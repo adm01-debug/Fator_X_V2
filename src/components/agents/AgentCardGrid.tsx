@@ -2,7 +2,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { Badge } from "@/components/ui/badge";
 import {
-  Star, Copy, Wand2, Download, ArrowRight, Loader2,
+  Star, Copy, Wand2, Download, ArrowRight, Loader2, GitBranch,
 } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -96,14 +96,17 @@ export function AgentCardGrid({
             <div className="flex items-center justify-between mt-auto pt-2 border-t border-border/20">
               <div className="flex flex-wrap items-center gap-1.5">
                 <StatusBadge status={agent.status ?? 'draft'} />
-                {(agent.tags ?? []).slice(0, 3).map(tag => (
-                  <Badge key={tag} variant="outline" className="text-[11px] h-5 border-border/40 text-muted-foreground font-normal">{tag}</Badge>
+                {(agent.tags ?? []).slice(0, 2).map(tag => (
+                  <Badge key={tag} variant="outline" className="text-[10px] h-5 border-border/40 text-muted-foreground font-normal px-1.5">{tag}</Badge>
                 ))}
-                {(agent.tags ?? []).length > 3 && (
-                  <span className="text-[10px] text-muted-foreground">+{(agent.tags ?? []).length - 3}</span>
+                {(agent.tags ?? []).length > 2 && (
+                  <span className="text-[10px] text-muted-foreground">+{(agent.tags ?? []).length - 2}</span>
                 )}
               </div>
-              <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/30 group-hover:text-primary transition-colors shrink-0" />
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] text-muted-foreground font-mono flex items-center gap-0.5 opacity-60"><GitBranch className="h-2.5 w-2.5" /> v{agent.version || 1}</span>
+                <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/30 group-hover:text-primary transition-colors shrink-0" />
+              </div>
             </div>
           </div>
         );

@@ -123,20 +123,38 @@ export default function AgentDetailPage() {
         }
       />
 
-      <div className="flex items-center gap-4">
-        <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center text-2xl">
-          {agent.avatar_emoji || '🤖'}
-        </div>
-        <div>
-          <div className="flex items-center gap-2.5">
-            <StatusBadge status={agent.status || 'draft'} />
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-card border border-border p-6 rounded-2xl">
+        <div className="flex items-center gap-4">
+          <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary/15 to-accent/10 flex items-center justify-center text-3xl shadow-sm">
+            {agent.avatar_emoji || '🤖'}
           </div>
-          <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-            <span>{String(agent.model ?? '')}</span>
-            <span>•</span>
-            <span>{String(agent.persona ?? '')}</span>
-            <span>•</span>
-            <span>v{String(agent.version ?? '')}</span>
+          <div>
+            <div className="flex items-center gap-2.5">
+              <h1 className="text-xl font-bold text-foreground">{agent.name}</h1>
+              <StatusBadge status={agent.status || 'draft'} />
+            </div>
+            <div className="flex items-center gap-3 mt-1.5 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1 bg-secondary/50 px-2 py-0.5 rounded text-[10px] font-mono"><Cpu className="h-3 w-3" /> {String(agent.model ?? '')}</span>
+              <span>•</span>
+              <span className="flex items-center gap-1"><MessageSquare className="h-3 w-3" /> {String(agent.persona ?? '')}</span>
+              <span>•</span>
+              <span className="flex items-center gap-1 font-mono"><GitBranch className="h-3 w-3" /> v{String(agent.version ?? '1')}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-6 border-l border-border/50 pl-6 hidden md:flex">
+          <div className="text-center">
+            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Health Score</p>
+            <p className="text-xl font-bold text-nexus-emerald">98%</p>
+          </div>
+          <div className="text-center">
+            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Uptime</p>
+            <p className="text-xl font-bold text-nexus-blue">99.9%</p>
+          </div>
+          <div className="text-center">
+            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Avg Latency</p>
+            <p className="text-xl font-bold text-foreground">145ms</p>
           </div>
         </div>
       </div>

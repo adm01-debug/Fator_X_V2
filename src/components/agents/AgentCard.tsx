@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { StatusBadge } from '@/components/shared/StatusBadge';
-import { Star, Copy, Wand2, Download, Loader2 } from 'lucide-react';
+import { Star, Copy, Wand2, Download, Loader2, GitBranch } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
 import { AgentCardViewer } from './AgentCardViewer';
 
@@ -29,7 +29,7 @@ export function AgentCard({
 
   return (
     <div
-      className={`nexus-card nexus-card-interactive cursor-pointer group relative overflow-hidden min-h-[180px] flex flex-col ${isSelected ? 'ring-2 ring-primary border-primary/40' : ''}`}
+      className={`nexus-card nexus-card-interactive cursor-pointer group relative overflow-hidden min-h-[190px] flex flex-col ${isSelected ? 'ring-2 ring-primary border-primary/40' : ''}`}
       onClick={() => selectionMode ? onToggleSelect({ stopPropagation: () => {} } as React.MouseEvent, agent.id) : onNavigate(agent.id)}
     >
       <div className={`absolute top-3 left-3 z-10 transition-opacity ${selectionMode || 'opacity-0 group-hover:opacity-100'}`} onClick={(e) => onToggleSelect(e, agent.id)}>
@@ -76,13 +76,15 @@ export function AgentCard({
 
       <p className="text-xs text-muted-foreground line-clamp-2 mb-3 flex-1">{agent.mission || 'Sem descrição'}</p>
 
-      <div className="flex items-center gap-2 flex-wrap mt-auto">
+      <div className="flex items-center gap-2 flex-wrap mt-auto pt-2 border-t border-border/20">
         <StatusBadge status={agent.status || 'draft'} />
         {(agent.tags ?? []).slice(0, 2).map(tag => (
-          <Badge key={tag} variant="outline" className="text-[11px] h-5 border-border/50">{tag}</Badge>
+          <Badge key={tag} variant="outline" className="text-[10px] h-5 border-border/50 font-normal px-1.5">{tag}</Badge>
         ))}
-        {(agent.tags ?? []).length > 2 && <span className="text-[11px] text-muted-foreground">+{(agent.tags ?? []).length - 2}</span>}
-        {agent.version && <span className="text-[11px] text-muted-foreground ml-auto">v{agent.version}</span>}
+        {(agent.tags ?? []).length > 2 && <span className="text-[10px] text-muted-foreground">+{(agent.tags ?? []).length - 2}</span>}
+        <div className="flex items-center gap-1.5 ml-auto text-[10px] text-muted-foreground font-mono">
+          <span className="flex items-center gap-0.5"><GitBranch className="h-2.5 w-2.5" /> v{agent.version || 1}</span>
+        </div>
       </div>
     </div>
   );
