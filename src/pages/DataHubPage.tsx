@@ -1,15 +1,17 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useDatahubStore } from '@/stores/datahubStore';
-import { PageHeader } from '@/components/shared/PageHeader';
-import { InfoHint } from '@/components/shared/InfoHint';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Search, Database, ArrowRight, Eye, RefreshCcw, Table2, Link2, Loader2, CheckCircle2, Snowflake, Server, Activity, Code2, Brain, GitBranch } from 'lucide-react';
+import { 
+  Search, Database, ArrowRight, Eye, RefreshCcw, Table2, 
+  Link2, Loader2, CheckCircle2, Snowflake, Server, Activity, 
+  Code2, Brain, GitBranch, ShieldCheck, Network, 
+  Layers
+} from 'lucide-react';
 import { ENTITY_MAPPINGS, ENTITY_LIST } from '@/config/datahub-entities';
 import { DataBrowser } from '@/components/datahub/DataBrowser';
-import { DataHubStats } from '@/components/datahub/DataHubStats';
 import { DataHubHealthTab } from '@/components/datahub/DataHubHealthTab';
 import { DataHubQueryBuilderTab } from '@/components/datahub/DataHubQueryBuilderTab';
 import { DataHubIdentityResolutionTab } from '@/components/datahub/DataHubIdentityResolutionTab';
@@ -24,6 +26,7 @@ import { DATAHUB_TABLE_BLACKLIST } from '@/config/datahub-blacklist';
 import { testDatahubConnections, listDatahubEntities } from '@/services/datahubService';
 import { NLPAnalysisDialog } from '@/components/shared/NLPAnalysisDialog';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 
 export default function DataHubPage() {
   const datahubActions = useDatahubStore();
@@ -75,23 +78,75 @@ export default function DataHubPage() {
   const activeConnections = connections.filter((c) => c.status !== 'hibernated');
   const connectedCount = activeConnections.filter((c) => c.status === 'connected').length;
   const totalRecords = Object.values(entityCounts).reduce((sum, v) => sum + (v >= 0 ? v : 0), 0);
-  const joinCount = ENTITY_LIST.reduce((acc, e) => acc + (e.secondary?.length ?? 0), 0);
   const crossDbCount = ENTITY_LIST.reduce((acc, e) => acc + (e.cross_db?.length ?? 0), 0);
 
   if (browsingEntity) {
     return (
-      <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
-        <PageHeader title="DataHub" description="Explorando dados reais" />
+      <div className="p-6 sm:p-8 lg:p-10 space-y-10 max-w-[1440px] mx-auto animate-page-enter">
+        <div className="flex items-center gap-4 mb-6">
+          <Button variant="outline" size="sm" onClick={() => setBrowsingEntity(null)} className="rounded-xl h-10 px-4 gap-2 font-bold border-border/40 hover:bg-secondary/50">
+            <ArrowRight className="h-4 w-4 rotate-180" /> Voltar ao Hub
+          </Button>
+          <div className="h-4 w-px bg-border/40 mx-2" />
+          <h2 className="text-xl font-heading font-black text-foreground">Explorador de Dados</h2>
+        </div>
         <DataBrowser entityId={browsingEntity} onClose={() => setBrowsingEntity(null)} />
       </div>
     );
   }
 
   return (
-    <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
-      <PageHeader title="DataHub" description="Central de dados: explore entidades, conexões e mapeamentos cross-database" actions={<NLPAnalysisDialog />} />
-      <DataHubStats entityCount={ENTITY_LIST.length} connectionCount={activeConnections.length} connectedCount={connectedCount} totalRecords={totalRecords} joinCount={joinCount} crossDbCount={crossDbCount} />
-      <InfoHint title="Como funciona o DataHub?">O DataHub mapeia entidades de negócio (Clientes, Produtos, etc.) para tabelas em múltiplos bancos de dados externos. Cada entidade tem uma tabela primária e pode ter joins secundários e <strong>cross-database</strong>.</InfoHint>
+    <div className="p-6 sm:p-8 lg:p-10 space-y-10 max-w-[1440px] mx-auto animate-page-enter">
+      {/* Header Elevated 10/10 */}
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-2xl shadow-primary/5 mb-10 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/[0.06] transition-colors duration-500 pointer-events-none" />
+        
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative">
+          <div className="flex items-center gap-7">
+            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
+              <Database className="h-11 w-11 text-primary animate-float" />
+            </div>
+            <div className="space-y-1">
+              <div className="flex items-center gap-3">
+                <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">DataHub</h1>
+                <Badge className="bg-nexus-cyan/10 text-nexus-cyan border-none font-black px-3 py-1 rounded-full text-[10px] tracking-widest uppercase">Grid de Dados Industrial</Badge>
+              </div>
+              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+                Orquestração unificada de dados. Gerencie entidades, conexões federadas e mapeamentos cross-database com precisão industrial.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+             <div className="flex flex-col items-end gap-1">
+              <div className="flex items-center gap-2 text-nexus-emerald font-black text-sm uppercase tracking-tighter">
+                <ShieldCheck className="h-4 w-4" /> Federado & Seguro
+              </div>
+              <p className="text-[10px] text-muted-foreground font-bold tracking-widest uppercase">Conectividade Ativa</p>
+            </div>
+            <div className="h-10 w-px bg-border/40 mx-4" />
+            <NLPAnalysisDialog />
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          { label: 'Entidades Mapeadas', value: ENTITY_LIST.length, icon: Layers, color: 'text-nexus-cyan', bg: 'bg-nexus-cyan/10' },
+          { label: 'Conexões Ativas', value: `${connectedCount}/${activeConnections.length}`, icon: Network, color: 'text-nexus-purple', bg: 'bg-nexus-purple/10' },
+          { label: 'Registros Totais', value: totalRecords.toLocaleString(), icon: Activity, color: 'text-nexus-emerald', bg: 'bg-nexus-emerald/10' },
+          { label: 'Cross-DB Joins', value: crossDbCount, icon: GitBranch, color: 'text-nexus-amber', bg: 'bg-nexus-amber/10' },
+        ].map((stat, i) => (
+          <div key={i} className="bg-card border border-border/40 p-6 rounded-[2rem] flex items-center gap-5 hover:border-primary/20 transition-all group">
+            <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform", stat.bg)}>
+              <stat.icon className={cn("h-7 w-7", stat.color)} />
+            </div>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{stat.label}</p>
+              <p className="text-2xl font-black text-foreground">{stat.value}</p>
+            </div>
+          </div>
+        ))}
+      </div>
 
       <Tabs defaultValue="entities" className="space-y-4">
         <TabsList className="bg-secondary/50">
@@ -202,9 +257,9 @@ export default function DataHubPage() {
 
         <TabsContent value="schema" className="space-y-4">
           <div className="nexus-card space-y-3">
-            <h3 className="text-sm font-semibold text-foreground">Tabelas Blacklisted ({DATAHUB_TABLE_BLACKLIST.size})</h3>
+            <h3 className="text-sm font-semibold text-foreground">Tabelas Blacklisted ({(DATAHUB_TABLE_BLACKLIST as Set<string>).size})</h3>
             <div className="flex flex-wrap gap-1.5">
-              {Array.from(DATAHUB_TABLE_BLACKLIST).sort().map((t) => <Badge key={t} variant="outline" className="text-[11px] font-mono text-destructive/70 border-destructive/20">{t}</Badge>)}
+              {Array.from(DATAHUB_TABLE_BLACKLIST as Set<string>).sort().map((t) => <Badge key={t} variant="outline" className="text-[11px] font-mono text-destructive/70 border-destructive/20">{t}</Badge>)}
             </div>
           </div>
           <div className="grid gap-4 md:grid-cols-2">
