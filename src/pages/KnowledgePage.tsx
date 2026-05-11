@@ -1,5 +1,4 @@
 import { CardGridSkeleton } from "@/components/shared/PageSkeleton";
-import { PageHeader } from "@/components/shared/PageHeader";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { QuickActionsBar } from "@/components/shared/QuickActionsBar";
 import { Input } from "@/components/ui/input";
@@ -7,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { 
   Search, BookOpen, ArrowRight, Database, Pencil, Trash2, Bot, 
   FileText, Activity, Layers, Zap, Shield, Sparkles, Filter, 
-  BarChart3, BrainCircuit, Globe, RefreshCcw, LayoutGrid, List
+  BarChart3, BrainCircuit, RefreshCcw, LayoutGrid, List, Radio, ShieldCheck, Globe, Cpu, Network, Waves
 } from "lucide-react";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -22,7 +21,7 @@ import { AccessControl, DangerousActionDialog } from "@/components/rbac";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 const pipeline = [
   { name: 'Parsing', icon: FileText, color: 'text-blue-500', bg: 'bg-blue-500/10' },
