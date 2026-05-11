@@ -23,6 +23,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState, useCallback } from "react";
 import { getWorkspaceInfo } from "@/lib/agentService";
 import { useI18n } from "@/hooks/useI18n";
+import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 const navSections = [
   {
@@ -190,15 +192,19 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-border/30 bg-sidebar" aria-label="Navegação principal">
-      <SidebarHeader className="p-3">
-        <div className="flex items-center gap-2.5">
-          <img src={fatorxIcon} alt="" className="h-8 w-8 shrink-0 rounded-lg shadow-sm shadow-primary/20" />
+    <Sidebar collapsible="icon" className="border-r border-border/40 bg-sidebar" aria-label="Navegação principal">
+      <SidebarHeader className="p-5">
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg shadow-primary/20 shrink-0">
+            <img src={fatorxIcon} alt="" className="h-6 w-6 invert brightness-0" />
+          </div>
           {!collapsed && (
-            <span className="font-heading text-base font-extrabold tracking-tight" aria-label="Fator X">
-              <span className="text-foreground">FATOR</span>
-              <span className="text-primary ml-0.5">X</span>
-            </span>
+            <div className="flex flex-col">
+              <span className="font-black text-lg tracking-tight leading-none text-foreground uppercase" aria-label="Fator X">
+                Fator<span className="text-primary">X</span>
+              </span>
+              <span className="text-[9px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] mt-1">Industrial Intelligence</span>
+            </div>
           )}
         </div>
       </SidebarHeader>
@@ -215,11 +221,11 @@ export function AppSidebar() {
                   aria-expanded={!isCollapsedSection}
                   aria-controls={`nav-section-${section.key}`}
                 >
-                  <SidebarGroupLabel className="text-[11px] uppercase tracking-wider text-muted-foreground/80 pointer-events-none p-0 h-auto font-semibold">
+                  <SidebarGroupLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 pointer-events-none p-0 h-auto">
                     {section.label}
                   </SidebarGroupLabel>
                   <ChevronDown
-                    className={`h-3 w-3 text-muted-foreground/50 transition-transform duration-200 ${isCollapsedSection ? '-rotate-90' : ''}`}
+                    className={`h-3 w-3 text-muted-foreground/40 transition-all duration-300 group-hover/label:text-primary ${isCollapsedSection ? '-rotate-90' : ''}`}
                     aria-hidden="true"
                   />
                 </button>
@@ -241,10 +247,10 @@ export function AppSidebar() {
                           <NavLink
                             to={item.url}
                             end={item.url === "/"}
-                            className={`flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm transition-all duration-200 group/navitem ${
+                            className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all duration-300 group/navitem ${
                               isActive
-                                ? 'text-primary font-semibold bg-primary/12'
-                                : 'text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground hover:translate-x-0.5 hover:shadow-sm'
+                                ? 'text-primary font-black bg-primary/10 shadow-sm shadow-primary/5'
+                                : 'text-sidebar-foreground/70 hover:bg-secondary/40 hover:text-foreground hover:translate-x-1'
                             }`}
                             activeClassName=""
                             aria-current={isActive ? "page" : undefined}
@@ -275,52 +281,58 @@ export function AppSidebar() {
         {!collapsed && (
           <>
             <Separator className="bg-border/30" />
-            <div className="rounded-lg bg-secondary/40 px-3 py-2.5">
-              <div className="flex items-center justify-between mb-1.5">
-                <p className="text-[11px] font-semibold text-foreground">Workspace {planLabel}</p>
-                <span className="text-[11px] text-muted-foreground">{agentCount}/{maxAgents}</span>
+            <div className="rounded-2xl bg-secondary/30 border border-border/40 p-4 shadow-sm">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80">Vazão do Workspace</p>
+                <Badge variant="outline" className="bg-primary/5 text-primary border-none text-[9px] font-black">{planLabel}</Badge>
               </div>
-              <div className="h-2 rounded-full bg-secondary" role="progressbar" aria-valuenow={usage} aria-valuemin={0} aria-valuemax={100} aria-label="Uso de agentes">
-                <div className={`h-full rounded-full transition-all duration-500 ${usage >= 100 ? 'bg-nexus-amber' : 'nexus-gradient-bg'}`} style={{ width: `${Math.max(usage, 4)}%` }} />
+              <div className="h-1.5 rounded-full bg-secondary/50 mb-2 overflow-hidden" role="progressbar" aria-valuenow={usage} aria-valuemin={0} aria-valuemax={100} aria-label="Uso de agentes">
+                <div className={cn("h-full rounded-full transition-all duration-1000", usage >= 100 ? 'bg-destructive' : 'nexus-gradient-bg')} style={{ width: `${Math.max(usage, 4)}%` }} />
+              </div>
+              <div className="flex justify-between items-center text-[10px] font-bold text-muted-foreground mb-3">
+                <span>{agentCount} Agentes</span>
+                <span>Limit {maxAgents}</span>
               </div>
               {usage >= 80 && planLabel === 'Free' && (
-                <button
+                <Button
                   onClick={() => navigate('/billing')}
-                  className="flex items-center gap-1.5 mt-2 w-full justify-center rounded-md bg-gradient-to-r from-nexus-amber/20 to-nexus-amber/10 border border-nexus-amber/30 px-2 py-1.5 text-[11px] font-semibold text-nexus-amber hover:from-nexus-amber/30 hover:to-nexus-amber/20 transition-all"
+                  className="w-full h-8 rounded-xl bg-nexus-amber/10 border border-nexus-amber/20 text-nexus-amber hover:bg-nexus-amber/20 text-[10px] font-black uppercase tracking-widest gap-2"
                 >
-                  <Crown className="h-3 w-3" />
-                  {usage >= 100 ? 'Limite atingido — Fazer upgrade' : 'Quase no limite — Upgrade'}
-                </button>
+                  <Crown className="h-3 w-3" /> UPGRADE
+                </Button>
               )}
             </div>
             <Separator className="bg-border/30" />
             {user && (
-              <div className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg hover:bg-secondary/30 transition-colors">
-                {user.user_metadata?.avatar_url ? (
-                  <img src={user.user_metadata.avatar_url} alt="" className="h-7 w-7 rounded-full shrink-0 object-cover" referrerPolicy="no-referrer" />
-                ) : (
-                  <div className="h-7 w-7 rounded-full nexus-gradient-bg flex items-center justify-center text-xs font-bold text-primary-foreground shrink-0">
-                    {(wsInfo?.userName?.[0] || user.email?.[0] || 'U').toUpperCase()}
-                  </div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium text-foreground truncate">{wsInfo?.userName || 'Usuário'}</p>
-                  <p className="text-[11px] text-muted-foreground truncate">{user.email}</p>
+              <div className="flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-secondary/20 border border-border/40 hover:bg-secondary/30 transition-all group">
+                <div className="relative shrink-0">
+                  {user.user_metadata?.avatar_url ? (
+                    <img src={user.user_metadata.avatar_url} alt="" className="h-9 w-9 rounded-xl object-cover border border-white/10" referrerPolicy="no-referrer" />
+                  ) : (
+                    <div className="h-9 w-9 rounded-xl nexus-gradient-bg flex items-center justify-center text-xs font-black text-primary-foreground shadow-sm">
+                      {(wsInfo?.userName?.[0] || user.email?.[0] || 'U').toUpperCase()}
+                    </div>
+                  )}
+                  <div className="absolute -bottom-1 -right-1 h-3 w-3 rounded-full bg-nexus-emerald border-2 border-background shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
                 </div>
-                <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0 text-muted-foreground hover:text-destructive" onClick={signOut} aria-label="Sair da conta">
-                  <LogOut className="h-3.5 w-3.5" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-black text-foreground uppercase tracking-tight truncate">{wsInfo?.userName || 'Operador'}</p>
+                  <p className="text-[10px] font-medium text-muted-foreground truncate">{user.email}</p>
+                </div>
+                <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-xl" onClick={signOut} aria-label="Sair da conta">
+                  <LogOut className="h-4 w-4" />
                 </Button>
               </div>
             )}
-            <div className="flex items-center justify-between px-2">
-              <p className="text-[10px] text-muted-foreground/50 select-none">Fator X v1.0</p>
+            <div className="flex items-center justify-between px-3 pt-1">
+              <p className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em] select-none">Fator X Core v1.0</p>
               <button
                 onClick={() => setLocale(locale === 'pt-BR' ? 'en' : 'pt-BR')}
-                className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition-colors rounded px-1.5 py-0.5 hover:bg-secondary/50"
+                className="flex items-center gap-1.5 text-[10px] font-black text-muted-foreground hover:text-primary transition-colors rounded-lg px-2 py-1 hover:bg-primary/5 border border-transparent hover:border-primary/20"
                 title="Alternar idioma"
               >
                 <Globe className="h-3 w-3" />
-                {locale === 'pt-BR' ? 'PT' : 'EN'}
+                {locale === 'pt-BR' ? 'BR' : 'US'}
               </button>
             </div>
           </>

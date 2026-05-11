@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { PageHeader } from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Palette, Globe, Bell, Key, Save, Server, Share2, Database, Zap, Shield, Activity } from "lucide-react";
+import { Palette, Globe, Bell, Key, Save, Server, Share2, Database, Activity, Radio, Cpu, ShieldCheck, Shield } from "lucide-react";
 import { MCPServerManager } from "@/components/integrations/MCPServerManager";
 import { MCPServersPanel } from "@/components/settings/MCPServersPanel";
 import { Bitrix24Connect } from "@/components/integrations/Bitrix24Connect";
@@ -37,19 +36,36 @@ export default function SettingsPage() {
   });
 
   return (
-    <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1200px] mx-auto animate-in fade-in duration-500">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <PageHeader 
-          title="Centro de Controle" 
-          description="Orquestração global do seu ecossistema de agentes e infraestrutura IA" 
-        />
-        <div className="flex gap-2 mb-2">
-          <Badge variant="outline" className="bg-nexus-emerald/5 text-nexus-emerald border-nexus-emerald/20 gap-1.5 py-1 px-3">
-            <Activity className="h-3 w-3" /> Sistema Nominal
-          </Badge>
-          <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 gap-1.5 py-1 px-3">
-            <Zap className="h-3 w-3" /> Versão 1.2.0
-          </Badge>
+    <div className="p-6 sm:p-8 lg:p-10 space-y-10 max-w-[1440px] mx-auto animate-page-enter">
+      {/* Header Elevated 10/10 */}
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-2xl shadow-primary/5 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/[0.06] transition-colors duration-500 pointer-events-none" />
+        
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative">
+          <div className="flex items-center gap-7">
+            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
+              <Cpu className="h-11 w-11 text-primary animate-float" />
+            </div>
+            <div className="space-y-1">
+              <div className="flex items-center gap-3">
+                <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Control Center</h1>
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest border border-primary/20">
+                  <Radio className="h-3 w-3 animate-pulse" /> Operational
+                </div>
+              </div>
+              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+                Orquestração global do seu ecossistema neural. Gerencie o workspace, infraestrutura e governança de IA.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+             <div className="flex flex-col items-end gap-1">
+              <div className="flex items-center gap-2 text-nexus-emerald font-black text-sm uppercase tracking-tighter">
+                <ShieldCheck className="h-4 w-4" /> Nexus Verified
+              </div>
+              <p className="text-[10px] text-muted-foreground font-bold tracking-widest uppercase">v1.2.0 Industrial Grade</p>
+            </div>
+          </div>
         </div>
       </div>
 
