@@ -110,11 +110,23 @@ export default function MonitoringPage() {
           {isLoading ? <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
           : filteredTraces.length === 0 ? <div className="flex flex-col items-center justify-center py-20 text-center"><Activity className="h-12 w-12 text-muted-foreground mb-4" /><h2 className="text-lg font-semibold text-foreground mb-1">Nenhum trace registrado</h2><p className="text-sm text-muted-foreground">Traces aparecerão aqui quando agentes estiverem em produção.</p></div>
           : <>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div className="nexus-card text-center py-3"><p className="text-xl font-heading font-bold text-foreground">{stats.total}</p><p className="text-[11px] text-muted-foreground">Total de traces</p></div>
-                <div className="nexus-card text-center py-3"><p className="text-xl font-heading font-bold text-destructive">{stats.errors}</p><p className="text-[11px] text-muted-foreground">Erros</p></div>
-                <div className="nexus-card text-center py-3"><p className="text-xl font-heading font-bold text-foreground">{stats.avgLatency}ms</p><p className="text-[11px] text-muted-foreground">Latência média</p></div>
-                <div className="nexus-card text-center py-3"><p className="text-xl font-heading font-bold text-foreground">${stats.totalCost.toFixed(3)}</p><p className="text-[11px] text-muted-foreground">Custo total</p></div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+                <div className="bg-card border border-border/40 p-6 rounded-3xl flex flex-col items-center justify-center gap-1 group hover:border-primary/20 transition-all">
+                  <p className="text-3xl font-heading font-black text-foreground group-hover:scale-110 transition-transform duration-300">{stats.total}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Total Traces</p>
+                </div>
+                <div className="bg-card border border-border/40 p-6 rounded-3xl flex flex-col items-center justify-center gap-1 group hover:border-destructive/20 transition-all">
+                  <p className="text-3xl font-heading font-black text-destructive group-hover:scale-110 transition-transform duration-300">{stats.errors}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Eventos Críticos</p>
+                </div>
+                <div className="bg-card border border-border/40 p-6 rounded-3xl flex flex-col items-center justify-center gap-1 group hover:border-nexus-cyan/20 transition-all">
+                  <p className="text-3xl font-heading font-black text-foreground group-hover:scale-110 transition-transform duration-300">{stats.avgLatency}ms</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Latência Média</p>
+                </div>
+                <div className="bg-card border border-border/40 p-6 rounded-3xl flex flex-col items-center justify-center gap-1 group hover:border-nexus-emerald/20 transition-all">
+                  <p className="text-3xl font-heading font-black text-nexus-emerald group-hover:scale-110 transition-transform duration-300">${stats.totalCost.toFixed(3)}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Custo Alocado</p>
+                </div>
               </div>
               <div className="grid lg:grid-cols-2 gap-4">
                 <div className="nexus-card"><h3 className="text-sm font-heading font-semibold text-foreground mb-3">Latência por evento</h3><LightBarChart data={latencyData} xKey="time" height={180} yFormatter={(v) => `${v}ms`} tooltipFormatter={(v) => `${v}ms`} series={[{ dataKey: 'latency', name: 'Latência', color: 'hsl(var(--primary))', radius: 3 }]} /></div>
