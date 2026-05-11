@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
 
-export type DateRange = '7d' | '14d' | '30d' | '90d';
+export type DateRange = '24h' | '7d' | '14d' | '30d' | '90d';
 
 interface DateRangePickerProps {
   value: DateRange;
