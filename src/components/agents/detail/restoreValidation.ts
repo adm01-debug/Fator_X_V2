@@ -304,6 +304,7 @@ export function validateRestore(
         detail: 'A versão de origem não define um modelo. Restaurar deixaria o agente sem LLM configurado.',
         hint: 'Desmarque "Modelo & parâmetros" para manter o modelo atual.',
         quickFixes: [
+          { kind: 'suggest-model', value: 'gpt-4o', label: 'Usar GPT-4o (Padrão)', description: 'Define um modelo robusto para liberar o rollback.' },
           { kind: 'uncheck-model', label: 'Desmarcar Modelo & parâmetros', description: 'Preserva o modelo atual.' },
         ],
       });
