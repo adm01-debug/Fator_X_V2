@@ -304,32 +304,35 @@ export function AppSidebar() {
             </div>
             <Separator className="bg-border/30" />
             {user && (
-              <div className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg hover:bg-secondary/30 transition-colors">
-                {user.user_metadata?.avatar_url ? (
-                  <img src={user.user_metadata.avatar_url} alt="" className="h-7 w-7 rounded-full shrink-0 object-cover" referrerPolicy="no-referrer" />
-                ) : (
-                  <div className="h-7 w-7 rounded-full nexus-gradient-bg flex items-center justify-center text-xs font-bold text-primary-foreground shrink-0">
-                    {(wsInfo?.userName?.[0] || user.email?.[0] || 'U').toUpperCase()}
-                  </div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium text-foreground truncate">{wsInfo?.userName || 'Usuário'}</p>
-                  <p className="text-[11px] text-muted-foreground truncate">{user.email}</p>
+              <div className="flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-secondary/20 border border-border/40 hover:bg-secondary/30 transition-all group">
+                <div className="relative shrink-0">
+                  {user.user_metadata?.avatar_url ? (
+                    <img src={user.user_metadata.avatar_url} alt="" className="h-9 w-9 rounded-xl object-cover border border-white/10" referrerPolicy="no-referrer" />
+                  ) : (
+                    <div className="h-9 w-9 rounded-xl nexus-gradient-bg flex items-center justify-center text-xs font-black text-primary-foreground shadow-sm">
+                      {(wsInfo?.userName?.[0] || user.email?.[0] || 'U').toUpperCase()}
+                    </div>
+                  )}
+                  <div className="absolute -bottom-1 -right-1 h-3 w-3 rounded-full bg-nexus-emerald border-2 border-background shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
                 </div>
-                <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0 text-muted-foreground hover:text-destructive" onClick={signOut} aria-label="Sair da conta">
-                  <LogOut className="h-3.5 w-3.5" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-black text-foreground uppercase tracking-tight truncate">{wsInfo?.userName || 'Operador'}</p>
+                  <p className="text-[10px] font-medium text-muted-foreground truncate">{user.email}</p>
+                </div>
+                <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-xl" onClick={signOut} aria-label="Sair da conta">
+                  <LogOut className="h-4 w-4" />
                 </Button>
               </div>
             )}
-            <div className="flex items-center justify-between px-2">
-              <p className="text-[10px] text-muted-foreground/50 select-none">Fator X v1.0</p>
+            <div className="flex items-center justify-between px-3 pt-1">
+              <p className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em] select-none">Fator X Core v1.0</p>
               <button
                 onClick={() => setLocale(locale === 'pt-BR' ? 'en' : 'pt-BR')}
-                className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition-colors rounded px-1.5 py-0.5 hover:bg-secondary/50"
+                className="flex items-center gap-1.5 text-[10px] font-black text-muted-foreground hover:text-primary transition-colors rounded-lg px-2 py-1 hover:bg-primary/5 border border-transparent hover:border-primary/20"
                 title="Alternar idioma"
               >
                 <Globe className="h-3 w-3" />
-                {locale === 'pt-BR' ? 'PT' : 'EN'}
+                {locale === 'pt-BR' ? 'BR' : 'US'}
               </button>
             </div>
           </>
