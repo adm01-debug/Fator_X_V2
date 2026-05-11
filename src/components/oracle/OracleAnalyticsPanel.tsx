@@ -8,8 +8,12 @@ import {
   Clock,
   Award,
   Activity,
+  Zap,
+  Target,
+  Trophy
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { fetchOracleHistory, type OracleHistoryEntry } from "@/lib/oracleHistory";
 import { getOracleStats } from "@/services/oracleService";
 import { ORACLE_MODES, type OracleMode } from "@/stores/oracleStore";
@@ -93,113 +97,111 @@ export function OracleAnalyticsPanel() {
   }, [history, metrics, serviceStats]);
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h3 className="text-sm font-heading font-semibold text-foreground flex items-center gap-2">
-          <BarChart3 className="h-4 w-4 text-primary" /> Oracle Analytics
-        </h3>
-        <p className="text-[11px] text-muted-foreground mt-0.5">
-          Métricas agregadas do histórico de consultas. Identifique o modo mais eficaz e o custo total acumulado.
-        </p>
+    <Card className="p-8 bg-card border-border rounded-3xl shadow-sm relative overflow-hidden group">
+      <div className="absolute top-0 right-0 w-64 h-64 bg-primary/[0.02] rounded-full -translate-y-1/2 translate-x-1/2" />
+      
+      <div className="flex items-center justify-between mb-8 relative">
+        <div className="flex items-center gap-4">
+          <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/15">
+            <BarChart3 className="w-6 h-6 text-primary" />
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-foreground">Oracle Analytics</h3>
+            <p className="text-xs text-muted-foreground max-w-lg leading-relaxed">
+              Métricas consolidadas de performance e custo acumulado do conselho de especialistas.
+            </p>
+          </div>
+        </div>
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center py-12">
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        <div className="flex justify-center py-20">
+          <Loader2 className="h-8 w-8 animate-spin text-primary/40" />
         </div>
       ) : history.length === 0 ? (
-        <div className="nexus-card text-center py-12">
-          <BarChart3 className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
-          <p className="text-sm text-muted-foreground">Nenhum histórico de consulta disponível</p>
-          <p className="text-[11px] text-muted-foreground/70 mt-1">
-            Faça algumas consultas no Oráculo para ver as métricas aqui
-          </p>
+        <div className="py-20 text-center opacity-40">
+          <Target className="h-12 w-12 mx-auto mb-4" />
+          <p className="text-sm font-bold uppercase tracking-widest">Sem Dados Operacionais</p>
+          <p className="text-xs text-muted-foreground mt-1">As métricas surgirão após a primeira sessão do conselho.</p>
         </div>
       ) : (
-        <>
+        <div className="space-y-8 animate-in fade-in duration-700">
           {/* Top stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div className="nexus-card text-center py-3">
-              <Activity className="h-4 w-4 mx-auto text-primary mb-1" />
-              <p className="text-xl font-bold text-primary">{totals.totalQueries}</p>
-              <p className="text-[10px] text-muted-foreground">Consultas Totais</p>
-            </div>
-            <div className="nexus-card text-center py-3">
-              <DollarSign className="h-4 w-4 mx-auto text-nexus-emerald mb-1" />
-              <p className="text-xl font-bold text-nexus-emerald">${totals.totalCost.toFixed(4)}</p>
-              <p className="text-[10px] text-muted-foreground">Custo Acumulado</p>
-            </div>
-            <div className="nexus-card text-center py-3">
-              <TrendingUp className="h-4 w-4 mx-auto text-nexus-purple mb-1" />
-              <p className="text-xl font-bold text-nexus-purple">{totals.avgConfidence.toFixed(0)}%</p>
-              <p className="text-[10px] text-muted-foreground">Confiança Média</p>
-            </div>
-            <div className="nexus-card text-center py-3">
-              <Clock className="h-4 w-4 mx-auto text-nexus-amber mb-1" />
-              <p className="text-xl font-bold text-nexus-amber">{totals.avgLatencyS.toFixed(1)}s</p>
-              <p className="text-[10px] text-muted-foreground">Latência Média</p>
-            </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { icon: <Activity className="h-4 w-4" />, label: 'Sessões', value: totals.totalQueries, cls: 'text-primary' },
+              { icon: <DollarSign className="h-4 w-4" />, label: 'Custo Total', value: `$${totals.totalCost.toFixed(4)}`, cls: 'text-nexus-emerald' },
+              { icon: <TrendingUp className="h-4 w-4" />, label: 'Confiança', value: `${totals.avgConfidence.toFixed(0)}%`, cls: 'text-nexus-purple' },
+              { icon: <Clock className="h-4 w-4" />, label: 'Latência', value: `${totals.avgLatencyS.toFixed(1)}s`, cls: 'text-nexus-amber' },
+            ].map(stat => (
+              <Card key={stat.label} className="p-4 bg-secondary/20 border-border/40 text-center">
+                <div className="flex justify-center mb-1.5 opacity-60">{stat.icon}</div>
+                <p className={`text-sm font-extrabold ${stat.cls}`}>{stat.value}</p>
+                <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">{stat.label}</p>
+              </Card>
+            ))}
           </div>
 
           {/* Best mode highlight */}
           {totals.bestMode && (
-            <div className="nexus-card bg-nexus-amber/5 border-nexus-amber/30">
-              <div className="flex items-center gap-3">
-                <Award className="h-8 w-8 text-nexus-amber" />
-                <div className="flex-1">
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
-                    Modo mais eficaz
-                  </p>
-                  <p className="text-sm font-semibold text-foreground">
+            <Card className="p-6 bg-primary/5 border-primary/20 rounded-2xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-4 opacity-10">
+                <Award className="h-12 w-12" />
+              </div>
+              <div className="flex items-center gap-4 relative">
+                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
+                  <Trophy className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-extrabold text-primary uppercase tracking-widest">Configuração com Maior Acurácia</p>
+                  <p className="text-lg font-bold text-foreground">
                     {ORACLE_MODES[totals.bestMode.mode as OracleMode]?.icon}{' '}
                     {ORACLE_MODES[totals.bestMode.mode as OracleMode]?.label ?? totals.bestMode.mode}
-                    <span className="text-[11px] text-nexus-amber font-mono ml-2">
-                      {totals.bestMode.avg_confidence.toFixed(0)}% confiança
+                    <span className="text-[11px] text-primary font-mono ml-3 px-2 py-0.5 rounded bg-primary/10">
+                      {totals.bestMode.avg_confidence.toFixed(0)}% AVG Confiança
                     </span>
-                  </p>
-                  <p className="text-[10px] text-muted-foreground">
-                    {totals.bestMode.count} consultas · ${totals.bestMode.total_cost.toFixed(4)} gasto
                   </p>
                 </div>
               </div>
-            </div>
+            </Card>
           )}
 
           {/* Per-mode breakdown */}
-          <div className="nexus-card">
-            <h4 className="text-xs font-semibold text-foreground mb-3">Performance por Modo</h4>
-            <div className="overflow-x-auto">
+          <Card className="p-6 rounded-2xl border-border/60 bg-card/60">
+            <h4 className="text-xs font-extrabold text-muted-foreground uppercase tracking-widest mb-6 px-1 flex items-center gap-2">
+              <Zap className="h-3.5 w-3.5 text-primary" /> Performance por Algoritmo
+            </h4>
+            <div className="overflow-x-auto scrollbar-hide">
               <table className="w-full text-xs">
                 <thead>
                   <tr className="border-b border-border/30">
-                    <th className="text-left py-2 px-2 font-semibold text-muted-foreground">Modo</th>
-                    <th className="text-right py-2 px-2 font-semibold text-muted-foreground">Consultas</th>
-                    <th className="text-right py-2 px-2 font-semibold text-muted-foreground">Confiança</th>
-                    <th className="text-right py-2 px-2 font-semibold text-muted-foreground">Consenso</th>
-                    <th className="text-right py-2 px-2 font-semibold text-muted-foreground">Custo</th>
-                    <th className="text-right py-2 px-2 font-semibold text-muted-foreground">Latência</th>
+                    <th className="text-left py-3 px-2 font-bold text-muted-foreground uppercase tracking-tighter">Modo Operacional</th>
+                    <th className="text-right py-3 px-2 font-bold text-muted-foreground uppercase tracking-tighter">Sessões</th>
+                    <th className="text-right py-3 px-2 font-bold text-muted-foreground uppercase tracking-tighter">Confiança</th>
+                    <th className="text-right py-3 px-2 font-bold text-muted-foreground uppercase tracking-tighter">Custo</th>
+                    <th className="text-right py-3 px-2 font-bold text-muted-foreground uppercase tracking-tighter">Latência</th>
                   </tr>
                 </thead>
                 <tbody>
                   {metrics.map((m) => {
                     const modeInfo = ORACLE_MODES[m.mode as OracleMode];
                     return (
-                      <tr key={m.mode} className="border-b border-border/10 hover:bg-secondary/20">
-                        <td className="py-2 px-2">
-                          <div className="flex items-center gap-1.5">
-                            <span>{modeInfo?.icon ?? '❓'}</span>
-                            <span className="font-medium">{modeInfo?.label ?? m.mode}</span>
+                      <tr key={m.mode} className="border-b border-border/10 hover:bg-secondary/40 transition-colors group">
+                        <td className="py-3 px-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg group-hover:scale-110 transition-transform">{modeInfo?.icon ?? '❓'}</span>
+                            <span className="font-bold text-foreground">{modeInfo?.label ?? m.mode}</span>
                           </div>
                         </td>
-                        <td className="text-right py-2 px-2 font-mono">{m.count}</td>
-                        <td className="text-right py-2 px-2">
+                        <td className="text-right py-3 px-2 font-mono font-bold opacity-60">{m.count}</td>
+                        <td className="text-right py-3 px-2">
                           <Badge
                             variant="outline"
-                            className="text-[9px]"
+                            className="text-[10px] font-bold px-2 rounded-lg border-none"
                             style={{
-                              borderColor:
-                                m.avg_confidence >= 80 ? 'hsl(var(--nexus-emerald) / 0.5)' :
-                                m.avg_confidence >= 60 ? 'hsl(var(--nexus-yellow) / 0.5)' : 'hsl(var(--nexus-red) / 0.5)',
+                              backgroundColor:
+                                m.avg_confidence >= 80 ? 'hsl(var(--nexus-emerald) / 0.15)' :
+                                m.avg_confidence >= 60 ? 'hsl(var(--nexus-yellow) / 0.15)' : 'hsl(var(--nexus-red) / 0.15)',
                               color:
                                 m.avg_confidence >= 80 ? 'hsl(var(--nexus-emerald))' :
                                 m.avg_confidence >= 60 ? 'hsl(var(--nexus-yellow))' : 'hsl(var(--nexus-red))',
@@ -208,13 +210,10 @@ export function OracleAnalyticsPanel() {
                             {m.avg_confidence.toFixed(0)}%
                           </Badge>
                         </td>
-                        <td className="text-right py-2 px-2 font-mono text-muted-foreground">
-                          {m.avg_consensus.toFixed(0)}%
-                        </td>
-                        <td className="text-right py-2 px-2 font-mono text-nexus-emerald">
+                        <td className="text-right py-3 px-2 font-mono font-bold text-foreground/80">
                           ${m.total_cost.toFixed(4)}
                         </td>
-                        <td className="text-right py-2 px-2 font-mono text-nexus-amber">
+                        <td className="text-right py-3 px-2 font-mono font-bold text-nexus-amber">
                           {m.avg_latency_s.toFixed(1)}s
                         </td>
                       </tr>
@@ -223,9 +222,9 @@ export function OracleAnalyticsPanel() {
                 </tbody>
               </table>
             </div>
-          </div>
-        </>
+          </Card>
+        </div>
       )}
-    </div>
+    </Card>
   );
 }
