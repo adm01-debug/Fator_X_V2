@@ -110,13 +110,14 @@ export default function DashboardPage() {
       </div>
 
       {agents.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-32 text-center bg-card/30 border border-dashed border-border/60 rounded-[3rem]">
-          <div className="h-24 w-24 rounded-[2rem] bg-gradient-to-br from-primary/10 to-accent/5 flex items-center justify-center mb-6 border border-primary/10">
-            <Sparkles className="h-12 w-12 text-primary/40 animate-pulse" />
+        <div className="flex flex-col items-center justify-center py-32 text-center bg-card/30 border border-dashed border-border/60 rounded-[4rem] relative overflow-hidden group">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.02] to-transparent pointer-events-none" />
+          <div className="h-32 w-32 rounded-[3rem] bg-gradient-to-br from-primary/10 to-accent/5 flex items-center justify-center mb-8 border border-primary/20 shadow-2xl group-hover:scale-110 transition-transform duration-700">
+            <Sparkles className="h-16 w-16 text-primary animate-pulse" />
           </div>
-          <h2 className="text-3xl font-heading font-black text-foreground mb-4">Inicie sua Frota Neural</h2>
-          <p className="text-lg text-muted-foreground mb-10 max-w-md">Você ainda não possui agentes ativos. Comece criando um agente autônomo para automatizar sua operação.</p>
-          <Button onClick={() => navigate('/agents/new')} size="lg" className="nexus-gradient-bg text-primary-foreground h-14 px-10 rounded-2xl font-bold text-lg shadow-xl shadow-primary/20">
+          <h2 className="text-4xl font-heading font-black text-foreground mb-6 tracking-tight">Inicie sua Frota Neural</h2>
+          <p className="text-xl text-muted-foreground mb-12 max-w-lg font-medium leading-relaxed">Sua infraestrutura Nexus está pronta. Comece criando um agente autônomo para orquestrar sua operação com inteligência industrial.</p>
+          <Button onClick={() => navigate('/agents/new')} size="lg" className="nexus-gradient-bg text-primary-foreground h-16 px-12 rounded-2xl font-black text-xl shadow-2xl shadow-primary/30 hover:scale-105 active:scale-95 transition-all">
             Criar Primeiro Agente
           </Button>
         </div>
