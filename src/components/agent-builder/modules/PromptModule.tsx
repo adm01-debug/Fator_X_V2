@@ -4,7 +4,7 @@ import { SectionTitle, NexusBadge, InputField, TextAreaField } from '../ui';
 import { CollapsibleCard } from '../ui/CollapsibleCard';
 import { CodeBlock } from '../ui/CodeBlock';
 import { Button } from '@/components/ui/button';
-import { Plus, Trash2, Copy, GitBranch, Check, ArrowLeftRight, Play } from 'lucide-react';
+import { Plus, Trash2, Copy, GitBranch, Check, ArrowLeftRight, Play, Sparkles, Wand2 } from 'lucide-react';
 import { toast } from 'sonner';
 import type { PromptTechnique, FewShotExample, OutputFormat } from '@/types/agentTypes';
 import { PromptDiff } from '@/components/prompts/PromptDiff';
@@ -35,6 +35,7 @@ const OUTPUT_FORMATS: { value: OutputFormat; label: string; description: string;
 export function PromptModule() {
   const { agent, updateAgent, promptVersions, savePromptVersion, activatePromptVersion } = useAgentBuilderStore();
   const [versionSummary, setVersionSummary] = useState('');
+  const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
   const [diffMode, setDiffMode] = useState(false);
   const [abTestOpen, setAbTestOpen] = useState(false);
   const [diffVersionA, setDiffVersionA] = useState<string | null>(null);
@@ -60,6 +61,35 @@ export function PromptModule() {
 
   const updateExample = (id: string, partial: Partial<FewShotExample>) => {
     updateAgent({ few_shot_examples: agent.few_shot_examples.map((e) => (e.id === id ? { ...e, ...partial } : e)) });
+  };
+
+  const handleAutoGenerateSummary = async () => {
+    if (!agent.system_prompt) return;
+    setIsGeneratingSummary(true);
+    try {
+      // Simulação de chamada de IA para gerar resumo semântico
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      const activeVersion = promptVersions.find(v => v.is_active);
+      
+      if (!activeVersion) {
+        setVersionSummary('Versão inicial do prompt do agente.');
+      } else {
+        // Mock de análise semântica
+        const changes = [];
+        if (agent.system_prompt.length > activeVersion.content.length) changes.push('expandiu as instruções');
+        else changes.push('refinou as instruções');
+        
+        if (agent.system_prompt.includes('JSON')) changes.push('reforçou o formato de saída JSON');
+        if (agent.system_prompt.includes('##')) changes.push('estruturou o prompt com seções Markdown');
+        
+        setVersionSummary(`IA: ${changes.join(', ')} e melhorou a clareza da persona.`);
+      }
+      toast.success('Resumo gerado com IA!');
+    } catch (error) {
+      toast.error('Erro ao gerar resumo');
+    } finally {
+      setIsGeneratingSummary(false);
+    }
   };
 
   const handleSaveVersion = async () => {
@@ -113,15 +143,29 @@ export function PromptModule() {
           badge={<NexusBadge color="purple">{promptVersions.length} versões</NexusBadge>}
         />
         <div className="rounded-xl border border-border bg-card p-5 space-y-4">
-          <div className="flex gap-2">
-            <InputField
-              label=""
-              value={versionSummary}
-              onChange={setVersionSummary}
-              placeholder="Resumo da mudança (ex: Adicionei constraints de segurança)"
-              className="flex-1"
-            />
-            <Button size="sm" onClick={handleSaveVersion} className="self-end">
+          <div className="flex flex-col gap-2">
+            <div className="relative group">
+              <InputField
+                label=""
+                value={versionSummary}
+                onChange={setVersionSummary}
+                placeholder="Resumo da mudança (ex: Adicionei constraints de segurança)"
+                className="pr-10"
+              />
+              <button
+                onClick={handleAutoGenerateSummary}
+                disabled={isGeneratingSummary || !agent.system_prompt}
+                className="absolute right-3 top-[10px] text-primary hover:text-primary/80 disabled:opacity-50 transition-colors"
+                title="Gerar resumo com IA"
+              >
+                {isGeneratingSummary ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Wand2 className="h-4 w-4" />
+                )}
+              </button>
+            </div>
+            <Button size="sm" onClick={handleSaveVersion} className="w-full sm:w-auto self-end">
               <GitBranch className="h-3.5 w-3.5 mr-1" /> Salvar Versão
             </Button>
           </div>
