@@ -14,7 +14,7 @@ import {
   deleteDraftVersion,
 } from '@/services/agentDraftVersionsService';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
-import { validateAgentVersion } from '@/lib/validations/agentVersionValidator';
+import { validateAgentVersion, type VersionValidationIssue } from '@/lib/validations/agentVersionValidator';
 import { VersionValidationPanel } from './VersionValidationPanel';
 
 interface DraftVersionsDialogProps {
