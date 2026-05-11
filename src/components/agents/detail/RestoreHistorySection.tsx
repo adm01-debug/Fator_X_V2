@@ -291,6 +291,8 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
           copyTools: entry.meta.options.copyTools,
           copyModel: entry.meta.options.copyModel,
           customSummary: `Desfazer rollback v${entry.versionNumber} → restaurado de v${preRollback.version}`,
+          configOverrides: entry.meta.config_overrides as any,
+          modelOverride: entry.meta.model_override
         },
       );
     },
