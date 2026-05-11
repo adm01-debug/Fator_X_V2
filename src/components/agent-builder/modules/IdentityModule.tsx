@@ -1,6 +1,11 @@
+import { useMemo } from 'react';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import { SectionTitle, InputField, TextAreaField, SelectionGrid, SliderField } from '../ui';
 import { cn } from '@/lib/utils';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer } from 'recharts';
+import { Sparkles, Info } from 'lucide-react';
 import type { AgentPersona } from '@/types/agentTypes';
 
 const AVATAR_EMOJIS = [
@@ -20,6 +25,32 @@ const PERSONA_ITEMS = [
 export function IdentityModule() {
   const agent = useAgentBuilderStore((s) => s.agent);
   const updateAgent = useAgentBuilderStore((s) => s.updateAgent);
+
+  const radarData = useMemo(() => [
+    { subject: 'Formalidade', A: agent.formality, fullMark: 100 },
+    { subject: 'Proatividade', A: agent.proactivity, fullMark: 100 },
+    { subject: 'Criatividade', A: agent.creativity, fullMark: 100 },
+    { subject: 'Verbosidade', A: agent.verbosity, fullMark: 100 },
+  ], [agent.formality, agent.proactivity, agent.creativity, agent.verbosity]);
+
+  const personaPreview = useMemo(() => {
+    let msg = "Olá! ";
+    if (agent.formality > 70) msg = "Saudações. ";
+    else if (agent.formality < 30) msg = "E aí! ";
+
+    if (agent.creativity > 70) msg += "Estou pronto para cocriar algo incrível hoje. ";
+    else msg += "Como posso auxiliar em suas tarefas atuais? ";
+
+    if (agent.verbosity > 70) {
+      msg += "Analisei os parâmetros da nossa interação e estou à disposição para aprofundar qualquer tópico que você julgar necessário para o sucesso da nossa missão.";
+    } else if (agent.verbosity < 30) {
+      msg += "Pronto.";
+    } else {
+      msg += "Estou à disposição.";
+    }
+
+    return msg;
+  }, [agent.formality, agent.creativity, agent.verbosity]);
 
   return (
     <div className="space-y-8">
@@ -78,35 +109,76 @@ export function IdentityModule() {
       {/* Seção C — Personalidade */}
       <section>
         <SectionTitle icon="🎚️" title="Personalidade" subtitle="Ajuste o comportamento e tom do agente" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <SliderField
-            label="Formalidade"
-            value={agent.formality}
-            onChange={(v) => updateAgent({ formality: v })}
-            min={0} max={100}
-            description="0 = Casual → 100 = Muito formal"
-          />
-          <SliderField
-            label="Proatividade"
-            value={agent.proactivity}
-            onChange={(v) => updateAgent({ proactivity: v })}
-            min={0} max={100}
-            description="0 = Reativo → 100 = Muito proativo"
-          />
-          <SliderField
-            label="Criatividade"
-            value={agent.creativity}
-            onChange={(v) => updateAgent({ creativity: v })}
-            min={0} max={100}
-            description="0 = Conservador → 100 = Muito criativo"
-          />
-          <SliderField
-            label="Verbosidade"
-            value={agent.verbosity}
-            onChange={(v) => updateAgent({ verbosity: v })}
-            min={0} max={100}
-            description="0 = Conciso → 100 = Detalhado"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          <div className="space-y-6">
+            <SliderField
+              label="Formalidade"
+              value={agent.formality}
+              onChange={(v) => updateAgent({ formality: v })}
+              min={0} max={100}
+              description="0 = Casual → 100 = Muito formal"
+            />
+            <SliderField
+              label="Proatividade"
+              value={agent.proactivity}
+              onChange={(v) => updateAgent({ proactivity: v })}
+              min={0} max={100}
+              description="0 = Reativo → 100 = Muito proativo"
+            />
+            <SliderField
+              label="Criatividade"
+              value={agent.creativity}
+              onChange={(v) => updateAgent({ creativity: v })}
+              min={0} max={100}
+              description="0 = Conservador → 100 = Muito criativo"
+            />
+            <SliderField
+              label="Verbosidade"
+              value={agent.verbosity}
+              onChange={(v) => updateAgent({ verbosity: v })}
+              min={0} max={100}
+              description="0 = Conciso → 100 = Detalhado"
+            />
+          </div>
+
+          <div className="relative h-[300px] w-full flex flex-col items-center justify-center bg-muted/20 rounded-2xl border border-border overflow-hidden p-4">
+            <div className="absolute top-4 left-4 flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+              <Sparkles className="h-3 w-3" /> Digital DNA
+            </div>
+            <ResponsiveContainer width="100%" height="100%">
+              <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
+                <PolarGrid stroke="hsl(var(--border))" />
+                <PolarAngleAxis dataKey="subject" tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
+                <Radar
+                  name="DNA"
+                  dataKey="A"
+                  stroke="hsl(var(--primary))"
+                  fill="hsl(var(--primary))"
+                  fillOpacity={0.3}
+                />
+              </RadarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Persona Preview Box */}
+        <div className="mt-6">
+          <Card className="bg-primary/5 border-primary/20 p-4 relative overflow-hidden group hover:bg-primary/10 transition-colors">
+            <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+              <Info className="h-12 w-12" />
+            </div>
+            <div className="flex items-center gap-2 mb-2">
+              <Badge className="bg-primary/20 text-primary hover:bg-primary/30 border-none text-[10px] px-1.5 py-0">
+                PREVIEW DA VOZ
+              </Badge>
+              <span className="text-[10px] text-muted-foreground italic">
+                Baseado nos ajustes de personalidade acima
+              </span>
+            </div>
+            <p className="text-sm text-foreground leading-relaxed italic">
+              "{personaPreview}"
+            </p>
+          </Card>
         </div>
       </section>
 
