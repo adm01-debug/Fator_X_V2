@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { 
   Search, BookOpen, ArrowRight, Database, Pencil, Trash2, Bot, 
   FileText, Activity, Layers, Zap, Shield, Filter, 
-  BarChart3, BrainCircuit, RefreshCcw, LayoutGrid, List, Radio, ShieldCheck, Globe
+  BarChart3, BrainCircuit, RefreshCcw, LayoutGrid, List, Radio, ShieldCheck, Globe, Cpu, Network
 } from "lucide-react";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
