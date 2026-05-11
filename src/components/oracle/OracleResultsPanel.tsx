@@ -1,7 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Copy, RefreshCw, FileText } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { 
+  Copy, RefreshCw, FileText, ShieldCheck, Activity, DollarSign, Zap, 
+  Cpu, Download, CheckCircle2, AlertTriangle 
+} from 'lucide-react';
 import { useOracleStore, ORACLE_MODES, ORACLE_PRESETS } from '@/stores/oracleStore';
 import { ConsensusMatrix } from './ConsensusMatrix';
 import { ModelCard } from './ModelCard';
