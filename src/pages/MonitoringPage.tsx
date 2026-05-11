@@ -1,9 +1,8 @@
-import { PageHeader } from "@/components/shared/PageHeader";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { SystemHealthBanner } from "@/components/shared/SystemHealthBanner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Clock, DollarSign, Wrench, Activity, Loader2, Bell, CheckCircle, Layers, Zap, Shield } from "lucide-react";
+import { Clock, DollarSign, Wrench, Activity, Loader2, Bell, CheckCircle, Layers, Zap, Shield, Search, Filter, BarChart3, Radio } from "lucide-react";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { LightBarChart, LightPieChart } from "@/components/charts";
@@ -17,6 +16,8 @@ import { AlertRulesPanel } from "@/components/monitoring/AlertRulesPanel";
 import { WebVitalsPanel } from "@/components/monitoring/WebVitalsPanel";
 import { MiddlewarePipelinePanel } from "@/components/monitoring/MiddlewarePipelinePanel";
 import { RetryEnginePanel } from "@/components/monitoring/RetryEnginePanel";
+import { cn } from "@/lib/utils";
+
 const PIE_COLORS = ['hsl(var(--primary))', 'hsl(var(--nexus-emerald, 142 71% 45%))', 'hsl(var(--nexus-amber, 38 92% 50%))', 'hsl(var(--nexus-cyan, 190 90% 50%))', 'hsl(var(--destructive))'];
 
 export default function MonitoringPage() {
@@ -45,27 +46,65 @@ export default function MonitoringPage() {
   const handleResolveAlert = async (id: string) => { try { await resolveAlert(id); toast.success('Alerta resolvido'); queryClient.invalidateQueries({ queryKey: ['alerts'] }); } catch (e: unknown) { toast.error(e instanceof Error ? e.message : 'Erro inesperado'); } };
 
   return (
-    <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
-      <PageHeader title="Monitoramento" description="Traces, sessões, alertas e observabilidade em tempo real" />
-      <SystemHealthBanner />
-      <div className="flex items-center gap-3 flex-wrap">
-        <Select value={agentFilter} onValueChange={setAgentFilter}>
-          <SelectTrigger className="w-[220px] bg-secondary/50 text-xs"><SelectValue placeholder="Filtrar por agente" /></SelectTrigger>
-          <SelectContent><SelectItem value="all">Todos os agentes</SelectItem>{agentsList.map((a) => <SelectItem key={a.id} value={String(a.id)}>{String(a.name)}</SelectItem>)}</SelectContent>
-        </Select>
-        {agentFilter !== 'all' && <Badge variant="outline" className="text-[11px]">Filtrado</Badge>}
+    <div className="p-6 sm:p-8 lg:p-10 space-y-8 max-w-[1440px] mx-auto animate-page-enter">
+      {/* Header Elevated 10/10 */}
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-xl shadow-primary/5 mb-10 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+        
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative">
+          <div className="flex items-center gap-7">
+            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
+              <Activity className="h-11 w-11 text-primary animate-pulse" />
+            </div>
+            <div className="space-y-1">
+              <div className="flex items-center gap-3">
+                <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Observabilidade</h1>
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-nexus-emerald/10 text-nexus-emerald text-[10px] font-bold uppercase tracking-widest border border-nexus-emerald/20">
+                  <Radio className="h-3 w-3 animate-pulse" /> Live
+                </div>
+              </div>
+              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+                Central de telemetria em tempo real. Monitore saúde, latência e custos de toda a infraestrutura neural.
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <Select value={agentFilter} onValueChange={setAgentFilter}>
+              <SelectTrigger className="w-[240px] h-12 rounded-2xl bg-background/50 border-border/50 hover:border-primary/30 transition-all font-bold text-sm">
+                <Filter className="h-4 w-4 mr-2 text-muted-foreground" />
+                <SelectValue placeholder="Filtrar Agente" />
+              </SelectTrigger>
+              <SelectContent className="rounded-2xl border-border/40">
+                <SelectItem value="all">Todos os Agentes</SelectItem>
+                {agentsList.map((a) => <SelectItem key={a.id} value={String(a.id)}>{String(a.name)}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Button variant="outline" size="lg" className="h-12 px-6 rounded-2xl border-border/40 font-bold gap-2">
+              <BarChart3 className="h-5 w-5" /> Exportar Dados
+            </Button>
+          </div>
+        </div>
       </div>
-      <AdvancedTraceFilters filters={traceFilters} onChange={setTraceFilters} />
 
-      <Tabs defaultValue="traces" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="traces">Traces</TabsTrigger>
-          <TabsTrigger value="sessions" className="gap-1.5"><Layers className="h-3.5 w-3.5" /> Sessões {sessions.length > 0 && <Badge variant="secondary" className="text-[11px] h-4 px-1 ml-1">{sessions.length}</Badge>}</TabsTrigger>
-          <TabsTrigger value="alerts" className="gap-1.5">Alertas {unresolvedCount > 0 && <Badge variant="destructive" className="text-[11px] h-4 px-1">{unresolvedCount}</Badge>}</TabsTrigger>
-          <TabsTrigger value="tracing" className="gap-1.5"><Zap className="h-3.5 w-3.5" /> Tracing</TabsTrigger>
-          <TabsTrigger value="vitals" className="gap-1.5">⚡ Web Vitals</TabsTrigger>
-          <TabsTrigger value="middleware" className="gap-1.5"><Layers className="h-3.5 w-3.5" /> Middleware</TabsTrigger>
-          <TabsTrigger value="resilience" className="gap-1.5"><Shield className="h-3.5 w-3.5" /> Resiliência</TabsTrigger>
+      <SystemHealthBanner />
+      
+      <div className="bg-card/30 p-4 rounded-3xl border border-border/40">
+        <AdvancedTraceFilters filters={traceFilters} onChange={setTraceFilters} />
+      </div>
+
+      <Tabs defaultValue="traces" className="space-y-8">
+        <TabsList className="bg-muted/50 p-1.5 rounded-2xl border border-border/40 h-auto flex-wrap gap-1">
+          <TabsTrigger value="traces" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm gap-2 font-bold">Traces</TabsTrigger>
+          <TabsTrigger value="sessions" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm gap-2 font-bold">
+            <Layers className="h-4 w-4" /> Sessões {sessions.length > 0 && <Badge className="bg-primary/10 text-primary border-none font-bold text-[10px] ml-1">{sessions.length}</Badge>}
+          </TabsTrigger>
+          <TabsTrigger value="alerts" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm gap-2 font-bold">
+            Alertas {unresolvedCount > 0 && <Badge variant="destructive" className="font-bold text-[10px] ml-1">{unresolvedCount}</Badge>}
+          </TabsTrigger>
+          <TabsTrigger value="tracing" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm gap-2 font-bold"><Zap className="h-4 w-4" /> Tracing</TabsTrigger>
+          <TabsTrigger value="vitals" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm gap-2 font-bold">⚡ Vitals</TabsTrigger>
+          <TabsTrigger value="middleware" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm gap-2 font-bold"><Layers className="h-4 w-4" /> Middleware</TabsTrigger>
+          <TabsTrigger value="resilience" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm gap-2 font-bold"><Shield className="h-4 w-4" /> Resiliência</TabsTrigger>
         </TabsList>
 
         <TabsContent value="traces">
