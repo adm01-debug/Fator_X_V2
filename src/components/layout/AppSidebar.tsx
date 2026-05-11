@@ -245,10 +245,10 @@ export function AppSidebar() {
                           <NavLink
                             to={item.url}
                             end={item.url === "/"}
-                            className={`flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm transition-all duration-200 group/navitem ${
+                            className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all duration-300 group/navitem ${
                               isActive
-                                ? 'text-primary font-semibold bg-primary/12'
-                                : 'text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground hover:translate-x-0.5 hover:shadow-sm'
+                                ? 'text-primary font-black bg-primary/10 shadow-sm shadow-primary/5'
+                                : 'text-sidebar-foreground/70 hover:bg-secondary/40 hover:text-foreground hover:translate-x-1'
                             }`}
                             activeClassName=""
                             aria-current={isActive ? "page" : undefined}
