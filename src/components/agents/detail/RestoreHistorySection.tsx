@@ -338,6 +338,12 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
             {entries.length}
           </span>
         </div>
+        <div className="flex items-center gap-1">
+          <FilterButton active={filter === "all"} onClick={() => setFilter("all")} label="Tudo" />
+          <FilterButton active={filter === "prompt"} onClick={() => setFilter("prompt")} label="Prompt" />
+          <FilterButton active={filter === "tools"} onClick={() => setFilter("tools")} label="Tools" />
+          <FilterButton active={filter === "model"} onClick={() => setFilter("model")} label="Modelo" />
+        </div>
       </div>
 
       <ol className="space-y-2 max-h-[280px] overflow-y-auto">
