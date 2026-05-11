@@ -246,5 +246,3 @@ export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
     </div>
   );
 }
-  );
-}
