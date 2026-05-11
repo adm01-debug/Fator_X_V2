@@ -23,11 +23,17 @@ export function BillingModule() {
   const billing = useBillingData(agent.id);
   const [simInput, setSimInput] = useState('Olá, preciso de ajuda com meu pedido número 12345.');
   const [simMaxTokens, setSimMaxTokens] = useState(1000);
+  
+  // Traffic simulation states
+  const [dailyInteractions, setDailyInteractions] = useState(340);
+  const [monthlyGrowth, setMonthlyGrowth] = useState(10);
 
   const totalWeek = billing.totalWeek;
   const avgDaily = billing.avgDaily;
   const projectedMonth = billing.projectedMonth;
   const budgetUsed = agent.monthly_budget ? (projectedMonth / agent.monthly_budget) * 100 : 0;
+
+  const currentModelPrice = getModelPrice(agent.model);
 
   const simulation = useMemo(() => {
     const inputTokens = estimateTokens(simInput);
@@ -45,6 +51,26 @@ export function BillingModule() {
       })
       .sort((a, b) => a.costUsd - b.costUsd);
   }, [simInput, simMaxTokens]);
+
+  const trafficProjection = useMemo(() => {
+    const inputTokens = estimateTokens(simInput);
+    const outputTokens = Math.max(100, Math.floor(simMaxTokens * 0.6));
+    const costPerInteraction = (inputTokens / 1000) * currentModelPrice.input_per_1k + (outputTokens / 1000) * currentModelPrice.output_per_1k;
+    
+    const projection = [];
+    let currentTraffic = dailyInteractions * 30;
+    
+    for (let i = 1; i <= 3; i++) {
+      const monthlyCost = currentTraffic * costPerInteraction;
+      projection.push({
+        month: `Mês ${i}`,
+        cost: monthlyCost,
+        traffic: Math.round(currentTraffic),
+      });
+      currentTraffic *= (1 + monthlyGrowth / 100);
+    }
+    return projection;
+  }, [dailyInteractions, monthlyGrowth, currentModelPrice, simInput, simMaxTokens]);
 
   const cheapest = simulation[0];
   const fastest = [...simulation].sort((a, b) => a.avg_latency_ms - b.avg_latency_ms)[0];
