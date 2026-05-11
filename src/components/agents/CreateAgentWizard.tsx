@@ -18,6 +18,7 @@ import {
 import { toast } from "sonner";
 import { supabaseExternal } from "@/integrations/supabase/externalClient";
 import { useAuth } from "@/contexts/AuthContext";
+import { saveDraftVersion } from "@/services/agentDraftVersionsService";
 import { AGENT_TEMPLATES as STATIC_TEMPLATES, type AgentTemplate } from "@/data/agentTemplates";
 import { QuickCreateWizard } from "./wizard/QuickCreateWizard";
 import { computeReadinessScore, READINESS_COLORS } from "@/lib/agentReadiness";
