@@ -13,7 +13,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  Check, Loader2, Brain, Wrench, ShieldAlert, Info, Wand2, Sparkles, TrendingUp, Zap, LayoutTemplate, PenTool
+  Check, Loader2, Brain, Wrench, ShieldAlert, Info, Wand2, Sparkles, TrendingUp, Zap, LayoutTemplate, PenTool, Search
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabaseExternal } from "@/integrations/supabase/externalClient";
