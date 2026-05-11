@@ -160,22 +160,28 @@ export default function AgentDetailPage() {
       </div>
 
       <div className="grid md:grid-cols-2 gap-4">
-        <div className="nexus-card">
-          <h3 className="text-sm font-heading font-semibold text-foreground mb-3">Configuração</h3>
-          <div className="space-y-2 text-xs">
-            <div className="flex justify-between"><span className="text-muted-foreground">Modelo</span><span className="text-foreground">{String(agent.model ?? '')}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Persona</span><span className="text-foreground">{String(agent.persona ?? '')}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Raciocínio</span><span className="text-foreground">{String(agent.reasoning ?? '')}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Versão</span><span className="text-foreground">v{String(agent.version ?? '')}</span></div>
+        <div className="bg-card border border-border p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-2 mb-4">
+            <Wrench className="h-4 w-4 text-primary" />
+            <h3 className="text-sm font-bold text-foreground">Configuração</h3>
+          </div>
+          <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-[11px]">
+            <div className="flex justify-between border-b border-border/50 pb-1.5"><span className="text-muted-foreground uppercase font-bold text-[9px]">Modelo</span><span className="text-foreground font-mono">{String(agent.model ?? '—')}</span></div>
+            <div className="flex justify-between border-b border-border/50 pb-1.5"><span className="text-muted-foreground uppercase font-bold text-[9px]">Persona</span><span className="text-foreground">{String(agent.persona ?? '—')}</span></div>
+            <div className="flex justify-between border-b border-border/50 pb-1.5"><span className="text-muted-foreground uppercase font-bold text-[9px]">Raciocínio</span><span className="text-foreground">{String(agent.reasoning ?? '—')}</span></div>
+            <div className="flex justify-between border-b border-border/50 pb-1.5"><span className="text-muted-foreground uppercase font-bold text-[9px]">Versão</span><span className="text-foreground font-mono">v{String(agent.version ?? '1')}</span></div>
           </div>
         </div>
-        <div className="nexus-card">
-          <h3 className="text-sm font-heading font-semibold text-foreground mb-3">Tags</h3>
+        <div className="bg-card border border-border p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-2 mb-4">
+            <Bot className="h-4 w-4 text-nexus-purple" />
+            <h3 className="text-sm font-bold text-foreground">Taxonomia & Tags</h3>
+          </div>
           <div className="flex flex-wrap gap-1.5">
             {(agent.tags ?? []).map(tag => (
-              <span key={tag} className="nexus-badge-primary">{tag}</span>
+              <span key={tag} className="px-2 py-0.5 rounded-md bg-nexus-purple/10 text-nexus-purple text-[10px] font-bold border border-nexus-purple/20">{tag}</span>
             ))}
-            {(agent.tags ?? []).length === 0 && <p className="text-xs text-muted-foreground">Nenhuma tag</p>}
+            {(agent.tags ?? []).length === 0 && <p className="text-[11px] text-muted-foreground italic">Nenhuma tag atribuída</p>}
           </div>
         </div>
       </div>
