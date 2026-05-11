@@ -1,13 +1,12 @@
 import { CardGridSkeleton } from "@/components/shared/PageSkeleton";
-import { PageHeader } from "@/components/shared/PageHeader";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { QuickActionsBar } from "@/components/shared/QuickActionsBar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { 
   Search, BookOpen, ArrowRight, Database, Pencil, Trash2, Bot, 
-  FileText, Activity, Layers, Zap, Shield, Sparkles, Filter, 
-  BarChart3, BrainCircuit, Globe, RefreshCcw, LayoutGrid, List
+  FileText, Activity, Layers, Zap, Shield, Filter, 
+  BarChart3, BrainCircuit, RefreshCcw, LayoutGrid, List, Radio, ShieldCheck, Globe
 } from "lucide-react";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -23,7 +22,7 @@ import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-
+import { cn } from "@/lib/utils";
 const pipeline = [
   { name: 'Parsing', icon: FileText, color: 'text-blue-500', bg: 'bg-blue-500/10' },
   { name: 'Chunking', icon: Layers, color: 'text-purple-500', bg: 'bg-purple-500/10' },
@@ -69,27 +68,43 @@ export default function KnowledgePage() {
   }
 
   return (
-    <div className="p-6 sm:p-8 lg:p-10 space-y-8 max-w-[1600px] mx-auto animate-in fade-in duration-500">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <PageHeader
-          title="Engine de Conhecimento & RAG"
-          description="Arquitetura de dados para Retrieval-Augmented Generation em escala industrial"
-          actions={
-            <div className="flex items-center gap-3">
+    <div className="p-6 sm:p-8 lg:p-10 space-y-10 max-w-[1440px] mx-auto animate-page-enter">
+      {/* Header Elevated 10/10 */}
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-2xl shadow-primary/5 mb-10 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/[0.06] transition-colors duration-500 pointer-events-none" />
+        
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative">
+          <div className="flex items-center gap-7">
+            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
+              <Database className="h-11 w-11 text-primary animate-float" />
+            </div>
+            <div className="space-y-1">
+              <div className="flex items-center gap-3">
+                <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Conhecimento & RAG</h1>
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-nexus-cyan/10 text-nexus-cyan text-[10px] font-bold uppercase tracking-widest border border-nexus-cyan/20">
+                  <Radio className="h-3 w-3 animate-pulse" /> Neural Network
+                </div>
+              </div>
+              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+                Ecossistema de recuperação vetorial. Orquestre o conhecimento dos seus agentes através de Retrieval-Augmented Generation em escala industrial.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+             <div className="flex flex-col items-end gap-1">
+              <div className="flex items-center gap-2 text-nexus-emerald font-black text-sm uppercase tracking-tighter">
+                <ShieldCheck className="h-4 w-4" /> Vector DB Nominal
+              </div>
+              <p className="text-[10px] text-muted-foreground font-bold tracking-widest uppercase">Auto-Scaling Ingestion</p>
+            </div>
+            <div className="h-10 w-px bg-border/40 mx-4" />
+            <div className="flex items-center gap-2">
               <AudioUploadDialog />
               <DocOcrDialog />
               <RagRerankTestDialog />
               <CreateKnowledgeBaseDialog onCreated={() => refetch()} />
             </div>
-          }
-        />
-        <div className="flex gap-2 mb-2">
-          <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 gap-1.5 py-1 px-3">
-            <Sparkles className="h-3 w-3" /> Auto-Scaling Ingestion
-          </Badge>
-          <Badge variant="outline" className="bg-nexus-emerald/5 text-nexus-emerald border-nexus-emerald/20 gap-1.5 py-1 px-3">
-            <Activity className="h-3 w-3" /> Vector DB Nominal
-          </Badge>
+          </div>
         </div>
       </div>
 
@@ -101,29 +116,35 @@ export default function KnowledgePage() {
             { label: 'Workflows', icon: Zap, path: '/workflows' },
           ]} />
 
-          <div className="nexus-card bg-card/50 backdrop-blur-sm border-border/40 p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-2">
-                <RefreshCcw className="h-4 w-4 text-primary animate-spin-slow" />
-                <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Workflow de Ingestão Neural</h3>
+          <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem] mb-10">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <RefreshCcw className="h-5 w-5 text-primary animate-spin-slow" />
+                </div>
+                <h3 className="text-xl font-heading font-black text-foreground">Fluxo de Ingestão Neural</h3>
               </div>
-              <Badge variant="secondary" className="text-[10px] font-mono">Parallel Execution: Active</Badge>
+              <Badge variant="secondary" className="bg-primary/5 text-primary border-none font-black text-[10px] uppercase tracking-widest px-3 py-1">Execution: Multi-Thread</Badge>
             </div>
             
-            <div className="relative">
-              <div className="absolute top-5 left-0 right-0 h-0.5 bg-border/30 hidden md:block" />
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 relative">
+            <div className="relative pt-4 pb-2">
+              <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-border/40 -translate-y-[22px] hidden md:block" />
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-8 relative">
                 {pipeline.map((step, i) => (
                   <div key={step.name} className="flex flex-col items-center group">
-                    <div className={`h-11 w-11 rounded-xl ${step.bg} flex items-center justify-center relative z-10 transition-all group-hover:scale-110 shadow-lg border border-border/20`}>
-                      <step.icon className={`h-5 w-5 ${step.color}`} />
-                      <div className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-background border border-border/40 flex items-center justify-center text-[10px] font-bold">
+                    <div className={cn(
+                      "h-14 w-14 rounded-2xl flex items-center justify-center relative z-10 transition-all duration-500",
+                      "bg-card border border-border/40 shadow-xl group-hover:scale-110 group-hover:border-primary/40",
+                      step.bg
+                    )}>
+                      <step.icon className={cn("h-6 w-6 transition-transform group-hover:rotate-6", step.color)} />
+                      <div className="absolute -top-2 -right-2 h-5 w-5 rounded-lg bg-background border border-border/40 flex items-center justify-center text-[10px] font-black shadow-sm">
                         {i + 1}
                       </div>
                     </div>
-                    <div className="mt-3 text-center">
-                      <p className="text-xs font-bold text-foreground">{step.name}</p>
-                      <p className="text-[10px] text-muted-foreground mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity">Pipeline Stage</p>
+                    <div className="mt-4 text-center">
+                      <p className="text-sm font-black text-foreground uppercase tracking-tight">{step.name}</p>
+                      <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest mt-1">Stage {i + 1}</p>
                     </div>
                   </div>
                 ))}
@@ -131,40 +152,40 @@ export default function KnowledgePage() {
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3 w-full md:w-auto">
-              <div className="relative flex-1 md:w-80">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
+            <div className="flex items-center gap-4 w-full md:w-auto">
+              <div className="relative flex-1 md:w-[400px]">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <Input 
-                  placeholder="Filtrar ecossistema de conhecimento..." 
+                  placeholder="Pesquisar bases de conhecimento..." 
                   value={search} 
                   onChange={(e) => setSearch(e.target.value)} 
-                  className="pl-9 bg-card/50 border-border/40 focus:ring-primary/20" 
+                  className="pl-12 h-14 rounded-2xl bg-card border-border/40 focus:ring-primary/20 text-base" 
                 />
               </div>
-              <div className="flex border border-border/40 rounded-lg p-1 bg-card/50">
+              <div className="flex bg-secondary/20 border border-border/40 rounded-2xl p-1 h-14">
                 <Button 
                   variant={viewMode === 'grid' ? 'secondary' : 'ghost'} 
-                  size="icon" className="h-8 w-8" 
+                  size="icon" className="h-full w-12 rounded-xl" 
                   onClick={() => setViewMode('grid')}
                 >
-                  <LayoutGrid className="h-4 w-4" />
+                  <LayoutGrid className="h-5 w-5" />
                 </Button>
                 <Button 
                   variant={viewMode === 'list' ? 'secondary' : 'ghost'} 
-                  size="icon" className="h-8 w-8" 
+                  size="icon" className="h-full w-12 rounded-xl" 
                   onClick={() => setViewMode('list')}
                 >
-                  <List className="h-4 w-4" />
+                  <List className="h-5 w-5" />
                 </Button>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" className="text-xs gap-1.5 border-border/40">
-                <Filter className="h-3.5 w-3.5" /> Filtros Avançados
+            <div className="flex items-center gap-3">
+              <Button variant="outline" size="lg" className="h-14 px-6 rounded-2xl border-border/40 font-bold gap-2">
+                <Filter className="h-5 w-5" /> Filtros
               </Button>
-              <Button variant="outline" size="sm" className="text-xs gap-1.5 border-border/40">
-                <BarChart3 className="h-3.5 w-3.5" /> Analytics
+              <Button variant="outline" size="lg" className="h-14 px-6 rounded-2xl border-border/40 font-bold gap-2">
+                <BarChart3 className="h-5 w-5" /> Analytics
               </Button>
             </div>
           </div>
