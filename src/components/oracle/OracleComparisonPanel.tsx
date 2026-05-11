@@ -10,7 +10,11 @@ import {
   DollarSign,
   Hash,
   Gauge,
+  Activity,
+  Zap,
+  ChevronRight
 } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -178,54 +182,60 @@ export function OracleComparisonPanel() {
   };
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h3 className="text-sm font-heading font-semibold text-foreground flex items-center gap-2">
-          <GitCompare className="h-4 w-4 text-primary" /> Modo Comparação
-        </h3>
-        <p className="text-[11px] text-muted-foreground mt-0.5">
-          Roda a mesma query em múltiplos modos do Oráculo lado a lado para comparar abordagens. Útil para escolher o modo certo para cada tipo de pergunta.
-        </p>
+    <Card className="p-8 bg-card border-border rounded-3xl shadow-sm relative overflow-hidden group">
+      <div className="absolute top-0 left-0 w-64 h-64 bg-primary/[0.02] rounded-full -translate-y-1/2 -translate-x-1/2" />
+      
+      <div className="flex items-center justify-between mb-8 relative">
+        <div className="flex items-center gap-4">
+          <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/15">
+            <GitCompare className="w-6 h-6 text-primary" />
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-foreground">Modo Benchmarking</h3>
+            <p className="text-xs text-muted-foreground max-w-lg leading-relaxed">
+              Compare a eficácia e o custo de múltiplos algoritmos do conselho simultaneamente para o mesmo dilema.
+            </p>
+          </div>
+        </div>
       </div>
 
-      {/* Query input */}
-      <div className="nexus-card space-y-3">
-        <div className="space-y-2">
-          <Label className="text-xs">Sua pergunta</Label>
+      <div className="space-y-6 relative">
+        {/* Query input */}
+        <div className="relative">
           <Textarea
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Ex: Devemos investir mais em redes sociais ou em SEO em 2026?"
-            rows={3}
-            className="bg-secondary/50 text-sm resize-none"
+            placeholder="Qual cenário você deseja comparar?"
+            rows={2}
+            className="bg-secondary/40 border-border/60 rounded-2xl p-4 text-base focus:ring-primary shadow-inner italic"
           />
         </div>
 
-        <div className="space-y-2">
-          <Label className="text-xs">Modos para comparar (mín. 2)</Label>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+        <div className="space-y-3">
+          <span className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-widest ml-1">Estratégias para Confronto:</span>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {COMPARISON_MODES.map((cfg) => {
               const modeInfo = ORACLE_MODES[cfg.mode];
               const checked = selectedModes.includes(cfg.mode);
               return (
                 <label
                   key={cfg.mode}
-                  className={`flex items-start gap-2 p-2.5 rounded-lg border cursor-pointer transition-colors ${
-                    checked ? 'bg-primary/10 border-primary/40' : 'bg-secondary/30 border-border/30 hover:border-primary/20'
+                  className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-all ${
+                    checked ? 'bg-primary/5 border-primary/40 shadow-sm' : 'bg-card text-muted-foreground hover:bg-secondary/50 border-border/60'
                   }`}
                 >
                   <Checkbox
                     checked={checked}
                     onCheckedChange={() => toggleMode(cfg.mode)}
                     disabled={isRunning}
-                    className="mt-0.5"
+                    className="mt-1"
                   />
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-sm">{modeInfo.icon}</span>
-                      <span className="text-xs font-semibold">{modeInfo.label}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">{modeInfo.icon}</span>
+                      <span className="text-xs font-bold uppercase tracking-tight">{modeInfo.label}</span>
                     </div>
-                    <p className="text-[10px] text-muted-foreground mt-0.5 line-clamp-2">{modeInfo.description}</p>
+                    <p className="text-[10px] leading-relaxed mt-1 line-clamp-2">{modeInfo.description}</p>
                   </div>
                 </label>
               );
@@ -233,168 +243,145 @@ export function OracleComparisonPanel() {
           </div>
         </div>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end pt-2">
           <Button
             onClick={handleCompare}
             disabled={isRunning || !query.trim() || selectedModes.length < 2}
-            className="gap-1.5"
+            className="nexus-gradient-bg h-11 px-10 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all font-bold group"
           >
-            {isRunning ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-            Comparar
+            {isRunning ? <Loader2 className="h-5 w-5 animate-spin" /> : <Sparkles className="h-5 w-5 group-hover:rotate-12 transition-transform" />}
+            {isRunning ? 'EXECUTANDO ARENA...' : 'INICIAR BENCHMARK'}
           </Button>
         </div>
       </div>
 
       {/* Summary metrics + export */}
       {successfulRuns.length > 0 && (
-        <div className="nexus-card">
-          <div className="flex items-center justify-between mb-3">
-            <h4 className="text-[11px] uppercase tracking-wider text-muted-foreground">
-              Comparação agregada
+        <div className="mt-10 space-y-6 animate-in fade-in duration-700">
+          <div className="flex items-center justify-between px-1">
+            <h4 className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+              <Activity className="h-3.5 w-3.5" /> Performance Consolidada
             </h4>
             <Button
-              variant="outline"
+              variant="ghost"
               size="sm"
               onClick={handleExport}
-              className="h-7 gap-1.5 text-xs"
+              className="h-8 rounded-lg gap-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
             >
-              <Download className="h-3 w-3" /> Exportar JSON
+              <Download className="h-3.5 w-3.5" /> Exportar Análise JSON
             </Button>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div>
-              <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
-                <DollarSign className="h-3 w-3" /> Custo total
-              </div>
-              <p className="text-sm font-heading font-bold tabular-nums">
-                ${aggregate.cost.toFixed(4)}
-              </p>
-            </div>
-            <div>
-              <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
-                <Hash className="h-3 w-3" /> Tokens totais
-              </div>
-              <p className="text-sm font-heading font-bold tabular-nums">
-                {aggregate.tokens.toLocaleString()}
-              </p>
-            </div>
-            <div>
-              <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
-                <Loader2 className="h-3 w-3" /> Latência média
-              </div>
-              <p className="text-sm font-heading font-bold tabular-nums">
-                {(aggregate.avgLatency / 1000).toFixed(1)}s
-              </p>
-            </div>
-            <div>
-              <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
-                <Trophy className="h-3 w-3 text-nexus-amber" /> Vencedor
-              </div>
-              <p className="text-sm font-heading font-bold">
-                {winnerMode ? ORACLE_MODES[winnerMode].label : '—'}
-              </p>
-            </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { icon: <DollarSign className="h-4 w-4" />, label: 'Custo Total', value: `$${aggregate.cost.toFixed(4)}`, cls: 'text-nexus-emerald' },
+              { icon: <Hash className="h-4 w-4" />, label: 'Volume Tokens', value: aggregate.tokens.toLocaleString(), cls: 'text-foreground' },
+              { icon: <Zap className="h-4 w-4" />, label: 'Latência Média', value: `${(aggregate.avgLatency / 1000).toFixed(1)}s`, cls: 'text-nexus-amber' },
+              { icon: <Trophy className="h-4 w-4" />, label: 'Melhor Algoritmo', value: winnerMode ? ORACLE_MODES[winnerMode].label : '—', cls: 'text-primary font-bold' },
+            ].map(m => (
+              <Card key={m.label} className="p-4 bg-secondary/20 border-border/40 text-center">
+                <div className="flex justify-center mb-1.5 opacity-60">{m.icon}</div>
+                <p className={`text-sm font-extrabold ${m.cls}`}>{m.value}</p>
+                <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">{m.label}</p>
+              </Card>
+            ))}
+          </div>
+
+          {/* Results grid */}
+          <div className={`grid gap-4 ${runs.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-3'}`}>
+            {runs.map((run) => {
+              const modeInfo = ORACLE_MODES[run.mode];
+              const isWinner = winnerMode === run.mode && run.status === 'success';
+              return (
+                <Card
+                  key={run.mode}
+                  className={`p-5 space-y-4 relative transition-all ${
+                    isWinner ? 'border-primary/50 shadow-md shadow-primary/5 ring-1 ring-primary/20' : 'border-border/60 bg-card/60'
+                  }`}
+                >
+                  {isWinner && (
+                    <div className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-background">
+                      <Trophy className="h-3 w-3 text-primary-foreground" />
+                    </div>
+                  )}
+                  
+                  <div className="flex items-center justify-between gap-2 pb-3 border-b border-border/40">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="text-xl">{modeInfo.icon}</span>
+                      <p className="text-xs font-bold uppercase tracking-tight truncate">{modeInfo.label}</p>
+                    </div>
+                    {run.status === 'pending' && <Badge variant="outline" className="text-[9px] uppercase font-bold opacity-40">Turno 0</Badge>}
+                    {run.status === 'running' && (
+                      <Badge variant="outline" className="text-[9px] gap-1.5 bg-primary/5 text-primary border-primary/20 animate-pulse font-bold uppercase">
+                        <Loader2 className="h-2.5 w-2.5 animate-spin" /> Em Sessão
+                      </Badge>
+                    )}
+                    {run.status === 'success' && (
+                      <Badge variant="outline" className="text-[9px] border-nexus-emerald/30 bg-nexus-emerald/5 text-nexus-emerald font-bold uppercase">
+                        {(run.duration_ms / 1000).toFixed(1)}s OK
+                      </Badge>
+                    )}
+                    {run.status === 'failed' && (
+                      <Badge variant="outline" className="text-[9px] border-destructive/30 bg-destructive/5 text-destructive font-bold uppercase">
+                        ERRO
+                      </Badge>
+                    )}
+                  </div>
+
+                  {run.status === 'success' && run.result && (
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-3 gap-1">
+                        <div className="text-center p-1.5 rounded-lg bg-secondary/40 border border-border/30">
+                          <p className="text-[9px] font-bold text-muted-foreground uppercase mb-0.5">Conf.</p>
+                          <p className="text-xs font-mono font-extrabold text-foreground">{((run.result.confidence_score ?? 0) * 100).toFixed(0)}%</p>
+                        </div>
+                        <div className="text-center p-1.5 rounded-lg bg-secondary/40 border border-border/30">
+                          <p className="text-[9px] font-bold text-muted-foreground uppercase mb-0.5">Cons.</p>
+                          <p className="text-xs font-mono font-extrabold text-foreground">{((run.result.consensus_degree ?? 0) * 100).toFixed(0)}%</p>
+                        </div>
+                        <div className="text-center p-1.5 rounded-lg bg-secondary/40 border border-border/30">
+                          <p className="text-[9px] font-bold text-muted-foreground uppercase mb-0.5">Custo</p>
+                          <p className="text-xs font-mono font-extrabold text-foreground">${(run.result.metrics?.total_cost_usd ?? 0).toFixed(4)}</p>
+                        </div>
+                      </div>
+
+                      <div className="text-[11px] text-foreground/80 leading-relaxed max-h-[200px] overflow-y-auto pr-1 bg-secondary/20 p-3 rounded-xl border border-border/40 scrollbar-hide italic">
+                        "{run.result.final_response ?? 'Nenhuma resposta sintetizada.'}"
+                      </div>
+                      
+                      <div className="flex items-center gap-1.5 text-[9px] font-bold text-muted-foreground uppercase tracking-widest ml-1">
+                        <Cpu className="h-3 w-3 opacity-60" /> {run.result.metrics?.models_used || 0} Especialistas Consultados
+                      </div>
+                    </div>
+                  )}
+
+                  {run.status === 'failed' && (
+                    <div className="py-10 text-center">
+                      <XCircle className="h-8 w-8 text-destructive/30 mx-auto mb-2" />
+                      <p className="text-[10px] text-destructive font-bold uppercase tracking-tight">Falha Crítica</p>
+                      <p className="text-[9px] text-muted-foreground mt-1 line-clamp-3">{run.error ?? 'Orquestrador Offline'}</p>
+                    </div>
+                  )}
+
+                  {run.status === 'pending' && (
+                    <div className="py-10 text-center opacity-40">
+                      <Clock className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                      <p className="text-[10px] font-bold uppercase tracking-widest">Aguardando Fila</p>
+                    </div>
+                  )}
+
+                  {run.status === 'running' && (
+                    <div className="py-10 text-center">
+                      <Loader2 className="h-8 w-8 text-primary/40 animate-spin mx-auto mb-2" />
+                      <p className="text-[10px] font-bold uppercase tracking-widest animate-pulse">Sintetizando...</p>
+                    </div>
+                  )}
+                </Card>
+              );
+            })}
           </div>
         </div>
       )}
-
-      {/* Results grid */}
-      {runs.length > 0 && (
-        <div className={`grid gap-3 ${runs.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-3'}`}>
-          {runs.map((run) => {
-            const modeInfo = ORACLE_MODES[run.mode];
-            const isWinner = winnerMode === run.mode && run.status === 'success';
-            return (
-              <div
-                key={run.mode}
-                className={`nexus-card space-y-3 ${
-                  isWinner ? 'ring-1 ring-nexus-amber/50' : ''
-                }`}
-              >
-                <div className="flex items-center justify-between gap-2 pb-2 border-b border-border/30">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className="text-lg">{modeInfo.icon}</span>
-                    <p className="text-xs font-semibold truncate">{modeInfo.label}</p>
-                    {isWinner && (
-                      <Trophy className="h-3.5 w-3.5 text-nexus-amber shrink-0" />
-                    )}
-                  </div>
-                  {run.status === 'pending' && <Badge variant="outline" className="text-[9px]">Pendente</Badge>}
-                  {run.status === 'running' && (
-                    <Badge variant="outline" className="text-[9px] gap-1">
-                      <Loader2 className="h-2.5 w-2.5 animate-spin" /> Rodando
-                    </Badge>
-                  )}
-                  {run.status === 'success' && (
-                    <Badge variant="outline" className="text-[9px] border-nexus-emerald/50 text-nexus-emerald gap-1">
-                      <CheckCircle2 className="h-2.5 w-2.5" />
-                      {(run.duration_ms / 1000).toFixed(1)}s
-                    </Badge>
-                  )}
-                  {run.status === 'failed' && (
-                    <Badge variant="outline" className="text-[9px] border-destructive/50 text-destructive gap-1">
-                      <XCircle className="h-2.5 w-2.5" /> Falhou
-                    </Badge>
-                  )}
-                </div>
-
-                {run.status === 'success' && run.result && (
-                  <div className="space-y-2">
-                    {/* Per-run metrics row */}
-                    <div className="grid grid-cols-3 gap-2 text-[10px]">
-                      <div className="flex items-center gap-1 text-muted-foreground">
-                        <Gauge className="h-2.5 w-2.5" />
-                        <span className="tabular-nums text-foreground">
-                          {((run.result.confidence_score ?? 0) * 100).toFixed(0)}%
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1 text-muted-foreground">
-                        <DollarSign className="h-2.5 w-2.5" />
-                        <span className="tabular-nums text-foreground">
-                          ${(run.result.metrics?.total_cost_usd ?? 0).toFixed(4)}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1 text-muted-foreground">
-                        <Hash className="h-2.5 w-2.5" />
-                        <span className="tabular-nums text-foreground">
-                          {(run.result.metrics?.total_tokens ?? 0).toLocaleString()}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="text-xs text-foreground whitespace-pre-wrap leading-relaxed max-h-[280px] overflow-y-auto pr-1 pt-2 border-t border-border/30">
-                      {run.result.final_response ?? 'Sem resposta'}
-                    </div>
-                    {(run.result.metrics?.models_used ?? 0) > 0 && (
-                      <div className="pt-2 border-t border-border/30 text-[10px] text-muted-foreground">
-                        {run.result.metrics.models_used} modelos · consenso {((run.result.consensus_degree ?? 0) * 100).toFixed(0)}%
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {run.status === 'failed' && (
-                  <p className="text-[11px] text-destructive italic">
-                    {run.error ?? 'Erro desconhecido'}
-                  </p>
-                )}
-
-                {run.status === 'pending' && (
-                  <p className="text-[11px] text-muted-foreground italic text-center py-6">
-                    Aguardando turno...
-                  </p>
-                )}
-
-                {run.status === 'running' && (
-                  <div className="flex justify-center py-6">
-                    <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
+    </Card>
   );
 }
