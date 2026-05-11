@@ -31,7 +31,8 @@ export type QuickFix =
   | { kind: 'set-temperature'; value: number; label: string; description?: string }
   | { kind: 'set-max-tokens'; value: number; label: string; description?: string }
   | { kind: 'clear-reasoning'; label: string; description?: string }
-  | { kind: 'set-model'; value: string; label: string; description?: string };
+  | { kind: 'set-model'; value: string; label: string; description?: string }
+  | { kind: 'uncheck-tools-if-prompt-mentions'; label: string; description?: string };
 
 export interface ValidationIssue {
   /** ID estável — usado para keys de lista e para deduplicação. */

@@ -291,6 +291,8 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
           copyTools: entry.meta.options.copyTools,
           copyModel: entry.meta.options.copyModel,
           customSummary: `Desfazer rollback v${entry.versionNumber} → restaurado de v${preRollback.version}`,
+          configOverrides: entry.meta.config_overrides as any,
+          modelOverride: entry.meta.model_override
         },
       );
     },
@@ -541,7 +543,7 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
                       }
                       setUndoTarget(entry);
                     }}
-                    disabled={isUndoingThis || (expired && !stale)}
+                    disabled={isUndoingThis || expired}
                     title={
                       expired
                         ? `Janela de ${UNDO_WINDOW_MS / 60000} min para desfazer expirou — restaure manualmente pelo gerenciador de versões`
@@ -604,11 +606,11 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
           if (!open && !undoMut.isPending) setUndoTarget(null);
         }}
       >
-        <AlertDialogContent className="max-w-lg">
+        <AlertDialogContent className="max-w-xl">
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
-              <Undo2 className="h-4 w-4 text-nexus-amber" aria-hidden />
-              Desfazer rollback v{undoTarget?.versionNumber}
+              <Undo2 className="h-5 w-5 text-nexus-amber" aria-hidden />
+              Confirmar Desfazer Rollback
             </AlertDialogTitle>
             <AlertDialogDescription asChild>
               <div className="space-y-3 text-sm">
