@@ -6,54 +6,30 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Palette, Globe, Bell, Key, Plus, Trash2, Save, Loader2, RotateCw, Sparkles, Server, Building2 } from "lucide-react";
+import { Palette, Globe, Bell, Key, Save, Server, Building2, Shield, Activity, Share2, Database, Zap } from "lucide-react";
 import { MCPServerManager } from "@/components/integrations/MCPServerManager";
 import { MCPServersPanel } from "@/components/settings/MCPServersPanel";
 import { Bitrix24Connect } from "@/components/integrations/Bitrix24Connect";
-import { AccessControl, DangerousActionDialog } from "@/components/rbac";
 import { toast } from "sonner";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  listMaskedSecrets, createWorkspaceSecret, deleteWorkspaceSecret, rotateWorkspaceSecret,
-  getWorkspace,
-} from "@/services/settingsService";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getWorkspace } from "@/services/settingsService";
 import { getWorkspaceId } from "@/lib/agentService";
 import { useTheme } from "next-themes";
 import { EnvironmentsManager } from "@/components/settings/EnvironmentsManager";
+import { ApiKeysTab } from "@/components/settings/ApiKeysTab";
+import { HuggingFaceTab } from "@/components/settings/HuggingFaceTab";
+import { Badge } from "@/components/ui/badge";
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
   const queryClient = useQueryClient();
-  const [newKeyName, setNewKeyName] = useState('');
-  const [newKeyValue, setNewKeyValue] = useState('');
-  const [editingKey, setEditingKey] = useState<string | null>(null);
-  const [editValue, setEditValue] = useState('');
-  const [notifications, setNotifications] = useState({ email: true, errors: true, billing: false, weekly: true });
-
-  const { data: secrets = [], isLoading: loadingSecrets } = useQuery({
-    queryKey: ['workspace_secrets'],
-    queryFn: async () => { const wsId = await getWorkspaceId(); return listMaskedSecrets(wsId); },
-  });
-
-  const addKeyMutation = useMutation({
-    mutationFn: async () => {
-      if (!newKeyName.trim() || !newKeyValue.trim()) throw new Error('Nome e valor são obrigatórios');
-      const wsId = await getWorkspaceId();
-      await createWorkspaceSecret({ workspaceId: wsId, keyName: newKeyName.trim(), keyValue: newKeyValue.trim() });
-    },
-    onSuccess: () => { toast.success('API Key adicionada!'); setNewKeyName(''); setNewKeyValue(''); queryClient.invalidateQueries({ queryKey: ['workspace_secrets'] }); },
-    onError: (e: Error) => toast.error(e.message || 'Erro inesperado'),
-  });
-
-  const deleteKeyMutation = useMutation({
-    mutationFn: deleteWorkspaceSecret,
-    onSuccess: () => { toast.success('API Key removida'); queryClient.invalidateQueries({ queryKey: ['workspace_secrets'] }); },
-  });
-
-  const rotateKeyMutation = useMutation({
-    mutationFn: async ({ id, newValue }: { id: string; newValue: string }) => { await rotateWorkspaceSecret(id, newValue); },
-    onSuccess: () => { toast.success('API Key rotacionada com sucesso!'); setEditingKey(null); setEditValue(''); queryClient.invalidateQueries({ queryKey: ['workspace_secrets'] }); },
-    onError: (e: Error) => toast.error(e.message),
+  const [notifications, setNotifications] = useState({ 
+    email: true, 
+    errors: true, 
+    billing: false, 
+    weekly: true,
+    slack: true,
+    webhooks: false
   });
 
   const { data: workspace } = useQuery({
@@ -62,171 +38,266 @@ export default function SettingsPage() {
   });
 
   return (
-    <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1000px] mx-auto">
-      <PageHeader title="Configurações" description="Configure seu workspace e preferências da plataforma" />
+    <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1200px] mx-auto animate-in fade-in duration-500">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <PageHeader 
+          title="Centro de Controle" 
+          description="Orquestração global do seu ecossistema de agentes e infraestrutura IA" 
+        />
+        <div className="flex gap-2 mb-2">
+          <Badge variant="outline" className="bg-nexus-emerald/5 text-nexus-emerald border-nexus-emerald/20 gap-1.5 py-1 px-3">
+            <Activity className="h-3 w-3" /> Sistema Nominal
+          </Badge>
+          <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 gap-1.5 py-1 px-3">
+            <Zap className="h-3 w-3" /> Versão 1.2.0
+          </Badge>
+        </div>
+      </div>
 
-      <Tabs defaultValue="general">
-        <TabsList className="bg-secondary/50 border border-border/50">
-          <TabsTrigger value="general" className="text-xs gap-1.5"><Globe className="h-3.5 w-3.5" /> Geral</TabsTrigger>
-          <TabsTrigger value="appearance" className="text-xs gap-1.5"><Palette className="h-3.5 w-3.5" /> Aparência</TabsTrigger>
-          <TabsTrigger value="apikeys" className="text-xs gap-1.5"><Key className="h-3.5 w-3.5" /> API Keys</TabsTrigger>
-          <TabsTrigger value="notifications" className="text-xs gap-1.5"><Bell className="h-3.5 w-3.5" /> Notificações</TabsTrigger>
-          <TabsTrigger value="environments" className="text-xs gap-1.5"><Globe className="h-3.5 w-3.5" /> Ambientes</TabsTrigger>
-          <TabsTrigger value="huggingface" className="text-xs gap-1.5"><Sparkles className="h-3.5 w-3.5" /> HuggingFace</TabsTrigger>
-          <TabsTrigger value="mcp" className="text-xs gap-1.5"><Server className="h-3.5 w-3.5" /> MCP Servers</TabsTrigger>
-          <TabsTrigger value="integrations" className="text-xs gap-1.5"><Building2 className="h-3.5 w-3.5" /> Integrações</TabsTrigger>
-        </TabsList>
+      <Tabs defaultValue="general" className="w-full">
+        <div className="flex overflow-x-auto pb-2 scrollbar-hide">
+          <TabsList className="bg-secondary/30 border border-border/50 p-1 h-auto flex-nowrap shrink-0">
+            <TabsTrigger value="general" className="text-xs gap-1.5 px-3 py-2"><Globe className="h-3.5 w-3.5" /> Geral</TabsTrigger>
+            <TabsTrigger value="appearance" className="text-xs gap-1.5 px-3 py-2"><Palette className="h-3.5 w-3.5" /> Aparência</TabsTrigger>
+            <TabsTrigger value="apikeys" className="text-xs gap-1.5 px-3 py-2"><Key className="h-3.5 w-3.5" /> API Keys</TabsTrigger>
+            <TabsTrigger value="security" className="text-xs gap-1.5 px-3 py-2"><Shield className="h-3.5 w-3.5" /> Segurança</TabsTrigger>
+            <TabsTrigger value="notifications" className="text-xs gap-1.5 px-3 py-2"><Bell className="h-3.5 w-3.5" /> Alertas</TabsTrigger>
+            <TabsTrigger value="environments" className="text-xs gap-1.5 px-3 py-2"><Activity className="h-3.5 w-3.5" /> Ciclo de Vida</TabsTrigger>
+            <TabsTrigger value="huggingface" className="text-xs gap-1.5 px-3 py-2"><Database className="h-3.5 w-3.5" /> Modelos ML</TabsTrigger>
+            <TabsTrigger value="mcp" className="text-xs gap-1.5 px-3 py-2"><Server className="h-3.5 w-3.5" /> MCP Servers</TabsTrigger>
+            <TabsTrigger value="integrations" className="text-xs gap-1.5 px-3 py-2"><Share2 className="h-3.5 w-3.5" /> Conexões</TabsTrigger>
+          </TabsList>
+        </div>
 
-        <TabsContent value="general" className="mt-4 space-y-4">
-          <div className="nexus-card space-y-4">
-            <h3 className="text-sm font-semibold text-foreground">Workspace</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5"><Label className="text-xs">Nome do workspace</Label><Input defaultValue={workspace?.name || 'Meu Workspace'} className="bg-secondary/50" /></div>
-              <div className="space-y-1.5"><Label className="text-xs">Plano</Label><Input value={String(workspace?.plan || 'free')} disabled className="bg-secondary/50 capitalize" /></div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5"><Label className="text-xs">Idioma</Label><Select defaultValue="pt-BR"><SelectTrigger className="bg-secondary/50"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="pt-BR">Português (BR)</SelectItem><SelectItem value="en-US">English (US)</SelectItem><SelectItem value="es">Español</SelectItem></SelectContent></Select></div>
-              <div className="space-y-1.5"><Label className="text-xs">Timezone</Label><Select defaultValue="America/Sao_Paulo"><SelectTrigger className="bg-secondary/50"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="America/Sao_Paulo">São Paulo (UTC-3)</SelectItem><SelectItem value="America/New_York">New York (UTC-5)</SelectItem><SelectItem value="Europe/London">London (UTC+0)</SelectItem></SelectContent></Select></div>
-            </div>
-            <Button size="sm" className="nexus-gradient-bg text-primary-foreground gap-1.5"><Save className="h-3.5 w-3.5" /> Salvar</Button>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="appearance" className="mt-4 space-y-4">
-          <div className="nexus-card space-y-4">
-            <h3 className="text-sm font-semibold text-foreground">Tema</h3>
-            <div className="grid grid-cols-3 gap-3">
-              {[
-                { value: 'dark', label: '🌙 Escuro', desc: 'Padrão — melhor para produtividade' },
-                { value: 'light', label: '☀️ Claro', desc: 'Para ambientes bem iluminados' },
-                { value: 'system', label: '💻 Sistema', desc: 'Segue a preferência do sistema' },
-              ].map(t => (
-                <button key={t.value} onClick={() => setTheme(t.value)} className={`p-4 rounded-lg border text-left transition-all ${theme === t.value ? 'border-primary bg-primary/10' : 'border-border/50 bg-secondary/30 hover:bg-secondary/50'}`}>
-                  <p className="text-sm font-medium text-foreground">{t.label}</p>
-                  <p className="text-[11px] text-muted-foreground mt-1">{t.desc}</p>
-                </button>
-              ))}
-            </div>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="apikeys" className="mt-4 space-y-4">
-          <div className="nexus-card space-y-4">
-            <h3 className="text-sm font-semibold text-foreground">API Keys</h3>
-            <p className="text-xs text-muted-foreground">Configure chaves de API para conectar modelos de IA e serviços externos.</p>
-            <div className="grid grid-cols-[1fr_1fr_auto] gap-2 items-end">
-              <div className="space-y-1"><Label className="text-[11px]">Nome da chave</Label><Input value={newKeyName} onChange={e => setNewKeyName(e.target.value)} placeholder="openrouter_api_key" className="bg-secondary/50 text-xs font-mono" /></div>
-              <div className="space-y-1"><Label className="text-[11px]">Valor</Label><Input type="password" value={newKeyValue} onChange={e => setNewKeyValue(e.target.value)} placeholder="sk-..." className="bg-secondary/50 text-xs font-mono" /></div>
-              <Button size="sm" onClick={() => addKeyMutation.mutate()} disabled={addKeyMutation.isPending} className="gap-1 nexus-gradient-bg text-primary-foreground">
-                {addKeyMutation.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Plus className="h-3.5 w-3.5" />} Adicionar
-              </Button>
-            </div>
-            {loadingSecrets ? <div className="flex justify-center py-8"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div> :
-             secrets.length === 0 ? <p className="text-xs text-muted-foreground text-center py-6">Nenhuma API key configurada</p> : (
-              <div className="space-y-2">
-                {secrets.map(s => (
-                  <div key={s.id} className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30 border border-border/30">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-mono font-medium text-foreground">{s.key_name}</p>
-                      {editingKey === s.id ? (
-                        <div className="flex gap-1.5 mt-1.5">
-                          <Input type="password" value={editValue} onChange={e => setEditValue(e.target.value)} placeholder="Novo valor..." className="bg-secondary/50 text-xs font-mono h-7" />
-                          <Button size="sm" className="h-7 text-xs" onClick={() => rotateKeyMutation.mutate({ id: s.id, newValue: editValue })} disabled={rotateKeyMutation.isPending}>Salvar</Button>
-                          <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => { setEditingKey(null); setEditValue(''); }}>Cancelar</Button>
-                        </div>
-                      ) : <p className="text-[11px] text-muted-foreground font-mono truncate">{s.masked_value}</p>}
-                      <p className="text-[10px] text-muted-foreground/50 mt-0.5">Atualizado: {new Date(s.updated_at ?? s.created_at ?? '').toLocaleDateString('pt-BR')}</p>
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mt-6">
+          <div className="lg:col-span-3 space-y-6">
+            <TabsContent value="general" className="m-0 focus-visible:outline-none">
+              <div className="nexus-card bg-card/50 backdrop-blur-sm border-border/40 p-6 space-y-6">
+                <div className="flex items-center justify-between border-b border-border/40 pb-4">
+                  <div>
+                    <h3 className="text-base font-semibold text-foreground">Identidade do Workspace</h3>
+                    <p className="text-xs text-muted-foreground">Configurações globais e identificação da organização</p>
+                  </div>
+                  <Badge className="bg-primary/10 text-primary border-none hover:bg-primary/20 uppercase tracking-wider text-[10px]">Enterprise</Badge>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label className="text-xs font-medium uppercase tracking-tight text-muted-foreground">Nome da Organização</Label>
+                    <Input defaultValue={workspace?.name || 'Nexus Intelligence'} className="bg-background/50 border-border/40 focus:border-primary/40 transition-colors" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs font-medium uppercase tracking-tight text-muted-foreground">Status do Plano</Label>
+                    <div className="relative">
+                      <Input value="Plano Enterprise (Ativo)" disabled className="bg-background/30 border-border/20 text-foreground font-medium" />
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-nexus-emerald shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse" />
                     </div>
-                    <Button size="icon" variant="ghost" className="h-7 w-7" title="Rotacionar" onClick={() => { setEditingKey(s.id); setEditValue(''); }}><RotateCw className="h-3.5 w-3.5 text-nexus-amber" /></Button>
-                    <AccessControl permission="settings.api_keys">
-                      <DangerousActionDialog
-                        trigger={<Button size="icon" variant="ghost" className="h-7 w-7 text-destructive"><Trash2 className="h-3.5 w-3.5" /></Button>}
-                        title="Revogar API key" description="A chave será permanentemente removida. Aplicações que dependem dela serão desautorizadas imediatamente."
-                        action="revoke" resourceType="workspace_secret" resourceId={s.id} resourceName={s.key_name} minReasonLength={10} confirmLabel="Revogar"
-                        onConfirm={async () => { await deleteKeyMutation.mutateAsync(s.id); }}
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs font-medium uppercase tracking-tight text-muted-foreground">Idioma Regional</Label>
+                    <Select defaultValue="pt-BR">
+                      <SelectTrigger className="bg-background/50 border-border/40">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="pt-BR">Português (BR)</SelectItem>
+                        <SelectItem value="en-US">English (US)</SelectItem>
+                        <SelectItem value="es">Español</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs font-medium uppercase tracking-tight text-muted-foreground">Fuso Horário Operacional</Label>
+                    <Select defaultValue="America/Sao_Paulo">
+                      <SelectTrigger className="bg-background/50 border-border/40">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="America/Sao_Paulo">São Paulo (UTC-3)</SelectItem>
+                        <SelectItem value="America/New_York">New York (UTC-5)</SelectItem>
+                        <SelectItem value="Europe/London">London (UTC+0)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                
+                <div className="pt-4 flex justify-end gap-3">
+                  <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-foreground">Resetar Alterações</Button>
+                  <Button size="sm" className="nexus-gradient-bg text-primary-foreground gap-1.5 px-6 shadow-lg shadow-primary/10 transition-all hover:scale-[1.02]">
+                    <Save className="h-3.5 w-3.5" /> Aplicar Configurações
+                  </Button>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="appearance" className="m-0 focus-visible:outline-none">
+              <div className="nexus-card bg-card/50 backdrop-blur-sm border-border/40 p-6 space-y-6">
+                <div>
+                  <h3 className="text-base font-semibold text-foreground">Motor de Renderização e Temas</h3>
+                  <p className="text-xs text-muted-foreground">Personalize a interface para máxima eficiência visual</p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {[
+                    { value: 'dark', label: 'Modo Escuro (HQ)', icon: '🌙', desc: 'Contraste otimizado para longas sessões' },
+                    { value: 'light', label: 'Modo Claro', icon: '☀️', desc: 'Ideal para ambientes externos' },
+                    { value: 'system', label: 'Sincronizar OS', icon: '💻', desc: 'Segue as diretrizes do hardware' },
+                  ].map(t => (
+                    <button 
+                      key={t.value} 
+                      onClick={() => setTheme(t.value)} 
+                      className={`group p-5 rounded-xl border text-left transition-all relative overflow-hidden ${
+                        theme === t.value 
+                          ? 'border-primary bg-primary/5 shadow-inner' 
+                          : 'border-border/30 bg-background/20 hover:border-border/60 hover:bg-background/40'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-2xl">{t.icon}</span>
+                        {theme === t.value && <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />}
+                      </div>
+                      <p className={`text-sm font-bold ${theme === t.value ? 'text-primary' : 'text-foreground'}`}>{t.label}</p>
+                      <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">{t.desc}</p>
+                      {theme === t.value && <div className="absolute bottom-0 right-0 p-1 opacity-20"><Palette className="h-8 w-8 text-primary" /></div>}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="p-4 rounded-lg bg-secondary/10 border border-border/20 flex items-start gap-4">
+                  <div className="p-2 bg-primary/10 rounded-full shrink-0"><Palette className="h-4 w-4 text-primary" /></div>
+                  <div className="space-y-1">
+                    <p className="text-xs font-semibold">Customização Avançada</p>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed">Você pode injetar CSS customizado e definir paletas de cores específicas para sua marca através do módulo de White-label nas configurações de administrador.</p>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="apikeys" className="m-0 focus-visible:outline-none"><ApiKeysTab /></TabsContent>
+            <TabsContent value="huggingface" className="m-0 focus-visible:outline-none"><HuggingFaceTab /></TabsContent>
+            <TabsContent value="environments" className="m-0 focus-visible:outline-none"><EnvironmentsManager /></TabsContent>
+            <TabsContent value="mcp" className="m-0 focus-visible:outline-none"><div className="space-y-6"><MCPServersPanel /><MCPServerManager /></div></TabsContent>
+            
+            <TabsContent value="notifications" className="m-0 focus-visible:outline-none">
+              <div className="nexus-card bg-card/50 backdrop-blur-sm border-border/40 p-6 space-y-6">
+                <div>
+                  <h3 className="text-base font-semibold text-foreground">Matriz de Notificações e Alertas</h3>
+                  <p className="text-xs text-muted-foreground">Defina a prioridade e canais de resposta para eventos críticos</p>
+                </div>
+
+                <div className="space-y-2">
+                  {[
+                    { key: 'errors', label: 'Fail-Safe & Erros Críticos', desc: 'Alertas imediatos quando um agente ou workflow atinge o estado terminal' },
+                    { key: 'email', label: 'Digest de Operações', desc: 'Resumo periódico de performance via email para stakeholders' },
+                    { key: 'slack', label: 'Slack Webhook Stream', desc: 'Encaminha eventos em tempo real para o canal de monitoramento' },
+                    { key: 'billing', label: 'Quota & Budget Guardrails', desc: 'Notificações proativas ao atingir 80% do limite de tokens mensal' },
+                    { key: 'webhooks', label: 'External Service Callbacks', desc: 'Aciona URLs externas para automação de resposta a incidentes' },
+                  ].map(n => (
+                    <div key={n.key} className="flex items-center justify-between p-4 rounded-lg bg-background/20 border border-border/20 hover:border-border/40 transition-all">
+                      <div className="space-y-1">
+                        <p className="text-sm font-medium text-foreground">{n.label}</p>
+                        <p className="text-[11px] text-muted-foreground leading-relaxed">{n.desc}</p>
+                      </div>
+                      <Switch 
+                        checked={notifications[n.key as keyof typeof notifications]} 
+                        onCheckedChange={v => setNotifications(prev => ({ ...prev, [n.key]: v }))} 
+                        className="data-[state=checked]:bg-nexus-emerald"
                       />
-                    </AccessControl>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="flex justify-end pt-2">
+                  <Button size="sm" onClick={() => toast.success('Matriz de alertas atualizada!')} className="nexus-gradient-bg text-primary-foreground gap-1.5 px-8">
+                    <Save className="h-3.5 w-3.5" /> Sincronizar Preferências
+                  </Button>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="integrations" className="m-0 focus-visible:outline-none">
+              <div className="nexus-card bg-card/50 backdrop-blur-sm border-border/40 p-6 space-y-6">
+                <div className="flex items-center justify-between border-b border-border/40 pb-4">
+                  <div>
+                    <h3 className="text-base font-semibold text-foreground">Bitrix24 CRM Sync</h3>
+                    <p className="text-xs text-muted-foreground">Ponte de dados para automação comercial e gestão de leads</p>
                   </div>
-                ))}
+                  <div className="h-8 w-8 rounded bg-blue-500/10 flex items-center justify-center border border-blue-500/20">
+                    <span className="text-blue-500 text-xs font-bold italic">B24</span>
+                  </div>
+                </div>
+                <Bitrix24Connect />
               </div>
-            )}
-            <div className="rounded-lg bg-secondary/20 p-3 border border-border/30">
-              <p className="text-[11px] text-muted-foreground">💡 <strong>Dica:</strong> Adicione <code className="font-mono">openrouter_api_key</code> para usar múltiplos modelos via OpenRouter, ou chaves específicas: <code className="font-mono">openai_api_key</code>, <code className="font-mono">anthropic_api_key</code>, <code className="font-mono">google_ai_api_key</code></p>
+            </TabsContent>
+          </div>
+
+          <div className="space-y-6">
+            <div className="nexus-card bg-primary/5 border-primary/20 p-5 space-y-4">
+              <div className="flex items-center gap-2">
+                <Shield className="h-4 w-4 text-primary" />
+                <h4 className="text-xs font-bold uppercase tracking-widest text-primary">Score de Segurança</h4>
+              </div>
+              <div className="relative pt-1">
+                <div className="flex mb-2 items-center justify-between">
+                  <div><span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-nexus-emerald bg-nexus-emerald/10">Excelente</span></div>
+                  <div className="text-right"><span className="text-xs font-semibold inline-block text-nexus-emerald">92%</span></div>
+                </div>
+                <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-primary/10">
+                  <div style={{ width: "92%" }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-nexus-emerald transition-all duration-1000"></div>
+                </div>
+              </div>
+              <p className="text-[10px] text-muted-foreground leading-relaxed">
+                Seu workspace utiliza criptografia AES-256 em repouso e políticas de RLS granulares.
+              </p>
+              <Button variant="outline" size="sm" className="w-full text-[10px] h-8 border-primary/20 hover:bg-primary/5">Ver Auditoria</Button>
             </div>
-          </div>
-        </TabsContent>
 
-        <TabsContent value="notifications" className="mt-4 space-y-4">
-          <div className="nexus-card space-y-4">
-            <h3 className="text-sm font-semibold text-foreground">Preferências de notificação</h3>
-            {[
-              { key: 'email', label: 'Notificações por email', desc: 'Receba alertas sobre eventos importantes' },
-              { key: 'errors', label: 'Alertas de erro', desc: 'Notificação imediata quando um agente falha' },
-              { key: 'billing', label: 'Alertas de custo', desc: 'Quando o uso exceder limites configurados' },
-              { key: 'weekly', label: 'Relatório semanal', desc: 'Resumo de uso e performance da semana' },
-            ].map(n => (
-              <div key={n.key} className="flex items-center justify-between py-2">
-                <div><p className="text-sm text-foreground">{n.label}</p><p className="text-[11px] text-muted-foreground">{n.desc}</p></div>
-                <Switch checked={notifications[n.key as keyof typeof notifications]} onCheckedChange={v => setNotifications(prev => ({ ...prev, [n.key]: v }))} />
-              </div>
-            ))}
-            <Button size="sm" onClick={() => toast.success('Preferências salvas!')} className="nexus-gradient-bg text-primary-foreground gap-1.5"><Save className="h-3.5 w-3.5" /> Salvar preferências</Button>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="environments" className="space-y-4 mt-4"><EnvironmentsManager /></TabsContent>
-
-        <TabsContent value="huggingface" className="space-y-4 mt-4">
-          <div className="rounded-lg border bg-card p-4 space-y-4">
-            <div className="flex items-center gap-2"><Sparkles className="h-5 w-5 text-nexus-amber" /><h3 className="font-semibold">HuggingFace Integration</h3></div>
-            <p className="text-sm text-muted-foreground">Modelos open-source gratuitos para guardrails, RAG, classificação e inferência. Configure o token HF na aba API Keys com o nome <code className="text-xs bg-muted px-1 py-0.5 rounded">huggingface_api_key</code>.</p>
-            <div className="space-y-3 pt-2">
-              <h4 className="text-sm font-medium">Funcionalidades Ativas</h4>
-              <div className="grid gap-3">
+            <div className="nexus-card p-5 space-y-4">
+              <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Status do Cluster</h4>
+              <div className="space-y-3">
                 {[
-                  { name: 'Injection Detection ML', desc: 'ProtectAI deberta-v3 · Detecta prompt injection com 99.9% precisão', status: 'Ativo' },
-                  { name: 'RAG Reranker', desc: 'BAAI/bge-reranker-v2-m3 · Cross-encoder multilingual gratuito', status: 'Ativo' },
-                  { name: 'Auto-Classificação de Traces', desc: 'xlm-roberta-large-xnli · 8 categorias zero-shot em PT', status: 'Ativo' },
-                  { name: 'NER no Super Cérebro', desc: 'bert-base-NER · Extração de entidades 10x mais rápida', status: 'Ativo' },
-                  { name: 'Sentiment Analysis (WhatsApp)', desc: 'twitter-roberta-base-sentiment · Análise de sentimento no DataHub', status: 'Ativo' },
-                  { name: 'LLM Provider (Inference API)', desc: 'Qwen3, Mistral Small, Llama 4 Scout · Modelos gratuitos no Agent Builder', status: 'Ativo' },
-                  { name: 'Fine-tuning (AutoTrain)', desc: 'Treine modelos custom com dados dos seus agentes', status: 'Disponível' },
-                ].map(f => (
-                  <div key={f.name} className="flex items-center justify-between p-3 rounded-md bg-muted/50">
-                    <div><p className="text-sm font-medium">{f.name}</p><p className="text-xs text-muted-foreground">{f.desc}</p></div>
-                    <span className={`text-xs px-2 py-0.5 rounded ${f.status === 'Ativo' ? 'bg-nexus-emerald/12 text-nexus-emerald' : 'bg-primary/12 text-primary'}`}>{f.status}</span>
+                  { label: 'Inference Engine', status: 'Nominal', time: '14ms' },
+                  { label: 'Vector Database', status: 'Nominal', time: '8ms' },
+                  { label: 'MCP Mesh', status: 'Aviso', time: '210ms' },
+                ].map(s => (
+                  <div key={s.label} className="flex items-center justify-between">
+                    <div>
+                      <p className="text-[11px] font-medium">{s.label}</p>
+                      <p className="text-[10px] text-muted-foreground">{s.time} latency</p>
+                    </div>
+                    <Badge variant="outline" className={`text-[9px] h-5 ${s.status === 'Nominal' ? 'border-nexus-emerald/30 text-nexus-emerald' : 'border-nexus-amber/30 text-nexus-amber'}`}>
+                      {s.status}
+                    </Badge>
                   </div>
                 ))}
               </div>
             </div>
-            <div className="pt-3 border-t space-y-2">
-              <h4 className="text-sm font-medium">Self-Hosted (TEI)</h4>
-              <p className="text-xs text-muted-foreground">Para alto volume, deploy TEI localmente com GPU. Configure os endpoints nas env vars <code className="bg-muted px-1 py-0.5 rounded ml-1">HF_TEI_ENDPOINT</code> e <code className="bg-muted px-1 py-0.5 rounded ml-1">HF_TEI_RERANK_ENDPOINT</code>.</p>
-              <div className="bg-muted/30 p-3 rounded text-xs font-mono text-muted-foreground whitespace-pre-wrap">
-{`# Embeddings (BGE-M3)
-docker run --gpus all -p 8080:80 -v tei-data:/data \\
-  ghcr.io/huggingface/text-embeddings-inference:cuda-1.9 \\
-  --model-id BAAI/bge-m3
 
-# Reranker (BGE-reranker-v2-m3)
-docker run --gpus all -p 8081:80 -v tei-data:/data \\
-  ghcr.io/huggingface/text-embeddings-inference:cuda-1.9 \\
-  --model-id BAAI/bge-reranker-v2-m3`}
+            <div className="nexus-card p-5 space-y-3 bg-gradient-to-br from-secondary/50 to-background border-border/40">
+              <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Uso de Recursos</h4>
+              <div className="space-y-1">
+                <div className="flex justify-between text-[11px] mb-1">
+                  <span>Tokens Mensais</span>
+                  <span className="font-mono">4.2M / 10M</span>
+                </div>
+                <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
+                  <div className="h-full bg-primary w-[42%]" />
+                </div>
+              </div>
+              <div className="space-y-1">
+                <div className="flex justify-between text-[11px] mb-1">
+                  <span>Storage (RAG)</span>
+                  <span className="font-mono">1.2GB / 10GB</span>
+                </div>
+                <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
+                  <div className="h-full bg-primary w-[12%]" />
+                </div>
               </div>
             </div>
           </div>
-        </TabsContent>
-
-        <TabsContent value="mcp" className="mt-4 space-y-4"><MCPServersPanel /><MCPServerManager /></TabsContent>
-
-        <TabsContent value="integrations" className="mt-4 space-y-4">
-          <div className="nexus-card space-y-4">
-            <h3 className="text-sm font-semibold text-foreground">Bitrix24 CRM</h3>
-            <p className="text-xs text-muted-foreground">Conecte sua conta Bitrix24 para sincronizar contatos, deals e atividades com seus agentes.</p>
-            <Bitrix24Connect />
-          </div>
-        </TabsContent>
+        </div>
       </Tabs>
     </div>
   );
 }
+
