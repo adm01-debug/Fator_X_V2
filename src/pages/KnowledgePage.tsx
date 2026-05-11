@@ -152,40 +152,40 @@ export default function KnowledgePage() {
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3 w-full md:w-auto">
-              <div className="relative flex-1 md:w-80">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
+            <div className="flex items-center gap-4 w-full md:w-auto">
+              <div className="relative flex-1 md:w-[400px]">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <Input 
-                  placeholder="Filtrar ecossistema de conhecimento..." 
+                  placeholder="Pesquisar bases de conhecimento..." 
                   value={search} 
                   onChange={(e) => setSearch(e.target.value)} 
-                  className="pl-9 bg-card/50 border-border/40 focus:ring-primary/20" 
+                  className="pl-12 h-14 rounded-2xl bg-card border-border/40 focus:ring-primary/20 text-base" 
                 />
               </div>
-              <div className="flex border border-border/40 rounded-lg p-1 bg-card/50">
+              <div className="flex bg-secondary/20 border border-border/40 rounded-2xl p-1 h-14">
                 <Button 
                   variant={viewMode === 'grid' ? 'secondary' : 'ghost'} 
-                  size="icon" className="h-8 w-8" 
+                  size="icon" className="h-full w-12 rounded-xl" 
                   onClick={() => setViewMode('grid')}
                 >
-                  <LayoutGrid className="h-4 w-4" />
+                  <LayoutGrid className="h-5 w-5" />
                 </Button>
                 <Button 
                   variant={viewMode === 'list' ? 'secondary' : 'ghost'} 
-                  size="icon" className="h-8 w-8" 
+                  size="icon" className="h-full w-12 rounded-xl" 
                   onClick={() => setViewMode('list')}
                 >
-                  <List className="h-4 w-4" />
+                  <List className="h-5 w-5" />
                 </Button>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" className="text-xs gap-1.5 border-border/40">
-                <Filter className="h-3.5 w-3.5" /> Filtros Avançados
+            <div className="flex items-center gap-3">
+              <Button variant="outline" size="lg" className="h-14 px-6 rounded-2xl border-border/40 font-bold gap-2">
+                <Filter className="h-5 w-5" /> Filtros
               </Button>
-              <Button variant="outline" size="sm" className="text-xs gap-1.5 border-border/40">
-                <BarChart3 className="h-3.5 w-3.5" /> Analytics
+              <Button variant="outline" size="lg" className="h-14 px-6 rounded-2xl border-border/40 font-bold gap-2">
+                <BarChart3 className="h-5 w-5" /> Analytics
               </Button>
             </div>
           </div>
