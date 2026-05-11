@@ -63,11 +63,9 @@ export default function DashboardPage() {
   });
   
   const activeCount = agents.filter(a => a.status === 'production' || a.status === 'monitoring').length;
-  const draftCount = agents.filter(a => a.status === 'draft').length;
 
   const getGreeting = () => { 
     const hour = new Date().getHours(); 
-    const name = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Comandante'; 
     return hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite'; 
   };
 
