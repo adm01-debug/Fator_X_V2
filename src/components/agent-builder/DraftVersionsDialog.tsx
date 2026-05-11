@@ -76,23 +76,37 @@ export function DraftVersionsDialog({ open, onOpenChange }: DraftVersionsDialogP
         toast({ title: 'Prompt limpo', description: 'Linhas em branco excessivas removidas.' });
         break;
       case 'config.rag_no_sources':
-        updateAgent({ rag_architecture: 'none' });
-        toast({ title: 'RAG desativado', description: 'Como não há fontes, a arquitetura foi definida como "none".' });
+        updateAgent({ rag_architecture: 'naive' }); // 'naive' is the simplest architecture
+        toast({ title: 'RAG simplificado', description: 'Arquitetura RAG definida como "naive" por falta de fontes.' });
         break;
       case 'config.react_without_tools':
-        updateAgent({ reasoning: 'linear' });
-        toast({ title: 'Raciocínio alterado', description: 'Alterado para "linear" pois não há ferramentas.' });
+        updateAgent({ reasoning: 'cot' }); // 'cot' (Chain of Thought) works without tools
+        toast({ title: 'Raciocínio alterado', description: 'Alterado para "cot" pois não há ferramentas.' });
         break;
       case 'config.expensive_for_simple':
-        updateAgent({ model: 'gpt-4o-mini' });
+        updateAgent({ model: 'claude-haiku-4.5' });
         toast({ title: 'Modelo alterado', description: 'Alterado para um modelo mais econômico.' });
         break;
       case 'config.production_no_guardrails':
         updateAgent({
           guardrails: [
             ...(agent.guardrails || []),
-            { name: 'Toxicity', enabled: true },
-            { name: 'PII Leak', enabled: true },
+            { 
+              id: 'toxicity-guard',
+              name: 'Toxicity', 
+              enabled: true,
+              category: 'output_safety',
+              description: 'Filtra conteúdo tóxico ou ofensivo',
+              severity: 'block'
+            },
+            { 
+              id: 'pii-guard',
+              name: 'PII Leak', 
+              enabled: true,
+              category: 'output_safety',
+              description: 'Previne vazamento de dados pessoais',
+              severity: 'block'
+            },
           ],
         });
         toast({ title: 'Guardrails ativados', description: 'Filtros básicos de segurança foram habilitados.' });
