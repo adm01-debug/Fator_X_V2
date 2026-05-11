@@ -252,19 +252,73 @@ export function CreateAgentWizard() {
       )}
 
       <Dialog open={isTemplateModalOpen} onOpenChange={setIsTemplateModalOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">{viewingTemplate?.emoji} {viewingTemplate?.name}</DialogTitle>
-            <DialogDescription>{viewingTemplate?.description}</DialogDescription>
+        <DialogContent className="max-w-3xl overflow-hidden flex flex-col max-h-[90vh]">
+          <DialogHeader className="px-6 pt-6 shrink-0">
+            <div className="flex items-center gap-4">
+              <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center text-4xl shadow-inner border border-primary/20">
+                {viewingTemplate?.emoji}
+              </div>
+              <div>
+                <DialogTitle className="text-2xl font-bold tracking-tight">{viewingTemplate?.name}</DialogTitle>
+                <div className="flex items-center gap-2 mt-1">
+                  <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-wider">{viewingTemplate?.category}</Badge>
+                  <span className="text-xs text-muted-foreground">•</span>
+                  <span className="text-xs text-muted-foreground">{viewingTemplate?.model}</span>
+                </div>
+              </div>
+            </div>
           </DialogHeader>
-          <div className="grid grid-cols-2 gap-4 py-4">
-            <div className="flex items-center gap-2 text-sm"><Brain className="h-4 w-4 text-primary" /> {viewingTemplate?.model}</div>
-            <div className="flex items-center gap-2 text-sm"><Wrench className="h-4 w-4 text-primary" /> {viewingTemplate?.tools?.length} ferramentas</div>
-            <div className="flex items-center gap-2 text-sm"><ShieldAlert className="h-4 w-4 text-primary" /> Guardrails ativos</div>
-            <div className="flex items-center gap-2 text-sm"><Info className="h-4 w-4 text-primary" /> Alta Eficiência</div>
-          </div>
-          <DialogFooter>
-            <Button onClick={() => viewingTemplate && applyTemplate(viewingTemplate)}>Ativar Blueprint</Button>
+
+          <ScrollArea className="flex-1 px-6">
+            <div className="py-4 space-y-6">
+              <div className="space-y-2">
+                <h4 className="text-sm font-bold flex items-center gap-2"><Info className="h-4 w-4 text-primary" /> Descrição do Blueprint</h4>
+                <p className="text-muted-foreground text-sm leading-relaxed">{viewingTemplate?.description}</p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-4 rounded-xl border bg-secondary/20 space-y-2">
+                  <h5 className="text-[11px] font-bold uppercase text-muted-foreground tracking-widest">Configuração</h5>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-sm"><Brain className="h-3.5 w-3.5 text-primary/70" /> {viewingTemplate?.model}</div>
+                    <div className="flex items-center gap-2 text-sm"><Wrench className="h-3.5 w-3.5 text-primary/70" /> {viewingTemplate?.tools?.length || 0} ferramentas</div>
+                    <div className="flex items-center gap-2 text-sm"><ShieldAlert className="h-3.5 w-3.5 text-primary/70" /> Guardrails habilitados</div>
+                  </div>
+                </div>
+                <div className="p-4 rounded-xl border bg-primary/5 border-primary/20 space-y-2">
+                  <h5 className="text-[11px] font-bold uppercase text-primary tracking-widest">Impacto Esperado</h5>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-sm font-medium"><Zap className="h-3.5 w-3.5 text-nexus-amber" /> Eficiência +45%</div>
+                    <div className="flex items-center gap-2 text-sm font-medium text-nexus-emerald"><Check className="h-3.5 w-3.5" /> ROI em &lt; 2 semanas</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <h4 className="text-sm font-bold flex items-center gap-2"><TrendingUp className="h-4 w-4 text-primary" /> Recomendações de Uso</h4>
+                <ul className="grid grid-cols-1 gap-2">
+                  <li className="flex items-start gap-2 text-sm text-muted-foreground">
+                    <div className="h-1.5 w-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
+                    Ideal para fluxos de {viewingTemplate?.category.toLowerCase()} com alto volume.
+                  </li>
+                  <li className="flex items-start gap-2 text-sm text-muted-foreground">
+                    <div className="h-1.5 w-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
+                    Conecte fontes de conhecimento via RAG para maior precisão.
+                  </li>
+                  <li className="flex items-start gap-2 text-sm text-muted-foreground">
+                    <div className="h-1.5 w-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
+                    Personalize o prompt com tom de voz da sua marca.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </ScrollArea>
+
+          <DialogFooter className="p-6 border-t bg-secondary/10 shrink-0">
+            <Button variant="ghost" onClick={() => setIsTemplateModalOpen(false)}>Cancelar</Button>
+            <Button onClick={() => viewingTemplate && applyTemplate(viewingTemplate)} className="nexus-gradient-bg gap-2">
+              Ativar este Blueprint <ChevronRight className="h-4 w-4" />
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
