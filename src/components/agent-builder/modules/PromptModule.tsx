@@ -36,6 +36,7 @@ export function PromptModule() {
   const { agent, updateAgent, promptVersions, savePromptVersion, activatePromptVersion } = useAgentBuilderStore();
   const [versionSummary, setVersionSummary] = useState('');
   const [diffMode, setDiffMode] = useState(false);
+  const [abTestOpen, setAbTestOpen] = useState(false);
   const [diffVersionA, setDiffVersionA] = useState<string | null>(null);
   const [diffVersionB, setDiffVersionB] = useState<string | null>(null);
 
