@@ -13,7 +13,6 @@ import {
   SkipForward,
   ShieldCheck,
   Target,
-  Zap,
   BarChart3,
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
