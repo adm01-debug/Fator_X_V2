@@ -243,8 +243,8 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
       if (latest && typeof latest.version === "number" && latest.version > entry.versionNumber) {
         // Marcador especial para o onError exibir o toast com ação "Recarregar".
         const err = new Error(
-          `Uma versão mais nova (v${latest.version}) foi criada depois deste rollback. ` +
-            `Recarregue antes de desfazer para evitar sobrescrever as mudanças mais recentes.`,
+          `Uma versão nova foi criada simultaneamente. ` +
+            `Por favor, recarregue a página antes de tentar desfazer o rollback.`,
         );
         (err as Error & { stale?: boolean; latestVersion?: number }).stale = true;
         (err as Error & { stale?: boolean; latestVersion?: number }).latestVersion = latest.version;
