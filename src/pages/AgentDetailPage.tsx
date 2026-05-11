@@ -276,7 +276,7 @@ function VersionHistory({ agentId }: { agentId: string }) {
       queryClient.invalidateQueries({ queryKey: ['agent', agentId] });
       setRollbackOpen(false);
       // Toast com ação para abrir a timeline já destacando a nova versão.
-      const summary = summarizeRestoreOptions(restoreOptions);
+      const summary = summarizeRestoreOptions(restoreOptions, fixOverrides);
       toast.success(`Rollback concluído — v${data.version} criada a partir de v${previous!.version}`, {
         description: summary.charAt(0).toUpperCase() + summary.slice(1) + ".",
         action: {

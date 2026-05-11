@@ -52,6 +52,8 @@ interface RestoreMetadata {
   restored_at: string;
   options: { copyPrompt: boolean; copyTools: boolean; copyModel: boolean };
   custom_summary: string | null;
+  config_overrides?: Record<string, unknown> | null;
+  model_override?: string | null;
 }
 
 interface Props {
@@ -90,6 +92,8 @@ function extractRestoreMeta(v: AgentVersion): RestoreMetadata | null {
       copyModel: !!opts.copyModel,
     },
     custom_summary: typeof m.custom_summary === "string" ? m.custom_summary : null,
+    config_overrides: m.config_overrides as Record<string, unknown> | null,
+    model_override: typeof m.model_override === "string" ? m.model_override : null,
   };
 }
 
@@ -269,7 +273,10 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
       queryClient.invalidateQueries({ queryKey: ["agent_versions", agentId] });
       queryClient.invalidateQueries({ queryKey: ["agent", agentId] });
       setUndoTarget(null);
-      const summary = summarizeRestoreOptions(entry.meta.options);
+      const summary = summarizeRestoreOptions(entry.meta.options, {
+        config: entry.meta.config_overrides as any,
+        model: entry.meta.model_override
+      });
       toast.success(
         `Rollback desfeito — v${data.version} criada a partir de v${entry.preRollback?.version ?? entry.meta.restored_from_version}`,
         {
@@ -376,7 +383,10 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
 
               {/* Resumo curto das opções (sempre presente, complementa os badges) */}
               <p className="text-[10px] text-muted-foreground italic mb-1.5">
-                {summarizeRestoreOptions(entry.meta.options)}
+                {summarizeRestoreOptions(entry.meta.options, {
+                  config: entry.meta.config_overrides as any,
+                  model: entry.meta.model_override
+                })}
               </p>
 
               {/* Badges das opções restauradas + ações */}
