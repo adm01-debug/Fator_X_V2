@@ -4,11 +4,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Card } from '@/components/ui/card';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import {
-  Sparkles, Loader2, ChevronDown, ChevronUp, Settings2,
+  Sparkles, Loader2, ChevronDown, ChevronUp, Settings2, Cpu, Brain, ChevronRight
 } from 'lucide-react';
 import { useOracleStore, ORACLE_MODES, ORACLE_PRESETS } from '@/stores/oracleStore';
 import { PresetSelector } from './PresetSelector';
