@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
 import { SectionTitle, ProgressBar } from '../ui';
+import { Button } from '@/components/ui/button';
+import { ExternalLink } from 'lucide-react';
 import { NexusRadarChart } from '../ui/NexusRadarChart';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import { LIFECYCLE_STAGES } from '@/data/agentBuilderData';
@@ -8,7 +10,7 @@ import type { ReadinessScore, ReadinessItem } from '@/types/agentTypes';
 function computeReadiness(agent: ReturnType<typeof useAgentBuilderStore.getState>['agent']): ReadinessScore {
   const categories: ReadinessScore['categories'] = {};
   const blockers: string[] = [];
-  const recommendations: string[] = [];
+  const recommendations: { label: string; tabId: string }[] = [];
 
   // Identity (max 10)
   const identityItems: ReadinessItem[] = [
@@ -18,8 +20,8 @@ function computeReadiness(agent: ReturnType<typeof useAgentBuilderStore.getState
     { label: 'Escopo definido (>50 chars)', passed: agent.scope.length > 50, weight: 2, is_blocker: false },
   ];
   categories.identity = { score: identityItems.filter(i => i.passed).reduce((s, i) => s + i.weight, 0), max: 10, items: identityItems };
-  if (!agent.name) recommendations.push('💡 Defina um nome para o agente');
-  if (agent.scope.length <= 50) recommendations.push('💡 Detalhe o escopo do agente (>50 chars) para +2 pontos');
+  if (!agent.name) recommendations.push({ label: '💡 Defina um nome para o agente', tabId: 'identity' });
+  if (agent.scope.length <= 50) recommendations.push({ label: '💡 Detalhe o escopo do agente (>50 chars) para +2 pontos', tabId: 'identity' });
 
   // Brain (max 12)
   const brainItems: ReadinessItem[] = [
@@ -28,7 +30,7 @@ function computeReadiness(agent: ReturnType<typeof useAgentBuilderStore.getState
     { label: 'Raciocínio definido', passed: !!agent.reasoning, weight: 4, is_blocker: false },
   ];
   categories.brain = { score: brainItems.filter(i => i.passed).reduce((s, i) => s + i.weight, 0), max: 12, items: brainItems };
-  if (!agent.model_fallback) recommendations.push('💡 Configurar modelo fallback aumentaria +3 pontos');
+  if (!agent.model_fallback) recommendations.push({ label: '💡 Configurar modelo fallback aumentaria +3 pontos', tabId: 'brain' });
 
   // Memory (max 12)
   const longTermCount = [agent.memory_episodic, agent.memory_semantic, agent.memory_procedural, agent.memory_profile, agent.memory_shared].filter(Boolean).length;
@@ -68,7 +70,7 @@ function computeReadiness(agent: ReturnType<typeof useAgentBuilderStore.getState
     { label: 'Output format definido', passed: !!agent.output_format, weight: 3, is_blocker: false },
   ];
   categories.prompt = { score: promptItems.filter(i => i.passed).reduce((s, i) => s + i.weight, 0), max: 15, items: promptItems };
-  if (agent.system_prompt.length <= 200) recommendations.push('💡 Expandir o system prompt (>200 chars) para +5 pontos');
+  if (agent.system_prompt.length <= 200) recommendations.push({ label: '💡 Expandir o system prompt (>200 chars) para +5 pontos', tabId: 'prompt' });
 
   // Guardrails (max 15)
   const hasPI = agent.guardrails.some(g => g.name.toLowerCase().includes('injection') && g.enabled);
@@ -127,7 +129,7 @@ const MATURITY_LABELS: Record<string, string> = {
 };
 
 export function ReadinessModule() {
-  const agent = useAgentBuilderStore((s) => s.agent);
+  const { agent, setActiveTab } = useAgentBuilderStore();
   const readiness = useMemo(() => computeReadiness(agent), [agent]);
 
   const radarData = Object.entries(readiness.categories).map(([key, cat]) => ({
@@ -208,7 +210,17 @@ export function ReadinessModule() {
           <SectionTitle icon="💡" title="Recomendações" subtitle="Ações sugeridas para melhorar o score" />
           <div className="rounded-xl border border-[hsl(var(--nexus-yellow))] bg-[hsl(var(--nexus-yellow))/0.05] p-4 space-y-2">
             {readiness.recommendations.map((r, i) => (
-              <p key={i} className="text-sm text-[hsl(var(--nexus-yellow))]">{r}</p>
+              <div key={i} className="flex items-center justify-between gap-4 p-2 rounded-lg hover:bg-[hsl(var(--nexus-yellow))/0.1] transition-colors group">
+                <p className="text-sm text-[hsl(var(--nexus-yellow))]">{r.label}</p>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-7 text-xs text-[hsl(var(--nexus-yellow))] hover:text-[hsl(var(--nexus-yellow))] hover:bg-[hsl(var(--nexus-yellow))/0.2] opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={() => setActiveTab(r.tabId)}
+                >
+                  <ExternalLink className="h-3 w-3 mr-1" /> Resolver
+                </Button>
+              </div>
             ))}
           </div>
         </>
