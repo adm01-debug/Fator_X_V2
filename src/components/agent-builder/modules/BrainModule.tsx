@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import { SectionTitle, SelectionGrid, SliderField, ToggleField, SelectField } from '../ui';
 import { NexusBadge } from '../ui/NexusBadge';
@@ -9,7 +9,7 @@ import { routeQuery, type RouteResult } from '@/services/modelRouterService';
 import { getAllSkills } from '@/services/progressiveSkillLoader';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Loader2, Cpu, Zap, Brain, Gauge } from 'lucide-react';
+import { Sparkles, Loader2, Cpu, Zap, Brain } from 'lucide-react';
 import { toast } from 'sonner';
 
 const MODELS = [
@@ -64,7 +64,6 @@ export function BrainModule() {
   };
 
   const modelStats = useMemo(() => {
-    const m = MODELS.find(m => m.id === agent.model);
     // Heurística de performance para visualização
     const intelligence = agent.model.includes('opus') || agent.model.includes('pro') || agent.model.includes('gpt-4') ? 95 : 
                          agent.model.includes('sonnet') ? 85 : 70;
