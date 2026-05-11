@@ -123,7 +123,7 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
     }
   },
 
-  saveAgent: async () => {
+  saveAgent: async (customSummary?: string) => {
     set({ isSaving: true });
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
@@ -133,23 +133,31 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
 
     const agent = get().agent;
     const row = agentToDbRow(agent, user.id);
+    let autoSummary = '';
 
     let error;
     if (agent.id) {
-      // ═══ Optimistic locking: check version hasn't changed ═══
+      // ═══ Optimistic locking & Change Detection ═══
       const { data: current } = await supabaseExternal
         .from('agents')
-        .select('version, updated_at')
+        .select('*')
         .eq('id', agent.id as string)
         .maybeSingle();
 
-      if (current && current.version !== agent.version) {
-        set({ isSaving: false });
-        // Version conflict — use window.confirm since Zustand stores cannot render UI
-        const overwrite = window.confirm(
-          `⚠️ Conflito de versão detectado!\n\nVocê está na versão ${agent.version}, mas o banco tem a versão ${current.version}.\nAlguém pode ter salvo mudanças depois de você.\n\nDeseja sobrescrever mesmo assim?`
-        );
-        if (!overwrite) return;
+      if (current) {
+        if (current.version !== agent.version) {
+          set({ isSaving: false });
+          const overwrite = window.confirm(
+            `⚠️ Conflito de versão detectado!\n\nVocê está na versão ${agent.version}, mas o banco tem a versão ${current.version}.\nAlguém pode ter salvo mudanças depois de você.\n\nDeseja sobrescrever mesmo assim?`
+          );
+          if (!overwrite) return;
+        }
+        
+        // Gera sumário automático se não houver customizado
+        if (!customSummary) {
+          const oldAgent = dbRowToAgent(current);
+          autoSummary = generateChangeSummary(oldAgent, agent);
+        }
       }
 
       // Bump version on update
@@ -170,6 +178,7 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
         .select('id')
         .single();
       error = e;
+      autoSummary = 'Criação inicial do agente';
       if (!e && data) {
         set((s) => ({ agent: { ...s.agent, id: data.id } }));
       }
