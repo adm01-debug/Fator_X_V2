@@ -340,7 +340,7 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
           // "Stale": existe versão local mais nova que a deste rollback.
           // Bloqueia o undo até o usuário recarregar e revisar.
           const stale = !!currentVersion && currentVersion.version > entry.versionNumber;
-          const canUndo = hasReference && !expired && !stale;
+          // const canUndo removido pois o onClick agora lida com stale separadamente.
           const isUndoingThis = undoMut.isPending && undoTarget?.versionId === entry.versionId;
           return (
             <li
