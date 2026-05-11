@@ -159,6 +159,24 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
   const [undoTarget, setUndoTarget] = useState<RestoreEntry | null>(null);
   const [filter, setFilter] = useState<"all" | "prompt" | "tools" | "model">("all");
 
+  // Re-uses overrides from a history entry for a NEW rollback
+  const handleReuseOverrides = (entry: RestoreEntry) => {
+    // This communicates with the parent (AgentDetailPage) via a custom event
+    // or we could just trigger the rollback dialog with pre-filled state.
+    // Since we are in the same component tree, we'll dispatch a custom event
+    // that AgentDetailPage can listen to, or better, we'll just show a toast
+    // with instructions for now if the parent state is hard to reach.
+    // BETTER: we'll add a state in AgentDetailPage to handle "Pending Overrides".
+    window.dispatchEvent(new CustomEvent('nexus:apply-rollback-overrides', { 
+      detail: { 
+        options: entry.meta.options,
+        configOverrides: entry.meta.config_overrides,
+        modelOverride: entry.meta.model_override
+      } 
+    }));
+    toast.info(`Configurações de v${entry.versionNumber} preparadas para um novo rollback.`);
+  };
+
   // versions vem ordenado do mais recente para o mais antigo. A versão
   // imediatamente posterior na lista (índice maior) é a "pré-rollback".
   const entries = useMemo<RestoreEntry[]>(() => {
