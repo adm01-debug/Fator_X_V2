@@ -4,16 +4,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  Brain, Wrench, ShieldAlert, Info, Wand2, Sparkles, Zap, LayoutTemplate, PenTool, Search, Loader2
+  Check, Loader2, Brain, Wrench, ShieldAlert, Info, Wand2, Sparkles, TrendingUp, Zap, LayoutTemplate, PenTool, Search, ChevronRight
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabaseExternal } from "@/integrations/supabase/externalClient";
