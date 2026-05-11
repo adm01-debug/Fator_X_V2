@@ -306,6 +306,15 @@ export function PromptModule() {
           ))}
         </div>
       </section>
+      {versionA && versionB && (
+        <PromptABTestDialog
+          open={abTestOpen}
+          onOpenChange={setAbTestOpen}
+          versionA={versionA}
+          versionB={versionB}
+          agentId={agent.id}
+        />
+      )}
     </div>
   );
 }
