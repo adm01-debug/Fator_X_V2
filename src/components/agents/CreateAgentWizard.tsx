@@ -84,7 +84,34 @@ export function CreateAgentWizard() {
   };
 
   const applyTemplate = (t: AgentTemplate) => {
-    toast.success(`Template ${t.name} ativado!`);
+    setMode("quick");
+    setMagicPreview({
+      name: t.name,
+      emoji: t.emoji,
+      mission: t.description,
+      type: t.type,
+      model: t.model,
+      system_prompt: t.prompt,
+      tools: t.tools.map(toolName => ({ name: toolName, enabled: true }))
+    });
+    // Auto-save as draft
+    saveDraftVersion({
+      agent: {
+        name: t.name,
+        mission: t.description,
+        persona: t.type as any,
+        model: t.model as any,
+        system_prompt: t.prompt,
+        avatar_emoji: t.emoji,
+        version: 1,
+        status: 'draft',
+        tags: t.tags || [],
+        tools: t.tools.map(tn => ({ name: tn, enabled: true })) as any
+      } as any,
+      label: `Blueprint: ${t.name}`,
+      note: 'Auto-salvamento após seleção de blueprint.'
+    });
+    toast.success(`Template ${t.name} carregado no wizard!`);
     setIsTemplateModalOpen(false);
     setViewingTemplate(null);
   };
