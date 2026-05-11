@@ -3,22 +3,23 @@ import {
   Loader2,
   Sparkles,
   GitCompare,
-  CheckCircle2,
   XCircle,
   Trophy,
   Download,
   DollarSign,
   Hash,
-  Gauge,
   Activity,
   Zap,
+  Cpu,
+  Clock,
+  CheckCircle2,
+  Gauge,
   ChevronRight
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { invokeTracedFunction } from "@/services/llmGatewayService";
