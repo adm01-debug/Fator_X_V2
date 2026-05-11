@@ -32,7 +32,8 @@ export type QuickFix =
   | { kind: 'set-max-tokens'; value: number; label: string; description?: string }
   | { kind: 'clear-reasoning'; label: string; description?: string }
   | { kind: 'set-model'; value: string; label: string; description?: string }
-  | { kind: 'uncheck-tools-if-prompt-mentions'; label: string; description?: string };
+  | { kind: 'uncheck-tools-if-prompt-mentions'; label: string; description?: string }
+  | { kind: 'suggest-model'; value: string; label: string; description?: string };
 
 export interface ValidationIssue {
   /** ID estável — usado para keys de lista e para deduplicação. */
@@ -303,6 +304,7 @@ export function validateRestore(
         detail: 'A versão de origem não define um modelo. Restaurar deixaria o agente sem LLM configurado.',
         hint: 'Desmarque "Modelo & parâmetros" para manter o modelo atual.',
         quickFixes: [
+          { kind: 'suggest-model', value: 'gpt-4o', label: 'Usar GPT-4o (Padrão)', description: 'Define um modelo robusto para liberar o rollback.' },
           { kind: 'uncheck-model', label: 'Desmarcar Modelo & parâmetros', description: 'Preserva o modelo atual.' },
         ],
       });
@@ -314,6 +316,9 @@ export function validateRestore(
         group: 'model',
         title: 'Persona não definida',
         detail: 'O agente ficará sem persona após o restore — comportamento padrão será aplicado.',
+        quickFixes: [
+          { kind: 'set-model', value: mergedModel ?? '', label: 'Manter modelo', description: 'Garante que o modelo seja preservado mesmo sem persona.' }
+        ]
       });
     }
 
@@ -328,8 +333,8 @@ export function validateRestore(
           title: `Temperature inválida (${String(temp)})`,
           detail: 'Temperature precisa ser um número entre 0 e 2.',
           quickFixes: [
-            { kind: 'set-temperature', value: 0.7, label: 'Redefinir para 0.7', description: 'Valor padrão equilibrado.' },
-            { kind: 'set-temperature', value: 1, label: 'Redefinir para 1' },
+            { kind: 'set-temperature', value: 0.7, label: 'Redefinir temperature para 0.7', description: 'Valor padrão equilibrado.' },
+            { kind: 'set-temperature', value: 1, label: 'Redefinir temperature para 1' },
             { kind: 'uncheck-model', label: 'Desmarcar Modelo & parâmetros' },
           ],
         });
@@ -389,6 +394,9 @@ export function validateRestore(
           group: 'model',
           title: 'max_tokens próximo do teto',
           detail: `${mx} tokens está perto do limite (${caps.maxTokensCap}) — respostas longas podem ser truncadas e o custo cresce linearmente.`,
+          quickFixes: [
+            { kind: 'set-max-tokens', value: Math.floor(caps.maxTokensCap * 0.5), label: 'Reduzir para 50%', description: 'Define um limite mais seguro.' }
+          ]
         });
       }
     }
@@ -464,6 +472,9 @@ export function validateRestore(
         title: `Troca de provider (${curCaps.family} → ${caps.family})`,
         detail: 'Mudar de provider pode alterar drasticamente comportamento, custo e latência. Tokenização, formatos de tool-call e suporte a recursos diferem entre famílias.',
         hint: 'Considere rodar uma simulação antes de aplicar em produção.',
+        quickFixes: [
+          { kind: 'uncheck-model', label: 'Desmarcar Modelo & parâmetros', description: 'Mantém o modelo atual e evita troca de provider.' }
+        ]
       });
     }
   }

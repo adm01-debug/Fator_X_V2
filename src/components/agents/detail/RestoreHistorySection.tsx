@@ -300,15 +300,12 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
       queryClient.invalidateQueries({ queryKey: ["agent_versions", agentId] });
       queryClient.invalidateQueries({ queryKey: ["agent", agentId] });
       setUndoTarget(null);
-      const summary = summarizeRestoreOptions(entry.meta.options, {
-        config: entry.meta.config_overrides as any,
-        model: entry.meta.model_override
-      });
+      // summary unused after description change
+      const shortSummary = summarizeRestoreOptions(entry.meta.options);
       toast.success(
-        `Rollback desfeito — v${data.version} criada a partir de v${entry.preRollback?.version ?? entry.meta.restored_from_version}`,
+        `Desfazer rollback: ${shortSummary}`,
         {
-          // Resumo curto das opções restauradas (mesmas do rollback original).
-          description: summary.charAt(0).toUpperCase() + summary.slice(1) + ".",
+          description: `v${data.version} criada a partir de v${entry.preRollback?.version ?? entry.meta.restored_from_version}.`,
           action: {
             label: "Ver na timeline",
             onClick: () => navigate(`/agents/${agentId}/versions/v/${data.id}`),

@@ -306,9 +306,9 @@ function VersionHistory({ agentId }: { agentId: string }) {
       queryClient.invalidateQueries({ queryKey: ['agent', agentId] });
       setRollbackOpen(false);
       // Toast com ação para abrir a timeline já destacando a nova versão.
-      const summary = summarizeRestoreOptions(restoreOptions, fixOverrides);
-      toast.success(`Rollback concluído — v${data.version} criada a partir de v${previous!.version}`, {
-        description: summary.charAt(0).toUpperCase() + summary.slice(1) + ".",
+      const shortSummary = summarizeRestoreOptions(restoreOptions);
+      toast.success(`Rollback: ${shortSummary}`, {
+        description: `v${data.version} criada a partir de v${previous!.version}.`,
         action: {
           label: 'Ver na timeline',
           onClick: () => navigate(`/agents/${agentId}/versions/v/${data.id}`),
@@ -486,6 +486,7 @@ function VersionHistory({ agentId }: { agentId: string }) {
                           setFixOverrides((prev) => ({ ...prev, config: { ...prev.config, reasoning: null } }));
                           break;
                         case 'set-model':
+                        case 'suggest-model':
                           setFixOverrides((prev) => ({ ...prev, model: fix.value }));
                           break;
                       }
