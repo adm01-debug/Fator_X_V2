@@ -117,29 +117,35 @@ export default function KnowledgePage() {
             { label: 'Workflows', icon: Zap, path: '/workflows' },
           ]} />
 
-          <div className="nexus-card bg-card/50 backdrop-blur-sm border-border/40 p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-2">
-                <RefreshCcw className="h-4 w-4 text-primary animate-spin-slow" />
-                <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Workflow de Ingestão Neural</h3>
+          <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem] mb-10">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <RefreshCcw className="h-5 w-5 text-primary animate-spin-slow" />
+                </div>
+                <h3 className="text-xl font-heading font-black text-foreground">Fluxo de Ingestão Neural</h3>
               </div>
-              <Badge variant="secondary" className="text-[10px] font-mono">Parallel Execution: Active</Badge>
+              <Badge variant="secondary" className="bg-primary/5 text-primary border-none font-black text-[10px] uppercase tracking-widest px-3 py-1">Execution: Multi-Thread</Badge>
             </div>
             
-            <div className="relative">
-              <div className="absolute top-5 left-0 right-0 h-0.5 bg-border/30 hidden md:block" />
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 relative">
+            <div className="relative pt-4 pb-2">
+              <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-border/40 -translate-y-[22px] hidden md:block" />
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-8 relative">
                 {pipeline.map((step, i) => (
                   <div key={step.name} className="flex flex-col items-center group">
-                    <div className={`h-11 w-11 rounded-xl ${step.bg} flex items-center justify-center relative z-10 transition-all group-hover:scale-110 shadow-lg border border-border/20`}>
-                      <step.icon className={`h-5 w-5 ${step.color}`} />
-                      <div className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-background border border-border/40 flex items-center justify-center text-[10px] font-bold">
+                    <div className={cn(
+                      "h-14 w-14 rounded-2xl flex items-center justify-center relative z-10 transition-all duration-500",
+                      "bg-card border border-border/40 shadow-xl group-hover:scale-110 group-hover:border-primary/40",
+                      step.bg
+                    )}>
+                      <step.icon className={cn("h-6 w-6 transition-transform group-hover:rotate-6", step.color)} />
+                      <div className="absolute -top-2 -right-2 h-5 w-5 rounded-lg bg-background border border-border/40 flex items-center justify-center text-[10px] font-black shadow-sm">
                         {i + 1}
                       </div>
                     </div>
-                    <div className="mt-3 text-center">
-                      <p className="text-xs font-bold text-foreground">{step.name}</p>
-                      <p className="text-[10px] text-muted-foreground mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity">Pipeline Stage</p>
+                    <div className="mt-4 text-center">
+                      <p className="text-sm font-black text-foreground uppercase tracking-tight">{step.name}</p>
+                      <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest mt-1">Stage {i + 1}</p>
                     </div>
                   </div>
                 ))}
