@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import { getMaskedSecrets, saveWorkspaceSecret } from '@/services/llmGatewayService';
 import { getWorkspaceId } from '@/lib/agentService';
 import { Button } from '@/components/ui/button';
-import { Check, AlertTriangle, Loader2 } from 'lucide-react';
+import { Check, AlertTriangle, Loader2, ShieldCheck, Lock, ShieldAlert, Key } from 'lucide-react';
 
 const API_KEYS = [
   { key_name: 'hf_api_token', label: 'HuggingFace API Token', placeholder: 'hf_...', description: 'Para todos os 26 modelos HF: LLMs, RAG, NLP, Visão, Áudio, Guardrails e Geração de Imagens' },
@@ -67,9 +67,46 @@ export function SettingsModule() {
     }
   }
 
+  const configuredCount = Object.values(keys).filter(k => k.saved).length;
+  const securityHealth = (configuredCount / API_KEYS.length) * 100;
+
   return (
     <div className="space-y-8">
       <SectionTitle icon="⚙️" title="Configurações" subtitle="Preferências do workspace e API keys" />
+
+      {/* Security Health Summary */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="rounded-xl border border-border bg-card p-4 flex items-center gap-4">
+          <div className={cn(
+            "h-10 w-10 rounded-full flex items-center justify-center shrink-0",
+            securityHealth >= 80 ? "bg-nexus-emerald/10" : "bg-nexus-amber/10"
+          )}>
+            {securityHealth >= 80 ? <ShieldCheck className="h-5 w-5 text-nexus-emerald" /> : <ShieldAlert className="h-5 w-5 text-nexus-amber" />}
+          </div>
+          <div>
+            <p className="text-xs font-bold">Security Score: {securityHealth.toFixed(0)}%</p>
+            <p className="text-[10px] text-muted-foreground">Saúde das chaves de integração.</p>
+          </div>
+        </div>
+        <div className="rounded-xl border border-border bg-card p-4 flex items-center gap-4">
+          <div className="h-10 w-10 rounded-full bg-nexus-blue/10 flex items-center justify-center shrink-0">
+            <Lock className="h-5 w-5 text-nexus-blue" />
+          </div>
+          <div>
+            <p className="text-xs font-bold">AES-256 Storage</p>
+            <p className="text-[10px] text-muted-foreground">Chaves criptografadas no repouso.</p>
+          </div>
+        </div>
+        <div className="rounded-xl border border-border bg-card p-4 flex items-center gap-4">
+          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+            <Key className="h-5 w-5 text-primary" />
+          </div>
+          <div>
+            <p className="text-xs font-bold">{configuredCount} de {API_KEYS.length}</p>
+            <p className="text-[10px] text-muted-foreground">Integrações prontas para uso.</p>
+          </div>
+        </div>
+      </div>
 
       {/* API Keys */}
       <SectionTitle icon="🔑" title="API Keys" subtitle="Chaves de API para integrações (armazenadas de forma segura)" />
