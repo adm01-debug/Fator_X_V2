@@ -4,6 +4,7 @@ import { CollapsibleCard } from '../ui/CollapsibleCard';
 import { Button } from '@/components/ui/button';
 import { Plus, Trash2 } from 'lucide-react';
 import type { AgentTool, MCPServer, CustomAPI } from '@/types/agentTypes';
+import { ToolSuggestions } from './ToolSuggestions';
 
 const TOOL_CATEGORIES = [
   { id: 'data', label: '📊 Dados', description: 'Consultas, leitura de bancos e APIs de dados.' },
@@ -86,12 +87,22 @@ export function ToolsModule() {
     <div className="space-y-10">
       {/* Seção A — Ferramentas por Categoria */}
       <section>
-        <SectionTitle
-          icon="🔧"
-          title="Ferramentas"
-          subtitle="Capacidades que o agente pode usar durante a execução."
-          badge={<NexusBadge color="blue">{enabledTools} ativas</NexusBadge>}
-        />
+        <div className="flex items-center justify-between mb-2">
+          <SectionTitle
+            icon="🔧"
+            title="Ferramentas"
+            subtitle="Capacidades que o agente pode usar durante a execução."
+            badge={<NexusBadge color="blue">{enabledTools} ativas</NexusBadge>}
+          />
+          <ToolSuggestions 
+            mission={agent.mission || ''} 
+            onAdd={(s) => {
+              updateAgent({ 
+                tools: [...agent.tools, { ...DEFAULT_TOOL, ...s, id: crypto.randomUUID() }] 
+              });
+            }}
+          />
+        </div>
         <div className="space-y-3">
           {toolsByCategory.map((cat) => (
             <CollapsibleCard

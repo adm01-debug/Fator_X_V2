@@ -4,7 +4,7 @@ import { DEFAULT_AGENT, TABS } from '@/data/agentBuilderData';
 import { supabase } from '@/integrations/supabase/client';
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import { audit } from '@/lib/auditService';
-import { agentToDbRow, dbRowToAgent } from './agentBuilderHelpers';
+import { agentToDbRow, dbRowToAgent, generateChangeSummary } from './agentBuilderHelpers';
 
 export interface PlaygroundSeed {
   input: string;
@@ -35,7 +35,7 @@ interface AgentBuilderStore {
   resetAgent: () => void;
   loadAgent: (agent: AgentConfig) => void;
 
-  saveAgent: () => Promise<void>;
+  saveAgent: (summary?: string) => Promise<void>;
   loadAgentFromDB: (id: string) => Promise<void>;
   loadSavedAgents: () => Promise<void>;
   deleteAgent: (id: string) => Promise<void>;
@@ -123,7 +123,7 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
     }
   },
 
-  saveAgent: async () => {
+  saveAgent: async (customSummary?: string) => {
     set({ isSaving: true });
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
@@ -133,23 +133,31 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
 
     const agent = get().agent;
     const row = agentToDbRow(agent, user.id);
+    let autoSummary = '';
 
     let error;
     if (agent.id) {
-      // ═══ Optimistic locking: check version hasn't changed ═══
+      // ═══ Optimistic locking & Change Detection ═══
       const { data: current } = await supabaseExternal
         .from('agents')
-        .select('version, updated_at')
+        .select('*')
         .eq('id', agent.id as string)
         .maybeSingle();
 
-      if (current && current.version !== agent.version) {
-        set({ isSaving: false });
-        // Version conflict — use window.confirm since Zustand stores cannot render UI
-        const overwrite = window.confirm(
-          `⚠️ Conflito de versão detectado!\n\nVocê está na versão ${agent.version}, mas o banco tem a versão ${current.version}.\nAlguém pode ter salvo mudanças depois de você.\n\nDeseja sobrescrever mesmo assim?`
-        );
-        if (!overwrite) return;
+      if (current) {
+        if (current.version !== agent.version) {
+          set({ isSaving: false });
+          const overwrite = window.confirm(
+            `⚠️ Conflito de versão detectado!\n\nVocê está na versão ${agent.version}, mas o banco tem a versão ${current.version}.\nAlguém pode ter salvo mudanças depois de você.\n\nDeseja sobrescrever mesmo assim?`
+          );
+          if (!overwrite) return;
+        }
+        
+        // Gera sumário automático se não houver customizado
+        if (!customSummary) {
+          const oldAgent = dbRowToAgent(current);
+          autoSummary = generateChangeSummary(oldAgent, agent);
+        }
       }
 
       // Bump version on update
@@ -170,6 +178,7 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
         .select('id')
         .single();
       error = e;
+      autoSummary = 'Criação inicial do agente';
       if (!e && data) {
         set((s) => ({ agent: { ...s.agent, id: data.id } }));
       }
@@ -208,7 +217,7 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
           system_prompt: (row.config as Record<string, unknown>)?.system_prompt as string || '',
           model: savedAgent.model,
           created_by: user.id,
-          change_summary: `Save at ${now}`,
+          change_summary: customSummary || autoSummary || `Save at ${now}`,
           environment: savedAgent.status === 'production' ? 'production' : savedAgent.status === 'staging' ? 'staging' : 'development',
         }).then(() => {}, () => {}); // Ignore duplicate version errors
       }

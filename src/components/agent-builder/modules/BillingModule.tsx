@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react';
 import { SectionTitle, SliderField, InputField, ToggleField, ProgressBar } from '../ui';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
-import { LightBarChart, LightLineChart } from '@/components/charts';
+import { LightBarChart, LightLineChart, LightAreaChart } from '@/components/charts';
 import { useBillingData } from '@/hooks/useBillingData';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { listModelPrices, USD_TO_BRL, estimateTokens } from '@/lib/llmPricing';
+import { listModelPrices, USD_TO_BRL, estimateTokens, getModelPrice } from '@/lib/llmPricing';
 import { Calculator, TrendingDown, Zap } from 'lucide-react';
 
 // Real data from Supabase via useBillingData hook — no more mocks!
@@ -23,11 +23,17 @@ export function BillingModule() {
   const billing = useBillingData(agent.id);
   const [simInput, setSimInput] = useState('Olá, preciso de ajuda com meu pedido número 12345.');
   const [simMaxTokens, setSimMaxTokens] = useState(1000);
+  
+  // Traffic simulation states
+  const [dailyInteractions, setDailyInteractions] = useState(340);
+  const [monthlyGrowth, setMonthlyGrowth] = useState(10);
 
   const totalWeek = billing.totalWeek;
   const avgDaily = billing.avgDaily;
   const projectedMonth = billing.projectedMonth;
   const budgetUsed = agent.monthly_budget ? (projectedMonth / agent.monthly_budget) * 100 : 0;
+
+  const currentModelPrice = getModelPrice(agent.model);
 
   const simulation = useMemo(() => {
     const inputTokens = estimateTokens(simInput);
@@ -45,6 +51,26 @@ export function BillingModule() {
       })
       .sort((a, b) => a.costUsd - b.costUsd);
   }, [simInput, simMaxTokens]);
+
+  const trafficProjection = useMemo(() => {
+    const inputTokens = estimateTokens(simInput);
+    const outputTokens = Math.max(100, Math.floor(simMaxTokens * 0.6));
+    const costPerInteraction = (inputTokens / 1000) * currentModelPrice.input_per_1k + (outputTokens / 1000) * currentModelPrice.output_per_1k;
+    
+    const projection = [];
+    let currentTraffic = dailyInteractions * 30;
+    
+    for (let i = 1; i <= 3; i++) {
+      const monthlyCost = currentTraffic * costPerInteraction;
+      projection.push({
+        month: `Mês ${i}`,
+        cost: monthlyCost,
+        traffic: Math.round(currentTraffic),
+      });
+      currentTraffic *= (1 + monthlyGrowth / 100);
+    }
+    return projection;
+  }, [dailyInteractions, monthlyGrowth, currentModelPrice, simInput, simMaxTokens]);
 
   const cheapest = simulation[0];
   const fastest = [...simulation].sort((a, b) => a.avg_latency_ms - b.avg_latency_ms)[0];
@@ -240,8 +266,62 @@ export function BillingModule() {
         </div>
       </div>
 
-      {/* Projection */}
-      <SectionTitle icon="📈" title="Projeção" subtitle="Tendência baseada nos últimos 7 dias" />
+      {/* Traffic Simulation & 3-Month Forecast */}
+      <SectionTitle icon="📊" title="Simulação de Crescimento" subtitle="Projeção de custos baseada em volume de tráfego" />
+      <div className="rounded-xl border border-border bg-card p-6 space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <SliderField
+            label="Interações/dia (estimado)"
+            value={dailyInteractions}
+            onChange={setDailyInteractions}
+            min={10}
+            max={5000}
+            step={10}
+            unit=" req"
+          />
+          <SliderField
+            label="Crescimento mensal esperado (%)"
+            value={monthlyGrowth}
+            onChange={setMonthlyGrowth}
+            min={0}
+            max={200}
+            step={5}
+            unit="%"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {trafficProjection.map((p) => (
+            <div key={p.month} className="rounded-lg border border-border bg-muted/20 p-4">
+              <p className="text-xs text-muted-foreground font-medium uppercase">{p.month}</p>
+              <div className="flex items-end justify-between mt-1">
+                <div>
+                  <p className="text-xl font-bold">${p.cost.toFixed(0)}</p>
+                  <p className="text-[10px] text-muted-foreground">Custo estimado</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-semibold">{p.traffic.toLocaleString()} req</p>
+                  <p className="text-[10px] text-muted-foreground">Volume mensal</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="h-[200px] mt-4">
+          <LightAreaChart
+            data={trafficProjection}
+            xKey="month"
+            series={[{ dataKey: 'cost', name: 'Custo Mensal', stroke: 'hsl(var(--nexus-yellow))' }]}
+            height={200}
+            yFormatter={(v: number) => `$${v}`}
+            tooltipFormatter={(v: number) => `$${v.toFixed(2)}`}
+          />
+        </div>
+      </div>
+
+      {/* Existing Projection */}
+      <SectionTitle icon="📈" title="Histórico de Tendência" subtitle="Uso real vs Tendência nos últimos 7 dias" />
       <div className="rounded-xl border border-border bg-card p-6">
         <p className="text-sm text-muted-foreground mb-4">
           Baseado no uso atual, projeção para o mês: <span className="text-foreground font-bold">${projectedMonth.toFixed(0)}</span>

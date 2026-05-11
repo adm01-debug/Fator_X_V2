@@ -4,10 +4,11 @@ import { SectionTitle, NexusBadge, InputField, TextAreaField } from '../ui';
 import { CollapsibleCard } from '../ui/CollapsibleCard';
 import { CodeBlock } from '../ui/CodeBlock';
 import { Button } from '@/components/ui/button';
-import { Plus, Trash2, Copy, GitBranch, Check, ArrowLeftRight } from 'lucide-react';
+import { Plus, Trash2, Copy, GitBranch, Check, ArrowLeftRight, Play } from 'lucide-react';
 import { toast } from 'sonner';
 import type { PromptTechnique, FewShotExample, OutputFormat } from '@/types/agentTypes';
 import { PromptDiff } from '@/components/prompts/PromptDiff';
+import { PromptABTestDialog } from './PromptABTestDialog';
 
 const PROMPT_TECHNIQUES: { id: string; name: string; impact: string; description: string; example: string }[] = [
   { id: 'role', name: 'Role Prompting', impact: 'Alto', description: 'Define quem o agente É', example: 'Você é um especialista em...' },
@@ -35,6 +36,7 @@ export function PromptModule() {
   const { agent, updateAgent, promptVersions, savePromptVersion, activatePromptVersion } = useAgentBuilderStore();
   const [versionSummary, setVersionSummary] = useState('');
   const [diffMode, setDiffMode] = useState(false);
+  const [abTestOpen, setAbTestOpen] = useState(false);
   const [diffVersionA, setDiffVersionA] = useState<string | null>(null);
   const [diffVersionB, setDiffVersionB] = useState<string | null>(null);
 
@@ -164,9 +166,21 @@ export function PromptModule() {
           {/* Diff Mode */}
           {promptVersions.length >= 2 && (
             <div className="border-t border-border pt-4 space-y-3">
-              <Button variant="outline" size="sm" onClick={() => setDiffMode(!diffMode)}>
-                <ArrowLeftRight className="h-3.5 w-3.5 mr-1" /> {diffMode ? 'Fechar Comparação' : 'Comparar Versões'}
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" onClick={() => setDiffMode(!diffMode)}>
+                  <ArrowLeftRight className="h-3.5 w-3.5 mr-1" /> {diffMode ? 'Fechar Comparação' : 'Comparar Versões'}
+                </Button>
+                {diffMode && diffVersionA && diffVersionB && (
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => setAbTestOpen(true)}
+                    className="border-nexus-amber/40 text-nexus-amber hover:bg-nexus-amber/10"
+                  >
+                    <Play className="h-3.5 w-3.5 mr-1" /> Iniciar Arena A/B
+                  </Button>
+                )}
+              </div>
               {diffMode && (
                 <div className="space-y-3">
                   <div className="grid grid-cols-2 gap-3">
@@ -292,6 +306,15 @@ export function PromptModule() {
           ))}
         </div>
       </section>
+      {versionA && versionB && (
+        <PromptABTestDialog
+          open={abTestOpen}
+          onOpenChange={setAbTestOpen}
+          versionA={versionA}
+          versionB={versionB}
+          agentId={agent.id}
+        />
+      )}
     </div>
   );
 }
