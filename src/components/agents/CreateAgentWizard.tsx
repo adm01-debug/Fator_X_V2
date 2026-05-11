@@ -85,14 +85,22 @@ export function CreateAgentWizard() {
   };
 
   const applyTemplate = (t: AgentTemplate) => {
+    // Map template model to wizard allowed models
+    const modelMap: Record<string, string> = {
+      'claude-sonnet-4-6': 'claude-3.5-sonnet',
+      'claude-haiku-4-5-20251001': 'claude-3.5-sonnet',
+      'claude-opus-4.6': 'claude-3-opus'
+    };
+    const mappedModel = modelMap[t.model] || 'gpt-4o';
+
     setMode("quick");
     setMagicPreview({
       name: t.name,
       emoji: t.emoji,
       mission: t.description,
       type: t.type,
-      model: t.model,
-      system_prompt: t.prompt,
+      model: mappedModel,
+      system_prompt: t.prompt.includes('## Persona') ? t.prompt : `## Persona\n${t.prompt}\n\n## Escopo\nAtuar conforme a descrição do blueprint.\n\n## Formato\nTexto estruturado.\n\n## Regras\nSeguir diretrizes da empresa.`,
       tools: t.tools.map(toolName => ({ name: toolName, enabled: true }))
     });
     // Auto-save as draft
@@ -101,7 +109,7 @@ export function CreateAgentWizard() {
         name: t.name,
         mission: t.description,
         persona: t.type as any,
-        model: t.model as any,
+        model: mappedModel as any,
         system_prompt: t.prompt,
         avatar_emoji: t.emoji,
         version: 1,
