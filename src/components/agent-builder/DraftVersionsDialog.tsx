@@ -129,7 +129,54 @@ export function DraftVersionsDialog({ open, onOpenChange }: DraftVersionsDialogP
     setForceSave(false);
     refresh();
   };
-...
+
+  const handleResume = (d: DraftVersion) => {
+    loadAgent(d.snapshot);
+    toast({ title: 'Rascunho restaurado', description: d.label });
+    onOpenChange(false);
+  };
+
+  const handleDiscard = (d: DraftVersion) => {
+    deleteDraftVersion(d.id);
+    toast({ title: 'Rascunho descartado', description: d.label });
+    refresh();
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <FileClock className="h-5 w-5 text-primary" aria-hidden />
+            Rascunhos de versão
+          </DialogTitle>
+          <DialogDescription>
+            Snapshots locais (não persistidos no servidor) da configuração atual do agente. Útil para experimentar mudanças sem perder o ponto de partida.
+          </DialogDescription>
+        </DialogHeader>
+
+        {/* Save form */}
+        <div className="space-y-2 nexus-card !p-3 border-primary/30 bg-primary/5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-foreground">Salvar estado atual</span>
+            <Badge variant="outline" className="text-[10px]">local</Badge>
+          </div>
+          <Input
+            placeholder='Ex: "Antes de trocar o prompt"'
+            value={label}
+            onChange={(e) => setLabel(e.target.value)}
+            className="h-8 text-xs"
+            aria-label="Título do rascunho"
+          />
+          <Textarea
+            placeholder="Anotação opcional (o que você está testando?)"
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            rows={2}
+            className="text-xs resize-none"
+            aria-label="Anotação"
+          />
+
           <VersionValidationPanel result={validation} onFix={handleFix} />
 
           <div className="flex justify-end gap-2">
