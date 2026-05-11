@@ -393,6 +393,9 @@ export function validateRestore(
           group: 'model',
           title: 'max_tokens próximo do teto',
           detail: `${mx} tokens está perto do limite (${caps.maxTokensCap}) — respostas longas podem ser truncadas e o custo cresce linearmente.`,
+          quickFixes: [
+            { kind: 'set-max-tokens', value: Math.floor(caps.maxTokensCap * 0.5), label: 'Reduzir para 50%', description: 'Define um limite mais seguro.' }
+          ]
         });
       }
     }
