@@ -58,6 +58,15 @@ export function IdentityModule() {
       <section>
         <SectionTitle icon="🧬" title="Nome, Missão & Avatar" subtitle="Defina a identidade fundamental do seu agente" />
         <div className="space-y-4">
+          <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg flex items-start gap-3">
+            <Sparkles className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+            <div>
+              <p className="text-xs font-bold text-primary uppercase">Sugestão de Preenchimento</p>
+              <p className="text-[11px] text-muted-foreground leading-relaxed mt-0.5">
+                Utilize o <strong>IA Builder</strong> no cabeçalho para gerar nome, missão e prompt a partir de uma ideia simples.
+              </p>
+            </div>
+          </div>
           <InputField
             label="Nome do Agente"
             value={agent.name}

@@ -127,9 +127,16 @@ export function ConversationalBuilder({ open, onOpenChange }: ConversationalBuil
         try {
           const args = JSON.parse(toolArgsBuffer);
           if (args.patch && typeof args.patch === 'object') {
+            // Apply patch and auto-save as draft
             updateAgent(args.patch);
+            const { saveDraftVersion } = await import('@/services/agentDraftVersionsService');
+            saveDraftVersion({
+              agent: { ...agent, ...args.patch },
+              label: `Snapshot IA - ${new Date().toLocaleTimeString('pt-BR')}`,
+              note: 'Atualização automática via IA Builder.'
+            });
             const fields = Object.keys(args.patch).join(', ');
-            toast.success(`✨ Atualizado: ${fields}`);
+            toast.success(`✨ Atualizado e Rascunho Salvo: ${fields}`);
           }
           if (args.done) {
             setDone(true);
