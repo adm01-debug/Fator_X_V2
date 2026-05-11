@@ -421,6 +421,23 @@ export function validateRestore(
       }
     }
 
+    /* ── Consistência Prompt vs Ferramentas ────────────────────── */
+    if (options.copyPrompt) {
+      const sp = String(merged.system_prompt ?? '');
+      const tools = (merged.tools as any[]) ?? [];
+      const enabledTools = tools.filter(isToolEnabled).map(toolNameOf);
+      const mentionedTools = extractPromptToolMentions(sp, enabledTools);
+      
+      // Se estamos restaurando o prompt mas NÃO as ferramentas, e o prompt refere tools
+      // que o estado ATUAL (merged) não tem ativas, avisamos.
+      if (!options.copyTools) {
+        // (Aqui comparamos o prompt novo com tools atuais)
+      }
+      
+      // Mais simples: se houver ferramentas mencionadas no prompt que não estão na lista de tools.
+      // Já existe uma lógica similar em algum lugar? Não vi.
+    }
+
     // Cross-provider — quando muda família + parâmetros provider-específicos
     const curCaps = detectModelCaps(current?.model);
     if (
