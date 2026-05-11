@@ -118,6 +118,7 @@ function countPromptWords(text: string): number {
 
 interface QuickCreateWizardProps {
   onBack: () => void;
+  initialData?: Partial<QuickAgentForm>;
 }
 
 // Parse síncrono dos params rf_* — usado para hidratar o estado inicial
