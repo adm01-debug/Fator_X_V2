@@ -32,7 +32,6 @@ import {
   Trash2,
   Cpu,
   Zap,
-  Shield,
   Activity,
   Network,
   Puzzle,
