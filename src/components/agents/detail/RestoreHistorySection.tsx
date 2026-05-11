@@ -166,6 +166,12 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
     versions.forEach((v, idx) => {
       const meta = extractRestoreMeta(v);
       if (!meta) return;
+      
+      // Aplicar filtro
+      if (filter === "prompt" && !meta.options.copyPrompt) return;
+      if (filter === "tools" && !meta.options.copyTools) return;
+      if (filter === "model" && !meta.options.copyModel) return;
+
       result.push({
         versionId: v.id,
         versionNumber: v.version,
@@ -177,7 +183,7 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
     return result.sort(
       (a, b) => new Date(b.meta.restored_at).getTime() - new Date(a.meta.restored_at).getTime(),
     );
-  }, [versions]);
+  }, [versions, filter]);
 
   // A "versão atual" é sempre a primeira (mais recente) — usada como base do
   // merge ao desfazer, garantindo que campos não restaurados sejam preservados.
