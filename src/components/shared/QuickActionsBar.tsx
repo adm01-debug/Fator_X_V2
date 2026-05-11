@@ -19,7 +19,7 @@ export function QuickActionsBar({ actions }: QuickActionsBarProps) {
   if (actions.length === 0) return null;
 
   return (
-    <div className="flex items-center gap-2 flex-wrap" role="toolbar" aria-label="Ações rápidas">
+    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-8" role="toolbar" aria-label="Ações rápidas">
       {actions.map((action) => {
         const Icon = action.icon;
         const isPrimary = action.variant === 'primary';
@@ -30,13 +30,15 @@ export function QuickActionsBar({ actions }: QuickActionsBarProps) {
               if (action.onClick) action.onClick();
               else if (action.path) navigate(action.path);
             }}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all min-h-[32px] ${
+            className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl text-xs font-bold transition-all border shadow-sm group ${
               isPrimary
-                ? 'nexus-gradient-bg text-primary-foreground hover:opacity-90'
-                : 'border border-border/50 bg-card text-muted-foreground hover:text-foreground hover:border-primary/30 hover:bg-primary/5'
+                ? 'nexus-gradient-bg text-primary-foreground border-transparent hover:scale-[1.03] shadow-primary/20'
+                : 'bg-card text-foreground border-border/60 hover:border-primary/40 hover:bg-primary/5 hover:scale-[1.03]'
             }`}
           >
-            <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+            <div className={`p-2 rounded-xl transition-colors ${isPrimary ? 'bg-white/20' : 'bg-primary/10 text-primary group-hover:bg-primary/20'}`}>
+              <Icon className="h-5 w-5" aria-hidden="true" />
+            </div>
             {action.label}
           </button>
         );

@@ -79,12 +79,12 @@ export function SavedTestRunsPanel({ agentId, agentName }: Props) {
 
   return (
     <>
-      <div className="nexus-card">
-        <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-          <h3 className="text-sm font-heading font-semibold text-foreground flex items-center gap-2">
+      <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
+        <div className="flex items-center justify-between p-6 border-b border-border/50 flex-wrap gap-2 bg-secondary/5">
+          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
             <History className="h-4 w-4 text-primary" aria-hidden="true" />
-            Test Runs salvos
-            <span className="text-xs font-normal text-muted-foreground">({runs.length})</span>
+            Histórico de Testes & Simulações
+            <span className="text-[10px] bg-secondary px-1.5 py-0.5 rounded-full font-mono text-muted-foreground">{runs.length}</span>
           </h3>
           <div className="flex items-center gap-2">
             {compareIds.length > 0 && (
@@ -103,8 +103,8 @@ export function SavedTestRunsPanel({ agentId, agentName }: Props) {
             </Button>
           </div>
         </div>
-
-        <div className="rounded-lg border border-border/50 overflow-hidden">
+        <div className="p-6">
+        <div className="rounded-xl border border-border/50 overflow-hidden shadow-inner">
           <div className="max-h-[320px] overflow-y-auto">
             <table className="w-full text-xs">
               <thead className="bg-secondary/40 sticky top-0">
@@ -178,6 +178,7 @@ export function SavedTestRunsPanel({ agentId, agentName }: Props) {
         <p className="text-[10px] text-muted-foreground/70 mt-2">
           Marque até 2 runs nas caixas e clique em Comparar para ver as diferenças. Salvos localmente neste navegador.
         </p>
+      </div>
       </div>
 
       {/* Visualizar detalhes — reusa o diálogo de simulação em modo somente leitura */}

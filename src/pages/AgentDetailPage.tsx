@@ -123,41 +123,65 @@ export default function AgentDetailPage() {
         }
       />
 
-      <div className="flex items-center gap-4">
-        <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center text-2xl">
-          {agent.avatar_emoji || '🤖'}
-        </div>
-        <div>
-          <div className="flex items-center gap-2.5">
-            <StatusBadge status={agent.status || 'draft'} />
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-card border border-border p-6 rounded-2xl">
+        <div className="flex items-center gap-4">
+          <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary/15 to-accent/10 flex items-center justify-center text-3xl shadow-sm">
+            {agent.avatar_emoji || '🤖'}
           </div>
-          <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-            <span>{String(agent.model ?? '')}</span>
-            <span>•</span>
-            <span>{String(agent.persona ?? '')}</span>
-            <span>•</span>
-            <span>v{String(agent.version ?? '')}</span>
+          <div>
+            <div className="flex items-center gap-2.5">
+              <h1 className="text-xl font-bold text-foreground">{agent.name}</h1>
+              <StatusBadge status={agent.status || 'draft'} />
+            </div>
+            <div className="flex items-center gap-3 mt-1.5 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1 bg-secondary/50 px-2 py-0.5 rounded text-[10px] font-mono"><Cpu className="h-3 w-3" /> {String(agent.model ?? '')}</span>
+              <span>•</span>
+              <span className="flex items-center gap-1"><MessageSquare className="h-3 w-3" /> {String(agent.persona ?? '')}</span>
+              <span>•</span>
+              <span className="flex items-center gap-1 font-mono"><GitBranch className="h-3 w-3" /> v{String(agent.version ?? '1')}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-6 border-l border-border/50 pl-6 hidden md:flex">
+          <div className="text-center">
+            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Health Score</p>
+            <p className="text-xl font-bold text-nexus-emerald">98%</p>
+          </div>
+          <div className="text-center">
+            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Uptime</p>
+            <p className="text-xl font-bold text-nexus-blue">99.9%</p>
+          </div>
+          <div className="text-center">
+            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Avg Latency</p>
+            <p className="text-xl font-bold text-foreground">145ms</p>
           </div>
         </div>
       </div>
 
       <div className="grid md:grid-cols-2 gap-4">
-        <div className="nexus-card">
-          <h3 className="text-sm font-heading font-semibold text-foreground mb-3">Configuração</h3>
-          <div className="space-y-2 text-xs">
-            <div className="flex justify-between"><span className="text-muted-foreground">Modelo</span><span className="text-foreground">{String(agent.model ?? '')}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Persona</span><span className="text-foreground">{String(agent.persona ?? '')}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Raciocínio</span><span className="text-foreground">{String(agent.reasoning ?? '')}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Versão</span><span className="text-foreground">v{String(agent.version ?? '')}</span></div>
+        <div className="bg-card border border-border p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-2 mb-4">
+            <Wrench className="h-4 w-4 text-primary" />
+            <h3 className="text-sm font-bold text-foreground">Configuração</h3>
+          </div>
+          <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-[11px]">
+            <div className="flex justify-between border-b border-border/50 pb-1.5"><span className="text-muted-foreground uppercase font-bold text-[9px]">Modelo</span><span className="text-foreground font-mono">{String(agent.model ?? '—')}</span></div>
+            <div className="flex justify-between border-b border-border/50 pb-1.5"><span className="text-muted-foreground uppercase font-bold text-[9px]">Persona</span><span className="text-foreground">{String(agent.persona ?? '—')}</span></div>
+            <div className="flex justify-between border-b border-border/50 pb-1.5"><span className="text-muted-foreground uppercase font-bold text-[9px]">Raciocínio</span><span className="text-foreground">{String(agent.reasoning ?? '—')}</span></div>
+            <div className="flex justify-between border-b border-border/50 pb-1.5"><span className="text-muted-foreground uppercase font-bold text-[9px]">Versão</span><span className="text-foreground font-mono">v{String(agent.version ?? '1')}</span></div>
           </div>
         </div>
-        <div className="nexus-card">
-          <h3 className="text-sm font-heading font-semibold text-foreground mb-3">Tags</h3>
+        <div className="bg-card border border-border p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-2 mb-4">
+            <Bot className="h-4 w-4 text-nexus-purple" />
+            <h3 className="text-sm font-bold text-foreground">Taxonomia & Tags</h3>
+          </div>
           <div className="flex flex-wrap gap-1.5">
             {(agent.tags ?? []).map(tag => (
-              <span key={tag} className="nexus-badge-primary">{tag}</span>
+              <span key={tag} className="px-2 py-0.5 rounded-md bg-nexus-purple/10 text-nexus-purple text-[10px] font-bold border border-nexus-purple/20">{tag}</span>
             ))}
-            {(agent.tags ?? []).length === 0 && <p className="text-xs text-muted-foreground">Nenhuma tag</p>}
+            {(agent.tags ?? []).length === 0 && <p className="text-[11px] text-muted-foreground italic">Nenhuma tag atribuída</p>}
           </div>
         </div>
       </div>

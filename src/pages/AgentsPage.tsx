@@ -1,5 +1,6 @@
 import { logger } from '@/lib/logger';
-import { PageHeader } from "@/components/shared/PageHeader";
+
+import { Badge } from "@/components/ui/badge";
 import { QuickActionsBar } from "@/components/shared/QuickActionsBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -182,31 +183,42 @@ export default function AgentsPage() {
 
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
-      <PageHeader
-        title="Agentes"
-        description="Gerencie seus agentes de IA — crie, configure e monitore"
-        actions={
+      <div className="bg-card border border-border p-8 rounded-3xl shadow-sm mb-8 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/[0.03] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative">
+          <div className="flex items-center gap-5">
+            <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/15 shadow-inner">
+              <Bot className="h-9 w-9 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-heading font-extrabold text-foreground tracking-tight">Agentes</h1>
+              <p className="text-sm text-muted-foreground max-w-md">Gerencie sua força de trabalho digital — da criação ao monitoramento</p>
+            </div>
+          </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="gap-1.5" onClick={() => fileInputRef.current?.click()}>
-              <Upload className="h-3.5 w-3.5" /> Importar
+            <Button variant="outline" size="sm" className="gap-1.5 h-10 rounded-xl" onClick={() => fileInputRef.current?.click()}>
+              <Upload className="h-4 w-4" /> Importar
             </Button>
             <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={handleImport} />
-            <Button variant="outline" size="sm" className="gap-1.5" onClick={() => navigate('/agents/templates')}>
-              <BookOpen className="h-3.5 w-3.5" /> Templates
+            <Button variant="outline" size="sm" className="gap-1.5 h-10 rounded-xl" onClick={() => navigate('/agents/templates')}>
+              <BookOpen className="h-4 w-4" /> Templates
             </Button>
             <AccessControl permission="agents.create">
-              <Button onClick={() => navigate('/agents/new')} className="nexus-gradient-bg text-primary-foreground gap-2 hover:opacity-90">
-                <Plus className="h-4 w-4" /> Criar agente
+              <Button onClick={() => navigate('/agents/new')} className="nexus-gradient-bg text-primary-foreground gap-2 h-10 px-5 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all">
+                <Plus className="h-5 w-5" /> Criar agente
               </Button>
             </AccessControl>
           </div>
-        }
-      />
+        </div>
+      </div>
 
       <QuickActionsBar actions={[
         { label: 'Conhecimento', icon: BookOpen, path: '/knowledge' },
         { label: 'Workflows', icon: GitBranch, path: '/workflows' },
         { label: 'Monitoramento', icon: Activity, path: '/monitoring' },
+        { label: 'Voz & Áudio', icon: Bot, path: '/voice-agents' },
+        { label: 'Visão Computacional', icon: Search, path: '/vision' },
+        { label: 'Templates', icon: BookOpen, path: '/agents/templates' },
       ]} />
 
       {/* Bulk Actions Bar */}
@@ -247,26 +259,32 @@ export default function AgentsPage() {
         </div>
       )}
 
-      <div className="flex items-center gap-3">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Buscar agentes..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 bg-secondary/50 border-border/50" />
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+          Sua Frota de Agentes
+          <Badge variant="secondary" className="font-mono text-[10px]">{sorted.length}</Badge>
+        </h2>
+        <div className="flex items-center gap-3">
+          <div className="relative w-full md:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input placeholder="Buscar por nome ou tag..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 h-10 rounded-xl bg-card border-border shadow-sm focus:ring-primary" />
+          </div>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-[160px] h-10 rounded-xl bg-card border-border shadow-sm">
+              <Filter className="h-3.5 w-3.5 mr-2 text-muted-foreground" />
+              <SelectValue placeholder="Filtrar Status" />
+            </SelectTrigger>
+            <SelectContent className="rounded-xl">
+              <SelectItem value="all">Todos os Status</SelectItem>
+              <SelectItem value="draft">Rascunho</SelectItem>
+              <SelectItem value="configured">Configurado</SelectItem>
+              <SelectItem value="testing">Testando</SelectItem>
+              <SelectItem value="staging">Staging</SelectItem>
+              <SelectItem value="production">Produção</SelectItem>
+              <SelectItem value="archived">Arquivado</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[160px] bg-secondary/50 border-border/50">
-            <Filter className="h-3.5 w-3.5 mr-2 text-muted-foreground" />
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todos</SelectItem>
-            <SelectItem value="draft">Rascunho</SelectItem>
-            <SelectItem value="configured">Configurado</SelectItem>
-            <SelectItem value="testing">Testando</SelectItem>
-            <SelectItem value="staging">Staging</SelectItem>
-            <SelectItem value="production">Produção</SelectItem>
-            <SelectItem value="archived">Arquivado</SelectItem>
-          </SelectContent>
-        </Select>
       </div>
 
       {isLoading ? (

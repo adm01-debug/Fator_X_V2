@@ -105,23 +105,24 @@ export function KPIDeepInsightsPanel({ daily, traces, agentName }: Props) {
 
   return (
     <div
-      className="nexus-card relative overflow-hidden"
+      className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden relative"
       role="region"
       aria-label="Insights detalhados por KPI"
     >
       <div className="absolute top-0 right-0 w-40 h-40 bg-primary/[0.04] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" aria-hidden />
 
-      <div className="flex items-center justify-between gap-3 mb-4 relative flex-wrap">
-        <div className="flex items-center gap-2">
-          <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center">
-            <Lightbulb className="h-3.5 w-3.5 text-primary" aria-hidden />
+      <div className="flex items-center justify-between gap-3 p-6 border-b border-border/50 relative flex-wrap bg-secondary/10">
+        <div className="flex items-center gap-3">
+          <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/15 shadow-inner">
+            <Lightbulb className="h-4 w-4 text-primary" aria-hidden />
           </div>
           <div>
-            <h3 className="text-sm font-heading font-semibold text-foreground">
-              Insights detalhados por KPI
+            <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5">
+              Insights de Inteligência Operacional
+              <Sparkles className="h-3 w-3 text-primary animate-pulse" />
             </h3>
             <p className="text-[11px] text-muted-foreground">
-              O que provavelmente causou o delta nos últimos {windowLabel}
+              Diagnóstico causal dos desvios de performance nos últimos {windowLabel}
             </p>
           </div>
         </div>
@@ -253,8 +254,9 @@ export function KPIDeepInsightsPanel({ daily, traces, agentName }: Props) {
         </div>
       </div>
 
+      <div className="p-6">
       {/* KPI selector tabs */}
-      <div role="tablist" aria-label="KPIs" className="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-4">
+      <div role="tablist" aria-label="KPIs" className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
         {insights.map((i) => {
           const Icon = KPI_ICON[i.key];
           const active = i.key === activeKey;
@@ -383,6 +385,7 @@ export function KPIDeepInsightsPanel({ daily, traces, agentName }: Props) {
             </p>
           </div>
         )}
+      </div>
       </div>
     </div>
   );
