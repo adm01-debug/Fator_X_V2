@@ -314,8 +314,8 @@ export function BillingModule() {
             xKey="month"
             series={[{ dataKey: 'cost', name: 'Custo Mensal', stroke: 'hsl(var(--nexus-yellow))' }]}
             height={200}
-            yFormatter={(v) => `$${v}`}
-            tooltipFormatter={(v) => `$${Number(v).toFixed(2)}`}
+            yFormatter={(v: number) => `$${v}`}
+            tooltipFormatter={(v: number) => `$${v.toFixed(2)}`}
           />
         </div>
       </div>
