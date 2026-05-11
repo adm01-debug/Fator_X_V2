@@ -15,6 +15,14 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { AGENT_TEMPLATES, type AgentTemplate } from "@/data/agentTemplates";
 import { saveAgent } from "@/lib/agentService";
 import type { AgentConfig } from "@/types/agentTypes";
@@ -51,6 +59,7 @@ export default function AgentTemplatesPage() {
   const { user } = useAuth();
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string>(ALL);
+  const [selectedTemplateForDetail, setSelectedTemplateForDetail] = useState<AgentTemplate | null>(null);
 
   const categories = useMemo(() => {
     const counts: Record<string, number> = { [ALL]: AGENT_TEMPLATES.length };
@@ -169,6 +178,7 @@ export default function AgentTemplatesPage() {
             <Card
               key={t.id}
               className="nexus-card p-6 flex flex-col group cursor-pointer hover:border-primary/40 transition-all border-border/50 bg-card/80 backdrop-blur-sm shadow-sm"
+              onClick={() => setSelectedTemplateForDetail(t)}
               style={{ animationDelay: `${i * 40}ms` }}
             >
               <div className="flex items-start justify-between mb-4">
@@ -237,24 +247,134 @@ export default function AgentTemplatesPage() {
               )}
 
               <Button
-                onClick={() => forkMutation.mutate(t)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedTemplateForDetail(t);
+                }}
                 disabled={forkMutation.isPending}
                 className="w-full nexus-gradient-bg text-primary-foreground gap-2 h-11 rounded-xl shadow-lg shadow-primary/10 hover:scale-[1.02] transition-all font-bold"
                 size="sm"
               >
-                {forkMutation.isPending && forkMutation.variables?.id === t.id ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Rocket className="h-4 w-4" />
-                )}
-                {forkMutation.isPending && forkMutation.variables?.id === t.id
-                  ? "Provisionando..."
-                  : "Ativar Blueprint"}
+                <Rocket className="h-4 w-4" />
+                Ver Detalhes
               </Button>
             </Card>
           ))}
         </div>
       )}
+
+      <Dialog open={!!selectedTemplateForDetail} onOpenChange={(open) => !open && setSelectedTemplateForDetail(null)}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          {selectedTemplateForDetail && (
+            <>
+              <DialogHeader className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center text-4xl shadow-inner border border-primary/10">
+                    {selectedTemplateForDetail.emoji}
+                  </div>
+                  <div className="text-left">
+                    <DialogTitle className="text-2xl font-bold">{selectedTemplateForDetail.name}</DialogTitle>
+                    <DialogDescription className="flex items-center gap-2 mt-1">
+                      <Badge variant="outline" className="text-[10px] font-bold uppercase">{selectedTemplateForDetail.category}</Badge>
+                      <span className="text-xs text-muted-foreground">• {selectedTemplateForDetail.config.model}</span>
+                    </DialogDescription>
+                  </div>
+                </div>
+              </DialogHeader>
+
+              <div className="grid gap-6 py-6 md:grid-cols-2">
+                <div className="space-y-6">
+                  <div className="space-y-3">
+                    <h4 className="text-sm font-bold flex items-center gap-2 text-foreground">
+                      <LayoutTemplate className="h-4 w-4 text-primary" />
+                      Configuração do Blueprint
+                    </h4>
+                    <div className="bg-secondary/30 rounded-xl p-4 border border-border/50 space-y-4">
+                      <div>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Prompt do Sistema</p>
+                        <p className="text-xs text-muted-foreground line-clamp-4 italic bg-background/50 p-2 rounded border border-border/30">
+                          {selectedTemplateForDetail.config.system_prompt}
+                        </p>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Temperatura</p>
+                          <p className="text-sm font-mono font-bold text-primary">{selectedTemplateForDetail.config.temperature}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Ferramentas</p>
+                          <p className="text-sm font-bold text-foreground">{selectedTemplateForDetail.config.tools.length}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h4 className="text-sm font-bold flex items-center gap-2 text-foreground">
+                      <Check className="h-4 w-4 text-nexus-emerald" />
+                      Recomendações de Uso
+                    </h4>
+                    <ul className="space-y-2">
+                      <li className="text-xs text-muted-foreground flex items-start gap-2">
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
+                        Ideal para fluxos de {selectedTemplateForDetail.category.toLowerCase()} com alto volume.
+                      </li>
+                      <li className="text-xs text-muted-foreground flex items-start gap-2">
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
+                        Integre com bases de conhecimento para respostas mais precisas.
+                      </li>
+                      <li className="text-xs text-muted-foreground flex items-start gap-2">
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
+                        Acompanhe os logs de execução nas primeiras 24h.
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="space-y-3">
+                    <h4 className="text-sm font-bold flex items-center gap-2 text-foreground">
+                      <Rocket className="h-4 w-4 text-nexus-purple" />
+                      Impacto Esperado
+                    </h4>
+                    <div className="grid grid-cols-1 gap-3">
+                      <div className="p-3 bg-nexus-emerald/5 border border-nexus-emerald/10 rounded-xl">
+                        <p className="text-[10px] font-bold text-nexus-emerald uppercase mb-1">Produtividade</p>
+                        <p className="text-lg font-bold text-foreground">+45% <span className="text-xs font-normal text-muted-foreground">de eficiência operacional</span></p>
+                      </div>
+                      <div className="p-3 bg-primary/5 border border-primary/10 rounded-xl">
+                        <p className="text-[10px] font-bold text-primary uppercase mb-1">Tempo de Resposta</p>
+                        <p className="text-lg font-bold text-foreground">-60% <span className="text-xs font-normal text-muted-foreground">de latência média</span></p>
+                      </div>
+                      <div className="p-3 bg-nexus-amber/5 border border-nexus-amber/10 rounded-xl">
+                        <p className="text-[10px] font-bold text-nexus-amber uppercase mb-1">Custo-Benefício</p>
+                        <p className="text-lg font-bold text-foreground">Excelente <span className="text-xs font-normal text-muted-foreground">em modelos {selectedTemplateForDetail.config.model.includes('4') ? 'Large' : 'Small'}</span></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <DialogFooter className="flex-col sm:flex-row gap-3">
+                <Button variant="outline" onClick={() => setSelectedTemplateForDetail(null)} className="flex-1 h-12 rounded-xl">
+                  Cancelar
+                </Button>
+                <Button 
+                  onClick={() => {
+                    forkMutation.mutate(selectedTemplateForDetail);
+                    setSelectedTemplateForDetail(null);
+                  }}
+                  disabled={forkMutation.isPending}
+                  className="flex-[2] h-12 nexus-gradient-bg text-primary-foreground gap-2 rounded-xl shadow-xl shadow-primary/20 font-bold"
+                >
+                  {forkMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Rocket className="h-4 w-4" />}
+                  Ativar e Criar Rascunho
+                </Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

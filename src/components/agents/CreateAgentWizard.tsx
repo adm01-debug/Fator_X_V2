@@ -35,6 +35,7 @@ export function CreateAgentWizard() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [magicIdea, setMagicIdea] = useState("");
   const [isGeneratingMagic, setIsGeneratingMagic] = useState(false);
+  const [magicPreview, setMagicPreview] = useState<any>(null);
 
   const categoryCount = useMemo(() => {
     const counts: Record<string, number> = { all: AGENT_TEMPLATES_LIST.length };
@@ -116,6 +117,7 @@ export function CreateAgentWizard() {
   const handleMagicCreate = async () => {
     if (!magicIdea.trim()) return;
     setIsGeneratingMagic(true);
+    setMagicPreview(null);
     try {
       // Simulação de IA gerando agente a partir de ideia
       await new Promise(resolve => setTimeout(resolve, 2000));
@@ -123,23 +125,70 @@ export function CreateAgentWizard() {
         name: `Agente ${magicIdea.split(' ')[0]}`,
         mission: `Auxiliar no processo de ${magicIdea} com foco em eficiência.`,
         type: 'chatbot',
-        prompt: `Você é um especialista em ${magicIdea}.\n\n## Missão\nSua missão é facilitar as tarefas relacionadas a ${magicIdea}...\n\n## Regras\n1. Seja sempre prestativo...`
+        model: 'gpt-4o',
+        prompt: `Você é um assistente especializado em ${magicIdea}.\n\n## Missão\nSua missão é facilitar as tarefas relacionadas a ${magicIdea} garantindo qualidade e agilidade.\n\n## Diretrizes\n1. Responda com clareza e precisão.\n2. Utilize o contexto fornecido para personalizar o atendimento.\n3. Siga as normas de segurança e privacidade da empresa.`,
+        tools: ['web_search', 'knowledge_base'],
+        memory: ['short_term', 'user_profile']
       };
-      setForm(prev => ({
-        ...prev,
-        name: mockResult.name,
-        description: mockResult.mission,
-        type: mockResult.type,
-        prompt: mockResult.prompt
-      }));
-      setMode("scratch");
-      setStep(0);
-      toast.success("IA estruturou seu agente!", { description: "Agora você pode refinar os detalhes." });
+      setMagicPreview(mockResult);
+      toast.success("IA estruturou seu agente!", { description: "Veja a prévia abaixo antes de prosseguir." });
     } catch {
       toast.error("Falha na geração mágica");
     } finally {
       setIsGeneratingMagic(false);
     }
+  };
+
+  const confirmMagicCreate = async () => {
+    if (!magicPreview) return;
+    
+    // Auto-fill form with generated values
+    setForm(prev => ({
+      ...prev,
+      name: magicPreview.name,
+      description: magicPreview.mission,
+      objective: magicPreview.mission,
+      type: magicPreview.type,
+      model: magicPreview.model,
+      prompt: magicPreview.prompt,
+      tools: magicPreview.tools,
+      memory: magicPreview.memory
+    }));
+
+    // Auto-save as draft if user is logged in
+    if (user) {
+      try {
+        const { data } = await supabaseExternal.from("agents").insert({
+          user_id: user.id,
+          name: magicPreview.name,
+          mission: magicPreview.mission,
+          persona: "assistant",
+          model: magicPreview.model,
+          avatar_emoji: "🪄",
+          status: "draft",
+          config: { 
+            type: magicPreview.type, 
+            prompt: magicPreview.prompt, 
+            tools: magicPreview.tools, 
+            memory: magicPreview.memory,
+            is_magic_draft: true
+          },
+        }).select('id').single();
+        
+        if (data?.id) {
+          toast.success("Rascunho salvo e versionado!");
+          navigate(`/builder/${data.id}`);
+          return;
+        }
+      } catch (e) {
+        console.error("Auto-save draft failed", e);
+      }
+    }
+
+    setMode("scratch");
+    setStep(0);
+    setMagicPreview(null);
+    setMagicIdea("");
   };
 
   const saveAgent = async () => {
@@ -204,6 +253,35 @@ export function CreateAgentWizard() {
               </Button>
             </div>
           </div>
+
+          {magicPreview && (
+            <div className="mt-8 p-6 bg-background/60 border border-primary/20 rounded-2xl animate-in fade-in slide-in-from-top-4 duration-500">
+              <div className="flex flex-col md:flex-row gap-6">
+                <div className="flex-1 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center text-xl">🪄</div>
+                    <div>
+                      <h4 className="font-bold text-foreground">{magicPreview.name}</h4>
+                      <p className="text-xs text-muted-foreground uppercase font-bold tracking-widest">{magicPreview.type} • {magicPreview.model}</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground italic leading-relaxed">"{magicPreview.mission}"</p>
+                  <div className="flex flex-wrap gap-2">
+                    {magicPreview.tools.map((t: string) => (
+                      <Badge key={t} variant="secondary" className="text-[10px] bg-primary/5 text-primary border-primary/10">{t}</Badge>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex items-end gap-3">
+                  <Button variant="ghost" size="sm" onClick={() => setMagicPreview(null)} className="h-10 px-4 rounded-xl text-muted-foreground">Descartar</Button>
+                  <Button onClick={confirmMagicCreate} className="nexus-gradient-bg text-primary-foreground h-10 px-6 rounded-xl shadow-lg shadow-primary/20 gap-2 font-bold">
+                    <Check className="h-4 w-4" />
+                    Finalizar e Editar
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </Card>
 
         <div className="grid gap-6 md:grid-cols-3">
