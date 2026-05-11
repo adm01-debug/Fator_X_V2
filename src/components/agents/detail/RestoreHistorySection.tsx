@@ -541,7 +541,7 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
                       }
                       setUndoTarget(entry);
                     }}
-                    disabled={isUndoingThis || (expired && !stale)}
+                    disabled={isUndoingThis || expired}
                     title={
                       expired
                         ? `Janela de ${UNDO_WINDOW_MS / 60000} min para desfazer expirou — restaure manualmente pelo gerenciador de versões`
