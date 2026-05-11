@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { 
   Search, BookOpen, ArrowRight, Database, Pencil, Trash2, Bot, 
   FileText, Activity, Layers, Zap, Shield, Filter, 
-  BarChart3, BrainCircuit, RefreshCcw, LayoutGrid, List, Radio, ShieldCheck, Globe
+  BarChart3, BrainCircuit, RefreshCcw, LayoutGrid, List, Radio, ShieldCheck, Globe,
+  Settings2, History, Terminal
 } from "lucide-react";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -17,12 +18,18 @@ import { KnowledgeBaseDetail } from "@/components/knowledge/KnowledgeBaseDetail"
 import { AudioUploadDialog } from "@/components/knowledge/AudioUploadDialog";
 import { DocOcrDialog } from "@/components/knowledge/DocOcrDialog";
 import { RagRerankTestDialog } from "@/components/knowledge/RagRerankTestDialog";
+import { IngestionLogsPanel } from "@/components/knowledge/IngestionLogsPanel";
+import { IngestionConfigPanel } from "@/components/knowledge/IngestionConfigPanel";
+import { VectorSearchResults } from "@/components/knowledge/VectorSearchResults";
+import { RagVersionControl } from "@/components/knowledge/RagVersionControl";
 import { AccessControl, DangerousActionDialog } from "@/components/rbac";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
+
 const pipeline = [
   { name: 'Parsing', icon: FileText, color: 'text-blue-500', bg: 'bg-blue-500/10' },
   { name: 'Chunking', icon: Layers, color: 'text-purple-500', bg: 'bg-purple-500/10' },
