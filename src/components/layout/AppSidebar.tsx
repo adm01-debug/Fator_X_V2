@@ -219,11 +219,11 @@ export function AppSidebar() {
                   aria-expanded={!isCollapsedSection}
                   aria-controls={`nav-section-${section.key}`}
                 >
-                  <SidebarGroupLabel className="text-[11px] uppercase tracking-wider text-muted-foreground/80 pointer-events-none p-0 h-auto font-semibold">
+                  <SidebarGroupLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 pointer-events-none p-0 h-auto">
                     {section.label}
                   </SidebarGroupLabel>
                   <ChevronDown
-                    className={`h-3 w-3 text-muted-foreground/50 transition-transform duration-200 ${isCollapsedSection ? '-rotate-90' : ''}`}
+                    className={`h-3 w-3 text-muted-foreground/40 transition-all duration-300 group-hover/label:text-primary ${isCollapsedSection ? '-rotate-90' : ''}`}
                     aria-hidden="true"
                   />
                 </button>
