@@ -347,6 +347,22 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
       </div>
 
       <ol className="space-y-2 max-h-[280px] overflow-y-auto">
+        {entries.length === 0 && (
+          <li className="flex flex-col items-center justify-center py-8 text-center bg-secondary/10 rounded-lg border border-dashed border-border/40">
+            <Clock className="h-6 w-6 text-muted-foreground/40 mb-2" />
+            <p className="text-xs text-muted-foreground">Nenhum rollback encontrado para este filtro.</p>
+            {filter !== "all" && (
+              <Button 
+                variant="link" 
+                size="sm" 
+                className="text-[10px] h-auto p-0 mt-1" 
+                onClick={() => setFilter("all")}
+              >
+                Limpar filtros
+              </Button>
+            )}
+          </li>
+        )}
         {entries.map((entry) => {
           const restoredAtMs = new Date(entry.meta.restored_at).getTime();
           const expiresAt = Number.isFinite(restoredAtMs) ? restoredAtMs + UNDO_WINDOW_MS : 0;
