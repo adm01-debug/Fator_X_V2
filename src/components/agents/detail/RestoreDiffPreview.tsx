@@ -95,6 +95,18 @@ function preview(v: unknown, max = 70): string {
 export function RestoreDiffPreview({ current, source, options }: Props) {
   const diff = useMemo(() => computeRestoreDiff(current, source, options), [current, source, options]);
 
+  // Track expanded state for prompt diffs
+  const [expandedPrompts, setExpandedPrompts] = useState<Set<string>>(new Set());
+
+  const togglePromptExpand = (field: string) => {
+    setExpandedPrompts(prev => {
+      const next = new Set(prev);
+      if (next.has(field)) next.delete(field);
+      else next.add(field);
+      return next;
+    });
+  };
+
   // Default: mostrar tudo. Usuário pode focar em alto/crítico para revisar
   // riscos primeiro, ou inverter para auditar mudanças cosméticas (médio/baixo).
   const [activeRisks, setActiveRisks] = useState<Set<RiskLevel>>(() => new Set(RISK_ORDER));
