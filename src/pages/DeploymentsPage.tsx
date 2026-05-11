@@ -1,13 +1,10 @@
 import { useState } from "react";
-import { useRetryAction } from "@/hooks/useRetryAction";
 import { CardGridSkeleton } from "@/components/shared/PageSkeleton";
 import { EmptyState } from "@/components/shared/EmptyState";
-import { PageHeader } from "@/components/shared/PageHeader";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Rocket, Link2, Copy, CheckCircle } from "lucide-react";
+import { Rocket, Copy, CheckCircle, Globe, Zap, Shield, Share2, Terminal, Code2, Layers, Cpu } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { listDeployedAgents } from "@/services/deploymentsService";
 import { toast } from "sonner";
@@ -15,62 +12,164 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { A2APanel } from '@/components/integrations/A2APanel';
 import { WebWidgetPanel } from '@/components/deployments/WebWidgetPanel';
 import { WhatsAppSendDialog } from '@/components/deployments/WhatsAppSendDialog';
+import { cn } from "@/lib/utils";
 
 export default function DeploymentsPage() {
-  // Retry engine for resilient operations
-  const retryEngine = useRetryAction(listDeployedAgents, { operationName: 'listDeployments', showErrorToast: true });
-  void retryEngine; // Available for manual retry on error states
   const { data: deployments = [], isLoading } = useQuery({
     queryKey: ['deployments'],
     queryFn: listDeployedAgents,
   });
 
   return (
-    <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
-      <PageHeader title="Implantações" description="Agentes em produção e staging" actions={<div className="flex gap-2"><WhatsAppSendDialog /><EndpointGeneratorButton /></div>} />
-
-      <WebWidgetPanel agentId={deployments[0]?.id} agentName={deployments[0]?.name} />
-
-      {isLoading ? (
-        <CardGridSkeleton count={6} cols={3} />
-      ) : deployments.length === 0 ? (
-        <EmptyState
-          icon={Rocket}
-          title="Nenhum agente deployado"
-          description="Mude o status de um agente para 'production' ou 'staging' no builder."
-          illustration="agents"
-        />
-      ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {deployments.map((dep: any) => (
-            <div key={dep.id} className="nexus-card">
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-2.5">
-                  <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-lg">{dep.emoji || '🤖'}</div>
-                  <div>
-                    <h3 className="text-sm font-semibold text-foreground">{dep.name}</h3>
-                    <p className="text-[11px] text-muted-foreground">{dep.version} • {dep.environment}</p>
-                  </div>
-                </div>
-                <StatusBadge status={dep.status || 'draft'} />
-              </div>
-              {dep.channels.length > 0 && (
-                <div className="flex flex-wrap gap-1 mt-2">
-                  {dep.channels.map((c: any) => (
-                    <span key={c.name} className={`text-[11px] px-2 py-0.5 rounded-full ${c.status === 'active' ? 'bg-nexus-emerald/10 text-nexus-emerald' : c.status === 'error' ? 'bg-destructive/10 text-destructive' : 'nexus-badge-primary'}`} title={c.error || `${c.messages} msgs`}>
-                      {c.name} {c.messages > 0 ? `(${c.messages})` : ''}
-                    </span>
-                  ))}
-                </div>
-              )}
-              <p className="text-[11px] text-muted-foreground mt-3">{new Date(dep.updated).toLocaleDateString('pt-BR')}</p>
+    <div className="p-6 sm:p-8 lg:p-10 space-y-10 max-w-[1440px] mx-auto animate-page-enter">
+      {/* Header Elevated 10/10 */}
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-xl shadow-primary/5 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/[0.06] transition-colors duration-500 pointer-events-none" />
+        
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative">
+          <div className="flex items-center gap-7">
+            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
+              <Rocket className="h-11 w-11 text-primary animate-float" />
             </div>
-          ))}
+            <div className="space-y-1">
+              <div className="flex items-center gap-3">
+                <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Implantações</h1>
+                <Badge className="bg-nexus-emerald/10 text-nexus-emerald border-none font-black px-3 py-1 rounded-full text-[10px] tracking-widest uppercase">Live Operations</Badge>
+              </div>
+              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+                Orquestre a distribuição global dos seus agentes. Gerencie canais, WebWidgets e endpoints de API em tempo real.
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <WhatsAppSendDialog />
+            <EndpointGeneratorButton />
+          </div>
         </div>
-      )}
+      </div>
 
-      {/* A2A Protocol */}
-      <A2APanel />
+      <div className="grid lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-8">
+          <WebWidgetPanel agentId={deployments[0]?.id} agentName={deployments[0]?.name} />
+          
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <Cpu className="h-5 w-5 text-primary" />
+                </div>
+                <h3 className="text-xl font-heading font-black text-foreground">Frota Ativa</h3>
+              </div>
+              <Badge variant="outline" className="h-8 px-4 rounded-xl text-xs font-bold border-border/40">{deployments.length} Ativos</Badge>
+            </div>
+
+            {isLoading ? (
+              <CardGridSkeleton count={6} cols={2} />
+            ) : deployments.length === 0 ? (
+              <EmptyState
+                icon={Rocket}
+                title="Centro de Operações Vazio"
+                description="Seus agentes aparecerão aqui assim que forem promovidos para Staging ou Produção no Builder."
+                illustration="agents"
+              />
+            ) : (
+              <div className="grid gap-6 md:grid-cols-2">
+                {deployments.map((dep: any) => (
+                  <div key={dep.id} className="nexus-card nexus-card-interactive group p-6 rounded-[2rem] bg-gradient-to-br from-card to-card/95 border-border/40 hover:border-primary/30 transition-all duration-500">
+                    <div className="flex items-start justify-between mb-5">
+                      <div className="flex items-center gap-4">
+                        <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center text-2xl shadow-sm border border-primary/10 group-hover:scale-105 transition-transform duration-300">
+                          {dep.emoji || '🤖'}
+                        </div>
+                        <div>
+                          <h3 className="text-base font-bold text-foreground group-hover:text-primary transition-colors">{dep.name}</h3>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{dep.environment}</span>
+                            <div className="h-1 w-1 rounded-full bg-border" />
+                            <span className="text-[10px] font-mono text-primary font-bold">v{dep.version}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <StatusBadge status={dep.status || 'draft'} />
+                    </div>
+
+                    <div className="space-y-4">
+                      {dep.channels.length > 0 ? (
+                        <div className="flex flex-wrap gap-2">
+                          {dep.channels.map((c: any) => (
+                            <Badge 
+                              key={c.name} 
+                              variant="secondary" 
+                              className={cn(
+                                "h-7 px-3 rounded-xl border-none font-bold text-[10px] tracking-tight transition-all",
+                                c.status === 'active' ? 'bg-nexus-emerald/10 text-nexus-emerald' : 'bg-muted text-muted-foreground'
+                              )}
+                            >
+                              <Share2 className="h-3 w-3 mr-1.5 opacity-60" />
+                              {c.name} {c.messages > 0 && <span className="ml-1 opacity-60">({c.messages})</span>}
+                            </Badge>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="h-7 flex items-center px-3 rounded-xl bg-muted/30 border border-dashed border-border/40">
+                          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Nenhum Canal Conectado</span>
+                        </div>
+                      )}
+
+                      <div className="flex items-center justify-between pt-4 border-t border-border/20">
+                        <div className="flex items-center gap-2">
+                          <Zap className="h-3.5 w-3.5 text-nexus-amber" />
+                          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Sincronizado há {new Date(dep.updated).toLocaleDateString('pt-BR')}</span>
+                        </div>
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-lg hover:bg-primary/10">
+                          <Terminal className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-8">
+          <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem]">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-10 w-10 rounded-xl bg-nexus-purple/10 flex items-center justify-center">
+                <Globe className="h-5 w-5 text-nexus-purple" />
+              </div>
+              <h3 className="text-xl font-heading font-black text-foreground">Orquestração A2A</h3>
+            </div>
+            <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
+              Protocolo Nexus Agent-to-Agent para comunicação inter-agentes em clusters distribuídos.
+            </p>
+            <A2APanel />
+          </div>
+
+          <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem]">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-10 w-10 rounded-xl bg-nexus-cyan/10 flex items-center justify-center">
+                <Shield className="h-5 w-5 text-nexus-cyan" />
+              </div>
+              <h3 className="text-xl font-heading font-black text-foreground">Status Operacional</h3>
+            </div>
+            <div className="space-y-4">
+              {[
+                { label: 'Gateway Neural', status: 'Online', color: 'text-nexus-emerald' },
+                { label: 'Cluster de Produção', status: 'Sincronizado', color: 'text-nexus-emerald' },
+                { label: 'CDN de WebWidgets', status: 'Ativa', color: 'text-nexus-emerald' },
+                { label: 'Canal WhatsApp', status: 'Offline', color: 'text-muted-foreground' },
+              ].map((s, i) => (
+                <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-card border border-border/40">
+                  <span className="text-xs font-bold text-foreground">{s.label}</span>
+                  <Badge variant="outline" className={cn("text-[9px] font-black uppercase tracking-widest border-none px-2", s.color)}>{s.status}</Badge>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -81,10 +180,10 @@ function EndpointGeneratorButton() {
   const baseUrl = `https://${projectId}.supabase.co/functions/v1`;
 
   const endpoints = [
-    { name: 'LLM Gateway', path: 'llm-gateway', method: 'POST', desc: 'Envie mensagens para qualquer modelo configurado' },
-    { name: 'RAG Query', path: 'cerebro-query', method: 'POST', desc: 'Consulta com retrieval-augmented generation' },
-    { name: 'Workflow Engine', path: 'workflow-engine-v2', method: 'POST', desc: 'Execute workflows multi-agente' },
-    { name: 'Oracle Council', path: 'oracle-council', method: 'POST', desc: 'Consulta multi-modelo com consenso' },
+    { name: 'Neural Gateway', path: 'llm-gateway', method: 'POST', desc: 'Interface unificada para múltiplos modelos' },
+    { name: 'Cerebro RAG', path: 'cerebro-query', method: 'POST', desc: 'Consulta com recuperação vetorial' },
+    { name: 'Workflow Runtime', path: 'workflow-engine-v2', method: 'POST', desc: 'Execução de grafos multi-agente' },
+    { name: 'Oracle Consensus', path: 'oracle-council', method: 'POST', desc: 'Validação cruzada de modelos' },
   ];
 
   const handleCopy = (text: string, id: string) => {
@@ -97,52 +196,64 @@ function EndpointGeneratorButton() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="gap-2">
-          <Link2 className="h-4 w-4" /> Endpoints API
+        <Button variant="outline" className="h-12 px-6 rounded-2xl border-border/40 font-bold gap-2.5 bg-background/50 hover:border-primary/30 transition-all">
+          <Code2 className="h-5 w-5 text-muted-foreground" /> 
+          <span className="font-bold">API Access</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-2xl rounded-[2.5rem] border-border/40 p-8 shadow-2xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Link2 className="h-4 w-4 text-primary" /> Endpoints de Integração
+          <DialogTitle className="text-2xl font-heading font-black flex items-center gap-3">
+            <Terminal className="h-6 w-6 text-primary" /> API Industrial Gateway
           </DialogTitle>
         </DialogHeader>
-        <div className="space-y-3 mt-2">
-          <div className="rounded-lg bg-secondary/30 border border-border/30 p-3">
-            <p className="text-xs font-medium text-foreground mb-1">Base URL</p>
-            <div className="flex items-center gap-2">
-              <Input value={baseUrl} readOnly className="text-xs font-mono bg-secondary/50 h-8" />
-              <Button size="icon" variant="ghost" className="h-8 w-8 shrink-0" onClick={() => handleCopy(baseUrl, 'base')}>
-                {copied === 'base' ? <CheckCircle className="h-3.5 w-3.5 text-nexus-emerald" /> : <Copy className="h-3.5 w-3.5" />}
+        <div className="space-y-6 mt-6">
+          <div className="bg-secondary/30 border border-border/40 p-5 rounded-2xl relative group">
+            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-3">Endpoint Base de Produção</p>
+            <div className="flex items-center gap-3">
+              <code className="flex-1 bg-background/50 p-2.5 rounded-xl text-xs font-mono text-primary truncate">{baseUrl}</code>
+              <Button size="icon" variant="ghost" className="h-10 w-10 rounded-xl hover:bg-primary/10 transition-colors" onClick={() => handleCopy(baseUrl, 'base')}>
+                {copied === 'base' ? <CheckCircle className="h-4 w-4 text-nexus-emerald" /> : <Copy className="h-4 w-4" />}
               </Button>
             </div>
           </div>
 
-          {endpoints.map(ep => {
-            const url = `${baseUrl}/${ep.path}`;
-            const curl = `curl -X ${ep.method} '${url}' \\\n  -H 'Authorization: Bearer YOUR_ANON_KEY' \\\n  -H 'Content-Type: application/json' \\\n  -d '{"model":"google/gemini-2.5-flash","messages":[{"role":"user","content":"Hello"}]}'`;
-            return (
-              <div key={ep.path} className="rounded-lg border border-border/30 p-3 space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs font-semibold text-foreground">{ep.name}</p>
-                    <p className="text-[11px] text-muted-foreground">{ep.desc}</p>
+          <div className="grid gap-4">
+            {endpoints.map(ep => {
+              const url = `${baseUrl}/${ep.path}`;
+              const curl = `curl -X ${ep.method} '${url}' \\\n  -H 'Authorization: Bearer YOUR_ANON_KEY' \\\n  -H 'Content-Type: application/json' \\\n  -d '{"model":"google/gemini-2.5-flash","messages":[{"role":"user","content":"Hello"}]}'`;
+              return (
+                <div key={ep.path} className="nexus-card p-5 rounded-2xl border-border/40 group hover:border-primary/30 transition-all">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <Layers className="h-4 w-4 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-foreground">{ep.name}</p>
+                        <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-tight">{ep.desc}</p>
+                      </div>
+                    </div>
+                    <Badge variant="outline" className="bg-primary/5 text-primary border-none text-[10px] font-black">{ep.method}</Badge>
                   </div>
-                  <Badge variant="outline" className="text-[11px] font-mono">{ep.method}</Badge>
+                  <div className="flex items-center gap-3 bg-muted/30 p-2 rounded-xl">
+                    <code className="text-[11px] text-muted-foreground font-mono truncate flex-1">{url}</code>
+                    <Button size="sm" variant="ghost" className="h-8 px-3 rounded-lg hover:bg-primary/10 text-[10px] font-bold" onClick={() => handleCopy(curl, ep.path)}>
+                      {copied === ep.path ? "COPIADO" : "COPIAR CURL"}
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <code className="text-[11px] text-primary font-mono truncate flex-1">{url}</code>
-                  <Button size="icon" variant="ghost" className="h-6 w-6 shrink-0" onClick={() => handleCopy(curl, ep.path)}>
-                    {copied === ep.path ? <CheckCircle className="h-3 w-3 text-nexus-emerald" /> : <Copy className="h-3 w-3" />}
-                  </Button>
-                </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
 
-          <p className="text-[11px] text-muted-foreground">
-            💡 Use a anon key do projeto no header Authorization. Para produção, use service role key com cuidado.
-          </p>
+          <div className="flex items-center gap-3 p-4 rounded-2xl bg-nexus-amber/10 border border-nexus-amber/20">
+            <Zap className="h-5 w-5 text-nexus-amber shrink-0" />
+            <p className="text-[11px] text-nexus-amber/80 font-bold leading-relaxed">
+              AVISO: Utilize sua 'ANON_KEY' no header de autorização para chamadas seguras. 
+              Para automações internas críticas, utilize a 'SERVICE_ROLE_KEY' com extrema cautela.
+            </p>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
