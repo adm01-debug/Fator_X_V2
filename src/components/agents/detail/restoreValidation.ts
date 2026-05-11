@@ -96,7 +96,6 @@ function detectModelCaps(modelRaw: string | null | undefined): ModelCaps {
   }
   
   if (/deepseek/.test(m)) {
-    const isV3 = /v3/.test(m);
     return { supportsReasoning: false, supportsTemperature: true, maxTokensCap: 8192, family: 'deepseek' };
   }
   
