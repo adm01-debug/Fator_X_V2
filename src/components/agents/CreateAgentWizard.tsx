@@ -28,7 +28,6 @@ export function CreateAgentWizard() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [mode, setMode] = useState<WizardMode>("choose");
-  
   const [AGENT_TEMPLATES_LIST, setAgentTemplates] = useState<AgentTemplate[]>(STATIC_TEMPLATES);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -85,12 +84,26 @@ export function CreateAgentWizard() {
     if (!magicIdea.trim()) return;
     setIsGeneratingMagic(true);
     await new Promise(r => setTimeout(r, 1000));
-    setMagicPreview({ name: "Agente Mágico", mission: magicIdea, type: "chatbot", model: "gpt-4o", tools: ["search"], memory: ["short"] });
+    const result = { 
+      name: "Agente Mágico", 
+      mission: magicIdea, 
+      type: "chatbot", 
+      model: "gpt-4o", 
+      tools: [{ name: "search", enabled: true }], 
+      guardrails: [{ name: "toxicity", enabled: true }],
+      system_prompt: "Você é um assistente gerado via IA..."
+    };
+    setMagicPreview(result);
     setIsGeneratingMagic(false);
   };
 
+  const readiness = useMemo(() => {
+    if (!magicPreview) return null;
+    return computeReadinessScore(magicPreview);
+  }, [magicPreview]);
+
   const confirmMagicCreate = async () => {
-    if (user) {
+    if (user && magicPreview) {
       await supabaseExternal.from("agents").insert({ user_id: user.id, name: magicPreview.name, status: "draft" });
       navigate("/agents");
     }
@@ -104,59 +117,92 @@ export function CreateAgentWizard() {
         <>
           <div className="text-center space-y-4">
             <h1 className="text-3xl font-bold">Criação de Agente</h1>
-            <p>Escolha um modo de criação</p>
+            <p className="text-muted-foreground">Escolha um modo de criação</p>
           </div>
           
-          <Card className="p-6">
-            <h3 className="mb-4">Geração Mágica</h3>
+          <Card className="p-6 bg-gradient-to-br from-primary/5 to-background border-primary/20">
+            <div className="flex items-center gap-2 mb-4">
+              <Sparkles className="text-primary" />
+              <h3 className="font-bold">Geração Mágica</h3>
+            </div>
             <div className="flex gap-2">
-              <Input value={magicIdea} onChange={e => setMagicIdea(e.target.value)} />
+              <Input value={magicIdea} onChange={e => setMagicIdea(e.target.value)} placeholder="Descreva seu agente..." />
               <Button onClick={handleMagicCreate} disabled={isGeneratingMagic}>{isGeneratingMagic ? <Loader2 className="animate-spin" /> : <Wand2 />}</Button>
             </div>
-            {magicPreview && (
-              <div className="mt-4 p-4 border rounded">
-                <p><strong>{magicPreview.name}</strong>: {magicPreview.mission}</p>
-                <Button onClick={confirmMagicCreate}>Finalizar</Button>
+            {magicPreview && readiness && (
+              <div className="mt-4 p-4 border rounded-xl bg-background/50 animate-in fade-in slide-in-from-top-2">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="text-primary h-4 w-4" />
+                    <p className="font-bold">{magicPreview.name}</p>
+                  </div>
+                  <Badge className={READINESS_COLORS[readiness.level].bg + " " + READINESS_COLORS[readiness.level].text}>
+                    {readiness.score}/10 {READINESS_COLORS[readiness.level].label}
+                  </Badge>
+                </div>
+                <p className="text-sm italic mb-4">"{magicPreview.mission}"</p>
+                <div className="flex justify-end gap-2">
+                  <Button variant="ghost" size="sm" onClick={() => setMagicPreview(null)}>Descartar</Button>
+                  <Button size="sm" onClick={confirmMagicCreate} className="gap-1.5"><Check className="h-4 w-4" /> Finalizar</Button>
+                </div>
               </div>
             )}
           </Card>
 
           <div className="grid grid-cols-3 gap-4">
-            <Button onClick={() => setMode("quick")}>Assistida</Button>
-            <Button onClick={() => setMode("template")}>Blueprints</Button>
-            <Button onClick={() => setMode("scratch")}>Custom</Button>
+            <Button onClick={() => setMode("quick")} variant="outline" className="h-32 flex flex-col gap-2">
+              <Zap className="h-6 w-6 text-nexus-amber" />
+              <span>Criação Assistida</span>
+            </Button>
+            <Button onClick={() => setMode("template")} variant="outline" className="h-32 flex flex-col gap-2">
+              <LayoutTemplate className="h-6 w-6 text-primary" />
+              <span>Blueprints</span>
+            </Button>
+            <Button onClick={() => setMode("scratch")} variant="outline" className="h-32 flex flex-col gap-2">
+              <PenTool className="h-6 w-6 text-muted-foreground" />
+              <span>Custom Total</span>
+            </Button>
           </div>
         </>
       )}
 
       {mode === "template" && (
-        <div className="grid grid-cols-3 gap-4">
-          <Input placeholder="Buscar..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
-          <div className="flex gap-2">
-            {categories.map(c => <Badge key={c} onClick={() => setSelectedCategory(c)}>{c} ({categoryCount[c]})</Badge>)}
-          </div>
-          {filteredTemplates.map(t => (
-            <div key={t.id} className="border p-4 cursor-pointer" onClick={() => handleTemplateClick(t)}>
-              {t.emoji} {t.name}
+        <div className="space-y-6">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" onClick={() => setMode("choose")}>Voltar</Button>
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input className="pl-9" placeholder="Buscar blueprints..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
             </div>
-          ))}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {categories.map(c => <Badge key={c} className="cursor-pointer" onClick={() => setSelectedCategory(c)} variant={selectedCategory === c ? "default" : "secondary"}>{c} ({categoryCount[c]})</Badge>)}
+          </div>
+          <div className="grid grid-cols-3 gap-4">
+            {filteredTemplates.map(t => (
+              <Card key={t.id} className="p-4 cursor-pointer hover:border-primary transition-colors" onClick={() => handleTemplateClick(t)}>
+                <div className="flex items-center gap-3"><span className="text-2xl">{t.emoji}</span><div className="font-medium text-sm">{t.name}</div></div>
+                <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{t.description}</p>
+              </Card>
+            ))}
+          </div>
         </div>
       )}
 
       <Dialog open={isTemplateModalOpen} onOpenChange={setIsTemplateModalOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>{viewingTemplate?.name}</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">{viewingTemplate?.emoji} {viewingTemplate?.name}</DialogTitle>
             <DialogDescription>{viewingTemplate?.description}</DialogDescription>
           </DialogHeader>
-          <div className="flex gap-2">
-            <Brain /> {viewingTemplate?.model}
-            <Wrench /> {viewingTemplate?.tools?.length} ferramentas
-            <ShieldAlert /> Guardrails ativados
-            <Info /> Impacto: Alta Eficiência
+          <div className="grid grid-cols-2 gap-4 py-4">
+            <div className="flex items-center gap-2 text-sm"><Brain className="h-4 w-4 text-primary" /> {viewingTemplate?.model}</div>
+            <div className="flex items-center gap-2 text-sm"><Wrench className="h-4 w-4 text-primary" /> {viewingTemplate?.tools?.length} ferramentas</div>
+            <div className="flex items-center gap-2 text-sm"><ShieldAlert className="h-4 w-4 text-primary" /> Guardrails ativos</div>
+            <div className="flex items-center gap-2 text-sm"><Info className="h-4 w-4 text-primary" /> Alta Eficiência</div>
           </div>
           <DialogFooter>
-            <Button onClick={() => viewingTemplate && applyTemplate(viewingTemplate)}>Ativar</Button>
+            <Button onClick={() => viewingTemplate && applyTemplate(viewingTemplate)}>Ativar Blueprint</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
