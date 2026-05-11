@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { FileText, Loader2, Search, Filter, History, ChevronRight, Zap, Target, ArrowRight } from "lucide-react";
+import { FileText, Search, Filter, History, Zap, Target, ArrowRight } from "lucide-react";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { useQuery } from "@tanstack/react-query";
 import { listAgentsBasic, listAllPromptVersions } from "@/services/promptVersionService";
@@ -8,7 +8,6 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 
 export default function PromptsPage() {
   const navigate = useNavigate();
