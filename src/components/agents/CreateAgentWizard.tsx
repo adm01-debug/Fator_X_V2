@@ -24,6 +24,16 @@ import { computeReadinessScore, READINESS_COLORS } from "@/lib/agentReadiness";
 
 type WizardMode = "choose" | "template" | "scratch" | "quick";
 
+const TYPE_LABEL: Record<string, string> = {
+  chatbot: 'Chatbot',
+  copilot: 'Copiloto',
+  analyst: 'Analista',
+  sdr: 'SDR',
+  support: 'Suporte',
+  researcher: 'Pesquisa',
+  orchestrator: 'Orquestrador',
+};
+
 export function CreateAgentWizard() {
   const { user } = useAuth();
   const [mode, setMode] = useState<WizardMode>("choose");
