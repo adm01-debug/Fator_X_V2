@@ -4,7 +4,7 @@ import { SectionTitle, NexusBadge, InputField, TextAreaField } from '../ui';
 import { CollapsibleCard } from '../ui/CollapsibleCard';
 import { CodeBlock } from '../ui/CodeBlock';
 import { Button } from '@/components/ui/button';
-import { Plus, Trash2, Copy, GitBranch, Check, ArrowLeftRight, Play, Sparkles, Wand2 } from 'lucide-react';
+import { Plus, Trash2, Copy, GitBranch, Check, ArrowLeftRight, Play, Wand2, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import type { PromptTechnique, FewShotExample, OutputFormat } from '@/types/agentTypes';
 import { PromptDiff } from '@/components/prompts/PromptDiff';
