@@ -23,6 +23,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState, useCallback } from "react";
 import { getWorkspaceInfo } from "@/lib/agentService";
 import { useI18n } from "@/hooks/useI18n";
+import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 const navSections = [
   {
