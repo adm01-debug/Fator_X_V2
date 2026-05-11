@@ -190,15 +190,19 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-border/30 bg-sidebar" aria-label="Navegação principal">
-      <SidebarHeader className="p-3">
-        <div className="flex items-center gap-2.5">
-          <img src={fatorxIcon} alt="" className="h-8 w-8 shrink-0 rounded-lg shadow-sm shadow-primary/20" />
+    <Sidebar collapsible="icon" className="border-r border-border/40 bg-sidebar" aria-label="Navegação principal">
+      <SidebarHeader className="p-5">
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg shadow-primary/20 shrink-0">
+            <img src={fatorxIcon} alt="" className="h-6 w-6 invert brightness-0" />
+          </div>
           {!collapsed && (
-            <span className="font-heading text-base font-extrabold tracking-tight" aria-label="Fator X">
-              <span className="text-foreground">FATOR</span>
-              <span className="text-primary ml-0.5">X</span>
-            </span>
+            <div className="flex flex-col">
+              <span className="font-black text-lg tracking-tight leading-none text-foreground uppercase" aria-label="Fator X">
+                Fator<span className="text-primary">X</span>
+              </span>
+              <span className="text-[9px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] mt-1">Industrial Intelligence</span>
+            </div>
           )}
         </div>
       </SidebarHeader>
