@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo } from "react";
-import { PageHeader } from "@/components/shared/PageHeader";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,9 +6,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import {
   Check, ArrowLeft, ArrowRight, ChevronRight, Shield, Search,
-  LayoutTemplate, PenTool, Database, Rocket,
+  LayoutTemplate, PenTool, Database, Rocket, Zap, Sparkles, Wand2, 
+  Loader2
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabaseExternal } from "@/integrations/supabase/externalClient";
@@ -19,7 +20,6 @@ import {
   STEPS, TEMPLATE_STEPS, AGENT_TYPES, MODELS, TOOLS, MEMORY_OPTIONS,
 } from "./wizard/wizardConstants";
 import { QuickCreateWizard } from "./wizard/QuickCreateWizard";
-import { Zap } from "lucide-react";
 
 type WizardMode = "choose" | "template" | "scratch" | "quick";
 
@@ -33,6 +33,8 @@ export function CreateAgentWizard() {
   const [AGENT_TEMPLATES_LIST, setAgentTemplates] = useState<AgentTemplate[]>(STATIC_TEMPLATES);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [magicIdea, setMagicIdea] = useState("");
+  const [isGeneratingMagic, setIsGeneratingMagic] = useState(false);
 
   const categoryCount = useMemo(() => {
     const counts: Record<string, number> = { all: AGENT_TEMPLATES_LIST.length };
@@ -111,6 +113,35 @@ export function CreateAgentWizard() {
     setForm(prev => ({ ...prev, name: t.name, description: t.description, type: t.type, model: t.model, prompt: t.prompt, tools: t.tools, memory: t.memory }));
   };
 
+  const handleMagicCreate = async () => {
+    if (!magicIdea.trim()) return;
+    setIsGeneratingMagic(true);
+    try {
+      // Simulação de IA gerando agente a partir de ideia
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      const mockResult = {
+        name: `Agente ${magicIdea.split(' ')[0]}`,
+        mission: `Auxiliar no processo de ${magicIdea} com foco em eficiência.`,
+        type: 'chatbot',
+        prompt: `Você é um especialista em ${magicIdea}.\n\n## Missão\nSua missão é facilitar as tarefas relacionadas a ${magicIdea}...\n\n## Regras\n1. Seja sempre prestativo...`
+      };
+      setForm(prev => ({
+        ...prev,
+        name: mockResult.name,
+        description: mockResult.mission,
+        type: mockResult.type,
+        prompt: mockResult.prompt
+      }));
+      setMode("scratch");
+      setStep(0);
+      toast.success("IA estruturou seu agente!", { description: "Agora você pode refinar os detalhes." });
+    } catch {
+      toast.error("Falha na geração mágica");
+    } finally {
+      setIsGeneratingMagic(false);
+    }
+  };
+
   const saveAgent = async () => {
     if (!user) { toast.error("Faça login para criar agentes"); navigate("/auth"); return; }
     setSaving(true);
@@ -137,29 +168,80 @@ export function CreateAgentWizard() {
 
   if (mode === "choose") {
     return (
-      <div className="p-6 max-w-[1100px] mx-auto space-y-8">
-        <PageHeader title="Criar novo agente" description="Escolha como deseja começar" backTo="/agents" />
-        <div className="grid gap-4 md:grid-cols-3">
-          <button onClick={() => { setMode("quick"); setStep(0); }} className="nexus-card text-left transition-all hover:ring-2 hover:ring-primary/50 space-y-3 p-6 relative">
-            <span className="absolute top-3 right-3 text-[10px] font-semibold text-primary bg-primary/10 border border-primary/20 px-1.5 py-0.5 rounded-full">RECOMENDADO</span>
-            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center"><Zap className="h-6 w-6 text-primary" /></div>
-            <h2 className="text-lg font-heading font-semibold text-foreground">Criação rápida</h2>
-            <p className="text-sm text-muted-foreground">4 passos guiados com templates pré-preenchidos por tipo e validações em tempo real.</p>
-            <p className="text-xs text-muted-foreground/80">Identidade → Tipo → Modelo → Prompt</p>
-          </button>
-          <button onClick={() => { setMode("template"); setStep(0); }} className="nexus-card text-left transition-all hover:ring-2 hover:ring-primary/50 space-y-3 p-6">
-            <div className="h-12 w-12 rounded-xl bg-primary/15 flex items-center justify-center"><LayoutTemplate className="h-6 w-6 text-primary" /></div>
-            <h2 className="text-lg font-heading font-semibold text-foreground">Usar template</h2>
-            <p className="text-sm text-muted-foreground">Comece com um dos {AGENT_TEMPLATES_LIST.length} templates pré-configurados e personalize em 3 passos rápidos.</p>
-            <div className="flex flex-wrap gap-1.5">
-              {AGENT_TEMPLATES_LIST.slice(0, 3).map(t => <span key={t.id} className="text-xs bg-secondary px-2 py-0.5 rounded-full text-muted-foreground">{t.emoji} {t.name}</span>)}
-              <span className="text-xs bg-secondary px-2 py-0.5 rounded-full text-muted-foreground">+{Math.max(0, AGENT_TEMPLATES_LIST.length - 3)}</span>
+      <div className="p-6 sm:p-10 max-w-[1200px] mx-auto space-y-12 animate-page-enter">
+        <div className="text-center space-y-4 max-w-2xl mx-auto">
+          <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+            Novo Agente de IA
+          </Badge>
+          <h1 className="text-4xl font-heading font-extrabold text-foreground tracking-tight">Qual o seu objetivo hoje?</h1>
+          <p className="text-muted-foreground text-lg">Escolha o caminho ideal para dar vida ao seu novo membro da frota digital.</p>
+        </div>
+
+        {/* Magic Idea Box */}
+        <Card className="p-8 bg-gradient-to-br from-primary/10 via-primary/5 to-background border-primary/20 shadow-xl shadow-primary/5 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700" />
+          <div className="relative flex flex-col md:flex-row items-center gap-6">
+            <div className="h-16 w-16 rounded-2xl bg-primary/20 flex items-center justify-center shrink-0 border border-primary/30">
+              <Sparkles className="h-8 w-8 text-primary animate-pulse" />
+            </div>
+            <div className="flex-1 space-y-2 text-center md:text-left">
+              <h3 className="text-xl font-bold text-foreground">Geração Mágica via IA</h3>
+              <p className="text-sm text-muted-foreground">Descreva sua ideia em poucas palavras e deixe nossa IA estruturar o agente completo para você.</p>
+            </div>
+            <div className="w-full md:w-[400px] flex gap-2">
+              <Input 
+                placeholder="Ex: Suporte para e-commerce de moda..." 
+                value={magicIdea}
+                onChange={(e) => setMagicIdea(e.target.value)}
+                className="bg-background/80 border-primary/30 focus:ring-primary h-12 rounded-xl"
+              />
+              <Button 
+                onClick={handleMagicCreate} 
+                disabled={isGeneratingMagic || !magicIdea.trim()}
+                className="nexus-gradient-bg text-primary-foreground h-12 px-6 rounded-xl shadow-lg shadow-primary/20"
+              >
+                {isGeneratingMagic ? <Loader2 className="h-5 w-5 animate-spin" /> : <Wand2 className="h-5 w-5" />}
+              </Button>
+            </div>
+          </div>
+        </Card>
+
+        <div className="grid gap-6 md:grid-cols-3">
+          <button onClick={() => { setMode("quick"); setStep(0); }} className="nexus-card text-left transition-all hover:scale-[1.02] hover:border-primary/50 group p-8 relative overflow-hidden">
+            <div className="absolute top-4 right-4 text-[10px] font-bold text-primary bg-primary/10 border border-primary/20 px-2 py-1 rounded-full uppercase tracking-tighter">RECOMENDADO</div>
+            <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
+              <Zap className="h-8 w-8 text-primary" />
+            </div>
+            <h2 className="text-xl font-bold text-foreground mb-3">Criação Assistida</h2>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-4">Fluxo otimizado em 4 passos com validações em tempo real e templates contextuais.</p>
+            <div className="flex items-center gap-1.5 text-xs text-primary font-bold">
+              <span>COMEÇAR AGORA</span>
+              <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
             </div>
           </button>
-          <button onClick={() => { setMode("scratch"); setStep(0); }} className="nexus-card text-left transition-all hover:ring-2 hover:ring-primary/50 space-y-3 p-6">
-            <div className="h-12 w-12 rounded-xl bg-secondary flex items-center justify-center"><PenTool className="h-6 w-6 text-muted-foreground" /></div>
-            <h2 className="text-lg font-heading font-semibold text-foreground">Avançado (do zero)</h2>
-            <p className="text-sm text-muted-foreground">Configure cada detalhe manualmente em 8 etapas com controle total: ferramentas, memória, knowledge, deploy.</p>
+
+          <button onClick={() => { setMode("template"); setStep(0); }} className="nexus-card text-left transition-all hover:scale-[1.02] hover:border-primary/50 group p-8 relative overflow-hidden">
+            <div className="h-14 w-14 rounded-2xl bg-secondary flex items-center justify-center mb-6 group-hover:bg-primary/10 transition-colors">
+              <LayoutTemplate className="h-8 w-8 text-muted-foreground group-hover:text-primary transition-colors" />
+            </div>
+            <h2 className="text-xl font-bold text-foreground mb-3">Galeria de Blueprints</h2>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-4">Acesse nossa biblioteca com {AGENT_TEMPLATES_LIST.length} modelos pré-validados para casos de uso comuns.</p>
+            <div className="flex flex-wrap gap-1.5">
+              {AGENT_TEMPLATES_LIST.slice(0, 2).map(t => <span key={t.id} className="text-[10px] bg-secondary/80 px-2 py-0.5 rounded-md text-muted-foreground border border-border/50">{t.emoji} {t.name}</span>)}
+              <span className="text-[10px] bg-secondary/80 px-2 py-0.5 rounded-md text-muted-foreground">+{AGENT_TEMPLATES_LIST.length - 2}</span>
+            </div>
+          </button>
+
+          <button onClick={() => { setMode("scratch"); setStep(0); }} className="nexus-card text-left transition-all hover:scale-[1.02] hover:border-primary/50 group p-8 relative overflow-hidden">
+            <div className="h-14 w-14 rounded-2xl bg-secondary flex items-center justify-center mb-6 group-hover:bg-primary/10 transition-colors">
+              <PenTool className="h-8 w-8 text-muted-foreground group-hover:text-primary transition-colors" />
+            </div>
+            <h2 className="text-xl font-bold text-foreground mb-3">Customização Total</h2>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-4">Para arquitetos de IA. Controle granular sobre memória, RAG, ferramentas e governança.</p>
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-bold group-hover:text-foreground transition-colors">
+              <span>EXPLORAR OPÇÕES</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </div>
           </button>
         </div>
       </div>

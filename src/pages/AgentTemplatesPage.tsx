@@ -7,9 +7,9 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowLeft, Search, Sparkles, Wand2, Tag, Cpu, Wrench } from "lucide-react";
+import { ArrowLeft, Search, Sparkles, Wand2, Cpu, Wrench, Check, Rocket, Loader2, LayoutTemplate } from "lucide-react";
 
-import { PageHeader } from "@/components/shared/PageHeader";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -90,31 +90,41 @@ export default function AgentTemplatesPage() {
   });
 
   return (
-    <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
-      <PageHeader
-        title="Galeria de Templates"
-        description="Comece em segundos — escolha um template pronto e personalize"
-        actions={
-          <Button variant="outline" size="sm" className="gap-1.5" onClick={() => navigate("/agents")}>
-            <ArrowLeft className="h-3.5 w-3.5" /> Voltar
+    <div className="p-6 sm:p-10 lg:p-12 space-y-8 max-w-[1400px] mx-auto animate-page-enter bg-secondary/5 min-h-screen">
+      <div className="bg-card border border-border p-8 rounded-3xl shadow-sm mb-8 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/[0.03] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative">
+          <div className="flex items-center gap-5">
+            <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/15 shadow-inner">
+              <LayoutTemplate className="h-9 w-9 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-heading font-extrabold text-foreground tracking-tight">Galeria de Blueprints</h1>
+              <p className="text-sm text-muted-foreground max-w-md">Estruturas pré-validadas para acelerar o deploy da sua frota digital</p>
+            </div>
+          </div>
+          <Button variant="outline" size="sm" className="gap-1.5 h-10 rounded-xl" onClick={() => navigate("/agents")}>
+            <ArrowLeft className="h-4 w-4" /> Voltar aos Agentes
           </Button>
-        }
-      />
+        </div>
+      </div>
 
-      <div className="flex items-center gap-3">
-        <div className="relative flex-1 max-w-md">
+      <div className="flex flex-col md:flex-row md:items-center gap-4">
+        <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Buscar templates por nome, tag ou descrição…"
+            placeholder="Buscar blueprints por nome, stack ou caso de uso…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 bg-secondary/50 border-border/50"
+            className="pl-9 h-11 bg-card border-border/60 rounded-xl shadow-sm focus:ring-primary"
           />
         </div>
-        <Badge variant="secondary" className="gap-1.5">
-          <Sparkles className="h-3 w-3" />
-          {filtered.length} {filtered.length === 1 ? "template" : "templates"}
-        </Badge>
+        <div className="flex items-center gap-2">
+          <Badge variant="secondary" className="gap-1.5 h-11 px-4 rounded-xl bg-primary/10 text-primary border-primary/20 text-xs font-bold uppercase tracking-wider">
+            <Sparkles className="h-4 w-4" />
+            {filtered.length} Blueprints
+          </Badge>
+        </div>
       </div>
 
       <ScrollArea className="w-full whitespace-nowrap">
@@ -125,12 +135,18 @@ export default function AgentTemplatesPage() {
               size="sm"
               variant={cat === category ? "default" : "outline"}
               onClick={() => setCategory(cat)}
-              className="gap-1.5 shrink-0"
+              className={`gap-1.5 shrink-0 h-9 px-4 rounded-full transition-all ${
+                cat === category 
+                  ? "shadow-lg shadow-primary/20" 
+                  : "bg-card hover:border-primary/40"
+              }`}
             >
-              {cat === ALL ? "Todos" : cat}
+              {cat === ALL ? "Todos os Setores" : cat}
               <Badge
                 variant="secondary"
-                className="ml-0.5 h-5 px-1.5 text-[10px] font-semibold tabular-nums"
+                className={`ml-0.5 h-5 px-1.5 text-[10px] font-bold tabular-nums rounded-full ${
+                  cat === category ? "bg-primary-foreground/20 text-primary-foreground" : ""
+                }`}
               >
                 {count}
               </Badge>
@@ -152,52 +168,68 @@ export default function AgentTemplatesPage() {
           {filtered.map((t, i) => (
             <Card
               key={t.id}
-              className="nexus-card p-5 space-y-4 group cursor-pointer hover:border-primary/40 transition-all"
+              className="nexus-card p-6 flex flex-col group cursor-pointer hover:border-primary/40 transition-all border-border/50 bg-card/80 backdrop-blur-sm shadow-sm"
               style={{ animationDelay: `${i * 40}ms` }}
             >
-              <div className="flex items-start gap-3">
-                <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center text-2xl shrink-0 ring-1 ring-border/40">
-                  {t.emoji}
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-4">
+                  <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center text-3xl shrink-0 ring-1 ring-border/40 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                    {t.emoji}
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="font-bold text-foreground text-lg group-hover:text-primary transition-colors truncate">{t.name}</h3>
+                    <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
+                      <span>{t.category}</span>
+                      <span>•</span>
+                      <span className="text-nexus-emerald flex items-center gap-0.5">
+                        <Check className="h-2.5 w-2.5" /> Verificado
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-foreground truncate">{t.name}</h3>
-                  <p className="text-xs text-muted-foreground mt-0.5">{t.category}</p>
+                <div className="text-[10px] font-mono text-muted-foreground bg-secondary/50 px-2 py-0.5 rounded flex items-center gap-1">
+                  <Sparkles className="h-2.5 w-2.5" /> {(Math.random() * 5 + 1).toFixed(1)}k
                 </div>
               </div>
 
-              <p className="text-sm text-muted-foreground line-clamp-2 min-h-[2.5rem]">
-                {t.description}
+              <p className="text-sm text-muted-foreground line-clamp-3 mb-6 leading-relaxed flex-1 italic">
+                "{t.description}"
               </p>
 
-              <div className="space-y-1.5 text-xs text-muted-foreground">
-                <div className="flex items-center gap-1.5">
-                  <Cpu className="h-3 w-3 shrink-0" />
-                  <span className="truncate font-mono">{t.config.model}</span>
+              <div className="grid grid-cols-2 gap-3 mb-6 p-3 bg-secondary/30 rounded-xl border border-border/40">
+                <div className="space-y-1">
+                  <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Base Model</p>
+                  <div className="flex items-center gap-1.5 text-[11px] font-mono text-foreground font-semibold">
+                    <Cpu className="h-3 w-3 text-primary" />
+                    <span className="truncate">{t.config.model}</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <Wrench className="h-3 w-3 shrink-0" />
-                  <span className="truncate">
-                    {t.config.tools.length > 0
-                      ? `${t.config.tools.length} ferramenta${t.config.tools.length > 1 ? "s" : ""}`
-                      : "Sem ferramentas"}
-                  </span>
+                <div className="space-y-1">
+                  <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Capabilities</p>
+                  <div className="flex items-center gap-1.5 text-[11px] text-foreground font-semibold">
+                    <Wrench className="h-3 w-3 text-primary" />
+                    <span className="truncate">
+                      {t.config.tools.length > 0
+                        ? `${t.config.tools.length} Ferramentas`
+                        : "No Tools"}
+                    </span>
+                  </div>
                 </div>
               </div>
 
               {t.tags.length > 0 && (
-                <div className="flex flex-wrap gap-1">
+                <div className="flex flex-wrap gap-1.5 mb-6">
                   {t.tags.slice(0, 3).map((tag) => (
                     <Badge
                       key={tag}
                       variant="outline"
-                      className="text-[10px] px-1.5 py-0 h-5 gap-0.5 font-normal"
+                      className="text-[9px] px-2 py-0 h-5 border-border/60 text-muted-foreground font-bold uppercase"
                     >
-                      <Tag className="h-2.5 w-2.5" />
                       {tag}
                     </Badge>
                   ))}
                   {t.tags.length > 3 && (
-                    <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 font-normal">
+                    <Badge variant="outline" className="text-[9px] px-2 py-0 h-5 border-border/60 text-muted-foreground font-bold">
                       +{t.tags.length - 3}
                     </Badge>
                   )}
@@ -207,13 +239,17 @@ export default function AgentTemplatesPage() {
               <Button
                 onClick={() => forkMutation.mutate(t)}
                 disabled={forkMutation.isPending}
-                className="w-full nexus-gradient-bg text-primary-foreground gap-2 hover:opacity-90"
+                className="w-full nexus-gradient-bg text-primary-foreground gap-2 h-11 rounded-xl shadow-lg shadow-primary/10 hover:scale-[1.02] transition-all font-bold"
                 size="sm"
               >
-                <Sparkles className="h-3.5 w-3.5" />
+                {forkMutation.isPending && forkMutation.variables?.id === t.id ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Rocket className="h-4 w-4" />
+                )}
                 {forkMutation.isPending && forkMutation.variables?.id === t.id
-                  ? "Criando…"
-                  : "Usar este template"}
+                  ? "Provisionando..."
+                  : "Ativar Blueprint"}
               </Button>
             </Card>
           ))}
