@@ -7,7 +7,7 @@ import {
   Search, BookOpen, ArrowRight, Database, Pencil, Trash2, Bot, 
   FileText, Activity, Layers, Zap, Shield, Filter, 
   BarChart3, BrainCircuit, RefreshCcw, LayoutGrid, List, Radio, ShieldCheck, Globe,
-  Settings2, History, Terminal
+  Settings2, History
 } from "lucide-react";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
