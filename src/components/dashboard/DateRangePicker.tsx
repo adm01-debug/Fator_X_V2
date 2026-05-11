@@ -9,6 +9,7 @@ interface DateRangePickerProps {
 }
 
 const OPTIONS: { value: DateRange; label: string }[] = [
+  { value: '24h', label: '24 horas' },
   { value: '7d', label: '7 dias' },
   { value: '14d', label: '14 dias' },
   { value: '30d', label: '30 dias' },
