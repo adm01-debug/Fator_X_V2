@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { 
   Bot, Plus, TrendingUp, DollarSign, Zap, 
   Sparkles, BookOpen, Activity, GitBranch, Shield, 
-  Cpu, Target, ChevronRight, Globe, Layers, BarChart3, RadioTower
+  Cpu, Target, ChevronRight, Globe, Layers, BarChart3, Radio
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
