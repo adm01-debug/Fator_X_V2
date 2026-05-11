@@ -266,8 +266,62 @@ export function BillingModule() {
         </div>
       </div>
 
-      {/* Projection */}
-      <SectionTitle icon="📈" title="Projeção" subtitle="Tendência baseada nos últimos 7 dias" />
+      {/* Traffic Simulation & 3-Month Forecast */}
+      <SectionTitle icon="📊" title="Simulação de Crescimento" subtitle="Projeção de custos baseada em volume de tráfego" />
+      <div className="rounded-xl border border-border bg-card p-6 space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <SliderField
+            label="Interações/dia (estimado)"
+            value={dailyInteractions}
+            onChange={setDailyInteractions}
+            min={10}
+            max={5000}
+            step={10}
+            unit=" req"
+          />
+          <SliderField
+            label="Crescimento mensal esperado (%)"
+            value={monthlyGrowth}
+            onChange={setMonthlyGrowth}
+            min={0}
+            max={200}
+            step={5}
+            unit="%"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {trafficProjection.map((p) => (
+            <div key={p.month} className="rounded-lg border border-border bg-muted/20 p-4">
+              <p className="text-xs text-muted-foreground font-medium uppercase">{p.month}</p>
+              <div className="flex items-end justify-between mt-1">
+                <div>
+                  <p className="text-xl font-bold">${p.cost.toFixed(0)}</p>
+                  <p className="text-[10px] text-muted-foreground">Custo estimado</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-semibold">{p.traffic.toLocaleString()} req</p>
+                  <p className="text-[10px] text-muted-foreground">Volume mensal</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="h-[200px] mt-4">
+          <LightAreaChart
+            data={trafficProjection}
+            xKey="month"
+            series={[{ dataKey: 'cost', name: 'Custo Mensal', stroke: 'hsl(var(--nexus-yellow))' }]}
+            height={200}
+            yFormatter={(v) => `$${v}`}
+            tooltipFormatter={(v) => `$${Number(v).toFixed(2)}`}
+          />
+        </div>
+      </div>
+
+      {/* Existing Projection */}
+      <SectionTitle icon="📈" title="Histórico de Tendência" subtitle="Uso real vs Tendência nos últimos 7 dias" />
       <div className="rounded-xl border border-border bg-card p-6">
         <p className="text-sm text-muted-foreground mb-4">
           Baseado no uso atual, projeção para o mês: <span className="text-foreground font-bold">${projectedMonth.toFixed(0)}</span>
