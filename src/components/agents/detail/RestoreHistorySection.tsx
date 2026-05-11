@@ -442,8 +442,22 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
                     variant="ghost"
                     size="sm"
                     className="h-5 px-1.5 text-[10px] gap-0.5 text-nexus-amber hover:text-nexus-amber hover:bg-nexus-amber/10 disabled:opacity-40"
-                    onClick={() => setUndoTarget(entry)}
-                    disabled={!canUndo || undoMut.isPending}
+                    onClick={() => {
+                      if (stale) {
+                        toast.error(`Uma versão mais nova (v${currentVersion.version}) foi detectada. Recarregue para revisar antes de desfazer.`, {
+                          action: {
+                            label: 'Recarregar',
+                            onClick: () => {
+                              queryClient.invalidateQueries({ queryKey: ["agent_versions", agentId] });
+                              queryClient.invalidateQueries({ queryKey: ["agent", agentId] });
+                            }
+                          }
+                        });
+                        return;
+                      }
+                      setUndoTarget(entry);
+                    }}
+                    disabled={isUndoingThis || (expired && !stale)}
                     title={
                       expired
                         ? `Janela de ${UNDO_WINDOW_MS / 60000} min para desfazer expirou — restaure manualmente pelo gerenciador de versões`

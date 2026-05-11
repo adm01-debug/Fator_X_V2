@@ -21,6 +21,7 @@ import { computeRestoreDiff } from "@/components/agents/detail/restoreDiffHelper
 import { validateRestore } from "@/components/agents/detail/restoreValidation";
 import { RestoreValidationPanel } from "@/components/agents/detail/RestoreValidationPanel";
 import { RestoreHistorySection } from "@/components/agents/detail/RestoreHistorySection";
+import { summarizeRestoreOptions } from "@/components/agents/detail/restoreHelpers";
 import { RestorePresetMenu } from "@/components/agents/detail/RestorePresetMenu";
 import { simulateAgentRun, type SimulationSummary } from "@/services/agentTestSimulationService";
 import {
@@ -275,7 +276,9 @@ function VersionHistory({ agentId }: { agentId: string }) {
       queryClient.invalidateQueries({ queryKey: ['agent', agentId] });
       setRollbackOpen(false);
       // Toast com ação para abrir a timeline já destacando a nova versão.
+      const summary = summarizeRestoreOptions(restoreOptions);
       toast.success(`Rollback concluído — v${data.version} criada a partir de v${previous!.version}`, {
+        description: summary.charAt(0).toUpperCase() + summary.slice(1) + ".",
         action: {
           label: 'Ver na timeline',
           onClick: () => navigate(`/agents/${agentId}/versions/v/${data.id}`),
