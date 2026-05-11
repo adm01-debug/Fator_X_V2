@@ -315,6 +315,9 @@ export function validateRestore(
         group: 'model',
         title: 'Persona não definida',
         detail: 'O agente ficará sem persona após o restore — comportamento padrão será aplicado.',
+        quickFixes: [
+          { kind: 'set-model', value: mergedModel ?? '', label: 'Manter modelo', description: 'Garante que o modelo seja preservado mesmo sem persona.' }
+        ]
       });
     }
 
