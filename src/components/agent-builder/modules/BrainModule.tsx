@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import { SectionTitle, SelectionGrid, SliderField, ToggleField, SelectField } from '../ui';
 import { NexusBadge } from '../ui/NexusBadge';
@@ -9,7 +9,7 @@ import { routeQuery, type RouteResult } from '@/services/modelRouterService';
 import { getAllSkills } from '@/services/progressiveSkillLoader';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Loader2, Cpu } from 'lucide-react';
+import { Sparkles, Loader2, Cpu, Zap, Brain } from 'lucide-react';
 import { toast } from 'sonner';
 
 const MODELS = [
@@ -63,6 +63,15 @@ export function BrainModule() {
     }
   };
 
+  const modelStats = useMemo(() => {
+    // Heurística de performance para visualização
+    const intelligence = agent.model.includes('opus') || agent.model.includes('pro') || agent.model.includes('gpt-4') ? 95 : 
+                         agent.model.includes('sonnet') ? 85 : 70;
+    const speed = agent.model.includes('haiku') || agent.model.includes('flash') || agent.model.includes('gpt-4o-mini') ? 95 :
+                  agent.model.includes('sonnet') || agent.model.includes('gpt-4o') ? 75 : 40;
+    return { intelligence, speed };
+  }, [agent.model]);
+
   return (
     <div className="space-y-10">
       {/* Seção A — Modelo Principal */}
@@ -94,6 +103,32 @@ export function BrainModule() {
           onChange={(id) => updateAgent({ model: id as LLMModel })}
           columns={3}
         />
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="rounded-xl border border-border bg-card p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-muted-foreground uppercase flex items-center gap-1.5">
+                <Brain className="h-3 w-3" /> Poder Cognitivo
+              </span>
+              <span className="text-xs font-bold text-primary">{modelStats.intelligence}%</span>
+            </div>
+            <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+              <div className="h-full bg-primary transition-all duration-500" style={{ width: `${modelStats.intelligence}%` }} />
+            </div>
+            <p className="text-[10px] text-muted-foreground italic">Capacidade de raciocínio lógico e aderência a instruções complexas.</p>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-muted-foreground uppercase flex items-center gap-1.5">
+                <Zap className="h-3 w-3" /> Velocidade de Resposta
+              </span>
+              <span className="text-xs font-bold text-nexus-blue">{modelStats.speed}%</span>
+            </div>
+            <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+              <div className="h-full bg-nexus-blue transition-all duration-500" style={{ width: `${modelStats.speed}%` }} />
+            </div>
+            <p className="text-[10px] text-muted-foreground italic">Latência estimada para tokens por segundo (TPS).</p>
+          </div>
+        </div>
       </section>
 
       {/* Seção B — Fallback */}

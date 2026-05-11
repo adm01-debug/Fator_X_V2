@@ -4,8 +4,13 @@ import { SelectionGrid } from '../ui/SelectionGrid';
 import { PipelineFlow } from '../ui/PipelineFlow';
 import { CollapsibleCard } from '../ui/CollapsibleCard';
 import type { RAGArchitecture, VectorDB } from '@/types/agentTypes';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, Search, FileText, CheckCircle2, Loader2, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 const RAG_ARCHITECTURES: { id: RAGArchitecture; icon: string; title: string; description: string; badge?: string }[] = [
   { id: 'naive', icon: '📄', title: 'Naive RAG', description: 'Embed → retrieve → generate. Simples e rápido.' },
@@ -58,6 +63,37 @@ const SOURCE_TYPES = [
 export function RAGModule() {
   const agent = useAgentBuilderStore((s) => s.agent);
   const updateAgent = useAgentBuilderStore((s) => s.updateAgent);
+  const [testQuery, setTestQuery] = useState('');
+  const [isSimulating, setIsSimulating] = useState(false);
+  const [simResults, setSimResults] = useState<{ source: string; chunk: string; score: number }[] | null>(null);
+
+  const handleSimulate = async () => {
+    if (!testQuery.trim()) return;
+    setIsSimulating(true);
+    setSimResults(null);
+    try {
+      // Simulação de busca vetorial
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      const mockResults = [
+        { 
+          source: agent.rag_sources[0]?.name || 'Documentação.pdf', 
+          chunk: '...o processo de ativação requer uma chave de 16 dígitos enviada por email...',
+          score: 0.89
+        },
+        { 
+          source: 'Knowledge Base', 
+          chunk: '...limites de uso são aplicados por organização e não por usuário individualmente...',
+          score: 0.76
+        }
+      ];
+      setSimResults(mockResults);
+      toast.success('Simulação de busca concluída');
+    } catch {
+      toast.error('Erro na simulação');
+    } finally {
+      setIsSimulating(false);
+    }
+  };
 
   const addSource = () => {
     const newSource = {
@@ -276,7 +312,55 @@ export function RAGModule() {
         </div>
       </section>
 
-      {/* Seção F — Quality Panel */}
+      {/* Seção F — Simulação de Busca */}
+      <section>
+        <SectionTitle icon="🔍" title="Simulador de Retrieval" subtitle="Teste como o agente buscará informações com a configuração atual." />
+        <Card className="p-4 bg-card border-border space-y-4">
+          <div className="flex gap-2">
+            <Input 
+              placeholder="Digite uma pergunta para testar a busca..." 
+              value={testQuery}
+              onChange={(e) => setTestQuery(e.target.value)}
+              className="text-sm"
+            />
+            <Button onClick={handleSimulate} disabled={isSimulating || !testQuery.trim()} className="gap-2">
+              {isSimulating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+              Simular
+            </Button>
+          </div>
+
+          {simResults && (
+            <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
+              <p className="text-[10px] font-bold text-muted-foreground uppercase flex items-center gap-1.5">
+                <CheckCircle2 className="h-3 w-3 text-nexus-green" /> {simResults.length} Chunks Recuperados (Simulação)
+              </p>
+              <div className="grid grid-cols-1 gap-2">
+                {simResults.map((res, i) => (
+                  <div key={i} className="rounded-lg border border-border bg-muted/20 p-3 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <FileText className="h-3 w-3 text-primary" />
+                        <span className="text-[11px] font-bold">{res.source}</span>
+                      </div>
+                      <Badge variant="outline" className="text-[10px] font-mono">Score: {res.score.toFixed(2)}</Badge>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground italic">"{res.chunk}"</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {!simResults && !isSimulating && (
+            <div className="flex items-center gap-2 text-[11px] text-muted-foreground bg-muted/30 p-2 rounded-lg">
+              <Info className="h-3.5 w-3.5" />
+              Use o simulador para validar o Threshold de Similaridade e o Top K.
+            </div>
+          )}
+        </Card>
+      </section>
+
+      {/* Seção G — Quality Panel */}
       <section>
         <SectionTitle icon="📊" title="Qualidade do RAG" subtitle="Resumo da configuração atual do pipeline RAG." />
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">

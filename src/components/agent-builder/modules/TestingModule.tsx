@@ -1,7 +1,9 @@
+import { useMemo } from 'react';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import { SectionTitle, NexusBadge, InputField, TextAreaField, SelectField } from '../ui';
 import { CollapsibleCard } from '../ui/CollapsibleCard';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import {
   Plus,
   Trash2,
@@ -9,7 +11,11 @@ import {
   XCircle,
   Clock,
   SkipForward,
+  ShieldCheck,
+  Target,
+  BarChart3,
 } from 'lucide-react';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import type { TestCase, EvalMetric } from '@/types/agentTypes';
 import { TestExecutionPanel } from './TestExecutionPanel';
 
@@ -112,6 +118,18 @@ export function TestingModule() {
     skipped: agent.test_cases.filter((t) => t.status === 'skipped').length,
   };
 
+  const coverageData = useMemo(() => {
+    return TEST_CATEGORIES.map(cat => ({
+      name: cat.label.split(' ')[1],
+      value: agent.test_cases.filter(t => t.category === cat.value).length,
+      color: cat.value === 'functional' ? 'hsl(var(--nexus-blue))' :
+             cat.value === 'safety' ? 'hsl(var(--nexus-emerald))' :
+             cat.value === 'edge_case' ? 'hsl(var(--nexus-amber))' :
+             cat.value === 'regression' ? 'hsl(var(--nexus-purple))' :
+             'hsl(var(--nexus-rose))'
+    })).filter(c => c.value > 0);
+  }, [agent.test_cases]);
+
   return (
     <div className="space-y-10">
       {/* Resumo */}
@@ -137,6 +155,69 @@ export function TestingModule() {
                 </div>
               );
             })}
+          </div>
+        )}
+
+        {/* Coverage Chart */}
+        {agent.test_cases.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <Card className="p-4 bg-card border-border flex flex-col items-center justify-center min-h-[220px]">
+              <p className="text-[10px] font-bold text-muted-foreground uppercase mb-4 self-start flex items-center gap-1.5">
+                <BarChart3 className="h-3 w-3" /> Cobertura por Categoria
+              </p>
+              {coverageData.length > 0 ? (
+                <div className="w-full h-[160px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={coverageData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={40}
+                        outerRadius={60}
+                        paddingAngle={5}
+                        dataKey="value"
+                      >
+                        {coverageData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip 
+                        contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px', fontSize: '10px' }}
+                      />
+                      <Legend verticalAlign="bottom" align="center" iconType="circle" wrapperStyle={{ fontSize: '10px', paddingTop: '10px' }} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <p className="text-xs text-muted-foreground">Adicione categorias aos testes para ver a cobertura.</p>
+              )}
+            </Card>
+
+            <div className="grid grid-cols-1 gap-2">
+              <div className="rounded-xl border border-border bg-card p-4 flex items-center gap-4">
+                <div className="h-10 w-10 rounded-full bg-nexus-blue/10 flex items-center justify-center shrink-0">
+                  <ShieldCheck className="h-5 w-5 text-nexus-blue" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold">Health Score: {(statusCounts.passed / (agent.test_cases.length || 1) * 100).toFixed(0)}%</p>
+                  <p className="text-[10px] text-muted-foreground">Percentual de testes passando atualmente.</p>
+                </div>
+              </div>
+              <div className="rounded-xl border border-border bg-card p-4 flex items-center gap-4">
+                <div className="h-10 w-10 rounded-full bg-nexus-amber/10 flex items-center justify-center shrink-0">
+                  <Target className="h-5 w-5 text-nexus-amber" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold">Ready for Production?</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    {statusCounts.failed > 0 ? '⛔ Bloqueado por falhas críticas.' : 
+                     agent.test_cases.length < 5 ? '⚠️ Mínimo de 5 testes recomendado.' : 
+                     '✅ Pronto para deploy.'}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </section>
