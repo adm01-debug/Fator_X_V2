@@ -6,12 +6,12 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Palette, Globe, Bell, Key, Save, Server, Building2, Shield, Activity, Share2, Database, Zap } from "lucide-react";
+import { Palette, Globe, Bell, Key, Save, Server, Share2, Database, Zap, Shield, Activity } from "lucide-react";
 import { MCPServerManager } from "@/components/integrations/MCPServerManager";
 import { MCPServersPanel } from "@/components/settings/MCPServersPanel";
 import { Bitrix24Connect } from "@/components/integrations/Bitrix24Connect";
 import { toast } from "sonner";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getWorkspace } from "@/services/settingsService";
 import { getWorkspaceId } from "@/lib/agentService";
 import { useTheme } from "next-themes";
@@ -22,7 +22,6 @@ import { Badge } from "@/components/ui/badge";
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
-  const queryClient = useQueryClient();
   const [notifications, setNotifications] = useState({ 
     email: true, 
     errors: true, 
