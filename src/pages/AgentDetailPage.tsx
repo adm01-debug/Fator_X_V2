@@ -246,20 +246,26 @@ function VersionHistory({ agentId }: { agentId: string }) {
   const hasAnyOptionSelected = copyPrompt || copyTools || copyModel;
 
   // Diff calculado uma vez para alimentar tanto o preview quanto o changelog.
-  const restoreDiff = previous && current && hasAnyOptionSelected
-    ? computeRestoreDiff(current, previous, restoreOptions)
-    : null;
+  // Memoizado para evitar cálculos pesados a cada re-render do componente pai.
+  const restoreDiff = useMemo(() => {
+    if (!previous || !current || !hasAnyOptionSelected) return null;
+    return computeRestoreDiff(current, previous, restoreOptions);
+  }, [current, previous, restoreOptions]);
 
-  // Validação pré-restore — corre sempre que houver origem; bloqueia confirmação
-  // se algum erro estrutural/incompatibilidade for detectado no estado pós-merge.
-  const validation = previous
-    ? validateRestore(current, previous, restoreOptions, fixOverrides)
-    : null;
+  // Validação pré-restore — sempre revalida quando muda a origem, os campos
+  // selecionados ou quando uma correção rápida (fixOverrides) é aplicada.
+  const validation = useMemo(() => {
+    if (!previous) return null;
+    return validateRestore(current, previous, restoreOptions, fixOverrides);
+  }, [current, previous, restoreOptions, fixOverrides]);
+
   const restoreBlocked = !!validation?.blocked;
 
   // Gate adicional: rollbacks high/critical exigem ack explícito do usuário.
-  const requiresHighRiskAck =
-    !!restoreDiff && (restoreDiff.overallRisk === 'high' || restoreDiff.overallRisk === 'critical');
+  const requiresHighRiskAck = useMemo(() => {
+    return !!restoreDiff && (restoreDiff.overallRisk === 'high' || restoreDiff.overallRisk === 'critical');
+  }, [restoreDiff]);
+
   const ackBlocked = requiresHighRiskAck && !riskAck;
 
   const rollbackMut = useMutation({
