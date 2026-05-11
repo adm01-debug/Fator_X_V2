@@ -147,11 +147,23 @@ export function CreateAgentWizard() {
 
   const confirmMagicCreate = async () => {
     if (user && magicPreview) {
-      // Option A: Save and go to dashboard
-      // await supabaseExternal.from("agents").insert({ user_id: user.id, name: magicPreview.name, status: "draft" });
-      // navigate("/agents");
-      
-      // Option B: Go to Assisted Creation with these values (satisfies "automate filling wizard steps")
+      // Auto-save as draft
+      saveDraftVersion({
+        agent: {
+          name: magicPreview.name,
+          mission: magicPreview.mission,
+          persona: magicPreview.type as any,
+          model: magicPreview.model as any,
+          system_prompt: magicPreview.system_prompt,
+          avatar_emoji: magicPreview.emoji || '🤖',
+          version: 1,
+          status: 'draft',
+          tags: ['magic-generation'],
+          tools: (magicPreview.tools || []).map((tn: any) => ({ name: tn.name, enabled: true })) as any
+        } as any,
+        label: `Geração Mágica: ${magicPreview.name}`,
+        note: `Criado a partir da ideia: ${magicIdea}`
+      });
       setMode("quick");
     }
   };
