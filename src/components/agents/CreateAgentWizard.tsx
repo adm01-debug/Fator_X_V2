@@ -36,6 +36,8 @@ export function CreateAgentWizard() {
   const [magicIdea, setMagicIdea] = useState("");
   const [isGeneratingMagic, setIsGeneratingMagic] = useState(false);
   const [magicPreview, setMagicPreview] = useState<any>(null);
+  const [viewingTemplate, setViewingTemplate] = useState<AgentTemplate | null>(null);
+  const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
 
   const categoryCount = useMemo(() => {
     const counts: Record<string, number> = { all: AGENT_TEMPLATES_LIST.length };
