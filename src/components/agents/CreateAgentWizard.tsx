@@ -27,7 +27,7 @@ export function CreateAgentWizard() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [mode, setMode] = useState<WizardMode>("choose");
-  const [step, setStep] = useState(0);
+  
   const [AGENT_TEMPLATES_LIST, setAgentTemplates] = useState<AgentTemplate[]>(STATIC_TEMPLATES);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
