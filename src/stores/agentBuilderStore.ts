@@ -35,7 +35,7 @@ interface AgentBuilderStore {
   resetAgent: () => void;
   loadAgent: (agent: AgentConfig) => void;
 
-  saveAgent: () => Promise<void>;
+  saveAgent: (summary?: string) => Promise<void>;
   loadAgentFromDB: (id: string) => Promise<void>;
   loadSavedAgents: () => Promise<void>;
   deleteAgent: (id: string) => Promise<void>;
