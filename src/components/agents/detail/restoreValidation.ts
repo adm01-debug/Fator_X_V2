@@ -332,8 +332,8 @@ export function validateRestore(
           title: `Temperature inválida (${String(temp)})`,
           detail: 'Temperature precisa ser um número entre 0 e 2.',
           quickFixes: [
-            { kind: 'set-temperature', value: 0.7, label: 'Redefinir para 0.7', description: 'Valor padrão equilibrado.' },
-            { kind: 'set-temperature', value: 1, label: 'Redefinir para 1' },
+            { kind: 'set-temperature', value: 0.7, label: 'Redefinir temperature para 0.7', description: 'Valor padrão equilibrado.' },
+            { kind: 'set-temperature', value: 1, label: 'Redefinir temperature para 1' },
             { kind: 'uncheck-model', label: 'Desmarcar Modelo & parâmetros' },
           ],
         });
