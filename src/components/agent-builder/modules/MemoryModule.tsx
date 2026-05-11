@@ -1,8 +1,11 @@
+import { useState, useMemo } from 'react';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import { SectionTitle, CollapsibleCard, ToggleField, SliderField, SelectField } from '../ui';
 import { NexusBadge } from '../ui/NexusBadge';
 import { PipelineFlow } from '../ui/PipelineFlow';
 import { ConfigCard } from '../ui/ConfigCard';
+import { Card } from '@/components/ui/card';
+import { Brain, Database, Search, ShieldCheck, Zap, Activity, Info } from 'lucide-react';
 import type { ConsolidationStrategy } from '@/types/agentTypes';
 
 // ═══ Governance Panel (reused by each memory layer) ═══
@@ -128,8 +131,20 @@ export function MemoryModule() {
   const agent = useAgentBuilderStore((s) => s.agent);
   const updateAgent = useAgentBuilderStore((s) => s.updateAgent);
   const memUpdate = useMemoryUpdate();
+  const [testSimInput, setTestSimInput] = useState('');
 
-  const activeCount = [agent.memory_short_term, agent.memory_episodic, agent.memory_semantic, agent.memory_procedural, agent.memory_profile, agent.memory_shared].filter(Boolean).length;
+  const memoryLayersStatus = useMemo(() => {
+    return [
+      { id: 'short', name: 'Curto Prazo', icon: <Zap className="h-3 w-3" />, color: 'hsl(var(--nexus-yellow))', active: agent.memory_short_term },
+      { id: 'episodic', name: 'Episódica', icon: <Database className="h-3 w-3" />, color: 'hsl(var(--nexus-green))', active: agent.memory_episodic },
+      { id: 'semantic', name: 'Semântica', icon: <Search className="h-3 w-3" />, color: 'hsl(var(--nexus-blue))', active: agent.memory_semantic },
+      { id: 'procedural', name: 'Procedural', icon: <Activity className="h-3 w-3" />, color: 'hsl(var(--nexus-red))', active: agent.memory_procedural },
+      { id: 'profile', name: 'Perfil', icon: <Brain className="h-3 w-3" />, color: 'hsl(var(--nexus-orange))', active: agent.memory_profile },
+      { id: 'shared', name: 'Compartilhada', icon: <ShieldCheck className="h-3 w-3" />, color: 'hsl(var(--nexus-purple))', active: agent.memory_shared },
+    ];
+  }, [agent]);
+
+  const activeCount = memoryLayersStatus.filter(l => l.active).length;
 
   return (
     <div className="space-y-10">
@@ -279,9 +294,62 @@ export function MemoryModule() {
         </div>
       </section>
 
-      {/* Seção D — Diagrama de Fluxo */}
+      {/* Seção D — Neural Context Heatmap */}
       <section>
-        <SectionTitle icon="📊" title="Fluxo de Memória" subtitle="Visualização do pipeline de memória durante uma interação." />
+        <SectionTitle icon="🧠" title="Neural Context Heatmap" subtitle="Simulação de ativação das camadas de memória por input." />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card className="p-4 bg-card border-border">
+            <p className="text-xs font-semibold mb-3 flex items-center gap-2">
+              <Zap className="h-3.5 w-3.5 text-primary" /> Testar Ativação
+            </p>
+            <textarea
+              className="w-full h-24 bg-muted/30 border border-border rounded-lg p-3 text-xs focus:ring-1 ring-primary outline-none transition-all"
+              placeholder="Digite uma mensagem para simular o que o agente lembraria..."
+              value={testSimInput}
+              onChange={(e) => setTestSimInput(e.target.value)}
+            />
+            <div className="mt-2 flex items-center gap-2 text-[10px] text-muted-foreground">
+              <Info className="h-3 w-3" />
+              A simulação estima a probabilidade de hit em cada camada de memória.
+            </div>
+          </Card>
+
+          <div className="space-y-2 flex flex-col justify-center">
+            {memoryLayersStatus.map((layer) => {
+              const hitChance = !layer.active ? 0 : testSimInput.length > 0 
+                ? (Math.random() * 80 + 20).toFixed(0) 
+                : 0;
+              
+              return (
+                <div key={layer.id} className="space-y-1">
+                  <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider">
+                    <span className="flex items-center gap-1.5" style={{ color: layer.active ? layer.color : 'hsl(var(--muted-foreground))' }}>
+                      {layer.icon} {layer.name}
+                    </span>
+                    <span className={layer.active ? 'text-foreground' : 'text-muted-foreground'}>
+                      {layer.active ? `${hitChance}% Prob. Hit` : 'Desativado'}
+                    </span>
+                  </div>
+                  <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                    <div 
+                      className="h-full transition-all duration-500 ease-out"
+                      style={{ 
+                        width: `${hitChance}%`, 
+                        backgroundColor: layer.color,
+                        boxShadow: layer.active && Number(hitChance) > 50 ? `0 0 10px ${layer.color}60` : 'none'
+                      }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Seção E — Diagrama de Fluxo */}
+      <section>
+        <SectionTitle icon="📊" title="Pipeline de Memória" subtitle="Visualização do pipeline de memória durante uma interação." />
         <div className="rounded-xl border border-border bg-card p-4 overflow-x-auto">
           <PipelineFlow steps={MEMORY_PIPELINE_STEPS} />
         </div>

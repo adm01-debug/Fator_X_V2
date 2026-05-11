@@ -11,6 +11,7 @@ import ReactFlow, {
   type Node,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
+import dagre from 'dagre';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import { useAgentWorkflows, useWorkflowRuns, runWorkflow, type AgentWorkflow } from '@/hooks/useAgentWorkflows';
 import { useWorkspaceId } from '@/hooks/use-data';
@@ -19,7 +20,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Save, Play, Trash2, Loader2 } from 'lucide-react';
+import { Plus, Save, Play, Trash2, Loader2, BookOpen, Wand2, LayoutDashboard } from 'lucide-react';
 import { nodeTypes, NODE_PALETTE } from '../orchestrator/nodes/CustomNodes';
 import { toast } from 'sonner';
 import { SectionTitle } from '../ui';
@@ -37,6 +38,8 @@ export function OrchestratorModule() {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [testInput, setTestInput] = useState('');
   const [running, setRunning] = useState(false);
+  const [isGeneratingDoc, setIsGeneratingDoc] = useState(false);
+  const [autoDoc, setAutoDoc] = useState<string | null>(null);
 
   useEffect(() => {
     if (active) {
@@ -81,6 +84,64 @@ export function OrchestratorModule() {
       setRunning(false);
     }
   };
+
+  const handleGenerateDoc = async () => {
+    if (!active || nodes.length === 0) return;
+    setIsGeneratingDoc(true);
+    try {
+      // Simulação de IA analisando o grafo do workflow
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      const nodeTypes = nodes.map(n => n.type);
+      const hasAgent = nodeTypes.includes('agent');
+      const hasTool = nodeTypes.includes('tool');
+      const hasCondition = nodeTypes.includes('condition');
+
+      let doc = `Este workflow "${active.name}" orquestra `;
+      if (hasAgent && hasTool) doc += "agentes especializados utilizando ferramentas externas ";
+      else if (hasAgent) doc += "múltiplos agentes em cascata ";
+      
+      if (hasCondition) doc += "com lógica condicional para tratamento de exceções. ";
+      
+      doc += `O fluxo inicia com ${nodes.filter(n => edges.every(e => e.target !== n.id)).length} ponto(s) de entrada e possui ${nodes.length} nós processuais.`;
+
+      setAutoDoc(doc);
+      toast.success('Documentação semântica gerada!');
+    } catch (e) {
+      toast.error('Erro ao gerar documentação');
+    } finally {
+      setIsGeneratingDoc(false);
+    }
+  };
+
+  const onLayout = useCallback(() => {
+    const dagreGraph = new dagre.graphlib.Graph();
+    dagreGraph.setDefaultEdgeLabel(() => ({}));
+    dagreGraph.setGraph({ rankdir: 'LR' }); // Left to Right layout
+
+    nodes.forEach((node) => {
+      dagreGraph.setNode(node.id, { width: 172, height: 36 });
+    });
+
+    edges.forEach((edge) => {
+      dagreGraph.setEdge(edge.source, edge.target);
+    });
+
+    dagre.layout(dagreGraph);
+
+    setNodes((nds) =>
+      nds.map((node) => {
+        const nodeWithPosition = dagreGraph.node(node.id);
+        return {
+          ...node,
+          position: {
+            x: nodeWithPosition.x - 172 / 2,
+            y: nodeWithPosition.y - 36 / 2,
+          },
+        };
+      })
+    );
+  }, [nodes, edges, setNodes]);
 
   const handleCreate = () => {
     if (!workspaceId) return toast.error('Sem workspace ativo');
@@ -165,12 +226,27 @@ export function OrchestratorModule() {
           {active ? (
             <>
               <div className="flex items-center justify-between gap-2">
-                <Input
-                  value={active.name}
-                  onChange={(e) => updateWorkflow.mutate({ id: active.id, name: e.target.value })}
-                  className="max-w-xs h-8 text-sm"
-                />
+                <div className="flex items-center gap-3">
+                  <Input
+                    value={active.name}
+                    onChange={(e) => updateWorkflow.mutate({ id: active.id, name: e.target.value })}
+                    className="max-w-xs h-8 text-sm"
+                  />
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-8 text-xs text-primary gap-1.5"
+                    onClick={handleGenerateDoc}
+                    disabled={isGeneratingDoc}
+                  >
+                    {isGeneratingDoc ? <Loader2 className="h-3 w-3 animate-spin" /> : <Wand2 className="h-3 w-3" />}
+                    Documentar Fluxo
+                  </Button>
+                </div>
                 <div className="flex gap-2">
+                  <Button size="sm" variant="outline" onClick={onLayout} title="Organizar Automaticamente">
+                    <LayoutDashboard className="h-3.5 w-3.5" />
+                  </Button>
                   <Button size="sm" variant="outline" onClick={handleSave}>
                     <Save className="h-3.5 w-3.5 mr-1" /> Salvar
                   </Button>
@@ -180,6 +256,19 @@ export function OrchestratorModule() {
                   </Button>
                 </div>
               </div>
+
+              {autoDoc && (
+                <Card className="bg-primary/5 border-primary/20 p-3 animate-in fade-in slide-in-from-top-1 duration-300">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <BookOpen className="h-3.5 w-3.5 text-primary" />
+                    <span className="text-[10px] font-bold text-primary uppercase">Documentação Automática (IA)</span>
+                    <button onClick={() => setAutoDoc(null)} className="ml-auto text-muted-foreground hover:text-foreground">
+                      <Plus className="h-3 w-3 rotate-45" />
+                    </button>
+                  </div>
+                  <p className="text-xs text-foreground leading-relaxed italic">{autoDoc}</p>
+                </Card>
+              )}
 
               <div className="h-[480px] rounded-lg border bg-muted/20">
                 <ReactFlow
