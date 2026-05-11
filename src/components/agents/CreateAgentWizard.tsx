@@ -83,18 +83,24 @@ export function CreateAgentWizard() {
   const handleMagicCreate = async () => {
     if (!magicIdea.trim()) return;
     setIsGeneratingMagic(true);
-    await new Promise(r => setTimeout(r, 1000));
+    // Simulate IA call - in a real app this would call an Edge Function
+    await new Promise(r => setTimeout(r, 1500));
+    
+    // Heuristic-based generation from idea
+    const idea = magicIdea.toLowerCase();
     const result = { 
-      name: "Agente Mágico", 
+      name: idea.split(' ').slice(0, 2).map(w => w[0].toUpperCase() + w.slice(1)).join(' ') || "Agente Especialista", 
       mission: magicIdea, 
-      type: "chatbot", 
-      model: "gpt-4o", 
-      tools: [{ name: "search", enabled: true }], 
+      type: idea.includes('suporte') ? 'support' : idea.includes('analis') ? 'analyst' : 'chatbot', 
+      model: idea.includes('complexo') || idea.includes('avançado') ? 'gpt-4o' : 'claude-haiku-4.5', 
+      emoji: idea.includes('suporte') ? '🎧' : idea.includes('venda') ? '💰' : '🤖',
+      tools: idea.includes('busca') || idea.includes('internet') ? [{ name: "search", enabled: true }] : [], 
       guardrails: [{ name: "toxicity", enabled: true }],
-      system_prompt: "Você é um assistente gerado via IA..."
+      system_prompt: `Você é um agente especializado em: ${magicIdea}.\nSua missão é ajudar o usuário da melhor forma possível seguindo as diretrizes de segurança.`
     };
     setMagicPreview(result);
     setIsGeneratingMagic(false);
+    toast.success("Plano de agente gerado com sucesso!");
   };
 
   const readiness = useMemo(() => {
@@ -104,12 +110,31 @@ export function CreateAgentWizard() {
 
   const confirmMagicCreate = async () => {
     if (user && magicPreview) {
-      await supabaseExternal.from("agents").insert({ user_id: user.id, name: magicPreview.name, status: "draft" });
-      navigate("/agents");
+      // Option A: Save and go to dashboard
+      // await supabaseExternal.from("agents").insert({ user_id: user.id, name: magicPreview.name, status: "draft" });
+      // navigate("/agents");
+      
+      // Option B: Go to Assisted Creation with these values (satisfies "automate filling wizard steps")
+      setMode("quick");
     }
   };
 
-  if (mode === "quick") return <QuickCreateWizard onBack={() => setMode("choose")} />;
+  if (mode === "quick") {
+    return (
+      <QuickCreateWizard 
+        onBack={() => setMode("choose")} 
+        initialData={magicPreview ? {
+          name: magicPreview.name,
+          emoji: magicPreview.emoji || "🤖",
+          mission: magicPreview.mission,
+          description: `Agente gerado magicamente para: ${magicPreview.mission}`,
+          type: magicPreview.type,
+          model: magicPreview.model,
+          prompt: magicPreview.system_prompt
+        } : undefined}
+      />
+    );
+  }
 
   return (
     <div className="p-6 max-w-[1200px] mx-auto space-y-8">
