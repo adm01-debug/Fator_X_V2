@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import { TABS } from '@/data/agentBuilderData';
 import { AgentPlayground } from './AgentPlayground';
@@ -5,7 +6,7 @@ import { TabNavigation } from './TabNavigation';
 import { ReadinessBadge } from './ReadinessBadge';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ChevronLeft, ChevronRight, Save, Plus, Loader2, Check, History, Sparkles, FileClock } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Save, Plus, Loader2, Check, History, Sparkles, FileClock, Bot } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { VersionDiffDialog } from '@/components/agents/VersionDiffDialog';
 import { useAgentVersions } from '@/hooks/useAgentVersions';
@@ -30,6 +31,7 @@ interface AgentBuilderLayoutProps {
 }
 
 export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
+  const navigate = useNavigate();
   const { agent, activeTab, isDirty, isSaving, lastSaved, saveAgent, resetAgent, nextTab, prevTab } =
     useAgentBuilderStore();
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -57,17 +59,18 @@ export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
           borderColor: 'hsl(var(--nexus-border, var(--border)))',
         }}
       >
-        <div className="flex items-center gap-3 min-w-0">
-          <h1
-            className="text-lg font-bold tracking-tight bg-clip-text text-transparent shrink-0"
-            style={{
-              backgroundImage: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)), hsl(var(--nexus-amber)))',
-            }}
-          >
-            ⚡ Fator X
-          </h1>
-          <span className="text-[11px] text-muted-foreground hidden lg:block">
-            Plataforma operacional para agentes de IA
+        <div className="flex items-center gap-5 min-w-0">
+          <div className="flex items-center gap-2 group cursor-pointer" onClick={() => navigate('/agents')}>
+            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/15 group-hover:bg-primary/20 transition-colors">
+              <Bot className="h-5 w-5 text-primary" />
+            </div>
+            <h1 className="text-base font-extrabold tracking-tight text-foreground">
+              Builder
+            </h1>
+          </div>
+          <div className="h-4 w-px bg-border hidden lg:block" />
+          <span className="text-[11px] text-muted-foreground hidden lg:block font-medium">
+            Fator X Operations
           </span>
         </div>
 
@@ -161,7 +164,7 @@ export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
       <TabNavigation />
 
       {/* ═══ CONTENT ═══ */}
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto bg-secondary/5">
         <div className="max-w-[1024px] mx-auto px-5 py-6 sm:px-6 sm:py-7">
           {children}
         </div>
