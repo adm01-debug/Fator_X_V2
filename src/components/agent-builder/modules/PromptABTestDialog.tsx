@@ -23,6 +23,8 @@ export function PromptABTestDialog({ open, onOpenChange, versionA, versionB }: P
     outputA: string;
     outputB: string;
     winner: 'A' | 'B' | 'Tie' | null;
+    metricsA: { quality: number, speed: number, adherence: number };
+    metricsB: { quality: number, speed: number, adherence: number };
   }[]>([]);
 
   const runTest = async () => {
@@ -41,12 +43,30 @@ export function PromptABTestDialog({ open, onOpenChange, versionA, versionB }: P
     for (let i = 0; i < inputs.length; i++) {
       // Simulação de chamada de LLM para as duas versões
       await new Promise(resolve => setTimeout(resolve, 800));
+      
+      const metricsA = {
+        quality: 70 + Math.random() * 30,
+        speed: 400 + Math.random() * 600,
+        adherence: 80 + Math.random() * 20
+      };
+      
+      const metricsB = {
+        quality: 70 + Math.random() * 30,
+        speed: 400 + Math.random() * 600,
+        adherence: 80 + Math.random() * 20
+      };
+
+      const scoreA = metricsA.quality * 0.5 + metricsA.adherence * 0.3 + (1000 - metricsA.speed) * 0.2;
+      const scoreB = metricsB.quality * 0.5 + metricsB.adherence * 0.3 + (1000 - metricsB.speed) * 0.2;
+
       setResults(prev => [...prev, {
         id: i + 1,
         input: inputs[i],
-        outputA: `[v${versionA.version}] Resposta simulada para: ${inputs[i]}`,
-        outputB: `[v${versionB.version}] Resposta simulada para: ${inputs[i]}`,
-        winner: Math.random() > 0.6 ? 'B' : Math.random() > 0.3 ? 'A' : 'Tie'
+        outputA: `[v${versionA.version}] Análise processada para: ${inputs[i]}. O plano atual cobre os requisitos solicitados.`,
+        outputB: `[v${versionB.version}] Com base na sua solicitação de "${inputs[i]}", verifiquei que o sistema está operacional.`,
+        winner: Math.abs(scoreA - scoreB) < 5 ? 'Tie' : scoreA > scoreB ? 'A' : 'B',
+        metricsA,
+        metricsB
       }]);
       setProgress(((i + 1) / inputs.length) * 100);
     }
@@ -127,21 +147,49 @@ export function PromptABTestDialog({ open, onOpenChange, versionA, versionB }: P
                       </Badge>
                     </div>
                     <div className="grid grid-cols-2 divide-x divide-border">
-                      <div className={`p-4 text-xs space-y-2 ${r.winner === 'A' ? 'bg-nexus-emerald/5' : ''}`}>
+                      <div className={`p-4 text-xs space-y-3 ${r.winner === 'A' ? 'bg-nexus-emerald/5' : ''}`}>
                         <div className="flex items-center justify-between">
                           <span className="font-bold opacity-50">v{versionA.version}</span>
                           {r.winner === 'A' && <Check className="h-3 w-3 text-nexus-emerald" />}
                           {r.winner === 'B' && <X className="h-3 w-3 text-destructive" />}
                         </div>
-                        <p className="leading-relaxed">{r.outputA}</p>
+                        <p className="leading-relaxed italic text-muted-foreground">"{r.outputA}"</p>
+                        <div className="grid grid-cols-3 gap-1 pt-2 border-t border-border/50">
+                          <div className="text-[9px]">
+                            <p className="opacity-50 uppercase">Qualidade</p>
+                            <p className="font-bold">{r.metricsA.quality.toFixed(0)}%</p>
+                          </div>
+                          <div className="text-[9px]">
+                            <p className="opacity-50 uppercase">Latência</p>
+                            <p className="font-bold">{r.metricsA.speed.toFixed(0)}ms</p>
+                          </div>
+                          <div className="text-[9px]">
+                            <p className="opacity-50 uppercase">Aderência</p>
+                            <p className="font-bold">{r.metricsA.adherence.toFixed(0)}%</p>
+                          </div>
+                        </div>
                       </div>
-                      <div className={`p-4 text-xs space-y-2 ${r.winner === 'B' ? 'bg-nexus-emerald/5' : ''}`}>
+                      <div className={`p-4 text-xs space-y-3 ${r.winner === 'B' ? 'bg-nexus-emerald/5' : ''}`}>
                         <div className="flex items-center justify-between">
                           <span className="font-bold opacity-50">v{versionB.version}</span>
                           {r.winner === 'B' && <Check className="h-3 w-3 text-nexus-emerald" />}
                           {r.winner === 'A' && <X className="h-3 w-3 text-destructive" />}
                         </div>
-                        <p className="leading-relaxed">{r.outputB}</p>
+                        <p className="leading-relaxed italic text-muted-foreground">"{r.outputB}"</p>
+                        <div className="grid grid-cols-3 gap-1 pt-2 border-t border-border/50">
+                          <div className="text-[9px]">
+                            <p className="opacity-50 uppercase">Qualidade</p>
+                            <p className="font-bold">{r.metricsB.quality.toFixed(0)}%</p>
+                          </div>
+                          <div className="text-[9px]">
+                            <p className="opacity-50 uppercase">Latência</p>
+                            <p className="font-bold">{r.metricsB.speed.toFixed(0)}ms</p>
+                          </div>
+                          <div className="text-[9px]">
+                            <p className="opacity-50 uppercase">Aderência</p>
+                            <p className="font-bold">{r.metricsB.adherence.toFixed(0)}%</p>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
