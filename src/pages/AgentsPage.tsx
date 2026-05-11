@@ -182,26 +182,34 @@ export default function AgentsPage() {
 
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
-      <PageHeader
-        title="Agentes"
-        description="Gerencie seus agentes de IA — crie, configure e monitore"
-        actions={
+      <div className="bg-card border border-border p-8 rounded-3xl shadow-sm mb-8 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/[0.03] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative">
+          <div className="flex items-center gap-5">
+            <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/15 shadow-inner">
+              <Bot className="h-9 w-9 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-heading font-extrabold text-foreground tracking-tight">Agentes</h1>
+              <p className="text-sm text-muted-foreground max-w-md">Gerencie sua força de trabalho digital — da criação ao monitoramento</p>
+            </div>
+          </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="gap-1.5" onClick={() => fileInputRef.current?.click()}>
-              <Upload className="h-3.5 w-3.5" /> Importar
+            <Button variant="outline" size="sm" className="gap-1.5 h-10 rounded-xl" onClick={() => fileInputRef.current?.click()}>
+              <Upload className="h-4 w-4" /> Importar
             </Button>
             <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={handleImport} />
-            <Button variant="outline" size="sm" className="gap-1.5" onClick={() => navigate('/agents/templates')}>
-              <BookOpen className="h-3.5 w-3.5" /> Templates
+            <Button variant="outline" size="sm" className="gap-1.5 h-10 rounded-xl" onClick={() => navigate('/agents/templates')}>
+              <BookOpen className="h-4 w-4" /> Templates
             </Button>
             <AccessControl permission="agents.create">
-              <Button onClick={() => navigate('/agents/new')} className="nexus-gradient-bg text-primary-foreground gap-2 hover:opacity-90">
-                <Plus className="h-4 w-4" /> Criar agente
+              <Button onClick={() => navigate('/agents/new')} className="nexus-gradient-bg text-primary-foreground gap-2 h-10 px-5 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all">
+                <Plus className="h-5 w-5" /> Criar agente
               </Button>
             </AccessControl>
           </div>
-        }
-      />
+        </div>
+      </div>
 
       <QuickActionsBar actions={[
         { label: 'Conhecimento', icon: BookOpen, path: '/knowledge' },
