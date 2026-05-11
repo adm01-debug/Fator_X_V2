@@ -440,6 +440,22 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
                     personalizado
                   </span>
                 )}
+                {entry.meta.config_overrides && (
+                  <span 
+                    className="text-[9px] uppercase tracking-wider text-nexus-amber bg-nexus-amber/10 px-1.5 py-0.5 rounded font-semibold border border-nexus-amber/20"
+                    title={`Ajustes manuais: ${Object.entries(entry.meta.config_overrides).map(([k, v]) => `${k}=${v}`).join(', ')}`}
+                  >
+                    ajustes manuais
+                  </span>
+                )}
+                {entry.meta.model_override && (
+                  <span 
+                    className="text-[9px] uppercase tracking-wider text-nexus-emerald bg-nexus-emerald/10 px-1.5 py-0.5 rounded font-semibold border border-nexus-emerald/20"
+                    title={`Modelo alterado para: ${entry.meta.model_override}`}
+                  >
+                    modelo novo
+                  </span>
+                )}
                 <div className="ml-auto flex items-center gap-1">
                   {/* Contador da janela de undo. Mostra mm:ss enquanto ativo,
                       pisca em vermelho no último minuto, e vira "expirado"
