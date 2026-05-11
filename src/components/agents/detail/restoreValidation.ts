@@ -221,6 +221,31 @@ export function validateRestore(
     mergedPersona = source.persona ?? mergedPersona;
   }
 
+  // Aplica overrides das correções rápidas ANTES da validação — permite que o
+  // painel reflita o estado corrigido instantaneamente após o clique.
+  if (overrides) {
+    const cfgOv = overrides.config ?? {};
+    if ('temperature' in cfgOv) {
+      if (cfgOv.temperature === null) delete merged.temperature;
+      else merged.temperature = cfgOv.temperature;
+    }
+    if ('max_tokens' in cfgOv) {
+      if (cfgOv.max_tokens === null) delete merged.max_tokens;
+      else merged.max_tokens = cfgOv.max_tokens;
+    }
+    if ('reasoning' in cfgOv) {
+      if (cfgOv.reasoning === null) delete merged.reasoning;
+      else merged.reasoning = cfgOv.reasoning;
+    }
+    if ('tools' in cfgOv) {
+      if (cfgOv.tools === null) delete merged.tools;
+      else merged.tools = cfgOv.tools;
+    }
+    if (overrides.model !== undefined) {
+      mergedModel = overrides.model;
+    }
+  }
+
   const caps = detectModelCaps(mergedModel);
 
   /* ── Prompt ─────────────────────────────────────────────────── */

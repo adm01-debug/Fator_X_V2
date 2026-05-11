@@ -252,7 +252,7 @@ function VersionHistory({ agentId }: { agentId: string }) {
   // Validação pré-restore — corre sempre que houver origem; bloqueia confirmação
   // se algum erro estrutural/incompatibilidade for detectado no estado pós-merge.
   const validation = previous
-    ? validateRestore(current, previous, restoreOptions)
+    ? validateRestore(current, previous, restoreOptions, fixOverrides)
     : null;
   const restoreBlocked = !!validation?.blocked;
 
