@@ -158,7 +158,7 @@ export function CreateAgentWizard() {
     // Auto-save as draft if user is logged in
     if (user) {
       try {
-        const { data, error } = await supabaseExternal.from("agents").insert({
+        const { data } = await supabaseExternal.from("agents").insert({
           user_id: user.id,
           name: magicPreview.name,
           mission: magicPreview.mission,
