@@ -426,16 +426,27 @@ export function validateRestore(
       const sp = String(merged.system_prompt ?? '');
       const tools = (merged.tools as any[]) ?? [];
       const enabledTools = tools.filter(isToolEnabled).map(toolNameOf);
-      const mentionedTools = extractPromptToolMentions(sp, enabledTools);
       
-      // Se estamos restaurando o prompt mas NÃO as ferramentas, e o prompt refere tools
-      // que o estado ATUAL (merged) não tem ativas, avisamos.
-      if (!options.copyTools) {
-        // (Aqui comparamos o prompt novo com tools atuais)
+      // Busca menções no prompt a ferramentas que NÃO estão habilitadas
+      // Precisamos de uma lista de ferramentas que poderiam estar lá.
+      const allKnownTools = tools.map(toolNameOf);
+      const mentionedTools = extractPromptToolMentions(sp, allKnownTools);
+      const missingTools = mentionedTools.filter(name => !enabledTools.includes(name));
+
+      if (missingTools.length > 0) {
+        issues.push({
+          id: 'prompt-tools-mismatch',
+          severity: 'warning',
+          group: 'prompt',
+          title: 'Ferramentas mencionadas mas ausentes',
+          detail: `O prompt restaurado menciona "${missingTools.join(', ')}", mas estas ferramentas não estão habilitadas na configuração resultante.`,
+          hint: options.copyTools ? 'Verifique se as ferramentas estavam habilitadas na versão de origem.' : 'Marque também "Ferramentas" para restaurar a lista compatível.',
+          quickFixes: !options.copyTools ? [
+            { kind: 'uncheck-prompt', label: 'Desmarcar Prompt' },
+            // Aqui poderíamos ter um "Habilitar ferramentas", mas é complexo via quickFix sem IDs.
+          ] : []
+        });
       }
-      
-      // Mais simples: se houver ferramentas mencionadas no prompt que não estão na lista de tools.
-      // Já existe uma lógica similar em algum lugar? Não vi.
     }
 
     // Cross-provider — quando muda família + parâmetros provider-específicos
