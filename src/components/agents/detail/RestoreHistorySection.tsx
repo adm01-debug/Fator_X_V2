@@ -336,7 +336,7 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
           const urgent = !expired && remainingMs < 60 * 1000;
           // Pode desfazer se temos a versão de referência localmente OU
           // pelo menos o id dela (fallback recarrega do servidor on-click).
-          const hasReference = !!entry.preRollback || !!entry.meta.restored_from_version_id;
+          // hasReference removido.
           // "Stale": existe versão local mais nova que a deste rollback.
           // Bloqueia o undo até o usuário recarregar e revisar.
           const stale = !!currentVersion && currentVersion.version > entry.versionNumber;
