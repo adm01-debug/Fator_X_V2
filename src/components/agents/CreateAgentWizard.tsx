@@ -13,15 +13,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  Check, ArrowRight, Shield, Search,
-  LayoutTemplate, PenTool, Zap, Sparkles, Wand2, 
-  Loader2, Info, Brain, Wrench, ShieldAlert, TrendingUp
+  Loader2, Brain, Wrench, ShieldAlert, Info, Wand2
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabaseExternal } from "@/integrations/supabase/externalClient";
 import { useAuth } from "@/contexts/AuthContext";
 import { AGENT_TEMPLATES as STATIC_TEMPLATES, type AgentTemplate } from "@/data/agentTemplates";
-import { STEPS, TEMPLATE_STEPS } from "./wizard/wizardConstants";
 import { QuickCreateWizard } from "./wizard/QuickCreateWizard";
 
 type WizardMode = "choose" | "template" | "scratch" | "quick";
