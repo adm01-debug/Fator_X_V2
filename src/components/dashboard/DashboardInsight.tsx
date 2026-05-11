@@ -31,19 +31,23 @@ export function DashboardInsight({ agents, usageStats, recentTraces }: InsightPr
   if (insights.length === 0) return null;
 
   return (
-    <div className="nexus-card border-primary/15 bg-gradient-to-r from-card via-card to-primary/[0.04] relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/[0.03] rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" aria-hidden="true" />
+    <div className="nexus-card border-primary/15 bg-gradient-to-r from-card via-card to-primary/[0.04] relative overflow-hidden group">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/[0.03] rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/[0.06] transition-colors" aria-hidden="true" />
       <div className="flex items-center gap-2 mb-3 relative">
-        <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center">
-          <Sparkles className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
+        <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center ring-4 ring-primary/5">
+          <Sparkles className="h-3.5 w-3.5 text-primary animate-pulse" aria-hidden="true" />
         </div>
         <h3 className="text-sm font-heading font-semibold text-foreground">Insights da IA</h3>
       </div>
-      <div className="space-y-2">
+      <div className="space-y-3">
         {insights.slice(0, 3).map((insight, i) => (
-          <div key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
-            <span className="shrink-0 mt-0.5" aria-hidden="true">{insight.icon}</span>
-            <p>{insight.text}</p>
+          <div key={i} className={`flex items-start gap-3 text-xs p-2.5 rounded-lg border transition-all ${
+            insight.type === 'warning' ? 'bg-nexus-amber/5 border-nexus-amber/10 text-nexus-amber/90' :
+            insight.type === 'success' ? 'bg-nexus-emerald/5 border-nexus-emerald/10 text-nexus-emerald/90' :
+            'bg-primary/5 border-primary/10 text-muted-foreground'
+          }`}>
+            <span className="shrink-0 text-base" aria-hidden="true">{insight.icon}</span>
+            <p className="leading-relaxed font-medium">{insight.text}</p>
           </div>
         ))}
       </div>

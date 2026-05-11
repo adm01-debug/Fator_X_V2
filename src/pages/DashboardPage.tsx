@@ -108,8 +108,8 @@ export default function DashboardPage() {
 
           {usageStats && (
             <div className="grid grid-cols-3 gap-4 sm:gap-5">
-              {[{ icon: Clock, color: "text-nexus-purple", bgColor: "bg-nexus-purple/10", value: `${usageStats.avgLatency}ms`, label: "Latência média" }, { icon: Sparkles, color: "text-nexus-cyan", bgColor: "bg-nexus-cyan/10", value: `${(usageStats.totalTokens / 1000).toFixed(0)}k`, label: "Tokens totais" }, { icon: Bot, color: "text-muted-foreground", bgColor: "bg-muted/10", value: `${draftCount}`, label: "Rascunhos" }].map((m) => (
-                <div key={m.label} className="nexus-card nexus-metric-card py-3 sm:py-4 flex items-center gap-3">
+              {[{ icon: Clock, color: "text-nexus-purple", bgColor: "bg-nexus-purple/10", value: usageStats.avgLatency > 0 ? `${usageStats.avgLatency}ms` : '—', label: "Latência média" }, { icon: Sparkles, color: "text-nexus-cyan", bgColor: "bg-nexus-cyan/10", value: usageStats.totalTokens > 0 ? `${(usageStats.totalTokens / 1000).toFixed(0)}k` : '—', label: "Tokens totais" }, { icon: Bot, color: "text-muted-foreground", bgColor: "bg-muted/10", value: `${draftCount}`, label: "Rascunhos" }].map((m) => (
+                <div key={m.label} className="nexus-card nexus-metric-card py-3 sm:py-4 flex items-center gap-3 hover:border-primary/30 transition-colors">
                   <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${m.bgColor}`}><m.icon className={`h-4 w-4 ${m.color}`} /></div>
                   <div><p className="text-sm sm:text-lg font-heading font-extrabold text-foreground">{m.value}</p><p className="text-[11px] text-muted-foreground/70 uppercase tracking-wider">{m.label}</p></div>
                 </div>
