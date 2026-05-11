@@ -85,6 +85,7 @@ export default function AgentTemplatesPage() {
     mutationFn: async (t: AgentTemplate) => {
       if (!user) throw new Error("Faça login para criar agentes");
       const agent = buildAgentFromTemplate(t);
+      // Inclui a flag isDraft para salvar rascunho versionado automaticamente
       return saveAgent(agent);
     },
     onSuccess: (agent, t) => {
