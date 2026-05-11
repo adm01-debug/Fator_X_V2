@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { 
   Search, BookOpen, ArrowRight, Database, Pencil, Trash2, Bot, 
   FileText, Activity, Layers, Zap, Shield, Sparkles, Filter, 
-  BarChart3, BrainCircuit, RefreshCcw, LayoutGrid, List, Radio, ShieldCheck, Globe, Cpu, Network, Waves
+  BarChart3, BrainCircuit, RefreshCcw, LayoutGrid, List, Radio, ShieldCheck, Globe, Cpu, Network
 } from "lucide-react";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -21,6 +21,7 @@ import { AccessControl, DangerousActionDialog } from "@/components/rbac";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 const pipeline = [
@@ -68,27 +69,43 @@ export default function KnowledgePage() {
   }
 
   return (
-    <div className="p-6 sm:p-8 lg:p-10 space-y-8 max-w-[1600px] mx-auto animate-in fade-in duration-500">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <PageHeader
-          title="Engine de Conhecimento & RAG"
-          description="Arquitetura de dados para Retrieval-Augmented Generation em escala industrial"
-          actions={
-            <div className="flex items-center gap-3">
+    <div className="p-6 sm:p-8 lg:p-10 space-y-10 max-w-[1440px] mx-auto animate-page-enter">
+      {/* Header Elevated 10/10 */}
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-2xl shadow-primary/5 mb-10 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/[0.06] transition-colors duration-500 pointer-events-none" />
+        
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative">
+          <div className="flex items-center gap-7">
+            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
+              <Database className="h-11 w-11 text-primary animate-float" />
+            </div>
+            <div className="space-y-1">
+              <div className="flex items-center gap-3">
+                <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Conhecimento & RAG</h1>
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-nexus-cyan/10 text-nexus-cyan text-[10px] font-bold uppercase tracking-widest border border-nexus-cyan/20">
+                  <Radio className="h-3 w-3 animate-pulse" /> Neural Network
+                </div>
+              </div>
+              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+                Ecossistema de recuperação vetorial. Orquestre o conhecimento dos seus agentes através de Retrieval-Augmented Generation em escala industrial.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+             <div className="flex flex-col items-end gap-1">
+              <div className="flex items-center gap-2 text-nexus-emerald font-black text-sm uppercase tracking-tighter">
+                <ShieldCheck className="h-4 w-4" /> Vector DB Nominal
+              </div>
+              <p className="text-[10px] text-muted-foreground font-bold tracking-widest uppercase">Auto-Scaling Ingestion</p>
+            </div>
+            <div className="h-10 w-px bg-border/40 mx-4" />
+            <div className="flex items-center gap-2">
               <AudioUploadDialog />
               <DocOcrDialog />
               <RagRerankTestDialog />
               <CreateKnowledgeBaseDialog onCreated={() => refetch()} />
             </div>
-          }
-        />
-        <div className="flex gap-2 mb-2">
-          <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 gap-1.5 py-1 px-3">
-            <Sparkles className="h-3 w-3" /> Auto-Scaling Ingestion
-          </Badge>
-          <Badge variant="outline" className="bg-nexus-emerald/5 text-nexus-emerald border-nexus-emerald/20 gap-1.5 py-1 px-3">
-            <Activity className="h-3 w-3" /> Vector DB Nominal
-          </Badge>
+          </div>
         </div>
       </div>
 
