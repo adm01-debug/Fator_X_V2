@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { SectionTitle, SliderField, InputField, ToggleField, ProgressBar } from '../ui';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
-import { LightBarChart, LightLineChart } from '@/components/charts';
+import { LightBarChart, LightLineChart, LightAreaChart } from '@/components/charts';
 import { useBillingData } from '@/hooks/useBillingData';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
