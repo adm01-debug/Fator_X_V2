@@ -4,7 +4,7 @@ import { DEFAULT_AGENT, TABS } from '@/data/agentBuilderData';
 import { supabase } from '@/integrations/supabase/client';
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import { audit } from '@/lib/auditService';
-import { agentToDbRow, dbRowToAgent } from './agentBuilderHelpers';
+import { agentToDbRow, dbRowToAgent, generateChangeSummary } from './agentBuilderHelpers';
 
 export interface PlaygroundSeed {
   input: string;
