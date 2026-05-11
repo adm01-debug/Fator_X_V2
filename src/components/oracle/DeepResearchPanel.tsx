@@ -7,7 +7,8 @@ import { useState, useCallback } from 'react';
 import { invokeOracleResearch } from '@/services/llmGatewayService';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Search, FileText, ChevronDown, ChevronUp } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Loader2, Search, FileText, ChevronDown, ChevronUp, AlertTriangle, Download } from 'lucide-react';
 
 interface ResearchResult {
   report: string;
