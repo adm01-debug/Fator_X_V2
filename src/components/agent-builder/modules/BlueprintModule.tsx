@@ -15,7 +15,9 @@ export function BlueprintModule() {
 
   const summaryCards = [
     { label: 'Nome', value: `${agent.avatar_emoji} ${agent.name || '(sem nome)'}` },
+    { label: 'Tipo (Persona)', value: agent.persona.charAt(0).toUpperCase() + agent.persona.slice(1) },
     { label: 'Modelo', value: agent.model },
+    { label: 'Missão', value: agent.mission || '(sem missão)' },
     { label: 'Memórias Ativas', value: [agent.memory_short_term && 'ST', agent.memory_episodic && 'Ep', agent.memory_semantic && 'Sem', agent.memory_procedural && 'Proc', agent.memory_profile && 'Prof', agent.memory_shared && 'Org'].filter(Boolean).join(', ') || 'Nenhuma' },
     { label: 'Ferramentas', value: `${agent.tools.filter(t => t.enabled).length} ativas` },
     { label: 'RAG', value: `${agent.rag_architecture} + ${agent.rag_vector_db}` },

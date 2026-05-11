@@ -123,7 +123,18 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
     }
   },
 
-  saveAgent: async (customSummary?: string) => {
+  saveAgent: async (customSummary?: string, isDraft?: boolean) => {
+    if (isDraft) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { saveDraftVersion } = await import('@/services/agentDraftVersionsService');
+        saveDraftVersion({ 
+          agent: get().agent, 
+          label: `Rascunho Automático - ${new Date().toLocaleTimeString('pt-BR')}`,
+          note: 'Snapshot gerado via criação mágica ou blueprint.'
+        });
+      }
+    }
     set({ isSaving: true });
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
