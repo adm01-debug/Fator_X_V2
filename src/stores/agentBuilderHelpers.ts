@@ -118,3 +118,23 @@ export function getCompleteness(a: AgentConfig): number {
   if (a.logging_enabled) score += 5;
   return Math.min(score, 100);
 }
+export function generateChangeSummary(oldAgent: AgentConfig, newAgent: AgentConfig): string {
+  const changes: string[] = [];
+  
+  if (oldAgent.name !== newAgent.name) changes.push(`Nome alterado para "${newAgent.name}"`);
+  if (oldAgent.mission !== newAgent.mission) changes.push('Missão atualizada');
+  if (oldAgent.model !== newAgent.model) changes.push(`Modelo trocado para ${newAgent.model}`);
+  if (oldAgent.system_prompt !== newAgent.system_prompt) changes.push('Prompt do sistema alterado');
+  
+  const oldTools = oldAgent.tools.filter(t => t.enabled).length;
+  const newTools = newAgent.tools.filter(t => t.enabled).length;
+  if (oldTools !== newTools) changes.push(`${newTools > oldTools ? 'Adicionadas' : 'Removidas'} ferramentas (${newTools} ativas)`);
+
+  const oldMemory = oldAgent.memory_short_term || oldAgent.memory_episodic || oldAgent.memory_semantic;
+  const newMemory = newAgent.memory_short_term || newAgent.memory_episodic || newAgent.memory_semantic;
+  if (oldMemory !== newMemory) changes.push('Configuração de memória alterada');
+
+  if (changes.length === 0) return 'Salvamento manual sem alterações estruturais detectadas';
+  
+  return changes.join(', ');
+}
