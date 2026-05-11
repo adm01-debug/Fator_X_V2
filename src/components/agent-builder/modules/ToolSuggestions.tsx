@@ -75,7 +75,7 @@ export function ToolSuggestions({ mission, onAdd }: Props) {
         <h4 className="text-xs font-semibold text-nexus-blue flex items-center gap-1.5 uppercase tracking-wider">
           <Sparkles className="h-3 w-3" /> Sugestões da IA
         </h4>
-        <Button variant="ghost" size="xs" onClick={() => setSuggestions([])} className="h-6 w-6 p-0">
+        <Button variant="ghost" size="sm" onClick={() => setSuggestions([])} className="h-6 w-6 p-0">
           <X className="h-3 w-3" />
         </Button>
       </div>
