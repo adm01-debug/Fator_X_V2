@@ -71,9 +71,30 @@ export function RestoreValidationPanel({ validation, onApplyFix }: Props) {
               : `${warnings.length} aviso${warnings.length === 1 ? '' : 's'}`}
           </h4>
         </div>
-        <span className="text-[10px] font-mono text-muted-foreground">
-          {errors.length ? 'rollback bloqueado' : 'rollback permitido'}
-        </span>
+        <div className="flex items-center gap-2">
+          {errors.length > 1 && issues.some(i => i.quickFixes && i.quickFixes.length > 0) && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className={`h-6 px-2 text-[10px] gap-1 font-semibold ${
+                errors.length ? 'hover:bg-destructive/20 text-destructive' : 'hover:bg-nexus-amber/20 text-nexus-amber'
+              }`}
+              onClick={() => {
+                issues.forEach(i => {
+                  if (i.quickFixes && i.quickFixes.length > 0) {
+                    onApplyFix?.(i.quickFixes[0]);
+                  }
+                });
+              }}
+            >
+              <Wand2 className="h-2.5 w-2.5" />
+              Corrigir tudo
+            </Button>
+          )}
+          <span className="text-[10px] font-mono text-muted-foreground">
+            {errors.length ? 'rollback bloqueado' : 'rollback permitido'}
+          </span>
+        </div>
       </header>
 
       <ul className="divide-y divide-border/40">

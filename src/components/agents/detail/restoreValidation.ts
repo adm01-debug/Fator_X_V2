@@ -76,24 +76,37 @@ function detectModelCaps(modelRaw: string | null | undefined): ModelCaps {
   const m = String(modelRaw ?? '').toLowerCase();
 
   // Reasoning models — não aceitam temperature customizada
-  if (/^o[1-9]|gpt-5|gpt-4\.5/.test(m)) {
-    return { supportsReasoning: true, supportsTemperature: false, maxTokensCap: 100_000, family: 'openai' };
+  if (/^o[1-9]|gpt-5|gpt-4\.5|deepseek-r1|r1-/.test(m)) {
+    return { supportsReasoning: true, supportsTemperature: false, maxTokensCap: 128_000, family: 'reasoning' };
   }
+  
   if (/^gpt/.test(m)) {
     return { supportsReasoning: false, supportsTemperature: true, maxTokensCap: 16_384, family: 'openai' };
   }
+  
   if (/claude/.test(m)) {
     // Claude 3.7+ aceita extended thinking
     const hasThinking = /3\.7|sonnet-4|opus-4|claude-4/.test(m);
     return { supportsReasoning: hasThinking, supportsTemperature: true, maxTokensCap: 64_000, family: 'anthropic' };
   }
+  
   if (/gemini/.test(m)) {
     const isThinking = /2\.5|thinking|3\./.test(m);
     return { supportsReasoning: isThinking, supportsTemperature: true, maxTokensCap: 65_536, family: 'google' };
   }
+  
+  if (/deepseek/.test(m)) {
+    return { supportsReasoning: false, supportsTemperature: true, maxTokensCap: 8192, family: 'deepseek' };
+  }
+  
+  if (/grok/.test(m)) {
+    return { supportsReasoning: false, supportsTemperature: true, maxTokensCap: 32_768, family: 'xai' };
+  }
+
   if (/llama|mistral|qwen|gemma/.test(m)) {
     return { supportsReasoning: false, supportsTemperature: true, maxTokensCap: 8_192, family: 'opensource' };
   }
+  
   // Desconhecido — modo permissivo, mas marcamos família como 'unknown' para alertar trocas.
   return { supportsReasoning: true, supportsTemperature: true, maxTokensCap: 32_000, family: 'unknown' };
 }
@@ -404,6 +417,34 @@ export function validateRestore(
           detail: `O parâmetro reasoning="${rsn}" é incompatível com "${mergedModel}". Apenas modelos com extended thinking (Claude 3.7+, GPT-5/o-series, Gemini 2.5 Thinking) aceitam esse campo.`,
           hint: 'Desmarque "Modelo & parâmetros" ou troque a versão de origem.',
           quickFixes: fixes,
+        });
+      }
+    }
+
+    /* ── Consistência Prompt vs Ferramentas ────────────────────── */
+    if (options.copyPrompt) {
+      const sp = String(merged.system_prompt ?? '');
+      const tools = (merged.tools as any[]) ?? [];
+      const enabledTools = tools.filter(isToolEnabled).map(toolNameOf);
+      
+      // Busca menções no prompt a ferramentas que NÃO estão habilitadas
+      // Precisamos de uma lista de ferramentas que poderiam estar lá.
+      const allKnownTools = tools.map(toolNameOf);
+      const mentionedTools = extractPromptToolMentions(sp, allKnownTools);
+      const missingTools = mentionedTools.filter(name => !enabledTools.includes(name));
+
+      if (missingTools.length > 0) {
+        issues.push({
+          id: 'prompt-tools-mismatch',
+          severity: 'warning',
+          group: 'prompt',
+          title: 'Ferramentas mencionadas mas ausentes',
+          detail: `O prompt restaurado menciona "${missingTools.join(', ')}", mas estas ferramentas não estão habilitadas na configuração resultante.`,
+          hint: options.copyTools ? 'Verifique se as ferramentas estavam habilitadas na versão de origem.' : 'Marque também "Ferramentas" para restaurar a lista compatível.',
+          quickFixes: !options.copyTools ? [
+            { kind: 'uncheck-prompt', label: 'Desmarcar Prompt' },
+            // Aqui poderíamos ter um "Habilitar ferramentas", mas é complexo via quickFix sem IDs.
+          ] : []
         });
       }
     }

@@ -26,10 +26,10 @@ export function summarizeRestoreOptions(
   if (overrides?.model) ovParts.push(`modelo alterado para ${overrides.model}`);
   
   const cfg = overrides?.config ?? {};
-  if (cfg.temperature !== undefined) ovParts.push(`temperature ${cfg.temperature}`);
-  if (cfg.max_tokens !== undefined) ovParts.push(`max_tokens ${cfg.max_tokens}`);
-  if (cfg.reasoning === null) ovParts.push("reasoning removido");
-  else if (cfg.reasoning) ovParts.push(`reasoning ${cfg.reasoning}`);
+  if (cfg.temperature !== undefined) ovParts.push(`temp. p/ ${cfg.temperature}`);
+  if (cfg.max_tokens !== undefined) ovParts.push(`tokens p/ ${cfg.max_tokens}`);
+  if (cfg.reasoning === null) ovParts.push("sem reasoning");
+  else if (cfg.reasoning) ovParts.push(`reasoning p/ ${cfg.reasoning}`);
   
   if (ovParts.length > 0) {
     base += ` (com ${ovParts.join(", ")})`;

@@ -157,6 +157,7 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [undoTarget, setUndoTarget] = useState<RestoreEntry | null>(null);
+  const [filter, setFilter] = useState<"all" | "prompt" | "tools" | "model">("all");
 
   // versions vem ordenado do mais recente para o mais antigo. A versão
   // imediatamente posterior na lista (índice maior) é a "pré-rollback".
@@ -165,6 +166,12 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
     versions.forEach((v, idx) => {
       const meta = extractRestoreMeta(v);
       if (!meta) return;
+      
+      // Aplicar filtro
+      if (filter === "prompt" && !meta.options.copyPrompt) return;
+      if (filter === "tools" && !meta.options.copyTools) return;
+      if (filter === "model" && !meta.options.copyModel) return;
+
       result.push({
         versionId: v.id,
         versionNumber: v.version,
@@ -176,7 +183,7 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
     return result.sort(
       (a, b) => new Date(b.meta.restored_at).getTime() - new Date(a.meta.restored_at).getTime(),
     );
-  }, [versions]);
+  }, [versions, filter]);
 
   // A "versão atual" é sempre a primeira (mais recente) — usada como base do
   // merge ao desfazer, garantindo que campos não restaurados sejam preservados.
@@ -331,9 +338,31 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
             {entries.length}
           </span>
         </div>
+        <div className="flex items-center gap-1">
+          <FilterButton active={filter === "all"} onClick={() => setFilter("all")} label="Tudo" />
+          <FilterButton active={filter === "prompt"} onClick={() => setFilter("prompt")} label="Prompt" />
+          <FilterButton active={filter === "tools"} onClick={() => setFilter("tools")} label="Tools" />
+          <FilterButton active={filter === "model"} onClick={() => setFilter("model")} label="Modelo" />
+        </div>
       </div>
 
       <ol className="space-y-2 max-h-[280px] overflow-y-auto">
+        {entries.length === 0 && (
+          <li className="flex flex-col items-center justify-center py-8 text-center bg-secondary/10 rounded-lg border border-dashed border-border/40">
+            <Clock className="h-6 w-6 text-muted-foreground/40 mb-2" />
+            <p className="text-xs text-muted-foreground">Nenhum rollback encontrado para este filtro.</p>
+            {filter !== "all" && (
+              <Button 
+                variant="link" 
+                size="sm" 
+                className="text-[10px] h-auto p-0 mt-1" 
+                onClick={() => setFilter("all")}
+              >
+                Limpar filtros
+              </Button>
+            )}
+          </li>
+        )}
         {entries.map((entry) => {
           const restoredAtMs = new Date(entry.meta.restored_at).getTime();
           const expiresAt = Number.isFinite(restoredAtMs) ? restoredAtMs + UNDO_WINDOW_MS : 0;
@@ -752,6 +781,21 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
   );
 }
 
+function FilterButton({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded transition-colors ${
+        active
+          ? "bg-primary/20 text-primary font-bold border border-primary/30"
+          : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground border border-transparent"
+      }`}
+    >
+      {label}
+    </button>
+  );
+}
 function RestoreOptionBadge({
   active,
   icon,
