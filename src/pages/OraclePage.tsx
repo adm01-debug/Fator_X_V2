@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { PageHeader } from '@/components/shared/PageHeader';
-import { ChevronDown, ChevronUp, History, Sparkles, Brain, Search, Activity, Share2, Download, MessageSquare } from 'lucide-react';
+import { ChevronDown, ChevronUp, History, Sparkles, Brain, Search, Activity, Share2, AlertTriangle } from 'lucide-react';
 import { useOracleStore } from '@/stores/oracleStore';
 import { OracleInputArea } from '@/components/oracle/OracleInputArea';
 import { OracleResultsPanel } from '@/components/oracle/OracleResultsPanel';
