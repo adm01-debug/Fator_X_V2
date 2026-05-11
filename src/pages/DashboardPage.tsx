@@ -108,8 +108,8 @@ export default function DashboardPage() {
 
           {usageStats && (
             <div className="grid grid-cols-3 gap-4 sm:gap-5">
-              {[{ icon: Clock, color: "text-nexus-purple", bgColor: "bg-nexus-purple/10", value: `${usageStats.avgLatency}ms`, label: "Latência média" }, { icon: Sparkles, color: "text-nexus-cyan", bgColor: "bg-nexus-cyan/10", value: `${(usageStats.totalTokens / 1000).toFixed(0)}k`, label: "Tokens totais" }, { icon: Bot, color: "text-muted-foreground", bgColor: "bg-muted/10", value: `${draftCount}`, label: "Rascunhos" }].map((m) => (
-                <div key={m.label} className="nexus-card nexus-metric-card py-3 sm:py-4 flex items-center gap-3">
+              {[{ icon: Clock, color: "text-nexus-purple", bgColor: "bg-nexus-purple/10", value: usageStats.avgLatency > 0 ? `${usageStats.avgLatency}ms` : '—', label: "Latência média" }, { icon: Sparkles, color: "text-nexus-cyan", bgColor: "bg-nexus-cyan/10", value: usageStats.totalTokens > 0 ? `${(usageStats.totalTokens / 1000).toFixed(0)}k` : '—', label: "Tokens totais" }, { icon: Bot, color: "text-muted-foreground", bgColor: "bg-muted/10", value: `${draftCount}`, label: "Rascunhos" }].map((m) => (
+                <div key={m.label} className="nexus-card nexus-metric-card py-3 sm:py-4 flex items-center gap-3 hover:border-primary/30 transition-colors">
                   <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${m.bgColor}`}><m.icon className={`h-4 w-4 ${m.color}`} /></div>
                   <div><p className="text-sm sm:text-lg font-heading font-extrabold text-foreground">{m.value}</p><p className="text-[11px] text-muted-foreground/70 uppercase tracking-wider">{m.label}</p></div>
                 </div>
@@ -119,32 +119,76 @@ export default function DashboardPage() {
 
           <div className="animate-chart-reveal"><UsageCharts data={usageData ?? []} /></div>
 
-          <div className="grid lg:grid-cols-2 gap-3 sm:gap-4">
-            <div className="nexus-card">
-              <h3 className="text-sm font-heading font-semibold text-foreground mb-3">Agentes recentes</h3>
-              <div className="stagger-list" role="list">
+          <div className="grid lg:grid-cols-2 gap-4">
+            <div className="nexus-card flex flex-col">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-heading font-semibold text-foreground flex items-center gap-2">
+                  <Bot className="h-4 w-4 text-primary" /> Agentes recentes
+                </h3>
+                <Button variant="ghost" size="sm" onClick={() => navigate('/agents')} className="text-[10px] h-7 px-2">Ver tudo</Button>
+              </div>
+              <div className="stagger-list flex-1" role="list">
                 {agents.slice(0, 5).map(agent => (
-                  <div key={agent.id} role="listitem" className="flex items-center justify-between cursor-pointer hover:bg-secondary/30 rounded-lg p-2 -mx-2 transition-colors min-h-[44px]" onClick={() => navigate(`/builder/${agent.id}`)}>
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-sm shrink-0">{agent.avatar_emoji || '🤖'}</div>
-                      <div className="min-w-0"><p className="text-sm font-medium text-foreground truncate">{agent.name}</p><p className="text-[11px] text-muted-foreground">{agent.model} • v{agent.version}</p></div>
+                  <div key={agent.id} role="listitem" className="flex items-center justify-between cursor-pointer hover:bg-primary/5 border border-transparent hover:border-primary/10 rounded-xl p-3 mb-2 last:mb-0 transition-all group" onClick={() => navigate(`/builder/${agent.id}`)}>
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/10 to-accent/5 flex items-center justify-center text-lg shrink-0 group-hover:scale-110 transition-transform shadow-sm">
+                        {agent.avatar_emoji || '🤖'}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-bold text-foreground truncate group-hover:text-primary transition-colors">{agent.name}</p>
+                        <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">{agent.model} • v{agent.version}</p>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2"><StatusBadge status={agent.status || 'draft'} /><ArrowRight className="h-4 w-4 text-muted-foreground" /></div>
+                    <div className="flex items-center gap-3">
+                      <StatusBadge status={agent.status || 'draft'} size="sm" />
+                      <div className="h-7 w-7 rounded-full bg-secondary/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <ArrowRight className="h-3.5 w-3.5 text-primary" />
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
-            <div className="nexus-card">
-              <h3 className="text-sm font-heading font-semibold text-foreground mb-3">Atividade recente</h3>
-              {recentTraces.length === 0 ? <p className="text-xs text-muted-foreground text-center py-8">Nenhuma atividade registrada.</p>
-              : <div className="stagger-list" role="list">
+            <div className="nexus-card flex flex-col">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-heading font-semibold text-foreground flex items-center gap-2">
+                  <Activity className="h-4 w-4 text-nexus-emerald" /> Atividade em tempo real
+                </h3>
+                <Button variant="ghost" size="sm" onClick={() => navigate('/monitoring')} className="text-[10px] h-7 px-2">Logs</Button>
+              </div>
+              {recentTraces.length === 0 ? (
+                <div className="flex flex-col items-center justify-center flex-1 py-8 opacity-50">
+                  <div className="h-12 w-12 rounded-full bg-muted/20 flex items-center justify-center mb-2">
+                    <Activity className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                  <p className="text-xs text-muted-foreground">Nenhuma atividade registrada.</p>
+                </div>
+              ) : (
+                <div className="stagger-list flex-1" role="list">
                   {recentTraces.map((trace: any) => (
-                    <div key={trace.id} role="listitem" className="flex items-center justify-between p-2 -mx-2 rounded-lg hover:bg-secondary/30 cursor-pointer min-h-[44px]" onClick={() => navigate('/monitoring')}>
-                      <div className="flex items-center gap-2.5"><StatusBadge status={trace.level || 'info'} /><div><p className="text-xs font-medium text-foreground">{trace.event}</p><p className="text-[11px] text-muted-foreground">{new Date(trace.created_at).toLocaleString('pt-BR')}</p></div></div>
-                      {trace.latency_ms && <span className="text-[11px] text-muted-foreground flex items-center gap-1"><Clock className="h-3 w-3" />{(trace.latency_ms / 1000).toFixed(1)}s</span>}
+                    <div key={trace.id} role="listitem" className="flex items-center justify-between p-3 mb-2 last:mb-0 rounded-xl border border-border/40 bg-card/50 hover:bg-secondary/30 cursor-pointer transition-all group" onClick={() => navigate('/monitoring')}>
+                      <div className="flex items-center gap-3">
+                        <div className={`h-2 w-2 rounded-full shrink-0 ${
+                          trace.level === 'error' || trace.level === 'critical' ? 'bg-destructive animate-pulse' : 
+                          trace.level === 'warning' ? 'bg-nexus-amber' : 'bg-primary'
+                        }`} />
+                        <div>
+                          <p className="text-xs font-bold text-foreground group-hover:text-primary transition-colors">{trace.event}</p>
+                          <p className="text-[10px] text-muted-foreground font-medium">{new Date(trace.created_at).toLocaleTimeString('pt-BR')}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        {trace.latency_ms && (
+                          <span className="text-[10px] font-mono text-muted-foreground bg-secondary/80 px-1.5 py-0.5 rounded flex items-center gap-1">
+                            <Clock className="h-2.5 w-2.5" />{(trace.latency_ms / 1000).toFixed(2)}s
+                          </span>
+                        )}
+                        <ArrowRight className="h-3 w-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />
+                      </div>
                     </div>
                   ))}
-                </div>}
+                </div>
+              )}
             </div>
           </div>
 
