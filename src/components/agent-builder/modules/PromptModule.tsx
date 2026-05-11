@@ -166,9 +166,21 @@ export function PromptModule() {
           {/* Diff Mode */}
           {promptVersions.length >= 2 && (
             <div className="border-t border-border pt-4 space-y-3">
-              <Button variant="outline" size="sm" onClick={() => setDiffMode(!diffMode)}>
-                <ArrowLeftRight className="h-3.5 w-3.5 mr-1" /> {diffMode ? 'Fechar Comparação' : 'Comparar Versões'}
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" onClick={() => setDiffMode(!diffMode)}>
+                  <ArrowLeftRight className="h-3.5 w-3.5 mr-1" /> {diffMode ? 'Fechar Comparação' : 'Comparar Versões'}
+                </Button>
+                {diffMode && diffVersionA && diffVersionB && (
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => setAbTestOpen(true)}
+                    className="border-nexus-amber/40 text-nexus-amber hover:bg-nexus-amber/10"
+                  >
+                    <Play className="h-3.5 w-3.5 mr-1" /> Iniciar Arena A/B
+                  </Button>
+                )}
+              </div>
               {diffMode && (
                 <div className="space-y-3">
                   <div className="grid grid-cols-2 gap-3">
