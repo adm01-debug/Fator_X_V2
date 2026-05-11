@@ -765,6 +765,21 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
   );
 }
 
+function FilterButton({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded transition-colors ${
+        active
+          ? "bg-primary/20 text-primary font-bold border border-primary/30"
+          : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground border border-transparent"
+      }`}
+    >
+      {label}
+    </button>
+  );
+}
 function RestoreOptionBadge({
   active,
   icon,
