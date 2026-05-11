@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { PageHeader } from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Palette, Globe, Bell, Key, Save, Server, Share2, Database, Zap, Shield, Activity, Radio, Cpu, ShieldCheck, Globe2 } from "lucide-react";
+import { Palette, Globe, Bell, Key, Save, Server, Share2, Database, Activity, Radio, Cpu, ShieldCheck } from "lucide-react";
 import { MCPServerManager } from "@/components/integrations/MCPServerManager";
 import { MCPServersPanel } from "@/components/settings/MCPServersPanel";
 import { Bitrix24Connect } from "@/components/integrations/Bitrix24Connect";
