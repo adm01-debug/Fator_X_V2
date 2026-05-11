@@ -17,7 +17,7 @@ interface Props {
   onAdd: (tool: ToolSuggestion) => void;
 }
 
-export function ToolSuggestions({ mission, persona, onAdd }: Props) {
+export function ToolSuggestions({ mission, onAdd }: Props) {
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<ToolSuggestion[]>([]);
 
