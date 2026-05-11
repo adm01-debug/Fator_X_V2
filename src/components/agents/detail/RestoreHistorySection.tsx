@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { restoreAgentVersion, type AgentVersion } from "@/services/agentsService";
+import { summarizeRestoreOptions } from "./restoreHelpers";
 import { supabaseExternal } from "@/integrations/supabase/externalClient";
 
 /**
@@ -51,6 +52,8 @@ interface RestoreMetadata {
   restored_at: string;
   options: { copyPrompt: boolean; copyTools: boolean; copyModel: boolean };
   custom_summary: string | null;
+  config_overrides?: Record<string, unknown> | null;
+  model_override?: string | null;
 }
 
 interface Props {
@@ -89,6 +92,8 @@ function extractRestoreMeta(v: AgentVersion): RestoreMetadata | null {
       copyModel: !!opts.copyModel,
     },
     custom_summary: typeof m.custom_summary === "string" ? m.custom_summary : null,
+    config_overrides: m.config_overrides as Record<string, unknown> | null,
+    model_override: typeof m.model_override === "string" ? m.model_override : null,
   };
 }
 
@@ -112,32 +117,7 @@ const FIELD_LABELS = {
   copyModel: "Modelo + reasoning",
 } as const;
 
-/**
- * Resumo curto e legível das opções de um rollback/undo.
- *
- * Ex.: { copyPrompt:true, copyTools:true } → "restaurou prompt e ferramentas"
- *      { copyModel:true }                  → "restaurou modelo e parâmetros"
- *      todas false                          → "nenhum campo restaurado"
- *      todas true                           → "restaurou prompt, ferramentas e modelo"
- *
- * Usado tanto no toast de sucesso do undo quanto na timeline de restaurações,
- * para que o usuário veja em uma linha o que de fato mudou — sem precisar
- * decodificar os badges individuais.
- */
-function summarizeRestoreOptions(opts: {
-  copyPrompt: boolean;
-  copyTools: boolean;
-  copyModel: boolean;
-}): string {
-  const parts: string[] = [];
-  if (opts.copyPrompt) parts.push("prompt");
-  if (opts.copyTools) parts.push("ferramentas");
-  if (opts.copyModel) parts.push("modelo e parâmetros");
-  if (parts.length === 0) return "nenhum campo restaurado";
-  if (parts.length === 1) return `restaurou ${parts[0]}`;
-  if (parts.length === 2) return `restaurou ${parts[0]} e ${parts[1]}`;
-  return `restaurou ${parts.slice(0, -1).join(", ")} e ${parts[parts.length - 1]}`;
-}
+// summarizeRestoreOptions movida para ./restoreHelpers.ts para reuso no AgentDetailPage.
 
 /**
  * Janela após a qual o "Desfazer rollback" expira automaticamente.
@@ -293,7 +273,10 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
       queryClient.invalidateQueries({ queryKey: ["agent_versions", agentId] });
       queryClient.invalidateQueries({ queryKey: ["agent", agentId] });
       setUndoTarget(null);
-      const summary = summarizeRestoreOptions(entry.meta.options);
+      const summary = summarizeRestoreOptions(entry.meta.options, {
+        config: entry.meta.config_overrides as any,
+        model: entry.meta.model_override
+      });
       toast.success(
         `Rollback desfeito — v${data.version} criada a partir de v${entry.preRollback?.version ?? entry.meta.restored_from_version}`,
         {
@@ -360,11 +343,11 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
           const urgent = !expired && remainingMs < 60 * 1000;
           // Pode desfazer se temos a versão de referência localmente OU
           // pelo menos o id dela (fallback recarrega do servidor on-click).
-          const hasReference = !!entry.preRollback || !!entry.meta.restored_from_version_id;
+          // hasReference removido.
           // "Stale": existe versão local mais nova que a deste rollback.
           // Bloqueia o undo até o usuário recarregar e revisar.
           const stale = !!currentVersion && currentVersion.version > entry.versionNumber;
-          const canUndo = hasReference && !expired && !stale;
+          // const canUndo removido pois o onClick agora lida com stale separadamente.
           const isUndoingThis = undoMut.isPending && undoTarget?.versionId === entry.versionId;
           return (
             <li
@@ -400,7 +383,10 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
 
               {/* Resumo curto das opções (sempre presente, complementa os badges) */}
               <p className="text-[10px] text-muted-foreground italic mb-1.5">
-                {summarizeRestoreOptions(entry.meta.options)}
+                {summarizeRestoreOptions(entry.meta.options, {
+                  config: entry.meta.config_overrides as any,
+                  model: entry.meta.model_override
+                })}
               </p>
 
               {/* Badges das opções restauradas + ações */}
@@ -466,8 +452,22 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
                     variant="ghost"
                     size="sm"
                     className="h-5 px-1.5 text-[10px] gap-0.5 text-nexus-amber hover:text-nexus-amber hover:bg-nexus-amber/10 disabled:opacity-40"
-                    onClick={() => setUndoTarget(entry)}
-                    disabled={!canUndo || undoMut.isPending}
+                    onClick={() => {
+                      if (stale) {
+                        toast.error(`Uma versão mais nova (v${currentVersion.version}) foi detectada. Recarregue para revisar antes de desfazer.`, {
+                          action: {
+                            label: 'Recarregar',
+                            onClick: () => {
+                              queryClient.invalidateQueries({ queryKey: ["agent_versions", agentId] });
+                              queryClient.invalidateQueries({ queryKey: ["agent", agentId] });
+                            }
+                          }
+                        });
+                        return;
+                      }
+                      setUndoTarget(entry);
+                    }}
+                    disabled={isUndoingThis || (expired && !stale)}
                     title={
                       expired
                         ? `Janela de ${UNDO_WINDOW_MS / 60000} min para desfazer expirou — restaure manualmente pelo gerenciador de versões`
