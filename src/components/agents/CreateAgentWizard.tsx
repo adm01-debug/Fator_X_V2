@@ -8,9 +8,17 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Check, ArrowLeft, ArrowRight, ChevronRight, Shield, Search,
   LayoutTemplate, PenTool, Database, Rocket, Zap, Sparkles, Wand2, 
-  Loader2
+  Loader2, Info, Brain, Wrench, ShieldAlert, TrendingUp
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabaseExternal } from "@/integrations/supabase/externalClient";
