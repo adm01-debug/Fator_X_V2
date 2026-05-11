@@ -1,11 +1,12 @@
 
-import { PageHeader } from "@/components/shared/PageHeader";
-import { StatusBadge } from "@/components/shared/StatusBadge";
-import { InfoHint } from "@/components/shared/InfoHint";
 import { AnimatedCounter } from "@/components/shared/AnimatedCounter";
 import { DateRangePicker, getDateRangeDays, type DateRange } from "@/components/dashboard/DateRangePicker";
 import { Button } from "@/components/ui/button";
-import { Bot, Plus, ArrowRight, TrendingUp, DollarSign, Clock, Zap, Sparkles, BookOpen, Activity, GitBranch } from "lucide-react";
+import { 
+  Bot, Plus, TrendingUp, DollarSign, Zap, 
+  Sparkles, BookOpen, Activity, GitBranch, Shield, 
+  Cpu, Target, ChevronRight, Globe, Layers, BarChart3, Radio
+} from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -16,12 +17,18 @@ import { ActivityFeed } from "@/components/dashboard/ActivityFeed";
 import { AutomationOverviewWidget } from "@/components/automation/AutomationOverviewWidget";
 import { DashboardAlerts } from "@/components/dashboard/DashboardAlerts";
 import { DashboardInsight } from "@/components/dashboard/DashboardInsight";
+import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 function DashboardLoadingSkeleton() {
   return (
-    <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto" aria-busy="true">
-      <div className="flex items-center justify-between"><div className="space-y-2"><div className="h-7 w-40 rounded-md skeleton-shimmer" /><div className="h-4 w-64 rounded-md skeleton-shimmer" /></div><div className="h-10 w-36 rounded-lg skeleton-shimmer" /></div>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">{Array.from({ length: 4 }).map((_, i) => <div key={i} className="nexus-card text-center space-y-2"><div className="h-8 w-8 mx-auto rounded-lg skeleton-shimmer" /><div className="h-7 w-16 mx-auto rounded skeleton-shimmer" /><div className="h-3 w-20 mx-auto rounded skeleton-shimmer" /></div>)}</div>
+    <div className="p-6 sm:p-8 lg:p-10 space-y-8 max-w-[1440px] mx-auto" aria-busy="true">
+      <div className="h-64 w-full rounded-[2.5rem] skeleton-shimmer" />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="h-32 rounded-[2rem] skeleton-shimmer" />
+        ))}
+      </div>
     </div>
   );
 }
@@ -30,9 +37,18 @@ export default function DashboardPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [dateRange, setDateRange] = useState<DateRange>('30d');
-  const { data: agents = [], isLoading } = useQuery({ queryKey: ['agents'], queryFn: listAgentsForDashboard, retry: 2 });
+  
+  const { data: agents = [], isLoading } = useQuery({ 
+    queryKey: ['agents'], 
+    queryFn: listAgentsForDashboard, 
+    retry: 2 
+  });
+  
   const days = getDateRangeDays(dateRange);
-  const { data: usageData = [] } = useQuery({ queryKey: ['dashboard_usage', dateRange], queryFn: () => getUsageInRange(days) });
+  const { data: usageData = [] } = useQuery({ 
+    queryKey: ['dashboard_usage', dateRange], 
+    queryFn: () => getUsageInRange(days) 
+  });
 
   const usageStats = usageData.length ? {
     totalCost: usageData.reduce((s, u) => s + Number(u.total_cost_usd || 0), 0),
@@ -41,164 +57,232 @@ export default function DashboardPage() {
     totalTokens: usageData.reduce((s, u) => s + (u.tokens_input || 0) + (u.tokens_output || 0), 0),
   } : null;
 
-  const { data: recentTraces = [] } = useQuery({ queryKey: ['dashboard_traces'], queryFn: () => getRecentDashboardTraces(5) });
+  const { data: recentTraces = [] } = useQuery({ 
+    queryKey: ['dashboard_traces'], 
+    queryFn: () => getRecentDashboardTraces(5) 
+  });
+  
   const activeCount = agents.filter(a => a.status === 'production' || a.status === 'monitoring').length;
-  const draftCount = agents.filter(a => a.status === 'draft').length;
 
-  const getGreeting = () => { const hour = new Date().getHours(); const name = user?.email?.split('@')[0] || ''; const prefix = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite'; return name ? `${prefix}, ${name}` : prefix; };
-  const getSummary = () => {
-    if (agents.length === 0) return null;
-    const parts: string[] = [];
-    if (activeCount > 0) parts.push(`${activeCount} agente${activeCount > 1 ? 's' : ''} em produção`);
-    if (draftCount > 0) parts.push(`${draftCount} rascunho${draftCount > 1 ? 's' : ''}`);
-    if (usageStats) { parts.push(`$${usageStats.totalCost.toFixed(2)} de custo nos últimos ${days} dias`); }
-    return parts.length > 0 ? parts.join(' · ') : null;
+  const getGreeting = () => { 
+    const hour = new Date().getHours(); 
+    return hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite'; 
   };
 
   if (isLoading) return <DashboardLoadingSkeleton />;
-  const summary = getSummary();
 
   return (
-    <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter" role="main">
-      <div className="space-y-1">
-        <PageHeader title={`${getGreeting()} 👋`} description="Visão executiva da operação de agentes de IA" gradient={false} actions={
-          <div className="flex items-center gap-3">
-            <DateRangePicker value={dateRange} onChange={setDateRange} />
-            {agents.length > 0 && <Button onClick={() => navigate('/agents/new')} className="nexus-gradient-bg text-primary-foreground gap-2 hover:opacity-90 min-h-[44px]"><Plus className="h-4 w-4" /> <span className="hidden sm:inline">Criar agente</span></Button>}
+    <div className="p-6 sm:p-8 lg:p-10 space-y-10 max-w-[1440px] mx-auto animate-page-enter">
+      {/* Header Elevated 10/10 */}
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-2xl shadow-primary/5 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/[0.04] rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:bg-primary/[0.06] transition-colors duration-700" />
+        
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10 relative">
+          <div className="flex items-center gap-8">
+            <div className="h-24 w-24 rounded-[2rem] bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
+              <Cpu className="h-12 w-12 text-primary animate-float" />
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-6xl">{getGreeting()}, {user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'Nexus'}</h1>
+              </div>
+              <p className="text-lg text-muted-foreground max-w-2xl font-medium leading-relaxed">
+                Bem-vindo ao Centro de Comando Nexus. Sua infraestrutura de agentes está processando em alta performance.
+              </p>
+              <div className="flex items-center gap-4 pt-2">
+                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-nexus-emerald/10 text-nexus-emerald text-[10px] font-bold uppercase tracking-widest border border-nexus-emerald/20">
+                  <Globe className="h-3 w-3" /> Sistema Nominal
+                </div>
+                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest border border-primary/20">
+                  <Activity className="h-3 w-3" /> {usageStats?.totalRequests || 0} Requests
+                </div>
+              </div>
+            </div>
           </div>
-        } />
-        {summary && <div className="flex items-center gap-2 mt-2"><Zap className="h-3.5 w-3.5 text-primary shrink-0" /><p className="text-xs text-muted-foreground">{summary}</p></div>}
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            <DateRangePicker value={dateRange} onChange={setDateRange} />
+            <Button onClick={() => navigate('/agents/new')} className="nexus-gradient-bg text-primary-foreground gap-3 h-14 px-8 rounded-2xl shadow-xl shadow-primary/25 hover:scale-[1.03] active:scale-[0.98] transition-all duration-300 group overflow-hidden relative">
+              <Plus className="h-6 w-6 group-hover:rotate-90 transition-transform duration-300" /> 
+              <span className="font-bold text-lg tracking-tight">Novo Agente</span>
+            </Button>
+          </div>
+        </div>
       </div>
 
       {agents.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-12 sm:py-20 text-center px-4">
-          <div className="relative mb-6"><div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-primary/15 to-accent/10 flex items-center justify-center border border-primary/10 mx-auto nexus-glow-sm"><span className="text-4xl">⚡</span></div></div>
-          <h2 className="text-xl sm:text-2xl font-heading font-bold nexus-gradient-text mb-2">Bem-vindo ao Fator X!</h2>
-          <p className="text-sm text-muted-foreground mb-6 max-w-md leading-relaxed">Crie, configure, avalie e opere agentes de IA com governança completa.</p>
-          <Button onClick={() => navigate('/agents/new')} size="lg" className="nexus-gradient-bg text-primary-foreground gap-2 hover:opacity-90 min-h-[48px] shadow-lg shadow-primary/20"><Plus className="h-4 w-4" /> Criar seu primeiro agente</Button>
+        <div className="flex flex-col items-center justify-center py-32 text-center bg-card/30 border border-dashed border-border/60 rounded-[3rem]">
+          <div className="h-24 w-24 rounded-[2rem] bg-gradient-to-br from-primary/10 to-accent/5 flex items-center justify-center mb-6 border border-primary/10">
+            <Sparkles className="h-12 w-12 text-primary/40 animate-pulse" />
+          </div>
+          <h2 className="text-3xl font-heading font-black text-foreground mb-4">Inicie sua Frota Neural</h2>
+          <p className="text-lg text-muted-foreground mb-10 max-w-md">Você ainda não possui agentes ativos. Comece criando um agente autônomo para automatizar sua operação.</p>
+          <Button onClick={() => navigate('/agents/new')} size="lg" className="nexus-gradient-bg text-primary-foreground h-14 px-10 rounded-2xl font-bold text-lg shadow-xl shadow-primary/20">
+            Criar Primeiro Agente
+          </Button>
         </div>
       ) : (
         <>
-          <div className="flex items-center gap-2 flex-wrap">
-            {[{ label: 'Novo Agente', icon: Plus, path: '/agents/new' }, { label: 'Conhecimento', icon: BookOpen, path: '/knowledge' }, { label: 'Monitoramento', icon: Activity, path: '/monitoring' }, { label: 'Workflows', icon: GitBranch, path: '/workflows' }].map(action => (
-              <button key={action.label} onClick={() => navigate(action.path)} className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-border/40 bg-card/80 backdrop-blur-sm text-xs font-medium text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all min-h-[36px]">
-                <action.icon className="h-3.5 w-3.5" />{action.label}
+          {/* Quick Actions Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {[
+              { label: 'Conhecimento', icon: BookOpen, path: '/knowledge', color: 'text-blue-500', bg: 'bg-blue-500/10' },
+              { label: 'Workflows', icon: GitBranch, path: '/workflows', color: 'text-purple-500', bg: 'bg-purple-500/10' },
+              { label: 'Monitoramento', icon: Activity, path: '/monitoring', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+              { label: 'Segurança', icon: Shield, path: '/security', color: 'text-orange-500', bg: 'bg-orange-500/10' },
+              { label: 'Ferramentas', icon: Zap, path: '/tools', color: 'text-cyan-500', bg: 'bg-cyan-500/10' },
+              { label: 'Analytics', icon: BarChart3, path: '/monitoring', color: 'text-pink-500', bg: 'bg-pink-500/10' },
+            ].map((action, i) => (
+              <button
+                key={i}
+                onClick={() => navigate(action.path)}
+                className="flex flex-col items-center justify-center gap-3 p-5 rounded-[2rem] bg-card border border-border/40 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 group"
+              >
+                <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 group-hover:rotate-3", action.bg)}>
+                  <action.icon className={cn("h-6 w-6", action.color)} />
+                </div>
+                <span className="text-xs font-bold text-foreground group-hover:text-primary transition-colors">{action.label}</span>
               </button>
             ))}
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 stagger-children" role="region" aria-label="Métricas principais">
+          {/* Metrics Section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: Bot, color: "text-primary", bgColor: "bg-primary/10", value: agents.length, label: "Total de agentes", path: '/agents' },
-              { icon: Zap, color: "text-nexus-emerald", bgColor: "bg-nexus-emerald/10", value: activeCount, label: "Em produção", path: '/deployments' },
-              { icon: DollarSign, color: "text-nexus-amber", bgColor: "bg-nexus-amber/10", value: usageStats?.totalCost ?? 0, label: `Custo (${dateRange})`, prefix: "$", decimals: 2, noData: !usageStats, path: '/billing' },
-              { icon: TrendingUp, color: "text-primary", bgColor: "bg-primary/10", value: usageStats?.totalRequests ?? 0, label: `Requests (${dateRange})`, noData: !usageStats, path: '/monitoring' },
-            ].map((metric) => (
-              <div key={metric.label} className="nexus-card nexus-metric-card nexus-card-interactive group cursor-pointer" onClick={() => navigate(metric.path)}>
-                <div className="flex items-start justify-between mb-1">
-                  <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">{metric.label}</p>
-                  <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${metric.bgColor}`}><metric.icon className={`h-4 w-4 ${metric.color}`} /></div>
+              { icon: Bot, color: "text-primary", bgColor: "bg-primary/10", value: agents.length, label: "Agentes Totais", trend: "+2", subLabel: "Frota Neural" },
+              { icon: Zap, color: "text-nexus-emerald", bgColor: "bg-nexus-emerald/10", value: activeCount, label: "Live Deployment", trend: "Active", subLabel: "Em Produção" },
+              { icon: DollarSign, color: "text-nexus-amber", bgColor: "bg-nexus-amber/10", value: usageStats?.totalCost ?? 0, label: "Cloud Cost", prefix: "$", decimals: 2, subLabel: `Budget ${dateRange}` },
+              { icon: TrendingUp, color: "text-nexus-cyan", bgColor: "bg-nexus-cyan/10", value: usageStats?.totalRequests ?? 0, label: "Vazão Neural", subLabel: "Total Requests" },
+            ].map((metric, i) => (
+              <div 
+                key={i} 
+                className="bg-card border border-border/40 p-8 rounded-[2.5rem] relative overflow-hidden group hover:border-primary/20 transition-all duration-500"
+              >
+                <div className="absolute -right-4 -bottom-4 h-24 w-24 bg-primary/[0.02] rounded-full blur-2xl group-hover:bg-primary/[0.04] transition-colors" />
+                <div className="flex items-center justify-between mb-6">
+                  <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 duration-500", metric.bgColor)}>
+                    <metric.icon className={cn("h-7 w-7", metric.color)} />
+                  </div>
+                  {metric.trend && (
+                    <Badge className="bg-muted/50 text-muted-foreground border-none font-bold text-[10px] px-2.5 py-1">
+                      {metric.trend}
+                    </Badge>
+                  )}
                 </div>
-                <p className="text-2xl sm:text-3xl font-heading font-extrabold tracking-tight text-foreground">
-                  {metric.noData ? '—' : <AnimatedCounter value={metric.value} prefix={metric.prefix} decimals={metric.decimals} />}
-                </p>
+                <div className="space-y-1">
+                  <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground/60">{metric.label}</p>
+                  <div className="flex items-baseline gap-1">
+                    <p className="text-4xl font-black text-foreground tracking-tight">
+                      <AnimatedCounter value={metric.value} prefix={metric.prefix} decimals={metric.decimals} />
+                    </p>
+                  </div>
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pt-2">{metric.subLabel}</p>
+                </div>
               </div>
             ))}
           </div>
 
-          {usageStats && (
-            <div className="grid grid-cols-3 gap-4 sm:gap-5">
-              {[{ icon: Clock, color: "text-nexus-purple", bgColor: "bg-nexus-purple/10", value: usageStats.avgLatency > 0 ? `${usageStats.avgLatency}ms` : '—', label: "Latência média" }, { icon: Sparkles, color: "text-nexus-cyan", bgColor: "bg-nexus-cyan/10", value: usageStats.totalTokens > 0 ? `${(usageStats.totalTokens / 1000).toFixed(0)}k` : '—', label: "Tokens totais" }, { icon: Bot, color: "text-muted-foreground", bgColor: "bg-muted/10", value: `${draftCount}`, label: "Rascunhos" }].map((m) => (
-                <div key={m.label} className="nexus-card nexus-metric-card py-3 sm:py-4 flex items-center gap-3 hover:border-primary/30 transition-colors">
-                  <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${m.bgColor}`}><m.icon className={`h-4 w-4 ${m.color}`} /></div>
-                  <div><p className="text-sm sm:text-lg font-heading font-extrabold text-foreground">{m.value}</p><p className="text-[11px] text-muted-foreground/70 uppercase tracking-wider">{m.label}</p></div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          <div className="animate-chart-reveal"><UsageCharts data={usageData ?? []} /></div>
-
-          <div className="grid lg:grid-cols-2 gap-4">
-            <div className="nexus-card flex flex-col">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-heading font-semibold text-foreground flex items-center gap-2">
-                  <Bot className="h-4 w-4 text-primary" /> Agentes recentes
-                </h3>
-                <Button variant="ghost" size="sm" onClick={() => navigate('/agents')} className="text-[10px] h-7 px-2">Ver tudo</Button>
-              </div>
-              <div className="stagger-list flex-1" role="list">
-                {agents.slice(0, 5).map(agent => (
-                  <div key={agent.id} role="listitem" className="flex items-center justify-between cursor-pointer hover:bg-primary/5 border border-transparent hover:border-primary/10 rounded-xl p-3 mb-2 last:mb-0 transition-all group" onClick={() => navigate(`/builder/${agent.id}`)}>
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/10 to-accent/5 flex items-center justify-center text-lg shrink-0 group-hover:scale-110 transition-transform shadow-sm">
-                        {agent.avatar_emoji || '🤖'}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-bold text-foreground truncate group-hover:text-primary transition-colors">{agent.name}</p>
-                        <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">{agent.model} • v{agent.version}</p>
-                      </div>
+          <div className="grid lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-8">
+              <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem]">
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                      <TrendingUp className="h-5 w-5 text-primary" />
                     </div>
+                    <h3 className="text-xl font-heading font-black text-foreground">Utilização da Infraestrutura</h3>
+                  </div>
+                </div>
+                <UsageCharts data={usageData ?? []} />
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-8">
+                {/* Recent Agents Widget */}
+                <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem] flex flex-col">
+                  <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
-                      <StatusBadge status={agent.status || 'draft'} size="sm" />
-                      <div className="h-7 w-7 rounded-full bg-secondary/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <ArrowRight className="h-3.5 w-3.5 text-primary" />
+                      <div className="h-10 w-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                        <Layers className="h-5 w-5 text-blue-500" />
                       </div>
+                      <h3 className="text-lg font-heading font-black text-foreground">Top Agentes</h3>
                     </div>
+                    <Button variant="ghost" size="sm" onClick={() => navigate('/agents')} className="text-[10px] font-bold h-8 px-3 rounded-lg hover:bg-primary/10">FULL FLEET</Button>
                   </div>
-                ))}
+                  <div className="space-y-3 flex-1">
+                    {agents.slice(0, 4).map(agent => (
+                      <div key={agent.id} className="flex items-center justify-between p-4 rounded-2xl bg-card border border-border/40 hover:border-primary/30 hover:shadow-lg transition-all cursor-pointer group" onClick={() => navigate(`/builder/${agent.id}`)}>
+                        <div className="flex items-center gap-4">
+                          <div className="h-12 w-12 rounded-xl bg-muted/30 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">{agent.avatar_emoji || '🤖'}</div>
+                          <div>
+                            <p className="text-sm font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1">{agent.name}</p>
+                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{agent.model?.split('-')[0]}</p>
+                          </div>
+                        </div>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground/30 group-hover:text-primary transition-colors" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Real-time Activity Widget */}
+                <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem] flex flex-col">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-xl bg-nexus-emerald/10 flex items-center justify-center">
+                        <Radio className="h-5 w-5 text-nexus-emerald animate-pulse" />
+                      </div>
+                      <h3 className="text-lg font-heading font-black text-foreground">Live Telemetria</h3>
+                    </div>
+                    <Button variant="ghost" size="sm" onClick={() => navigate('/monitoring')} className="text-[10px] font-bold h-8 px-3 rounded-lg hover:bg-nexus-emerald/10">LOGS</Button>
+                  </div>
+                  <div className="space-y-3 flex-1">
+                    {recentTraces.slice(0, 4).map((trace: any) => (
+                      <div key={trace.id} className="flex items-center justify-between p-4 rounded-2xl bg-card border border-border/40 hover:border-nexus-emerald/30 hover:shadow-lg transition-all cursor-pointer group" onClick={() => navigate('/monitoring')}>
+                        <div className="flex items-center gap-4 min-w-0">
+                          <div className={cn(
+                            "h-2 w-2 rounded-full shrink-0",
+                            trace.level === 'error' ? 'bg-destructive shadow-[0_0_8px_rgba(239,68,68,0.5)]' : 'bg-nexus-emerald shadow-[0_0_8px_rgba(16,185,129,0.5)]'
+                          )} />
+                          <div className="min-w-0">
+                            <p className="text-sm font-bold text-foreground group-hover:text-nexus-emerald transition-colors truncate">{trace.event}</p>
+                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{new Date(trace.created_at).toLocaleTimeString('pt-BR')}</p>
+                          </div>
+                        </div>
+                        {trace.latency_ms && <span className="text-[9px] font-black text-muted-foreground/60 bg-muted px-2 py-0.5 rounded-full">{trace.latency_ms}ms</span>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="nexus-card flex flex-col">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-heading font-semibold text-foreground flex items-center gap-2">
-                  <Activity className="h-4 w-4 text-nexus-emerald" /> Atividade em tempo real
-                </h3>
-                <Button variant="ghost" size="sm" onClick={() => navigate('/monitoring')} className="text-[10px] h-7 px-2">Logs</Button>
-              </div>
-              {recentTraces.length === 0 ? (
-                <div className="flex flex-col items-center justify-center flex-1 py-8 opacity-50">
-                  <div className="h-12 w-12 rounded-full bg-muted/20 flex items-center justify-center mb-2">
-                    <Activity className="h-5 w-5 text-muted-foreground" />
+
+            <div className="space-y-8">
+              <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem]">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="h-10 w-10 rounded-xl bg-nexus-purple/10 flex items-center justify-center">
+                    <Activity className="h-5 w-5 text-nexus-purple" />
                   </div>
-                  <p className="text-xs text-muted-foreground">Nenhuma atividade registrada.</p>
+                  <h3 className="text-xl font-heading font-black text-foreground">Fluxo de Eventos</h3>
                 </div>
-              ) : (
-                <div className="stagger-list flex-1" role="list">
-                  {recentTraces.map((trace: any) => (
-                    <div key={trace.id} role="listitem" className="flex items-center justify-between p-3 mb-2 last:mb-0 rounded-xl border border-border/40 bg-card/50 hover:bg-secondary/30 cursor-pointer transition-all group" onClick={() => navigate('/monitoring')}>
-                      <div className="flex items-center gap-3">
-                        <div className={`h-2 w-2 rounded-full shrink-0 ${
-                          trace.level === 'error' || trace.level === 'critical' ? 'bg-destructive animate-pulse' : 
-                          trace.level === 'warning' ? 'bg-nexus-amber' : 'bg-primary'
-                        }`} />
-                        <div>
-                          <p className="text-xs font-bold text-foreground group-hover:text-primary transition-colors">{trace.event}</p>
-                          <p className="text-[10px] text-muted-foreground font-medium">{new Date(trace.created_at).toLocaleTimeString('pt-BR')}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        {trace.latency_ms && (
-                          <span className="text-[10px] font-mono text-muted-foreground bg-secondary/80 px-1.5 py-0.5 rounded flex items-center gap-1">
-                            <Clock className="h-2.5 w-2.5" />{(trace.latency_ms / 1000).toFixed(2)}s
-                          </span>
-                        )}
-                        <ArrowRight className="h-3 w-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />
-                      </div>
-                    </div>
-                  ))}
+                <ActivityFeed />
+              </div>
+              
+              <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem]">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="h-10 w-10 rounded-xl bg-nexus-cyan/10 flex items-center justify-center">
+                    <Target className="h-5 w-5 text-nexus-cyan" />
+                  </div>
+                  <h3 className="text-xl font-heading font-black text-foreground">Insights Cognitivos</h3>
                 </div>
-              )}
+                <DashboardInsight agents={agents} usageStats={usageStats} recentTraces={recentTraces} />
+              </div>
+
+              <DashboardAlerts />
             </div>
           </div>
-
-          <div className="nexus-card"><h3 className="text-sm font-heading font-semibold text-foreground mb-3 flex items-center gap-2"><Activity className="h-4 w-4 text-primary" /> Feed de Atividades</h3><ActivityFeed /></div>
+          
           <AutomationOverviewWidget />
-          <DashboardInsight agents={agents} usageStats={usageStats} recentTraces={recentTraces} />
-          <DashboardAlerts />
         </>
       )}
-      <InfoHint title="O que são superagentes de IA?">Superagentes combinam modelos de linguagem, memória persistente, ferramentas externas e RAG para executar tarefas complexas de forma autônoma.</InfoHint>
     </div>
   );
 }
