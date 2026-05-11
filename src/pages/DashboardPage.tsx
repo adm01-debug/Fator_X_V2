@@ -191,71 +191,84 @@ export default function DashboardPage() {
 
           <div className="grid lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-8">
-              <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem]">
-                <div className="flex items-center justify-between mb-8">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                      <TrendingUp className="h-5 w-5 text-primary" />
+              <div className="bg-card/30 border border-border/40 p-10 rounded-[3.5rem] shadow-xl shadow-primary/[0.02]">
+                <div className="flex items-center justify-between mb-10">
+                  <div className="flex items-center gap-4">
+                    <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center">
+                      <TrendingUp className="h-6 w-6 text-primary" />
                     </div>
-                    <h3 className="text-xl font-heading font-black text-foreground">Utilização da Infraestrutura</h3>
+                    <div>
+                      <h3 className="text-2xl font-heading font-black text-foreground tracking-tight">Utilização da Infraestrutura</h3>
+                      <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">Sincronização em Tempo Real</p>
+                    </div>
                   </div>
                 </div>
                 <UsageCharts data={usageData ?? []} />
               </div>
 
               <div className="grid md:grid-cols-2 gap-8">
-                {/* Recent Agents Widget */}
-                <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem] flex flex-col">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                        <Layers className="h-5 w-5 text-blue-500" />
+                {/* Recent Agents Widget Elevated */}
+                <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem] flex flex-col shadow-xl shadow-primary/[0.02] hover:shadow-2xl hover:shadow-primary/[0.04] transition-all duration-500">
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-4">
+                      <div className="h-12 w-12 rounded-2xl bg-blue-500/10 flex items-center justify-center">
+                        <Layers className="h-6 w-6 text-blue-500" />
                       </div>
-                      <h3 className="text-lg font-heading font-black text-foreground">Top Agentes</h3>
+                      <h3 className="text-xl font-heading font-black text-foreground tracking-tight">Top Agentes</h3>
                     </div>
-                    <Button variant="ghost" size="sm" onClick={() => navigate('/agents')} className="text-[10px] font-bold h-8 px-3 rounded-lg hover:bg-primary/10">FULL FLEET</Button>
+                    <Button variant="ghost" size="sm" onClick={() => navigate('/agents')} className="text-[10px] font-black h-8 px-4 rounded-xl hover:bg-primary/10 tracking-widest uppercase">Full Fleet</Button>
                   </div>
-                  <div className="space-y-3 flex-1">
+                  <div className="space-y-4 flex-1">
                     {agents.slice(0, 4).map(agent => (
-                      <div key={agent.id} className="flex items-center justify-between p-4 rounded-2xl bg-card border border-border/40 hover:border-primary/30 hover:shadow-lg transition-all cursor-pointer group" onClick={() => navigate(`/builder/${agent.id}`)}>
-                        <div className="flex items-center gap-4">
-                          <div className="h-12 w-12 rounded-xl bg-muted/30 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">{agent.avatar_emoji || '🤖'}</div>
+                      <div key={agent.id} className="flex items-center justify-between p-5 rounded-[2rem] bg-card border border-border/40 hover:border-primary/40 hover:bg-background/80 hover:shadow-xl transition-all duration-300 cursor-pointer group" onClick={() => navigate(`/builder/${agent.id}`)}>
+                        <div className="flex items-center gap-5">
+                          <div className="h-14 w-14 rounded-2xl bg-muted/30 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-sm">{agent.avatar_emoji || '🤖'}</div>
                           <div>
-                            <p className="text-sm font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1">{agent.name}</p>
-                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{agent.model?.split('-')[0]}</p>
+                            <p className="text-base font-black text-foreground group-hover:text-primary transition-colors line-clamp-1">{agent.name}</p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <Badge variant="outline" className="text-[9px] font-black uppercase tracking-tighter border-primary/20 text-primary">{agent.model?.split('-')[0]}</Badge>
+                              <span className="h-1 w-1 rounded-full bg-muted-foreground/30" />
+                              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Active</span>
+                            </div>
                           </div>
                         </div>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground/30 group-hover:text-primary transition-colors" />
+                        <div className="h-10 w-10 rounded-xl flex items-center justify-center text-muted-foreground/30 group-hover:text-primary group-hover:bg-primary/10 transition-all duration-300">
+                          <ChevronRight className="h-5 w-5" />
+                        </div>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                {/* Real-time Activity Widget */}
-                <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem] flex flex-col">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-nexus-emerald/10 flex items-center justify-center">
-                        <Radio className="h-5 w-5 text-nexus-emerald animate-pulse" />
+                {/* Real-time Activity Widget Elevated */}
+                <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem] flex flex-col shadow-xl shadow-primary/[0.02] hover:shadow-2xl hover:shadow-primary/[0.04] transition-all duration-500">
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-4">
+                      <div className="h-12 w-12 rounded-2xl bg-nexus-emerald/10 flex items-center justify-center">
+                        <Radio className="h-6 w-6 text-nexus-emerald animate-pulse" />
                       </div>
-                      <h3 className="text-lg font-heading font-black text-foreground">Live Telemetria</h3>
+                      <h3 className="text-xl font-heading font-black text-foreground tracking-tight">Live Telemetria</h3>
                     </div>
-                    <Button variant="ghost" size="sm" onClick={() => navigate('/monitoring')} className="text-[10px] font-bold h-8 px-3 rounded-lg hover:bg-nexus-emerald/10">LOGS</Button>
+                    <Button variant="ghost" size="sm" onClick={() => navigate('/monitoring')} className="text-[10px] font-black h-8 px-4 rounded-xl hover:bg-nexus-emerald/10 tracking-widest uppercase">Logs</Button>
                   </div>
-                  <div className="space-y-3 flex-1">
+                  <div className="space-y-4 flex-1">
                     {recentTraces.slice(0, 4).map((trace: any) => (
-                      <div key={trace.id} className="flex items-center justify-between p-4 rounded-2xl bg-card border border-border/40 hover:border-nexus-emerald/30 hover:shadow-lg transition-all cursor-pointer group" onClick={() => navigate('/monitoring')}>
-                        <div className="flex items-center gap-4 min-w-0">
+                      <div key={trace.id} className="flex items-center justify-between p-5 rounded-[2rem] bg-card border border-border/40 hover:border-nexus-emerald/40 hover:bg-background/80 hover:shadow-xl transition-all duration-300 cursor-pointer group" onClick={() => navigate('/monitoring')}>
+                        <div className="flex items-center gap-5 min-w-0">
                           <div className={cn(
-                            "h-2 w-2 rounded-full shrink-0",
-                            trace.level === 'error' ? 'bg-destructive shadow-[0_0_8px_rgba(239,68,68,0.5)]' : 'bg-nexus-emerald shadow-[0_0_8px_rgba(16,185,129,0.5)]'
+                            "h-3 w-3 rounded-full shrink-0",
+                            trace.level === 'error' ? 'bg-destructive shadow-[0_0_12px_rgba(239,68,68,0.6)]' : 'bg-nexus-emerald shadow-[0_0_12px_rgba(16,185,129,0.6)]'
                           )} />
                           <div className="min-w-0">
-                            <p className="text-sm font-bold text-foreground group-hover:text-nexus-emerald transition-colors truncate">{trace.event}</p>
-                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{new Date(trace.created_at).toLocaleTimeString('pt-BR')}</p>
+                            <p className="text-base font-black text-foreground group-hover:text-nexus-emerald transition-colors truncate">{trace.event}</p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{new Date(trace.created_at).toLocaleTimeString('pt-BR')}</span>
+                              <span className="h-1 w-1 rounded-full bg-muted-foreground/30" />
+                              <Badge variant="outline" className="text-[9px] font-black uppercase tracking-tighter border-nexus-emerald/20 text-nexus-emerald">Verified</Badge>
+                            </div>
                           </div>
                         </div>
-                        {trace.latency_ms && <span className="text-[9px] font-black text-muted-foreground/60 bg-muted px-2 py-0.5 rounded-full">{trace.latency_ms}ms</span>}
+                        {trace.latency_ms && <span className="text-[10px] font-black text-muted-foreground/60 bg-muted px-2.5 py-1 rounded-lg border border-border/40">{trace.latency_ms}ms</span>}
                       </div>
                     ))}
                   </div>
@@ -264,22 +277,22 @@ export default function DashboardPage() {
             </div>
 
             <div className="space-y-8">
-              <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem]">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="h-10 w-10 rounded-xl bg-nexus-purple/10 flex items-center justify-center">
-                    <Activity className="h-5 w-5 text-nexus-purple" />
+              <div className="bg-card/30 border border-border/40 p-10 rounded-[3rem] shadow-xl shadow-primary/[0.02]">
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="h-12 w-12 rounded-2xl bg-nexus-purple/10 flex items-center justify-center">
+                    <Activity className="h-6 w-6 text-nexus-purple" />
                   </div>
-                  <h3 className="text-xl font-heading font-black text-foreground">Fluxo de Eventos</h3>
+                  <h3 className="text-2xl font-heading font-black text-foreground tracking-tight">Fluxo de Eventos</h3>
                 </div>
                 <ActivityFeed />
               </div>
               
-              <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem]">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="h-10 w-10 rounded-xl bg-nexus-cyan/10 flex items-center justify-center">
-                    <Target className="h-5 w-5 text-nexus-cyan" />
+              <div className="bg-card/30 border border-border/40 p-10 rounded-[3rem] shadow-xl shadow-primary/[0.02]">
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="h-12 w-12 rounded-2xl bg-nexus-cyan/10 flex items-center justify-center">
+                    <Target className="h-6 w-6 text-nexus-cyan" />
                   </div>
-                  <h3 className="text-xl font-heading font-black text-foreground">Insights Cognitivos</h3>
+                  <h3 className="text-2xl font-heading font-black text-foreground tracking-tight">Cognitive Insights</h3>
                 </div>
                 <DashboardInsight agents={agents} usageStats={usageStats} recentTraces={recentTraces} />
               </div>
