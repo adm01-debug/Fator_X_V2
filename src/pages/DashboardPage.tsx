@@ -110,144 +110,165 @@ export default function DashboardPage() {
       </div>
 
       {agents.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-32 text-center bg-card/30 border border-dashed border-border/60 rounded-[3rem]">
-          <div className="h-24 w-24 rounded-[2rem] bg-gradient-to-br from-primary/10 to-accent/5 flex items-center justify-center mb-6 border border-primary/10">
-            <Sparkles className="h-12 w-12 text-primary/40 animate-pulse" />
+        <div className="flex flex-col items-center justify-center py-32 text-center bg-card/30 border border-dashed border-border/60 rounded-[4rem] relative overflow-hidden group">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.02] to-transparent pointer-events-none" />
+          <div className="h-32 w-32 rounded-[3rem] bg-gradient-to-br from-primary/10 to-accent/5 flex items-center justify-center mb-8 border border-primary/20 shadow-2xl group-hover:scale-110 transition-transform duration-700">
+            <Sparkles className="h-16 w-16 text-primary animate-pulse" />
           </div>
-          <h2 className="text-3xl font-heading font-black text-foreground mb-4">Inicie sua Frota Neural</h2>
-          <p className="text-lg text-muted-foreground mb-10 max-w-md">Você ainda não possui agentes ativos. Comece criando um agente autônomo para automatizar sua operação.</p>
-          <Button onClick={() => navigate('/agents/new')} size="lg" className="nexus-gradient-bg text-primary-foreground h-14 px-10 rounded-2xl font-bold text-lg shadow-xl shadow-primary/20">
+          <h2 className="text-4xl font-heading font-black text-foreground mb-6 tracking-tight">Inicie sua Frota Neural</h2>
+          <p className="text-xl text-muted-foreground mb-12 max-w-lg font-medium leading-relaxed">Sua infraestrutura Nexus está pronta. Comece criando um agente autônomo para orquestrar sua operação com inteligência industrial.</p>
+          <Button onClick={() => navigate('/agents/new')} size="lg" className="nexus-gradient-bg text-primary-foreground h-16 px-12 rounded-2xl font-black text-xl shadow-2xl shadow-primary/30 hover:scale-105 active:scale-95 transition-all">
             Criar Primeiro Agente
           </Button>
         </div>
       ) : (
         <>
-          {/* Quick Actions Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {[
-              { label: 'Conhecimento', icon: BookOpen, path: '/knowledge', color: 'text-blue-500', bg: 'bg-blue-500/10' },
-              { label: 'Workflows', icon: GitBranch, path: '/workflows', color: 'text-purple-500', bg: 'bg-purple-500/10' },
-              { label: 'Monitoramento', icon: Activity, path: '/monitoring', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-              { label: 'Segurança', icon: Shield, path: '/security', color: 'text-orange-500', bg: 'bg-orange-500/10' },
-              { label: 'Ferramentas', icon: Zap, path: '/tools', color: 'text-cyan-500', bg: 'bg-cyan-500/10' },
-              { label: 'Analytics', icon: BarChart3, path: '/monitoring', color: 'text-pink-500', bg: 'bg-pink-500/10' },
-            ].map((action, i) => (
-              <button
-                key={i}
-                onClick={() => navigate(action.path)}
-                className="flex flex-col items-center justify-center gap-3 p-5 rounded-[2rem] bg-card border border-border/40 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 group"
-              >
-                <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 group-hover:rotate-3", action.bg)}>
-                  <action.icon className={cn("h-6 w-6", action.color)} />
-                </div>
-                <span className="text-xs font-bold text-foreground group-hover:text-primary transition-colors">{action.label}</span>
-              </button>
-            ))}
-          </div>
-
-          {/* Metrics Section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { icon: Bot, color: "text-primary", bgColor: "bg-primary/10", value: agents.length, label: "Agentes Totais", trend: "+2", subLabel: "Frota Neural" },
-              { icon: Zap, color: "text-nexus-emerald", bgColor: "bg-nexus-emerald/10", value: activeCount, label: "Live Deployment", trend: "Active", subLabel: "Em Produção" },
-              { icon: DollarSign, color: "text-nexus-amber", bgColor: "bg-nexus-amber/10", value: usageStats?.totalCost ?? 0, label: "Cloud Cost", prefix: "$", decimals: 2, subLabel: `Budget ${dateRange}` },
-              { icon: TrendingUp, color: "text-nexus-cyan", bgColor: "bg-nexus-cyan/10", value: usageStats?.totalRequests ?? 0, label: "Vazão Neural", subLabel: "Total Requests" },
-            ].map((metric, i) => (
-              <div 
-                key={i} 
-                className="bg-card border border-border/40 p-8 rounded-[2.5rem] relative overflow-hidden group hover:border-primary/20 transition-all duration-500"
-              >
-                <div className="absolute -right-4 -bottom-4 h-24 w-24 bg-primary/[0.02] rounded-full blur-2xl group-hover:bg-primary/[0.04] transition-colors" />
-                <div className="flex items-center justify-between mb-6">
-                  <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 duration-500", metric.bgColor)}>
-                    <metric.icon className={cn("h-7 w-7", metric.color)} />
-                  </div>
-                  {metric.trend && (
-                    <Badge className="bg-muted/50 text-muted-foreground border-none font-bold text-[10px] px-2.5 py-1">
-                      {metric.trend}
-                    </Badge>
-                  )}
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground/60">{metric.label}</p>
-                  <div className="flex items-baseline gap-1">
-                    <p className="text-4xl font-black text-foreground tracking-tight">
-                      <AnimatedCounter value={metric.value} prefix={metric.prefix} decimals={metric.decimals} />
-                    </p>
-                  </div>
-                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pt-2">{metric.subLabel}</p>
-                </div>
+      {/* Matrix System Performance Elevated 10/10 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          { icon: Bot, color: "text-primary", bgColor: "bg-primary/10", value: agents.length, label: "Agentes Totais", trend: "+2", subLabel: "Frota Neural", status: "Nominal" },
+          { icon: Zap, color: "text-nexus-emerald", bgColor: "bg-nexus-emerald/10", value: activeCount, label: "Live Deployment", trend: "Active", subLabel: "Em Produção", status: "Online" },
+          { icon: DollarSign, color: "text-nexus-amber", bgColor: "bg-nexus-amber/10", value: usageStats?.totalCost ?? 0, label: "Cloud Cost", prefix: "$", decimals: 2, subLabel: `Budget ${dateRange}`, status: "Optimized" },
+          { icon: TrendingUp, color: "text-nexus-cyan", bgColor: "bg-nexus-cyan/10", value: usageStats?.totalRequests ?? 0, label: "Vazão Neural", subLabel: "Total Requests", status: "High Cap" },
+        ].map((metric, i) => (
+          <div 
+            key={i} 
+            className="bg-card border border-border/40 p-8 rounded-[2.5rem] relative overflow-hidden group hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500"
+          >
+            <div className="absolute -right-4 -bottom-4 h-24 w-24 bg-primary/[0.02] rounded-full blur-2xl group-hover:bg-primary/[0.06] transition-colors" />
+            <div className="flex items-center justify-between mb-6">
+              <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 duration-500", metric.bgColor)}>
+                <metric.icon className={cn("h-7 w-7", metric.color)} />
               </div>
-            ))}
+              <div className="flex flex-col items-end gap-1">
+                <Badge className="bg-muted/50 text-muted-foreground border-none font-black text-[10px] px-2.5 py-1 uppercase tracking-widest">
+                  {metric.trend}
+                </Badge>
+                <span className="text-[9px] font-black text-nexus-emerald uppercase tracking-tighter">{metric.status}</span>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">{metric.label}</p>
+              <div className="flex items-baseline gap-1">
+                <p className="text-5xl font-black text-foreground tracking-tighter">
+                  <AnimatedCounter value={metric.value} prefix={metric.prefix} decimals={metric.decimals} />
+                </p>
+              </div>
+              <div className="flex items-center gap-2 pt-3">
+                <div className="h-1 flex-1 bg-border/40 rounded-full overflow-hidden">
+                  <div className={cn("h-full rounded-full transition-all duration-1000", i === 0 ? 'w-[75%] bg-primary' : i === 1 ? 'w-[90%] bg-nexus-emerald' : i === 2 ? 'w-[45%] bg-nexus-amber' : 'w-[82%] bg-nexus-cyan')} />
+                </div>
+                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{metric.subLabel}</span>
+              </div>
+            </div>
           </div>
+        ))}
+      </div>
+
+      {/* Industrial Quick Actions Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+        {[
+          { label: 'Conhecimento', icon: BookOpen, path: '/knowledge', color: 'text-blue-500', bg: 'bg-blue-500/10' },
+          { label: 'Workflows', icon: GitBranch, path: '/workflows', color: 'text-purple-500', bg: 'bg-purple-500/10' },
+          { label: 'Monitoramento', icon: Activity, path: '/monitoring', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+          { label: 'Segurança', icon: Shield, path: '/security', color: 'text-orange-500', bg: 'bg-orange-500/10' },
+          { label: 'Ferramentas', icon: Zap, path: '/tools', color: 'text-cyan-500', bg: 'bg-cyan-500/10' },
+          { label: 'Analytics', icon: BarChart3, path: '/monitoring', color: 'text-pink-500', bg: 'bg-pink-500/10' },
+        ].map((action, i) => (
+          <button
+            key={i}
+            onClick={() => navigate(action.path)}
+            className="flex flex-col items-center justify-center gap-4 p-7 rounded-[2.5rem] bg-card/50 border border-border/40 hover:border-primary/40 hover:bg-card hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 group relative overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className={cn("h-16 w-16 rounded-[1.5rem] flex items-center justify-center relative z-10 transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 shadow-lg", action.bg)}>
+              <action.icon className={cn("h-8 w-8", action.color)} />
+            </div>
+            <span className="text-sm font-black text-foreground group-hover:text-primary transition-colors relative z-10 uppercase tracking-tight">{action.label}</span>
+          </button>
+        ))}
+      </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-8">
-              <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem]">
-                <div className="flex items-center justify-between mb-8">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                      <TrendingUp className="h-5 w-5 text-primary" />
+              <div className="bg-card/30 border border-border/40 p-10 rounded-[3.5rem] shadow-xl shadow-primary/[0.02]">
+                <div className="flex items-center justify-between mb-10">
+                  <div className="flex items-center gap-4">
+                    <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center">
+                      <TrendingUp className="h-6 w-6 text-primary" />
                     </div>
-                    <h3 className="text-xl font-heading font-black text-foreground">Utilização da Infraestrutura</h3>
+                    <div>
+                      <h3 className="text-2xl font-heading font-black text-foreground tracking-tight">Utilização da Infraestrutura</h3>
+                      <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">Sincronização em Tempo Real</p>
+                    </div>
                   </div>
                 </div>
                 <UsageCharts data={usageData ?? []} />
               </div>
 
               <div className="grid md:grid-cols-2 gap-8">
-                {/* Recent Agents Widget */}
-                <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem] flex flex-col">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                        <Layers className="h-5 w-5 text-blue-500" />
+                {/* Recent Agents Widget Elevated */}
+                <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem] flex flex-col shadow-xl shadow-primary/[0.02] hover:shadow-2xl hover:shadow-primary/[0.04] transition-all duration-500">
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-4">
+                      <div className="h-12 w-12 rounded-2xl bg-blue-500/10 flex items-center justify-center">
+                        <Layers className="h-6 w-6 text-blue-500" />
                       </div>
-                      <h3 className="text-lg font-heading font-black text-foreground">Top Agentes</h3>
+                      <h3 className="text-xl font-heading font-black text-foreground tracking-tight">Top Agentes</h3>
                     </div>
-                    <Button variant="ghost" size="sm" onClick={() => navigate('/agents')} className="text-[10px] font-bold h-8 px-3 rounded-lg hover:bg-primary/10">FULL FLEET</Button>
+                    <Button variant="ghost" size="sm" onClick={() => navigate('/agents')} className="text-[10px] font-black h-8 px-4 rounded-xl hover:bg-primary/10 tracking-widest uppercase">Full Fleet</Button>
                   </div>
-                  <div className="space-y-3 flex-1">
+                  <div className="space-y-4 flex-1">
                     {agents.slice(0, 4).map(agent => (
-                      <div key={agent.id} className="flex items-center justify-between p-4 rounded-2xl bg-card border border-border/40 hover:border-primary/30 hover:shadow-lg transition-all cursor-pointer group" onClick={() => navigate(`/builder/${agent.id}`)}>
-                        <div className="flex items-center gap-4">
-                          <div className="h-12 w-12 rounded-xl bg-muted/30 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">{agent.avatar_emoji || '🤖'}</div>
+                      <div key={agent.id} className="flex items-center justify-between p-5 rounded-[2rem] bg-card border border-border/40 hover:border-primary/40 hover:bg-background/80 hover:shadow-xl transition-all duration-300 cursor-pointer group" onClick={() => navigate(`/builder/${agent.id}`)}>
+                        <div className="flex items-center gap-5">
+                          <div className="h-14 w-14 rounded-2xl bg-muted/30 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-sm">{agent.avatar_emoji || '🤖'}</div>
                           <div>
-                            <p className="text-sm font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1">{agent.name}</p>
-                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{agent.model?.split('-')[0]}</p>
+                            <p className="text-base font-black text-foreground group-hover:text-primary transition-colors line-clamp-1">{agent.name}</p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <Badge variant="outline" className="text-[9px] font-black uppercase tracking-tighter border-primary/20 text-primary">{agent.model?.split('-')[0]}</Badge>
+                              <span className="h-1 w-1 rounded-full bg-muted-foreground/30" />
+                              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Active</span>
+                            </div>
                           </div>
                         </div>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground/30 group-hover:text-primary transition-colors" />
+                        <div className="h-10 w-10 rounded-xl flex items-center justify-center text-muted-foreground/30 group-hover:text-primary group-hover:bg-primary/10 transition-all duration-300">
+                          <ChevronRight className="h-5 w-5" />
+                        </div>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                {/* Real-time Activity Widget */}
-                <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem] flex flex-col">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-nexus-emerald/10 flex items-center justify-center">
-                        <Radio className="h-5 w-5 text-nexus-emerald animate-pulse" />
+                {/* Real-time Activity Widget Elevated */}
+                <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem] flex flex-col shadow-xl shadow-primary/[0.02] hover:shadow-2xl hover:shadow-primary/[0.04] transition-all duration-500">
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-4">
+                      <div className="h-12 w-12 rounded-2xl bg-nexus-emerald/10 flex items-center justify-center">
+                        <Radio className="h-6 w-6 text-nexus-emerald animate-pulse" />
                       </div>
-                      <h3 className="text-lg font-heading font-black text-foreground">Live Telemetria</h3>
+                      <h3 className="text-xl font-heading font-black text-foreground tracking-tight">Live Telemetria</h3>
                     </div>
-                    <Button variant="ghost" size="sm" onClick={() => navigate('/monitoring')} className="text-[10px] font-bold h-8 px-3 rounded-lg hover:bg-nexus-emerald/10">LOGS</Button>
+                    <Button variant="ghost" size="sm" onClick={() => navigate('/monitoring')} className="text-[10px] font-black h-8 px-4 rounded-xl hover:bg-nexus-emerald/10 tracking-widest uppercase">Logs</Button>
                   </div>
-                  <div className="space-y-3 flex-1">
+                  <div className="space-y-4 flex-1">
                     {recentTraces.slice(0, 4).map((trace: any) => (
-                      <div key={trace.id} className="flex items-center justify-between p-4 rounded-2xl bg-card border border-border/40 hover:border-nexus-emerald/30 hover:shadow-lg transition-all cursor-pointer group" onClick={() => navigate('/monitoring')}>
-                        <div className="flex items-center gap-4 min-w-0">
+                      <div key={trace.id} className="flex items-center justify-between p-5 rounded-[2rem] bg-card border border-border/40 hover:border-nexus-emerald/40 hover:bg-background/80 hover:shadow-xl transition-all duration-300 cursor-pointer group" onClick={() => navigate('/monitoring')}>
+                        <div className="flex items-center gap-5 min-w-0">
                           <div className={cn(
-                            "h-2 w-2 rounded-full shrink-0",
-                            trace.level === 'error' ? 'bg-destructive shadow-[0_0_8px_rgba(239,68,68,0.5)]' : 'bg-nexus-emerald shadow-[0_0_8px_rgba(16,185,129,0.5)]'
+                            "h-3 w-3 rounded-full shrink-0",
+                            trace.level === 'error' ? 'bg-destructive shadow-[0_0_12px_rgba(239,68,68,0.6)]' : 'bg-nexus-emerald shadow-[0_0_12px_rgba(16,185,129,0.6)]'
                           )} />
                           <div className="min-w-0">
-                            <p className="text-sm font-bold text-foreground group-hover:text-nexus-emerald transition-colors truncate">{trace.event}</p>
-                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{new Date(trace.created_at).toLocaleTimeString('pt-BR')}</p>
+                            <p className="text-base font-black text-foreground group-hover:text-nexus-emerald transition-colors truncate">{trace.event}</p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{new Date(trace.created_at).toLocaleTimeString('pt-BR')}</span>
+                              <span className="h-1 w-1 rounded-full bg-muted-foreground/30" />
+                              <Badge variant="outline" className="text-[9px] font-black uppercase tracking-tighter border-nexus-emerald/20 text-nexus-emerald">Verified</Badge>
+                            </div>
                           </div>
                         </div>
-                        {trace.latency_ms && <span className="text-[9px] font-black text-muted-foreground/60 bg-muted px-2 py-0.5 rounded-full">{trace.latency_ms}ms</span>}
+                        {trace.latency_ms && <span className="text-[10px] font-black text-muted-foreground/60 bg-muted px-2.5 py-1 rounded-lg border border-border/40">{trace.latency_ms}ms</span>}
                       </div>
                     ))}
                   </div>
@@ -256,22 +277,22 @@ export default function DashboardPage() {
             </div>
 
             <div className="space-y-8">
-              <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem]">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="h-10 w-10 rounded-xl bg-nexus-purple/10 flex items-center justify-center">
-                    <Activity className="h-5 w-5 text-nexus-purple" />
+              <div className="bg-card/30 border border-border/40 p-10 rounded-[3rem] shadow-xl shadow-primary/[0.02]">
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="h-12 w-12 rounded-2xl bg-nexus-purple/10 flex items-center justify-center">
+                    <Activity className="h-6 w-6 text-nexus-purple" />
                   </div>
-                  <h3 className="text-xl font-heading font-black text-foreground">Fluxo de Eventos</h3>
+                  <h3 className="text-2xl font-heading font-black text-foreground tracking-tight">Fluxo de Eventos</h3>
                 </div>
                 <ActivityFeed />
               </div>
               
-              <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem]">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="h-10 w-10 rounded-xl bg-nexus-cyan/10 flex items-center justify-center">
-                    <Target className="h-5 w-5 text-nexus-cyan" />
+              <div className="bg-card/30 border border-border/40 p-10 rounded-[3rem] shadow-xl shadow-primary/[0.02]">
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="h-12 w-12 rounded-2xl bg-nexus-cyan/10 flex items-center justify-center">
+                    <Target className="h-6 w-6 text-nexus-cyan" />
                   </div>
-                  <h3 className="text-xl font-heading font-black text-foreground">Insights Cognitivos</h3>
+                  <h3 className="text-2xl font-heading font-black text-foreground tracking-tight">Cognitive Insights</h3>
                 </div>
                 <DashboardInsight agents={agents} usageStats={usageStats} recentTraces={recentTraces} />
               </div>

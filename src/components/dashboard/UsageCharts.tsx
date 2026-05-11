@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { LightAreaChart, LightBarChart, ComparisonToggle, generateComparisonData } from "@/components/charts";
 import { format, subDays, eachDayOfInterval } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { Badge } from "@/components/ui/badge";
 
 interface UsageRow {
   date: string;
@@ -124,97 +125,115 @@ export function UsageCharts({ data }: UsageChartsProps) {
   }
 
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
-      {/* Requests & Errors */}
-      <div className="nexus-card">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-heading font-semibold text-foreground">
-            Requests &amp; Erros <span className="text-muted-foreground font-normal">(30 dias)</span>
-          </h3>
+    <div className="grid gap-8 lg:grid-cols-2">
+      {/* Requests & Errors Elevated */}
+      <div className="nexus-card bg-card/50 border-border/40 p-8 rounded-[2.5rem] shadow-lg shadow-primary/[0.02] hover:shadow-2xl hover:shadow-primary/[0.05] transition-all duration-500">
+        <div className="flex items-center justify-between mb-8">
+          <div className="space-y-1">
+            <h3 className="text-lg font-black font-heading text-foreground uppercase tracking-tight">
+              Requests &amp; Erros
+            </h3>
+            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Neural Load Tracking</p>
+          </div>
           <ComparisonToggle enabled={compareRequests} onToggle={setCompareRequests} label="vs anterior" />
         </div>
         <LightAreaChart
           data={requestsData}
           xKey="label"
-          height={220}
-          margin={{ top: 4, right: 4, left: -20, bottom: 0 }}
+          height={240}
+          margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
           showLegend
           series={[
-            { dataKey: "requests", name: "Requests", stroke: "hsl(var(--primary))", gradientFrom: "hsl(var(--primary))" },
-            { dataKey: "errors", name: "Erros", stroke: "#f43f5e", gradientFrom: "#f43f5e", strokeWidth: 1.5 },
-            ...(compareRequests ? [{ dataKey: "prev_requests", name: "Anterior", stroke: "hsl(var(--muted-foreground))", gradientFrom: "hsl(var(--muted-foreground))", strokeWidth: 1 }] : []),
+            { dataKey: "requests", name: "Requests", stroke: "hsl(var(--primary))", gradientFrom: "hsl(var(--primary))", strokeWidth: 3 },
+            { dataKey: "errors", name: "Erros", stroke: "#f43f5e", gradientFrom: "#f43f5e", strokeWidth: 2 },
+            ...(compareRequests ? [{ dataKey: "prev_requests", name: "Anterior", stroke: "hsl(var(--muted-foreground))", gradientFrom: "hsl(var(--muted-foreground))", strokeWidth: 1.5 }] : []),
           ]}
         />
         {peakRequestIdx >= 0 && (
-          <p className="text-[10px] text-muted-foreground mt-2 flex items-center gap-1">
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary" />
-            Pico: {chartData[peakRequestIdx]?.label} ({chartData[peakRequestIdx]?.requests} requests)
-          </p>
+          <div className="mt-6 flex items-center justify-between pt-4 border-t border-border/10">
+            <p className="text-[11px] font-bold text-muted-foreground flex items-center gap-2 uppercase tracking-widest">
+              <span className="h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_rgba(var(--primary),0.5)]" />
+              Pico: {chartData[peakRequestIdx]?.label}
+            </p>
+            <Badge variant="outline" className="text-[10px] font-black border-primary/20 text-primary">{chartData[peakRequestIdx]?.requests} Req</Badge>
+          </div>
         )}
       </div>
 
-      {/* Cost */}
-      <div className="nexus-card">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-heading font-semibold text-foreground">
-            Custo USD <span className="text-muted-foreground font-normal">(30 dias)</span>
-          </h3>
+      {/* Cost Elevated */}
+      <div className="nexus-card bg-card/50 border-border/40 p-8 rounded-[2.5rem] shadow-lg shadow-primary/[0.02] hover:shadow-2xl hover:shadow-primary/[0.05] transition-all duration-500">
+        <div className="flex items-center justify-between mb-8">
+          <div className="space-y-1">
+            <h3 className="text-lg font-black font-heading text-foreground uppercase tracking-tight">
+              Cloud Cost USD
+            </h3>
+            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Budget Utilization</p>
+          </div>
           <ComparisonToggle enabled={compareCost} onToggle={setCompareCost} label="vs anterior" />
         </div>
         <LightBarChart
           data={costData}
           xKey="label"
-          height={220}
-          margin={{ top: 4, right: 4, left: -20, bottom: 0 }}
+          height={240}
+          margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
           yFormatter={(v) => `$${v}`}
           tooltipFormatter={(v) => `$${v.toFixed(4)}`}
           showLegend={compareCost}
           series={[
-            { dataKey: "cost", name: "Custo", color: "hsl(var(--primary))", radius: 3 },
-            ...(compareCost ? [{ dataKey: "prev_cost", name: "Anterior", color: "hsl(var(--muted-foreground))", radius: 3 }] : []),
+            { dataKey: "cost", name: "Custo", color: "hsl(var(--primary))", radius: 6 },
+            ...(compareCost ? [{ dataKey: "prev_cost", name: "Anterior", color: "hsl(var(--muted-foreground))", radius: 6 }] : []),
           ]}
         />
         {peakCostIdx >= 0 && (
-          <p className="text-[10px] text-muted-foreground mt-2 flex items-center gap-1">
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-nexus-amber" />
-            Pico: {chartData[peakCostIdx]?.label} (${chartData[peakCostIdx]?.cost})
-          </p>
+          <div className="mt-6 flex items-center justify-between pt-4 border-t border-border/10">
+            <p className="text-[11px] font-bold text-muted-foreground flex items-center gap-2 uppercase tracking-widest">
+              <span className="h-2 w-2 rounded-full bg-nexus-amber shadow-[0_0_8px_rgba(var(--nexus-amber),0.5)]" />
+              Pico: {chartData[peakCostIdx]?.label}
+            </p>
+            <Badge variant="outline" className="text-[10px] font-black border-nexus-amber/20 text-nexus-amber">${chartData[peakCostIdx]?.cost}</Badge>
+          </div>
         )}
       </div>
 
-      {/* Latency */}
-      <div className="nexus-card">
-        <h3 className="text-sm font-heading font-semibold text-foreground mb-4">
-          Latência média <span className="text-muted-foreground font-normal">(ms, 30 dias)</span>
-        </h3>
+      {/* Latency Elevated */}
+      <div className="nexus-card bg-card/50 border-border/40 p-8 rounded-[2.5rem] shadow-lg shadow-primary/[0.02] hover:shadow-2xl hover:shadow-primary/[0.05] transition-all duration-500">
+        <div className="space-y-1 mb-8">
+          <h3 className="text-lg font-black font-heading text-foreground uppercase tracking-tight">
+            Latência Média
+          </h3>
+          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Cognitive Delay ms</p>
+        </div>
         <LightAreaChart
           data={chartData}
           xKey="label"
-          height={220}
-          margin={{ top: 4, right: 4, left: -20, bottom: 0 }}
+          height={240}
+          margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
           yFormatter={(v) => `${v}ms`}
           tooltipFormatter={(v) => `${v}ms`}
           series={[
-            { dataKey: "latency", name: "Latência", stroke: "#f59e0b", gradientFrom: "#f59e0b" },
+            { dataKey: "latency", name: "Latência", stroke: "#f59e0b", gradientFrom: "#f59e0b", strokeWidth: 3 },
           ]}
         />
       </div>
 
-      {/* Tokens */}
-      <div className="nexus-card">
-        <h3 className="text-sm font-heading font-semibold text-foreground mb-4">
-          Tokens <span className="text-muted-foreground font-normal">(30 dias)</span>
-        </h3>
+      {/* Tokens Elevated */}
+      <div className="nexus-card bg-card/50 border-border/40 p-8 rounded-[2.5rem] shadow-lg shadow-primary/[0.02] hover:shadow-2xl hover:shadow-primary/[0.05] transition-all duration-500">
+        <div className="space-y-1 mb-8">
+          <h3 className="text-lg font-black font-heading text-foreground uppercase tracking-tight">
+            Vazão de Tokens
+          </h3>
+          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Neural Processing Units</p>
+        </div>
         <LightBarChart
           data={chartData}
           xKey="label"
-          height={220}
-          margin={{ top: 4, right: 4, left: -20, bottom: 0 }}
+          height={240}
+          margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
           yFormatter={(v) => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v)}
           showLegend
           series={[
-            { dataKey: "tokensIn", name: "Input", color: "hsl(var(--primary))", radius: 3, stackId: "tokens" },
-            { dataKey: "tokensOut", name: "Output", color: "#8b5cf6", radius: 3, stackId: "tokens" },
+            { dataKey: "tokensIn", name: "Input", color: "hsl(var(--primary))", radius: 6, stackId: "tokens" },
+            { dataKey: "tokensOut", name: "Output", color: "#8b5cf6", radius: 6, stackId: "tokens" },
           ]}
         />
       </div>

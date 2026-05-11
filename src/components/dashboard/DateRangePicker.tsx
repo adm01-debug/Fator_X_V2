@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
 
-export type DateRange = '7d' | '14d' | '30d' | '90d';
+export type DateRange = '24h' | '7d' | '14d' | '30d' | '90d';
 
 interface DateRangePickerProps {
   value: DateRange;
@@ -9,6 +9,7 @@ interface DateRangePickerProps {
 }
 
 const OPTIONS: { value: DateRange; label: string }[] = [
+  { value: '24h', label: '24 horas' },
   { value: '7d', label: '7 dias' },
   { value: '14d', label: '14 dias' },
   { value: '30d', label: '30 dias' },
@@ -40,9 +41,11 @@ export function DateRangePicker({ value, onChange }: DateRangePickerProps) {
 
 export function getDateRangeDays(range: DateRange): number {
   switch (range) {
+    case '24h': return 1;
     case '7d': return 7;
     case '14d': return 14;
     case '30d': return 30;
     case '90d': return 90;
+    default: return 30;
   }
 }
