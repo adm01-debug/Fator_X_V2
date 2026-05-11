@@ -604,11 +604,11 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
           if (!open && !undoMut.isPending) setUndoTarget(null);
         }}
       >
-        <AlertDialogContent className="max-w-lg">
+        <AlertDialogContent className="max-w-xl">
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
-              <Undo2 className="h-4 w-4 text-nexus-amber" aria-hidden />
-              Desfazer rollback v{undoTarget?.versionNumber}
+              <Undo2 className="h-5 w-5 text-nexus-amber" aria-hidden />
+              Confirmar Desfazer Rollback
             </AlertDialogTitle>
             <AlertDialogDescription asChild>
               <div className="space-y-3 text-sm">
