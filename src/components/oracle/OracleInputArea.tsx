@@ -29,43 +29,47 @@ export function OracleInputArea() {
   const modeConfig = ORACLE_MODES[store.mode];
 
   return (
-    <div className="nexus-card space-y-4">
+    <Card className="p-8 bg-card border-border rounded-3xl shadow-sm relative overflow-hidden group">
+      <div className="absolute top-0 right-0 w-48 h-48 bg-primary/[0.02] rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700" />
+      
       {/* Mode & Preset selector */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 relative">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => setShowPresets(!showPresets)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-secondary/50 border border-border/50 hover:bg-secondary transition-colors"
+            className="flex items-center gap-3 px-4 py-2 rounded-xl bg-secondary/80 border border-border/60 hover:bg-secondary hover:border-primary/30 transition-all shadow-sm"
           >
-            <span className="text-sm">{currentPreset?.icon || '🏛️'}</span>
-            <span className="text-xs font-medium text-foreground">
+            <span className="text-xl">{currentPreset?.icon || '🏛️'}</span>
+            <span className="text-sm font-bold text-foreground uppercase tracking-tight">
               {currentPreset?.name.replace(/^[^\s]+\s/, '') || 'Conselho Executivo'}
             </span>
             {showPresets ? (
-              <ChevronUp className="h-3 w-3 text-muted-foreground" />
+              <ChevronUp className="h-4 w-4 text-muted-foreground" />
             ) : (
-              <ChevronDown className="h-3 w-3 text-muted-foreground" />
+              <ChevronDown className="h-4 w-4 text-muted-foreground" />
             )}
           </button>
-          <Badge variant="outline" className="text-[11px]">
-            {modeConfig.icon} {modeConfig.label}
-          </Badge>
-          <Badge variant="outline" className="text-[11px] text-muted-foreground">
-            {currentPreset?.members.length || 3} modelos
-          </Badge>
+          <div className="flex gap-2">
+            <Badge variant="outline" className="h-7 rounded-lg bg-primary/5 text-primary border-primary/20 text-[10px] font-bold uppercase">
+              {modeConfig.icon} {modeConfig.label}
+            </Badge>
+            <Badge variant="outline" className="h-7 rounded-lg bg-muted/50 text-muted-foreground border-border/50 text-[10px] font-bold uppercase">
+              {currentPreset?.members.length || 3} Especialistas
+            </Badge>
+          </div>
         </div>
         <button
           onClick={() => setShowAdvanced(!showAdvanced)}
-          className="flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors"
+          className="flex items-center gap-1.5 text-xs font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-widest"
         >
-          <Settings2 className="h-3.5 w-3.5" />
-          Avançado
+          <Settings2 className="h-4 w-4" />
+          Configurações
         </button>
       </div>
 
       {/* Preset selector (collapsible) */}
       {showPresets && (
-        <div className="overflow-hidden">
+        <div className="mb-6 animate-in slide-in-from-top-2 duration-300">
           <PresetSelector
             selectedPreset={store.selectedPreset}
             onSelect={(id) => {
@@ -78,46 +82,53 @@ export function OracleInputArea() {
 
       {/* Advanced settings (collapsible) */}
       {showAdvanced && (
-        <div className="overflow-hidden">
-          <div className="p-3 rounded-lg bg-secondary/30 border border-border/30 space-y-3">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <Label className="text-[11px]">Chairman (Sintetizador)</Label>
+        <div className="mb-6 animate-in slide-in-from-top-2 duration-300">
+          <div className="p-6 rounded-2xl bg-secondary/30 border border-border/40 space-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                  <Cpu className="h-3 w-3" /> Chairman (Sintetizador)
+                </Label>
                 <Select value={store.chairmanModel} onValueChange={store.setChairmanModel}>
-                  <SelectTrigger className="h-8 text-xs">
+                  <SelectTrigger className="h-10 rounded-xl bg-card border-border/60">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="rounded-xl">
                     {CHAIRMAN_MODELS.map((m) => (
-                      <SelectItem key={m.value} value={m.value} className="text-xs">
+                      <SelectItem key={m.value} value={m.value} className="text-xs font-medium">
                         {m.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-1.5">
-                <Label className="text-[11px]">Seleção Chairman</Label>
+              <div className="space-y-2">
+                <Label className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider">Seleção do Presidente</Label>
                 <Select
                   value={store.chairmanSelection}
                   onValueChange={(v) => store.setChairmanSelection(v as 'auto' | 'manual')}
                 >
-                  <SelectTrigger className="h-8 text-xs">
+                  <SelectTrigger className="h-10 rounded-xl bg-card border-border/60">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="auto" className="text-xs">🤖 Auto (por domínio)</SelectItem>
-                    <SelectItem value="manual" className="text-xs">✋ Manual</SelectItem>
+                  <SelectContent className="rounded-xl">
+                    <SelectItem value="auto" className="text-xs font-medium italic">🤖 Automática (por domínio)</SelectItem>
+                    <SelectItem value="manual" className="text-xs font-medium">✋ Manual (fixo)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <Label className="text-[11px]">💭 Modo Thinking</Label>
-                <p className="text-[11px] text-muted-foreground">
-                  Mostra raciocínio passo-a-passo de cada modelo
-                </p>
+            <div className="flex items-center justify-between p-4 bg-card/40 rounded-xl border border-border/30">
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Brain className="h-4 w-4 text-primary" />
+                </div>
+                <div>
+                  <Label className="text-xs font-bold text-foreground">💭 Modo Raciocínio (Thinking)</Label>
+                  <p className="text-[10px] text-muted-foreground">
+                    Exibe a cadeia de pensamento completa de cada membro do conselho
+                  </p>
+                </div>
               </div>
               <Switch checked={store.enableThinking} onCheckedChange={store.setEnableThinking} />
             </div>
@@ -126,29 +137,45 @@ export function OracleInputArea() {
       )}
 
       {/* Query input */}
-      <Textarea
-        placeholder="Faça sua pergunta ao conselho de IAs..."
-        value={store.query}
-        onChange={(e) => store.setQuery(e.target.value)}
-        className="min-h-[100px] bg-secondary/50 border-border/50 text-sm"
-      />
+      <div className="relative">
+        <Textarea
+          placeholder="Qual decisão complexa o conselho deve analisar hoje?"
+          value={store.query}
+          onChange={(e) => store.setQuery(e.target.value)}
+          className="min-h-[140px] bg-secondary/40 border-border/60 rounded-2xl p-6 text-base focus:ring-primary focus:border-primary transition-all shadow-inner placeholder:italic"
+        />
+        {store.query.length > 0 && (
+          <div className="absolute bottom-4 right-4 text-[10px] font-mono text-muted-foreground bg-card px-2 py-0.5 rounded border border-border/40">
+            {store.query.length} caracteres
+          </div>
+        )}
+      </div>
 
       {/* Submit */}
-      <div className="flex items-center justify-between">
-        <p className="text-[11px] text-muted-foreground">{modeConfig.stages.join(' → ')}</p>
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+        <div className="flex items-center gap-2">
+          {modeConfig.stages.map((stage, idx) => (
+            <div key={stage} className="flex items-center gap-2">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase">{stage}</span>
+              {idx < modeConfig.stages.length - 1 && (
+                <ChevronRight className="h-3 w-3 text-muted-foreground/30" />
+              )}
+            </div>
+          ))}
+        </div>
         <Button
           onClick={store.submitQuery}
           disabled={store.isRunning || !store.query.trim()}
-          className="nexus-gradient-bg text-primary-foreground gap-2"
+          className="nexus-gradient-bg text-primary-foreground gap-3 h-12 px-8 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all font-bold group"
         >
           {store.isRunning ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
+            <Loader2 className="h-5 w-5 animate-spin" />
           ) : (
-            <Sparkles className="h-4 w-4" />
+            <Sparkles className="h-5 w-5 group-hover:rotate-12 transition-transform" />
           )}
-          {store.isRunning ? 'Consultando...' : '🔮 Convocar Conselho'}
+          {store.isRunning ? 'Conselho em Sessão...' : 'CONVOCAR CONSELHO'}
         </Button>
       </div>
-    </div>
+    </Card>
   );
 }
