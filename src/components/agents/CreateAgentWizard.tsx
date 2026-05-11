@@ -122,6 +122,13 @@ export function CreateAgentWizard() {
   const applyTemplate = (t: AgentTemplate) => {
     setSelectedTemplate(t);
     setForm(prev => ({ ...prev, name: t.name, description: t.description, type: t.type, model: t.model, prompt: t.prompt, tools: t.tools, memory: t.memory }));
+    setIsTemplateModalOpen(false);
+    setViewingTemplate(null);
+  };
+
+  const handleTemplateClick = (t: AgentTemplate) => {
+    setViewingTemplate(t);
+    setIsTemplateModalOpen(true);
   };
 
   const handleMagicCreate = async () => {
