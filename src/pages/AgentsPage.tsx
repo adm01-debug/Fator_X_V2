@@ -1,7 +1,5 @@
 import { logger } from '@/lib/logger';
-
 import { Badge } from "@/components/ui/badge";
-import { QuickActionsBar } from "@/components/shared/QuickActionsBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -24,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import { AccessControl, DangerousActionDialog } from "@/components/rbac";
 import { AgentCard } from "@/components/agents/AgentCard";
+import { cn } from "@/lib/utils";
 
 type AgentRow = Tables<"agents">;
 
