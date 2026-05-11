@@ -76,24 +76,39 @@ function detectModelCaps(modelRaw: string | null | undefined): ModelCaps {
   const m = String(modelRaw ?? '').toLowerCase();
 
   // Reasoning models — não aceitam temperature customizada
-  if (/^o[1-9]|gpt-5|gpt-4\.5/.test(m)) {
-    return { supportsReasoning: true, supportsTemperature: false, maxTokensCap: 100_000, family: 'openai' };
+  if (/^o[1-9]|gpt-5|gpt-4\.5|deepseek-r1|r1-/.test(m)) {
+    return { supportsReasoning: true, supportsTemperature: false, maxTokensCap: 128_000, family: 'reasoning' };
   }
+  
   if (/^gpt/.test(m)) {
     return { supportsReasoning: false, supportsTemperature: true, maxTokensCap: 16_384, family: 'openai' };
   }
+  
   if (/claude/.test(m)) {
     // Claude 3.7+ aceita extended thinking
     const hasThinking = /3\.7|sonnet-4|opus-4|claude-4/.test(m);
+    const maxTokens = /opus/.test(m) ? 4096 : 8192; // Max output tokens
     return { supportsReasoning: hasThinking, supportsTemperature: true, maxTokensCap: 64_000, family: 'anthropic' };
   }
+  
   if (/gemini/.test(m)) {
     const isThinking = /2\.5|thinking|3\./.test(m);
     return { supportsReasoning: isThinking, supportsTemperature: true, maxTokensCap: 65_536, family: 'google' };
   }
+  
+  if (/deepseek/.test(m)) {
+    const isV3 = /v3/.test(m);
+    return { supportsReasoning: false, supportsTemperature: true, maxTokensCap: 8192, family: 'deepseek' };
+  }
+  
+  if (/grok/.test(m)) {
+    return { supportsReasoning: false, supportsTemperature: true, maxTokensCap: 32_768, family: 'xai' };
+  }
+
   if (/llama|mistral|qwen|gemma/.test(m)) {
     return { supportsReasoning: false, supportsTemperature: true, maxTokensCap: 8_192, family: 'opensource' };
   }
+  
   // Desconhecido — modo permissivo, mas marcamos família como 'unknown' para alertar trocas.
   return { supportsReasoning: true, supportsTemperature: true, maxTokensCap: 32_000, family: 'unknown' };
 }
