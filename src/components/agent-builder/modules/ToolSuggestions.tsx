@@ -13,7 +13,6 @@ interface ToolSuggestion {
 
 interface Props {
   mission: string;
-  persona: string;
   onAdd: (tool: ToolSuggestion) => void;
 }
 
