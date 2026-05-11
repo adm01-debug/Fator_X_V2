@@ -37,4 +37,3 @@ export function summarizeRestoreOptions(
 
   return base;
 }
-
