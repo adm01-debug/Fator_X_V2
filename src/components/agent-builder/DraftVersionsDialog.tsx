@@ -14,7 +14,7 @@ import {
   deleteDraftVersion,
 } from '@/services/agentDraftVersionsService';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
-import { validateAgentVersion } from '@/lib/validations/agentVersionValidator';
+import { validateAgentVersion, type VersionValidationIssue } from '@/lib/validations/agentVersionValidator';
 import { VersionValidationPanel } from './VersionValidationPanel';
 
 interface DraftVersionsDialogProps {
@@ -43,6 +43,7 @@ export function DraftVersionsDialog({ open, onOpenChange }: DraftVersionsDialogP
   const { toast } = useToast();
   const agent = useAgentBuilderStore((s) => s.agent);
   const loadAgent = useAgentBuilderStore((s) => s.loadAgent);
+  const updateAgent = useAgentBuilderStore((s) => s.updateAgent);
 
   const [drafts, setDrafts] = useState<DraftVersion[]>([]);
   const [label, setLabel] = useState('');
@@ -65,6 +66,65 @@ export function DraftVersionsDialog({ open, onOpenChange }: DraftVersionsDialogP
     () => validateAgentVersion(agent, { label, note }),
     [agent, label, note],
   );
+
+  const handleFix = (issue: VersionValidationIssue) => {
+    switch (issue.code) {
+      case 'prompt.empty_blocks':
+        updateAgent({
+          system_prompt: (agent.system_prompt ?? '').replace(/\n{3,}/g, '\n\n'),
+        });
+        toast({ title: 'Prompt limpo', description: 'Linhas em branco excessivas removidas.' });
+        break;
+      case 'config.rag_no_sources':
+        updateAgent({ rag_architecture: 'naive' }); // 'naive' is the simplest architecture
+        toast({ title: 'RAG simplificado', description: 'Arquitetura RAG definida como "naive" por falta de fontes.' });
+        break;
+      case 'config.react_without_tools':
+        updateAgent({ reasoning: 'cot' }); // 'cot' (Chain of Thought) works without tools
+        toast({ title: 'Raciocínio alterado', description: 'Alterado para "cot" pois não há ferramentas.' });
+        break;
+      case 'config.expensive_for_simple':
+        updateAgent({ model: 'claude-haiku-4.5' });
+        toast({ title: 'Modelo alterado', description: 'Alterado para um modelo mais econômico.' });
+        break;
+      case 'config.production_no_guardrails':
+        updateAgent({
+          guardrails: [
+            ...(agent.guardrails || []),
+            { 
+              id: 'toxicity-guard',
+              name: 'Toxicity', 
+              enabled: true,
+              category: 'output_safety',
+              description: 'Filtra conteúdo tóxico ou ofensivo',
+              severity: 'block'
+            },
+            { 
+              id: 'pii-guard',
+              name: 'PII Leak', 
+              enabled: true,
+              category: 'output_safety',
+              description: 'Previne vazamento de dados pessoais',
+              severity: 'block'
+            },
+          ],
+        });
+        toast({ title: 'Guardrails ativados', description: 'Filtros básicos de segurança foram habilitados.' });
+        break;
+      case 'config.long_term_without_short':
+        updateAgent({ memory_short_term: true });
+        toast({ title: 'Memória corrigida', description: 'Memória de curto prazo ativada.' });
+        break;
+      case 'prompt.no_identity':
+        updateAgent({
+          system_prompt: `Meu nome é {{name}}.\n\n${agent.system_prompt ?? ''}`,
+        });
+        toast({ title: 'Identidade adicionada', description: 'Placeholder de nome inserido no início do prompt.' });
+        break;
+      default:
+        toast({ title: 'Ação não disponível', description: 'Este problema requer correção manual.' });
+    }
+  };
 
   const handleSave = (opts?: { override?: boolean }) => {
     if (!validation.canSave && !opts?.override) return;
@@ -131,7 +191,7 @@ export function DraftVersionsDialog({ open, onOpenChange }: DraftVersionsDialogP
             aria-label="Anotação"
           />
 
-          <VersionValidationPanel result={validation} />
+          <VersionValidationPanel result={validation} onFix={handleFix} />
 
           <div className="flex justify-end gap-2">
             {!validation.canSave && (

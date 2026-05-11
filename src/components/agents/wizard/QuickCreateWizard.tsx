@@ -118,6 +118,7 @@ function countPromptWords(text: string): number {
 
 interface QuickCreateWizardProps {
   onBack: () => void;
+  initialData?: Partial<QuickAgentForm>;
 }
 
 // Parse síncrono dos params rf_* — usado para hidratar o estado inicial
@@ -156,7 +157,7 @@ function parseDeeplinkParams(sp: URLSearchParams): {
   };
 }
 
-export function QuickCreateWizard({ onBack }: QuickCreateWizardProps) {
+export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProps) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
@@ -167,7 +168,10 @@ export function QuickCreateWizard({ onBack }: QuickCreateWizardProps) {
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof QuickAgentForm, string>>>({});
 
-  const [form, setForm] = useState<QuickAgentForm>(QUICK_AGENT_DEFAULTS);
+  const [form, setForm] = useState<QuickAgentForm>(() => ({
+    ...QUICK_AGENT_DEFAULTS,
+    ...initialData
+  }));
   const [draftsStore, setDraftsStore] = useState<DraftsStoreV2>({ version: 2, activeId: null, drafts: [] });
   const [pendingDrafts, setPendingDrafts] = useState<DraftEntry[]>([]);
   const [draftDecided, setDraftDecided] = useState(false);

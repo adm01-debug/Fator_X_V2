@@ -1,14 +1,28 @@
-import { AlertTriangle, CheckCircle2, ShieldAlert } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, ShieldAlert, Zap } from 'lucide-react';
 import type { VersionValidationResult, VersionValidationIssue } from '@/lib/validations/agentVersionValidator';
+import { Button } from '@/components/ui/button';
 
 interface VersionValidationPanelProps {
   result: VersionValidationResult;
+  onFix?: (issue: VersionValidationIssue) => void;
 }
 
-function IssueRow({ issue }: { issue: VersionValidationIssue }) {
+function IssueRow({ issue, onFix }: { issue: VersionValidationIssue; onFix?: (issue: VersionValidationIssue) => void }) {
   const isError = issue.level === 'error';
   const Icon = isError ? ShieldAlert : AlertTriangle;
   const color = isError ? 'text-destructive' : 'text-nexus-amber';
+  
+  // Define if this issue has a quick fix
+  const hasQuickFix = [
+    'prompt.empty_blocks',
+    'config.rag_no_sources',
+    'config.react_without_tools',
+    'config.expensive_for_simple',
+    'config.production_no_guardrails',
+    'config.long_term_without_short',
+    'prompt.no_identity'
+  ].includes(issue.code);
+
   return (
     <li className="flex items-start gap-2 text-xs">
       <Icon className={`h-3.5 w-3.5 shrink-0 mt-0.5 ${color}`} aria-hidden />
@@ -17,11 +31,22 @@ function IssueRow({ issue }: { issue: VersionValidationIssue }) {
         <span className="text-foreground/90"> · {issue.message}</span>
         <span className="ml-1.5 font-mono text-[10px] text-muted-foreground">{issue.code}</span>
       </div>
+      {hasQuickFix && onFix && (
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="h-6 px-2 text-[10px] gap-1 text-primary hover:text-primary hover:bg-primary/10 shrink-0"
+          onClick={() => onFix(issue)}
+        >
+          <Zap className="h-3 w-3" />
+          Corrigir
+        </Button>
+      )}
     </li>
   );
 }
 
-export function VersionValidationPanel({ result }: VersionValidationPanelProps) {
+export function VersionValidationPanel({ result, onFix }: VersionValidationPanelProps) {
   const { errors, warnings } = result;
   const total = errors.length + warnings.length;
 
@@ -61,10 +86,10 @@ export function VersionValidationPanel({ result }: VersionValidationPanelProps) 
       </div>
       <ul className="space-y-1.5">
         {errors.map((e) => (
-          <IssueRow key={`${e.code}-${e.message}`} issue={e} />
+          <IssueRow key={`${e.code}-${e.message}`} issue={e} onFix={onFix} />
         ))}
         {warnings.map((w) => (
-          <IssueRow key={`${w.code}-${w.message}`} issue={w} />
+          <IssueRow key={`${w.code}-${w.message}`} issue={w} onFix={onFix} />
         ))}
       </ul>
     </div>
