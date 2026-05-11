@@ -154,20 +154,48 @@ export function CreateAgentWizard() {
               <Button onClick={handleMagicCreate} disabled={isGeneratingMagic}>{isGeneratingMagic ? <Loader2 className="animate-spin" /> : <Wand2 />}</Button>
             </div>
             {magicPreview && readiness && (
-              <div className="mt-4 p-4 border rounded-xl bg-background/50 animate-in fade-in slide-in-from-top-2">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <TrendingUp className="text-primary h-4 w-4" />
-                    <p className="font-bold">{magicPreview.name}</p>
+              <div className="mt-4 p-5 border rounded-xl bg-background/50 animate-in fade-in slide-in-from-top-2 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="text-3xl">{magicPreview.emoji || '🤖'}</span>
+                    <div>
+                      <p className="font-bold text-lg">{magicPreview.name}</p>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">{TYPE_LABEL[magicPreview.type] || magicPreview.type}</p>
+                    </div>
                   </div>
-                  <Badge className={READINESS_COLORS[readiness.level].bg + " " + READINESS_COLORS[readiness.level].text}>
-                    {readiness.score}/10 {READINESS_COLORS[readiness.level].label}
+                  <Badge className={READINESS_COLORS[readiness.level].bg + " " + READINESS_COLORS[readiness.level].text + " px-3 py-1 text-xs font-bold"}>
+                    Score: {readiness.score}/10
                   </Badge>
                 </div>
-                <p className="text-sm italic mb-4">"{magicPreview.mission}"</p>
-                <div className="flex justify-end gap-2">
-                  <Button variant="ghost" size="sm" onClick={() => setMagicPreview(null)}>Descartar</Button>
-                  <Button size="sm" onClick={confirmMagicCreate} className="gap-1.5"><Check className="h-4 w-4" /> Finalizar</Button>
+                
+                <div className="grid grid-cols-2 gap-4 py-2 border-y border-border/50">
+                  <div className="space-y-1">
+                    <span className="text-[10px] text-muted-foreground font-bold uppercase">Modelo</span>
+                    <div className="flex items-center gap-1.5 text-sm font-medium"><Brain className="h-3.5 w-3.5 text-primary" /> {magicPreview.model}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <span className="text-[10px] text-muted-foreground font-bold uppercase">Ferramentas</span>
+                    <div className="flex items-center gap-1.5 text-sm font-medium"><Wrench className="h-3.5 w-3.5 text-primary" /> {magicPreview.tools?.length || 0} habilitadas</div>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <span className="text-[10px] text-muted-foreground font-bold uppercase">Missão & Comportamento</span>
+                  <p className="text-sm italic leading-relaxed text-foreground/80 bg-primary/5 p-3 rounded-lg border border-primary/10">"{magicPreview.mission}"</p>
+                </div>
+
+                <div className="space-y-1">
+                  <span className="text-[10px] text-muted-foreground font-bold uppercase">Prévia do System Prompt</span>
+                  <div className="text-[11px] font-mono bg-secondary/30 p-3 rounded-lg border line-clamp-3">
+                    {magicPreview.system_prompt}
+                  </div>
+                </div>
+
+                <div className="flex justify-between items-center pt-2">
+                  <Button variant="ghost" size="sm" onClick={() => setMagicPreview(null)} className="text-muted-foreground hover:text-destructive">Descartar e refazer</Button>
+                  <div className="flex gap-2">
+                    <Button size="sm" onClick={confirmMagicCreate} className="gap-1.5 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20"><Sparkles className="h-4 w-4" /> Refinar no Wizard</Button>
+                  </div>
                 </div>
               </div>
             )}
