@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { SectionTitle, ProgressBar } from '../ui';
 import { Button } from '@/components/ui/button';
-import { ExternalLink, Zap } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import { NexusRadarChart } from '../ui/NexusRadarChart';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import { LIFECYCLE_STAGES } from '@/data/agentBuilderData';
@@ -108,7 +108,9 @@ function computeReadiness(agent: any): DetailedReadinessScore {
 
   const total = Object.values(categories).reduce((s: any, c: any) => s + c.score, 0);
   const maxTotal = Object.values(categories).reduce((s: any, c: any) => s + c.max, 0);
-  const pct = Math.round((total / maxTotal) * 100);
+  const totalNum = Number(total);
+  const maxTotalNum = Number(maxTotal);
+  const pct = Math.round((totalNum / maxTotalNum) * 100);
 
   let maturity_level: DetailedReadinessScore['maturity_level'] = 'prototype';
   if (pct >= 80) maturity_level = 'production_ready';
