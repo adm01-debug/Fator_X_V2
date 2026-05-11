@@ -135,6 +135,6 @@ export function RagVersionControl() {
           </div>
         ))}
       </div>
-    </div>
+    </Card>
   );
 }
