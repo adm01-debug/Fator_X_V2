@@ -25,7 +25,6 @@ import { computeReadinessScore, READINESS_COLORS } from "@/lib/agentReadiness";
 type WizardMode = "choose" | "template" | "scratch" | "quick";
 
 export function CreateAgentWizard() {
-  const navigate = useNavigate();
   const { user } = useAuth();
   const [mode, setMode] = useState<WizardMode>("choose");
   const [AGENT_TEMPLATES_LIST, setAgentTemplates] = useState<AgentTemplate[]>(STATIC_TEMPLATES);
