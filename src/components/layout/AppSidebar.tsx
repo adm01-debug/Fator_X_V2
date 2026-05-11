@@ -279,22 +279,25 @@ export function AppSidebar() {
         {!collapsed && (
           <>
             <Separator className="bg-border/30" />
-            <div className="rounded-lg bg-secondary/40 px-3 py-2.5">
-              <div className="flex items-center justify-between mb-1.5">
-                <p className="text-[11px] font-semibold text-foreground">Workspace {planLabel}</p>
-                <span className="text-[11px] text-muted-foreground">{agentCount}/{maxAgents}</span>
+            <div className="rounded-2xl bg-secondary/30 border border-border/40 p-4 shadow-sm">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80">Vazão do Workspace</p>
+                <Badge variant="outline" className="bg-primary/5 text-primary border-none text-[9px] font-black">{planLabel}</Badge>
               </div>
-              <div className="h-2 rounded-full bg-secondary" role="progressbar" aria-valuenow={usage} aria-valuemin={0} aria-valuemax={100} aria-label="Uso de agentes">
-                <div className={`h-full rounded-full transition-all duration-500 ${usage >= 100 ? 'bg-nexus-amber' : 'nexus-gradient-bg'}`} style={{ width: `${Math.max(usage, 4)}%` }} />
+              <div className="h-1.5 rounded-full bg-secondary/50 mb-2 overflow-hidden" role="progressbar" aria-valuenow={usage} aria-valuemin={0} aria-valuemax={100} aria-label="Uso de agentes">
+                <div className={cn("h-full rounded-full transition-all duration-1000", usage >= 100 ? 'bg-destructive' : 'nexus-gradient-bg')} style={{ width: `${Math.max(usage, 4)}%` }} />
+              </div>
+              <div className="flex justify-between items-center text-[10px] font-bold text-muted-foreground mb-3">
+                <span>{agentCount} Agentes</span>
+                <span>Limit {maxAgents}</span>
               </div>
               {usage >= 80 && planLabel === 'Free' && (
-                <button
+                <Button
                   onClick={() => navigate('/billing')}
-                  className="flex items-center gap-1.5 mt-2 w-full justify-center rounded-md bg-gradient-to-r from-nexus-amber/20 to-nexus-amber/10 border border-nexus-amber/30 px-2 py-1.5 text-[11px] font-semibold text-nexus-amber hover:from-nexus-amber/30 hover:to-nexus-amber/20 transition-all"
+                  className="w-full h-8 rounded-xl bg-nexus-amber/10 border border-nexus-amber/20 text-nexus-amber hover:bg-nexus-amber/20 text-[10px] font-black uppercase tracking-widest gap-2"
                 >
-                  <Crown className="h-3 w-3" />
-                  {usage >= 100 ? 'Limite atingido — Fazer upgrade' : 'Quase no limite — Upgrade'}
-                </button>
+                  <Crown className="h-3 w-3" /> UPGRADE
+                </Button>
               )}
             </div>
             <Separator className="bg-border/30" />
