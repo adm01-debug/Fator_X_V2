@@ -8,6 +8,7 @@ import { Plus, Trash2, Copy, GitBranch, Check, ArrowLeftRight } from 'lucide-rea
 import { toast } from 'sonner';
 import type { PromptTechnique, FewShotExample, OutputFormat } from '@/types/agentTypes';
 import { PromptDiff } from '@/components/prompts/PromptDiff';
+import { PromptABTestDialog } from './PromptABTestDialog';
 
 const PROMPT_TECHNIQUES: { id: string; name: string; impact: string; description: string; example: string }[] = [
   { id: 'role', name: 'Role Prompting', impact: 'Alto', description: 'Define quem o agente É', example: 'Você é um especialista em...' },
