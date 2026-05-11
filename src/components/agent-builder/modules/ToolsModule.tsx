@@ -4,6 +4,7 @@ import { CollapsibleCard } from '../ui/CollapsibleCard';
 import { Button } from '@/components/ui/button';
 import { Plus, Trash2 } from 'lucide-react';
 import type { AgentTool, MCPServer, CustomAPI } from '@/types/agentTypes';
+import { ToolSuggestions } from './ToolSuggestions';
 
 const TOOL_CATEGORIES = [
   { id: 'data', label: '📊 Dados', description: 'Consultas, leitura de bancos e APIs de dados.' },
