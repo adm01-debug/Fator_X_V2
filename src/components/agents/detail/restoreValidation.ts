@@ -87,7 +87,6 @@ function detectModelCaps(modelRaw: string | null | undefined): ModelCaps {
   if (/claude/.test(m)) {
     // Claude 3.7+ aceita extended thinking
     const hasThinking = /3\.7|sonnet-4|opus-4|claude-4/.test(m);
-    const maxTokens = /opus/.test(m) ? 4096 : 8192; // Max output tokens
     return { supportsReasoning: hasThinking, supportsTemperature: true, maxTokensCap: 64_000, family: 'anthropic' };
   }
   
