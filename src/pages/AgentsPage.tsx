@@ -1,5 +1,6 @@
 import { logger } from '@/lib/logger';
 
+import { Badge } from "@/components/ui/badge";
 import { QuickActionsBar } from "@/components/shared/QuickActionsBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
