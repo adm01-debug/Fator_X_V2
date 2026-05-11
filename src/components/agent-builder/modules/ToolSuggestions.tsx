@@ -88,7 +88,7 @@ export function ToolSuggestions({ mission, onAdd }: Props) {
                 <Badge variant="outline" className="text-[9px] h-4 uppercase">{s.category}</Badge>
               </div>
               <Button 
-                size="xs" 
+                size="sm" 
                 variant="outline" 
                 className="h-7 gap-1 text-xs border-nexus-blue/30 hover:bg-nexus-blue/10"
                 onClick={() => {
