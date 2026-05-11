@@ -72,6 +72,13 @@ export function BillingModule() {
     return projection;
   }, [dailyInteractions, monthlyGrowth, currentModelPrice, simInput, simMaxTokens]);
 
+  const idealModel = useMemo(() => {
+    // Lógica para recomendar o modelo ideal baseada no custo projetado e latência
+    const candidates = simulation.filter(s => s.avg_latency_ms < 2000); // Filtra por latência aceitável
+    const bestValue = [...candidates].sort((a, b) => a.costUsd - b.costUsd)[0];
+    return bestValue;
+  }, [simulation]);
+
   const cheapest = simulation[0];
   const fastest = [...simulation].sort((a, b) => a.avg_latency_ms - b.avg_latency_ms)[0];
 
@@ -289,6 +296,28 @@ export function BillingModule() {
             unit="%"
           />
         </div>
+
+        {idealModel && (
+          <div className="rounded-xl border-2 border-primary bg-primary/5 p-5 flex flex-col md:flex-row items-center gap-6">
+            <div className="h-14 w-14 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+              <Zap className="h-7 w-7 text-primary" />
+            </div>
+            <div className="flex-1 space-y-1 text-center md:text-left">
+              <div className="flex items-center justify-center md:justify-start gap-2">
+                <h4 className="font-bold text-lg">Recomendação: {idealModel.label}</h4>
+                <Badge className="bg-primary text-primary-foreground">Melhor Custo-Benefício</Badge>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Baseado no volume de {dailyInteractions.toLocaleString()} requisições diárias, este modelo economizaria aprox. 
+                <span className="font-bold text-foreground"> ${((trafficProjection[0].cost * 1.5) - trafficProjection[0].cost).toFixed(0)}/mês</span> 
+                mantendo a latência abaixo de 2s.
+              </p>
+            </div>
+            <Button onClick={() => updateAgent({ model: idealModel.model as any })} className="gap-2 shrink-0">
+              <Check className="h-4 w-4" /> Aplicar Modelo
+            </Button>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {trafficProjection.map((p) => (
