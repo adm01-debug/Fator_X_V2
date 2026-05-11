@@ -78,7 +78,6 @@ export default function DataHubPage() {
   const activeConnections = connections.filter((c) => c.status !== 'hibernated');
   const connectedCount = activeConnections.filter((c) => c.status === 'connected').length;
   const totalRecords = Object.values(entityCounts).reduce((sum, v) => sum + (v >= 0 ? v : 0), 0);
-  const joinCount = ENTITY_LIST.reduce((acc, e) => acc + (e.secondary?.length ?? 0), 0);
   const crossDbCount = ENTITY_LIST.reduce((acc, e) => acc + (e.cross_db?.length ?? 0), 0);
 
   if (browsingEntity) {
