@@ -394,7 +394,7 @@ export function CreateAgentWizard() {
                 const selected = selectedTemplate?.id === t.id;
                 const isVerified = dbTemplateIds.has(t.id);
                 return (
-                  <button key={t.id} onClick={() => applyTemplate(t)} className={`nexus-card text-left transition-all relative ${selected ? "ring-2 ring-primary bg-primary/5" : "hover:bg-secondary/60"}`}>
+                  <button key={t.id} onClick={() => handleTemplateClick(t)} className={`nexus-card text-left transition-all relative ${selected ? "ring-2 ring-primary bg-primary/5" : "hover:bg-secondary/60"}`}>
                     <div className="flex items-center gap-3 mb-2">
                       <span className="text-2xl">{t.emoji}</span>
                       <div className="min-w-0 flex-1">
