@@ -157,6 +157,7 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [undoTarget, setUndoTarget] = useState<RestoreEntry | null>(null);
+  const [filter, setFilter] = useState<"all" | "prompt" | "tools" | "model">("all");
 
   // versions vem ordenado do mais recente para o mais antigo. A versão
   // imediatamente posterior na lista (índice maior) é a "pré-rollback".
