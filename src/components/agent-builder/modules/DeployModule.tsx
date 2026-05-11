@@ -1,7 +1,8 @@
 import { fromTable } from '@/lib/supabaseExtended';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import { SectionTitle, NexusBadge, ToggleField } from '../ui';
-import { Globe, MessageSquare, Mail, Hash, Send, Radio, Sparkles } from 'lucide-react';
+import { Globe, MessageSquare, Mail, Hash, Send, Radio, Sparkles, Activity, Map as MapIcon, BarChart3 } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 import { getWorkspaceId } from '@/lib/agentService';
 import type { DeployChannelConfig, MonitoringKPI, DeployChannel } from '@/types/agentTypes';
@@ -152,6 +153,13 @@ export function DeployModule() {
   const activeChannels = channels.filter((c) => c.enabled).length;
   const activeKPIs = kpis.filter((k) => k.enabled).length;
 
+  const channelTraffic = [
+    { name: 'WhatsApp', value: 450, color: 'hsl(var(--nexus-emerald))' },
+    { name: 'Web Chat', value: 320, color: 'hsl(var(--nexus-blue))' },
+    { name: 'Slack', value: 120, color: 'hsl(var(--nexus-purple))' },
+    { name: 'REST API', value: 890, color: 'hsl(var(--primary))' },
+  ];
+
   return (
     <div className="space-y-10">
       {/* Ambiente */}
@@ -161,6 +169,62 @@ export function DeployModule() {
           title="Deploy & Canais"
           subtitle="Configure o ambiente de deploy, canais de comunicação e KPIs de monitoramento."
         />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div className="rounded-xl border border-border bg-card p-4 space-y-4">
+            <p className="text-[10px] font-bold text-muted-foreground uppercase flex items-center gap-1.5">
+              <BarChart3 className="h-3 w-3" /> Tráfego por Canal (Simulado)
+            </p>
+            <div className="h-[180px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={channelTraffic} layout="vertical" margin={{ left: -20 }}>
+                  <XAxis type="number" hide />
+                  <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} width={70} />
+                  <Tooltip 
+                    cursor={{ fill: 'transparent' }}
+                    contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px', fontSize: '10px' }}
+                  />
+                  <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={12}>
+                    {channelTraffic.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-4 flex flex-col justify-center">
+            <p className="text-[10px] font-bold text-muted-foreground uppercase mb-4 flex items-center gap-1.5">
+              <Activity className="h-3 w-3 text-nexus-blue" /> Saúde da Infraestrutura
+            </p>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-muted-foreground">API Latency</span>
+                <span className="font-bold text-nexus-emerald">124ms (Healthy)</span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-muted-foreground">Auto-scaling Group</span>
+                <span className="font-bold text-nexus-blue">2 nodes active</span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-muted-foreground">Database Pool</span>
+                <span className="font-bold text-nexus-amber">85% Capacity</span>
+              </div>
+              <div className="pt-2">
+                <div className="flex items-center gap-2 mb-1">
+                  <MapIcon className="h-3 w-3 text-muted-foreground" />
+                  <span className="text-[10px] text-muted-foreground font-bold uppercase">Multi-Region Edge</span>
+                </div>
+                <div className="flex gap-1">
+                  <div className="h-1.5 w-1.5 rounded-full bg-nexus-emerald" title="US-East" />
+                  <div className="h-1.5 w-1.5 rounded-full bg-nexus-emerald" title="EU-West" />
+                  <div className="h-1.5 w-1.5 rounded-full bg-nexus-emerald" title="SA-East" />
+                  <div className="h-1.5 w-1.5 rounded-full bg-muted animate-pulse" title="AP-South" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
           {ENVIRONMENT_OPTIONS.map((env) => (
             <button
