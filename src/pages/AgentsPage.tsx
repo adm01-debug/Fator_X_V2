@@ -182,44 +182,62 @@ export default function AgentsPage() {
   });
 
   return (
-    <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
-      <div className="bg-card border border-border p-8 rounded-3xl shadow-sm mb-8 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/[0.03] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative">
-          <div className="flex items-center gap-5">
-            <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/15 shadow-inner">
-              <Bot className="h-9 w-9 text-primary" />
+    <div className="p-6 sm:p-8 lg:p-10 space-y-8 max-w-[1440px] mx-auto animate-page-enter">
+      {/* Header Elevated 10/10 */}
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-xl shadow-primary/5 mb-10 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/[0.06] transition-colors duration-500" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent/[0.03] rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2" />
+        
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative">
+          <div className="flex items-center gap-7">
+            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
+              <Bot className="h-11 w-11 text-primary animate-float" />
             </div>
-            <div>
-              <h1 className="text-3xl font-heading font-extrabold text-foreground tracking-tight">Agentes</h1>
-              <p className="text-sm text-muted-foreground max-w-md">Gerencie sua força de trabalho digital — da criação ao monitoramento</p>
+            <div className="space-y-1">
+              <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Agentes</h1>
+              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+                Orquestre sua frota neural com precisão industrial. Gerencie, monitore e escale seus agentes autônomos.
+              </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="gap-1.5 h-10 rounded-xl" onClick={() => fileInputRef.current?.click()}>
-              <Upload className="h-4 w-4" /> Importar
+          <div className="flex flex-wrap items-center gap-3">
+            <Button variant="outline" size="lg" className="gap-2.5 h-12 px-6 rounded-2xl bg-background/50 border-border/50 hover:bg-background hover:border-primary/30 transition-all duration-300" onClick={() => fileInputRef.current?.click()}>
+              <Upload className="h-5 w-5 text-muted-foreground" /> 
+              <span className="font-bold">Importar</span>
             </Button>
             <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={handleImport} />
-            <Button variant="outline" size="sm" className="gap-1.5 h-10 rounded-xl" onClick={() => navigate('/agents/templates')}>
-              <BookOpen className="h-4 w-4" /> Templates
-            </Button>
+            
             <AccessControl permission="agents.create">
-              <Button onClick={() => navigate('/agents/new')} className="nexus-gradient-bg text-primary-foreground gap-2 h-10 px-5 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all">
-                <Plus className="h-5 w-5" /> Criar agente
+              <Button onClick={() => navigate('/agents/new')} className="nexus-gradient-bg text-primary-foreground gap-2.5 h-12 px-8 rounded-2xl shadow-xl shadow-primary/25 hover:scale-[1.03] active:scale-[0.98] transition-all duration-300 group">
+                <Plus className="h-5 w-5 group-hover:rotate-90 transition-transform duration-300" /> 
+                <span className="font-bold text-lg tracking-tight">Criar Agente</span>
               </Button>
             </AccessControl>
           </div>
         </div>
       </div>
 
-      <QuickActionsBar actions={[
-        { label: 'Conhecimento', icon: BookOpen, path: '/knowledge' },
-        { label: 'Workflows', icon: GitBranch, path: '/workflows' },
-        { label: 'Monitoramento', icon: Activity, path: '/monitoring' },
-        { label: 'Voz & Áudio', icon: Bot, path: '/voice-agents' },
-        { label: 'Visão Computacional', icon: Search, path: '/vision' },
-        { label: 'Templates', icon: BookOpen, path: '/agents/templates' },
-      ]} />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        {[
+          { label: 'Conhecimento', icon: BookOpen, path: '/knowledge', color: 'text-blue-500', bg: 'bg-blue-500/10' },
+          { label: 'Workflows', icon: GitBranch, path: '/workflows', color: 'text-purple-500', bg: 'bg-purple-500/10' },
+          { label: 'Monitoramento', icon: Activity, path: '/monitoring', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+          { label: 'Voz & Áudio', icon: Bot, path: '/voice-agents', color: 'text-orange-500', bg: 'bg-orange-500/10' },
+          { label: 'Visão', icon: Search, path: '/vision', color: 'text-cyan-500', bg: 'bg-cyan-500/10' },
+          { label: 'Templates', icon: BookOpen, path: '/agents/templates', color: 'text-pink-500', bg: 'bg-pink-500/10' },
+        ].map((action, i) => (
+          <button
+            key={i}
+            onClick={() => navigate(action.path)}
+            className="flex items-center gap-3 p-4 rounded-2xl bg-card border border-border/40 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 group text-left"
+          >
+            <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110", action.bg)}>
+              <action.icon className={cn("h-5 w-5", action.color)} />
+            </div>
+            <span className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">{action.label}</span>
+          </button>
+        ))}
+      </div>
 
       {/* Bulk Actions Bar */}
       {selectionMode && (
