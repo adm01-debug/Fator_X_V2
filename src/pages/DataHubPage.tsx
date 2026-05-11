@@ -7,12 +7,11 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { 
   Search, Database, ArrowRight, Eye, RefreshCcw, Table2, 
   Link2, Loader2, CheckCircle2, Snowflake, Server, Activity, 
-  Code2, Brain, GitBranch, ShieldCheck, Globe, Zap, Network, 
-  Cpu, Layers, BarChart3, Radio
+  Code2, Brain, GitBranch, ShieldCheck, Network, 
+  Layers
 } from 'lucide-react';
 import { ENTITY_MAPPINGS, ENTITY_LIST } from '@/config/datahub-entities';
 import { DataBrowser } from '@/components/datahub/DataBrowser';
-import { DataHubStats } from '@/components/datahub/DataHubStats';
 import { DataHubHealthTab } from '@/components/datahub/DataHubHealthTab';
 import { DataHubQueryBuilderTab } from '@/components/datahub/DataHubQueryBuilderTab';
 import { DataHubIdentityResolutionTab } from '@/components/datahub/DataHubIdentityResolutionTab';
@@ -23,6 +22,7 @@ import { HibernatedDatabasesPanel } from '@/components/datahub/HibernatedDatabas
 import { ConnectionCard, DEFAULT_CONNECTIONS, type ConnectionDef } from '@/components/datahub/ConnectionCard';
 import { EntityDetailPanel, ENTITY_ICONS, getConnectionLabel } from '@/components/datahub/EntityDetailPanel';
 import { MCPServerPanel } from '@/components/datahub/MCPServerPanel';
+import { DATAHUB_TABLE_BLACKLIST } from '@/config/datahub-blacklist';
 import { testDatahubConnections, listDatahubEntities } from '@/services/datahubService';
 import { NLPAnalysisDialog } from '@/components/shared/NLPAnalysisDialog';
 import { toast } from 'sonner';
