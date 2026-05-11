@@ -471,6 +471,9 @@ export function validateRestore(
         title: `Troca de provider (${curCaps.family} → ${caps.family})`,
         detail: 'Mudar de provider pode alterar drasticamente comportamento, custo e latência. Tokenização, formatos de tool-call e suporte a recursos diferem entre famílias.',
         hint: 'Considere rodar uma simulação antes de aplicar em produção.',
+        quickFixes: [
+          { kind: 'uncheck-model', label: 'Desmarcar Modelo & parâmetros', description: 'Mantém o modelo atual e evita troca de provider.' }
+        ]
       });
     }
   }
