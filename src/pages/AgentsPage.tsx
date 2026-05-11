@@ -215,6 +215,9 @@ export default function AgentsPage() {
         { label: 'Conhecimento', icon: BookOpen, path: '/knowledge' },
         { label: 'Workflows', icon: GitBranch, path: '/workflows' },
         { label: 'Monitoramento', icon: Activity, path: '/monitoring' },
+        { label: 'Voz & Áudio', icon: Bot, path: '/voice-agents' },
+        { label: 'Visão Computacional', icon: Search, path: '/vision' },
+        { label: 'Templates', icon: BookOpen, path: '/agents/templates' },
       ]} />
 
       {/* Bulk Actions Bar */}
