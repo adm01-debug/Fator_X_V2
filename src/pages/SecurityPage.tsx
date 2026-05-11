@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { PageHeader } from "@/components/shared/PageHeader";
 import { SecurityPosture } from "@/components/security/SecurityPosture";
 import { ComplianceFrameworks } from "@/components/security/ComplianceFrameworks";
 import { GuardrailPolicies } from "@/components/security/GuardrailPolicies";
