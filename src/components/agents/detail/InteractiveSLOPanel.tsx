@@ -185,14 +185,13 @@ export function InteractiveSLOPanel({ agentId, agentName, slo, traces, daily, on
 
 
   return (
-    <div className="nexus-card" role="region" aria-label="Painel SLO interativo">
-      <div className="flex items-start justify-between mb-4 gap-3 flex-wrap">
+    <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden" role="region" aria-label="Painel SLO interativo">
+      <div className="flex items-center justify-between gap-3 p-6 border-b border-border/50 flex-wrap bg-secondary/10">
         <div>
-          <h3 className="text-sm font-heading font-semibold text-foreground">Painel SLO interativo</h3>
+          <h3 className="text-sm font-bold text-foreground">Painel Operacional SLO</h3>
           <p className="text-[11px] text-muted-foreground">
-            Ajuste as metas com os sliders · janela:{' '}
-            <span className="font-mono text-foreground">{activeWindow.label}</span> ·{' '}
-            <span className="font-mono">{windowedTraces.length}</span> trace{windowedTraces.length !== 1 ? 's' : ''}
+            Gestão dinâmica de service levels · janela:{' '}
+            <span className="font-mono text-foreground font-semibold">{activeWindow.label}</span>
           </p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
@@ -260,8 +259,9 @@ export function InteractiveSLOPanel({ agentId, agentName, slo, traces, daily, on
         </div>
       </div>
 
+      <div className="p-6 space-y-6">
       {/* Cards de meta */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {cards.map((c) => {
           const style = STATUS[c.status];
           return (
@@ -299,7 +299,8 @@ export function InteractiveSLOPanel({ agentId, agentName, slo, traces, daily, on
       </div>
 
       {/* Error budget burn */}
-      <div className={`mt-3 rounded-lg border ${burnStyle.border} ${burnStyle.bg} p-3`}>
+      <div className={`rounded-xl border ${burnStyle.border} ${burnStyle.bg} p-4 shadow-sm relative overflow-hidden`}>
+        <div className="absolute top-0 right-0 w-24 h-24 bg-current opacity-[0.03] rounded-full -translate-y-1/2 translate-x-1/2" />
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <Flame className={`h-3.5 w-3.5 ${burnStyle.color}`} />
@@ -403,6 +404,7 @@ export function InteractiveSLOPanel({ agentId, agentName, slo, traces, daily, on
             p50 {DEFAULT_SLO_TARGETS.p50}ms · p95 {DEFAULT_SLO_TARGETS.p95}ms · p99 {DEFAULT_SLO_TARGETS.p99}ms · {DEFAULT_SLO_TARGETS.availability}%
           </span>
         </div>
+      </div>
       </div>
 
       <ViolationDrillDownDialog
