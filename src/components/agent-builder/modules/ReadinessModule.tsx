@@ -1,25 +1,31 @@
 import { useMemo } from 'react';
 import { SectionTitle, ProgressBar } from '../ui';
+import { Button } from '@/components/ui/button';
+import { ExternalLink } from 'lucide-react';
 import { NexusRadarChart } from '../ui/NexusRadarChart';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import { LIFECYCLE_STAGES } from '@/data/agentBuilderData';
 import type { ReadinessScore, ReadinessItem } from '@/types/agentTypes';
 
-function computeReadiness(agent: ReturnType<typeof useAgentBuilderStore.getState>['agent']): ReadinessScore {
-  const categories: ReadinessScore['categories'] = {};
+interface DetailedReadinessScore extends Omit<ReadinessScore, 'recommendations'> {
+  recommendations: { label: string; tabId: string }[];
+}
+
+function computeReadiness(agent: any): DetailedReadinessScore {
+  const categories: any = {};
   const blockers: string[] = [];
-  const recommendations: string[] = [];
+  const recommendations: { label: string; tabId: string }[] = [];
 
   // Identity (max 10)
   const identityItems: ReadinessItem[] = [
     { label: 'Nome definido', passed: !!agent.name, weight: 3, is_blocker: false },
     { label: 'Missão definida', passed: !!agent.mission, weight: 3, is_blocker: false },
     { label: 'Persona selecionada', passed: !!agent.persona, weight: 2, is_blocker: false },
-    { label: 'Escopo definido (>50 chars)', passed: agent.scope.length > 50, weight: 2, is_blocker: false },
+    { label: 'Escopo definido (>50 chars)', passed: (agent.scope || '').length > 50, weight: 2, is_blocker: false },
   ];
   categories.identity = { score: identityItems.filter(i => i.passed).reduce((s, i) => s + i.weight, 0), max: 10, items: identityItems };
-  if (!agent.name) recommendations.push('💡 Defina um nome para o agente');
-  if (agent.scope.length <= 50) recommendations.push('💡 Detalhe o escopo do agente (>50 chars) para +2 pontos');
+  if (!agent.name) recommendations.push({ label: '💡 Defina um nome para o agente', tabId: 'identity' });
+  if ((agent.scope || '').length <= 50) recommendations.push({ label: '💡 Detalhe o escopo do agente (>50 chars) para +2 pontos', tabId: 'identity' });
 
   // Brain (max 12)
   const brainItems: ReadinessItem[] = [
@@ -28,7 +34,7 @@ function computeReadiness(agent: ReturnType<typeof useAgentBuilderStore.getState
     { label: 'Raciocínio definido', passed: !!agent.reasoning, weight: 4, is_blocker: false },
   ];
   categories.brain = { score: brainItems.filter(i => i.passed).reduce((s, i) => s + i.weight, 0), max: 12, items: brainItems };
-  if (!agent.model_fallback) recommendations.push('💡 Configurar modelo fallback aumentaria +3 pontos');
+  if (!agent.model_fallback) recommendations.push({ label: '💡 Configurar modelo fallback aumentaria +3 pontos', tabId: 'brain' });
 
   // Memory (max 12)
   const longTermCount = [agent.memory_episodic, agent.memory_semantic, agent.memory_procedural, agent.memory_profile, agent.memory_shared].filter(Boolean).length;
@@ -39,44 +45,44 @@ function computeReadiness(agent: ReturnType<typeof useAgentBuilderStore.getState
     { label: 'Consolidação definida', passed: !!agent.memory_consolidation, weight: 2, is_blocker: false },
   ];
   categories.memory = { score: memoryItems.filter(i => i.passed).reduce((s, i) => s + i.weight, 0), max: 12, items: memoryItems };
-  if (longTermCount < 2) recommendations.push('💡 Ativar memória episódica ou semântica aumentaria o score em +4');
+  if (longTermCount < 2) recommendations.push({ label: '💡 Ativar memória episódica ou semântica aumentaria o score em +4', tabId: 'memory' });
 
   // RAG (max 12)
   const ragItems: ReadinessItem[] = [
     { label: 'Arquitetura selecionada', passed: !!agent.rag_architecture, weight: 3, is_blocker: false },
     { label: 'Vector DB selecionado', passed: !!agent.rag_vector_db, weight: 3, is_blocker: false },
-    { label: '≥1 fonte de conhecimento', passed: agent.rag_sources.length > 0, weight: 3, is_blocker: false },
+    { label: '≥1 fonte de conhecimento', passed: (agent.rag_sources || []).length > 0, weight: 3, is_blocker: false },
     { label: 'Reranker ativo', passed: agent.rag_reranker, weight: 1, is_blocker: false },
     { label: 'Hybrid search ativo', passed: agent.rag_hybrid_search, weight: 2, is_blocker: false },
   ];
   categories.rag = { score: ragItems.filter(i => i.passed).reduce((s, i) => s + i.weight, 0), max: 12, items: ragItems };
 
   // Tools (max 8)
-  const activeTools = agent.tools.filter(t => t.enabled);
+  const activeTools = (agent.tools || []).filter((t: any) => t.enabled);
   const toolsItems: ReadinessItem[] = [
     { label: '≥3 ferramentas ativas', passed: activeTools.length >= 3, weight: 3, is_blocker: false },
     { label: 'Governança configurada', passed: activeTools.length > 0, weight: 3, is_blocker: false },
-    { label: 'MCP server configurado', passed: agent.mcp_servers.length > 0, weight: 2, is_blocker: false },
+    { label: 'MCP server configurado', passed: (agent.mcp_servers || []).length > 0, weight: 2, is_blocker: false },
   ];
   categories.tools = { score: toolsItems.filter(i => i.passed).reduce((s, i) => s + i.weight, 0), max: 8, items: toolsItems };
 
   // Prompt (max 15)
   const promptItems: ReadinessItem[] = [
-    { label: 'System prompt >200 chars', passed: agent.system_prompt.length > 200, weight: 5, is_blocker: false },
-    { label: '≥2 técnicas de prompt', passed: agent.prompt_techniques.filter(t => t.enabled).length >= 2, weight: 3, is_blocker: false },
-    { label: '≥2 few-shot examples', passed: agent.few_shot_examples.length >= 2, weight: 4, is_blocker: false },
+    { label: 'System prompt >200 chars', passed: (agent.system_prompt || '').length > 200, weight: 5, is_blocker: false },
+    { label: '≥2 técnicas de prompt', passed: (agent.prompt_techniques || []).filter((t: any) => t.enabled).length >= 2, weight: 3, is_blocker: false },
+    { label: '≥2 few-shot examples', passed: (agent.few_shot_examples || []).length >= 2, weight: 4, is_blocker: false },
     { label: 'Output format definido', passed: !!agent.output_format, weight: 3, is_blocker: false },
   ];
   categories.prompt = { score: promptItems.filter(i => i.passed).reduce((s, i) => s + i.weight, 0), max: 15, items: promptItems };
-  if (agent.system_prompt.length <= 200) recommendations.push('💡 Expandir o system prompt (>200 chars) para +5 pontos');
+  if ((agent.system_prompt || '').length <= 200) recommendations.push({ label: '💡 Expandir o system prompt (>200 chars) para +5 pontos', tabId: 'prompt' });
 
   // Guardrails (max 15)
-  const hasPI = agent.guardrails.some(g => g.name.toLowerCase().includes('injection') && g.enabled);
-  const hasPII = agent.guardrails.some(g => g.name.toLowerCase().includes('pii') && g.enabled);
-  const activeGuardrails = agent.guardrails.filter(g => g.enabled).length;
+  const hasPI = (agent.guardrails || []).some((g: any) => g.name.toLowerCase().includes('injection') && g.enabled);
+  const hasPII = (agent.guardrails || []).some((g: any) => g.name.toLowerCase().includes('pii') && g.enabled);
+  const activeGuardrailsCount = (agent.guardrails || []).filter((g: any) => g.enabled).length;
   const guardrailItems: ReadinessItem[] = [
     { label: 'Prompt injection ativo', passed: hasPI, weight: 5, is_blocker: true, fix_hint: 'Ative o guardrail Prompt Injection Detection na aba Guardrails' },
-    { label: '≥5 guardrails ativos', passed: activeGuardrails >= 5, weight: 4, is_blocker: false },
+    { label: '≥5 guardrails ativos', passed: activeGuardrailsCount >= 5, weight: 4, is_blocker: false },
     { label: 'PII redaction ativo', passed: hasPII, weight: 3, is_blocker: false },
     { label: 'Audit trail ativo', passed: true, weight: 3, is_blocker: false },
   ];
@@ -85,12 +91,12 @@ function computeReadiness(agent: ReturnType<typeof useAgentBuilderStore.getState
 
   // Testing (max 10)
   const testItems: ReadinessItem[] = [
-    { label: '≥3 cenários de teste', passed: agent.test_cases.length >= 3, weight: 4, is_blocker: true, fix_hint: 'Crie cenários de teste na aba Avaliação & Testes' },
+    { label: '≥3 cenários de teste', passed: (agent.test_cases || []).length >= 3, weight: 4, is_blocker: true, fix_hint: 'Crie cenários de teste na aba Avaliação & Testes' },
     { label: '≥1 bateria executada', passed: !!agent.last_test_results, weight: 3, is_blocker: false },
     { label: 'Accuracy >80%', passed: (agent.last_test_results?.accuracy ?? 0) > 80, weight: 3, is_blocker: false },
   ];
   categories.testing = { score: testItems.filter(i => i.passed).reduce((s, i) => s + i.weight, 0), max: 10, items: testItems };
-  if (agent.test_cases.length < 3) blockers.push('⛔ Nenhum cenário de teste criado (mínimo 3)');
+  if ((agent.test_cases || []).length < 3) blockers.push('⛔ Nenhum cenário de teste criado (mínimo 3)');
 
   // Observability (max 6)
   const obsItems: ReadinessItem[] = [
@@ -100,11 +106,13 @@ function computeReadiness(agent: ReturnType<typeof useAgentBuilderStore.getState
   categories.observability = { score: obsItems.filter(i => i.passed).reduce((s, i) => s + i.weight, 0), max: 6, items: obsItems };
   if (!agent.logging_enabled) blockers.push('⛔ Logging não está habilitado');
 
-  const total = Object.values(categories).reduce((s, c) => s + c.score, 0);
-  const maxTotal = Object.values(categories).reduce((s, c) => s + c.max, 0);
-  const pct = Math.round((total / maxTotal) * 100);
+  const total = Object.values(categories).reduce((s: any, c: any) => s + c.score, 0);
+  const maxTotal = Object.values(categories).reduce((s: any, c: any) => s + c.max, 0);
+  const totalNum = Number(total);
+  const maxTotalNum = Number(maxTotal);
+  const pct = Math.round((totalNum / maxTotalNum) * 100);
 
-  let maturity_level: ReadinessScore['maturity_level'] = 'prototype';
+  let maturity_level: DetailedReadinessScore['maturity_level'] = 'prototype';
   if (pct >= 80) maturity_level = 'production_ready';
   else if (pct >= 60) maturity_level = 'staging';
   else if (pct >= 40) maturity_level = 'tested';
@@ -127,10 +135,10 @@ const MATURITY_LABELS: Record<string, string> = {
 };
 
 export function ReadinessModule() {
-  const agent = useAgentBuilderStore((s) => s.agent);
+  const { agent, setActiveTab } = useAgentBuilderStore();
   const readiness = useMemo(() => computeReadiness(agent), [agent]);
 
-  const radarData = Object.entries(readiness.categories).map(([key, cat]) => ({
+  const radarData = Object.entries(readiness.categories).map(([key, cat]: [string, any]) => ({
     subject: key.charAt(0).toUpperCase() + key.slice(1),
     value: cat.score,
     max: cat.max,
@@ -168,7 +176,7 @@ export function ReadinessModule() {
       {/* Category Breakdown */}
       <SectionTitle icon="📊" title="Score por Categoria" subtitle="Detalhamento do score em cada área" />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {Object.entries(readiness.categories).map(([key, cat]) => (
+        {Object.entries(readiness.categories).map(([key, cat]: [string, any]) => (
           <div key={key} className="rounded-xl border border-border bg-card p-4 space-y-3">
             <div className="flex justify-between items-center">
               <h4 className="text-sm font-semibold capitalize">{key}</h4>
@@ -176,7 +184,7 @@ export function ReadinessModule() {
             </div>
             <ProgressBar value={cat.score} max={cat.max} />
             <div className="space-y-1">
-              {cat.items.map((item) => (
+              {cat.items.map((item: any) => (
                 <div key={item.label} className="flex items-center gap-2 text-xs">
                   <span>{item.passed ? '✅' : '❌'}</span>
                   <span className={item.passed ? 'text-muted-foreground' : 'text-foreground'}>{item.label}</span>
@@ -208,7 +216,17 @@ export function ReadinessModule() {
           <SectionTitle icon="💡" title="Recomendações" subtitle="Ações sugeridas para melhorar o score" />
           <div className="rounded-xl border border-[hsl(var(--nexus-yellow))] bg-[hsl(var(--nexus-yellow))/0.05] p-4 space-y-2">
             {readiness.recommendations.map((r, i) => (
-              <p key={i} className="text-sm text-[hsl(var(--nexus-yellow))]">{r}</p>
+              <div key={i} className="flex items-center justify-between gap-4 p-2 rounded-lg hover:bg-[hsl(var(--nexus-yellow))/0.1] transition-colors group">
+                <p className="text-sm text-[hsl(var(--nexus-yellow))]">{r.label}</p>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-7 text-xs text-[hsl(var(--nexus-yellow))] hover:text-[hsl(var(--nexus-yellow))] hover:bg-[hsl(var(--nexus-yellow))/0.2] opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={() => setActiveTab(r.tabId)}
+                >
+                  <ExternalLink className="h-3 w-3 mr-1" /> Resolver
+                </Button>
+              </div>
             ))}
           </div>
         </>
