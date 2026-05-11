@@ -9,8 +9,10 @@ import {
   Award,
   Activity,
   Zap,
-  Target
+  Target,
+  Trophy
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { fetchOracleHistory, type OracleHistoryEntry } from "@/lib/oracleHistory";
