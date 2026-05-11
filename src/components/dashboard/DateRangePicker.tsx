@@ -41,9 +41,11 @@ export function DateRangePicker({ value, onChange }: DateRangePickerProps) {
 
 export function getDateRangeDays(range: DateRange): number {
   switch (range) {
+    case '24h': return 1;
     case '7d': return 7;
     case '14d': return 14;
     case '30d': return 30;
     case '90d': return 90;
+    default: return 30;
   }
 }
