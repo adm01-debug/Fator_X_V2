@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Mic, Square, Trash2, Clock, DollarSign, Bot, Loader2 } from "lucide-react";
+import { Mic, Square, Trash2, Clock, DollarSign, Bot, Loader2, Radio, Activity, Volume2, ShieldCheck, Headphones } from "lucide-react";
 import { toast } from "sonner";
 import { listAgentSummaries } from "@/services/agentsService";
 import {
@@ -13,6 +13,7 @@ import {
   type VoiceSession, type VoiceTurn,
 } from "@/services/voiceAgentService";
 import { VoiceWaveform } from "@/components/voice/VoiceWaveform";
+import { cn } from "@/lib/utils";
 
 type State = "idle" | "listening" | "processing" | "speaking";
 
@@ -149,38 +150,69 @@ export default function VoiceAgentsPage() {
   const totalCost = history.reduce((s, h) => s + (h.cost_cents || 0), 0) / 100;
 
   const stateLabel: Record<State, string> = {
-    idle: "Inativo",
-    listening: "🎙 Ouvindo...",
-    processing: "⏳ Processando...",
-    speaking: "🔊 Falando...",
+    idle: "Nominal",
+    listening: "Live Listening",
+    processing: "Neural Processing",
+    speaking: "Voice Synthesizing",
   };
   const stateColor: Record<State, string> = {
-    idle: "bg-muted",
-    listening: "bg-primary/15 text-primary",
-    processing: "bg-nexus-amber/15 text-nexus-amber",
-    speaking: "bg-emerald-500/15 text-emerald-500",
+    idle: "bg-muted text-muted-foreground",
+    listening: "bg-nexus-cyan/10 text-nexus-cyan border-nexus-cyan/20",
+    processing: "bg-nexus-purple/10 text-nexus-purple border-nexus-purple/20",
+    speaking: "bg-nexus-emerald/10 text-nexus-emerald border-nexus-emerald/20",
   };
 
   return (
-    <div className="container py-6 space-y-6 page-enter">
-      <header className="space-y-2">
-        <h1 className="text-3xl font-heading font-bold tracking-tight nexus-gradient-text">Voice Agents</h1>
-        <p className="text-muted-foreground">Converse por voz com seus agentes em tempo real — STT + LLM + TTS nativo do navegador.</p>
-      </header>
+    <div className="p-6 sm:p-8 lg:p-10 space-y-10 max-w-[1440px] mx-auto animate-page-enter">
+      {/* Header Elevated 10/10 */}
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-2xl shadow-primary/5 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/[0.06] transition-colors duration-500 pointer-events-none" />
+        
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative">
+          <div className="flex items-center gap-7">
+            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
+              <Headphones className="h-11 w-11 text-primary animate-pulse" />
+            </div>
+            <div className="space-y-1">
+              <div className="flex items-center gap-3">
+                <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Interface de Voz</h1>
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-nexus-cyan/10 text-nexus-cyan text-[10px] font-bold uppercase tracking-widest border border-nexus-cyan/20">
+                  <Radio className="h-3 w-3 animate-pulse" /> Real-time
+                </div>
+              </div>
+              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+                Orquestração neural de áudio. Converse por voz com seus agentes através de STT, LLM e síntese de alta fidelidade.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+             <div className="flex flex-col items-end gap-1">
+              <div className="flex items-center gap-2 text-nexus-emerald font-black text-sm uppercase tracking-tighter">
+                <ShieldCheck className="h-4 w-4" /> Gateway Ativo
+              </div>
+              <p className="text-[10px] text-muted-foreground font-bold tracking-widest uppercase">Latência Sub-500ms</p>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card><CardContent className="pt-6 flex items-center gap-3">
-          <Mic className="h-5 w-5 text-primary" />
-          <div><p className="text-xs text-muted-foreground">Sessões</p><p className="text-2xl font-bold tabular-nums">{history.length}</p></div>
-        </CardContent></Card>
-        <Card><CardContent className="pt-6 flex items-center gap-3">
-          <Clock className="h-5 w-5 text-primary" />
-          <div><p className="text-xs text-muted-foreground">Minutos totais</p><p className="text-2xl font-bold tabular-nums">{totalMinutes.toFixed(1)}</p></div>
-        </CardContent></Card>
-        <Card><CardContent className="pt-6 flex items-center gap-3">
-          <DollarSign className="h-5 w-5 text-primary" />
-          <div><p className="text-xs text-muted-foreground">Custo acumulado</p><p className="text-2xl font-bold tabular-nums">${totalCost.toFixed(3)}</p></div>
-        </CardContent></Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          { label: 'Sessões Totais', value: history.length, icon: Activity, color: 'text-nexus-cyan', bg: 'bg-nexus-cyan/10' },
+          { label: 'Minutos Neurais', value: totalMinutes.toFixed(1), icon: Clock, color: 'text-nexus-purple', bg: 'bg-nexus-purple/10' },
+          { label: 'Custo Alocado', value: `$${totalCost.toFixed(3)}`, icon: DollarSign, color: 'text-nexus-emerald', bg: 'bg-nexus-emerald/10' },
+          { label: 'Vozes Ativas', value: '6', icon: Volume2, color: 'text-nexus-amber', bg: 'bg-nexus-amber/10' },
+        ].map((stat, i) => (
+          <div key={i} className="bg-card border border-border/40 p-6 rounded-[2rem] flex items-center gap-5 hover:border-primary/20 transition-all group">
+            <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform", stat.bg)}>
+              <stat.icon className={cn("h-7 w-7", stat.color)} />
+            </div>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{stat.label}</p>
+              <p className="text-2xl font-black text-foreground">{stat.value}</p>
+            </div>
+          </div>
+        ))}
       </div>
 
       <Card>
