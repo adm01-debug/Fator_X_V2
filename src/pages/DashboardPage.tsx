@@ -122,64 +122,71 @@ export default function DashboardPage() {
         </div>
       ) : (
         <>
-          {/* Quick Actions Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {[
-              { label: 'Conhecimento', icon: BookOpen, path: '/knowledge', color: 'text-blue-500', bg: 'bg-blue-500/10' },
-              { label: 'Workflows', icon: GitBranch, path: '/workflows', color: 'text-purple-500', bg: 'bg-purple-500/10' },
-              { label: 'Monitoramento', icon: Activity, path: '/monitoring', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-              { label: 'Segurança', icon: Shield, path: '/security', color: 'text-orange-500', bg: 'bg-orange-500/10' },
-              { label: 'Ferramentas', icon: Zap, path: '/tools', color: 'text-cyan-500', bg: 'bg-cyan-500/10' },
-              { label: 'Analytics', icon: BarChart3, path: '/monitoring', color: 'text-pink-500', bg: 'bg-pink-500/10' },
-            ].map((action, i) => (
-              <button
-                key={i}
-                onClick={() => navigate(action.path)}
-                className="flex flex-col items-center justify-center gap-3 p-5 rounded-[2rem] bg-card border border-border/40 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 group"
-              >
-                <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 group-hover:rotate-3", action.bg)}>
-                  <action.icon className={cn("h-6 w-6", action.color)} />
-                </div>
-                <span className="text-xs font-bold text-foreground group-hover:text-primary transition-colors">{action.label}</span>
-              </button>
-            ))}
-          </div>
-
-          {/* Metrics Section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { icon: Bot, color: "text-primary", bgColor: "bg-primary/10", value: agents.length, label: "Agentes Totais", trend: "+2", subLabel: "Frota Neural" },
-              { icon: Zap, color: "text-nexus-emerald", bgColor: "bg-nexus-emerald/10", value: activeCount, label: "Live Deployment", trend: "Active", subLabel: "Em Produção" },
-              { icon: DollarSign, color: "text-nexus-amber", bgColor: "bg-nexus-amber/10", value: usageStats?.totalCost ?? 0, label: "Cloud Cost", prefix: "$", decimals: 2, subLabel: `Budget ${dateRange}` },
-              { icon: TrendingUp, color: "text-nexus-cyan", bgColor: "bg-nexus-cyan/10", value: usageStats?.totalRequests ?? 0, label: "Vazão Neural", subLabel: "Total Requests" },
-            ].map((metric, i) => (
-              <div 
-                key={i} 
-                className="bg-card border border-border/40 p-8 rounded-[2.5rem] relative overflow-hidden group hover:border-primary/20 transition-all duration-500"
-              >
-                <div className="absolute -right-4 -bottom-4 h-24 w-24 bg-primary/[0.02] rounded-full blur-2xl group-hover:bg-primary/[0.04] transition-colors" />
-                <div className="flex items-center justify-between mb-6">
-                  <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 duration-500", metric.bgColor)}>
-                    <metric.icon className={cn("h-7 w-7", metric.color)} />
-                  </div>
-                  {metric.trend && (
-                    <Badge className="bg-muted/50 text-muted-foreground border-none font-bold text-[10px] px-2.5 py-1">
-                      {metric.trend}
-                    </Badge>
-                  )}
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground/60">{metric.label}</p>
-                  <div className="flex items-baseline gap-1">
-                    <p className="text-4xl font-black text-foreground tracking-tight">
-                      <AnimatedCounter value={metric.value} prefix={metric.prefix} decimals={metric.decimals} />
-                    </p>
-                  </div>
-                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pt-2">{metric.subLabel}</p>
-                </div>
+      {/* Matrix System Performance Elevated 10/10 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          { icon: Bot, color: "text-primary", bgColor: "bg-primary/10", value: agents.length, label: "Agentes Totais", trend: "+2", subLabel: "Frota Neural", status: "Nominal" },
+          { icon: Zap, color: "text-nexus-emerald", bgColor: "bg-nexus-emerald/10", value: activeCount, label: "Live Deployment", trend: "Active", subLabel: "Em Produção", status: "Online" },
+          { icon: DollarSign, color: "text-nexus-amber", bgColor: "bg-nexus-amber/10", value: usageStats?.totalCost ?? 0, label: "Cloud Cost", prefix: "$", decimals: 2, subLabel: `Budget ${dateRange}`, status: "Optimized" },
+          { icon: TrendingUp, color: "text-nexus-cyan", bgColor: "bg-nexus-cyan/10", value: usageStats?.totalRequests ?? 0, label: "Vazão Neural", subLabel: "Total Requests", status: "High Cap" },
+        ].map((metric, i) => (
+          <div 
+            key={i} 
+            className="bg-card border border-border/40 p-8 rounded-[2.5rem] relative overflow-hidden group hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500"
+          >
+            <div className="absolute -right-4 -bottom-4 h-24 w-24 bg-primary/[0.02] rounded-full blur-2xl group-hover:bg-primary/[0.06] transition-colors" />
+            <div className="flex items-center justify-between mb-6">
+              <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 duration-500", metric.bgColor)}>
+                <metric.icon className={cn("h-7 w-7", metric.color)} />
               </div>
-            ))}
+              <div className="flex flex-col items-end gap-1">
+                <Badge className="bg-muted/50 text-muted-foreground border-none font-black text-[10px] px-2.5 py-1 uppercase tracking-widest">
+                  {metric.trend}
+                </Badge>
+                <span className="text-[9px] font-black text-nexus-emerald uppercase tracking-tighter">{metric.status}</span>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">{metric.label}</p>
+              <div className="flex items-baseline gap-1">
+                <p className="text-5xl font-black text-foreground tracking-tighter">
+                  <AnimatedCounter value={metric.value} prefix={metric.prefix} decimals={metric.decimals} />
+                </p>
+              </div>
+              <div className="flex items-center gap-2 pt-3">
+                <div className="h-1 flex-1 bg-border/40 rounded-full overflow-hidden">
+                  <div className={cn("h-full rounded-full transition-all duration-1000", i === 0 ? 'w-[75%] bg-primary' : i === 1 ? 'w-[90%] bg-nexus-emerald' : i === 2 ? 'w-[45%] bg-nexus-amber' : 'w-[82%] bg-nexus-cyan')} />
+                </div>
+                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{metric.subLabel}</span>
+              </div>
+            </div>
           </div>
+        ))}
+      </div>
+
+      {/* Industrial Quick Actions Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+        {[
+          { label: 'Conhecimento', icon: BookOpen, path: '/knowledge', color: 'text-blue-500', bg: 'bg-blue-500/10' },
+          { label: 'Workflows', icon: GitBranch, path: '/workflows', color: 'text-purple-500', bg: 'bg-purple-500/10' },
+          { label: 'Monitoramento', icon: Activity, path: '/monitoring', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+          { label: 'Segurança', icon: Shield, path: '/security', color: 'text-orange-500', bg: 'bg-orange-500/10' },
+          { label: 'Ferramentas', icon: Zap, path: '/tools', color: 'text-cyan-500', bg: 'bg-cyan-500/10' },
+          { label: 'Analytics', icon: BarChart3, path: '/monitoring', color: 'text-pink-500', bg: 'bg-pink-500/10' },
+        ].map((action, i) => (
+          <button
+            key={i}
+            onClick={() => navigate(action.path)}
+            className="flex flex-col items-center justify-center gap-4 p-7 rounded-[2.5rem] bg-card/50 border border-border/40 hover:border-primary/40 hover:bg-card hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 group relative overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className={cn("h-16 w-16 rounded-[1.5rem] flex items-center justify-center relative z-10 transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 shadow-lg", action.bg)}>
+              <action.icon className={cn("h-8 w-8", action.color)} />
+            </div>
+            <span className="text-sm font-black text-foreground group-hover:text-primary transition-colors relative z-10 uppercase tracking-tight">{action.label}</span>
+          </button>
+        ))}
+      </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-8">
