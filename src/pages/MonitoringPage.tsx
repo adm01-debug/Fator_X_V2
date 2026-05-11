@@ -16,7 +16,6 @@ import { AlertRulesPanel } from "@/components/monitoring/AlertRulesPanel";
 import { WebVitalsPanel } from "@/components/monitoring/WebVitalsPanel";
 import { MiddlewarePipelinePanel } from "@/components/monitoring/MiddlewarePipelinePanel";
 import { RetryEnginePanel } from "@/components/monitoring/RetryEnginePanel";
-import { cn } from "@/lib/utils";
 
 const PIE_COLORS = ['hsl(var(--primary))', 'hsl(var(--nexus-emerald, 142 71% 45%))', 'hsl(var(--nexus-amber, 38 92% 50%))', 'hsl(var(--nexus-cyan, 190 90% 50%))', 'hsl(var(--destructive))'];
 
