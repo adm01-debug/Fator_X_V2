@@ -10,7 +10,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Undo2, FileText, Wrench, Cpu, ArrowRight, Clock, Loader2, AlertTriangle, TimerOff } from "lucide-react";
+import { Undo2, FileText, Wrench, Cpu, ArrowRight, Clock, Loader2, AlertTriangle, TimerOff, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -158,6 +158,24 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
   const queryClient = useQueryClient();
   const [undoTarget, setUndoTarget] = useState<RestoreEntry | null>(null);
   const [filter, setFilter] = useState<"all" | "prompt" | "tools" | "model">("all");
+
+  // Re-uses overrides from a history entry for a NEW rollback
+  const handleReuseOverrides = (entry: RestoreEntry) => {
+    // This communicates with the parent (AgentDetailPage) via a custom event
+    // or we could just trigger the rollback dialog with pre-filled state.
+    // Since we are in the same component tree, we'll dispatch a custom event
+    // that AgentDetailPage can listen to, or better, we'll just show a toast
+    // with instructions for now if the parent state is hard to reach.
+    // BETTER: we'll add a state in AgentDetailPage to handle "Pending Overrides".
+    window.dispatchEvent(new CustomEvent('nexus:apply-rollback-overrides', { 
+      detail: { 
+        options: entry.meta.options,
+        configOverrides: entry.meta.config_overrides,
+        modelOverride: entry.meta.model_override
+      } 
+    }));
+    toast.info(`Configurações de v${entry.versionNumber} preparadas para um novo rollback.`);
+  };
 
   // versions vem ordenado do mais recente para o mais antigo. A versão
   // imediatamente posterior na lista (índice maior) é a "pré-rollback".
@@ -439,6 +457,33 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
                   <span className="text-[9px] uppercase tracking-wider text-primary bg-primary/10 px-1.5 py-0.5 rounded font-semibold">
                     personalizado
                   </span>
+                )}
+                {entry.meta.config_overrides && (
+                  <span 
+                    className="text-[9px] uppercase tracking-wider text-nexus-amber bg-nexus-amber/10 px-1.5 py-0.5 rounded font-semibold border border-nexus-amber/20"
+                    title={`Ajustes manuais: ${Object.entries(entry.meta.config_overrides).map(([k, v]) => `${k}=${v}`).join(', ')}`}
+                  >
+                    ajustes manuais
+                  </span>
+                )}
+                {entry.meta.model_override && (
+                  <span 
+                    className="text-[9px] uppercase tracking-wider text-nexus-emerald bg-nexus-emerald/10 px-1.5 py-0.5 rounded font-semibold border border-nexus-emerald/20"
+                    title={`Modelo alterado para: ${entry.meta.model_override}`}
+                  >
+                    modelo novo
+                  </span>
+                )}
+                {(entry.meta.config_overrides || entry.meta.model_override) && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-5 px-1.5 text-[9px] gap-1 text-nexus-amber hover:bg-nexus-amber/10 border border-nexus-amber/20"
+                    onClick={() => handleReuseOverrides(entry)}
+                    title="Reutilizar estas mesmas configurações em um novo rollback"
+                  >
+                    <Plus className="h-2.5 w-2.5" /> Reutilizar ajustes
+                  </Button>
                 )}
                 <div className="ml-auto flex items-center gap-1">
                   {/* Contador da janela de undo. Mostra mm:ss enquanto ativo,

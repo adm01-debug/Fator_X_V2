@@ -1,8 +1,9 @@
 import { useMemo, useState, useRef, useCallback, useEffect } from 'react';
-import { ArrowRight, Plus, Minus, Pencil, MessageSquare, Wrench, Cpu, CheckCircle2, Filter, ShieldAlert, AlertTriangle, Info, ShieldCheck, Flame, Pin, PinOff, ArrowDownUp } from 'lucide-react';
+import { ArrowRight, Plus, Minus, Pencil, MessageSquare, Wrench, Cpu, CheckCircle2, Filter, ShieldAlert, AlertTriangle, Info, ShieldCheck, Flame, Pin, PinOff, ArrowDownUp, ChevronDown, ChevronUp } from 'lucide-react';
 import type { AgentVersion } from '@/services/agentsService';
 import { computeRestoreDiff, type FieldChange, type RiskLevel } from './restoreDiffHelpers';
 import { RiskExplainPopover } from './RiskExplainPopover';
+import { DiffViewer } from '@/components/shared/DiffViewer';
 
 interface Props {
   current: AgentVersion | null | undefined;
@@ -93,6 +94,18 @@ function preview(v: unknown, max = 70): string {
 
 export function RestoreDiffPreview({ current, source, options }: Props) {
   const diff = useMemo(() => computeRestoreDiff(current, source, options), [current, source, options]);
+
+  // Track expanded state for prompt diffs
+  const [expandedPrompts, setExpandedPrompts] = useState<Set<string>>(new Set());
+
+  const togglePromptExpand = (field: string) => {
+    setExpandedPrompts(prev => {
+      const next = new Set(prev);
+      if (next.has(field)) next.delete(field);
+      else next.add(field);
+      return next;
+    });
+  };
 
   // Default: mostrar tudo. Usuário pode focar em alto/crítico para revisar
   // riscos primeiro, ou inverter para auditar mudanças cosméticas (médio/baixo).
@@ -510,6 +523,9 @@ export function RestoreDiffPreview({ current, source, options }: Props) {
                       </li>
                     );
                   }
+                  const isPrompt = c.group === 'prompt';
+                  const isExpanded = expandedPrompts.has(c.field);
+                  
                   return (
                     <li
                       key={c.field}
@@ -528,12 +544,33 @@ export function RestoreDiffPreview({ current, source, options }: Props) {
                         </span>
                         {riskBadge}
                         <span className="font-medium text-foreground">{c.label}</span>
+                        
+                        {isPrompt && (
+                          <button 
+                            onClick={() => togglePromptExpand(c.field)}
+                            className="ml-auto flex items-center gap-1 text-[10px] text-primary hover:underline font-medium"
+                          >
+                            {isExpanded ? (
+                              <><ChevronUp className="h-2.5 w-2.5" /> Esconder diff</>
+                            ) : (
+                              <><ChevronDown className="h-2.5 w-2.5" /> Ver diff visual</>
+                            )}
+                          </button>
+                        )}
                       </div>
-                      <div className="flex items-center gap-2 font-mono text-[10px] text-muted-foreground">
-                        <span className="line-through opacity-70 truncate max-w-[40%]" title={String(c.before)}>{preview(c.before)}</span>
-                        <ArrowRight className="h-2.5 w-2.5 shrink-0" aria-hidden="true" />
-                        <span className="text-foreground truncate max-w-[55%]" title={String(c.after)}>{preview(c.after)}</span>
-                      </div>
+
+                      {isPrompt && isExpanded ? (
+                        <div className="mt-2 space-y-2">
+                          <p className="text-[10px] text-muted-foreground uppercase font-semibold tracking-tighter">Comparação visual de palavras:</p>
+                          <DiffViewer oldText={String(c.before || '')} newText={String(c.after || '')} />
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 font-mono text-[10px] text-muted-foreground">
+                          <span className="line-through opacity-70 truncate max-w-[40%]" title={String(c.before)}>{preview(c.before)}</span>
+                          <ArrowRight className="h-2.5 w-2.5 shrink-0" aria-hidden="true" />
+                          <span className="text-foreground truncate max-w-[55%]" title={String(c.after)}>{preview(c.after)}</span>
+                        </div>
+                      )}
                     </li>
                   );
                 })}
