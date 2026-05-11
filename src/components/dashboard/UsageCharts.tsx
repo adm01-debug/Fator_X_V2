@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { LightAreaChart, LightBarChart, ComparisonToggle, generateComparisonData } from "@/components/charts";
 import { format, subDays, eachDayOfInterval } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { Badge } from "@/components/ui/badge";
 
 interface UsageRow {
   date: string;
