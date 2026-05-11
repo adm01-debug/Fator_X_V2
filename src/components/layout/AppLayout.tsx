@@ -161,14 +161,17 @@ export function AppLayout({ children }: AppLayoutProps) {
         <div className="min-h-screen flex w-full">
           <AppSidebar />
            <div className="flex-1 flex flex-col min-w-0">
-             <header className="h-14 flex items-center justify-between border-b border-border/50 px-3 sm:px-5 bg-background/95 sticky top-0 z-30" role="banner">
-              <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
-                <SidebarTrigger className="text-muted-foreground hover:text-foreground hover:bg-secondary/60 rounded-lg transition-colors shrink-0" aria-label="Alternar sidebar" />
+             <header className="h-16 flex items-center justify-between border-b border-border/40 px-6 bg-background/80 backdrop-blur-md sticky top-0 z-40 transition-all duration-300" role="banner">
+              <div className="flex items-center gap-4 flex-1 min-w-0">
+                <div className="flex items-center gap-3">
+                  <SidebarTrigger className="text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-xl h-10 w-10 transition-all shrink-0" aria-label="Alternar sidebar" />
+                  <div className="h-6 w-px bg-border/40 hidden sm:block" />
+                </div>
                 
-                {/* Breadcrumb */}
-                <nav className="hidden sm:flex items-center gap-1 text-sm text-muted-foreground" aria-label="Breadcrumb">
-                  <span className="text-foreground/50">•</span>
-                  <span className="font-medium text-foreground">{pageTitle}</span>
+                {/* Breadcrumb Elevated */}
+                <nav className="hidden sm:flex items-center gap-2 text-sm" aria-label="Breadcrumb">
+                  <div className="h-2 w-2 rounded-full bg-primary/20 animate-pulse" />
+                  <span className="font-black text-foreground uppercase tracking-widest text-[11px]">{pageTitle}</span>
                 </nav>
 
                 {/* Mobile search icon */}
@@ -176,69 +179,81 @@ export function AppLayout({ children }: AppLayoutProps) {
                   onClick={() => {
                     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true }));
                   }}
-                  className="md:hidden flex items-center justify-center h-9 w-9 rounded-lg bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors shrink-0 ml-auto"
+                  className="md:hidden flex items-center justify-center h-10 w-10 rounded-xl bg-secondary/50 text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all shrink-0 ml-auto"
                   aria-label="Abrir busca rápida"
                 >
-                  <Search className="h-4 w-4" aria-hidden="true" />
+                  <Search className="h-5 w-5" aria-hidden="true" />
                 </button>
-                {/* Desktop search bar */}
+                {/* Desktop search bar Elevated */}
                 <button
                   onClick={() => {
                     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true }));
                   }}
-                  className="hidden md:flex items-center gap-2 rounded-lg bg-secondary/50 px-3 py-1.5 text-sm text-muted-foreground cursor-pointer hover:bg-secondary hover:text-foreground transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none ml-auto"
+                  className="hidden md:flex items-center gap-3 rounded-xl bg-secondary/30 border border-border/30 px-4 py-2 text-sm text-muted-foreground cursor-pointer hover:bg-secondary/50 hover:border-primary/30 transition-all focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:outline-none ml-auto group"
                   aria-label="Abrir busca rápida (⌘K)"
                 >
-                  <Search className="h-3.5 w-3.5" aria-hidden="true" />
-                  <span>Buscar...</span>
-                  <kbd className="ml-4 inline-flex h-5 items-center gap-0.5 rounded border border-border bg-background px-1.5 text-[11px] font-mono text-muted-foreground" aria-hidden="true">
-                    <Command className="h-2.5 w-2.5" />K
+                  <Search className="h-4 w-4 group-hover:text-primary transition-colors" aria-hidden="true" />
+                  <span className="font-medium group-hover:text-foreground transition-colors">Busca Global...</span>
+                  <kbd className="ml-6 inline-flex h-6 items-center gap-1 rounded-lg border border-border/40 bg-background/50 px-2 text-[10px] font-black font-mono text-muted-foreground/60 shadow-sm" aria-hidden="true">
+                    <Command className="h-3 w-3" />K
                   </kbd>
                 </button>
               </div>
-              <div className="flex items-center gap-2 sm:gap-2.5">
-                <AgentDrilldownBadge />
-                <ThemeToggle />
-                <NotificationBell />
+              
+              <div className="flex items-center gap-3 sm:gap-4 ml-4">
+                <div className="flex items-center gap-1 bg-secondary/20 p-1 rounded-2xl border border-border/40">
+                  <AgentDrilldownBadge />
+                  <ThemeToggle />
+                  <NotificationBell />
+                </div>
+                
                 <NotificationsDrawer />
+                
+                <div className="h-8 w-px bg-border/40 hidden sm:block" />
+
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button
-                      className="relative h-8 w-8 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 overflow-hidden"
+                      className="relative h-10 w-10 rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 overflow-hidden group hover:scale-105 transition-transform duration-300 shadow-lg shadow-primary/5"
                       aria-label="Menu do usuário"
                     >
                       {user?.user_metadata?.avatar_url ? (
-                        <img src={user.user_metadata.avatar_url} alt="" className="h-8 w-8 rounded-full object-cover" referrerPolicy="no-referrer" />
+                        <img src={user.user_metadata.avatar_url} alt="" className="h-full w-full object-cover" referrerPolicy="no-referrer" />
                       ) : (
-                        <div className="h-8 w-8 rounded-full nexus-gradient-bg flex items-center justify-center text-xs font-semibold text-primary-foreground">
+                        <div className="h-full w-full nexus-gradient-bg flex items-center justify-center text-sm font-black text-primary-foreground">
                           {(user?.email?.[0] || 'U').toUpperCase()}
                         </div>
                       )}
-                      <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-nexus-emerald border-2 border-background" aria-label="Online" />
+                      <div className="absolute inset-0 border border-white/10 rounded-2xl pointer-events-none" />
+                      <span className="absolute bottom-1 right-1 h-2.5 w-2.5 rounded-full bg-nexus-emerald border-2 border-background shadow-[0_0_8px_rgba(16,185,129,0.5)]" aria-label="Online" />
                     </button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56">
-                    <DropdownMenuLabel className="font-normal">
+                  <DropdownMenuContent align="end" className="w-64 rounded-2xl border-border/40 shadow-2xl p-2">
+                    <DropdownMenuLabel className="font-normal px-4 py-3">
                       <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium text-foreground">Minha conta</p>
-                        <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+                        <p className="text-sm font-black text-foreground uppercase tracking-tight">Comando Central</p>
+                        <p className="text-xs font-medium text-muted-foreground truncate">{user?.email}</p>
                       </div>
                     </DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => navigate('/settings')} className="gap-2 cursor-pointer">
-                      <Settings className="h-3.5 w-3.5" /> Configurações
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => {
-                      const event = new KeyboardEvent('keydown', { key: '?' });
-                      window.dispatchEvent(event);
-                    }} className="gap-2 cursor-pointer">
-                      <Keyboard className="h-3.5 w-3.5" /> Atalhos de teclado
-                      <kbd className="ml-auto text-[11px] font-mono text-muted-foreground">?</kbd>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={signOut} className="gap-2 cursor-pointer text-destructive focus:text-destructive">
-                      <LogOut className="h-3.5 w-3.5" /> Sair
-                    </DropdownMenuItem>
+                    <DropdownMenuSeparator className="bg-border/40" />
+                    <div className="p-1 space-y-1">
+                      <DropdownMenuItem onClick={() => navigate('/settings')} className="gap-3 cursor-pointer rounded-xl py-2.5 font-bold text-xs uppercase tracking-wider">
+                        <Settings className="h-4 w-4 text-primary" /> Configurações
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => {
+                        const event = new KeyboardEvent('keydown', { key: '?' });
+                        window.dispatchEvent(event);
+                      }} className="gap-3 cursor-pointer rounded-xl py-2.5 font-bold text-xs uppercase tracking-wider">
+                        <Keyboard className="h-4 w-4 text-primary" /> Atalhos
+                        <kbd className="ml-auto h-5 px-1.5 flex items-center justify-center rounded border border-border/40 bg-muted/50 text-[10px] font-black">?</kbd>
+                      </DropdownMenuItem>
+                    </div>
+                    <DropdownMenuSeparator className="bg-border/40" />
+                    <div className="p-1">
+                      <DropdownMenuItem onClick={signOut} className="gap-3 cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10 rounded-xl py-2.5 font-black text-xs uppercase tracking-wider">
+                        <LogOut className="h-4 w-4" /> Encerrar Sessão
+                      </DropdownMenuItem>
+                    </div>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
