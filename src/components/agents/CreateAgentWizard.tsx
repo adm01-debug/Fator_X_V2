@@ -10,7 +10,7 @@ import { Card } from "@/components/ui/card";
 import {
   Check, ArrowLeft, ArrowRight, ChevronRight, Shield, Search,
   LayoutTemplate, PenTool, Database, Rocket, Zap, Sparkles, Wand2, 
-  MessageSquare, Brain, Target, Globe, Loader2, Info
+  Loader2
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabaseExternal } from "@/integrations/supabase/externalClient";
