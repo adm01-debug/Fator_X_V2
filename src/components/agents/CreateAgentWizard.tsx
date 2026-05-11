@@ -158,7 +158,7 @@ export function CreateAgentWizard() {
     // Auto-save as draft if user is logged in
     if (user) {
       try {
-        await supabaseExternal.from("agents").insert({
+        const { data, error } = await supabaseExternal.from("agents").insert({
           user_id: user.id,
           name: magicPreview.name,
           mission: magicPreview.mission,
@@ -173,8 +173,13 @@ export function CreateAgentWizard() {
             memory: magicPreview.memory,
             is_magic_draft: true
           },
-        });
-        toast.success("Rascunho salvo automaticamente!");
+        }).select('id').single();
+        
+        if (data?.id) {
+          toast.success("Rascunho salvo e versionado!");
+          navigate(`/builder/${data.id}`);
+          return;
+        }
       } catch (e) {
         console.error("Auto-save draft failed", e);
       }
