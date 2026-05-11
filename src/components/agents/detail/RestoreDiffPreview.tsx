@@ -523,6 +523,9 @@ export function RestoreDiffPreview({ current, source, options }: Props) {
                       </li>
                     );
                   }
+                  const isPrompt = c.group === 'prompt';
+                  const isExpanded = expandedPrompts.has(c.field);
+                  
                   return (
                     <li
                       key={c.field}
@@ -541,12 +544,33 @@ export function RestoreDiffPreview({ current, source, options }: Props) {
                         </span>
                         {riskBadge}
                         <span className="font-medium text-foreground">{c.label}</span>
+                        
+                        {isPrompt && (
+                          <button 
+                            onClick={() => togglePromptExpand(c.field)}
+                            className="ml-auto flex items-center gap-1 text-[10px] text-primary hover:underline font-medium"
+                          >
+                            {isExpanded ? (
+                              <><ChevronUp className="h-2.5 w-2.5" /> Esconder diff</>
+                            ) : (
+                              <><ChevronDown className="h-2.5 w-2.5" /> Ver diff visual</>
+                            )}
+                          </button>
+                        )}
                       </div>
-                      <div className="flex items-center gap-2 font-mono text-[10px] text-muted-foreground">
-                        <span className="line-through opacity-70 truncate max-w-[40%]" title={String(c.before)}>{preview(c.before)}</span>
-                        <ArrowRight className="h-2.5 w-2.5 shrink-0" aria-hidden="true" />
-                        <span className="text-foreground truncate max-w-[55%]" title={String(c.after)}>{preview(c.after)}</span>
-                      </div>
+
+                      {isPrompt && isExpanded ? (
+                        <div className="mt-2 space-y-2">
+                          <p className="text-[10px] text-muted-foreground uppercase font-semibold tracking-tighter">Comparação visual de palavras:</p>
+                          <DiffViewer oldText={String(c.before || '')} newText={String(c.after || '')} />
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 font-mono text-[10px] text-muted-foreground">
+                          <span className="line-through opacity-70 truncate max-w-[40%]" title={String(c.before)}>{preview(c.before)}</span>
+                          <ArrowRight className="h-2.5 w-2.5 shrink-0" aria-hidden="true" />
+                          <span className="text-foreground truncate max-w-[55%]" title={String(c.after)}>{preview(c.after)}</span>
+                        </div>
+                      )}
                     </li>
                   );
                 })}
