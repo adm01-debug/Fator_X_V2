@@ -4,7 +4,7 @@ import { SelectionGrid } from '../ui/SelectionGrid';
 import { PipelineFlow } from '../ui/PipelineFlow';
 import { CollapsibleCard } from '../ui/CollapsibleCard';
 import type { RAGArchitecture, VectorDB } from '@/types/agentTypes';
-import { Plus, Trash2, Search, Database, FileText, CheckCircle2, Loader2, Info } from 'lucide-react';
+import { Plus, Trash2, Search, FileText, CheckCircle2, Loader2, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
