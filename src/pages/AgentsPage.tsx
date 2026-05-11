@@ -1,5 +1,5 @@
 import { logger } from '@/lib/logger';
-import { PageHeader } from "@/components/shared/PageHeader";
+
 import { QuickActionsBar } from "@/components/shared/QuickActionsBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
