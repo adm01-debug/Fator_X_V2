@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { StatusBadge } from '@/components/shared/StatusBadge';
-import { Star, Copy, Wand2, Download, Loader2, GitBranch, Cpu, Zap, Activity, MessageSquare } from 'lucide-react';
+import { Star, Copy, Wand2, Download, Loader2, GitBranch, Zap, Activity, MessageSquare } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
 import { AgentCardViewer } from './AgentCardViewer';
 import { cn } from '@/lib/utils';
@@ -82,6 +82,9 @@ export function AgentCard({
           </div>
           <button onClick={(e) => onExport(e, agent)} className="h-8 w-8 rounded-lg flex items-center justify-center text-muted-foreground/40 hover:text-nexus-cyan hover:bg-nexus-cyan/10 opacity-0 group-hover:opacity-100 transition-all" title="Exportar JSON">
             <Download className="h-4 w-4" />
+          </button>
+          <button onClick={(e) => onAutoTag(e, agent)} className="h-8 w-8 rounded-lg flex items-center justify-center text-muted-foreground/40 hover:text-nexus-purple hover:bg-nexus-purple/10 opacity-0 group-hover:opacity-100 transition-all" title="Auto-tag">
+            <Wand2 className="h-4 w-4" />
           </button>
           <button onClick={(e) => onClone(e, agent)} className="h-8 w-8 rounded-lg flex items-center justify-center text-muted-foreground/40 hover:text-foreground hover:bg-secondary/50 opacity-0 group-hover:opacity-100 transition-all" disabled={cloning}>
             {cloning ? <Loader2 className="h-4 w-4 animate-spin" /> : <Copy className="h-4 w-4" />}
