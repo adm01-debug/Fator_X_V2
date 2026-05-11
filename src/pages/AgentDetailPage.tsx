@@ -486,6 +486,7 @@ function VersionHistory({ agentId }: { agentId: string }) {
                           setFixOverrides((prev) => ({ ...prev, config: { ...prev.config, reasoning: null } }));
                           break;
                         case 'set-model':
+                        case 'suggest-model':
                           setFixOverrides((prev) => ({ ...prev, model: fix.value }));
                           break;
                       }
