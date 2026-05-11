@@ -217,7 +217,7 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
           system_prompt: (row.config as Record<string, unknown>)?.system_prompt as string || '',
           model: savedAgent.model,
           created_by: user.id,
-          change_summary: `Save at ${now}`,
+          change_summary: customSummary || autoSummary || `Save at ${now}`,
           environment: savedAgent.status === 'production' ? 'production' : savedAgent.status === 'staging' ? 'staging' : 'development',
         }).then(() => {}, () => {}); // Ignore duplicate version errors
       }
