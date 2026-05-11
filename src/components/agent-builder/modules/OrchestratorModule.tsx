@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import ReactFlow, {
   Background,
   Controls,
@@ -11,6 +11,7 @@ import ReactFlow, {
   type Node,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
+import dagre from 'dagre';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import { useAgentWorkflows, useWorkflowRuns, runWorkflow, type AgentWorkflow } from '@/hooks/useAgentWorkflows';
 import { useWorkspaceId } from '@/hooks/use-data';
@@ -19,7 +20,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Save, Play, Trash2, Loader2, Sparkles, BookOpen, Wand2 } from 'lucide-react';
+import { Plus, Save, Play, Trash2, Loader2, BookOpen, Wand2, LayoutDashboard } from 'lucide-react';
 import { nodeTypes, NODE_PALETTE } from '../orchestrator/nodes/CustomNodes';
 import { toast } from 'sonner';
 import { SectionTitle } from '../ui';
@@ -112,6 +113,35 @@ export function OrchestratorModule() {
       setIsGeneratingDoc(false);
     }
   };
+
+  const onLayout = useCallback(() => {
+    const dagreGraph = new dagre.graphlib.Graph();
+    dagreGraph.setDefaultEdgeLabel(() => ({}));
+    dagreGraph.setGraph({ rankdir: 'LR' }); // Left to Right layout
+
+    nodes.forEach((node) => {
+      dagreGraph.setNode(node.id, { width: 172, height: 36 });
+    });
+
+    edges.forEach((edge) => {
+      dagreGraph.setEdge(edge.source, edge.target);
+    });
+
+    dagre.layout(dagreGraph);
+
+    setNodes((nds) =>
+      nds.map((node) => {
+        const nodeWithPosition = dagreGraph.node(node.id);
+        return {
+          ...node,
+          position: {
+            x: nodeWithPosition.x - 172 / 2,
+            y: nodeWithPosition.y - 36 / 2,
+          },
+        };
+      })
+    );
+  }, [nodes, edges, setNodes]);
 
   const handleCreate = () => {
     if (!workspaceId) return toast.error('Sem workspace ativo');
@@ -214,6 +244,9 @@ export function OrchestratorModule() {
                   </Button>
                 </div>
                 <div className="flex gap-2">
+                  <Button size="sm" variant="outline" onClick={onLayout} title="Organizar Automaticamente">
+                    <LayoutDashboard className="h-3.5 w-3.5" />
+                  </Button>
                   <Button size="sm" variant="outline" onClick={handleSave}>
                     <Save className="h-3.5 w-3.5 mr-1" /> Salvar
                   </Button>
