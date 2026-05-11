@@ -258,26 +258,32 @@ export default function AgentsPage() {
         </div>
       )}
 
-      <div className="flex items-center gap-3">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Buscar agentes..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 bg-secondary/50 border-border/50" />
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+          Sua Frota de Agentes
+          <Badge variant="secondary" className="font-mono text-[10px]">{sorted.length}</Badge>
+        </h2>
+        <div className="flex items-center gap-3">
+          <div className="relative w-full md:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input placeholder="Buscar por nome ou tag..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 h-10 rounded-xl bg-card border-border shadow-sm focus:ring-primary" />
+          </div>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-[160px] h-10 rounded-xl bg-card border-border shadow-sm">
+              <Filter className="h-3.5 w-3.5 mr-2 text-muted-foreground" />
+              <SelectValue placeholder="Filtrar Status" />
+            </SelectTrigger>
+            <SelectContent className="rounded-xl">
+              <SelectItem value="all">Todos os Status</SelectItem>
+              <SelectItem value="draft">Rascunho</SelectItem>
+              <SelectItem value="configured">Configurado</SelectItem>
+              <SelectItem value="testing">Testando</SelectItem>
+              <SelectItem value="staging">Staging</SelectItem>
+              <SelectItem value="production">Produção</SelectItem>
+              <SelectItem value="archived">Arquivado</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[160px] bg-secondary/50 border-border/50">
-            <Filter className="h-3.5 w-3.5 mr-2 text-muted-foreground" />
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todos</SelectItem>
-            <SelectItem value="draft">Rascunho</SelectItem>
-            <SelectItem value="configured">Configurado</SelectItem>
-            <SelectItem value="testing">Testando</SelectItem>
-            <SelectItem value="staging">Staging</SelectItem>
-            <SelectItem value="production">Produção</SelectItem>
-            <SelectItem value="archived">Arquivado</SelectItem>
-          </SelectContent>
-        </Select>
       </div>
 
       {isLoading ? (
