@@ -257,9 +257,9 @@ export default function DataHubPage() {
 
         <TabsContent value="schema" className="space-y-4">
           <div className="nexus-card space-y-3">
-            <h3 className="text-sm font-semibold text-foreground">Tabelas Blacklisted ({DATAHUB_TABLE_BLACKLIST.size})</h3>
+            <h3 className="text-sm font-semibold text-foreground">Tabelas Blacklisted ({(DATAHUB_TABLE_BLACKLIST as Set<string>).size})</h3>
             <div className="flex flex-wrap gap-1.5">
-              {Array.from(DATAHUB_TABLE_BLACKLIST).sort().map((t) => <Badge key={t} variant="outline" className="text-[11px] font-mono text-destructive/70 border-destructive/20">{t}</Badge>)}
+              {Array.from(DATAHUB_TABLE_BLACKLIST as Set<string>).sort().map((t) => <Badge key={t} variant="outline" className="text-[11px] font-mono text-destructive/70 border-destructive/20">{t}</Badge>)}
             </div>
           </div>
           <div className="grid gap-4 md:grid-cols-2">
