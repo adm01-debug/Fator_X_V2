@@ -1,12 +1,11 @@
 
-import { StatusBadge } from "@/components/shared/StatusBadge";
 import { AnimatedCounter } from "@/components/shared/AnimatedCounter";
 import { DateRangePicker, getDateRangeDays, type DateRange } from "@/components/dashboard/DateRangePicker";
 import { Button } from "@/components/ui/button";
 import { 
-  Bot, Plus, ArrowRight, TrendingUp, DollarSign, Clock, Zap, 
-  Sparkles, BookOpen, Activity, GitBranch, Search, Shield, 
-  Cpu, Target, MousePointer2, ChevronRight, Globe, Layers, BarChart3
+  Bot, Plus, TrendingUp, DollarSign, Zap, 
+  Sparkles, BookOpen, Activity, GitBranch, Shield, 
+  Cpu, Target, ChevronRight, Globe, Layers, BarChart3, RadioTower
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
