@@ -43,6 +43,7 @@ export function DraftVersionsDialog({ open, onOpenChange }: DraftVersionsDialogP
   const { toast } = useToast();
   const agent = useAgentBuilderStore((s) => s.agent);
   const loadAgent = useAgentBuilderStore((s) => s.loadAgent);
+  const updateAgent = useAgentBuilderStore((s) => s.updateAgent);
 
   const [drafts, setDrafts] = useState<DraftVersion[]>([]);
   const [label, setLabel] = useState('');
@@ -66,6 +67,51 @@ export function DraftVersionsDialog({ open, onOpenChange }: DraftVersionsDialogP
     [agent, label, note],
   );
 
+  const handleFix = (issue: VersionValidationIssue) => {
+    switch (issue.code) {
+      case 'prompt.empty_blocks':
+        updateAgent({
+          system_prompt: (agent.system_prompt ?? '').replace(/\n{3,}/g, '\n\n'),
+        });
+        toast({ title: 'Prompt limpo', description: 'Linhas em branco excessivas removidas.' });
+        break;
+      case 'config.rag_no_sources':
+        updateAgent({ rag_architecture: 'none' });
+        toast({ title: 'RAG desativado', description: 'Como não há fontes, a arquitetura foi definida como "none".' });
+        break;
+      case 'config.react_without_tools':
+        updateAgent({ reasoning: 'linear' });
+        toast({ title: 'Raciocínio alterado', description: 'Alterado para "linear" pois não há ferramentas.' });
+        break;
+      case 'config.expensive_for_simple':
+        updateAgent({ model: 'gpt-4o-mini' });
+        toast({ title: 'Modelo alterado', description: 'Alterado para um modelo mais econômico.' });
+        break;
+      case 'config.production_no_guardrails':
+        updateAgent({
+          guardrails: [
+            ...(agent.guardrails || []),
+            { name: 'Toxicity', enabled: true },
+            { name: 'PII Leak', enabled: true },
+          ],
+        });
+        toast({ title: 'Guardrails ativados', description: 'Filtros básicos de segurança foram habilitados.' });
+        break;
+      case 'config.long_term_without_short':
+        updateAgent({ memory_short_term: true });
+        toast({ title: 'Memória corrigida', description: 'Memória de curto prazo ativada.' });
+        break;
+      case 'prompt.no_identity':
+        updateAgent({
+          system_prompt: `Meu nome é {{name}}.\n\n${agent.system_prompt ?? ''}`,
+        });
+        toast({ title: 'Identidade adicionada', description: 'Placeholder de nome inserido no início do prompt.' });
+        break;
+      default:
+        toast({ title: 'Ação não disponível', description: 'Este problema requer correção manual.' });
+    }
+  };
+
   const handleSave = (opts?: { override?: boolean }) => {
     if (!validation.canSave && !opts?.override) return;
     const draft = saveDraftVersion({ agent, label, note });
@@ -83,55 +129,8 @@ export function DraftVersionsDialog({ open, onOpenChange }: DraftVersionsDialogP
     setForceSave(false);
     refresh();
   };
-
-  const handleResume = (d: DraftVersion) => {
-    loadAgent(d.snapshot);
-    toast({ title: 'Rascunho restaurado', description: d.label });
-    onOpenChange(false);
-  };
-
-  const handleDiscard = (d: DraftVersion) => {
-    deleteDraftVersion(d.id);
-    toast({ title: 'Rascunho descartado', description: d.label });
-    refresh();
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <FileClock className="h-5 w-5 text-primary" aria-hidden />
-            Rascunhos de versão
-          </DialogTitle>
-          <DialogDescription>
-            Snapshots locais (não persistidos no servidor) da configuração atual do agente. Útil para experimentar mudanças sem perder o ponto de partida.
-          </DialogDescription>
-        </DialogHeader>
-
-        {/* Save form */}
-        <div className="space-y-2 nexus-card !p-3 border-primary/30 bg-primary/5">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-foreground">Salvar estado atual</span>
-            <Badge variant="outline" className="text-[10px]">local</Badge>
-          </div>
-          <Input
-            placeholder='Ex: "Antes de trocar o prompt"'
-            value={label}
-            onChange={(e) => setLabel(e.target.value)}
-            className="h-8 text-xs"
-            aria-label="Título do rascunho"
-          />
-          <Textarea
-            placeholder="Anotação opcional (o que você está testando?)"
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            rows={2}
-            className="text-xs resize-none"
-            aria-label="Anotação"
-          />
-
-          <VersionValidationPanel result={validation} />
+...
+          <VersionValidationPanel result={validation} onFix={handleFix} />
 
           <div className="flex justify-end gap-2">
             {!validation.canSave && (
