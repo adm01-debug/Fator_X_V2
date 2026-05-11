@@ -474,6 +474,17 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
                     modelo novo
                   </span>
                 )}
+                {(entry.meta.config_overrides || entry.meta.model_override) && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-5 px-1.5 text-[9px] gap-1 text-nexus-amber hover:bg-nexus-amber/10 border border-nexus-amber/20"
+                    onClick={() => handleReuseOverrides(entry)}
+                    title="Reutilizar estas mesmas configurações em um novo rollback"
+                  >
+                    <Plus className="h-2.5 w-2.5" /> Reutilizar ajustes
+                  </Button>
+                )}
                 <div className="ml-auto flex items-center gap-1">
                   {/* Contador da janela de undo. Mostra mm:ss enquanto ativo,
                       pisca em vermelho no último minuto, e vira "expirado"
