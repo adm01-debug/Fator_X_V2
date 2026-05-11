@@ -12,9 +12,6 @@ import {
   Zap,
   Cpu,
   Clock,
-  CheckCircle2,
-  Gauge,
-  ChevronRight
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
