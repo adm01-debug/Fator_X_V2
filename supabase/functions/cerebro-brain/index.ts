@@ -350,7 +350,7 @@ serve(async (req) => {
       }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
-    // ═══ ACTION: temporal_graph ═══
+    // ═══ ACTION: temporal_events ═══
     if (action === 'temporal_graph') {
       const { data: events } = await supabase.from('agent_traces')
         .select('id, created_at, agent_id, event_type, metadata')
@@ -360,6 +360,11 @@ serve(async (req) => {
       const { data: agents } = await supabase.from('agents').select('id, name');
       const agentMap = Object.fromEntries((agents || []).map(a => [a.id, a.name]));
 
+      const { data: relations } = await supabase.from('knowledge_relations')
+        .select('*, source:knowledge_entities!source_id(name, entity_type), target:knowledge_entities!target_id(name, entity_type)')
+        .order('created_at', { ascending: false })
+        .limit(100);
+
       return new Response(JSON.stringify({
         timeline: (events || []).map(e => ({
           id: e.id,
@@ -367,7 +372,8 @@ serve(async (req) => {
           agent: agentMap[e.agent_id!] || 'Sistema',
           type: e.event_type,
           info: e.metadata
-        }))
+        })),
+        relations: relations || [],
       }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
