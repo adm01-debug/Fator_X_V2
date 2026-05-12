@@ -23,7 +23,7 @@ import { ConnectionCard, DEFAULT_CONNECTIONS, type ConnectionDef } from '@/compo
 import { EntityDetailPanel, ENTITY_ICONS, getConnectionLabel } from '@/components/datahub/EntityDetailPanel';
 import { MCPServerPanel } from '@/components/datahub/MCPServerPanel';
 import { DATAHUB_TABLE_BLACKLIST } from '@/config/datahub-blacklist';
-import { testDatahubConnections, listDatahubEntities } from '@/services/datahubService';
+import { streamInvoke } from '@/services/datahubService';
 import { NLPAnalysisDialog } from '@/components/shared/NLPAnalysisDialog';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
