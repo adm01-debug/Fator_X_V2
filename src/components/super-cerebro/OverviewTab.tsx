@@ -47,7 +47,12 @@ export function OverviewTab() {
     queryKey: ['cerebro_stats'],
     queryFn: async () => {
       const data = await invokeCerebroBrain({ action: 'stats' });
-      return data as CerebroStats;
+      // If we have enhanced memories, use them
+      const memoryManager = await invokeCerebroBrain({ action: 'memory_manager' });
+      return { 
+        ...data, 
+        recent_memories: memoryManager?.memories?.slice(0, 5) || data?.recent_memories || [] 
+      } as CerebroStats;
     },
   });
 
