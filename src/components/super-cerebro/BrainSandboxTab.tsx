@@ -51,10 +51,11 @@ export function BrainSandboxTab() {
     if (!query.trim()) return;
     setIsRunningAll(true);
     setResults([]);
-    const modes: Array<'full' | 'facts_only' | 'rag_only' | 'no_context'> = [
+    const modes: Array<'full' | 'facts_only' | 'rag_only' | 'tiered' | 'no_context'> = [
       'full',
       'facts_only',
       'rag_only',
+      'tiered',
       'no_context',
     ];
     const collected: SandboxResult[] = [];
