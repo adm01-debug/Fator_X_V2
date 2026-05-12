@@ -57,11 +57,28 @@ export function StreamingChat({ endpoint, placeholder = 'Digite sua mensagem...'
 
         {/* Streaming response */}
         {isStreaming && text && (
-          <div className="flex justify-start">
-            <div className="max-w-[80%] rounded-lg px-3 py-2 text-sm bg-muted text-foreground">
-              {text}
-              <span className="animate-pulse text-primary">▌</span>
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-start">
+              <div className="max-w-[80%] rounded-lg px-3 py-2 text-sm bg-muted text-foreground">
+                {text}
+                <span className="animate-pulse text-primary">▌</span>
+              </div>
             </div>
+            {/* Tool Progress UI */}
+            {toolCalls.length > 0 && (
+              <div className="flex flex-wrap gap-2 px-1">
+                {toolCalls.map((tc) => (
+                  <Badge 
+                    key={tc.id} 
+                    variant="outline" 
+                    className="flex items-center gap-1.5 py-1 px-2 text-[10px] animate-in fade-in slide-in-from-left-2"
+                  >
+                    <Zap className="w-3 h-3 text-yellow-500 animate-pulse" />
+                    <span>Executing: <strong>{tc.name}</strong></span>
+                  </Badge>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

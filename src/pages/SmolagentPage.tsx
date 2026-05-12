@@ -298,13 +298,63 @@ export default function SmolagentPage() {
         </div>
       </div>
 
-      {/* Streaming Chat Mode */}
-      <div className="nexus-card p-0 h-[500px]">
-        <StreamingChat
-          endpoint="/functions/v1/smolagent-runtime"
-          placeholder="Converse com o agente autônomo (streaming)..."
-          buildBody={(msg) => ({ task: msg, agent_id: 'default', stream: true })}
-        />
+      {/* Streaming Sandbox / Playground */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="nexus-card p-6 space-y-4 flex flex-col h-[600px]">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Cpu className="w-4 h-4 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold">Autonomous Chat</h3>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">ReAct Loop Playground</p>
+              </div>
+            </div>
+            <Badge variant="outline" className="text-[10px] bg-green-500/10 text-green-500 border-green-500/20">
+              Streaming Active
+            </Badge>
+          </div>
+          
+          <div className="flex-1 min-h-0 border border-border/50 rounded-xl overflow-hidden bg-muted/5">
+            <StreamingChat
+              endpoint="/functions/v1/smolagent-runtime"
+              placeholder="Desafie o agente: 'Analise o sentimento desta frase e traduza para inglês'..."
+              buildBody={(msg) => ({ task: msg, agent_id: 'default', stream: true, model })}
+            />
+          </div>
+        </div>
+
+        <div className="nexus-card p-6 space-y-4 h-[600px] overflow-y-auto">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
+              <Wrench className="w-4 h-4 text-accent" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold">Tool Inventory</h3>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Capabilities Registry</p>
+            </div>
+          </div>
+
+          <div className="grid gap-3">
+            {tools.map((t) => (
+              <div key={t} className="p-3 rounded-lg border border-border/50 bg-muted/5 hover:border-primary/30 transition-all group">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-mono font-bold text-primary">{t}</span>
+                  <Badge variant="secondary" className="text-[9px]">Edge Tool</Badge>
+                </div>
+                <p className="text-[10px] text-muted-foreground line-clamp-2">
+                  Integrated capability for {t.replace(/_/g, ' ')} operations within the ReAct loop.
+                </p>
+              </div>
+            ))}
+            {tools.length === 0 && (
+              <div className="py-12 text-center text-muted-foreground text-xs animate-pulse">
+                Carregando inventário de ferramentas...
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
