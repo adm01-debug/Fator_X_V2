@@ -33,6 +33,18 @@ export function OracleResultsPanel() {
     toast.success('Markdown exportado!');
   };
 
+  const handleExportJson = () => {
+    const json = exportToJson(
+      store.query,
+      results,
+      currentPreset?.name || store.selectedPreset,
+      `${modeConfig.icon} ${modeConfig.label}`,
+      store.chairmanModel,
+    );
+    downloadText(json, `oraculo_${Date.now()}.json`, 'application/json');
+    toast.success('JSON exportado!');
+  };
+
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       {/* Metrics cards */}
