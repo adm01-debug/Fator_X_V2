@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { 
-  MessageSquare, User, Clock, CheckCircle2, AlertCircle, 
-  ArrowRight, Search, Filter, Loader2, ShieldCheck,
+  MessageSquare, User, Clock, 
+  ArrowRight, Search, Loader2, ShieldCheck,
   Smartphone, Zap, Phone, ExternalLink
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
