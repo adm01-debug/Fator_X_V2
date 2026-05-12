@@ -10,8 +10,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { 
-  Loader2, MessageSquare, Sparkles, ArrowUpDown, Search, 
-  History, X, Layers, ShieldCheck, Zap 
+  Loader2, Sparkles, ArrowUpDown, Search, 
+  History, Layers, ShieldCheck, Zap 
 } from 'lucide-react';
 import { invokeCerebroQuery, queryTiered } from '@/services/cerebroService';
 import { toast } from 'sonner';
