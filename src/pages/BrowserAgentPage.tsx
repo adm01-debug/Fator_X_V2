@@ -145,21 +145,63 @@ export default function BrowserAgentPage() {
             </Button>
           </CardHeader>
           <CardContent>
-            <ScrollArea className="h-64">
-              <div className="space-y-2">
-                {activeSession.steps.map((s, i) => (
-                  <div key={i} className="text-xs p-2 rounded bg-muted/40 border border-border/50">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Badge variant="outline" className="text-[10px]">#{s.step_index + 1}</Badge>
-                      <Badge className="text-[10px]">{s.action}</Badge>
-                      <span className="text-muted-foreground truncate">{s.url}</span>
-                    </div>
-                    <p className="text-muted-foreground">{s.reasoning}</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-[500px]">
+              <ScrollArea className="h-full border rounded-lg bg-black/5 p-4">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between sticky top-0 bg-background/80 backdrop-blur pb-2">
+                    <h3 className="text-sm font-bold flex items-center gap-2">
+                      <ListChecks className="h-4 w-4" /> Log de Execução
+                    </h3>
+                    <Badge variant="outline">Step {activeSession.steps_count + 1}</Badge>
                   </div>
-                ))}
-                {activeSession.steps.length === 0 && <p className="text-xs text-muted-foreground">Aguardando primeiro passo...</p>}
+                  {activeSession.steps.map((s, i) => (
+                    <div key={i} className="text-xs p-3 rounded-lg bg-card border shadow-sm space-y-2 animate-in slide-in-from-bottom-2">
+                      <div className="flex items-center gap-2">
+                        <Badge variant="secondary" className="uppercase text-[9px] font-black">{s.action}</Badge>
+                        <span className="text-muted-foreground truncate flex-1">{s.url}</span>
+                      </div>
+                      <p className="font-medium text-foreground/80 leading-relaxed italic">"{s.reasoning}"</p>
+                      {s.screenshot && (
+                        <div className="relative aspect-video rounded overflow-hidden border">
+                          <img src={`data:image/jpeg;base64,${s.screenshot}`} alt="Step Screenshot" className="object-cover w-full h-full" />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                  {activeSession.steps.length === 0 && (
+                    <div className="flex flex-col items-center justify-center h-40 text-muted-foreground gap-2">
+                      <Loader2 className="h-6 w-6 animate-spin" />
+                      <p className="text-sm">Iniciando motor de navegação...</p>
+                    </div>
+                  )}
+                </div>
+              </ScrollArea>
+              
+              <div className="h-full border rounded-lg bg-muted flex flex-col">
+                <div className="p-2 border-b bg-background flex items-center justify-between">
+                  <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">Live Agent Viewport</span>
+                  <div className="flex gap-1">
+                    <div className="w-2 h-2 rounded-full bg-red-500" />
+                    <div className="w-2 h-2 rounded-full bg-yellow-500" />
+                    <div className="w-2 h-2 rounded-full bg-green-500" />
+                  </div>
+                </div>
+                <div className="flex-1 flex items-center justify-center p-4">
+                  {activeSession.steps[activeSession.steps.length - 1]?.screenshot ? (
+                    <img 
+                      src={`data:image/jpeg;base64,${activeSession.steps[activeSession.steps.length - 1].screenshot}`} 
+                      className="max-h-full max-w-full rounded shadow-2xl border-4 border-background"
+                      alt="Live View"
+                    />
+                  ) : (
+                    <div className="text-center space-y-3">
+                      <Globe2 className="h-12 w-12 mx-auto text-muted-foreground/30 animate-pulse" />
+                      <p className="text-xs text-muted-foreground">Aguardando sinal visual...</p>
+                    </div>
+                  )}
+                </div>
               </div>
-            </ScrollArea>
+            </div>
           </CardContent>
         </Card>
       )}
