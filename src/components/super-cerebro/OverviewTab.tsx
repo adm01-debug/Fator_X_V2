@@ -65,13 +65,13 @@ export function OverviewTab() {
 
   const metrics = [
     { label: 'Agentes', value: stats?.agents ?? 0, icon: '🤖', color: 'text-primary' },
-    { label: 'Bases de Conhecimento', value: stats?.knowledge_bases ?? 0, icon: '📚', color: 'text-nexus-emerald' },
-    { label: 'Chunks RAG', value: stats?.chunks ?? 0, icon: '🧩', color: 'text-cyan-400' },
+    { label: 'Bases', value: stats?.knowledge_bases ?? 0, icon: '📚', color: 'text-nexus-emerald' },
     { label: 'Memórias', value: stats?.memories ?? 0, icon: '💾', color: 'text-nexus-purple' },
+    { label: 'Entidades', value: stats?.entities ?? 0, icon: '🏢', color: 'text-nexus-blue' },
+    { label: 'Relações', value: stats?.relations ?? 0, icon: '🔗', color: 'text-nexus-amber' },
+    { label: 'Traces', value: stats?.traces ?? 0, icon: '📊', color: 'text-nexus-rose' },
+    { label: 'Consultas Hoje', value: stats?.today_traces ?? 0, icon: '🔍', color: 'text-teal-400' },
     { label: 'Ferramentas', value: stats?.tools ?? 0, icon: '🔧', color: 'text-nexus-amber' },
-    { label: 'Workflows', value: stats?.workflows ?? 0, icon: '🔄', color: 'text-primary' },
-    { label: 'Traces (total)', value: stats?.traces ?? 0, icon: '📊', color: 'text-nexus-rose' },
-    { label: 'Consultas hoje', value: stats?.today_traces ?? 0, icon: '🔍', color: 'text-teal-400' },
   ];
 
   const healthScore = health?.score ?? 0;
