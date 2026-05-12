@@ -154,18 +154,23 @@ export default function DeploymentsPage() {
               <div className="h-10 w-10 rounded-xl bg-nexus-cyan/10 flex items-center justify-center">
                 <Shield className="h-5 w-5 text-nexus-cyan" />
               </div>
-              <h3 className="text-xl font-heading font-black text-foreground">Status Operacional</h3>
+              <h3 className="text-xl font-heading font-black text-foreground">Saúde & SLA</h3>
             </div>
             <div className="space-y-4">
               {[
-                { label: 'Gateway Neural', status: 'Online', color: 'text-nexus-emerald' },
-                { label: 'Cluster de Produção', status: 'Sincronizado', color: 'text-nexus-emerald' },
-                { label: 'CDN de WebWidgets', status: 'Ativa', color: 'text-nexus-emerald' },
-                { label: 'Canal WhatsApp', status: 'Offline', color: 'text-muted-foreground' },
+                { label: 'Gateway Neural', status: 'Online', val: '99.99%', color: 'text-nexus-emerald' },
+                { label: 'Latência Global', status: 'P95', val: '142ms', color: 'text-nexus-emerald' },
+                { label: 'Taxa de Erro', status: 'Estável', val: '0.02%', color: 'text-nexus-emerald' },
+                { label: 'Rollback Status', status: 'Inativo', val: 'V6.2', color: 'text-muted-foreground' },
               ].map((s, i) => (
-                <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-card border border-border/40">
-                  <span className="text-xs font-bold text-foreground">{s.label}</span>
-                  <Badge variant="outline" className={cn("text-[9px] font-black uppercase tracking-widest border-none px-2", s.color)}>{s.status}</Badge>
+                <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-card border border-border/40 group hover:border-primary/30 transition-all">
+                  <div className="flex flex-col">
+                    <span className="text-xs font-bold text-foreground">{s.label}</span>
+                    <span className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">{s.status}</span>
+                  </div>
+                  <div className="text-right">
+                    <span className={cn("text-xs font-black font-mono", s.color)}>{s.val}</span>
+                  </div>
                 </div>
               ))}
             </div>
