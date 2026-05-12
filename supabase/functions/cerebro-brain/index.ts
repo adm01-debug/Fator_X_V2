@@ -383,16 +383,8 @@ serve(async (req) => {
         recent_memories: recentMemories || [],
       }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
-        agents: agents.count || 0,
-        knowledge_bases: kbs.count || 0,
-        chunks: chunks.count || 0,
-        traces: traces.count || 0,
-        memories: memories.count || 0,
-        tools: tools.count || 0,
-        workflows: workflows.count || 0,
-        today_traces: todayTraces || 0,
-      }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
-    }
+
+
 
     return new Response(JSON.stringify({ error: `Unknown action: ${action}` }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
   } catch (error: unknown) {
