@@ -340,19 +340,19 @@ export default function AgentVersioningPage() {
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
       <PageHeader
-        title={`Versionamento — ${agent.name}`}
-        description="Crie novas versões do prompt e ferramentas com changelog automático e comparação visual."
+        title={`Versionamento & Rastro Histórico — ${agent.name}`}
+        description="Audite a evolução do DNA digital. Compare deltas estruturais, reverta para estados íntegros e visualize diffs semânticos com precisão industrial."
         backTo={`/agents/${id}`}
         actions={
           <div className="flex items-center gap-2">
             <CopyLinkButton />
             <Button
               size="sm"
-              className="gap-1.5 nexus-gradient-bg text-primary-foreground hover:opacity-90"
+              className="gap-1.5 nexus-gradient-bg text-primary-foreground hover:opacity-90 font-bold px-4 rounded-xl shadow-lg shadow-primary/20"
               onClick={() => setNewOpen(true)}
               disabled={!selected}
             >
-              <Plus className="h-3.5 w-3.5" /> Nova versão
+              <Plus className="h-4 w-4" /> Nova Versão Canônica
             </Button>
           </div>
         }
