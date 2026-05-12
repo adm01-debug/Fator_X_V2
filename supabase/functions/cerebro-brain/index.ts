@@ -5,7 +5,7 @@ import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse, check
 
 // CORS handled by _shared/cors.ts — dynamic origin whitelist
 
-const VALID_ACTIONS = ['knowledge_graph', 'knowledge_health', 'auto_extract', 'expert_discovery', 'brain_sandbox', 'stats', 'temporal_graph', 'entity_resolution', 'decay_detection'] as const;
+const VALID_ACTIONS = ['knowledge_graph', 'knowledge_health', 'auto_extract', 'expert_discovery', 'brain_sandbox', 'stats', 'temporal_graph', 'entity_resolution', 'decay_detection', 'memory_manager', 'knowledge_decay'] as const;
 type CerebroAction = typeof VALID_ACTIONS[number];
 
 const VALID_EXTRACT_TYPES = ['entities', 'facts', 'rules', 'contacts'] as const;
@@ -350,7 +350,7 @@ serve(async (req) => {
       }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
-    // ═══ ACTION: temporal_graph ═══
+    // ═══ ACTION: temporal_events ═══
     if (action === 'temporal_graph') {
       const { data: events } = await supabase.from('agent_traces')
         .select('id, created_at, agent_id, event_type, metadata')
@@ -360,6 +360,11 @@ serve(async (req) => {
       const { data: agents } = await supabase.from('agents').select('id, name');
       const agentMap = Object.fromEntries((agents || []).map(a => [a.id, a.name]));
 
+      const { data: relations } = await supabase.from('knowledge_relations')
+        .select('*, source:knowledge_entities!source_id(name, entity_type), target:knowledge_entities!target_id(name, entity_type)')
+        .order('created_at', { ascending: false })
+        .limit(100);
+
       return new Response(JSON.stringify({
         timeline: (events || []).map(e => ({
           id: e.id,
@@ -367,52 +372,93 @@ serve(async (req) => {
           agent: agentMap[e.agent_id!] || 'Sistema',
           type: e.event_type,
           info: e.metadata
-        }))
+        })),
+        relations: relations || [],
       }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
     // ═══ ACTION: entity_resolution ═══
     if (action === 'entity_resolution') {
-      const { data: entities } = await supabase.from('agent_memories')
-        .select('id, content, memory_type, agent_id')
-        .eq('memory_type', 'semantic')
+      const { data: entities } = await supabase.from('knowledge_entities')
+        .select('*')
+        .order('importance_score', { ascending: false })
         .limit(200);
 
       const conflicts = (entities || [])
-        .filter((e, i, arr) => arr.findIndex(t => t.content === e.content) !== i)
-        .map(e => ({ id: e.id, term: e.content, reason: 'Duplicidade semântica detectada' }));
+        .filter((e, i, arr) => arr.findIndex(t => t.name === e.name && t.entity_type === e.entity_type) !== i)
+        .map(e => ({ id: e.id, term: e.name, reason: 'Duplicidade de entidade detectada' }));
+
+      const { data: resolutionLogs } = await supabase.from('entity_resolution_logs')
+        .select('*, primary_entity:knowledge_entities!primary_entity_id(name)')
+        .order('created_at', { ascending: false })
+        .limit(20);
 
       return new Response(JSON.stringify({
-        resolved: (entities || []).length - conflicts.length,
+        entities: entities || [],
+        resolved_count: (entities || []).length - conflicts.length,
         conflicts,
+        logs: resolutionLogs || [],
         total_analyzed: (entities || []).length
       }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
     // ═══ ACTION: decay_detection ═══
     if (action === 'decay_detection') {
-      const { data: memories } = await supabase.from('agent_memories')
-        .select('id, created_at, content, importance_score')
+      const { data: memories } = await supabase.from('agent_memories_v2')
+        .select('*')
         .order('created_at', { ascending: true })
         .limit(100);
 
       const now = new Date();
       const decayed = (memories || []).map(m => {
         const ageInDays = Math.floor((now.getTime() - new Date(m.created_at).getTime()) / 86400000);
-        const baseImportance = Number(m.importance_score || 5);
-        const currentRelevance = Math.max(0, baseImportance - (ageInDays * 0.1));
+        const baseImportance = Number(m.importance_score || 1.0);
+        const decayRate = Number(m.decay_rate || 0.05);
+        const currentScore = Math.max(0, baseImportance * Math.exp(-decayRate * (ageInDays / 30)));
         
         return {
           id: m.id,
           content: m.content,
+          type: m.memory_type,
           age: ageInDays,
           original_score: baseImportance,
-          current_score: currentRelevance,
-          status: currentRelevance < 2 ? 'forgotten' : currentRelevance < 4 ? 'decaying' : 'active'
+          current_score: currentScore,
+          status: currentScore < 0.2 ? 'forgotten' : currentScore < 0.5 ? 'decaying' : 'active'
         };
       });
 
       return new Response(JSON.stringify({ items: decayed }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    }
+
+    // ═══ ACTION: memory_manager ═══
+    if (action === 'memory_manager') {
+       const { data: memories } = await supabase.from('agent_memories_v2')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(100);
+      
+      const stats = {
+        episodic: memories?.filter(m => m.memory_type === 'episodic').length || 0,
+        semantic: memories?.filter(m => m.memory_type === 'semantic').length || 0,
+        procedural: memories?.filter(m => m.memory_type === 'procedural').length || 0,
+        l0: memories?.filter(m => m.context_tier === 'L0').length || 0,
+        l1: memories?.filter(m => m.context_tier === 'L1').length || 0,
+        l2: memories?.filter(m => m.context_tier === 'L2').length || 0,
+      };
+
+      return new Response(JSON.stringify({ memories: memories || [], stats }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    }
+
+    // ═══ ACTION: temporal_graph (Enhanced) ═══
+    if (action === 'temporal_graph') {
+      const { data: relations } = await supabase.from('knowledge_relations')
+        .select('*, source:knowledge_entities!source_id(name, entity_type), target:knowledge_entities!target_id(name, entity_type)')
+        .order('created_at', { ascending: false })
+        .limit(100);
+
+      return new Response(JSON.stringify({
+        relations: relations || [],
+      }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
     // ═══ ACTION: stats ═══

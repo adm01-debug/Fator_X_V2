@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { invokeCerebroBrain } from "@/services/cerebroService";
 import { Loader2, Clock, TrendingUp, Calendar, Activity } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -73,12 +74,38 @@ export function TemporalGraphTab() {
 
   const { data: snapshot, isLoading: snapLoading, refetch: refetchSnap } = useQuery({
     queryKey: ['temporal-snapshot', window],
-    queryFn: () => getTemporalSnapshot(window),
+    queryFn: async () => {
+      // Try to get enhanced temporal data from edge function
+      try {
+        const enhanced = await invokeCerebroBrain({ action: 'temporal_graph' });
+        const legacy = await getTemporalSnapshot(window);
+        return { ...legacy, relations: enhanced?.relations || [] };
+      } catch (e) {
+        return getTemporalSnapshot(window);
+      }
+    },
   });
 
   const { data: timeline = [], isLoading: timelineLoading } = useQuery({
     queryKey: ['temporal-timeline'],
-    queryFn: () => listRecentMemoryEvents(30),
+    queryFn: async () => {
+      try {
+        const enhanced = await invokeCerebroBrain({ action: 'temporal_graph' });
+        if (enhanced?.timeline?.length) {
+          return enhanced.timeline.map((e: any) => ({
+            id: e.id,
+            content: `${e.type}: ${JSON.stringify(e.info)}`,
+            memory_type: e.type,
+            source: e.agent,
+            created_at: e.time,
+            relevance_score: 1.0
+          }));
+        }
+        return listRecentMemoryEvents(30);
+      } catch (e) {
+        return listRecentMemoryEvents(30);
+      }
+    },
   });
 
   return (

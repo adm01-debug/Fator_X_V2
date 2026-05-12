@@ -477,6 +477,48 @@ export type Database = {
           },
         ]
       }
+      agent_memories_v2: {
+        Row: {
+          agent_id: string | null
+          content: string
+          context_tier: string | null
+          created_at: string | null
+          decay_rate: number | null
+          embedding: string | null
+          id: string
+          importance_score: number | null
+          last_accessed_at: string | null
+          memory_type: string
+          metadata: Json | null
+        }
+        Insert: {
+          agent_id?: string | null
+          content: string
+          context_tier?: string | null
+          created_at?: string | null
+          decay_rate?: number | null
+          embedding?: string | null
+          id?: string
+          importance_score?: number | null
+          last_accessed_at?: string | null
+          memory_type: string
+          metadata?: Json | null
+        }
+        Update: {
+          agent_id?: string | null
+          content?: string
+          context_tier?: string | null
+          created_at?: string | null
+          decay_rate?: number | null
+          embedding?: string | null
+          id?: string
+          importance_score?: number | null
+          last_accessed_at?: string | null
+          memory_type?: string
+          metadata?: Json | null
+        }
+        Relationships: []
+      }
       agent_skills: {
         Row: {
           agent_id: string
@@ -1734,6 +1776,8 @@ export type Database = {
           document_id: string | null
           embedding_status: string | null
           id: string
+          l0_abstract: string | null
+          l1_overview: string | null
           metadata: Json | null
           token_count: number | null
         }
@@ -1744,6 +1788,8 @@ export type Database = {
           document_id?: string | null
           embedding_status?: string | null
           id?: string
+          l0_abstract?: string | null
+          l1_overview?: string | null
           metadata?: Json | null
           token_count?: number | null
         }
@@ -1754,6 +1800,8 @@ export type Database = {
           document_id?: string | null
           embedding_status?: string | null
           id?: string
+          l0_abstract?: string | null
+          l1_overview?: string | null
           metadata?: Json | null
           token_count?: number | null
         }
@@ -2520,6 +2568,41 @@ export type Database = {
             columns: ["drill_id"]
             isOneToOne: false
             referencedRelation: "dr_drills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      entity_resolution_logs: {
+        Row: {
+          confidence: number | null
+          created_at: string | null
+          id: string
+          merged_entity_id: string | null
+          primary_entity_id: string | null
+          resolution_method: string | null
+        }
+        Insert: {
+          confidence?: number | null
+          created_at?: string | null
+          id?: string
+          merged_entity_id?: string | null
+          primary_entity_id?: string | null
+          resolution_method?: string | null
+        }
+        Update: {
+          confidence?: number | null
+          created_at?: string | null
+          id?: string
+          merged_entity_id?: string | null
+          primary_entity_id?: string | null
+          resolution_method?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entity_resolution_logs_primary_entity_id_fkey"
+            columns: ["primary_entity_id"]
+            isOneToOne: false
+            referencedRelation: "knowledge_entities"
             referencedColumns: ["id"]
           },
         ]
@@ -3849,6 +3932,93 @@ export type Database = {
             columns: ["workspace_id"]
             isOneToOne: false
             referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      knowledge_entities: {
+        Row: {
+          created_at: string | null
+          entity_type: string
+          id: string
+          importance_score: number | null
+          last_seen_at: string | null
+          metadata: Json | null
+          name: string
+          properties: Json | null
+          updated_at: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          entity_type: string
+          id?: string
+          importance_score?: number | null
+          last_seen_at?: string | null
+          metadata?: Json | null
+          name: string
+          properties?: Json | null
+          updated_at?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          entity_type?: string
+          id?: string
+          importance_score?: number | null
+          last_seen_at?: string | null
+          metadata?: Json | null
+          name?: string
+          properties?: Json | null
+          updated_at?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      knowledge_relations: {
+        Row: {
+          created_at: string | null
+          id: string
+          properties: Json | null
+          relation_type: string
+          source_id: string | null
+          strength: number | null
+          target_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          properties?: Json | null
+          relation_type: string
+          source_id?: string | null
+          strength?: number | null
+          target_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          properties?: Json | null
+          relation_type?: string
+          source_id?: string | null
+          strength?: number | null
+          target_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "knowledge_relations_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "knowledge_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "knowledge_relations_target_id_fkey"
+            columns: ["target_id"]
+            isOneToOne: false
+            referencedRelation: "knowledge_entities"
             referencedColumns: ["id"]
           },
         ]
@@ -7271,6 +7441,19 @@ export type Database = {
       rollback_change: {
         Args: { p_change_id: string; p_post_mortem_url: string }
         Returns: undefined
+      }
+      search_context_l0: {
+        Args: { p_collection_id?: string; p_limit?: number; p_query: string }
+        Returns: {
+          chunk_id: string
+          collection_id: string
+          document_id: string
+          l0_abstract: string
+          l1_overview: string
+          l2_content: string
+          relevance_score: number
+          token_count: number
+        }[]
       }
       start_dr_drill: { Args: { p_drill_id: string }; Returns: Json }
       start_game_day: {

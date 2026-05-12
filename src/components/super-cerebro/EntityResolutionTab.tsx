@@ -11,6 +11,7 @@ import {
   mergeEntityCluster,
   type EntityCluster,
 } from "@/services/entityResolutionService";
+import { invokeCerebroBrain } from "@/services/cerebroService";
 import { AccessControl, DangerousActionDialog } from "@/components/rbac";
 
 export function EntityResolutionTab() {
@@ -21,7 +22,15 @@ export function EntityResolutionTab() {
 
   const { data: report, isLoading, refetch, isFetching } = useQuery({
     queryKey: ['entity-resolution', threshold, scanLimit],
-    queryFn: () => resolveMemoryEntities(scanLimit, threshold),
+    queryFn: async () => {
+      try {
+        await invokeCerebroBrain({ action: 'entity_resolution' });
+        // Fallback or merge with legacy
+        return resolveMemoryEntities(scanLimit, threshold);
+      } catch (e) {
+        return resolveMemoryEntities(scanLimit, threshold);
+      }
+    },
   });
 
   const handleMerge = async (cluster: EntityCluster) => {

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { invokeCerebroBrain } from "@/services/cerebroService";
 import {
   Loader2,
   TrendingDown,
@@ -36,7 +37,14 @@ export function DecayDetectionTab() {
 
   const { data: report, isLoading, refetch, isFetching } = useQuery({
     queryKey: ['knowledge-decay', scanLimit],
-    queryFn: () => detectKnowledgeDecay(scanLimit),
+    queryFn: async () => {
+      try {
+        await invokeCerebroBrain({ action: 'decay_detection' });
+        return detectKnowledgeDecay(scanLimit);
+      } catch (e) {
+        return detectKnowledgeDecay(scanLimit);
+      }
+    },
   });
 
   const filteredItems = report?.items.filter(
