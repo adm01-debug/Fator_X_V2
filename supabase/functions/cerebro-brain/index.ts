@@ -5,7 +5,7 @@ import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse, check
 
 // CORS handled by _shared/cors.ts — dynamic origin whitelist
 
-const VALID_ACTIONS = ['knowledge_graph', 'knowledge_health', 'auto_extract', 'expert_discovery', 'brain_sandbox', 'stats', 'temporal_graph', 'entity_resolution', 'decay_detection'] as const;
+const VALID_ACTIONS = ['knowledge_graph', 'knowledge_health', 'auto_extract', 'expert_discovery', 'brain_sandbox', 'stats', 'temporal_graph', 'entity_resolution', 'decay_detection', 'memory_manager', 'knowledge_decay'] as const;
 type CerebroAction = typeof VALID_ACTIONS[number];
 
 const VALID_EXTRACT_TYPES = ['entities', 'facts', 'rules', 'contacts'] as const;
