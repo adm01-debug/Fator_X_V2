@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { TrendingDown, DollarSign, Zap, Lightbulb, ArrowDown, PieChart, Wallet, ShieldCheck, Sparkles, Loader2, ArrowUpRight } from "lucide-react";
+import { TrendingDown, DollarSign, Zap, Lightbulb, ArrowDown, PieChart, Wallet, ShieldCheck, Sparkles, ArrowUpRight } from "lucide-react";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { getDashboardMetrics } from "@/services/monitoringService";
