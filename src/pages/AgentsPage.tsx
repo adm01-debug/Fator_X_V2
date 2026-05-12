@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Bot, Plus, Search, Filter, BookOpen, GitBranch, Activity,
-  Download, Upload, Trash2, Archive, CheckSquare, X,
+  Download, Upload, Trash2, Archive, CheckSquare, X, Network,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
