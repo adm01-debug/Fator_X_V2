@@ -12,6 +12,7 @@ interface OracleStore {
   mode: OracleMode;
   selectedPreset: string;
   isRunning: boolean;
+  isReplaying: boolean;
   currentStage: number;
   stageLabel: string;
   results: OracleResult | null;
@@ -26,6 +27,7 @@ interface OracleStore {
   enableThinking: boolean;
   chairmanModel: string;
   chairmanSelection: 'auto' | 'manual';
+  abortController: AbortController | null;
 
   setQuery: (q: string) => void;
   setMode: (m: OracleMode) => void;
@@ -34,7 +36,9 @@ interface OracleStore {
   setChairmanModel: (m: string) => void;
   setChairmanSelection: (s: 'auto' | 'manual') => void;
   submitQuery: () => Promise<void>;
+  cancelQuery: () => void;
   clearResults: () => void;
+  replayEntry: (entry: OracleResult) => Promise<void>;
 }
 
 // ═══ STORE ═══
