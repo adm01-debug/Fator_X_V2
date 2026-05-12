@@ -558,9 +558,3 @@ export default function PromptEditorPage() {
       </Tabs>
     </div>
   );
-}
-
-      </Tabs>
-    </div>
-  );
-}
