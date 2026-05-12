@@ -123,14 +123,79 @@ export function CronSchedulerPanel() {
 
       {/* Actions */}
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Agendamentos</h3>
+        <h3 className="text-lg font-bold flex items-center gap-2">
+          <Calendar className="h-5 w-5 text-primary" />
+          Agendamentos
+        </h3>
         <div className="flex gap-2">
+          <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+            <DialogTrigger asChild>
+              <Button size="sm" className="nexus-gradient-bg text-primary-foreground gap-1.5 h-9 rounded-xl font-bold">
+                <Plus className="h-4 w-4" /> Novo Agendamento
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[500px] rounded-[2rem] border-border/40 p-8 shadow-2xl">
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-heading font-black">Configurar Cron-Job</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-6 mt-4">
+                <div className="space-y-2">
+                  <Label className="text-xs font-black uppercase text-muted-foreground tracking-widest">Nome da Automação</Label>
+                  <Input 
+                    value={newName} 
+                    onChange={(e) => setNewName(e.target.value)} 
+                    placeholder="Ex: Sync de Estoque Diário" 
+                    className="h-11 rounded-xl bg-secondary/30"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-xs font-black uppercase text-muted-foreground tracking-widest">Target Type</Label>
+                    <Select value={targetType} onValueChange={setTargetType}>
+                      <SelectTrigger className="h-11 rounded-xl bg-secondary/30">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="workflow">Workflow</SelectItem>
+                        <SelectItem value="agent">Agente</SelectItem>
+                        <SelectItem value="webhook">Webhook</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs font-black uppercase text-muted-foreground tracking-widest">ID do Alvo</Label>
+                    <Input 
+                      value={targetId} 
+                      onChange={(e) => setTargetId(e.target.value)} 
+                      placeholder="UUID do recurso" 
+                      className="h-11 rounded-xl bg-secondary/30"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                   <Label className="text-xs font-black uppercase text-muted-foreground tracking-widest">Editor Visual Cron</Label>
+                   <CronVisualEditor value={newCron} onChange={setNewCron} />
+                </div>
+
+                <DialogFooter className="pt-4">
+                  <Button variant="outline" onClick={() => setCreateOpen(false)} className="h-12 rounded-xl px-6">Cancelar</Button>
+                  <Button onClick={handleCreate} disabled={saving} className="h-12 px-8 rounded-xl nexus-gradient-bg text-primary-foreground font-bold shadow-lg shadow-primary/20">
+                    {saving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Settings2 className="h-5 w-5" />}
+                    <span className="ml-2">Ativar Job</span>
+                  </Button>
+                </DialogFooter>
+              </div>
+            </DialogContent>
+          </Dialog>
+
           <Button
             variant="outline"
             size="sm"
             onClick={handleRunPending}
             disabled={running}
-            className="border-border hover:border-primary"
+            className="border-border hover:border-primary h-9 rounded-xl font-bold gap-1.5"
           >
             {running ? (
               <Loader2 size={14} className="mr-1 animate-spin" />
