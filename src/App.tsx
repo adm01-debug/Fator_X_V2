@@ -241,6 +241,7 @@ const App = () => (
                       <Route path="/voice-agents" element={<SafePage><VoiceAgentsPage /></SafePage>} />
                       <Route path="/browser-agent" element={<SafePage><BrowserAgentPage /></SafePage>} />
                       <Route path="/orchestration" element={<SafePage><AgentOrchestrationPage /></SafePage>} />
+                      <Route path="/agents/swarm" element={<SafePage><SwarmOrchestrationPage /></SafePage>} />
                       <Route path="/replay" element={<SafePage><ReplayForkPage /></SafePage>} />
                       <Route path="/sso" element={<SafePage><ProtectedRoute permission="settings.api_keys"><EnterpriseSSOPage /></ProtectedRoute></SafePage>} />
                       <Route path="/residency" element={<SafePage><ProtectedRoute permission="settings.api_keys"><DataResidencyPage /></ProtectedRoute></SafePage>} />
