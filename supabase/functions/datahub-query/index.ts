@@ -211,8 +211,51 @@ serve(async (req) => {
     }
 
 
-    // ═══ ACTION: list_entities ═══
+    // ═══ ACTION: list_entities (Optimized with Streaming) ═══
     if (action === 'list_entities') {
+      const isStreaming = body.streaming === true;
+
+      if (isStreaming) {
+        const stream = new ReadableStream({
+          async start(controller) {
+            controller.enqueue(sseEvent('start', { total_entities: Object.keys(ENTITY_MAPPINGS).length }));
+            
+            for (const [entityId, mapping] of Object.entries(ENTITY_MAPPINGS)) {
+              try {
+                const client = getExternalClient(mapping.primary.connection);
+                let query = client.from(mapping.primary.table).select('id', { count: 'exact', head: true });
+                if (mapping.primary.filter) query = applyStaticFilter(query, mapping.primary.filter);
+                
+                const startTime = performance.now();
+                const { count, error } = await query;
+                const latency = Math.round(performance.now() - startTime);
+                
+                if (error) throw new Error(error.message);
+                
+                controller.enqueue(sseEvent('entity_count', { 
+                  id: entityId, 
+                  count: count ?? 0,
+                  latency_ms: latency
+                }));
+              } catch {
+                controller.enqueue(sseEvent('entity_count', { id: entityId, count: -1 }));
+              }
+            }
+            
+            controller.enqueue(sseEvent('done', { timestamp: new Date().toISOString() }));
+            controller.close();
+          }
+        });
+
+        return new Response(stream, { 
+          headers: { 
+            ...getCorsHeaders(req), 
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache'
+          } 
+        });
+      }
+
       const counts: Record<string, number> = {};
       for (const [entityId, mapping] of Object.entries(ENTITY_MAPPINGS)) {
         try {
@@ -227,6 +270,7 @@ serve(async (req) => {
       }
       return new Response(JSON.stringify({ entities: counts }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
+
 
     // ═══ ACTION: query_entity ═══
     if (action === 'query_entity') {
