@@ -14,7 +14,9 @@ import { toast } from 'sonner';
 export function Bitrix24Connect() {
   const [connected, setConnected] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [testing, setTesting] = useState(false);
   const [domain, setDomain] = useState<string | null>(null);
+  const [tokenInfo, setTokenInfo] = useState<{ expires?: string } | null>(null);
 
   useEffect(() => {
     checkStatus();
