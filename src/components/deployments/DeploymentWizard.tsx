@@ -14,7 +14,7 @@ interface DeploymentWizardProps {
   onDeploy: (env: 'staging' | 'production') => void;
 }
 
-export function DeploymentWizard({ agentId, agentName, isOpen, onOpenChange, onDeploy }: DeploymentWizardProps) {
+export function DeploymentWizard({ agentName, isOpen, onOpenChange, onDeploy }: DeploymentWizardProps) {
   const [step, setStep] = useState(1);
   const [targetEnv, setTargetEnv] = useState<'staging' | 'production' | null>(null);
   const [isDeploying, setIsDeploying] = useState(false);
