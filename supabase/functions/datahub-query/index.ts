@@ -2,16 +2,12 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse, checkRateLimit, getRateLimitIdentifier, createRateLimitResponse, RATE_LIMITS } from "../_shared/mod.ts";
 
-// CORS handled by _shared/cors.ts — dynamic origin whitelist
+const encoder = new TextEncoder();
 
-/* ── Connection registry ─────────────────────────────── */
+function sseEvent(event: string, data: any) {
+  return encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+}
 
-const CONNECTION_REGISTRY: Record<string, { urlEnv: string; keyEnv: string }> = {
-  bancodadosclientes:      { urlEnv: 'BANCODADOSCLIENTES_URL',      keyEnv: 'BANCODADOSCLIENTES_SERVICE_ROLE_KEY' },
-  'supabase-fuchsia-kite': { urlEnv: 'FUCHSIA_KITE_URL',            keyEnv: 'FUCHSIA_KITE_SERVICE_ROLE_KEY' },
-  gestao_time_promo:       { urlEnv: 'GESTAO_TIME_PROMO_URL',       keyEnv: 'GESTAO_TIME_PROMO_SERVICE_ROLE_KEY' },
-  backupgiftstore:         { urlEnv: 'BACKUPGIFTSTORE_URL',          keyEnv: 'BACKUPGIFTSTORE_SERVICE_ROLE_KEY' },
-};
 
 function getExternalClient(connectionId: string) {
   const reg = CONNECTION_REGISTRY[connectionId];
