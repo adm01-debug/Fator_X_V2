@@ -52,6 +52,7 @@ export default function DeploymentsPage() {
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
           <WebWidgetPanel agentId={deployments[0]?.id} agentName={deployments[0]?.name} />
+          <ApprovalQueuePanel />
           
           <div className="space-y-4">
             <div className="flex items-center justify-between">
