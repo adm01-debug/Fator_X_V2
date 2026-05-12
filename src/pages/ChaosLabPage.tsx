@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { AlertTriangle, Zap, Power, Trash2, Activity, Clock } from 'lucide-react';
+import { AlertTriangle, Zap, Power, Trash2, Activity, Clock, ShieldAlert, BarChart3, Globe } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
