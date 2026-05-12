@@ -1,7 +1,10 @@
-import { Loader2, Network, Activity, TrendingUp, Database, Zap } from "lucide-react";
+import { Loader2, Network, Activity, TrendingUp, Database, Zap, GitMerge, TrendingDown, Layers } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { invokeCerebroBrain, getHealthScore } from "@/services/cerebroService";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { compactMemories } from "@/services/memoryService";
+import { useState } from "react";
 
 interface MemoryEntry {
   id: string;
