@@ -27,6 +27,8 @@ interface CerebroStats {
 }
 
 export function OverviewTab() {
+  const queryClient = useQueryClient();
+  const [compacting, setCompacting] = useState(false);
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['cerebro_stats'],
     queryFn: async () => {
