@@ -91,12 +91,24 @@ export async function invokeLLMGateway(body: {
   sessionId?: string;
 }) {
   const retryLimit = 2;
+  const fallbacks = ["gpt-4o-mini", "claude-3-haiku-20240307", "gemini-1.5-flash"];
   let attempt = 0;
   let lastError: any;
 
   while (attempt <= retryLimit) {
+    const currentModel = attempt === 0 ? body.model : fallbacks[attempt - 1] || body.model;
+    const currentBody = { ...body, model: currentModel };
+
     try {
-      return await tracedInvoke('llm-gateway', body, {
+      if (attempt > 0) {
+        logger.warn(`Self-Healing: Triggering fallback model due to previous failure`, { 
+          original_model: body.model, 
+          fallback_model: currentModel,
+          attempt 
+        });
+      }
+
+      return await tracedInvoke('llm-gateway', currentBody, {
         spanKind: 'llm',
         agentId: body.agentId,
         sessionId: body.sessionId,
@@ -111,8 +123,11 @@ export async function invokeLLMGateway(body: {
       attempt++;
       lastError = err;
       if (attempt <= retryLimit) {
-        const backoff = Math.pow(2, attempt) * 1000;
-        logger.warn(`llm-gateway attempt ${attempt} failed, retrying in ${backoff}ms`, { error: (err as any).message });
+        const backoff = Math.pow(2, attempt) * 500; // Faster backoff for self-healing
+        logger.warn(`llm-gateway attempt ${attempt} failed, retrying with self-healing...`, { 
+          error: (err as any).message,
+          next_model: fallbacks[attempt - 1] || body.model
+        });
         await new Promise(r => setTimeout(r, backoff));
       }
     }
