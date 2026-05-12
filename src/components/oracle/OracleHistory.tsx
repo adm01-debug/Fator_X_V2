@@ -118,6 +118,12 @@ export function OracleHistory({ onClose }: OracleHistoryProps) {
                     </div>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
+                    <Button size="icon" variant="ghost" className="h-7 w-7 text-primary" onClick={() => {
+                        store.replayEntry(entry.results);
+                        onClose?.();
+                      }}>
+                      <Play className="h-3.5 w-3.5" />
+                    </Button>
                     <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => setExpandedId(expandedId === entry.id ? null : entry.id)}>
                       <Eye className="h-3.5 w-3.5" />
                     </Button>
