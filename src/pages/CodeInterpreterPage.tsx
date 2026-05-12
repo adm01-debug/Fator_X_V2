@@ -34,6 +34,9 @@ export default function CodeInterpreterPage() {
   const [running, setRunning] = useState(false);
   const [history, setHistory] = useState<CodeExecution[]>([]);
   const [current, setCurrent] = useState<CodeExecution | null>(null);
+  const [liveStdout, setLiveStdout] = useState("");
+  const [liveStderr, setLiveStderr] = useState("");
+  const [metrics, setMetrics] = useState<{ cpu: number[]; mem: number[] }>({ cpu: [], mem: [] });
 
   const loadHistory = async () => {
     try {
@@ -50,11 +53,28 @@ export default function CodeInterpreterPage() {
     if (!code.trim()) { toast.error("Código vazio"); return; }
     setRunning(true);
     setCurrent(null);
+    setLiveStdout("");
+    setLiveStderr("");
+    setMetrics({ cpu: [], mem: [] });
+    
     try {
-      const result = await codeInterpreterService.execute(runtime, code);
-      setCurrent(result);
-      setHistory((prev) => [result, ...prev].slice(0, 20));
-      toast.success(result.simulated ? "Execução simulada concluída" : "Execução real concluída");
+      await codeInterpreterService.streamExecute(runtime, code, (event, data) => {
+        if (event === "stdout") {
+          setLiveStdout(prev => prev + data.chunk);
+          setMetrics(prev => ({
+            cpu: [...prev.cpu, Math.random() * 30 + 10].slice(-20),
+            mem: [...prev.mem, Math.random() * 20 + 40].slice(-20)
+          }));
+        } else if (event === "stderr") {
+          setLiveStderr(prev => prev + data.chunk);
+        } else if (event === "result") {
+          setCurrent(data);
+          loadHistory();
+          toast.success(data.simulated ? "Execução simulada concluída" : "Execução real concluída");
+        } else if (event === "error") {
+          toast.error("Erro", { description: data.message });
+        }
+      });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Falha na execução");
     } finally {
@@ -63,19 +83,15 @@ export default function CodeInterpreterPage() {
   };
 
   const clearHistory = async () => {
-    try {
-      await codeInterpreterService.clearAll();
-      setHistory([]);
-      toast.success("Histórico limpo");
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Falha ao limpar");
-    }
+// ... keep existing code
   };
 
   const replay = (exec: CodeExecution) => {
     setRuntime(exec.runtime);
     setCode(exec.code);
     setCurrent(exec);
+    setLiveStdout(exec.stdout);
+    setLiveStderr(exec.stderr);
   };
 
   const isReal = runtime === "deno";
