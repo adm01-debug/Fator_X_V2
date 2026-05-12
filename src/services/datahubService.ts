@@ -5,6 +5,55 @@
 import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/lib/logger';
 
+export async function streamInvoke(action: string, payload: Record<string, any>, onEvent: (event: string, data: any) => void) {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error('Not authenticated');
+
+  const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/datahub-query`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${session.access_token}`,
+      'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+    },
+    body: JSON.stringify({ action, streaming: true, ...payload }),
+  });
+
+  if (!response.ok || !response.body) throw new Error(`Streaming failed: ${response.statusText}`);
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const parts = buffer.split('\n\n');
+    buffer = parts.pop() || '';
+
+    for (const part of parts) {
+      const lines = part.split('\n');
+      let event = 'message';
+      let data = null;
+
+      for (const line of lines) {
+        if (line.startsWith('event: ')) event = line.slice(7);
+        else if (line.startsWith('data: ')) {
+          try {
+            data = JSON.parse(line.slice(6));
+          } catch (e) {
+            console.error('Error parsing SSE data', e);
+          }
+        }
+      }
+
+      if (data) onEvent(event, data);
+    }
+  }
+}
+
 export async function queryEntity(
   entityType: string,
   filters?: Record<string, unknown>,
