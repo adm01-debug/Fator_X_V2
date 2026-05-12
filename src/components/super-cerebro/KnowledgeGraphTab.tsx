@@ -37,6 +37,9 @@ export function KnowledgeGraphTab() {
     knowledge_base: { emoji: '📚', label: 'Bases de Conhecimento', color: 'border-nexus-emerald/50 bg-nexus-emerald/5' },
     tool: { emoji: '🔧', label: 'Ferramentas', color: 'border-nexus-amber/50 bg-nexus-amber/5' },
     workflow: { emoji: '🔄', label: 'Workflows', color: 'border-cyan-500/50 bg-cyan-500/5' },
+    person: { emoji: '👤', label: 'Pessoas', color: 'border-nexus-blue/50 bg-nexus-blue/5' },
+    organization: { emoji: '🏢', label: 'Empresas', color: 'border-nexus-purple/50 bg-nexus-purple/5' },
+    concept: { emoji: '💡', label: 'Conceitos', color: 'border-nexus-orange/50 bg-nexus-orange/5' },
   };
 
   return (
@@ -57,12 +60,12 @@ export function KnowledgeGraphTab() {
         <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
       ) : (
         <>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2">
             {Object.entries(typeConfig).map(([type, cfg]) => (
-              <div key={type} className={`nexus-card text-center py-3 border ${cfg.color}`}>
-                <p className="text-xl mb-1">{cfg.emoji}</p>
-                <p className="text-lg font-bold text-foreground">{nodesByType(type).length}</p>
-                <p className="text-[11px] text-muted-foreground">{cfg.label}</p>
+              <div key={type} className={`nexus-card text-center py-2 border ${cfg.color}`}>
+                <p className="text-lg mb-0.5">{cfg.emoji}</p>
+                <p className="text-base font-bold text-foreground">{nodesByType(type).length}</p>
+                <p className="text-[9px] text-muted-foreground uppercase font-black">{cfg.label}</p>
               </div>
             ))}
           </div>

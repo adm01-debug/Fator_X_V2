@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -11,8 +10,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { 
-  Loader2, MessageSquare, Sparkles, ArrowUpDown, Search, 
-  History, X, Layers, ShieldCheck, Zap 
+  Loader2, Sparkles, ArrowUpDown, Search, 
+  History, Layers, ShieldCheck, Zap 
 } from 'lucide-react';
 import { invokeCerebroQuery, queryTiered } from '@/services/cerebroService';
 import { toast } from 'sonner';
@@ -186,148 +185,157 @@ export function SearchTab() {
 
   return (
     <div className="space-y-6">
-      {/* ── Consulta Semântica ── */}
-      <div className="nexus-card space-y-4">
-        <h3 className="text-sm font-heading font-semibold text-foreground flex items-center gap-2">
-          <MessageSquare className="h-4 w-4 text-primary" /> Consultar o Super Cérebro
-        </h3>
-        <Textarea
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Pergunte ao Super Cérebro... Ex: Quais são nossos principais fornecedores?"
-          className="bg-secondary/50 min-h-[80px] text-sm"
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-              e.preventDefault();
-              handleSearch();
-            }
-          }}
-        />
-        {history.length > 0 && (
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between">
-              <p className="text-[10px] text-muted-foreground flex items-center gap-1">
-                <History className="h-3 w-3" /> Histórico recente
-              </p>
-              <button
-                onClick={() => {
-                  setHistory([]);
-                  saveHistory([]);
-                }}
-                className="text-[10px] text-muted-foreground hover:text-destructive flex items-center gap-0.5"
-              >
-                <X className="h-2.5 w-2.5" /> Limpar
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-1.5">
-              {history.map((h, i) => (
-                <button
-                  key={i}
-                  onClick={() => setQuery(h)}
-                  className="px-2 py-1 text-[10px] rounded-md bg-secondary/40 border border-border/30 text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors max-w-[200px] truncate"
-                  title={h}
-                >
-                  {h}
-                </button>
-              ))}
-      </div>
-
       {/* ── Context Tiers (Hierarchical Search) ── */}
-      <div className="nexus-card space-y-4">
+      <div className="nexus-card space-y-4 border-primary/20 bg-primary/5 shadow-lg">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-heading font-semibold text-foreground flex items-center gap-2">
-            <Layers className="h-4 w-4 text-primary" /> Busca Hierárquica (L0/L1/L2)
+          <h3 className="text-base font-heading font-bold text-foreground flex items-center gap-2">
+            <Layers className="h-5 w-5 text-primary" /> Context Tiers L0/L1/L2
           </h3>
-          <Badge variant="outline" className="bg-nexus-emerald/5 text-nexus-emerald border-nexus-emerald/20 gap-1.5 py-0.5 px-2 text-[9px]">
-            <Zap className="h-3 w-3" /> Token Optimized
+          <Badge className="bg-primary text-primary-foreground gap-1.5 py-1 px-3 text-[10px] font-bold">
+            <Zap className="h-3.5 w-3.5" /> AGENT BRAIN OPTIMIZED
           </Badge>
         </div>
-        <p className="text-[11px] text-muted-foreground">
-          Estratégia OpenViking: L0 (Abstract) para filtro → L1 (Overview) para planejamento → L2 (Full) para contexto final. 
-          Economiza até 80% de tokens em bases grandes.
-        </p>
         
+        <div className="bg-background/50 p-4 rounded-xl space-y-3">
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            O Nexus utiliza uma arquitetura de contexto hierárquica inspirada no <span className="text-foreground font-semibold">OpenViking</span>. 
+            Este mecanismo permite que os agentes consultem bases massivas mantendo a precisão e economizando até <span className="text-nexus-emerald font-bold">80% de tokens</span>.
+          </p>
+          <div className="grid grid-cols-3 gap-2 py-2">
+             <div className="text-center space-y-1">
+               <div className="text-[10px] font-black uppercase text-muted-foreground">L0 Abstract</div>
+               <div className="text-xs font-mono text-primary">Relevance</div>
+             </div>
+             <div className="text-center space-y-1">
+               <div className="text-[10px] font-black uppercase text-muted-foreground">L1 Overview</div>
+               <div className="text-xs font-mono text-nexus-amber">Planning</div>
+             </div>
+             <div className="text-center space-y-1">
+               <div className="text-[10px] font-black uppercase text-muted-foreground">L2 Full</div>
+               <div className="text-xs font-mono text-nexus-emerald">Context</div>
+             </div>
+          </div>
+        </div>
+
+        <div className="relative group">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+          <Input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Consulte o cérebro usando tiers... Ex: Qual o histórico de negociação com a Ambev?"
+            className="h-14 pl-12 bg-background border-primary/20 focus:ring-primary/20 text-base rounded-2xl shadow-inner"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleTieredSearch();
+            }}
+          />
+        </div>
+
         <div className="flex gap-3">
           <Button
             onClick={handleTieredSearch}
             disabled={isTieredSearching || !query.trim()}
-            variant="outline"
-            className="flex-1 gap-2 border-primary/20 hover:bg-primary/5"
+            size="lg"
+            className="flex-1 gap-2 nexus-gradient-bg text-primary-foreground shadow-xl shadow-primary/20 h-12 font-bold"
           >
             {isTieredSearching ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="h-5 w-5 animate-spin" />
             ) : (
-              <ShieldCheck className="h-4 w-4 text-nexus-emerald" />
+              <ShieldCheck className="h-5 w-5" />
             )}
-            {isTieredSearching ? 'Processando Camadas...' : 'Executar Busca Hierárquica'}
+            {isTieredSearching ? 'Filtrando Camadas...' : 'Executar Busca Hierárquica'}
+          </Button>
+          
+          <Button
+            onClick={handleSearch}
+            disabled={isSearching || !query.trim()}
+            variant="outline"
+            size="lg"
+            className="gap-2 h-12 px-6 border-primary/20"
+          >
+            {isSearching ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4 text-primary" />}
+            Modo Chat
           </Button>
         </div>
 
         {tieredResults && (
-          <div className="space-y-4">
+          <div className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
             <div className="grid grid-cols-3 gap-3">
-              <div className="bg-secondary/30 rounded-lg p-2 text-center border border-border/20">
-                <p className="text-lg font-bold text-foreground">{tieredResults.l0Results}</p>
-                <p className="text-[9px] text-muted-foreground uppercase">L0 Found</p>
+              <div className="bg-background/40 backdrop-blur-sm rounded-xl p-3 text-center border border-border/20 shadow-sm">
+                <p className="text-xl font-black text-primary">{tieredResults.l0Results}</p>
+                <p className="text-[9px] text-muted-foreground uppercase tracking-widest font-bold">L0 Matches</p>
               </div>
-              <div className="bg-secondary/30 rounded-lg p-2 text-center border border-border/20">
-                <p className="text-lg font-bold text-foreground">{tieredResults.l1Results}</p>
-                <p className="text-[9px] text-muted-foreground uppercase">L1 Filtered</p>
+              <div className="bg-background/40 backdrop-blur-sm rounded-xl p-3 text-center border border-border/20 shadow-sm">
+                <p className="text-xl font-black text-nexus-amber">{tieredResults.l1Results}</p>
+                <p className="text-[9px] text-muted-foreground uppercase tracking-widest font-bold">L1 Filtered</p>
               </div>
-              <div className="bg-nexus-emerald/5 rounded-lg p-2 text-center border border-nexus-emerald/20">
-                <p className="text-lg font-bold text-nexus-emerald">{tieredResults.tokensSaved}</p>
-                <p className="text-[9px] text-muted-foreground uppercase">Tokens Saved</p>
+              <div className="bg-nexus-emerald/5 backdrop-blur-sm rounded-xl p-3 text-center border border-nexus-emerald/20 shadow-sm ring-1 ring-nexus-emerald/10">
+                <p className="text-xl font-black text-nexus-emerald">{tieredResults.tokensSaved}</p>
+                <p className="text-[9px] text-muted-foreground uppercase tracking-widest font-bold">Tokens Saved</p>
               </div>
             </div>
 
             <div className="space-y-2">
-              <p className="text-xs font-semibold text-foreground">Top Chunks (L2 Ready):</p>
-              {tieredResults.l2Results.map((tier, idx) => (
-                <div key={tier.chunk_id} className="p-3 rounded-lg bg-secondary/20 border border-border/20 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Badge variant="outline" className="text-[9px]">Rank #{idx + 1}</Badge>
-                    <span className="text-[10px] text-muted-foreground font-mono">{tier.token_count} tokens</span>
+              <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2 px-1">
+                <div className="w-1 h-3 bg-primary rounded-full" /> Top Relevant Context (L2 Tier)
+              </h4>
+              <div className="grid grid-cols-1 gap-2">
+                {tieredResults.l2Results.map((tier, idx) => (
+                  <div key={tier.chunk_id} className="group p-4 rounded-2xl bg-background/60 border border-border/40 hover:border-primary/40 transition-all hover:shadow-md">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <Badge variant="secondary" className="text-[9px] font-black">RANK #{idx + 1}</Badge>
+                        <span className="text-[10px] text-muted-foreground font-mono bg-secondary/50 px-1.5 py-0.5 rounded">ID: {tier.chunk_id.slice(0, 8)}</span>
+                      </div>
+                      <span className="text-[10px] font-bold text-nexus-emerald">{tier.token_count} tokens</span>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="bg-secondary/20 p-2 rounded-lg border border-border/10">
+                        <p className="text-[9px] font-black uppercase text-primary/60 mb-1">L0 Abstract (Relevance)</p>
+                        <p className="text-xs text-foreground italic leading-relaxed">"{tier.l0_abstract}..."</p>
+                      </div>
+                      <div>
+                        <p className="text-[9px] font-black uppercase text-nexus-emerald/60 mb-1">L2 Full Content (Context)</p>
+                        <p className="text-[11px] text-muted-foreground line-clamp-4 leading-relaxed">{tier.l2_content}</p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-bold uppercase text-primary tracking-widest">L0 Abstract</p>
-                    <p className="text-xs text-foreground italic">"{tier.l0_abstract}..."</p>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-bold uppercase text-nexus-emerald tracking-widest">L2 Full Content</p>
-                    <p className="text-[11px] text-muted-foreground line-clamp-3">{tier.l2_content}</p>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         )}
-      </div>
-          </div>
-        )}
-        <div className="flex justify-between items-center">
-          <p className="text-[11px] text-muted-foreground">
-            Consulta semântica ao conhecimento da empresa (fatos + RAG + bancos externos)
-          </p>
-          <Button
-            onClick={handleSearch}
-            disabled={isSearching || !query.trim()}
-            className="nexus-gradient-bg text-primary-foreground gap-2"
-          >
-            {isSearching ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Sparkles className="h-4 w-4" />
-            )}
-            {isSearching ? 'Buscando...' : '🧠 Consultar'}
-          </Button>
-        </div>
-        {searchResults && (
-          <div className="p-4 rounded-lg bg-secondary/30 border border-border/30">
-            <p className="text-xs font-semibold text-foreground mb-2">Resposta do Super Cérebro:</p>
+
+        {searchResults && !tieredResults && (
+          <div className="p-5 rounded-2xl bg-secondary/20 border border-border/40 animate-in fade-in slide-in-from-top-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Sparkles className="h-4 w-4 text-primary" />
+              <p className="text-xs font-bold uppercase tracking-widest text-foreground">Resposta do Super Cérebro</p>
+            </div>
             <div className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
               {searchResults}
             </div>
           </div>
+        )}
+      </div>
+
+      <div className="nexus-card opacity-60 hover:opacity-100 transition-opacity">
+        <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-2">
+          <History className="h-3.5 w-3.5" /> Histórico Sináptico
+        </h3>
+        {history.length > 0 ? (
+          <div className="flex flex-wrap gap-2">
+            {history.map((h, i) => (
+              <button
+                key={i}
+                onClick={() => setQuery(h)}
+                className="px-3 py-1.5 text-[10px] font-medium rounded-xl bg-secondary/50 border border-border/30 text-muted-foreground hover:text-primary hover:border-primary/40 transition-all max-w-[200px] truncate"
+              >
+                {h}
+              </button>
+            ))}
+          </div>
+        ) : (
+          <p className="text-[10px] italic text-muted-foreground">Nenhuma consulta recente registrada.</p>
         )}
       </div>
 
