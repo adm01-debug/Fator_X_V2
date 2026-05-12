@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { logger } from '@/lib/logger';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { InfoHint } from '@/components/shared/InfoHint';
@@ -34,12 +34,6 @@ import {
 } from 'recharts';
 import { StreamingChat } from '@/components/shared/StreamingChat';
 
-
-
-
-
-
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyData = Record<string, any>;
 
@@ -47,7 +41,7 @@ interface AgentStep {
   step: number;
   thought: string;
   action: string;
-  action_input: string;
+  action_input: string | Record<string, unknown>;
   observation: string;
   latency_ms?: number;
   tokens?: number;
@@ -62,7 +56,6 @@ interface AgentResult {
   total_latency_ms: number;
 }
 
-
 export default function SmolagentPage() {
   const [task, setTask] = useState('');
   const [model, setModel] = useState('huggingface/Qwen/Qwen3-30B-A3B');
@@ -71,7 +64,10 @@ export default function SmolagentPage() {
   const [result, setResult] = useState<AgentResult | null>(null);
   const [tools, setTools] = useState<string[]>([]);
   const [expandedSteps, setExpandedSteps] = useState<Set<number>>(new Set());
+  const [activeTab, setActiveTab] = useState('agent');
   const resultRef = useRef<HTMLDivElement>(null);
+
+  const { text, tokens, isStreaming, latencyMs, events, stateDelta, stream, reset } = useStreamingResponse();
 
   useEffect(() => {
     supabase.functions
@@ -93,6 +89,8 @@ export default function SmolagentPage() {
     }
     setLoading(true);
     setResult(null);
+    reset();
+    
     try {
       const { data, error } = await supabase.functions.invoke('smolagent-runtime', {
         body: { action: 'run', task, model, max_steps: maxSteps },
@@ -106,6 +104,7 @@ export default function SmolagentPage() {
       setLoading(false);
     }
   };
+
 
   const toggleStep = (idx: number) => {
     setExpandedSteps((prev) => {
