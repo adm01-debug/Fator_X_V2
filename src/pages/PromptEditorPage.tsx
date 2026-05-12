@@ -7,11 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Save, GitBranch, CheckCircle, AlertTriangle,
-  RotateCcw, Trash2, Loader2, FileText,
-  Activity, ShieldCheck, Zap, Target, Search, History, Sparkles, BarChart3, Info, Microscope, FileJson, Languages, Wand2, ArrowRight, RefreshCcw, Layout, Database, Layers
-} from "lucide-react";
+import { Save, GitBranch, CheckCircle, AlertTriangle, RotateCcw, Trash2, Loader2, FileText } from "lucide-react";
+
 import { toast } from "sonner";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { AccessControl, DangerousActionDialog } from "@/components/rbac";
