@@ -9,6 +9,7 @@ interface ExecuteBody {
   runtime: "python" | "node" | "deno";
   code: string;
   workspace_id?: string;
+  stream?: boolean;
 }
 
 const MAX_CODE_BYTES = 50_000;
