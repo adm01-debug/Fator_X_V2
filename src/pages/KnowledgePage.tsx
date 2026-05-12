@@ -228,7 +228,7 @@ export default function KnowledgePage() {
                     <Database className="h-10 w-10 text-muted-foreground/50" />
                   </div>
                   <h2 className="text-lg font-bold text-foreground mb-2">Vácuo de Informação Detectado</h2>
-                  <p className="text-sm text-muted-foreground max-w-sm mb-6">Sua infraestrutura RAG ainda não possui bases de dados ativas. Comece conectando uma fonte de conhecimento.</p>
+                  <p className="text-sm text-muted-foreground max-sm mb-6">Sua infraestrutura RAG ainda não possui bases de dados ativas. Comece conectando uma fonte de conhecimento.</p>
                   <CreateKnowledgeBaseDialog onCreated={() => refetch()} />
                 </div>
               ) : viewMode === 'grid' ? (
@@ -392,7 +392,9 @@ export default function KnowledgePage() {
         </TabsContent>
 
         <TabsContent value="search" className="m-0 focus-visible:ring-0">
-          <VectorSearchResults />
+          <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem]">
+            <VectorSearchResults />
+          </div>
         </TabsContent>
 
         <TabsContent value="versions" className="m-0 focus-visible:ring-0">
@@ -409,6 +411,7 @@ export default function KnowledgePage() {
     </div>
   );
 }
+
 
 function VectorIndexesStatus() {
   const { data: indexes = [] } = useQuery({
