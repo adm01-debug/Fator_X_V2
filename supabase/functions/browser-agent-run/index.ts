@@ -18,7 +18,8 @@ interface SimplifiedDOM {
   url: string;
   title: string;
   text: string;
-  elements: Array<{ idx: number; tag: string; text: string; href?: string; type?: string; name?: string }>;
+  screenshot?: string; // Base64 screenshot
+  elements: Array<{ idx: number; tag: string; text: string; href?: string; type?: string; name?: string; x?: number; y?: number }>;
 }
 
 async function fetchAndSimplify(url: string): Promise<SimplifiedDOM> {
@@ -83,35 +84,38 @@ async function decideAction(goal: string, history: any[], dom: SimplifiedDOM, ap
     `[${e.idx}] <${e.tag}${e.type ? ` type=${e.type}` : ""}${e.name ? ` name=${e.name}` : ""}${e.href ? ` href=${e.href.slice(0, 60)}` : ""}> ${e.text}`
   ).join("\n");
 
-  const systemPrompt = `Você é um agente autônomo de navegação web. Decida a próxima ação para alcançar o objetivo do usuário.
+  const systemPrompt = `Você é um agente autônomo de navegação web avançado. Analise o DOM e a imagem (se disponível) para decidir o próximo passo.
+  
+Ações disponíveis (responda APENAS via tool call):
+- click(idx): Clicar num elemento pelo índice numérico.
+- type(idx, text): Preencher um campo de input com texto.
+- scroll(direction): Rolar a página ("up", "down").
+- navigate(url): Ir para uma URL absoluta.
+- wait(ms): Aguardar carregamento de elementos dinâmicos.
+- extract(description): Extrair informação visível.
+- done(result): Finalizar com o resultado consolidado.
 
-Ações disponíveis (responda APENAS com uma das funções abaixo via tool call):
-- click(idx): clicar num elemento numerado
-- type(idx, text): preencher campo com texto
-- navigate(url): ir para URL absoluta
-- extract(description): extrair informação visível e usar como resposta parcial
-- done(result): terminar com resposta final
+Regras de Ouro:
+1. Se o objetivo foi alcançado, use done().
+2. Se houver um cookie banner ou modal bloqueando, tente fechar primeiro.
+3. Se não encontrar o que procura, tente scroll("down").
+4. Mantenha o raciocínio (reasoning) conciso e focado na intenção estratégica.`;
 
-Regras:
-- Se já tem informação suficiente, chame done() com o resultado.
-- Para click em <a>, prefira navigate(href) se href for absoluto.
-- NÃO repita ações que já falharam no histórico.`;
+  const userMsg = [
+    { type: "text", text: `OBJETIVO: ${goal}\nPÁGINA: ${dom.url}\nTÍTULO: ${dom.title}\n\nHISTÓRICO:\n${history.slice(-5).map((h, i) => `${i + 1}. ${h.action} -> ${h.reasoning}`).join("\n") || "(vazio)"}` },
+  ];
 
-  const userMsg = `OBJETIVO: ${goal}
+  if (dom.screenshot) {
+    userMsg.push({
+      type: "image_url",
+      image_url: { url: `data:image/jpeg;base64,${dom.screenshot}` }
+    } as any);
+  }
 
-HISTÓRICO (${history.length} steps):
-${history.slice(-5).map((h, i) => `${i + 1}. ${h.action}(${JSON.stringify(h.args)}) → ${h.reasoning?.slice(0, 100) || ""}`).join("\n") || "(vazio)"}
-
-PÁGINA ATUAL: ${dom.url}
-TÍTULO: ${dom.title}
-
-ELEMENTOS INTERATIVOS:
-${elementsList || "(nenhum)"}
-
-CONTEÚDO (snippet):
-${dom.text.slice(0, 1500)}
-
-Decida a próxima ação.`;
+  userMsg.push({
+    type: "text",
+    text: `ELEMENTOS INTERATIVOS:\n${dom.elements.map(e => `[${e.idx}] <${e.tag}> ${e.text}`).join("\n")}\n\nCONTEÚDO TEXTUAL:\n${dom.text.slice(0, 1000)}`
+  });
 
   const tools = [{
     type: "function",
@@ -121,14 +125,15 @@ Decida a próxima ação.`;
       parameters: {
         type: "object",
         properties: {
-          action: { type: "string", enum: ["click", "type", "navigate", "extract", "done"] },
-          idx: { type: "number", description: "Índice do elemento (click/type)" },
-          text: { type: "string", description: "Texto a digitar (type) ou URL (navigate)" },
-          result: { type: "string", description: "Resultado final (done) ou extração (extract)" },
-          reasoning: { type: "string", description: "Por que essa ação" },
+          action: { type: "string", enum: ["click", "type", "scroll", "navigate", "wait", "extract", "done"] },
+          idx: { type: "number" },
+          text: { type: "string" },
+          direction: { type: "string", enum: ["up", "down"] },
+          ms: { type: "number" },
+          result: { type: "string" },
+          reasoning: { type: "string" },
         },
         required: ["action", "reasoning"],
-        additionalProperties: false,
       },
     },
   }];
@@ -137,8 +142,11 @@ Decida a próxima ação.`;
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: "google/gemini-2.5-flash",
-      messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userMsg }],
+      model: "google/gemini-2.0-flash", // Use o modelo flash mais recente para melhor custo-benefício e visão
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userMsg as any }
+      ],
       tools,
       tool_choice: { type: "function", function: { name: "next_action" } },
     }),

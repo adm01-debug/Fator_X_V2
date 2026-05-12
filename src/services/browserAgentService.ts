@@ -3,8 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 export interface BrowserStep {
   step_index: number;
   url: string;
-  action: "click" | "type" | "navigate" | "extract" | "done";
-  args: { idx?: number; text?: string; result?: string };
+  action: "click" | "type" | "navigate" | "extract" | "done" | "scroll" | "wait";
+  args: { idx?: number; text?: string; result?: string; direction?: string; ms?: number };
+  screenshot?: string;
   reasoning: string;
   ts: string;
 }
