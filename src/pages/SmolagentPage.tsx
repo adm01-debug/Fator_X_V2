@@ -40,11 +40,12 @@ interface AgentStep {
   step: number;
   thought: string;
   action: string;
-  action_input: string | Record<string, unknown>;
+  action_input: string;
   observation: string;
   latency_ms?: number;
   tokens?: number;
 }
+
 interface AgentResult {
   answer: string;
   steps: AgentStep[];
