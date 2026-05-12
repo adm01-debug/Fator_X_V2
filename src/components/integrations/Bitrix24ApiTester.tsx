@@ -163,7 +163,7 @@ export function Bitrix24ApiTester() {
                 </TabsTrigger>
               </TabsList>
               
-              {result && (
+              {!!result && (
                 <Button 
                   variant="ghost" 
                   size="sm" 
