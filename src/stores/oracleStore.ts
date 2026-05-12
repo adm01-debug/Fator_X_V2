@@ -100,7 +100,7 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
 
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-      const { data: { session } } = await (await import('@/lib/supabase')).supabase.auth.getSession();
+      const { data: { session } } = await supabase.auth.getSession();
       
       const response = await fetch(`${supabaseUrl}/functions/v1/oracle-council`, {
         method: 'POST',
