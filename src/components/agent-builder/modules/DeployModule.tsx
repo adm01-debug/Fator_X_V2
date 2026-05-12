@@ -1,7 +1,7 @@
 import { fromTable } from '@/lib/supabaseExtended';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import { SectionTitle, NexusBadge, ToggleField } from '../ui';
-import { Globe, MessageSquare, Mail, Hash, Send, Radio, Sparkles, Activity, Map as MapIcon, BarChart3 } from 'lucide-react';
+import { Globe, MessageSquare, Mail, Hash, Send, Radio, Sparkles, Activity, Map as MapIcon, BarChart3, Rocket, CheckCircle, ShieldCheck, AlertTriangle, Zap } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 import { getWorkspaceId } from '@/lib/agentService';
@@ -416,6 +416,89 @@ export function DeployModule() {
               checked={agent.budget_kill_switch}
               onCheckedChange={(v) => updateAgent({ budget_kill_switch: v })}
             />
+          </div>
+        </div>
+      </section>
+      {/* Pipeline de Deploy Industrial */}
+      <section className="p-8 rounded-[2rem] border border-primary/20 bg-gradient-to-br from-primary/10 to-transparent relative overflow-hidden group">
+        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+          <Rocket className="h-24 w-24 text-primary" />
+        </div>
+        <div className="relative">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="h-10 w-10 rounded-xl bg-primary/20 flex items-center justify-center">
+              <Rocket className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <h3 className="text-lg font-black text-foreground">Deploy Industrial Nexus</h3>
+              <p className="text-xs text-muted-foreground">Promova este agente através dos estágios de governança.</p>
+            </div>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-8">
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {[
+                  { id: 'staging', label: 'Staging', desc: 'Ambiente de pré-produção controlado.', icon: <Activity className="h-4 w-4" /> },
+                  { id: 'production', label: 'Produção', desc: 'Deploy global em alta escala.', icon: <Globe className="h-4 w-4" /> },
+                ].map((env) => (
+                  <button
+                    key={env.id}
+                    onClick={() => updateAgent({ status: env.id as any })}
+                    className={cn(
+                      "flex flex-col p-4 rounded-2xl border text-left transition-all duration-300",
+                      agent.status === env.id 
+                        ? "bg-background border-primary shadow-xl shadow-primary/10 scale-[1.02]" 
+                        : "bg-background/40 border-border/40 hover:border-primary/40"
+                    )}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className={cn("h-7 w-7 rounded-lg flex items-center justify-center", agent.status === env.id ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground")}>
+                        {env.icon}
+                      </div>
+                      <span className="text-sm font-bold">{env.label}</span>
+                      {agent.status === env.id && <Badge className="ml-auto bg-nexus-emerald text-white border-none text-[9px] font-black">ACTIVE</Badge>}
+                    </div>
+                    <p className="text-[10px] text-muted-foreground leading-relaxed">{env.desc}</p>
+                  </button>
+                ))}
+              </div>
+
+              <div className="p-4 rounded-2xl border border-border/40 bg-background/40 space-y-4">
+                <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+                  <ShieldCheck className="h-3 w-3" /> Verificações de Saúde
+                </h4>
+                <div className="space-y-2">
+                  {[
+                    { label: 'Integridade de Configuração', ok: true },
+                    { label: 'Validação de Guardrails', ok: agent.guardrails.filter(g => g.enabled).length >= 3 },
+                    { label: 'Cobertura de Testes (CLEAR)', ok: agent.test_cases.length >= 3 },
+                    { label: 'Canais de Comunicação', ok: agent.deploy_channels.some(c => c.enabled) },
+                  ].map((check, i) => (
+                    <div key={i} className="flex items-center justify-between p-2 rounded-xl bg-card/30 border border-border/20">
+                      <span className="text-[11px] font-medium text-foreground">{check.label}</span>
+                      {check.ok ? <CheckCircle className="h-3.5 w-3.5 text-nexus-emerald" /> : <AlertTriangle className="h-3.5 w-3.5 text-nexus-amber" />}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 rounded-[2rem] border border-border/40 bg-background/20 backdrop-blur-sm flex flex-col justify-center items-center text-center space-y-4">
+              <div className="h-16 w-16 rounded-3xl bg-primary/10 flex items-center justify-center border border-primary/20 shadow-lg">
+                <Zap className="h-8 w-8 text-primary animate-pulse" />
+              </div>
+              <div>
+                <h4 className="text-base font-black text-foreground">Snapshot & Deploy</h4>
+                <p className="text-xs text-muted-foreground max-w-[240px] mt-1">Gere um rastro imutável e promova as alterações para o cluster industrial.</p>
+              </div>
+              <Button className="w-full h-12 rounded-2xl nexus-gradient-bg text-primary-foreground font-bold shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+                Promover para {agent.status === 'production' ? 'Produção' : 'Staging'}
+              </Button>
+              <div className="flex items-center gap-1.5 text-[9px] font-bold text-muted-foreground uppercase tracking-tighter">
+                <Activity className="h-3 w-3" /> Transição segura com rollback automático
+              </div>
+            </div>
           </div>
         </div>
       </section>
