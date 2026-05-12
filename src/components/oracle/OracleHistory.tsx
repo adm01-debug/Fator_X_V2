@@ -10,7 +10,7 @@ import { ORACLE_MODES, ORACLE_PRESETS, type OracleMode } from '@/stores/oracleSt
 import { toast } from 'sonner';
 
 interface OracleHistoryProps {
-  onReplay?: (entry: OracleHistoryEntry) => void;
+  onClose?: () => void;
 }
 
 export function OracleHistory(_props: OracleHistoryProps) {
