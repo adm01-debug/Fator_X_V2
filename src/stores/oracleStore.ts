@@ -170,7 +170,10 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
         })
       });
 
-      if (!response.ok) throw new Error('Falha na conexão com o conselho');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Falha na conexão com o conselho');
+      }
 
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
@@ -234,9 +237,9 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
         abortController: null,
       });
       
-      // Auto-retry once for network errors
-      if (e.message.includes('fetch') || e.message.includes('network')) {
-        toast.info('Erro de conexão. Tentando novamente em 3 segundos...');
+      // Auto-retry once for network errors or transient 500s
+      if (e.message.includes('fetch') || e.message.includes('network') || e.message.includes('502') || e.message.includes('503')) {
+        toast.info('Erro de conexão ou timeout. Tentando novamente em 3 segundos...');
         setTimeout(() => get().submitQuery(), 3000);
       }
     }
