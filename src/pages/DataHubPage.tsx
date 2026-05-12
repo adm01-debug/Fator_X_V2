@@ -45,26 +45,50 @@ export default function DataHubPage() {
   const testConnections = useCallback(async () => {
     setTestingConnections(true);
     try {
-      const data = await testDatahubConnections();
       const now = new Date();
-      setConnections((prev) => prev.map((c) => {
-        if (c.status === 'hibernated') return c;
-        const result = data.connections?.[c.id];
-        if (!result) return c;
-        return { ...c, status: result.status === 'connected' ? 'connected' as const : 'error' as const, count: result.count, error: result.error, lastTested: now };
-      }));
-      const connected = Object.values(data.connections ?? {}).filter((r: unknown) => (r as Record<string, unknown>).status === 'connected').length;
-      toast.success(`${connected} de 4 conexões ativas!`);
-    } catch (e: unknown) { toast.error(`Erro ao testar conexões: ${e instanceof Error ? e.message : String(e)}`); }
-    finally { setTestingConnections(false); }
+      // Start streaming connection tests
+      await streamInvoke('test_connections', {}, (event, data) => {
+        if (event === 'connection') {
+          setConnections((prev) => prev.map((c) => {
+            if (c.id === data.id) {
+              return { 
+                ...c, 
+                status: data.status === 'connected' ? 'connected' as const : 'error' as const, 
+                count: data.count, 
+                error: data.error,
+                latency: data.latency_ms,
+                lastTested: now 
+              };
+            }
+            return c;
+          }));
+        }
+        if (event === 'done') {
+          toast.success('Teste de conexões concluído!');
+        }
+      });
+    } catch (e: unknown) { 
+      toast.error(`Erro ao testar conexões: ${e instanceof Error ? e.message : String(e)}`); 
+    } finally { 
+      setTestingConnections(false); 
+    }
   }, []);
 
   const loadEntityCounts = useCallback(async () => {
     setLoadingCounts(true);
-    try { const data = await listDatahubEntities(); setEntityCounts(data.entities ?? {}); }
-    catch (e: unknown) { toast.error(`Erro ao carregar contagens: ${e instanceof Error ? e.message : String(e)}`); }
-    finally { setLoadingCounts(false); }
+    try { 
+      await streamInvoke('list_entities', {}, (event, data) => {
+        if (event === 'entity_count') {
+          setEntityCounts(prev => ({ ...prev, [data.id]: data.count }));
+        }
+      });
+    } catch (e: unknown) { 
+      toast.error(`Erro ao carregar contagens: ${e instanceof Error ? e.message : String(e)}`); 
+    } finally { 
+      setLoadingCounts(false); 
+    }
   }, []);
+
 
   useEffect(() => { testConnections(); loadEntityCounts(); }, [testConnections, loadEntityCounts]);
 
