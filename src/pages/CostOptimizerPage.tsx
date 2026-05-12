@@ -27,12 +27,7 @@ const recs: Recommendation[] = [
 ];
 
 export default function CostOptimizerPage() {
-  const { data: metrics } = useQuery({
-    queryKey: ['dashboard-metrics-finops'],
-    queryFn: getDashboardMetrics,
-  });
-
-  const pricing = getAllPricing();
+  const monthlySpend = 3247.80;
   const totalSavings = recs.filter(r => !r.applied).reduce((s, r) => s + r.savings, 0);
   const monthlySpend = 3247.80;
 
