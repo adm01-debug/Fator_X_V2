@@ -14,24 +14,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
-import { 
-  Loader2, Play, Trash2, ChevronDown, ChevronRight, Clock, Cpu, Wrench, 
-  Activity, Search, Shield, Zap, Terminal, MessageSquare, Database, ArrowRight, Code 
-} from 'lucide-react';
+import { Loader2, Play, Trash2, ChevronDown, ChevronRight, Clock, Cpu, Wrench } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { useStreamingResponse } from '@/hooks/useStreamingResponse';
-import { Card } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
-import { cn } from '@/lib/utils';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { 
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as ChartTooltip, ResponsiveContainer,
-  BarChart, Bar, Cell
-} from 'recharts';
 import { StreamingChat } from '@/components/shared/StreamingChat';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -46,7 +31,6 @@ interface AgentStep {
   latency_ms?: number;
   tokens?: number;
 }
-
 interface AgentResult {
   answer: string;
   steps: AgentStep[];
@@ -64,10 +48,8 @@ export default function SmolagentPage() {
   const [result, setResult] = useState<AgentResult | null>(null);
   const [tools, setTools] = useState<string[]>([]);
   const [expandedSteps, setExpandedSteps] = useState<Set<number>>(new Set());
-  const [activeTab, setActiveTab] = useState('agent');
   const resultRef = useRef<HTMLDivElement>(null);
 
-  const { text, tokens, isStreaming, latencyMs, events, stateDelta, stream, reset } = useStreamingResponse();
 
   useEffect(() => {
     supabase.functions
