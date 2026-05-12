@@ -110,18 +110,20 @@ serve(async (req) => {
     const gatewayUrl = `${supabaseUrl}/functions/v1/llm-gateway`;
     const totalStartTime = Date.now();
 
-    // Build system prompt based on mode
+    // ═══ Guardrails & Mode Configuration ═══
     const buildSystemPrompt = (member: { model: string; persona?: string }) => {
       const thinkingInstructions = enable_thinking
         ? '\n\nAntes de dar sua resposta final, pense passo a passo:\n💭 Passo 1: Quais são os fatos relevantes?\n💭 Passo 2: Quais são as possíveis abordagens?\n💭 Passo 3: Quais são os riscos?\n💭 Passo 4: Minha recomendação e por quê?\n\nSepare claramente o raciocínio da resposta final usando "## Resposta" antes da resposta.'
         : '';
 
+      const baseGuards = "\n\nSiga estas regras rigorosamente:\n- Não forneça conselhos médicos, jurídicos ou financeiros sem ressalvas.\n- Mantenha tom profissional e objetivo.\n- Cite fontes sempre que possível.";
+
       const modeInstructions: Record<string, string> = {
-        council: `Você é ${member.persona || 'um especialista'}. Responda de forma completa e fundamentada.${thinkingInstructions}`,
-        researcher: `Você é ${member.persona || 'um pesquisador'}. Analise a questão em profundidade, cite dados e tendências relevantes. Estruture a resposta com seções claras.${thinkingInstructions}`,
-        validator: `Você é ${member.persona || 'um verificador de fatos'}. Verifique a veracidade da afirmação/pergunta. Classifique como: CONFIRMADO, DISPUTADO ou NÃO VERIFICADO. Apresente evidências a favor e contra.${thinkingInstructions}`,
-        executor: `Você é ${member.persona || 'um executor'}. Decomponha a tarefa em sub-tarefas concretas e acionáveis. Para cada sub-tarefa, indique: responsável sugerido, prazo estimado, e dependências.${thinkingInstructions}`,
-        advisor: `Você é ${member.persona || 'um conselheiro'}. Analise a decisão apresentada. Liste prós e contras de cada opção, avalie riscos, e dê uma recomendação fundamentada com score de confiança.${thinkingInstructions}`,
+        council: `Você é ${member.persona || 'um especialista'}. Responda de forma completa e fundamentada.${thinkingInstructions}${baseGuards}`,
+        researcher: `Você é ${member.persona || 'um pesquisador'}. Analise a questão em profundidade, cite dados e tendências relevantes. Estruture a resposta com seções claras.${thinkingInstructions}\n- Foco em objetividade e profundidade técnica.`,
+        validator: `Você é ${member.persona || 'um verificador de fatos'}. Verifique a veracidade da afirmação/pergunta. Classifique como: CONFIRMADO, DISPUTADO ou NÃO VERIFICADO. Apresente evidências a favor e contra.${thinkingInstructions}\n- Seja extremamente cético e rigoroso.`,
+        executor: `Você é ${member.persona || 'um executor'}. Decomponha a tarefa em sub-tarefas concretas e acionáveis. Para cada sub-tarefa, indique: responsável sugerido, prazo estimado, e dependências.${thinkingInstructions}\n- Foco em pragmatismo e viabilidade técnica.`,
+        advisor: `Você é ${member.persona || 'um conselheiro'}. Analise a decisão apresentada. Liste prós e contras de cada opção, avalie riscos, e dê uma recomendação fundamentada com score de confiança.${thinkingInstructions}\n- Foco em análise multivariada e mitigação de riscos.`,
       };
       return modeInstructions[mode] || modeInstructions.council;
     };
