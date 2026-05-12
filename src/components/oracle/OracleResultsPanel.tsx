@@ -4,12 +4,12 @@ import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { 
   Copy, RefreshCw, FileText, ShieldCheck, Activity, DollarSign, Zap, 
-  Cpu, Download, CheckCircle2, AlertTriangle 
+  Cpu, Download, CheckCircle2, AlertTriangle, XCircle, Share, Code
 } from 'lucide-react';
 import { useOracleStore, ORACLE_MODES, ORACLE_PRESETS } from '@/stores/oracleStore';
 import { ConsensusMatrix } from './ConsensusMatrix';
 import { ModelCard } from './ModelCard';
-import { exportToMarkdown, downloadText } from '@/lib/oracleExport';
+import { exportToMarkdown, exportToJson, downloadText } from '@/lib/oracleExport';
 import { toast } from 'sonner';
 
 export function OracleResultsPanel() {
