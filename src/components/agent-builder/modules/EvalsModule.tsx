@@ -8,7 +8,8 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Loader2, Play, Plus, Trash2, CheckCircle2, XCircle, Eye } from 'lucide-react';
+import { Loader2, Play, Plus, Trash2, CheckCircle2, XCircle, Eye, FileText } from 'lucide-react';
+import { AuditReportDialog } from '@/components/evaluations/AuditReportDialog';
 import {
   useEvalDatasets,
   useEvalRuns,
@@ -236,15 +237,33 @@ export function EvalsModule() {
       </Tabs>
 
       <Dialog open={!!selectedRunId} onOpenChange={(o) => !o && setSelectedRunId(null)}>
-        <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Detalhes da Avaliação</DialogTitle>
-          </DialogHeader>
-          <RunDetails runId={selectedRunId} />
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+          <Tabs defaultValue="results">
+            <TabsList className="mb-4">
+              <TabsTrigger value="results">Resultados Individuais</TabsTrigger>
+              <TabsTrigger value="audit">Relatório de Auditoria</TabsTrigger>
+            </TabsList>
+            <TabsContent value="results">
+              <DialogHeader>
+                <DialogTitle>Detalhes da Execução</DialogTitle>
+              </DialogHeader>
+              <RunDetails runId={selectedRunId} />
+            </TabsContent>
+            <TabsContent value="audit">
+              <AuditReportView runId={selectedRunId} runs={runs} />
+            </TabsContent>
+          </Tabs>
         </DialogContent>
       </Dialog>
     </div>
   );
+}
+
+function AuditReportView({ runId, runs }: { runId: string | null; runs: any[] }) {
+  const { data: results = [] } = useEvalResults(runId);
+  const run = runs.find(r => r.id === runId);
+  if (!run) return null;
+  return <AuditReportDialog run={run} results={results} />;
 }
 
 function RunDetails({ runId }: { runId: string | null }) {
