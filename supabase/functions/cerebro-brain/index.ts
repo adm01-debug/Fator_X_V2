@@ -365,7 +365,24 @@ serve(async (req) => {
       const yesterday = new Date(Date.now() - 86400000).toISOString();
       const { count: todayTraces } = await supabase.from('agent_traces').select('id', { count: 'exact', head: true }).gte('created_at', yesterday);
 
+      // Fetch recent memories for the stream
+      const { data: recentMemories } = await supabase.from('agent_memories')
+        .select('id, memory_type, content, created_at, agent_id')
+        .order('created_at', { ascending: false })
+        .limit(5);
+
       return new Response(JSON.stringify({
+        agents: agents.count || 0,
+        knowledge_bases: kbs.count || 0,
+        chunks: chunks.count || 0,
+        traces: traces.count || 0,
+        memories: memories.count || 0,
+        tools: tools.count || 0,
+        workflows: workflows.count || 0,
+        today_traces: todayTraces || 0,
+        recent_memories: recentMemories || [],
+      }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    }
         agents: agents.count || 0,
         knowledge_bases: kbs.count || 0,
         chunks: chunks.count || 0,

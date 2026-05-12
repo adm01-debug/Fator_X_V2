@@ -35,7 +35,9 @@ export async function queryBrain(query: string, options?: Record<string, unknown
   } = await supabase.auth.getSession();
   if (!session) throw new Error('Not authenticated');
 
-  const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/cerebro-brain`, {
+  const stream = options?.stream === true;
+
+  const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/cerebro-query`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -46,6 +48,7 @@ export async function queryBrain(query: string, options?: Record<string, unknown
   });
 
   if (!resp.ok) throw new Error('Brain query failed');
+  if (stream) return resp.body;
   return resp.json();
 }
 
@@ -72,6 +75,20 @@ export async function invokeCerebroBrain(body: Record<string, unknown>) {
 
 /** Invoke cerebro-query edge function */
 export async function invokeCerebroQuery(body: Record<string, unknown>) {
+  if (body.stream) {
+    const { data: { session } } = await supabase.auth.getSession();
+    const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/cerebro-query`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session?.access_token}`,
+        'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+      },
+      body: JSON.stringify(body),
+    });
+    if (!resp.ok) throw new Error('Cerebro Query failed');
+    return resp.body;
+  }
   const { data, error } = await supabase.functions.invoke('cerebro-query', { body });
   if (error) throw error;
   return data;

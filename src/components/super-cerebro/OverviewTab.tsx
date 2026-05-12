@@ -3,6 +3,14 @@ import { Badge } from "@/components/ui/badge";
 import { invokeCerebroBrain, getHealthScore } from "@/services/cerebroService";
 import { useQuery } from "@tanstack/react-query";
 
+interface MemoryEntry {
+  id: string;
+  memory_type: string;
+  content: string;
+  created_at: string;
+  agent_id?: string;
+}
+
 interface CerebroStats {
   agents?: number;
   knowledge_bases?: number;
@@ -12,6 +20,7 @@ interface CerebroStats {
   workflows?: number;
   traces?: number;
   today_traces?: number;
+  recent_memories?: MemoryEntry[];
 }
 
 export function OverviewTab() {
@@ -143,10 +152,54 @@ export function OverviewTab() {
             </div>
           </div>
 
+          {/* Telemetria Neural — Real-time stream */}
+          <div className="nexus-card">
+            <h3 className="text-sm font-heading font-semibold text-foreground mb-3 flex items-center gap-2">
+              <Zap className="h-4 w-4 text-nexus-amber" /> Telemetria Neural (Memórias Recentes)
+            </h3>
+            <div className="space-y-2">
+              {stats?.recent_memories && stats.recent_memories.length > 0 ? (
+                stats.recent_memories.map((m) => (
+                  <div key={m.id} className="flex items-start gap-3 p-2.5 rounded-lg bg-secondary/30 border border-border/30 animate-pulse-once">
+                    <div className="mt-0.5">
+                      {m.memory_type === 'semantic' ? '🧠' : m.memory_type === 'episodic' ? '📽️' : '💾'}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-0.5">
+                        <Badge variant="outline" className="text-[9px] px-1 py-0 h-3.5 border-nexus-purple/30 text-nexus-purple">
+                          {m.memory_type}
+                        </Badge>
+                        <span className="text-[9px] text-muted-foreground">
+                          {new Date(m.created_at).toLocaleTimeString()}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-foreground line-clamp-2 leading-relaxed">
+                        {m.content}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-6 border border-dashed border-border/50 rounded-lg">
+                  <p className="text-xs text-muted-foreground italic">Aguardando novos impulsos sinápticos...</p>
+                </div>
+              )}
+            </div>
+            <div className="mt-3 pt-3 border-t border-border/30 flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <div className="h-1.5 w-1.5 rounded-full bg-nexus-emerald animate-pulse" />
+                <span className="text-[10px] text-muted-foreground">Monitoramento em tempo real ativo</span>
+              </div>
+              <Badge variant="outline" className="text-[9px] border-primary/20 text-primary">
+                v10.0-PROD
+              </Badge>
+            </div>
+          </div>
+
           {/* Quick insights */}
           <div className="nexus-card">
             <h3 className="text-sm font-heading font-semibold text-foreground mb-3 flex items-center gap-2">
-              <Zap className="h-4 w-4 text-nexus-amber" /> Insights Rápidos
+              <TrendingUp className="h-4 w-4 text-nexus-emerald" /> Insights de Operação
             </h3>
             <div className="grid md:grid-cols-2 gap-2">
               {(() => {
@@ -166,9 +219,6 @@ export function OverviewTab() {
                 if ((stats?.today_traces ?? 0) > 100) {
                   insights.push({ msg: `Alto volume hoje: ${stats?.today_traces ?? 0} consultas`, type: 'info' });
                 }
-                if ((stats?.memories ?? 0) > 0) {
-                  insights.push({ msg: `Memórias episódicas: ${stats?.memories ?? 0}`, type: 'info' });
-                }
                 return insights.map((insight, i) => (
                   <div
                     key={i}
@@ -185,6 +235,7 @@ export function OverviewTab() {
               })()}
             </div>
           </div>
+
         </>
       )}
     </div>
