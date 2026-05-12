@@ -72,9 +72,8 @@ export default function SmolagentPage() {
     }
     setLoading(true);
     setResult(null);
-    reset();
-    
     try {
+
       const { data, error } = await supabase.functions.invoke('smolagent-runtime', {
         body: { action: 'run', task, model, max_steps: maxSteps },
       });
