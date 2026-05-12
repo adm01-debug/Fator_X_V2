@@ -2,9 +2,14 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Clock, RefreshCw, Play, Loader2 } from 'lucide-react';
-import { listSchedules, runCronExecutor, CRON_PRESETS, getScheduleStats, describeCronExpression, type CronSchedule, type ScheduleStats } from '@/services/cronSchedulerService';
+import { Clock, RefreshCw, Play, Loader2, Plus, Calendar, Settings2 } from 'lucide-react';
+import { listSchedules, runCronExecutor, CRON_PRESETS, getScheduleStats, describeCronExpression, createSchedule, type CronSchedule, type ScheduleStats } from '@/services/cronSchedulerService';
 import { useToast } from '@/hooks/use-toast';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { CronVisualEditor } from './CronVisualEditor';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const STATUS_COLORS: Record<string, string> = {
   active: 'bg-nexus-emerald/20 text-nexus-emerald',
@@ -20,6 +25,13 @@ export function CronSchedulerPanel() {
   const [loading, setLoading] = useState(true);
   const [running, setRunning] = useState(false);
   const { toast } = useToast();
+
+  const [createOpen, setCreateOpen] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [newCron, setNewCron] = useState('* * * * *');
+  const [saving, setSaving] = useState(false);
+  const [targetType, setTargetType] = useState('agent');
+  const [targetId, setTargetId] = useState('');
 
   const loadData = async () => {
     setLoading(true);
@@ -63,6 +75,32 @@ export function CronSchedulerPanel() {
     }
   };
 
+  const handleCreate = async () => {
+    if (!newName.trim() || !targetId.trim()) {
+      toast({ title: 'Preencha todos os campos', variant: 'destructive' });
+      return;
+    }
+    setSaving(true);
+    try {
+      await createSchedule({
+        name: newName.trim(),
+        frequency: 'cron',
+        cron_expression: newCron,
+        target_type: targetType as any,
+        target_id: targetId.trim(),
+      });
+      toast({ title: 'Agendamento criado!' });
+      setCreateOpen(false);
+      setNewName('');
+      setTargetId('');
+      await loadData();
+    } catch (e: any) {
+      toast({ title: 'Erro ao criar', description: e.message, variant: 'destructive' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Stats */}
@@ -84,14 +122,79 @@ export function CronSchedulerPanel() {
 
       {/* Actions */}
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Agendamentos</h3>
+        <h3 className="text-lg font-bold flex items-center gap-2">
+          <Calendar className="h-5 w-5 text-primary" />
+          Agendamentos
+        </h3>
         <div className="flex gap-2">
+          <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+            <DialogTrigger asChild>
+              <Button size="sm" className="nexus-gradient-bg text-primary-foreground gap-1.5 h-9 rounded-xl font-bold">
+                <Plus className="h-4 w-4" /> Novo Agendamento
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[500px] rounded-[2rem] border-border/40 p-8 shadow-2xl">
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-heading font-black">Configurar Cron-Job</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-6 mt-4">
+                <div className="space-y-2">
+                  <Label className="text-xs font-black uppercase text-muted-foreground tracking-widest">Nome da Automação</Label>
+                  <Input 
+                    value={newName} 
+                    onChange={(e) => setNewName(e.target.value)} 
+                    placeholder="Ex: Sync de Estoque Diário" 
+                    className="h-11 rounded-xl bg-secondary/30"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-xs font-black uppercase text-muted-foreground tracking-widest">Target Type</Label>
+                    <Select value={targetType} onValueChange={setTargetType}>
+                      <SelectTrigger className="h-11 rounded-xl bg-secondary/30">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="workflow">Workflow</SelectItem>
+                        <SelectItem value="agent">Agente</SelectItem>
+                        <SelectItem value="webhook">Webhook</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs font-black uppercase text-muted-foreground tracking-widest">ID do Alvo</Label>
+                    <Input 
+                      value={targetId} 
+                      onChange={(e) => setTargetId(e.target.value)} 
+                      placeholder="UUID do recurso" 
+                      className="h-11 rounded-xl bg-secondary/30"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                   <Label className="text-xs font-black uppercase text-muted-foreground tracking-widest">Editor Visual Cron</Label>
+                   <CronVisualEditor value={newCron} onChange={setNewCron} />
+                </div>
+
+                <DialogFooter className="pt-4">
+                  <Button variant="outline" onClick={() => setCreateOpen(false)} className="h-12 rounded-xl px-6">Cancelar</Button>
+                  <Button onClick={handleCreate} disabled={saving} className="h-12 px-8 rounded-xl nexus-gradient-bg text-primary-foreground font-bold shadow-lg shadow-primary/20">
+                    {saving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Settings2 className="h-5 w-5" />}
+                    <span className="ml-2">Ativar Job</span>
+                  </Button>
+                </DialogFooter>
+              </div>
+            </DialogContent>
+          </Dialog>
+
           <Button
             variant="outline"
             size="sm"
             onClick={handleRunPending}
             disabled={running}
-            className="border-border hover:border-primary"
+            className="border-border hover:border-primary h-9 rounded-xl font-bold gap-1.5"
           >
             {running ? (
               <Loader2 size={14} className="mr-1 animate-spin" />

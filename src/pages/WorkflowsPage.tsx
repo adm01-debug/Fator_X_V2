@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Play, LayoutGrid, Network, Calendar, Search, Activity, Zap, Layers, Sparkles, Loader2 } from 'lucide-react';
+import { Plus, Play, LayoutGrid, Network, Calendar, Search, Activity, Zap, Layers, Sparkles, Loader2, ArrowRightLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { workflowSchema } from '@/lib/validations/agentSchema';
@@ -20,6 +20,7 @@ import { WorkflowCanvasTab } from '@/components/workflows/WorkflowCanvasTab';
 import { WorkflowListTab } from '@/components/workflows/WorkflowListTab';
 import { WorkflowRunsHistory } from '@/components/workflows/WorkflowRunsHistory';
 import { WorkflowSchedulerTab } from '@/components/workflows/WorkflowSchedulerTab';
+import { WorkflowHandoffVisualizer } from '@/components/workflows/WorkflowHandoffVisualizer';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
@@ -253,6 +254,9 @@ export default function WorkflowsPage() {
           <TabsTrigger value="schedule" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm gap-2 font-bold">
             <Calendar className="h-4 w-4" /> Agendamentos
           </TabsTrigger>
+          <TabsTrigger value="handoffs" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm gap-2 font-bold">
+            <ArrowRightLeft className="h-4 w-4" /> Handoffs
+          </TabsTrigger>
         </TabsList>
 
         <div className="min-h-[600px] bg-card/30 border border-border/40 rounded-[2.5rem] p-4">
@@ -270,6 +274,7 @@ export default function WorkflowsPage() {
           <TabsContent value="schedule" className="m-0">
             <WorkflowSchedulerTab workflows={workflows.map(w => ({ id: w.id, name: w.name }))} />
           </TabsContent>
+          <TabsContent value="handoffs" className="m-0"><WorkflowHandoffVisualizer /></TabsContent>
         </div>
       </Tabs>
     </div>

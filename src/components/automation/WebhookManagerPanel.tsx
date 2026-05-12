@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Webhook, Loader2, Send } from 'lucide-react';
+import { Webhook, Loader2, Send, Clipboard, PlayCircle } from 'lucide-react';
 import {
   listWebhooks,
   triggerWebhookViaEF,
@@ -10,6 +10,9 @@ import {
   type WebhookEndpoint,
 } from '@/services/webhookTriggerService';
 import { useToast } from '@/hooks/use-toast';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 const AUTH_LABELS: Record<string, string> = {
   none: 'Sem Auth', header: 'Header', hmac_sha256: 'HMAC SHA-256',
@@ -20,6 +23,9 @@ export function WebhookManagerPanel() {
   const [webhooks, setWebhooks] = useState<WebhookEndpoint[]>([]);
   const [loading, setLoading] = useState(true);
   const [testingId, setTestingId] = useState<string | null>(null);
+  const [testDialogOpen, setTestDialogOpen] = useState(false);
+  const [selectedWebhook, setSelectedWebhook] = useState<WebhookEndpoint | null>(null);
+  const [testPayload, setTestPayload] = useState('{\n  "test": true,\n  "source": "nexus-studio",\n  "event": "manual_trigger"\n}');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -29,17 +35,29 @@ export function WebhookManagerPanel() {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleTest = async (w: WebhookEndpoint) => {
-    setTestingId(w.id);
+  const handleTest = async () => {
+    if (!selectedWebhook) return;
+    setTestingId(selectedWebhook.id);
     try {
+      let payloadObj = { test: true };
+      try {
+        payloadObj = JSON.parse(testPayload);
+      } catch (e) {
+        toast({ title: 'JSON inválido', variant: 'destructive' });
+        setTestingId(null);
+        return;
+      }
+
       const result = await triggerWebhookViaEF({
-        path: w.path,
-        payload: { test: true, source: 'webhook-manager-panel', ts: Date.now() },
+        path: selectedWebhook.path,
+        payload: payloadObj,
       });
+
       toast({
         title: 'Webhook disparado',
-        description: `${w.name} — status ${result.status}`,
+        description: `${selectedWebhook.name} — status ${result.status}`,
       });
+      setTestDialogOpen(false);
     } catch (e) {
       toast({
         title: 'Falha no teste',
@@ -49,6 +67,11 @@ export function WebhookManagerPanel() {
     } finally {
       setTestingId(null);
     }
+  };
+
+  const openTestDialog = (w: WebhookEndpoint) => {
+    setSelectedWebhook(w);
+    setTestDialogOpen(true);
   };
 
   return (
@@ -113,14 +136,10 @@ export function WebhookManagerPanel() {
                       size="sm"
                       variant="outline"
                       className="h-7 text-xs gap-1.5 border-border hover:bg-accent hover:border-primary"
-                      disabled={testingId === w.id || w.status !== 'active'}
-                      onClick={() => handleTest(w)}
+                      disabled={w.status !== 'active'}
+                      onClick={() => openTestDialog(w)}
                     >
-                      {testingId === w.id ? (
-                        <Loader2 className="h-3 w-3 animate-spin" />
-                      ) : (
-                        <Send className="h-3 w-3" />
-                      )}
+                      <Send className="h-3 w-3" />
                       Testar
                     </Button>
                   </div>
@@ -130,6 +149,54 @@ export function WebhookManagerPanel() {
           ))}
         </div>
       )}
+
+      {/* Test Webhook Dialog */}
+      <Dialog open={testDialogOpen} onOpenChange={setTestDialogOpen}>
+        <DialogContent className="sm:max-w-[500px] rounded-[2rem] border-border/40 p-8 shadow-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-heading font-black flex items-center gap-2">
+              <PlayCircle className="h-6 w-6 text-primary" />
+              Testar Webhook
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6 mt-4">
+            <div className="space-y-2">
+              <Label className="text-xs font-black uppercase text-muted-foreground tracking-widest">Webhook Alvo</Label>
+              <div className="p-3 rounded-xl bg-secondary/30 border border-border/20">
+                <p className="text-sm font-bold text-foreground">{selectedWebhook?.name}</p>
+                <code className="text-[10px] text-muted-foreground">{selectedWebhook?.path}</code>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label className="text-xs font-black uppercase text-muted-foreground tracking-widest">JSON Payload</Label>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-6 text-[10px] gap-1"
+                  onClick={() => navigator.clipboard.writeText(testPayload)}
+                >
+                  <Clipboard className="h-3 w-3" /> Copiar
+                </Button>
+              </div>
+              <Textarea 
+                value={testPayload} 
+                onChange={(e) => setTestPayload(e.target.value)} 
+                className="font-mono text-xs min-h-[160px] rounded-xl bg-secondary/20"
+              />
+            </div>
+
+            <DialogFooter className="pt-4">
+              <Button variant="outline" onClick={() => setTestDialogOpen(false)} className="h-12 rounded-xl px-6">Cancelar</Button>
+              <Button onClick={handleTest} disabled={!!testingId} className="h-12 px-8 rounded-xl nexus-gradient-bg text-primary-foreground font-bold shadow-lg shadow-primary/20">
+                {testingId ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
+                <span className="ml-2">Disparar Agora</span>
+              </Button>
+            </DialogFooter>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
