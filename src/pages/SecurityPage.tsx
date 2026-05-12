@@ -240,6 +240,10 @@ export default function SecurityPage() {
         <TabsContent value="threats" className="animate-in fade-in duration-500">
           <RedTeamingPanel />
         </TabsContent>
+
+        <TabsContent value="audit" className="animate-in fade-in duration-500">
+          <AuditLogSection />
+        </TabsContent>
       </Tabs>
     </div>
   );
