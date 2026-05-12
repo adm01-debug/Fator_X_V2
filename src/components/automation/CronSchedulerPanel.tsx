@@ -75,6 +75,33 @@ export function CronSchedulerPanel() {
     }
   };
 
+  const handleCreate = async () => {
+    if (!newName.trim() || !targetId.trim()) {
+      toast({ title: 'Preencha todos os campos', variant: 'destructive' });
+      return;
+    }
+    setSaving(true);
+    try {
+      await createSchedule({
+        name: newName.trim(),
+        frequency: 'cron',
+        cron_expression: newCron,
+        target_type: targetType as any,
+        target_id: targetId.trim(),
+        status: 'active',
+      });
+      toast({ title: 'Agendamento criado!' });
+      setCreateOpen(false);
+      setNewName('');
+      setTargetId('');
+      await loadData();
+    } catch (e: any) {
+      toast({ title: 'Erro ao criar', description: e.message, variant: 'destructive' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Stats */}
