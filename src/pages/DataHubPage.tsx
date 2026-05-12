@@ -152,7 +152,13 @@ export default function DataHubPage() {
               <p className="text-[10px] text-muted-foreground font-bold tracking-widest uppercase">Conectividade Ativa</p>
             </div>
             <div className="h-10 w-px bg-border/40 mx-4" />
+            {isStreaming && (
+              <Badge className="bg-nexus-cyan/20 text-nexus-cyan border-nexus-cyan/30 animate-pulse font-black px-3 py-1 rounded-full text-[10px] tracking-widest uppercase mr-4">
+                <Activity className="h-3 w-3 mr-1" /> Live Stream Ativo
+              </Badge>
+            )}
             <NLPAnalysisDialog />
+
           </div>
         </div>
       </div>
