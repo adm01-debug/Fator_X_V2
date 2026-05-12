@@ -161,6 +161,58 @@ export async function listWorkflowRuns(limit = 30) {
   return data ?? [];
 }
 
+/* ── Execute workflow stream ── */
+export async function executeWorkflowStream(
+  workflowId: string,
+  input: string = '',
+  onEvent: (event: any) => void
+): Promise<void> {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session?.access_token) throw new Error('Not authenticated');
+
+  const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/workflow-engine-v2`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${session.access_token}`,
+      'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+      'Accept': 'text/event-stream'
+    },
+    body: JSON.stringify({ workflow_id: workflowId, input })
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({ error: 'Streaming failed' }));
+    throw new Error(err.error || 'Streaming failed');
+  }
+
+  const reader = response.body?.getReader();
+  if (!reader) throw new Error('No readable stream');
+
+  const decoder = new TextDecoder();
+  let buffer = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop() || '';
+
+    for (const line of lines) {
+      if (line.startsWith('data: ')) {
+        try {
+          const data = JSON.parse(line.slice(6));
+          onEvent(data);
+        } catch (e) {
+          console.error('Failed to parse SSE line', e);
+        }
+      }
+    }
+  }
+}
+
 /* ── Execute workflow ── */
 export async function executeWorkflow(
   workflowId: string,
@@ -173,7 +225,6 @@ export async function executeWorkflow(
   return withTrace(
     `workflow.${workflowName}`,
     async (_addSpan, ctx) => {
-      // Try workflow-engine for DB workflows
       try {
         const engineResult = await ctx.withSpan('workflow.engine_invoke', 'tool', async (span) => {
           span.setAttribute('workflow.id', workflowId);
@@ -186,23 +237,17 @@ export async function executeWorkflow(
           });
           if (error) throw new Error(error.message);
           if (data?.status === 'completed') {
-            span.setAttribute('workflow.steps_executed', data.steps_executed ?? 0);
-            span.setAttribute('cost.usd', data.total_cost_usd ?? 0);
+            span.setAttribute('workflow.steps_executed', data.stepsExecuted ?? 0);
+            span.setAttribute('cost.usd', data.cost ?? 0);
             return {
-              stepsExecuted: data.steps_executed as number,
-              cost: (data.total_cost_usd as number) ?? 0,
+              stepsExecuted: data.stepsExecuted as number,
+              cost: (data.cost as number) ?? 0,
             };
           }
-          // Engine returned a non-completed status — surface as error so
-          // the catch falls through to the step-by-step fallback path.
           throw new Error(`workflow-engine status ${data?.status ?? 'unknown'}`);
         });
         return engineResult;
       } catch {
-        // Fallback: execute step-by-step via LLM Gateway, one span per step.
-        // Each step receives the full pipeline context so it understands its
-        // role in the sequence. Not a true workflow engine, but produces
-        // meaningful output when workflow-engine-v2 is unavailable.
         const pipelineContext = steps.map((s, i) => `${i + 1}. ${s}`).join('\n');
         let previousOutput = '';
         let totalCost = 0;
@@ -287,12 +332,8 @@ export async function getWorkflowSteps(workflowId: string): Promise<WorkflowStep
 
 /* ── Sync steps from canvas nodes ── */
 async function syncWorkflowSteps(workflowId: string, nodes: WorkflowNode[]): Promise<void> {
-  // Delete existing steps
   await fromTable('workflow_steps').delete().eq('workflow_id', workflowId);
-
   if (nodes.length === 0) return;
-
-  // Insert new steps from nodes
   const stepsToInsert = nodes.map((node, index) => ({
     workflow_id: workflowId,
     name: String(node.data?.label || node.type || `Step ${index + 1}`),
@@ -306,7 +347,6 @@ async function syncWorkflowSteps(workflowId: string, nodes: WorkflowNode[]): Pro
       ...((node.data?.config as Record<string, unknown>) || {}),
     } as unknown as Json,
   }));
-
   const { error } = await fromTable('workflow_steps').insert(stepsToInsert);
   if (error) {
     logger.error('Failed to sync workflow_steps:', error.message);
@@ -316,8 +356,6 @@ async function syncWorkflowSteps(workflowId: string, nodes: WorkflowNode[]): Pro
 /* ── Map DB row to Workflow ── */
 function mapWorkflow(row: Record<string, unknown>, steps: WorkflowStep[] = []): Workflow {
   const config = (row.config || {}) as Record<string, unknown>;
-
-  // If we have normalized steps, build nodes from them; otherwise fallback to config JSON
   let nodes: WorkflowNode[];
   if (steps.length > 0) {
     nodes = steps.map((step) => {
@@ -339,9 +377,7 @@ function mapWorkflow(row: Record<string, unknown>, steps: WorkflowStep[] = []): 
   } else {
     nodes = Array.isArray(config.nodes) ? (config.nodes as WorkflowNode[]) : [];
   }
-
   const edges = Array.isArray(config.edges) ? (config.edges as WorkflowEdge[]) : [];
-
   return {
     id: String(row.id),
     name: String(row.name || ''),
