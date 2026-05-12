@@ -19,10 +19,30 @@ import { ApprovalQueuePanel } from "@/components/deployments/ApprovalQueuePanel"
 import { DeploymentWizard } from "@/components/deployments/DeploymentWizard";
 
 export default function DeploymentsPage() {
+  const [wizardOpen, setWizardOpen] = useState(false);
+  const [selectedAgent, setSelectedAgent] = useState<{id: string, name: string} | null>(null);
+
   const { data: deployments = [], isLoading } = useQuery({
     queryKey: ['deployments'],
     queryFn: listDeployedAgents,
   });
+
+  const { data: health } = useQuery({
+    queryKey: ['system-health'],
+    queryFn: getSystemHealth,
+    refetchInterval: 15000,
+  });
+
+  const { data: metrics } = useQuery({
+    queryKey: ['live-metrics'],
+    queryFn: getDashboardMetrics,
+    refetchInterval: 30000,
+  });
+
+  const handleDeployClick = (agent: any) => {
+    setSelectedAgent({ id: agent.id, name: agent.name });
+    setWizardOpen(true);
+  };
 
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-10 max-w-[1440px] mx-auto animate-page-enter">
@@ -58,14 +78,14 @@ export default function DeploymentsPage() {
           <ApprovalQueuePanel />
           
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between px-2">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
                   <Cpu className="h-5 w-5 text-primary" />
                 </div>
                 <h3 className="text-xl font-heading font-black text-foreground">Frota Ativa</h3>
               </div>
-              <Badge variant="outline" className="h-8 px-4 rounded-xl text-xs font-bold border-border/40">{deployments.length} Ativos</Badge>
+              <Badge variant="outline" className="h-8 px-4 rounded-xl text-xs font-bold border-border/40 bg-card/50">{deployments.length} Ativos</Badge>
             </div>
 
             {isLoading ? (
@@ -80,7 +100,7 @@ export default function DeploymentsPage() {
             ) : (
               <div className="grid gap-6 md:grid-cols-2">
                 {deployments.map((dep: any) => (
-                  <div key={dep.id} className="nexus-card nexus-card-interactive group p-6 rounded-[2rem] bg-gradient-to-br from-card to-card/95 border-border/40 hover:border-primary/30 transition-all duration-500">
+                  <div key={dep.id} className="nexus-card nexus-card-interactive group p-6 rounded-[2.5rem] bg-card/50 backdrop-blur-sm border-border/40 hover:border-primary/30 transition-all duration-500">
                     <div className="flex items-start justify-between mb-5">
                       <div className="flex items-center gap-4">
                         <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center text-2xl shadow-sm border border-primary/10 group-hover:scale-105 transition-transform duration-300">
@@ -124,11 +144,16 @@ export default function DeploymentsPage() {
                       <div className="flex items-center justify-between pt-4 border-t border-border/20">
                         <div className="flex items-center gap-2">
                           <Zap className="h-3.5 w-3.5 text-nexus-amber" />
-                          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Sincronizado há {new Date(dep.updated).toLocaleDateString('pt-BR')}</span>
+                          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Updated {new Date(dep.updated).toLocaleDateString('pt-BR')}</span>
                         </div>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-lg hover:bg-primary/10">
-                          <Terminal className="h-4 w-4" />
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-lg hover:bg-primary/10" onClick={() => handleDeployClick(dep)}>
+                            <Rocket className="h-4 w-4 text-primary" />
+                          </Button>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-lg hover:bg-primary/10">
+                            <Terminal className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -139,7 +164,7 @@ export default function DeploymentsPage() {
         </div>
 
         <div className="space-y-8">
-          <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem]">
+          <div className="bg-card/50 backdrop-blur-xl border border-border/40 p-8 rounded-[3rem] shadow-xl shadow-primary/5">
             <div className="flex items-center gap-3 mb-6">
               <div className="h-10 w-10 rounded-xl bg-nexus-purple/10 flex items-center justify-center">
                 <Globe className="h-5 w-5 text-nexus-purple" />
@@ -152,24 +177,28 @@ export default function DeploymentsPage() {
             <A2APanel />
           </div>
 
-          <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem]">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="h-10 w-10 rounded-xl bg-nexus-cyan/10 flex items-center justify-center">
-                <Shield className="h-5 w-5 text-nexus-cyan" />
+          <div className="bg-card/50 backdrop-blur-xl border border-border/40 p-8 rounded-[3rem] shadow-xl shadow-primary/5">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl bg-nexus-cyan/10 flex items-center justify-center">
+                  <Shield className="h-5 w-5 text-nexus-cyan" />
+                </div>
+                <h3 className="text-xl font-heading font-black text-foreground">Saúde & SLA</h3>
               </div>
-              <h3 className="text-xl font-heading font-black text-foreground">Saúde & SLA</h3>
+              {health?.status === 'healthy' && <div className="h-2 w-2 rounded-full bg-nexus-emerald animate-pulse" />}
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {[
-                { label: 'Gateway Neural', status: 'Online', val: '99.99%', color: 'text-nexus-emerald' },
-                { label: 'Latência Global', status: 'P95', val: '142ms', color: 'text-nexus-emerald' },
-                { label: 'Taxa de Erro', status: 'Estável', val: '0.02%', color: 'text-nexus-emerald' },
-                { label: 'Rollback Status', status: 'Inativo', val: 'V6.2', color: 'text-muted-foreground' },
+                { label: 'Gateway Neural', status: health?.status || 'Online', val: '99.99%', color: health?.status === 'healthy' ? 'text-nexus-emerald' : 'text-nexus-amber' },
+                { label: 'Latência Global', status: 'P95', val: `${health?.checks?.gateway?.latency_ms || 142}ms`, color: 'text-nexus-emerald' },
+                { label: 'Consultas 24h', status: 'Throughput', val: metrics?.executions24h?.toLocaleString() || '0', color: 'text-primary' },
+                { label: 'Custo Diário', status: 'FinOps', val: `$${metrics?.dailyCost?.toFixed(2) || '0.00'}`, color: 'text-nexus-purple' },
+                { label: 'Alertas Ativos', status: 'Incidents', val: metrics?.activeAlerts || '0', color: (metrics?.activeAlerts || 0) > 0 ? 'text-destructive' : 'text-muted-foreground' },
               ].map((s, i) => (
-                <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-card border border-border/40 group hover:border-primary/30 transition-all">
+                <div key={i} className="flex items-center justify-between p-3.5 rounded-2xl bg-secondary/30 border border-border/20 group hover:border-primary/20 transition-all">
                   <div className="flex flex-col">
                     <span className="text-xs font-bold text-foreground">{s.label}</span>
-                    <span className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">{s.status}</span>
+                    <span className="text-[9px] text-muted-foreground uppercase font-black tracking-widest">{s.status}</span>
                   </div>
                   <div className="text-right">
                     <span className={cn("text-xs font-black font-mono", s.color)}>{s.val}</span>
@@ -177,9 +206,21 @@ export default function DeploymentsPage() {
                 </div>
               ))}
             </div>
+            <Button variant="outline" className="w-full mt-6 h-10 rounded-xl text-[10px] font-bold uppercase tracking-widest border-border/40" asChild>
+               <a href="/observability">Ver Detalhes OTel</a>
+            </Button>
           </div>
         </div>
       </div>
+
+      <DeploymentWizard 
+        isOpen={wizardOpen}
+        onOpenChange={setWizardOpen}
+        agentName={selectedAgent?.name || ""}
+        onDeploy={(env) => {
+          console.log(`Deploying to ${env}`);
+        }}
+      />
     </div>
   );
 }
