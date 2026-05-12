@@ -5,10 +5,10 @@ export function useGuardrails() {
   const [lastCheck, setLastCheck] = useState<GuardrailResponse | null>(null);
   const [checking, setChecking] = useState(false);
 
-  const validateInput = useCallback(async (text: string): Promise<boolean> => {
+  const validateInput = useCallback(async (text: string, agent_id?: string, mode?: string): Promise<boolean> => {
     setChecking(true);
     try {
-      const result = await checkInput(text);
+      const result = await checkInput(text, agent_id, mode);
       setLastCheck(result);
       return result.allowed;
     } catch {
@@ -18,10 +18,10 @@ export function useGuardrails() {
     }
   }, []);
 
-  const validateOutput = useCallback(async (text: string): Promise<boolean> => {
+  const validateOutput = useCallback(async (text: string, agent_id?: string, mode?: string): Promise<boolean> => {
     setChecking(true);
     try {
-      const result = await checkOutput(text);
+      const result = await checkOutput(text, agent_id, mode);
       setLastCheck(result);
       return result.allowed;
     } catch {

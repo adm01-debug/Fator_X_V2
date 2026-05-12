@@ -23,9 +23,9 @@ export interface GuardrailResponse {
   score_average?: number;
 }
 
-export async function checkInput(text: string): Promise<GuardrailResponse> {
+export async function checkInput(text: string, agent_id?: string, mode: string = 'Council'): Promise<GuardrailResponse> {
   const { data, error } = await supabase.functions.invoke('guardrails-ml', {
-    body: { text, direction: 'input' },
+    body: { text, direction: 'input', agent_id, mode },
   });
   if (error) {
     logger.error('Guardrails ML input check failed', { error: error.message });
@@ -34,9 +34,9 @@ export async function checkInput(text: string): Promise<GuardrailResponse> {
   return data as GuardrailResponse;
 }
 
-export async function checkOutput(text: string): Promise<GuardrailResponse> {
+export async function checkOutput(text: string, agent_id?: string, mode: string = 'Council'): Promise<GuardrailResponse> {
   const { data, error } = await supabase.functions.invoke('guardrails-ml', {
-    body: { text, direction: 'output' },
+    body: { text, direction: 'output', agent_id, mode },
   });
   if (error) {
     logger.error('Guardrails ML output check failed', { error: error.message });
