@@ -122,7 +122,8 @@ const KnowledgeManagementPage = lazy(() => import("./pages/KnowledgeManagementPa
 const ArticleEditorPage = lazy(() => import("./pages/ArticleEditorPage"));
 const PublicHelpCenterPage = lazy(() => import("./pages/PublicHelpCenterPage"));
 const PublicForumPage = lazy(() => import("./pages/PublicForumPage"));
-const SwarmOrchestrationPage = lazy(() => import("./pages/SwarmOrchestrationPage.tsx"));
+const SwarmOrchestrationPage = lazy(() => import("./pages/SwarmOrchestrationPage"));
+const AgentArenaPage = lazy(() => import("./pages/AgentArenaPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient({
@@ -252,6 +253,7 @@ const App = () => (
                       <Route path="/marketplace-pro" element={<SafePage><MarketplaceMonetizedPage /></SafePage>} />
                       <Route path="/synthetic-data" element={<SafePage><SyntheticDataPage /></SafePage>} />
                       <Route path="/canary" element={<SafePage><CanaryDeploymentsPage /></SafePage>} />
+                      <Route path="/arena" element={<SafePage><AgentArenaPage /></SafePage>} />
                       <Route path="/code-interpreter" element={<SafePage><CodeInterpreterPage /></SafePage>} />
                       <Route path="/email-triggers" element={<SafePage><EmailCalendarTriggersPage /></SafePage>} />
                       <Route path="/debugger" element={<SafePage><AgentDebuggerPage /></SafePage>} />

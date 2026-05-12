@@ -95,6 +95,7 @@ const navSections = [
       { title: "DR Drills", url: "/observability/dr-drills", icon: Archive },
       { title: "Postmortems", url: "/observability/postmortems", icon: FileText },
       { title: "Replay & Fork", url: "/replay", icon: GitBranchIcon },
+      { title: "Agent Battle Arena", url: "/arena", icon: Swords },
       { title: "Voice Agent", url: "/voice", icon: Mic },
       { title: "Voice Realtime", url: "/voice-agents", icon: Mic },
       { title: "Dados & Storage", url: "/data-storage", icon: Database },
