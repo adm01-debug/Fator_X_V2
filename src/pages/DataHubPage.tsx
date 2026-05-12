@@ -38,6 +38,8 @@ export default function DataHubPage() {
   const [entityCounts, setEntityCounts] = useState<Record<string, number>>({});
   const [testingConnections, setTestingConnections] = useState(false);
   const [loadingCounts, setLoadingCounts] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false);
+
 
   // Sync entity selection to store
   useEffect(() => { storeSelectEntity(selectedEntity); }, [selectedEntity, storeSelectEntity]);
