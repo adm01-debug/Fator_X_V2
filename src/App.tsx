@@ -122,6 +122,7 @@ const KnowledgeManagementPage = lazy(() => import("./pages/KnowledgeManagementPa
 const ArticleEditorPage = lazy(() => import("./pages/ArticleEditorPage"));
 const PublicHelpCenterPage = lazy(() => import("./pages/PublicHelpCenterPage"));
 const PublicForumPage = lazy(() => import("./pages/PublicForumPage"));
+const SwarmOrchestrationPage = lazy(() => import("./pages/SwarmOrchestrationPage.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient({
