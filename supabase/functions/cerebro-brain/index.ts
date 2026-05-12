@@ -5,7 +5,7 @@ import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse, check
 
 // CORS handled by _shared/cors.ts — dynamic origin whitelist
 
-const VALID_ACTIONS = ['knowledge_graph', 'knowledge_health', 'auto_extract', 'expert_discovery', 'brain_sandbox', 'stats'] as const;
+const VALID_ACTIONS = ['knowledge_graph', 'knowledge_health', 'auto_extract', 'expert_discovery', 'brain_sandbox', 'stats', 'temporal_graph', 'entity_resolution', 'decay_detection'] as const;
 type CerebroAction = typeof VALID_ACTIONS[number];
 
 const VALID_EXTRACT_TYPES = ['entities', 'facts', 'rules', 'contacts'] as const;
@@ -348,6 +348,71 @@ serve(async (req) => {
         tokens: result.tokens,
         cost_usd: result.cost_usd,
       }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    }
+
+    // ═══ ACTION: temporal_graph ═══
+    if (action === 'temporal_graph') {
+      const { data: events } = await supabase.from('agent_traces')
+        .select('id, created_at, agent_id, event_type, metadata')
+        .order('created_at', { ascending: false })
+        .limit(100);
+
+      const { data: agents } = await supabase.from('agents').select('id, name');
+      const agentMap = Object.fromEntries((agents || []).map(a => [a.id, a.name]));
+
+      return new Response(JSON.stringify({
+        timeline: (events || []).map(e => ({
+          id: e.id,
+          time: e.created_at,
+          agent: agentMap[e.agent_id!] || 'Sistema',
+          type: e.event_type,
+          info: e.metadata
+        }))
+      }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    }
+
+    // ═══ ACTION: entity_resolution ═══
+    if (action === 'entity_resolution') {
+      const { data: entities } = await supabase.from('agent_memories')
+        .select('id, content, memory_type, agent_id')
+        .eq('memory_type', 'semantic')
+        .limit(200);
+
+      const conflicts = (entities || [])
+        .filter((e, i, arr) => arr.findIndex(t => t.content === e.content) !== i)
+        .map(e => ({ id: e.id, term: e.content, reason: 'Duplicidade semântica detectada' }));
+
+      return new Response(JSON.stringify({
+        resolved: (entities || []).length - conflicts.length,
+        conflicts,
+        total_analyzed: (entities || []).length
+      }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    }
+
+    // ═══ ACTION: decay_detection ═══
+    if (action === 'decay_detection') {
+      const { data: memories } = await supabase.from('agent_memories')
+        .select('id, created_at, content, importance_score')
+        .order('created_at', { ascending: true })
+        .limit(100);
+
+      const now = new Date();
+      const decayed = (memories || []).map(m => {
+        const ageInDays = Math.floor((now.getTime() - new Date(m.created_at).getTime()) / 86400000);
+        const baseImportance = Number(m.importance_score || 5);
+        const currentRelevance = Math.max(0, baseImportance - (ageInDays * 0.1));
+        
+        return {
+          id: m.id,
+          content: m.content,
+          age: ageInDays,
+          original_score: baseImportance,
+          current_score: currentRelevance,
+          status: currentRelevance < 2 ? 'forgotten' : currentRelevance < 4 ? 'decaying' : 'active'
+        };
+      });
+
+      return new Response(JSON.stringify({ items: decayed }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
     // ═══ ACTION: stats ═══
