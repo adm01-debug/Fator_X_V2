@@ -254,6 +254,9 @@ export default function WorkflowsPage() {
           <TabsTrigger value="schedule" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm gap-2 font-bold">
             <Calendar className="h-4 w-4" /> Agendamentos
           </TabsTrigger>
+          <TabsTrigger value="handoffs" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm gap-2 font-bold">
+            <ArrowRightLeft className="h-4 w-4" /> Handoffs
+          </TabsTrigger>
         </TabsList>
 
         <div className="min-h-[600px] bg-card/30 border border-border/40 rounded-[2.5rem] p-4">
