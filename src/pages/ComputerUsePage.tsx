@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Monitor, MousePointer2, Camera, Play, Square, FastForward, AlertTriangle, CheckCircle2, Loader2, Sparkles, Brain, Target, Globe } from "lucide-react";
+import { Monitor, MousePointer2, Play, Square, FastForward, Sparkles, Brain, Target, Globe } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,7 +22,7 @@ export default function ComputerUsePage() {
   const [task, setTask] = useState("");
   const [running, setRunning] = useState(false);
   const [actions, setActions] = useState<Action[]>([]);
-  const [model, setModel] = useState("claude-3-5-sonnet");
+  const [model] = useState("claude-3-5-sonnet");
   const [currentThought, setCurrentThought] = useState("");
   const [cursorPos, setCursorPos] = useState({ x: 50, y: 50 });
   const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null);
