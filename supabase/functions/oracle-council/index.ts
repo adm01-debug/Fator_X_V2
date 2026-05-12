@@ -195,7 +195,7 @@ serve(async (req) => {
           if (enable_peer_review) {
             await sendUpdate('stage', { stage: 2, label: 'Realizando Peer-Review...' });
             const anonymized = successfulResponses.map((r, i) => `## Resposta ${String.fromCharCode(65 + i)}\n${r.content}`).join('\n\n---\n\n');
-            const reviewPrompt = `Avalie as respostas anônimas à pergunta: "${query}"\n\n${anonymized}\n\nResponda APENAS em JSON válido.`;
+            const reviewPrompt = `Pergunta: "${query}"\n\nAvalie as respostas anônimas acima. Identifique pontos de consenso e divergências. Cite especificamente "Resposta A", "Resposta B", etc.\n\nResponda APENAS em JSON válido com este formato: {"consensus_degree": number, "consensus_points": [{"claim": string, "category": "fact"|"opinion", "consensusLevel": "strong"|"partial"|"disputed"}], "divergences": [string]}`;
             
             const reviewModel = chairman_model || successfulResponses[0].model;
             const reviewResponse = await fetch(gatewayUrl, {
@@ -204,18 +204,19 @@ serve(async (req) => {
               body: JSON.stringify({
                 model: reviewModel,
                 messages: [
-                  { role: 'system', content: 'Você é um avaliador imparcial. Responda SOMENTE em JSON.' },
+                  { role: 'system', content: 'Você é um avaliador imparcial e crítico. Responda SOMENTE em JSON.' },
                   { role: 'user', content: reviewPrompt },
                 ],
-                temperature: 0.3,
+                temperature: 0.2,
               }),
             });
             const reviewResult = await reviewResponse.json();
             try {
               const jsonMatch = reviewResult.content.match(/\{[\s\S]*\}/);
               if (jsonMatch) {
-                stage2Results = [JSON.parse(jsonMatch[0])];
-                await sendUpdate('review_complete', stage2Results[0]);
+                const parsedReview = JSON.parse(jsonMatch[0]);
+                stage2Results = [parsedReview];
+                await sendUpdate('review_complete', parsedReview);
               }
             } catch (e) { console.error('Stage 2 JSON Error', e); }
           }
@@ -223,7 +224,8 @@ serve(async (req) => {
           // STAGE 3: Synthesis
           await sendUpdate('stage', { stage: 3, label: 'Presidente sintetizando veredito...' });
           const chairmanModel = chairman_model || successfulResponses[0].model;
-          const synthesisPrompt = `Pergunta: "${query}"\n\nRespostas do Conselho:\n${successfulResponses.map(r => r.content).join('\n\n---\n\n')}\n\nSintetize a resposta final. Use Markdown.`;
+          const reviewData = stage2Results[0] || {};
+          const synthesisPrompt = `Pergunta: "${query}"\n\nRespostas do Conselho:\n${successfulResponses.map((r, i) => `[Membro ${i+1} (${r.model})]: ${r.content}`).join('\n\n---\n\n')}\n\nAnálise de Consenso:\n${JSON.stringify(reviewData)}\n\nSintetize a resposta final. Use citações inline como [Membro 1] para atribuir ideias. Garanta que divergências sejam apresentadas de forma neutra. Use Markdown estruturado.`;
           
           const synthesisResponse = await fetch(gatewayUrl, {
             method: 'POST',
@@ -231,10 +233,10 @@ serve(async (req) => {
             body: JSON.stringify({
               model: chairmanModel,
               messages: [
-                { role: 'system', content: 'Você é o Chairman do Oráculo.' },
+                { role: 'system', content: 'Você é o Chairman do Oráculo. Sua missão é criar um veredito equilibrado e fundamentado.' },
                 { role: 'user', content: synthesisPrompt },
               ],
-              temperature: 0.5,
+              temperature: 0.4,
             }),
           });
           const synthesisResult = await synthesisResponse.json();
@@ -242,9 +244,14 @@ serve(async (req) => {
           
           await sendUpdate('final', {
             final_response: finalContent,
+            confidence_score: Math.round((reviewData.consensus_degree || 85) * 0.9 + (successfulResponses.length / members.length) * 10),
+            consensus_degree: reviewData.consensus_degree || 75,
+            consensus_points: reviewData.consensus_points || [],
             metrics: {
               total_latency_ms: Date.now() - totalStartTime,
               total_cost_usd: stage1.reduce((s, r) => s + (r.cost_usd || 0), 0) + (synthesisResult.cost_usd || 0),
+              total_tokens: stage1.reduce((s, r) => s + (r.tokens?.total || 0), 0) + (synthesisResult.tokens?.total || 0),
+              models_used: successfulResponses.length,
             }
           });
           await writer.close();
