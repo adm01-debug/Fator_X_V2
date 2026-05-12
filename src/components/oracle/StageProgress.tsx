@@ -14,6 +14,7 @@ export function StageProgress({ mode, currentStage }: StageProgressProps) {
   return (
     <div className="p-6 bg-card border border-border/60 rounded-2xl shadow-sm animate-in fade-in slide-in-from-top-2">
       <div className="flex flex-col gap-6">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             {!store.error ? (
               <>
