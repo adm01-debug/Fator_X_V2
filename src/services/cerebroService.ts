@@ -35,7 +35,9 @@ export async function queryBrain(query: string, options?: Record<string, unknown
   } = await supabase.auth.getSession();
   if (!session) throw new Error('Not authenticated');
 
-  const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/cerebro-brain`, {
+  const stream = options?.stream === true;
+
+  const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/cerebro-query`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -46,6 +48,7 @@ export async function queryBrain(query: string, options?: Record<string, unknown
   });
 
   if (!resp.ok) throw new Error('Brain query failed');
+  if (stream) return resp.body;
   return resp.json();
 }
 
