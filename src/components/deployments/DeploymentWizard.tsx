@@ -7,7 +7,6 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
 interface DeploymentWizardProps {
-  agentId: string;
   agentName: string;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
