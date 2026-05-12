@@ -109,6 +109,7 @@ export function BrainSandboxTab() {
                 <SelectItem value="full">🧠 Completo (Fatos + RAG)</SelectItem>
                 <SelectItem value="facts_only">📊 Apenas Fatos da plataforma</SelectItem>
                 <SelectItem value="rag_only">📚 Apenas RAG / base de docs</SelectItem>
+                <SelectItem value="tiered">📶 Hierarquia de Contexto (L0/L1/L2)</SelectItem>
                 <SelectItem value="no_context">🚫 Sem contexto (LLM puro)</SelectItem>
               </SelectContent>
             </Select>
