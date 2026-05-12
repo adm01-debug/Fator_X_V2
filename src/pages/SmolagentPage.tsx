@@ -40,7 +40,7 @@ interface AgentStep {
   step: number;
   thought: string;
   action: string;
-  action_input: string;
+  action_input: string | Record<string, unknown>;
   observation: string;
   latency_ms?: number;
   tokens?: number;
@@ -53,6 +53,7 @@ interface AgentResult {
   total_cost_usd: number;
   total_latency_ms: number;
 }
+
 
 export default function SmolagentPage() {
   const [task, setTask] = useState('');
