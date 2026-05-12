@@ -1,7 +1,11 @@
-import { Loader2, Network, Activity, TrendingUp, Database, Zap } from "lucide-react";
+import { Loader2, Network, Activity, TrendingUp, Database, Zap, GitMerge, TrendingDown, Layers } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { invokeCerebroBrain, getHealthScore } from "@/services/cerebroService";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { compactMemories } from "@/services/memoryService";
+import { useState } from "react";
 
 interface MemoryEntry {
   id: string;
@@ -24,6 +28,21 @@ interface CerebroStats {
 }
 
 export function OverviewTab() {
+  const queryClient = useQueryClient();
+  const [compacting, setCompacting] = useState(false);
+
+  const handleCompact = async () => {
+    setCompacting(true);
+    try {
+      await compactMemories('episodic');
+      toast.success('Memórias episódicas compactadas');
+      queryClient.invalidateQueries({ queryKey: ['cerebro_stats'] });
+    } catch (e: any) {
+      toast.error('Erro na compactação: ' + e.message);
+    } finally {
+      setCompacting(false);
+    }
+  };
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['cerebro_stats'],
     queryFn: async () => {
@@ -196,12 +215,13 @@ export function OverviewTab() {
             </div>
           </div>
 
-          {/* Quick insights */}
-          <div className="nexus-card">
-            <h3 className="text-sm font-heading font-semibold text-foreground mb-3 flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-nexus-emerald" /> Insights de Operação
-            </h3>
-            <div className="grid md:grid-cols-2 gap-2">
+          {/* Quick Management */}
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="nexus-card">
+              <h3 className="text-sm font-heading font-semibold text-foreground mb-3 flex items-center gap-2">
+                <TrendingUp className="h-4 w-4 text-nexus-emerald" /> Insights de Operação
+              </h3>
+              <div className="grid grid-cols-1 gap-2">
               {(() => {
                 const insights: Array<{ msg: string; type: 'good' | 'warn' | 'info' }> = [];
                 if ((stats?.knowledge_bases ?? 0) === 0) {
@@ -233,9 +253,48 @@ export function OverviewTab() {
                   </div>
                 ));
               })()}
+              </div>
+            </div>
+            
+            <div className="nexus-card">
+              <h3 className="text-sm font-heading font-semibold text-foreground mb-3 flex items-center gap-2">
+                <Zap className="h-4 w-4 text-primary" /> Manutenção de Memória
+              </h3>
+              <div className="space-y-3">
+                <div className="p-3 rounded-lg bg-secondary/30 border border-border/30">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Layers className="h-4 w-4 text-nexus-purple" />
+                      <span className="text-xs font-semibold">Compactação Automática</span>
+                    </div>
+                    <Badge variant="outline" className="text-[10px] border-nexus-emerald/30 text-nexus-emerald">Otimizado</Badge>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground mb-3">Reduza o custo de contexto fundindo memórias episódicas similares em fatos canônicos.</p>
+                  <Button 
+                    size="sm" 
+                    className="w-full h-8 gap-2 text-xs" 
+                    variant="outline" 
+                    onClick={handleCompact}
+                    disabled={compacting}
+                  >
+                    {compacting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <GitMerge className="h-3.5 w-3.5" />}
+                    Compactar Memórias Episódicas
+                  </Button>
+                </div>
+
+                <div className="p-3 rounded-lg bg-secondary/30 border border-border/30">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <TrendingDown className="h-4 w-4 text-nexus-orange" />
+                      <span className="text-xs font-semibold">Temporal Decay</span>
+                    </div>
+                    <Badge variant="outline" className="text-[10px]">Ativo</Badge>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">O Super Cérebro esquece gradualmente informações irrelevantes para manter a precisão.</p>
+                </div>
+              </div>
             </div>
           </div>
-
         </>
       )}
     </div>

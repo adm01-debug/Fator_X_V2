@@ -18,6 +18,7 @@ const modeLabels: Record<string, string> = {
   full: '🧠 Contexto Completo (Fatos + RAG)',
   facts_only: '📊 Apenas Fatos',
   rag_only: '📚 Apenas RAG',
+  tiered: '📶 Context Tiers (L0/L1/L2)',
   no_context: '🚫 Sem Contexto',
 };
 
@@ -50,10 +51,11 @@ export function BrainSandboxTab() {
     if (!query.trim()) return;
     setIsRunningAll(true);
     setResults([]);
-    const modes: Array<'full' | 'facts_only' | 'rag_only' | 'no_context'> = [
+    const modes: Array<'full' | 'facts_only' | 'rag_only' | 'tiered' | 'no_context'> = [
       'full',
       'facts_only',
       'rag_only',
+      'tiered',
       'no_context',
     ];
     const collected: SandboxResult[] = [];
@@ -108,6 +110,7 @@ export function BrainSandboxTab() {
                 <SelectItem value="full">🧠 Completo (Fatos + RAG)</SelectItem>
                 <SelectItem value="facts_only">📊 Apenas Fatos da plataforma</SelectItem>
                 <SelectItem value="rag_only">📚 Apenas RAG / base de docs</SelectItem>
+                <SelectItem value="tiered">📶 Hierarquia de Contexto (L0/L1/L2)</SelectItem>
                 <SelectItem value="no_context">🚫 Sem contexto (LLM puro)</SelectItem>
               </SelectContent>
             </Select>

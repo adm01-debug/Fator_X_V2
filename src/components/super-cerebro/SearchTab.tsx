@@ -10,8 +10,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Loader2, MessageSquare, Sparkles, ArrowUpDown, Search, History, X } from 'lucide-react';
-import { invokeCerebroQuery } from '@/services/cerebroService';
+import { 
+  Loader2, MessageSquare, Sparkles, ArrowUpDown, Search, 
+  History, X, Layers, ShieldCheck, Zap 
+} from 'lucide-react';
+import { invokeCerebroQuery, queryTiered } from '@/services/cerebroService';
 import { toast } from 'sonner';
 import {
   rerankChunks,
@@ -19,6 +22,7 @@ import {
   fetchChunksForRerank,
   type RerankResult,
 } from '@/services/knowledgeService';
+import type { ContextTier } from '@/services/contextTiersService';
 
 const HISTORY_KEY = 'nexus-cerebro-search-history';
 const HISTORY_MAX = 10;
@@ -51,6 +55,15 @@ export function SearchTab() {
   const [isReranking, setIsReranking] = useState(false);
   const [rerankResults, setRerankResults] = useState<RerankResult[] | null>(null);
   const [rerankMethod, setRerankMethod] = useState<string | null>(null);
+
+  // Tiered Search state
+  const [isTieredSearching, setIsTieredSearching] = useState(false);
+  const [tieredResults, setTieredResults] = useState<{ 
+    l2Results: ContextTier[]; 
+    tokensSaved: number;
+    l0Results: number;
+    l1Results: number;
+  } | null>(null);
 
   // KB filter
   const [knowledgeBases, setKnowledgeBases] = useState<{ id: string; name: string }[]>([]);
@@ -140,6 +153,25 @@ export function SearchTab() {
     }
   };
 
+  const handleTieredSearch = async () => {
+    if (!query.trim()) return;
+    setIsTieredSearching(true);
+    setTieredResults(null);
+    try {
+      const result = await queryTiered(query, {
+        l0Limit: 20,
+        l1Limit: 8,
+        l2Limit: 3
+      });
+      setTieredResults(result);
+      toast.success(`Busca hierárquica concluída! Economia: ${result.tokensSaved} tokens`);
+    } catch (e: any) {
+      toast.error('Erro na busca tiered: ' + e.message);
+    } finally {
+      setIsTieredSearching(false);
+    }
+  };
+
   const methodLabels: Record<string, string> = {
     cohere: 'Cohere Rerank v3.5',
     hf_bge_reranker: 'HuggingFace BGE Reranker',
@@ -198,7 +230,78 @@ export function SearchTab() {
                   {h}
                 </button>
               ))}
+      </div>
+
+      {/* ── Context Tiers (Hierarchical Search) ── */}
+      <div className="nexus-card space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-heading font-semibold text-foreground flex items-center gap-2">
+            <Layers className="h-4 w-4 text-primary" /> Busca Hierárquica (L0/L1/L2)
+          </h3>
+          <Badge variant="outline" className="bg-nexus-emerald/5 text-nexus-emerald border-nexus-emerald/20 gap-1.5 py-0.5 px-2 text-[9px]">
+            <Zap className="h-3 w-3" /> Token Optimized
+          </Badge>
+        </div>
+        <p className="text-[11px] text-muted-foreground">
+          Estratégia OpenViking: L0 (Abstract) para filtro → L1 (Overview) para planejamento → L2 (Full) para contexto final. 
+          Economiza até 80% de tokens em bases grandes.
+        </p>
+        
+        <div className="flex gap-3">
+          <Button
+            onClick={handleTieredSearch}
+            disabled={isTieredSearching || !query.trim()}
+            variant="outline"
+            className="flex-1 gap-2 border-primary/20 hover:bg-primary/5"
+          >
+            {isTieredSearching ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <ShieldCheck className="h-4 w-4 text-nexus-emerald" />
+            )}
+            {isTieredSearching ? 'Processando Camadas...' : 'Executar Busca Hierárquica'}
+          </Button>
+        </div>
+
+        {tieredResults && (
+          <div className="space-y-4">
+            <div className="grid grid-cols-3 gap-3">
+              <div className="bg-secondary/30 rounded-lg p-2 text-center border border-border/20">
+                <p className="text-lg font-bold text-foreground">{tieredResults.l0Results}</p>
+                <p className="text-[9px] text-muted-foreground uppercase">L0 Found</p>
+              </div>
+              <div className="bg-secondary/30 rounded-lg p-2 text-center border border-border/20">
+                <p className="text-lg font-bold text-foreground">{tieredResults.l1Results}</p>
+                <p className="text-[9px] text-muted-foreground uppercase">L1 Filtered</p>
+              </div>
+              <div className="bg-nexus-emerald/5 rounded-lg p-2 text-center border border-nexus-emerald/20">
+                <p className="text-lg font-bold text-nexus-emerald">{tieredResults.tokensSaved}</p>
+                <p className="text-[9px] text-muted-foreground uppercase">Tokens Saved</p>
+              </div>
             </div>
+
+            <div className="space-y-2">
+              <p className="text-xs font-semibold text-foreground">Top Chunks (L2 Ready):</p>
+              {tieredResults.l2Results.map((tier, idx) => (
+                <div key={tier.chunk_id} className="p-3 rounded-lg bg-secondary/20 border border-border/20 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Badge variant="outline" className="text-[9px]">Rank #{idx + 1}</Badge>
+                    <span className="text-[10px] text-muted-foreground font-mono">{tier.token_count} tokens</span>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-bold uppercase text-primary tracking-widest">L0 Abstract</p>
+                    <p className="text-xs text-foreground italic">"{tier.l0_abstract}..."</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-bold uppercase text-nexus-emerald tracking-widest">L2 Full Content</p>
+                    <p className="text-[11px] text-muted-foreground line-clamp-3">{tier.l2_content}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
           </div>
         )}
         <div className="flex justify-between items-center">
