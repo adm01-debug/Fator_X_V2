@@ -60,12 +60,12 @@ export function KnowledgeGraphTab() {
         <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
       ) : (
         <>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2">
             {Object.entries(typeConfig).map(([type, cfg]) => (
-              <div key={type} className={`nexus-card text-center py-3 border ${cfg.color}`}>
-                <p className="text-xl mb-1">{cfg.emoji}</p>
-                <p className="text-lg font-bold text-foreground">{nodesByType(type).length}</p>
-                <p className="text-[11px] text-muted-foreground">{cfg.label}</p>
+              <div key={type} className={`nexus-card text-center py-2 border ${cfg.color}`}>
+                <p className="text-lg mb-0.5">{cfg.emoji}</p>
+                <p className="text-base font-bold text-foreground">{nodesByType(type).length}</p>
+                <p className="text-[9px] text-muted-foreground uppercase font-black">{cfg.label}</p>
               </div>
             ))}
           </div>
