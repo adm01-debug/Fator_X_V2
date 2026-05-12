@@ -9,6 +9,7 @@ interface ExecuteBody {
   runtime: "python" | "node" | "deno";
   code: string;
   workspace_id?: string;
+  stream?: boolean;
 }
 
 const MAX_CODE_BYTES = 50_000;
@@ -121,6 +122,99 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ error: `Code exceeds ${MAX_CODE_BYTES} bytes` }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
+    if (body.stream) {
+      const { readable, writable } = new TransformStream();
+      const writer = writable.getWriter();
+      const encoder = new TextEncoder();
+
+      const sendEvent = async (event: string, data: any) => {
+        await writer.write(encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`));
+      };
+
+      // Execução asíncrona para streaming
+      (async () => {
+        try {
+          if (body.runtime === "deno") {
+            const start = Date.now();
+            const tmpFile = await Deno.makeTempFile({ suffix: ".ts" });
+            await Deno.writeTextFile(tmpFile, body.code);
+
+            const cmd = new Deno.Command("deno", {
+              args: ["run", "--no-prompt", "--allow-read=/tmp", tmpFile],
+              stdout: "piped",
+              stderr: "piped",
+            });
+
+            const child = cmd.spawn();
+            const stdoutReader = child.stdout.getReader();
+            const stderrReader = child.stderr.getReader();
+
+            let fullStdout = "";
+            let fullStderr = "";
+
+            const read = async (reader: ReadableStreamDefaultReader<Uint8Array>, type: "stdout" | "stderr") => {
+              while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                const chunk = new TextDecoder().decode(value);
+                if (type === "stdout") fullStdout += chunk;
+                else fullStderr += chunk;
+                await sendEvent(type, { chunk, ts: new Date().toISOString() });
+              }
+            };
+
+            await Promise.all([read(stdoutReader, "stdout"), read(stderrReader, "stderr")]);
+            const { code: exit_code } = await child.output();
+            const duration_ms = Date.now() - start;
+
+            await sendEvent("result", { 
+              status: exit_code === 0 ? "completed" : "failed",
+              exit_code,
+              duration_ms,
+              stdout: fullStdout,
+              stderr: fullStderr
+            });
+
+            // Persist (optional but good for history)
+            await supabase.from("code_executions").insert({
+              user_id: user.id,
+              workspace_id: body.workspace_id ?? null,
+              runtime: body.runtime,
+              code: body.code,
+              stdout: fullStdout, stderr: fullStderr, exit_code, duration_ms, status: exit_code === 0 ? "completed" : "failed", simulated: false,
+            });
+
+            try { await Deno.remove(tmpFile); } catch (_) { }
+          } else {
+            // Simulated streaming
+            await sendEvent("stdout", { chunk: `[Simulação ${body.runtime}] Analisando código...\n`, ts: new Date().toISOString() });
+            await new Promise(r => setTimeout(r, 800));
+            const r = await simulateExecution(body.runtime, body.code);
+            await sendEvent("stdout", { chunk: r.stdout, ts: new Date().toISOString() });
+            if (r.stderr) await sendEvent("stderr", { chunk: r.stderr, ts: new Date().toISOString() });
+            await sendEvent("result", { ...r, status: r.exit_code === 0 ? "completed" : "failed" });
+            
+            await supabase.from("code_executions").insert({
+              user_id: user.id,
+              workspace_id: body.workspace_id ?? null,
+              runtime: body.runtime,
+              code: body.code,
+              stdout: r.stdout, stderr: r.stderr, exit_code: r.exit_code, duration_ms: r.duration_ms, status: r.exit_code === 0 ? "completed" : "failed", simulated: true, files: r.files
+            });
+          }
+        } catch (err) {
+          await sendEvent("error", { message: err instanceof Error ? err.message : String(err) });
+        } finally {
+          await writer.close();
+        }
+      })();
+
+      return new Response(readable, {
+        headers: { ...corsHeaders, "Content-Type": "text/event-stream", "Cache-Control": "no-cache", "Connection": "keep-alive" },
+      });
+    }
+
+    // Comportamento normal (não streaming)
     let stdout = "", stderr = "", exit_code = 0, duration_ms = 0;
     let files: Array<{ name: string; size: number }> = [];
     let simulated = false;
