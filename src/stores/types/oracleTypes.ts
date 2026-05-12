@@ -27,6 +27,7 @@ export interface ModelResponse {
   cost_usd: number;
   latency_ms: number;
   success: boolean;
+  failover?: boolean;
 }
 
 export interface ConsensusPoint {
