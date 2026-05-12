@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { saveOracleHistory } from '@/lib/oracleHistory';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export type { OracleMode, OraclePreset, ModelResponse, ConsensusPoint, Citation, OracleResult } from './types/oracleTypes';
 import type { OracleMode, OracleResult } from './types/oracleTypes';
