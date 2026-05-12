@@ -24,91 +24,36 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseKey, { global: { headers: { Authorization: authHeader } } });
 
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    if (!user) return errorResponse('Unauthorized', 401, req);
 
-    let rawBody: unknown;
+    let rawBody: any;
     try { rawBody = await req.json(); } catch {
-      return new Response(JSON.stringify({ error: 'Invalid JSON body' }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      return errorResponse('Invalid JSON body', 400, req);
     }
 
     const validation = validateBody(rawBody);
-    if (!validation.valid) {
-      return new Response(JSON.stringify({ error: validation.error }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
-    }
+    if (!validation.valid) return errorResponse(validation.error, 400, req);
     const { query } = validation;
+    const stream = rawBody.stream === true;
 
     const { data: member } = await supabase.from('workspace_members').select('workspace_id').eq('user_id', user.id).limit(1).single();
 
     // ═══ Gather context from LOCAL Supabase tables ═══
     const facts: string[] = [];
-
     const { count: agentCount } = await supabase.from('agents').select('id', { count: 'exact', head: true });
     if (agentCount) facts.push(`Temos ${agentCount} agentes configurados na plataforma`);
-
     const { count: kbCount } = await supabase.from('knowledge_bases').select('id', { count: 'exact', head: true });
     if (kbCount) facts.push(`Temos ${kbCount} bases de conhecimento`);
-
     const yesterday = new Date(Date.now() - 86400000).toISOString();
     const { count: traceCount } = await supabase.from('agent_traces').select('id', { count: 'exact', head: true }).gte('created_at', yesterday);
     if (traceCount) facts.push(`${traceCount} interações nas últimas 24h`);
-
-    const { data: usage } = await supabase.from('agent_usage').select('total_cost_usd, requests').order('date', { ascending: false }).limit(7);
-    if (usage && usage.length > 0) {
-      const totalCost = usage.reduce((s: number, u) => s + (Number(u.total_cost_usd) || 0), 0);
-      const totalReqs = usage.reduce((s: number, u) => s + (Number(u.requests) || 0), 0);
-      facts.push(`Últimos 7 dias: ${totalReqs} requests, custo total $${totalCost.toFixed(4)}`);
-    }
-
-    if (member?.workspace_id) {
-      const { data: budgets } = await supabase.from('budgets').select('name, limit_usd, current_usd').eq('workspace_id', member.workspace_id).eq('is_active', true);
-      if (budgets) {
-        for (const b of budgets) {
-          facts.push(`Budget "${b.name}": $${Number(b.current_usd || 0).toFixed(2)} / $${b.limit_usd} (${(Number(b.current_usd || 0) / Number(b.limit_usd) * 100).toFixed(0)}%)`);
-        }
-      }
-    }
-
-    // ═══ External DBs context ═══
-    const externalFacts: string[] = [];
-    if (member?.workspace_id) {
-      const extDbs = [
-        { urlKey: 'ext_clientes_url', anonKey: 'ext_clientes_anon', label: 'CRM Clientes', queries: [
-          { table: 'companies', filter: 'is_customer.eq.true,status.eq.ativo', countLabel: 'clientes ativos' },
-          { table: 'companies', filter: 'is_supplier.eq.true,status.eq.ativo', countLabel: 'fornecedores ativos' },
-        ]},
-        { urlKey: 'ext_produtos_url', anonKey: 'ext_produtos_anon', label: 'Catálogo', queries: [
-          { table: 'products', filter: '', countLabel: 'produtos no catálogo' },
-        ]},
-      ];
-
-      for (const db of extDbs) {
-        try {
-          const { data: urlSecret } = await supabase.from('workspace_secrets').select('key_value').eq('workspace_id', member.workspace_id).eq('key_name', db.urlKey).single();
-          const { data: anonSecret } = await supabase.from('workspace_secrets').select('key_value').eq('workspace_id', member.workspace_id).eq('key_name', db.anonKey).single();
-          if (urlSecret?.key_value && anonSecret?.key_value) {
-            const extClient = createClient(urlSecret.key_value, anonSecret.key_value);
-            for (const q of db.queries) {
-              let extQuery = extClient.from(q.table).select('id', { count: 'exact', head: true });
-              if (q.filter) {
-                for (const f of q.filter.split(',')) {
-                  const [col, op, val] = f.split('.');
-                  if (op === 'eq') extQuery = extQuery.eq(col, val === 'true' ? true : val);
-                }
-              }
-              const { count } = await extQuery;
-              if (count !== null) externalFacts.push(`${count} ${q.countLabel}`);
-            }
-          }
-        } catch { /* skip failed external connections */ }
-      }
-    }
 
     // ═══ RAG context with reranking ═══
     let ragContext = '';
     let ragReranked = false;
     try {
-      const { data: chunks } = await supabase.from('chunks').select('id, content, chunk_index, metadata').eq('embedding_status', 'done').limit(20);
-      if (chunks && chunks.length > 0) {
+      const { data: chunks } = await supabase.from('chunks').select('id, content, metadata').eq('embedding_status', 'done').limit(15);
+      if (chunks?.length) {
         try {
           const rerankUrl = `${supabaseUrl}/functions/v1/rag-rerank`;
           const rerankResp = await fetch(rerankUrl, {
@@ -118,40 +63,20 @@ serve(async (req) => {
           });
           if (rerankResp.ok) {
             const rerankData = await rerankResp.json();
-            if (rerankData.reranked && rerankData.reranked.length > 0) {
-              ragContext = rerankData.reranked
-                .map((r: { chunk?: { content?: string }; content?: string }) => r.chunk?.content || r.content)
-                .filter(Boolean)
-                .join('\n---\n')
-                .substring(0, 3000);
+            if (rerankData.reranked?.length > 0) {
+              ragContext = rerankData.reranked.map((r: any) => r.chunk?.content || r.content).join('\n---\n').substring(0, 3000);
               ragReranked = true;
             }
-          } else {
-            await rerankResp.text();
           }
-        } catch { /* rerank failed, fallback to raw chunks */ }
-
-        if (!ragContext) {
-          ragContext = chunks.map((c: { content: string }) => c.content).join('\n---\n').substring(0, 3000);
-        }
+        } catch { /* fallback */ }
+        if (!ragContext) ragContext = chunks.map((c: any) => c.content).join('\n---\n').substring(0, 3000);
       }
-    } catch { /* no RAG data */ }
+    } catch { /* skip */ }
 
-    // ═══ Build system prompt ═══
-    const allFacts = [...facts, ...externalFacts];
     const systemPrompt = `Você é o Super Cérebro da Promo Brindes — a inteligência central da empresa.
-
-## Dados da Plataforma Fator X
-${allFacts.length > 0 ? allFacts.map(f => `- ${f}`).join('\n') : '- Nenhum dado carregado ainda'}
-
-${externalFacts.length > 0 ? `## Dados dos Bancos Externos\n${externalFacts.map(f => '- ' + f).join('\n')}` : ''}
-
-${ragContext ? `## Base de Conhecimento (RAG${ragReranked ? ' — Reranked' : ''})\n${ragContext}` : ''}
-
-## Instruções
-- Responda com base nos dados reais disponíveis acima
-- Se não tiver dados, diga claramente
-- Use português do Brasil`;
+Responda com base no contexto fornecido. Se não souber, seja honesto.
+Fatos: ${facts.join('; ')}
+RAG: ${ragContext || 'Nenhum dado disponível'}`;
 
     const gatewayUrl = `${supabaseUrl}/functions/v1/llm-gateway`;
     const resp = await fetch(gatewayUrl, {
@@ -160,20 +85,25 @@ ${ragContext ? `## Base de Conhecimento (RAG${ragReranked ? ' — Reranked' : ''
       body: JSON.stringify({
         model: 'claude-sonnet-4.6',
         messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: query }],
-        temperature: 0.5, max_tokens: 4000,
+        temperature: 0.5,
+        stream,
       }),
     });
-    const result = await resp.json();
 
-    return new Response(JSON.stringify({
+    if (stream) {
+      return new Response(resp.body, { headers: { ...getCorsHeaders(req), 'Content-Type': 'text/event-stream' } });
+    }
+
+    const result = await resp.json();
+    return jsonResponse({
       response: result.content || result.error,
-      facts_loaded: allFacts.length,
-      external_facts: externalFacts.length,
-      rag_chunks_used: ragContext.length > 0,
+      facts_loaded: facts.length,
       rag_reranked: ragReranked,
-      model: result.model, tokens: result.tokens, cost_usd: result.cost_usd,
-    }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
-  } catch (error: unknown) {
-    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : 'Internal error' }), { status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      tokens: result.tokens,
+      cost_usd: result.cost_usd,
+    }, req);
+
+  } catch (error: any) {
+    return errorResponse(error.message, 500, req);
   }
 });
