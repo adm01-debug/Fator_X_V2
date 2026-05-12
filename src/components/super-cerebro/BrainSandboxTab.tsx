@@ -18,6 +18,7 @@ const modeLabels: Record<string, string> = {
   full: '🧠 Contexto Completo (Fatos + RAG)',
   facts_only: '📊 Apenas Fatos',
   rag_only: '📚 Apenas RAG',
+  tiered: '📶 Context Tiers (L0/L1/L2)',
   no_context: '🚫 Sem Contexto',
 };
 
