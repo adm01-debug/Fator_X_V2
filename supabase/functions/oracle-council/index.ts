@@ -126,8 +126,140 @@ serve(async (req) => {
       return modeInstructions[mode] || modeInstructions.council;
     };
 
-    // ═══ STAGE 1: Parallel Polling ═══
+    // ═══ STAGE 1: Parallel Polling (with Streaming) ═══
     const stage1Start = Date.now();
+    
+    // Check if client wants streaming
+    const isStream = req.headers.get('accept') === 'text/event-stream';
+
+    if (isStream) {
+      const { readable, writable } = new TransformStream();
+      const writer = writable.getWriter();
+      const encoder = new TextEncoder();
+
+      const sendUpdate = async (type: string, data: any) => {
+        await writer.write(encoder.encode(`data: ${JSON.stringify({ type, data })}\n\n`));
+      };
+
+      (async () => {
+        try {
+          await sendUpdate('stage', { stage: 1, label: 'Coletando opiniões...' });
+          
+          const stage1Promises = members.map(async (member, idx) => {
+            const mStart = Date.now();
+            const response = await fetch(gatewayUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': authHeader!, 'apikey': supabaseKey },
+              body: JSON.stringify({
+                model: member.model,
+                messages: [
+                  { role: 'system', content: buildSystemPrompt(member) },
+                  { role: 'user', content: query },
+                ],
+                temperature: mode === 'validator' ? 0.3 : 0.7,
+                max_tokens: 3000,
+              }),
+            });
+            const result = await response.json();
+            
+            let content = result.content || result.error || 'No response';
+            let thinking = '';
+            if (enable_thinking && content.includes('💭')) {
+              const splitIdx = content.indexOf('## Resposta');
+              if (splitIdx > -1) {
+                thinking = content.substring(0, splitIdx).trim();
+                content = content.substring(splitIdx).trim();
+              }
+            }
+
+            const mResult = {
+              index: idx, model: member.model, persona: member.persona || 'General',
+              content, thinking,
+              tokens: result.tokens || { total: 0 }, cost_usd: result.cost_usd || 0,
+              latency_ms: Date.now() - mStart, success: !result.error,
+            };
+            
+            await sendUpdate('member_response', mResult);
+            return mResult;
+          });
+
+          const stage1 = await Promise.all(stage1Promises);
+          const successfulResponses = stage1.filter(r => r.success);
+
+          if (successfulResponses.length < 2) {
+            throw new Error('Membros insuficientes para quorum');
+          }
+
+          // STAGE 2: Peer Review
+          let stage2Results: any[] = [];
+          if (enable_peer_review) {
+            await sendUpdate('stage', { stage: 2, label: 'Realizando Peer-Review...' });
+            const anonymized = successfulResponses.map((r, i) => `## Resposta ${String.fromCharCode(65 + i)}\n${r.content}`).join('\n\n---\n\n');
+            const reviewPrompt = `Avalie as respostas anônimas à pergunta: "${query}"\n\n${anonymized}\n\nResponda APENAS em JSON válido.`;
+            
+            const reviewModel = chairman_model || successfulResponses[0].model;
+            const reviewResponse = await fetch(gatewayUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': authHeader!, 'apikey': supabaseKey },
+              body: JSON.stringify({
+                model: reviewModel,
+                messages: [
+                  { role: 'system', content: 'Você é um avaliador imparcial. Responda SOMENTE em JSON.' },
+                  { role: 'user', content: reviewPrompt },
+                ],
+                temperature: 0.3,
+              }),
+            });
+            const reviewResult = await reviewResponse.json();
+            try {
+              const jsonMatch = reviewResult.content.match(/\{[\s\S]*\}/);
+              if (jsonMatch) {
+                stage2Results = [JSON.parse(jsonMatch[0])];
+                await sendUpdate('review_complete', stage2Results[0]);
+              }
+            } catch (e) { console.error('Stage 2 JSON Error', e); }
+          }
+
+          // STAGE 3: Synthesis
+          await sendUpdate('stage', { stage: 3, label: 'Presidente sintetizando veredito...' });
+          const chairmanModel = chairman_model || successfulResponses[0].model;
+          const synthesisPrompt = `Pergunta: "${query}"\n\nRespostas do Conselho:\n${successfulResponses.map(r => r.content).join('\n\n---\n\n')}\n\nSintetize a resposta final. Use Markdown.`;
+          
+          const synthesisResponse = await fetch(gatewayUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': authHeader!, 'apikey': supabaseKey },
+            body: JSON.stringify({
+              model: chairmanModel,
+              messages: [
+                { role: 'system', content: 'Você é o Chairman do Oráculo.' },
+                { role: 'user', content: synthesisPrompt },
+              ],
+              temperature: 0.5,
+            }),
+          });
+          const synthesisResult = await synthesisResponse.json();
+          const finalContent = synthesisResult.content || '';
+          
+          await sendUpdate('final', {
+            final_response: finalContent,
+            metrics: {
+              total_latency_ms: Date.now() - totalStartTime,
+              total_cost_usd: stage1.reduce((s, r) => s + (r.cost_usd || 0), 0) + (synthesisResult.cost_usd || 0),
+            }
+          });
+          await writer.close();
+        } catch (err: any) {
+          await sendUpdate('error', err.message);
+          await writer.close();
+        }
+      })();
+
+      return new Response(readable, {
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' },
+      });
+    }
+
+    // --- Legacy Sync Flow ---
     const stage1Promises = members.map(async (member, idx) => {
       try {
         const response = await fetch(gatewayUrl, {
@@ -139,201 +271,44 @@ serve(async (req) => {
               { role: 'system', content: buildSystemPrompt(member) },
               { role: 'user', content: query },
             ],
-            temperature: mode === 'validator' ? 0.3 : 0.7,
+            temperature: 0.7,
             max_tokens: 3000,
           }),
         });
         const result = await response.json();
-        
-        let content = result.content || result.error || 'No response';
-        let thinking = '';
-        if (enable_thinking && content.includes('💭')) {
-          const splitIdx = content.indexOf('## Resposta');
-          if (splitIdx > -1) {
-            thinking = content.substring(0, splitIdx).trim();
-            content = content.substring(splitIdx).trim();
-          }
-        }
-
         return {
           index: idx, model: member.model, persona: member.persona || 'General',
-          content, thinking,
+          content: result.content || result.error || 'No response',
           tokens: result.tokens || { total: 0 }, cost_usd: result.cost_usd || 0,
           latency_ms: result.latency_ms || 0, success: !result.error,
         };
-      } catch (e: unknown) {
-        return {
-          index: idx, model: member.model, persona: member.persona || 'General',
-          content: `Error: ${e instanceof Error ? e.message : 'Unknown'}`, thinking: '',
-          tokens: { total: 0 }, cost_usd: 0, latency_ms: 0, success: false,
-        };
+      } catch (e: any) {
+        return { index: idx, model: member.model, success: false, content: e.message };
       }
     });
 
-    const stage1Results = await Promise.allSettled(stage1Promises);
-    const stage1 = stage1Results.map(r => r.status === 'fulfilled' ? r.value : null).filter(Boolean) as Array<Record<string, unknown>>;
+    const stage1 = await Promise.all(stage1Promises);
     const successfulResponses = stage1.filter(r => r.success);
-
-    if (successfulResponses.length < 2) {
-      return new Response(JSON.stringify({ error: 'Insufficient responses', stage1_results: stage1 }), {
-        status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
-      });
-    }
-    const stage1Latency = Date.now() - stage1Start;
-
-    // ═══ STAGE 2: Peer Review (if enabled) ═══
-    let stage2Results: Array<Record<string, unknown>> = [];
-    let stage2Latency = 0;
-
-    if (enable_peer_review && successfulResponses.length >= 2) {
-      const stage2Start = Date.now();
-      const shuffled = [...successfulResponses].sort(() => Math.random() - 0.5);
-      const anonymized = shuffled.map((r, i) => `## Resposta ${String.fromCharCode(65 + i)}\n${r.content}`).join('\n\n---\n\n');
-
-      const reviewPrompt = `Avalie as respostas anônimas à pergunta: "${query}"
-
-${anonymized}
-
-Para CADA resposta, atribua scores de 0 a 100 nos critérios:
-- Precisão, Completude, Raciocínio, Aplicabilidade, Clareza
-
-Também extraia os PONTOS DE CONSENSO e DIVERGÊNCIA entre as respostas.
-
-Responda APENAS em JSON válido:
-{
-  "reviews": [
-    { "response": "A", "scores": { "precisao": 85, "completude": 90, "raciocinio": 88, "aplicabilidade": 92, "clareza": 87 }, "total": 88.4 }
-  ],
-  "ranking": ["A", "B"],
-  "consensus_points": [
-    { "claim": "texto do ponto", "category": "fact", "consensus_level": "strong", "model_positions": [{ "response": "A", "position": "agree", "detail": "..." }] }
-  ]
-}`;
-
-      const reviewModel = chairman_model || successfulResponses[0].model;
-      const reviewResponse = await fetch(gatewayUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': authHeader!, 'apikey': supabaseKey },
-        body: JSON.stringify({
-          model: reviewModel,
-          messages: [
-            { role: 'system', content: 'Você é um avaliador imparcial e criterioso. Responda SOMENTE em JSON válido.' },
-            { role: 'user', content: reviewPrompt },
-          ],
-          temperature: 0.3, max_tokens: 3000,
-        }),
-      });
-
-      const reviewResult = await reviewResponse.json();
-      try {
-        const jsonMatch = (reviewResult.content || '').match(/\{[\s\S]*\}/);
-        if (jsonMatch) stage2Results = [JSON.parse(jsonMatch[0])];
-      } catch {
-        stage2Results = [{ raw: reviewResult.content }];
-      }
-      stage2Latency = Date.now() - stage2Start;
-    }
-
-    // ═══ STAGE 3: Chairman Synthesis ═══
-    const stage3Start = Date.now();
-    const chairmanModel = chairman_model || successfulResponses[0].model;
-
-    const responseSummary = successfulResponses.map((r, i) => `### Modelo ${i + 1} (${r.model}):\n${r.content}`).join('\n\n---\n\n');
-    const reviewInfo = stage2Results.length > 0 ? `\n\n### Avaliação peer-review:\n${JSON.stringify(stage2Results[0], null, 2)}` : '';
-
-    const modeSynthesisInstructions: Record<string, string> = {
-      council: 'Sintetize UMA resposta final que incorpore os melhores pontos de cada resposta.',
-      researcher: 'Compile um RELATÓRIO ESTRUTURADO com seções, dados-chave, e conclusões. Inclua metodologia e limitações.',
-      validator: 'Emita um VEREDICTO: CONFIRMADO, DISPUTADO ou NÃO VERIFICADO. Liste evidências a favor e contra.',
-      executor: 'Compile um PLANO DE AÇÃO consolidado com sub-tarefas priorizadas, responsáveis e cronograma.',
-      advisor: 'Apresente uma MATRIZ DE DECISÃO com prós/contras, scores por critério, e RECOMENDAÇÃO FINAL.',
-    };
-
-    const synthesisPrompt = `Você é o Chairman de um conselho de IAs (Modo: ${mode}).
-
-Pergunta: "${query}"
-
-${responseSummary}
-${reviewInfo}
-
-Sua tarefa:
-1. ${modeSynthesisInstructions[mode] || modeSynthesisInstructions.council}
-2. Identifique pontos de consenso e divergência
-3. Atribua score de confiança (0-100) e consenso (0-100)
-
-Responda em markdown:
-## Resposta Sintetizada
-(síntese)
-
-## Pontos de Consenso
-- (pontos)
-
-## Divergências
-- (pontos)
-
-## Confiança: X/100
-## Consenso: Y/100`;
-
+    const chairmanModel = chairman_model || successfulResponses[0]?.model || 'google/gemini-2.5-pro';
     const synthesisResponse = await fetch(gatewayUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': authHeader!, 'apikey': supabaseKey },
       body: JSON.stringify({
         model: chairmanModel,
-        messages: [
-          { role: 'system', content: 'Você é o Chairman do Oráculo — um conselho de múltiplas IAs. Sua síntese deve ser a melhor resposta possível.' },
-          { role: 'user', content: synthesisPrompt },
-        ],
-        temperature: 0.5, max_tokens: 4000,
+        messages: [{ role: 'user', content: `Sintetize: ${query}\n\nRespostas: ${successfulResponses.map(r => r.content).join('\n')}` }],
       }),
     });
-
     const synthesisResult = await synthesisResponse.json();
-    const stage3Latency = Date.now() - stage3Start;
-
-    const finalContent = synthesisResult.content || '';
-    const confidenceMatch = finalContent.match(/Confiança:\s*(\d+)/);
-    const consensusMatch = finalContent.match(/Consenso:\s*(\d+)/);
-
-    // Extract consensus points from stage 2
-    let consensusPoints: Array<Record<string, unknown>> = [];
-    if (stage2Results[0]?.consensus_points) {
-      const rawPoints = stage2Results[0].consensus_points as Array<Record<string, unknown>>;
-      consensusPoints = rawPoints.map((cp, i: number) => ({
-        id: `cp-${i}`,
-        claim: cp.claim,
-        category: cp.category || 'opinion',
-        modelPositions: ((cp.model_positions || []) as Array<Record<string, unknown>>).map((mp) => ({
-          model: mp.response || mp.model || `Model ${i}`,
-          position: mp.position || 'not_mentioned',
-          detail: mp.detail || '',
-          confidence: mp.confidence || 70,
-        })),
-        consensusLevel: cp.consensus_level || 'partial',
-        resolution: cp.resolution,
-      }));
-    }
-
-    const totalLatency = Date.now() - totalStartTime;
-    const totalCost = stage1.reduce((s: number, r: Record<string, unknown>) => s + ((r.cost_usd as number) || 0), 0) + ((synthesisResult.cost_usd as number) || 0);
-    const totalTokens = stage1.reduce((s: number, r: Record<string, unknown>) => s + (((r.tokens as Record<string, unknown>)?.total as number) || 0), 0) + (((synthesisResult.tokens as Record<string, unknown>)?.total as number) || 0);
 
     return new Response(JSON.stringify({
-      final_response: finalContent,
-      confidence_score: confidenceMatch ? parseInt(confidenceMatch[1]) : 75,
-      consensus_degree: consensusMatch ? parseInt(consensusMatch[1]) : 70,
+      final_response: synthesisResult.content,
       stage1_results: stage1,
-      stage2_results: stage2Results,
-      consensus_points: consensusPoints,
       metrics: {
-        total_latency_ms: totalLatency,
-        stage1_latency_ms: stage1Latency,
-        stage2_latency_ms: stage2Latency,
-        stage3_latency_ms: stage3Latency,
-        total_cost_usd: totalCost,
-        total_tokens: totalTokens,
-        models_used: successfulResponses.length,
-      },
+        total_latency_ms: Date.now() - totalStartTime,
+        total_cost_usd: stage1.reduce((s, r) => s + (r.cost_usd || 0), 0) + (synthesisResult.cost_usd || 0),
+      }
     }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+
   } catch (error: unknown) {
     return new Response(JSON.stringify({ error: error instanceof Error ? error.message : 'Internal error' }), {
       status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
