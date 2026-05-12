@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Webhook, Loader2, Send, Code, PlayCircle, Settings, Clipboard } from 'lucide-react';
+import { Webhook, Loader2, Send, Clipboard, PlayCircle } from 'lucide-react';
 import {
   listWebhooks,
   triggerWebhookViaEF,
