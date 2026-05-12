@@ -135,7 +135,25 @@ export default function PromptEditorPage() {
   const scorePercent = Math.round((scoreItems.filter(([, v]) => v).length / scoreItems.length) * 100);
   const diffVersion = versions.find((v: any) => v.id === diffVersionId);
 
+  const latencyData = [
+    { time: '10:00', latency: 85 },
+    { time: '10:05', latency: 92 },
+    { time: '10:10', latency: 78 },
+    { time: '10:15', latency: 105 },
+    { time: '10:20', latency: 88 },
+    { time: '10:25', latency: 82 },
+    { time: '10:30', latency: 95 },
+  ];
+
+  const qualityStats = [
+    { range: '0.9-1.0', count: 45, color: 'hsl(var(--nexus-emerald))' },
+    { range: '0.8-0.9', count: 32, color: 'hsl(var(--nexus-cyan))' },
+    { range: '0.7-0.8', count: 18, color: 'hsl(var(--primary))' },
+    { range: '< 0.7', count: 5, color: 'hsl(var(--muted-foreground))' },
+  ];
+
   if (isLoading) {
+
     return (
       <div className="flex items-center justify-center py-20">
         <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
