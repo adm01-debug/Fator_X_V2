@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Loader2, Play, Plus, Trash2, CheckCircle2, XCircle, Eye, FileText } from 'lucide-react';
+import { Loader2, Play, Plus, Trash2, CheckCircle2, XCircle, Eye } from 'lucide-react';
 import { AuditReportDialog } from '@/components/evaluations/AuditReportDialog';
 import {
   useEvalDatasets,
