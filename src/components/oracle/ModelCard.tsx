@@ -30,10 +30,15 @@ export function ModelCard({ response, rank, showThinking }: ModelCardProps) {
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-[11px]">{shortName}</Badge>
+          <Badge variant="outline" className="text-[11px] font-mono">{shortName}</Badge>
           {rank && (
             <Badge variant="default" className="text-[11px] bg-primary/20 text-primary border-primary/30">
               #{rank}
+            </Badge>
+          )}
+          {(response as any).failover && (
+            <Badge variant="outline" className="text-[10px] bg-nexus-amber/10 text-nexus-amber border-nexus-amber/30 animate-pulse">
+              FAILOVER
             </Badge>
           )}
         </div>

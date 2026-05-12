@@ -9,7 +9,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import {
-  Sparkles, Loader2, ChevronDown, ChevronUp, Settings2, Cpu, Brain, ChevronRight, XCircle
+  Sparkles, Loader2, ChevronDown, ChevronUp, Settings2, Cpu, Brain, ChevronRight, XCircle, ShieldCheck
 } from 'lucide-react';
 import { useOracleStore, ORACLE_MODES, ORACLE_PRESETS } from '@/stores/oracleStore';
 import { PresetSelector } from './PresetSelector';
@@ -119,6 +119,19 @@ export function OracleInputArea() {
                 </Select>
               </div>
             </div>
+
+            <div className="space-y-2">
+              <Label className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                <ShieldCheck className="h-3 w-3" /> Guardrails (Políticas do Conselho)
+              </Label>
+              <Textarea
+                placeholder="Ex: Não use termos técnicos excessivos. Sempre apresente riscos financeiros."
+                value={store.customGuardrails}
+                onChange={(e) => store.setCustomGuardrails(e.target.value)}
+                className="min-h-[80px] bg-card border-border/60 rounded-xl text-xs"
+              />
+            </div>
+
             <div className="flex items-center justify-between p-4 bg-card/40 rounded-xl border border-border/30">
               <div className="flex items-center gap-3">
                 <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">

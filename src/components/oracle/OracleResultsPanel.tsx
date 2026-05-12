@@ -9,7 +9,7 @@ import {
 import { useOracleStore, ORACLE_MODES, ORACLE_PRESETS } from '@/stores/oracleStore';
 import { ConsensusMatrix } from './ConsensusMatrix';
 import { ModelCard } from './ModelCard';
-import { exportToMarkdown, exportToJson, downloadText } from '@/lib/oracleExport';
+import { exportToMarkdown, exportToJson, exportToPdf, downloadText } from '@/lib/oracleExport';
 import { toast } from 'sonner';
 
 export function OracleResultsPanel() {
@@ -43,6 +43,17 @@ export function OracleResultsPanel() {
     );
     downloadText(json, `oraculo_${Date.now()}.json`, 'application/json');
     toast.success('JSON exportado!');
+  };
+
+  const handleExportPdf = () => {
+    exportToPdf(
+      store.query,
+      results,
+      currentPreset?.name || store.selectedPreset,
+      `${modeConfig.icon} ${modeConfig.label}`,
+      store.chairmanModel,
+    );
+    toast.success('Relatório PDF gerado!');
   };
 
   return (
@@ -107,7 +118,11 @@ export function OracleResultsPanel() {
                 <Button size="sm" variant="outline" className="h-9 rounded-xl gap-2" onClick={() => { navigator.clipboard.writeText(results.final_response); toast.success('Copiado!'); }}>
                   <Copy className="h-3.5 w-3.5" /> Copiar Resposta
                 </Button>
+                <Button size="sm" variant="outline" className="h-9 rounded-xl gap-2" onClick={handleExportPdf}>
+                  <Download className="h-3.5 w-3.5" /> PDF
+                </Button>
                 <Button size="sm" variant="outline" className="h-9 rounded-xl gap-2" onClick={handleExportMd}>
+
                   <Download className="h-3.5 w-3.5" /> MD
                 </Button>
                 <Button size="sm" variant="outline" className="h-9 rounded-xl gap-2" onClick={handleExportJson}>

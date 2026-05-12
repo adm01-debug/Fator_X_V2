@@ -65,6 +65,7 @@ interface OracleRequest {
   enable_peer_review?: boolean;
   enable_thinking?: boolean;
   preset_id?: string;
+  custom_guardrails?: string;
 }
 
 serve(async (req) => {
@@ -105,7 +106,7 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: validation.error }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
-    const { query, mode, members, chairman_model, enable_peer_review = true, enable_thinking = false } = validation.data;
+    const { query, mode, members, chairman_model, enable_peer_review = true, enable_thinking = false, custom_guardrails } = validation.data;
 
     const gatewayUrl = `${supabaseUrl}/functions/v1/llm-gateway`;
     const totalStartTime = Date.now();
@@ -116,7 +117,9 @@ serve(async (req) => {
         ? '\n\nAntes de dar sua resposta final, pense passo a passo:\n💭 Passo 1: Quais são os fatos relevantes?\n💭 Passo 2: Quais são as possíveis abordagens?\n💭 Passo 3: Quais são os riscos?\n💭 Passo 4: Minha recomendação e por quê?\n\nSepare claramente o raciocínio da resposta final usando "## Resposta" antes da resposta.'
         : '';
 
-      const baseGuards = "\n\nSiga estas regras rigorosamente:\n- Não forneça conselhos médicos, jurídicos ou financeiros sem ressalvas.\n- Mantenha tom profissional e objetivo.\n- Cite fontes sempre que possível.";
+      const baseGuards = custom_guardrails 
+        ? `\n\nDiretrizes Específicas:\n${custom_guardrails}`
+        : "\n\nSiga estas regras rigorosamente:\n- Não forneça conselhos médicos, jurídicos ou financeiros sem ressalvas.\n- Mantenha tom profissional e objetivo.\n- Cite fontes sempre que possível.";
 
       const modeInstructions: Record<string, string> = {
         council: `Você é ${member.persona || 'um especialista'}. Responda de forma completa e fundamentada.${thinkingInstructions}${baseGuards}`,
