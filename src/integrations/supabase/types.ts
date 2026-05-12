@@ -440,7 +440,10 @@ export type Database = {
         Row: {
           content: string
           created_at: string
+          decay_rate: number | null
           id: string
+          importance: number | null
+          last_accessed_at: string | null
           memory_type: string
           relevance_score: number | null
           source: string | null
@@ -450,7 +453,10 @@ export type Database = {
         Insert: {
           content: string
           created_at?: string
+          decay_rate?: number | null
           id?: string
+          importance?: number | null
+          last_accessed_at?: string | null
           memory_type?: string
           relevance_score?: number | null
           source?: string | null
@@ -460,7 +466,10 @@ export type Database = {
         Update: {
           content?: string
           created_at?: string
+          decay_rate?: number | null
           id?: string
+          importance?: number | null
+          last_accessed_at?: string | null
           memory_type?: string
           relevance_score?: number | null
           source?: string | null
