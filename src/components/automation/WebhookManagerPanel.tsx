@@ -136,14 +136,10 @@ export function WebhookManagerPanel() {
                       size="sm"
                       variant="outline"
                       className="h-7 text-xs gap-1.5 border-border hover:bg-accent hover:border-primary"
-                      disabled={testingId === w.id || w.status !== 'active'}
-                      onClick={() => handleTest(w)}
+                      disabled={w.status !== 'active'}
+                      onClick={() => openTestDialog(w)}
                     >
-                      {testingId === w.id ? (
-                        <Loader2 className="h-3 w-3 animate-spin" />
-                      ) : (
-                        <Send className="h-3 w-3" />
-                      )}
+                      <Send className="h-3 w-3" />
                       Testar
                     </Button>
                   </div>
