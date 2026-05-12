@@ -50,6 +50,7 @@ export default function SmolagentPage() {
   const [expandedSteps, setExpandedSteps] = useState<Set<number>>(new Set());
   const resultRef = useRef<HTMLDivElement>(null);
 
+
   useEffect(() => {
     supabase.functions
       .invoke('smolagent-runtime', { body: { action: 'list_tools' } })
@@ -63,6 +64,7 @@ export default function SmolagentPage() {
       });
   }, []);
 
+
   const handleRun = async () => {
     if (!task.trim()) {
       toast.error('Descreva a tarefa');
@@ -71,6 +73,7 @@ export default function SmolagentPage() {
     setLoading(true);
     setResult(null);
     try {
+
       const { data, error } = await supabase.functions.invoke('smolagent-runtime', {
         body: { action: 'run', task, model, max_steps: maxSteps },
       });
@@ -83,6 +86,7 @@ export default function SmolagentPage() {
       setLoading(false);
     }
   };
+
 
   const toggleStep = (idx: number) => {
     setExpandedSteps((prev) => {

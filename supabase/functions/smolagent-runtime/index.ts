@@ -335,12 +335,12 @@ async function runAgent(
   ctx: AgentContext,
   model: string,
   maxSteps: number,
+  onEvent?: (event: { type: string; data: Record<string, unknown> }) => void
 ): Promise<{ answer: string; steps: AgentStep[]; totalTokens: number; totalCost: number }> {
   const steps: AgentStep[] = [];
   let totalTokens = 0;
   let totalCost = 0;
 
-  // Build tool descriptions for system prompt
   const toolDescriptions = tools.map(t => {
     const paramStr = Object.entries(t.parameters)
       .map(([k, v]) => `  - ${k} (${v.type}${v.required ? ', required' : ''}): ${v.description}`)
@@ -350,14 +350,16 @@ async function runAgent(
 
   const systemPrompt = REACT_SYSTEM_PROMPT.replace('{TOOLS}', toolDescriptions);
 
-  // Build conversation history
   const messages: Array<{ role: string; content: string }> = [
     { role: 'system', content: systemPrompt },
     { role: 'user', content: task },
   ];
 
+  onEvent?.({ type: 'RUN_STARTED', data: { task, model, max_steps: maxSteps } });
+
   for (let step = 0; step < maxSteps; step++) {
-    // Call LLM
+    onEvent?.({ type: 'STATE_DELTA', data: { delta: { current_step: step + 1, status: 'thinking' } } });
+    
     const llmResp = await fetch(`${ctx.supabaseUrl}/functions/v1/llm-gateway`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': ctx.authHeader, 'apikey': ctx.supabaseKey },
@@ -375,7 +377,6 @@ async function runAgent(
     totalTokens += llmResult.tokens?.total || 0;
     totalCost += llmResult.cost_usd || 0;
 
-    // Parse response
     const thoughtMatch = response.match(/Thought:\s*(.*?)(?=\n(?:Action|Final Answer))/s);
     const actionMatch = response.match(/Action:\s*(\S+)/);
     const actionInputMatch = response.match(/Action Input:\s*(\{[\s\S]*?\})/);
@@ -383,20 +384,21 @@ async function runAgent(
 
     const thought = thoughtMatch?.[1]?.trim() || response;
 
-    // Check for Final Answer
     if (finalAnswerMatch) {
+      const answer = finalAnswerMatch[1].trim();
       steps.push({
         step: step + 1,
         thought,
         action: 'final_answer',
         action_input: {},
-        observation: finalAnswerMatch[1].trim(),
+        observation: answer,
         timestamp: Date.now(),
       });
-      return { answer: finalAnswerMatch[1].trim(), steps, totalTokens, totalCost };
+      onEvent?.({ type: 'TEXT_MESSAGE_CONTENT', data: { content: answer } });
+      onEvent?.({ type: 'RUN_FINISHED', data: { answer, total_steps: step + 1 } });
+      return { answer, steps, totalTokens, totalCost };
     }
 
-    // Execute tool
     if (actionMatch && actionInputMatch) {
       const toolName = actionMatch[1].trim();
       let toolInput: Record<string, unknown> = {};
@@ -406,13 +408,15 @@ async function runAgent(
         toolInput = { raw: actionInputMatch[1] };
       }
 
+      onEvent?.({ type: 'TOOL_CALL_START', data: { name: toolName, args: toolInput } });
+      onEvent?.({ type: 'STATE_DELTA', data: { delta: { status: 'acting', current_tool: toolName } } });
+
       const tool = tools.find(t => t.name === toolName);
       let observation: string;
 
       if (tool) {
         try {
           observation = await tool.execute(toolInput, ctx);
-          // Truncate long observations
           if (observation.length > 3000) {
             observation = observation.substring(0, 3000) + '\n... [truncated]';
           }
@@ -423,6 +427,8 @@ async function runAgent(
         observation = `Tool "${toolName}" not found. Available tools: ${tools.map(t => t.name).join(', ')}`;
       }
 
+      onEvent?.({ type: 'TOOL_CALL_END', data: { name: toolName, result: observation } });
+
       steps.push({
         step: step + 1,
         thought,
@@ -432,29 +438,24 @@ async function runAgent(
         timestamp: Date.now(),
       });
 
-      // Add to conversation
       messages.push({ role: 'assistant', content: response });
       messages.push({ role: 'user', content: `Observation: ${observation}` });
 
-      // ═══ SLIDING WINDOW (C4 fix): keep context under control ═══
-      // System prompt (index 0) + task (index 1) + last 6 messages (3 steps)
-      const MAX_CONTEXT_MESSAGES = 8; // system + task + 3 recent steps
+      const MAX_CONTEXT_MESSAGES = 8;
       if (messages.length > MAX_CONTEXT_MESSAGES) {
-        const systemPromptMsg = messages[0]; // always keep system prompt
-        const taskMsg = messages[1]; // always keep original task
-        // Summarize old steps into a context message
-        const oldMessages = messages.slice(2, -6); // everything except system, task, and last 3 steps
+        const systemPromptMsg = messages[0];
+        const taskMsg = messages[1];
+        const oldMessages = messages.slice(2, -6);
         const summary = oldMessages
           .filter(m => m.role === 'user' && m.content.startsWith('Observation:'))
           .map(m => m.content.substring(0, 150))
           .join(' | ');
-        const contextMsg = { role: 'user' as const, content: `[Previous steps summary: ${summary.substring(0, 500)}]` };
-        const recentMessages = messages.slice(-6); // last 3 steps (6 messages)
+        const contextMsg = { role: 'user', content: `[Previous steps summary: ${summary.substring(0, 500)}]` };
+        const recentMessages = messages.slice(-6);
         messages.length = 0;
         messages.push(systemPromptMsg, taskMsg, contextMsg, ...recentMessages);
       }
     } else {
-      // No action parsed — treat as final answer
       steps.push({
         step: step + 1,
         thought,
@@ -464,8 +465,9 @@ async function runAgent(
         timestamp: Date.now(),
       });
 
-      // If it looks like a direct answer, return it
       if (!response.includes('Action:')) {
+        onEvent?.({ type: 'TEXT_MESSAGE_CONTENT', data: { content: thought } });
+        onEvent?.({ type: 'RUN_FINISHED', data: { answer: thought, total_steps: step + 1 } });
         return { answer: thought, steps, totalTokens, totalCost };
       }
 
@@ -474,15 +476,17 @@ async function runAgent(
     }
   }
 
-  // Max steps reached
   const lastStep = steps[steps.length - 1];
+  const finalAnswer = lastStep?.observation || 'Agent reached maximum steps without a final answer.';
+  onEvent?.({ type: 'RUN_FINISHED', data: { answer: finalAnswer, error: 'Max steps reached' } });
   return {
-    answer: lastStep?.observation || 'Agent reached maximum steps without a final answer.',
+    answer: finalAnswer,
     steps,
     totalTokens,
     totalCost,
   };
 }
+
 
 // ═══ MAIN HANDLER ═══
 
@@ -502,10 +506,53 @@ serve(async (req) => {
     if (!hfToken) return jsonResponse({ error: 'HF_API_TOKEN not configured' }, 400);
 
     const body = await req.json();
-    const { action } = body;
+    const { action, stream } = body;
 
     const ctx: AgentContext = { supabaseUrl, supabaseKey, authHeader, hfToken };
     const allTools = buildToolRegistry(ctx);
+
+    if (stream) {
+      const encoder = new TextEncoder();
+      const stream = new ReadableStream({
+        async start(controller) {
+          const emit = (event: { type: string; data: Record<string, unknown> }) => {
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ ...event.data, type: event.type })}\n\n`));
+          };
+
+          try {
+            const { task, model: reqModel, max_steps } = body;
+            if (!task) {
+              emit({ type: 'RUN_ERROR', data: { error: 'task required' } });
+              controller.close();
+              return;
+            }
+
+            const model = reqModel || 'huggingface/Qwen/Qwen3-30B-A3B';
+            const maxSteps = Math.min(max_steps || MAX_STEPS, 15);
+
+            await runAgent(task, allTools, ctx, model, maxSteps, (event) => {
+              emit(event);
+            });
+            
+            controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+            controller.close();
+          } catch (e) {
+            emit({ type: 'RUN_ERROR', data: { error: (e as Error).message } });
+            controller.close();
+          }
+        }
+      });
+
+      return new Response(stream, {
+        headers: {
+          ...getCorsHeaders(req),
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive',
+        },
+      });
+    }
+
 
     // ═══ ACTION: list_tools ═══
     if (action === 'list_tools') {
