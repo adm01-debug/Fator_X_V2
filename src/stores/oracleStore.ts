@@ -58,7 +58,7 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
   error: null,
   history: [],
   enableThinking: false,
-  chairmanModel: 'google/gemini-2.5-pro',
+  chairmanModel: 'openai/gpt-4o',
   chairmanSelection: 'auto',
   abortController: null,
   customGuardrails: '',
@@ -214,7 +214,10 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
                 ],
               });
               
-              saveOracleHistory(query, mode, preset.id, preset.name, chairmanModel, enableThinking, finalResults).catch(() => {});
+              saveOracleHistory(query, mode, preset.id, preset.name, chairmanModel, enableThinking, finalResults).catch((err) => {
+                console.error("Erro ao salvar histórico:", err);
+                toast.error("Não foi possível salvar no histórico, mas o resultado está disponível abaixo.");
+              });
             } else if (type === 'error') {
               throw new Error(data);
             }

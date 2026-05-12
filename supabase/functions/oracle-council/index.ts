@@ -118,15 +118,15 @@ serve(async (req) => {
         : '';
 
       const baseGuards = custom_guardrails 
-        ? `\n\nDiretrizes Específicas:\n${custom_guardrails}`
+        ? `\n\nDiretrizes Específicas do Projeto:\n${custom_guardrails}`
         : "\n\nSiga estas regras rigorosamente:\n- Não forneça conselhos médicos, jurídicos ou financeiros sem ressalvas.\n- Mantenha tom profissional e objetivo.\n- Cite fontes sempre que possível.";
 
       const modeInstructions: Record<string, string> = {
-        council: `Você é ${member.persona || 'um especialista'}. Responda de forma completa e fundamentada.${thinkingInstructions}${baseGuards}`,
-        researcher: `Você é ${member.persona || 'um pesquisador'}. Analise a questão em profundidade, cite dados e tendências relevantes. Estruture a resposta com seções claras.${thinkingInstructions}\n- Foco em objetividade e profundidade técnica.`,
-        validator: `Você é ${member.persona || 'um verificador de fatos'}. Verifique a veracidade da afirmação/pergunta. Classifique como: CONFIRMADO, DISPUTADO ou NÃO VERIFICADO. Apresente evidências a favor e contra.${thinkingInstructions}\n- Seja extremamente cético e rigoroso.`,
-        executor: `Você é ${member.persona || 'um executor'}. Decomponha a tarefa em sub-tarefas concretas e acionáveis. Para cada sub-tarefa, indique: responsável sugerido, prazo estimado, e dependências.${thinkingInstructions}\n- Foco em pragmatismo e viabilidade técnica.`,
-        advisor: `Você é ${member.persona || 'um conselheiro'}. Analise a decisão apresentada. Liste prós e contras de cada opção, avalie riscos, e dê uma recomendação fundamentada com score de confiança.${thinkingInstructions}\n- Foco em análise multivariada e mitigação de riscos.`,
+        council: `Você é ${member.persona || 'um especialista'}. Seu objetivo é fornecer uma perspectiva única e técnica para um conselho de IAs. Responda de forma completa e fundamentada.${thinkingInstructions}${baseGuards}`,
+        researcher: `Você é ${member.persona || 'um pesquisador sênior'}. Analise a questão com rigor acadêmico, cite dados, tendências e possíveis fontes de evidência. Estruture a resposta com seções claras.${thinkingInstructions}\n- Foco em objetividade, profundidade técnica e exaustão informativa.${baseGuards}`,
+        validator: `Você é ${member.persona || 'um auditor de integridade'}. Verifique a veracidade da afirmação/pergunta. Classifique as alegações como: CONFIRMADO, DISPUTADO ou NÃO VERIFICADO. Apresente evidências a favor e contra cada ponto.${thinkingInstructions}\n- Seja extremamente cético, rigoroso e procure por vieses ou falácias.${baseGuards}`,
+        executor: `Você é ${member.persona || 'um estrategista operacional'}. Decomponha a tarefa em sub-tarefas concretas, acionáveis e técnicas. Para cada sub-tarefa, indique: perfil executor sugerido, complexidade (1-10), e dependências críticas.${thinkingInstructions}\n- Foco total em pragmatismo, viabilidade e roadmap de execução.${baseGuards}`,
+        advisor: `Você é ${member.persona || 'um conselheiro estratégico'}. Analise os trade-offs da decisão. Liste prós e contras multicritério (custo, tempo, risco, qualidade). Forneça uma recomendação clara com score de confiança.${thinkingInstructions}\n- Foco em análise multivariada, mitigação de riscos e visão de longo prazo.${baseGuards}`,
       };
       return modeInstructions[mode] || modeInstructions.council;
     };
@@ -155,8 +155,8 @@ serve(async (req) => {
             let result: any = null;
             let currentModel = member.model;
             
-            // Failover models
-            const failoverModels = ['google/gemini-2.5-pro', 'openai/gpt-5-mini', 'anthropic/claude-3-haiku'];
+            // Failover models hierarchy (tier-based)
+            const failoverModels = ['openai/gpt-4o', 'anthropic/claude-3-5-sonnet', 'google/gemini-1.5-pro', 'meta-llama/llama-3.1-405b'];
 
             const callGateway = async (model: string) => {
               const response = await fetch(gatewayUrl, {

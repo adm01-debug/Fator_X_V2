@@ -165,14 +165,45 @@ export function exportToPdf(
     doc.text('Respostas Individuais do Conselho', 14, 22);
     
     results.stage1_results.forEach((r, i) => {
-      const currentY = doc.internal.pageSize.height - 30 > (doc as any).lastAutoTable?.finalY ? (doc as any).lastAutoTable?.finalY + 10 : 30;
+      doc.addPage();
+      doc.setFontSize(16);
+      doc.setTextColor(40, 40, 40);
+      doc.text(`Membro ${i + 1}: ${r.persona}`, 14, 20);
+      doc.setFontSize(10);
+      doc.setTextColor(100, 100, 100);
+      doc.text(`Modelo: ${r.model}${r.failover ? ' (FAILOVER UTILIZADO)' : ''}`, 14, 27);
+      
       doc.autoTable({
-        startY: i === 0 ? 30 : currentY,
-        head: [[`Membro ${i + 1}: ${r.model}`]],
-        body: [[r.content.substring(0, 500) + (r.content.length > 500 ? '...' : '')]],
-        theme: 'plain',
-        headStyles: { fillColor: [243, 244, 246], textColor: [0, 0, 0] },
+        startY: 35,
+        head: [['Atributo', 'Valor']],
+        body: [
+          ['Tokens', r.tokens.total.toLocaleString()],
+          ['Custo', `$${r.cost_usd.toFixed(4)}`],
+          ['Latência', `${(r.latency_ms / 1000).toFixed(1)}s`],
+        ],
+        theme: 'grid',
+        styles: { fontSize: 8 },
       });
+
+      const nextY = (doc as any).lastAutoTable.finalY + 10;
+      doc.setFontSize(12);
+      doc.setTextColor(40, 40, 40);
+      doc.text('Resposta:', 14, nextY);
+      
+      doc.setFontSize(9);
+      doc.setTextColor(60, 60, 60);
+      const memberLines = doc.splitTextToSize(r.content, 180);
+      doc.text(memberLines, 14, nextY + 7);
+
+      if (r.thinking) {
+        doc.addPage();
+        doc.setFontSize(12);
+        doc.text('Raciocínio Interno (Thinking):', 14, 20);
+        doc.setFontSize(8);
+        doc.setTextColor(120, 120, 120);
+        const thinkingLines = doc.splitTextToSize(r.thinking, 180);
+        doc.text(thinkingLines, 14, 27);
+      }
     });
   }
 

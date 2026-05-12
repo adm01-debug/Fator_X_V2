@@ -15,10 +15,10 @@ import { useOracleStore, ORACLE_MODES, ORACLE_PRESETS } from '@/stores/oracleSto
 import { PresetSelector } from './PresetSelector';
 
 const CHAIRMAN_MODELS = [
-  { value: 'google/gemini-2.5-pro', label: 'Gemini 2.5 Pro' },
-  { value: 'openai/gpt-5', label: 'GPT-5' },
-  { value: 'google/gemini-2.5-flash', label: 'Gemini 2.5 Flash' },
-  { value: 'openai/gpt-5-mini', label: 'GPT-5 Mini' },
+  { value: 'openai/gpt-4o', label: 'GPT-4o (Otimizado)' },
+  { value: 'anthropic/claude-3-5-sonnet', label: 'Claude 3.5 Sonnet' },
+  { value: 'google/gemini-1.5-pro', label: 'Gemini 1.5 Pro' },
+  { value: 'meta-llama/llama-3.1-405b', label: 'Llama 3.1 405B' },
 ];
 
 export function OracleInputArea() {
