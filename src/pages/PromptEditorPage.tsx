@@ -9,7 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Save, GitBranch, CheckCircle, AlertTriangle, RotateCcw, Trash2, Loader2, FileText,
-  Activity, ShieldCheck, Zap, Target, Search, History, Sparkles, BarChart3, Info, Microscope, FileJson, Languages, Wand2, ArrowRight, RefreshCcw, Layout, Database, Layers
+  Activity, ShieldCheck, Zap, Target, History, BarChart3, Info, Microscope, FileJson, Languages, Wand2, ArrowRight, Layout, Layers
+
 } from "lucide-react";
 
 
