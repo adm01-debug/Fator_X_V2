@@ -10,8 +10,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Loader2, MessageSquare, Sparkles, ArrowUpDown, Search, History, X } from 'lucide-react';
-import { invokeCerebroQuery } from '@/services/cerebroService';
+import { 
+  Loader2, MessageSquare, Sparkles, ArrowUpDown, Search, 
+  History, X, Layers, ShieldCheck, Zap 
+} from 'lucide-react';
+import { invokeCerebroQuery, queryTiered } from '@/services/cerebroService';
 import { toast } from 'sonner';
 import {
   rerankChunks,
@@ -19,6 +22,7 @@ import {
   fetchChunksForRerank,
   type RerankResult,
 } from '@/services/knowledgeService';
+import type { ContextTier } from '@/services/contextTiersService';
 
 const HISTORY_KEY = 'nexus-cerebro-search-history';
 const HISTORY_MAX = 10;
