@@ -98,9 +98,19 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
         );
       }
 
-      const data = await invokeTracedFunction<OracleResult>(
-        'oracle-council',
-        {
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      const { data: { session } } = await (await import('@/lib/supabase')).supabase.auth.getSession();
+      
+      const response = await fetch(`${supabaseUrl}/functions/v1/oracle-council`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`,
+          'apikey': supabaseAnonKey,
+          'Accept': 'text/event-stream'
+        },
+        body: JSON.stringify({
           query,
           mode,
           members: preset.members,
@@ -108,43 +118,55 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
           enable_peer_review: preset.enablePeerReview,
           enable_thinking: enableThinking,
           preset_id: preset.id,
-        },
-        {
-          spanKind: 'llm',
-          extractCostUsd: (d) => (d as OracleResult)?.metrics?.total_cost_usd,
-          extractTokens: (d) => {
-            const m = (d as OracleResult)?.metrics;
-            return m ? { input: m.total_tokens, output: 0 } : undefined;
-          },
-          extractModel: (b) => (b as { chairman_model?: string }).chairman_model,
-        },
-      );
-
-      // Clear stage timers since API completed
-      stageTimers.forEach(clearTimeout);
-
-      const results = data;
-      set({
-        results,
-        currentStage: stageCount,
-        stageLabel: modeConfig.stages[stageCount - 1],
-        isRunning: false,
-        history: [
-          ...get().history,
-          { query, results, timestamp: new Date().toISOString(), preset: preset.id, mode },
-        ],
+        })
       });
 
-      // Persist to database
-      saveOracleHistory(
-        query,
-        mode,
-        preset.id,
-        preset.name,
-        chairmanModel,
-        enableThinking,
-        results,
-      ).catch(() => {});
+      if (!response.ok) throw new Error('Falha na conexão com o conselho');
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      
+      let tempResults: any = { stage1_results: [], metrics: { total_latency_ms: 0, total_cost_usd: 0 } };
+
+      while (true) {
+        const { done, value } = await reader!.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n');
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const { type, data } = JSON.parse(line.slice(6));
+            
+            if (type === 'stage') {
+              set({ currentStage: data.stage, stageLabel: data.label });
+            } else if (type === 'member_response') {
+              tempResults.stage1_results.push(data);
+              set({ results: { ...tempResults } as OracleResult });
+            } else if (type === 'review_complete') {
+              tempResults.stage2_results = [data];
+              set({ results: { ...tempResults } as OracleResult });
+            } else if (type === 'final') {
+              const finalResults = { ...tempResults, ...data };
+              set({
+                results: finalResults,
+                currentStage: stageCount,
+                stageLabel: modeConfig.stages[stageCount - 1],
+                isRunning: false,
+                history: [
+                  ...get().history,
+                  { query, results: finalResults, timestamp: new Date().toISOString(), preset: preset.id, mode },
+                ],
+              });
+              
+              saveOracleHistory(query, mode, preset.id, preset.name, chairmanModel, enableThinking, finalResults).catch(() => {});
+            } else if (type === 'error') {
+              throw new Error(data);
+            }
+          }
+        }
+      }
     } catch (e: unknown) {
       set({
         error: e instanceof Error ? e.message : 'Erro ao consultar o Oráculo',
@@ -153,6 +175,7 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
         stageLabel: '',
       });
     }
+
   },
 
   clearResults: () => set({ results: null, currentStage: 0, stageLabel: '', error: null }),
