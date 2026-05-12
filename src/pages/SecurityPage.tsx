@@ -221,7 +221,10 @@ export default function SecurityPage() {
         </TabsContent>
 
         <TabsContent value="guardrails" className="space-y-8 animate-in fade-in duration-500">
-          <GuardrailsLibrary />
+          <div className="grid lg:grid-cols-2 gap-8">
+            <GuardrailsLibrary />
+            <GuardrailsSimulator />
+          </div>
           <GuardrailsConfig />
           <GuardrailPolicies />
         </TabsContent>
