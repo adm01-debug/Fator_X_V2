@@ -47,7 +47,7 @@ export default function DataHubPage() {
     try {
       const now = new Date();
       // Start streaming connection tests
-      await streamInvoke('test_connections', {}, (event, data) => {
+      await streamInvoke('test_connections', {}, (event: string, data: any) => {
         if (event === 'connection') {
           setConnections((prev) => prev.map((c) => {
             if (c.id === data.id) {
@@ -67,6 +67,7 @@ export default function DataHubPage() {
           toast.success('Teste de conexões concluído!');
         }
       });
+
     } catch (e: unknown) { 
       toast.error(`Erro ao testar conexões: ${e instanceof Error ? e.message : String(e)}`); 
     } finally { 
