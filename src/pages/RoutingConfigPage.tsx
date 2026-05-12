@@ -24,6 +24,7 @@ import {
   getSourceLabel,
 } from "@/services/agentRoutingService";
 import { listAgents } from "@/lib/agentService";
+import { RoutingEventsMonitor } from "@/components/routing/RoutingEventsMonitor";
 
 const SOURCE_ICONS: Record<string, typeof Building2> = {
   bitrix24: Building2,
