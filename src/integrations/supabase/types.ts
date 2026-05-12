@@ -1776,6 +1776,8 @@ export type Database = {
           document_id: string | null
           embedding_status: string | null
           id: string
+          l0_abstract: string | null
+          l1_overview: string | null
           metadata: Json | null
           token_count: number | null
         }
@@ -1786,6 +1788,8 @@ export type Database = {
           document_id?: string | null
           embedding_status?: string | null
           id?: string
+          l0_abstract?: string | null
+          l1_overview?: string | null
           metadata?: Json | null
           token_count?: number | null
         }
@@ -1796,6 +1800,8 @@ export type Database = {
           document_id?: string | null
           embedding_status?: string | null
           id?: string
+          l0_abstract?: string | null
+          l1_overview?: string | null
           metadata?: Json | null
           token_count?: number | null
         }
@@ -7435,6 +7441,19 @@ export type Database = {
       rollback_change: {
         Args: { p_change_id: string; p_post_mortem_url: string }
         Returns: undefined
+      }
+      search_context_l0: {
+        Args: { p_collection_id?: string; p_limit?: number; p_query: string }
+        Returns: {
+          chunk_id: string
+          collection_id: string
+          document_id: string
+          l0_abstract: string
+          l1_overview: string
+          l2_content: string
+          relevance_score: number
+          token_count: number
+        }[]
       }
       start_dr_drill: { Args: { p_drill_id: string }; Returns: Json }
       start_game_day: {
