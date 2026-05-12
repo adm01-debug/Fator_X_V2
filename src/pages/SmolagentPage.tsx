@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { useStreamingResponse, type AGUIEvent } from '@/hooks/useStreamingResponse';
+import { useStreamingResponse } from '@/hooks/useStreamingResponse';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
@@ -41,7 +41,7 @@ interface AgentStep {
   step: number;
   thought: string;
   action: string;
-  action_input: string | Record<string, unknown>;
+  action_input: string;
   observation: string;
   latency_ms?: number;
   tokens?: number;
@@ -81,6 +81,7 @@ export default function SmolagentPage() {
         });
       });
   }, []);
+
 
   const handleRun = async () => {
     if (!task.trim()) {
