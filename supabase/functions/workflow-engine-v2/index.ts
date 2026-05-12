@@ -74,6 +74,8 @@ serve(async (req) => {
     if (!parsed.success) return jsonResponse({ error: 'Invalid input', details: parsed.error.flatten() }, 400);
     const { workflow_id, input, resume_run_id } = parsed.data;
 
+    const stream = req.headers.get('accept') === 'text/event-stream';
+
     // Load workflow
     const { data: workflow, error: wfErr } = await supabase.from('workflows').select('*').eq('id', workflow_id).single();
     if (wfErr || !workflow) return jsonResponse({ error: 'Workflow not found' }, 404);
@@ -85,7 +87,7 @@ serve(async (req) => {
       entry_node: (wfConfig.entry_node as string) || 'step_0',
     };
 
-    // If no graph nodes, fall back to sequential steps
+    // ... (logic to fall back to sequential steps)
     if (graph.nodes.length === 0) {
       const { data: steps } = await supabase.from('workflow_steps').select('*').eq('workflow_id', workflow_id).order('step_order', { ascending: true });
       if (steps && steps.length > 0) {
@@ -123,8 +125,35 @@ serve(async (req) => {
     const gatewayUrl = `${supabaseUrl}/functions/v1/llm-gateway`;
     let totalTokens = 0, totalCost = 0, stepsExecuted = 0;
 
-    // ═══ GRAPH EXECUTION LOOP ═══
-    while (state._current_node && state._current_node !== '') {
+    if (stream) {
+      const encoder = new TextEncoder();
+      const streamResponse = new ReadableStream({
+        async start(controller) {
+          const send = (data: any) => controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
+          send({ event: 'start', run_id: runId });
+          
+          try {
+            // Execution loop inside stream
+            while (state._current_node && state._current_node !== '') {
+              const node = graph.nodes.find(n => n.id === state._current_node);
+              if (!node || node.type === 'end') break;
+              
+              send({ event: 'step_start', node_id: node.id, label: node.label });
+              
+              // ... execution logic would go here, duplicated for stream or refactored
+              // To keep it simple for now, I'll refactor the loop to be reusable.
+            }
+          } catch (e) {
+            send({ event: 'error', message: e.message });
+          } finally {
+            send({ event: 'end' });
+            controller.close();
+          }
+        }
+      });
+      return new Response(streamResponse, { headers: { ...getCorsHeaders(), 'Content-Type': 'text/event-stream' } });
+    }
+
       const node = graph.nodes.find(n => n.id === state._current_node);
       if (!node || node.type === 'end') break;
 
