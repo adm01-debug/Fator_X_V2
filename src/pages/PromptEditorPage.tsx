@@ -8,25 +8,17 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
-  Save, GitBranch, CheckCircle, AlertTriangle, RotateCcw, Trash2, Loader2, FileText,
-  Activity, ShieldCheck, Zap, Target, History, BarChart3, Info, Microscope, FileJson, Languages, Wand2, ArrowRight, Layout, Layers
-
+  Save, GitBranch, RotateCcw, Trash2, Loader2, FileText,
+  Activity, ShieldCheck, Target, History, Wand2, ArrowRight, Layout, Layers
 } from "lucide-react";
-
-
 import { toast } from "sonner";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { AccessControl, DangerousActionDialog } from "@/components/rbac";
 import { Progress } from "@/components/ui/progress";
-
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as ChartTooltip, ResponsiveContainer,
-  BarChart, Bar, Cell
-} from 'recharts';
 import {
   getAgentBasic,
   listPromptVersions,
@@ -34,6 +26,7 @@ import {
   updatePromptVersion,
   deletePromptVersion,
   restorePromptVersion,
+  diffLines,
 } from "@/services/promptVersionService";
 
 export default function PromptEditorPage() {
