@@ -164,18 +164,30 @@ export function OracleInputArea() {
             </div>
           ))}
         </div>
-        <Button
-          onClick={store.submitQuery}
-          disabled={store.isRunning || !store.query.trim()}
-          className="nexus-gradient-bg text-primary-foreground gap-3 h-12 px-8 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all font-bold group"
-        >
-          {store.isRunning ? (
-            <Loader2 className="h-5 w-5 animate-spin" />
-          ) : (
-            <Sparkles className="h-5 w-5 group-hover:rotate-12 transition-transform" />
+        <div className="flex items-center gap-3">
+          <Button
+            onClick={store.submitQuery}
+            disabled={store.isRunning || !store.query.trim()}
+            className="nexus-gradient-bg text-primary-foreground gap-3 h-12 px-8 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all font-bold group"
+          >
+            {store.isRunning ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : (
+              <Sparkles className="h-5 w-5 group-hover:rotate-12 transition-transform" />
+            )}
+            {store.isRunning ? (store.isReplaying ? 'Rodando Replay...' : 'Conselho em Sessão...') : 'CONVOCAR CONSELHO'}
+          </Button>
+          {store.isRunning && !store.isReplaying && (
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-12 w-12 rounded-xl border-destructive/20 text-destructive hover:bg-destructive/10"
+              onClick={store.cancelQuery}
+            >
+              <XCircle className="h-5 w-5" />
+            </Button>
           )}
-          {store.isRunning ? 'Conselho em Sessão...' : 'CONVOCAR CONSELHO'}
-        </Button>
+        </div>
       </div>
     </Card>
   );
