@@ -56,6 +56,8 @@ export function MCPServerPanel() {
           </div>
           <code className="text-[11px] text-muted-foreground font-mono break-all">{mcpUrl}</code>
         </div>
+      </div>
+
       <div className="nexus-card bg-primary/5 border-primary/20">
         <h4 className="text-xs font-bold uppercase tracking-widest text-primary mb-3">Configuração Claude Desktop</h4>
         <pre className="text-[10px] font-mono bg-background p-4 rounded-xl border border-primary/10 overflow-x-auto">
@@ -90,7 +92,7 @@ export function MCPServerPanel() {
         <div className="grid md:grid-cols-3 gap-3 mb-3">
           <div>
             <label htmlFor="mcp-tool-select" className="text-[11px] text-muted-foreground">Tool</label>
-            <select id="mcp-tool-select" value={testTool} onChange={(e) => setTestTool(e.target.value)} className="w-full rounded-lg border border-border bg-secondary/50 px-2 py-1.5 text-xs">
+            <select id="mcp-tool-select" value={testTool} onChange={(e) => setTestTool(e.target.value)} className="w-full rounded-lg border border-border bg-secondary/50 px-2 py-1.5 text-xs text-foreground">
               {mcpTools.map((t) => <option key={t.name} value={t.name}>{t.name}</option>)}
             </select>
           </div>
