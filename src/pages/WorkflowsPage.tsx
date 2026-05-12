@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Play, LayoutGrid, Network, Calendar, Search, Activity, Zap, Layers, Sparkles } from 'lucide-react';
+import { Plus, Play, LayoutGrid, Network, Calendar, Search, Activity, Zap, Layers, Sparkles, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { workflowSchema } from '@/lib/validations/agentSchema';
@@ -13,7 +13,7 @@ import {
   saveWorkflow as saveWorkflowService,
   deleteWorkflow as deleteWorkflowService,
   toggleWorkflowStatus,
-  executeWorkflow,
+  executeWorkflowStream,
 } from '@/services/workflowsService';
 import { AccessControl } from '@/components/rbac/AccessControl';
 import { WorkflowCanvasTab } from '@/components/workflows/WorkflowCanvasTab';
@@ -22,6 +22,7 @@ import { WorkflowRunsHistory } from '@/components/workflows/WorkflowRunsHistory'
 import { WorkflowSchedulerTab } from '@/components/workflows/WorkflowSchedulerTab';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
 
 interface Workflow {
   id: string;
@@ -60,6 +61,7 @@ export default function WorkflowsPage() {
   const [newName, setNewName] = useState('');
   const [newSteps, setNewSteps] = useState('');
   const [executing, setExecuting] = useState<string | null>(null);
+  const [currentEvent, setCurrentEvent] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleCreate = async () => {
@@ -92,11 +94,27 @@ export default function WorkflowsPage() {
 
   const handleExecute = async (wf: Workflow) => {
     setExecuting(wf.id);
+    setCurrentEvent(null);
     try {
-      const result = await executeWorkflow(wf.id, wf.name, wf.steps);
-      toast.success(`Workflow executado! ${result.stepsExecuted} etapas • $${result.cost.toFixed(4)}`);
-    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : 'Erro inesperado'); }
-    finally { setExecuting(null); }
+      await executeWorkflowStream(wf.id, `Iniciando workflow ${wf.name}`, (event) => {
+        setCurrentEvent(event);
+        if (event.event === 'node_start') {
+          toast.info(`Iniciando etapa: ${event.label}`, { duration: 1500 });
+        }
+        if (event.event === 'run_completed') {
+          toast.success(`Workflow "${wf.name}" concluído com sucesso!`);
+          setExecuting(null);
+          queryClient.invalidateQueries({ queryKey: ['workflow_runs'] });
+        }
+        if (event.event === 'error') {
+          toast.error(`Erro no workflow: ${event.message}`);
+          setExecuting(null);
+        }
+      });
+    } catch (e: unknown) { 
+      toast.error(e instanceof Error ? e.message : 'Erro inesperado'); 
+      setExecuting(null);
+    }
   };
 
   return (
@@ -116,7 +134,7 @@ export default function WorkflowsPage() {
                 <Badge className="bg-primary/10 text-primary border-none font-bold px-3 py-1 rounded-full text-xs">BETA</Badge>
               </div>
               <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
-                Desenhe arquiteturas multi-agente complexas. Automatize processos de ponta a ponta com orquestração inteligente.
+                Desenhe arquiteturas multi-agente complexas com orquestração streaming em tempo real.
               </p>
             </div>
           </div>
@@ -152,7 +170,6 @@ export default function WorkflowsPage() {
                       placeholder="Classificar, Processar, Validar, Notificar" 
                       className="h-12 rounded-xl bg-secondary/30 border-border/30 focus:ring-primary/20" 
                     />
-                    <p className="text-[11px] text-muted-foreground font-medium italic">Separe as etapas por vírgula. Elas serão convertidas em nodos executores.</p>
                   </div>
                   <Button onClick={handleCreate} className="w-full h-12 nexus-gradient-bg text-primary-foreground rounded-xl font-bold text-lg shadow-lg shadow-primary/20">
                     Instanciar Workflow
@@ -163,6 +180,32 @@ export default function WorkflowsPage() {
           </div>
         </div>
       </div>
+
+      {executing && (
+        <Card className="p-6 rounded-[2rem] border-primary/30 bg-primary/5 animate-in fade-in slide-in-from-top-4 duration-500 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-bold flex items-center gap-2 text-primary">
+              <Loader2 className="h-5 w-5 animate-spin" />
+              Executando Workflow: {workflows.find(w => w.id === executing)?.name}
+            </h3>
+            <Badge variant="outline" className="animate-pulse bg-primary/10 text-primary border-primary/20">LIVE STREAMING</Badge>
+          </div>
+          <div className="flex items-center gap-4">
+             <div className="flex-1 h-2 bg-secondary rounded-full overflow-hidden">
+                <div className="h-full bg-primary animate-progress-indeterminate w-1/3" />
+             </div>
+             <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+               {currentEvent?.label || 'Iniciando...'}
+             </span>
+          </div>
+          {currentEvent?.output && (
+            <div className="mt-4 p-4 rounded-xl bg-card border border-border/40 font-mono text-xs max-h-40 overflow-y-auto">
+              <p className="text-muted-foreground mb-2 italic">// Último output:</p>
+              {typeof currentEvent.output === 'string' ? currentEvent.output : JSON.stringify(currentEvent.output, null, 2)}
+            </div>
+          )}
+        </Card>
+      )}
 
       {/* Workflow Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
