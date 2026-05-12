@@ -29,6 +29,19 @@ interface CerebroStats {
 export function OverviewTab() {
   const queryClient = useQueryClient();
   const [compacting, setCompacting] = useState(false);
+
+  const handleCompact = async () => {
+    setCompacting(true);
+    try {
+      await compactMemories('episodic');
+      toast.success('Memórias episódicas compactadas');
+      queryClient.invalidateQueries({ queryKey: ['cerebro_stats'] });
+    } catch (e: any) {
+      toast.error('Erro na compactação: ' + e.message);
+    } finally {
+      setCompacting(false);
+    }
+  };
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['cerebro_stats'],
     queryFn: async () => {
