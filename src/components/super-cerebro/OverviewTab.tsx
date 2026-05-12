@@ -20,6 +20,8 @@ interface CerebroStats {
   knowledge_bases?: number;
   chunks?: number;
   memories?: number;
+  entities?: number;
+  relations?: number;
   tools?: number;
   workflows?: number;
   traces?: number;
