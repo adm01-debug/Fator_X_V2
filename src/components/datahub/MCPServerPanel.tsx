@@ -56,6 +56,21 @@ export function MCPServerPanel() {
           </div>
           <code className="text-[11px] text-muted-foreground font-mono break-all">{mcpUrl}</code>
         </div>
+      <div className="nexus-card bg-primary/5 border-primary/20">
+        <h4 className="text-xs font-bold uppercase tracking-widest text-primary mb-3">Configuração Claude Desktop</h4>
+        <pre className="text-[10px] font-mono bg-background p-4 rounded-xl border border-primary/10 overflow-x-auto">
+{`{
+  "mcpServers": {
+    "nexus-datahub": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-http", "--url", "${mcpUrl}"],
+      "env": {
+        "NEXUS_API_KEY": "SUA_API_KEY"
+      }
+    }
+  }
+}`}
+        </pre>
       </div>
 
       <div className="nexus-card">
