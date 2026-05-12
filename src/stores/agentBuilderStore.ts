@@ -351,6 +351,58 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
     });
   },
 
+  rollbackToVersion: async (versionId: string) => {
+    const { promptVersions, agent } = get();
+    const target = promptVersions.find(v => v.id === versionId);
+    if (!target || !agent.id) return;
+
+    // A rollback in prompt versioning creates a NEW version with the old content
+    // to maintain a clean linear audit trail.
+    const newVersion = (promptVersions.length > 0 ? Math.max(...promptVersions.map(v => v.version)) : 0) + 1;
+    const summary = `Rollback para v${target.version} (${target.change_summary.slice(0, 30)}...)`;
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    // Deactivate current
+    await supabaseExternal
+      .from('prompt_versions')
+      .update({ is_active: false })
+      .eq('agent_id', agent.id);
+
+    // Create new version with target content
+    const { data, error } = await supabaseExternal
+      .from('prompt_versions')
+      .insert({
+        agent_id: agent.id,
+        user_id: user.id,
+        version: newVersion,
+        content: target.content,
+        change_summary: summary,
+        is_active: true,
+      })
+      .select()
+      .single();
+
+    if (!error && data) {
+      const pv: PromptVersion = {
+        id: data.id,
+        version: data.version,
+        content: data.content,
+        change_summary: data.change_summary || '',
+        author: 'user',
+        is_active: true,
+        created_at: data.created_at,
+      };
+      set({
+        promptVersions: [...promptVersions.map(v => ({ ...v, is_active: false })), pv],
+        agent: { ...agent, system_prompt: target.content, system_prompt_version: newVersion },
+        isDirty: false,
+      });
+      audit.agentUpdated(agent.id, ['prompt_rollback']);
+    }
+  },
+
   exportJSON: () => JSON.stringify(get().agent, null, 2),
 
   exportMarkdown: () => {
