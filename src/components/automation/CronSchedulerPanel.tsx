@@ -2,9 +2,14 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Clock, RefreshCw, Play, Loader2 } from 'lucide-react';
-import { listSchedules, runCronExecutor, CRON_PRESETS, getScheduleStats, describeCronExpression, type CronSchedule, type ScheduleStats } from '@/services/cronSchedulerService';
+import { Clock, RefreshCw, Play, Loader2, Plus, Calendar, Settings2 } from 'lucide-react';
+import { listSchedules, runCronExecutor, CRON_PRESETS, getScheduleStats, describeCronExpression, createSchedule, type CronSchedule, type ScheduleStats } from '@/services/cronSchedulerService';
 import { useToast } from '@/hooks/use-toast';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { CronVisualEditor } from './CronVisualEditor';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const STATUS_COLORS: Record<string, string> = {
   active: 'bg-nexus-emerald/20 text-nexus-emerald',
