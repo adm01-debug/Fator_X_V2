@@ -274,6 +274,7 @@ export default function WorkflowsPage() {
           <TabsContent value="schedule" className="m-0">
             <WorkflowSchedulerTab workflows={workflows.map(w => ({ id: w.id, name: w.name }))} />
           </TabsContent>
+          <TabsContent value="handoffs" className="m-0"><WorkflowHandoffVisualizer /></TabsContent>
         </div>
       </Tabs>
     </div>
