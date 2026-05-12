@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, ArrowRightLeft, User, Bot, AlertCircle, CheckCircle2, Clock } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Loader2, ArrowRightLeft, User, Bot, CheckCircle2, Clock } from 'lucide-react';
 import { getHandoffHistory } from '@/services/agentHandoffService';
 import type { HandoffRecord } from '@/services/types/agentHandoffTypes';
 
