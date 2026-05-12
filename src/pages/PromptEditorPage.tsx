@@ -360,7 +360,7 @@ export default function PromptEditorPage() {
                       size="sm" 
                       className="rounded-xl border-nexus-emerald/30 text-nexus-emerald hover:bg-nexus-emerald/5 gap-2 font-black text-[10px] uppercase tracking-widest"
                       onClick={() => restoreVersionMut.mutate(diffVersion)}
-                      disabled={restoreVersionMut.isPending || diffVersion.is_active}
+                      disabled={restoreVersionMut.isPending || !!diffVersion.is_active}
                     >
                       <RotateCcw className="h-3.5 w-3.5" /> Restaurar Snapshot
                     </Button>
