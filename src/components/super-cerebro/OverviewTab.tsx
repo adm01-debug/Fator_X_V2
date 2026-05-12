@@ -3,6 +3,14 @@ import { Badge } from "@/components/ui/badge";
 import { invokeCerebroBrain, getHealthScore } from "@/services/cerebroService";
 import { useQuery } from "@tanstack/react-query";
 
+interface MemoryEntry {
+  id: string;
+  memory_type: string;
+  content: string;
+  created_at: string;
+  agent_id?: string;
+}
+
 interface CerebroStats {
   agents?: number;
   knowledge_bases?: number;
@@ -12,6 +20,7 @@ interface CerebroStats {
   workflows?: number;
   traces?: number;
   today_traces?: number;
+  recent_memories?: MemoryEntry[];
 }
 
 export function OverviewTab() {
