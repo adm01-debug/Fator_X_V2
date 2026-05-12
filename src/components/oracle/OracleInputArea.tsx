@@ -29,6 +29,21 @@ export function OracleInputArea() {
   const currentPreset = ORACLE_PRESETS.find((p) => p.id === store.selectedPreset);
   const modeConfig = ORACLE_MODES[store.mode];
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && store.isRunning) {
+        store.cancelQuery();
+        toast.info('Consulta cancelada');
+      }
+      if (e.key === 'Enter' && e.ctrlKey && !store.isRunning && store.query.trim()) {
+        store.submitQuery();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [store.isRunning, store.query]);
+
   return (
     <Card className="p-8 bg-card border-border rounded-3xl shadow-sm relative overflow-hidden group">
       <div className="absolute top-0 right-0 w-48 h-48 bg-primary/[0.02] rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700" />
