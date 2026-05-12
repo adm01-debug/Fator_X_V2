@@ -138,8 +138,60 @@ serve(async (req) => {
     const body = await req.json();
     const { action } = body;
 
-    // ═══ ACTION: test_connections ═══
+    // ═══ ACTION: test_connections (Optimized with Streaming) ═══
     if (action === 'test_connections') {
+      const isStreaming = body.streaming === true;
+      
+      if (isStreaming) {
+        const stream = new ReadableStream({
+          async start(controller) {
+            controller.enqueue(sseEvent('start', { timestamp: new Date().toISOString() }));
+            
+            for (const [connId] of Object.entries(CONNECTION_REGISTRY)) {
+              try {
+                const client = getExternalClient(connId);
+                const testTable = connId === 'bancodadosclientes' ? 'companies'
+                  : connId === 'supabase-fuchsia-kite' ? 'products'
+                  : connId === 'gestao_time_promo' ? 'colaboradores'
+                  : 'contacts';
+                
+                const startTime = performance.now();
+                const { count, error } = await client.from(testTable).select('id', { count: 'exact', head: true });
+                const latency = Math.round(performance.now() - startTime);
+                
+                if (error) throw new Error(error.message);
+                
+                controller.enqueue(sseEvent('connection', { 
+                  id: connId, 
+                  status: 'connected', 
+                  count: count ?? 0,
+                  latency_ms: latency
+                }));
+              } catch (e: unknown) {
+                controller.enqueue(sseEvent('connection', { 
+                  id: connId, 
+                  status: 'error', 
+                  error: e instanceof Error ? e.message : 'Unknown' 
+                }));
+              }
+            }
+            
+            controller.enqueue(sseEvent('done', { timestamp: new Date().toISOString() }));
+            controller.close();
+          }
+        });
+        
+        return new Response(stream, { 
+          headers: { 
+            ...getCorsHeaders(req), 
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive'
+          } 
+        });
+      }
+
+      // Fallback to legacy JSON for compatibility
       const results: Record<string, { status: string; count?: number; error?: string }> = {};
       for (const [connId] of Object.entries(CONNECTION_REGISTRY)) {
         try {
@@ -157,6 +209,7 @@ serve(async (req) => {
       }
       return new Response(JSON.stringify({ connections: results }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
+
 
     // ═══ ACTION: list_entities ═══
     if (action === 'list_entities') {
