@@ -506,10 +506,53 @@ serve(async (req) => {
     if (!hfToken) return jsonResponse({ error: 'HF_API_TOKEN not configured' }, 400);
 
     const body = await req.json();
-    const { action } = body;
+    const { action, stream } = body;
 
     const ctx: AgentContext = { supabaseUrl, supabaseKey, authHeader, hfToken };
     const allTools = buildToolRegistry(ctx);
+
+    if (stream) {
+      const encoder = new TextEncoder();
+      const stream = new ReadableStream({
+        async start(controller) {
+          const emit = (event: { type: string; data: Record<string, unknown> }) => {
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ ...event.data, type: event.type })}\n\n`));
+          };
+
+          try {
+            const { task, model: reqModel, max_steps } = body;
+            if (!task) {
+              emit({ type: 'RUN_ERROR', data: { error: 'task required' } });
+              controller.close();
+              return;
+            }
+
+            const model = reqModel || 'huggingface/Qwen/Qwen3-30B-A3B';
+            const maxSteps = Math.min(max_steps || MAX_STEPS, 15);
+
+            await runAgent(task, allTools, ctx, model, maxSteps, (event) => {
+              emit(event);
+            });
+            
+            controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+            controller.close();
+          } catch (e) {
+            emit({ type: 'RUN_ERROR', data: { error: (e as Error).message } });
+            controller.close();
+          }
+        }
+      });
+
+      return new Response(stream, {
+        headers: {
+          ...getCorsHeaders(req),
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive',
+        },
+      });
+    }
+
 
     // ═══ ACTION: list_tools ═══
     if (action === 'list_tools') {
