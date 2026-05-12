@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Activity, TrendingUp, AlertCircle, Clock, Zap, Search, Layers, Box, Terminal, Database, ShieldAlert, Cpu } from "lucide-react";
+import { Activity, TrendingUp, AlertCircle, Clock, Search, Layers, Box, Terminal, Database, ShieldAlert, Cpu } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getRecentTraceEvents } from "@/services/monitoringService";
 import { getSystemHealth } from "@/services/healthService";
