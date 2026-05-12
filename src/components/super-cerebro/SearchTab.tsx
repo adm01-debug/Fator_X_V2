@@ -67,19 +67,29 @@ export function SearchTab() {
   const handleSearch = async () => {
     if (!query.trim()) return;
     setIsSearching(true);
-    setSearchResults(null);
+    setSearchResults("");
     try {
-      const data = await invokeCerebroQuery({ query, mode: 'chat' });
-      const meta: string[] = [];
-      if (data?.facts_loaded > 0) meta.push(`${data.facts_loaded} fatos`);
-      if (data?.rag_chunks_used) meta.push(data.rag_reranked ? 'RAG reranked' : 'RAG ativo');
-      if (data?.external_facts > 0) meta.push(`${data.external_facts} fatos externos`);
-      const metaLine =
-        meta.length > 0
-          ? `\n\n---\n_${meta.join(' • ')} • Custo: $${data?.cost_usd?.toFixed(6) || '0'}_`
-          : '';
-      setSearchResults((data?.response || 'Sem resposta') + metaLine);
-      // Persist to history (dedupe + cap to HISTORY_MAX)
+      const body = await invokeCerebroQuery({ query, mode: 'chat', stream: true });
+      
+      if (body instanceof ReadableStream) {
+        const reader = body.getReader();
+        const decoder = new TextDecoder();
+        let done = false;
+        let fullText = "";
+
+        while (!done) {
+          const { value, done: doneReading } = await reader.read();
+          done = doneReading;
+          const chunkValue = decoder.decode(value);
+          fullText += chunkValue;
+          setSearchResults(fullText);
+        }
+      } else {
+        const data = body;
+        setSearchResults(data?.response || 'Sem resposta');
+      }
+
+      // Persist to history
       const trimmed = query.trim();
       const next = [trimmed, ...history.filter((h) => h !== trimmed)].slice(0, HISTORY_MAX);
       setHistory(next);
