@@ -153,6 +153,25 @@ export function SearchTab() {
     }
   };
 
+  const handleTieredSearch = async () => {
+    if (!query.trim()) return;
+    setIsTieredSearching(true);
+    setTieredResults(null);
+    try {
+      const result = await queryTiered(query, {
+        l0Limit: 20,
+        l1Limit: 8,
+        l2Limit: 3
+      });
+      setTieredResults(result);
+      toast.success(`Busca hierárquica concluída! Economia: ${result.tokensSaved} tokens`);
+    } catch (e: any) {
+      toast.error('Erro na busca tiered: ' + e.message);
+    } finally {
+      setIsTieredSearching(false);
+    }
+  };
+
   const methodLabels: Record<string, string> = {
     cohere: 'Cohere Rerank v3.5',
     hf_bge_reranker: 'HuggingFace BGE Reranker',
