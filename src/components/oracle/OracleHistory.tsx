@@ -3,17 +3,18 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { Trash2, Eye, FileText, Clock, Filter } from 'lucide-react';
+import { Trash2, Eye, FileText, Clock, Filter, Play, Download } from 'lucide-react';
 import { fetchOracleHistory, deleteOracleHistory, type OracleHistoryEntry, type HistoryFilters } from '@/lib/oracleHistory';
 import { exportToMarkdown, downloadText } from '@/lib/oracleExport';
-import { ORACLE_MODES, ORACLE_PRESETS, type OracleMode } from '@/stores/oracleStore';
+import { useOracleStore, ORACLE_MODES, ORACLE_PRESETS, type OracleMode } from '@/stores/oracleStore';
 import { toast } from 'sonner';
 
 interface OracleHistoryProps {
   onClose?: () => void;
 }
 
-export function OracleHistory(_props: OracleHistoryProps) {
+export function OracleHistory({ onClose }: OracleHistoryProps) {
+  const store = useOracleStore();
   const [entries, setEntries] = useState<OracleHistoryEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<HistoryFilters>({});
