@@ -2,7 +2,7 @@ import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import { SectionTitle, NexusBadge, ToggleField, SliderField, SelectField } from '../ui';
 import { CollapsibleCard } from '../ui/CollapsibleCard';
 import { Button } from '@/components/ui/button';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, Wrench } from 'lucide-react';
 import type { AgentTool, MCPServer, CustomAPI } from '@/types/agentTypes';
 import { ToolSuggestions } from './ToolSuggestions';
 
@@ -348,6 +348,35 @@ export function ToolsModule() {
             <Plus className="h-4 w-4 mr-2" /> Adicionar API
           </Button>
         </div>
+      </section>
+      {/* Seção D — Validação de Tools */}
+      <section className="p-4 rounded-xl border border-primary/20 bg-primary/5">
+        <div className="flex items-center gap-2 mb-4">
+          <Wrench className="h-4 w-4 text-primary" />
+          <h4 className="text-xs font-bold text-foreground uppercase tracking-tight">Status das Ferramentas</h4>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="space-y-1">
+            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Capacidades</p>
+            <p className="text-sm font-semibold">{agent.tools.length} Ferramentas / {agent.mcp_servers.length} MCP</p>
+          </div>
+          <div className="space-y-1">
+            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Ativas</p>
+            <p className="text-sm font-semibold text-nexus-emerald">{agent.tools.filter(t => t.enabled).length} Habilitadas</p>
+          </div>
+          <div className="space-y-1">
+            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Segurança</p>
+            <p className="text-sm font-semibold text-nexus-blue">
+              {agent.tools.filter(t => t.requires_approval).length} com aprovação humana
+            </p>
+          </div>
+        </div>
+        {agent.tools.length === 0 && (
+          <div className="mt-4 p-3 rounded-lg bg-nexus-amber/10 border border-nexus-amber/20 flex items-center gap-2">
+            <div className="h-2 w-2 rounded-full bg-nexus-amber animate-pulse" />
+            <p className="text-[11px] text-nexus-amber font-medium">Considere adicionar ferramentas para que o agente possa executar ações reais.</p>
+          </div>
+        )}
       </section>
     </div>
   );

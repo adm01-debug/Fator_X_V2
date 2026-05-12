@@ -87,16 +87,37 @@ export async function invokeLLMGateway(body: {
   messages: Array<{ role: string; content: string }>;
   temperature?: number;
   max_tokens?: number;
+  agentId?: string;
+  sessionId?: string;
 }) {
-  return tracedInvoke('llm-gateway', body, {
-    spanKind: 'llm',
-    extractModel: (b) => (b as { model: string }).model,
-    extractCostUsd: (d) => (d as { cost_usd?: number })?.cost_usd,
-    extractTokens: (d) => {
-      const r = d as { usage?: { input_tokens?: number; output_tokens?: number } };
-      return r?.usage ? { input: r.usage.input_tokens, output: r.usage.output_tokens } : undefined;
-    },
-  });
+  const retryLimit = 2;
+  let attempt = 0;
+  let lastError: any;
+
+  while (attempt <= retryLimit) {
+    try {
+      return await tracedInvoke('llm-gateway', body, {
+        spanKind: 'llm',
+        agentId: body.agentId,
+        sessionId: body.sessionId,
+        extractModel: (b) => (b as { model: string }).model,
+        extractCostUsd: (d) => (d as { cost_usd?: number })?.cost_usd,
+        extractTokens: (d) => {
+          const r = d as { usage?: { input_tokens?: number; output_tokens?: number } };
+          return r?.usage ? { input: r.usage.input_tokens, output: r.usage.output_tokens } : undefined;
+        },
+      });
+    } catch (err) {
+      attempt++;
+      lastError = err;
+      if (attempt <= retryLimit) {
+        const backoff = Math.pow(2, attempt) * 1000;
+        logger.warn(`llm-gateway attempt ${attempt} failed, retrying in ${backoff}ms`, { error: (err as any).message });
+        await new Promise(r => setTimeout(r, backoff));
+      }
+    }
+  }
+  throw lastError;
 }
 
 export async function invokeGuardrailsEngine(body: Record<string, unknown>) {

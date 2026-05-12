@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer } from 'recharts';
-import { Sparkles, Info } from 'lucide-react';
+import { Sparkles, Info, CheckCircle2 } from 'lucide-react';
 import type { AgentPersona } from '@/types/agentTypes';
 
 const AVATAR_EMOJIS = [
@@ -191,18 +191,45 @@ export function IdentityModule() {
         </div>
       </section>
 
-      {/* Seção D — Escopo */}
+      {/* Seção D — Escopo & Validação */}
       <section>
         <SectionTitle icon="📐" title="Escopo de Atuação" subtitle="Defina os limites do que o agente pode e não pode fazer" />
-        <TextAreaField
-          label="Escopo"
-          value={agent.scope}
-          onChange={(v) => updateAgent({ scope: v })}
-          placeholder={"O agente PODE:\n- Responder dúvidas sobre produtos\n- Consultar estoque\n\nO agente NÃO PODE:\n- Alterar preços\n- Aprovar descontos acima de 10%"}
-          rows={6}
-          hint="Defina limites claros. O que pode e NÃO pode fazer."
-          maxLength={2000}
-        />
+        <div className="space-y-4">
+          <TextAreaField
+            label="Escopo"
+            value={agent.scope}
+            onChange={(v) => updateAgent({ scope: v })}
+            placeholder={"O agente PODE:\n- Responder dúvidas sobre produtos\n- Consultar estoque\n\nO agente NÃO PODE:\n- Alterar preços\n- Aprovar descontos acima de 10%"}
+            rows={6}
+            hint="Defina limites claros. O que pode e NÃO pode fazer."
+            maxLength={2000}
+          />
+          
+          <div className="p-4 rounded-xl border border-nexus-emerald/20 bg-nexus-emerald/5">
+            <div className="flex items-center gap-2 mb-3">
+              <CheckCircle2 className="h-4 w-4 text-nexus-emerald" />
+              <h4 className="text-xs font-bold text-foreground uppercase tracking-tight">Validação de Identidade</h4>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="flex items-center gap-2 text-[11px]">
+                <div className={cn("h-1.5 w-1.5 rounded-full", agent.name ? "bg-nexus-emerald" : "bg-muted")} />
+                <span className={cn(agent.name ? "text-foreground" : "text-muted-foreground")}>Nome configurado</span>
+              </div>
+              <div className="flex items-center gap-2 text-[11px]">
+                <div className={cn("h-1.5 w-1.5 rounded-full", agent.mission ? "bg-nexus-emerald" : "bg-muted")} />
+                <span className={cn(agent.mission ? "text-foreground" : "text-muted-foreground")}>Missão definida</span>
+              </div>
+              <div className="flex items-center gap-2 text-[11px]">
+                <div className={cn("h-1.5 w-1.5 rounded-full", agent.scope.length > 50 ? "bg-nexus-emerald" : "bg-muted")} />
+                <span className={cn(agent.scope.length > 50 ? "text-foreground" : "text-muted-foreground")}>Escopo detalhado</span>
+              </div>
+              <div className="flex items-center gap-2 text-[11px]">
+                <div className={cn("h-1.5 w-1.5 rounded-full", agent.avatar_emoji ? "bg-nexus-emerald" : "bg-muted")} />
+                <span className={cn(agent.avatar_emoji ? "text-foreground" : "text-muted-foreground")}>Avatar selecionado</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </div>
   );
