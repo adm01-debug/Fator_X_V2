@@ -23,7 +23,7 @@ import { ConnectionCard, DEFAULT_CONNECTIONS, type ConnectionDef } from '@/compo
 import { EntityDetailPanel, ENTITY_ICONS, getConnectionLabel } from '@/components/datahub/EntityDetailPanel';
 import { MCPServerPanel } from '@/components/datahub/MCPServerPanel';
 import { DATAHUB_TABLE_BLACKLIST } from '@/config/datahub-blacklist';
-import { testDatahubConnections, listDatahubEntities } from '@/services/datahubService';
+import { streamInvoke } from '@/services/datahubService';
 import { NLPAnalysisDialog } from '@/components/shared/NLPAnalysisDialog';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -38,33 +38,69 @@ export default function DataHubPage() {
   const [entityCounts, setEntityCounts] = useState<Record<string, number>>({});
   const [testingConnections, setTestingConnections] = useState(false);
   const [loadingCounts, setLoadingCounts] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false);
+
 
   // Sync entity selection to store
   useEffect(() => { storeSelectEntity(selectedEntity); }, [selectedEntity, storeSelectEntity]);
 
   const testConnections = useCallback(async () => {
     setTestingConnections(true);
+    setIsStreaming(true);
+
     try {
-      const data = await testDatahubConnections();
       const now = new Date();
-      setConnections((prev) => prev.map((c) => {
-        if (c.status === 'hibernated') return c;
-        const result = data.connections?.[c.id];
-        if (!result) return c;
-        return { ...c, status: result.status === 'connected' ? 'connected' as const : 'error' as const, count: result.count, error: result.error, lastTested: now };
-      }));
-      const connected = Object.values(data.connections ?? {}).filter((r: unknown) => (r as Record<string, unknown>).status === 'connected').length;
-      toast.success(`${connected} de 4 conexões ativas!`);
-    } catch (e: unknown) { toast.error(`Erro ao testar conexões: ${e instanceof Error ? e.message : String(e)}`); }
-    finally { setTestingConnections(false); }
+      // Start streaming connection tests
+      await streamInvoke('test_connections', {}, (event: string, data: any) => {
+        if (event === 'connection') {
+          setConnections((prev) => prev.map((c) => {
+            if (c.id === data.id) {
+              return { 
+                ...c, 
+                status: data.status === 'connected' ? 'connected' as const : 'error' as const, 
+                count: data.count, 
+                error: data.error,
+                latency: data.latency_ms,
+                lastTested: now 
+              };
+            }
+            return c;
+          }));
+        }
+        if (event === 'done') {
+          toast.success('Teste de conexões concluído!');
+        }
+      });
+
+    } catch (e: unknown) { 
+      toast.error(`Erro ao testar conexões: ${e instanceof Error ? e.message : String(e)}`); 
+    } finally { 
+      setTestingConnections(false); 
+      setIsStreaming(false);
+    }
+
   }, []);
 
   const loadEntityCounts = useCallback(async () => {
     setLoadingCounts(true);
-    try { const data = await listDatahubEntities(); setEntityCounts(data.entities ?? {}); }
-    catch (e: unknown) { toast.error(`Erro ao carregar contagens: ${e instanceof Error ? e.message : String(e)}`); }
-    finally { setLoadingCounts(false); }
+    setIsStreaming(true);
+
+    try { 
+      await streamInvoke('list_entities', {}, (event: string, data: any) => {
+        if (event === 'entity_count') {
+          setEntityCounts(prev => ({ ...prev, [data.id]: data.count }));
+        }
+      });
+
+    } catch (e: unknown) { 
+      toast.error(`Erro ao carregar contagens: ${e instanceof Error ? e.message : String(e)}`); 
+    } finally { 
+      setLoadingCounts(false); 
+      setIsStreaming(false);
+    }
+
   }, []);
+
 
   useEffect(() => { testConnections(); loadEntityCounts(); }, [testConnections, loadEntityCounts]);
 
@@ -124,7 +160,13 @@ export default function DataHubPage() {
               <p className="text-[10px] text-muted-foreground font-bold tracking-widest uppercase">Conectividade Ativa</p>
             </div>
             <div className="h-10 w-px bg-border/40 mx-4" />
+            {isStreaming && (
+              <Badge className="bg-nexus-cyan/20 text-nexus-cyan border-nexus-cyan/30 animate-pulse font-black px-3 py-1 rounded-full text-[10px] tracking-widest uppercase mr-4">
+                <Activity className="h-3 w-3 mr-1" /> Live Stream Ativo
+              </Badge>
+            )}
             <NLPAnalysisDialog />
+
           </div>
         </div>
       </div>
