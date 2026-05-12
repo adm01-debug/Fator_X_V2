@@ -214,12 +214,13 @@ export function OverviewTab() {
             </div>
           </div>
 
-          {/* Quick insights */}
-          <div className="nexus-card">
-            <h3 className="text-sm font-heading font-semibold text-foreground mb-3 flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-nexus-emerald" /> Insights de Operação
-            </h3>
-            <div className="grid md:grid-cols-2 gap-2">
+          {/* Quick Management */}
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="nexus-card">
+              <h3 className="text-sm font-heading font-semibold text-foreground mb-3 flex items-center gap-2">
+                <TrendingUp className="h-4 w-4 text-nexus-emerald" /> Insights de Operação
+              </h3>
+              <div className="grid grid-cols-1 gap-2">
               {(() => {
                 const insights: Array<{ msg: string; type: 'good' | 'warn' | 'info' }> = [];
                 if ((stats?.knowledge_bases ?? 0) === 0) {
