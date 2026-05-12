@@ -106,7 +106,7 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: validation.error }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
-    const { query, mode, members, chairman_model, enable_peer_review = true, enable_thinking = false } = validation.data;
+    const { query, mode, members, chairman_model, enable_peer_review = true, enable_thinking = false, custom_guardrails } = validation.data;
 
     const gatewayUrl = `${supabaseUrl}/functions/v1/llm-gateway`;
     const totalStartTime = Date.now();
