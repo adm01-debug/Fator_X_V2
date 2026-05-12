@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { invokeBitrix24Api } from '@/services/llmGatewayService';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
@@ -39,10 +39,10 @@ export function Bitrix24ApiTester() {
       const parsedParams = params.trim() ? JSON.parse(params) : {};
       const data = await invokeBitrix24Api({ method, params: parsedParams });
       setResult(data);
-      setHistory(prev => [{ method, ts: new Date().toLocaleTimeString(), status: 'ok' }, ...prev].slice(0, 10));
+      setHistory(prev => [{ method, ts: new Date().toLocaleTimeString(), status: 'ok' as const }, ...prev].slice(0, 10));
       toast.success('Execução concluída com sucesso');
     } catch (e: unknown) {
-      setHistory(prev => [{ method, ts: new Date().toLocaleTimeString(), status: 'err' }, ...prev].slice(0, 10));
+      setHistory(prev => [{ method, ts: new Date().toLocaleTimeString(), status: 'err' as const }, ...prev].slice(0, 10));
       toast.error(e instanceof Error ? e.message : 'Erro na requisição');
     } finally {
       setTesting(false);
