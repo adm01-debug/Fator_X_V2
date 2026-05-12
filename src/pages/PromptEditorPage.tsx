@@ -131,12 +131,8 @@ export default function PromptEditorPage() {
   const diffVersion = versions.find((v: any) => v.id === diffVersionId);
 
   // Telemetry data simulation
-  const qualityStats = [
-    { range: '0.9-1.0', count: 45, color: 'hsl(var(--nexus-emerald))' },
-    { range: '0.8-0.9', count: 32, color: 'hsl(var(--nexus-cyan))' },
-    { range: '0.7-0.8', count: 18, color: 'hsl(var(--primary))' },
-    { range: '< 0.7', count: 5, color: 'hsl(var(--muted-foreground))' },
-  ];
+  /* Telemetry data simulation */
+  // const qualityStats = [ ... ];
 
   if (isLoading) {
 
