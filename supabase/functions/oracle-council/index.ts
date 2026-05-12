@@ -149,20 +149,43 @@ serve(async (req) => {
           
           const stage1Promises = members.map(async (member, idx) => {
             const mStart = Date.now();
-            const response = await fetch(gatewayUrl, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json', 'Authorization': authHeader!, 'apikey': supabaseKey },
-              body: JSON.stringify({
-                model: member.model,
-                messages: [
-                  { role: 'system', content: buildSystemPrompt(member) },
-                  { role: 'user', content: query },
-                ],
-                temperature: mode === 'validator' ? 0.3 : 0.7,
-                max_tokens: 3000,
-              }),
-            });
-            const result = await response.json();
+            let result: any = null;
+            let currentModel = member.model;
+            
+            // Failover models
+            const failoverModels = ['google/gemini-2.5-pro', 'openai/gpt-5-mini', 'anthropic/claude-3-haiku'];
+
+            const callGateway = async (model: string) => {
+              const response = await fetch(gatewayUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': authHeader!, 'apikey': supabaseKey },
+                body: JSON.stringify({
+                  model: model,
+                  messages: [
+                    { role: 'system', content: buildSystemPrompt(member) },
+                    { role: 'user', content: query },
+                  ],
+                  temperature: mode === 'validator' ? 0.3 : 0.7,
+                  max_tokens: 3000,
+                }),
+              });
+              if (!response.ok) throw new Error(`Gateway error: ${response.status}`);
+              return await response.json();
+            };
+
+            try {
+              result = await callGateway(currentModel);
+            } catch (err) {
+              console.error(`Model ${currentModel} failed, trying failover...`, err);
+              // Simple failover to a reliable model
+              currentModel = failoverModels.find(m => m !== currentModel) || failoverModels[0];
+              try {
+                result = await callGateway(currentModel);
+              } catch (err2) {
+                console.error(`Failover to ${currentModel} also failed`, err2);
+                return { index: idx, model: member.model, success: false, content: 'Erro persistente após failover' };
+              }
+            }
             
             let content = result.content || result.error || 'No response';
             let thinking = '';
@@ -175,10 +198,11 @@ serve(async (req) => {
             }
 
             const mResult = {
-              index: idx, model: member.model, persona: member.persona || 'General',
+              index: idx, model: currentModel, original_model: member.model, persona: member.persona || 'General',
               content, thinking,
               tokens: result.tokens || { total: 0 }, cost_usd: result.cost_usd || 0,
               latency_ms: Date.now() - mStart, success: !result.error,
+              failover: currentModel !== member.model
             };
             
             await sendUpdate('member_response', mResult);
