@@ -93,14 +93,15 @@ serve(async (req) => {
       const nodes: KnowledgeGraphNode[] = [];
       const edges: KnowledgeGraphEdge[] = [];
 
-      const { data: agents } = await supabase.from('agents').select('id, name, avatar_emoji, model, status, tags');
+      // Core entities
+      const { data: agents } = await supabase.from('agents').select('id, name, avatar_emoji, status');
       for (const a of (agents || [])) {
-        nodes.push({ id: a.id, type: 'agent', label: a.name, emoji: a.avatar_emoji, status: a.status, tags: a.tags });
+        nodes.push({ id: a.id, type: 'agent', label: a.name, emoji: a.avatar_emoji, status: a.status });
       }
 
-      const { data: kbs } = await supabase.from('knowledge_bases').select('id, name, document_count, chunk_count, status');
+      const { data: kbs } = await supabase.from('knowledge_bases').select('id, name, status');
       for (const kb of (kbs || [])) {
-        nodes.push({ id: kb.id, type: 'knowledge_base', label: kb.name, docs: kb.document_count, chunks: kb.chunk_count, status: kb.status });
+        nodes.push({ id: kb.id, type: 'knowledge_base', label: kb.name, status: kb.status });
       }
 
       const { data: tools } = await supabase.from('tool_integrations').select('id, name, type, is_enabled');
@@ -113,17 +114,23 @@ serve(async (req) => {
         nodes.push({ id: w.id, type: 'workflow', label: w.name, status: w.status });
       }
 
+      // Domain-specific entities (from knowledge_entities table)
+      const { data: entities } = await supabase.from('knowledge_entities').select('id, name, entity_type, metadata');
+      for (const e of (entities || [])) {
+        nodes.push({ id: e.id, type: e.entity_type, label: e.name, metadata: e.metadata });
+      }
+
+      // Relations
+      const { data: relations } = await supabase.from('knowledge_relations').select('source_id, target_id, relation_type, strength');
+      for (const r of (relations || [])) {
+        edges.push({ source: r.source_id, target: r.target_id, label: r.relation_type, type: r.relation_type, strength: r.strength });
+      }
+
+      // Hardcoded relations from system structure
       const { data: steps } = await supabase.from('workflow_steps').select('workflow_id, agent_id, name');
       for (const s of (steps || [])) {
         if (s.agent_id && s.workflow_id) {
-          edges.push({ source: s.agent_id, target: s.workflow_id, label: s.name, type: 'participates' });
-        }
-      }
-
-      const { data: policies } = await supabase.from('tool_policies').select('agent_id, tool_integration_id, is_allowed');
-      for (const p of (policies || [])) {
-        if (p.agent_id && p.tool_integration_id) {
-          edges.push({ source: p.agent_id, target: p.tool_integration_id, label: p.is_allowed ? 'uses' : 'blocked', type: 'tool_access' });
+          edges.push({ source: s.agent_id, target: s.workflow_id, label: s.name || 'step', type: 'participates' });
         }
       }
 
