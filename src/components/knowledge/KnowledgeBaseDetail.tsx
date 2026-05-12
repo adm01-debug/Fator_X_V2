@@ -76,28 +76,69 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
     if (!docTitle.trim() || !selectedCollectionId) { toast.error('Título é obrigatório'); return; }
     setSaving(true);
     try {
-      const { ingestResult } = await createDocumentWithIngest(
-        { title: docTitle.trim(), collection_id: selectedCollectionId, source_url: docSourceUrl.trim() || null, source_type: docSourceUrl.trim() ? 'url' : 'manual' },
-        docContent,
-      );
-      if (ingestResult) {
-        toast.success(`${(ingestResult as Record<string, number>)?.chunks_created || 0} chunks criados`);
+      const { data: doc, error: docError } = await (await import('@/integrations/supabase/client')).supabase
+        .from('documents')
+        .insert({
+          title: docTitle.trim(),
+          collection_id: selectedCollectionId,
+          source_type: docSourceUrl.trim() ? 'url' : 'manual',
+          source_url: docSourceUrl.trim() || null,
+          status: 'pending'
+        })
+        .select()
+        .single();
+
+      if (docError) throw docError;
+
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      const { data: { session } } = await (await import('@/integrations/supabase/client')).supabase.auth.getSession();
+
+      const response = await fetch(`${supabaseUrl}/functions/v1/rag-ingest`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`,
+          'apikey': supabaseKey,
+          'Accept': 'text/event-stream'
+        },
+        body: JSON.stringify({
+          document_id: doc.id,
+          content: docContent,
+          chunk_size: 1000,
+          chunk_overlap: 200
+        })
+      });
+
+      if (!response.ok) throw new Error('Falha no pipeline de ingestão');
+
+      const reader = response.body?.getReader();
+      const decoder = new TextEncoder();
+      
+      while (true) {
+        const { done, value } = await reader!.read();
+        if (done) break;
+        const chunk = new TextDecoder().decode(value);
+        const lines = chunk.split('\n');
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const event = JSON.parse(line.slice(6));
+            if (event.type === 'status') toast.info(event.data.message);
+            if (event.type === 'progress') console.log(`Ingestão: ${event.data.percentage}%`);
+          }
+        }
       }
 
-      const docCount = await getDocumentCount(selectedCollectionId);
-      const allDocIds = [...documents.map((d: any) => d.id)];
-      const chunkCount = await getChunkCountForCollection(allDocIds);
-      await updateKBCounts(kbId, docCount, chunkCount);
-
-      toast.success('Documento adicionado!');
+      toast.success('Documento indexado com sucesso!');
       setNewDocOpen(false);
       setDocTitle(''); setDocContent(''); setDocSourceUrl('');
       queryClient.invalidateQueries({ queryKey: ['documents', selectedCollectionId] });
       queryClient.invalidateQueries({ queryKey: ['chunks'] });
-    } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : 'Erro');
+    } catch (e: any) {
+      toast.error(e.message || 'Erro na ingestão');
     } finally { setSaving(false); }
   };
+
 
   const handleDeleteCollection = async (id: string) => {
     try {
