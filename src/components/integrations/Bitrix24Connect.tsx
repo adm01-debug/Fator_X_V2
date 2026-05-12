@@ -4,11 +4,12 @@
  */
 import { logger } from '@/lib/logger';
 import { useState, useEffect } from 'react';
-import { invokeBitrix24OAuth } from '@/services/llmGatewayService';
+import { invokeBitrix24OAuth, invokeBitrix24Api } from '@/services/llmGatewayService';
 import { getAuthSession } from '@/services/securityService';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Unlink, ExternalLink } from 'lucide-react';
+import { Unlink, ExternalLink, RefreshCw, ShieldCheck } from 'lucide-react';
+import { toast } from 'sonner';
 
 export function Bitrix24Connect() {
   const [connected, setConnected] = useState(false);
