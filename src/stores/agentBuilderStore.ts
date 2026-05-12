@@ -44,6 +44,7 @@ interface AgentBuilderStore {
   savePromptVersion: (summary: string) => Promise<void>;
   loadPromptVersions: () => Promise<void>;
   activatePromptVersion: (versionId: string) => Promise<void>;
+  rollbackToVersion: (versionId: string) => Promise<void>;
 
   exportJSON: () => string;
   exportMarkdown: () => string;
