@@ -26,7 +26,6 @@ const recs: Recommendation[] = [
 export default function CostOptimizerPage() {
   const monthlySpend = 3247.80;
   const totalSavings = recs.filter(r => !r.applied).reduce((s, r) => s + r.savings, 0);
-  const monthlySpend = 3247.80;
 
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-8 max-w-[1440px] mx-auto animate-page-enter">
