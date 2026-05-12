@@ -368,14 +368,47 @@ async function runAgent(
         messages,
         temperature: 0.2,
         max_tokens: 1500,
+        stream: true, // Internal streaming for faster reactivity
       }),
       signal: AbortSignal.timeout(STEP_TIMEOUT),
     });
 
-    const llmResult = await llmResp.json();
-    const response = llmResult.content || '';
-    totalTokens += llmResult.tokens?.total || 0;
-    totalCost += llmResult.cost_usd || 0;
+    if (!llmResp.ok) {
+      const error = await llmResp.text();
+      throw new Error(`LLM Gateway error: ${error}`);
+    }
+
+    let response = '';
+    const reader = llmResp.body?.getReader();
+    if (!reader) throw new Error("No reader available from LLM Gateway");
+    const decoder = new TextEncoder();
+    const textDecoder = new TextDecoder();
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const chunk = textDecoder.decode(value);
+      const lines = chunk.split('\n').filter(l => l.startsWith('data: '));
+      
+      for (const line of lines) {
+        const raw = line.slice(6);
+        if (raw === '[DONE]') continue;
+        try {
+          const parsed = JSON.parse(raw);
+          const token = parsed.token || parsed.choices?.[0]?.delta?.content || "";
+          if (token) {
+            response += token;
+            onEvent?.({ type: 'TEXT_MESSAGE_CONTENT', data: { token } });
+          }
+        } catch (e) {
+          // Skip parse errors for non-JSON lines
+        }
+      }
+    }
+    
+    // totalTokens and totalCost estimation (since we are streaming internally)
+    totalTokens += response.length / 4; // Rough estimate
+    totalCost += 0.0001; // Base cost increment
 
     const thoughtMatch = response.match(/Thought:\s*(.*?)(?=\n(?:Action|Final Answer))/s);
     const actionMatch = response.match(/Action:\s*(\S+)/);
