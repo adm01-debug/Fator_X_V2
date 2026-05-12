@@ -78,11 +78,12 @@ export default function DataHubPage() {
   const loadEntityCounts = useCallback(async () => {
     setLoadingCounts(true);
     try { 
-      await streamInvoke('list_entities', {}, (event, data) => {
+      await streamInvoke('list_entities', {}, (event: string, data: any) => {
         if (event === 'entity_count') {
           setEntityCounts(prev => ({ ...prev, [data.id]: data.count }));
         }
       });
+
     } catch (e: unknown) { 
       toast.error(`Erro ao carregar contagens: ${e instanceof Error ? e.message : String(e)}`); 
     } finally { 
