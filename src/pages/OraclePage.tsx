@@ -53,7 +53,7 @@ export default function OraclePage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Main Content */}
         <div className="lg:col-span-8 space-y-8">
-          <Tabs defaultValue="consult" className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="bg-muted/50 p-1 rounded-2xl h-12 w-full max-w-[400px] mb-6">
               <TabsTrigger value="consult" className="rounded-xl flex-1 gap-2 font-bold data-[state=active]:bg-card data-[state=active]:shadow-sm">
                 <Brain className="h-4 w-4" /> Consultar
