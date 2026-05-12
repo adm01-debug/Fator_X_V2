@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Bot, Plus, Search, Filter, BookOpen, GitBranch, Activity,
-  Download, Upload, Trash2, Archive, CheckSquare, X,
+  Download, Upload, Trash2, Archive, CheckSquare, X, Network,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
@@ -224,6 +224,7 @@ export default function AgentsPage() {
           { label: 'Voz & Áudio', icon: Bot, path: '/voice-agents', color: 'text-orange-500', bg: 'bg-orange-500/10' },
           { label: 'Visão', icon: Search, path: '/vision', color: 'text-cyan-500', bg: 'bg-cyan-500/10' },
           { label: 'Templates', icon: BookOpen, path: '/agents/templates', color: 'text-pink-500', bg: 'bg-pink-500/10' },
+          { label: 'Enxame (A2A)', icon: Network, path: '/agents/swarm', color: 'text-amber-500', bg: 'bg-amber-500/10' },
         ].map((action, i) => (
           <button
             key={i}

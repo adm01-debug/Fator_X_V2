@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button';
 export default function OraclePage() {
   const store = useOracleStore();
   const [showHistory, setShowHistory] = useState(false);
+  const [activeTab, setActiveTab] = useState('consult');
 
   return (
     <div className="p-6 sm:p-10 lg:p-12 space-y-8 max-w-[1400px] mx-auto animate-page-enter bg-secondary/5 min-h-screen">
@@ -36,6 +37,9 @@ export default function OraclePage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <Button variant="default" size="sm" className="nexus-gradient-bg text-primary-foreground gap-1.5 h-10 rounded-xl px-5 font-bold shadow-lg shadow-primary/20" onClick={() => setActiveTab('research')}>
+              <Search className="h-4 w-4" /> Deep Research
+            </Button>
              <Button variant="outline" size="sm" className="gap-1.5 h-10 rounded-xl" onClick={() => setShowHistory(!showHistory)}>
               <History className="h-4 w-4" /> Histórico
             </Button>
@@ -49,7 +53,7 @@ export default function OraclePage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Main Content */}
         <div className="lg:col-span-8 space-y-8">
-          <Tabs defaultValue="consult" className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="bg-muted/50 p-1 rounded-2xl h-12 w-full max-w-[400px] mb-6">
               <TabsTrigger value="consult" className="rounded-xl flex-1 gap-2 font-bold data-[state=active]:bg-card data-[state=active]:shadow-sm">
                 <Brain className="h-4 w-4" /> Consultar
