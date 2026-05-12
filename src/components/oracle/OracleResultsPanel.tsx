@@ -9,7 +9,7 @@ import {
 import { useOracleStore, ORACLE_MODES, ORACLE_PRESETS } from '@/stores/oracleStore';
 import { ConsensusMatrix } from './ConsensusMatrix';
 import { ModelCard } from './ModelCard';
-import { exportToMarkdown, exportToJson, downloadText } from '@/lib/oracleExport';
+import { exportToMarkdown, exportToJson, exportToPdf, downloadText } from '@/lib/oracleExport';
 import { toast } from 'sonner';
 
 export function OracleResultsPanel() {
