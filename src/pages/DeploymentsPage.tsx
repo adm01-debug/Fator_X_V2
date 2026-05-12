@@ -13,6 +13,7 @@ import { A2APanel } from '@/components/integrations/A2APanel';
 import { WebWidgetPanel } from '@/components/deployments/WebWidgetPanel';
 import { WhatsAppSendDialog } from '@/components/deployments/WhatsAppSendDialog';
 import { cn } from "@/lib/utils";
+import { ApprovalQueuePanel } from "@/components/deployments/ApprovalQueuePanel";
 
 export default function DeploymentsPage() {
   const { data: deployments = [], isLoading } = useQuery({
