@@ -108,7 +108,10 @@ export function OracleResultsPanel() {
                   <Copy className="h-3.5 w-3.5" /> Copiar Resposta
                 </Button>
                 <Button size="sm" variant="outline" className="h-9 rounded-xl gap-2" onClick={handleExportMd}>
-                  <Download className="h-3.5 w-3.5" /> Exportar MD
+                  <Download className="h-3.5 w-3.5" /> MD
+                </Button>
+                <Button size="sm" variant="outline" className="h-9 rounded-xl gap-2" onClick={handleExportJson}>
+                  <Code className="h-3.5 w-3.5" /> JSON
                 </Button>
               </div>
             </div>
