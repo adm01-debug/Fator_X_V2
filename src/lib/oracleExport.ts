@@ -1,4 +1,6 @@
 import type { OracleResult } from '@/stores/oracleStore';
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
 
 // ═══ MARKDOWN EXPORT ═══
 
@@ -77,6 +79,8 @@ export function exportToMarkdown(
   return lines.join('\n');
 }
 
+// ═══ JSON EXPORT ═══
+
 export function exportToJson(
   query: string,
   results: OracleResult,
@@ -94,6 +98,85 @@ export function exportToJson(
     query,
     results
   }, null, 2);
+}
+
+// ═══ PDF EXPORT ═══
+
+export function exportToPdf(
+  query: string,
+  results: OracleResult,
+  presetName: string,
+  mode: string,
+  chairmanModel: string,
+) {
+  const doc = new jsPDF() as any;
+  const date = new Date().toLocaleString('pt-BR');
+
+  // Header
+  doc.setFontSize(22);
+  doc.setTextColor(40, 40, 40);
+  doc.text('Relatorio de Auditoria - Oraculo', 14, 22);
+  
+  doc.setFontSize(10);
+  doc.setTextColor(100, 100, 100);
+  doc.text(`Data: ${date}`, 14, 30);
+  doc.text(`Modo: ${mode} | Preset: ${presetName}`, 14, 35);
+
+  // Stats Table
+  doc.autoTable({
+    startY: 45,
+    head: [['Metrica', 'Valor']],
+    body: [
+      ['Confianca', `${results.confidence_score}%`],
+      ['Consenso', `${results.consensus_degree}%`],
+      ['Chairman', chairmanModel],
+      ['Custo Total', `$${results.metrics.total_cost_usd.toFixed(4)}`],
+      ['Tempo Total', `${(results.metrics.total_latency_ms / 1000).toFixed(1)}s`],
+      ['Tokens', results.metrics.total_tokens.toLocaleString()],
+    ],
+    theme: 'striped',
+    headStyles: { fillColor: [79, 70, 229] },
+  });
+
+  // Query section
+  const finalY = (doc as any).lastAutoTable.finalY + 10;
+  doc.setFontSize(14);
+  doc.setTextColor(40, 40, 40);
+  doc.text('Pergunta:', 14, finalY);
+  doc.setFontSize(11);
+  doc.setTextColor(60, 60, 60);
+  const queryLines = doc.splitTextToSize(query, 180);
+  doc.text(queryLines, 14, finalY + 7);
+
+  // Synthesis section
+  const synthesisY = finalY + (queryLines.length * 6) + 15;
+  doc.setFontSize(14);
+  doc.setTextColor(40, 40, 40);
+  doc.text('Sintese do Presidente:', 14, synthesisY);
+  doc.setFontSize(10);
+  doc.setTextColor(60, 60, 60);
+  const synthesisLines = doc.splitTextToSize(results.final_response, 180);
+  doc.text(synthesisLines, 14, synthesisY + 7);
+
+  // Final page for details if needed
+  if (results.stage1_results?.length) {
+    doc.addPage();
+    doc.setFontSize(16);
+    doc.text('Respostas Individuais do Conselho', 14, 22);
+    
+    results.stage1_results.forEach((r, i) => {
+      const currentY = doc.internal.pageSize.height - 30 > (doc as any).lastAutoTable?.finalY ? (doc as any).lastAutoTable?.finalY + 10 : 30;
+      doc.autoTable({
+        startY: i === 0 ? 30 : currentY,
+        head: [[`Membro ${i + 1}: ${r.model}`]],
+        body: [[r.content.substring(0, 500) + (r.content.length > 500 ? '...' : '')]],
+        theme: 'plain',
+        headStyles: { fillColor: [243, 244, 246], textColor: [0, 0, 0] },
+      });
+    });
+  }
+
+  doc.save(`oraculo_auditoria_${Date.now()}.pdf`);
 }
 
 // ═══ DOWNLOAD HELPERS ═══
