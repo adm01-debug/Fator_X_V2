@@ -9,7 +9,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import {
-  Sparkles, Loader2, ChevronDown, ChevronUp, Settings2, Cpu, Brain, ChevronRight
+  Sparkles, Loader2, ChevronDown, ChevronUp, Settings2, Cpu, Brain, ChevronRight, XCircle
 } from 'lucide-react';
 import { useOracleStore, ORACLE_MODES, ORACLE_PRESETS } from '@/stores/oracleStore';
 import { PresetSelector } from './PresetSelector';
