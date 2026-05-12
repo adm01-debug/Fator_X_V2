@@ -48,6 +48,7 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
   mode: 'council',
   selectedPreset: 'executive',
   isRunning: false,
+  isReplaying: false,
   currentStage: 0,
   stageLabel: '',
   results: null,
@@ -56,6 +57,7 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
   enableThinking: false,
   chairmanModel: 'google/gemini-2.5-pro',
   chairmanSelection: 'auto',
+  abortController: null,
 
   setQuery: (query) => set({ query }),
   setMode: (mode) => set({ mode }),
@@ -74,40 +76,77 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
   setChairmanModel: (chairmanModel) => set({ chairmanModel }),
   setChairmanSelection: (chairmanSelection) => set({ chairmanSelection }),
 
+  cancelQuery: () => {
+    const { abortController } = get();
+    if (abortController) {
+      abortController.abort();
+      set({ isRunning: false, stageLabel: 'Cancelado pelo usuário', abortController: null });
+    }
+  },
+
+  replayEntry: async (entry: OracleResult) => {
+    set({ isRunning: true, isReplaying: true, currentStage: 1, stageLabel: 'Iniciando Replay...', results: null, error: null });
+    
+    // Simulate Stage 1
+    await new Promise(r => setTimeout(r, 1000));
+    set({ currentStage: 1, stageLabel: 'Replay: Coletando opiniões...' });
+    
+    const results: any = { stage1_results: [], metrics: entry.metrics };
+    for (const res of entry.stage1_results) {
+      await new Promise(r => setTimeout(r, 800));
+      results.stage1_results.push(res);
+      set({ results: { ...results } as OracleResult });
+    }
+
+    // Simulate Stage 2
+    if (entry.stage2_results?.length) {
+      await new Promise(r => setTimeout(r, 1000));
+      set({ currentStage: 2, stageLabel: 'Replay: Realizando Peer-Review...' });
+      await new Promise(r => setTimeout(r, 1000));
+      results.stage2_results = entry.stage2_results;
+      set({ results: { ...results } as OracleResult });
+    }
+
+    // Simulate Stage 3
+    await new Promise(r => setTimeout(r, 1000));
+    set({ currentStage: 3, stageLabel: 'Replay: Síntese do Presidente...' });
+    await new Promise(r => setTimeout(r, 1500));
+    
+    set({ 
+      results: entry, 
+      currentStage: 3, 
+      stageLabel: 'Replay concluído', 
+      isRunning: false, 
+      isReplaying: false 
+    });
+  },
+
   submitQuery: async () => {
     const { query, selectedPreset, mode, enableThinking, chairmanModel } = get();
     if (!query.trim()) return;
 
+    const controller = new AbortController();
     const preset = ORACLE_PRESETS.find((p) => p.id === selectedPreset) || ORACLE_PRESETS[0];
     const modeConfig = ORACLE_MODES[mode];
 
     set({
       isRunning: true,
+      isReplaying: false,
       currentStage: 1,
       stageLabel: modeConfig.stages[0],
       results: null,
       error: null,
+      abortController: controller,
     });
 
     try {
-      // Progressive stage tracking while API processes
-      const stageCount = modeConfig.stages.length;
-      const stageTimers: ReturnType<typeof setTimeout>[] = [];
-      for (let i = 1; i < stageCount - 1; i++) {
-        stageTimers.push(
-          setTimeout(() => {
-            const { isRunning } = get();
-            if (isRunning) set({ currentStage: i + 1, stageLabel: modeConfig.stages[i] });
-          }, i * 4000),
-        );
-      }
-
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
       const { data: { session } } = await supabase.auth.getSession();
       
       const response = await fetch(`${supabaseUrl}/functions/v1/oracle-council`, {
         method: 'POST',
+        signal: controller.signal,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session?.access_token}`,
@@ -130,7 +169,10 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
       
-      let tempResults: any = { stage1_results: [], metrics: { total_latency_ms: 0, total_cost_usd: 0 } };
+      let tempResults: any = { 
+        stage1_results: [], 
+        metrics: { total_latency_ms: 0, total_cost_usd: 0, total_tokens: 0, models_used: 0 } 
+      };
 
       while (true) {
         const { done, value } = await reader!.read();
@@ -150,14 +192,16 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
               set({ results: { ...tempResults } as OracleResult });
             } else if (type === 'review_complete') {
               tempResults.stage2_results = [data];
+              tempResults.consensus_points = data.consensus_points || [];
               set({ results: { ...tempResults } as OracleResult });
             } else if (type === 'final') {
               const finalResults = { ...tempResults, ...data };
               set({
                 results: finalResults,
-                currentStage: stageCount,
-                stageLabel: modeConfig.stages[stageCount - 1],
+                currentStage: modeConfig.stages.length,
+                stageLabel: modeConfig.stages[modeConfig.stages.length - 1],
                 isRunning: false,
+                abortController: null,
                 history: [
                   ...get().history,
                   { query, results: finalResults, timestamp: new Date().toISOString(), preset: preset.id, mode },
@@ -171,15 +215,22 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
           }
         }
       }
-    } catch (e: unknown) {
+    } catch (e: any) {
+      if (e.name === 'AbortError') return;
       set({
         error: e instanceof Error ? e.message : 'Erro ao consultar o Oráculo',
         isRunning: false,
         currentStage: 0,
         stageLabel: '',
+        abortController: null,
       });
+      
+      // Auto-retry once for network errors
+      if (e.message.includes('fetch') || e.message.includes('network')) {
+        toast.info('Erro de conexão. Tentando novamente em 3 segundos...');
+        setTimeout(() => get().submitQuery(), 3000);
+      }
     }
-
   },
 
   clearResults: () => set({ results: null, currentStage: 0, stageLabel: '', error: null }),
