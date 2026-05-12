@@ -36,7 +36,6 @@ const FAULT_TYPES: { value: ChaosFaultType; label: string; desc: string }[] = [
 export default function ChaosLabPage() {
   const [workspaceId, setWorkspaceId] = useState<string | null>(null);
   const [experiments, setExperiments] = useState<ChaosExperiment[]>([]);
-  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
   // Form state
