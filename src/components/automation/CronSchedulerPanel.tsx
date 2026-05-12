@@ -88,7 +88,6 @@ export function CronSchedulerPanel() {
         cron_expression: newCron,
         target_type: targetType as any,
         target_id: targetId.trim(),
-        status: 'active',
       });
       toast({ title: 'Agendamento criado!' });
       setCreateOpen(false);
