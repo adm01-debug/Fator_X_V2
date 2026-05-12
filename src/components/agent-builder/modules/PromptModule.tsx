@@ -4,7 +4,7 @@ import { SectionTitle, NexusBadge, InputField, TextAreaField } from '../ui';
 import { CollapsibleCard } from '../ui/CollapsibleCard';
 import { CodeBlock } from '../ui/CodeBlock';
 import { Button } from '@/components/ui/button';
-import { Plus, Trash2, Copy, GitBranch, Check, ArrowLeftRight, Play, Wand2, Loader2 } from 'lucide-react';
+import { Plus, Trash2, Copy, GitBranch, Check, ArrowLeftRight, Play, Wand2, Loader2, Undo2 } from 'lucide-react';
 import { toast } from 'sonner';
 import type { PromptTechnique, FewShotExample, OutputFormat } from '@/types/agentTypes';
 import { PromptDiff } from '@/components/prompts/PromptDiff';
@@ -33,7 +33,7 @@ const OUTPUT_FORMATS: { value: OutputFormat; label: string; description: string;
 ];
 
 export function PromptModule() {
-  const { agent, updateAgent, promptVersions, savePromptVersion, activatePromptVersion } = useAgentBuilderStore();
+  const { agent, updateAgent, promptVersions, savePromptVersion, activatePromptVersion, rollbackToVersion } = useAgentBuilderStore();
   const [versionSummary, setVersionSummary] = useState('');
   const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
   const [diffMode, setDiffMode] = useState(false);
@@ -193,13 +193,30 @@ export function PromptModule() {
                   </div>
                   <div className="flex items-center gap-1">
                     {!pv.is_active && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => { activatePromptVersion(pv.id); toast.success(`Versão v${pv.version} ativada`); }}
-                      >
-                        <Check className="h-3.5 w-3.5" />
-                      </Button>
+                      <>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => { activatePromptVersion(pv.id); toast.success(`Versão v${pv.version} ativada`); }}
+                          title="Ativar conteúdo (sem criar nova versão)"
+                        >
+                          <Check className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="hover:text-nexus-amber"
+                          onClick={() => { 
+                            if(confirm(`Deseja criar uma nova versão v${promptVersions.length + 1} com o conteúdo da v${pv.version}?`)) {
+                              rollbackToVersion(pv.id); 
+                              toast.success(`Rollback concluído! Criada v${promptVersions.length + 1}`); 
+                            }
+                          }}
+                          title="Rollback (cria nova versão)"
+                        >
+                          <Undo2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </>
                     )}
                   </div>
                 </div>

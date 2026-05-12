@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
@@ -9,10 +9,11 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import {
-  Sparkles, Loader2, ChevronDown, ChevronUp, Settings2, Cpu, Brain, ChevronRight, XCircle, ShieldCheck
+  Sparkles, Loader2, ChevronDown, ChevronUp, Settings2, Cpu, Brain, ChevronRight, XCircle, ShieldCheck, RotateCcw, AlertTriangle
 } from 'lucide-react';
 import { useOracleStore, ORACLE_MODES, ORACLE_PRESETS } from '@/stores/oracleStore';
 import { PresetSelector } from './PresetSelector';
+import { toast } from 'sonner';
 
 const CHAIRMAN_MODELS = [
   { value: 'openai/gpt-4o', label: 'GPT-4o (Otimizado)' },
@@ -28,6 +29,21 @@ export function OracleInputArea() {
 
   const currentPreset = ORACLE_PRESETS.find((p) => p.id === store.selectedPreset);
   const modeConfig = ORACLE_MODES[store.mode];
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && store.isRunning) {
+        store.cancelQuery();
+        toast.info('Consulta cancelada');
+      }
+      if (e.key === 'Enter' && e.ctrlKey && !store.isRunning && store.query.trim()) {
+        store.submitQuery();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [store.isRunning, store.query]);
 
   return (
     <Card className="p-8 bg-card border-border rounded-3xl shadow-sm relative overflow-hidden group">
@@ -164,6 +180,62 @@ export function OracleInputArea() {
           </div>
         )}
       </div>
+
+      {/* Progress and status alerts */}
+      {store.isRunning && (
+        <div className="mt-4 px-2 flex items-center justify-between animate-in fade-in slide-in-from-top-1">
+          <div className="flex items-center gap-2">
+            <Loader2 className="h-3 w-3 animate-spin text-primary" />
+            <span className="text-[10px] font-bold text-primary uppercase tracking-widest">{store.stageLabel}</span>
+          </div>
+          <span className="text-[10px] text-muted-foreground uppercase font-bold">Pressione ESC para cancelar</span>
+        </div>
+      )}
+
+      {store.error && !store.isRunning && (
+        <div className="mt-4 p-3 rounded-xl bg-destructive/10 border border-destructive/20 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <AlertTriangle className="h-4 w-4 text-destructive" />
+            <p className="text-xs text-destructive font-medium">{store.error}</p>
+          </div>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-8 text-[10px] font-bold uppercase gap-1.5 text-destructive hover:bg-destructive/10"
+            onClick={() => store.submitQuery()}
+          >
+            <RotateCcw className="h-3 w-3" /> Tentar Novamente
+          </Button>
+        </div>
+      )}
+
+      {/* Progress and status alerts */}
+      {store.isRunning && (
+        <div className="mt-4 px-2 flex items-center justify-between animate-in fade-in slide-in-from-top-1">
+          <div className="flex items-center gap-2">
+            <Loader2 className="h-3 w-3 animate-spin text-primary" />
+            <span className="text-[10px] font-bold text-primary uppercase tracking-widest">{store.stageLabel}</span>
+          </div>
+          <span className="text-[10px] text-muted-foreground uppercase font-bold">Pressione ESC para cancelar</span>
+        </div>
+      )}
+
+      {store.error && !store.isRunning && (
+        <div className="mt-4 p-3 rounded-xl bg-destructive/10 border border-destructive/20 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <AlertTriangle className="h-4 w-4 text-destructive" />
+            <p className="text-xs text-destructive font-medium">{store.error}</p>
+          </div>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-8 text-[10px] font-bold uppercase gap-1.5 text-destructive hover:bg-destructive/10"
+            onClick={() => store.submitQuery()}
+          >
+            <RotateCcw className="h-3 w-3" /> Tentar Novamente
+          </Button>
+        </div>
+      )}
 
       {/* Submit */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
