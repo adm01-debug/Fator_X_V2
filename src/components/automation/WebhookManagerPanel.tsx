@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Webhook, Loader2, Send } from 'lucide-react';
+import { Webhook, Loader2, Send, Code, PlayCircle, Settings, Clipboard } from 'lucide-react';
 import {
   listWebhooks,
   triggerWebhookViaEF,
@@ -10,6 +10,9 @@ import {
   type WebhookEndpoint,
 } from '@/services/webhookTriggerService';
 import { useToast } from '@/hooks/use-toast';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 const AUTH_LABELS: Record<string, string> = {
   none: 'Sem Auth', header: 'Header', hmac_sha256: 'HMAC SHA-256',
