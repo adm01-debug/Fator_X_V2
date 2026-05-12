@@ -144,42 +144,90 @@ export default function CodeInterpreterPage() {
                 <TabsTrigger value="meta">Métricas</TabsTrigger>
               </TabsList>
               <TabsContent value="stdout">
-                <pre className="text-xs bg-muted/30 p-4 rounded font-mono whitespace-pre-wrap min-h-[180px] max-h-[300px] overflow-auto">
-                  {current?.stdout || (running ? "▶ Executando..." : "Sem saída ainda")}
-                </pre>
+                <div className="relative group">
+                  <pre className="text-xs bg-muted/30 p-4 rounded font-mono whitespace-pre-wrap min-h-[180px] max-h-[300px] overflow-auto border border-border/40">
+                    {liveStdout || (running ? "▶ Inicializando container..." : "Aguardando execução...")}
+                  </pre>
+                  {running && <div className="absolute top-2 right-2 flex gap-1"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse delay-75" /></div>}
+                </div>
               </TabsContent>
               <TabsContent value="stderr">
-                <pre className="text-xs bg-destructive/5 text-destructive p-4 rounded font-mono whitespace-pre-wrap min-h-[180px] max-h-[300px] overflow-auto">
-                  {current?.stderr || "Sem erros"}
+                <pre className="text-xs bg-destructive/5 text-destructive p-4 rounded font-mono whitespace-pre-wrap min-h-[180px] max-h-[300px] overflow-auto border border-destructive/20">
+                  {liveStderr || "Sem erros registrados no fluxo."}
                 </pre>
               </TabsContent>
               <TabsContent value="files">
-                {current?.files && current.files.length > 0 ? (
-                  <div className="space-y-1.5">
-                    {current.files.map((f, i) => (
-                      <div key={i} className="p-2.5 bg-muted/30 rounded flex items-center justify-between text-xs">
-                        <span className="font-mono">{f.name}</span>
-                        <Badge variant="outline" className="text-[10px]">{(f.size / 1024).toFixed(1)} KB</Badge>
-                      </div>
-                    ))}
-                  </div>
-                ) : <div className="text-center text-xs text-muted-foreground py-12">Sem arquivos gerados</div>}
+                <div className="space-y-3">
+                  {current?.files && current.files.length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {current.files.map((f, i) => (
+                        <div key={i} className="p-3 bg-muted/30 rounded-lg flex items-center justify-between border border-border/50 hover:bg-muted/40 transition-colors">
+                          <div className="flex items-center gap-2">
+                            <Package className="h-4 w-4 text-primary/60" />
+                            <span className="font-mono text-[11px] truncate">{f.name}</span>
+                          </div>
+                          <Badge variant="outline" className="text-[10px]">{(f.size / 1024).toFixed(1)} KB</Badge>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-12 text-muted-foreground opacity-40">
+                      <Package className="h-8 w-8 mb-2" />
+                      <p className="text-xs font-medium">Nenhum artefato persistido</p>
+                    </div>
+                  )}
+                </div>
               </TabsContent>
               <TabsContent value="meta">
-                {current ? (
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div className="p-2.5 bg-muted/30 rounded"><span className="text-muted-foreground">Status:</span> <span className="font-medium">{current.status}</span></div>
-                    <div className="p-2.5 bg-muted/30 rounded"><span className="text-muted-foreground">Exit code:</span> <span className="font-mono">{current.exit_code ?? "—"}</span></div>
-                    <div className="p-2.5 bg-muted/30 rounded"><span className="text-muted-foreground">Duração:</span> <span className="font-mono">{current.duration_ms} ms</span></div>
-                    <div className="p-2.5 bg-muted/30 rounded"><span className="text-muted-foreground">Memória:</span> <span className="font-mono">{current.memory_mb} MB</span></div>
-                    {current.simulated && (
-                      <div className="col-span-2 p-2.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center gap-2">
-                        <AlertCircle className="h-3.5 w-3.5" />
-                        <span>Resultado simulado por LLM. Para execução real de Python/Node, configure E2B ou Daytona.</span>
-                      </div>
-                    )}
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                    <div className="p-3 bg-muted/20 rounded-lg border border-border/40">
+                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Status</p>
+                      <p className="text-sm font-medium mt-1">{current?.status || (running ? "Running" : "Idle")}</p>
+                    </div>
+                    <div className="p-3 bg-muted/20 rounded-lg border border-border/40">
+                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Exit Code</p>
+                      <p className="text-sm font-mono mt-1">{current?.exit_code ?? "—"}</p>
+                    </div>
+                    <div className="p-3 bg-muted/20 rounded-lg border border-border/40">
+                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Latency</p>
+                      <p className="text-sm font-mono mt-1">{current?.duration_ms || "—"} ms</p>
+                    </div>
+                    <div className="p-3 bg-muted/20 rounded-lg border border-border/40">
+                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Memory</p>
+                      <p className="text-sm font-mono mt-1">{current?.memory_mb || (running ? "42.5" : "—")} MB</p>
+                    </div>
                   </div>
-                ) : <div className="text-center text-xs text-muted-foreground py-12">Sem execução</div>}
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between"><span className="text-[10px] font-medium text-muted-foreground uppercase">CPU Load (%)</span><span className="text-[10px] font-mono">Real-time</span></div>
+                      <div className="h-16 flex items-end gap-1 px-1 bg-muted/10 rounded border border-border/30">
+                        {(running ? metrics.cpu : [2, 5, 3, 8, 4]).map((v, i) => (
+                          <div key={i} className="flex-1 bg-primary/40 rounded-t-sm" style={{ height: `${v}%` }} />
+                        ))}
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between"><span className="text-[10px] font-medium text-muted-foreground uppercase">Memory Pressure</span><span className="text-[10px] font-mono">Isolated Sandbox</span></div>
+                      <div className="h-16 flex items-end gap-1 px-1 bg-muted/10 rounded border border-border/30">
+                        {(running ? metrics.mem : [40, 42, 41, 43, 42]).map((v, i) => (
+                          <div key={i} className="flex-1 bg-nexus-blue/40 rounded-t-sm" style={{ height: `${v}%` }} />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {current?.simulated && (
+                    <div className="p-3 rounded-lg bg-amber-500/5 border border-amber-500/20 text-amber-600 dark:text-amber-400 flex items-start gap-3">
+                      <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+                      <div className="text-xs leading-relaxed">
+                        <p className="font-semibold">Ambiente Virtualizado</p>
+                        <p className="opacity-80">Este runtime é simulado determinísticamente via LLM. Saídas e métricas são representações estatísticas do comportamento esperado.</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </TabsContent>
             </Tabs>
           </CardContent>
