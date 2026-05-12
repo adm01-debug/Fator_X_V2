@@ -22,6 +22,7 @@ import { IngestionLogsPanel } from "@/components/knowledge/IngestionLogsPanel";
 import { IngestionConfigPanel } from "@/components/knowledge/IngestionConfigPanel";
 import { VectorSearchResults } from "@/components/knowledge/VectorSearchResults";
 import { RagVersionControl } from "@/components/knowledge/RagVersionControl";
+import { RealtimeVectorCharts } from "@/components/knowledge/RealtimeVectorCharts";
 import { AccessControl, DangerousActionDialog } from "@/components/rbac";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -341,6 +342,7 @@ export default function KnowledgePage() {
 
             <div className="space-y-6 h-fit">
               <IngestionLogsPanel />
+              <RealtimeVectorCharts />
               <VectorIndexesStatus />
               
               <div className="nexus-card bg-gradient-to-br from-primary/10 to-transparent border-primary/20 p-5 space-y-4">
