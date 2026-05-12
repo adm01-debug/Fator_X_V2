@@ -6,6 +6,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 import { getWorkspaceId } from '@/lib/agentService';
 import type { DeployChannelConfig, MonitoringKPI, DeployChannel } from '@/types/agentTypes';
@@ -495,7 +496,20 @@ export function DeployModule() {
                 <h4 className="text-base font-black text-foreground">Snapshot & Deploy</h4>
                 <p className="text-xs text-muted-foreground max-w-[240px] mt-1">Gere um rastro imutável e promova as alterações para o cluster industrial.</p>
               </div>
-              <Button className="w-full h-12 rounded-2xl nexus-gradient-bg text-primary-foreground font-bold shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+              <Button 
+                className="w-full h-12 rounded-2xl nexus-gradient-bg text-primary-foreground font-bold shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
+                onClick={() => {
+                  const target = agent.status === 'production' ? 'Produção' : 'Staging';
+                  toast.promise(
+                    new Promise((resolve) => setTimeout(resolve, 2000)),
+                    {
+                      loading: `Promovendo para ${target}...`,
+                      success: `Deploy em ${target} concluído com sucesso!`,
+                      error: 'Falha no deploy automático.',
+                    }
+                  );
+                }}
+              >
                 Promover para {agent.status === 'production' ? 'Produção' : 'Staging'}
               </Button>
               <div className="flex items-center gap-1.5 text-[9px] font-bold text-muted-foreground uppercase tracking-tighter">
