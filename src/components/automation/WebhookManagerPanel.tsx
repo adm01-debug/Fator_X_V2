@@ -23,6 +23,9 @@ export function WebhookManagerPanel() {
   const [webhooks, setWebhooks] = useState<WebhookEndpoint[]>([]);
   const [loading, setLoading] = useState(true);
   const [testingId, setTestingId] = useState<string | null>(null);
+  const [testDialogOpen, setTestDialogOpen] = useState(false);
+  const [selectedWebhook, setSelectedWebhook] = useState<WebhookEndpoint | null>(null);
+  const [testPayload, setTestPayload] = useState('{\n  "test": true,\n  "source": "nexus-studio",\n  "event": "manual_trigger"\n}');
   const { toast } = useToast();
 
   useEffect(() => {
