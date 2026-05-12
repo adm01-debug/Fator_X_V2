@@ -29,6 +29,7 @@ interface OracleStore {
   chairmanModel: string;
   chairmanSelection: 'auto' | 'manual';
   abortController: AbortController | null;
+  customGuardrails: string;
 
   setQuery: (q: string) => void;
   setMode: (m: OracleMode) => void;
@@ -36,6 +37,7 @@ interface OracleStore {
   setEnableThinking: (v: boolean) => void;
   setChairmanModel: (m: string) => void;
   setChairmanSelection: (s: 'auto' | 'manual') => void;
+  setCustomGuardrails: (g: string) => void;
   submitQuery: () => Promise<void>;
   cancelQuery: () => void;
   clearResults: () => void;
@@ -59,6 +61,7 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
   chairmanModel: 'google/gemini-2.5-pro',
   chairmanSelection: 'auto',
   abortController: null,
+  customGuardrails: '',
 
   setQuery: (query) => set({ query }),
   setMode: (mode) => set({ mode }),
@@ -76,6 +79,7 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
   setEnableThinking: (enableThinking) => set({ enableThinking }),
   setChairmanModel: (chairmanModel) => set({ chairmanModel }),
   setChairmanSelection: (chairmanSelection) => set({ chairmanSelection }),
+  setCustomGuardrails: (customGuardrails) => set({ customGuardrails }),
 
   cancelQuery: () => {
     const { abortController } = get();
@@ -123,7 +127,7 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
   },
 
   submitQuery: async () => {
-    const { query, selectedPreset, mode, enableThinking, chairmanModel } = get();
+    const { query, selectedPreset, mode, enableThinking, chairmanModel, customGuardrails } = get();
     if (!query.trim()) return;
 
     const controller = new AbortController();
@@ -162,6 +166,7 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
           enable_peer_review: preset.enablePeerReview,
           enable_thinking: enableThinking,
           preset_id: preset.id,
+          custom_guardrails: customGuardrails,
         })
       });
 
