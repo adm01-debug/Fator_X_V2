@@ -65,6 +65,7 @@ interface OracleRequest {
   enable_peer_review?: boolean;
   enable_thinking?: boolean;
   preset_id?: string;
+  custom_guardrails?: string;
 }
 
 serve(async (req) => {
