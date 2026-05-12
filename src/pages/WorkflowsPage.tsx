@@ -20,6 +20,7 @@ import { WorkflowCanvasTab } from '@/components/workflows/WorkflowCanvasTab';
 import { WorkflowListTab } from '@/components/workflows/WorkflowListTab';
 import { WorkflowRunsHistory } from '@/components/workflows/WorkflowRunsHistory';
 import { WorkflowSchedulerTab } from '@/components/workflows/WorkflowSchedulerTab';
+import { WorkflowHandoffVisualizer } from '@/components/workflows/WorkflowHandoffVisualizer';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
