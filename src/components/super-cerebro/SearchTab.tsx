@@ -56,6 +56,15 @@ export function SearchTab() {
   const [rerankResults, setRerankResults] = useState<RerankResult[] | null>(null);
   const [rerankMethod, setRerankMethod] = useState<string | null>(null);
 
+  // Tiered Search state
+  const [isTieredSearching, setIsTieredSearching] = useState(false);
+  const [tieredResults, setTieredResults] = useState<{ 
+    l2Results: ContextTier[]; 
+    tokensSaved: number;
+    l0Results: number;
+    l1Results: number;
+  } | null>(null);
+
   // KB filter
   const [knowledgeBases, setKnowledgeBases] = useState<{ id: string; name: string }[]>([]);
   const [selectedKbId, setSelectedKbId] = useState<string>('all');
