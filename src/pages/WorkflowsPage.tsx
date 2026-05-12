@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Play, LayoutGrid, Network, Calendar, Search, Activity, Zap, Layers, Sparkles, Loader2 } from 'lucide-react';
+import { Plus, Play, LayoutGrid, Network, Calendar, Search, Activity, Zap, Layers, Sparkles, Loader2, ArrowRightLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { workflowSchema } from '@/lib/validations/agentSchema';
