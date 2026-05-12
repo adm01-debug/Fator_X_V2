@@ -109,7 +109,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
       if (!response.ok) throw new Error('Falha no pipeline de ingestão');
 
       const reader = response.body?.getReader();
-      const decoder = new TextEncoder();
+      const decoder = new TextDecoder();
       
       while (true) {
         const { done, value } = await reader!.read();
