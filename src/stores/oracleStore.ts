@@ -58,7 +58,7 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
   error: null,
   history: [],
   enableThinking: false,
-  chairmanModel: 'google/gemini-2.5-pro',
+  chairmanModel: 'openai/gpt-4o',
   chairmanSelection: 'auto',
   abortController: null,
   customGuardrails: '',
