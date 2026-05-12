@@ -46,6 +46,8 @@ export default function DataHubPage() {
 
   const testConnections = useCallback(async () => {
     setTestingConnections(true);
+    setIsStreaming(true);
+
     try {
       const now = new Date();
       // Start streaming connection tests
