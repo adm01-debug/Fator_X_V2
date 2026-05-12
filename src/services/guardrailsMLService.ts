@@ -18,6 +18,9 @@ export interface GuardrailResponse {
   results: GuardrailResult[];
   blocked_count: number;
   version: string;
+  request_id?: string;
+  latency_ms?: number;
+  score_average?: number;
 }
 
 export async function checkInput(text: string): Promise<GuardrailResponse> {
