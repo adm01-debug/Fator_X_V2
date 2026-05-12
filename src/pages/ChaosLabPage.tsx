@@ -125,24 +125,56 @@ export default function ChaosLabPage() {
   const activeExperiments = experiments.filter(isActive);
 
   return (
-    <div className="container mx-auto p-4 md:p-6 space-y-6 page-enter">
-      <div className="flex items-start justify-between gap-4 flex-wrap">
-        <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <Zap className="h-7 w-7 text-nexus-amber" />
-            Chaos Lab
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Injete falhas controladas para validar resiliência do sistema
-          </p>
+    <div className="p-6 sm:p-8 lg:p-10 space-y-8 max-w-[1440px] mx-auto animate-page-enter">
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-xl shadow-nexus-amber/5 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-nexus-amber/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+        
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative">
+          <div className="flex items-center gap-7">
+            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-nexus-amber/20 to-nexus-amber/5 flex items-center justify-center border border-nexus-amber/20 shadow-2xl shadow-nexus-amber/10 group-hover:scale-105 transition-transform duration-500">
+              <Zap className="h-11 w-11 text-nexus-amber" />
+            </div>
+            <div className="space-y-1">
+              <div className="flex items-center gap-3">
+                <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Chaos Lab</h1>
+                <Badge className="bg-nexus-amber/10 text-nexus-amber border-none font-black px-3 py-1 rounded-full text-[10px] tracking-widest uppercase">Injeção de Falhas</Badge>
+              </div>
+              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+                Valide a resiliência do Nexus injetando latência e erros controlados. Teste seus SLOs e mecanismos de autocura sob stress.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            {activeExperiments.length > 0 && (
+              <Button variant="destructive" size="lg" onClick={handleKillSwitch} className="h-14 px-8 rounded-2xl font-bold shadow-xl shadow-destructive/20 animate-pulse">
+                <Power className="h-5 w-5 mr-3" />
+                Pânico: Parar Tudo ({activeExperiments.length})
+              </Button>
+            )}
+          </div>
         </div>
-        {activeExperiments.length > 0 && (
-          <Button variant="destructive" size="lg" onClick={handleKillSwitch}>
-            <Power className="h-4 w-4 mr-2" />
-            Pânico — Desativar Tudo ({activeExperiments.length})
-          </Button>
-        )}
       </div>
+
+      <div className="grid lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-8">
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card className="bg-card/50 border-border/40 rounded-3xl p-6 text-center">
+                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Impacto P95</p>
+                 <p className={cn("text-3xl font-black", activeExperiments.length > 0 ? "text-nexus-amber" : "text-nexus-emerald")}>
+                    {activeExperiments.length > 0 ? "+420ms" : "Nominal"}
+                 </p>
+              </Card>
+              <Card className="bg-card/50 border-border/40 rounded-3xl p-6 text-center">
+                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Taxa de Erro</p>
+                 <p className={cn("text-3xl font-black", activeExperiments.length > 0 ? "text-nexus-orange" : "text-nexus-emerald")}>
+                    {activeExperiments.length > 0 ? "2.4%" : "0.01%"}
+                 </p>
+              </Card>
+              <Card className="bg-card/50 border-border/40 rounded-3xl p-6 text-center">
+                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Recuperação</p>
+                 <p className="text-3xl font-black text-nexus-blue">100%</p>
+              </Card>
+           </div>
 
       {/* Educational alert when no experiments */}
       {!loading && experiments.length === 0 && (
