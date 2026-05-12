@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { saveOracleHistory } from '@/lib/oracleHistory';
-import { invokeTracedFunction } from '@/services/llmGatewayService';
+import { supabase } from '@/integrations/supabase/client';
 
 export type { OracleMode, OraclePreset, ModelResponse, ConsensusPoint, Citation, OracleResult } from './types/oracleTypes';
 import type { OracleMode, OracleResult } from './types/oracleTypes';
