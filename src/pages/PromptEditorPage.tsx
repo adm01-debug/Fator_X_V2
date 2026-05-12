@@ -376,8 +376,7 @@ export default function PromptEditorPage() {
                   </div>
 
                   <div className="flex-1 p-6 rounded-3xl bg-secondary/20 border border-border/10 font-mono text-[13px] leading-relaxed overflow-auto max-h-[500px] scrollbar-thin">
-                    {(function() {
-                      const { diffLines } = require('@/services/promptVersionService');
+                    {(() => {
                       const diffs = diffLines(activeVersion?.content || '', diffVersion.content);
                       return diffs.map((d: any, idx: number) => (
                         <div key={idx} className={cn(
