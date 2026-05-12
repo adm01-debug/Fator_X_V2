@@ -3,9 +3,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { Trash2, Eye, FileText, Clock, Filter, Play } from 'lucide-react';
+import { Trash2, Eye, FileText, Clock, Filter, Play, Download, FileJson } from 'lucide-react';
 import { fetchOracleHistory, deleteOracleHistory, type OracleHistoryEntry, type HistoryFilters } from '@/lib/oracleHistory';
-import { exportToMarkdown, downloadText } from '@/lib/oracleExport';
+import { exportToMarkdown, downloadText, exportToPdf, exportToJson } from '@/lib/oracleExport';
 import { useOracleStore, ORACLE_MODES, ORACLE_PRESETS, type OracleMode } from '@/stores/oracleStore';
 import { toast } from 'sonner';
 
@@ -47,6 +47,29 @@ export function OracleHistory({ onClose }: OracleHistoryProps) {
     );
     downloadText(md, `oraculo_${entry.id.slice(0, 8)}.md`);
     toast.success('Markdown exportado!');
+  };
+
+  const handleExportPdf = (entry: OracleHistoryEntry) => {
+    exportToPdf(
+      entry.query,
+      entry.results,
+      entry.preset_name || entry.preset_id,
+      entry.mode,
+      entry.chairman_model || '',
+    );
+    toast.success('Relatório PDF gerado!');
+  };
+
+  const handleExportJson = (entry: OracleHistoryEntry) => {
+    const json = exportToJson(
+      entry.query,
+      entry.results,
+      entry.preset_name || entry.preset_id,
+      entry.mode,
+      entry.chairman_model || '',
+    );
+    downloadText(json, `oraculo_${entry.id.slice(0, 8)}.json`);
+    toast.success('JSON exportado!');
   };
 
   if (loading) {
@@ -128,8 +151,14 @@ export function OracleHistory({ onClose }: OracleHistoryProps) {
                     <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => setExpandedId(expandedId === entry.id ? null : entry.id)}>
                       <Eye className="h-3.5 w-3.5" />
                     </Button>
-                    <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => handleExportMd(entry)}>
+                    <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => handleExportMd(entry)} title="Exportar MD">
                       <FileText className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => handleExportPdf(entry)} title="Exportar PDF">
+                      <Download className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => handleExportJson(entry)} title="Exportar JSON">
+                      <FileJson className="h-3.5 w-3.5" />
                     </Button>
                     <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => handleDelete(entry.id)}>
                       <Trash2 className="h-3.5 w-3.5" />
