@@ -96,7 +96,9 @@ export default function DataHubPage() {
       toast.error(`Erro ao carregar contagens: ${e instanceof Error ? e.message : String(e)}`); 
     } finally { 
       setLoadingCounts(false); 
+      setIsStreaming(false);
     }
+
   }, []);
 
 
