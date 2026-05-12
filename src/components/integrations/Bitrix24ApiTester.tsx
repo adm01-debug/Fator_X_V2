@@ -204,7 +204,7 @@ export function Bitrix24ApiTester() {
                       </div>
                       <div className="rounded-2xl border border-border/40 overflow-hidden bg-black/20 backdrop-blur-md">
                         <pre className="p-6 font-mono text-[12px] leading-relaxed text-nexus-cyan/90 overflow-x-auto">
-                          {JSON.stringify(result, null, 2)}
+                          {String(JSON.stringify(result, null, 2))}
                         </pre>
                       </div>
                     </div>
