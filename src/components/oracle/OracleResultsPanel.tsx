@@ -43,7 +43,17 @@ export function OracleResultsPanel() {
     );
     downloadText(json, `oraculo_${Date.now()}.json`, 'application/json');
     toast.success('JSON exportado!');
+  const handleExportPdf = () => {
+    exportToPdf(
+      store.query,
+      results,
+      currentPreset?.name || store.selectedPreset,
+      `${modeConfig.icon} ${modeConfig.label}`,
+      store.chairmanModel,
+    );
+    toast.success('Relatório PDF gerado!');
   };
+
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
