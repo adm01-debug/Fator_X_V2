@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { logger } from '@/lib/logger';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { InfoHint } from '@/components/shared/InfoHint';
@@ -14,7 +14,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
-import { Loader2, Play, Trash2, ChevronDown, ChevronRight, Clock, Cpu, Wrench, Activity, Search, Shield, Zap, Terminal, MessageSquare, Database, ArrowRight, Code } from 'lucide-react';
+import { 
+  Loader2, Play, Trash2, ChevronDown, ChevronRight, Clock, Cpu, Wrench, 
+  Activity, Search, Shield, Zap, Terminal, MessageSquare, Database, ArrowRight, Code 
+} from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useStreamingResponse, type AGUIEvent } from '@/hooks/useStreamingResponse';
@@ -29,6 +32,8 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as ChartTooltip, ResponsiveContainer,
   BarChart, Bar, Cell
 } from 'recharts';
+import { StreamingChat } from '@/components/shared/StreamingChat';
+
 
 
 
