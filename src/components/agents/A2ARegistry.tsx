@@ -1,10 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { listAgentCards, type AgentCard } from "@/services/agentCardService";
+import { listAgentCards } from "@/services/agentCardService";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Bot, Network, Shield, Zap, Globe, Cpu } from "lucide-react";
+import { Bot, Network, Shield, Globe, Cpu } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 export function A2ARegistry() {
   const { data: cards = [], isLoading } = useQuery({
