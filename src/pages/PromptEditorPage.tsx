@@ -25,9 +25,6 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as ChartTooltip, ResponsiveContainer,
   BarChart, Bar, Cell
 } from 'recharts';
-
-
-
 import {
   getAgentBasic,
   listPromptVersions,
@@ -38,6 +35,7 @@ import {
 } from "@/services/promptVersionService";
 
 export default function PromptEditorPage() {
+
   const { id: agentId } = useParams();
   const queryClient = useQueryClient();
 
