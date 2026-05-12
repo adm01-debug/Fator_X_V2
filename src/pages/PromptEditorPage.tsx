@@ -130,16 +130,7 @@ export default function PromptEditorPage() {
   const scorePercent = Math.round((scoreItems.filter(([, v]) => v).length / scoreItems.length) * 100);
   const diffVersion = versions.find((v: any) => v.id === diffVersionId);
 
-  const latencyData = [
-    { time: '10:00', latency: 85 },
-    { time: '10:05', latency: 92 },
-    { time: '10:10', latency: 78 },
-    { time: '10:15', latency: 105 },
-    { time: '10:20', latency: 88 },
-    { time: '10:25', latency: 82 },
-    { time: '10:30', latency: 95 },
-  ];
-
+  // Telemetry data simulation
   const qualityStats = [
     { range: '0.9-1.0', count: 45, color: 'hsl(var(--nexus-emerald))' },
     { range: '0.8-0.9', count: 32, color: 'hsl(var(--nexus-cyan))' },
