@@ -23,38 +23,42 @@ export default function SuperCerebroPage() {
 
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
-      <PageHeader title="🧠 Super Cérebro" description="Enterprise Memory Layer — Memória centralizada da empresa" gradient={false} />
+      <PageHeader 
+        title="🧠 Super Cérebro" 
+        description="Enterprise Memory Layer — Camada de Inteligência e Memória Institucional" 
+        gradient={false} 
+      />
 
       <InfoHint title="O que é o Super Cérebro?">
-        O Super Cérebro é a camada de memória empresarial que conecta todos os agentes. Ele armazena conhecimento institucional, processos, dados de clientes e fornecedores — permitindo que qualquer agente acesse informações da empresa em tempo real.
+        O Super Cérebro é a malha de memória neural da organização. Ele centraliza conhecimentos episódicos (o que aconteceu), semânticos (o que sabemos) e procedurais (como fazemos), permitindo que agentes tomem decisões baseadas em todo o histórico institucional.
       </InfoHint>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="bg-secondary/50 border border-border/50 flex-wrap h-auto gap-1 p-1">
           <TabsTrigger value="overview" className="text-xs gap-1.5"><Brain className="h-3.5 w-3.5" /> Visão Geral</TabsTrigger>
-          <TabsTrigger value="search" className="text-xs gap-1.5"><Search className="h-3.5 w-3.5" /> Consultar</TabsTrigger>
+          <TabsTrigger value="search" className="text-xs gap-1.5"><Search className="h-3.5 w-3.5" /> Context Tiers</TabsTrigger>
           <TabsTrigger value="knowledge" className="text-xs gap-1.5"><BookOpen className="h-3.5 w-3.5" /> Áreas</TabsTrigger>
-          <TabsTrigger value="graph" className="text-xs gap-1.5"><Network className="h-3.5 w-3.5" /> Grafo</TabsTrigger>
+          <TabsTrigger value="graph" className="text-xs gap-1.5"><Network className="h-3.5 w-3.5" /> Knowledge Graph</TabsTrigger>
+          <TabsTrigger value="temporal" className="text-xs gap-1.5"><Clock className="h-3.5 w-3.5" /> Temporal</TabsTrigger>
+          <TabsTrigger value="resolution" className="text-xs gap-1.5"><GitMerge className="h-3.5 w-3.5" /> Entity Resolution</TabsTrigger>
+          <TabsTrigger value="decay" className="text-xs gap-1.5"><TrendingDown className="h-3.5 w-3.5" /> Decay</TabsTrigger>
           <TabsTrigger value="health" className="text-xs gap-1.5"><Activity className="h-3.5 w-3.5" /> Saúde</TabsTrigger>
           <TabsTrigger value="extract" className="text-xs gap-1.5"><Zap className="h-3.5 w-3.5" /> Extração</TabsTrigger>
           <TabsTrigger value="experts" className="text-xs gap-1.5"><Users className="h-3.5 w-3.5" /> Especialistas</TabsTrigger>
           <TabsTrigger value="sandbox" className="text-xs gap-1.5"><FlaskConical className="h-3.5 w-3.5" /> Sandbox</TabsTrigger>
-          <TabsTrigger value="temporal" className="text-xs gap-1.5"><Clock className="h-3.5 w-3.5" /> Temporal</TabsTrigger>
-          <TabsTrigger value="resolution" className="text-xs gap-1.5"><GitMerge className="h-3.5 w-3.5" /> Resolução</TabsTrigger>
-          <TabsTrigger value="decay" className="text-xs gap-1.5"><TrendingDown className="h-3.5 w-3.5" /> Decay</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="mt-4"><OverviewTab /></TabsContent>
-        <TabsContent value="search" className="mt-4"><SearchTab /></TabsContent>
-        <TabsContent value="knowledge" className="mt-4"><KnowledgeAreasTab /></TabsContent>
-        <TabsContent value="graph" className="mt-4"><KnowledgeGraphTab /></TabsContent>
-        <TabsContent value="health" className="mt-4"><KnowledgeHealthTab /></TabsContent>
-        <TabsContent value="extract" className="mt-4"><AutoExtractionTab /></TabsContent>
-        <TabsContent value="experts" className="mt-4"><ExpertDiscoveryTab /></TabsContent>
-        <TabsContent value="sandbox" className="mt-4"><BrainSandboxTab /></TabsContent>
-        <TabsContent value="temporal" className="mt-4"><TemporalGraphTab /></TabsContent>
-        <TabsContent value="resolution" className="mt-4"><EntityResolutionTab /></TabsContent>
-        <TabsContent value="decay" className="mt-4"><DecayDetectionTab /></TabsContent>
+        <TabsContent value="overview" className="animate-in fade-in-50 duration-500"><OverviewTab /></TabsContent>
+        <TabsContent value="search" className="animate-in fade-in-50 duration-500"><SearchTab /></TabsContent>
+        <TabsContent value="knowledge" className="animate-in fade-in-50 duration-500"><KnowledgeAreasTab /></TabsContent>
+        <TabsContent value="graph" className="animate-in fade-in-50 duration-500"><KnowledgeGraphTab /></TabsContent>
+        <TabsContent value="temporal" className="animate-in fade-in-50 duration-500"><TemporalGraphTab /></TabsContent>
+        <TabsContent value="resolution" className="animate-in fade-in-50 duration-500"><EntityResolutionTab /></TabsContent>
+        <TabsContent value="decay" className="animate-in fade-in-50 duration-500"><DecayDetectionTab /></TabsContent>
+        <TabsContent value="health" className="animate-in fade-in-50 duration-500"><KnowledgeHealthTab /></TabsContent>
+        <TabsContent value="extract" className="animate-in fade-in-50 duration-500"><AutoExtractionTab /></TabsContent>
+        <TabsContent value="experts" className="animate-in fade-in-50 duration-500"><ExpertDiscoveryTab /></TabsContent>
+        <TabsContent value="sandbox" className="animate-in fade-in-50 duration-500"><BrainSandboxTab /></TabsContent>
       </Tabs>
     </div>
   );
