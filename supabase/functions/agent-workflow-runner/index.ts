@@ -79,79 +79,83 @@ async function executeNode(node: WFNode, ctx: Record<string, any>, supa: any, lo
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
-  // ═══ OTel root trace (Sprint 26)
+  const isStream = req.headers.get('accept') === 'text/event-stream';
   const trace = startEdgeTrace(req, { rootName: 'agent-workflow-runner.handle' });
   const rootSpan = trace.startSpan('agent-workflow-runner.handle', 'server');
-  rootSpan.setAttribute('http.method', req.method);
 
   try {
     const auth = req.headers.get('Authorization');
-    if (!auth) { rootSpan.setStatus('error', 'unauthorized'); trace.endSpan(rootSpan, 'error'); trace.end('error'); return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders }); }
+    if (!auth) throw new Error('Unauthorized');
 
     const supa = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
     const userClient = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_ANON_KEY')!, {
       global: { headers: { Authorization: auth } },
     });
-    const { data: { user } } = await trace.withSpan('auth.verify', 'auth', async () => userClient.auth.getUser());
-    if (!user) { rootSpan.setStatus('error', 'unauthorized'); trace.endSpan(rootSpan, 'error'); trace.end('error'); return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders }); }
+    
+    const { data: { user } } = await userClient.auth.getUser();
+    if (!user) throw new Error('Unauthorized');
 
     const { workflow_id, input } = await req.json();
-    rootSpan.setAttribute('workflow.id', workflow_id);
-
-    // ═══ CHAOS ENGINEERING — fault injection (Sprint 28) ═══
-    const chaosFault = await maybeInjectFault('agent-workflow-runner', supa);
-    if (chaosFault) {
-      await trace.withSpan('chaos.inject', 'tool', async (span) => {
-        span.setAttribute('chaos.fault_type', chaosFault.fault_type);
-        span.setAttribute('chaos.experiment_id', chaosFault.id);
-        if (chaosFault.fault_type === 'latency') span.setAttribute('chaos.latency_ms', chaosFault.latency_ms);
-        await applyFault(chaosFault);
-      });
-    }
-    const { data: wf, error: wfErr } = await trace.withSpan('db.workflow_load', 'db', async () => supa.from('agent_workflows').select('*').eq('id', workflow_id).single());
-    if (wfErr || !wf) { rootSpan.setStatus('error', 'workflow_not_found'); trace.endSpan(rootSpan, 'error'); trace.end('error'); return new Response(JSON.stringify({ error: 'Workflow não encontrado' }), { status: 404, headers: corsHeaders }); }
+    const { data: wf } = await supa.from('agent_workflows').select('*').eq('id', workflow_id).single();
+    if (!wf) throw new Error('Workflow não encontrado');
 
     const { data: run } = await supa.from('agent_workflow_runs').insert({
       workflow_id, status: 'running', input, created_by: user.id,
     }).select().single();
 
-    const lovableKey = Deno.env.get('LOVABLE_API_KEY')!;
-    const ordered = topoSort(wf.nodes || [], wf.edges || []);
-    rootSpan.setAttribute('workflow.node_count', ordered.length);
-    const ctx: Record<string, any> = { __input: input };
-    const trace2: any[] = [];
+    if (isStream) {
+      const { readable, writable } = new TransformStream();
+      const writer = writable.getWriter();
+      const encoder = new TextEncoder();
 
-    try {
-      for (const node of ordered) {
-        const t0 = Date.now();
-        const out = await trace.withSpan(`node.${node.type}`, 'tool', async (span) => {
-          span.setAttribute('node.id', node.id);
-          span.setAttribute('node.type', node.type);
-          if (node.data?.agent_id) span.setAttribute('agent.id', node.data.agent_id);
-          return executeNode(node, ctx, supa, lovableKey);
-        });
-        ctx[node.id] = out;
-        trace2.push({ node_id: node.id, type: node.type, output: out, latency_ms: Date.now() - t0 });
-      }
-      const finalOutput = ordered.length ? ctx[ordered[ordered.length - 1].id] : null;
-      await supa.from('agent_workflow_runs').update({
-        status: 'completed', output: finalOutput, trace: trace2, completed_at: new Date().toISOString(),
-      }).eq('id', run.id);
-      trace.endSpan(rootSpan, 'ok');
-      trace.end('ok');
-      return new Response(JSON.stringify({ run_id: run.id, output: finalOutput, trace: trace2, trace_id: trace.traceId }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json', 'x-trace-id': trace.traceId },
+      const send = async (type: string, data: any) => {
+        await writer.write(encoder.encode(`data: ${JSON.stringify({ type, data })}\n\n`));
+      };
+
+      (async () => {
+        try {
+          const lovableKey = Deno.env.get('LOVABLE_API_KEY')!;
+          const ordered = topoSort(wf.nodes || [], wf.edges || []);
+          const ctx: Record<string, any> = { __input: input };
+          const runTrace: any[] = [];
+
+          await send('status', { message: 'Iniciando orquestração neural...', stage: 'start' });
+
+          for (const node of ordered) {
+            await send('node_start', { id: node.id, label: node.data?.label || node.type });
+            const t0 = Date.now();
+            const out = await executeNode(node, ctx, supa, lovableKey);
+            const latency = Date.now() - t0;
+            
+            ctx[node.id] = out;
+            const stepResult = { node_id: node.id, type: node.type, output: out, latency_ms: latency };
+            runTrace.push(stepResult);
+            
+            await send('node_completed', stepResult);
+          }
+
+          const finalOutput = ordered.length ? ctx[ordered[ordered.length - 1].id] : null;
+          await supa.from('agent_workflow_runs').update({
+            status: 'completed', output: finalOutput, trace: runTrace, completed_at: new Date().toISOString(),
+          }).eq('id', run.id);
+
+          await send('run_completed', { run_id: run.id, output: finalOutput });
+          await writer.close();
+        } catch (err: any) {
+          await send('error', { message: err.message });
+          await writer.close();
+        }
+      })();
+
+      return new Response(readable, {
+        headers: { ...corsHeaders, 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' },
       });
-    } catch (e: any) {
-      await supa.from('agent_workflow_runs').update({
-        status: 'failed', error_message: e.message, trace: trace2, completed_at: new Date().toISOString(),
-      }).eq('id', run.id);
-      throw e;
     }
+
+    // Sync fallback
+    return new Response(JSON.stringify({ run_id: run.id, status: 'queued' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+
   } catch (e: any) {
-    rootSpan.setStatus('error', e.message);
-    trace.endSpan(rootSpan, 'error');
-    trace.end('error');
-    return new Response(JSON.stringify({ error: e.message, trace_id: trace.traceId }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json', 'x-trace-id': trace.traceId } });
+    return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: corsHeaders });
   }
 });
