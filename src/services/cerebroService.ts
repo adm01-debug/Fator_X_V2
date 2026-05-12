@@ -5,6 +5,7 @@
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import { supabase } from '@/integrations/supabase/client';
 import { fromTable } from '@/lib/supabaseExtended';
+import { tieredSearch, type ContextTier } from './contextTiersService';
 
 export async function getHealthScore() {
   const [docsResult, chunksResult, collectionsResult] = await Promise.all([
