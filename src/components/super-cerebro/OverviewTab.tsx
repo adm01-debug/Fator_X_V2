@@ -252,6 +252,7 @@ export function OverviewTab() {
                   </div>
                 ));
               })()}
+              </div>
             </div>
             
             <div className="nexus-card">
@@ -293,7 +294,6 @@ export function OverviewTab() {
               </div>
             </div>
           </div>
-
         </>
       )}
     </div>
