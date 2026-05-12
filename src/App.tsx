@@ -253,6 +253,7 @@ const App = () => (
                       <Route path="/marketplace-pro" element={<SafePage><MarketplaceMonetizedPage /></SafePage>} />
                       <Route path="/synthetic-data" element={<SafePage><SyntheticDataPage /></SafePage>} />
                       <Route path="/canary" element={<SafePage><CanaryDeploymentsPage /></SafePage>} />
+                      <Route path="/arena" element={<SafePage><AgentArenaPage /></SafePage>} />
                       <Route path="/code-interpreter" element={<SafePage><CodeInterpreterPage /></SafePage>} />
                       <Route path="/email-triggers" element={<SafePage><EmailCalendarTriggersPage /></SafePage>} />
                       <Route path="/debugger" element={<SafePage><AgentDebuggerPage /></SafePage>} />
