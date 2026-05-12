@@ -4,9 +4,11 @@ import { EmptyState } from "@/components/shared/EmptyState";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Rocket, Copy, CheckCircle, Globe, Zap, Shield, Share2, Terminal, Code2, Layers, Cpu } from "lucide-react";
+import { Rocket, Copy, CheckCircle, Globe, Zap, Shield, Share2, Terminal, Code2, Layers, Cpu, Activity, AlertTriangle, TrendingUp } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { listDeployedAgents } from "@/services/deploymentsService";
+import { getSystemHealth } from "@/services/healthService";
+import { getDashboardMetrics } from "@/services/monitoringService";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { A2APanel } from '@/components/integrations/A2APanel';
@@ -14,6 +16,7 @@ import { WebWidgetPanel } from '@/components/deployments/WebWidgetPanel';
 import { WhatsAppSendDialog } from '@/components/deployments/WhatsAppSendDialog';
 import { cn } from "@/lib/utils";
 import { ApprovalQueuePanel } from "@/components/deployments/ApprovalQueuePanel";
+import { DeploymentWizard } from "@/components/deployments/DeploymentWizard";
 
 export default function DeploymentsPage() {
   const { data: deployments = [], isLoading } = useQuery({
