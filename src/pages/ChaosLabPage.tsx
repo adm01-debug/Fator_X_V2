@@ -1,13 +1,13 @@
 import { useEffect, useState, useCallback } from 'react';
-import { AlertTriangle, Zap, Power, Trash2, Activity, Clock, ShieldAlert, BarChart3, Globe, Loader2, Play, FlaskConical } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Zap, Power, Activity, Clock, ShieldAlert, BarChart3, Globe, Loader2, Play, FlaskConical } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
 import {
   listChaosExperiments,
