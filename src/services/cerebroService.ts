@@ -5,7 +5,7 @@
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import { supabase } from '@/integrations/supabase/client';
 import { fromTable } from '@/lib/supabaseExtended';
-import { tieredSearch, type ContextTier } from './contextTiersService';
+import { tieredSearch } from './contextTiersService';
 
 /** Hierarchical search via Context Tiers */
 export async function queryTiered(query: string, options?: { collectionId?: string; l0Limit?: number; l1Limit?: number; l2Limit?: number }) {
