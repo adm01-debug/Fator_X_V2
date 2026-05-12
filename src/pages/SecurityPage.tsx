@@ -18,6 +18,7 @@ import { PIIScannerPanel } from '@/components/security/PIIScannerPanel';
 import { TwoFactorSetup } from '@/components/security/TwoFactorSetup';
 import { AccessControlPanel } from '@/components/security/AccessControlPanel';
 import { GuardrailsLibrary } from '@/components/security/GuardrailsLibrary';
+import { GuardrailsSimulator } from '@/components/security/GuardrailsSimulator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 
@@ -208,6 +209,7 @@ export default function SecurityPage() {
           <TabsTrigger value="access" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm gap-2 font-bold"><Fingerprint className="h-4 w-4" /> Acesso & Chaves</TabsTrigger>
           <TabsTrigger value="compliance" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm gap-2 font-bold">Compliance & Auditoria</TabsTrigger>
           <TabsTrigger value="threats" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm gap-2 font-bold"><Activity className="h-4 w-4" /> Red Teaming</TabsTrigger>
+          <TabsTrigger value="audit" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm gap-2 font-bold">Audit Trail</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-8 animate-in fade-in duration-500">
@@ -219,7 +221,10 @@ export default function SecurityPage() {
         </TabsContent>
 
         <TabsContent value="guardrails" className="space-y-8 animate-in fade-in duration-500">
-          <GuardrailsLibrary />
+          <div className="grid lg:grid-cols-2 gap-8">
+            <GuardrailsLibrary />
+            <GuardrailsSimulator />
+          </div>
           <GuardrailsConfig />
           <GuardrailPolicies />
         </TabsContent>
@@ -238,6 +243,10 @@ export default function SecurityPage() {
 
         <TabsContent value="threats" className="animate-in fade-in duration-500">
           <RedTeamingPanel />
+        </TabsContent>
+
+        <TabsContent value="audit" className="animate-in fade-in duration-500">
+          <AuditLogSection />
         </TabsContent>
       </Tabs>
     </div>
