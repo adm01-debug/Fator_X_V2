@@ -411,26 +411,33 @@ serve(async (req) => {
 
     // ═══ ACTION: decay_detection ═══
     if (action === 'decay_detection') {
-      const { data: memories } = await supabase.from('agent_memories_v2')
-        .select('*')
+      const { data: memories } = await supabase.from('agent_memories')
+        .select('id, content, memory_type, importance, decay_rate, created_at')
         .order('created_at', { ascending: true })
-        .limit(100);
+        .limit(200);
 
       const now = new Date();
       const decayed = (memories || []).map(m => {
-        const ageInDays = Math.floor((now.getTime() - new Date(m.created_at).getTime()) / 86400000);
-        const baseImportance = Number(m.importance_score || 1.0);
-        const decayRate = Number(m.decay_rate || 0.05);
+        const createdAt = m.created_at ? new Date(m.created_at) : now;
+        const ageInDays = Math.floor((now.getTime() - createdAt.getTime()) / 86400000);
+        const baseImportance = Number(m.importance || 0.5);
+        const decayRate = Number(m.decay_rate || 0.01);
+        
+        // Decay formula: I(t) = I0 * e^(-rt)
         const currentScore = Math.max(0, baseImportance * Math.exp(-decayRate * (ageInDays / 30)));
         
+        let status: 'active' | 'decaying' | 'forgotten' = 'active';
+        if (currentScore < 0.2) status = 'forgotten';
+        else if (currentScore < 0.4) status = 'decaying';
+
         return {
           id: m.id,
           content: m.content,
           type: m.memory_type,
           age: ageInDays,
           original_score: baseImportance,
-          current_score: currentScore,
-          status: currentScore < 0.2 ? 'forgotten' : currentScore < 0.5 ? 'decaying' : 'active'
+          current_score: Number(currentScore.toFixed(3)),
+          status
         };
       });
 
@@ -439,7 +446,7 @@ serve(async (req) => {
 
     // ═══ ACTION: memory_manager ═══
     if (action === 'memory_manager') {
-       const { data: memories } = await supabase.from('agent_memories_v2')
+       const { data: memories } = await supabase.from('agent_memories')
         .select('*')
         .order('created_at', { ascending: false })
         .limit(100);
@@ -448,29 +455,14 @@ serve(async (req) => {
         episodic: memories?.filter(m => m.memory_type === 'episodic').length || 0,
         semantic: memories?.filter(m => m.memory_type === 'semantic').length || 0,
         procedural: memories?.filter(m => m.memory_type === 'procedural').length || 0,
-        l0: memories?.filter(m => m.context_tier === 'L0').length || 0,
-        l1: memories?.filter(m => m.context_tier === 'L1').length || 0,
-        l2: memories?.filter(m => m.context_tier === 'L2').length || 0,
       };
 
       return new Response(JSON.stringify({ memories: memories || [], stats }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
-    // ═══ ACTION: temporal_graph (Enhanced) ═══
-    if (action === 'temporal_graph') {
-      const { data: relations } = await supabase.from('knowledge_relations')
-        .select('*, source:knowledge_entities!source_id(name, entity_type), target:knowledge_entities!target_id(name, entity_type)')
-        .order('created_at', { ascending: false })
-        .limit(100);
-
-      return new Response(JSON.stringify({
-        relations: relations || [],
-      }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
-    }
-
     // ═══ ACTION: stats ═══
     if (action === 'stats') {
-      const [agents, kbs, chunks, traces, memories, tools, workflows] = await Promise.all([
+      const [agents, kbs, chunks, traces, memories, tools, workflows, entities, relations] = await Promise.all([
         supabase.from('agents').select('id', { count: 'exact', head: true }),
         supabase.from('knowledge_bases').select('id', { count: 'exact', head: true }),
         supabase.from('chunks').select('id', { count: 'exact', head: true }),
@@ -478,14 +470,15 @@ serve(async (req) => {
         supabase.from('agent_memories').select('id', { count: 'exact', head: true }),
         supabase.from('tool_integrations').select('id', { count: 'exact', head: true }),
         supabase.from('workflows').select('id', { count: 'exact', head: true }),
+        supabase.from('knowledge_entities').select('id', { count: 'exact', head: true }),
+        supabase.from('knowledge_relations').select('id', { count: 'exact', head: true }),
       ]);
 
       const yesterday = new Date(Date.now() - 86400000).toISOString();
       const { count: todayTraces } = await supabase.from('agent_traces').select('id', { count: 'exact', head: true }).gte('created_at', yesterday);
 
-      // Fetch recent memories for the stream
       const { data: recentMemories } = await supabase.from('agent_memories')
-        .select('id, memory_type, content, created_at, agent_id')
+        .select('id, memory_type, content, created_at')
         .order('created_at', { ascending: false })
         .limit(5);
 
@@ -497,6 +490,8 @@ serve(async (req) => {
         memories: memories.count || 0,
         tools: tools.count || 0,
         workflows: workflows.count || 0,
+        entities: entities.count || 0,
+        relations: relations.count || 0,
         today_traces: todayTraces || 0,
         recent_memories: recentMemories || [],
       }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
