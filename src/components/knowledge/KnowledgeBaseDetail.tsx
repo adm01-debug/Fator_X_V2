@@ -114,7 +114,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
       while (true) {
         const { done, value } = await reader!.read();
         if (done) break;
-        const chunk = new TextDecoder().decode(value);
+        const chunk = decoder.decode(value);
         const lines = chunk.split('\n');
         for (const line of lines) {
           if (line.startsWith('data: ')) {
