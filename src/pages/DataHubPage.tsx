@@ -76,7 +76,9 @@ export default function DataHubPage() {
       toast.error(`Erro ao testar conexões: ${e instanceof Error ? e.message : String(e)}`); 
     } finally { 
       setTestingConnections(false); 
+      setIsStreaming(false);
     }
+
   }, []);
 
   const loadEntityCounts = useCallback(async () => {
