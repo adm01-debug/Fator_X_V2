@@ -197,12 +197,24 @@ export function useStreamingResponse() {
                   tokenCount++;
                   if (parsed.provider) setState(prev => ({ ...prev, provider: parsed.provider as string }));
                   if (parsed.model) setState(prev => ({ ...prev, model: parsed.model as string }));
-                  setState(prev => ({
-                    ...prev,
-                    text: fullText,
-                    tokens: tokenCount,
-                    latencyMs: Date.now() - startTimeRef.current,
-                  }));
+                  setState(prev => {
+                    // Detect tool calls in the stream
+                    const toolCallMatches = Array.from(fullText.matchAll(/Action:\s*(\w+)/g));
+                    const newToolCalls: ToolCall[] = toolCallMatches.map((m, i) => ({
+                      id: `tc-${i}`,
+                      name: m[1],
+                      args: '',
+                      status: 'running'
+                    }));
+
+                    return {
+                      ...prev,
+                      text: fullText,
+                      tokens: tokenCount,
+                      toolCalls: newToolCalls.length > 0 ? newToolCalls : prev.toolCalls,
+                      latencyMs: Date.now() - startTimeRef.current,
+                    };
+                  });
                   options?.onToken?.(parsed.token as string);
                   emitEvent({ type: 'TEXT_MESSAGE_CONTENT', timestamp: Date.now(), data: { content: parsed.token } });
                   continue;
