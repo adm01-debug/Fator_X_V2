@@ -93,12 +93,26 @@ export default function BudgetSettingsPage() {
   const dailyColor = dailyPct >= 100 ? "text-destructive" : dailyPct >= threshold ? "text-warning" : "text-success";
 
   return (
-    <div className="container mx-auto p-6 space-y-6 max-w-5xl animate-fade-in">
-      <div className="flex items-center gap-3">
-        <Wallet className="h-7 w-7 text-primary" />
-        <div>
-          <h1 className="text-3xl font-bold gradient-text">Orçamento</h1>
-          <p className="text-muted-foreground">Configure limites de gasto e bloqueio automático</p>
+    <div className="p-6 sm:p-8 lg:p-10 space-y-8 max-w-[1440px] mx-auto animate-page-enter">
+      {/* Budget Industrial Header */}
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-xl shadow-primary/5 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+        
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative">
+          <div className="flex items-center gap-7">
+            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
+              <Wallet className="h-11 w-11 text-primary animate-float" />
+            </div>
+            <div className="space-y-1">
+              <div className="flex items-center gap-3">
+                <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Budget & Limits</h1>
+                <Badge className="bg-primary/10 text-primary border-none font-black px-3 py-1 rounded-full text-[10px] tracking-widest uppercase">Guardrails de Gasto</Badge>
+              </div>
+              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+                Proteção financeira automatizada. Configure limites rígidos e avisos de consumo para evitar surpresas no faturamento LLM.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
