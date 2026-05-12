@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button';
 export default function OraclePage() {
   const store = useOracleStore();
   const [showHistory, setShowHistory] = useState(false);
+  const [activeTab, setActiveTab] = useState('consult');
 
   return (
     <div className="p-6 sm:p-10 lg:p-12 space-y-8 max-w-[1400px] mx-auto animate-page-enter bg-secondary/5 min-h-screen">
