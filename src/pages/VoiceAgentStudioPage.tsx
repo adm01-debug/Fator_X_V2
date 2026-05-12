@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Mic, MicOff, Phone, PhoneOff, Volume2, Settings2, Activity, Waves, Clock, ShieldCheck, Database, Zap } from "lucide-react";
+import { Mic, MicOff, Phone, PhoneOff, Volume2, Settings2, Activity, Waves, ShieldCheck, Database, Zap, Brain } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
