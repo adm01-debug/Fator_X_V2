@@ -81,6 +81,8 @@ export default function DataHubPage() {
 
   const loadEntityCounts = useCallback(async () => {
     setLoadingCounts(true);
+    setIsStreaming(true);
+
     try { 
       await streamInvoke('list_entities', {}, (event: string, data: any) => {
         if (event === 'entity_count') {
