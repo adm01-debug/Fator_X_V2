@@ -55,7 +55,7 @@ export default function ChaosLabPage() {
     } catch (e) {
       toast.error('Falha ao carregar experimentos');
     } finally {
-      setLoading(false);
+      // Refresh done
     }
   }, []);
 
