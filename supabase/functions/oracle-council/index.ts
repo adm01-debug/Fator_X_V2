@@ -155,8 +155,8 @@ serve(async (req) => {
             let result: any = null;
             let currentModel = member.model;
             
-            // Failover models
-            const failoverModels = ['google/gemini-2.5-pro', 'openai/gpt-5-mini', 'anthropic/claude-3-haiku'];
+            // Failover models hierarchy (tier-based)
+            const failoverModels = ['openai/gpt-4o', 'anthropic/claude-3-5-sonnet', 'google/gemini-1.5-pro', 'meta-llama/llama-3.1-405b'];
 
             const callGateway = async (model: string) => {
               const response = await fetch(gatewayUrl, {

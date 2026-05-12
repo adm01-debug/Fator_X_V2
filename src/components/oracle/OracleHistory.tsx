@@ -118,9 +118,10 @@ export function OracleHistory({ onClose }: OracleHistoryProps) {
                     </div>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
-                    <Button size="icon" variant="ghost" className="h-7 w-7 text-primary" onClick={() => {
+                    <Button size="icon" variant="ghost" className="h-7 w-7 text-nexus-emerald hover:bg-nexus-emerald/10" onClick={() => {
                         store.replayEntry(entry.results);
                         onClose?.();
+                        toast.info("Iniciando replay da sessão histórica...");
                       }}>
                       <Play className="h-3.5 w-3.5" />
                     </Button>

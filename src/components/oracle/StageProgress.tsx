@@ -1,5 +1,5 @@
 import { ORACLE_MODES, type OracleMode, useOracleStore } from '@/stores/oracleStore';
-import { Loader2, CheckCircle2 } from 'lucide-react';
+import { Loader2, CheckCircle2, AlertTriangle } from 'lucide-react';
 
 interface StageProgressProps {
   mode: OracleMode;
@@ -14,10 +14,18 @@ export function StageProgress({ mode, currentStage }: StageProgressProps) {
   return (
     <div className="p-6 bg-card border border-border/60 rounded-2xl shadow-sm animate-in fade-in slide-in-from-top-2">
       <div className="flex flex-col gap-6">
-        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Loader2 className="h-4 w-4 text-primary animate-spin" />
-            <span className="text-sm font-bold text-foreground">{stageLabel || 'Processando...'}</span>
+            {!store.error ? (
+              <>
+                <Loader2 className="h-4 w-4 text-primary animate-spin" />
+                <span className="text-sm font-bold text-foreground">{stageLabel || 'Processando...'}</span>
+              </>
+            ) : (
+              <>
+                <AlertTriangle className="h-4 w-4 text-destructive" />
+                <span className="text-sm font-bold text-destructive">Falha crítica no estágio</span>
+              </>
+            )}
           </div>
           <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">
             Etapa {currentStage} de {stages.length}
