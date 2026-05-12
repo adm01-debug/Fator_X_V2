@@ -24,7 +24,7 @@ export function EntityResolutionTab() {
     queryKey: ['entity-resolution', threshold, scanLimit],
     queryFn: async () => {
       try {
-        const enhanced = await invokeCerebroBrain({ action: 'entity_resolution' });
+        await invokeCerebroBrain({ action: 'entity_resolution' });
         // Fallback or merge with legacy
         return resolveMemoryEntities(scanLimit, threshold);
       } catch (e) {
