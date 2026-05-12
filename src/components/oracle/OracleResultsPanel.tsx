@@ -4,12 +4,12 @@ import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { 
   Copy, RefreshCw, FileText, ShieldCheck, Activity, DollarSign, Zap, 
-  Cpu, Download, CheckCircle2, AlertTriangle 
+  Cpu, Download, CheckCircle2, AlertTriangle, Code
 } from 'lucide-react';
 import { useOracleStore, ORACLE_MODES, ORACLE_PRESETS } from '@/stores/oracleStore';
 import { ConsensusMatrix } from './ConsensusMatrix';
 import { ModelCard } from './ModelCard';
-import { exportToMarkdown, downloadText } from '@/lib/oracleExport';
+import { exportToMarkdown, exportToJson, downloadText } from '@/lib/oracleExport';
 import { toast } from 'sonner';
 
 export function OracleResultsPanel() {
@@ -31,6 +31,18 @@ export function OracleResultsPanel() {
     );
     downloadText(md, `oraculo_${Date.now()}.md`);
     toast.success('Markdown exportado!');
+  };
+
+  const handleExportJson = () => {
+    const json = exportToJson(
+      store.query,
+      results,
+      currentPreset?.name || store.selectedPreset,
+      `${modeConfig.icon} ${modeConfig.label}`,
+      store.chairmanModel,
+    );
+    downloadText(json, `oraculo_${Date.now()}.json`, 'application/json');
+    toast.success('JSON exportado!');
   };
 
   return (
@@ -96,7 +108,10 @@ export function OracleResultsPanel() {
                   <Copy className="h-3.5 w-3.5" /> Copiar Resposta
                 </Button>
                 <Button size="sm" variant="outline" className="h-9 rounded-xl gap-2" onClick={handleExportMd}>
-                  <Download className="h-3.5 w-3.5" /> Exportar MD
+                  <Download className="h-3.5 w-3.5" /> MD
+                </Button>
+                <Button size="sm" variant="outline" className="h-9 rounded-xl gap-2" onClick={handleExportJson}>
+                  <Code className="h-3.5 w-3.5" /> JSON
                 </Button>
               </div>
             </div>

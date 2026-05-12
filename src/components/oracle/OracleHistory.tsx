@@ -3,17 +3,18 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { Trash2, Eye, FileText, Clock, Filter } from 'lucide-react';
+import { Trash2, Eye, FileText, Clock, Filter, Play } from 'lucide-react';
 import { fetchOracleHistory, deleteOracleHistory, type OracleHistoryEntry, type HistoryFilters } from '@/lib/oracleHistory';
 import { exportToMarkdown, downloadText } from '@/lib/oracleExport';
-import { ORACLE_MODES, ORACLE_PRESETS, type OracleMode } from '@/stores/oracleStore';
+import { useOracleStore, ORACLE_MODES, ORACLE_PRESETS, type OracleMode } from '@/stores/oracleStore';
 import { toast } from 'sonner';
 
 interface OracleHistoryProps {
-  onReplay?: (entry: OracleHistoryEntry) => void;
+  onClose?: () => void;
 }
 
-export function OracleHistory(_props: OracleHistoryProps) {
+export function OracleHistory({ onClose }: OracleHistoryProps) {
+  const store = useOracleStore();
   const [entries, setEntries] = useState<OracleHistoryEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<HistoryFilters>({});
@@ -117,6 +118,12 @@ export function OracleHistory(_props: OracleHistoryProps) {
                     </div>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
+                    <Button size="icon" variant="ghost" className="h-7 w-7 text-primary" onClick={() => {
+                        store.replayEntry(entry.results);
+                        onClose?.();
+                      }}>
+                      <Play className="h-3.5 w-3.5" />
+                    </Button>
                     <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => setExpandedId(expandedId === entry.id ? null : entry.id)}>
                       <Eye className="h-3.5 w-3.5" />
                     </Button>
