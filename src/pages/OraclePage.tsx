@@ -36,6 +36,9 @@ export default function OraclePage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <Button variant="default" size="sm" className="nexus-gradient-bg text-primary-foreground gap-1.5 h-10 rounded-xl px-5 font-bold shadow-lg shadow-primary/20" onClick={() => { /* Handled by Tabs default if we want, but let's just trigger research mode */ }}>
+              <Search className="h-4 w-4" /> Deep Research
+            </Button>
              <Button variant="outline" size="sm" className="gap-1.5 h-10 rounded-xl" onClick={() => setShowHistory(!showHistory)}>
               <History className="h-4 w-4" /> Histórico
             </Button>
