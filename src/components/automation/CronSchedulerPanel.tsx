@@ -26,6 +26,13 @@ export function CronSchedulerPanel() {
   const [running, setRunning] = useState(false);
   const { toast } = useToast();
 
+  const [createOpen, setCreateOpen] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [newCron, setNewCron] = useState('* * * * *');
+  const [saving, setSaving] = useState(false);
+  const [targetType, setTargetType] = useState('agent');
+  const [targetId, setTargetId] = useState('');
+
   const loadData = async () => {
     setLoading(true);
     try {
