@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { 
   Copy, RefreshCw, FileText, ShieldCheck, Activity, DollarSign, Zap, 
-  Cpu, Download, CheckCircle2, AlertTriangle, XCircle, Share, Code
+  Cpu, Download, CheckCircle2, AlertTriangle, Code
 } from 'lucide-react';
 import { useOracleStore, ORACLE_MODES, ORACLE_PRESETS } from '@/stores/oracleStore';
 import { ConsensusMatrix } from './ConsensusMatrix';
