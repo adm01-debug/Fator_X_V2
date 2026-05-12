@@ -35,17 +35,29 @@ export function WebhookManagerPanel() {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleTest = async (w: WebhookEndpoint) => {
-    setTestingId(w.id);
+  const handleTest = async () => {
+    if (!selectedWebhook) return;
+    setTestingId(selectedWebhook.id);
     try {
+      let payloadObj = { test: true };
+      try {
+        payloadObj = JSON.parse(testPayload);
+      } catch (e) {
+        toast({ title: 'JSON inválido', variant: 'destructive' });
+        setTestingId(null);
+        return;
+      }
+
       const result = await triggerWebhookViaEF({
-        path: w.path,
-        payload: { test: true, source: 'webhook-manager-panel', ts: Date.now() },
+        path: selectedWebhook.path,
+        payload: payloadObj,
       });
+
       toast({
         title: 'Webhook disparado',
-        description: `${w.name} — status ${result.status}`,
+        description: `${selectedWebhook.name} — status ${result.status}`,
       });
+      setTestDialogOpen(false);
     } catch (e) {
       toast({
         title: 'Falha no teste',
@@ -55,6 +67,11 @@ export function WebhookManagerPanel() {
     } finally {
       setTestingId(null);
     }
+  };
+
+  const openTestDialog = (w: WebhookEndpoint) => {
+    setSelectedWebhook(w);
+    setTestDialogOpen(true);
   };
 
   return (
