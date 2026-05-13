@@ -9,6 +9,7 @@
  */
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
+import { logger } from '@/lib/logger';
 
 const EXTERNAL_SUPABASE_URL = import.meta.env.VITE_EXTERNAL_SUPABASE_URL;
 const EXTERNAL_SUPABASE_ANON_KEY = import.meta.env.VITE_EXTERNAL_SUPABASE_ANON_KEY;
@@ -21,9 +22,9 @@ const resolvedUrl = EXTERNAL_SUPABASE_URL || FALLBACK_URL;
 const resolvedKey = EXTERNAL_SUPABASE_ANON_KEY || FALLBACK_KEY;
 
 if (!EXTERNAL_SUPABASE_URL || !EXTERNAL_SUPABASE_ANON_KEY) {
-  console.warn(
+  logger.warn(
     '⚠️ VITE_EXTERNAL_SUPABASE_URL or VITE_EXTERNAL_SUPABASE_ANON_KEY not set.',
-    'Falling back to Lovable Cloud DB. Set them in Lovable environment settings to use the external DB.'
+    { detail: 'Falling back to Lovable Cloud DB. Set them in Lovable environment settings to use the external DB.' }
   );
 }
 
@@ -53,6 +54,6 @@ export async function syncExternalAuth(accessToken: string) {
       refresh_token: '', // Not needed — local client manages refresh
     });
   } catch (e) {
-    console.warn('⚠️ Failed to sync external auth session:', e);
+    logger.warn('⚠️ Failed to sync external auth session in externalClient', e);
   }
 }
