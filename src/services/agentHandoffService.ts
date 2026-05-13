@@ -138,7 +138,7 @@ export async function getPendingHandoffs(targetAgentId: string): Promise<Handoff
     .order('created_at' as never, { ascending: false });
 
   if (error) throw new Error(`Failed to get pending handoffs: ${error.message}`);
-  return (data ?? []) as unknown as HandoffRecord[];
+  return (data ?? []) as any as HandoffRecord[];
 }
 
 /**
