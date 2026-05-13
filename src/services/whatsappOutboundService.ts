@@ -74,7 +74,7 @@ async function loadActiveProviderConfig(): Promise<ProviderSecrets> {
 
   const map: Record<string, string> = {};
   for (const row of (data ?? [])) {
-    map[row.key_name] = row.encrypted_value;
+    map[row.key_name] = row.encrypted_value ?? '';
   }
 
   const provider = (map['whatsapp_outbound_active_provider'] ?? 'meta') as WhatsAppProvider;

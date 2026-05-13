@@ -65,7 +65,7 @@ export async function listSessions(limit = 50): Promise<VoiceSession[]> {
     .order("started_at", { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return (data as any[]) as VoiceSession[];
+  return (data || []) as unknown as VoiceSession[];
 }
 
 export async function getSession(id: string): Promise<VoiceSession | null> {
