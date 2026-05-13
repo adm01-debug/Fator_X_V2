@@ -10,7 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
  * Returns a typed Supabase client for a specific table.
  * Using 'any' for table name to avoid deep type instantiation issues in build.
  */
-export const fromTable = (table: string) => supabase.from(table as any);
+export const fromTable = (table: string) => (supabase as any).from(table);
 
 /**
  * Checks if a user is locked out due to multiple failed login attempts.
@@ -39,7 +39,7 @@ export const syncExternalAuth = (token: string | null) => {
  * Executes a Supabase RPC call.
  */
 export const rpcCall = async (fnName: string, params: any) => {
-  return await supabase.rpc(fnName as any, params);
+  return await (supabase as any).rpc(fnName, params);
 };
 
 /**
