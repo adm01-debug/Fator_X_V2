@@ -12,7 +12,7 @@ export async function getWorkspaceId(): Promise<string> {
   if (cachedWorkspaceId) return cachedWorkspaceId;
   
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Não autenticado');
+  if (!user) throw new Error('Not authenticated');
 
   const { data } = await supabaseExternal
     .from('workspace_members')
