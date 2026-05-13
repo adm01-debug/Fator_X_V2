@@ -30,7 +30,7 @@ export default function AgentArenaPage() {
   const [results, setResults] = useState<{ a: ArenaResult; b: ArenaResult } | null>(null);
 
   useEffect(() => {
-    listAgentSummaries().then(data => setAgents((data as any).agents || [])).catch(() => toast.error("Falha ao carregar agentes"));
+    listAgentSummaries().then(data => setAgents(data.agents)).catch(() => toast.error("Falha ao carregar agentes"));
   }, []);
 
   const handleRunArena = async () => {
@@ -56,7 +56,7 @@ export default function AgentArenaPage() {
           messages: [{ role: "user", content: prompt }],
           agentId: agentB 
         })
-      ]) as any[];
+      ]) as Array<{ text: string; usage?: { total_tokens: number; cost: number } }>;
 
       const endTime = Date.now();
       const totalLatency = endTime - startTime;
@@ -66,7 +66,7 @@ export default function AgentArenaPage() {
       const judgement = await invokeLLMGateway({ 
         model: "gpt-4o",
         messages: [{ role: "user", content: judgePrompt }]
-      }) as any;
+      }) as { text: string };
 
       const evalData = JSON.parse(judgement.text.replace(/```json|```/g, ''));
 
@@ -92,8 +92,9 @@ export default function AgentArenaPage() {
       });
 
       toast.success(`Arena concluída! Vencedor: Agente ${evalData.winner}`);
-    } catch (e: any) {
-      toast.error("Erro na arena: " + e.message);
+    } catch (e) {
+      const err = e as Error;
+      toast.error("Erro na arena: " + err.message);
     } finally {
       setRunning(false);
     }
@@ -275,7 +276,7 @@ function CompetidorResult({ label, name, result, isWinner, loading }: { label: s
   );
 }
 
-function MetricItem({ icon: Icon, label, value }: { icon: any; label: string; value: string }) {
+function MetricItem({ icon: Icon, label, value }: { icon: React.ElementType; label: string; value: string }) {
   return (
     <div className="bg-secondary/10 p-2.5 rounded-2xl border border-border/20 text-center">
       <Icon className="h-3 w-3 mx-auto mb-1 text-muted-foreground" />
