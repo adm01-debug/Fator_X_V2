@@ -12,7 +12,6 @@ type AnyFrom = any;
  * Returns an untyped query builder — callers should cast results.
  */
 export function fromTable(name: string): AnyFrom {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (supabaseExternal as any).from(name);
 }
 
