@@ -70,7 +70,7 @@ export async function createCredential(input: CreateCredentialInput): Promise<Cr
   }).select().single();
   if (error) throw error;
   await logAudit(data.id, 'created', userId, 'user', { credential_type: input.credential_type, service_name: input.service_name });
-  return data as CredentialEntry;
+  return data as unknown as CredentialEntry;
 }
 
 export async function getCredential(id: string, requesterId?: string, requesterType: CredentialAuditLog['actor_type'] = 'user'): Promise<CredentialData> {
@@ -129,7 +129,7 @@ export async function rotateCredential(id: string, newData: CredentialData): Pro
   const { data, error } = await fromTable('credential_vault').update({ encrypted_data: encrypted, status: 'active', last_rotated_at: now.toISOString(), next_rotation_at: nextRotation, updated_at: now.toISOString() }).eq('id', id).select().single();
   if (error) throw error;
   await logAudit(id, 'rotated', userId, 'user', {});
-  return data as CredentialEntry;
+  return data as unknown as CredentialEntry;
 }
 
 export async function revokeCredential(id: string): Promise<void> {
@@ -149,7 +149,7 @@ export async function deleteCredential(id: string): Promise<void> {
 export async function getAuditLogs(credentialId: string, limit: number = 50): Promise<CredentialAuditLog[]> {
   const { data, error } = await fromTable('credential_audit_logs').select('*').eq('credential_id', credentialId).order('created_at', { ascending: false }).limit(limit);
   if (error) throw error;
-  return (data ?? []) as CredentialAuditLog[];
+  return (data ?? []) as unknown as CredentialAuditLog[];
 }
 
 export async function getVaultStats(): Promise<VaultStats> {

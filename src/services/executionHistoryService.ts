@@ -49,7 +49,7 @@ export async function startExecution(
     .select()
     .single();
   if (error) throw error;
-  return data as ExecutionRecord;
+  return data as unknown as ExecutionRecord;
 }
 
 export async function completeExecution(
@@ -163,7 +163,7 @@ export async function getExecution(id: string): Promise<ExecutionRecord | null> 
     .eq('id', id)
     .maybeSingle();
   if (error) throw error;
-  return data as ExecutionRecord | null;
+  return data as unknown as ExecutionRecord | null;
 }
 
 /* ------------------------------------------------------------------ */

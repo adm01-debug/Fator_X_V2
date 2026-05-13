@@ -134,7 +134,7 @@ export function resetCircuitBreaker(serviceName: string): void { const cb = circ
 export async function addToDeadLetterQueue(operation: string, error: string, attempts: number, policy: RetryPolicy): Promise<DeadLetterEntry> {
   const { data, error: dbError } = await fromTable('dead_letter_queue').insert({ source: 'retry_engine', operation, payload: {}, error, attempts, retry_policy: policy as unknown as Record<string, unknown>, status: 'pending' }).select().single();
   if (dbError) throw dbError;
-  return data as DeadLetterEntry;
+  return data as unknown as DeadLetterEntry;
 }
 
 export async function listDeadLetters(status?: DeadLetterEntry['status'], limit: number = 50): Promise<DeadLetterEntry[]> {
@@ -142,7 +142,7 @@ export async function listDeadLetters(status?: DeadLetterEntry['status'], limit:
   if (status) query = query.eq('status', status);
   const { data, error } = await query;
   if (error) throw error;
-  return (data ?? []) as DeadLetterEntry[];
+  return (data ?? []) as unknown as DeadLetterEntry[];
 }
 
 export async function resolveDeadLetter(id: string, status: 'retried' | 'resolved' | 'discarded' = 'resolved'): Promise<void> {
