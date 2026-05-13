@@ -41,7 +41,7 @@ export async function initiateHandoff(request: HandoffRequest): Promise<HandoffR
 
   // Store in workflow_handoffs table
   const { data, error } = await fromTable('workflow_handoffs')
-    .insert(record)
+    .insert(record as any)
     .select()
     .single();
 
