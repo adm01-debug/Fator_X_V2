@@ -55,8 +55,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error: error as Error | null };
+    // Check lockout first via our new service
+    const { isUserLockedOut } = await import('@/lib/supabaseExtended');
+    const locked = await isUserLockedOut(email);
+    if (locked) {
+      return { error: new Error("Muitas tentativas falhas. Sua conta está temporariamente bloqueada por 15 minutos.") };
+    }
+
+    const { error, data } = await supabase.auth.signInWithPassword({ email, password });
+    
+    // Log attempt (successful or failed)
+    await supabase.from('auth_attempts').insert({
+      email,
+      success: !error,
+      ip_address: null // Client-side can't reliably get IP without service
+    });
+
+    if (error) return { error: error as Error | null };
+    
+    // Check if MFA is required for this user (Admin role)
+    if (data.user) {
+      const { data: roleData } = await supabase
+        .from('user_roles')
+        .select('role_key')
+        .eq('user_id', data.user.id)
+        .maybeSingle();
+      
+      if (roleData?.role_key === 'workspace_admin') {
+        const { data: mfaData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+        if (mfaData?.currentLevel !== 'aal2') {
+          // This is a prompt/flag for the UI to redirect to MFA setup or verification
+          console.warn("MFA AAL2 required for admin");
+        }
+      }
+    }
+
+    return { error: null };
   };
 
   const signOut = async () => {

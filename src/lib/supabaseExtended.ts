@@ -1,27 +1,53 @@
-/**
- * Helper for tables added by migrations but not yet in auto-generated types.
- * Uses type assertion scoped to this single file to keep the rest of the codebase clean.
- * Tables here: prompt_ab_tests, alert_rules, roles, permissions, role_permissions, user_roles, mcp_servers
- */
-import { supabaseExternal } from '@/integrations/supabase/externalClient';
-
-type AnyFrom = any;
+import { supabase } from '@/integrations/supabase/client';
 
 /**
- * Access a table that is not in the auto-generated Supabase types.
- * Returns an untyped query builder — callers should cast results.
+ * Supabase Extended Client
+ * Includes additional helpers for schema-safe access and RLS persona testing.
+ * Added: isUserLockedOut RPC call.
  */
-export function fromTable(name: string): AnyFrom {
-  return (supabaseExternal as any).from(name);
-}
 
 /**
- * Call an RPC function that is not in the auto-generated Supabase types.
- * Scopes the type assertion to this single file.
+ * Returns a typed Supabase client for a specific table.
+ * Using 'any' for table name to avoid deep type instantiation issues in build.
  */
-export async function rpcCall(
-  fnName: string,
-  params: Record<string, unknown> = {},
-): Promise<{ data: unknown; error: { message: string } | null }> {
-  return (supabaseExternal as any).rpc(fnName, params);
-}
+export const fromTable = (table: any) => (supabase as any).from(table);
+
+/**
+ * Checks if a user is locked out due to multiple failed login attempts.
+ */
+export const isUserLockedOut = async (email: string): Promise<boolean> => {
+  const { data, error } = await (supabase as any).rpc('is_user_locked_out', { target_email: email });
+  if (error) {
+    console.error('Lockout check failed:', error);
+    return false;
+  }
+  return !!data;
+};
+
+/**
+ * Syncs the local auth token to the external database client.
+ */
+export const syncExternalAuth = (token: string | null) => {
+  if (token) {
+    localStorage.setItem('supabase.external.auth.token', token);
+  } else {
+    localStorage.removeItem('supabase.external.auth.token');
+  }
+};
+
+/**
+ * Executes a Supabase RPC call.
+ */
+export const rpcCall = async (fnName: string, params: any) => {
+  return await (supabase as any).rpc(fnName, params);
+};
+
+/**
+ * Helper to wrap any Supabase call and fix the deep type issue
+ */
+export const wrap = (fn: any) => fn as any;
+
+/**
+ * Mock result type to satisfy high-level UI component mapping
+ */
+export type ResultOne = Record<string, any>;

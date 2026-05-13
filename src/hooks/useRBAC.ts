@@ -110,7 +110,7 @@ export function useRBAC() {
    */
   const isAtLeast = useCallback(
     (requiredRole: RoleKey): boolean => {
-      const levels: Record<RoleKey, number> = {
+      const levels: Record<string, number> = {
         workspace_admin: 100,
         agent_editor: 70,
         operator: 50,

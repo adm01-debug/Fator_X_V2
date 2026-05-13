@@ -1294,6 +1294,30 @@ export type Database = {
         }
         Relationships: []
       }
+      auth_attempts: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          ip_address: string | null
+          success: boolean | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          ip_address?: string | null
+          success?: boolean | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          ip_address?: string | null
+          success?: boolean | null
+        }
+        Relationships: []
+      }
       automation_logs: {
         Row: {
           created_at: string
@@ -7270,6 +7294,8 @@ export type Database = {
         }
         Returns: string
       }
+      is_mfa_valid_for_role: { Args: never; Returns: boolean }
+      is_user_locked_out: { Args: { target_email: string }; Returns: boolean }
       is_workspace_admin: {
         Args: { _user_id: string; _workspace_id: string }
         Returns: boolean
