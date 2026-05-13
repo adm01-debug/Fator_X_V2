@@ -16,7 +16,13 @@ export interface CostEstimateResult {
   totalTokens: number;
   costUsd: number;
   costBrl: number;
+  estLatencyMs: number;
+  pricing: {
+    label: string;
+    context_window: number;
+  };
   loading: boolean;
+
   error?: string;
 }
 
@@ -30,7 +36,13 @@ export function useCostEstimate(input: CostEstimateInput): CostEstimateResult {
     totalTokens: 0,
     costUsd: 0,
     costBrl: 0,
+    estLatencyMs: 500,
+    pricing: {
+      label: 'Gemini 2.5 Flash',
+      context_window: 1000000
+    },
     loading: false
+
   });
 
   useEffect(() => {
@@ -64,7 +76,13 @@ export function useCostEstimate(input: CostEstimateInput): CostEstimateResult {
           totalTokens: inputTokens + outputTokens,
           costUsd: data.costUsd,
           costBrl: data.costBrl,
+          estLatencyMs: data.estLatencyMs || 800,
+          pricing: {
+            label: data.modelLabel || model.split('/').pop() || model,
+            context_window: data.contextWindow || 1000000
+          },
           loading: false
+
         });
       } catch (err) {
         console.error('Error calculating cost on backend:', err);
@@ -81,7 +99,13 @@ export function useCostEstimate(input: CostEstimateInput): CostEstimateResult {
           totalTokens: inputTokens + outputTokens,
           costUsd: localUsd,
           costBrl: localUsd * USD_TO_BRL,
+          estLatencyMs: 1000,
+          pricing: {
+            label: model,
+            context_window: 128000
+          },
           loading: false,
+
           error: 'Using local estimate fallback'
         });
       }
