@@ -1,31 +1,34 @@
 # 🚀 Pull Request Template
 
-## 📋 Descrição
-Descreva brevemente as mudanças e o motivo deste PR.
+## 📝 Descrição
+Forneça um resumo claro e conciso das alterações propostas.
 
-## 🎯 Tipo de Mudança
-- [ ] ✨ Feature
-- [ ] 🐛 Bug Fix
-- [ ] ♻️ Refactor
-- [ ] 📝 Documentação
-- [ ] 🛡️ Segurança
-- [ ] ⚡ Performance
-- [ ] 📦 Dependência
+## 🎯 Tipo de Alteração
+- [ ] ✨ New Feature (Nova funcionalidade)
+- [ ] 🐛 Bug Fix (Correção de erro)
+- [ ] ♻️ Refactoring (Refatoração de código existente)
+- [ ] 📝 Documentation (Documentação)
+- [ ] 🧪 Tests (Adição ou melhoria de testes)
+- [ ] 🚀 Performance (Melhoria de desempenho)
+- [ ] 🔒 Security (Segurança)
 
-## 🔬 Checklist de Qualidade
-- [ ] **Lint & Tipos:** `npm run lint` e `npx tsc --noEmit` passam sem erros.
-- [ ] **Testes:** Foram adicionados/atualizados testes para cobrir as mudanças.
-- [ ] **RLS:** Se alterou o banco, verificou as RLS policies (positivo/negativo).
-- [ ] **Segurança:** Não foram expostos segredos ou tokens.
-- [ ] **UI:** Se visual, testou em desktop e mobile (responsividade).
-- [ ] **Zero Any:** Não foram adicionados `any` ou `as any` sem justificativa.
-- [ ] **Console:** Removidos `console.log` desnecessários.
+## 🧪 Como foi testado?
+- [ ] ✅ Unit Tests (`npm run test`)
+- [ ] ✅ Integration Tests
+- [ ] ✅ E2E Tests (`npm run test:e2e`)
+- [ ] ✅ Linting (`npm run lint`)
+- [ ] ✅ Build Check (`npm run build`)
 
-## 🖼️ Screenshots (Obrigatório para mudanças de UI)
-[Cole aqui]
+## 📋 Checklist
+- [ ] O código segue os padrões de estilo do projeto.
+- [ ] Não há `console.log` remanescentes (exceto via `logger`).
+- [ ] Não foram adicionados novos `any` ou `as any`.
+- [ ] A cobertura de testes foi mantida ou aumentada (Threshold 80%).
+- [ ] Novas migrations possuem script de `DOWN` comentado.
+- [ ] Documentação atualizada (se necessário).
 
-## 🔗 Issues Relacionadas
-Fixes # (issue number)
+## 📸 Screenshots (se aplicável)
+_Adicione prints se houver mudanças na UI._
 
 ---
-*Rumo ao 10/10 sempre! 🚀*
+*Nexus Agents Studio CI/CD Enforced*
