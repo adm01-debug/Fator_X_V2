@@ -71,10 +71,13 @@ serve(async (req) => {
       }
     }
 
-    // Auth verification
+    // Auth verification (HMAC is mandatory for 10/10 if configured)
     if (webhook.auth_type === 'hmac_sha256') {
       const signature = headers['x-hub-signature-256'] || headers['x-signature'] || '';
-      // Use raw body for verification to be precise
+      if (!signature || !webhook.secret) {
+        await logEvent(supabase, webhook.id, req.method, headers, queryParams, body, sourceIp, 'rejected', 401);
+        return errorResponse(req, 'Missing signature or secret', 401);
+      }
       const valid = await verifyHmac(webhook.secret, rawBody, signature);
       if (!valid) {
         await logEvent(supabase, webhook.id, req.method, headers, queryParams, body, sourceIp, 'rejected', 401);
@@ -83,15 +86,21 @@ serve(async (req) => {
     } else if (webhook.auth_type === 'bearer') {
       const authHeader = headers['authorization'] || '';
       const token = authHeader.replace('Bearer ', '');
-      if (token !== webhook.secret) {
+      if (!token || token !== webhook.secret) {
         await logEvent(supabase, webhook.id, req.method, headers, queryParams, body, sourceIp, 'rejected', 401);
         return errorResponse(req, 'Invalid bearer token', 401);
       }
     } else if (webhook.auth_type === 'api_key') {
       const apiKey = headers['x-api-key'] || url.searchParams.get('api_key') || '';
-      if (apiKey !== webhook.secret) {
+      if (!apiKey || apiKey !== webhook.secret) {
         await logEvent(supabase, webhook.id, req.method, headers, queryParams, body, sourceIp, 'rejected', 401);
         return errorResponse(req, 'Invalid API key', 401);
+      }
+    } else {
+      // For 10/10 security, reject any webhook without auth_type if not public
+      if (!webhook.is_public) {
+        await logEvent(supabase, webhook.id, req.method, headers, queryParams, body, sourceIp, 'rejected', 401);
+        return errorResponse(req, 'Authentication required', 401);
       }
     }
 

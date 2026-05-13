@@ -30,12 +30,15 @@ export async function hmacSha256Hex(secret: string, message: string): Promise<st
  * Enforces timing-safe comparison.
  */
 export async function verifyHmac(
-  secret: string,
+  secret: string | undefined,
   body: string,
-  receivedSignature: string,
+  receivedSignature: string | null,
   prefix = 'sha256='
 ): Promise<boolean> {
-  if (!receivedSignature || !secret) return false;
+  if (!receivedSignature || !secret) {
+    console.error('Missing signature or secret for HMAC verification');
+    return false;
+  }
   
   const signature = receivedSignature.startsWith(prefix) 
     ? receivedSignature.slice(prefix.length) 

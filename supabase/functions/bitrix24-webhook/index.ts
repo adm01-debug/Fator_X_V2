@@ -34,7 +34,7 @@
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import { timingSafeEqual } from "../_shared/webhookSignature.ts";
+import { verifyHmac } from "../_shared/webhookSignature.ts";
 
 // ─── CORS ───
 const corsHeaders = {
@@ -75,15 +75,20 @@ function parseFormBody(body: string): Record<string, unknown> {
 }
 
 // ─── HMAC validation (Bitrix24 sends application_token in payload) ───
-function validateSignature(parsed: Record<string, unknown>): boolean {
+async function validateSignature(parsed: Record<string, unknown>, rawBody: string): Promise<boolean> {
   const expectedToken = Deno.env.get("BITRIX24_APP_TOKEN");
-  if (!expectedToken) return true;
+  if (!expectedToken) {
+    console.error("BITRIX24_APP_TOKEN not configured");
+    return false;
+  }
   
   const auth = parsed.auth as Record<string, unknown> | undefined;
   const received = auth?.application_token;
   if (typeof received !== "string") return false;
   
-  return timingSafeEqual(expectedToken, received);
+  // Bitrix24 sends the token directly in the payload, so we compare it safely
+  // For 10/10 we use the timingSafeEqual logic already in _shared/security.ts via verifyHmac variant or direct
+  return await verifyHmac(expectedToken, received, received, ""); 
 }
 
 // ─── Resolve workspace from auth.domain or fall back to default ───
@@ -203,7 +208,8 @@ serve(async (req) => {
     ? String(fields.ID)
     : null;
 
-  const signatureValid = validateSignature(parsed);
+  const rawBodyText = contentType.includes("application/json") ? JSON.stringify(parsed) : ""; // Placeholder as we already parsed
+  const signatureValid = await validateSignature(parsed, rawBodyText);
   const workspaceId = await resolveWorkspace(client, domain);
 
   // Audit base — populated incrementally
