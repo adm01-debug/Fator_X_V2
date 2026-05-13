@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { syncExternalAuth } from "@/integrations/supabase/externalClient";
+import { logger } from "@/lib/logger";
 import type { User, Session } from "@supabase/supabase-js";
 
 interface AuthContextType {
