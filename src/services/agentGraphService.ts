@@ -46,13 +46,13 @@ export const agentGraphService = {
       .eq('workspace_id', workspaceId)
       .order('updated_at', { ascending: false });
     if (error) throw error;
-    return (data ?? []) as unknown as AgentGraph[];
+    return (data as any) ?? [];
   },
 
   async getGraph(id: string): Promise<AgentGraph> {
     const { data, error } = await supabase.from('agent_graphs').select('*').eq('id', id).single();
     if (error) throw error;
-    return data as unknown as AgentGraph;
+    return data as any;
   },
 
   async createGraph(workspaceId: string, name: string, description = ''): Promise<AgentGraph> {
@@ -71,7 +71,7 @@ export const agentGraphService = {
       .select()
       .single();
     if (error) throw error;
-    return data as unknown as AgentGraph;
+    return data as any;
   },
 
   async updateGraph(id: string, patch: Partial<Pick<AgentGraph, 'name' | 'description' | 'nodes' | 'edges' | 'entry_node_id'>>): Promise<void> {
@@ -98,12 +98,12 @@ export const agentGraphService = {
       .order('started_at', { ascending: false })
       .limit(50);
     if (error) throw error;
-    return (data ?? []) as unknown as GraphExecution[];
+    return (data as any) ?? [];
   },
 
   async getExecution(id: string): Promise<GraphExecution> {
     const { data, error } = await supabase.from('graph_executions').select('*').eq('id', id).single();
     if (error) throw error;
-    return data as unknown as GraphExecution;
+    return data as any;
   },
 };
