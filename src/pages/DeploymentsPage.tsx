@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { logger } from "@/lib/logger";
 import { CardGridSkeleton } from "@/components/shared/PageSkeleton";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { StatusBadge } from "@/components/shared/StatusBadge";
@@ -218,7 +219,7 @@ export default function DeploymentsPage() {
         onOpenChange={setWizardOpen}
         agentName={selectedAgent?.name || ""}
         onDeploy={(env) => {
-          console.log(`Deploying to ${env}`);
+          logger.info(`Deploying to ${env}`, { agent_id: selectedAgent?.id });
         }}
       />
     </div>

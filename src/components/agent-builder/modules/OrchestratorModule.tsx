@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { logger } from '@/lib/logger';
 import ReactFlow, {
   Background,
   Controls,
@@ -77,7 +78,7 @@ export function OrchestratorModule() {
       try { parsed = JSON.parse(testInput); } catch {}
       const result = await runWorkflow(active.id, parsed);
       toast.success('Execução concluída');
-      console.log('Workflow result:', result);
+      logger.info('Workflow execution result', { workflow_id: active.id, result });
     } catch (e: any) {
       toast.error(e.message || 'Falha na execução');
     } finally {

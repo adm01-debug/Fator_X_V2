@@ -6,6 +6,12 @@ interface AudioVisualizerProps {
   color?: string;
 }
 
+declare global {
+  interface Window {
+    webkitAudioContext: typeof AudioContext;
+  }
+}
+
 export function AudioVisualizer({ stream, connected, color = '#9B59B6' }: AudioVisualizerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number>();
@@ -22,7 +28,7 @@ export function AudioVisualizer({ stream, connected, color = '#9B59B6' }: AudioV
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const analyser = audioCtx.createAnalyser();
     const source = audioCtx.createMediaStreamSource(stream);
     

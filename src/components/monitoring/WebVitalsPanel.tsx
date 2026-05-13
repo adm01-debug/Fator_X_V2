@@ -7,6 +7,19 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Gauge, RefreshCcw, CheckCircle2, AlertTriangle, XCircle } from 'lucide-react';
 
+interface ExtendedPerformance extends Performance {
+  memory?: {
+    usedJSHeapSize: number;
+    totalJSHeapSize: number;
+    jsHeapSizeLimit: number;
+  };
+}
+
+interface LayoutShift extends PerformanceEntry {
+  value: number;
+  hadRecentInput: boolean;
+}
+
 interface VitalMetric {
   name: string;
   value: number;
@@ -77,13 +90,13 @@ export function WebVitalsPanel() {
 
     // CLS from layout-shift entries
     try {
-      const clsEntries = performance.getEntriesByType('layout-shift') as any[];
+      const clsEntries = performance.getEntriesByType('layout-shift') as unknown as LayoutShift[];
       const clsValue = clsEntries.reduce((sum, e) => sum + (e.hadRecentInput ? 0 : e.value || 0), 0);
       collected.CLS = { name: 'CLS', value: Math.round(clsValue * 1000) / 1000, rating: getRating('CLS', clsValue), unit: '', threshold: { good: 0.1, poor: 0.25 } };
     } catch { /* ignore */ }
 
     // Memory info (Chrome only)
-    const perf = performance as any;
+    const perf = performance as ExtendedPerformance;
     if (perf.memory) {
       const heapMB = Math.round(perf.memory.usedJSHeapSize / 1048576);
       collected.HEAP = { name: 'HEAP', value: heapMB, rating: heapMB < 50 ? 'good' : heapMB < 150 ? 'needs-improvement' : 'poor', unit: 'MB', threshold: { good: 50, poor: 150 } };

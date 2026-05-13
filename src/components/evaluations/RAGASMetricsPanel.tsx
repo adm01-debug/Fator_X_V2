@@ -148,7 +148,7 @@ export function RAGASMetricsPanel() {
             {Object.entries(METRIC_META).map(([key, meta]) => (
               <MetricBar
                 key={key}
-                value={(result as any)[key] ?? 0}
+                value={result[key as keyof RAGASResult] as number ?? 0}
                 label={meta.label}
                 color={meta.color}
               />

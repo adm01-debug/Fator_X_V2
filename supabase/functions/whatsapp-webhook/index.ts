@@ -31,6 +31,7 @@
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
+import { verifyHmac } from "../_shared/webhookSignature.ts";
 
 // ─── CORS ───
 const corsHeaders = {
@@ -181,34 +182,19 @@ async function validateSignature(
 ): Promise<boolean> {
   switch (provider) {
     case 'twilio': {
-      // Twilio uses HMAC-SHA1 over URL+body. Skipped here unless
-      // WHATSAPP_TWILIO_AUTH_TOKEN is set; in dev mode returns true.
       const token = Deno.env.get('WHATSAPP_TWILIO_AUTH_TOKEN');
       if (!token) return true;
       const provided = headers.get('x-twilio-signature') ?? '';
-      // Full Twilio validation is complex (requires URL); we accept any
-      // non-empty signature when token is configured. Operators can
-      // tighten this in production.
       return provided.length > 0;
     }
     case 'meta': {
       const secret = Deno.env.get('WHATSAPP_META_APP_SECRET');
       if (!secret) return true;
       const provided = headers.get('x-hub-signature-256') ?? '';
-      if (!provided.startsWith('sha256=')) return false;
-      const expected = await hmacSha256Hex(secret, rawBody);
-      const providedHex = provided.slice(7);
-      // Constant-time comparison
-      if (providedHex.length !== expected.length) return false;
-      let diff = 0;
-      for (let i = 0; i < expected.length; i++) {
-        diff |= providedHex.charCodeAt(i) ^ expected.charCodeAt(i);
-      }
-      return diff === 0;
+      return await verifyHmac(secret, rawBody, provided, 'sha256=');
     }
     case 'zapi':
     case 'evolution': {
-      // Token in body or header — check for any of the configured tokens
       const tokens = [
         Deno.env.get('WHATSAPP_ZAPI_TOKEN'),
         Deno.env.get('WHATSAPP_EVOLUTION_TOKEN'),
@@ -220,21 +206,6 @@ async function validateSignature(
     default:
       return false;
   }
-}
-
-async function hmacSha256Hex(secret: string, message: string): Promise<string> {
-  const enc = new TextEncoder();
-  const key = await crypto.subtle.importKey(
-    'raw',
-    enc.encode(secret),
-    { name: 'HMAC', hash: 'SHA-256' },
-    false,
-    ['sign'],
-  );
-  const sig = await crypto.subtle.sign('HMAC', key, enc.encode(message));
-  return Array.from(new Uint8Array(sig))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
 }
 
 // ─── Workspace resolution by destination phone or default ───
