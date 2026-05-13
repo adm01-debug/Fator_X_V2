@@ -76,7 +76,7 @@ export async function completeHandoff(
     .update({
       status: 'completed' as const,
       context: response,
-    })
+    } as any)
     .eq('id' as never, handoffId)
     .select()
     .single();
