@@ -22,12 +22,12 @@ describe('OTel GenAI Semantic Conventions', () => {
   it('estimates cost for known models', async () => {
     const { estimateCost } = await import('@/lib/otel-genai');
     
-    const cost = estimateCost('claude-sonnet-4-20250514', 1000, 500);
+    const cost = await estimateCost('claude-sonnet-4-20250514', 1000, 500);
     expect(cost).toBeGreaterThan(0);
     expect(cost).toBeLessThan(1); // Should be fraction of a dollar for small usage
     
     // Opus should be more expensive
-    const opusCost = estimateCost('claude-opus-4-6', 1000, 500);
+    const opusCost = await estimateCost('claude-opus-4-6', 1000, 500);
     expect(opusCost).toBeGreaterThan(cost);
   });
 });
