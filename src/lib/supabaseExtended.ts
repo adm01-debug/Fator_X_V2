@@ -4,12 +4,12 @@
  * Added: isUserLockedOut RPC call.
  */
 import { supabase } from '@/integrations/supabase/client';
-import type { Database } from '@/integrations/supabase/types';
 
 /**
  * Returns a typed Supabase client for a specific table.
+ * Using 'any' for table name to avoid deep type instantiation issues in build.
  */
-export const fromTable = (table: keyof Database['public']['Tables']) => supabase.from(table);
+export const fromTable = (table: any) => supabase.from(table);
 
 /**
  * Checks if a user is locked out due to multiple failed login attempts.
@@ -25,7 +25,6 @@ export const isUserLockedOut = async (email: string): Promise<boolean> => {
 
 /**
  * Syncs the local auth token to the external database client.
- * This is a placeholder for actual external client sync logic.
  */
 export const syncExternalAuth = (token: string | null) => {
   if (token) {
