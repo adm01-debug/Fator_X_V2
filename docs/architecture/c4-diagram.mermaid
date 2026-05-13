@@ -1,0 +1,22 @@
+graph TD
+    subgraph Frontend [React Application]
+        UI[UI Components] --> Hooks[Hooks / Stores]
+        Hooks --> Services[Domain Services]
+    end
+
+    subgraph Clients [Supabase Clients]
+        Services --> SupabaseLocal[Supabase Client - Auth Only]
+        Services --> SupabaseExternal[Supabase External Client - Data]
+    end
+
+    subgraph Backend [Supabase Cloud]
+        SupabaseLocal --> Auth[Supabase Auth]
+        SupabaseExternal --> DataDB[Application Database]
+        Services --> Edge[Edge Functions]
+    end
+
+    subgraph Integrations
+        Edge --> OpenAI[OpenAI / Anthropic]
+        Edge --> Bitrix24[Bitrix24 CRM]
+        Edge --> WhatsApp[WhatsApp Evolution]
+    end
