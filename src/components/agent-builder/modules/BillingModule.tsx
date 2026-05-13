@@ -6,7 +6,7 @@ import { useBillingData } from '@/hooks/useBillingData';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { listModelPrices, USD_TO_BRL, estimateTokens, getModelPrice } from '@/lib/llmPricing';
+import { listModelPrices, USD_TO_BRL, estimateTokens, getModelPrice, type ModelPrice } from '@/lib/llmPricing';
 import { Calculator, TrendingDown, Zap, Check } from 'lucide-react';
 
 // Real data from Supabase via useBillingData hook — no more mocks!
