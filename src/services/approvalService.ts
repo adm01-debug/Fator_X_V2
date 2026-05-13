@@ -5,10 +5,10 @@ export interface PendingApproval {
   id: string;
   workflow_id: string;
   status: string;
-  output: any; // Complex JSON from workflow-engine
+  output: any; 
   started_at: string | null;
-  current_step: number;
-  total_steps: number;
+  current_step: number | null;
+  total_steps: number | null;
   workflows: { name: string } | null;
 }
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
@@ -20,7 +20,7 @@ export async function listPendingApprovals(): Promise<PendingApproval[]> {
     .eq('status', 'awaiting_approval')
     .order('started_at', { ascending: false })
     .limit(20);
-  return data ?? [];
+  return (data as any) ?? [];
 }
 
 export async function approveWorkflowRun(runId: string, workflowId: string, feedback: string) {
