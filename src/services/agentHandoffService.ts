@@ -56,7 +56,7 @@ export async function acceptHandoff(handoffId: string): Promise<HandoffRecord> {
   const { data, error } = await fromTable('workflow_handoffs')
     .update({
       status: 'accepted' as const,
-    })
+    } as any)
     .eq('id' as never, handoffId)
     .select()
     .single();
