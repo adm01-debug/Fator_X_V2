@@ -53,13 +53,18 @@ export const LLM_PRICING: Record<string, ModelPrice> = {
     model: 'openai/gpt-5.2', label: 'GPT-5.2', provider: 'openai',
     input_per_1k: 0.00280, output_per_1k: 0.0120, avg_latency_ms: 3000, context_window: 400_000,
   },
+  'anthropic/claude-3.7-sonnet': {
+    model: 'anthropic/claude-3.7-sonnet', label: 'Claude 3.7 Sonnet', provider: 'anthropic',
+    input_per_1k: 0.00300, output_per_1k: 0.0150, avg_latency_ms: 1800, context_window: 200_000,
+  },
 };
+
 
 export function listModelPrices(): ModelPrice[] {
   return Object.values(LLM_PRICING);
 }
 
-export const USD_TO_BRL = 5.0;
+export const USD_TO_BRL = 5.75;
 
 export function getModelPrice(modelId: string | undefined | null): ModelPrice {
   if (modelId && LLM_PRICING[modelId]) return LLM_PRICING[modelId];
@@ -80,6 +85,8 @@ export async function calculateCostOnBackend(model: string, inputTokens: number,
 /** Rough char→token estimation. */
 export function estimateTokens(text: string): number {
   if (!text) return 0;
+  // Note: Standardize char/token ratio to 4 consistently across the platform
   return Math.ceil(text.length / 4);
 }
+
 
