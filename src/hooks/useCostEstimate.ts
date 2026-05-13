@@ -1,5 +1,6 @@
-import { useMemo } from 'react';
-import { getModelPrice, estimateTokens, USD_TO_BRL, type ModelPrice } from '@/lib/llmPricing';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { estimateTokens, USD_TO_BRL } from '@/lib/llmPricing';
 
 export interface CostEstimateInput {
   model?: string | null;
@@ -15,40 +16,80 @@ export interface CostEstimateResult {
   totalTokens: number;
   costUsd: number;
   costBrl: number;
-  estLatencyMs: number;
-  pricing: ModelPrice;
+  loading: boolean;
+  error?: string;
 }
 
 /**
- * Estimate cost & latency for a single LLM call.
- * Token math: chars/4 for input; maxTokens for output ceiling.
+ * Estimate cost for a single LLM call using the Edge Function (Single Source of Truth).
  */
 export function useCostEstimate(input: CostEstimateInput): CostEstimateResult {
-  return useMemo(() => {
-    const pricing = getModelPrice(input.model);
-    const sysTokens = estimateTokens(input.systemPrompt ?? '');
-    const userTokens = estimateTokens(input.userInput ?? '');
-    // Each tool definition adds ~50 tokens of schema overhead.
-    const toolsOverhead = (input.toolsCount ?? 0) * 50;
-    const inputTokens = sysTokens + userTokens + toolsOverhead;
-    // Assume model uses ~60% of max_tokens on average; floor 100 for short replies.
-    const outputTokens = Math.max(100, Math.floor((input.maxTokens ?? 1000) * 0.6));
+  const [result, setResult] = useState<CostEstimateResult>({
+    inputTokens: 0,
+    outputTokens: 0,
+    totalTokens: 0,
+    costUsd: 0,
+    costBrl: 0,
+    loading: false
+  });
 
-    const inputCost = (inputTokens / 1000) * pricing.input_per_1k;
-    const outputCost = (outputTokens / 1000) * pricing.output_per_1k;
-    const costUsd = inputCost + outputCost;
+  useEffect(() => {
+    let isMounted = true;
+    
+    const calculate = async () => {
+      const sysTokens = estimateTokens(input.systemPrompt ?? '');
+      const userTokens = estimateTokens(input.userInput ?? '');
+      const toolsOverhead = (input.toolsCount ?? 0) * 50;
+      const inputTokens = sysTokens + userTokens + toolsOverhead;
+      const outputTokens = Math.max(100, Math.floor((input.maxTokens ?? 1000) * 0.6));
+      const model = input.model || 'google/gemini-2.5-flash';
 
-    // Latency scales slightly with output size.
-    const estLatencyMs = pricing.avg_latency_ms + Math.floor(outputTokens / 50) * 10;
+      setResult(prev => ({ ...prev, loading: true }));
 
-    return {
-      inputTokens,
-      outputTokens,
-      totalTokens: inputTokens + outputTokens,
-      costUsd,
-      costBrl: costUsd * USD_TO_BRL,
-      estLatencyMs,
-      pricing,
+      try {
+        const { data, error } = await supabase.functions.invoke('cost-calculator', {
+          body: { 
+            model, 
+            inputTokens, 
+            outputTokens 
+          }
+        });
+
+        if (error) throw error;
+        if (!isMounted) return;
+
+        setResult({
+          inputTokens,
+          outputTokens,
+          totalTokens: inputTokens + outputTokens,
+          costUsd: data.costUsd,
+          costBrl: data.costBrl,
+          loading: false
+        });
+      } catch (err) {
+        console.error('Error calculating cost on backend:', err);
+        if (!isMounted) return;
+        
+        // Fallback to local (though discouraged, better than showing 0)
+        const localInputCost = (inputTokens / 1000) * 0.003;
+        const localOutputCost = (outputTokens / 1000) * 0.015;
+        const localUsd = localInputCost + localOutputCost;
+        
+        setResult({
+          inputTokens,
+          outputTokens,
+          totalTokens: inputTokens + outputTokens,
+          costUsd: localUsd,
+          costBrl: localUsd * USD_TO_BRL,
+          loading: false,
+          error: 'Using local estimate fallback'
+        });
+      }
     };
+
+    calculate();
+    return () => { isMounted = false; };
   }, [input.model, input.systemPrompt, input.userInput, input.maxTokens, input.toolsCount]);
+
+  return result;
 }

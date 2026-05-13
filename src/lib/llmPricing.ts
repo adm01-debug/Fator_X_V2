@@ -80,6 +80,8 @@ export async function calculateCostOnBackend(model: string, inputTokens: number,
 /** Rough char→token estimation. */
 export function estimateTokens(text: string): number {
   if (!text) return 0;
+  // Note: Standardize char/token ratio to 4 consistently across the platform
   return Math.ceil(text.length / 4);
 }
+
 
