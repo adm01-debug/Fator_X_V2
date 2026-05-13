@@ -67,7 +67,7 @@ export async function listRoles(): Promise<Role[]> {
     .order('level', { ascending: false });
 
   if (error) throw error;
-  return (data ?? []) as unknown as Role[];
+  return (data ?? []) as Role[];
 }
 
 // ═══ Permissions ═══
@@ -78,12 +78,12 @@ export async function listPermissions(): Promise<Permission[]> {
     .order('module', { ascending: true });
 
   if (error) throw error;
-  return (data ?? []) as unknown as Permission[];
+  return (data ?? []) as Permission[];
 }
 
 export async function getPermissionsForRole(roleKey: string): Promise<Permission[]> {
   const roleResult = await fromTable('roles').select('id').eq('key', roleKey).single();
-  const roleId = (roleResult.data as Record<string, unknown> | null)?.id ?? '';
+  const roleId = (roleResult.data as any)?.id ?? '';
 
   const { data, error } = await fromTable('role_permissions')
     .select('permission_id')
@@ -92,11 +92,11 @@ export async function getPermissionsForRole(roleKey: string): Promise<Permission
   if (error) throw error;
 
   // Fetch permissions by IDs
-  const permIds = (data ?? []).map((rp: Record<string, unknown>) => String(rp.permission_id));
+  const permIds = (data ?? []).map((rp: any) => String(rp.permission_id));
   if (permIds.length === 0) return [];
 
   const { data: perms } = await fromTable('permissions').select('*').in('id', permIds);
-  return (perms ?? []) as unknown as Permission[];
+  return (perms ?? []) as Permission[];
 }
 
 // ═══ User Roles ═══
@@ -109,7 +109,7 @@ export async function getUserRole(userId: string, workspaceId: string): Promise<
     .maybeSingle();
 
   if (error) throw error;
-  return data as unknown as UserRole | null;
+  return data as UserRole | null;
 }
 
 export async function getUserPermissions(userId: string, workspaceId: string): Promise<Set<PermissionKey>> {
@@ -117,7 +117,7 @@ export async function getUserPermissions(userId: string, workspaceId: string): P
   if (!userRole) return new Set();
 
   const roleResult = await fromTable('roles').select('id').eq('key', userRole.role_key).single();
-  const roleId = (roleResult.data as Record<string, unknown> | null)?.id ?? '';
+  const roleId = (roleResult.data as any)?.id ?? '';
 
   const { data, error } = await fromTable('role_permissions')
     .select('permission_id')
@@ -125,12 +125,12 @@ export async function getUserPermissions(userId: string, workspaceId: string): P
 
   if (error) throw error;
 
-  const permIds = (data ?? []).map((rp: Record<string, unknown>) => String(rp.permission_id));
+  const permIds = (data ?? []).map((rp: any) => String(rp.permission_id));
   if (permIds.length === 0) return new Set();
 
   const { data: perms } = await fromTable('permissions').select('key').in('id', permIds);
   const permissions = new Set<PermissionKey>();
-  ((perms ?? []) as Array<Record<string, unknown>>).forEach(p => {
+  ((perms ?? []) as Array<any>).forEach(p => {
     if (p.key) permissions.add(String(p.key) as PermissionKey);
   });
 
@@ -154,7 +154,7 @@ export async function assignRole(
     .single();
 
   if (error) throw error;
-  return data as unknown as UserRole;
+  return data as UserRole;
 }
 
 export async function removeRole(userId: string, workspaceId: string): Promise<void> {
