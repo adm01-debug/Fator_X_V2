@@ -30,11 +30,13 @@ export default function AgentAlertsPage() {
     enabled: !!agentId,
   });
 
-  const { data: traces = [] } = useQuery({
+  const { data: traceData = { traces: [], total: 0 } } = useQuery({
     queryKey: ['agent-traces-for-alerts', agentId],
     queryFn: () => listAgentTraces({ agentId, sinceHours: 24, limit: 500 }),
     staleTime: 30_000,
   });
+
+  const traces = (traceData as any).traces || [];
 
   const [rules, setRules] = useState<AlertRule[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
