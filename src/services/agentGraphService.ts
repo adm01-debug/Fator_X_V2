@@ -7,6 +7,7 @@ export interface GraphNode {
   role?: string;
   label?: string;
   position: { x: number; y: number };
+  [key: string]: any;
 }
 
 export interface GraphEdge {
@@ -14,6 +15,7 @@ export interface GraphEdge {
   from: string;
   to: string;
   condition?: string;
+  [key: string]: any;
 }
 
 // Map the Database type to our cleaner interface
