@@ -19,7 +19,7 @@ export function AuditLogSection() {
 
     if (format === 'csv') {
       const headers = ['Data', 'Ação', 'Tipo', 'Entity ID', 'Metadata'];
-      const rows = logs.map((l: Record<string, unknown>) => [
+      const rows = logs.map((l: any) => [
         new Date(l.created_at as string).toISOString(),
         l.action,
         l.entity_type,
