@@ -34,13 +34,14 @@ export const AGENT_TYPES = [
 ];
 
 export const MODELS = [
-  { id: "gpt-4o", name: "GPT-4o", provider: "OpenAI", cost: "$$", speed: "Rápido", quality: "Excelente" },
-  { id: "gpt-4-turbo", name: "GPT-4 Turbo", provider: "OpenAI", cost: "$$$", speed: "Médio", quality: "Máxima" },
-  { id: "claude-3.5-sonnet", name: "Claude 3.5 Sonnet", provider: "Anthropic", cost: "$$", speed: "Rápido", quality: "Excelente" },
-  { id: "claude-3-opus", name: "Claude 3 Opus", provider: "Anthropic", cost: "$$$", speed: "Lento", quality: "Máxima" },
-  { id: "gemini-1.5-pro", name: "Gemini 1.5 Pro", provider: "Google", cost: "$", speed: "Rápido", quality: "Muito boa" },
-  { id: "llama-3-70b", name: "Llama 3 70B", provider: "Meta (open)", cost: "$", speed: "Médio", quality: "Boa" },
+  { id: "google/gemini-2.5-flash", name: "Gemini 2.5 Flash", provider: "Google", cost: "Baixo", speed: "Instantâneo", quality: "Boa" },
+  { id: "google/gemini-2.5-pro", name: "Gemini 2.5 Pro", provider: "Google", cost: "Médio", speed: "Rápido", quality: "Excelente" },
+  { id: "google/gemini-3.1-pro-preview", name: "Gemini 3.1 Pro", provider: "Google", cost: "Médio", speed: "Rápido", quality: "Máxima" },
+  { id: "openai/gpt-5", name: "GPT-5", provider: "OpenAI", cost: "Alto", speed: "Médio", quality: "Máxima" },
+  { id: "openai/gpt-5-mini", name: "GPT-5 Mini", provider: "OpenAI", cost: "Baixo", speed: "Rápido", quality: "Muito boa" },
+  { id: "anthropic/claude-3.7-sonnet", name: "Claude 3.7 Sonnet", provider: "Anthropic", cost: "Médio", speed: "Rápido", quality: "Excelente" },
 ];
+
 
 export const TOOLS = [
   { id: "web_search", name: "Web Search", icon: Globe, category: "Busca" },
