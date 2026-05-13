@@ -32,7 +32,7 @@ export async function initiateHandoff(request: HandoffRequest): Promise<HandoffR
     execution_id: request.executionId ?? null,
     source_node_id: request.sourceNodeId ?? request.sourceAgentId,
     target_node_id: request.targetNodeId ?? request.targetAgentId,
-    context: request.context as any,
+    context: request.context as Record<string, any>,
     reason: request.reason,
     reason_text: request.reasonText ?? null,
     status: 'pending' as const,
