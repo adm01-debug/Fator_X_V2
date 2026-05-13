@@ -82,7 +82,7 @@ export async function completeHandoff(
     .single();
 
   if (error) throw new Error(`Failed to complete handoff: ${error.message}`);
-  return data as unknown as HandoffRecord;
+  return data as any as HandoffRecord;
 }
 
 /**
