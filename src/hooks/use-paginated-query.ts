@@ -4,6 +4,15 @@ import type { Database } from '@/integrations/supabase/types';
 
 type TableName = keyof Database['public']['Tables'];
 
+// Local interface to provide type-safe access to common methods without hitting deep recursion
+interface QueryBuilder {
+  select: (columns?: string, options?: { count?: string; head?: boolean }) => QueryBuilder;
+  eq: (column: string, value: string) => QueryBuilder;
+  order: (column: string, options: { ascending: boolean }) => QueryBuilder;
+  range: (from: number, to: number) => QueryBuilder;
+  then: (onfulfilled?: (value: { data: any[] | null; count: number | null; error: Error | null }) => any) => Promise<any>;
+}
+
 export interface PaginationState {
   page: number;
   pageSize: number;
@@ -65,24 +74,23 @@ export function usePaginatedQuery<T = Record<string, unknown>>(
         const from = (page - 1) * pageSize;
         const to = from + pageSize - 1;
 
-        // Count - using a more relaxed approach to avoid deep instantiation
-        // but still avoiding the 'any' keyword where possible in logic
-        type Builder = { eq: (c: string, v: string) => Builder } & PromiseLike<any>;
-        
-        let countBuilder = (supabaseExternal.from(table).select('*', { count: 'exact', head: true }) as unknown) as Builder;
+        // Count
+        const countBuilder = (supabaseExternal.from(table) as unknown) as QueryBuilder;
+        let countQuery = countBuilder.select('*', { count: 'exact', head: true });
         for (const [col, val] of Object.entries(eqFilters)) {
-          countBuilder = countBuilder.eq(col, val);
+          countQuery = countQuery.eq(col, val);
         }
-        const { count } = await countBuilder;
+        const { count } = await countQuery;
         const total = count ?? 0;
 
         // Data
-        let dataBuilder = (supabaseExternal.from(table).select(select).order(orderBy, { ascending }).range(from, to) as unknown) as Builder;
+        const dataBuilder = (supabaseExternal.from(table) as unknown) as QueryBuilder;
+        let dataQuery = dataBuilder.select(select).order(orderBy, { ascending }).range(from, to);
         for (const [col, val] of Object.entries(eqFilters)) {
-          dataBuilder = dataBuilder.eq(col, val);
+          dataQuery = dataQuery.eq(col, val);
         }
-        const { data: rows, error: qErr } = await dataBuilder;
-        if (qErr) throw (qErr as Error);
+        const { data: rows, error: qErr } = await dataQuery;
+        if (qErr) throw qErr;
 
         setData((rows ?? []) as T[]);
         setPagination({ page, pageSize, total, totalPages: Math.ceil(total / pageSize) });
