@@ -107,7 +107,7 @@ export async function deleteWhatsAppRoute(id: string): Promise<void> {
 
 export async function toggleWhatsAppRoute(id: string, isEnabled: boolean): Promise<void> {
   const { error } = await fromTable('agent_routing_config')
-    .update({ is_enabled: isEnabled })
+    .update({ is_enabled: isEnabled } as Record<string, any>)
     .eq('id', id);
   if (error) {
     logger.error('toggleWhatsAppRoute failed', { error: error.message });
