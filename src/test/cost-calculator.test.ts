@@ -40,7 +40,7 @@ vi.mock('@/integrations/supabase/client', () => ({
       })),
     })),
     functions: {
-      invoke: vi.fn(async (fn, { body }) => {
+      invoke: vi.fn(async (_fn, { body }) => {
         const inputRate = body.model.includes('sonnet') ? 0.003 : 0.0025;
         const outputRate = body.model.includes('sonnet') ? 0.015 : 0.01;
         const inputCost = (body.inputTokens / 1000) * inputRate;
