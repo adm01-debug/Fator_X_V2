@@ -34,12 +34,16 @@ export const quickModelSchema = z.object({
     .refine(
       (m) =>
         [
-          'gpt-4o',
-          'gpt-4-turbo',
-          'claude-3.5-sonnet',
-          'claude-3-opus',
-          'gemini-1.5-pro',
-          'llama-3-70b',
+          'google/gemini-2.5-flash',
+          'google/gemini-2.5-flash-lite',
+          'google/gemini-2.5-pro',
+          'google/gemini-3-flash-preview',
+          'google/gemini-3.1-pro-preview',
+          'openai/gpt-5',
+          'openai/gpt-5-mini',
+          'openai/gpt-5-nano',
+          'openai/gpt-5.2',
+
         ].includes(m),
       'Modelo inválido',
     ),
@@ -281,7 +285,7 @@ export const QUICK_AGENT_DEFAULTS: QuickAgentForm = {
   mission: '',
   description: '',
   type: 'chatbot',
-  model: 'gpt-4o',
+  model: 'google/gemini-2.5-flash',
   prompt: '',
 };
 
