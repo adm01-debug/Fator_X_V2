@@ -19,7 +19,7 @@ export async function getUsageSummary(period: 'day' | 'week' | 'month' = 'week')
 
   if (error) throw error;
 
-  const records = (data ?? []) as any[];
+  const records = (data ?? []);
   const totalCost = records.reduce((s, r) => s + Number(r.cost_usd || 0), 0);
   const totalTokens = records.reduce((s, r) => s + Number(r.tokens || 0), 0);
 
