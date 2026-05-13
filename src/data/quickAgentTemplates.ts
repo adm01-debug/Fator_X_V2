@@ -564,7 +564,8 @@ export const QUICK_AGENT_TEMPLATES: Record<QuickAgentType, QuickAgentTemplate> =
     emoji: '💬',
     mission: 'Atender usuários finais com respostas rápidas, claras e empáticas em chat.',
     description: 'Assistente conversacional para atendimento de primeiro nível.',
-    recommendedModel: 'gpt-4o',
+    recommendedModel: 'google/gemini-2.5-flash',
+
     systemPrompt: CHATBOT_BALANCED,
     promptVariants: makeVariants(CHATBOT_BALANCED, CHATBOT_CONCISE, CHATBOT_DETAILED),
   },
@@ -574,7 +575,8 @@ export const QUICK_AGENT_TEMPLATES: Record<QuickAgentType, QuickAgentTemplate> =
     emoji: '✨',
     mission: 'Acelerar o trabalho de times internos com sugestões contextuais e respostas precisas.',
     description: 'Copiloto interno para equipes — produtividade e contexto.',
-    recommendedModel: 'gpt-4o',
+    recommendedModel: 'openai/gpt-5-mini',
+
     systemPrompt: COPILOT_BALANCED,
     promptVariants: makeVariants(COPILOT_BALANCED, COPILOT_CONCISE, COPILOT_DETAILED),
   },
@@ -584,7 +586,8 @@ export const QUICK_AGENT_TEMPLATES: Record<QuickAgentType, QuickAgentTemplate> =
     emoji: '📊',
     mission: 'Analisar dados e gerar insights acionáveis com rigor estatístico.',
     description: 'Analista de dados com foco em insights de negócio.',
-    recommendedModel: 'claude-3.5-sonnet',
+    recommendedModel: 'anthropic/claude-3.7-sonnet',
+
     systemPrompt: ANALYST_BALANCED,
     promptVariants: makeVariants(ANALYST_BALANCED, ANALYST_CONCISE, ANALYST_DETAILED),
   },
@@ -614,7 +617,8 @@ export const QUICK_AGENT_TEMPLATES: Record<QuickAgentType, QuickAgentTemplate> =
     emoji: '🔎',
     mission: 'Pesquisar fontes confiáveis e sintetizar com citações precisas.',
     description: 'Pesquisador documental e web com rastreabilidade total.',
-    recommendedModel: 'claude-3-opus',
+    recommendedModel: 'openai/gpt-5',
+
     systemPrompt: RESEARCHER_BALANCED,
     promptVariants: makeVariants(RESEARCHER_BALANCED, RESEARCHER_CONCISE, RESEARCHER_DETAILED),
   },
