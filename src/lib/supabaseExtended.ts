@@ -33,3 +33,10 @@ export const syncExternalAuth = (token: string | null) => {
     localStorage.removeItem('supabase.external.auth.token');
   }
 };
+
+/**
+ * Executes a Supabase RPC call.
+ */
+export const rpcCall = async (fnName: string, params: any) => {
+  return await supabase.rpc(fnName as any, params);
+};
