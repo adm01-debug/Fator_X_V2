@@ -113,7 +113,7 @@ export async function updateCredential(id: string, updates: { name?: string; des
   const { data, error } = await fromTable('credential_vault').update(patch).eq('id', id).select().single();
   if (error) throw error;
   await logAudit(id, 'updated', userId, 'user', { fields_updated: Object.keys(updates) });
-  return data as CredentialEntry;
+  return data as unknown as CredentialEntry;
 }
 
 export async function rotateCredential(id: string, newData: CredentialData): Promise<CredentialEntry> {
