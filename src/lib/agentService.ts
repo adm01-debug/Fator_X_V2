@@ -106,7 +106,7 @@ export async function getAgent(id: string): Promise<AgentConfig> {
 
 export async function saveAgent(agent: AgentConfig): Promise<AgentConfig> {
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Não autenticado');
+  if (!user) throw new Error('Not authenticated');
 
   let workspaceId: string | null = null;
   try { workspaceId = await getWorkspaceId(); } catch (err) { logger.error("Operation failed:", err);}
