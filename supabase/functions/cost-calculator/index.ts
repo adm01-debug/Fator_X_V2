@@ -1,54 +1,78 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { 
+  handleCorsPreflight, 
+  jsonResponse, 
+  errorResponse, 
+  createAdminClient,
+  z,
+  parseBody
+} from "../_shared/mod.ts";
 
 /**
  * Edge Function to calculate LLM costs based on centralized pricing.
- * Mover logic from frontend to ensure single source of truth.
+ * Single source of truth for both frontend and backend.
  */
 
-const LLM_PRICING: Record<string, any> = {
-  'google/gemini-2.5-flash': {
-    model: 'google/gemini-2.5-flash', label: 'Gemini 2.5 Flash', provider: 'google',
-    input_per_1k: 0.00015, output_per_1k: 0.0006, avg_latency_ms: 800, context_window: 1_000_000,
-  },
-  'google/gemini-2.5-flash-lite': {
-    model: 'google/gemini-2.5-flash-lite', label: 'Gemini 2.5 Flash Lite', provider: 'google',
-    input_per_1k: 0.00010, output_per_1k: 0.0004, avg_latency_ms: 500, context_window: 1_000_000,
-  },
-  'google/gemini-2.5-pro': {
-    model: 'google/gemini-2.5-pro', label: 'Gemini 2.5 Pro', provider: 'google',
-    input_per_1k: 0.00125, output_per_1k: 0.010, avg_latency_ms: 2200, context_window: 2_000_000,
-  },
-  'openai/gpt-5': {
-    model: 'openai/gpt-5', label: 'GPT-5', provider: 'openai',
-    input_per_1k: 0.00250, output_per_1k: 0.0100, avg_latency_ms: 2800, context_window: 400_000,
-  }
+const CostRequestSchema = z.object({
+  model: z.string(),
+  inputTokens: z.number().nonnegative(),
+  outputTokens: z.number().nonnegative(),
+});
+
+const DEFAULT_PRICING = {
+  input_cost_per_1k: 0.003, // Default to Sonnet-like
+  output_cost_per_1k: 0.015,
+  provider: 'unknown'
 };
 
-const USD_TO_BRL = 5.0;
+const USD_TO_BRL = 5.75; // Updated to match current service value
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: { "Access-Control-Allow-Origin": "*" } });
-  }
+  if (req.method === 'OPTIONS') return handleCorsPreflight(req);
 
   try {
-    const { model, inputTokens, outputTokens } = await req.json();
-    const pricing = LLM_PRICING[model] || LLM_PRICING['google/gemini-2.5-flash'];
+    const parsed = await parseBody(req, CostRequestSchema);
+    if (parsed.error) return parsed.error;
     
-    const inputCost = (inputTokens / 1000) * pricing.input_per_1k;
-    const outputCost = (outputTokens / 1000) * pricing.output_per_1k;
+    const { model, inputTokens, outputTokens } = parsed.data;
+    
+    const supabaseAdmin = createAdminClient();
+    const { data: pricingList } = await supabaseAdmin
+      .from('model_pricing')
+      .select('model_pattern, input_cost_per_1k, output_cost_per_1k');
+    
+    let pricing = { ...DEFAULT_PRICING };
+    
+    if (pricingList) {
+      // Sort by pattern length DESC to match most specific pattern first
+      const sorted = [...pricingList].sort((a, b) => b.model_pattern.length - a.model_pattern.length);
+      const match = sorted.find(p => model.toLowerCase().includes(p.model_pattern.toLowerCase()));
+      
+      if (match) {
+        pricing = {
+          input_cost_per_1k: Number(match.input_cost_per_1k),
+          output_cost_per_1k: Number(match.output_cost_per_1k),
+          provider: model.split('/')[0] || 'unknown'
+        };
+      }
+    }
+    
+    const inputCost = (inputTokens / 1000) * pricing.input_cost_per_1k;
+    const outputCost = (outputTokens / 1000) * pricing.output_cost_per_1k;
     const costUsd = inputCost + outputCost;
 
-    return new Response(
-      JSON.stringify({
-        costUsd,
-        costBrl: costUsd * USD_TO_BRL,
-        model: pricing.label,
-        provider: pricing.provider
-      }),
-      { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } }
-    );
+    return jsonResponse(req, {
+      costUsd,
+      costBrl: costUsd * USD_TO_BRL,
+      model,
+      provider: pricing.provider,
+      tokens: inputTokens + outputTokens,
+      breakdown: {
+        inputCost,
+        outputCost
+      }
+    });
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), { status: 400 });
+    return errorResponse(req, err instanceof Error ? err.message : 'Unknown error');
   }
 });
