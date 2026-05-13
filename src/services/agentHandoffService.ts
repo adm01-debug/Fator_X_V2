@@ -168,7 +168,7 @@ export async function getExecutionHandoffs(executionId: string): Promise<Handoff
     .order('created_at' as never, { ascending: true });
 
   if (error) throw new Error(`Failed to get execution handoffs: ${error.message}`);
-  return (data ?? []) as any[];
+  return (data ?? []) as any as HandoffRecord[];
 }
 
 // ──────── Handoff Rules Engine ────────
