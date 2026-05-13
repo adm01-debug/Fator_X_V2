@@ -22,9 +22,9 @@ const SNIPPETS: Record<CodeRuntime, { label: string; code: string }[]> = {
     { label: "Plot", code: 'import matplotlib.pyplot as plt\nplt.plot([1,2,3,4],[1,4,9,16])\nplt.savefig("/tmp/plot.png")\nprint("saved")' },
   ],
   node: [
-    { label: "Hello", code: 'console.log("Olá do sandbox virtual Node!");' },
-    { label: "Map", code: 'const xs = [1,2,3,4,5];\nconsole.log(xs.map(x => x * x));' },
-    { label: "Fetch", code: 'const r = await fetch("https://api.github.com");\nconsole.log(r.status);' },
+    { label: "Hello", code: 'logger.info("Olá do sandbox virtual Node!");' },
+    { label: "Map", code: 'const xs = [1,2,3,4,5];\nlogger.info(xs.map(x => x * x));' },
+    { label: "Fetch", code: 'const r = await fetch("https://api.github.com");\nlogger.info(r.status);' },
   ],
 };
 
