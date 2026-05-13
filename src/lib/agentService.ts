@@ -83,7 +83,7 @@ export async function getAgent(id: string): Promise<AgentConfig> {
     .maybeSingle();
 
   if (error) throw error;
-  if (!data) throw new Error('Agente não encontrado');
+  if (!data) throw new Error('Agent not found');
 
   const config = (data.config || {}) as Record<string, any>;
   return {
