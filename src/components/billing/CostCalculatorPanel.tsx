@@ -2,47 +2,86 @@
  * CostCalculatorPanel — Interactive LLM cost calculator.
  * Wires costCalculatorService into BillingPage.
  */
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calculator, ArrowUpDown, DollarSign } from 'lucide-react';
-import { getAllPricing, calculateCost, formatCostUsd, formatCostBrl, compareCosts, type ActualCost } from '@/services/costCalculatorService';
+import { Calculator, ArrowUpDown, DollarSign, Loader2 } from 'lucide-react';
+import { getAllPricing, calculateCost, formatCostUsd, formatCostBrl, compareCosts, type ActualCost, type ModelPricing } from '@/services/costCalculatorService';
 import { Button } from '@/components/ui/button';
 
 export function CostCalculatorPanel() {
-  const allPricing = useMemo(() => getAllPricing(), []);
+  const [allPricing, setAllPricing] = useState<ModelPricing[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    getAllPricing().then(data => {
+      setAllPricing(data);
+      setLoading(false);
+    });
+  }, []);
+
   const providers = useMemo(() => [...new Set(allPricing.map(p => p.provider))], [allPricing]);
 
-  const [provider, setProvider] = useState(providers[0] || 'openai');
+  const [provider, setProvider] = useState('openai');
   const [model, setModel] = useState('');
   const [inputTokens, setInputTokens] = useState('1000');
   const [outputTokens, setOutputTokens] = useState('500');
   const [result, setResult] = useState<ActualCost | null>(null);
+  const [calculating, setCalculating] = useState(false);
   const [showComparison, setShowComparison] = useState(false);
+  const [comparison, setComparison] = useState<Array<{ provider: string; model: string; costUsd: number; costBrl: number }>>([]);
+  const [comparing, setComparing] = useState(false);
 
   const modelsForProvider = useMemo(
     () => allPricing.filter(p => p.provider === provider),
     [allPricing, provider]
   );
 
-  const handleCalculate = () => {
+  // Sync provider/model when data loads
+  useEffect(() => {
+    if (providers.length > 0 && !provider) {
+      setProvider(providers[0]);
+    }
+  }, [providers, provider]);
+
+  const handleCalculate = async () => {
     const inp = parseInt(inputTokens) || 0;
     const out = parseInt(outputTokens) || 0;
     const m = model || modelsForProvider[0]?.model || '';
     if (!m) return;
+    
+    setCalculating(true);
     try {
-      const cost = calculateCost(provider, m, inp, out);
+      const cost = await calculateCost(provider, m, inp, out);
       setResult(cost);
     } catch { /* ignore */ }
+    setCalculating(false);
   };
 
-  const comparison = useMemo(() => {
-    if (!showComparison) return [];
-    const inp = parseInt(inputTokens) || 1000;
-    const out = parseInt(outputTokens) || 500;
-    return compareCosts(inp, out);
-  }, [showComparison, inputTokens, outputTokens]);
+  const toggleComparison = async () => {
+    if (!showComparison) {
+      setComparing(true);
+      const inp = parseInt(inputTokens) || 1000;
+      const out = parseInt(outputTokens) || 500;
+      try {
+        const results = await compareCosts(inp, out);
+        setComparison(results);
+        setShowComparison(true);
+      } catch { /* ignore */ }
+      setComparing(false);
+    } else {
+      setShowComparison(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="nexus-card h-40 flex items-center justify-center">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
     <div className="nexus-card space-y-4">
@@ -52,7 +91,7 @@ export function CostCalculatorPanel() {
         </div>
         <div>
           <h3 className="text-sm font-bold text-foreground">Calculadora de Custos LLM</h3>
-          <p className="text-[11px] text-muted-foreground">{allPricing.length} modelos · {providers.length} providers · Preços abril 2026</p>
+          <p className="text-[11px] text-muted-foreground">{allPricing.length} modelos · {providers.length} providers · Fonte: Central de Preços Nexus</p>
         </div>
       </div>
 
@@ -86,11 +125,13 @@ export function CostCalculatorPanel() {
       </div>
 
       <div className="flex gap-2">
-        <Button size="sm" className="gap-1.5 text-xs" onClick={handleCalculate}>
-          <DollarSign className="h-3.5 w-3.5" /> Calcular
+        <Button size="sm" className="gap-1.5 text-xs" onClick={handleCalculate} disabled={calculating}>
+          {calculating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <DollarSign className="h-3.5 w-3.5" />} 
+          Calcular
         </Button>
-        <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => setShowComparison(!showComparison)}>
-          <ArrowUpDown className="h-3.5 w-3.5" /> {showComparison ? 'Ocultar' : 'Comparar'} Todos
+        <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={toggleComparison} disabled={comparing}>
+          {comparing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ArrowUpDown className="h-3.5 w-3.5" />}
+          {showComparison ? 'Ocultar' : 'Comparar'} Todos
         </Button>
       </div>
 
@@ -101,7 +142,7 @@ export function CostCalculatorPanel() {
             <p className="text-[10px] text-muted-foreground">Custo USD</p>
           </div>
           <div className="rounded-lg border border-border bg-muted/20 p-3 text-center">
-            <p className="text-lg font-black text-foreground">{formatCostBrl(result.totalCostBrl)}</p>
+            <p className="text-lg font-black text-foreground">{formatCostBrl(result.totalCostUsd)}</p>
             <p className="text-[10px] text-muted-foreground">Custo BRL</p>
           </div>
           <div className="rounded-lg border border-border bg-muted/20 p-3 text-center">
@@ -119,10 +160,10 @@ export function CostCalculatorPanel() {
               <div key={i} className="flex items-center gap-2 rounded-lg border border-border bg-secondary/20 px-3 py-1.5">
                 <span className="text-[10px] text-muted-foreground w-5">{i + 1}</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[11px] font-medium truncate">{c.provider}/{c.model}</p>
+                  <p className="text-[11px] font-medium truncate">{c.model}</p>
                 </div>
                 <Badge variant="outline" className="text-[10px]">{formatCostUsd(c.costUsd)}</Badge>
-                <span className="text-[10px] text-muted-foreground">{formatCostBrl(c.costBrl)}</span>
+                <span className="text-[10px] text-muted-foreground">{formatCostBrl(c.costUsd)}</span>
               </div>
             ))}
           </div>

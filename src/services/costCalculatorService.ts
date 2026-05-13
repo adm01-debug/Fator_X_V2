@@ -1,87 +1,57 @@
-/**
- * Nexus Agents Studio — Cost Calculator Service
- *
- * Tracks and estimates costs for LLM usage across all providers.
- * Features:
- * - Pre-execution cost estimation
- * - Post-execution actual cost tracking
- * - Per-node cost breakdown in workflows
- * - Budget alerts and limits
- * - Provider/model pricing database
- * - BRL conversion support
- */
-
 
 export type { ModelPricing, CostEstimate, CostBreakdownItem, ActualCost, BudgetConfig, BudgetStatus } from './types/costCalculatorTypes';
 import type { ModelPricing, CostEstimate, CostBreakdownItem, ActualCost, BudgetConfig, BudgetStatus } from './types/costCalculatorTypes';
+import { supabase } from '@/integrations/supabase/client';
 
-// ──────── Pricing Database (updated April 2026) ────────
+// ──────── Pricing ────────
 
-const PRICING_DB: ModelPricing[] = [
-  // Anthropic
-  { provider: 'anthropic', model: 'claude-opus-4-6', inputPricePerMToken: 15.0, outputPricePerMToken: 75.0, lastUpdated: '2026-04-01' },
-  { provider: 'anthropic', model: 'claude-sonnet-4-6', inputPricePerMToken: 3.0, outputPricePerMToken: 15.0, lastUpdated: '2026-04-01' },
-  { provider: 'anthropic', model: 'claude-haiku-4-5', inputPricePerMToken: 0.8, outputPricePerMToken: 4.0, lastUpdated: '2026-04-01' },
-  // OpenAI
-  { provider: 'openai', model: 'gpt-4o', inputPricePerMToken: 2.5, outputPricePerMToken: 10.0, lastUpdated: '2026-04-01' },
-  { provider: 'openai', model: 'gpt-4o-mini', inputPricePerMToken: 0.15, outputPricePerMToken: 0.6, lastUpdated: '2026-04-01' },
-  { provider: 'openai', model: 'gpt-4.1', inputPricePerMToken: 2.0, outputPricePerMToken: 8.0, lastUpdated: '2026-04-01' },
-  { provider: 'openai', model: 'gpt-4.1-mini', inputPricePerMToken: 0.4, outputPricePerMToken: 1.6, lastUpdated: '2026-04-01' },
-  { provider: 'openai', model: 'o3-mini', inputPricePerMToken: 1.1, outputPricePerMToken: 4.4, lastUpdated: '2026-04-01' },
-  // Google
-  { provider: 'google', model: 'gemini-2.5-pro', inputPricePerMToken: 1.25, outputPricePerMToken: 10.0, lastUpdated: '2026-04-01' },
-  { provider: 'google', model: 'gemini-2.5-flash', inputPricePerMToken: 0.15, outputPricePerMToken: 0.6, lastUpdated: '2026-04-01' },
-  { provider: 'google', model: 'gemini-2.0-flash', inputPricePerMToken: 0.1, outputPricePerMToken: 0.4, lastUpdated: '2026-04-01' },
-  // DeepSeek
-  { provider: 'deepseek', model: 'deepseek-v3', inputPricePerMToken: 0.27, outputPricePerMToken: 1.1, lastUpdated: '2026-04-01' },
-  { provider: 'deepseek', model: 'deepseek-r1', inputPricePerMToken: 0.55, outputPricePerMToken: 2.19, lastUpdated: '2026-04-01' },
-  // Meta (via OpenRouter)
-  { provider: 'meta', model: 'llama-4-maverick', inputPricePerMToken: 0.2, outputPricePerMToken: 0.6, lastUpdated: '2026-04-01' },
-  { provider: 'meta', model: 'llama-4-scout', inputPricePerMToken: 0.15, outputPricePerMToken: 0.4, lastUpdated: '2026-04-01' },
-  // Mistral
-  { provider: 'mistral', model: 'mistral-large', inputPricePerMToken: 2.0, outputPricePerMToken: 6.0, lastUpdated: '2026-04-01' },
-  { provider: 'mistral', model: 'mistral-small', inputPricePerMToken: 0.1, outputPricePerMToken: 0.3, lastUpdated: '2026-04-01' },
-  // Qwen
-  { provider: 'alibaba', model: 'qwen-3', inputPricePerMToken: 0.3, outputPricePerMToken: 1.2, lastUpdated: '2026-04-01' },
-  // HuggingFace (free tier)
-  { provider: 'huggingface', model: 'inference-free', inputPricePerMToken: 0, outputPricePerMToken: 0, lastUpdated: '2026-04-01' },
-];
+/**
+ * Get pricing for a specific model from DB via direct query
+ */
+export async function getModelPricing(provider: string, model: string): Promise<ModelPricing | null> {
+  const fullModel = model.includes('/') ? model : `${provider}/${model}`;
+  const { data: pricingList, error } = await supabase
+    .from('model_pricing')
+    .select('*');
+  
+  if (error || !pricingList) return null;
 
-// BRL exchange rate (approximate, updated periodically)
+  const sorted = [...pricingList].sort((a, b) => b.model_pattern.length - a.model_pattern.length);
+  const match = sorted.find(p => fullModel.toLowerCase().includes(p.model_pattern.toLowerCase()));
+  
+  if (!match) return null;
+
+  return {
+    provider: fullModel.split('/')[0] || 'unknown',
+    model: match.model_pattern,
+    inputPricePerMToken: Number(match.input_cost_per_1k) * 1000,
+    outputPricePerMToken: Number(match.output_cost_per_1k) * 1000,
+    lastUpdated: new Date().toISOString()
+  };
+}
+
+/**
+ * Get all available pricing entries from DB
+ */
+export async function getAllPricing(): Promise<ModelPricing[]> {
+  const { data, error } = await supabase
+    .from('model_pricing')
+    .select('*')
+    .order('model_pattern');
+    
+  if (error) return [];
+  
+  return (data || []).map(p => ({
+    provider: p.model_pattern.split('/')[0] || 'auto',
+    model: p.model_pattern,
+    inputPricePerMToken: Number(p.input_cost_per_1k) * 1000,
+    outputPricePerMToken: Number(p.output_cost_per_1k) * 1000,
+    lastUpdated: new Date().toISOString()
+  }));
+}
+
+// BRL exchange rate
 let USD_TO_BRL = 5.75;
-
-// ──────── Core Functions ────────
-
-/**
- * Get pricing for a specific model
- */
-export function getModelPricing(provider: string, model: string): ModelPricing | null {
-  // Exact match first
-  const exact = PRICING_DB.find(
-    (p) => p.provider === provider.toLowerCase() && p.model === model.toLowerCase()
-  );
-  if (exact) return exact;
-
-  // Partial match (model name contains)
-  const partial = PRICING_DB.find(
-    (p) => p.provider === provider.toLowerCase() && model.toLowerCase().includes(p.model.toLowerCase())
-  );
-  return partial ?? null;
-}
-
-/**
- * Get all available pricing entries
- */
-export function getAllPricing(): ModelPricing[] {
-  return [...PRICING_DB];
-}
-
-/**
- * Update the USD→BRL exchange rate
- */
-export function setExchangeRate(rate: number): void {
-  USD_TO_BRL = rate;
-}
 
 /**
  * Get current exchange rate
@@ -91,50 +61,86 @@ export function getExchangeRate(): number {
 }
 
 /**
- * Calculate cost for a given token count
+ * Update the USD→BRL exchange rate
  */
-export function calculateCost(
+export function setExchangeRate(rate: number): void {
+  USD_TO_BRL = rate;
+}
+
+// ──────── Core Functions ────────
+
+/**
+ * Calculate cost calling the edge function (Single Source of Truth)
+ */
+export async function calculateCost(
   provider: string,
   model: string,
   inputTokens: number,
   outputTokens: number
-): ActualCost {
+): Promise<ActualCost> {
   if (inputTokens < 0 || outputTokens < 0) {
     throw new Error('Token counts must be non-negative');
   }
-  if (!provider || !model) {
-    throw new Error('Provider and model are required');
+
+  const fullModel = model.includes('/') ? model : `${provider}/${model}`;
+
+  try {
+    const { data, error } = await supabase.functions.invoke('cost-calculator', {
+      body: { 
+        model: fullModel,
+        inputTokens,
+        outputTokens
+      }
+    });
+
+    if (error) throw error;
+
+    return {
+      inputTokens,
+      outputTokens,
+      totalTokens: inputTokens + outputTokens,
+      inputCostUsd: data.breakdown.inputCost,
+      outputCostUsd: data.breakdown.outputCost,
+      totalCostUsd: data.costUsd,
+      totalCostBrl: data.costBrl,
+      durationMs: 0,
+      provider: data.provider,
+      model: data.model,
+      timestamp: new Date().toISOString(),
+    };
+  } catch (err) {
+    console.error('Failed to call cost-calculator edge function, falling back to local calc:', err);
+    // Fallback to local calculation if edge function fails
+    const pricing = await getModelPricing(provider, model);
+    const inputRate = (pricing?.inputPricePerMToken ?? 3.0) / 1000;
+    const outputRate = (pricing?.outputPricePerMToken ?? 15.0) / 1000;
+
+    const inputCostUsd = (inputTokens / 1000) * inputRate;
+    const outputCostUsd = (outputTokens / 1000) * outputRate;
+    const totalCostUsd = inputCostUsd + outputCostUsd;
+
+    return {
+      inputTokens,
+      outputTokens,
+      totalTokens: inputTokens + outputTokens,
+      inputCostUsd,
+      outputCostUsd,
+      totalCostUsd,
+      totalCostBrl: totalCostUsd * USD_TO_BRL,
+      durationMs: 0,
+      provider,
+      model,
+      timestamp: new Date().toISOString(),
+    };
   }
-  const pricing = getModelPricing(provider, model);
-  const inputRate = pricing?.inputPricePerMToken ?? 3.0;  // default to Sonnet-range
-  const outputRate = pricing?.outputPricePerMToken ?? 15.0;
-
-  const inputCostUsd = (inputTokens / 1_000_000) * inputRate;
-  const outputCostUsd = (outputTokens / 1_000_000) * outputRate;
-  const totalCostUsd = inputCostUsd + outputCostUsd;
-
-  return {
-    inputTokens,
-    outputTokens,
-    totalTokens: inputTokens + outputTokens,
-    inputCostUsd,
-    outputCostUsd,
-    totalCostUsd,
-    totalCostBrl: totalCostUsd * USD_TO_BRL,
-    durationMs: 0,
-    provider,
-    model,
-    timestamp: new Date().toISOString(),
-  };
 }
 
 // ──────── Pre-Execution Estimation ────────
 
 /**
  * Estimate cost BEFORE executing a workflow.
- * Analyzes nodes and estimates token usage per node.
  */
-export function estimateWorkflowCost(
+export async function estimateWorkflowCost(
   nodes: Array<{
     id: string;
     type: string;
@@ -142,7 +148,7 @@ export function estimateWorkflowCost(
   }>,
   defaultProvider: string,
   defaultModel: string
-): CostEstimate {
+): Promise<CostEstimate> {
   const breakdown: CostBreakdownItem[] = [];
   let totalInput = 0;
   let totalOutput = 0;
@@ -152,12 +158,11 @@ export function estimateWorkflowCost(
     const nodeModel = (node.data.model as string) ?? defaultModel;
     const nodeType = node.type;
 
-    // Estimate tokens based on node type
     const estimate = estimateNodeTokens(nodeType, node.data);
     totalInput += estimate.input;
     totalOutput += estimate.output;
 
-    const cost = calculateCost(nodeProvider, nodeModel, estimate.input, estimate.output);
+    const cost = await calculateCost(nodeProvider, nodeModel, estimate.input, estimate.output);
 
     breakdown.push({
       label: (node.data.name as string) ?? nodeType,
@@ -171,7 +176,7 @@ export function estimateWorkflowCost(
     });
   }
 
-  const total = calculateCost(defaultProvider, defaultModel, totalInput, totalOutput);
+  const total = await calculateCost(defaultProvider, defaultModel, totalInput, totalOutput);
 
   return {
     provider: defaultProvider,
@@ -194,7 +199,6 @@ function estimateNodeTokens(
   nodeType: string,
   nodeData: Record<string, unknown>
 ): { input: number; output: number } {
-  // Base estimates per node type (averages from production data)
   const estimates: Record<string, { input: number; output: number }> = {
     'llm': { input: 2000, output: 1000 },
     'llm-call': { input: 2000, output: 1000 },
@@ -206,21 +210,18 @@ function estimateNodeTokens(
     'output': { input: 0, output: 100 },
     'webhook': { input: 200, output: 200 },
     'code': { input: 1000, output: 500 },
-    'oracle': { input: 8000, output: 4000 },  // Multi-LLM uses more
+    'oracle': { input: 8000, output: 4000 },
     'guardrails': { input: 500, output: 100 },
     'memory': { input: 300, output: 100 },
     'handoff': { input: 1000, output: 200 },
   };
 
   const base = estimates[nodeType] ?? { input: 500, output: 300 };
-
-  // Adjust based on node data hints
   const maxTokens = Number(nodeData.max_tokens ?? 0);
   if (maxTokens > 0) {
     return { input: base.input, output: Math.min(maxTokens, base.output * 3) };
   }
 
-  // If system prompt is long, increase input estimate
   const systemPrompt = String(nodeData.system_prompt ?? '');
   if (systemPrompt.length > 500) {
     const extraTokens = Math.floor(systemPrompt.length / 4);
@@ -241,24 +242,15 @@ const DEFAULT_BUDGET: BudgetConfig = {
 
 let currentBudget: BudgetConfig = { ...DEFAULT_BUDGET };
 
-/**
- * Set budget configuration
- */
 export function setBudget(budget: Partial<BudgetConfig>): BudgetConfig {
   currentBudget = { ...currentBudget, ...budget };
   return currentBudget;
 }
 
-/**
- * Get current budget configuration
- */
 export function getBudget(): BudgetConfig {
   return { ...currentBudget };
 }
 
-/**
- * Check if a cost would exceed the per-request budget
- */
 export function checkRequestBudget(estimatedCostUsd: number): {
   allowed: boolean;
   maxAllowed: number;
@@ -274,9 +266,6 @@ export function checkRequestBudget(estimatedCostUsd: number): {
   };
 }
 
-/**
- * Calculate budget status from spending data
- */
 export function calculateBudgetStatus(
   dailySpentUsd: number,
   monthlySpentUsd: number
@@ -301,9 +290,6 @@ export function calculateBudgetStatus(
 
 // ──────── Formatting Helpers ────────
 
-/**
- * Format cost for display (with currency)
- */
 export function formatCostUsd(usd: number): string {
   if (usd < 0.001) return '$0.00';
   if (usd < 0.01) return `$${usd.toFixed(4)}`;
@@ -311,18 +297,12 @@ export function formatCostUsd(usd: number): string {
   return `$${usd.toFixed(2)}`;
 }
 
-/**
- * Format cost in BRL
- */
 export function formatCostBrl(usd: number): string {
   const brl = usd * USD_TO_BRL;
   if (brl < 0.01) return 'R$ 0,00';
   return `R$ ${brl.toFixed(2).replace('.', ',')}`;
 }
 
-/**
- * Format token count for display
- */
 export function formatTokenCount(tokens: number): string {
   if (tokens >= 1_000_000) return `${(tokens / 1_000_000).toFixed(1)}M`;
   if (tokens >= 1_000) return `${(tokens / 1_000).toFixed(1)}K`;
@@ -332,22 +312,26 @@ export function formatTokenCount(tokens: number): string {
 /**
  * Get a cost comparison across providers for the same token count
  */
-export function compareCosts(
+export async function compareCosts(
   inputTokens: number,
   outputTokens: number
-): Array<{
+): Promise<Array<{
   provider: string;
   model: string;
   costUsd: number;
   costBrl: number;
-}> {
-  return PRICING_DB.map((pricing) => {
-    const cost = calculateCost(pricing.provider, pricing.model, inputTokens, outputTokens);
-    return {
-      provider: pricing.provider,
-      model: pricing.model,
-      costUsd: cost.totalCostUsd,
-      costBrl: cost.totalCostBrl,
-    };
-  }).sort((a, b) => a.costUsd - b.costUsd);
+}>> {
+  const pricingList = await getAllPricing();
+  const results = await Promise.all(
+    pricingList.map(async (p) => {
+      const cost = await calculateCost(p.provider, p.model, inputTokens, outputTokens);
+      return {
+        provider: p.provider,
+        model: p.model,
+        costUsd: cost.totalCostUsd,
+        costBrl: cost.totalCostBrl,
+      };
+    })
+  );
+  return results.sort((a, b) => a.costUsd - b.costUsd);
 }

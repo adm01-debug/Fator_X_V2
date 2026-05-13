@@ -7329,6 +7329,7 @@ export type Database = {
         Returns: string
       }
       check_budget: { Args: { p_workspace_id: string }; Returns: Json }
+      cleanup_old_auth_attempts: { Args: never; Returns: undefined }
       close_risk: {
         Args: { p_notes?: string; p_risk_id: string }
         Returns: undefined

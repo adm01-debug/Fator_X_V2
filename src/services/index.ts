@@ -65,9 +65,12 @@ export {
   getBudget as getCostBudget,
   setBudget as setCostBudget,
   getModelPricing as getCostModelPricing,
+  getAllPricing as getAllCostPricing,
   checkRequestBudget as checkBudget,
   formatCostUsd,
   formatCostBrl,
+  estimateWorkflowCost,
+  compareCosts,
 } from './costCalculatorService';
 export * from './middlewarePipelineService';
 export * from './progressiveSkillLoader';
