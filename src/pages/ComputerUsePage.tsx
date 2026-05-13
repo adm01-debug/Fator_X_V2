@@ -10,13 +10,14 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 type Action = { 
-  type: string; 
-  params?: any; 
-  ts: string; 
+interface Action {
+  type: string;
+  params?: Record<string, any>;
+  ts: string;
   status: "ok" | "pending" | "error";
   thought?: string;
   coord?: { x: number; y: number } | null;
-};
+}
 
 export default function ComputerUsePage() {
   const [task, setTask] = useState("");
@@ -94,8 +95,9 @@ export default function ComputerUsePage() {
           }
         }
       }
-    } catch (e: any) {
-      toast.error(e.message);
+    } catch (e) {
+      const err = e as Error;
+      toast.error(err.message);
       setRunning(false);
     }
   };
