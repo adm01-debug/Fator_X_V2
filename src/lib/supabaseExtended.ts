@@ -5,7 +5,6 @@
  */
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyFrom = any;
 
 /**
