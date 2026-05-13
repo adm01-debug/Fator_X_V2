@@ -1,0 +1,1 @@
+ALTER FUNCTION public.increment_version_column() SET search_path = public;

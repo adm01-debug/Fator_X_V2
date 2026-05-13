@@ -5,8 +5,9 @@
  */
 import { supabase } from "@/integrations/supabase/client";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const db = supabase as any;
+// All tables are properly typed in Database schema now.
+const db = supabase;
+
 
 export interface IpWhitelistEntry {
   id: string;

@@ -354,6 +354,7 @@ export type Database = {
           name: string
           nodes: Json
           updated_at: string
+          version: number | null
           workspace_id: string
         }
         Insert: {
@@ -366,6 +367,7 @@ export type Database = {
           name: string
           nodes?: Json
           updated_at?: string
+          version?: number | null
           workspace_id: string
         }
         Update: {
@@ -378,6 +380,7 @@ export type Database = {
           name?: string
           nodes?: Json
           updated_at?: string
+          version?: number | null
           workspace_id?: string
         }
         Relationships: [
@@ -397,6 +400,7 @@ export type Database = {
           id: string
           installed_at: string
           skill_id: string
+          version: number | null
         }
         Insert: {
           agent_id: string
@@ -404,6 +408,7 @@ export type Database = {
           id?: string
           installed_at?: string
           skill_id: string
+          version?: number | null
         }
         Update: {
           agent_id?: string
@@ -411,6 +416,7 @@ export type Database = {
           id?: string
           installed_at?: string
           skill_id?: string
+          version?: number | null
         }
         Relationships: [
           {
@@ -541,6 +547,7 @@ export type Database = {
           source_trace_id: string | null
           success_count: number
           updated_at: string
+          version: number | null
         }
         Insert: {
           agent_id: string
@@ -554,6 +561,7 @@ export type Database = {
           source_trace_id?: string | null
           success_count?: number
           updated_at?: string
+          version?: number | null
         }
         Update: {
           agent_id?: string
@@ -567,6 +575,7 @@ export type Database = {
           source_trace_id?: string | null
           success_count?: number
           updated_at?: string
+          version?: number | null
         }
         Relationships: [
           {
@@ -3521,6 +3530,33 @@ export type Database = {
           },
         ]
       }
+      idempotency_keys: {
+        Row: {
+          created_at: string | null
+          expires_at: string
+          id: string
+          key: string
+          response_body: Json
+          status_code: number
+        }
+        Insert: {
+          created_at?: string | null
+          expires_at: string
+          id?: string
+          key: string
+          response_body: Json
+          status_code: number
+        }
+        Update: {
+          created_at?: string | null
+          expires_at?: string
+          id?: string
+          key?: string
+          response_body?: Json
+          status_code?: number
+        }
+        Relationships: []
+      }
       incident_playbooks: {
         Row: {
           actions: Json
@@ -4100,6 +4136,7 @@ export type Database = {
           status: string | null
           updated_at: string | null
           vector_db: string | null
+          version: number | null
           workspace_id: string | null
         }
         Insert: {
@@ -4113,6 +4150,7 @@ export type Database = {
           status?: string | null
           updated_at?: string | null
           vector_db?: string | null
+          version?: number | null
           workspace_id?: string | null
         }
         Update: {
@@ -4126,6 +4164,7 @@ export type Database = {
           status?: string | null
           updated_at?: string | null
           vector_db?: string | null
+          version?: number | null
           workspace_id?: string | null
         }
         Relationships: [
@@ -6816,6 +6855,7 @@ export type Database = {
           name: string
           owner_id: string | null
           plan: string | null
+          version: number | null
         }
         Insert: {
           created_at?: string | null
@@ -6824,6 +6864,7 @@ export type Database = {
           name?: string
           owner_id?: string | null
           plan?: string | null
+          version?: number | null
         }
         Update: {
           created_at?: string | null
@@ -6832,6 +6873,7 @@ export type Database = {
           name?: string
           owner_id?: string | null
           plan?: string | null
+          version?: number | null
         }
         Relationships: []
       }

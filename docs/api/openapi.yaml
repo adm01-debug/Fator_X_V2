@@ -1,0 +1,735 @@
+openapi: 3.0.0
+info:
+  title: Nexus Agents Studio API
+  description: API documentation for the 66 Edge Functions of the Nexus platform.
+  version: 1.0.0
+servers:
+  - url: https://0ef3e2b6-577d-454f-881a-388fe5cf1ec6.functions.supabase.co
+    description: Production Edge Functions
+paths:
+  /a2a-server:
+    post:
+      summary: A2a Server
+      description: Execution of the a2a-server agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /agent-conversational-builder:
+    post:
+      summary: Agent Conversational Builder
+      description: Execution of the agent-conversational-builder agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /agent-eval-runner:
+    post:
+      summary: Agent Eval Runner
+      description: Execution of the agent-eval-runner agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /agent-workflow-runner:
+    post:
+      summary: Agent Workflow Runner
+      description: Execution of the agent-workflow-runner agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /audio-transcribe:
+    post:
+      summary: Audio Transcribe
+      description: Execution of the audio-transcribe agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /automation-pipeline:
+    post:
+      summary: Automation Pipeline
+      description: Execution of the automation-pipeline agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /bitrix24-api:
+    post:
+      summary: Bitrix24 Api
+      description: Execution of the bitrix24-api agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /bitrix24-oauth:
+    post:
+      summary: Bitrix24 Oauth
+      description: Execution of the bitrix24-oauth agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /bitrix24-webhook:
+    post:
+      summary: Bitrix24 Webhook
+      description: Execution of the bitrix24-webhook agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /browser-agent-run:
+    post:
+      summary: Browser Agent Run
+      description: Execution of the browser-agent-run agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /browser-session-cancel:
+    post:
+      summary: Browser Session Cancel
+      description: Execution of the browser-session-cancel agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /cerebro-brain:
+    post:
+      summary: Cerebro Brain
+      description: Execution of the cerebro-brain agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /cerebro-query:
+    post:
+      summary: Cerebro Query
+      description: Execution of the cerebro-query agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /code-interpreter-execute:
+    post:
+      summary: Code Interpreter Execute
+      description: Execution of the code-interpreter-execute agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /computer-use-execute:
+    post:
+      summary: Computer Use Execute
+      description: Execution of the computer-use-execute agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /cron-executor:
+    post:
+      summary: Cron Executor
+      description: Execution of the cron-executor agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /datahub-mcp-server:
+    post:
+      summary: Datahub Mcp Server
+      description: Execution of the datahub-mcp-server agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /datahub-query:
+    post:
+      summary: Datahub Query
+      description: Execution of the datahub-query agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /doc-ocr:
+    post:
+      summary: Doc Ocr
+      description: Execution of the doc-ocr agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /dr-orchestrator:
+    post:
+      summary: Dr Orchestrator
+      description: Execution of the dr-orchestrator agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /eval-engine-v2:
+    post:
+      summary: Eval Engine V2
+      description: Execution of the eval-engine-v2 agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /eval-judge:
+    post:
+      summary: Eval Judge
+      description: Execution of the eval-judge agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /global-search:
+    post:
+      summary: Global Search
+      description: Execution of the global-search agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /graph-execute:
+    post:
+      summary: Graph Execute
+      description: Execution of the graph-execute agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /guardrails-engine:
+    post:
+      summary: Guardrails Engine
+      description: Execution of the guardrails-engine agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /guardrails-ml:
+    post:
+      summary: Guardrails Ml
+      description: Execution of the guardrails-ml agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /health-check:
+    post:
+      summary: Health Check
+      description: Execution of the health-check agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /hf-autotrain:
+    post:
+      summary: Hf Autotrain
+      description: Execution of the hf-autotrain agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /image-analysis:
+    post:
+      summary: Image Analysis
+      description: Execution of the image-analysis agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /incident-orchestrator:
+    post:
+      summary: Incident Orchestrator
+      description: Execution of the incident-orchestrator agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /kb-analyze-gaps:
+    post:
+      summary: Kb Analyze Gaps
+      description: Execution of the kb-analyze-gaps agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /kb-translate-article:
+    post:
+      summary: Kb Translate Article
+      description: Execution of the kb-translate-article agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /lgpd-manager:
+    post:
+      summary: Lgpd Manager
+      description: Execution of the lgpd-manager agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /llm-gateway:
+    post:
+      summary: Llm Gateway
+      description: Execution of the llm-gateway agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /memory-manager:
+    post:
+      summary: Memory Manager
+      description: Execution of the memory-manager agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /memory-tools:
+    post:
+      summary: Memory Tools
+      description: Execution of the memory-tools agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /nlp-pipeline:
+    post:
+      summary: Nlp Pipeline
+      description: Execution of the nlp-pipeline agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /notification-sender:
+    post:
+      summary: Notification Sender
+      description: Execution of the notification-sender agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /openclaw-proxy:
+    post:
+      summary: Openclaw Proxy
+      description: Execution of the openclaw-proxy agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /oracle-council:
+    post:
+      summary: Oracle Council
+      description: Execution of the oracle-council agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /oracle-research:
+    post:
+      summary: Oracle Research
+      description: Execution of the oracle-research agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /product-mockup:
+    post:
+      summary: Product Mockup
+      description: Execution of the product-mockup agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /queue-worker:
+    post:
+      summary: Queue Worker
+      description: Execution of the queue-worker agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /quick-agent-test:
+    post:
+      summary: Quick Agent Test
+      description: Execution of the quick-agent-test agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /rag-embed-v2:
+    post:
+      summary: Rag Embed V2
+      description: Execution of the rag-embed-v2 agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /rag-ingest:
+    post:
+      summary: Rag Ingest
+      description: Execution of the rag-ingest agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /rag-rerank-v2:
+    post:
+      summary: Rag Rerank V2
+      description: Execution of the rag-rerank-v2 agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /rag-rerank:
+    post:
+      summary: Rag Rerank
+      description: Execution of the rag-rerank agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /replay-fork-execute:
+    post:
+      summary: Replay Fork Execute
+      description: Execution of the replay-fork-execute agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /sbom-scanner:
+    post:
+      summary: Sbom Scanner
+      description: Execution of the sbom-scanner agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /semantic-search:
+    post:
+      summary: Semantic Search
+      description: Execution of the semantic-search agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /smart-model-router:
+    post:
+      summary: Smart Model Router
+      description: Execution of the smart-model-router agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /smolagent-runtime:
+    post:
+      summary: Smolagent Runtime
+      description: Execution of the smolagent-runtime agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /synthetic-runner:
+    post:
+      summary: Synthetic Runner
+      description: Execution of the synthetic-runner agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /test-runner:
+    post:
+      summary: Test Runner
+      description: Execution of the test-runner agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /text-to-speech:
+    post:
+      summary: Text To Speech
+      description: Execution of the text-to-speech agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /validate-access:
+    post:
+      summary: Validate Access
+      description: Execution of the validate-access agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /visual-search:
+    post:
+      summary: Visual Search
+      description: Execution of the visual-search agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /voice-session:
+    post:
+      summary: Voice Session
+      description: Execution of the voice-session agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /voice-synthesize:
+    post:
+      summary: Voice Synthesize
+      description: Execution of the voice-synthesize agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /voice-transcribe:
+    post:
+      summary: Voice Transcribe
+      description: Execution of the voice-transcribe agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /webhook-receiver:
+    post:
+      summary: Webhook Receiver
+      description: Execution of the webhook-receiver agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /whatsapp-webhook:
+    post:
+      summary: Whatsapp Webhook
+      description: Execution of the whatsapp-webhook agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /widget-proxy:
+    post:
+      summary: Widget Proxy
+      description: Execution of the widget-proxy agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /workflow-engine-v2:
+    post:
+      summary: Workflow Engine V2
+      description: Execution of the workflow-engine-v2 agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+  /cost-calculator:
+    post:
+      summary: Cost Calculator
+      description: Execution of the cost-calculator agentic component.
+      responses:
+        '200':
+          description: Successful execution
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error

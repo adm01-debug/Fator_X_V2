@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { Database } from '@/integrations/supabase/types';
 
 export interface GraphNode {
   id: string;
@@ -15,26 +16,16 @@ export interface GraphEdge {
   condition?: string;
 }
 
-export interface AgentGraph {
-  id: string;
-  workspace_id: string;
-  created_by: string;
-  name: string;
-  description: string;
+// Map the Database type to our cleaner interface
+type AgentGraphRow = Database['public']['Tables']['agent_graphs']['Row'];
+type GraphExecutionRow = Database['public']['Tables']['graph_executions']['Row'];
+
+export interface AgentGraph extends Omit<AgentGraphRow, 'nodes' | 'edges'> {
   nodes: GraphNode[];
   edges: GraphEdge[];
-  entry_node_id: string | null;
-  created_at: string;
-  updated_at: string;
 }
 
-export interface GraphExecution {
-  id: string;
-  graph_id: string;
-  user_id: string;
-  input: string;
-  status: 'running' | 'completed' | 'failed';
-  current_node_id: string | null;
+export interface GraphExecution extends Omit<GraphExecutionRow, 'trace'> {
   trace: Array<{
     node_id: string;
     agent_id: string | null;
@@ -45,17 +36,12 @@ export interface GraphExecution {
     cost_cents: number;
     ts: string;
   }>;
-  final_output: string | null;
-  total_cost_cents: number;
-  error_message: string | null;
-  started_at: string;
-  ended_at: string | null;
 }
 
 export const agentGraphService = {
   async listGraphs(workspaceId: string): Promise<AgentGraph[]> {
     const { data, error } = await supabase
-      .from('agent_graphs' as any)
+      .from('agent_graphs')
       .select('*')
       .eq('workspace_id', workspaceId)
       .order('updated_at', { ascending: false });
@@ -64,7 +50,7 @@ export const agentGraphService = {
   },
 
   async getGraph(id: string): Promise<AgentGraph> {
-    const { data, error } = await supabase.from('agent_graphs' as any).select('*').eq('id', id).single();
+    const { data, error } = await supabase.from('agent_graphs').select('*').eq('id', id).single();
     if (error) throw error;
     return data as unknown as AgentGraph;
   },
@@ -73,8 +59,15 @@ export const agentGraphService = {
     const { data: u } = await supabase.auth.getUser();
     if (!u.user) throw new Error('Não autenticado');
     const { data, error } = await supabase
-      .from('agent_graphs' as any)
-      .insert({ workspace_id: workspaceId, created_by: u.user.id, name, description, nodes: [], edges: [] } as any)
+      .from('agent_graphs')
+      .insert({ 
+        workspace_id: workspaceId, 
+        created_by: u.user.id, 
+        name, 
+        description, 
+        nodes: [], 
+        edges: [] 
+      })
       .select()
       .single();
     if (error) throw error;
@@ -82,12 +75,12 @@ export const agentGraphService = {
   },
 
   async updateGraph(id: string, patch: Partial<Pick<AgentGraph, 'name' | 'description' | 'nodes' | 'edges' | 'entry_node_id'>>): Promise<void> {
-    const { error } = await supabase.from('agent_graphs' as any).update(patch as any).eq('id', id);
+    const { error } = await supabase.from('agent_graphs').update(patch as any).eq('id', id);
     if (error) throw error;
   },
 
   async deleteGraph(id: string): Promise<void> {
-    const { error } = await supabase.from('agent_graphs' as any).delete().eq('id', id);
+    const { error } = await supabase.from('agent_graphs').delete().eq('id', id);
     if (error) throw error;
   },
 
@@ -99,7 +92,7 @@ export const agentGraphService = {
 
   async listExecutions(graphId: string): Promise<GraphExecution[]> {
     const { data, error } = await supabase
-      .from('graph_executions' as any)
+      .from('graph_executions')
       .select('*')
       .eq('graph_id', graphId)
       .order('started_at', { ascending: false })
@@ -109,7 +102,7 @@ export const agentGraphService = {
   },
 
   async getExecution(id: string): Promise<GraphExecution> {
-    const { data, error } = await supabase.from('graph_executions' as any).select('*').eq('id', id).single();
+    const { data, error } = await supabase.from('graph_executions').select('*').eq('id', id).single();
     if (error) throw error;
     return data as unknown as GraphExecution;
   },
