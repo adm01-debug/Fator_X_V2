@@ -8,30 +8,12 @@
  * routes to the right agent via agent_routing_config, and logs an
  * audit row in whatsapp_webhook_events.
  *
- * Supported providers (auto-detected from payload shape):
- *   - Twilio       (form-urlencoded, X-Twilio-Signature header)
- *   - Meta Cloud   (JSON, X-Hub-Signature-256 header HMAC SHA256)
- *   - Z-API        (JSON, custom token in body)
- *   - Evolution    (JSON, custom Authorization header)
- *
- * Event types after normalization:
- *   - message.text       Plain text message
- *   - message.image      Image message
- *   - message.audio      Voice / audio message
- *   - message.document   Document attachment
- *   - message.location   Location share
- *   - status.delivered   Delivery receipt
- *   - status.read        Read receipt
- *
- * Provider verification tokens are stored as workspace_secrets with key
- * names whatsapp_twilio_token / whatsapp_meta_token / etc. The Edge
- * Function reads them at request time.
- *
  * verify_jwt: false (providers cannot send JWT)
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { verifyHmac } from "../_shared/webhookSignature.ts";
+
 
 // ─── CORS ───
 const corsHeaders = {
