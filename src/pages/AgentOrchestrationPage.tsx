@@ -37,7 +37,7 @@ export default function AgentOrchestrationPage() {
         listAgentSummaries(),
       ]);
       setGraphs(gs);
-      setAgents((ag as any).agents || []);
+      setAgents(ag.agents);
     }
   })(); }, []);
 
@@ -58,7 +58,10 @@ export default function AgentOrchestrationPage() {
       setActiveGraph(g);
       setNewName(''); setCreateOpen(false);
       toast.success('Grafo criado');
-    } catch (e: any) { toast.error(e.message); }
+    } catch (e) {
+      const err = e as Error;
+      toast.error(err.message);
+    }
   }
 
   async function handleAddNode() {
@@ -120,7 +123,10 @@ export default function AgentOrchestrationPage() {
       setActiveExec(fresh);
       const ex = await agentGraphService.listExecutions(activeGraph.id);
       setExecutions(ex);
-    } catch (e: any) { toast.error(e.message || 'Falha na execução'); }
+    } catch (e) {
+      const err = e as Error;
+      toast.error(err.message || 'Falha na execução');
+    }
     finally { setRunning(false); }
   }
 
