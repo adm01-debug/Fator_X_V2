@@ -77,7 +77,7 @@ export const agentGraphService = {
   },
 
   async updateGraph(id: string, patch: Partial<Pick<AgentGraph, 'name' | 'description' | 'nodes' | 'edges' | 'entry_node_id'>>): Promise<void> {
-    const { error } = await supabase.from('agent_graphs').update(patch).eq('id', id);
+    const { error } = await supabase.from('agent_graphs').update(patch as any).eq('id', id);
     if (error) throw error;
   },
 
