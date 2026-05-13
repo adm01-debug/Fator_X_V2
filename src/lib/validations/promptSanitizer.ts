@@ -175,7 +175,8 @@ export type PromptDiagnosticId =
   | 'long_line'
   | 'empty_block'
   | 'exceeds_chars'
-  | 'exceeds_lines';
+  | 'exceeds_lines'
+  | 'rule_contradiction';
 
 export type PromptFixerId = 'invisible' | 'longLines' | 'truncate' | 'empty';
 
@@ -418,6 +419,24 @@ export function diagnosePrompt(prompt: string): PromptDiagnosticIssue[] {
       fixerId: 'empty',
     });
   }
+  
+  // 6. Rule Contradictions (Polarity, Numeric, Language)
+  const conflicts = detectPromptContradictions(text);
+  if (conflicts.length > 0) {
+    const first = conflicts[0];
+    issues.push({
+      id: 'rule_contradiction',
+      level: 'error',
+      title: 'Regras contraditórias',
+      description: `Foram detectados conflitos lógicos no prompt. Exemplo: ${first.reason}`,
+      rulePattern: 'logical_consistency',
+      occurrences: conflicts.length,
+      affectedLines: Array.from(new Set(conflicts.flatMap(c => [c.lineA, c.lineB]))).sort((a, b) => a - b).slice(0, 5),
+      sample: buildSample(text, text.split('\n').slice(0, first.lineA - 1).reduce((acc, l) => acc + l.length + 1, 0), 10),
+    });
+  }
 
   return issues;
 }
+
+import { detectPromptContradictions } from './promptContradictions';
