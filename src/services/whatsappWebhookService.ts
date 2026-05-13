@@ -81,6 +81,12 @@ export async function upsertWhatsAppRoute(
   const wsId = await getWorkspaceId();
   const { error } = await fromTable('agent_routing_config')
     .upsert({
+      workspace_id: wsId,
+      source: 'whatsapp',
+      event_type: eventType,
+      agent_id: agentId,
+      is_enabled: isEnabled,
+    }, {
       onConflict: 'workspace_id,source,event_type',
     });
   if (error) {
