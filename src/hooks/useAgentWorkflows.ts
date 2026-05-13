@@ -53,7 +53,7 @@ export function useAgentWorkflows(agentId?: string) {
         .eq('agent_id', agentId!)
         .order('updated_at', { ascending: false });
       if (error) throw error;
-      return (data || []) as AgentWorkflow[];
+      return (data || []) as unknown as AgentWorkflow[];
     },
   });
 
@@ -68,8 +68,8 @@ export function useAgentWorkflows(agentId?: string) {
           workspace_id: input.workspace_id,
           name: input.name,
           description: input.description,
-          nodes: input.nodes ?? [],
-          edges: input.edges ?? [],
+          nodes: (input.nodes ?? []) as any,
+          edges: (input.edges ?? []) as any,
           created_by: u.user.id,
         })
         .select()
@@ -87,7 +87,7 @@ export function useAgentWorkflows(agentId?: string) {
   const updateWorkflow = useMutation({
     mutationFn: async (input: { id: string; nodes?: unknown[]; edges?: unknown[]; name?: string; description?: string; status?: string }) => {
       const { id, ...patch } = input;
-      const { error } = await supabase.from('agent_workflows').update(patch).eq('id', id);
+      const { error } = await supabase.from('agent_workflows').update(patch as any).eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -124,7 +124,7 @@ export function useWorkflowRuns(workflowId?: string) {
         .order('started_at', { ascending: false })
         .limit(50);
       if (error) throw error;
-      return (data || []) as WorkflowRun[];
+      return (data || []) as unknown as WorkflowRun[];
     },
   });
 }
