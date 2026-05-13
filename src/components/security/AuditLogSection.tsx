@@ -68,7 +68,7 @@ export function AuditLogSection() {
         <p className="text-xs text-muted-foreground py-4 text-center">Nenhum evento registrado</p>
       ) : (
         <div className="space-y-1 max-h-[300px] overflow-y-auto">
-          {logs.map((log: Record<string, unknown>, i: number) => (
+          {logs.map((log: any, i: number) => (
             <div key={(log.id as string) || i}
               className="flex items-center gap-3 py-2 px-2 rounded hover:bg-secondary/30 text-xs">
               <span className="text-muted-foreground w-[130px] shrink-0 font-mono text-[11px]">{new Date(log.created_at as string).toLocaleString('pt-BR')}</span>
