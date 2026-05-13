@@ -168,7 +168,16 @@ export default function CostOptimizerPage() {
   );
 }
 
-function FinOpsMetricCard({ label, value, icon: Icon, trend, subLabel, color = "text-foreground" }: any) {
+interface MetricCardProps {
+  label: string;
+  value: string;
+  icon: React.ElementType;
+  trend?: string;
+  subLabel: string;
+  color?: string;
+}
+
+function FinOpsMetricCard({ label, value, icon: Icon, trend, subLabel, color = "text-foreground" }: MetricCardProps) {
   return (
     <Card className="bg-card/50 border-border/40 rounded-[2.5rem] p-8 shadow-sm group hover:border-primary/20 transition-all">
       <div className="flex items-start justify-between mb-5">
