@@ -14,8 +14,8 @@ export function WorkflowRunsHistory() {
 
   return (
     <div className="space-y-3">
-      {runs.map((run: any) => {
-        const wfData = run.workflows as Record<string, unknown> | null;
+      {runs.map((run) => {
+        const wfData = run.workflows;
         return (
           <div key={String(run.id)} className="nexus-card">
             <div className="flex items-center justify-between">
