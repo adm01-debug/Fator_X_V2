@@ -12,7 +12,6 @@
 
 // supabaseExternal import removed — this service uses fromTable for untyped tables
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 import { fromTable } from '@/lib/supabaseExtended';
 
 export type { HandoffReason, HandoffStatus, HandoffContext, HandoffRequest, HandoffRecord, HandoffRule, HandoffCondition } from './types/agentHandoffTypes';
