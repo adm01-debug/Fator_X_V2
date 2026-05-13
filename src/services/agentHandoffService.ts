@@ -116,7 +116,7 @@ export async function failHandoff(
     .update({
       status: 'failed' as const,
       reason: errorMsg,
-    })
+    } as any)
     .eq('id' as never, handoffId)
     .select()
     .single();
