@@ -41,3 +41,8 @@ export const syncExternalAuth = (token: string | null) => {
 export const rpcCall = async (fnName: string, params: any) => {
   return await (supabase as any).rpc(fnName, params);
 };
+
+/**
+ * Helper to wrap any Supabase call and fix the deep type issue
+ */
+export const wrap = (fn: any) => fn as any;
