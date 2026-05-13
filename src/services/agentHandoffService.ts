@@ -96,7 +96,7 @@ export async function rejectHandoff(
     .update({
       status: 'rejected' as const,
       reason: reason,
-    })
+    } as any)
     .eq('id' as never, handoffId)
     .select()
     .single();
