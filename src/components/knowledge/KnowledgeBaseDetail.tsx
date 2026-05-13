@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { logger } from '@/lib/logger';
 import {
   listCollectionsForKB,
   listDocuments,
@@ -120,7 +121,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
           if (line.startsWith('data: ')) {
             const event = JSON.parse(line.slice(6));
             if (event.type === 'status') toast.info(event.data.message);
-            if (event.type === 'progress') console.log(`Ingestão: ${event.data.percentage}%`);
+            if (event.type === 'progress') logger.debug(`Ingestão: ${event.data.percentage}%`);
           }
         }
       }
