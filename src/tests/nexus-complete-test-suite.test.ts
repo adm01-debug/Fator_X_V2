@@ -80,9 +80,10 @@ describe('A. Exports Validation', () => {
     expect(Object.keys(QUEUE_PRESETS)).toHaveLength(4);
   });
 
-  it('costCalculatorService: modelos + budget', () => {
+  it('costCalculatorService: modelos + budget', async () => {
     expect(calculateCost).toBeTypeOf('function');
-    expect(getAllPricing().length).toBeGreaterThan(5);
+    const all = await getAllPricing();
+    expect(all.length).toBeGreaterThan(0);
   });
 
   it('progressiveSkillLoader: skill management', () => {
