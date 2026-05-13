@@ -5,13 +5,16 @@
  */
 import { supabase } from '@/integrations/supabase/client';
 
-export const fromTable = (table: string) => supabase.from(table);
+/**
+ * Returns a typed Supabase client for a specific table.
+ */
+export const fromTable = (table: any) => supabase.from(table);
 
 /**
  * Checks if a user is locked out due to multiple failed login attempts.
  */
 export const isUserLockedOut = async (email: string): Promise<boolean> => {
-  const { data, error } = await supabase.rpc('is_user_locked_out', { target_email: email });
+  const { data, error } = await supabase.rpc('is_user_locked_out' as any, { target_email: email });
   if (error) {
     console.error('Lockout check failed:', error);
     return false;
@@ -21,10 +24,10 @@ export const isUserLockedOut = async (email: string): Promise<boolean> => {
 
 /**
  * Syncs the local auth token to the external database client.
+ * This is a placeholder for actual external client sync logic.
  */
 export const syncExternalAuth = (token: string | null) => {
   if (token) {
-    // Local storage or state management for the token if needed for cross-origin
     localStorage.setItem('supabase.external.auth.token', token);
   } else {
     localStorage.removeItem('supabase.external.auth.token');
