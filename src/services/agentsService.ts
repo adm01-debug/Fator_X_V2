@@ -227,7 +227,7 @@ export async function createAgentVersion(input: CreateAgentVersionInput): Promis
       persona: input.persona,
       mission: input.mission,
       name: input.name ?? null,
-      config: input.config as Record<string, any>,
+      config: input.config as any,
       change_summary: input.change_summary,
     })
     .select('*')
@@ -243,9 +243,9 @@ export async function createAgentVersion(input: CreateAgentVersionInput): Promis
     .update({
       version: nextVersion,
       model: input.model,
-      persona: input.persona as Record<string, any>,
+      persona: input.persona as any,
       mission: input.mission,
-      config: input.config as Record<string, any>,
+      config: input.config as any,
     })
     .eq('id', input.agentId);
   if (syncErr) {
