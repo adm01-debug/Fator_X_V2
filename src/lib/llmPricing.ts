@@ -59,7 +59,7 @@ export function listModelPrices(): ModelPrice[] {
   return Object.values(LLM_PRICING);
 }
 
-export const USD_TO_BRL = 5.0;
+export const USD_TO_BRL = 5.75;
 
 export function getModelPrice(modelId: string | undefined | null): ModelPrice {
   if (modelId && LLM_PRICING[modelId]) return LLM_PRICING[modelId];
