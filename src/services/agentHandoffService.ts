@@ -62,7 +62,7 @@ export async function acceptHandoff(handoffId: string): Promise<HandoffRecord> {
     .single();
 
   if (error) throw new Error(`Failed to accept handoff: ${error.message}`);
-  return data as unknown as HandoffRecord;
+  return data as any as HandoffRecord;
 }
 
 /**
