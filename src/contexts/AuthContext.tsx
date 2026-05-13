@@ -116,8 +116,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
+const FALLBACK_AUTH: AuthContextType = {
+  user: null,
+  session: null,
+  loading: true,
+  signUp: async () => ({ error: new Error("AuthProvider not mounted") }),
+  signIn: async () => ({ error: new Error("AuthProvider not mounted") }),
+  signOut: async () => {},
+  resetPassword: async () => ({ error: new Error("AuthProvider not mounted") }),
+  updatePassword: async () => ({ error: new Error("AuthProvider not mounted") }),
+};
+
 export function useAuth() {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
-  return ctx;
+  // Return a safe fallback instead of throwing — prevents blank screens
+  // during HMR re-evaluation or when a consumer renders briefly before
+  // AuthProvider mounts. Real auth-gated routes use AuthGuard.
+  return ctx ?? FALLBACK_AUTH;
 }
