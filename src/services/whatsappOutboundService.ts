@@ -311,6 +311,8 @@ export async function sendWhatsAppMessage(
           case 'evolution':
             result = await sendViaEvolution(providerSecrets.config, input);
             break;
+          default:
+            throw new Error(`Unsupported provider: ${providerSecrets.provider}`);
         }
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
