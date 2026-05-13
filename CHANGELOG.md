@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2026-05-13
+
+### Added
+- **Auditoria 10/10**: Avanço nas ondas de Quick Wins e Sprint 1.
+- **Security**: Implementada validação HMAC obrigatória em webhooks via `_shared/webhookSignature.ts` e integração com `security.ts`.
+- **Deno Compliance**: Ajustados logs em Edge Functions para garantir visibilidade no Supabase Dashboard sem violar `no-console`.
+
+### Fixed
+- **Type Safety**: Refatorado `billingService.ts` eliminando casts `as any[]` em favor de tipagem automática do Supabase Client.
+- **HMAC Enforcement**: Centralizada lógica de verificação de assinatura em `verifyHmac`.
+
+### Changed
+- **Logging**: Ativada regra `no-console: error` no ESLint e limpos logs residuais em serviços frontend.
+- **Test Infrastructure**: Reforçado threshold de 80% de cobertura no `vitest.config.ts`.
+
 ## [1.0.0] - 2026-05-13
 
 ### Added
