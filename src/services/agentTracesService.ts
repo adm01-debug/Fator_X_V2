@@ -43,15 +43,21 @@ export interface ListTracesParams {
   from?: string;
   to?: string;
   limit?: number;
+  offset?: number;
 }
 
-export async function listAgentTraces(params: ListTracesParams = {}): Promise<AgentTraceRow[]> {
-  const { agentId, level, event, search, sinceHours = 24, from, to, limit = 500 } = params;
+export interface ListTracesResult {
+  traces: AgentTraceRow[];
+  total: number;
+}
+
+export async function listAgentTraces(params: ListTracesParams = {}): Promise<ListTracesResult> {
+  const { agentId, level, event, search, sinceHours = 24, from, to, limit = 500, offset = 0 } = params;
   let q = supabase
     .from('agent_traces')
-    .select('id, agent_id, session_id, level, event, input, output, metadata, latency_ms, tokens_used, cost_usd, created_at')
+    .select('id, agent_id, session_id, level, event, input, output, metadata, latency_ms, tokens_used, cost_usd, created_at', { count: 'exact' })
     .order('created_at', { ascending: false })
-    .limit(limit);
+    .range(offset, offset + limit - 1);
 
   if (agentId) q = q.eq('agent_id', agentId);
   if (level && level !== 'all') q = q.eq('level', level);
@@ -65,7 +71,7 @@ export async function listAgentTraces(params: ListTracesParams = {}): Promise<Ag
     q = q.gte('created_at', since);
   }
 
-  const { data, error } = await q;
+  const { data, error, count } = await q;
   if (error) throw error;
 
   let rows = (data ?? []) as unknown as AgentTraceRow[];
@@ -78,7 +84,7 @@ export async function listAgentTraces(params: ListTracesParams = {}): Promise<Ag
       JSON.stringify(r.output ?? '').toLowerCase().includes(s),
     );
   }
-  return rows;
+  return { traces: rows, total: count ?? 0 };
 }
 
 /**

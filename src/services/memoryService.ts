@@ -57,15 +57,19 @@ export async function compactMemories(memoryType: string) {
 }
 
 /** List memories directly from the database (fallback) */
-export async function listMemories(type: string, limit = 100): Promise<MemoryEntry[]> {
-  const { data, error } = await supabaseExternal
+export async function listMemories(type: string, limit = 100, offset = 0): Promise<{ memories: MemoryEntry[], total: number }> {
+  const { data, error, count } = await supabaseExternal
     .from('agent_memories')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('memory_type', type)
     .order('created_at', { ascending: false })
-    .limit(limit);
+    .range(offset, offset + limit - 1);
+  
   if (error) throw error;
-  return (data ?? []) as MemoryEntry[];
+  return {
+    memories: (data ?? []) as MemoryEntry[],
+    total: count ?? 0
+  };
 }
 
 // ============================================================================
