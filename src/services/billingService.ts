@@ -20,11 +20,11 @@ export async function getUsageSummary(period: 'day' | 'week' | 'month' = 'week')
   if (error) throw error;
 
   const records = data || [];
-  const totalCost = records.reduce((s: number, r) => s + Number(r.cost_usd || 0), 0);
-  const totalTokens = records.reduce((s: number, r) => s + Number(r.tokens || 0), 0);
+  const totalCost = records.reduce((s: number, r: any) => s + Number(r.cost_usd || 0), 0);
+  const totalTokens = records.reduce((s: number, r: any) => s + Number(r.tokens || 0), 0);
 
   const byType: Record<string, number> = {};
-  records.forEach((r) => {
+  records.forEach((r: any) => {
     const type = String(r.record_type || 'llm');
     byType[type] = (byType[type] || 0) + Number(r.cost_usd || 0);
   });
