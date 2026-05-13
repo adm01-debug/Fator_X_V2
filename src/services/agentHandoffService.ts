@@ -155,7 +155,7 @@ export async function getHandoffHistory(
     .limit(limit);
 
   if (error) throw new Error(`Failed to get handoff history: ${error.message}`);
-  return (data ?? []) as unknown as HandoffRecord[];
+  return (data ?? []) as any as HandoffRecord[];
 }
 
 /**
