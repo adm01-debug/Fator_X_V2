@@ -149,7 +149,7 @@ export default function AgentTracesPage() {
     if (!urlAgentId || appliedAgentParam.current === urlAgentId) return;
     if (filters.agentFilter !== urlAgentId) {
       setFilters((prev) => ({ ...prev, agentFilter: urlAgentId }));
-      const matched = agents.find((a) => a.id === urlAgentId);
+      const matched = agents.find((a: any) => a.id === urlAgentId);
       drilldown.setDrilldown(urlAgentId, matched?.name ?? null, 'deep-link');
       toast.success(matched ? `Filtrando por: ${matched.name}` : 'Filtro de agente aplicado via link');
     }
@@ -174,11 +174,11 @@ export default function AgentTracesPage() {
       return;
     }
     if (drilldown.agentId !== agentFilter) {
-      const matched = agents.find((a) => a.id === agentFilter);
+      const matched = agents.find((a: any) => a.id === agentFilter);
       drilldown.setDrilldown(agentFilter, matched?.name ?? null, 'manual');
     } else if (!drilldown.agentName) {
       // Backfill the cached name once agents finish loading.
-      const matched = agents.find((a) => a.id === agentFilter);
+      const matched = agents.find((a: any) => a.id === agentFilter);
       if (matched) drilldown.setDrilldown(agentFilter, matched.name, drilldown.origin ?? 'manual');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
