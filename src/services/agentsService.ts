@@ -396,16 +396,20 @@ export async function getAgentVersions(agentId: string, limit = 20): Promise<Age
 /** Lightweight (id, name) summaries — used by selectors and orchestration UIs. */
 export interface AgentSummary { id: string; name: string }
 
-export async function listAgentSummaries(limit?: number): Promise<AgentSummary[]> {
+export async function listAgentSummaries(limit?: number, offset = 0): Promise<{ agents: AgentSummary[], total: number }> {
   let query = supabaseExternal
     .from('agents')
-    .select('id, name')
-    .order('updated_at', { ascending: false });
-  if (typeof limit === 'number') query = query.limit(limit);
-  const { data, error } = await query;
+    .select('id, name', { count: 'exact' })
+    .order('updated_at', { ascending: false })
+    .range(offset, offset + (limit || 50) - 1);
+  
+  const { data, error, count } = await query;
   if (error) {
     logger.error('Failed to list agent summaries', { error: error.message });
     throw error;
   }
-  return (data ?? []) as AgentSummary[];
+  return {
+    agents: (data ?? []) as AgentSummary[],
+    total: count ?? 0
+  };
 }
