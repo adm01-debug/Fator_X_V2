@@ -150,15 +150,26 @@ export async function toggleWorkflowStatus(id: string, currentStatus: string): P
   if (error) throw error;
 }
 
+export interface WorkflowRunRow {
+  id: string;
+  workflow_id: string;
+  status: string;
+  total_steps: number;
+  current_step: number | null;
+  started_at: string | null;
+  error: string | null;
+  workflows: { name: string } | null;
+}
+
 /* ── List workflow runs ── */
-export async function listWorkflowRuns(limit = 30) {
+export async function listWorkflowRuns(limit = 30): Promise<WorkflowRunRow[]> {
   const { data, error } = await supabaseExternal
     .from('workflow_runs')
     .select('*, workflows(name)')
     .order('started_at', { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return data ?? [];
+  return (data as any) ?? [];
 }
 
 /* ── Execute workflow stream ── */

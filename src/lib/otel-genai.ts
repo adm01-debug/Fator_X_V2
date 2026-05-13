@@ -78,8 +78,35 @@ export function createGenAIAttributes(params: {
   return attrs;
 }
 
-// Cost calculator for major providers
-export function estimateCost(model: string, inputTokens: number, outputTokens: number): number {
+/**
+ * LLM Cost Estimator (Frontend Fallback)
+ * 
+ * IMPORTANT: This is for UI preview only. The "Single Source of Truth" 
+ * is the 'cost-calculator' Edge Function.
+ */
+export async function estimateCost(model: string, inputTokens: number, outputTokens: number): Promise<number> {
+  try {
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    
+    const response = await fetch(`${supabaseUrl}/functions/v1/cost-calculator`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${supabaseKey}`
+      },
+      body: JSON.stringify({ model, input_tokens: inputTokens, output_tokens: outputTokens })
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      return data.cost_usd ?? 0;
+    }
+  } catch (err) {
+    console.error('Failed to fetch from cost-calculator edge function, falling back to local estimation', err);
+  }
+
+  // Local fallback if edge function is unreachable
   const pricing: Record<string, { input: number; output: number }> = {
     'claude-sonnet-4-20250514': { input: 3, output: 15 },
     'claude-haiku-4-5-20251001': { input: 0.8, output: 4 },

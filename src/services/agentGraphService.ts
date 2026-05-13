@@ -7,6 +7,7 @@ export interface GraphNode {
   role?: string;
   label?: string;
   position: { x: number; y: number };
+  [key: string]: any;
 }
 
 export interface GraphEdge {
@@ -14,6 +15,7 @@ export interface GraphEdge {
   from: string;
   to: string;
   condition?: string;
+  [key: string]: any;
 }
 
 // Map the Database type to our cleaner interface
@@ -35,7 +37,7 @@ export interface GraphExecution extends Omit<GraphExecutionRow, 'trace'> {
     latency_ms: number;
     cost_cents: number;
     ts: string;
-  }>;
+  }> | null;
 }
 
 export const agentGraphService = {
@@ -46,7 +48,7 @@ export const agentGraphService = {
       .eq('workspace_id', workspaceId)
       .order('updated_at', { ascending: false });
     if (error) throw error;
-    return (data ?? []) as unknown as AgentGraph[];
+    return (data as unknown as AgentGraph[]) ?? [];
   },
 
   async getGraph(id: string): Promise<AgentGraph> {
@@ -98,7 +100,7 @@ export const agentGraphService = {
       .order('started_at', { ascending: false })
       .limit(50);
     if (error) throw error;
-    return (data ?? []) as unknown as GraphExecution[];
+    return (data as unknown as GraphExecution[]) ?? [];
   },
 
   async getExecution(id: string): Promise<GraphExecution> {

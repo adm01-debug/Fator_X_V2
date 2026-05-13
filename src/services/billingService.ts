@@ -2,12 +2,59 @@
  * Nexus Agents Studio — Billing Service
  * Budget management, cost tracking, pricing.
  */
+export interface UsageSummary {
+  totalCost: number;
+  totalTokens: number;
+  byType: Record<string, number>;
+  recordCount: number;
+  period: string;
+  since: string;
+}
+
+export interface AgentUsageRow {
+  id: string;
+  agent_id: string;
+  date: string;
+  total_cost_usd: number | null;
+  tokens_input: number | null;
+  tokens_output: number | null;
+  requests: number | null;
+  error_count: number | null;
+}
+
+export interface UsageRecordRow {
+  id: string;
+  workspace_id: string;
+  record_type: string;
+  tokens: number | null;
+  cost_usd: number | null;
+  created_at: string;
+}
+
+export interface BudgetRow {
+  id: string;
+  workspace_id: string;
+  name: string;
+  limit_usd: number;
+  current_usd: number | null;
+  alert_threshold: number | null;
+  period: string;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface ModelPricingRow {
+  id: string;
+  model_pattern: string;
+  input_cost_per_1k: number;
+  output_cost_per_1k: number;
+}
 import { fromTable } from '@/lib/supabaseExtended';
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
 
 // ═══ Usage ═══
 
-export async function getUsageSummary(period: 'day' | 'week' | 'month' = 'week') {
+export async function getUsageSummary(period: 'day' | 'week' | 'month' = 'week'): Promise<UsageSummary> {
   const now = new Date();
   const periodMs = period === 'day' ? 86400000 : period === 'week' ? 604800000 : 2592000000;
   const since = new Date(now.getTime() - periodMs).toISOString();
@@ -32,7 +79,7 @@ export async function getUsageSummary(period: 'day' | 'week' | 'month' = 'week')
   return { totalCost, totalTokens, byType, recordCount: records.length, period, since };
 }
 
-export async function getAgentUsage(days = 30) {
+export async function getAgentUsage(days = 30): Promise<AgentUsageRow[]> {
   const since = new Date();
   since.setDate(since.getDate() - days);
   const { data, error } = await supabaseExternal
@@ -41,28 +88,28 @@ export async function getAgentUsage(days = 30) {
     .gte('date', since.toISOString().split('T')[0])
     .order('date', { ascending: true });
   if (error) throw error;
-  return data ?? [];
+  return (data as any) ?? [];
 }
 
-export async function getUsageRecords(limit = 50) {
+export async function getUsageRecords(limit = 50): Promise<UsageRecordRow[]> {
   const { data, error } = await supabaseExternal
     .from('usage_records')
     .select('*')
     .order('created_at', { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return data ?? [];
+  return (data as any) ?? [];
 }
 
 // ═══ Budgets ═══
 
-export async function listBudgets() {
+export async function listBudgets(): Promise<BudgetRow[]> {
   const { data, error } = await supabaseExternal
     .from('budgets')
     .select('*')
     .order('created_at', { ascending: false });
   if (error) throw error;
-  return data ?? [];
+  return (data as any) ?? [];
 }
 
 export async function getBudget(workspaceId: string) {
@@ -117,11 +164,11 @@ export async function checkBudgetStatus(workspaceId: string) {
 
 // ═══ Pricing ═══
 
-export async function getModelPricing() {
+export async function getModelPricing(): Promise<ModelPricingRow[]> {
   const { data, error } = await supabaseExternal
     .from('model_pricing')
     .select('*')
     .order('model_pattern');
   if (error) throw error;
-  return data ?? [];
+  return (data as any) ?? [];
 }

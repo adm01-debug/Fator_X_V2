@@ -1,16 +1,26 @@
 /**
  * Nexus Agents Studio — Approval Queue Service
  */
+export interface PendingApproval {
+  id: string;
+  workflow_id: string;
+  status: string;
+  output: any; 
+  started_at: string | null;
+  current_step: number | null;
+  total_steps: number | null;
+  workflows: { name: string } | null;
+}
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import { supabase } from '@/integrations/supabase/client';
 
-export async function listPendingApprovals() {
+export async function listPendingApprovals(): Promise<PendingApproval[]> {
   const { data } = await supabaseExternal.from('workflow_runs')
     .select('id, workflow_id, status, output, started_at, current_step, total_steps, workflows(name)')
     .eq('status', 'awaiting_approval')
     .order('started_at', { ascending: false })
     .limit(20);
-  return data ?? [];
+  return (data as any) ?? [];
 }
 
 export async function approveWorkflowRun(runId: string, workflowId: string, feedback: string) {

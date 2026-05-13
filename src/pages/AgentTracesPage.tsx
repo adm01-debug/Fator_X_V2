@@ -138,7 +138,7 @@ export default function AgentTracesPage() {
     queryKey: ['agent-summaries-traces'],
     queryFn: () => listAgentSummaries(100),
   });
-  const agents = (agentSummaryData as any).agents || [];
+  const agents = agentSummaryData.agents;
 
   // Apply `?agent_id=` deep-link once after mount: override the persisted
   // agent filter, push it to the session-scoped drilldown store (so it
@@ -149,7 +149,7 @@ export default function AgentTracesPage() {
     if (!urlAgentId || appliedAgentParam.current === urlAgentId) return;
     if (filters.agentFilter !== urlAgentId) {
       setFilters((prev) => ({ ...prev, agentFilter: urlAgentId }));
-      const matched = agents.find((a: any) => a.id === urlAgentId);
+      const matched = agents.find((a) => a.id === urlAgentId);
       drilldown.setDrilldown(urlAgentId, matched?.name ?? null, 'deep-link');
       toast.success(matched ? `Filtrando por: ${matched.name}` : 'Filtro de agente aplicado via link');
     }
@@ -174,11 +174,11 @@ export default function AgentTracesPage() {
       return;
     }
     if (drilldown.agentId !== agentFilter) {
-      const matched = agents.find((a: any) => a.id === agentFilter);
+      const matched = agents.find((a) => a.id === agentFilter);
       drilldown.setDrilldown(agentFilter, matched?.name ?? null, 'manual');
     } else if (!drilldown.agentName) {
       // Backfill the cached name once agents finish loading.
-      const matched = agents.find((a: any) => a.id === agentFilter);
+      const matched = agents.find((a) => a.id === agentFilter);
       if (matched) drilldown.setDrilldown(agentFilter, matched.name, drilldown.origin ?? 'manual');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -236,7 +236,7 @@ export default function AgentTracesPage() {
   });
 
   const executions = useMemo(() => {
-    const rows = Array.isArray(traces) ? traces : (traces as any)?.traces ?? [];
+    const rows = Array.isArray(traces) ? traces : traces.traces;
     return groupBySession(rows);
   }, [traces]);
   const selected: ExecutionGroup | null = useMemo(
@@ -306,9 +306,9 @@ export default function AgentTracesPage() {
   }, [effectiveSessionId, selectedStep, searchParams, setSearchParams]);
 
   const totals = useMemo(() => {
-    const rows = Array.isArray(traces) ? traces : (traces as any)?.traces ?? [];
-    const errors = rows.filter((t: any) => t.level === 'error').length;
-    const cost = rows.reduce((s: number, t: any) => s + Number(t.cost_usd ?? 0), 0);
+    const rows = Array.isArray(traces) ? traces : traces.traces;
+    const errors = rows.filter((t) => t.level === 'error').length;
+    const cost = rows.reduce((s: number, t) => s + Number(t.cost_usd ?? 0), 0);
     return { execs: executions.length, traces: rows.length, errors, cost };
   }, [traces, executions]);
 

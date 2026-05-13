@@ -43,7 +43,7 @@ export interface DrilldownAuditState {
   failureModesKey: string;
 }
 
-type FieldFormatter = (value: DrilldownAuditState[keyof DrilldownAuditState]) => string;
+type FieldFormatter = (value: any) => string;
 
 // Field metadata: label + formatter for human-friendly diff display.
 const FIELDS: Record<keyof DrilldownAuditState, { label: string; format: FieldFormatter }> = {
