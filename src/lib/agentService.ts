@@ -85,7 +85,7 @@ export async function getAgent(id: string): Promise<AgentConfig> {
   if (error) throw error;
   if (!data) throw new Error('Agent not found');
 
-  const config = (data.config || {}) as Record<string, any>;
+  const config = (data.config || {}) as any;
   return {
     ...DEFAULT_AGENT,
     ...config,
