@@ -77,21 +77,13 @@ function parseFormBody(body: string): Record<string, unknown> {
 // ─── HMAC validation (Bitrix24 sends application_token in payload) ───
 function validateSignature(parsed: Record<string, unknown>): boolean {
   const expectedToken = Deno.env.get("BITRIX24_APP_TOKEN");
-  if (!expectedToken) {
-    // No token configured = treat as valid (dev mode); operators should
-    // configure BITRIX24_APP_TOKEN before going live.
-    return true;
-  }
+  if (!expectedToken) return true;
+  
   const auth = parsed.auth as Record<string, unknown> | undefined;
   const received = auth?.application_token;
   if (typeof received !== "string") return false;
-  // Constant-time comparison to defeat timing attacks
-  if (received.length !== expectedToken.length) return false;
-  let diff = 0;
-  for (let i = 0; i < received.length; i++) {
-    diff |= received.charCodeAt(i) ^ expectedToken.charCodeAt(i);
-  }
-  return diff === 0;
+  
+  return timingSafeEqual(expectedToken, received);
 }
 
 // ─── Resolve workspace from auth.domain or fall back to default ───
