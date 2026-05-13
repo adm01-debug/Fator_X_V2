@@ -134,10 +134,11 @@ export default function AgentTracesPage() {
     enabled: !!id,
   });
 
-  const { data: agents = [] } = useQuery({
+  const { data: agentSummaryData = { agents: [], total: 0 } } = useQuery({
     queryKey: ['agent-summaries-traces'],
     queryFn: () => listAgentSummaries(100),
   });
+  const agents = (agentSummaryData as any).agents || [];
 
   // Apply `?agent_id=` deep-link once after mount: override the persisted
   // agent filter, push it to the session-scoped drilldown store (so it
