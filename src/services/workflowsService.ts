@@ -217,7 +217,7 @@ export async function executeWorkflowStream(
           const data = JSON.parse(line.slice(6));
           onEvent(data);
         } catch (e) {
-          console.error('Failed to parse SSE line', e);
+          logger.error('Failed to parse SSE line in workflow execution', e);
         }
       }
     }

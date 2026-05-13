@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { saveOracleHistory } from '@/lib/oracleHistory';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 export type { OracleMode, OraclePreset, ModelResponse, ConsensusPoint, Citation, OracleResult } from './types/oracleTypes';
 import type { OracleMode, OracleResult } from './types/oracleTypes';
@@ -218,7 +219,7 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
               });
               
               saveOracleHistory(query, mode, preset.id, preset.name, chairmanModel, enableThinking, finalResults).catch((err) => {
-                console.error("Erro ao salvar histórico:", err);
+                logger.error("Erro ao salvar histórico do Oráculo:", err);
                 toast.error("Não foi possível salvar no histórico, mas o resultado está disponível abaixo.");
               });
             } else if (type === 'error') {

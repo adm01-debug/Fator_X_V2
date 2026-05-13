@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Mic, MicOff, Phone, PhoneOff, Volume2, Settings2, Activity, Waves, ShieldCheck, Database, Zap, Brain } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -52,7 +53,7 @@ export default function VoiceAgentStudioPage() {
       tick();
     } catch (e) {
       toast.error("Erro ao acessar microfone", { description: "Verifique as permissões do seu navegador." });
-      console.error(e);
+      logger.error("Erro ao acessar microfone no VoiceAgentStudio", e);
     }
   };
 

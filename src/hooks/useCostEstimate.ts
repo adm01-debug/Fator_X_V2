@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { estimateTokens, USD_TO_BRL, LLM_PRICING } from '@/lib/llmPricing';
+import { logger } from '@/lib/logger';
 
 export interface CostEstimateInput {
   model?: string | null;
@@ -85,7 +86,7 @@ export function useCostEstimate(input: CostEstimateInput): CostEstimateResult {
 
         });
       } catch (err) {
-        console.error('Error calculating cost on backend:', err);
+        logger.error('Error calculating cost on backend in useCostEstimate:', err);
         if (!isMounted) return;
         
         // Fallback to local
