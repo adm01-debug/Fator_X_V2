@@ -74,7 +74,7 @@ export async function listAgentTraces(params: ListTracesParams = {}): Promise<Li
   const { data, error, count } = await q;
   if (error) throw error;
 
-  let rows = (data ?? []) as unknown as AgentTraceRow[];
+  let rows = (data ?? []) as AgentTraceRow[];
   if (search) {
     const s = search.toLowerCase();
     rows = rows.filter((r) =>
