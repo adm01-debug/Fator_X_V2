@@ -81,7 +81,7 @@ export async function listSchedules(status?: ScheduleStatus): Promise<CronSchedu
   if (status) query = query.eq('status', status);
   const { data, error } = await query;
   if (error) throw error;
-  return (data ?? []) as CronSchedule[];
+  return (data ?? []) as unknown as CronSchedule[];
 }
 
 export async function getSchedule(id: string): Promise<CronSchedule | null> {
@@ -95,7 +95,7 @@ export async function updateSchedule(id: string, updates: Partial<CreateSchedule
   if (updates.cron_expression) patch.next_run_at = getNextCronRun(updates.cron_expression).toISOString();
   const { data, error } = await fromTable('cron_schedules').update(patch).eq('id', id).select().single();
   if (error) throw error;
-  return data as CronSchedule;
+  return data as unknown as CronSchedule;
 }
 
 export async function pauseSchedule(id: string): Promise<CronSchedule> { return updateSchedule(id, { status: 'paused' }); }
@@ -125,7 +125,7 @@ export async function recordExecution(scheduleId: string, status: ScheduleExecut
 export async function getScheduleExecutions(scheduleId: string, limit: number = 50): Promise<ScheduleExecution[]> {
   const { data, error } = await fromTable('cron_schedule_executions').select('*').eq('schedule_id', scheduleId).order('started_at', { ascending: false }).limit(limit);
   if (error) throw error;
-  return (data ?? []) as ScheduleExecution[];
+  return (data ?? []) as unknown as ScheduleExecution[];
 }
 
 /* ── Stats ── */

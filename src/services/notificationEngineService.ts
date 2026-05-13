@@ -81,7 +81,7 @@ export async function sendNotification(input: SendNotificationInput): Promise<No
     source_type: input.source_type ?? 'system', source_id: input.source_id ?? null,
   }).select().single();
   if (error) throw error;
-  return data as NotificationPayload;
+  return data as unknown as NotificationPayload;
 }
 
 export async function sendBulkNotifications(inputs: SendNotificationInput[]): Promise<NotificationPayload[]> {
@@ -136,7 +136,7 @@ export async function listNotifications(
   if (filters?.source_type) query = query.eq('source_type', filters.source_type);
   const { data, error } = await query;
   if (error) throw error;
-  return (data ?? []) as NotificationPayload[];
+  return (data ?? []) as unknown as NotificationPayload[];
 }
 
 export async function getInAppNotifications(userId: string, unreadOnly: boolean = false): Promise<NotificationPayload[]> {
@@ -144,7 +144,7 @@ export async function getInAppNotifications(userId: string, unreadOnly: boolean 
   if (unreadOnly) query = query.in('status', ['sent', 'delivered']);
   const { data, error } = await query;
   if (error) throw error;
-  return (data ?? []) as NotificationPayload[];
+  return (data ?? []) as unknown as NotificationPayload[];
 }
 
 export async function markAllRead(userId: string): Promise<number> {
@@ -162,13 +162,13 @@ export async function listTemplates(channel?: NotificationChannel): Promise<Noti
   if (channel) query = query.eq('channel', channel);
   const { data, error } = await query;
   if (error) throw error;
-  return (data ?? []) as NotificationTemplate[];
+  return (data ?? []) as unknown as NotificationTemplate[];
 }
 
 export async function createTemplate(input: Omit<NotificationTemplate, 'id' | 'created_at'>): Promise<NotificationTemplate> {
   const { data, error } = await fromTable('notification_templates').insert(input).select().single();
   if (error) throw error;
-  return data as NotificationTemplate;
+  return data as unknown as NotificationTemplate;
 }
 
 /* ------------------------------------------------------------------ */
