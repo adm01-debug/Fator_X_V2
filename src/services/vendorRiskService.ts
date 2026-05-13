@@ -129,14 +129,14 @@ export async function registerVendor(i: RegisterVendorInput): Promise<string> {
     p_vendor_type: i.vendorType,
     p_criticality: i.criticality,
     p_data_classification: i.dataClassification,
-    p_website: i.website ?? null,
-    p_contact_email: i.contactEmail ?? null,
+    p_website: i.website ?? undefined,
+    p_contact_email: i.contactEmail ?? undefined,
     p_dpa_signed: i.dpaSigned ?? false,
-    p_dpa_expires_at: i.dpaExpiresAt ?? null,
-    p_soc2_valid_until: i.soc2ValidUntil ?? null,
-    p_iso27001_valid_until: i.iso27001ValidUntil ?? null,
-    p_owner_id: i.ownerId ?? null,
-    p_notes: i.notes ?? null,
+    p_dpa_expires_at: i.dpaExpiresAt ?? undefined,
+    p_soc2_valid_until: i.soc2ValidUntil ?? undefined,
+    p_iso27001_valid_until: i.iso27001ValidUntil ?? undefined,
+    p_owner_id: i.ownerId ?? undefined,
+    p_notes: i.notes ?? undefined,
   });
   if (error) throw error;
   return data as string;
@@ -156,7 +156,7 @@ export async function assessVendor(input: {
     p_compliance_score: input.complianceScore,
     p_operational_score: input.operationalScore,
     p_findings: input.findings ?? [],
-    p_recommendations: input.recommendations ?? null,
+    p_recommendations: input.recommendations ?? undefined,
   });
   if (error) throw error;
   return data as string;
@@ -165,7 +165,7 @@ export async function assessVendor(input: {
 export async function offboardVendor(vendorId: string, notes?: string): Promise<void> {
   const { error } = await supabase.rpc("offboard_vendor", {
     p_vendor_id: vendorId,
-    p_notes: notes ?? null,
+    p_notes: notes ?? undefined,
   });
   if (error) throw error;
 }
@@ -202,7 +202,7 @@ export async function uploadVendorDocument(input: {
 export async function getVendorSummary(workspaceId: string): Promise<VendorSummary> {
   const { data, error } = await supabase.rpc("get_vendor_summary", { p_workspace_id: workspaceId });
   if (error) throw error;
-  return data as VendorSummary;
+  return data as unknown as VendorSummary;
 }
 
 // ============ Helpers ============
