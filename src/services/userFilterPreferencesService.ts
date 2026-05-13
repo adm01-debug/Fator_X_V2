@@ -4,6 +4,7 @@
  */
 import { fromTable } from '@/lib/supabaseExtended';
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
 
 export type FilterScope = 'agent_traces';
 
@@ -22,7 +23,7 @@ export async function getUserFilters<T = Record<string, unknown>>(
     if (error) throw error;
     return (data?.filters ?? null) as T | null;
   } catch (e) {
-    console.warn('[userFilterPreferences] read failed', e);
+    logger.warn('[userFilterPreferences] read failed', e);
     return null;
   }
 }
@@ -43,7 +44,7 @@ export async function saveUserFilters<T = Record<string, unknown>>(
     if (error) throw error;
     return true;
   } catch (e) {
-    console.warn('[userFilterPreferences] save failed', e);
+    logger.warn('[userFilterPreferences] save failed', e);
     return false;
   }
 }
@@ -60,7 +61,7 @@ export async function deleteUserFilters(scope: FilterScope): Promise<boolean> {
     if (error) throw error;
     return true;
   } catch (e) {
-    console.warn('[userFilterPreferences] delete failed', e);
+    logger.warn('[userFilterPreferences] delete failed', e);
     return false;
   }
 }

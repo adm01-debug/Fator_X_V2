@@ -2,6 +2,7 @@
 export type { ModelPricing, CostEstimate, CostBreakdownItem, ActualCost, BudgetConfig, BudgetStatus } from './types/costCalculatorTypes';
 import type { ModelPricing, CostEstimate, CostBreakdownItem, ActualCost, BudgetConfig, BudgetStatus } from './types/costCalculatorTypes';
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
 
 // ──────── Pricing ────────
 
@@ -109,7 +110,7 @@ export async function calculateCost(
       timestamp: new Date().toISOString(),
     };
   } catch (err) {
-    console.error('Failed to call cost-calculator edge function, falling back to local calc:', err);
+    logger.error('Failed to call cost-calculator edge function in costCalculatorService', err);
     // Fallback to local calculation if edge function fails
     const pricing = await getModelPricing(provider, model);
     const inputRate = (pricing?.inputPricePerMToken ?? 3.0) / 1000;

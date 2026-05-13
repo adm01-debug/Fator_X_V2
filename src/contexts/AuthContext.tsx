@@ -85,7 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const { data: mfaData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
         if (mfaData?.currentLevel !== 'aal2') {
           // This is a prompt/flag for the UI to redirect to MFA setup or verification
-          console.warn("MFA AAL2 required for admin");
+          logger.warn("MFA AAL2 required for admin user", { userId: data.user.id });
         }
       }
     }
