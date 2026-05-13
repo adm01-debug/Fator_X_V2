@@ -3530,6 +3530,33 @@ export type Database = {
           },
         ]
       }
+      idempotency_keys: {
+        Row: {
+          created_at: string | null
+          expires_at: string
+          id: string
+          key: string
+          response_body: Json
+          status_code: number
+        }
+        Insert: {
+          created_at?: string | null
+          expires_at: string
+          id?: string
+          key: string
+          response_body: Json
+          status_code: number
+        }
+        Update: {
+          created_at?: string | null
+          expires_at?: string
+          id?: string
+          key?: string
+          response_body?: Json
+          status_code?: number
+        }
+        Relationships: []
+      }
       incident_playbooks: {
         Row: {
           actions: Json
