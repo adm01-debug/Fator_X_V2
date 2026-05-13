@@ -9,8 +9,6 @@ export default defineConfig({
     globals: true,
     setupFiles: ["./src/test/setup.ts"],
     include: ["src/**/*.{test,spec}.{ts,tsx}"],
-    // RLS persona tests live under tests/rls and run against a real Supabase
-    // project — opt-in via the dedicated `test:rls` script.
     exclude: ["node_modules", "dist", "tests/rls/**", "e2e/**"],
     coverage: {
       provider: "v8",
@@ -20,10 +18,10 @@ export default defineConfig({
       include: ["src/services/**", "src/lib/**", "src/hooks/**"],
       exclude: ["src/**/*.test.*", "src/test/**", "src/tests/**"],
       thresholds: {
-        lines: 70,
-        functions: 70,
-        branches: 60,
-        statements: 70,
+        lines: 80,
+        functions: 80,
+        branches: 70,
+        statements: 80,
       },
     },
   },
