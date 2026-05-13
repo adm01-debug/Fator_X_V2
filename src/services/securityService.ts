@@ -80,7 +80,7 @@ export async function getSecurityEvents(_options?: { severity?: string; limit?: 
 
 export async function getAuditLog(options?: { userId?: string; limit?: number }) {
   try {
-    let query = supabaseExternal
+    let query = (supabaseExternal as any)
       .from('audit_log_safe')
       .select('*')
       .order('created_at', { ascending: false })
@@ -93,7 +93,7 @@ export async function getAuditLog(options?: { userId?: string; limit?: number })
       console.warn('Audit log query failed:', error.message);
       return [];
     }
-    return data ?? [];
+    return (data ?? []) as any[];
   } catch {
     return [];
   }
