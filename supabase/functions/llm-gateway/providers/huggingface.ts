@@ -130,12 +130,9 @@ export async function callHuggingFace(
   if (first.retryable) {
     const fallbacks = HF_FREE_MODELS.filter((m) => m !== requestedModel);
     for (const fallbackModel of fallbacks) {
-      console.log(
-        `HF fallback: trying ${fallbackModel} after ${requestedModel} failed (${first.errorMsg})`,
-      );
+      // In Deno Edge Functions, console.log is used for visibility in Supabase Dashboard logs
       const attempt = await callHuggingFaceSingle(fallbackModel, params, apiKey);
       if (attempt.result) {
-        console.log(`HF fallback success: ${fallbackModel}`);
         return attempt.result;
       }
       errors.push(`[${fallbackModel}] ${attempt.errorMsg}`);

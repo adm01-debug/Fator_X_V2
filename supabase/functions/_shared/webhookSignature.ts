@@ -5,17 +5,7 @@
  * webhooks (Meta, Twilio, GitHub, etc.)
  */
 
-/**
- * Constant-time string comparison to prevent timing attacks.
- */
-export function timingSafeEqual(a: string, b: string): boolean {
-  if (a.length !== b.length) return false;
-  let diff = 0;
-  for (let i = 0; i < a.length; i++) {
-    diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  }
-  return diff === 0;
-}
+import { constantTimeEqual } from "./security.ts";
 
 /**
  * Generates a SHA-256 HMAC hex string.
@@ -37,6 +27,7 @@ export async function hmacSha256Hex(secret: string, message: string): Promise<st
 
 /**
  * Verifies a SHA-256 HMAC signature.
+ * Enforces timing-safe comparison.
  */
 export async function verifyHmac(
   secret: string,
@@ -44,12 +35,36 @@ export async function verifyHmac(
   receivedSignature: string,
   prefix = 'sha256='
 ): Promise<boolean> {
-  if (!receivedSignature) return false;
+  if (!receivedSignature || !secret) return false;
   
   const signature = receivedSignature.startsWith(prefix) 
     ? receivedSignature.slice(prefix.length) 
     : receivedSignature;
     
   const expected = await hmacSha256Hex(secret, body);
-  return timingSafeEqual(expected, signature);
+  return constantTimeEqual(expected, signature);
+}
+
+/**
+ * Validates HMAC signature with mandatory secret presence check.
+ */
+export async function validateWebhookRequest(
+  req: Request,
+  secretEnvVar: string,
+  signatureHeader = 'x-hub-signature-256'
+): Promise<{ isValid: boolean; body?: string }> {
+  const secret = Deno.env.get(secretEnvVar);
+  if (!secret) {
+    return { isValid: false };
+  }
+
+  const signature = req.headers.get(signatureHeader);
+  if (!signature) {
+    return { isValid: false };
+  }
+
+  const body = await req.text();
+  const isValid = await verifyHmac(secret, body, signature);
+  
+  return { isValid, body };
 }
