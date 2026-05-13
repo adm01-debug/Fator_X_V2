@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { estimateTokens, USD_TO_BRL } from '@/lib/llmPricing';
+import { estimateTokens, USD_TO_BRL, LLM_PRICING } from '@/lib/llmPricing';
 
 export interface CostEstimateInput {
   model?: string | null;
@@ -88,9 +88,10 @@ export function useCostEstimate(input: CostEstimateInput): CostEstimateResult {
         console.error('Error calculating cost on backend:', err);
         if (!isMounted) return;
         
-        // Fallback to local (though discouraged, better than showing 0)
-        const localInputCost = (inputTokens / 1000) * 0.003;
-        const localOutputCost = (outputTokens / 1000) * 0.015;
+        // Fallback to local
+        const pricing = LLM_PRICING[model] || LLM_PRICING['google/gemini-2.5-flash'];
+        const localInputCost = (inputTokens / 1000) * pricing.input_per_1k;
+        const localOutputCost = (outputTokens / 1000) * pricing.output_per_1k;
         const localUsd = localInputCost + localOutputCost;
         
         setResult({
@@ -99,10 +100,10 @@ export function useCostEstimate(input: CostEstimateInput): CostEstimateResult {
           totalTokens: inputTokens + outputTokens,
           costUsd: localUsd,
           costBrl: localUsd * USD_TO_BRL,
-          estLatencyMs: 1000,
+          estLatencyMs: pricing.avg_latency_ms,
           pricing: {
-            label: model,
-            context_window: 128000
+            label: pricing.label,
+            context_window: pricing.context_window
           },
           loading: false,
 

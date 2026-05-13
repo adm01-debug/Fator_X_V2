@@ -70,7 +70,7 @@ export interface VendorSummary {
 }
 
 export async function listVendors(workspaceId: string): Promise<Vendor[]> {
-  const { data, error } = await (supabase as any)
+  const { data, error } = await supabase
     .from("vendors")
     .select("*")
     .eq("workspace_id", workspaceId)
@@ -81,13 +81,13 @@ export async function listVendors(workspaceId: string): Promise<Vendor[]> {
 }
 
 export async function getVendor(id: string): Promise<Vendor | null> {
-  const { data, error } = await (supabase as any).from("vendors").select("*").eq("id", id).maybeSingle();
+  const { data, error } = await supabase.from("vendors").select("*").eq("id", id).maybeSingle();
   if (error) throw error;
   return data as Vendor | null;
 }
 
 export async function listAssessments(vendorId: string): Promise<VendorAssessment[]> {
-  const { data, error } = await (supabase as any)
+  const { data, error } = await supabase
     .from("vendor_assessments")
     .select("*")
     .eq("vendor_id", vendorId)
@@ -97,7 +97,7 @@ export async function listAssessments(vendorId: string): Promise<VendorAssessmen
 }
 
 export async function listDocuments(vendorId: string): Promise<VendorDocument[]> {
-  const { data, error } = await (supabase as any)
+  const { data, error } = await supabase
     .from("vendor_documents")
     .select("*")
     .eq("vendor_id", vendorId)
@@ -123,20 +123,20 @@ export interface RegisterVendorInput {
 }
 
 export async function registerVendor(i: RegisterVendorInput): Promise<string> {
-  const { data, error } = await (supabase as any).rpc("register_vendor", {
+  const { data, error } = await supabase.rpc("register_vendor", {
     p_workspace_id: i.workspaceId,
     p_name: i.name,
     p_vendor_type: i.vendorType,
     p_criticality: i.criticality,
     p_data_classification: i.dataClassification,
-    p_website: i.website ?? null,
-    p_contact_email: i.contactEmail ?? null,
+    p_website: i.website ?? undefined,
+    p_contact_email: i.contactEmail ?? undefined,
     p_dpa_signed: i.dpaSigned ?? false,
-    p_dpa_expires_at: i.dpaExpiresAt ?? null,
-    p_soc2_valid_until: i.soc2ValidUntil ?? null,
-    p_iso27001_valid_until: i.iso27001ValidUntil ?? null,
-    p_owner_id: i.ownerId ?? null,
-    p_notes: i.notes ?? null,
+    p_dpa_expires_at: i.dpaExpiresAt ?? undefined,
+    p_soc2_valid_until: i.soc2ValidUntil ?? undefined,
+    p_iso27001_valid_until: i.iso27001ValidUntil ?? undefined,
+    p_owner_id: i.ownerId ?? undefined,
+    p_notes: i.notes ?? undefined,
   });
   if (error) throw error;
   return data as string;
@@ -150,22 +150,22 @@ export async function assessVendor(input: {
   findings?: string[];
   recommendations?: string;
 }): Promise<string> {
-  const { data, error } = await (supabase as any).rpc("assess_vendor", {
+  const { data, error } = await supabase.rpc("assess_vendor", {
     p_vendor_id: input.vendorId,
     p_security_score: input.securityScore,
     p_compliance_score: input.complianceScore,
     p_operational_score: input.operationalScore,
     p_findings: input.findings ?? [],
-    p_recommendations: input.recommendations ?? null,
+    p_recommendations: input.recommendations ?? undefined,
   });
   if (error) throw error;
   return data as string;
 }
 
 export async function offboardVendor(vendorId: string, notes?: string): Promise<void> {
-  const { error } = await (supabase as any).rpc("offboard_vendor", {
+  const { error } = await supabase.rpc("offboard_vendor", {
     p_vendor_id: vendorId,
-    p_notes: notes ?? null,
+    p_notes: notes ?? undefined,
   });
   if (error) throw error;
 }
@@ -182,7 +182,7 @@ export async function uploadVendorDocument(input: {
   const userId = u.user?.id;
   if (!userId) throw new Error("not authenticated");
 
-  const { data, error } = await (supabase as any)
+  const { data, error } = await supabase
     .from("vendor_documents")
     .insert({
       vendor_id: input.vendorId,
@@ -200,9 +200,9 @@ export async function uploadVendorDocument(input: {
 }
 
 export async function getVendorSummary(workspaceId: string): Promise<VendorSummary> {
-  const { data, error } = await (supabase as any).rpc("get_vendor_summary", { p_workspace_id: workspaceId });
+  const { data, error } = await supabase.rpc("get_vendor_summary", { p_workspace_id: workspaceId });
   if (error) throw error;
-  return data as VendorSummary;
+  return data as unknown as VendorSummary;
 }
 
 // ============ Helpers ============

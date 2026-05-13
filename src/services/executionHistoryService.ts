@@ -38,7 +38,7 @@ export async function startExecution(
       source_name: sourceName,
       status: 'running',
       trigger,
-      input_data: inputData,
+      input_data: inputData as any,
       steps: [],
       tokens_used: 0,
       cost_brl: 0,
@@ -49,7 +49,7 @@ export async function startExecution(
     .select()
     .single();
   if (error) throw error;
-  return data as ExecutionRecord;
+  return data as unknown as ExecutionRecord;
 }
 
 export async function completeExecution(
@@ -118,10 +118,10 @@ export async function recordStep(
     .single();
   if (fetchError) throw fetchError;
 
-  const steps = [...((existing?.steps as ExecutionStepRecord[]) ?? []), step];
+  const steps = [...((existing?.steps as unknown as ExecutionStepRecord[]) ?? []), step];
 
   const { error } = await fromTable('execution_history')
-    .update({ steps })
+    .update({ steps: steps as any })
     .eq('id', executionId);
   if (error) throw error;
 }
@@ -163,7 +163,7 @@ export async function getExecution(id: string): Promise<ExecutionRecord | null> 
     .eq('id', id)
     .maybeSingle();
   if (error) throw error;
-  return data as ExecutionRecord | null;
+  return data as unknown as ExecutionRecord | null;
 }
 
 /* ------------------------------------------------------------------ */
@@ -312,8 +312,8 @@ export async function getExecutionStats(
     running: running.length,
     success_rate: items.length > 0 ? (success.length / items.length) * 100 : 0,
     avg_duration_ms: durations.length > 0 ? durations.reduce((a: any, b: any) => a + b, 0) / durations.length : 0,
-    total_tokens: items.reduce((s: any, i: any) => s + (i.tokens_used ?? 0), 0),
-    total_cost_brl: items.reduce((s: any, i: any) => s + (i.cost_brl ?? 0), 0),
+    total_tokens: items.reduce((s: number, i: any) => s + (i.tokens_used ?? 0), 0),
+    total_cost_brl: items.reduce((s: number, i: any) => s + (i.cost_brl ?? 0), 0),
     by_type: byType,
   };
 }

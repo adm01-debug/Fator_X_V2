@@ -84,8 +84,8 @@ export function useBillingData(agentId?: string): BillingData {
         }
 
         // Accumulate real costs
-        (records ?? []).forEach((r: any) => {
-          const d = new Date(r.created_at as string);
+        (records ?? []).forEach((r) => {
+          const d = new Date(r.created_at ?? '');
           const key = DAY_NAMES[d.getDay()];
           const entry = dayMap.get(key);
           if (!entry) return;
@@ -126,11 +126,11 @@ export function useBillingData(agentId?: string): BillingData {
             projection.push({ week: `S${w + 1}`, real: null, projetado: Math.round(avgDaily * 7) });
           } else {
             // Filter records that fall within this specific week
-            const weekRecords = (records ?? []).filter((r: any) => {
-              const d = new Date(r.created_at as string);
+            const weekRecords = (records ?? []).filter((r) => {
+              const d = new Date(r.created_at ?? '');
               return d >= weekStart && d < weekEnd;
             });
-            const weekCost = weekRecords.reduce((s: number, r: any) => s + (Number(r.cost_usd) || 0), 0);
+            const weekCost = weekRecords.reduce((s: number, r) => s + (Number(r.cost_usd) || 0), 0);
             projection.push({
               week: `S${w + 1}`,
               real: Math.round(weekCost * 100) / 100,
