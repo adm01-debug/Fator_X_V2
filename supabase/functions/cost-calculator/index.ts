@@ -20,10 +20,14 @@ const CostRequestSchema = z.object({
 });
 
 const DEFAULT_PRICING = {
-  input_cost_per_1k: 0.003, // Default to Sonnet-like
+  input_cost_per_1k: 0.003,
   output_cost_per_1k: 0.015,
-  provider: 'unknown'
+  provider: 'unknown',
+  avg_latency_ms: 1000,
+  context_window: 128000,
+  label: 'Unknown Model'
 };
+
 
 const USD_TO_BRL = 5.75; // Updated to match current service value
 
@@ -39,7 +43,8 @@ serve(async (req) => {
     const supabaseAdmin = createAdminClient();
     const { data: pricingList } = await supabaseAdmin
       .from('model_pricing')
-      .select('model_pattern, input_cost_per_1k, output_cost_per_1k');
+      .select('model_pattern, input_cost_per_1k, output_cost_per_1k, avg_latency_ms, context_window, label');
+
     
     let pricing = { ...DEFAULT_PRICING };
     
@@ -52,20 +57,30 @@ serve(async (req) => {
         pricing = {
           input_cost_per_1k: Number(match.input_cost_per_1k),
           output_cost_per_1k: Number(match.output_cost_per_1k),
-          provider: model.split('/')[0] || 'unknown'
+          provider: model.split('/')[0] || 'unknown',
+          avg_latency_ms: Number(match.avg_latency_ms || 1000),
+          context_window: Number(match.context_window || 128000),
+          label: match.label || model
         };
+
       }
     }
     
     const inputCost = (inputTokens / 1000) * pricing.input_cost_per_1k;
     const outputCost = (outputTokens / 1000) * pricing.output_cost_per_1k;
     const costUsd = inputCost + outputCost;
+    const estLatencyMs = pricing.avg_latency_ms + Math.floor(outputTokens / 50) * 10;
+
 
     return jsonResponse(req, {
       costUsd,
       costBrl: costUsd * USD_TO_BRL,
+      estLatencyMs,
+      modelLabel: pricing.label,
+      contextWindow: pricing.context_window,
       model,
       provider: pricing.provider,
+
       tokens: inputTokens + outputTokens,
       breakdown: {
         inputCost,
