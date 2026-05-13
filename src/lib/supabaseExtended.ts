@@ -1,9 +1,10 @@
+import { supabase } from '@/integrations/supabase/client';
+
 /**
  * Supabase Extended Client
  * Includes additional helpers for schema-safe access and RLS persona testing.
  * Added: isUserLockedOut RPC call.
  */
-import { supabase } from '@/integrations/supabase/client';
 
 /**
  * Returns a typed Supabase client for a specific table.
