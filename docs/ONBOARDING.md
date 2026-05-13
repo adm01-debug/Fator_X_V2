@@ -1,19 +1,32 @@
-# Nexus Agents Studio Onboarding
+# 🚀 Onboarding — Nexus Agents Studio
 
-## Welcome!
-Nexus is a high-performance agent orchestration platform built on Supabase Cloud and React.
+Bem-vindo ao Nexus! Este guia ajudará você a configurar seu ambiente de desenvolvimento local.
 
-## Stack Overview
-- **Frontend**: React 18 + Vite + Tailwind CSS + shadcn/ui.
-- **Backend**: Supabase (PostgreSQL + RLS + Edge Functions).
-- **Gateway**: Lovable AI Gateway for LLM provider abstraction.
+## 🛠 Pré-requisitos
+- Node.js 20+
+- npm 9+
+- Git
+- Lovable CLI (opcional)
 
-## Getting Started
-1. **Environment Setup**: Ensure `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are set.
-2. **Database Access**: All data operations should use `supabaseExternal` (Dual-Client architecture).
-3. **Security**: Row Level Security (RLS) is active on 100% of tables. Always test your queries against RLS personas.
+## 📦 Instalação
+1. Clone o repositório
+2. `npm install`
+3. Crie um arquivo `.env` baseado no `.env.example`
 
-## Key Concepts
-- **Agents**: Autonomous entities with specific missions and tools.
-- **Workflows**: Multi-step automated sequences.
-- **Super Cérebro**: RAG engine with vector embeddings.
+## 🏗 Arquitetura
+O Nexus utiliza uma arquitetura **Dual-Client**:
+- `supabase`: Cliente local para autenticação e metadados.
+- `supabaseExternal`: Cliente para o banco de dados principal de produção.
+
+## 🔬 Testes
+- Unitários: `npm test`
+- E2E: `npx playwright test`
+- RLS: `tests/rls/personas.test.ts`
+
+## 📜 Convenções
+- **Commits**: Usar Conventional Commits (`feat:`, `fix:`, `chore:`)
+- **Tipagem**: Zero `any`. Use tipos gerados do Supabase.
+- **Logs**: Use o `logger` do `@/lib/logger` em vez de `console.log`.
+
+---
+*Nexus Agents Studio 2026 — 10/10 Quality Enforced*
