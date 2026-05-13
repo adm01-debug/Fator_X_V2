@@ -9,7 +9,6 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
-type Action = { 
 interface Action {
   type: string;
   params?: Record<string, any>;
