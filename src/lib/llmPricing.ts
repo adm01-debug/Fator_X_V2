@@ -1,7 +1,9 @@
 /**
  * LLM Pricing Table — USD per 1K tokens.
- * Last updated: April 2026.
+ * DEPRECATED: Use the cost-calculator Edge Function for real-time math.
+ * Keeping for offline estimation if needed.
  */
+import { supabase } from '@/integrations/supabase/client';
 
 export interface ModelPrice {
   model: string;
@@ -35,7 +37,6 @@ export const LLM_PRICING: Record<string, ModelPrice> = {
     model: 'google/gemini-3.1-pro-preview', label: 'Gemini 3.1 Pro', provider: 'google',
     input_per_1k: 0.00150, output_per_1k: 0.012, avg_latency_ms: 2400, context_window: 2_000_000,
   },
-  // OpenAI
   'openai/gpt-5': {
     model: 'openai/gpt-5', label: 'GPT-5', provider: 'openai',
     input_per_1k: 0.00250, output_per_1k: 0.0100, avg_latency_ms: 2800, context_window: 400_000,
@@ -54,6 +55,10 @@ export const LLM_PRICING: Record<string, ModelPrice> = {
   },
 };
 
+export function listModelPrices(): ModelPrice[] {
+  return Object.values(LLM_PRICING);
+}
+
 export const USD_TO_BRL = 5.0;
 
 export function getModelPrice(modelId: string | undefined | null): ModelPrice {
@@ -61,12 +66,20 @@ export function getModelPrice(modelId: string | undefined | null): ModelPrice {
   return LLM_PRICING['google/gemini-2.5-flash'];
 }
 
-export function listModelPrices(): ModelPrice[] {
-  return Object.values(LLM_PRICING);
+/**
+ * Server-side cost calculation via Edge Function.
+ */
+export async function calculateCostOnBackend(model: string, inputTokens: number, outputTokens: number) {
+  const { data, error } = await supabase.functions.invoke('cost-calculator', {
+    body: { model, inputTokens, outputTokens }
+  });
+  if (error) throw error;
+  return data;
 }
 
-/** Rough char→token estimation (avg ~4 chars/token for EN/PT). */
+/** Rough char→token estimation. */
 export function estimateTokens(text: string): number {
   if (!text) return 0;
   return Math.ceil(text.length / 4);
 }
+

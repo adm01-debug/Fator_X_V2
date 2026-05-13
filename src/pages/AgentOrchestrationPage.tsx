@@ -37,7 +37,7 @@ export default function AgentOrchestrationPage() {
         listAgentSummaries(),
       ]);
       setGraphs(gs);
-      setAgents(ag);
+      setAgents((ag as any).agents || []);
     }
   })(); }, []);
 

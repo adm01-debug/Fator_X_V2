@@ -30,7 +30,7 @@ export default function AgentArenaPage() {
   const [results, setResults] = useState<{ a: ArenaResult; b: ArenaResult } | null>(null);
 
   useEffect(() => {
-    listAgentSummaries().then(setAgents).catch(() => toast.error("Falha ao carregar agentes"));
+    listAgentSummaries().then(data => setAgents((data as any).agents || [])).catch(() => toast.error("Falha ao carregar agentes"));
   }, []);
 
   const handleRunArena = async () => {

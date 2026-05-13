@@ -32,17 +32,20 @@ export default function MemoryPage() {
   const [compacting, setCompacting] = useState(false);
   const queryClient = useQueryClient();
 
-  const { data: memories = [], isLoading } = useQuery({
+  const { data: memoryData = { memories: [], total: 0 }, isLoading } = useQuery({
     queryKey: ['agent_memories', activeType, search],
     queryFn: async () => {
       if (search.trim()) {
         try {
-          return await searchMemory(search.trim(), activeType, 50);
+          const results = await searchMemory(search.trim(), activeType, 50);
+          return { memories: results, total: results.length };
         } catch (err) { logger.error("Search fallback:", err); }
       }
       return listMemories(activeType, 100);
     },
   });
+  
+  const memories = memoryData.memories;
 
   const handleAdd = async () => {
     const result = memorySchema.safeParse({ content: newContent, memory_type: activeType, source: newSource || undefined });
