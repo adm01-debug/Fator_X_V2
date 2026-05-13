@@ -86,7 +86,7 @@ export async function upsertWhatsAppRoute(
       event_type: eventType,
       agent_id: agentId,
       is_enabled: isEnabled,
-    }, {
+    } as Record<string, any>, {
       onConflict: 'workspace_id,source,event_type',
     });
   if (error) {
