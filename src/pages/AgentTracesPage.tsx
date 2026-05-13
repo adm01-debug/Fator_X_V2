@@ -234,7 +234,10 @@ export default function AgentTracesPage() {
     staleTime: 30_000,
   });
 
-  const executions = useMemo(() => groupBySession(traces), [traces]);
+  const executions = useMemo(() => {
+    const rows = Array.isArray(traces) ? traces : (traces as any)?.traces ?? [];
+    return groupBySession(rows);
+  }, [traces]);
   const selected: ExecutionGroup | null = useMemo(
     () => executions.find((e) => e.session_id === selectedId) ?? executions[0] ?? null,
     [executions, selectedId],
@@ -302,9 +305,10 @@ export default function AgentTracesPage() {
   }, [effectiveSessionId, selectedStep, searchParams, setSearchParams]);
 
   const totals = useMemo(() => {
-    const errors = traces.filter((t) => t.level === 'error').length;
-    const cost = traces.reduce((s, t) => s + Number(t.cost_usd ?? 0), 0);
-    return { execs: executions.length, traces: traces.length, errors, cost };
+    const rows = Array.isArray(traces) ? traces : (traces as any)?.traces ?? [];
+    const errors = rows.filter((t: any) => t.level === 'error').length;
+    const cost = rows.reduce((s: number, t: any) => s + Number(t.cost_usd ?? 0), 0);
+    return { execs: executions.length, traces: rows.length, errors, cost };
   }, [traces, executions]);
 
   const hasActiveFilters =
