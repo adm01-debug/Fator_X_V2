@@ -73,7 +73,7 @@ async function loadActiveProviderConfig(): Promise<ProviderSecrets> {
   if (error) throw error;
 
   const map: Record<string, string> = {};
-  for (const row of (data ?? []) as unknown as Array<{ key_name: string; encrypted_value: string }>) {
+  for (const row of (data ?? []) as any[]) {
     map[row.key_name] = row.encrypted_value;
   }
 
@@ -311,6 +311,8 @@ export async function sendWhatsAppMessage(
           case 'evolution':
             result = await sendViaEvolution(providerSecrets.config, input);
             break;
+          default:
+            throw new Error(`Unsupported provider: ${providerSecrets.provider}`);
         }
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);

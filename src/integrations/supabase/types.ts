@@ -619,10 +619,10 @@ export type Database = {
       }
       agent_traces: {
         Row: {
-          agent_id: string
+          agent_id: string | null
           cost_usd: number | null
           created_at: string
-          event: string
+          event: string | null
           id: string
           input: Json | null
           latency_ms: number | null
@@ -631,13 +631,13 @@ export type Database = {
           output: Json | null
           session_id: string | null
           tokens_used: number | null
-          user_id: string
+          user_id: string | null
         }
         Insert: {
-          agent_id: string
+          agent_id?: string | null
           cost_usd?: number | null
           created_at?: string
-          event: string
+          event?: string | null
           id?: string
           input?: Json | null
           latency_ms?: number | null
@@ -646,13 +646,13 @@ export type Database = {
           output?: Json | null
           session_id?: string | null
           tokens_used?: number | null
-          user_id: string
+          user_id?: string | null
         }
         Update: {
-          agent_id?: string
+          agent_id?: string | null
           cost_usd?: number | null
           created_at?: string
-          event?: string
+          event?: string | null
           id?: string
           input?: Json | null
           latency_ms?: number | null
@@ -661,17 +661,57 @@ export type Database = {
           output?: Json | null
           session_id?: string | null
           tokens_used?: number | null
-          user_id?: string
+          user_id?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "agent_traces_agent_id_fkey"
-            columns: ["agent_id"]
-            isOneToOne: false
-            referencedRelation: "agents"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
+      }
+      agent_traces_v2_2026_05: {
+        Row: {
+          agent_id: string | null
+          cost_usd: number | null
+          created_at: string
+          event: string | null
+          id: string
+          input: Json | null
+          latency_ms: number | null
+          level: Database["public"]["Enums"]["trace_level"] | null
+          metadata: Json | null
+          output: Json | null
+          session_id: string | null
+          tokens_used: number | null
+          user_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       agent_usage: {
         Row: {
@@ -1193,31 +1233,64 @@ export type Database = {
           action: string
           created_at: string
           entity_id: string | null
-          entity_type: string
+          entity_type: string | null
           id: string
           ip_address: string | null
           metadata: Json | null
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           action: string
           created_at?: string
           entity_id?: string | null
-          entity_type: string
+          entity_type?: string | null
           id?: string
           ip_address?: string | null
           metadata?: Json | null
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           action?: string
           created_at?: string
           entity_id?: string | null
-          entity_type?: string
+          entity_type?: string | null
           id?: string
           ip_address?: string | null
           metadata?: Json | null
-          user_id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      audit_log_v2_2026_05: {
+        Row: {
+          action: string
+          created_at: string
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -6536,36 +6609,6 @@ export type Database = {
       }
     }
     Views: {
-      audit_log_safe: {
-        Row: {
-          action: string | null
-          created_at: string | null
-          entity_id: string | null
-          entity_type: string | null
-          id: string | null
-          metadata: Json | null
-          user_id: string | null
-        }
-        Insert: {
-          action?: string | null
-          created_at?: string | null
-          entity_id?: string | null
-          entity_type?: string | null
-          id?: string | null
-          metadata?: Json | null
-          user_id?: string | null
-        }
-        Update: {
-          action?: string | null
-          created_at?: string | null
-          entity_id?: string | null
-          entity_type?: string | null
-          id?: string | null
-          metadata?: Json | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
       forum_posts_public: {
         Row: {
           author_name: string | null
@@ -6932,30 +6975,6 @@ export type Database = {
         }
         Relationships: []
       }
-      slo_metrics_hourly: {
-        Row: {
-          agent_id: string | null
-          bucket_hour: string | null
-          error_count: number | null
-          p50_latency_ms: number | null
-          p95_latency_ms: number | null
-          p99_latency_ms: number | null
-          success_rate: number | null
-          total_cost_usd: number | null
-          total_tokens: number | null
-          total_traces: number | null
-          user_id: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "agent_traces_agent_id_fkey"
-            columns: ["agent_id"]
-            isOneToOne: false
-            referencedRelation: "agents"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       workspace_members_directory: {
         Row: {
           accepted_at: string | null
@@ -7076,6 +7095,10 @@ export type Database = {
           p_triggered_by: string
         }
         Returns: string
+      }
+      create_partition_if_not_exists: {
+        Args: { p_date: string; t_name: string }
+        Returns: undefined
       }
       create_pentest_engagement: {
         Args: {

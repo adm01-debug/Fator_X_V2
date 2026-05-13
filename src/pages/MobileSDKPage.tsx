@@ -35,7 +35,7 @@ const client = new NexusClient({ apiKey: 'nx_xxx' });
 const agent = client.agent('agt_001');
 
 const response = await agent.chat('Olá!');
-console.log(response.text);`,
+logger.info(response.text);`,
   Flutter: `import 'package:nexus_agents/nexus_agents.dart';
 
 final client = NexusClient(apiKey: 'nx_xxx');

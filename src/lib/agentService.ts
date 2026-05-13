@@ -12,7 +12,7 @@ export async function getWorkspaceId(): Promise<string> {
   if (cachedWorkspaceId) return cachedWorkspaceId;
   
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Não autenticado');
+  if (!user) throw new Error('Not authenticated');
 
   const { data } = await supabaseExternal
     .from('workspace_members')
@@ -21,7 +21,7 @@ export async function getWorkspaceId(): Promise<string> {
     .limit(1)
     .maybeSingle();
 
-  if (!data?.workspace_id) throw new Error('Workspace não encontrado');
+  if (!data?.workspace_id) throw new Error('Workspace not found');
   cachedWorkspaceId = data.workspace_id;
   return cachedWorkspaceId!
 }
@@ -83,9 +83,9 @@ export async function getAgent(id: string): Promise<AgentConfig> {
     .maybeSingle();
 
   if (error) throw error;
-  if (!data) throw new Error('Agente não encontrado');
+  if (!data) throw new Error('Agent not found');
 
-  const config = (data.config || {}) as Record<string, any>;
+  const config = (data.config || {}) as any;
   return {
     ...DEFAULT_AGENT,
     ...config,
@@ -106,7 +106,7 @@ export async function getAgent(id: string): Promise<AgentConfig> {
 
 export async function saveAgent(agent: AgentConfig): Promise<AgentConfig> {
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Não autenticado');
+  if (!user) throw new Error('Not authenticated');
 
   let workspaceId: string | null = null;
   try { workspaceId = await getWorkspaceId(); } catch (err) { logger.error("Operation failed:", err);}

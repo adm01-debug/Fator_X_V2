@@ -12,7 +12,6 @@
 
 // supabaseExternal import removed — this service uses fromTable for untyped tables
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 import { fromTable } from '@/lib/supabaseExtended';
 
 export type { HandoffReason, HandoffStatus, HandoffContext, HandoffRequest, HandoffRecord, HandoffRule, HandoffCondition } from './types/agentHandoffTypes';
@@ -32,7 +31,7 @@ export async function initiateHandoff(request: HandoffRequest): Promise<HandoffR
     execution_id: request.executionId ?? null,
     source_node_id: request.sourceNodeId ?? request.sourceAgentId,
     target_node_id: request.targetNodeId ?? request.targetAgentId,
-    context: request.context as unknown,
+    context: request.context as any,
     reason: request.reason,
     reason_text: request.reasonText ?? null,
     status: 'pending' as const,
@@ -41,12 +40,12 @@ export async function initiateHandoff(request: HandoffRequest): Promise<HandoffR
 
   // Store in workflow_handoffs table
   const { data, error } = await fromTable('workflow_handoffs')
-    .insert(record)
+    .insert(record as any)
     .select()
     .single();
 
   if (error) throw new Error(`Failed to initiate handoff: ${error.message}`);
-  return data as unknown as HandoffRecord;
+  return data as any as HandoffRecord;
 }
 
 /**
@@ -56,13 +55,13 @@ export async function acceptHandoff(handoffId: string): Promise<HandoffRecord> {
   const { data, error } = await fromTable('workflow_handoffs')
     .update({
       status: 'accepted' as const,
-    })
+    } as any)
     .eq('id' as never, handoffId)
     .select()
     .single();
 
   if (error) throw new Error(`Failed to accept handoff: ${error.message}`);
-  return data as unknown as HandoffRecord;
+  return data as any as HandoffRecord;
 }
 
 /**
@@ -76,13 +75,13 @@ export async function completeHandoff(
     .update({
       status: 'completed' as const,
       context: response,
-    })
+    } as any)
     .eq('id' as never, handoffId)
     .select()
     .single();
 
   if (error) throw new Error(`Failed to complete handoff: ${error.message}`);
-  return data as unknown as HandoffRecord;
+  return data as any as HandoffRecord;
 }
 
 /**
@@ -96,13 +95,13 @@ export async function rejectHandoff(
     .update({
       status: 'rejected' as const,
       reason: reason,
-    })
+    } as any)
     .eq('id' as never, handoffId)
     .select()
     .single();
 
   if (error) throw new Error(`Failed to reject handoff: ${error.message}`);
-  return data as unknown as HandoffRecord;
+  return data as any as HandoffRecord;
 }
 
 /**
@@ -116,13 +115,13 @@ export async function failHandoff(
     .update({
       status: 'failed' as const,
       reason: errorMsg,
-    })
+    } as any)
     .eq('id' as never, handoffId)
     .select()
     .single();
 
   if (error) throw new Error(`Failed to fail handoff: ${error.message}`);
-  return data as unknown as HandoffRecord;
+  return data as any as HandoffRecord;
 }
 
 // ──────── Handoff Queries ────────
@@ -138,7 +137,7 @@ export async function getPendingHandoffs(targetAgentId: string): Promise<Handoff
     .order('created_at' as never, { ascending: false });
 
   if (error) throw new Error(`Failed to get pending handoffs: ${error.message}`);
-  return (data ?? []) as unknown as HandoffRecord[];
+  return (data ?? []) as any as HandoffRecord[];
 }
 
 /**
@@ -155,7 +154,7 @@ export async function getHandoffHistory(
     .limit(limit);
 
   if (error) throw new Error(`Failed to get handoff history: ${error.message}`);
-  return (data ?? []) as unknown as HandoffRecord[];
+  return (data ?? []) as any as HandoffRecord[];
 }
 
 /**
@@ -168,7 +167,7 @@ export async function getExecutionHandoffs(executionId: string): Promise<Handoff
     .order('created_at' as never, { ascending: true });
 
   if (error) throw new Error(`Failed to get execution handoffs: ${error.message}`);
-  return (data ?? []) as unknown as HandoffRecord[];
+  return (data ?? []) as any as HandoffRecord[];
 }
 
 // ──────── Handoff Rules Engine ────────

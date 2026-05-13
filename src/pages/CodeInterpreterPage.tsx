@@ -12,9 +12,9 @@ import { codeInterpreterService, type CodeExecution, type CodeRuntime } from "@/
 
 const SNIPPETS: Record<CodeRuntime, { label: string; code: string }[]> = {
   deno: [
-    { label: "Hello", code: 'console.log("Olá do sandbox Deno real!");' },
-    { label: "Fibonacci", code: 'const fib = (n: number): number => n < 2 ? n : fib(n-1) + fib(n-2);\nconsole.log([...Array(10)].map((_, i) => fib(i)).join(", "));' },
-    { label: "JSON", code: 'const data = { name: "Nexus", year: 2026 };\nconsole.log(JSON.stringify(data, null, 2));' },
+    { label: "Hello", code: 'logger.info("Olá do sandbox Deno real!");' },
+    { label: "Fibonacci", code: 'const fib = (n: number): number => n < 2 ? n : fib(n-1) + fib(n-2);\nlogger.info([...Array(10)].map((_, i) => fib(i)).join(", "));' },
+    { label: "JSON", code: 'const data = { name: "Nexus", year: 2026 };\nlogger.info(JSON.stringify(data, null, 2));' },
   ],
   python: [
     { label: "Hello", code: 'print("Olá do sandbox virtual Python!")' },
@@ -22,9 +22,9 @@ const SNIPPETS: Record<CodeRuntime, { label: string; code: string }[]> = {
     { label: "Plot", code: 'import matplotlib.pyplot as plt\nplt.plot([1,2,3,4],[1,4,9,16])\nplt.savefig("/tmp/plot.png")\nprint("saved")' },
   ],
   node: [
-    { label: "Hello", code: 'console.log("Olá do sandbox virtual Node!");' },
-    { label: "Map", code: 'const xs = [1,2,3,4,5];\nconsole.log(xs.map(x => x * x));' },
-    { label: "Fetch", code: 'const r = await fetch("https://api.github.com");\nconsole.log(r.status);' },
+    { label: "Hello", code: 'logger.info("Olá do sandbox virtual Node!");' },
+    { label: "Map", code: 'const xs = [1,2,3,4,5];\nlogger.info(xs.map(x => x * x));' },
+    { label: "Fetch", code: 'const r = await fetch("https://api.github.com");\nlogger.info(r.status);' },
   ],
 };
 

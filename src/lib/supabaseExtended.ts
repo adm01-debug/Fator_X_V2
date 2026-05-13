@@ -5,7 +5,6 @@
  */
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyFrom = any;
 
 /**
@@ -13,7 +12,6 @@ type AnyFrom = any;
  * Returns an untyped query builder — callers should cast results.
  */
 export function fromTable(name: string): AnyFrom {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (supabaseExternal as any).from(name);
 }
 
@@ -25,6 +23,5 @@ export async function rpcCall(
   fnName: string,
   params: Record<string, unknown> = {},
 ): Promise<{ data: unknown; error: { message: string } | null }> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (supabaseExternal as any).rpc(fnName, params);
 }

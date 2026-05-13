@@ -59,23 +59,28 @@ export async function revokeApiKey(id: string) {
 }
 
 export async function getSecurityEvents(_options?: { severity?: string; limit?: number }) {
-  const { data, error } = await supabaseExternal
-    .from('audit_log_safe')
-    .select('*')
-    .order('created_at', { ascending: false })
-    .limit(_options?.limit || 50);
+  try {
+    const { data, error } = await (supabaseExternal as any)
+      .from('audit_log_safe')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(_options?.limit || 50);
 
-  if (error) throw error;
-  return (data ?? []).map((entry) => ({
-    ...entry,
-    severity: 'info',
-    event_type: entry.action,
-  }));
+    if (error) throw error;
+    return (data ?? []).map((entry: any) => ({
+      ...entry,
+      severity: 'info',
+      event_type: entry.action,
+    }));
+  } catch (err) {
+    logger.error('getSecurityEvents failed', { error: String(err) });
+    return [];
+  }
 }
 
 export async function getAuditLog(options?: { userId?: string; limit?: number }) {
   try {
-    let query = supabaseExternal
+    let query = (supabaseExternal as any)
       .from('audit_log_safe')
       .select('*')
       .order('created_at', { ascending: false })
@@ -88,7 +93,7 @@ export async function getAuditLog(options?: { userId?: string; limit?: number })
       console.warn('Audit log query failed:', error.message);
       return [];
     }
-    return data ?? [];
+    return (data ?? []) as any[];
   } catch {
     return [];
   }

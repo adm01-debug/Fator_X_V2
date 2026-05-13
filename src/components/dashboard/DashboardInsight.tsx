@@ -3,7 +3,7 @@ import { Sparkles } from 'lucide-react';
 interface InsightProps {
   agents: Array<{ status: string | null; name: string }>;
   usageStats: { totalCost: number; totalRequests: number; avgLatency: number; totalTokens: number } | null;
-  recentTraces: Array<{ level: string | null; event: string }>;
+  recentTraces: Array<{ level: string | null; event: string | null }>;
 }
 
 export function DashboardInsight({ agents, usageStats, recentTraces }: InsightProps) {
