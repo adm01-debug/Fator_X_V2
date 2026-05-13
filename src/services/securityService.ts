@@ -90,7 +90,7 @@ export async function getAuditLog(options?: { userId?: string; limit?: number })
 
     const { data, error } = await query;
     if (error) {
-      console.warn('Audit log query failed:', error.message);
+      logger.warn('Audit log query failed in securityService', { error: error.message });
       return [];
     }
     return (data ?? []) as any[];

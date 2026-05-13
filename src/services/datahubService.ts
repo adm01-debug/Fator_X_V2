@@ -44,7 +44,7 @@ export async function streamInvoke(action: string, payload: Record<string, any>,
           try {
             data = JSON.parse(line.slice(6));
           } catch (e) {
-            console.error('Error parsing SSE data', e);
+            logger.error('Error parsing SSE data in DataHub streamInvoke', e);
           }
         }
       }

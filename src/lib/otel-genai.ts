@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 /**
  * OpenTelemetry GenAI Semantic Conventions for Nexus
  * Spec: https://opentelemetry.io/docs/specs/semconv/gen-ai/
@@ -103,7 +104,7 @@ export async function estimateCost(model: string, inputTokens: number, outputTok
       return data.cost_usd ?? 0;
     }
   } catch (err) {
-    console.error('Failed to fetch from cost-calculator edge function, falling back to local estimation', err);
+    logger.error('Failed to fetch from cost-calculator edge function, falling back to local estimation in otel-genai', err);
   }
 
   // Local fallback if edge function is unreachable

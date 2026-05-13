@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Terminal, Play, FileCode2, Package, Trash2, History, Sparkles, Loader2, AlertCircle } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -43,7 +44,7 @@ export default function CodeInterpreterPage() {
       const list = await codeInterpreterService.list();
       setHistory(list);
     } catch (e) {
-      console.error(e);
+      logger.error("Erro ao carregar histórico do CodeInterpreter", e);
     }
   };
 

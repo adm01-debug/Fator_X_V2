@@ -1,5 +1,8 @@
 name: Nexus CI
 
+env:
+  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
 on:
   push:
     branches: [main]
@@ -180,3 +183,17 @@ jobs:
         with:
           name: k6-summary
           path: summary.json
+
+  notify-failure:
+    name: Notify Slack on Failure
+    runs-on: ubuntu-latest
+    needs: [security-audit, lint-and-typecheck, unit-tests, e2e-tests, build, lighthouse, load-test]
+    if: failure() && github.event_name == 'push'
+    steps:
+      - name: Slack Notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

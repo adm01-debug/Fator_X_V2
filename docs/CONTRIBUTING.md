@@ -1,19 +1,17 @@
-# Contributing to Nexus
+# 🛠 Contributing — Nexus Agents Studio
 
-## Development Workflow
-1. **Branching**: Use feature branches (`feat/`, `fix/`, `refactor/`).
-2. **Pull Requests**:
-   - Must pass linting (`npm run lint`).
-   - Must pass tests (`npm run test`).
-   - Must include an ADR if architectural changes are made.
-3. **Code Style**: We enforce standard Prettier and ESLint rules. `no-console` is prohibited in production code.
+## Fluxo de Trabalho
+1. Crie uma branch a partir da `main`: `feature/nome-da-feature` ou `fix/nome-do-bug`
+2. Implemente suas mudanças seguindo as diretrizes de tipagem (Zero `any`).
+3. Adicione testes para novas funcionalidades.
+4. Abra um Pull Request para a `main`.
 
-## Security Standards
-- Never hardcode API keys.
-- Always use `supabaseExternal` for data.
-- Ensure every new table has RLS enabled with granular policies.
-- HMAC signature verification is required for all new webhooks.
+## SLA de Code Review
+- O objetivo é realizar a primeira revisão em até **24 horas úteis**.
 
-## Review SLA
-- PRs should be reviewed within 24 hours.
-- Security-critical PRs require at least 2 approvals.
+## Qualidade 10/10
+- O CI falhará se a cobertura de testes cair abaixo de **80%**.
+- O ESLint proibirá `any` e `console.log`.
+
+---
+*Nexus Agents Studio 2026 — Rumo à Perfeição*

@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 
 export type CodeRuntime = "python" | "node" | "deno";
 
@@ -71,7 +72,7 @@ export const codeInterpreterService = {
           try {
             onEvent(eventMatch[1], JSON.parse(dataMatch[1]));
           } catch (e) {
-            console.error("Erro ao processar evento SSE:", e);
+            logger.error("Erro ao processar evento SSE no codeInterpreterService", e);
           }
         }
       }

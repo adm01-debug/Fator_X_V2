@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
 
 /**
  * Supabase Extended Client
@@ -18,7 +19,7 @@ export const fromTable = (table: string) => (supabase as any).from(table);
 export const isUserLockedOut = async (email: string): Promise<boolean> => {
   const { data, error } = await supabase.rpc('is_user_locked_out', { target_email: email });
   if (error) {
-    console.error('Lockout check failed:', error);
+    logger.error('Lockout check failed in supabaseExtended', error);
     return false;
   }
   return !!data;

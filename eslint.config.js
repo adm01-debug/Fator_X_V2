@@ -28,4 +28,10 @@ export default tseslint.config(
       "@typescript-eslint/no-explicit-any": "error",
     },
   },
+  {
+    files: ["supabase/functions/**/*.ts", "src/lib/logger.ts", "src/test/**/*.test.tsx"],
+    rules: {
+      "no-console": "off",
+    },
+  }
 );

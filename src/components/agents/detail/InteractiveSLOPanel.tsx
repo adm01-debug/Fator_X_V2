@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { CheckCircle2, AlertTriangle, XCircle, RotateCcw, Flame, Activity, Clock, Download, FileText, FileSpreadsheet } from 'lucide-react';
+import { logger } from '@/lib/logger';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import {
@@ -156,7 +157,7 @@ export function InteractiveSLOPanel({ agentId, agentName, slo, traces, daily, on
         description: `Janela ${activeWindow.label} · ${windowedTraces.length} traces`,
       });
     } catch (e) {
-      console.error('Erro ao gerar relatório SLO:', e);
+      logger.error('Erro ao gerar relatório SLO (PDF) no InteractiveSLOPanel', e);
       toast.error('Falha ao gerar o relatório PDF');
     }
   };
@@ -178,7 +179,7 @@ export function InteractiveSLOPanel({ agentId, agentName, slo, traces, daily, on
         description: `${timeline.length} buckets · janela ${activeWindow.label}`,
       });
     } catch (e) {
-      console.error('Erro ao gerar CSV da timeline:', e);
+      logger.error('Erro ao gerar CSV da timeline no InteractiveSLOPanel', e);
       toast.error('Falha ao gerar o CSV');
     }
   };

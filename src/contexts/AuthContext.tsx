@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { syncExternalAuth } from "@/integrations/supabase/externalClient";
+import { logger } from "@/lib/logger";
 import type { User, Session } from "@supabase/supabase-js";
 
 interface AuthContextType {
@@ -85,7 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const { data: mfaData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
         if (mfaData?.currentLevel !== 'aal2') {
           // This is a prompt/flag for the UI to redirect to MFA setup or verification
-          console.warn("MFA AAL2 required for admin");
+          logger.warn("MFA AAL2 required for admin user", { userId: data.user.id });
         }
       }
     }
