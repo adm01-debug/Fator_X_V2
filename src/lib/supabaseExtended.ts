@@ -46,3 +46,8 @@ export const rpcCall = async (fnName: string, params: any) => {
  * Helper to wrap any Supabase call and fix the deep type issue
  */
 export const wrap = (fn: any) => fn as any;
+
+/**
+ * Mock result type to satisfy high-level UI component mapping
+ */
+export type ResultOne = Record<string, any>;
