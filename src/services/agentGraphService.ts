@@ -2,6 +2,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Database } from '@/integrations/supabase/types';
 
 export interface GraphNode {
+  [key: string]: any;
   id: string;
   agent_id?: string | null;
   role?: string;
@@ -10,6 +11,7 @@ export interface GraphNode {
 }
 
 export interface GraphEdge {
+  [key: string]: any;
   id?: string;
   from: string;
   to: string;
