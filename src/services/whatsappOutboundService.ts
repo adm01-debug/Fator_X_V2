@@ -73,7 +73,7 @@ async function loadActiveProviderConfig(): Promise<ProviderSecrets> {
   if (error) throw error;
 
   const map: Record<string, string> = {};
-  for (const row of (data ?? []) as any[]) {
+  for (const row of (data ?? [])) {
     map[row.key_name] = row.encrypted_value;
   }
 
