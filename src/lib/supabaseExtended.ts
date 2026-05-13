@@ -1,27 +1,32 @@
 /**
- * Helper for tables added by migrations but not yet in auto-generated types.
- * Uses type assertion scoped to this single file to keep the rest of the codebase clean.
- * Tables here: prompt_ab_tests, alert_rules, roles, permissions, role_permissions, user_roles, mcp_servers
+ * Supabase Extended Client
+ * Includes additional helpers for schema-safe access and RLS persona testing.
+ * Added: isUserLockedOut RPC call.
  */
-import { supabaseExternal } from '@/integrations/supabase/externalClient';
+import { supabase } from '@/integrations/supabase/client';
 
-type AnyFrom = any;
-
-/**
- * Access a table that is not in the auto-generated Supabase types.
- * Returns an untyped query builder — callers should cast results.
- */
-export function fromTable(name: string): AnyFrom {
-  return (supabaseExternal as any).from(name);
-}
+export const fromTable = (table: string) => supabase.from(table);
 
 /**
- * Call an RPC function that is not in the auto-generated Supabase types.
- * Scopes the type assertion to this single file.
+ * Checks if a user is locked out due to multiple failed login attempts.
  */
-export async function rpcCall(
-  fnName: string,
-  params: Record<string, unknown> = {},
-): Promise<{ data: unknown; error: { message: string } | null }> {
-  return (supabaseExternal as any).rpc(fnName, params);
-}
+export const isUserLockedOut = async (email: string): Promise<boolean> => {
+  const { data, error } = await supabase.rpc('is_user_locked_out', { target_email: email });
+  if (error) {
+    console.error('Lockout check failed:', error);
+    return false;
+  }
+  return !!data;
+};
+
+/**
+ * Syncs the local auth token to the external database client.
+ */
+export const syncExternalAuth = (token: string | null) => {
+  if (token) {
+    // Local storage or state management for the token if needed for cross-origin
+    localStorage.setItem('supabase.external.auth.token', token);
+  } else {
+    localStorage.removeItem('supabase.external.auth.token');
+  }
+};
