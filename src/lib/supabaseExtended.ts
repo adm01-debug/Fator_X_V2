@@ -4,11 +4,12 @@
  * Added: isUserLockedOut RPC call.
  */
 import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/integrations/supabase/types';
 
 /**
  * Returns a typed Supabase client for a specific table.
  */
-export const fromTable = (table: any) => supabase.from(table);
+export const fromTable = (table: keyof Database['public']['Tables']) => supabase.from(table);
 
 /**
  * Checks if a user is locked out due to multiple failed login attempts.
