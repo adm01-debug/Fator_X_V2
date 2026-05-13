@@ -23,6 +23,5 @@ export async function rpcCall(
   fnName: string,
   params: Record<string, unknown> = {},
 ): Promise<{ data: unknown; error: { message: string } | null }> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (supabaseExternal as any).rpc(fnName, params);
 }
