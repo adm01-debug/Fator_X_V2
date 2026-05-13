@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import type { Database } from '@/integrations/supabase/types';
-import type { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 
 type TableName = keyof Database['public']['Tables'];
 
@@ -66,8 +65,11 @@ export function usePaginatedQuery<T = Record<string, unknown>>(
         const from = (page - 1) * pageSize;
         const to = from + pageSize - 1;
 
-        // Count
-        let countBuilder = supabaseExternal.from(table).select('*', { count: 'exact', head: true }) as PostgrestFilterBuilder<Database['public'], any, any>;
+        // Count - using a more relaxed approach to avoid deep instantiation
+        // but still avoiding the 'any' keyword where possible in logic
+        type Builder = { eq: (c: string, v: string) => Builder } & PromiseLike<any>;
+        
+        let countBuilder = (supabaseExternal.from(table).select('*', { count: 'exact', head: true }) as unknown) as Builder;
         for (const [col, val] of Object.entries(eqFilters)) {
           countBuilder = countBuilder.eq(col, val);
         }
@@ -75,12 +77,12 @@ export function usePaginatedQuery<T = Record<string, unknown>>(
         const total = count ?? 0;
 
         // Data
-        let dataBuilder = supabaseExternal.from(table).select(select).order(orderBy, { ascending }).range(from, to) as PostgrestFilterBuilder<Database['public'], any, any>;
+        let dataBuilder = (supabaseExternal.from(table).select(select).order(orderBy, { ascending }).range(from, to) as unknown) as Builder;
         for (const [col, val] of Object.entries(eqFilters)) {
           dataBuilder = dataBuilder.eq(col, val);
         }
         const { data: rows, error: qErr } = await dataBuilder;
-        if (qErr) throw qErr;
+        if (qErr) throw (qErr as Error);
 
         setData((rows ?? []) as T[]);
         setPagination({ page, pageSize, total, totalPages: Math.ceil(total / pageSize) });
