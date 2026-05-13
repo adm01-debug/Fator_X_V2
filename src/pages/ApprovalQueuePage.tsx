@@ -25,7 +25,7 @@ export default function ApprovalQueuePage() {
   const handleApprove = async (runId: string) => {
     setProcessing(true);
     try {
-      const run = pendingRuns.find((r: Record<string, unknown>) => r.id === runId);
+      const run = pendingRuns.find((r) => r.id === runId);
       const data = await approveWorkflowRun(runId, String(run?.workflow_id), feedback);
       toast.success(`Workflow aprovado e retomado! Status: ${data.status}`);
       setSelectedRun(null);
@@ -62,10 +62,8 @@ export default function ApprovalQueuePage() {
       ) : (
         <div className="space-y-4">
           {pendingRuns.map((run) => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const output = run.output as Record<string, any> | null;
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const pending = output?.pending_approval as Record<string, any> | undefined;
+            const output = run.output as { pending_approval?: { label?: string; context?: any } } | null;
+            const pending = output?.pending_approval;
             const isSelected = selectedRun === run.id;
             const workflows = run.workflows as { name?: string } | null;
             return (
