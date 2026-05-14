@@ -3,10 +3,11 @@ import { DEFAULT_AGENT } from '@/data/agentBuilderData';
 import type { Json } from '@/integrations/supabase/types';
 
 export function agentToDbRow(agent: AgentConfig, userId: string) {
-  const { id, created_at: _ca, updated_at: _ua, ...rest } = agent;
+  const { id, created_at: _ca, updated_at: _ua, workspace_id, ...rest } = agent;
   return {
     ...(id ? { id: id as string } : {}),
     user_id: userId,
+    workspace_id: workspace_id || undefined,
     name: agent.name,
     mission: agent.mission,
     persona: agent.persona,

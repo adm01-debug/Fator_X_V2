@@ -266,7 +266,24 @@ async function recordTrace(supabase: any, p: {
       }).select('id').single().catch(() => null);
       // Insert trace_event
       if (strace?.data?.id) {
-        await (supabase as any).from('trace_events').insert({ session_trace_id: strace.data.id, event_type: p.event, data: { level: p.level, guardrails: p.guardrailsTriggered } }).then(() => {}).catch(() => {});
+        await (supabase as any).from('trace_events').insert({ 
+          session_trace_id: strace.data.id, 
+          event_type: p.event, 
+          data: { level: p.level, guardrails: p.guardrailsTriggered } 
+        }).catch(() => {});
+      }
+      
+      // FIX P2-05: Record audit for high-risk cost/usage
+      if (p.costUsd > 0.5 || p.level === 'critical') {
+        await (supabase as any).from('audit_events').insert({
+          workspace_id: p.workspaceId,
+          user_id: p.userId,
+          event_type: 'high_cost_usage',
+          resource_type: 'llm_call',
+          resource_id: p.agentId,
+          action: 'execute',
+          metadata: { cost: p.costUsd, level: p.level, model: p.model }
+        }).catch(() => {});
       }
     }
 

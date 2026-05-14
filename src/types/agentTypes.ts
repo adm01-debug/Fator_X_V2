@@ -303,6 +303,7 @@ export interface AgentConfig {
   id?: string;
   created_at?: string;
   updated_at?: string;
+  workspace_id?: string | null;
   version: number;
   status: AgentLifecycleStage;
   tags: string[];
