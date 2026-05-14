@@ -200,12 +200,23 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
       const { data, error: e } = await supabaseExternal
         .from('agents')
         .insert(row)
-        .select('id')
+        .select('id, workspace_id')
         .single();
       error = e;
       autoSummary = 'Criação inicial do agente';
       if (!e && data) {
-        set((s) => ({ agent: { ...s.agent, id: data.id } }));
+        set((s) => ({ agent: { ...s.agent, id: data.id, workspace_id: data.workspace_id } }));
+        
+        // FIX P1-01: Audit creation
+        supabaseExternal.from('audit_events').insert({
+          workspace_id: data.workspace_id,
+          user_id: user.id,
+          event_type: 'agent_created',
+          resource_type: 'agent',
+          resource_id: data.id,
+          action: 'create',
+          metadata: { name: agent.name }
+        }).then(() => {});
       }
     }
 
