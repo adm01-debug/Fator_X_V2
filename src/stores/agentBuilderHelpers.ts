@@ -7,7 +7,7 @@ export function agentToDbRow(agent: AgentConfig, userId: string) {
   return {
     ...(id ? { id: id as string } : {}),
     user_id: userId,
-    workspace_id: (workspace_id || (agent as any).workspace_id) as string | undefined,
+    workspace_id: workspace_id || undefined,
     name: agent.name,
     mission: agent.mission,
     persona: agent.persona,
