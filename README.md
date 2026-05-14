@@ -66,5 +66,11 @@ Proprietário — Promo Brindes © 2026
 
 ---
 
+## 📋 Auditoria e Conformidade
+
+O sistema passa por auditorias regulares de qualidade e segurança (Meta 10/10).
+- [📄 Relatório de Auditoria (Markdown)](docs/AUDITORIA_NEXUS_10-10.md)
+- [📕 Relatório de Auditoria (PDF)](docs/AUDITORIA_NEXUS_10-10.pdf)
+
 *Desenvolvido por Pink e Cerébro — Promo Brindes*
 *Powered by Claude Code + Lovable*
