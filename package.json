@@ -9,6 +9,7 @@
     "build:dev": "vite build --mode development",
     "build:analyze": "vite build && echo 'Open dist/bundle-report.html in your browser'",
     "check:bundle": "node scripts/check-bundle-size.mjs",
+    "docs:pdf": "node scripts/generate-audit-pdf.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
