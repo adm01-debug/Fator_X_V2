@@ -1237,6 +1237,56 @@ export type Database = {
           },
         ]
       }
+      audit_events: {
+        Row: {
+          action: string
+          created_at: string | null
+          event_type: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          resource_id: string | null
+          resource_type: string
+          user_agent: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          event_type: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          resource_id?: string | null
+          resource_type: string
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          event_type?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          resource_id?: string | null
+          resource_type?: string
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_events_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_log: {
         Row: {
           action: string
@@ -7514,6 +7564,14 @@ export type Database = {
       }
       get_user_workspace_ids: { Args: { _user_id: string }; Returns: string[] }
       get_vendor_summary: { Args: { p_workspace_id: string }; Returns: Json }
+      get_workspace_daily_usage_v2: {
+        Args: { p_days?: number; p_workspace_id: string }
+        Returns: {
+          total_cost_usd: number
+          total_tokens: number
+          usage_date: string
+        }[]
+      }
       get_workspace_members_full: {
         Args: { _workspace_id: string }
         Returns: {
