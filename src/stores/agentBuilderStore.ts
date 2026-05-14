@@ -179,6 +179,19 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
         .from('agents')
         .update(row)
         .eq('id', agent.id as string);
+      
+      // FIX P1-01: Audit update
+      if (!e) {
+        supabaseExternal.from('audit_events').insert({
+          workspace_id: row.workspace_id,
+          user_id: user.id,
+          event_type: 'agent_updated',
+          resource_type: 'agent',
+          resource_id: agent.id,
+          action: 'update',
+          metadata: { version: row.version, summary: customSummary || autoSummary }
+        }).then(() => {});
+      }
       error = e;
       if (!e) {
         set((s) => ({ agent: { ...s.agent, version: row.version } }));
