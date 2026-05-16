@@ -30,14 +30,14 @@ export function EmptyState({
   illustration = 'default',
 }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center py-16 px-6 text-center animate-fade-in-up" role="status" aria-label={title}>
+    <div className="flex flex-col items-center justify-center py-20 px-6 text-center animate-fade-in-up" role="status" aria-label={title}>
       {/* Illustrated circle with glow */}
-      <div className="relative mb-6">
-        <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center border border-primary/10" aria-hidden="true">
-          <span className="text-3xl">{ILLUSTRATIONS[illustration]}</span>
+      <div className="relative mb-8 group">
+        <div className="h-24 w-24 rounded-3xl bg-gradient-to-br from-primary/10 via-accent/5 to-primary/5 flex items-center justify-center border border-primary/20 shadow-[0_0_40px_-10px_hsl(var(--primary)/0.2)] transition-all duration-500 group-hover:scale-110 group-hover:shadow-[0_0_50px_-5px_hsl(var(--primary)/0.3)]" aria-hidden="true">
+          <span className="text-4xl drop-shadow-sm transition-transform duration-500 group-hover:rotate-12">{ILLUSTRATIONS[illustration]}</span>
         </div>
-        <div className="absolute -bottom-1 -right-1 h-8 w-8 rounded-xl bg-card border border-border flex items-center justify-center shadow-sm">
-          <Icon className="h-4 w-4 text-muted-foreground" />
+        <div className="absolute -bottom-2 -right-2 h-10 w-10 rounded-2xl bg-card border border-border flex items-center justify-center shadow-xl transition-all duration-500 group-hover:translate-x-1 group-hover:translate-y-1">
+          <Icon className="h-5 w-5 text-primary/70" />
         </div>
       </div>
 

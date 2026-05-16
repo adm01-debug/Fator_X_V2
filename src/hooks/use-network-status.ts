@@ -7,10 +7,14 @@ export function useNetworkStatus() {
   useEffect(() => {
     const handleOffline = () => {
       setIsOnline(false);
-      toast.error('Sem conexão com a internet', {
+      toast.error('Sistema Offline', {
         id: 'network-offline',
-        description: 'Verifique sua conexão e tente novamente.',
+        description: 'Verifique sua conexão. O sistema entrará em modo de segurança.',
         duration: Infinity,
+        action: {
+          label: 'Tentar Reconectar',
+          onClick: () => window.location.reload(),
+        },
       });
     };
 
