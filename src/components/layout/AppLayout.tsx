@@ -92,7 +92,9 @@ export function AppLayout({ children }: AppLayoutProps) {
     { key: 'a', description: 'Ir para Agentes', handler: () => navigate('/agents') },
     { key: 'n', shift: true, description: 'Novo Agente', handler: () => navigate('/agents/new') },
     { key: 'Backspace', alt: true, description: 'Voltar', handler: () => {
-      if (window.history.length > 2) navigate(-1);
+      const backBtn = document.querySelector('[aria-label="Voltar para a página anterior"]') as HTMLButtonElement;
+      if (backBtn) backBtn.click();
+      else if (window.history.length > 2) navigate(-1);
       else navigate('/');
     }},
   ], [navigate]);
