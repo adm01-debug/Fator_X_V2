@@ -10,6 +10,8 @@ import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { AgentDrilldownBadge } from "@/components/shared/AgentDrilldownBadge";
 import { DirectionalTransition } from "@/components/shared/DirectionalTransition";
 import { NavigationProgress } from "@/components/shared/NavigationProgress";
+import { BackButton } from "@/components/shared/BackButton";
+import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
 import { ScrollRestoration } from "@/components/shared/ScrollRestoration";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { SwipeNavigation } from "@/components/shared/SwipeNavigation";
@@ -163,16 +165,16 @@ export function AppLayout({ children }: AppLayoutProps) {
            <div className="flex-1 flex flex-col min-w-0">
              <header className="h-16 flex items-center justify-between border-b border-border/40 px-6 bg-background/80 backdrop-blur-md sticky top-0 z-40 transition-all duration-300" role="banner">
               <div className="flex items-center gap-4 flex-1 min-w-0">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                   <SidebarTrigger className="text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-xl h-10 w-10 transition-all shrink-0" aria-label="Alternar sidebar" />
-                  <div className="h-6 w-px bg-border/40 hidden sm:block" />
+                  <div className="h-6 w-px bg-border/40 hidden sm:block mx-1" />
+                  <BackButton />
                 </div>
                 
                 {/* Breadcrumb Elevated */}
-                <nav className="hidden sm:flex items-center gap-2 text-sm" aria-label="Breadcrumb">
-                  <div className="h-2 w-2 rounded-full bg-primary/20 animate-pulse" />
-                  <span className="font-black text-foreground uppercase tracking-widest text-[11px]">{pageTitle}</span>
-                </nav>
+                <div className="hidden lg:flex items-center gap-3 ml-2">
+                  <Breadcrumbs />
+                </div>
 
                 {/* Mobile search icon */}
                 <button

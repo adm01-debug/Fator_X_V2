@@ -1,106 +1,72 @@
-import { useLocation, Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { ChevronRight, Home } from "lucide-react";
-import { Fragment, useMemo } from "react";
+import { cn } from "@/lib/utils";
 
-const routeLabels: Record<string, string> = {
-  "": "Dashboard",
+/**
+ * Maps common path segments to readable labels
+ */
+const PATH_LABELS: Record<string, string> = {
   agents: "Agentes",
-  new: "Novo Agente",
-  builder: "Agent Builder",
+  new: "Novo",
+  templates: "Templates",
+  versions: "Versões",
+  traces: "Traces",
+  alerts: "Alertas",
+  builder: "Builder",
   brain: "Super Cérebro",
-  "super-cerebro": "Super Cérebro",
-  oracle: "Oráculo",
-  knowledge: "Conhecimento / RAG",
+  knowledge: "Conhecimento",
   memory: "Memória",
   tools: "Ferramentas",
   prompts: "Prompts",
   workflows: "Workflows",
   automation: "Automação",
-  evaluations: "Avaliações",
-  deployments: "Implantações",
-  monitoring: "Monitoramento",
-  "data-storage": "Dados & Storage",
-  datahub: "DataHub",
-  security: "Segurança",
-  lgpd: "LGPD",
-  approvals: "Aprovações",
-  team: "Equipe",
-  billing: "Faturamento",
   settings: "Configurações",
-  admin: "Admin BD",
-  "ai-studio": "AI Studio",
-  "fine-tuning": "Fine-tuning",
-  smolagent: "Smolagent",
-  auth: "Autenticação",
-  "reset-password": "Redefinir Senha",
+  billing: "Faturamento",
+  team: "Equipe",
 };
-
-interface BreadcrumbItem {
-  label: string;
-  path: string;
-  isLast: boolean;
-}
 
 export function Breadcrumbs() {
   const location = useLocation();
+  const pathnames = location.pathname.split("/").filter((x) => x);
 
-  const crumbs = useMemo<BreadcrumbItem[]>(() => {
-    const segments = location.pathname.split("/").filter(Boolean);
-
-    if (segments.length === 0) return [];
-
-    const items: BreadcrumbItem[] = [];
-    let currentPath = "";
-
-    for (let i = 0; i < segments.length; i++) {
-      const segment = segments[i];
-      currentPath += `/${segment}`;
-
-      // Skip UUID-like segments in breadcrumb label but keep them in path
-      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}/.test(segment);
-      const label = isUuid
-        ? "Detalhes"
-        : routeLabels[segment] || segment.charAt(0).toUpperCase() + segment.slice(1);
-
-      items.push({
-        label,
-        path: currentPath,
-        isLast: i === segments.length - 1,
-      });
-    }
-
-    return items;
-  }, [location.pathname]);
-
-  if (crumbs.length === 0) return null;
+  if (pathnames.length === 0) return null;
 
   return (
-    <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-xs text-muted-foreground">
+    <nav className="flex items-center space-x-1 text-[11px] font-black uppercase tracking-widest text-muted-foreground/60" aria-label="Breadcrumb">
       <Link
         to="/"
-        className="flex items-center gap-1 hover:text-foreground transition-colors rounded-sm px-1 py-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        aria-label="Ir para o Dashboard"
+        className="hover:text-primary transition-colors flex items-center gap-1 group"
+        aria-label="Início"
       >
-        <Home className="h-3 w-3" aria-hidden="true" />
+        <Home className="h-3 w-3 mb-0.5 group-hover:scale-110 transition-transform" />
       </Link>
 
-      {crumbs.map((crumb) => (
-        <Fragment key={crumb.path}>
-          <ChevronRight className="h-3 w-3 text-muted-foreground/50 shrink-0" aria-hidden="true" />
-          {crumb.isLast ? (
-            <span className="text-foreground font-medium truncate max-w-[200px]" aria-current="page">
-              {crumb.label}
-            </span>
-          ) : (
-            <Link
-              to={crumb.path}
-              className="hover:text-foreground transition-colors truncate max-w-[150px] rounded-sm px-1 py-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            >
-              {crumb.label}
-            </Link>
-          )}
-        </Fragment>
-      ))}
+      {pathnames.map((value, index) => {
+        const last = index === pathnames.length - 1;
+        const to = `/${pathnames.slice(0, index + 1).join("/")}`;
+        
+        // Try to get a label, handle UUIDs or IDs by keeping them as is (or truncate)
+        let label = PATH_LABELS[value] || value;
+        if (value.length > 20) label = value.substring(0, 8) + "...";
+
+        return (
+          <div key={to} className="flex items-center space-x-1">
+            <ChevronRight className="h-3 w-3 text-muted-foreground/30" />
+            {last ? (
+              <span className="text-foreground font-black border-b-2 border-primary/40 pb-0.5">
+                {label}
+              </span>
+            ) : (
+              <Link
+                to={to}
+                className="hover:text-primary transition-colors"
+              >
+                {label}
+              </Link>
+            )}
+          </div>
+        );
+      })}
     </nav>
   );
 }
