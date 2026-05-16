@@ -16,9 +16,9 @@ export function SkeletonLoader({ variant, count = 6, className }: SkeletonLoader
     return (
       <div className={cn("grid gap-6 md:grid-cols-2 lg:grid-cols-3", className)}>
         {Array.from({ length: count }).map((_, i) => (
-          <div key={i} className="p-6 rounded-[2rem] border border-border/40 bg-card/30 space-y-4">
+          <div key={i} className="p-6 rounded-[2rem] border border-border/40 bg-card/30 space-y-4 animate-pulse-once">
             <div className="flex items-center gap-4">
-              <Skeleton className="h-14 w-14 rounded-2xl" />
+              <Skeleton className="h-14 w-14 rounded-2xl bg-primary/5" />
               <div className="flex-1 space-y-2">
                 <Skeleton className="h-4 w-3/4" />
                 <Skeleton className="h-3 w-1/2" />
@@ -83,9 +83,9 @@ export function SkeletonLoader({ variant, count = 6, className }: SkeletonLoader
       <div className={cn("space-y-8", className)}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="p-6 rounded-[2rem] border border-border/40 bg-card/30 space-y-4">
+            <div key={i} className="p-6 rounded-[2rem] border border-border/40 bg-card/30 space-y-4 animate-pulse-once">
               <div className="flex items-center justify-between">
-                <Skeleton className="h-10 w-10 rounded-xl" />
+                <Skeleton className="h-10 w-10 rounded-xl bg-primary/5" />
                 <Skeleton className="h-4 w-16" />
               </div>
               <div className="space-y-2">
