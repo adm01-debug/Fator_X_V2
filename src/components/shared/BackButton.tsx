@@ -3,6 +3,7 @@ import { ChevronLeft, CornerUpLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface BackButtonProps {
@@ -18,6 +19,7 @@ export function BackButton({ className, to }: BackButtonProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useIsMobile();
+  const { confirmNavigation } = useUnsavedChanges();
 
   // Don't show on root or dashboard unless forced via props
   if (!to && (location.pathname === "/" || location.pathname === "/dashboard")) {
@@ -25,20 +27,19 @@ export function BackButton({ className, to }: BackButtonProps) {
   }
 
   const handleBack = () => {
-    if (to) {
-      navigate(to);
-      return;
-    }
+    confirmNavigation(() => {
+      if (to) {
+        navigate(to);
+        return;
+      }
 
-    // Safety: check if there's actually a history to go back to
-    // If we're at the first entry of the session, go to dashboard
-    if (window.history.length <= 1) {
-      navigate("/");
-      return;
-    }
+      if (window.history.length <= 1) {
+        navigate("/");
+        return;
+      }
 
-    // Standard back behavior
-    navigate(-1);
+      navigate(-1);
+    });
   };
 
   const button = (
