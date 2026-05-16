@@ -6,16 +6,16 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 interface BackButtonProps {
   className?: string;
+  to?: string;
 }
 
 /**
  * Context-aware Back Button.
  * Navigates to browser history if possible, otherwise falls back to the parent path.
  */
-export function BackButton({ className }: BackButtonProps) {
+export function BackButton({ className, to }: BackButtonProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const isMobile = useIsMobile();
 
   // Don't show on root or dashboard
   if (location.pathname === "/" || location.pathname === "/dashboard") {
@@ -23,6 +23,11 @@ export function BackButton({ className }: BackButtonProps) {
   }
 
   const handleBack = () => {
+    if (to) {
+      navigate(to);
+      return;
+    }
+
     // Check history length to see if we can just go back
     if (window.history.length > 2) {
       navigate(-1);
