@@ -1,42 +1,59 @@
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
+import { cn } from "@/lib/utils";
 
 interface BackButtonProps {
-  /** Override target — defaults to browser history back */
-  to?: string;
-  /** Custom label */
-  label?: string;
   className?: string;
+  to?: string;
 }
 
-export function BackButton({ to, label = "Voltar", className }: BackButtonProps) {
+/**
+ * Context-aware Back Button.
+ * Navigates to browser history if possible, otherwise falls back to the parent path.
+ */
+export function BackButton({ className, to }: BackButtonProps) {
   const navigate = useNavigate();
-  const { confirmNavigation } = useUnsavedChanges();
+  const location = useLocation();
+
+  // Don't show on root or dashboard
+  if (location.pathname === "/" || location.pathname === "/dashboard") {
+    return null;
+  }
 
   const handleBack = () => {
-    confirmNavigation(() => {
-      if (to) {
-        navigate(to);
-      } else if (window.history.length > 2) {
-        navigate(-1);
+    if (to) {
+      navigate(to);
+      return;
+    }
+
+    // Check history length to see if we can just go back
+    if (window.history.length > 2) {
+      navigate(-1);
+    } else {
+      // Fallback: Go to parent path
+      const pathSegments = location.pathname.split("/").filter(Boolean);
+      if (pathSegments.length > 1) {
+        navigate("/" + pathSegments.slice(0, -1).join("/"));
       } else {
         navigate("/");
       }
-    });
+    }
   };
 
   return (
     <Button
       variant="ghost"
-      size="sm"
+      size="icon"
       onClick={handleBack}
-      className={`gap-2 text-muted-foreground hover:text-foreground -ml-2 group ${className ?? ""}`}
-      aria-label={label}
+      className={cn(
+        "h-9 w-9 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all shrink-0 group",
+        className
+      )}
+      title="Voltar (Alt+Backspace)"
+      aria-label="Voltar para a página anterior"
     >
-      <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" aria-hidden="true" />
-      <span className="text-sm">{label}</span>
+      <ChevronLeft className="h-5 w-5 transition-transform group-hover:-translate-x-0.5" />
     </Button>
   );
 }
