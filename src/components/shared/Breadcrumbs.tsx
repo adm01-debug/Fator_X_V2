@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { ChevronRight, Home, LayoutDashboard } from "lucide-react";
+import { ChevronRight, LayoutDashboard } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
