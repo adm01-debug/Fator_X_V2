@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 /**
@@ -9,15 +9,28 @@ import { useLocation } from "react-router-dom";
 export function DirectionalTransition({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const containerRef = useRef<HTMLDivElement>(null);
+  const [prevPath, setPrevPath] = useState(location.pathname);
+  const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
+
+  useEffect(() => {
+    // Detect direction based on path length or typical hierarchy
+    // This is a heuristic, in a perfect world we'd use a history tracker
+    const isBack = prevPath.length > location.pathname.length || 
+                  (prevPath.includes(location.pathname) && prevPath !== location.pathname);
+    
+    setDirection(isBack ? 'backward' : 'forward');
+    setPrevPath(location.pathname);
+  }, [location.pathname, prevPath]);
 
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
 
-    // Phase 1: Preparation (Zero Opacity, slight offset)
+    // Phase 1: Preparation
+    const offset = direction === 'forward' ? '16px' : '-16px';
     el.style.opacity = "0";
-    el.style.transform = "translateY(12px)";
-    el.style.filter = "blur(4px)";
+    el.style.transform = `translateX(${offset})`;
+    el.style.filter = "blur(8px)";
     el.style.transition = "none";
 
     // Phase 2: Animation Trigger
@@ -25,9 +38,9 @@ export function DirectionalTransition({ children }: { children: React.ReactNode 
     const frame = requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         if (!containerRef.current) return;
-        containerRef.current.style.transition = "opacity 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease-out";
+        containerRef.current.style.transition = "opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.4s ease-out";
         containerRef.current.style.opacity = "1";
-        containerRef.current.style.transform = "translateY(0)";
+        containerRef.current.style.transform = "translateX(0)";
         containerRef.current.style.filter = "blur(0)";
       });
     });
