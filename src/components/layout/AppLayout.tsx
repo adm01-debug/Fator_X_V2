@@ -15,11 +15,13 @@ import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
 import { ScrollRestoration } from "@/components/shared/ScrollRestoration";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { SwipeNavigation } from "@/components/shared/SwipeNavigation";
+import { SystemStatusIndicator } from "@/components/shared/SystemStatusIndicator";
 import { UnsavedChangesProvider } from "@/hooks/use-unsaved-changes";
 import { useNetworkStatus } from "@/hooks/use-network-status";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useDocumentTitle } from "@/hooks/use-document-title";
+
 
 // Lazy-load dialogs only shown on interaction.
 // Retry once on failure — Vite dev/preview occasionally serves a stale chunk
@@ -277,8 +279,10 @@ export function AppLayout({ children }: AppLayoutProps) {
                 )}
               </ErrorBoundary>
             </main>
+            <SystemStatusIndicator />
           </div>
         </div>
+
         <Suspense fallback={null}>
           <CommandPalette />
           <KeyboardShortcutsDialog />

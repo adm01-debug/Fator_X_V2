@@ -22,7 +22,9 @@ import {
 } from "@/components/ui/select";
 import { AccessControl, DangerousActionDialog } from "@/components/rbac";
 import { AgentCard } from "@/components/agents/AgentCard";
+import { SharedEmptyState } from "@/components/shared/SharedEmptyState";
 import { cn } from "@/lib/utils";
+
 
 type AgentRow = Tables<"agents">;
 
