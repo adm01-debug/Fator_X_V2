@@ -1,7 +1,9 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, CornerUpLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface BackButtonProps {
   className?: string;
@@ -9,15 +11,16 @@ interface BackButtonProps {
 }
 
 /**
- * Context-aware Back Button.
- * Navigates to browser history if possible, otherwise falls back to the parent path.
+ * Context-aware Back Button with visual feedback and history protection.
+ * Elevated for 10/10 UX with tooltips and mobile-first touch targets.
  */
 export function BackButton({ className, to }: BackButtonProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const isMobile = useIsMobile();
 
-  // Don't show on root or dashboard
-  if (location.pathname === "/" || location.pathname === "/dashboard") {
+  // Don't show on root or dashboard unless forced via props
+  if (!to && (location.pathname === "/" || location.pathname === "/dashboard")) {
     return null;
   }
 
@@ -27,33 +30,47 @@ export function BackButton({ className, to }: BackButtonProps) {
       return;
     }
 
-    // Check history length to see if we can just go back
-    if (window.history.length > 2) {
-      navigate(-1);
-    } else {
-      // Fallback: Go to parent path
-      const pathSegments = location.pathname.split("/").filter(Boolean);
-      if (pathSegments.length > 1) {
-        navigate("/" + pathSegments.slice(0, -1).join("/"));
-      } else {
-        navigate("/");
-      }
+    // Safety: check if there's actually a history to go back to
+    // If we're at the first entry of the session, go to dashboard
+    if (window.history.length <= 1) {
+      navigate("/");
+      return;
     }
+
+    // Standard back behavior
+    navigate(-1);
   };
 
-  return (
+  const button = (
     <Button
       variant="ghost"
       size="icon"
       onClick={handleBack}
       className={cn(
-        "h-9 w-9 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all shrink-0 group",
+        "h-9 w-9 sm:h-10 sm:w-10 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all shrink-0 group relative",
+        "active:scale-95 touch-none", // Mobile feedback
         className
       )}
-      title="Voltar (Alt+Backspace)"
       aria-label="Voltar para a página anterior"
     >
       <ChevronLeft className="h-5 w-5 transition-transform group-hover:-translate-x-0.5" />
+      {/* Visual indicator of "Parent" navigation if no history */}
+      {window.history.length <= 1 && (
+        <CornerUpLeft className="absolute -top-1 -right-1 h-3 w-3 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+      )}
     </Button>
+  );
+
+  if (isMobile) return button;
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        {button}
+      </TooltipTrigger>
+      <TooltipContent side="bottom" className="text-[10px] font-bold uppercase tracking-widest bg-background/95 backdrop-blur-md border-primary/20">
+        Voltar <span className="ml-2 text-muted-foreground/60">Alt+←</span>
+      </TooltipContent>
+    </Tooltip>
   );
 }

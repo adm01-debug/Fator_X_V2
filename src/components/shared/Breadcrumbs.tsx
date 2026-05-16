@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
-import { ChevronRight, Home } from "lucide-react";
+import { ChevronRight, Home, LayoutDashboard } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 /**
  * Maps common path segments to readable labels
@@ -22,6 +23,10 @@ const PATH_LABELS: Record<string, string> = {
   settings: "Configurações",
   billing: "Faturamento",
   team: "Equipe",
+  monitoring: "Monitoramento",
+  deployments: "Implantações",
+  security: "Segurança",
+  datahub: "DataHub",
 };
 
 export function Breadcrumbs() {
@@ -31,34 +36,40 @@ export function Breadcrumbs() {
   if (pathnames.length === 0) return null;
 
   return (
-    <nav className="flex items-center space-x-1 text-[11px] font-black uppercase tracking-widest text-muted-foreground/60" aria-label="Breadcrumb">
+    <nav 
+      className="flex items-center text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40" 
+      aria-label="Navegação hierárquica"
+    >
       <Link
         to="/"
-        className="hover:text-primary transition-colors flex items-center gap-1 group"
-        aria-label="Início"
+        className="hover:text-primary transition-all flex items-center gap-1.5 group px-1 py-0.5 rounded-md hover:bg-primary/5"
+        aria-label="Ir para o Dashboard"
       >
-        <Home className="h-3 w-3 mb-0.5 group-hover:scale-110 transition-transform" />
+        <LayoutDashboard className="h-3.5 w-3.5 group-hover:scale-110 transition-transform text-primary/60" />
       </Link>
 
       {pathnames.map((value, index) => {
         const last = index === pathnames.length - 1;
         const to = `/${pathnames.slice(0, index + 1).join("/")}`;
         
-        // Try to get a label, handle UUIDs or IDs by keeping them as is (or truncate)
+        // Try to get a label, handle UUIDs or IDs
         let label = PATH_LABELS[value] || value;
         if (value.length > 20) label = value.substring(0, 8) + "...";
 
         return (
-          <div key={to} className="flex items-center space-x-1">
-            <ChevronRight className="h-3 w-3 text-muted-foreground/30" />
+          <div key={to} className="flex items-center">
+            <ChevronRight className="h-3 w-3 mx-1 text-muted-foreground/20 stroke-[3px]" />
             {last ? (
-              <span className="text-foreground font-black border-b-2 border-primary/40 pb-0.5">
+              <span className="text-foreground/90 font-black px-2 py-0.5 rounded-md bg-secondary/30 border border-border/40 shadow-sm animate-in fade-in slide-in-from-left-1 duration-300">
                 {label}
               </span>
             ) : (
               <Link
                 to={to}
-                className="hover:text-primary transition-colors"
+                className={cn(
+                  "hover:text-primary transition-all px-1.5 py-0.5 rounded-md hover:bg-primary/5",
+                  "focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:outline-none"
+                )}
               >
                 {label}
               </Link>
