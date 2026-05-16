@@ -23,7 +23,9 @@ import {
 import { AccessControl, DangerousActionDialog } from "@/components/rbac";
 import { AgentCard } from "@/components/agents/AgentCard";
 import { SharedEmptyState } from "@/components/shared/SharedEmptyState";
+import { SkeletonLoader } from "@/components/shared/SkeletonLoader";
 import { cn } from "@/lib/utils";
+
 
 
 type AgentRow = Tables<"agents">;
