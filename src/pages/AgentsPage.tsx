@@ -22,7 +22,11 @@ import {
 } from "@/components/ui/select";
 import { AccessControl, DangerousActionDialog } from "@/components/rbac";
 import { AgentCard } from "@/components/agents/AgentCard";
+import { SharedEmptyState } from "@/components/shared/SharedEmptyState";
+import { SkeletonLoader } from "@/components/shared/SkeletonLoader";
 import { cn } from "@/lib/utils";
+
+
 
 type AgentRow = Tables<"agents">;
 
@@ -306,31 +310,8 @@ export default function AgentsPage() {
       </div>
 
       {isLoading ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 stagger-children">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="nexus-card p-6 space-y-4 bg-card/50 border-border/20" style={{ animationDelay: `${i * 100}ms` }}>
-              <div className="flex items-center gap-4">
-                <div className="h-14 w-14 rounded-2xl skeleton-shimmer shrink-0" />
-                <div className="flex-1 space-y-2">
-                  <div className="h-4 w-3/4 rounded-full skeleton-shimmer" />
-                  <div className="h-3 w-1/2 rounded-full skeleton-shimmer" />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <div className="h-3 w-full rounded-full skeleton-shimmer" />
-                <div className="h-3 w-2/3 rounded-full skeleton-shimmer" />
-              </div>
-              <div className="h-16 w-full rounded-xl skeleton-shimmer mt-2" />
-              <div className="flex justify-between items-center pt-2">
-                <div className="flex gap-2">
-                  <div className="h-5 w-16 rounded-full skeleton-shimmer" />
-                  <div className="h-5 w-16 rounded-full skeleton-shimmer" />
-                </div>
-                <div className="h-4 w-12 rounded skeleton-shimmer" />
-              </div>
-            </div>
-          ))}
-        </div>
+        <SkeletonLoader variant="card-grid" count={6} />
+
       ) : !user ? (
         <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in-up">
           <div className="relative mb-6">
@@ -343,43 +324,27 @@ export default function AgentsPage() {
           <Button onClick={() => navigate("/auth")} className="nexus-gradient-bg text-primary-foreground gap-2">Entrar</Button>
         </div>
       ) : sorted.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in-up">
-          {search || statusFilter !== "all" ? (
-            <>
-              <div className="relative mb-6">
-                <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-muted/30 to-muted/10 flex items-center justify-center border border-border/50">
-                  <Search className="h-9 w-9 text-muted-foreground/50" />
-                </div>
-              </div>
-              <h2 className="text-lg font-heading font-semibold text-foreground mb-1">Nenhum agente encontrado</h2>
-              <p className="text-sm text-muted-foreground mb-4 max-w-sm">Tente ajustar os filtros ou o termo de busca.</p>
-              <Button variant="outline" size="sm" onClick={() => { setSearch(''); setStatusFilter('all'); }}>Limpar filtros</Button>
-            </>
-          ) : (
-            <>
-              <div className="relative mb-6">
-                <div className="h-24 w-24 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center border border-primary/15 animate-border-glow">
-                  <Bot className="h-12 w-12 text-primary" />
-                </div>
-                <div className="absolute -bottom-2 -right-2 h-10 w-10 rounded-xl bg-card border border-border flex items-center justify-center shadow-md">
-                  <Plus className="h-5 w-5 text-nexus-emerald" />
-                </div>
-              </div>
-              <h2 className="text-xl font-heading font-bold text-foreground mb-2">Crie seu primeiro agente</h2>
-              <p className="text-sm text-muted-foreground mb-6 max-w-sm leading-relaxed">
-                Comece com um template ou importe um arquivo JSON para dar vida ao seu agente de IA.
-              </p>
-              <div className="flex gap-3">
-                <Button variant="outline" onClick={() => fileInputRef.current?.click()} className="gap-2">
-                  <Upload className="h-4 w-4" /> Importar JSON
-                </Button>
-                <Button onClick={() => navigate('/agents/new')} className="nexus-gradient-bg text-primary-foreground gap-2 hover:opacity-90">
-                  <Plus className="h-4 w-4" /> Criar agente
-                </Button>
-              </div>
-            </>
-          )}
-        </div>
+        <SharedEmptyState
+          icon={search || statusFilter !== "all" ? Search : Bot}
+          title={search || statusFilter !== "all" ? "Nenhum agente encontrado" : "Sua frota está vazia"}
+          description={
+            search || statusFilter !== "all" 
+              ? "Tente ajustar os filtros ou o termo de busca para encontrar o que procura." 
+              : "Comece sua jornada criando seu primeiro agente autônomo para automatizar processos complexos."
+          }
+          actionLabel="Criar Primeiro Agente"
+          onAction={() => navigate('/agents/new')}
+          secondaryActionLabel={search || statusFilter !== "all" ? "Limpar Filtros" : "Explorar Templates"}
+          onSecondaryAction={() => {
+            if (search || statusFilter !== "all") {
+              setSearch("");
+              setStatusFilter("all");
+            } else {
+              navigate('/agents/templates');
+            }
+          }}
+        />
+
       ) : (
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3 stagger-children">
           {sorted.map((agent) => (
