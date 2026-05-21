@@ -163,6 +163,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
   const { user } = useAuth();
   // Hidratação síncrona dos params rf_* — calculada UMA VEZ antes do
   // primeiro render para evitar flicker entre "vazio → destacado".
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   const initialDeeplink = useMemo(() => parseDeeplinkParams(searchParams), []);
   const [step, setStep] = useState(initialDeeplink.valid ? initialDeeplink.stepIdx : 0);
   const [saving, setSaving] = useState(false);
@@ -270,6 +271,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
       ['rf_field', 'rf_step', 'rf_type', 'rf_msg', 'rf_focus'].forEach((k) => next.delete(k));
       setSearchParams(next, { replace: true });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   }, []);
 
   // Gera URL atual + params rf_* e copia para o clipboard. Botão "Copiar link"
@@ -360,6 +362,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
     const next = new URLSearchParams(searchParams);
     next.delete('rf_focus');
     setSearchParams(next, { replace: true });
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   }, []);
 
   // On mount: load store, filter recoverable drafts.

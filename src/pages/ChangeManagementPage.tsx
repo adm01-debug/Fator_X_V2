@@ -87,6 +87,7 @@ export default function ChangeManagementPage() {
     }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   useEffect(() => { if (workspaceId) refresh(); }, [workspaceId]);
 
   const refreshApprovals = async (c: ChangeRequest) => {

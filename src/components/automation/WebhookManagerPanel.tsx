@@ -33,6 +33,7 @@ export function WebhookManagerPanel() {
       .then(setWebhooks)
       .catch(() => toast({ title: 'Erro ao carregar webhooks', variant: 'destructive' }))
       .finally(() => setLoading(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   }, []);
 
   const handleTest = async () => {
@@ -42,7 +43,7 @@ export function WebhookManagerPanel() {
       let payloadObj = { test: true };
       try {
         payloadObj = JSON.parse(testPayload);
-      } catch (e) {
+      } catch {
         toast({ title: 'JSON inválido', variant: 'destructive' });
         setTestingId(null);
         return;

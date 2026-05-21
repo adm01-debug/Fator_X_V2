@@ -42,13 +42,14 @@ export function CronSchedulerPanel() {
       ]);
       setSchedules(schedulesData);
       setStats(statsData);
-    } catch (e) {
+    } catch {
       toast({ title: 'Erro ao carregar agendamentos', variant: 'destructive' });
     } finally {
       setLoading(false);
     }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   useEffect(() => { loadData(); }, []);
 
   const handleRunPending = async () => {

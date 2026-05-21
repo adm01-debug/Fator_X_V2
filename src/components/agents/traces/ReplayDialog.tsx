@@ -49,6 +49,7 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
   const [speed, setSpeed] = useState(1);
   const timerRef = useRef<number | null>(null);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   const traces = execution?.traces ?? [];
   const total = traces.length;
   const current = traces[step];

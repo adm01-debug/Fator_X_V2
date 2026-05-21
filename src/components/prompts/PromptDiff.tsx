@@ -22,12 +22,12 @@ export function diffLines(a: string, b: string): { linesA: { text: string; type:
     }
   }
 
-  const linesA: { text: string; type: 'same' | 'removed' }[] = [];
-  const linesB: { text: string; type: 'same' | 'added' }[] = [];
+  type DiffLineA = { text: string; type: 'same' | 'removed' };
+  type DiffLineB = { text: string; type: 'same' | 'added' };
 
   let i = m, j = n;
-  const opsA: typeof linesA = [];
-  const opsB: typeof linesB = [];
+  const opsA: DiffLineA[] = [];
+  const opsB: DiffLineB[] = [];
 
   while (i > 0 || j > 0) {
     if (i > 0 && j > 0 && aLines[i - 1] === bLines[j - 1]) {

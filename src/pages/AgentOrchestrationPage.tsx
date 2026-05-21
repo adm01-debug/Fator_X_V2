@@ -43,6 +43,7 @@ export default function AgentOrchestrationPage() {
 
   useEffect(() => {
     if (activeGraph) agentGraphService.listExecutions(activeGraph.id).then(setExecutions);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   }, [activeGraph?.id]);
 
   const selectedNode = useMemo(

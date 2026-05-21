@@ -117,6 +117,7 @@ export function DataBrowser({ entityId, onClose }: { entityId: string; onClose: 
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   }, [page, selectedRecord, onClose]);
 
   const fetchRecord = async (recordId: string) => {

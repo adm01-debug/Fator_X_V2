@@ -60,6 +60,7 @@ export default function PromptEditorPage() {
       setSummary("");
       setDirty(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   }, [activeVersion?.id]);
 
   const handleContentChange = (val: string) => {

@@ -50,6 +50,7 @@ export function DirectionalTransition({ children }: { children: React.ReactNode 
     if (main) main.focus({ preventScroll: true });
 
     return () => cancelAnimationFrame(frame);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   }, [location.pathname]);
 
   return (

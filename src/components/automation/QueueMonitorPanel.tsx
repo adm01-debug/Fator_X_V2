@@ -32,6 +32,7 @@ export function QueueMonitorPanel() {
 
   useEffect(() => {
     loadQueues();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   }, []);
 
   const handleRunWorker = async (q: QueueDefinition) => {

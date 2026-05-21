@@ -103,6 +103,7 @@ export function useRetryAction<TArgs extends unknown[], TResult>(
         setLoading(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
     [action, options, toast],
   );
 

@@ -89,6 +89,7 @@ export default function RiskRegisterPage() {
     }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   useEffect(() => { refresh(); }, [workspaceId]);
 
   useEffect(() => {

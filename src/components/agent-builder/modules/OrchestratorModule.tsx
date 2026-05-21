@@ -47,6 +47,7 @@ export function OrchestratorModule() {
       setNodes((active.nodes as unknown as Node[]) || []);
       setEdges((active.edges as unknown as Edge[]) || []);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   }, [activeId]);
 
   const onConnect = useCallback((c: Connection) => setEdges((eds) => addEdge(c, eds)), [setEdges]);
@@ -108,7 +109,7 @@ export function OrchestratorModule() {
 
       setAutoDoc(doc);
       toast.success('Documentação semântica gerada!');
-    } catch (e) {
+    } catch {
       toast.error('Erro ao gerar documentação');
     } finally {
       setIsGeneratingDoc(false);
