@@ -14,6 +14,7 @@ export const PROMPT_LIMITS = {
 } as const;
 
 // Caracteres de controle perigosos (preserva \t \n \r)
+// eslint-disable-next-line no-control-regex -- intentional: strip dangerous control chars
 const CONTROL_CHARS_RE = /[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g;
 // Zero-width e BOM (comuns em colagem do Word/Notion)
 const ZERO_WIDTH_RE = /[\u200B-\u200D\uFEFF\u2060]/g;

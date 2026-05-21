@@ -111,7 +111,7 @@ function countPromptWords(text: string): number {
   // boilerplate the user pasted in.
   const stripped = text
     .replace(/```[\s\S]*?```/g, ' ')
-    .replace(/[`*_~#>\-]/g, ' ');
+    .replace(/[`*_~#>-]/g, ' ');
   const matches = stripped.trim().match(/\S+/g);
   return matches ? matches.length : 0;
 }

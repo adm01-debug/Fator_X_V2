@@ -2,6 +2,11 @@ import type { OracleResult } from '@/stores/oracleStore';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 
+type AutoTableDoc = jsPDF & {
+  autoTable: (options: Record<string, unknown>) => void;
+  lastAutoTable: { finalY: number };
+};
+
 // ═══ MARKDOWN EXPORT ═══
 
 export function exportToMarkdown(
@@ -109,7 +114,7 @@ export function exportToPdf(
   mode: string,
   chairmanModel: string,
 ) {
-  const doc = new jsPDF() as any;
+  const doc = new jsPDF() as AutoTableDoc;
   const date = new Date().toLocaleString('pt-BR');
 
   // Header
@@ -139,7 +144,7 @@ export function exportToPdf(
   });
 
   // Query section
-  const finalY = (doc as any).lastAutoTable.finalY + 10;
+  const finalY = doc.lastAutoTable.finalY + 10;
   doc.setFontSize(14);
   doc.setTextColor(40, 40, 40);
   doc.text('Pergunta:', 14, finalY);
@@ -185,7 +190,7 @@ export function exportToPdf(
         styles: { fontSize: 8 },
       });
 
-      const nextY = (doc as any).lastAutoTable.finalY + 10;
+      const nextY = doc.lastAutoTable.finalY + 10;
       doc.setFontSize(12);
       doc.setTextColor(40, 40, 40);
       doc.text('Resposta:', 14, nextY);

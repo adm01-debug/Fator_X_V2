@@ -7,6 +7,7 @@
  */
 import { PROMPT_LIMITS } from '@/lib/validations/promptSanitizer';
 
+// eslint-disable-next-line no-control-regex -- intentional: strip dangerous control chars
 const CONTROL_CHARS_RE = /[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g;
 const ZERO_WIDTH_RE = /[\u200B-\u200D\uFEFF\u2060]/g;
 const DANGEROUS_TAGS_RE = /<\/?\s*(script|iframe|object|embed|style|link|meta)\b[^>]*>/gi;
