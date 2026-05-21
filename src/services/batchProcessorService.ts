@@ -187,14 +187,15 @@ export async function getBatchProgress(id: string): Promise<BatchProgress | null
 export async function getBatchStats(): Promise<{ total_jobs: number; completed: number; failed: number; running: number; total_items_processed: number; success_rate: number; avg_duration_ms: number; avg_items_per_second: number }> {
   const { data, error } = await fromTable('batch_jobs').select('status, processed_items, successful_items, failed_items, duration_ms, avg_item_ms');
   if (error) throw error;
-  const jobs: any[] = data ?? [];
-  const completed = jobs.filter((j: any) => j.status === 'completed' || j.status === 'partial');
-  const failed = jobs.filter((j: any) => j.status === 'failed');
-  const running = jobs.filter((j: any) => j.status === 'running');
-  const totalProcessed = jobs.reduce((s: number, j: any) => s + (j.processed_items ?? 0), 0);
-  const totalSuccessful = jobs.reduce((s: number, j: any) => s + (j.successful_items ?? 0), 0);
-  const durations = jobs.map((j: any) => j.duration_ms).filter((d: any): d is number => d !== null);
-  const speeds = jobs.map((j: any) => j.avg_item_ms).filter((s: any): s is number => s !== null && s > 0);
+  type StatRow = { status: string; processed_items: number | null; successful_items: number | null; failed_items: number | null; duration_ms: number | null; avg_item_ms: number | null };
+  const jobs = (data ?? []) as StatRow[];
+  const completed = jobs.filter((j) => j.status === 'completed' || j.status === 'partial');
+  const failed = jobs.filter((j) => j.status === 'failed');
+  const running = jobs.filter((j) => j.status === 'running');
+  const totalProcessed = jobs.reduce((s, j) => s + (j.processed_items ?? 0), 0);
+  const totalSuccessful = jobs.reduce((s, j) => s + (j.successful_items ?? 0), 0);
+  const durations = jobs.map((j) => j.duration_ms).filter((d): d is number => d !== null);
+  const speeds = jobs.map((j) => j.avg_item_ms).filter((s): s is number => s !== null && s > 0);
   return {
     total_jobs: jobs.length, completed: completed.length, failed: failed.length, running: running.length,
     total_items_processed: totalProcessed, success_rate: totalProcessed > 0 ? (totalSuccessful / totalProcessed) * 100 : 0,

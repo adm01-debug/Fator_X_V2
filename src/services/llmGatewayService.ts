@@ -93,7 +93,7 @@ export async function invokeLLMGateway(body: {
   const retryLimit = 2;
   const fallbacks = ["gpt-4o-mini", "claude-3-haiku-20240307", "gemini-1.5-flash"];
   let attempt = 0;
-  let lastError: any;
+  let lastError: unknown;
 
   while (attempt <= retryLimit) {
     const currentModel = attempt === 0 ? body.model : fallbacks[attempt - 1] || body.model;
@@ -125,7 +125,7 @@ export async function invokeLLMGateway(body: {
       if (attempt <= retryLimit) {
         const backoff = Math.pow(2, attempt) * 500; // Faster backoff for self-healing
         logger.warn(`llm-gateway attempt ${attempt} failed, retrying with self-healing...`, { 
-          error: (err as any).message,
+          error: (err as Error).message,
           next_model: fallbacks[attempt - 1] || body.model
         });
         await new Promise(r => setTimeout(r, backoff));

@@ -193,7 +193,7 @@ export async function logWebhookEvent(
     .single();
   if (error) throw error;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   await rpcCall('increment_webhook_counter', { webhook_uuid: webhookId });
 
   return data as WebhookEvent;

@@ -60,14 +60,13 @@ export async function revokeApiKey(id: string) {
 
 export async function getSecurityEvents(_options?: { severity?: string; limit?: number }) {
   try {
-    const { data, error } = await (supabaseExternal as any)
-      .from('audit_log_safe')
+    const { data, error } = await fromTable('audit_log_safe')
       .select('*')
       .order('created_at', { ascending: false })
       .limit(_options?.limit || 50);
 
     if (error) throw error;
-    return (data ?? []).map((entry: any) => ({
+    return (data ?? []).map((entry: { action: string; [key: string]: unknown }) => ({
       ...entry,
       severity: 'info',
       event_type: entry.action,
@@ -80,8 +79,7 @@ export async function getSecurityEvents(_options?: { severity?: string; limit?: 
 
 export async function getAuditLog(options?: { userId?: string; limit?: number }) {
   try {
-    let query = (supabaseExternal as any)
-      .from('audit_log_safe')
+    let query = fromTable('audit_log_safe')
       .select('*')
       .order('created_at', { ascending: false })
       .limit(options?.limit || 100);
@@ -93,7 +91,7 @@ export async function getAuditLog(options?: { userId?: string; limit?: number })
       logger.warn('Audit log query failed in securityService', { error: error.message });
       return [];
     }
-    return (data ?? []) as any[];
+    return (data ?? []) as Array<Record<string, unknown>>;
   } catch {
     return [];
   }

@@ -61,15 +61,15 @@ export default function CodeInterpreterPage() {
     try {
       await codeInterpreterService.streamExecute(runtime, code, (event, data) => {
         if (event === "stdout") {
-          setLiveStdout(prev => prev + data.chunk);
+          setLiveStdout(prev => prev + (data.chunk ?? ''));
           setMetrics(prev => ({
             cpu: [...prev.cpu, Math.random() * 30 + 10].slice(-20),
             mem: [...prev.mem, Math.random() * 20 + 40].slice(-20)
           }));
         } else if (event === "stderr") {
-          setLiveStderr(prev => prev + data.chunk);
+          setLiveStderr(prev => prev + (data.chunk ?? ''));
         } else if (event === "result") {
-          setCurrent(data);
+          setCurrent(data as unknown as CodeExecution);
           loadHistory();
           toast.success(data.simulated ? "Execução simulada concluída" : "Execução real concluída");
         } else if (event === "error") {

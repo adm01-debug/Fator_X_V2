@@ -81,7 +81,7 @@ export function ClearFiltersToast({ toastId, cleared, storageKeys, onUndo, onClo
           Dispensar
         </button>
       </div>
-      {/* eslint-disable-next-line @typescript-eslint/no-unused-expressions */}
+      { }
       {toastId && null}
     </div>
   );

@@ -102,7 +102,7 @@ export const TEI_DOCKER_COMMANDS = {
   embeddings: `docker run --gpus all -p 8080:80 ghcr.io/huggingface/text-embeddings-inference:cuda-1.9 --model-id BAAI/bge-m3`,
   reranker: `docker run --gpus all -p 8081:80 ghcr.io/huggingface/text-embeddings-inference:cuda-1.9 --model-id BAAI/bge-reranker-v2-m3`,
 } as const;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const getDenoEnv = (key: string): string | null => {
   try {
     if (typeof globalThis !== 'undefined' && 'Deno' in globalThis) {

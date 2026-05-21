@@ -38,7 +38,7 @@ export function useWorkflowPersistence() {
     }
 
     const ids = (data ?? []).map((w: any) => w.id);
-    let stepCounts: Record<string, number> = {};
+    const stepCounts: Record<string, number> = {};
 
     if (ids.length > 0) {
       const { data: steps } = await supabaseExternal

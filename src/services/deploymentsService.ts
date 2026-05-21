@@ -4,6 +4,7 @@
  */
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import { supabase } from '@/integrations/supabase/client';
+import { fromTable } from '@/lib/supabaseExtended';
 
 export type DeployChannel = 'widget' | 'api' | 'whatsapp' | 'slack' | 'bitrix24' | 'telegram';
 
@@ -38,7 +39,7 @@ export async function createDeployment(agentId: string, channel: DeployChannel, 
     config,
     status: 'active',
   };
-  const { data, error } = await (supabaseExternal.from('deploy_connections').insert as Function)(insertData)
+  const { data, error } = await fromTable('deploy_connections').insert(insertData)
     .select()
     .single();
 

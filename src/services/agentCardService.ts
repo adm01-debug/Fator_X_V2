@@ -11,7 +11,7 @@
 
 // supabaseExternal import removed — this service uses fromTable for untyped tables
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 import { fromTable } from '@/lib/supabaseExtended';
 
 
@@ -284,7 +284,7 @@ export async function listAgentCards(): Promise<AgentCard[]> {
   if (error) throw new Error(`Failed to list agents: ${error.message}`);
 
   return (data ?? [])
-    .map((agent: any) => {
+    .map((agent: { metadata?: Record<string, unknown> | null }) => {
       const metadata = agent.metadata as Record<string, unknown> | null;
       const cached = metadata?.agent_card as AgentCard | undefined;
       if (cached) return cached;
