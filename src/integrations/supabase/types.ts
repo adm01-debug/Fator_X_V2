@@ -6588,6 +6588,98 @@ export type Database = {
           },
         ]
       }
+      webhook_endpoints: {
+        Row: {
+          auth_type: string | null
+          created_at: string | null
+          id: string
+          ip_whitelist: string[] | null
+          is_public: boolean | null
+          methods: string[] | null
+          path: string
+          secret: string | null
+          status: string | null
+          target_id: string | null
+          target_type: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          auth_type?: string | null
+          created_at?: string | null
+          id?: string
+          ip_whitelist?: string[] | null
+          is_public?: boolean | null
+          methods?: string[] | null
+          path: string
+          secret?: string | null
+          status?: string | null
+          target_id?: string | null
+          target_type?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          auth_type?: string | null
+          created_at?: string | null
+          id?: string
+          ip_whitelist?: string[] | null
+          is_public?: boolean | null
+          methods?: string[] | null
+          path?: string
+          secret?: string | null
+          status?: string | null
+          target_id?: string | null
+          target_type?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      webhook_events: {
+        Row: {
+          body: Json | null
+          created_at: string | null
+          headers: Json | null
+          id: string
+          method: string
+          query_params: Json | null
+          response_code: number | null
+          source_ip: string | null
+          status: string | null
+          webhook_id: string | null
+        }
+        Insert: {
+          body?: Json | null
+          created_at?: string | null
+          headers?: Json | null
+          id?: string
+          method: string
+          query_params?: Json | null
+          response_code?: number | null
+          source_ip?: string | null
+          status?: string | null
+          webhook_id?: string | null
+        }
+        Update: {
+          body?: Json | null
+          created_at?: string | null
+          headers?: Json | null
+          id?: string
+          method?: string
+          query_params?: Json | null
+          response_code?: number | null
+          source_ip?: string | null
+          status?: string | null
+          webhook_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "webhook_events_webhook_id_fkey"
+            columns: ["webhook_id"]
+            isOneToOne: false
+            referencedRelation: "webhook_endpoints"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workflow_runs: {
         Row: {
           completed_at: string | null
@@ -7587,6 +7679,10 @@ export type Database = {
       }
       increment_skill_installs: {
         Args: { p_skill_id: string }
+        Returns: undefined
+      }
+      increment_webhook_counter: {
+        Args: { webhook_uuid: string }
         Returns: undefined
       }
       invite_workspace_member: {
