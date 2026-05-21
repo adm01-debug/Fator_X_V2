@@ -97,7 +97,7 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
     await new Promise(r => setTimeout(r, 1000));
     set({ currentStage: 1, stageLabel: 'Replay: Coletando opiniões...' });
     
-    const results: any = { stage1_results: [], metrics: entry.metrics };
+    const results: { stage1_results: unknown[]; metrics: unknown } = { stage1_results: [], metrics: entry.metrics };
     for (const res of entry.stage1_results) {
       await new Promise(r => setTimeout(r, 800));
       results.stage1_results.push(res);
@@ -179,9 +179,9 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
       
-      const tempResults: any = { 
-        stage1_results: [], 
-        metrics: { total_latency_ms: 0, total_cost_usd: 0, total_tokens: 0, models_used: 0 } 
+      const tempResults: Record<string, unknown> & { stage1_results: unknown[] } = {
+        stage1_results: [],
+        metrics: { total_latency_ms: 0, total_cost_usd: 0, total_tokens: 0, models_used: 0 }
       };
 
       while (true) {
@@ -228,18 +228,19 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
           }
         }
       }
-    } catch (e: any) {
-      if (e.name === 'AbortError') return;
+    } catch (e: unknown) {
+      if (e instanceof Error && e.name === 'AbortError') return;
+      const msg = e instanceof Error ? e.message : 'Erro ao consultar o Oráculo';
       set({
-        error: e instanceof Error ? e.message : 'Erro ao consultar o Oráculo',
+        error: msg,
         isRunning: false,
         currentStage: 0,
         stageLabel: '',
         abortController: null,
       });
-      
+
       // Auto-retry once for network errors or transient 500s
-      if (e.message.includes('fetch') || e.message.includes('network') || e.message.includes('502') || e.message.includes('503')) {
+      if (msg.includes('fetch') || msg.includes('network') || msg.includes('502') || msg.includes('503')) {
         toast.info('Erro de conexão ou timeout. Tentando novamente em 3 segundos...');
         setTimeout(() => get().submitQuery(), 3000);
       }

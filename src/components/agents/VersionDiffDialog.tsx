@@ -47,15 +47,23 @@ function versionToText(v: Version): string {
   return lines.join('\n');
 }
 
-function getCfg(v: Version): Record<string, unknown> {
+interface VersionConfig {
+  temperature?: number;
+  max_tokens?: number;
+  tools?: unknown;
+  guardrails?: unknown;
+  system_prompt?: string;
+}
+
+function getCfg(v: Version): VersionConfig {
   try {
-    return (typeof v.config === 'string' ? JSON.parse(v.config) : v.config) || {};
+    return ((typeof v.config === 'string' ? JSON.parse(v.config) : v.config) || {}) as VersionConfig;
   } catch { return {}; }
 }
 
 function countEnabled(arr: unknown): number {
   if (!Array.isArray(arr)) return 0;
-  return arr.filter((x: any) => x && (x.enabled ?? true)).length;
+  return arr.filter((x) => x && ((x as { enabled?: boolean }).enabled ?? true)).length;
 }
 
 interface Delta { label: string; from: string | number; to: string | number; }
@@ -64,15 +72,15 @@ function computeDeltas(a: Version, b: Version): Delta[] {
   const ca = getCfg(a); const cb = getCfg(b);
   const out: Delta[] = [];
   if (a.model !== b.model) out.push({ label: 'Modelo', from: a.model || '—', to: b.model || '—' });
-  const ta = (ca as any).temperature, tb = (cb as any).temperature;
+  const ta = ca.temperature, tb = cb.temperature;
   if (ta !== tb && (ta !== undefined || tb !== undefined)) out.push({ label: 'Temperature', from: ta ?? '—', to: tb ?? '—' });
-  const ma = (ca as any).max_tokens, mb = (cb as any).max_tokens;
+  const ma = ca.max_tokens, mb = cb.max_tokens;
   if (ma !== mb && (ma !== undefined || mb !== undefined)) out.push({ label: 'Max Tokens', from: ma ?? '—', to: mb ?? '—' });
-  const toolsA = countEnabled((ca as any).tools), toolsB = countEnabled((cb as any).tools);
+  const toolsA = countEnabled(ca.tools), toolsB = countEnabled(cb.tools);
   if (toolsA !== toolsB) out.push({ label: 'Ferramentas ativas', from: toolsA, to: toolsB });
-  const grA = countEnabled((ca as any).guardrails), grB = countEnabled((cb as any).guardrails);
+  const grA = countEnabled(ca.guardrails), grB = countEnabled(cb.guardrails);
   if (grA !== grB) out.push({ label: 'Guardrails ativos', from: grA, to: grB });
-  const spA = ((ca as any).system_prompt || '').length, spB = ((cb as any).system_prompt || '').length;
+  const spA = (ca.system_prompt || '').length, spB = (cb.system_prompt || '').length;
   if (spA !== spB) out.push({ label: 'System prompt (chars)', from: spA, to: spB });
   if (a.persona !== b.persona) out.push({ label: 'Persona', from: 'alterada', to: '—' });
   if (a.mission !== b.mission) out.push({ label: 'Missão', from: 'alterada', to: '—' });

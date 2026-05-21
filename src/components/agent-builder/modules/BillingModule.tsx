@@ -50,7 +50,7 @@ export function BillingModule() {
           costBrl: costUsd * USD_TO_BRL,
         };
       })
-      .sort((a: any, b: any) => a.costUsd - b.costUsd);
+      .sort((a, b) => a.costUsd - b.costUsd);
   }, [simInput, simMaxTokens]);
 
   const trafficProjection = useMemo(() => {
@@ -75,13 +75,13 @@ export function BillingModule() {
 
   const idealModel = useMemo(() => {
     // Lógica para recomendar o modelo ideal baseada no custo projetado e latência
-    const candidates = simulation.filter((s: any) => s.avg_latency_ms < 2000); // Filtra por latência aceitável
+    const candidates = simulation.filter((s) => s.avg_latency_ms < 2000); // Filtra por latência aceitável
     const bestValue = [...candidates].sort((a, b) => a.costUsd - b.costUsd)[0];
     return bestValue;
   }, [simulation]);
 
   const cheapest = simulation[0];
-  const fastest = [...simulation].sort((a: any, b: any) => a.avg_latency_ms - b.avg_latency_ms)[0];
+  const fastest = [...simulation].sort((a, b) => a.avg_latency_ms - b.avg_latency_ms)[0];
 
   return (
     <div className="space-y-8">
@@ -140,7 +140,7 @@ export function BillingModule() {
       {/* Category Breakdown */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {COST_CATEGORIES.map((cat) => {
-          const total = billing.dailyUsage.reduce((s: number, d: any) => s + (d[cat.key as keyof typeof d] as number), 0);
+          const total = billing.dailyUsage.reduce((s: number, d) => s + (d[cat.key as keyof typeof d] as number), 0);
           const pct = (total / totalWeek) * 100;
           return (
             <div key={cat.key} className="rounded-xl border border-border bg-card p-4 space-y-2">
@@ -257,7 +257,7 @@ export function BillingModule() {
               </tr>
             </thead>
             <tbody>
-              {simulation.map((row: any, i: number) => (
+              {simulation.map((row, i: number) => (
                 <tr key={row.model} className={`border-b border-border/30 hover:bg-muted/20 ${i === 0 ? 'bg-nexus-green/5' : ''}`}>
                   <td className="py-2 font-medium">
                     {row.label}
@@ -314,7 +314,7 @@ export function BillingModule() {
                 mantendo a latência abaixo de 2s.
               </p>
             </div>
-            <Button onClick={() => updateAgent({ model: idealModel.model as any })} className="gap-2 shrink-0">
+            <Button onClick={() => updateAgent({ model: idealModel.model })} className="gap-2 shrink-0">
               <Check className="h-4 w-4" /> Aplicar Modelo
             </Button>
           </div>
