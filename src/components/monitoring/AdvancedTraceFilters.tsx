@@ -166,6 +166,7 @@ export interface FilterableTrace {
   event?: string | null;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
 export function applyTraceFilters<T extends FilterableTrace>(traces: T[], filters: TraceFilters): T[] {
   return traces.filter(t => {
     if (filters.dateFrom) {
@@ -186,4 +187,5 @@ export function applyTraceFilters<T extends FilterableTrace>(traces: T[], filter
   });
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
 export { EMPTY_FILTERS };

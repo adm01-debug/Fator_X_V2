@@ -73,4 +73,5 @@ export function SandboxConfigTab({ config, onUpdate }: SandboxConfigTabProps) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
 export { RUNTIME_OPTIONS, SECURITY_LEVEL_COLORS };

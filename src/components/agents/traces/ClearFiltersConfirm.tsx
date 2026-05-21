@@ -14,10 +14,12 @@ import { AlertTriangle } from 'lucide-react';
 
 const BYPASS_KEY = 'nexus.traces.clearFilters.skipConfirm';
 
+// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
 export function shouldSkipClearConfirm(): boolean {
   try { return sessionStorage.getItem(BYPASS_KEY) === '1'; } catch { return false; }
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
 export function setSkipClearConfirm(skip: boolean) {
   try {
     if (skip) sessionStorage.setItem(BYPASS_KEY, '1');

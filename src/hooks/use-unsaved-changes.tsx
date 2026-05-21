@@ -16,6 +16,7 @@ const UnsavedChangesContext = createContext<UnsavedChangesContextType>({
   confirmNavigation: (cb) => cb(),
 });
 
+// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
 export function useUnsavedChanges() {
   return useContext(UnsavedChangesContext);
 }

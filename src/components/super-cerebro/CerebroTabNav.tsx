@@ -42,5 +42,6 @@ export function CerebroTabNav() {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
 export { CEREBRO_TABS };
 export default CerebroTabNav;
