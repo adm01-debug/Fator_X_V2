@@ -1,3 +1,4 @@
+import { onActivateKey } from '@/lib/a11y';
 import { CardGridSkeleton } from "@/components/shared/PageSkeleton";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { QuickActionsBar } from "@/components/shared/QuickActionsBar";
@@ -236,7 +237,7 @@ export default function KnowledgePage() {
                   {filtered.map((kb) => (
                     <div key={kb.id}
                       className="nexus-card group cursor-pointer hover:border-primary/40 transition-all hover:shadow-2xl hover:shadow-primary/5 p-0 overflow-hidden"
-                      onClick={() => setSelectedKb({ id: kb.id, name: kb.name })}
+                      role="button" tabIndex={0} onClick={() => setSelectedKb({ id: kb.id, name: kb.name })} onKeyDown={onActivateKey(() => setSelectedKb({ id: kb.id, name: kb.name }))}
                     >
                       <div className="p-5 space-y-4">
                         <div className="flex items-start justify-between">

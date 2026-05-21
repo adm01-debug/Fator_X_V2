@@ -9,6 +9,7 @@
  * Uses the existing queryEntity() service — no new backend needed.
  * RLS-respecting (entity mappings live in datahub-entities config).
  */
+import { onActivateKey } from '@/lib/a11y';
 import { useState, useMemo, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -330,7 +331,7 @@ export function DataHubExplorerTab() {
       {detailRow && (
         <div
           className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4"
-          onClick={() => setDetailRow(null)}
+          role="button" tabIndex={0} onClick={() => setDetailRow(null)} onKeyDown={onActivateKey(() => setDetailRow(null))}
         >
           <div
             className="nexus-card max-w-2xl w-full max-h-[80vh] overflow-y-auto"

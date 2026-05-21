@@ -1,3 +1,4 @@
+import { onActivateKey } from '@/lib/a11y';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { StatusBadge } from '@/components/shared/StatusBadge';
@@ -36,7 +37,7 @@ export function AgentCard({
         "bg-gradient-to-br from-card to-card/95 border-border/40 hover:border-primary/30",
         isSelected && "ring-2 ring-primary border-primary/40 bg-primary/[0.02]"
       )}
-      onClick={() => selectionMode ? onToggleSelect({ stopPropagation: () => {} } as React.MouseEvent, agent.id) : onNavigate(agent.id)}
+      role="button" tabIndex={0} onClick={() => selectionMode ? onToggleSelect({ stopPropagation: () => {} } as React.MouseEvent, agent.id) : onNavigate(agent.id)} onKeyDown={onActivateKey(() => selectionMode ? onToggleSelect({ stopPropagation: () => {} } as React.MouseEvent, agent.id) : onNavigate(agent.id))}
     >
       {/* Background patterns */}
       <div className="absolute top-0 right-0 w-32 h-32 bg-primary/[0.03] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />

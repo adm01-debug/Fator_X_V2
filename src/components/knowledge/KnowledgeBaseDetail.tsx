@@ -1,3 +1,4 @@
+import { onActivateKey } from '@/lib/a11y';
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { logger } from '@/lib/logger';
@@ -200,7 +201,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
               <div
                 key={coll.id}
                 className={`nexus-card cursor-pointer p-3 group ${selectedCollectionId === coll.id ? 'border-primary/40 nexus-glow-sm' : ''}`}
-                onClick={() => setSelectedCollectionId(coll.id)}
+                role="button" tabIndex={0} onClick={() => setSelectedCollectionId(coll.id)} onKeyDown={onActivateKey(() => setSelectedCollectionId(coll.id))}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 min-w-0">

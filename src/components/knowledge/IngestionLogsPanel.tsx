@@ -1,3 +1,4 @@
+import { onActivateKey } from '@/lib/a11y';
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -96,7 +97,7 @@ export function IngestionLogsPanel() {
                 "p-4 cursor-pointer transition-colors hover:bg-primary/5",
                 selectedLog === log.id && "bg-primary/5"
               )}
-              onClick={() => setSelectedLog(selectedLog === log.id ? null : log.id)}
+              role="button" tabIndex={0} onClick={() => setSelectedLog(selectedLog === log.id ? null : log.id)} onKeyDown={onActivateKey(() => setSelectedLog(selectedLog === log.id ? null : log.id))}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-2">

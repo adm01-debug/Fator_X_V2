@@ -1,3 +1,4 @@
+import { onActivateKey } from '@/lib/a11y';
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { listEvaluationDatasets, listTestCases, createEvaluationDataset, createTestCase, deleteTestCase, updateDatasetCaseCount } from '@/services/evaluationsService';
@@ -136,7 +137,7 @@ export function EvaluationDatasetsPanel() {
                 <div
                   key={ds.id}
                   className={`nexus-card cursor-pointer p-3 group ${selectedDatasetId === ds.id ? 'border-primary/40 nexus-glow-sm' : ''}`}
-                  onClick={() => setSelectedDatasetId(ds.id)}
+                  role="button" tabIndex={0} onClick={() => setSelectedDatasetId(ds.id)} onKeyDown={onActivateKey(() => setSelectedDatasetId(ds.id))}
                 >
                   <div className="flex items-center justify-between">
                     <div className="min-w-0">

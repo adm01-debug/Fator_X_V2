@@ -55,12 +55,15 @@ export default function VisionAgentsPage() {
           <CardHeader className="pb-3 flex-row items-center justify-between">
             <CardTitle className="text-sm flex items-center gap-2"><ImageIcon className="h-4 w-4" />Imagem</CardTitle>
             <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0])} />
-            <Button size="sm" variant="outline" role="button" tabIndex={0} onClick={() => fileRef.current?.click()} onKeyDown={onActivateKey(() => fileRef.current?.click())}><Upload className="h-3.5 w-3.5 mr-1" />Upload</Button>
+            <Button size="sm" variant="outline" onClick={() => fileRef.current?.click()}><Upload className="h-3.5 w-3.5 mr-1" />Upload</Button>
           </CardHeader>
           <CardContent>
             {!imageUrl ? (
               <div
+                role="button"
+                tabIndex={0}
                 onClick={() => fileRef.current?.click()}
+                onKeyDown={onActivateKey(() => fileRef.current?.click())}
                 className="aspect-video border-2 border-dashed border-border/50 rounded-md flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-colors"
               >
                 <Upload className="h-10 w-10 text-muted-foreground/40 mb-2" />

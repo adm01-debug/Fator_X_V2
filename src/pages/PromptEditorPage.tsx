@@ -1,3 +1,4 @@
+import { onActivateKey } from '@/lib/a11y';
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -300,7 +301,7 @@ export default function PromptEditorPage() {
                         diffVersionId === v.id && "bg-primary/5",
                         v.is_active && "border-l-4 border-primary"
                       )}
-                      onClick={() => setDiffVersionId(diffVersionId === v.id ? null : v.id)}
+                      role="button" tabIndex={0} onClick={() => setDiffVersionId(diffVersionId === v.id ? null : v.id)} onKeyDown={onActivateKey(() => setDiffVersionId(diffVersionId === v.id ? null : v.id))}
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-center gap-3">
