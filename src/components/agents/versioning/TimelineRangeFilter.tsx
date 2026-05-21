@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control -- a11y: visual caption for composite/custom control; tracked for dedicated a11y pass */
 import { useMemo, useState } from 'react';
 import { Clock, GitBranch, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';

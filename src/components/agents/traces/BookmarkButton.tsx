@@ -101,7 +101,6 @@ export function BookmarkButton({
           rows={3}
           className="text-xs resize-none"
           maxLength={280}
-          autoFocus
           onKeyDown={(e) => {
             if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); handleSave(); }
           }}

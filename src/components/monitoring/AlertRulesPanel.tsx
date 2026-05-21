@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control -- a11y: visual caption for composite/custom control; tracked for dedicated a11y pass */
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';

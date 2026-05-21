@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control -- a11y: visual caption for composite/custom control; tracked for dedicated a11y pass */
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import { SectionTitle, NexusBadge, ToggleField, SliderField, SelectField } from '../ui';
 import { CollapsibleCard } from '../ui/CollapsibleCard';

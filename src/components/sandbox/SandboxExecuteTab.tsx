@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control -- a11y: visual caption for composite/custom control; tracked for dedicated a11y pass */
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';

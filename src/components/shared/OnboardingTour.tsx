@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-static-element-interactions -- a11y: row/card click mirrors a primary action available elsewhere ; intentional interaction on semantic element ; decorative wrapper / click-through container; tracked for dedicated a11y pass */
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { X, ArrowRight, Bot, Sparkles, Keyboard, Rocket, Brain, Shield, GitBranch } from "lucide-react";

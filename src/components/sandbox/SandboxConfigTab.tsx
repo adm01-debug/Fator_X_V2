@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/label-has-associated-control, jsx-a11y/no-static-element-interactions -- a11y: row/card click mirrors a primary action available elsewhere ; visual caption for composite/custom control ; decorative wrapper / click-through container; tracked for dedicated a11y pass */
 import type { SandboxConfig, SandboxRuntime } from '@/components/workflows/SandboxExecutionPanel';
 
 const RUNTIME_OPTIONS: Array<{

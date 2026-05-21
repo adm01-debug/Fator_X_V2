@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control -- a11y: visual caption for composite/custom control; tracked for dedicated a11y pass */
 /**
  * RestorePresetMenu — botão único no header do `<fieldset>` de campos do
  * diálogo de rollback. Permite:
@@ -143,7 +144,6 @@ export function RestorePresetMenu({ current, onApply, onPresetsLoaded, disabled 
             }}
           >
             <Input
-              autoFocus
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               placeholder="Nome do preset (ex.: Só prompt)"

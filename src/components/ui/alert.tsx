@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/heading-has-content -- a11y: forwardRef primitive renders content via children; tracked for dedicated a11y pass */
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 
