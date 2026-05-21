@@ -1,3 +1,4 @@
+import { onActivateKey } from '@/lib/a11y';
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { SystemHealthBanner } from "@/components/shared/SystemHealthBanner";
 import { Badge } from "@/components/ui/badge";
@@ -136,7 +137,7 @@ export default function MonitoringPage() {
                 <div className="space-y-2 max-h-[500px] overflow-y-auto">
                   <h3 className="text-xs font-heading font-semibold text-muted-foreground uppercase tracking-wider mb-2">Eventos recentes</h3>
                   {filteredTraces.map((trace) => (
-                    <div key={trace.id} className={`nexus-card cursor-pointer p-3 ${selected?.id === trace.id ? 'border-primary/40 nexus-glow-sm' : ''}`} onClick={() => setSelectedId(trace.id)}>
+                    <div key={trace.id} className={`nexus-card cursor-pointer p-3 ${selected?.id === trace.id ? 'border-primary/40 nexus-glow-sm' : ''}`} role="button" tabIndex={0} onClick={() => setSelectedId(trace.id)} onKeyDown={onActivateKey(() => setSelectedId(trace.id))}>
                       <div className="flex items-center justify-between mb-1.5"><p className="text-xs font-medium text-foreground truncate">{trace.event}</p><StatusBadge status={trace.level || 'info'} /></div>
                       <p className="text-[11px] text-muted-foreground">{trace.session_id || trace.id.slice(0, 8)}</p>
                       <div className="flex items-center gap-3 mt-2 text-[11px] text-muted-foreground">
@@ -175,7 +176,7 @@ export default function MonitoringPage() {
           : <div className="space-y-3">
               {sessions.map((session) => (
                 <div key={session.id} className="nexus-card">
-                  <div className="flex items-center justify-between cursor-pointer" onClick={() => setExpandedSessionId(expandedSessionId === session.id ? null : session.id)}>
+                  <div className="flex items-center justify-between cursor-pointer" role="button" tabIndex={0} onClick={() => setExpandedSessionId(expandedSessionId === session.id ? null : session.id)} onKeyDown={onActivateKey(() => setExpandedSessionId(expandedSessionId === session.id ? null : session.id))}>
                     <div>
                       <div className="flex items-center gap-2">
                         <p className="text-sm font-semibold text-foreground font-mono">{session.id.substring(0, 12)}...</p>
@@ -189,7 +190,7 @@ export default function MonitoringPage() {
                       {sessionTraces.length === 0 ? <p className="text-xs text-muted-foreground text-center py-4">Nenhum trace nesta sessão</p>
                       : sessionTraces.map((st) => (
                         <div key={st.id} className="rounded-lg bg-secondary/20 p-2.5">
-                          <div className="flex items-center gap-3 text-xs cursor-pointer" onClick={() => setExpandedTraceId(expandedTraceId === st.id ? null : st.id)}>
+                          <div className="flex items-center gap-3 text-xs cursor-pointer" role="button" tabIndex={0} onClick={() => setExpandedTraceId(expandedTraceId === st.id ? null : st.id)} onKeyDown={onActivateKey(() => setExpandedTraceId(expandedTraceId === st.id ? null : st.id))}>
                             <Badge variant="outline" className="text-[11px] shrink-0">{st.trace_type}</Badge>
                             <span className="text-foreground truncate flex-1">{st.latency_ms ? `${st.latency_ms}ms` : ''} {st.tokens_used ? `• ${st.tokens_used}t` : ''}</span>
                             <span className="text-muted-foreground shrink-0 font-mono">{new Date(st.created_at || '').toLocaleTimeString('pt-BR')}</span>

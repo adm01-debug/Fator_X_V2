@@ -1,3 +1,4 @@
+import { onActivateKey } from '@/lib/a11y';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -28,7 +29,7 @@ export function DashboardAlerts() {
           <div className="h-2 w-2 rounded-full bg-destructive animate-ping" />
           Alertas Críticos ({alerts.length})
         </h3>
-        <button onClick={() => navigate('/monitoring')} className="text-[11px] font-semibold text-primary hover:text-primary/80 transition-colors bg-primary/10 px-2 py-0.5 rounded">Ver todos</button>
+        <button role="button" tabIndex={0} onClick={() => navigate('/monitoring')} onKeyDown={onActivateKey(() => navigate('/monitoring'))} className="text-[11px] font-semibold text-primary hover:text-primary/80 transition-colors bg-primary/10 px-2 py-0.5 rounded">Ver todos</button>
       </div>
       <div className="space-y-2 relative">
         {alerts.map((a) => (
