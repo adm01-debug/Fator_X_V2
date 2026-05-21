@@ -12,9 +12,9 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { supabaseExternal } from "@/integrations/supabase/externalClient";
 import { useGlobalSearch } from "@/hooks/useGlobalSearch";
-import { Loader2, Bot as BotIcon, BookOpen as KbIcon, FileText as ArticleIcon, GitBranch as WfIcon, FlaskConical as EvalIcon, Zap as AutoIcon, FileText as DocIcon } from "lucide-react";
+import { Loader2, Bot as BotIcon, BookOpen as KbIcon, FileText as ArticleIcon, GitBranch as WfIcon, FlaskConical as EvalIcon, Zap as AutoIcon, FileText as DocIcon, type LucideIcon } from "lucide-react";
 
-const TYPE_META: Record<string, { label: string; icon: any; color: string }> = {
+const TYPE_META: Record<string, { label: string; icon: LucideIcon; color: string }> = {
   agent: { label: "Agente", icon: BotIcon, color: "text-primary" },
   knowledge_base: { label: "Base", icon: KbIcon, color: "text-nexus-emerald" },
   article: { label: "Artigo", icon: ArticleIcon, color: "text-nexus-cyan" },

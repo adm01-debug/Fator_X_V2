@@ -67,20 +67,20 @@ export function OrchestratorModule() {
 
   const handleSave = () => {
     if (!active) return;
-    updateWorkflow.mutate({ id: active.id, nodes: nodes as any, edges: edges as any });
+    updateWorkflow.mutate({ id: active.id, nodes, edges });
   };
 
   const handleRun = async () => {
     if (!active) return;
     setRunning(true);
     try {
-      let parsed: any = testInput;
+      let parsed: unknown = testInput;
       try { parsed = JSON.parse(testInput); } catch { /* not JSON: keep raw text */ }
       const result = await runWorkflow(active.id, parsed);
       toast.success('Execução concluída');
       logger.info('Workflow execution result', { workflow_id: active.id, result });
-    } catch (e: any) {
-      toast.error(e.message || 'Falha na execução');
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : 'Falha na execução');
     } finally {
       setRunning(false);
     }
@@ -149,7 +149,7 @@ export function OrchestratorModule() {
     const name = prompt('Nome do workflow?');
     if (!name) return;
     createWorkflow.mutate({ name, workspace_id: workspaceId }, {
-      onSuccess: (w: any) => setActiveId(w.id),
+      onSuccess: (w: { id: string }) => setActiveId(w.id),
     });
   };
 

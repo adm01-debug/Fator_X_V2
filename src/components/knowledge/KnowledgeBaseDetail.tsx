@@ -48,7 +48,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
     enabled: !!selectedCollectionId,
   });
 
-  const selectedDocIds = documents.map((d: any) => d.id);
+  const selectedDocIds = documents.map((d) => d.id);
   const { data: chunks = [], isLoading: loadingChunks } = useQuery({
     queryKey: ['chunks', selectedDocIds],
     queryFn: () => listChunksForDocuments(selectedDocIds),
@@ -131,8 +131,8 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
       setDocTitle(''); setDocContent(''); setDocSourceUrl('');
       queryClient.invalidateQueries({ queryKey: ['documents', selectedCollectionId] });
       queryClient.invalidateQueries({ queryKey: ['chunks'] });
-    } catch (e: any) {
-      toast.error(e.message || 'Erro na ingestão');
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : 'Erro na ingestão');
     } finally { setSaving(false); }
   };
 
@@ -155,7 +155,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
     } catch (e: unknown) { toast.error(e instanceof Error ? e.message : 'Erro'); }
   };
 
-  const selectedCollection = collections.find((c: any) => c.id === selectedCollectionId);
+  const selectedCollection = collections.find((c) => c.id === selectedCollectionId);
 
   return (
     <div className="space-y-4">
@@ -196,7 +196,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
               <p className="text-xs text-muted-foreground">Nenhuma collection. Crie uma para organizar documentos.</p>
             </div>
           ) : (
-            collections.map((coll: any) => (
+            collections.map((coll) => (
               <div
                 key={coll.id}
                 className={`nexus-card cursor-pointer p-3 group ${selectedCollectionId === coll.id ? 'border-primary/40 nexus-glow-sm' : ''}`}
@@ -264,7 +264,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
               <p className="text-xs text-muted-foreground">Nenhum documento nesta collection.</p>
             </div>
           ) : (
-            documents.map((doc: any) => (
+            documents.map((doc) => (
               <div key={doc.id} className="nexus-card p-3 group">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 min-w-0">
@@ -309,7 +309,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
             </div>
           ) : (
             <div className="space-y-2 max-h-[600px] overflow-y-auto">
-              {chunks.map((chunk: any) => (
+              {chunks.map((chunk) => (
                 <div key={chunk.id} className="nexus-card p-3">
                   <div className="flex items-center justify-between mb-1.5">
                     <Badge variant="outline" className="text-[11px]">#{chunk.chunk_index}</Badge>

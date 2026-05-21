@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ChevronLeft, ChevronRight, Save, Plus, Loader2, History, Sparkles, FileClock, Bot } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { VersionDiffDialog } from '@/components/agents/VersionDiffDialog';
+import { VersionDiffDialog, type Version as VersionType } from '@/components/agents/VersionDiffDialog';
 import { useAgentVersions } from '@/hooks/useAgentVersions';
 import { ConversationalBuilder } from './ConversationalBuilder';
 import { DraftVersionsDialog } from './DraftVersionsDialog';
@@ -239,7 +239,7 @@ export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
       <VersionDiffDialog
         open={historyOpen}
         onOpenChange={setHistoryOpen}
-        versions={versions as any}
+        versions={versions as unknown as VersionType[]}
         agentId={agent.id as string | undefined}
       />
       <ConversationalBuilder open={convOpen} onOpenChange={setConvOpen} />

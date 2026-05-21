@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { SectionTitle, CodeBlock } from '../ui';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import { useAgentVersions } from '@/hooks/useAgentVersions';
-import { VersionDiffDialog } from '@/components/agents/VersionDiffDialog';
+import { VersionDiffDialog, type Version as VersionType } from '@/components/agents/VersionDiffDialog';
 import { Button } from '@/components/ui/button';
 import { GitCompare, History } from 'lucide-react';
 import { toast } from 'sonner';
@@ -171,7 +171,7 @@ export function BlueprintModule() {
           <VersionDiffDialog
             open={historyOpen}
             onOpenChange={setHistoryOpen}
-            versions={versions as any}
+            versions={versions as unknown as VersionType[]}
             agentId={agent.id as string | undefined}
           />
         </>

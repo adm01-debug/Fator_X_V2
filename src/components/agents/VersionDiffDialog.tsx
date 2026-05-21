@@ -11,7 +11,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type { Json } from "@/integrations/supabase/types";
 
-interface Version {
+export interface Version {
   id: string;
   version: number;
   model: string | null;

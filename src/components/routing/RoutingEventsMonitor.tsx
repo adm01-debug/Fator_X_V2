@@ -4,7 +4,7 @@ import { listRecentWhatsAppEvents } from "@/services/whatsappWebhookService";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle2, AlertCircle, XCircle, Loader2, Building2, MessageCircle, Clock, Zap } from "lucide-react";
+import { CheckCircle2, AlertCircle, XCircle, Loader2, Building2, MessageCircle, Clock, Zap, type LucideIcon } from "lucide-react";
 
 export function RoutingEventsMonitor() {
   const { data: bitrixEvents = [], isLoading: loadingBitrix } = useQuery({
@@ -19,7 +19,7 @@ export function RoutingEventsMonitor() {
     refetchInterval: 10000,
   });
 
-  const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
+  const STATUS_CONFIG: Record<string, { label: string; color: string; icon: LucideIcon }> = {
     routed: { label: "Roteado", color: "text-nexus-emerald bg-nexus-emerald/10 border-nexus-emerald/20", icon: CheckCircle2 },
     no_route: { label: "Sem rota", color: "text-muted-foreground bg-muted/10 border-border/20", icon: AlertCircle },
     failed: { label: "Falhou", color: "text-destructive bg-destructive/10 border-destructive/20", icon: XCircle },

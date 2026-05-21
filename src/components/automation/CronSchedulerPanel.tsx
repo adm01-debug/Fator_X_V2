@@ -86,7 +86,7 @@ export function CronSchedulerPanel() {
         name: newName.trim(),
         frequency: 'cron',
         cron_expression: newCron,
-        target_type: targetType as any,
+        target_type: targetType as 'workflow' | 'agent' | 'edge_function' | 'webhook',
         target_id: targetId.trim(),
       });
       toast({ title: 'Agendamento criado!' });
@@ -94,8 +94,8 @@ export function CronSchedulerPanel() {
       setNewName('');
       setTargetId('');
       await loadData();
-    } catch (e: any) {
-      toast({ title: 'Erro ao criar', description: e.message, variant: 'destructive' });
+    } catch (e: unknown) {
+      toast({ title: 'Erro ao criar', description: e instanceof Error ? e.message : String(e), variant: 'destructive' });
     } finally {
       setSaving(false);
     }

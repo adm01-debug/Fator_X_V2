@@ -35,8 +35,8 @@ export function ApprovalQueuePanel() {
       queryClient.invalidateQueries({ queryKey: ['pending-approvals'] });
       setSelectedRun(null);
       setFeedback("");
-    } catch (err: any) {
-      toast.error("Erro: " + err.message);
+    } catch (err: unknown) {
+      toast.error("Erro: " + (err instanceof Error ? err.message : String(err)));
     } finally {
       setProcessing(false);
     }
@@ -62,7 +62,7 @@ export function ApprovalQueuePanel() {
       </CardHeader>
       <CardContent className="p-0">
         <div className="divide-y divide-nexus-amber/10">
-          {pending.map((run: any) => (
+          {pending.map((run) => (
             <div key={run.id} className="p-4 flex items-center justify-between gap-4 hover:bg-nexus-amber/[0.03] transition-colors">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">

@@ -433,7 +433,7 @@ export function validateRestore(
     /* ── Consistência Prompt vs Ferramentas ────────────────────── */
     if (options.copyPrompt) {
       const sp = String(merged.system_prompt ?? '');
-      const tools = (merged.tools as any[]) ?? [];
+      const tools = (merged.tools as unknown[]) ?? [];
       const enabledTools = tools.filter(isToolEnabled).map(toolNameOf);
       
       // Busca menções no prompt a ferramentas que NÃO estão habilitadas

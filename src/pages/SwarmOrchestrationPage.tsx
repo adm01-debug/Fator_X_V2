@@ -18,7 +18,7 @@ interface A2ALog {
   direction: 'inbound' | 'outbound';
   type: 'handshake' | 'task' | 'response' | 'error';
   agent: string;
-  payload: any;
+  payload: unknown;
 }
 
 export default function SwarmOrchestrationPage() {
@@ -73,12 +73,12 @@ export default function SwarmOrchestrationPage() {
       });
       
       toast.success("Comunicação A2A concluída");
-    } catch (err: any) {
+    } catch (err: unknown) {
       addLog({
         direction: 'inbound',
         type: 'error',
         agent: 'Nexus-A2A-Server',
-        payload: { error: err.message }
+        payload: { error: err instanceof Error ? err.message : String(err) }
       });
       toast.error("Erro na comunicação A2A");
     } finally {

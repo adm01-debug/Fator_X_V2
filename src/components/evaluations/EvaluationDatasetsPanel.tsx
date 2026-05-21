@@ -132,7 +132,7 @@ export function EvaluationDatasetsPanel() {
                 <p className="text-xs text-muted-foreground">Nenhum dataset criado</p>
               </div>
             ) : (
-              datasets.map((ds: any) => (
+              datasets.map((ds) => (
                 <div
                   key={ds.id}
                   className={`nexus-card cursor-pointer p-3 group ${selectedDatasetId === ds.id ? 'border-primary/40 nexus-glow-sm' : ''}`}
@@ -200,11 +200,11 @@ export function EvaluationDatasetsPanel() {
               </div>
             ) : (
               <div className="space-y-2 max-h-[500px] overflow-y-auto">
-                {testCases.map((tc: any) => (
+                {testCases.map((tc) => (
                   <div key={tc.id} className="nexus-card p-3 group">
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex flex-wrap gap-1">
-                        {(tc.tags ?? []).map((tag: any) => <Badge key={tag} variant="secondary" className="text-[11px]">{tag}</Badge>)}
+                        {(tc.tags ?? []).map((tag: string) => <Badge key={tag} variant="secondary" className="text-[11px]">{tag}</Badge>)}
                       </div>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>

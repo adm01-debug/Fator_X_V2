@@ -31,7 +31,7 @@ export function DashboardAlerts() {
         <button onClick={() => navigate('/monitoring')} className="text-[11px] font-semibold text-primary hover:text-primary/80 transition-colors bg-primary/10 px-2 py-0.5 rounded">Ver todos</button>
       </div>
       <div className="space-y-2 relative">
-        {alerts.map((a: any) => (
+        {alerts.map((a) => (
           <div key={a.id} className="flex items-center gap-3 text-xs p-2 rounded-lg bg-background/50 border border-border/50 hover:border-destructive/30 transition-all cursor-pointer group/alert" onClick={() => navigate('/monitoring')}>
             <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${a.severity === 'critical' ? 'bg-destructive shadow-[0_0_8px_rgba(239,68,68,0.5)]' : 'bg-nexus-amber'}`} />
             <span className="text-foreground font-medium truncate flex-1">{a.title}</span>

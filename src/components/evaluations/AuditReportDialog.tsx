@@ -1,11 +1,12 @@
 import { useState } from 'react';
+import type { EvalRun, EvalResult } from '@/hooks/useAgentEvals';
 import { Button } from '@/components/ui/button';
 import { Download, FileJson, CheckCircle2, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface AuditReportProps {
-  run: any;
-  results: any[];
+  run: EvalRun;
+  results: EvalResult[];
 }
 
 export function AuditReportDialog({ run, results }: AuditReportProps) {

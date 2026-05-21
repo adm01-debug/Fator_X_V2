@@ -92,7 +92,7 @@ export function TemporalGraphTab() {
       try {
         const enhanced = await invokeCerebroBrain({ action: 'temporal_graph' });
         if (enhanced?.timeline?.length) {
-          return enhanced.timeline.map((e: any) => ({
+          return enhanced.timeline.map((e) => ({
             id: e.id,
             content: `${e.type}: ${JSON.stringify(e.info)}`,
             memory_type: e.type,
@@ -210,7 +210,7 @@ export function TemporalGraphTab() {
           </p>
         ) : (
           <div className="space-y-1.5 max-h-[400px] overflow-y-auto">
-            {timeline.map((m: any) => {
+            {timeline.map((m) => {
               const memory = m as Record<string, unknown>;
               const content = String(memory.content ?? '');
               const memType = String(memory.memory_type ?? 'semantic');
