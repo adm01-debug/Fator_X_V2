@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-05-22
+
+### Added
+- **Security Monitoring Dashboard**: Implementado painel centralizado para alertas de segurança (RLS, RBAC, Auth) com monitoramento em tempo real.
+- **Contract Versioning (v1/v2)**: Introduzido versionamento de contratos em Edge Functions com suporte a compatibilidade retroativa.
+- **Contract Tests**: Suíte de testes automatizados para validação de payloads e esquemas de API.
+
+### Fixed
+- **SECURITY DEFINER Protection**: Corrigido `search_path` em 33 funções do banco de dados para prevenir ataques de interceptação de esquema.
+- **Database Linter**: Resolvidos todos os avisos críticos relacionados a políticas RLS e proteção de colunas sensíveis.
+
 ## [1.0.1] - 2026-05-13
 
 ### Added
