@@ -78,7 +78,7 @@ export async function importAgentFromJSON(json: string): Promise<string> {
 
   const { data, error } = await supabaseExternal.from('agents').insert({
     user_id: user.id,
-    workspace_id: member?.workspace_id ?? null,
+    workspace_id: member?.workspace_id,
     name: `${agent.name} (importado)`,
     mission: agent.mission,
     persona: agent.persona,

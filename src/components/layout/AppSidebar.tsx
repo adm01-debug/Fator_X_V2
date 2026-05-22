@@ -329,6 +329,18 @@ export function AppSidebar() {
               <p className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em] select-none">Fator X Core v1.0</p>
               <button
                 onClick={() => setLocale(locale === 'pt-BR' ? 'en' : 'pt-BR')}
+                className="text-[9px] font-black text-muted-foreground/60 hover:text-primary transition-colors uppercase tracking-widest"
+                aria-label="Alternar idioma"
+              >
+                {locale === 'pt-BR' ? 'EN' : 'PT'}
+              </button>
+            </div>
+          </>
+        )}
+      </SidebarFooter>
+    </Sidebar>
+  );
+}
                 className="flex items-center gap-1.5 text-[10px] font-black text-muted-foreground hover:text-primary transition-colors rounded-lg px-2 py-1 hover:bg-primary/5 border border-transparent hover:border-primary/20"
                 title="Alternar idioma"
               >

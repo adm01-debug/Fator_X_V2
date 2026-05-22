@@ -46,8 +46,8 @@ function log(level: LogLevel, message: string, context?: unknown) {
     case 'debug': console.debug(formatted); break;
     case 'info': console.info(formatted); break;
     case 'warn': console.warn(formatted); break;
-    case 'error':
-    case 'critical': console.error(formatted); break;
+    case 'error': console.error(formatted); break;
+    case 'critical': console.error(`%c${formatted}`, 'color: white; background: red; font-weight: bold; padding: 2px;'); break;
   }
 
   // Forward errors to Sentry (no-op if not initialized)
