@@ -6,7 +6,8 @@ import {
   LayoutDashboard, Bot, BookOpen, Brain, Puzzle, FileText, GitBranch, Zap,
   FlaskConical, Rocket, Activity, Database, Shield, Users, CreditCard, Settings,
   Sparkles, PanelLeftClose, PanelLeft, LogOut, ServerCog, ChevronDown, Palette, Dna, Workflow, Package,
-  Globe, ShieldCheck, CircleCheckBig, Crown, Route as RouteIcon, Languages,
+  ShieldCheck, CircleCheckBig, Crown, Route as RouteIcon, Languages,
+
   Mic, GitBranch as GitBranchIcon, KeyRound, Globe2, Monitor, Eye, Smartphone, TestTube2,
   Store, Cpu, Wand2, GitMerge, Terminal, Mail, Bug, FileCheck2,
   PhoneCall, Network, FlaskRound, TrendingDown,
@@ -329,11 +330,10 @@ export function AppSidebar() {
               <p className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em] select-none">Fator X Core v1.0</p>
               <button
                 onClick={() => setLocale(locale === 'pt-BR' ? 'en' : 'pt-BR')}
-                className="flex items-center gap-1.5 text-[10px] font-black text-muted-foreground hover:text-primary transition-colors rounded-lg px-2 py-1 hover:bg-primary/5 border border-transparent hover:border-primary/20"
-                title="Alternar idioma"
+                className="text-[9px] font-black text-muted-foreground/60 hover:text-primary transition-colors uppercase tracking-widest"
+                aria-label="Alternar idioma"
               >
-                <Globe className="h-3 w-3" />
-                {locale === 'pt-BR' ? 'BR' : 'US'}
+                {locale === 'pt-BR' ? 'EN' : 'PT'}
               </button>
             </div>
           </>

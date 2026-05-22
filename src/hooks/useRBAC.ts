@@ -137,7 +137,7 @@ export function useRBAC() {
     /** All permissions as Set */
     permissions: state.permissions,
     /** Loading state */
-    loading: state.loading,
+    loading: state.loading && !!user?.id,
     /** Error message */
     error: state.error,
   };

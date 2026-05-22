@@ -82,7 +82,7 @@ export async function listPermissions(): Promise<Permission[]> {
 }
 
 export async function getPermissionsForRole(roleKey: string): Promise<Permission[]> {
-  const roleResult = await fromTable('roles').select('id').eq('key', roleKey).single();
+  const roleResult = await fromTable('roles').select('id').eq('key', roleKey).maybeSingle();
   const roleId = (roleResult.data as any)?.id ?? '';
 
   const { data, error } = await fromTable('role_permissions')
@@ -116,7 +116,7 @@ export async function getUserPermissions(userId: string, workspaceId: string): P
   const userRole = await getUserRole(userId, workspaceId);
   if (!userRole) return new Set();
 
-  const roleResult = await fromTable('roles').select('id').eq('key', userRole.role_key).single();
+  const roleResult = await fromTable('roles').select('id').eq('key', userRole.role_key).maybeSingle();
   const roleId = (roleResult.data as any)?.id ?? '';
 
   const { data, error } = await fromTable('role_permissions')
@@ -130,7 +130,7 @@ export async function getUserPermissions(userId: string, workspaceId: string): P
 
   const { data: perms } = await fromTable('permissions').select('key').in('id', permIds);
   const permissions = new Set<PermissionKey>();
-  ((perms ?? []) as Array<any>).forEach(p => {
+  (perms ?? []).forEach((p: any) => {
     if (p.key) permissions.add(String(p.key) as PermissionKey);
   });
 
@@ -151,7 +151,7 @@ export async function assignRole(
       assigned_by: assignedBy,
     }, { onConflict: 'user_id,workspace_id' })
     .select()
-    .single();
+    .maybeSingle();
 
   if (error) throw error;
   return data as UserRole;
