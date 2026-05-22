@@ -337,19 +337,6 @@ export function AppSidebar() {
             </div>
           </>
         )}
-      </SidebarFooter>
-    </Sidebar>
-  );
-}
-                className="flex items-center gap-1.5 text-[10px] font-black text-muted-foreground hover:text-primary transition-colors rounded-lg px-2 py-1 hover:bg-primary/5 border border-transparent hover:border-primary/20"
-                title="Alternar idioma"
-              >
-                <Globe className="h-3 w-3" />
-                {locale === 'pt-BR' ? 'BR' : 'US'}
-              </button>
-            </div>
-          </>
-        )}
         <Button
           variant="ghost"
           size="sm"
