@@ -11,24 +11,17 @@
  * verify_jwt: false (providers cannot send JWT)
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
+import { 
+  handleCorsPreflight, 
+  getCorsHeaders, 
+  createAdminClient,
+  jsonResponse,
+  errorResponse,
+  parseBody
+} from "../_shared/mod.ts";
+import { WhatsAppWebhookContracts } from "../_shared/contracts.ts";
 import { verifyHmac } from "../_shared/webhookSignature.ts";
 
-
-// ─── CORS ───
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "content-type, authorization, x-twilio-signature, x-hub-signature-256",
-};
-
-// ─── Supabase service-role client ───
-function getServiceClient() {
-  const url = Deno.env.get("SUPABASE_URL");
-  const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  if (!url || !key) throw new Error("Missing Supabase env vars");
-  return createClient(url, key);
-}
 
 // ─── Trace ID generator ───
 function generateTraceId(): string {
@@ -264,7 +257,7 @@ async function writeAudit(
 // ─── Main handler ───
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return handleCorsPreflight(req);
   }
 
   // Meta verification GET handshake
@@ -275,49 +268,40 @@ serve(async (req) => {
     const challenge = url.searchParams.get('hub.challenge');
     const expected = Deno.env.get('WHATSAPP_META_VERIFY_TOKEN');
     if (mode === 'subscribe' && expected && token === expected && challenge) {
-      return new Response(challenge, { status: 200, headers: { ...corsHeaders, 'Content-Type': 'text/plain' } });
+      return new Response(challenge, { status: 200, headers: { ...getCorsHeaders(req), 'Content-Type': 'text/plain' } });
     }
-    return new Response('Forbidden', { status: 403, headers: corsHeaders });
+    return errorResponse(req, 'Forbidden', 403);
   }
 
+
   if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-      status: 405,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return errorResponse(req, 'Method not allowed', 405);
   }
 
   const traceId = generateTraceId();
   const startTime = Date.now();
-  let client: ReturnType<typeof createClient>;
+  let client;
   try {
-    client = getServiceClient();
+    client = createAdminClient();
   } catch (err) {
     console.error('Service client init failed', err);
-    return new Response(JSON.stringify({ error: 'Server configuration error' }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return errorResponse(req, 'Server configuration error', 500);
   }
 
-  // Read raw body once (need it for HMAC validation)
-  const rawBody = await req.text();
-  const contentType = req.headers.get('content-type') ?? '';
+  // Parse body with contract validation
+  const { data: parsed, error: validationError, rawBody } = await parseBody(req, WhatsAppWebhookContracts, { 
+    returnRawBody: true,
+    defaultVersion: 'v1' 
+  });
 
-  let parsed: Record<string, unknown>;
-  try {
-    if (contentType.includes('application/json')) {
-      parsed = JSON.parse(rawBody);
-    } else {
-      parsed = parseFormBody(rawBody);
-    }
-  } catch (err) {
-    console.error('Body parse failed', err);
-    return new Response(JSON.stringify({ error: 'Invalid request body' }), {
-      status: 400,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+  if (validationError) {
+    return validationError;
   }
+
+  if (!parsed || !rawBody) {
+    return errorResponse(req, 'Invalid request body', 400);
+  }
+
 
   const provider = detectProvider(req.headers, parsed);
   const event = normalizeEvent(provider, parsed);
@@ -345,11 +329,9 @@ serve(async (req) => {
     audit.routing_status = 'invalid_signature';
     audit.routing_error = 'HMAC validation failed';
     await writeAudit(client, audit);
-    return new Response(JSON.stringify({ error: 'Invalid signature', trace_id: traceId }), {
-      status: 401,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return jsonResponse(req, { error: 'Invalid signature', trace_id: traceId }, 401);
   }
+
 
   if (!workspaceId) {
     audit.routing_status = 'no_route';
