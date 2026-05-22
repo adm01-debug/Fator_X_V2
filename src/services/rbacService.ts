@@ -130,7 +130,7 @@ export async function getUserPermissions(userId: string, workspaceId: string): P
 
   const { data: perms } = await fromTable('permissions').select('key').in('id', permIds);
   const permissions = new Set<PermissionKey>();
-  (perms ?? []).forEach(p => {
+  (perms ?? []).forEach((p: any) => {
     if (p.key) permissions.add(String(p.key) as PermissionKey);
   });
 
