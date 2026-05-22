@@ -7068,6 +7068,47 @@ export type Database = {
       }
     }
     Views: {
+      audit_log_safe: {
+        Row: {
+          action: string | null
+          created_at: string | null
+          id: string | null
+          ip_address: string | null
+          resource: string | null
+          resource_id: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          action?: string | null
+          created_at?: string | null
+          id?: string | null
+          ip_address?: string | null
+          resource?: string | null
+          resource_id?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string | null
+          created_at?: string | null
+          id?: string | null
+          ip_address?: string | null
+          resource?: string | null
+          resource_id?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_events_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       forum_posts_public: {
         Row: {
           author_name: string | null
