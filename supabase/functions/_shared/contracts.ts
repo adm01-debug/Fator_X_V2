@@ -48,6 +48,26 @@ export const WhatsAppWebhookContracts = {
 };
 
 /**
+ * LLM Gateway Contracts
+ */
+export const LLMGatewayContracts = {
+  v1: z.object({
+    model: z.string().min(2).max(200),
+    messages: z.array(z.object({
+      role: z.enum(['system', 'user', 'assistant', 'tool']),
+      content: z.string().min(1),
+      name: z.string().optional(),
+    })).min(1).max(100),
+    temperature: z.number().min(0).max(2).default(0.7),
+    max_tokens: z.number().int().min(1).max(128000).default(4000),
+    stream: z.boolean().default(false),
+    workspace_id: z.string().uuid().optional(),
+    agent_id: z.string().uuid().optional(),
+    session_id: z.string().uuid().optional(),
+  }),
+};
+
+/**
  * Common Error Response Contract
  */
 export const ErrorResponseContract = z.object({
