@@ -1,9 +1,3 @@
-/**
- * Nexus Agents Studio — Shared Validation (HARDENED)
- * FIX P2-03: max length constraints on all string fields
- * FIX P2-04: body size guard before parsing
- */
-
 import { z, type ZodSchema, type ZodError } from "https://esm.sh/zod@3.23.8";
 import { errorResponse } from "./cors.ts";
 
@@ -72,6 +66,7 @@ export async function parseBody<T>(
 
   let rawBody: string;
   let raw: unknown;
+  const contentType = req.headers.get('content-type') || '';
 
   try {
     rawBody = await req.text();
@@ -82,12 +77,20 @@ export async function parseBody<T>(
         error: errorResponse(req, `Request body too large (max ${MAX_BODY_SIZE / 1024 / 1024}MB)`, 413),
       };
     }
-    raw = JSON.parse(rawBody);
+
+    if (contentType.includes('application/x-www-form-urlencoded')) {
+      const params = new URLSearchParams(rawBody);
+      const obj: Record<string, string> = {};
+      for (const [k, v] of params.entries()) obj[k] = v;
+      raw = obj;
+    } else {
+      raw = JSON.parse(rawBody);
+    }
   } catch {
     return {
       data: null,
       version,
-      error: errorResponse(req, 'Invalid JSON body', 400),
+      error: errorResponse(req, 'Invalid request body', 400),
     };
   }
 
