@@ -379,7 +379,7 @@ serve(async (req) => {
 
   try {
     const authHeader = req.headers.get('Authorization');
-    if (!authHeader) return new Response(JSON.stringify({ error: 'Missing authorization' }), { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    if (!authHeader) return errorResponse(req, 'Missing authorization', 401);
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
@@ -391,16 +391,20 @@ serve(async (req) => {
       else span.setAttribute('user.id', res.data.user.id);
       return res;
     });
-    if (authError || !user) { rootSpan.setStatus('error', 'unauthorized'); trace.endSpan(rootSpan, 'error'); trace.end('error'); return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }); }
-    if (!checkRateLimit(user.id)) { rootSpan.setStatus('error', 'rate_limited'); trace.endSpan(rootSpan, 'error'); trace.end('error'); return new Response(JSON.stringify({ error: 'Rate limit exceeded' }), { status: 429, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json', 'Retry-After': '60' } }); }
+    if (authError || !user) { rootSpan.setStatus('error', 'unauthorized'); trace.endSpan(rootSpan, 'error'); trace.end('error'); return errorResponse(req, 'Unauthorized', 401); }
+    if (!checkRateLimit(user.id)) { rootSpan.setStatus('error', 'rate_limited'); trace.endSpan(rootSpan, 'error'); trace.end('error'); return errorResponse(req, 'Rate limit exceeded', 429); }
 
-    let rawBody: unknown;
-    try { rawBody = await req.json(); } catch { rootSpan.setStatus('error', 'invalid_json'); trace.endSpan(rootSpan, 'error'); trace.end('error'); return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }); }
+    // Parse and Validate body with contract validation
+    const { data: body, error: validationError } = await parseBody(req, LLMGatewayContracts, { defaultVersion: 'v1' });
+    if (validationError) {
+      rootSpan.setStatus('error', 'validation_failed');
+      trace.endSpan(rootSpan, 'error');
+      trace.end('error');
+      return validationError;
+    }
+    if (!body) return errorResponse(req, 'Invalid request body', 400);
 
-    const validation = validateRequest(rawBody);
-    if (!validation.valid) { rootSpan.setStatus('error', 'validation_failed'); trace.endSpan(rootSpan, 'error'); trace.end('error'); return new Response(JSON.stringify({ error: validation.error }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }); }
-
-    const { model, messages, temperature, max_tokens, agent_id, session_id, stream } = validation.data;
+    const { model, messages, temperature, max_tokens, stream, workspace_id, agent_id, session_id } = body;
     rootSpan.setAttribute('gen_ai.request.model', model);
     rootSpan.setAttribute('gen_ai.system', 'llm-gateway');
     if (agent_id) rootSpan.setAttribute('agent.id', agent_id);
@@ -408,7 +412,7 @@ serve(async (req) => {
     const userMessage = messages.filter(m => m.role === 'user').pop()?.content || '';
 
     const { data: member } = await supabase.from('workspace_members').select('workspace_id').eq('user_id', user.id).limit(1).single();
-    const workspaceId = member?.workspace_id || validation.data.workspace_id;
+    const workspaceId = member?.workspace_id || workspace_id;
 
     // ═══ CHAOS ENGINEERING — fault injection (Sprint 28) ═══
     const chaosFault = await maybeInjectFault('llm-gateway', supabase);
@@ -571,7 +575,7 @@ serve(async (req) => {
             const opt = chain[ci];
             try {
               let fullContent = '';
-              let insideThinkBlock = false; // Track <think> blocks for filtering
+              let insideThinkBlock = false; // Track <tool_call> blocks for filtering
               let promptTokens = 0, completionTokens = 0;
               const isAnthropic = opt.provider === 'anthropic';
               const isHuggingFace = opt.provider === 'huggingface';
@@ -635,10 +639,10 @@ serve(async (req) => {
                     }
                     if (token) {
                       fullContent += token;
-                      // Filter out <think>...</think> blocks from streaming output
-                      if (token.includes('<think>')) { insideThinkBlock = true; continue; }
+                      // Filter out <tool_call>...<tool_call> blocks from streaming output
+                      if (token.includes('<tool_call>')) { insideThinkBlock = true; continue; }
                       if (insideThinkBlock) {
-                        if (token.includes('</think>')) { insideThinkBlock = false; }
+                        if (token.includes('<tool_call>')) { insideThinkBlock = false; }
                         continue; // Skip tokens inside think block
                       }
                       controller.enqueue(encoder.encode(`data: ${JSON.stringify({ token, model: opt.model, provider: opt.provider })}\n\n`));
@@ -647,8 +651,8 @@ serve(async (req) => {
                 }
               }
               clearTimeout(streamTimeout);
-              // Strip <think> tags from Qwen models
-              const cleanContent = fullContent.replace(/<think>[\s\S]*?<\/think>\s*/g, '').trim();
+              // Strip <tool_call> tags from Qwen models
+              const cleanContent = fullContent.replace(/<tool_call>[\s\S]*?<\/think>\s*/g, '').trim();
               // Final summary event
               const latencyMs = Date.now() - startTime;
               const totalTokens = promptTokens + completionTokens;
