@@ -2,9 +2,20 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient, type SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { callLovable, callOpenRouter, callAnthropic, callOpenAICompatible, callHuggingFace, type LLMCallParams, type LLMResult } from "./providers.ts";
-import { getCorsHeaders, handleCorsPreflight, getRateLimitIdentifier, createRateLimitResponse, RATE_LIMITS } from "../_shared/mod.ts";
+import { 
+  getCorsHeaders, 
+  handleCorsPreflight, 
+  getRateLimitIdentifier, 
+  createRateLimitResponse, 
+  RATE_LIMITS,
+  parseBody,
+  jsonResponse,
+  errorResponse
+} from "../_shared/mod.ts";
+import { LLMGatewayContracts } from "../_shared/contracts.ts";
 import { startEdgeTrace } from "../_shared/otel.ts";
 import { maybeInjectFault, applyFault } from "../_shared/chaos.ts";
+
 
 // CORS handled by _shared/cors.ts — dynamic origin whitelist
 // corsHeaders removed — using getCorsHeaders(req) from _shared/cors.ts
@@ -32,43 +43,8 @@ function checkRateLimit(userId: string): boolean {
   return true;
 }
 
-// ═══ Input Validation ═══
-interface LLMRequest {
-  model: string;
-  messages: Array<{ role: string; content: string }>;
-  temperature: number;
-  max_tokens: number;
-  stream: boolean;
-  workspace_id?: string;
-  agent_id?: string;
-  session_id?: string;
-}
+// Validation logic removed — now using parseBody with LLMGatewayContracts
 
-function validateRequest(body: unknown): { valid: true; data: LLMRequest } | { valid: false; error: string } {
-  if (!body || typeof body !== 'object') return { valid: false, error: 'Request body must be a JSON object' };
-  const b = body as Record<string, unknown>;
-  if (typeof b.model !== 'string' || b.model.length < 2 || b.model.length > 200) return { valid: false, error: 'model must be a string (2-200 chars)' };
-  if (!Array.isArray(b.messages) || b.messages.length === 0 || b.messages.length > 100) return { valid: false, error: 'messages must be a non-empty array (max 100)' };
-  for (const msg of b.messages) {
-    if (!msg || typeof msg !== 'object') return { valid: false, error: 'Each message must be an object' };
-    const m = msg as Record<string, unknown>;
-    if (typeof m.role !== 'string' || !['system', 'user', 'assistant'].includes(m.role)) return { valid: false, error: 'Invalid message.role' };
-    if (typeof m.content !== 'string' || m.content.length === 0) return { valid: false, error: 'Empty message.content' };
-  }
-  return {
-    valid: true,
-    data: {
-      model: b.model as string,
-      messages: b.messages as Array<{ role: string; content: string }>,
-      temperature: typeof b.temperature === 'number' ? Math.max(0, Math.min(2, b.temperature)) : 0.7,
-      max_tokens: typeof b.max_tokens === 'number' ? Math.max(1, Math.min(32000, Math.floor(b.max_tokens))) : 4000,
-      workspace_id: typeof b.workspace_id === 'string' ? b.workspace_id : undefined,
-      agent_id: typeof b.agent_id === 'string' ? b.agent_id : undefined,
-      session_id: typeof b.session_id === 'string' ? b.session_id : undefined,
-      stream: b.stream === true,
-    },
-  };
-}
 
 // ═══ Cost Calculation from DB pricing ═══
 async function calculateCost(supabase: SupabaseClient, model: string, promptTokens: number, completionTokens: number): Promise<number> {
