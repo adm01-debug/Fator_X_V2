@@ -1,0 +1,35 @@
+-- Corrigindo search_path em funções SECURITY DEFINER para mitigar riscos de segurança
+
+ALTER FUNCTION public.review_risk(uuid, integer, text) SET search_path = public, extensions;
+ALTER FUNCTION public.detect_cost_anomalies() SET search_path = public, extensions;
+ALTER FUNCTION public.close_risk(uuid, text) SET search_path = public, extensions;
+ALTER FUNCTION public.assess_vendor(uuid, integer, integer, integer, text[], text) SET search_path = public, extensions;
+ALTER FUNCTION public.execute_change(uuid, boolean) SET search_path = public, extensions;
+ALTER FUNCTION public.handle_bcp_test_run() SET search_path = public, extensions;
+ALTER FUNCTION public.publish_compliance_report(uuid) SET search_path = public, extensions;
+ALTER FUNCTION public.decide_change(uuid, change_decision, text) SET search_path = public, extensions;
+ALTER FUNCTION public.promote_experiment_winner(uuid, text) SET search_path = public, extensions;
+ALTER FUNCTION public.increment_webhook_counter(uuid) SET search_path = public, extensions;
+ALTER FUNCTION public.handle_secret_rotation_event() SET search_path = public, extensions;
+ALTER FUNCTION public.is_workspace_admin(uuid, uuid) SET search_path = public, extensions;
+ALTER FUNCTION public.get_secrets_status_summary(uuid) SET search_path = public, extensions;
+ALTER FUNCTION public.handle_asset_audit() SET search_path = public, extensions;
+ALTER FUNCTION public.increment_skill_installs(uuid) SET search_path = public, extensions;
+ALTER FUNCTION public.get_creator_earnings(uuid) SET search_path = public, extensions;
+ALTER FUNCTION public.handle_new_user() SET search_path = public, extensions;
+ALTER FUNCTION public.get_risk_summary(uuid) SET search_path = public, extensions;
+ALTER FUNCTION public.accept_workspace_invitation(uuid) SET search_path = public, extensions;
+ALTER FUNCTION public.complete_game_day(uuid, boolean, text[], integer, text) SET search_path = public, extensions;
+ALTER FUNCTION public.forum_update_thread_stats() SET search_path = public, extensions;
+ALTER FUNCTION public.acknowledge_cost_alert(uuid) SET search_path = public, extensions;
+ALTER FUNCTION public.refresh_secrets_status() SET search_path = public, extensions;
+ALTER FUNCTION public.get_active_chaos_faults(text) SET search_path = public, extensions;
+ALTER FUNCTION public.kb_article_create_version() SET search_path = public, extensions;
+ALTER FUNCTION public.decommission_asset(uuid, text) SET search_path = public, extensions;
+ALTER FUNCTION public.assign_variant(uuid, text) SET search_path = public, extensions;
+ALTER FUNCTION public.get_vendor_summary(uuid) SET search_path = public, extensions;
+ALTER FUNCTION public.get_my_2fa_status() SET search_path = public, extensions;
+ALTER FUNCTION public.get_workspace_members_full(uuid) SET search_path = public, extensions;
+ALTER FUNCTION public.create_partition_if_not_exists(text, timestamp with time zone) SET search_path = public, extensions;
+ALTER FUNCTION public.acknowledge_vulnerability(uuid, text) SET search_path = public, extensions;
+ALTER FUNCTION public.update_updated_at_column() SET search_path = public, extensions;
