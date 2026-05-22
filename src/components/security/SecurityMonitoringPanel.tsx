@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { ShieldAlert, ShieldCheck, AlertTriangle, CheckCircle, Loader2, XCircle, Bell, Clock, Filter } from "lucide-react";
+import { ShieldAlert, ShieldCheck, CheckCircle, Loader2, Bell, Clock, Filter } from "lucide-react";
 import { supabaseExternal } from "@/integrations/supabase/externalClient";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -28,9 +28,9 @@ export function SecurityMonitoringPanel() {
     loadAlerts();
     
     // Subscribe to new alerts
-    const channel = supabaseExternal
+    const channel = (supabaseExternal as any)
       .channel('security_alerts_changes')
-      .on('postgres_changes', { event: 'INSERT', table: 'security_alerts' }, (payload) => {
+      .on('postgres_changes', { event: 'INSERT', table: 'security_alerts' }, (payload: any) => {
         setAlerts(prev => [payload.new as SecurityAlert, ...prev]);
         toast.error(`Alerta de Segurança: ${payload.new.message}`);
       })
@@ -55,7 +55,7 @@ export function SecurityMonitoringPanel() {
 
       const { data, error } = await query;
       if (error) throw error;
-      setAlerts(data || []);
+      setAlerts((data || []) as any as SecurityAlert[]);
     } catch (err) {
       console.error('Failed to load alerts', err);
     } finally {
@@ -95,7 +95,7 @@ export function SecurityMonitoringPanel() {
             <CardTitle className="text-xl font-bold flex items-center gap-2">
               <Bell className="h-5 w-5 text-primary" /> Central de Monitoramento
             </CardTitle>
-            <CardDescription>Alertas em tempo real sobre RLS, RBAC e integridade do sistema</CardDescription>
+            <CardDescription>Alertas em tempo real sobre RLS e RBAC</CardDescription>
           </div>
           <div className="flex items-center gap-2">
             <Tabs value={filter} onValueChange={(v) => { setFilter(v as any); loadAlerts(); }} className="w-auto">
@@ -114,7 +114,7 @@ export function SecurityMonitoringPanel() {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
             <Loader2 className="h-10 w-10 animate-spin text-primary/20" />
-            <p className="text-sm font-medium text-muted-foreground animate-pulse">Sincronizando com a Fortaleza...</p>
+            <p className="text-sm font-medium text-muted-foreground animate-pulse">Sincronizando...</p>
           </div>
         ) : alerts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center px-6">
@@ -123,7 +123,7 @@ export function SecurityMonitoringPanel() {
             </div>
             <h3 className="text-lg font-bold text-foreground">Sistema Íntegro</h3>
             <p className="text-sm text-muted-foreground max-w-xs mt-2 font-medium">
-              Nenhum alerta de segurança detectado. Todos os perímetros estão seguros.
+              Nenhum alerta detectado.
             </p>
           </div>
         ) : (
