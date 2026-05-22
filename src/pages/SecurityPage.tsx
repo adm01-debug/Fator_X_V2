@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { SecurityPosture } from "@/components/security/SecurityPosture";
+import { SecurityMonitoringPanel } from "@/components/security/SecurityMonitoringPanel";
 import { ComplianceFrameworks } from "@/components/security/ComplianceFrameworks";
 import { GuardrailPolicies } from "@/components/security/GuardrailPolicies";
 import { SessionManagement } from "@/components/security/SessionManagement";
@@ -213,10 +214,17 @@ export default function SecurityPage() {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-8 animate-in fade-in duration-500">
-          <SecurityPosture />
-          <div className="grid lg:grid-cols-2 gap-8">
-            <TwoFactorSetup />
-            <RateLimitingPanel />
+          <div className="grid lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-8">
+              <SecurityPosture />
+              <div className="grid md:grid-cols-2 gap-8">
+                <TwoFactorSetup />
+                <RateLimitingPanel />
+              </div>
+            </div>
+            <div className="lg:col-span-1">
+              <SecurityMonitoringPanel />
+            </div>
           </div>
         </TabsContent>
 
