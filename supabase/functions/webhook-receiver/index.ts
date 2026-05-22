@@ -5,9 +5,12 @@ import {
   checkRateLimit, 
   createAdminClient,
   jsonResponse,
-  errorResponse
+  errorResponse,
+  parseBody
 } from "../_shared/mod.ts";
+import { WebhookReceiverContracts } from "../_shared/contracts.ts";
 import { verifyHmac } from "../_shared/webhookSignature.ts";
+
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
@@ -43,16 +46,16 @@ serve(async (req) => {
       return errorResponse(req, `Method ${req.method} not allowed`, 405);
     }
 
-    // Parse body for signature validation (need raw body for HMAC)
-    const rawBody = ['POST', 'PUT', 'PATCH'].includes(req.method) ? await req.text() : '';
-    let body = {};
-    if (rawBody) {
-      try {
-        body = JSON.parse(rawBody);
-      } catch {
-        body = {};
-      }
+    // Parse body with versioned contract validation
+    const { data: body, error: validationError, rawBody, version } = await parseBody(req, WebhookReceiverContracts, { 
+      returnRawBody: true,
+      defaultVersion: 'v1' 
+    });
+
+    if (validationError) {
+      return validationError;
     }
+
 
     // Parse query params
     const queryParams: Record<string, string> = {};
