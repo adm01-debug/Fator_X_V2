@@ -19,7 +19,11 @@ Deno.test("WebhookReceiver Contract - v1 valid payload", async () => {
   const result = await parseBody(req, WebhookReceiverContracts);
   assertEquals(result.error, null);
   assertEquals(result.version, "v1");
-  assertEquals(result.data.event_type, "test.event");
+  if (result.data) {
+    assertEquals(result.data.event_type, "test.event");
+  } else {
+    throw new Error("Data should not be null");
+  }
 });
 
 Deno.test("WebhookReceiver Contract - v2 missing source (invalid)", async () => {
@@ -39,12 +43,15 @@ Deno.test("WebhookReceiver Contract - v2 missing source (invalid)", async () => 
   const result = await parseBody(req, WebhookReceiverContracts);
   assertEquals(result.data, null);
   assertEquals(result.version, "v2");
-  assertEquals(result.error.status, 422);
-  
-  const errorBody = await result.error.json();
-  const validation = ErrorResponseContract.safeParse(errorBody);
-  assertEquals(validation.success, true);
-  assertEquals(errorBody.code, "VALIDATION_ERROR");
+  if (result.error) {
+    assertEquals(result.error.status, 422);
+    const errorBody = await result.error.json();
+    const validation = ErrorResponseContract.safeParse(errorBody);
+    assertEquals(validation.success, true);
+    assertEquals(errorBody.code, "VALIDATION_ERROR");
+  } else {
+    throw new Error("Error should not be null");
+  }
 });
 
 Deno.test("WhatsApp Webhook Contract - v2 valid meta payload", async () => {
@@ -85,9 +92,12 @@ Deno.test("Validation Error Format - 422 fields validation", async () => {
   });
   
   const result = await parseBody(req, WebhookReceiverContracts);
-  assertEquals(result.error.status, 422);
-  
-  const errorBody = await result.error.json();
-  assertEquals(errorBody.fields[0].field, "event_type");
-  assertEquals(typeof errorBody.fields[0].message, "string");
+  if (result.error) {
+    assertEquals(result.error.status, 422);
+    const errorBody = await result.error.json();
+    assertEquals(errorBody.fields[0].field, "event_type");
+    assertEquals(typeof errorBody.fields[0].message, "string");
+  } else {
+    throw new Error("Error should not be null");
+  }
 });
