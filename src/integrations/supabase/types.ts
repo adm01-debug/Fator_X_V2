@@ -5462,6 +5462,53 @@ export type Database = {
           },
         ]
       }
+      security_alerts: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          is_resolved: boolean | null
+          message: string
+          metadata: Json | null
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: string
+          workspace_id: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          is_resolved?: boolean | null
+          message: string
+          metadata?: Json | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity: string
+          workspace_id?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          is_resolved?: boolean | null
+          message?: string
+          metadata?: Json | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "security_alerts_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       session_traces: {
         Row: {
           cost_usd: number | null
@@ -7021,6 +7068,47 @@ export type Database = {
       }
     }
     Views: {
+      audit_log_safe: {
+        Row: {
+          action: string | null
+          created_at: string | null
+          id: string | null
+          ip_address: string | null
+          resource: string | null
+          resource_id: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          action?: string | null
+          created_at?: string | null
+          id?: string | null
+          ip_address?: string | null
+          resource?: string | null
+          resource_id?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string | null
+          created_at?: string | null
+          id?: string | null
+          ip_address?: string | null
+          resource?: string | null
+          resource_id?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_events_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       forum_posts_public: {
         Row: {
           author_name: string | null
