@@ -71,20 +71,6 @@ export function AccessControl({
 export function useAccessGuard() {
   const { can } = useRBAC();
 
-  function guardAction(
-    permission: PermissionKey | PermissionKey[],
-    action: () => void | Promise<void>,
-    onDenied?: () => void
-  ) {
-
-    return async () => {
-      if (can(permission)) {
-        await action();
-      } else {
-        onDenied?.();
-      }
-    };
-  }
 
   return { 
     guardAction: (permission: PermissionKey | PermissionKey[], action: () => void | Promise<void>, onDenied?: () => void) => {
