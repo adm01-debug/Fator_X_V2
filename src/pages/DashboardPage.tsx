@@ -21,6 +21,8 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { SkeletonLoader } from "@/components/shared/SkeletonLoader";
 import { SharedEmptyState } from "@/components/shared/SharedEmptyState";
+import { AccessControl } from "@/components/rbac";
+
 
 
 function DashboardLoadingSkeleton() {

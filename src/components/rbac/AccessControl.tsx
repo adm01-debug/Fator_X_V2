@@ -76,6 +76,7 @@ export function useAccessGuard() {
     action: () => void | Promise<void>,
     onDenied?: () => void
   ) {
+
     return async () => {
       if (can(permission)) {
         await action();
