@@ -3,6 +3,8 @@ import { LightAreaChart, LightBarChart, ComparisonToggle, generateComparisonData
 import { format, subDays, eachDayOfInterval } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
+import { TooltipExtraSection } from "@/components/charts/types";
 
 interface UsageRow {
   date: string;
@@ -48,6 +50,7 @@ function buildDailyMap(data: UsageRow[]) {
 }
 
 export function UsageCharts({ data }: UsageChartsProps) {
+  const navigate = useNavigate();
   const [compareRequests, setCompareRequests] = useState(false);
   const [compareCost, setCompareCost] = useState(false);
 
@@ -124,6 +127,27 @@ export function UsageCharts({ data }: UsageChartsProps) {
     );
   }
 
+  const handleDrilldown = (d: any) => {
+    const from = new Date(d.date);
+    from.setHours(0, 0, 0, 0);
+    const to = new Date(d.date);
+    to.setHours(23, 59, 59, 999);
+    navigate(`/traces?from=${from.toISOString()}&to=${to.toISOString()}`);
+  };
+
+  const drilldownExtras = (d: any) => {
+    const sections: TooltipExtraSection[] = [];
+    if (d.requests > 0 || d.errors > 0 || d.cost > 0) {
+      sections.push({
+        title: "Ações Rápidas",
+        rows: [
+          { label: "Ver Traces", value: "Clique para inspecionar", color: "hsl(var(--primary))" }
+        ]
+      });
+    }
+    return sections;
+  };
+
   return (
     <div className="grid gap-8 lg:grid-cols-2">
       {/* Requests & Errors Elevated */}
@@ -143,6 +167,8 @@ export function UsageCharts({ data }: UsageChartsProps) {
           height={240}
           margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
           showLegend
+          onPointClick={handleDrilldown}
+          tooltipExtras={drilldownExtras}
           series={[
             { dataKey: "requests", name: "Requests", stroke: "hsl(var(--primary))", gradientFrom: "hsl(var(--primary))", strokeWidth: 3 },
             { dataKey: "errors", name: "Erros", stroke: "#f43f5e", gradientFrom: "#f43f5e", strokeWidth: 2 },
@@ -179,6 +205,7 @@ export function UsageCharts({ data }: UsageChartsProps) {
           yFormatter={(v) => `$${v}`}
           tooltipFormatter={(v) => `$${v.toFixed(4)}`}
           showLegend={compareCost}
+          onBarClick={handleDrilldown}
           series={[
             { dataKey: "cost", name: "Custo", color: "hsl(var(--primary))", radius: 6 },
             ...(compareCost ? [{ dataKey: "prev_cost", name: "Anterior", color: "hsl(var(--muted-foreground))", radius: 6 }] : []),
@@ -210,6 +237,8 @@ export function UsageCharts({ data }: UsageChartsProps) {
           margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
           yFormatter={(v) => `${v}ms`}
           tooltipFormatter={(v) => `${v}ms`}
+          onPointClick={handleDrilldown}
+          tooltipExtras={drilldownExtras}
           series={[
             { dataKey: "latency", name: "Latência", stroke: "#f59e0b", gradientFrom: "#f59e0b", strokeWidth: 3 },
           ]}
@@ -231,6 +260,7 @@ export function UsageCharts({ data }: UsageChartsProps) {
           margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
           yFormatter={(v) => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v)}
           showLegend
+          onBarClick={handleDrilldown}
           series={[
             { dataKey: "tokensIn", name: "Input", color: "hsl(var(--primary))", radius: 6, stackId: "tokens" },
             { dataKey: "tokensOut", name: "Output", color: "#8b5cf6", radius: 6, stackId: "tokens" },

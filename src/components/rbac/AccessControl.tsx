@@ -15,7 +15,9 @@
  *   </AccessControl>
  */
 
+import { toast } from "sonner";
 import type { ReactNode } from 'react';
+
 import { useRBAC } from '@/hooks/useRBAC';
 import type { PermissionKey } from '@/services/rbacService';
 
@@ -69,19 +71,22 @@ export function AccessControl({
 export function useAccessGuard() {
   const { can } = useRBAC();
 
-  function guardAction(
-    permission: PermissionKey | PermissionKey[],
-    action: () => void | Promise<void>,
-    onDenied?: () => void
-  ) {
-    return async () => {
-      if (can(permission)) {
-        await action();
-      } else {
-        onDenied?.();
-      }
-    };
-  }
 
-  return { guardAction, can };
+  return { 
+    guardAction: (permission: PermissionKey | PermissionKey[], action: () => void | Promise<void>, onDenied?: () => void) => {
+      return async () => {
+        if (can(permission)) {
+          await action();
+        } else {
+          toast.error("Acesso Negado", { 
+            description: "Você não tem permissão para realizar esta ação.",
+            icon: "🔒"
+          });
+          onDenied?.();
+        }
+      };
+    }, 
+    can 
+  };
 }
+
