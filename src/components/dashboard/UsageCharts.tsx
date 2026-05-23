@@ -3,6 +3,9 @@ import { LightAreaChart, LightBarChart, ComparisonToggle, generateComparisonData
 import { format, subDays, eachDayOfInterval } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
+import { TooltipExtraSection } from "@/components/charts/types";
+
 
 interface UsageRow {
   date: string;
@@ -48,7 +51,9 @@ function buildDailyMap(data: UsageRow[]) {
 }
 
 export function UsageCharts({ data }: UsageChartsProps) {
+  const navigate = useNavigate();
   const [compareRequests, setCompareRequests] = useState(false);
+
   const [compareCost, setCompareCost] = useState(false);
 
   const chartData = useMemo(() => {
@@ -139,16 +144,38 @@ export function UsageCharts({ data }: UsageChartsProps) {
         </div>
         <LightAreaChart
           data={requestsData}
+          onPointClick={(d) => {
+            const from = new Date(d.date);
+            from.setHours(0, 0, 0, 0);
+            const to = new Date(d.date);
+            to.setHours(23, 59, 59, 999);
+            navigate(`/traces?from=${from.toISOString()}&to=${to.toISOString()}`);
+          }}
+
+          data={requestsData}
           xKey="label"
           height={240}
           margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
           showLegend
+          tooltipExtras={(d) => {
+            const sections: TooltipExtraSection[] = [];
+            if (d.requests > 0 || d.errors > 0) {
+              sections.push({
+                title: "Ações Rápidas",
+                rows: [
+                  { label: "Ver Traces", value: "Clique para inspecionar", color: "hsl(var(--primary))" }
+                ]
+              });
+            }
+            return sections;
+          }}
           series={[
             { dataKey: "requests", name: "Requests", stroke: "hsl(var(--primary))", gradientFrom: "hsl(var(--primary))", strokeWidth: 3 },
             { dataKey: "errors", name: "Erros", stroke: "#f43f5e", gradientFrom: "#f43f5e", strokeWidth: 2 },
             ...(compareRequests ? [{ dataKey: "prev_requests", name: "Anterior", stroke: "hsl(var(--muted-foreground))", gradientFrom: "hsl(var(--muted-foreground))", strokeWidth: 1.5 }] : []),
           ]}
         />
+
         {peakRequestIdx >= 0 && (
           <div className="mt-6 flex items-center justify-between pt-4 border-t border-border/10">
             <p className="text-[11px] font-bold text-muted-foreground flex items-center gap-2 uppercase tracking-widest">
@@ -172,6 +199,15 @@ export function UsageCharts({ data }: UsageChartsProps) {
           <ComparisonToggle enabled={compareCost} onToggle={setCompareCost} label="vs anterior" />
         </div>
         <LightBarChart
+          data={costData}
+          onBarClick={(d) => {
+            const from = new Date(d.date);
+            from.setHours(0, 0, 0, 0);
+            const to = new Date(d.date);
+            to.setHours(23, 59, 59, 999);
+            navigate(`/traces?from=${from.toISOString()}&to=${to.toISOString()}`);
+          }}
+
           data={costData}
           xKey="label"
           height={240}
@@ -205,6 +241,15 @@ export function UsageCharts({ data }: UsageChartsProps) {
         </div>
         <LightAreaChart
           data={chartData}
+          onPointClick={(d) => {
+            const from = new Date(d.date);
+            from.setHours(0, 0, 0, 0);
+            const to = new Date(d.date);
+            to.setHours(23, 59, 59, 999);
+            navigate(`/traces?from=${from.toISOString()}&to=${to.toISOString()}`);
+          }}
+
+          data={chartData}
           xKey="label"
           height={240}
           margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
@@ -225,6 +270,15 @@ export function UsageCharts({ data }: UsageChartsProps) {
           <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Neural Processing Units</p>
         </div>
         <LightBarChart
+          data={chartData}
+          onBarClick={(d) => {
+            const from = new Date(d.date);
+            from.setHours(0, 0, 0, 0);
+            const to = new Date(d.date);
+            to.setHours(23, 59, 59, 999);
+            navigate(`/traces?from=${from.toISOString()}&to=${to.toISOString()}`);
+          }}
+
           data={chartData}
           xKey="label"
           height={240}

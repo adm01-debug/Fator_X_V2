@@ -100,11 +100,14 @@ export default function DashboardPage() {
           </div>
           <div className="flex flex-col sm:flex-row items-center gap-4">
             <DateRangePicker value={dateRange} onChange={setDateRange} />
-            <Button onClick={() => navigate('/agents/new')} className="nexus-gradient-bg text-primary-foreground gap-3 h-14 px-8 rounded-2xl shadow-xl shadow-primary/25 hover:scale-[1.03] active:scale-[0.98] transition-all duration-300 group overflow-hidden relative">
-              <Plus className="h-6 w-6 group-hover:rotate-90 transition-transform duration-300" /> 
-              <span className="font-bold text-lg tracking-tight">Novo Agente</span>
-            </Button>
+            <AccessControl permission="agents.create">
+              <Button onClick={() => navigate('/agents/new')} className="nexus-gradient-bg text-primary-foreground gap-3 h-14 px-8 rounded-2xl shadow-xl shadow-primary/25 hover:scale-[1.03] active:scale-[0.98] transition-all duration-300 group overflow-hidden relative">
+                <Plus className="h-6 w-6 group-hover:rotate-90 transition-transform duration-300" /> 
+                <span className="font-bold text-lg tracking-tight">Novo Agente</span>
+              </Button>
+            </AccessControl>
           </div>
+
         </div>
       </div>
 

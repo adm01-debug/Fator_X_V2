@@ -204,11 +204,14 @@ export default function AgentsPage() {
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <Button variant="outline" size="lg" className="gap-2.5 h-12 px-6 rounded-2xl bg-background/50 border-border/50 hover:bg-background hover:border-primary/30 transition-all duration-300" onClick={() => fileInputRef.current?.click()}>
-              <Upload className="h-5 w-5 text-muted-foreground" /> 
-              <span className="font-bold">Importar</span>
-            </Button>
+            <AccessControl permission="agents.create">
+              <Button variant="outline" size="lg" className="gap-2.5 h-12 px-6 rounded-2xl bg-background/50 border-border/50 hover:bg-background hover:border-primary/30 transition-all duration-300" onClick={() => fileInputRef.current?.click()}>
+                <Upload className="h-5 w-5 text-muted-foreground" /> 
+                <span className="font-bold">Importar</span>
+              </Button>
+            </AccessControl>
             <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={handleImport} />
+
             
             <AccessControl permission="agents.create">
               <Button onClick={() => navigate('/agents/new')} className="nexus-gradient-bg text-primary-foreground gap-2.5 h-12 px-8 rounded-2xl shadow-xl shadow-primary/25 hover:scale-[1.03] active:scale-[0.98] transition-all duration-300 group">
