@@ -107,7 +107,7 @@ export function OnboardingTour() {
     <div
       role="button"
       tabIndex={0}
-      aria-label="Fechar tour"
+      aria-label="Fechar tour clicando fora"
       className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-4"
       onClick={(e) => { if (e.target === e.currentTarget) dismiss(); }}
       onKeyDown={(e) => {
