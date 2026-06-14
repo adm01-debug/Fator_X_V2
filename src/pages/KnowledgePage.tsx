@@ -235,8 +235,16 @@ export default function KnowledgePage() {
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {filtered.map((kb) => (
                     <div key={kb.id}
+                      role="button"
+                      tabIndex={0}
                       className="nexus-card group cursor-pointer hover:border-primary/40 transition-all hover:shadow-2xl hover:shadow-primary/5 p-0 overflow-hidden"
                       onClick={() => setSelectedKb({ id: kb.id, name: kb.name })}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          setSelectedKb({ id: kb.id, name: kb.name });
+                        }
+                      }}
                     >
                       <div className="p-5 space-y-4">
                         <div className="flex items-start justify-between">
@@ -269,7 +277,7 @@ export default function KnowledgePage() {
                         </div>
                       </div>
 
-                      <div className="bg-secondary/10 border-t border-border/30 p-3 flex items-center gap-2" onClick={e => e.stopPropagation()}>
+                      <div role="presentation" className="bg-secondary/10 border-t border-border/30 p-3 flex items-center gap-2" onClick={e => e.stopPropagation()} onKeyDown={e => e.stopPropagation()}>
                         <Button variant="ghost" size="sm" className="flex-1 h-8 text-[11px] gap-1.5 hover:bg-primary/5" onClick={() => setEditKb(kb)}>
                           <Pencil className="h-3 w-3" /> Configurar
                         </Button>

@@ -1,6 +1,6 @@
 import type { SandboxConfig, SandboxRuntime } from '@/components/workflows/SandboxExecutionPanel';
 
-const RUNTIME_OPTIONS: Array<{
+export const RUNTIME_OPTIONS: Array<{
   id: SandboxRuntime;
   name: string;
   description: string;
@@ -12,7 +12,7 @@ const RUNTIME_OPTIONS: Array<{
   { id: 'none', name: 'Desabilitado', description: 'Execução de código desabilitada para este agente', securityLevel: 'none' },
 ];
 
-const SECURITY_LEVEL_COLORS: Record<string, string> = {
+export const SECURITY_LEVEL_COLORS: Record<string, string> = {
   high: 'hsl(var(--nexus-emerald))',
   medium: 'hsl(var(--nexus-yellow))',
   low: 'hsl(var(--nexus-red))',
@@ -80,5 +80,3 @@ export function SandboxConfigTab({ config, onUpdate }: SandboxConfigTabProps) {
     </div>
   );
 }
-
-export { RUNTIME_OPTIONS, SECURITY_LEVEL_COLORS };
