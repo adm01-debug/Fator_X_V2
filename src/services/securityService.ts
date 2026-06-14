@@ -122,7 +122,7 @@ export async function getAuditLog(options?: { userId?: string; limit?: number })
       logger.warn('Audit log query failed in securityService', { error: error.message });
       return [];
     }
-    return (data ?? []) as any[];
+    return (data ?? []) as Record<string, unknown>[];
   } catch {
     return [];
   }

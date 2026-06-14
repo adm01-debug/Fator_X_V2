@@ -154,7 +154,7 @@ export function RoutingConfigPage() {
                   {s.unique_agents} {t("routing.unique_agents")}
                 </div>
               </div>
-              <div className="flex gap-1 mt-3 pt-3 border-t border-border/30" onClick={(e) => e.stopPropagation()}>
+              <div role="presentation" className="flex gap-1 mt-3 pt-3 border-t border-border/30" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
                 <Button
                   variant="ghost"
                   size="sm"

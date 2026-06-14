@@ -25,6 +25,27 @@ interface KnowledgeBaseDetailProps {
   onBack: () => void;
 }
 
+interface Collection {
+  id: string;
+  name: string;
+}
+
+interface KnowledgeDocument {
+  id: string;
+  title: string;
+  source_type?: string;
+  status?: string;
+  source_url?: string;
+}
+
+interface Chunk {
+  id: string;
+  chunk_index?: number;
+  token_count?: number;
+  embedding_status?: string;
+  content?: string;
+}
+
 export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetailProps) {
   const queryClient = useQueryClient();
   const [selectedCollectionId, setSelectedCollectionId] = useState<string | null>(null);
