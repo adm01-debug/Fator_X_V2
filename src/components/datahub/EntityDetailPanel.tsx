@@ -13,6 +13,7 @@ function getConnectionLabel(connId: string): string {
   return DEFAULT_CONNECTIONS.find((c) => c.id === connId)?.label ?? connId;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- imported by DataBrowser and DataHubPage
 export { ENTITY_ICONS, getConnectionLabel };
 
 export function EntityDetailPanel({ entityId, mapping, onBrowse }: {

@@ -7,6 +7,7 @@ interface Props {
   labelB: string;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- diffLines is imported by several other modules
 export function diffLines(a: string, b: string): { linesA: { text: string; type: 'same' | 'removed' }[]; linesB: { text: string; type: 'same' | 'added' }[] } {
   const aLines = a.split('\n');
   const bLines = b.split('\n');
@@ -22,12 +23,9 @@ export function diffLines(a: string, b: string): { linesA: { text: string; type:
     }
   }
 
-  const linesA: { text: string; type: 'same' | 'removed' }[] = [];
-  const linesB: { text: string; type: 'same' | 'added' }[] = [];
-
   let i = m, j = n;
-  const opsA: typeof linesA = [];
-  const opsB: typeof linesB = [];
+  const opsA: { text: string; type: 'same' | 'removed' }[] = [];
+  const opsB: { text: string; type: 'same' | 'added' }[] = [];
 
   while (i > 0 || j > 0) {
     if (i > 0 && j > 0 && aLines[i - 1] === bLines[j - 1]) {

@@ -42,5 +42,4 @@ export function CerebroTabNav() {
   );
 }
 
-export { CEREBRO_TABS };
 export default CerebroTabNav;

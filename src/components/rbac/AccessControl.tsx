@@ -68,6 +68,7 @@ export function AccessControl({
  *     await deleteAgent(id);
  *   });
  */
+// eslint-disable-next-line react-refresh/only-export-components -- imported via rbac/index
 export function useAccessGuard() {
   const { can } = useRBAC();
 

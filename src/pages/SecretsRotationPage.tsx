@@ -78,7 +78,7 @@ export default function SecretsRotationPage() {
       const r = await refreshSecretsStatus();
       toast.success(`${r.marked_overdue} marcados como overdue, ${r.marked_pending} como pending`);
       if (workspaceId) load(workspaceId);
-    } catch (err) {
+    } catch {
       toast.error("Falha ao atualizar status");
     }
   };
@@ -133,7 +133,7 @@ export default function SecretsRotationPage() {
       await markSecretRetired(secret.id);
       toast.success("Secret aposentado");
       if (workspaceId) load(workspaceId);
-    } catch (err) {
+    } catch {
       toast.error("Falha ao aposentar");
     }
   };

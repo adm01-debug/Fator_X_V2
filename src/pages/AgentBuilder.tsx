@@ -88,7 +88,7 @@ export default function AgentBuilder() {
     } else {
       resetAgent();
     }
-  }, [id]);
+  }, [id, loadAgentFromDB, resetAgent]);
 
   // Suporte a deep-link via ?tab=prompt|tools|brain etc. — usado por atalhos
   // como "Editar prompt" / "Gerenciar tools" / "Ajustar modelo" no preview do

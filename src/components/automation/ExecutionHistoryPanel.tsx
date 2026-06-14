@@ -24,7 +24,7 @@ export function ExecutionHistoryPanel() {
     ]).then(([{ data, total: t }, s]) => { setExecutions(data); setTotal(t); setStats(s); })
       .catch(() => toast({ title: 'Erro', variant: 'destructive' }))
       .finally(() => setLoading(false));
-  }, [search]);
+  }, [search, toast]);
 
   return (
     <div className="space-y-6">

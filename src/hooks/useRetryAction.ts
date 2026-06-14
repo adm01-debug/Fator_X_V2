@@ -103,6 +103,7 @@ export function useRetryAction<TArgs extends unknown[], TResult>(
         setLoading(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- resolvePolicy derives solely from options, which is already a dependency; listing it would break execute memoization
     [action, options, toast],
   );
 

@@ -18,7 +18,7 @@ export function CredentialVaultPanel() {
       .then(([c, s]) => { setCredentials(c); setStats(s); })
       .catch(() => toast({ title: 'Erro', variant: 'destructive' }))
       .finally(() => setLoading(false));
-  }, []);
+  }, [toast]);
 
   return (
     <div className="space-y-6">

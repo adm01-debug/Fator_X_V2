@@ -32,7 +32,7 @@ export interface ReviewData {
   hasContradictions: boolean;
 }
 
-export function useReviewData(form: QuickAgentForm): ReviewData {
+function useReviewData(form: QuickAgentForm): ReviewData {
   return useMemo(() => {
     const sections = detectPromptSections(form.prompt);
     const missingSections = getMissingSections(form.prompt);

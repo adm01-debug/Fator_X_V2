@@ -33,7 +33,7 @@ export function WebhookManagerPanel() {
       .then(setWebhooks)
       .catch(() => toast({ title: 'Erro ao carregar webhooks', variant: 'destructive' }))
       .finally(() => setLoading(false));
-  }, []);
+  }, [toast]);
 
   const handleTest = async () => {
     if (!selectedWebhook) return;
@@ -42,7 +42,7 @@ export function WebhookManagerPanel() {
       let payloadObj = { test: true };
       try {
         payloadObj = JSON.parse(testPayload);
-      } catch (e) {
+      } catch {
         toast({ title: 'JSON inválido', variant: 'destructive' });
         setTestingId(null);
         return;

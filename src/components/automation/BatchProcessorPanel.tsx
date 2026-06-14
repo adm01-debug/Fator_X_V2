@@ -27,7 +27,7 @@ export function BatchProcessorPanel() {
       .then(([j, s]) => { setJobs(j); setStats(s); })
       .catch(() => toast({ title: 'Erro', variant: 'destructive' }))
       .finally(() => setLoading(false));
-  }, []);
+  }, [toast]);
 
   return (
     <div className="space-y-6">

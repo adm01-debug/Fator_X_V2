@@ -16,6 +16,7 @@ const UnsavedChangesContext = createContext<UnsavedChangesContextType>({
   confirmNavigation: (cb) => cb(),
 });
 
+// eslint-disable-next-line react-refresh/only-export-components -- useUnsavedChanges hook is imported by BackButton and tests
 export function useUnsavedChanges() {
   return useContext(UnsavedChangesContext);
 }

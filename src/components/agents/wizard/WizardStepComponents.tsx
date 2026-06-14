@@ -19,7 +19,7 @@ const AGENT_TYPES = [
   { id: "orchestrator", label: "Orquestrador", icon: Layers, desc: "Coordena múltiplos sub-agentes" },
 ];
 
-export const MODELS = [
+const MODELS = [
   { id: "gpt-4o", name: "GPT-4o", provider: "OpenAI", cost: "$$", speed: "Rápido", quality: "Excelente" },
   { id: "gpt-4-turbo", name: "GPT-4 Turbo", provider: "OpenAI", cost: "$$$", speed: "Médio", quality: "Máxima" },
   { id: "claude-3.5-sonnet", name: "Claude 3.5 Sonnet", provider: "Anthropic", cost: "$$", speed: "Rápido", quality: "Excelente" },
@@ -244,5 +244,3 @@ export function StepDeploy({ form, update }: { form: FormType; update: (k: strin
     </div>
   );
 }
-
-export { AGENT_TYPES };

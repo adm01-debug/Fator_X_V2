@@ -19,7 +19,7 @@ interface Props {
   onClose: () => void;
 }
 
-export function ClearFiltersToast({ toastId, cleared, storageKeys, onUndo, onClose }: Props) {
+export function ClearFiltersToast({ cleared, storageKeys, onUndo, onClose }: Props) {
   return (
     <div className="w-[360px] rounded-xl bg-card/95 backdrop-blur-xl border border-border/50 shadow-2xl p-4 space-y-3"
          role="status"
@@ -81,8 +81,6 @@ export function ClearFiltersToast({ toastId, cleared, storageKeys, onUndo, onClo
           Dispensar
         </button>
       </div>
-      {/* eslint-disable-next-line @typescript-eslint/no-unused-expressions */}
-      {toastId && null}
     </div>
   );
 }
