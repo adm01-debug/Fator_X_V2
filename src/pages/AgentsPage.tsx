@@ -9,7 +9,7 @@ import {
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { listAgents, cloneAgent, autoTagAgent } from "@/lib/agentService";
 import { useAgents } from "@/hooks/use-data";
@@ -63,6 +63,14 @@ export default function AgentsPage() {
     queryFn: () => listAgents(statusFilter),
     enabled: !!user,
   });
+
+  const filtered = useMemo(
+    () => agents.filter(a =>
+      a.name.toLowerCase().includes(search.toLowerCase()) ||
+      (a.tags ?? []).some(t => t.toLowerCase().includes(search.toLowerCase()))
+    ),
+    [agents, search],
+  );
 
   const handleToggleFav = useCallback((e: React.MouseEvent, id: string) => {
     e.stopPropagation();
@@ -130,7 +138,7 @@ export default function AgentsPage() {
 
   const selectAll = useCallback(() => {
     setSelectedIds(new Set(filtered.map(a => a.id)));
-  }, []);
+  }, [filtered]);
 
   const clearSelection = useCallback(() => setSelectedIds(new Set()), []);
 
@@ -171,11 +179,6 @@ export default function AgentsPage() {
     });
     toast.success(`${selected.length} agente(s) exportado(s)`);
   }, [selectedIds, agents]);
-
-  const filtered = agents.filter(a =>
-    a.name.toLowerCase().includes(search.toLowerCase()) ||
-    (a.tags ?? []).some(t => t.toLowerCase().includes(search.toLowerCase()))
-  );
 
   const sorted = [...filtered].sort((a, b) => {
     const aFav = favorites.includes(a.id) ? 1 : 0;
