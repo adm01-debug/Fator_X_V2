@@ -218,11 +218,13 @@ export function OracleComparisonPanel() {
               return (
                 <label
                   key={cfg.mode}
+                  htmlFor={`oracle-mode-${cfg.mode}`}
                   className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-all ${
                     checked ? 'bg-primary/5 border-primary/40 shadow-sm' : 'bg-card text-muted-foreground hover:bg-secondary/50 border-border/60'
                   }`}
                 >
                   <Checkbox
+                    id={`oracle-mode-${cfg.mode}`}
                     checked={checked}
                     onCheckedChange={() => toggleMode(cfg.mode)}
                     disabled={isRunning}

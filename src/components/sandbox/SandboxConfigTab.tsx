@@ -42,13 +42,21 @@ export function SandboxConfigTab({ config, onUpdate }: SandboxConfigTabProps) {
   return (
     <div className="pt-4 space-y-4">
       <div className="space-y-2">
-        <label className="text-xs text-muted-foreground font-medium">Runtime</label>
+        <span className="block text-xs text-muted-foreground font-medium">Runtime</span>
         <div className="grid grid-cols-2 gap-2">
           {RUNTIME_OPTIONS.map((rt) => (
             <div
               key={rt.id}
+              role="button"
+              tabIndex={0}
               className={`p-3 rounded-lg border cursor-pointer transition-all ${config.runtime === rt.id ? 'border-primary bg-primary/10' : 'border-border bg-background hover:border-border'}`}
               onClick={() => onUpdate({ runtime: rt.id })}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  onUpdate({ runtime: rt.id });
+                }
+              }}
             >
               <div className="flex items-center justify-between mb-1">
                 <span className="text-sm font-medium text-foreground">{rt.name}</span>
@@ -62,7 +70,7 @@ export function SandboxConfigTab({ config, onUpdate }: SandboxConfigTabProps) {
 
       {config.runtime !== 'none' && (
         <div className="space-y-3">
-          <label className="text-xs text-muted-foreground font-medium">Limites de Recursos</label>
+          <span className="block text-xs text-muted-foreground font-medium">Limites de Recursos</span>
           <SliderField label="CPU" value={config.cpuLimit} min={0.25} max={4} step={0.25} unit="cores" onChange={(v) => onUpdate({ cpuLimit: v })} />
           <SliderField label="Memória" value={config.memoryLimitMb} min={128} max={4096} step={128} unit="MB" onChange={(v) => onUpdate({ memoryLimitMb: v })} />
           <SliderField label="Timeout" value={config.timeoutSeconds} min={5} max={300} step={5} unit="seg" onChange={(v) => onUpdate({ timeoutSeconds: v })} />

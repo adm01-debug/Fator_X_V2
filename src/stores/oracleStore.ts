@@ -179,9 +179,14 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
       
-      let tempResults: any = { 
-        stage1_results: [], 
-        metrics: { total_latency_ms: 0, total_cost_usd: 0, total_tokens: 0, models_used: 0 } 
+      const tempResults: {
+        stage1_results: OracleResult['stage1_results'];
+        stage2_results?: OracleResult['stage2_results'];
+        consensus_points?: OracleResult['consensus_points'];
+        metrics: Partial<OracleResult['metrics']>;
+      } = {
+        stage1_results: [],
+        metrics: { total_latency_ms: 0, total_cost_usd: 0, total_tokens: 0, models_used: 0 }
       };
 
       while (true) {
@@ -228,8 +233,9 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
           }
         }
       }
-    } catch (e: any) {
-      if (e.name === 'AbortError') return;
+    } catch (e) {
+      const err = e as { name?: string; message?: string };
+      if (err.name === 'AbortError') return;
       set({
         error: e instanceof Error ? e.message : 'Erro ao consultar o Oráculo',
         isRunning: false,
@@ -237,9 +243,9 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
         stageLabel: '',
         abortController: null,
       });
-      
+
       // Auto-retry once for network errors or transient 500s
-      if (e.message.includes('fetch') || e.message.includes('network') || e.message.includes('502') || e.message.includes('503')) {
+      if (err.message?.includes('fetch') || err.message?.includes('network') || err.message?.includes('502') || err.message?.includes('503')) {
         toast.info('Erro de conexão ou timeout. Tentando novamente em 3 segundos...');
         setTimeout(() => get().submitQuery(), 3000);
       }

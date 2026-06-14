@@ -173,7 +173,9 @@ interface FilterableTrace {
   event?: string;
 }
 
-// eslint-disable-next-line react-refresh/only-export-components -- imported by MonitoringPage
+// Pure helper exported alongside the component and consumed by MonitoringPage; moving it
+// would require editing that out-of-scope file, so fast-refresh is disabled for this export only.
+// eslint-disable-next-line react-refresh/only-export-components
 export function applyTraceFilters<T extends FilterableTrace>(traces: T[], filters: TraceFilters): T[] {
   return traces.filter(t => {
     if (filters.dateFrom) {

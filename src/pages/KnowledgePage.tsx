@@ -52,7 +52,7 @@ export default function KnowledgePage() {
     queryFn: listKnowledgeBases,
   });
 
-  const filtered = knowledgeBases.filter((kb: any) =>
+  const filtered = knowledgeBases.filter((kb) =>
     kb.name.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -233,7 +233,7 @@ export default function KnowledgePage() {
                 </div>
               ) : viewMode === 'grid' ? (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  {filtered.map((kb: any) => (
+                  {filtered.map((kb) => (
                     <div key={kb.id}
                       className="nexus-card group cursor-pointer hover:border-primary/40 transition-all hover:shadow-2xl hover:shadow-primary/5 p-0 overflow-hidden"
                       onClick={() => setSelectedKb({ id: kb.id, name: kb.name })}
@@ -309,7 +309,7 @@ export default function KnowledgePage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border/20">
-                      {filtered.map((kb: any) => (
+                      {filtered.map((kb) => (
                         <tr key={kb.id} className="hover:bg-primary/5 transition-colors cursor-pointer group" onClick={() => setSelectedKb({ id: kb.id, name: kb.name })}>
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-3">
@@ -468,10 +468,10 @@ function VectorIndexesStatus() {
       {indexes.length > 0 && (
         <div className="space-y-2 pt-2 border-t border-border/20">
           <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-tight mb-2">Índices Vetoriais</p>
-          {indexes.map((idx: any) => (
+          {indexes.map((idx) => (
             <div key={idx.id} className="group p-2.5 rounded-lg bg-secondary/30 border border-border/10 hover:border-primary/30 transition-colors">
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[11px] font-bold truncate max-w-[120px]">{(idx.knowledge_bases as any)?.name || 'Índice Ativo'}</span>
+                <span className="text-[11px] font-bold truncate max-w-[120px]">{(idx.knowledge_bases as { name?: string } | null)?.name || 'Índice Ativo'}</span>
                 <Badge variant="outline" className="text-[8px] h-4 py-0 border-nexus-emerald/30 text-nexus-emerald">Nominal</Badge>
               </div>
               <div className="flex items-center gap-2 text-[9px] text-muted-foreground font-mono">
