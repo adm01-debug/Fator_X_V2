@@ -24,7 +24,7 @@ export default function PromptsPage() {
     queryFn: listAllPromptVersions,
   });
 
-  const agentMap = new Map(agents.map((a: any) => [a.id, a]));
+  const agentMap = new Map(agents.map((a) => [a.id, a]));
   const grouped = new Map<string, typeof prompts[0]>();
   for (const p of prompts) {
     if (!grouped.has(p.agent_id) || p.version > (grouped.get(p.agent_id)!.version)) {
@@ -34,7 +34,7 @@ export default function PromptsPage() {
   
   const filteredPrompts = Array.from(grouped.values()).filter(p => {
     const agent = agentMap.get(p.agent_id);
-    const agentName = (agent as any)?.name?.toLowerCase() || "";
+    const agentName = agent?.name?.toLowerCase() || "";
     const summary = (p.change_summary || "").toLowerCase();
     return agentName.includes(searchTerm.toLowerCase()) || summary.includes(searchTerm.toLowerCase());
   });
@@ -131,9 +131,17 @@ export default function PromptsPage() {
               {filteredPrompts.map((p) => {
                 const agent = agentMap.get(p.agent_id);
                 return (
-                  <div 
-                    key={p.id} 
+                  <div
+                    key={p.id}
+                    role="button"
+                    tabIndex={0}
                     onClick={() => navigate(`/prompts/${p.agent_id}`)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        navigate(`/prompts/${p.agent_id}`);
+                      }
+                    }}
                     className="nexus-card group cursor-pointer p-8 rounded-[2.5rem] flex flex-col justify-between min-h-[320px] bg-gradient-to-br from-card to-card/95 border-border/40 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 relative overflow-hidden"
                   >
                     <div className="absolute top-0 right-0 w-32 h-32 bg-primary/[0.02] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:bg-primary/[0.05] transition-colors" />
@@ -146,7 +154,7 @@ export default function PromptsPage() {
                           </div>
                           <div>
                             <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1">
-                              {(agent as any)?.name || 'Agente Sem Nome'}
+                              {agent?.name || 'Agente Sem Nome'}
                             </h3>
                             <div className="flex items-center gap-2 mt-1">
                               <Badge variant="outline" className="text-[10px] h-5 px-1.5 bg-primary/5 border-primary/20 text-primary font-mono">v{p.version}</Badge>

@@ -51,7 +51,7 @@ export default function DataHubPage() {
     try {
       const now = new Date();
       // Start streaming connection tests
-      await streamInvoke('test_connections', {}, (event: string, data: { id?: string; status?: string; count?: number; error?: string; latency_ms?: number }) => {
+      await streamInvoke('test_connections', {}, (event: string, data: { id: string; status: string; count: number; error?: string; latency_ms: number }) => {
         if (event === 'connection') {
           setConnections((prev) => prev.map((c) => {
             if (c.id === data.id) {
@@ -86,9 +86,9 @@ export default function DataHubPage() {
     setIsStreaming(true);
 
     try { 
-      await streamInvoke('list_entities', {}, (event: string, data: { id?: string; count?: number }) => {
+      await streamInvoke('list_entities', {}, (event: string, data: { id: string; count: number }) => {
         if (event === 'entity_count') {
-          setEntityCounts(prev => ({ ...prev, [String(data.id)]: data.count }));
+          setEntityCounts(prev => ({ ...prev, [data.id]: data.count }));
         }
       });
 

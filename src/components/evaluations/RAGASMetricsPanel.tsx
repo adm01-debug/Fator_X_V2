@@ -103,17 +103,18 @@ export function RAGASMetricsPanel() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="space-y-2">
-          <label className="text-[11px] font-medium text-muted-foreground">Agente</label>
+          <label htmlFor="ragas-agent" className="text-[11px] font-medium text-muted-foreground">Agente</label>
           <Select value={agentId} onValueChange={setAgentId}>
-            <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Selecionar agente" /></SelectTrigger>
+            <SelectTrigger id="ragas-agent" className="h-8 text-xs"><SelectValue placeholder="Selecionar agente" /></SelectTrigger>
             <SelectContent>
               {agents.map(a => <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
         <div className="space-y-2">
-          <label className="text-[11px] font-medium text-muted-foreground">Perguntas de teste (1 por linha)</label>
+          <label htmlFor="ragas-test-input" className="text-[11px] font-medium text-muted-foreground">Perguntas de teste (1 por linha)</label>
           <Textarea
+            id="ragas-test-input"
             placeholder="Qual o horário de funcionamento?\nComo fazer uma troca?"
             value={testInput}
             onChange={e => setTestInput(e.target.value)}

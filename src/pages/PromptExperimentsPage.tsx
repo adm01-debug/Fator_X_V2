@@ -140,7 +140,7 @@ function ExperimentCard({
             </CardTitle>
             <div className="text-xs text-muted-foreground line-clamp-1">{experiment.description || 'Sem descrição'}</div>
           </div>
-          <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
+          <div role="presentation" className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
             <Badge variant={STATUS_VARIANT[experiment.status]}>{STATUS_LABEL[experiment.status]}</Badge>
             {experiment.status !== 'completed' && (
               <Button size="icon" variant="ghost" onClick={onToggle}>
