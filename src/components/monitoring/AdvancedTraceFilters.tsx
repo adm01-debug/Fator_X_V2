@@ -70,8 +70,9 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
       {expanded && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-3 rounded-lg bg-secondary/30 border border-border/30 animate-fade-in">
           <div className="space-y-1">
-            <label className="text-[11px] font-medium text-muted-foreground">Data início</label>
+            <label htmlFor="trace-filter-dateFrom" className="text-[11px] font-medium text-muted-foreground">Data início</label>
             <Input
+              id="trace-filter-dateFrom"
               type="date"
               value={filters.dateFrom}
               onChange={e => onChange({ ...filters, dateFrom: e.target.value })}
@@ -79,8 +80,9 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
             />
           </div>
           <div className="space-y-1">
-            <label className="text-[11px] font-medium text-muted-foreground">Data fim</label>
+            <label htmlFor="trace-filter-dateTo" className="text-[11px] font-medium text-muted-foreground">Data fim</label>
             <Input
+              id="trace-filter-dateTo"
               type="date"
               value={filters.dateTo}
               onChange={e => onChange({ ...filters, dateTo: e.target.value })}
@@ -88,8 +90,9 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
             />
           </div>
           <div className="space-y-1">
-            <label className="text-[11px] font-medium text-muted-foreground">Latência mín (ms)</label>
+            <label htmlFor="trace-filter-minLatency" className="text-[11px] font-medium text-muted-foreground">Latência mín (ms)</label>
             <Input
+              id="trace-filter-minLatency"
               type="number"
               placeholder="0"
               value={filters.minLatency}
@@ -98,8 +101,9 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
             />
           </div>
           <div className="space-y-1">
-            <label className="text-[11px] font-medium text-muted-foreground">Latência máx (ms)</label>
+            <label htmlFor="trace-filter-maxLatency" className="text-[11px] font-medium text-muted-foreground">Latência máx (ms)</label>
             <Input
+              id="trace-filter-maxLatency"
               type="number"
               placeholder="∞"
               value={filters.maxLatency}
@@ -108,8 +112,9 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
             />
           </div>
           <div className="space-y-1">
-            <label className="text-[11px] font-medium text-muted-foreground">Custo mín ($)</label>
+            <label htmlFor="trace-filter-minCost" className="text-[11px] font-medium text-muted-foreground">Custo mín ($)</label>
             <Input
+              id="trace-filter-minCost"
               type="number"
               step="0.001"
               placeholder="0"
@@ -119,8 +124,9 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
             />
           </div>
           <div className="space-y-1">
-            <label className="text-[11px] font-medium text-muted-foreground">Custo máx ($)</label>
+            <label htmlFor="trace-filter-maxCost" className="text-[11px] font-medium text-muted-foreground">Custo máx ($)</label>
             <Input
+              id="trace-filter-maxCost"
               type="number"
               step="0.001"
               placeholder="∞"
@@ -130,9 +136,9 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
             />
           </div>
           <div className="space-y-1">
-            <label className="text-[11px] font-medium text-muted-foreground">Nível</label>
+            <label htmlFor="trace-filter-level" className="text-[11px] font-medium text-muted-foreground">Nível</label>
             <Select value={filters.level} onValueChange={v => onChange({ ...filters, level: v })}>
-              <SelectTrigger className="h-8 text-xs bg-background"><SelectValue /></SelectTrigger>
+              <SelectTrigger id="trace-filter-level" className="h-8 text-xs bg-background"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos</SelectItem>
                 <SelectItem value="debug">Debug</SelectItem>
@@ -144,8 +150,9 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
             </Select>
           </div>
           <div className="space-y-1">
-            <label className="text-[11px] font-medium text-muted-foreground">Evento</label>
+            <label htmlFor="trace-filter-event" className="text-[11px] font-medium text-muted-foreground">Evento</label>
             <Input
+              id="trace-filter-event"
               placeholder="Buscar evento..."
               value={filters.event}
               onChange={e => onChange({ ...filters, event: e.target.value })}
@@ -158,14 +165,23 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
   );
 }
 
-export function applyTraceFilters(traces: any[], filters: TraceFilters): any[] {
+interface FilterableTrace {
+  created_at?: string;
+  latency_ms?: number | null;
+  cost_usd?: number | string | null;
+  level?: string;
+  event?: string;
+}
+
+// eslint-disable-next-line react-refresh/only-export-components -- imported by MonitoringPage
+export function applyTraceFilters<T extends FilterableTrace>(traces: T[], filters: TraceFilters): T[] {
   return traces.filter(t => {
     if (filters.dateFrom) {
-      const traceDate = new Date(t.created_at).toISOString().split('T')[0];
+      const traceDate = new Date(t.created_at ?? '').toISOString().split('T')[0];
       if (traceDate < filters.dateFrom) return false;
     }
     if (filters.dateTo) {
-      const traceDate = new Date(t.created_at).toISOString().split('T')[0];
+      const traceDate = new Date(t.created_at ?? '').toISOString().split('T')[0];
       if (traceDate > filters.dateTo) return false;
     }
     if (filters.minLatency && t.latency_ms != null && t.latency_ms < Number(filters.minLatency)) return false;
@@ -178,4 +194,5 @@ export function applyTraceFilters(traces: any[], filters: TraceFilters): any[] {
   });
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- imported by MonitoringPage
 export { EMPTY_FILTERS };

@@ -75,10 +75,18 @@ export function WorkflowTemplatesGallery() {
               return (
                 <div
                   key={tpl.id}
+                  role="button"
+                  tabIndex={0}
                   className={`p-4 rounded-lg border bg-secondary/20 transition-all cursor-pointer ${
                     isPreviewing ? 'border-primary ring-1 ring-primary/40' : 'border-border/30 hover:border-primary/40'
                   }`}
                   onClick={() => setPreviewId(isPreviewing ? null : tpl.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setPreviewId(isPreviewing ? null : tpl.id);
+                    }
+                  }}
                 >
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className="flex items-center gap-2 min-w-0 flex-1">

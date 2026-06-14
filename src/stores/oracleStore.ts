@@ -97,7 +97,7 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
     await new Promise(r => setTimeout(r, 1000));
     set({ currentStage: 1, stageLabel: 'Replay: Coletando opiniões...' });
     
-    const results: any = { stage1_results: [], metrics: entry.metrics };
+    const results: Partial<OracleResult> & { stage1_results: OracleResult['stage1_results'] } = { stage1_results: [], metrics: entry.metrics };
     for (const res of entry.stage1_results) {
       await new Promise(r => setTimeout(r, 800));
       results.stage1_results.push(res);

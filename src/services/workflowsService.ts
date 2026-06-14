@@ -169,14 +169,21 @@ export async function listWorkflowRuns(limit = 30): Promise<WorkflowRunRow[]> {
     .order('started_at', { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return (data as any) ?? [];
+  return (data as unknown as WorkflowRunRow[]) ?? [];
 }
 
 /* ── Execute workflow stream ── */
+export interface WorkflowStreamEvent {
+  event?: string;
+  label?: string;
+  message?: string;
+  [key: string]: unknown;
+}
+
 export async function executeWorkflowStream(
   workflowId: string,
   input: string = '',
-  onEvent: (event: any) => void
+  onEvent: (event: WorkflowStreamEvent) => void
 ): Promise<void> {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session?.access_token) throw new Error('Not authenticated');

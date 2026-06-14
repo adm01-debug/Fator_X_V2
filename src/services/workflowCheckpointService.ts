@@ -112,8 +112,8 @@ export async function completeExecution(
     .select('cost_usd, tokens_used, duration_ms')
     .eq('execution_id' as never, executionId);
 
-  const totals = (checkpoints ?? []).reduce(
-    (acc: { cost: number; tokens: number; duration: number }, cp: any) => ({
+  const totals = ((checkpoints ?? []) as Array<{ cost_usd: number | null; tokens_used: number | null; duration_ms: number | null }>).reduce(
+    (acc: { cost: number; tokens: number; duration: number }, cp) => ({
       cost: acc.cost + Number(cp.cost_usd ?? 0),
       tokens: acc.tokens + Number(cp.tokens_used ?? 0),
       duration: acc.duration + Number(cp.duration_ms ?? 0),

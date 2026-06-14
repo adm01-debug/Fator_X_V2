@@ -59,7 +59,15 @@ export default function VisionAgentsPage() {
           <CardContent>
             {!imageUrl ? (
               <div
+                role="button"
+                tabIndex={0}
                 onClick={() => fileRef.current?.click()}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    fileRef.current?.click();
+                  }
+                }}
                 className="aspect-video border-2 border-dashed border-border/50 rounded-md flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-colors"
               >
                 <Upload className="h-10 w-10 text-muted-foreground/40 mb-2" />

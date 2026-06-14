@@ -22,7 +22,7 @@ export function agentToDbRow(agent: AgentConfig, userId: string) {
 }
 
 export function dbRowToAgent(row: Record<string, unknown>): AgentConfig {
-  const config = (row.config || {}) as Record<string, any>;
+  const config = (row.config || {}) as Record<string, unknown>;
   return {
     ...DEFAULT_AGENT,
     ...config,
