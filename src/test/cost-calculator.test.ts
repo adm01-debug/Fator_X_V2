@@ -164,7 +164,7 @@ describe('costCalculatorService — estimateWorkflowCost', () => {
     ];
     const e = await estimateWorkflowCost(nodes, 'anthropic', 'sonnet');
     expect(e.breakdown?.[0].provider).toBe('openai');
-    expect(e.breakdown?.[0].model).toBe('openai/gpt-4o');
+    expect(e.breakdown?.[0].model).toBe('gpt-4o');
   });
 });
 

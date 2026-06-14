@@ -182,7 +182,11 @@ export function AppSidebar() {
     if (user) {
       getWorkspaceInfo().then(info => info && setWsInfo(info));
     }
-  }, [user]);
+    // Depend on the stable user id, not the user object reference: an
+    // unstable `user` identity would re-run this on every render and, via
+    // setWsInfo, cause an infinite render loop.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
 
   const planLabel = wsInfo?.plan === 'pro' ? 'Pro' : wsInfo?.plan === 'enterprise' ? 'Enterprise' : 'Free';
   const agentCount = wsInfo?.agentCount ?? 0;

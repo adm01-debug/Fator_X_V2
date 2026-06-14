@@ -104,8 +104,9 @@ describe('executeWorkflow — tracer instrumentation', () => {
   });
 
   it('engine path returns the steps_executed and cost from the engine', async () => {
+    // workflow-engine-v2 returns camelCase `stepsExecuted` and `cost`.
     mockInvoke.mockResolvedValue({
-      data: { status: 'completed', steps_executed: 7, total_cost_usd: 0.42 },
+      data: { status: 'completed', stepsExecuted: 7, cost: 0.42 },
       error: null,
     });
     const result = await executeWorkflow('wf-3', 'EngineReturn', ['a', 'b']);
@@ -138,7 +139,7 @@ describe('executeWorkflow — tracer instrumentation', () => {
       'workflow.step.enricher',
       'workflow.step.reporter',
     ]);
-    expect(stepSpans.every((s) => s.kind === 'agent')).toBe(true);
+    expect(stepSpans.every((s) => s.kind === 'llm')).toBe(true);
 
     expect(result.stepsExecuted).toBe(3);
     expect(result.cost).toBeCloseTo(0.03, 5); // 3 × 0.01

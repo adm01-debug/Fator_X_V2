@@ -287,8 +287,9 @@ describe('C. Funções Puras — Cost Calculator', () => {
     setBudget({ maxCostPerDayUsd: 50 });
     expect(getBudget().maxCostPerDayUsd).toBe(50);
   });
-  it('tokens negativos rejeitados', () => {
-    expect(() => calculateCost('anthropic', 'claude-sonnet-4-6', -1, 0)).toThrow();
+  it('tokens negativos rejeitados', async () => {
+    // calculateCost is async, so negative tokens surface as a rejected promise.
+    await expect(calculateCost('anthropic', 'claude-sonnet-4-6', -1, 0)).rejects.toThrow();
   });
 });
 

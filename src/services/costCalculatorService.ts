@@ -6,20 +6,49 @@ import { logger } from '@/lib/logger';
 
 // ──────── Pricing ────────
 
+type PricingRow = { model_pattern: string; input_cost_per_1k: number; output_cost_per_1k: number };
+
 /**
- * Get pricing for a specific model from DB via direct query
+ * Static fallback pricing (USD per 1k tokens). Used whenever the
+ * `model_pricing` DB table is empty or unreachable so cost estimation,
+ * comparison and budget checks keep working offline / on a fresh project.
+ * Patterns are matched as case-insensitive substrings of `provider/model`.
+ */
+const DEFAULT_PRICING: PricingRow[] = [
+  { model_pattern: 'anthropic/claude-opus', input_cost_per_1k: 0.015, output_cost_per_1k: 0.075 },
+  { model_pattern: 'anthropic/claude-sonnet', input_cost_per_1k: 0.003, output_cost_per_1k: 0.015 },
+  { model_pattern: 'anthropic/claude-haiku', input_cost_per_1k: 0.0008, output_cost_per_1k: 0.004 },
+  { model_pattern: 'openai/gpt-4o-mini', input_cost_per_1k: 0.00015, output_cost_per_1k: 0.0006 },
+  { model_pattern: 'openai/gpt-4o', input_cost_per_1k: 0.0025, output_cost_per_1k: 0.01 },
+  { model_pattern: 'openai/gpt-4', input_cost_per_1k: 0.03, output_cost_per_1k: 0.06 },
+  { model_pattern: 'google/gemini-1.5-flash', input_cost_per_1k: 0.000075, output_cost_per_1k: 0.0003 },
+  { model_pattern: 'google/gemini-1.5-pro', input_cost_per_1k: 0.00125, output_cost_per_1k: 0.005 },
+];
+
+/**
+ * Load raw pricing rows from the DB, falling back to the static table
+ * when the query fails or returns nothing.
+ */
+async function loadPricingRows(): Promise<PricingRow[]> {
+  try {
+    const { data, error } = await supabase.from('model_pricing').select('*');
+    if (!error && Array.isArray(data) && data.length > 0) return data as PricingRow[];
+  } catch {
+    // ignore — fall through to defaults
+  }
+  return DEFAULT_PRICING;
+}
+
+/**
+ * Get pricing for a specific model from DB (with static fallback)
  */
 export async function getModelPricing(provider: string, model: string): Promise<ModelPricing | null> {
   const fullModel = model.includes('/') ? model : `${provider}/${model}`;
-  const { data: pricingList, error } = await supabase
-    .from('model_pricing')
-    .select('*');
-  
-  if (error || !pricingList) return null;
+  const pricingList = await loadPricingRows();
 
   const sorted = [...pricingList].sort((a, b) => b.model_pattern.length - a.model_pattern.length);
   const match = sorted.find(p => fullModel.toLowerCase().includes(p.model_pattern.toLowerCase()));
-  
+
   if (!match) return null;
 
   return {
@@ -32,17 +61,22 @@ export async function getModelPricing(provider: string, model: string): Promise<
 }
 
 /**
- * Get all available pricing entries from DB
+ * Get all available pricing entries from DB (with static fallback)
  */
 export async function getAllPricing(): Promise<ModelPricing[]> {
-  const { data, error } = await supabase
-    .from('model_pricing')
-    .select('*')
-    .order('model_pattern');
-    
-  if (error) return [];
-  
-  return (data || []).map(p => ({
+  let rows: PricingRow[] | null = null;
+  try {
+    const { data, error } = await supabase
+      .from('model_pricing')
+      .select('*')
+      .order('model_pattern');
+    if (!error && Array.isArray(data) && data.length > 0) rows = data as PricingRow[];
+  } catch {
+    // ignore — fall through to defaults
+  }
+  if (!rows) rows = DEFAULT_PRICING;
+
+  return rows.map(p => ({
     provider: p.model_pattern.split('/')[0] || 'auto',
     model: p.model_pattern,
     inputPricePerMToken: Number(p.input_cost_per_1k) * 1000,

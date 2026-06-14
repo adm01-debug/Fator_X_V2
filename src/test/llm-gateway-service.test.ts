@@ -28,6 +28,7 @@ vi.mock('@/lib/tracing', () => ({
   startTrace: () => ({
     traceId: 'trace-1',
     startSpan: () => ({
+      id: 'span-1',
       setAttribute: vi.fn(),
       setInput: vi.fn(),
       setOutput: vi.fn(),
@@ -74,7 +75,9 @@ describe('llmGatewayService', () => {
   });
 
   it('throws on invoke error', async () => {
-    mockInvoke.mockResolvedValueOnce({ data: null, error: { message: 'gateway error' } });
+    // invokeLLMGateway self-heals by retrying with fallback models, so every
+    // attempt (initial + fallbacks) must fail for it to ultimately reject.
+    mockInvoke.mockResolvedValue({ data: null, error: { message: 'gateway error' } });
     const { invokeLLMGateway } = await import('@/services/llmGatewayService');
     await expect(invokeLLMGateway({ model: 'x', messages: [] })).rejects.toBeTruthy();
   });

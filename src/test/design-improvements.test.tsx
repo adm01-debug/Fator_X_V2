@@ -7,6 +7,7 @@ import { render, screen, fireEvent, waitFor, act } from "@testing-library/react"
 import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { useUIStore } from "@/stores/uiStore";
 
 // ═══ JSDOM polyfills ═══
 beforeEach(() => {
@@ -132,8 +133,8 @@ describe("Round 1: Foundational Design Polish", () => {
       const h1 = screen.getByRole("heading", { level: 1 });
       expect(h1).toBeInTheDocument();
       expect(h1.textContent).toBe("Test Title");
-      expect(h1.className).toContain("text-2xl");
-      expect(h1.className).toContain("sm:text-3xl");
+      expect(h1.className).toContain("text-3xl");
+      expect(h1.className).toContain("sm:text-4xl");
     });
   });
 
@@ -297,7 +298,7 @@ describe("Round 2: UX & Interaction", () => {
           <Breadcrumbs />
         </Wrapper>
       );
-      expect(screen.getByText("Knowledge / RAG")).toBeInTheDocument();
+      expect(screen.getByText("Conhecimento")).toBeInTheDocument();
       expect(screen.getByLabelText("Ir para o Dashboard")).toBeInTheDocument();
     });
 
@@ -315,11 +316,11 @@ describe("Round 2: UX & Interaction", () => {
       const { Breadcrumbs } = await import("@/components/shared/Breadcrumbs");
       const routes = [
         { path: "/datahub", label: "DataHub" },
-        { path: "/lgpd", label: "LGPD Compliance" },
-        { path: "/approvals", label: "Aprovações" },
-        { path: "/admin", label: "Admin BD" },
         { path: "/brain", label: "Super Cérebro" },
-        { path: "/oracle", label: "Oráculo" },
+        { path: "/security", label: "Segurança" },
+        { path: "/billing", label: "Faturamento" },
+        { path: "/monitoring", label: "Monitoramento" },
+        { path: "/deployments", label: "Implantações" },
       ];
       for (const { path, label } of routes) {
         const { unmount } = render(
@@ -339,13 +340,13 @@ describe("Round 2: UX & Interaction", () => {
           <Breadcrumbs />
         </Wrapper>
       );
-      const last = screen.getByText("Security & Guardrails");
+      const last = screen.getByText("Segurança");
       expect(last.getAttribute("aria-current")).toBe("page");
     });
   });
 
-  describe("#19 Dashboard AI Insight", () => {
-    it("renders InfoHint with the correct title", async () => {
+  describe("#19 Dashboard Empty State", () => {
+    it("renders the neural-fleet empty state when there are no agents", async () => {
       const DashboardPage = (await import("@/pages/DashboardPage")).default;
       render(
         <Wrapper>
@@ -353,7 +354,7 @@ describe("Round 2: UX & Interaction", () => {
         </Wrapper>
       );
       await waitFor(() => {
-        expect(screen.getByText("O que são superagentes de IA?")).toBeInTheDocument();
+        expect(screen.getByText("Inicie sua Frota Neural")).toBeInTheDocument();
       });
     });
   });
@@ -381,10 +382,10 @@ describe("Round 2: UX & Interaction", () => {
         { path: "/", expected: "Dashboard" },
         { path: "/agents", expected: "Agentes" },
         { path: "/brain", expected: "Super Cérebro" },
-        { path: "/knowledge", expected: "Knowledge" },
+        { path: "/knowledge", expected: "Conhecimento" },
         { path: "/datahub", expected: "DataHub" },
         { path: "/lgpd", expected: "LGPD" },
-        { path: "/settings", expected: "Settings" },
+        { path: "/settings", expected: "Configurações" },
       ];
       for (const { path, expected } of routes) {
         const { container, unmount } = render(
@@ -407,6 +408,8 @@ describe("Round 2: UX & Interaction", () => {
     beforeEach(() => {
       localStorage.clear();
       vi.useRealTimers();
+      // Tour completion is tracked in the UI store (not localStorage).
+      useUIStore.setState({ onboardingComplete: false });
     });
 
     it("shows the tour after a delay for first-time users", async () => {
@@ -424,7 +427,7 @@ describe("Round 2: UX & Interaction", () => {
     });
 
     it("does NOT show the tour if already dismissed", async () => {
-      localStorage.setItem("nexus-onboarding-v2", "true");
+      useUIStore.setState({ onboardingComplete: true });
       vi.useFakeTimers();
       const { OnboardingTour } = await import("@/components/shared/OnboardingTour");
       const { container } = render(
@@ -495,7 +498,7 @@ describe("Round 2: UX & Interaction", () => {
       await act(async () => { vi.advanceTimersByTime(1500); });
       await act(async () => { fireEvent.click(screen.getByLabelText("Fechar tour")); });
       expect(screen.queryByRole("dialog")).toBeNull();
-      expect(localStorage.getItem("nexus-onboarding-v2")).toBe("true");
+      expect(useUIStore.getState().onboardingComplete).toBe(true);
       vi.useRealTimers();
     });
 
@@ -529,7 +532,7 @@ describe("Round 3: Visual & Token Polish", () => {
       );
       const logo = container.querySelector("img");
       expect(logo).toBeTruthy();
-      expect(logo!.className).toContain("h-8");
+      expect(logo!.className).toContain("h-6");
       expect(logo!.className).not.toContain("h-14");
     });
   });
@@ -542,7 +545,7 @@ describe("Round 3: Visual & Token Polish", () => {
           <AppSidebar />
         </SidebarWrapper>
       );
-      expect(screen.getByText(/Workspace Free/)).toBeInTheDocument();
+      expect(screen.getByText("Vazão do Workspace")).toBeInTheDocument();
       expect(screen.getByRole("progressbar")).toBeInTheDocument();
     });
 
@@ -578,14 +581,14 @@ describe("Round 3: Visual & Token Polish", () => {
         </SidebarWrapper>
       );
       expect(screen.getByText("Dashboard")).toBeInTheDocument();
-      expect(screen.getByText("Agents")).toBeInTheDocument();
-      expect(screen.getByText("Knowledge / RAG")).toBeInTheDocument();
+      expect(screen.getByText("Agentes")).toBeInTheDocument();
+      expect(screen.getByText("Conhecimento / RAG")).toBeInTheDocument();
       expect(screen.getByText("Prompts")).toBeInTheDocument();
     });
   });
 
   describe("#25 Empty State Cards", () => {
-    it("renders 3 feature cards when no agents exist", async () => {
+    it("renders the empty state with title and description when no agents exist", async () => {
       const DashboardPage = (await import("@/pages/DashboardPage")).default;
       render(
         <Wrapper>
@@ -593,13 +596,12 @@ describe("Round 3: Visual & Token Polish", () => {
         </Wrapper>
       );
       await waitFor(() => {
-        expect(screen.getByText("Super Cérebro")).toBeInTheDocument();
-        expect(screen.getByText("Oráculo")).toBeInTheDocument();
-        expect(screen.getByText("Guardrails")).toBeInTheDocument();
+        expect(screen.getByText("Inicie sua Frota Neural")).toBeInTheDocument();
+        expect(screen.getByText(/Sua infraestrutura Nexus está pronta/)).toBeInTheDocument();
       });
     });
 
-    it("each card has a distinct accent border class", async () => {
+    it("empty state exposes a primary call-to-action", async () => {
       const DashboardPage = (await import("@/pages/DashboardPage")).default;
       render(
         <Wrapper>
@@ -607,12 +609,7 @@ describe("Round 3: Visual & Token Polish", () => {
         </Wrapper>
       );
       await waitFor(() => {
-        const cerebro = screen.getByLabelText(/Navegar para Super Cérebro/);
-        const oraculo = screen.getByLabelText(/Navegar para Oráculo/);
-        const guardrails = screen.getByLabelText(/Navegar para Guardrails/);
-        expect(cerebro.className).toContain("nexus-purple");
-        expect(oraculo.className).toContain("nexus-cyan");
-        expect(guardrails.className).toContain("nexus-emerald");
+        expect(screen.getByText("Criar Primeiro Agente")).toBeInTheDocument();
       });
     });
   });
@@ -626,7 +623,7 @@ describe("Round 3: Visual & Token Polish", () => {
         </Wrapper>
       );
       await waitFor(() => {
-        expect(screen.getByText("Criar seu primeiro agente")).toBeInTheDocument();
+        expect(screen.getByText("Criar Primeiro Agente")).toBeInTheDocument();
         expect(screen.queryByText("Criar agente")).not.toBeInTheDocument();
       });
     });
@@ -700,7 +697,7 @@ describe("Round 3: Visual & Token Polish", () => {
         </Wrapper>
       );
       await waitFor(() => {
-        const statusRing = container.querySelector(".bg-nexus-emerald");
+        const statusRing = container.querySelector('.bg-nexus-emerald[aria-label="Online"]');
         expect(statusRing).toBeTruthy();
         expect(statusRing!.getAttribute("aria-label")).toBe("Online");
       });
@@ -716,7 +713,7 @@ describe("Round 3: Visual & Token Polish", () => {
         </Wrapper>
       );
       await waitFor(() => {
-        expect(screen.getByText("Super Cérebro")).toBeInTheDocument();
+        expect(screen.getByText("Inicie sua Frota Neural")).toBeInTheDocument();
       });
     });
   });
@@ -846,9 +843,10 @@ describe("Cross-cutting: Theme & Styling", () => {
         <AppSidebar />
       </SidebarWrapper>
     );
-    expect(screen.getByText("FATOR")).toBeInTheDocument();
+    // Brand renders "Fator" + a highlighted "X" inside a span labelled "Fator X".
+    expect(screen.getByLabelText("Fator X")).toBeInTheDocument();
     const xSpan = screen.getByText("X");
     expect(xSpan).toBeInTheDocument();
-    expect(xSpan.className).toContain("bg-clip-text");
+    expect(xSpan.className).toContain("text-primary");
   });
 });

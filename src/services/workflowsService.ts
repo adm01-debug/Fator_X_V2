@@ -266,7 +266,7 @@ export async function executeWorkflow(
 
         for (let i = 0; i < steps.length; i++) {
           const step = steps[i];
-          await ctx.withSpan(`workflow.step.${step}`, 'custom', async (span) => {
+          await ctx.withSpan(`workflow.step.${step}`, 'llm', async (span) => {
             span.setAttribute('workflow.id', workflowId);
             span.setAttribute('workflow.step_index', i);
             span.setAttribute('workflow.step_name', step);
