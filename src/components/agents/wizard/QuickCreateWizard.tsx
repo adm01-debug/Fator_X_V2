@@ -111,7 +111,7 @@ function countPromptWords(text: string): number {
   // boilerplate the user pasted in.
   const stripped = text
     .replace(/```[\s\S]*?```/g, ' ')
-    .replace(/[`*_~#>\-]/g, ' ');
+    .replace(/[`*_~#>-]/g, ' ');
   const matches = stripped.trim().match(/\S+/g);
   return matches ? matches.length : 0;
 }
@@ -163,6 +163,10 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
   const { user } = useAuth();
   // Hidratação síncrona dos params rf_* — calculada UMA VEZ antes do
   // primeiro render para evitar flicker entre "vazio → destacado".
+  // Lê os params rf_* uma única vez na montagem para hidratar o estado inicial
+  // sem flicker. Intencionalmente NÃO depende de `searchParams`: mudanças
+  // posteriores na URL não devem recalcular o estado inicial.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const initialDeeplink = useMemo(() => parseDeeplinkParams(searchParams), []);
   const [step, setStep] = useState(initialDeeplink.valid ? initialDeeplink.stepIdx : 0);
   const [saving, setSaving] = useState(false);
@@ -262,7 +266,6 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
   // Deeplink rf_*: a hidratação do estado já foi feita SÍNCRONA via lazy
   // initializers acima (sem flicker). Aqui só limpamos params inválidos da
   // URL para não confundir o usuário em recargas futuras.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const rfField = searchParams.get('rf_field');
     if (rfField && !RF_VALID_FIELDS.includes(rfField as keyof QuickAgentForm)) {
@@ -270,7 +273,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
       ['rf_field', 'rf_step', 'rf_type', 'rf_msg', 'rf_focus'].forEach((k) => next.delete(k));
       setSearchParams(next, { replace: true });
     }
-  }, []);
+  }, [searchParams, setSearchParams]);
 
   // Gera URL atual + params rf_* e copia para o clipboard. Botão "Copiar link"
   // do RestoreFeedbackBanner: permite compartilhar um link que já abre o wizard
@@ -336,8 +339,8 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
   // Auto-focus no mount quando o deeplink veio com rf_focus=1.
   // Usa o mesmo caminho do "Corrigir agora" (rAF duplo + scroll + foco) para
   // garantir que o input já esteja montado quando .focus() for chamado.
-  // Roda apenas uma vez — `initialDeeplink` é estável (useMemo sem deps).
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // Roda apenas uma vez — `initialDeeplink` é estável (useMemo sem deps) e o
+  // efeito remove rf_focus da URL ao final; re-executar re-roubaria o foco.
   useEffect(() => {
     if (!initialDeeplink.valid || !initialDeeplink.autoFocus || !initialDeeplink.field) return;
     const inputId = FIELD_INPUT_ID[initialDeeplink.field];
@@ -360,6 +363,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
     const next = new URLSearchParams(searchParams);
     next.delete('rf_focus');
     setSearchParams(next, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // On mount: load store, filter recoverable drafts.
@@ -387,7 +391,6 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
     } else {
       setPendingDrafts(recoverable);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Auto-save current form into the active draft (after user resolved any pending recovery).

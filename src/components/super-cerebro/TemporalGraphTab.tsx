@@ -80,7 +80,7 @@ export function TemporalGraphTab() {
         const enhanced = await invokeCerebroBrain({ action: 'temporal_graph' });
         const legacy = await getTemporalSnapshot(window);
         return { ...legacy, relations: enhanced?.relations || [] };
-      } catch (e) {
+      } catch {
         return getTemporalSnapshot(window);
       }
     },
@@ -102,7 +102,7 @@ export function TemporalGraphTab() {
           }));
         }
         return listRecentMemoryEvents(30);
-      } catch (e) {
+      } catch {
         return listRecentMemoryEvents(30);
       }
     },

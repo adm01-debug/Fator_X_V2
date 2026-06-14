@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 
 interface Action {
   type: string;
-  params?: Record<string, any>;
+  params?: Record<string, unknown>;
   ts: string;
   status: "ok" | "pending" | "error";
   thought?: string;

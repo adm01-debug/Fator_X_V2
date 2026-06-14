@@ -293,11 +293,18 @@ export async function getExecutionStats(
     .gte('started_at', since.toISOString());
   if (error) throw error;
 
-  const items = data ?? [];
-  const success = items.filter((i: any) => i.status === 'success');
-  const failed = items.filter((i: any) => i.status === 'failed');
-  const running = items.filter((i: any) => i.status === 'running');
-  const durations = items.map((i: any) => i.duration_ms).filter((d: any): d is number => d !== null);
+  type StatsRow = {
+    status: ExecutionStatus;
+    execution_type: ExecutionType;
+    duration_ms: number | null;
+    tokens_used: number | null;
+    cost_brl: number | null;
+  };
+  const items = (data ?? []) as StatsRow[];
+  const success = items.filter((i) => i.status === 'success');
+  const failed = items.filter((i) => i.status === 'failed');
+  const running = items.filter((i) => i.status === 'running');
+  const durations = items.map((i) => i.duration_ms).filter((d): d is number => d !== null);
   const byType = {} as Record<ExecutionType, number>;
 
   for (const item of items) {
@@ -312,8 +319,8 @@ export async function getExecutionStats(
     running: running.length,
     success_rate: items.length > 0 ? (success.length / items.length) * 100 : 0,
     avg_duration_ms: durations.length > 0 ? durations.reduce((a, b) => a + b, 0) / durations.length : 0,
-    total_tokens: items.reduce((s: number, i: any) => s + (i.tokens_used ?? 0), 0),
-    total_cost_brl: items.reduce((s: number, i: any) => s + (i.cost_brl ?? 0), 0),
+    total_tokens: items.reduce((s: number, i) => s + (i.tokens_used ?? 0), 0),
+    total_cost_brl: items.reduce((s: number, i) => s + (i.cost_brl ?? 0), 0),
     by_type: byType,
   };
 }

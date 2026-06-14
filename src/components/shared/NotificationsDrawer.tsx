@@ -48,7 +48,7 @@ export function NotificationsDrawer() {
         .in('level', ['warning', 'error', 'critical'])
         .order('created_at', { ascending: false })
         .limit(20);
-      const traceNotifs = (traces ?? []).map((a: any) => ({
+      const traceNotifs = (traces ?? []).map((a: { id: string; event: string; level: string | null; created_at: string }) => ({
         id: a.id,
         type: 'trace' as const,
         title: a.event,
@@ -63,7 +63,7 @@ export function NotificationsDrawer() {
         .eq('is_resolved', false)
         .order('created_at', { ascending: false })
         .limit(20);
-      const alertNotifs: Notification[] = (alerts ?? []).map((a: any) => ({
+      const alertNotifs: Notification[] = (alerts ?? []).map((a: { id: string; title: string; message: string | null; severity: string | null; created_at: string | null }) => ({
         id: `alert-${a.id}`,
         type: 'trace' as const,
         title: a.title,
@@ -89,7 +89,7 @@ export function NotificationsDrawer() {
           table: 'agent_traces',
           filter: 'level=in.(error,critical,warning)',
         },
-        (payload: any) => {
+        (payload: { new: Record<string, unknown> }) => {
           const row = payload.new as Record<string, unknown>;
           const notif: Notification = {
             id: String(row.id ?? ''),
@@ -120,7 +120,7 @@ export function NotificationsDrawer() {
       .on(
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'agents' },
-        (payload: any) => {
+        (payload: { new: Record<string, unknown>; old: Record<string, unknown> }) => {
           const row = payload.new as Record<string, unknown>;
           const old = payload.old as Record<string, unknown>;
           if (old.status && row.status && old.status !== row.status) {
@@ -158,7 +158,7 @@ export function NotificationsDrawer() {
       .on(
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'evaluation_runs' },
-        (payload: any) => {
+        (payload: { new: Record<string, unknown>; old: Record<string, unknown> }) => {
           const row = payload.new as Record<string, unknown>;
           const old = payload.old as Record<string, unknown>;
           if (old.status !== 'completed' && row.status === 'completed') {
@@ -180,7 +180,7 @@ export function NotificationsDrawer() {
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'evaluation_runs' },
-        (payload: any) => {
+        (payload: { new: Record<string, unknown> }) => {
           const row = payload.new as Record<string, unknown>;
           if (row.status === 'completed') {
             const notif: Notification = {

@@ -46,7 +46,7 @@ export default function PromptEditorPage() {
     enabled: !!agentId,
   });
 
-  const activeVersion = versions.find((v: any) => v.is_active) || versions[0];
+  const activeVersion = versions.find((v) => v.is_active) || versions[0];
 
   const [content, setContent] = useState("");
   const [summary, setSummary] = useState("");
@@ -131,7 +131,7 @@ export default function PromptEditorPage() {
   const score = computeScore(content);
   const scoreItems = Object.entries(score);
   const scorePercent = Math.round((scoreItems.filter(([, v]) => v).length / scoreItems.length) * 100);
-  const diffVersion = versions.find((v: any) => v.id === diffVersionId);
+  const diffVersion = versions.find((v) => v.id === diffVersionId);
 
   // Telemetry data simulation
   /* Telemetry data simulation */
@@ -295,14 +295,22 @@ export default function PromptEditorPage() {
               </div>
               <ScrollArea className="h-[600px]">
                 <div className="divide-y divide-border/10">
-                  {versions.map((v: any) => (
+                  {versions.map((v) => (
                     <div key={v.id}
+                      role="button"
+                      tabIndex={0}
                       className={cn(
                         "p-5 cursor-pointer transition-all hover:bg-primary/[0.02]",
                         diffVersionId === v.id && "bg-primary/5",
                         v.is_active && "border-l-4 border-primary"
                       )}
                       onClick={() => setDiffVersionId(diffVersionId === v.id ? null : v.id)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          setDiffVersionId(diffVersionId === v.id ? null : v.id);
+                        }
+                      }}
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-center gap-3">
@@ -368,7 +376,7 @@ export default function PromptEditorPage() {
                   <div className="flex-1 p-6 rounded-3xl bg-secondary/20 border border-border/10 font-mono text-[13px] leading-relaxed overflow-auto max-h-[500px] scrollbar-thin">
                     {(() => {
                       const diffs = diffLines(activeVersion?.content || '', diffVersion.content);
-                      return diffs.map((d: any, idx: number) => (
+                      return diffs.map((d, idx: number) => (
                         <div key={idx} className={cn(
                           "px-2 py-0.5 rounded",
                           d.added && "bg-nexus-emerald/10 text-nexus-emerald border-l-2 border-nexus-emerald",

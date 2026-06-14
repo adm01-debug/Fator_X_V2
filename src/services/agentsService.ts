@@ -243,9 +243,9 @@ export async function createAgentVersion(input: CreateAgentVersionInput): Promis
     .update({
       version: nextVersion,
       model: input.model,
-      persona: input.persona as any,
+      persona: input.persona,
       mission: input.mission,
-      config: input.config as any,
+      config: input.config as Record<string, unknown>,
     })
     .eq('id', input.agentId);
   if (syncErr) {
@@ -397,7 +397,7 @@ export async function getAgentVersions(agentId: string, limit = 20): Promise<Age
 export interface AgentSummary { id: string; name: string }
 
 export async function listAgentSummaries(limit?: number, offset = 0): Promise<{ agents: AgentSummary[], total: number }> {
-  let query = supabaseExternal
+  const query = supabaseExternal
     .from('agents')
     .select('id, name', { count: 'exact' })
     .order('updated_at', { ascending: false })

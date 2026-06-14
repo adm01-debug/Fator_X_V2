@@ -84,9 +84,9 @@ export function BulkEditDialog({
         {step === 'select' ? (
           <div className="space-y-4 py-2">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">Campo a alterar</label>
+              <label htmlFor="bulk-edit-field" className="text-sm font-medium text-foreground">Campo a alterar</label>
               <Select value={field} onValueChange={setField}>
-                <SelectTrigger><SelectValue placeholder="Selecione o campo..." /></SelectTrigger>
+                <SelectTrigger id="bulk-edit-field"><SelectValue placeholder="Selecione o campo..." /></SelectTrigger>
                 <SelectContent>
                   {editableColumns.map(c => (
                     <SelectItem key={c.key} value={c.key}>{c.label}</SelectItem>
@@ -97,10 +97,10 @@ export function BulkEditDialog({
 
             {field && (
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Novo valor</label>
+                <label htmlFor="bulk-edit-value" className="text-sm font-medium text-foreground">Novo valor</label>
                 {selectedCol?.format === 'boolean' ? (
                   <Select value={value} onValueChange={setValue}>
-                    <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
+                    <SelectTrigger id="bulk-edit-value"><SelectValue placeholder="Selecione..." /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="true">Sim (true)</SelectItem>
                       <SelectItem value="false">Não (false)</SelectItem>
@@ -108,6 +108,7 @@ export function BulkEditDialog({
                   </Select>
                 ) : (
                   <Input
+                    id="bulk-edit-value"
                     placeholder="Novo valor..."
                     value={value}
                     onChange={e => setValue(e.target.value)}

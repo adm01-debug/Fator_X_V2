@@ -605,6 +605,9 @@ const TraceItem = forwardRef<HTMLLIElement, TraceItemProps>(
           dim && 'opacity-40 hover:opacity-90',
         )}
         onClick={handleClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(); }
+        }}
       >
         {/* Marker rail: a thin amber notch to make bookmarks scannable. */}
         {isBookmarked && (
@@ -667,7 +670,12 @@ const TraceItem = forwardRef<HTMLLIElement, TraceItemProps>(
         )}
 
         {open && (
-          <div className="mt-2 ml-6 space-y-2" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="mt-2 ml-6 space-y-2"
+            role="presentation"
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+          >
             {isBookmarked && bookmark.note && (
               <div className="rounded border border-nexus-amber/30 bg-nexus-amber/10 p-2 text-[11px] text-foreground flex items-start gap-1.5">
                 <BookmarkCheck className="h-3 w-3 text-nexus-amber mt-0.5 shrink-0" />
