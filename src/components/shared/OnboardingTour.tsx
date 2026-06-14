@@ -105,12 +105,22 @@ export function OnboardingTour() {
 
   return (
     <div
+      role="button"
+      tabIndex={0}
+      aria-label="Fechar tour"
       className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-4"
-      onClick={dismiss}
+      onClick={(e) => { if (e.target === e.currentTarget) dismiss(); }}
+      onKeyDown={(e) => {
+        if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault();
+          dismiss();
+        }
+      }}
     >
+      {/* Dismiss only fires when the backdrop itself is clicked (target === currentTarget),
+          so the panel no longer needs propagation-stopping handlers. */}
       <div
         className="w-full max-w-md rounded-2xl border border-primary/20 bg-background/95 backdrop-blur-xl shadow-2xl shadow-primary/10 overflow-hidden animate-fade-in-up"
-        onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-label="Tour de boas-vindas"
         aria-describedby="tour-description"

@@ -41,10 +41,9 @@ export function CitationRenderer({ text, citations }: CitationRendererProps) {
             const citation = citations.find(c => c.index === idx);
             if (!citation) return <sup key={i} className="text-muted-foreground text-[11px]">[{idx}]</sup>;
             return (
-              <sup key={i}
-                role="button"
-                tabIndex={0}
-                className="inline-flex items-center cursor-pointer"
+              <button key={i}
+                type="button"
+                className="inline-flex items-center align-super cursor-pointer bg-transparent border-0 p-0"
                 onClick={() => setExpandedCitation(expandedCitation === idx ? null : idx)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
@@ -56,7 +55,7 @@ export function CitationRenderer({ text, citations }: CitationRendererProps) {
                 <Badge variant="outline" className="text-[11px] h-4 px-1 ml-0.5 hover:bg-primary/10 transition-colors">
                   {idx}
                 </Badge>
-              </sup>
+              </button>
             );
           }
           return <span key={i}>{part}</span>;
