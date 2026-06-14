@@ -42,8 +42,16 @@ export function CitationRenderer({ text, citations }: CitationRendererProps) {
             if (!citation) return <sup key={i} className="text-muted-foreground text-[11px]">[{idx}]</sup>;
             return (
               <sup key={i}
+                role="button"
+                tabIndex={0}
                 className="inline-flex items-center cursor-pointer"
                 onClick={() => setExpandedCitation(expandedCitation === idx ? null : idx)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setExpandedCitation(expandedCitation === idx ? null : idx);
+                  }
+                }}
               >
                 <Badge variant="outline" className="text-[11px] h-4 px-1 ml-0.5 hover:bg-primary/10 transition-colors">
                   {idx}

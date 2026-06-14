@@ -23,7 +23,7 @@ export function SandboxExecuteTab({
     <Card className="bg-card border-border">
       <CardContent className="pt-4 space-y-3">
         <div className="flex items-center gap-2">
-          <label className="text-xs text-muted-foreground">Linguagem:</label>
+          <span className="text-xs text-muted-foreground">Linguagem:</span>
           <div className="flex gap-1">
             {config.allowedLanguages.map((lang) => (
               <Badge
