@@ -171,7 +171,7 @@ export function BlueprintModule() {
           <VersionDiffDialog
             open={historyOpen}
             onOpenChange={setHistoryOpen}
-            versions={versions as any}
+            versions={versions}
             agentId={agent.id as string | undefined}
           />
         </>

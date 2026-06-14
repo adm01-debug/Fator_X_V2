@@ -67,7 +67,7 @@ export async function getSecurityEvents(options?: { severity?: string; limit?: n
       .limit(options?.limit || 50);
 
     if (error) throw error;
-    return (data ?? []).map((entry: any) => ({
+    return (data ?? []).map((entry: Record<string, unknown>) => ({
       ...entry,
       severity: 'info',
       event_type: entry.action,
@@ -109,7 +109,7 @@ export async function resolveSecurityAlert(id: string) {
 
 export async function getAuditLog(options?: { userId?: string; limit?: number }) {
   try {
-    let query = (supabaseExternal as any)
+    let query = (supabaseExternal as unknown as typeof fromTable extends never ? never : ReturnType<typeof supabaseExternal.from>)
       .from('audit_log_safe')
       .select('*')
       .order('created_at', { ascending: false })

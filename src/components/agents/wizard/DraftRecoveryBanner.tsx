@@ -100,7 +100,11 @@ function NameLabelOrEditor({ draft, isEditing, onStartEdit, onCancel, onConfirm 
 
   if (isEditing) {
     return (
-      <div className="flex flex-col gap-1 flex-1 min-w-0" onClick={(e) => e.stopPropagation()}>
+      <div
+        role="presentation"
+        className="flex flex-col gap-1 flex-1 min-w-0"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex items-center gap-1.5">
           <Input
             ref={inputRef}

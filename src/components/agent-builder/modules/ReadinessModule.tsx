@@ -5,14 +5,16 @@ import { ExternalLink } from 'lucide-react';
 import { NexusRadarChart } from '../ui/NexusRadarChart';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import { LIFECYCLE_STAGES } from '@/data/agentBuilderData';
-import type { ReadinessScore, ReadinessItem } from '@/types/agentTypes';
+import type { AgentConfig, ReadinessScore, ReadinessItem } from '@/types/agentTypes';
+
+type ReadinessCategory = { score: number; max: number; items: ReadinessItem[] };
 
 interface DetailedReadinessScore extends Omit<ReadinessScore, 'recommendations'> {
   recommendations: { label: string; tabId: string }[];
 }
 
-function computeReadiness(agent: any): DetailedReadinessScore {
-  const categories: any = {};
+function computeReadiness(agent: AgentConfig): DetailedReadinessScore {
+  const categories: Record<string, ReadinessCategory> = {};
   const blockers: string[] = [];
   const recommendations: { label: string; tabId: string }[] = [];
 
@@ -58,7 +60,7 @@ function computeReadiness(agent: any): DetailedReadinessScore {
   categories.rag = { score: ragItems.filter(i => i.passed).reduce((s, i) => s + i.weight, 0), max: 12, items: ragItems };
 
   // Tools (max 8)
-  const activeTools = (agent.tools || []).filter((t: any) => t.enabled);
+  const activeTools = (agent.tools || []).filter((t) => t.enabled);
   const toolsItems: ReadinessItem[] = [
     { label: '≥3 ferramentas ativas', passed: activeTools.length >= 3, weight: 3, is_blocker: false },
     { label: 'Governança configurada', passed: activeTools.length > 0, weight: 3, is_blocker: false },

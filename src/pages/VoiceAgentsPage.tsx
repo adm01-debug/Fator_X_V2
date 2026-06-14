@@ -32,8 +32,9 @@ export default function VoiceAgentsPage() {
   const audioCtxRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
-    listAgentSummaries(50).then(data => setAgents((data as any).agents || [])).catch(() => {});
+    listAgentSummaries(50).then(data => setAgents((data as { agents?: { id: string; name: string }[] }).agents || [])).catch(() => {});
     refreshHistory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const refreshHistory = useCallback(() => {
@@ -53,8 +54,8 @@ export default function VoiceAgentsPage() {
       setState("speaking");
       await speakText(reply);
       setState("listening");
-    } catch (e: any) {
-      toast.error(e?.message || "Erro no turno");
+    } catch (e: unknown) {
+      toast.error((e as { message?: string })?.message || "Erro no turno");
       setState("listening");
     }
   }, [agentId]);
@@ -117,8 +118,8 @@ export default function VoiceAgentsPage() {
       setState("listening");
       setupVAD(mediaStream, sess);
       toast.success("Conversa iniciada — fale naturalmente");
-    } catch (e: any) {
-      toast.error(e?.message || "Erro ao iniciar");
+    } catch (e: unknown) {
+      toast.error((e as { message?: string })?.message || "Erro ao iniciar");
     }
   };
 
@@ -135,8 +136,8 @@ export default function VoiceAgentsPage() {
       setState("idle");
       refreshHistory();
       toast.success("Sessão encerrada");
-    } catch (e: any) {
-      toast.error(e?.message || "Erro ao encerrar");
+    } catch (e: unknown) {
+      toast.error((e as { message?: string })?.message || "Erro ao encerrar");
     }
   };
 

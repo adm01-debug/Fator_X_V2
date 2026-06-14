@@ -13,7 +13,7 @@ interface BarSeries {
 }
 
 interface Props {
-  data: Record<string, any>[];
+  data: Record<string, unknown>[];
   xKey: string;
   series: BarSeries[];
   height?: number;
@@ -23,7 +23,7 @@ interface Props {
   showLegend?: boolean;
   showGrid?: boolean;
   /** Optional click handler on a bar/group. Receives the datum and its index. */
-  onBarClick?: (datum: Record<string, any>, index: number) => void;
+  onBarClick?: (datum: Record<string, unknown>, index: number) => void;
 }
 
 function niceMax(v: number) {
@@ -70,7 +70,6 @@ export function LightBarChart({
       const ym = niceMax(maxVal * 1.1);
       return { yMax: ym, ticks: [0, ym * 0.25, ym * 0.5, ym * 0.75, ym], isStacked: false };
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, series]);
 
   if (!width || inner.width <= 0 || inner.height <= 0) {
@@ -206,7 +205,7 @@ export function LightBarChart({
                 className="fill-muted-foreground"
                 style={{ fontSize: 10 }}
               >
-                {d[xKey]}
+                {String(d[xKey] ?? '')}
               </text>
             );
           })}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ShieldAlert, ShieldCheck, CheckCircle, Loader2, Bell, Clock, Filter } from "lucide-react";
 import { supabaseExternal } from "@/integrations/supabase/externalClient";
 import { Badge } from "@/components/ui/badge";
@@ -8,13 +8,14 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { logger } from "@/lib/logger";
 
 interface SecurityAlert {
   id: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
   category: string;
   message: string;
-  metadata: any;
+  metadata: Record<string, unknown>;
   is_resolved: boolean;
   created_at: string;
 }
@@ -24,44 +25,52 @@ export function SecurityMonitoringPanel() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'unresolved'>('unresolved');
 
-  useEffect(() => {
-    loadAlerts();
-    
-    // Subscribe to new alerts
-    const channel = (supabaseExternal as any)
-      .channel('security_alerts_changes')
-      .on('postgres_changes', { event: 'INSERT', table: 'security_alerts' }, (payload: any) => {
-        setAlerts(prev => [payload.new as SecurityAlert, ...prev]);
-        toast.error(`Alerta de Segurança: ${payload.new.message}`);
-      })
-      .subscribe();
-
-    return () => {
-      supabaseExternal.removeChannel(channel);
-    };
-  }, []);
-
-  async function loadAlerts() {
+  const loadAlerts = useCallback(async () => {
     setLoading(true);
     try {
       let query = supabaseExternal
         .from('security_alerts')
         .select('*')
         .order('created_at', { ascending: false });
-      
+
       if (filter === 'unresolved') {
         query = query.eq('is_resolved', false);
       }
 
       const { data, error } = await query;
       if (error) throw error;
-      setAlerts((data || []) as any as SecurityAlert[]);
+      setAlerts((data || []) as unknown as SecurityAlert[]);
     } catch (err) {
-      console.error('Failed to load alerts', err);
+      logger.error('Failed to load alerts', err);
     } finally {
       setLoading(false);
     }
-  }
+  }, [filter]);
+
+  useEffect(() => {
+    loadAlerts();
+
+    // Subscribe to new alerts
+    const channel = (supabaseExternal as unknown as {
+      channel: (name: string) => {
+        on: (
+          event: string,
+          filter: { event: string; table: string },
+          cb: (payload: { new: SecurityAlert }) => void,
+        ) => { subscribe: () => unknown };
+      };
+    })
+      .channel('security_alerts_changes')
+      .on('postgres_changes', { event: 'INSERT', table: 'security_alerts' }, (payload) => {
+        setAlerts(prev => [payload.new, ...prev]);
+        toast.error(`Alerta de Segurança: ${payload.new.message}`);
+      })
+      .subscribe();
+
+    return () => {
+      supabaseExternal.removeChannel(channel as Parameters<typeof supabaseExternal.removeChannel>[0]);
+    };
+  }, [loadAlerts]);
 
   async function resolveAlert(id: string) {
     try {
@@ -73,7 +82,7 @@ export function SecurityMonitoringPanel() {
       if (error) throw error;
       setAlerts(prev => prev.filter(a => a.id !== id));
       toast.success('Alerta resolvido');
-    } catch (err) {
+    } catch {
       toast.error('Falha ao resolver alerta');
     }
   }
@@ -98,7 +107,7 @@ export function SecurityMonitoringPanel() {
             <CardDescription>Alertas em tempo real sobre RLS e RBAC</CardDescription>
           </div>
           <div className="flex items-center gap-2">
-            <Tabs value={filter} onValueChange={(v) => { setFilter(v as any); loadAlerts(); }} className="w-auto">
+            <Tabs value={filter} onValueChange={(v) => { setFilter(v as 'all' | 'unresolved'); loadAlerts(); }} className="w-auto">
               <TabsList className="h-8 p-1 bg-secondary/50">
                 <TabsTrigger value="unresolved" className="text-[10px] px-3 h-6">Pendentes</TabsTrigger>
                 <TabsTrigger value="all" className="text-[10px] px-3 h-6">Todos</TabsTrigger>
@@ -173,6 +182,6 @@ export function SecurityMonitoringPanel() {
   );
 }
 
-function cn(...inputs: any[]) {
+function cn(...inputs: unknown[]) {
   return inputs.filter(Boolean).join(' ');
 }

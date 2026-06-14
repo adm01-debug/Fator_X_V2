@@ -291,7 +291,12 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
           copyTools: entry.meta.options.copyTools,
           copyModel: entry.meta.options.copyModel,
           customSummary: `Desfazer rollback v${entry.versionNumber} → restaurado de v${preRollback.version}`,
-          configOverrides: entry.meta.config_overrides as any,
+          configOverrides: (entry.meta.config_overrides ?? undefined) as Partial<{
+            temperature: number | null;
+            max_tokens: number | null;
+            reasoning: string | null;
+            tools: unknown[] | null;
+          }> | undefined,
           modelOverride: entry.meta.model_override
         },
       );
@@ -430,7 +435,12 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
               {/* Resumo curto das opções (sempre presente, complementa os badges) */}
               <p className="text-[10px] text-muted-foreground italic mb-1.5">
                 {summarizeRestoreOptions(entry.meta.options, {
-                  config: entry.meta.config_overrides as any,
+                  config: (entry.meta.config_overrides ?? undefined) as Partial<{
+                    temperature: number | null;
+                    max_tokens: number | null;
+                    reasoning: string | null;
+                    tools: unknown[] | null;
+                  }> | undefined,
                   model: entry.meta.model_override
                 })}
               </p>

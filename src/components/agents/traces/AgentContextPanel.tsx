@@ -78,7 +78,7 @@ export function AgentContextPanel({ agentId, executions, loading }: Props) {
   const observed = useMemo(() => {
     let cost = 0;
     let tokens = 0;
-    let runs = executions.length;
+    const runs = executions.length;
     for (const e of executions) {
       cost += e.total_cost;
       tokens += e.total_tokens;

@@ -252,8 +252,9 @@ export function RAGModule() {
               <div className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-medium text-foreground">Nome</label>
+                    <label htmlFor={`rag-source-name-${source.id}`} className="text-xs font-medium text-foreground">Nome</label>
                     <input
+                      id={`rag-source-name-${source.id}`}
                       className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-sm text-foreground"
                       value={source.name}
                       onChange={(e) => updateSource(source.id, { name: e.target.value })}
@@ -268,8 +269,9 @@ export function RAGModule() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-foreground">Localização / URL</label>
+                  <label htmlFor={`rag-source-location-${source.id}`} className="text-xs font-medium text-foreground">Localização / URL</label>
                   <input
+                    id={`rag-source-location-${source.id}`}
                     className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-sm text-foreground"
                     value={source.location}
                     onChange={(e) => updateSource(source.id, { location: e.target.value })}

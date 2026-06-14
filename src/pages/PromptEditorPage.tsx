@@ -60,6 +60,9 @@ export default function PromptEditorPage() {
       setSummary("");
       setDirty(false);
     }
+    // Intentionally only re-run when the active version id changes; depending on the
+    // full activeVersion object would reset local edits on unrelated field updates.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeVersion?.id]);
 
   const handleContentChange = (val: string) => {

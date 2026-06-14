@@ -155,9 +155,10 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
               Entre dois checkpoints (v{minVersion}–v{maxVersion})
             </p>
             <div className="grid grid-cols-2 gap-2">
-              <label className="text-[11px] text-muted-foreground space-y-1">
+              <label htmlFor="range-vmin" className="text-[11px] text-muted-foreground space-y-1">
                 <span>De (vMin)</span>
                 <Input
+                  id="range-vmin"
                   type="number"
                   inputMode="numeric"
                   min={minVersion}
@@ -167,9 +168,10 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
                   onChange={(e) => onChange({ ...range, mode: 'version', vMin: Number(e.target.value) || minVersion })}
                 />
               </label>
-              <label className="text-[11px] text-muted-foreground space-y-1">
+              <label htmlFor="range-vmax" className="text-[11px] text-muted-foreground space-y-1">
                 <span>Até (vMax)</span>
                 <Input
+                  id="range-vmax"
                   type="number"
                   inputMode="numeric"
                   min={minVersion}
@@ -216,18 +218,20 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
               Janela absoluta
             </p>
             <div className="grid grid-cols-2 gap-2">
-              <label className="text-[11px] text-muted-foreground space-y-1">
+              <label htmlFor="range-from" className="text-[11px] text-muted-foreground space-y-1">
                 <span>De</span>
                 <Input
+                  id="range-from"
                   type="datetime-local"
                   className="h-7 text-xs"
                   value={range.fromIso ? toLocalInput(range.fromIso) : ''}
                   onChange={(e) => onChange({ mode: 'time', lastMinutes: undefined, fromIso: fromLocalInput(e.target.value), toIso: range.toIso })}
                 />
               </label>
-              <label className="text-[11px] text-muted-foreground space-y-1">
+              <label htmlFor="range-to" className="text-[11px] text-muted-foreground space-y-1">
                 <span>Até</span>
                 <Input
+                  id="range-to"
                   type="datetime-local"
                   className="h-7 text-xs"
                   value={range.toIso ? toLocalInput(range.toIso) : ''}
@@ -268,6 +272,7 @@ function fromLocalInput(local: string): string | undefined {
 
 /* ---------- helpers de filtragem reutilizáveis ---------- */
 
+// eslint-disable-next-line react-refresh/only-export-components -- pure helper colocated with the filter UI
 export function filterByRange(versions: AgentVersion[], range: TimelineRange): AgentVersion[] {
   if (range.mode === 'off') return versions;
 
@@ -301,6 +306,7 @@ export function filterByRange(versions: AgentVersion[], range: TimelineRange): A
 }
 
 /** Serializa para a URL como `range=version:1-5` ou `range=time:60` ou `range=time:abs:from~to`. */
+// eslint-disable-next-line react-refresh/only-export-components -- pure helper colocated with the filter UI
 export function serializeRange(range: TimelineRange): string | null {
   if (range.mode === 'off') return null;
   if (range.mode === 'version') {
@@ -313,6 +319,7 @@ export function serializeRange(range: TimelineRange): string | null {
   return null;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- pure helper colocated with the filter UI
 export function parseRange(raw: string | null): TimelineRange {
   if (!raw) return { mode: 'off' };
   if (raw.startsWith('version:')) {
