@@ -49,6 +49,17 @@ function buildDailyMap(data: UsageRow[]) {
   return map;
 }
 
+interface ChartPoint {
+  date: string;
+  label: string;
+  requests: number;
+  tokensIn: number;
+  tokensOut: number;
+  cost: number;
+  latency: number;
+  errors: number;
+}
+
 export function UsageCharts({ data }: UsageChartsProps) {
   const navigate = useNavigate();
   const [compareRequests, setCompareRequests] = useState(false);
@@ -127,7 +138,7 @@ export function UsageCharts({ data }: UsageChartsProps) {
     );
   }
 
-  const handleDrilldown = (d: any) => {
+  const handleDrilldown = (d: ChartPoint) => {
     const from = new Date(d.date);
     from.setHours(0, 0, 0, 0);
     const to = new Date(d.date);
@@ -135,7 +146,7 @@ export function UsageCharts({ data }: UsageChartsProps) {
     navigate(`/traces?from=${from.toISOString()}&to=${to.toISOString()}`);
   };
 
-  const drilldownExtras = (d: any) => {
+  const drilldownExtras = (d: ChartPoint) => {
     const sections: TooltipExtraSection[] = [];
     if (d.requests > 0 || d.errors > 0 || d.cost > 0) {
       sections.push({

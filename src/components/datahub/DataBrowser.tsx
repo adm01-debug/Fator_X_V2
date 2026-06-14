@@ -37,6 +37,9 @@ const ENTITY_ICONS: Record<string, React.ElementType> = {
   produto: Package, colaborador: UserCheck, conversa_whatsapp: MessageCircle,
 };
 
+type DataRecord = Record<string, unknown> & { id: string };
+type EnrichedData = { enriched: Record<string, unknown[]>; cross_db: Record<string, unknown[]> };
+
 
 export function DataBrowser({ entityId, onClose }: { entityId: string; onClose: () => void }) {
   const mapping = ENTITY_MAPPINGS[entityId];
@@ -45,15 +48,15 @@ export function DataBrowser({ entityId, onClose }: { entityId: string; onClose: 
   ];
   const filterOptions = ENTITY_FILTER_OPTIONS[entityId] ?? [];
 
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<DataRecord[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState<number>(25);
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearch = useDebounce(searchTerm, 350);
   const [loading, setLoading] = useState(false);
-  const [selectedRecord, setSelectedRecord] = useState<any>(null);
-  const [enrichedData, setEnrichedData] = useState<any>(null);
+  const [selectedRecord, setSelectedRecord] = useState<DataRecord | null>(null);
+  const [enrichedData, setEnrichedData] = useState<EnrichedData | null>(null);
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [filters, setFilters] = useState<ActiveFilter[]>([]);
@@ -66,6 +69,8 @@ export function DataBrowser({ entityId, onClose }: { entityId: string; onClose: 
   const [bulkEditOpen, setBulkEditOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
+  const totalPages = Math.ceil(total / pageSize);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -90,8 +95,9 @@ export function DataBrowser({ entityId, onClose }: { entityId: string; onClose: 
       }
       const { data: result, error } = await supabaseExternal.functions.invoke('datahub-query', { body });
       if (error) throw error;
-      setData(result.data ?? []);
-      setTotal(result.total ?? 0);
+      const typed = result as { data?: DataRecord[]; total?: number };
+      setData(typed.data ?? []);
+      setTotal(typed.total ?? 0);
     } catch (e: unknown) {
       toast.error(`Erro ao buscar dados: ${e instanceof Error ? e.message : String(e)}`);
     } finally {
@@ -117,7 +123,7 @@ export function DataBrowser({ entityId, onClose }: { entityId: string; onClose: 
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [page, selectedRecord, onClose]);
+  }, [page, totalPages, selectedRecord, onClose]);
 
   const fetchRecord = async (recordId: string) => {
     try {
@@ -125,8 +131,9 @@ export function DataBrowser({ entityId, onClose }: { entityId: string; onClose: 
         body: { action: 'query_entity', entity: entityId, record_id: recordId },
       });
       if (error) throw error;
-      setSelectedRecord(result.record);
-      setEnrichedData({ enriched: result.enriched, cross_db: result.cross_db });
+      const typed = result as { record: DataRecord; enriched: Record<string, unknown[]>; cross_db: Record<string, unknown[]> };
+      setSelectedRecord(typed.record);
+      setEnrichedData({ enriched: typed.enriched, cross_db: typed.cross_db });
     } catch (e: unknown) {
       toast.error(`Erro: ${e instanceof Error ? e.message : String(e)}`);
     }
@@ -218,8 +225,6 @@ export function DataBrowser({ entityId, onClose }: { entityId: string; onClose: 
   };
 
   const selectedRecords = data.filter(r => selectedIds.has(r.id));
-
-  const totalPages = Math.ceil(total / pageSize);
   const Icon = ENTITY_ICONS[entityId] ?? Database;
   const displayCol = mapping?.primary.display_column ?? 'id';
 

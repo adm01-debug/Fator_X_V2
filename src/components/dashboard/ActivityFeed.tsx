@@ -25,6 +25,13 @@ const ACTION_LABELS: Record<string, { label: string; color: string }> = {
 };
 
 
+interface AuditLogEntry {
+  id: string;
+  action?: string | null;
+  metadata?: Record<string, string> | null;
+  created_at?: string | null;
+}
+
 function getRelativeTime(date: string): string {
   const diff = Date.now() - new Date(date).getTime();
   const mins = Math.floor(diff / 60000);
@@ -63,7 +70,7 @@ export function ActivityFeed() {
 
   return (
     <div className="space-y-1 max-h-[320px] overflow-y-auto">
-      {logs.map((log: any) => {
+      {logs.map((log: AuditLogEntry) => {
         const action = String(log.action ?? '');
         const info = ACTION_LABELS[action] || { label: action, color: 'text-muted-foreground' };
         const meta = log.metadata as Record<string, string> | null;

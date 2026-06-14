@@ -36,7 +36,7 @@ export default function AgentAlertsPage() {
     staleTime: 30_000,
   });
 
-  const traces = (traceData as any).traces || [];
+  const traces = useMemo(() => traceData.traces ?? [], [traceData]);
 
   const [rules, setRules] = useState<AlertRule[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);

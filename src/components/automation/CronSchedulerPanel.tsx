@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -33,7 +33,7 @@ export function CronSchedulerPanel() {
   const [targetType, setTargetType] = useState('agent');
   const [targetId, setTargetId] = useState('');
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
     try {
       const [schedulesData, statsData] = await Promise.all([
@@ -42,14 +42,14 @@ export function CronSchedulerPanel() {
       ]);
       setSchedules(schedulesData);
       setStats(statsData);
-    } catch (e) {
+    } catch {
       toast({ title: 'Erro ao carregar agendamentos', variant: 'destructive' });
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
 
-  useEffect(() => { loadData(); }, []);
+  useEffect(() => { loadData(); }, [loadData]);
 
   const handleRunPending = async () => {
     setRunning(true);
@@ -86,7 +86,7 @@ export function CronSchedulerPanel() {
         name: newName.trim(),
         frequency: 'cron',
         cron_expression: newCron,
-        target_type: targetType as any,
+        target_type: targetType as CronSchedule['target_type'],
         target_id: targetId.trim(),
       });
       toast({ title: 'Agendamento criado!' });
@@ -94,8 +94,8 @@ export function CronSchedulerPanel() {
       setNewName('');
       setTargetId('');
       await loadData();
-    } catch (e: any) {
-      toast({ title: 'Erro ao criar', description: e.message, variant: 'destructive' });
+    } catch (e: unknown) {
+      toast({ title: 'Erro ao criar', description: e instanceof Error ? e.message : 'Erro desconhecido', variant: 'destructive' });
     } finally {
       setSaving(false);
     }

@@ -37,11 +37,33 @@ export function AgentCardGrid({
         return (
           <div
             key={agent.id}
+            role="button"
+            tabIndex={0}
             className={`nexus-card nexus-card-interactive cursor-pointer group relative overflow-hidden min-h-[180px] flex flex-col ${isSelected ? 'ring-2 ring-primary border-primary/40' : ''}`}
             onClick={() => selectionMode ? onToggleSelect({ stopPropagation: () => {} } as React.MouseEvent, agent.id) : onNavigate(`/builder/${agent.id}`)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                if (selectionMode) {
+                  onToggleSelect({ stopPropagation: () => {} } as React.MouseEvent, agent.id);
+                } else {
+                  onNavigate(`/builder/${agent.id}`);
+                }
+              }
+            }}
           >
-            <div className={`absolute top-3 left-3 z-10 transition-opacity ${selectionMode || 'opacity-0 group-hover:opacity-100'}`}
-              onClick={(e) => onToggleSelect(e, agent.id)}>
+            <div
+              role="button"
+              tabIndex={0}
+              className={`absolute top-3 left-3 z-10 transition-opacity ${selectionMode || 'opacity-0 group-hover:opacity-100'}`}
+              onClick={(e) => onToggleSelect(e, agent.id)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  onToggleSelect(e as unknown as React.MouseEvent, agent.id);
+                }
+              }}
+            >
               <Checkbox checked={isSelected} className="h-4 w-4" />
             </div>
 

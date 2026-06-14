@@ -2,7 +2,7 @@ import { Handle, Position } from 'reactflow';
 import { cn } from '@/lib/utils';
 
 interface NodeProps {
-  data: { label?: string; [key: string]: any };
+  data: { label?: string; [key: string]: unknown };
   selected?: boolean;
 }
 
@@ -30,6 +30,7 @@ export const ConditionNode = makeNode('🔀', 'Condition', 'border-yellow-500/50
 export const TransformNode = makeNode('✨', 'Transform', 'border-pink-500/50 bg-pink-500/10', true, true);
 export const OutputNode = makeNode('🎯', 'Output', 'border-red-500/50 bg-red-500/10', true, false);
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const nodeTypes = {
   trigger: TriggerNode,
   agent: AgentNode,
@@ -39,6 +40,7 @@ export const nodeTypes = {
   output: OutputNode,
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const NODE_PALETTE = [
   { type: 'trigger', icon: '▶️', label: 'Trigger', desc: 'Entrada do fluxo' },
   { type: 'agent', icon: '🤖', label: 'Agente', desc: 'Chamada a um agente' },

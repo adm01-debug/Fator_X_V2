@@ -18,6 +18,7 @@ import {
   useDeleteEvalDataset,
   useRunEval,
   type EvalItem,
+  type EvalRun,
 } from '@/hooks/useAgentEvals';
 import { useWorkspaceId } from '@/hooks/use-data';
 import { toast } from 'sonner';
@@ -259,7 +260,7 @@ export function EvalsModule() {
   );
 }
 
-function AuditReportView({ runId, runs }: { runId: string | null; runs: any[] }) {
+function AuditReportView({ runId, runs }: { runId: string | null; runs: EvalRun[] }) {
   const { data: results = [] } = useEvalResults(runId);
   const run = runs.find(r => r.id === runId);
   if (!run) return null;

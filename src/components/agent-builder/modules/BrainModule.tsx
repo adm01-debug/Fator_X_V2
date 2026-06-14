@@ -164,6 +164,7 @@ export function BrainModule() {
           {REASONING_OPTIONS.map((opt) => (
             <label
               key={opt.id}
+              htmlFor={`reasoning-${opt.id}`}
               className={cn(
                 'flex items-start gap-3 rounded-lg border p-4 cursor-pointer transition-all duration-200',
                 agent.reasoning === opt.id
@@ -171,7 +172,7 @@ export function BrainModule() {
                   : 'border-border bg-muted/20 hover:bg-muted/40'
               )}
             >
-              <RadioGroupItem value={opt.id} className="mt-0.5" />
+              <RadioGroupItem id={`reasoning-${opt.id}`} value={opt.id} className="mt-0.5" />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-semibold text-foreground">{opt.name}</span>

@@ -7,7 +7,7 @@ export interface GraphNode {
   role?: string;
   label?: string;
   position: { x: number; y: number };
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface GraphEdge {
@@ -15,7 +15,7 @@ export interface GraphEdge {
   from: string;
   to: string;
   condition?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 // Map the Database type to our cleaner interface
@@ -77,7 +77,7 @@ export const agentGraphService = {
   },
 
   async updateGraph(id: string, patch: Partial<Pick<AgentGraph, 'name' | 'description' | 'nodes' | 'edges' | 'entry_node_id'>>): Promise<void> {
-    const { error } = await supabase.from('agent_graphs').update(patch as any).eq('id', id);
+    const { error } = await supabase.from('agent_graphs').update(patch as Record<string, unknown>).eq('id', id);
     if (error) throw error;
   },
 

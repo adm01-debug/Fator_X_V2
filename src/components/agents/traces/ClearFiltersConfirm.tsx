@@ -3,7 +3,7 @@
  * the currently active filters that will be reset. Includes a session-scoped
  * "don't ask again" bypass.
  */
-import { useState, type ReactNode } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
@@ -14,11 +14,11 @@ import { AlertTriangle } from 'lucide-react';
 
 const BYPASS_KEY = 'nexus.traces.clearFilters.skipConfirm';
 
-export function shouldSkipClearConfirm(): boolean {
+function shouldSkipClearConfirm(): boolean {
   try { return sessionStorage.getItem(BYPASS_KEY) === '1'; } catch { return false; }
 }
 
-export function setSkipClearConfirm(skip: boolean) {
+function setSkipClearConfirm(skip: boolean) {
   try {
     if (skip) sessionStorage.setItem(BYPASS_KEY, '1');
     else sessionStorage.removeItem(BYPASS_KEY);
@@ -34,6 +34,7 @@ interface Props {
 export function ClearFiltersConfirm({ trigger, activeFilters, onConfirm }: Props) {
   const [skip, setSkip] = useState(false);
   const [open, setOpen] = useState(false);
+  const skipId = useId();
 
   // If user already opted out this session, run directly via a wrapper.
   if (shouldSkipClearConfirm()) {
@@ -77,8 +78,8 @@ export function ClearFiltersConfirm({ trigger, activeFilters, onConfirm }: Props
                   ))}
                 </ul>
               )}
-              <label className="flex items-center gap-2 text-xs cursor-pointer">
-                <Checkbox checked={skip} onCheckedChange={(v) => setSkip(v === true)} />
+              <label htmlFor={skipId} className="flex items-center gap-2 text-xs cursor-pointer">
+                <Checkbox id={skipId} checked={skip} onCheckedChange={(v) => setSkip(v === true)} />
                 <span>Não perguntar novamente nesta sessão</span>
               </label>
             </div>

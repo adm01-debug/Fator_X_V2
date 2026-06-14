@@ -227,7 +227,7 @@ export async function createAgentVersion(input: CreateAgentVersionInput): Promis
       persona: input.persona,
       mission: input.mission,
       name: input.name ?? null,
-      config: input.config as any,
+      config: input.config as Record<string, unknown>,
       change_summary: input.change_summary,
     })
     .select('*')

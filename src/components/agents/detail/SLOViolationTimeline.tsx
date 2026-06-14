@@ -43,7 +43,7 @@ export function SLOViolationTimeline({ data, daily, onDayClick, onViolationClick
             <Tooltip key={day.date}>
               <TooltipTrigger asChild>
                 <div
-                  role="listitem"
+                  role="button"
                   tabIndex={0}
                   onClick={() => handleClick(day.date)}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(day.date); } }}

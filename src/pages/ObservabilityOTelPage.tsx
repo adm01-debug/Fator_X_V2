@@ -116,7 +116,7 @@ export default function ObservabilityOTelPage() {
                       <div className="flex items-center gap-8 shrink-0">
                          <div className="text-right">
                            <p className="text-[10px] font-black uppercase text-muted-foreground tracking-tighter">Latência</p>
-                           <p className="text-sm font-bold font-mono text-nexus-amber">{(trace.data as any)?.latency_ms || Math.floor(Math.random() * 800)}ms</p>
+                           <p className="text-sm font-bold font-mono text-nexus-amber">{(trace.data?.latency_ms as number | undefined) || Math.floor(Math.random() * 800)}ms</p>
                          </div>
                          <div className="text-right w-24 hidden md:block">
                            <p className="text-[10px] font-black uppercase text-muted-foreground tracking-tighter">Consumo</p>

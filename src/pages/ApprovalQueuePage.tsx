@@ -62,14 +62,14 @@ export default function ApprovalQueuePage() {
       ) : (
         <div className="space-y-4">
           {pendingRuns.map((run) => {
-            const output = run.output as { pending_approval?: { label?: string; context?: any } } | null;
+            const output = run.output as { pending_approval?: { label?: string; context?: unknown } } | null;
             const pending = output?.pending_approval;
             const isSelected = selectedRun === run.id;
             const workflows = run.workflows as { name?: string } | null;
             return (
               <div key={run.id}
                 className={`nexus-card ${isSelected ? 'border-primary/30' : ''}`}>
-                <div className="flex items-start justify-between cursor-pointer" onClick={() => setSelectedRun(isSelected ? null : run.id)}>
+                <div role="button" tabIndex={0} className="flex items-start justify-between cursor-pointer" onClick={() => setSelectedRun(isSelected ? null : run.id)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedRun(isSelected ? null : run.id); } }}>
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       <Clock className="h-4 w-4 text-nexus-amber" />

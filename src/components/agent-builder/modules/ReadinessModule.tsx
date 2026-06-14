@@ -71,7 +71,7 @@ function computeReadiness(agent: AgentConfig): DetailedReadinessScore {
   // Prompt (max 15)
   const promptItems: ReadinessItem[] = [
     { label: 'System prompt >200 chars', passed: (agent.system_prompt || '').length > 200, weight: 5, is_blocker: false },
-    { label: '≥2 técnicas de prompt', passed: (agent.prompt_techniques || []).filter((t: any) => t.enabled).length >= 2, weight: 3, is_blocker: false },
+    { label: '≥2 técnicas de prompt', passed: (agent.prompt_techniques || []).filter((t) => t.enabled).length >= 2, weight: 3, is_blocker: false },
     { label: '≥2 few-shot examples', passed: (agent.few_shot_examples || []).length >= 2, weight: 4, is_blocker: false },
     { label: 'Output format definido', passed: !!agent.output_format, weight: 3, is_blocker: false },
   ];
@@ -79,9 +79,9 @@ function computeReadiness(agent: AgentConfig): DetailedReadinessScore {
   if ((agent.system_prompt || '').length <= 200) recommendations.push({ label: '💡 Expandir o system prompt (>200 chars) para +5 pontos', tabId: 'prompt' });
 
   // Guardrails (max 15)
-  const hasPI = (agent.guardrails || []).some((g: any) => g.name.toLowerCase().includes('injection') && g.enabled);
-  const hasPII = (agent.guardrails || []).some((g: any) => g.name.toLowerCase().includes('pii') && g.enabled);
-  const activeGuardrailsCount = (agent.guardrails || []).filter((g: any) => g.enabled).length;
+  const hasPI = (agent.guardrails || []).some((g) => g.name.toLowerCase().includes('injection') && g.enabled);
+  const hasPII = (agent.guardrails || []).some((g) => g.name.toLowerCase().includes('pii') && g.enabled);
+  const activeGuardrailsCount = (agent.guardrails || []).filter((g) => g.enabled).length;
   const guardrailItems: ReadinessItem[] = [
     { label: 'Prompt injection ativo', passed: hasPI, weight: 5, is_blocker: true, fix_hint: 'Ative o guardrail Prompt Injection Detection na aba Guardrails' },
     { label: '≥5 guardrails ativos', passed: activeGuardrailsCount >= 5, weight: 4, is_blocker: false },
@@ -108,11 +108,9 @@ function computeReadiness(agent: AgentConfig): DetailedReadinessScore {
   categories.observability = { score: obsItems.filter(i => i.passed).reduce((s, i) => s + i.weight, 0), max: 6, items: obsItems };
   if (!agent.logging_enabled) blockers.push('⛔ Logging não está habilitado');
 
-  const total = Object.values(categories).reduce((s: any, c: any) => s + c.score, 0);
-  const maxTotal = Object.values(categories).reduce((s: any, c: any) => s + c.max, 0);
-  const totalNum = Number(total);
-  const maxTotalNum = Number(maxTotal);
-  const pct = Math.round((totalNum / maxTotalNum) * 100);
+  const total = Object.values(categories).reduce((s, c) => s + c.score, 0);
+  const maxTotal = Object.values(categories).reduce((s, c) => s + c.max, 0);
+  const pct = Math.round((total / maxTotal) * 100);
 
   let maturity_level: DetailedReadinessScore['maturity_level'] = 'prototype';
   if (pct >= 80) maturity_level = 'production_ready';
@@ -140,7 +138,7 @@ export function ReadinessModule() {
   const { agent, setActiveTab } = useAgentBuilderStore();
   const readiness = useMemo(() => computeReadiness(agent), [agent]);
 
-  const radarData = Object.entries(readiness.categories).map(([key, cat]: [string, any]) => ({
+  const radarData = Object.entries(readiness.categories).map(([key, cat]) => ({
     subject: key.charAt(0).toUpperCase() + key.slice(1),
     value: cat.score,
     max: cat.max,
@@ -178,7 +176,7 @@ export function ReadinessModule() {
       {/* Category Breakdown */}
       <SectionTitle icon="📊" title="Score por Categoria" subtitle="Detalhamento do score em cada área" />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {Object.entries(readiness.categories).map(([key, cat]: [string, any]) => (
+        {Object.entries(readiness.categories).map(([key, cat]) => (
           <div key={key} className="rounded-xl border border-border bg-card p-4 space-y-3">
             <div className="flex justify-between items-center">
               <h4 className="text-sm font-semibold capitalize">{key}</h4>
@@ -186,7 +184,7 @@ export function ReadinessModule() {
             </div>
             <ProgressBar value={cat.score} max={cat.max} />
             <div className="space-y-1">
-              {cat.items.map((item: any) => (
+              {cat.items.map((item) => (
                 <div key={item.label} className="flex items-center gap-2 text-xs">
                   <span>{item.passed ? '✅' : '❌'}</span>
                   <span className={item.passed ? 'text-muted-foreground' : 'text-foreground'}>{item.label}</span>

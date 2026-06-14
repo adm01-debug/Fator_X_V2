@@ -146,8 +146,6 @@ export function ExecutionTimeline({ execution, selectedStep, onSelectStep }: Pro
 
   return (
     <div
-      tabIndex={0}
-      onKeyDown={onKeyDown}
       onFocus={() => setFocused(true)}
       onBlur={(e) => {
         // Only blur when focus leaves the entire container — moving into a
@@ -161,8 +159,6 @@ export function ExecutionTimeline({ execution, selectedStep, onSelectStep }: Pro
           ? 'ring-2 ring-primary/60 shadow-[0_0_0_4px_hsl(var(--primary)/0.08)]'
           : 'ring-1 ring-transparent',
       )}
-      aria-label="Linha do tempo navegável"
-      aria-describedby="timeline-shortcuts-hint"
     >
       <ExecutionSummary
         execution={execution}
@@ -187,9 +183,12 @@ export function ExecutionTimeline({ execution, selectedStep, onSelectStep }: Pro
       </span>
 
       <ol
-        className="space-y-1.5 mt-3"
+        className="space-y-1.5 mt-3 outline-none"
         role="listbox"
-        aria-label="Eventos da execução"
+        tabIndex={0}
+        onKeyDown={onKeyDown}
+        aria-label="Linha do tempo navegável — eventos da execução"
+        aria-describedby="timeline-shortcuts-hint"
         aria-activedescendant={execution.traces[step] ? `trace-${execution.traces[step].id}` : undefined}
       >
         {execution.traces.map((t, i) => {

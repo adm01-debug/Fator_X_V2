@@ -475,6 +475,16 @@ export function DraftRecoveryBanner({
     setSearchParams(next, { replace: true });
   };
   const itemsRef = useRef<Record<string, HTMLDivElement | null>>({});
+  // Callback ref to focus the primary restore action on mount (replaces
+  // autoFocus for a11y), guarding so it only fires the first time the
+  // single-draft restore button renders.
+  const restoreBtnFocused = useRef(false);
+  const focusRestoreBtn = (el: HTMLButtonElement | null) => {
+    if (el && !restoreBtnFocused.current) {
+      restoreBtnFocused.current = true;
+      el.focus();
+    }
+  };
 
   const handleConfirmRename = (id: string, newName: string) => {
     onRename(id, newName);
@@ -564,9 +574,9 @@ export function DraftRecoveryBanner({
             onConfirm={() => onDiscardOne(only.id)}
           />
           <Button
+            ref={focusRestoreBtn}
             size="sm"
             onClick={() => onRestore(only.id, restoreMode)}
-            autoFocus
             title={
               blocked
                 ? (only.restoreBlockedReason ?? 'Rascunho incompleto — vamos pular direto ao primeiro campo pendente')
@@ -688,7 +698,7 @@ export function DraftRecoveryBanner({
                 </div>
               </div>
 
-              <span onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+              <span role="presentation" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
                 <ConfirmDialog
                   trigger={
                     <button

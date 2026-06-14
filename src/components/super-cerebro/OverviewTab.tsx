@@ -39,8 +39,8 @@ export function OverviewTab() {
       await compactMemories('episodic');
       toast.success('Memórias episódicas compactadas');
       queryClient.invalidateQueries({ queryKey: ['cerebro_stats'] });
-    } catch (e: any) {
-      toast.error('Erro na compactação: ' + e.message);
+    } catch (e: unknown) {
+      toast.error('Erro na compactação: ' + (e instanceof Error ? e.message : String(e)));
     } finally {
       setCompacting(false);
     }

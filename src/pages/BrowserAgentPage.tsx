@@ -100,8 +100,9 @@ export default function BrowserAgentPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Objetivo</label>
+            <label htmlFor="browser-agent-goal" className="text-sm font-medium">Objetivo</label>
             <Textarea
+              id="browser-agent-goal"
               placeholder="Ex: Encontre o preço atual do iPhone 15 Pro Max no site da Apple Brasil"
               value={goal}
               onChange={(e) => setGoal(e.target.value)}
@@ -111,12 +112,12 @@ export default function BrowserAgentPage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div className="md:col-span-2 space-y-2">
-              <label className="text-sm font-medium">URL inicial</label>
-              <Input value={startUrl} onChange={(e) => setStartUrl(e.target.value)} placeholder="https://..." />
+              <label htmlFor="browser-agent-url" className="text-sm font-medium">URL inicial</label>
+              <Input id="browser-agent-url" value={startUrl} onChange={(e) => setStartUrl(e.target.value)} placeholder="https://..." />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">Max steps</label>
-              <Input type="number" min={1} max={25} value={maxSteps} onChange={(e) => setMaxSteps(parseInt(e.target.value) || 10)} />
+              <label htmlFor="browser-agent-maxsteps" className="text-sm font-medium">Max steps</label>
+              <Input id="browser-agent-maxsteps" type="number" min={1} max={25} value={maxSteps} onChange={(e) => setMaxSteps(parseInt(e.target.value) || 10)} />
             </div>
           </div>
           <Button

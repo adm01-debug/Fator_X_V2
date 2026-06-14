@@ -598,10 +598,9 @@ export default function SLODashboard() {
         }));
       }
     } finally {
-      if (!isMountedRef.current) return;
       // Only the latest request controls the spinner — stale ones don't
       // get to flip it off prematurely.
-      if (myToken === requestTokenRef.current) {
+      if (isMountedRef.current && myToken === requestTokenRef.current) {
         setLoading(false);
         setRefreshing(false);
         setRecomputing(false);

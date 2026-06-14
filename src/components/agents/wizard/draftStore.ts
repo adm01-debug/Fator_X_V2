@@ -166,7 +166,7 @@ export function loadDrafts(): DraftsStoreV2 {
         return {
           version: 2,
           activeId: typeof parsed.activeId === 'string' ? parsed.activeId : null,
-          drafts: parsed.drafts.map((d: any) => ({
+          drafts: (parsed.drafts as Partial<DraftEntry>[]).map((d) => ({
             id: typeof d.id === 'string' ? d.id : genId(),
             form: normalizeForm(d.form),
             savedAt: typeof d.savedAt === 'string' ? d.savedAt : new Date().toISOString(),

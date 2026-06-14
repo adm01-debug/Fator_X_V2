@@ -82,7 +82,7 @@ export function IdentityModule() {
             hint="Uma frase clara que define o propósito principal"
           />
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-foreground">Avatar</label>
+            <span className="text-xs font-medium text-foreground">Avatar</span>
             <div className="flex flex-wrap gap-2">
               {AVATAR_EMOJIS.map((emoji) => (
                 <button
