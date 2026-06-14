@@ -95,12 +95,16 @@ export function SandboxExecutionPanel({ agentId, onConfigChange, onExecute }: Sa
           <Card className="bg-card border-border">
             <CardContent className="pt-4 space-y-4">
               <div className="space-y-2">
-                <label className="text-xs text-muted-foreground font-medium">Runtime</label>
+                <span className="block text-xs text-muted-foreground font-medium">Runtime</span>
                 <div className="grid grid-cols-2 gap-2">
                   {RUNTIME_OPTIONS.map((rt) => (
                     <div key={rt.id}
+                      role="button"
+                      tabIndex={0}
+                      aria-pressed={config.runtime === rt.id}
                       className={`p-3 rounded-lg border cursor-pointer transition-all ${config.runtime === rt.id ? 'border-primary bg-primary/10' : 'border-border bg-background hover:border-border'}`}
-                      onClick={() => updateConfig({ runtime: rt.id })}>
+                      onClick={() => updateConfig({ runtime: rt.id })}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); updateConfig({ runtime: rt.id }); } }}>
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-sm font-medium text-foreground">{rt.name}</span>
                         <div className="w-2 h-2 rounded-full" style={{ backgroundColor: SECURITY_LEVEL_COLORS[rt.securityLevel] }} />
@@ -112,7 +116,7 @@ export function SandboxExecutionPanel({ agentId, onConfigChange, onExecute }: Sa
               </div>
               {config.runtime !== 'none' && (
                 <div className="space-y-3">
-                  <label className="text-xs text-muted-foreground font-medium">Limites de Recursos</label>
+                  <span className="block text-xs text-muted-foreground font-medium">Limites de Recursos</span>
                   <SliderField label="CPU" value={config.cpuLimit} min={0.25} max={4} step={0.25} unit="cores" onChange={(v) => updateConfig({ cpuLimit: v })} />
                   <SliderField label="Memória" value={config.memoryLimitMb} min={128} max={4096} step={128} unit="MB" onChange={(v) => updateConfig({ memoryLimitMb: v })} />
                   <SliderField label="Timeout" value={config.timeoutSeconds} min={5} max={300} step={5} unit="seg" onChange={(v) => updateConfig({ timeoutSeconds: v })} />
@@ -128,7 +132,7 @@ export function SandboxExecutionPanel({ agentId, onConfigChange, onExecute }: Sa
           <Card className="bg-card border-border">
             <CardContent className="pt-4 space-y-3">
               <div className="flex items-center gap-2">
-                <label className="text-xs text-muted-foreground">Linguagem:</label>
+                <span className="text-xs text-muted-foreground">Linguagem:</span>
                 <div className="flex gap-1">
                   {config.allowedLanguages.map((lang) => (
                     <Badge key={lang} className={`cursor-pointer text-[10px] ${language === lang ? 'bg-primary text-foreground' : 'bg-muted text-muted-foreground hover:bg-muted'}`}
@@ -222,8 +226,8 @@ export function SandboxExecutionPanel({ agentId, onConfigChange, onExecute }: Sa
               <ToggleField label="Acesso ao Shell" description="Permitir execução de comandos shell (bash/sh)" checked={config.shellAccess} onChange={(v) => updateConfig({ shellAccess: v })} icon={Terminal} />
               {config.networkEnabled && (
                 <div className="space-y-1">
-                  <label className="text-xs text-muted-foreground">Domínios Permitidos</label>
-                  <textarea value={config.allowedDomains.join('\n')} onChange={(e) => updateConfig({ allowedDomains: e.target.value.split('\n').filter(Boolean) })}
+                  <label htmlFor="sandbox-allowed-domains" className="text-xs text-muted-foreground">Domínios Permitidos</label>
+                  <textarea id="sandbox-allowed-domains" value={config.allowedDomains.join('\n')} onChange={(e) => updateConfig({ allowedDomains: e.target.value.split('\n').filter(Boolean) })}
                     className="w-full h-20 p-2 bg-background border border-border rounded text-xs font-mono text-muted-foreground resize-none focus:border-primary focus:outline-none"
                     placeholder="api.exemplo.com&#10;github.com&#10;pypi.org" />
                 </div>
