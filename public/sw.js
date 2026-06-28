@@ -9,7 +9,7 @@
  * Cache name versioning: bump CACHE_VERSION to force re-cache on deploy.
  */
 
-const CACHE_VERSION = 'fator-x-v1';
+const CACHE_VERSION = 'fator-x-v2';
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 
