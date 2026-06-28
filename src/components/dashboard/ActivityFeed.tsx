@@ -56,7 +56,7 @@ export function ActivityFeed() {
     return (
       <div className="text-center py-8">
         <Activity className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-        <p className="text-xs text-muted-foreground">Nenhuma atividade registrada ainda.</p>
+        <p className="text-body-sm text-muted-foreground">Nenhuma atividade registrada ainda.</p>
       </div>
     );
   }
