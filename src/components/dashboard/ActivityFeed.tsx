@@ -70,7 +70,7 @@ export function ActivityFeed() {
         const detail = meta?.name || meta?.email || meta?.keyName || '';
 
         return (
-          <div key={log.id} className="flex items-center gap-3 py-1.5 px-2 rounded-lg hover:bg-secondary/30 text-xs transition-colors">
+          <div key={log.id} className="flex items-center gap-3 py-1.5 px-2 rounded-lg hover:bg-secondary/30 text-body-sm transition-colors">
             <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${info.color.replace('text-', 'bg-')}`} />
             {action.includes('security') || action.includes('denied') ? (
               <ShieldAlert className="h-3 w-3 text-destructive shrink-0" />
