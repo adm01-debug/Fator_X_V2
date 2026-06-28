@@ -61,13 +61,23 @@ self.addEventListener('fetch', (event) => {
   // Network-first for HTML navigations
   if (request.mode === 'navigate' || request.headers.get('accept')?.includes('text/html')) {
     event.respondWith(
-      fetch(request)
-        .then((response) => {
+      (async () => {
+        try {
+          const response = await fetch(request);
           const copy = response.clone();
-          caches.open(RUNTIME_CACHE).then((cache) => cache.put(request, copy));
+          caches.open(RUNTIME_CACHE).then((cache) => cache.put(request, copy)).catch(() => {});
           return response;
-        })
-        .catch(() => caches.match(request).then((cached) => cached || caches.match('/')))
+        } catch {
+          const cached = await caches.match(request);
+          if (cached) return cached;
+          const shell = await caches.match('/');
+          if (shell) return shell;
+          return new Response(
+            '<!doctype html><meta charset="utf-8"><title>Offline</title><p>Offline</p>',
+            { status: 503, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+          );
+        }
+      })()
     );
     return;
   }
@@ -93,7 +103,14 @@ self.addEventListener('fetch', (event) => {
 
   // Default: network with cache fallback
   event.respondWith(
-    fetch(request).catch(() => caches.match(request))
+    (async () => {
+      try {
+        return await fetch(request);
+      } catch {
+        const cached = await caches.match(request);
+        return cached || Response.error();
+      }
+    })()
   );
 });
 
