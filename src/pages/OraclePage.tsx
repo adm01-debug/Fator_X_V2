@@ -29,11 +29,11 @@ export default function OraclePage() {
               <Sparkles className="h-9 w-9 text-primary animate-pulse" />
             </div>
             <div>
-              <h1 className="text-3xl font-heading font-extrabold text-foreground tracking-tight flex items-center gap-3">
+              <h1 className="text-hero font-heading font-extrabold text-foreground tracking-tight flex items-center gap-3">
                 Oráculo v2
-                <Badge className="bg-primary/20 text-primary border-none text-[10px] font-bold px-2 py-0">PRO</Badge>
+                <Badge className="bg-primary/20 text-primary border-none text-meta font-bold px-2 py-0">PRO</Badge>
               </h1>
-              <p className="text-sm text-muted-foreground max-w-md">O Conselho Multi-LLM definitivo para decisões complexas e pesquisa profunda</p>
+              <p className="text-body-sm text-muted-foreground max-w-md">O Conselho Multi-LLM definitivo para decisões complexas e pesquisa profunda</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -68,7 +68,7 @@ export default function OraclePage() {
               {store.isRunning && <StageProgress mode={store.mode} currentStage={store.currentStage} />}
               {store.error && (
                 <Card className="border-destructive/30 bg-destructive/5 p-4">
-                  <p className="text-sm text-destructive font-medium flex items-center gap-2">
+                  <p className="text-body-sm text-destructive font-medium flex items-center gap-2">
                     <AlertTriangle className="h-4 w-4" /> {store.error}
                   </p>
                 </Card>
@@ -103,7 +103,7 @@ export default function OraclePage() {
           <OracleAnalyticsPanel />
           
           <Card className="p-6 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
-            <h4 className="font-bold text-sm mb-3 flex items-center gap-2">
+            <h4 className="font-bold text-body-sm mb-3 flex items-center gap-2">
               <Activity className="h-4 w-4 text-primary" />
               Status do Conselho
             </h4>
@@ -113,7 +113,7 @@ export default function OraclePage() {
                 { label: 'Modelos Prontos', value: '24/26', color: 'text-primary' },
                 { label: 'Latência Média', value: '1.2s', color: 'text-foreground' },
               ].map(stat => (
-                <div key={stat.label} className="flex justify-between items-center text-xs">
+                <div key={stat.label} className="flex justify-between items-center text-meta">
                   <span className="text-muted-foreground font-medium">{stat.label}</span>
                   <span className={`font-bold ${stat.color}`}>{stat.value}</span>
                 </div>

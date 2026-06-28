@@ -505,7 +505,7 @@ export default function AgentTracesPage() {
 
       {/* Active absolute window banner (drill-down from SLO bucket / KPI delta) */}
       {windowOverride && (
-        <div className="flex items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-xs">
+        <div className="flex items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-meta">
           <div className="flex items-center gap-2 min-w-0">
             <CalendarClock className="h-3.5 w-3.5 text-primary shrink-0" />
             <span className="text-muted-foreground">Janela ativa:</span>
@@ -521,7 +521,7 @@ export default function AgentTracesPage() {
           <Button
             variant="ghost"
             size="sm"
-            className="h-7 text-xs gap-1"
+            className="h-7 text-meta gap-1"
             onClick={() => {
               setWindowOverride(null);
               setSelectedId(null);
@@ -548,7 +548,7 @@ export default function AgentTracesPage() {
       {/* Compare-mode helper banner */}
       {compareMode && (
         <div
-          className="flex items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-xs animate-fade-in-up"
+          className="flex items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-meta animate-fade-in-up"
           role="status"
           aria-live="polite"
         >
@@ -563,11 +563,11 @@ export default function AgentTracesPage() {
           </div>
           <div className="flex items-center gap-1">
             {comparePicks.length === 2 && (
-              <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => setCompareOpen(true)}>
+              <Button size="sm" variant="ghost" className="h-7 text-meta" onClick={() => setCompareOpen(true)}>
                 Reabrir painel
               </Button>
             )}
-            <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={exitCompareMode}>
+            <Button size="sm" variant="ghost" className="h-7 text-meta" onClick={exitCompareMode}>
               <X className="h-3 w-3 mr-1" /> Sair
             </Button>
           </div>
@@ -582,7 +582,7 @@ export default function AgentTracesPage() {
           )}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm">Execuções</CardTitle>
+              <CardTitle className="text-body-sm">Execuções</CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               <ExecutionList
@@ -620,7 +620,7 @@ export default function AgentTracesPage() {
 
         <Card>
           <CardHeader className="pb-2 flex-row items-center justify-between space-y-0">
-            <CardTitle className="text-sm">Linha do tempo</CardTitle>
+            <CardTitle className="text-body-sm">Linha do tempo</CardTitle>
             {selected && (
               <Button size="sm" onClick={() => setReplayOpen(true)} className="h-8">
                 <Play className="h-3.5 w-3.5 mr-1.5" /> Replay
@@ -654,7 +654,7 @@ export default function AgentTracesPage() {
                 )}
               </div>
             ) : !selected ? (
-              <div className="h-[560px] flex flex-col items-center justify-center text-sm text-muted-foreground gap-2">
+              <div className="h-[560px] flex flex-col items-center justify-center text-body-sm text-muted-foreground gap-2">
                 <Activity className="h-8 w-8 opacity-40" />
                 Selecione uma execução para ver os eventos.
               </div>
@@ -706,7 +706,7 @@ function SyncBadge({ status }: { status: 'idle' | 'loading' | 'synced' | 'local'
   } as const;
   const { Icon, text, cls } = map[status];
   return (
-    <span className={`flex items-center gap-1.5 text-[10px] ${cls}`} aria-live="polite">
+    <span className={`flex items-center gap-1.5 text-meta ${cls}`} aria-live="polite">
       <Icon className={`h-3 w-3 ${status === 'saving' ? 'animate-spin' : ''}`} /> {text}
     </span>
   );
@@ -722,7 +722,7 @@ function Kpi({ icon: Icon, label, value, accent }: {
           <Icon className="h-4 w-4" />
         </div>
         <div className="min-w-0">
-          <p className="text-[10px] uppercase text-muted-foreground">{label}</p>
+          <p className="text-meta uppercase text-muted-foreground">{label}</p>
           <p className="text-base font-semibold tabular-nums">{value}</p>
         </div>
       </CardContent>

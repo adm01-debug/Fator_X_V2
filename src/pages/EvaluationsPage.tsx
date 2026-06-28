@@ -88,8 +88,8 @@ function EvalCard({ ev }: { ev: Record<string, unknown> }) {
             <FlaskConical className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-foreground">{evName}</h3>
-            <p className="text-[11px] text-muted-foreground">{testCases} test cases • {createdAt ? new Date(createdAt).toLocaleDateString('pt-BR') : ''}</p>
+            <h3 className="text-body-sm font-semibold text-foreground">{evName}</h3>
+            <p className="text-meta text-muted-foreground">{testCases} test cases • {createdAt ? new Date(createdAt).toLocaleDateString('pt-BR') : ''}</p>
           </div>
         </div>
         <StatusBadge status={evStatus} />
@@ -100,11 +100,11 @@ function EvalCard({ ev }: { ev: Record<string, unknown> }) {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
             <div className="text-center rounded-lg bg-secondary/30 p-3">
               <p className={`text-lg font-heading font-bold ${passRate >= 80 ? 'text-nexus-emerald' : passRate >= 50 ? 'text-nexus-amber' : 'text-destructive'}`}>{passRate}%</p>
-              <p className="text-[11px] text-muted-foreground mt-0.5">Pass rate</p>
+              <p className="text-meta text-muted-foreground mt-0.5">Pass rate</p>
             </div>
             <div className="text-center rounded-lg bg-secondary/30 p-3">
               <p className="text-lg font-heading font-bold text-foreground">{testCases}</p>
-              <p className="text-[11px] text-muted-foreground mt-0.5">Test cases</p>
+              <p className="text-meta text-muted-foreground mt-0.5">Test cases</p>
             </div>
             <div className="text-center rounded-lg bg-secondary/30 p-3">
               <div className="h-2 rounded-full bg-secondary overflow-hidden">
@@ -113,13 +113,13 @@ function EvalCard({ ev }: { ev: Record<string, unknown> }) {
                   style={{ width: `${passRate}%` }}
                 />
               </div>
-              <p className="text-[11px] text-muted-foreground mt-2">Score visual</p>
+              <p className="text-meta text-muted-foreground mt-2">Score visual</p>
             </div>
             <div className="text-center rounded-lg bg-secondary/30 p-3">
               <p className="text-lg font-heading font-bold text-foreground">
                 {completedAt && createdAt ? `${Math.round((new Date(completedAt).getTime() - new Date(createdAt).getTime()) / 1000)}s` : '—'}
               </p>
-              <p className="text-[11px] text-muted-foreground mt-0.5">Duração</p>
+              <p className="text-meta text-muted-foreground mt-0.5">Duração</p>
             </div>
           </div>
 
@@ -128,7 +128,7 @@ function EvalCard({ ev }: { ev: Record<string, unknown> }) {
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-xs gap-1.5 w-full justify-center"
+                className="text-meta gap-1.5 w-full justify-center"
                 onClick={() => setExpanded(!expanded)}
               >
                 {expanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
@@ -136,7 +136,7 @@ function EvalCard({ ev }: { ev: Record<string, unknown> }) {
               </Button>
               {expanded && (
                 <div className="mt-2 rounded-lg border border-border max-h-[300px] overflow-y-auto">
-                  <table className="w-full text-xs">
+                  <table className="w-full text-meta">
                     <thead className="bg-secondary/50 sticky top-0">
                       <tr>
                         <th className="text-left p-2 font-medium text-muted-foreground w-8"></th>
@@ -158,7 +158,7 @@ function EvalCard({ ev }: { ev: Record<string, unknown> }) {
                           <td className="p-2 text-muted-foreground truncate max-w-[150px]">{c.expected}</td>
                           <td className="p-2 text-muted-foreground truncate max-w-[150px]">{c.actual}</td>
                           <td className="p-2">
-                            <Badge variant={c.passed ? 'default' : 'destructive'} className="text-[10px]">
+                            <Badge variant={c.passed ? 'default' : 'destructive'} className="text-meta">
                               {c.score != null ? `${(c.score * 100).toFixed(0)}%` : c.passed ? 'Pass' : 'Fail'}
                             </Badge>
                           </td>

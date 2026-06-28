@@ -241,7 +241,7 @@ export default function AgentsPage() {
             <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110", action.bg)}>
               <action.icon className={cn("h-5 w-5", action.color)} />
             </div>
-            <span className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">{action.label}</span>
+            <span className="text-body-sm font-bold text-foreground group-hover:text-primary transition-colors">{action.label}</span>
           </button>
         ))}
       </div>
@@ -250,19 +250,19 @@ export default function AgentsPage() {
       {selectionMode && (
         <div className="flex items-center gap-2 p-3 rounded-lg bg-primary/5 border border-primary/20 animate-fade-in">
           <CheckSquare className="h-4 w-4 text-primary" />
-          <span className="text-sm font-medium text-foreground">{selectedIds.size} selecionado(s)</span>
+          <span className="text-body-sm font-medium text-foreground">{selectedIds.size} selecionado(s)</span>
           <div className="flex-1" />
-          <Button variant="outline" size="sm" className="gap-1.5 h-7 text-xs" onClick={selectAll}>Selecionar todos</Button>
-          <Button variant="outline" size="sm" className="gap-1.5 h-7 text-xs" onClick={handleBulkExport} disabled={bulkLoading}>
+          <Button variant="outline" size="sm" className="gap-1.5 h-7 text-meta" onClick={selectAll}>Selecionar todos</Button>
+          <Button variant="outline" size="sm" className="gap-1.5 h-7 text-meta" onClick={handleBulkExport} disabled={bulkLoading}>
             <Download className="h-3 w-3" /> Exportar
           </Button>
-          <Button variant="outline" size="sm" className="gap-1.5 h-7 text-xs" onClick={handleBulkArchive} disabled={bulkLoading}>
+          <Button variant="outline" size="sm" className="gap-1.5 h-7 text-meta" onClick={handleBulkArchive} disabled={bulkLoading}>
             <Archive className="h-3 w-3" /> Arquivar
           </Button>
           <AccessControl permission="agents.delete">
             <DangerousActionDialog
               trigger={
-                <Button variant="destructive" size="sm" className="gap-1.5 h-7 text-xs" disabled={bulkLoading}>
+                <Button variant="destructive" size="sm" className="gap-1.5 h-7 text-meta" disabled={bulkLoading}>
                   <Trash2 className="h-3 w-3" /> Excluir
                 </Button>
               }
@@ -287,7 +287,7 @@ export default function AgentsPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
           Sua Frota de Agentes
-          <Badge variant="secondary" className="font-mono text-[10px]">{sorted.length}</Badge>
+          <Badge variant="secondary" className="font-mono text-meta">{sorted.length}</Badge>
         </h2>
         <div className="flex items-center gap-3">
           <div className="relative w-full md:w-64">
@@ -323,7 +323,7 @@ export default function AgentsPage() {
             </div>
           </div>
           <h2 className="text-lg font-heading font-semibold text-foreground mb-1">Faça login para ver seus agentes</h2>
-          <p className="text-sm text-muted-foreground mb-6 max-w-md">Seus agentes são salvos na nuvem e vinculados à sua conta.</p>
+          <p className="text-body-sm text-muted-foreground mb-6 max-w-md">Seus agentes são salvos na nuvem e vinculados à sua conta.</p>
           <Button onClick={() => navigate("/auth")} className="nexus-gradient-bg text-primary-foreground gap-2">Entrar</Button>
         </div>
       ) : sorted.length === 0 ? (
