@@ -33,14 +33,14 @@ export function DataBrowserTable({
   return (
     <div className="rounded-lg border border-border overflow-hidden">
       <div className="overflow-x-auto max-h-[500px]">
-        <table className="w-full text-xs">
+        <table className="w-full text-body-sm text-numeric">
           <thead className="bg-secondary/50 sticky top-0 z-10">
             <tr>
               <th className="p-2 w-[36px]">
                 <Checkbox checked={allSelected} onCheckedChange={onToggleSelectAll} aria-label="Selecionar todos" />
               </th>
               {columns.map(col => (
-                <th key={col.key} className={`text-left p-2 font-medium text-muted-foreground select-none ${col.width ?? ''} ${col.sortable ? 'cursor-pointer hover:text-foreground' : ''}`}
+                <th key={col.key} className={`text-left p-2 text-meta font-medium uppercase tracking-wide text-muted-foreground select-none ${col.width ?? ''} ${col.sortable ? 'cursor-pointer hover:text-foreground' : ''}`}
                   onClick={() => col.sortable && onSort(col.key)}>
                   <div className="flex items-center gap-1">
                     {col.label}
@@ -52,7 +52,7 @@ export function DataBrowserTable({
                   </div>
                 </th>
               ))}
-              <th className="text-left p-2 font-medium text-muted-foreground w-[60px]">Ações</th>
+              <th className="text-left p-2 text-meta font-medium uppercase tracking-wide text-muted-foreground w-[60px]">Ações</th>
             </tr>
           </thead>
           <tbody>

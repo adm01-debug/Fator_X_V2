@@ -255,6 +255,24 @@ code, pre, .font-mono, [class*="font-mono"] {
 }
 
 @layer utilities {
+  /* ═══ Typography Scale — escala tipográfica padronizada ═══
+   * Use estes tokens em todo o sistema para coerência visual.
+   * Substitui usos ad-hoc de text-[11px], text-xs, text-sm, etc.
+   */
+  .text-meta      { font-size: 11px; line-height: 1.4; letter-spacing: 0.01em; }   /* metadata, badges, timestamps */
+  .text-caption   { font-size: 12px; line-height: 1.45; }                          /* legendas, hints secundários */
+  .text-body-sm   { font-size: 13px; line-height: 1.55; }                          /* corpo denso (tabelas, listas) */
+  .text-body      { font-size: 14px; line-height: 1.6; }                           /* corpo padrão */
+  .text-ui        { font-size: 15px; line-height: 1.5; font-weight: 500; }         /* botões, inputs, nav */
+  .text-title-sm  { font-size: 16px; line-height: 1.35; font-weight: 600; font-family: var(--font-heading); letter-spacing: -0.01em; }
+  .text-title     { font-size: 20px; line-height: 1.3; font-weight: 600; font-family: var(--font-heading); letter-spacing: -0.015em; }
+  .text-title-lg  { font-size: 24px; line-height: 1.25; font-weight: 700; font-family: var(--font-heading); letter-spacing: -0.02em; }
+  .text-hero      { font-size: 32px; line-height: 1.15; font-weight: 700; font-family: var(--font-heading); letter-spacing: -0.025em; }
+  .text-hero-lg   { font-size: 40px; line-height: 1.1;  font-weight: 700; font-family: var(--font-heading); letter-spacing: -0.03em; }
+
+  /* numerais tabulares para tabelas, KPIs e métricas */
+  .text-numeric   { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+
   .nexus-card-hover {
     @apply transition-all duration-300;
   }
