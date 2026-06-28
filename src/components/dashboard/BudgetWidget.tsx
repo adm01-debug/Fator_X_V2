@@ -27,8 +27,9 @@ export function BudgetWidget() {
             <div className="flex items-center gap-3">
               <Wallet className="h-5 w-5 text-muted-foreground" />
               <div>
-                <p className="text-sm font-medium">Orçamento</p>
-                <p className="text-xs text-muted-foreground">Não configurado</p>
+                <p className="text-body-sm font-medium">Orçamento</p>
+                <p className="text-meta text-muted-foreground">Não configurado</p>
+
               </div>
             </div>
             <ArrowRight className="h-4 w-4 text-muted-foreground" />
