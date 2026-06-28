@@ -27,8 +27,9 @@ export function BudgetWidget() {
             <div className="flex items-center gap-3">
               <Wallet className="h-5 w-5 text-muted-foreground" />
               <div>
-                <p className="text-sm font-medium">Orçamento</p>
-                <p className="text-xs text-muted-foreground">Não configurado</p>
+                <p className="text-body-sm font-medium">Orçamento</p>
+                <p className="text-meta text-muted-foreground">Não configurado</p>
+
               </div>
             </div>
             <ArrowRight className="h-4 w-4 text-muted-foreground" />
@@ -49,20 +50,21 @@ export function BudgetWidget() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Wallet className={`h-4 w-4 ${colorClass}`} />
-              <p className="text-sm font-medium">Orçamento Mensal</p>
+              <p className="text-body-sm font-medium">Orçamento Mensal</p>
             </div>
             <ArrowRight className="h-4 w-4 text-muted-foreground" />
           </div>
           <div className="flex items-baseline justify-between">
-            <span className={`text-lg font-semibold ${colorClass}`}>
+            <span className={`text-title-sm text-numeric ${colorClass}`}>
               ${Number(status.monthly_spend ?? 0).toFixed(2)}
             </span>
-            <span className="text-xs text-muted-foreground">
+            <span className="text-meta text-muted-foreground text-numeric">
               de ${Number(status.monthly_limit ?? 0).toFixed(2)}
             </span>
           </div>
           <Progress value={Math.min(monthlyPct, 100)} className="h-2" />
-          <p className="text-xs text-muted-foreground">{monthlyPct.toFixed(1)}% utilizado</p>
+          <p className="text-meta text-muted-foreground text-numeric">{monthlyPct.toFixed(1)}% utilizado</p>
+
         </CardContent>
       </Card>
     </Link>

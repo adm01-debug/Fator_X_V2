@@ -25,10 +25,11 @@ export function CostAnomalyWidget() {
               <CheckCircle2 className="h-5 w-5 text-success" />
             )}
             <div>
-              <p className="text-sm font-medium">Anomalias de Custo (24h)</p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-body-sm font-medium">Anomalias de Custo (24h)</p>
+              <p className="text-meta text-muted-foreground">
                 {count > 0 ? `${count} alerta(s) ativo(s)` : "Sem anomalias"}
               </p>
+
             </div>
           </div>
           <ArrowRight className="h-4 w-4 text-muted-foreground" />

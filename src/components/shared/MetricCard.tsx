@@ -79,12 +79,12 @@ export const MetricCard = memo(function MetricCard({
     >
       <div className="flex items-start justify-between">
         <div className="flex-1 min-w-0">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{title}</p>
-          <p className="mt-1.5 text-3xl font-heading font-extrabold text-foreground tracking-tight animate-number-pop">{value}</p>
-          {subtitle && <p className="mt-0.5 text-xs text-muted-foreground/70">{subtitle}</p>}
+          <p className="text-meta font-medium text-muted-foreground uppercase tracking-wider">{title}</p>
+          <p className="mt-1.5 text-hero font-extrabold text-foreground text-numeric animate-number-pop">{value}</p>
+          {subtitle && <p className="mt-0.5 text-meta text-muted-foreground/70">{subtitle}</p>}
           {trend && (
             <div className="flex items-center gap-1.5 mt-1.5">
-              <span className={`inline-flex items-center gap-0.5 text-xs font-semibold px-1.5 py-0.5 rounded-md ${
+              <span className={`inline-flex items-center gap-0.5 text-meta font-semibold px-1.5 py-0.5 rounded-md ${
                 trend.positive 
                   ? 'bg-nexus-emerald/10 text-nexus-emerald' 
                   : 'bg-nexus-rose/10 text-nexus-rose'
@@ -93,6 +93,7 @@ export const MetricCard = memo(function MetricCard({
               </span>
             </div>
           )}
+
         </div>
         <div className="flex flex-col items-end gap-2">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-all group-hover:bg-primary/15 group-hover:scale-110" aria-hidden="true">

@@ -111,15 +111,16 @@ export function UsageCharts({ data }: UsageChartsProps) {
       <div className="grid gap-4 lg:grid-cols-2">
         {['Requests & Erros', 'Custo USD', 'Latência média', 'Tokens'].map(title => (
           <div key={title} className="nexus-card">
-            <h3 className="text-sm font-heading font-semibold text-foreground mb-4">
+            <h3 className="text-title-sm text-foreground mb-4">
               {title} <span className="text-muted-foreground font-normal">(30 dias)</span>
             </h3>
             <div className="flex flex-col items-center justify-center h-[220px] text-center">
               <div className="h-12 w-12 rounded-xl bg-muted/20 flex items-center justify-center mb-3">
                 <span className="text-2xl opacity-40" aria-hidden="true">📊</span>
               </div>
-              <p className="text-sm text-muted-foreground">Sem dados neste período</p>
-              <p className="text-[11px] text-muted-foreground/60 mt-1">Os dados aparecerão quando seus agentes processarem requisições</p>
+              <p className="text-body-sm text-muted-foreground">Sem dados neste período</p>
+              <p className="text-meta text-muted-foreground/60 mt-1">Os dados aparecerão quando seus agentes processarem requisições</p>
+
             </div>
           </div>
         ))}
@@ -154,10 +155,10 @@ export function UsageCharts({ data }: UsageChartsProps) {
       <div className="nexus-card bg-card/50 border-border/40 p-8 rounded-[2.5rem] shadow-lg shadow-primary/[0.02] hover:shadow-2xl hover:shadow-primary/[0.05] transition-all duration-500">
         <div className="flex items-center justify-between mb-8">
           <div className="space-y-1">
-            <h3 className="text-lg font-black font-heading text-foreground uppercase tracking-tight">
+            <h3 className="text-title-sm font-black text-foreground uppercase tracking-tight">
               Requests &amp; Erros
             </h3>
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Neural Load Tracking</p>
+            <p className="text-meta font-bold text-muted-foreground uppercase tracking-widest">Neural Load Tracking</p>
           </div>
           <ComparisonToggle enabled={compareRequests} onToggle={setCompareRequests} label="vs anterior" />
         </div>
@@ -177,11 +178,11 @@ export function UsageCharts({ data }: UsageChartsProps) {
         />
         {peakRequestIdx >= 0 && (
           <div className="mt-6 flex items-center justify-between pt-4 border-t border-border/10">
-            <p className="text-[11px] font-bold text-muted-foreground flex items-center gap-2 uppercase tracking-widest">
+            <p className="text-meta font-bold text-muted-foreground flex items-center gap-2 uppercase tracking-widest">
               <span className="h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_rgba(var(--primary),0.5)]" />
               Pico: {chartData[peakRequestIdx]?.label}
             </p>
-            <Badge variant="outline" className="text-[10px] font-black border-primary/20 text-primary">{chartData[peakRequestIdx]?.requests} Req</Badge>
+            <Badge variant="outline" className="text-meta font-black border-primary/20 text-primary">{chartData[peakRequestIdx]?.requests} Req</Badge>
           </div>
         )}
       </div>
@@ -190,10 +191,10 @@ export function UsageCharts({ data }: UsageChartsProps) {
       <div className="nexus-card bg-card/50 border-border/40 p-8 rounded-[2.5rem] shadow-lg shadow-primary/[0.02] hover:shadow-2xl hover:shadow-primary/[0.05] transition-all duration-500">
         <div className="flex items-center justify-between mb-8">
           <div className="space-y-1">
-            <h3 className="text-lg font-black font-heading text-foreground uppercase tracking-tight">
+            <h3 className="text-title-sm font-black text-foreground uppercase tracking-tight">
               Cloud Cost USD
             </h3>
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Budget Utilization</p>
+            <p className="text-meta font-bold text-muted-foreground uppercase tracking-widest">Budget Utilization</p>
           </div>
           <ComparisonToggle enabled={compareCost} onToggle={setCompareCost} label="vs anterior" />
         </div>
@@ -213,11 +214,11 @@ export function UsageCharts({ data }: UsageChartsProps) {
         />
         {peakCostIdx >= 0 && (
           <div className="mt-6 flex items-center justify-between pt-4 border-t border-border/10">
-            <p className="text-[11px] font-bold text-muted-foreground flex items-center gap-2 uppercase tracking-widest">
+            <p className="text-meta font-bold text-muted-foreground flex items-center gap-2 uppercase tracking-widest">
               <span className="h-2 w-2 rounded-full bg-nexus-amber shadow-[0_0_8px_rgba(var(--nexus-amber),0.5)]" />
               Pico: {chartData[peakCostIdx]?.label}
             </p>
-            <Badge variant="outline" className="text-[10px] font-black border-nexus-amber/20 text-nexus-amber">${chartData[peakCostIdx]?.cost}</Badge>
+            <Badge variant="outline" className="text-meta font-black border-nexus-amber/20 text-nexus-amber">${chartData[peakCostIdx]?.cost}</Badge>
           </div>
         )}
       </div>
@@ -225,10 +226,10 @@ export function UsageCharts({ data }: UsageChartsProps) {
       {/* Latency Elevated */}
       <div className="nexus-card bg-card/50 border-border/40 p-8 rounded-[2.5rem] shadow-lg shadow-primary/[0.02] hover:shadow-2xl hover:shadow-primary/[0.05] transition-all duration-500">
         <div className="space-y-1 mb-8">
-          <h3 className="text-lg font-black font-heading text-foreground uppercase tracking-tight">
+          <h3 className="text-title-sm font-black text-foreground uppercase tracking-tight">
             Latência Média
           </h3>
-          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Cognitive Delay ms</p>
+          <p className="text-meta font-bold text-muted-foreground uppercase tracking-widest">Cognitive Delay ms</p>
         </div>
         <LightAreaChart
           data={chartData}
@@ -248,10 +249,10 @@ export function UsageCharts({ data }: UsageChartsProps) {
       {/* Tokens Elevated */}
       <div className="nexus-card bg-card/50 border-border/40 p-8 rounded-[2.5rem] shadow-lg shadow-primary/[0.02] hover:shadow-2xl hover:shadow-primary/[0.05] transition-all duration-500">
         <div className="space-y-1 mb-8">
-          <h3 className="text-lg font-black font-heading text-foreground uppercase tracking-tight">
+          <h3 className="text-title-sm font-black text-foreground uppercase tracking-tight">
             Vazão de Tokens
           </h3>
-          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Neural Processing Units</p>
+          <p className="text-meta font-bold text-muted-foreground uppercase tracking-widest">Neural Processing Units</p>
         </div>
         <LightBarChart
           data={chartData}

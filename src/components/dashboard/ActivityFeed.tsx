@@ -56,7 +56,7 @@ export function ActivityFeed() {
     return (
       <div className="text-center py-8">
         <Activity className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-        <p className="text-xs text-muted-foreground">Nenhuma atividade registrada ainda.</p>
+        <p className="text-body-sm text-muted-foreground">Nenhuma atividade registrada ainda.</p>
       </div>
     );
   }
@@ -70,7 +70,7 @@ export function ActivityFeed() {
         const detail = meta?.name || meta?.email || meta?.keyName || '';
 
         return (
-          <div key={log.id} className="flex items-center gap-3 py-1.5 px-2 rounded-lg hover:bg-secondary/30 text-xs transition-colors">
+          <div key={log.id} className="flex items-center gap-3 py-1.5 px-2 rounded-lg hover:bg-secondary/30 text-body-sm transition-colors">
             <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${info.color.replace('text-', 'bg-')}`} />
             {action.includes('security') || action.includes('denied') ? (
               <ShieldAlert className="h-3 w-3 text-destructive shrink-0" />
@@ -80,7 +80,7 @@ export function ActivityFeed() {
               <span className={`font-medium ${info.color}`}>{info.label}</span>
               {detail && <span className="text-muted-foreground ml-1.5 truncate">— {detail}</span>}
             </div>
-            <span className="text-[11px] text-muted-foreground shrink-0">{getRelativeTime(log.created_at ?? '')}</span>
+            <span className="text-meta text-muted-foreground shrink-0 text-numeric">{getRelativeTime(log.created_at ?? '')}</span>
           </div>
         );
       })}
