@@ -52,7 +52,7 @@ export function DataBrowserTable({
                   </div>
                 </th>
               ))}
-              <th className="text-left p-2 font-medium text-muted-foreground w-[60px]">Ações</th>
+              <th className="text-left p-2 text-meta font-medium uppercase tracking-wide text-muted-foreground w-[60px]">Ações</th>
             </tr>
           </thead>
           <tbody>
