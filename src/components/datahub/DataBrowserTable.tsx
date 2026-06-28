@@ -40,7 +40,7 @@ export function DataBrowserTable({
                 <Checkbox checked={allSelected} onCheckedChange={onToggleSelectAll} aria-label="Selecionar todos" />
               </th>
               {columns.map(col => (
-                <th key={col.key} className={`text-left p-2 font-medium text-muted-foreground select-none ${col.width ?? ''} ${col.sortable ? 'cursor-pointer hover:text-foreground' : ''}`}
+                <th key={col.key} className={`text-left p-2 text-meta font-medium uppercase tracking-wide text-muted-foreground select-none ${col.width ?? ''} ${col.sortable ? 'cursor-pointer hover:text-foreground' : ''}`}
                   onClick={() => col.sortable && onSort(col.key)}>
                   <div className="flex items-center gap-1">
                     {col.label}
