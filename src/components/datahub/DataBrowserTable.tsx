@@ -33,7 +33,7 @@ export function DataBrowserTable({
   return (
     <div className="rounded-lg border border-border overflow-hidden">
       <div className="overflow-x-auto max-h-[500px]">
-        <table className="w-full text-xs">
+        <table className="w-full text-body-sm text-numeric">
           <thead className="bg-secondary/50 sticky top-0 z-10">
             <tr>
               <th className="p-2 w-[36px]">
