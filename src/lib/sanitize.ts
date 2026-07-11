@@ -30,7 +30,7 @@ const RICH_TEXT_CONFIG: Config = {
   RETURN_TRUSTED_TYPE: false,
 };
 
-const STRICT_CONFIG: DOMPurify.Config = {
+const STRICT_CONFIG: Config = {
   ALLOWED_TAGS: ["b", "i", "em", "strong", "code", "a", "br", "p"],
   ALLOWED_ATTR: ["href", "title", "rel"],
 };
