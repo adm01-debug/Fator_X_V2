@@ -97,6 +97,24 @@ jobs:
             test-results/
             e2e/__screenshots__/
 
+  edge-contracts:
+    name: Edge Function Contract Tests
+    runs-on: ubuntu-latest
+    needs: lint-and-typecheck
+    if: github.event_name == 'pull_request'
+    env:
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Run edge function contract tests
+        run: |
+          deno test --allow-net --allow-env --no-check \
+            supabase/functions/_shared/edge-contract_test.ts
+
   build:
     name: Build
     runs-on: ubuntu-latest
