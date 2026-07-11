@@ -110,18 +110,17 @@ export async function resolveSecurityAlert(id: string) {
 export async function getAuditLog(options?: { userId?: string; limit?: number }) {
   try {
     type AuditRow = { id: string; user_id: string | null; action: string; created_at: string; details?: Record<string, unknown> };
+    type Filterable = { eq: (k: string, v: string) => Filterable } & PromiseLike<{ data: AuditRow[] | null; error: { message: string } | null }>;
     const client = supabaseExternal as unknown as {
       from: (t: string) => {
         select: (c: string) => {
           order: (c: string, o: { ascending: boolean }) => {
-            limit: (n: number) => {
-              eq: (k: string, v: string) => Promise<{ data: AuditRow[] | null; error: { message: string } | null }>;
-            } & Promise<{ data: AuditRow[] | null; error: { message: string } | null }>;
+            limit: (n: number) => Filterable;
           };
         };
       };
     };
-    let query = client
+    let query: Filterable = client
       .from('audit_log_safe')
       .select('*')
       .order('created_at', { ascending: false })
