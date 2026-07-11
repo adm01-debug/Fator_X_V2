@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { getAgentById } from '@/services/agentsService';
-import { listAgentTraces } from '@/services/agentTracesService';
+import { listAgentTraces, type AgentTraceRow } from '@/services/agentTracesService';
 import {
   alertRulesService, evaluateRule, makeRuleFromTemplate, ALERT_RULE_TEMPLATES,
   type AlertRule,
@@ -36,7 +36,7 @@ export default function AgentAlertsPage() {
     staleTime: 30_000,
   });
 
-  const traces = (traceData as { traces?: unknown[] }).traces || [];
+  const traces = ((traceData as { traces?: AgentTraceRow[] }).traces) || [];
 
   const [rules, setRules] = useState<AlertRule[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);

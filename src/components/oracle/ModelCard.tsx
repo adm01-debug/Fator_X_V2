@@ -36,7 +36,7 @@ export function ModelCard({ response, rank, showThinking }: ModelCardProps) {
               #{rank}
             </Badge>
           )}
-          {(response as { failover?: unknown }).failover && (
+          {Boolean((response as { failover?: unknown }).failover) && (
             <Badge variant="outline" className="text-meta bg-nexus-amber/10 text-nexus-amber border-nexus-amber/30 animate-pulse">
               FAILOVER
             </Badge>
