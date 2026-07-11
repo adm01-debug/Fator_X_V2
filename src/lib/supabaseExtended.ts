@@ -11,7 +11,7 @@ import { logger } from '@/lib/logger';
  * Returns a typed Supabase client for a specific table.
  * Using 'any' for table name to avoid deep type instantiation issues in build.
  */
-export const fromTable = (table: string) => (supabase as any).from(table);
+export const fromTable = (table: string) => (supabase as unknown as { from: (t: string) => ReturnType<typeof supabase.from> }).from(table);
 
 /**
  * Checks if a user is locked out due to multiple failed login attempts.
@@ -39,16 +39,16 @@ export const syncExternalAuth = (token: string | null) => {
 /**
  * Executes a Supabase RPC call.
  */
-export const rpcCall = async (fnName: string, params: any) => {
-  return await (supabase as any).rpc(fnName, params);
+export const rpcCall = async (fnName: string, params: Record<string, unknown>) => {
+  return await (supabase as unknown as { rpc: (fn: string, p: Record<string, unknown>) => Promise<{ data: unknown; error: unknown }> }).rpc(fnName, params);
 };
 
 /**
  * Helper to wrap any Supabase call and fix the deep type issue
  */
-export const wrap = (fn: any) => fn as any;
+export const wrap = <T>(fn: T): T => fn;
 
 /**
  * Mock result type to satisfy high-level UI component mapping
  */
-export type ResultOne = Record<string, any>;
+export type ResultOne = Record<string, unknown>;
