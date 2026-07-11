@@ -7029,6 +7029,13 @@ export type Database = {
             foreignKeyName: "workspace_member_emails_member_id_fkey"
             columns: ["member_id"]
             isOneToOne: true
+            referencedRelation: "workspace_members_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workspace_member_emails_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: true
             referencedRelation: "workspace_members_safe"
             referencedColumns: ["id"]
           },
@@ -7553,6 +7560,54 @@ export type Database = {
         }
         Relationships: []
       }
+      usage_records_cost_safe: {
+        Row: {
+          agent_id: string | null
+          cost_usd: number | null
+          created_at: string | null
+          id: string | null
+          metadata: Json | null
+          record_type: string | null
+          tokens: number | null
+          workspace_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          cost_usd?: never
+          created_at?: string | null
+          id?: string | null
+          metadata?: never
+          record_type?: string | null
+          tokens?: number | null
+          workspace_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          cost_usd?: never
+          created_at?: string | null
+          id?: string | null
+          metadata?: never
+          record_type?: string | null
+          tokens?: number | null
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usage_records_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "usage_records_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workspace_members_directory: {
         Row: {
           accepted_at: string | null
@@ -7562,6 +7617,38 @@ export type Database = {
           role: string | null
           user_id: string | null
           workspace_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workspace_members_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workspace_members_public: {
+        Row: {
+          id: string | null
+          name: string | null
+          role: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          id?: string | null
+          name?: string | null
+          role?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          id?: string | null
+          name?: string | null
+          role?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
         }
         Relationships: [
           {
