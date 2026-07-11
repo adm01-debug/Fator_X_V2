@@ -20,7 +20,7 @@ export async function listPendingApprovals(): Promise<PendingApproval[]> {
     .eq('status', 'awaiting_approval')
     .order('started_at', { ascending: false })
     .limit(20);
-  return (data as any) ?? [];
+  return (data ?? []) as unknown as PendingApproval[];
 }
 
 export async function approveWorkflowRun(runId: string, workflowId: string, feedback: string) {

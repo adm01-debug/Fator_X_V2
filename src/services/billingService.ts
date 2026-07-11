@@ -88,7 +88,7 @@ export async function getAgentUsage(days = 30): Promise<AgentUsageRow[]> {
     .gte('date', since.toISOString().split('T')[0])
     .order('date', { ascending: true });
   if (error) throw error;
-  return (data as any) ?? [];
+  return (data ?? []) as unknown as AgentUsageRow[];
 }
 
 export async function getUsageRecords(limit = 50): Promise<UsageRecordRow[]> {
@@ -98,7 +98,7 @@ export async function getUsageRecords(limit = 50): Promise<UsageRecordRow[]> {
     .order('created_at', { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return (data as any) ?? [];
+  return (data ?? []) as unknown as UsageRecordRow[];
 }
 
 // ═══ Budgets ═══
@@ -109,7 +109,7 @@ export async function listBudgets(): Promise<BudgetRow[]> {
     .select('*')
     .order('created_at', { ascending: false });
   if (error) throw error;
-  return (data as any) ?? [];
+  return (data ?? []) as unknown as BudgetRow[];
 }
 
 export async function getBudget(workspaceId: string) {
@@ -170,5 +170,5 @@ export async function getModelPricing(): Promise<ModelPricingRow[]> {
     .select('*')
     .order('model_pattern');
   if (error) throw error;
-  return (data as any) ?? [];
+  return (data ?? []) as unknown as ModelPricingRow[];
 }

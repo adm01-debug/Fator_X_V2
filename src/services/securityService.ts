@@ -109,7 +109,19 @@ export async function resolveSecurityAlert(id: string) {
 
 export async function getAuditLog(options?: { userId?: string; limit?: number }) {
   try {
-    let query = (supabaseExternal as any)
+    type AuditRow = { id: string; user_id: string | null; action: string; created_at: string; details?: Record<string, unknown> };
+    const client = supabaseExternal as unknown as {
+      from: (t: string) => {
+        select: (c: string) => {
+          order: (c: string, o: { ascending: boolean }) => {
+            limit: (n: number) => {
+              eq: (k: string, v: string) => Promise<{ data: AuditRow[] | null; error: { message: string } | null }>;
+            } & Promise<{ data: AuditRow[] | null; error: { message: string } | null }>;
+          };
+        };
+      };
+    };
+    let query = client
       .from('audit_log_safe')
       .select('*')
       .order('created_at', { ascending: false })
@@ -122,7 +134,7 @@ export async function getAuditLog(options?: { userId?: string; limit?: number })
       logger.warn('Audit log query failed in securityService', { error: error.message });
       return [];
     }
-    return (data ?? []) as any[];
+    return (data ?? []) as AuditRow[];
   } catch {
     return [];
   }

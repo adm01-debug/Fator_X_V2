@@ -169,7 +169,7 @@ export async function listWorkflowRuns(limit = 30): Promise<WorkflowRunRow[]> {
     .order('started_at', { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return (data as any) ?? [];
+  return (data ?? []) as unknown as WorkflowRunRow[];
 }
 
 /* ── Execute workflow stream ── */
