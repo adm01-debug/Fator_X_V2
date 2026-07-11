@@ -59,7 +59,7 @@ export function ExecutionHistoryPanel() {
           {executions.map((e) => (
             <Card key={e.id} className="bg-card border-border">
               <CardContent className="p-3 flex items-center gap-3">
-                <span className="text-lg">{TYPE_ICONS[e.execution_type] ?? '⚡'}</span>
+                <span className="text-title-sm">{TYPE_ICONS[e.execution_type] ?? '⚡'}</span>
                 <div className="flex-1 min-w-0">
                   <p className="text-body-sm font-medium truncate">{e.source_name}</p>
                   <p className="text-meta text-muted-foreground">{e.trigger} • {e.steps.length} steps • {e.tokens_used} tokens</p>

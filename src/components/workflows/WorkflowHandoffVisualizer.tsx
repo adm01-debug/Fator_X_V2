@@ -26,7 +26,7 @@ export function WorkflowHandoffVisualizer() {
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-lg font-bold flex items-center gap-2">
+          <h3 className="text-title-sm font-bold flex items-center gap-2">
             <ArrowRightLeft className="h-5 w-5 text-primary" />
             Fluxo de Handoffs
           </h3>

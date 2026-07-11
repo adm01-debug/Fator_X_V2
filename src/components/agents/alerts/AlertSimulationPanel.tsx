@@ -41,7 +41,7 @@ export function AlertSimulationPanel({ rule, traces, onEdit }: Props) {
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h3 className="text-base font-semibold text-foreground truncate">{rule.name}</h3>
+          <h3 className="text-title-sm font-semibold text-foreground truncate">{rule.name}</h3>
           {rule.description && (
             <p className="text-meta text-muted-foreground mt-0.5">{rule.description}</p>
           )}
@@ -71,13 +71,13 @@ export function AlertSimulationPanel({ rule, traces, onEdit }: Props) {
           <div className="grid grid-cols-2 gap-3 text-meta">
             <div>
               <p className="text-muted-foreground">Valor atual</p>
-              <p className="font-mono text-foreground text-base font-semibold tabular-nums">
+              <p className="font-mono text-foreground text-title-sm font-semibold tabular-nums">
                 {evalResult?.formatted ?? '—'}
               </p>
             </div>
             <div>
               <p className="text-muted-foreground">Threshold</p>
-              <p className="font-mono text-foreground text-base font-semibold tabular-nums">
+              <p className="font-mono text-foreground text-title-sm font-semibold tabular-nums">
                 {rule.operator} {evalResult?.formattedThreshold ?? '—'}
               </p>
             </div>
@@ -175,7 +175,7 @@ function Stat({ label, value, accent }: { label: string; value: string; accent?:
   return (
     <div className="rounded-md border border-border/40 p-2 bg-card/40">
       <p className="text-meta uppercase text-muted-foreground">{label}</p>
-      <p className={`text-base font-semibold tabular-nums ${color}`}>{value}</p>
+      <p className={`text-title-sm font-semibold tabular-nums ${color}`}>{value}</p>
     </div>
   );
 }

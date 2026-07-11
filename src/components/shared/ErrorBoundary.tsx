@@ -71,7 +71,7 @@ export class ErrorBoundary extends Component<Props, State> {
             <div className="h-14 w-14 rounded-2xl bg-destructive/10 flex items-center justify-center" aria-hidden="true">
               <AlertTriangle className="h-7 w-7 text-destructive" />
             </div>
-            <h2 className="text-lg font-heading font-semibold text-foreground">Algo deu errado</h2>
+            <h2 className="text-title-sm font-heading font-semibold text-foreground">Algo deu errado</h2>
             <p className="text-body-sm text-muted-foreground">
               {canRetry
                 ? 'Ocorreu um erro inesperado. Tente novamente ou volte para o início.'

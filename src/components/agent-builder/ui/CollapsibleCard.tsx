@@ -26,7 +26,7 @@ export function CollapsibleCard({ icon, title, subtitle, badge, defaultOpen = fa
         <CollapsibleTrigger asChild>
           <button className="flex items-center justify-between w-full px-4 py-3 text-left hover:bg-muted/20 rounded-xl transition-colors">
             <div className="flex items-center gap-2.5 min-w-0">
-              {icon && <span className="text-lg">{icon}</span>}
+              {icon && <span className="text-title-sm">{icon}</span>}
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="text-body-sm font-semibold text-foreground">{title}</span>

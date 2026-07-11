@@ -281,7 +281,7 @@ export function KPIDeepInsightsPanel({ daily, traces, agentName }: Props) {
                 <span className={active ? 'text-foreground' : 'text-muted-foreground'}>{i.label}</span>
               </div>
               <div className="flex items-baseline gap-1.5">
-                <span className="text-base font-heading font-extrabold text-foreground tabular-nums">
+                <span className="text-title-sm font-heading font-extrabold text-foreground tabular-nums">
                   {i.currentLabel}
                 </span>
                 {i.cmp.hasPrev && (() => {

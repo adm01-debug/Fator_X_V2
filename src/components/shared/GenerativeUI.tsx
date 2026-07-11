@@ -49,7 +49,7 @@ function CardWidget({ widget }: { widget: UIWidget }) {
         <div className="grid grid-cols-3 gap-2">
           {metrics.map((m, i) => (
             <div key={i} className="bg-secondary/30 rounded p-2 text-center border border-border/20">
-              <div className="text-lg font-bold text-primary">{m.value}</div>
+              <div className="text-title-sm font-bold text-primary">{m.value}</div>
               <div className="text-meta text-muted-foreground">{m.label}</div>
             </div>
           ))}

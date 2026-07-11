@@ -122,7 +122,7 @@ export function CronSchedulerPanel() {
 
       {/* Actions */}
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-bold flex items-center gap-2">
+        <h3 className="text-title-sm font-bold flex items-center gap-2">
           <Calendar className="h-5 w-5 text-primary" />
           Agendamentos
         </h3>

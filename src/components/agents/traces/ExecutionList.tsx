@@ -144,7 +144,7 @@ export function ExecutionList({ executions, selectedId, onSelect, onReplay, load
             <Filter className="h-4 w-4 text-muted-foreground" />
           </div>
         </div>
-        <h3 className="text-lg font-heading font-semibold text-foreground mb-1.5">Nenhuma execução para esses filtros</h3>
+        <h3 className="text-title-sm font-heading font-semibold text-foreground mb-1.5">Nenhuma execução para esses filtros</h3>
         <p className="text-body-sm text-muted-foreground max-w-md leading-relaxed">
           Ajuste o nível, evento, agente ou janela temporal para ampliar a busca.
         </p>

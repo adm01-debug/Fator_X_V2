@@ -192,7 +192,7 @@ export default function AgentArenaPage() {
               <div className="h-16 w-16 rounded-full bg-primary/5 flex items-center justify-center mb-6">
                 <BarChart3 className="h-8 w-8 text-muted-foreground/30" />
               </div>
-              <h3 className="text-lg font-bold text-foreground">Aguardando Arena</h3>
+              <h3 className="text-title-sm font-bold text-foreground">Aguardando Arena</h3>
               <p className="text-body-sm text-muted-foreground max-w-xs mt-2 leading-relaxed">
                 Selecione os competidores e inicie a batalha para ver as métricas de performance lado a lado.
               </p>

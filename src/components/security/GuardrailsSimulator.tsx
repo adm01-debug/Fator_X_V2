@@ -64,7 +64,7 @@ export function GuardrailsSimulator() {
               <Sparkles className="w-5 h-5 text-nexus-purple" />
             </div>
             <div>
-              <CardTitle className="text-lg font-bold">Simulador de Guardrails</CardTitle>
+              <CardTitle className="text-title-sm font-bold">Simulador de Guardrails</CardTitle>
               <CardDescription className="text-meta uppercase tracking-widest font-black opacity-50">Teste de Stress Neural</CardDescription>
             </div>
           </div>
@@ -103,7 +103,7 @@ export function GuardrailsSimulator() {
                   {result.safe ? <ShieldCheck className="w-8 h-8 text-nexus-emerald" /> : <ShieldAlert className="w-8 h-8 text-destructive" />}
                 </div>
                 <div>
-                  <p className={`text-lg font-black tracking-tight ${result.safe ? 'text-nexus-emerald' : 'text-destructive'}`}>
+                  <p className={`text-title-sm font-black tracking-tight ${result.safe ? 'text-nexus-emerald' : 'text-destructive'}`}>
                     {result.safe ? 'ENTRADA SEGURA' : 'RISCO DETECTADO'}
                   </p>
                   <p className="text-meta text-muted-foreground font-medium">Score de Confiança: {(result.score * 100).toFixed(0)}%</p>

@@ -109,7 +109,7 @@ function StatCard({ label, value }: { label: string; value: string }) {
   return (
     <div className="p-4 rounded-xl border bg-card/50">
       <p className="text-meta font-bold text-muted-foreground uppercase mb-1">{label}</p>
-      <p className="text-lg font-black text-foreground">{value}</p>
+      <p className="text-title-sm font-black text-foreground">{value}</p>
     </div>
   );
 }

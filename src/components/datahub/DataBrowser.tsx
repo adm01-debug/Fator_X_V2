@@ -230,7 +230,7 @@ export function DataBrowser({ entityId, onClose }: { entityId: string; onClose: 
         <div className="flex items-center gap-3">
           <Button size="sm" variant="ghost" onClick={onClose}><ChevronLeft className="h-4 w-4" /></Button>
           <Icon className="h-5 w-5 text-primary" />
-          <h3 className="text-lg font-heading font-bold text-foreground">{mapping?.name ?? entityId}</h3>
+          <h3 className="text-title-sm font-heading font-bold text-foreground">{mapping?.name ?? entityId}</h3>
           <Badge variant="secondary" className="text-meta">{total.toLocaleString()} registros</Badge>
         </div>
         <div className="flex items-center gap-2">

@@ -59,7 +59,7 @@ export function AuthBrandingPanel() {
             Construa agentes de IA{' '}
             <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">extraordinários</span>
           </h2>
-          <p className="text-base text-muted-foreground leading-relaxed max-w-md">Orquestre, monitore e escale seus agentes inteligentes com a plataforma mais completa do mercado.</p>
+          <p className="text-title-sm text-muted-foreground leading-relaxed max-w-md">Orquestre, monitore e escale seus agentes inteligentes com a plataforma mais completa do mercado.</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <FeaturePill icon={Brain} text="Multi-modelo (GPT, Gemini, Claude)" />

@@ -188,7 +188,7 @@ export default function AgentTemplatesPage() {
                     {t.emoji}
                   </div>
                   <div className="min-w-0">
-                    <h3 className="font-bold text-foreground text-lg group-hover:text-primary transition-colors truncate">{t.name}</h3>
+                    <h3 className="font-bold text-foreground text-title-sm group-hover:text-primary transition-colors truncate">{t.name}</h3>
                     <div className="flex items-center gap-1.5 text-meta text-muted-foreground font-bold uppercase tracking-wider">
                       <span>{t.category}</span>
                       <span>•</span>
@@ -341,15 +341,15 @@ export default function AgentTemplatesPage() {
                     <div className="grid grid-cols-1 gap-3">
                       <div className="p-3 bg-nexus-emerald/5 border border-nexus-emerald/10 rounded-xl">
                         <p className="text-meta font-bold text-nexus-emerald uppercase mb-1">Produtividade</p>
-                        <p className="text-lg font-bold text-foreground">+45% <span className="text-meta font-normal text-muted-foreground">de eficiência operacional</span></p>
+                        <p className="text-title-sm font-bold text-foreground">+45% <span className="text-meta font-normal text-muted-foreground">de eficiência operacional</span></p>
                       </div>
                       <div className="p-3 bg-primary/5 border border-primary/10 rounded-xl">
                         <p className="text-meta font-bold text-primary uppercase mb-1">Tempo de Resposta</p>
-                        <p className="text-lg font-bold text-foreground">-60% <span className="text-meta font-normal text-muted-foreground">de latência média</span></p>
+                        <p className="text-title-sm font-bold text-foreground">-60% <span className="text-meta font-normal text-muted-foreground">de latência média</span></p>
                       </div>
                       <div className="p-3 bg-nexus-amber/5 border border-nexus-amber/10 rounded-xl">
                         <p className="text-meta font-bold text-nexus-amber uppercase mb-1">Custo-Benefício</p>
-                        <p className="text-lg font-bold text-foreground">Excelente <span className="text-meta font-normal text-muted-foreground">em modelos {selectedTemplateForDetail.config.model.includes('4') ? 'Large' : 'Small'}</span></p>
+                        <p className="text-title-sm font-bold text-foreground">Excelente <span className="text-meta font-normal text-muted-foreground">em modelos {selectedTemplateForDetail.config.model.includes('4') ? 'Large' : 'Small'}</span></p>
                       </div>
                     </div>
                   </div>

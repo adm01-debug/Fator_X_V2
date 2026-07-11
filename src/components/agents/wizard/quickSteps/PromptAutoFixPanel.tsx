@@ -165,7 +165,7 @@ function FixRow({ fix, onPreview, onApply }: FixRowProps) {
   return (
     <li className="flex items-center justify-between gap-2 text-meta bg-background/50 rounded-md px-2 py-1.5 border border-border/40">
       <div className="flex items-center gap-2 min-w-0">
-        <span className="text-base shrink-0" aria-hidden>
+        <span className="text-title-sm shrink-0" aria-hidden>
           {fix.icon}
         </span>
         <div className="min-w-0">

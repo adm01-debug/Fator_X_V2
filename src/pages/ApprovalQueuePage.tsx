@@ -56,7 +56,7 @@ export default function ApprovalQueuePage() {
       ) : pendingRuns.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <CheckCircle className="h-12 w-12 text-nexus-emerald mb-4" />
-          <h2 className="text-lg font-semibold text-foreground mb-1">Nenhuma aprovação pendente</h2>
+          <h2 className="text-title-sm font-semibold text-foreground mb-1">Nenhuma aprovação pendente</h2>
           <p className="text-body-sm text-muted-foreground">Workflows com gates HITL aparecerão aqui quando precisarem de aprovação humana.</p>
         </div>
       ) : (

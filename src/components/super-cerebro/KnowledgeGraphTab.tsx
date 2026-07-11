@@ -63,8 +63,8 @@ export function KnowledgeGraphTab() {
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2">
             {Object.entries(typeConfig).map(([type, cfg]) => (
               <div key={type} className={`nexus-card text-center py-2 border ${cfg.color}`}>
-                <p className="text-lg mb-0.5">{cfg.emoji}</p>
-                <p className="text-base font-bold text-foreground">{nodesByType(type).length}</p>
+                <p className="text-title-sm mb-0.5">{cfg.emoji}</p>
+                <p className="text-title-sm font-bold text-foreground">{nodesByType(type).length}</p>
                 <p className="text-[9px] text-muted-foreground uppercase font-black">{cfg.label}</p>
               </div>
             ))}

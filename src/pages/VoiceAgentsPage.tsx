@@ -180,7 +180,7 @@ export default function VoiceAgentsPage() {
                   <Radio className="h-3 w-3 animate-pulse" /> Real-time
                 </div>
               </div>
-              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+              <p className="text-title-sm text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Orquestração neural de áudio. Converse por voz com seus agentes através de STT, LLM e síntese de alta fidelidade.
               </p>
             </div>
@@ -233,7 +233,7 @@ export default function VoiceAgentsPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <Button size="lg" variant="gradient" className="h-16 text-lg w-full md:w-auto" onClick={handleStart}>
+              <Button size="lg" variant="gradient" className="h-16 text-title-sm w-full md:w-auto" onClick={handleStart}>
                 <Mic className="mr-2 h-5 w-5" /> Iniciar Conversa
               </Button>
               <p className="text-meta text-muted-foreground">

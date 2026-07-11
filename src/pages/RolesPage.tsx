@@ -82,7 +82,7 @@ export default function RolesPage() {
                 </div>
 
                 <div>
-                  <h3 className="text-base font-bold text-foreground">{role.name}</h3>
+                  <h3 className="text-title-sm font-bold text-foreground">{role.name}</h3>
                   <p className="text-meta text-muted-foreground mt-1 line-clamp-2">{role.description}</p>
                 </div>
 

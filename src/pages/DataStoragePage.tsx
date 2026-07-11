@@ -41,7 +41,7 @@ export default function DataStoragePage() {
             { label: 'Total de registros', value: stats.total },
           ].map(s => (
             <div key={s.label} className="nexus-card text-center py-3">
-              <p className="text-lg font-heading font-bold text-foreground">{s.value}</p>
+              <p className="text-title-sm font-heading font-bold text-foreground">{s.value}</p>
               <p className="text-meta text-muted-foreground">{s.label}</p>
             </div>
           ))}

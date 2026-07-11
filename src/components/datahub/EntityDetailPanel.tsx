@@ -28,7 +28,7 @@ export function EntityDetailPanel({ entityId, mapping, onBrowse }: {
             <Icon className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h3 className="text-lg font-heading font-bold text-foreground">{mapping.name}</h3>
+            <h3 className="text-title-sm font-heading font-bold text-foreground">{mapping.name}</h3>
             <p className="text-meta text-muted-foreground">
               Banco primário: <span className="font-mono text-foreground">{getConnectionLabel(mapping.primary.connection)}</span>
             </p>

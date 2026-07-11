@@ -98,7 +98,7 @@ export function PromptABTestDialog({ open, onOpenChange, versionA, versionB }: P
                 <GitBranch className="h-8 w-8 text-primary" />
               </div>
               <div>
-                <h3 className="text-lg font-bold">Pronto para a Batalha?</h3>
+                <h3 className="text-title-sm font-bold">Pronto para a Batalha?</h3>
                 <p className="text-body-sm text-muted-foreground max-w-sm">
                   Serão executados 5 casos de teste padrão para avaliar a aderência das instruções.
                 </p>

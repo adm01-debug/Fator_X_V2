@@ -45,7 +45,7 @@ function ThreadList({ helpCenterId, hcSlug, primaryColor }: { helpCenterId: stri
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-lg font-semibold">{threads.length} tópicos</h2>
+        <h2 className="text-title-sm font-semibold">{threads.length} tópicos</h2>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button disabled={!user} style={{ background: primaryColor }}><Plus className="h-4 w-4 mr-2" />Novo tópico</Button>
@@ -128,7 +128,7 @@ function ThreadView({ threadId, hcSlug, primaryColor }: { threadId: string; hcSl
         <div className="text-foreground whitespace-pre-wrap">{thread.body}</div>
       </div>
 
-      <h2 className="text-lg font-semibold">{posts.length} respostas</h2>
+      <h2 className="text-title-sm font-semibold">{posts.length} respostas</h2>
       {posts.map((p: { id: string; body: string; author_name: string; author_id: string; is_answer: boolean; created_at: string }) => (
         <div key={p.id} className={`nexus-card ${p.is_answer ? "border-nexus-emerald/50 bg-nexus-emerald/5" : ""}`}>
           {p.is_answer && <Badge className="bg-nexus-emerald mb-2"><CheckCircle2 className="h-3 w-3 mr-1" />Resposta aceita</Badge>}

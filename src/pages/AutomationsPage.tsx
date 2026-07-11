@@ -138,7 +138,7 @@ export default function AutomationsPage() {
             <Card key={r.id}>
               <CardHeader className="flex flex-row items-start justify-between gap-3 pb-3">
                 <div className="flex-1">
-                  <CardTitle className="text-base flex items-center gap-2">
+                  <CardTitle className="text-title-sm flex items-center gap-2">
                     {r.name}
                     <Badge variant={r.is_active ? 'default' : 'secondary'}>{r.is_active ? 'Ativa' : 'Pausada'}</Badge>
                   </CardTitle>

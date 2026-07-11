@@ -121,10 +121,10 @@ export function HealthTab() {
           <div key={m.category} className="bg-card rounded-xl border border-border p-5">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <span className="text-lg">{m.icon}</span>
+                <span className="text-title-sm">{m.icon}</span>
                 <span className="text-body-sm font-semibold text-foreground">{m.category}</span>
               </div>
-              <span className="text-lg font-bold" style={{ color: m.color }}>{m.score}%</span>
+              <span className="text-title-sm font-bold" style={{ color: m.color }}>{m.score}%</span>
             </div>
             <div className="h-2 bg-muted rounded-full mb-2">
               <div className="h-full rounded-full transition-all" style={{ width: `${m.score}%`, backgroundColor: m.color }} />

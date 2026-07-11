@@ -261,11 +261,11 @@ export default function PromptEditorPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-3 rounded-xl bg-secondary/20 border border-border/10">
                     <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-tighter">System Tokens</p>
-                    <p className="text-lg font-black">{Math.round(content.length / 4)}</p>
+                    <p className="text-title-sm font-black">{Math.round(content.length / 4)}</p>
                   </div>
                   <div className="p-3 rounded-xl bg-secondary/20 border border-border/10">
                     <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-tighter">Density Score</p>
-                    <p className="text-lg font-black">0.84</p>
+                    <p className="text-title-sm font-black">0.84</p>
                   </div>
                 </div>
               </Card>
@@ -347,7 +347,7 @@ export default function PromptEditorPage() {
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <Badge variant="outline" className="text-meta font-black uppercase tracking-widest border-primary/30 text-primary">v{diffVersion.version}</Badge>
-                        <h3 className="text-lg font-black text-foreground">Visualizador de Inteligência</h3>
+                        <h3 className="text-title-sm font-black text-foreground">Visualizador de Inteligência</h3>
                       </div>
                       <p className="text-meta text-muted-foreground font-medium">Analisando regressão semântica entre versões</p>
                     </div>

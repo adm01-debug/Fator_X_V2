@@ -53,7 +53,7 @@ export default function SettingsPage() {
                   <Radio className="h-3 w-3 animate-pulse" /> Operational
                 </div>
               </div>
-              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+              <p className="text-title-sm text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Orquestração global do seu ecossistema neural. Gerencie o workspace, infraestrutura e governança de IA.
               </p>
             </div>
@@ -90,7 +90,7 @@ export default function SettingsPage() {
               <div className="nexus-card bg-card/50 backdrop-blur-sm border-border/40 p-6 space-y-6">
                 <div className="flex items-center justify-between border-b border-border/40 pb-4">
                   <div>
-                    <h3 className="text-base font-semibold text-foreground">Identidade do Workspace</h3>
+                    <h3 className="text-title-sm font-semibold text-foreground">Identidade do Workspace</h3>
                     <p className="text-meta text-muted-foreground">Configurações globais e identificação da organização</p>
                   </div>
                   <Badge className="bg-primary/10 text-primary border-none hover:bg-primary/20 uppercase tracking-wider text-meta">Enterprise</Badge>
@@ -148,7 +148,7 @@ export default function SettingsPage() {
             <TabsContent value="appearance" className="m-0 focus-visible:outline-none">
               <div className="nexus-card bg-card/50 backdrop-blur-sm border-border/40 p-6 space-y-6">
                 <div>
-                  <h3 className="text-base font-semibold text-foreground">Motor de Renderização e Temas</h3>
+                  <h3 className="text-title-sm font-semibold text-foreground">Motor de Renderização e Temas</h3>
                   <p className="text-meta text-muted-foreground">Personalize a interface para máxima eficiência visual</p>
                 </div>
                 
@@ -196,7 +196,7 @@ export default function SettingsPage() {
             <TabsContent value="notifications" className="m-0 focus-visible:outline-none">
               <div className="nexus-card bg-card/50 backdrop-blur-sm border-border/40 p-6 space-y-6">
                 <div>
-                  <h3 className="text-base font-semibold text-foreground">Matriz de Notificações e Alertas</h3>
+                  <h3 className="text-title-sm font-semibold text-foreground">Matriz de Notificações e Alertas</h3>
                   <p className="text-meta text-muted-foreground">Defina a prioridade e canais de resposta para eventos críticos</p>
                 </div>
 
@@ -234,7 +234,7 @@ export default function SettingsPage() {
               <div className="nexus-card bg-card/50 backdrop-blur-sm border-border/40 p-6 space-y-6">
                 <div className="flex items-center justify-between border-b border-border/40 pb-4">
                   <div>
-                    <h3 className="text-base font-semibold text-foreground">Bitrix24 CRM Sync</h3>
+                    <h3 className="text-title-sm font-semibold text-foreground">Bitrix24 CRM Sync</h3>
                     <p className="text-meta text-muted-foreground">Ponte de dados para automação comercial e gestão de leads</p>
                   </div>
                   <div className="h-8 w-8 rounded bg-blue-500/10 flex items-center justify-center border border-blue-500/20">

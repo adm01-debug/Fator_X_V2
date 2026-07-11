@@ -58,7 +58,7 @@ export function A2ARegistry() {
                 </div>
               </div>
               <div className="mt-4">
-                <CardTitle className="text-lg group-hover:text-primary transition-colors">{card.name}</CardTitle>
+                <CardTitle className="text-title-sm group-hover:text-primary transition-colors">{card.name}</CardTitle>
                 <CardDescription className="line-clamp-2 mt-1">{card.description}</CardDescription>
               </div>
             </CardHeader>

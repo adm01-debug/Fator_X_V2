@@ -142,7 +142,7 @@ export function OnboardingTour() {
             </div>
           </div>
 
-          <h3 className="text-lg font-heading font-bold text-foreground mb-2">{current.title}</h3>
+          <h3 className="text-title-sm font-heading font-bold text-foreground mb-2">{current.title}</h3>
           <p id="tour-description" className="text-body-sm text-muted-foreground leading-relaxed">{current.description}</p>
 
           {current.tip && (

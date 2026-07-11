@@ -117,7 +117,7 @@ export default function VendorsPage() {
       <Card>
         <CardHeader>
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <CardTitle className="text-base">Inventário de fornecedores</CardTitle>
+            <CardTitle className="text-title-sm">Inventário de fornecedores</CardTitle>
             <div className="flex flex-wrap gap-2">
               <Select value={filterCrit} onValueChange={setFilterCrit}>
                 <SelectTrigger className="h-8 w-[140px]"><SelectValue placeholder="Criticidade" /></SelectTrigger>

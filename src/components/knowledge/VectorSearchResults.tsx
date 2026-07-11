@@ -52,7 +52,7 @@ export function VectorSearchResults() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Search className="h-5 w-5 text-primary" />
-          <h3 className="text-lg font-bold">Neural Retrieval Results</h3>
+          <h3 className="text-title-sm font-bold">Neural Retrieval Results</h3>
         </div>
         <div className="flex items-center gap-2">
           <Badge variant="secondary" className="bg-nexus-emerald/10 text-nexus-emerald border-nexus-emerald/20 font-black">3 Matches Found</Badge>

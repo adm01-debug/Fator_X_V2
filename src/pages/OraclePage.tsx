@@ -86,7 +86,7 @@ export default function OraclePage() {
           {showHistory && (
             <Card className="p-6 rounded-2xl animate-in fade-in slide-in-from-top-4 duration-500">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-bold flex items-center gap-2">
+                <h3 className="text-title-sm font-bold flex items-center gap-2">
                   <History className="h-5 w-5 text-muted-foreground" />
                   Histórico de Consultas
                 </h3>

@@ -328,7 +328,7 @@ export default function AssetInventoryPage() {
       {/* Filters */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Filtros</CardTitle>
+          <CardTitle className="text-title-sm">Filtros</CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-3">
           <div className="relative">
@@ -378,7 +378,7 @@ export default function AssetInventoryPage() {
       {/* Table */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Ativos ({filtered.length})</CardTitle>
+          <CardTitle className="text-title-sm">Ativos ({filtered.length})</CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (

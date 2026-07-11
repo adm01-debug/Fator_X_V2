@@ -81,12 +81,12 @@ export function ConsensusMatrix({ points, overallConsensus }: ConsensusMatrixPro
                     const pos = point.modelPositions.find(mp => mp.model === m);
                     return (
                       <td key={m} className="text-center p-2.5" title={pos?.detail}>
-                        <span className="text-base">{positionIcon[pos?.position || 'not_mentioned']}</span>
+                        <span className="text-title-sm">{positionIcon[pos?.position || 'not_mentioned']}</span>
                       </td>
                     );
                   })}
                   <td className="text-center p-2.5">
-                    <span className="text-base">{levelConfig[point.consensusLevel].icon}</span>
+                    <span className="text-title-sm">{levelConfig[point.consensusLevel].icon}</span>
                   </td>
                 </tr>
               ))}

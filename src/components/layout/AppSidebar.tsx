@@ -202,7 +202,7 @@ export function AppSidebar() {
           </div>
           {!collapsed && (
             <div className="flex flex-col">
-              <span className="font-black text-lg tracking-tight leading-none text-foreground uppercase" aria-label="Fator X">
+              <span className="font-black text-title-sm tracking-tight leading-none text-foreground uppercase" aria-label="Fator X">
                 Fator<span className="text-primary">X</span>
               </span>
               <span className="text-[9px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] mt-1">Industrial Intelligence</span>

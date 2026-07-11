@@ -53,7 +53,7 @@ export default function EnterpriseSSOPage() {
         <TabsContent value="saml" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">Provider de Identidade</CardTitle>
+              <CardTitle className="text-title-sm flex items-center gap-2">Provider de Identidade</CardTitle>
               <CardDescription>Selecione seu IdP e configure o SAML SSO</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -136,7 +136,7 @@ export default function EnterpriseSSOPage() {
         <TabsContent value="scim" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">SCIM 2.0 Provisioning</CardTitle>
+              <CardTitle className="text-title-sm">SCIM 2.0 Provisioning</CardTitle>
               <CardDescription>Sincronize usuários e grupos automaticamente do seu IdP</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -180,7 +180,7 @@ export default function EnterpriseSSOPage() {
         <TabsContent value="domain" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Domínios verificados</CardTitle>
+              <CardTitle className="text-title-sm">Domínios verificados</CardTitle>
               <CardDescription>Apenas emails destes domínios podem usar SSO</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">

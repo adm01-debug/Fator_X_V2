@@ -174,7 +174,7 @@ export function AgentPlayground() {
           <SheetHeader className="px-5 pt-5 pb-3 border-b border-border/50 shrink-0">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-lg">{agent.avatar_emoji || '🤖'}</span>
+                <span className="text-title-sm">{agent.avatar_emoji || '🤖'}</span>
                 <div>
                   <SheetTitle className="text-body-sm font-heading font-bold text-foreground">{agent.name || 'Agente'}</SheetTitle>
                   <p className="text-meta text-muted-foreground">{agent.model} • Playground</p>

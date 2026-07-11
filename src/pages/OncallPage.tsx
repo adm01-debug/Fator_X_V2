@@ -103,7 +103,7 @@ export default function OncallPage() {
 
       <Card className="border-primary/30 bg-primary/5">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base"><ShieldAlert className="h-4 w-4 text-primary" />Quem está on-call agora</CardTitle>
+          <CardTitle className="flex items-center gap-2 text-title-sm"><ShieldAlert className="h-4 w-4 text-primary" />Quem está on-call agora</CardTitle>
         </CardHeader>
         <CardContent>
           {current.length === 0 ? (
@@ -126,7 +126,7 @@ export default function OncallPage() {
       </Card>
 
       <Card>
-        <CardHeader><CardTitle className="flex items-center gap-2 text-base"><Phone className="h-4 w-4" />Todos os plantões</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="flex items-center gap-2 text-title-sm"><Phone className="h-4 w-4" />Todos os plantões</CardTitle></CardHeader>
         <CardContent className="space-y-2">
           {loading ? <p className="text-muted-foreground text-body-sm">Carregando…</p> : entries.length === 0 ? (
             <p className="text-muted-foreground text-body-sm text-center py-8">Nenhum plantão configurado.</p>

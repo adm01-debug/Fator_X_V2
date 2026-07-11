@@ -62,7 +62,7 @@ export function SandboxExecutionPanel({ agentId, onConfigChange, onExecute }: Sa
       {/* Header */}
       <Card className="bg-card border-border">
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center justify-between text-base text-foreground">
+          <CardTitle className="flex items-center justify-between text-title-sm text-foreground">
             <span className="flex items-center gap-2">
               <Shield className="w-4 h-4 text-nexus-emerald" /> Sandboxed Execution
               {agentId && <Badge className="bg-primary/20 text-primary text-meta ml-1">Agent Config</Badge>}

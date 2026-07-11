@@ -66,7 +66,7 @@ export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
               <Bot className="h-6 w-6 text-primary" />
             </div>
             <div className="flex flex-col">
-              <h1 className="text-lg font-black tracking-tight text-foreground leading-none">
+              <h1 className="text-title-sm font-black tracking-tight text-foreground leading-none">
                 Agent Forge
               </h1>
               <span className="text-meta text-muted-foreground font-bold uppercase tracking-widest mt-0.5">
@@ -78,7 +78,7 @@ export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
           <div className="hidden lg:flex items-center gap-4 pl-4 border-l border-border/40">
             {agent.name && (
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-secondary/30 border border-border/20 max-w-[200px]">
-                <span className="text-base leading-none">{agent.avatar_emoji}</span>
+                <span className="text-title-sm leading-none">{agent.avatar_emoji}</span>
                 <span className="text-meta font-bold text-foreground truncate">{agent.name}</span>
               </div>
             )}

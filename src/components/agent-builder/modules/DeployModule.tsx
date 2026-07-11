@@ -358,7 +358,7 @@ export function DeployModule() {
                   checked={kpi.enabled}
                   onCheckedChange={(v) => updateKPI(kpi.id, { enabled: v })}
                 />
-                <span className="text-lg">{kpi.icon}</span>
+                <span className="text-title-sm">{kpi.icon}</span>
                 <div className="min-w-0">
                   <p className="text-body-sm font-medium text-foreground">{kpi.name}</p>
                   <p className="text-meta text-muted-foreground">Target: {kpi.target}</p>
@@ -434,7 +434,7 @@ export function DeployModule() {
               <Rocket className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h3 className="text-lg font-black text-foreground">Deploy Industrial Nexus</h3>
+              <h3 className="text-title-sm font-black text-foreground">Deploy Industrial Nexus</h3>
               <p className="text-meta text-muted-foreground">Promova este agente através dos estágios de governança.</p>
             </div>
           </div>
@@ -493,7 +493,7 @@ export function DeployModule() {
                 <Zap className="h-8 w-8 text-primary animate-pulse" />
               </div>
               <div>
-                <h4 className="text-base font-black text-foreground">Snapshot & Deploy</h4>
+                <h4 className="text-title-sm font-black text-foreground">Snapshot & Deploy</h4>
                 <p className="text-meta text-muted-foreground max-w-[240px] mt-1">Gere um rastro imutável e promova as alterações para o cluster industrial.</p>
               </div>
               <Button 

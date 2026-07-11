@@ -100,7 +100,7 @@ export default function SwarmOrchestrationPage() {
             </div>
             <div className="space-y-1">
               <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Swarm Orchestration</h1>
-              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+              <p className="text-title-sm text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Orquestração descentralizada de agentes via protocolo A2A. Gerencie a comunicação inter-agente com descoberta automática.
               </p>
             </div>
@@ -155,7 +155,7 @@ export default function SwarmOrchestrationPage() {
             <CardHeader className="border-b border-border/40 flex flex-row items-center justify-between">
               <div className="flex items-center gap-2">
                 <Terminal className="h-5 w-5 text-primary" />
-                <CardTitle className="text-lg">A2A Traffic Monitor</CardTitle>
+                <CardTitle className="text-title-sm">A2A Traffic Monitor</CardTitle>
               </div>
               <Activity className="h-4 w-4 text-nexus-emerald animate-pulse" />
             </CardHeader>

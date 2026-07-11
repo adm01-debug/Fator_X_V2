@@ -276,7 +276,7 @@ export default function RiskRegisterPage() {
       {/* Heatmap */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Heatmap de Riscos (Likelihood × Impact)</CardTitle>
+          <CardTitle className="text-title-sm">Heatmap de Riscos (Likelihood × Impact)</CardTitle>
           <CardDescription>Distribuição visual dos riscos ativos</CardDescription>
         </CardHeader>
         <CardContent>
@@ -320,7 +320,7 @@ export default function RiskRegisterPage() {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between gap-4 flex-wrap">
-            <CardTitle className="text-lg">Riscos registrados</CardTitle>
+            <CardTitle className="text-title-sm">Riscos registrados</CardTitle>
             <div className="flex gap-2">
               <Select value={filterCategory} onValueChange={setFilterCategory}>
                 <SelectTrigger className="w-[160px]"><SelectValue /></SelectTrigger>

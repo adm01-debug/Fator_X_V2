@@ -33,7 +33,7 @@ export function AutomationTemplatesPanel() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Templates de Automação — Promo Brindes</h3>
+        <h3 className="text-title-sm font-semibold">Templates de Automação — Promo Brindes</h3>
         <Badge variant="outline" className="border-border">{templates.length} disponíveis</Badge>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

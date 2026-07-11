@@ -170,7 +170,7 @@ export default function GameDaysPage() {
       ) : gameDays.length === 0 ? (
         <Card className="p-12 text-center">
           <Swords className="h-12 w-12 text-muted-foreground/40 mx-auto mb-4" />
-          <h3 className="font-semibold text-lg mb-2">Nenhum Game Day agendado</h3>
+          <h3 className="font-semibold text-title-sm mb-2">Nenhum Game Day agendado</h3>
           <p className="text-muted-foreground mb-4">Drills mensais identificam gaps no runbook e melhoram MTTR.</p>
           <Button onClick={() => setDialogOpen(true)} variant="gradient">
             <Plus className="h-4 w-4" /> Agendar primeiro
@@ -183,7 +183,7 @@ export default function GameDaysPage() {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 mb-2">
-                    <h3 className="font-semibold text-lg">{gd.title}</h3>
+                    <h3 className="font-semibold text-title-sm">{gd.title}</h3>
                     <Badge variant={STATUS_VARIANTS[gd.status]}>{gd.status}</Badge>
                     <Badge variant="outline">{SCENARIO_LABELS[gd.scenario]}</Badge>
                   </div>

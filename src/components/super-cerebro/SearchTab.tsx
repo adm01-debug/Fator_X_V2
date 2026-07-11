@@ -188,7 +188,7 @@ export function SearchTab() {
       {/* ── Context Tiers (Hierarchical Search) ── */}
       <div className="nexus-card space-y-4 border-primary/20 bg-primary/5 shadow-lg">
         <div className="flex items-center justify-between">
-          <h3 className="text-base font-heading font-bold text-foreground flex items-center gap-2">
+          <h3 className="text-title-sm font-heading font-bold text-foreground flex items-center gap-2">
             <Layers className="h-5 w-5 text-primary" /> Context Tiers L0/L1/L2
           </h3>
           <Badge className="bg-primary text-primary-foreground gap-1.5 py-1 px-3 text-meta font-bold">
@@ -223,7 +223,7 @@ export function SearchTab() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Consulte o cérebro usando tiers... Ex: Qual o histórico de negociação com a Ambev?"
-            className="h-14 pl-12 bg-background border-primary/20 focus:ring-primary/20 text-base rounded-2xl shadow-inner"
+            className="h-14 pl-12 bg-background border-primary/20 focus:ring-primary/20 text-title-sm rounded-2xl shadow-inner"
             onKeyDown={(e) => {
               if (e.key === 'Enter') handleTieredSearch();
             }}

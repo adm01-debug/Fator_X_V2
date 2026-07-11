@@ -93,7 +93,7 @@ export default function KnowledgePage() {
                   <Radio className="h-3 w-3 animate-pulse" /> Neural Network
                 </div>
               </div>
-              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+              <p className="text-title-sm text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Ecossistema de recuperação vetorial. Orquestre o conhecimento dos seus agentes através de Retrieval-Augmented Generation em escala industrial.
               </p>
             </div>
@@ -193,7 +193,7 @@ export default function KnowledgePage() {
                       placeholder="Pesquisar bases de conhecimento..." 
                       value={search} 
                       onChange={(e) => setSearch(e.target.value)} 
-                      className="pl-12 h-14 rounded-2xl bg-card border-border/40 focus:ring-primary/20 text-base" 
+                      className="pl-12 h-14 rounded-2xl bg-card border-border/40 focus:ring-primary/20 text-title-sm" 
                     />
                   </div>
                   <div className="flex bg-secondary/20 border border-border/40 rounded-2xl p-1 h-14">
@@ -227,7 +227,7 @@ export default function KnowledgePage() {
                   <div className="h-20 w-20 rounded-full bg-secondary/30 flex items-center justify-center mb-6 border border-border/20">
                     <Database className="h-10 w-10 text-muted-foreground/50" />
                   </div>
-                  <h2 className="text-lg font-bold text-foreground mb-2">Vácuo de Informação Detectado</h2>
+                  <h2 className="text-title-sm font-bold text-foreground mb-2">Vácuo de Informação Detectado</h2>
                   <p className="text-body-sm text-muted-foreground max-sm mb-6">Sua infraestrutura RAG ainda não possui bases de dados ativas. Comece conectando uma fonte de conhecimento.</p>
                   <CreateKnowledgeBaseDialog onCreated={() => refetch()} />
                 </div>

@@ -153,7 +153,7 @@ export function GuardrailsLibrary() {
                   <Card key={preset.id} className="p-4 bg-secondary/20 border-border/40 hover:border-primary/30 transition-colors flex flex-col">
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <div className="flex items-center gap-2 min-w-0">
-                        <span className="text-lg shrink-0">{meta.icon}</span>
+                        <span className="text-title-sm shrink-0">{meta.icon}</span>
                         <div className="min-w-0">
                           <p className="text-meta font-semibold text-foreground truncate">{preset.name}</p>
                           <div className="flex items-center gap-1 mt-0.5">

@@ -99,7 +99,7 @@ export default function SearchPage() {
 
       <section className="space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">
+          <h2 className="text-title-sm font-semibold">
             Resultados {results.length > 0 && (
               <span className="text-muted-foreground">({results.length})</span>
             )}
@@ -133,7 +133,7 @@ export default function SearchPage() {
             <Card key={r.chunk_id} className="transition-shadow hover:shadow-md">
               <CardHeader className="pb-2">
                 <div className="flex items-start justify-between gap-3">
-                  <CardTitle className="flex items-center gap-2 text-base">
+                  <CardTitle className="flex items-center gap-2 text-title-sm">
                     <FileText className="h-4 w-4 text-primary" />
                     {r.document_title ?? "Documento sem título"}
                   </CardTitle>

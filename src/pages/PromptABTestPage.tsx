@@ -42,7 +42,7 @@ export default function PromptABTestPage() {
       />
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card><CardContent className="p-4"><div className="text-meta text-muted-foreground">Status</div><div className="text-lg font-bold mt-1 flex items-center gap-2">{running ? <><div className="h-2 w-2 rounded-full bg-nexus-green animate-pulse" />Rodando</> : "Pausado"}</div></CardContent></Card>
+        <Card><CardContent className="p-4"><div className="text-meta text-muted-foreground">Status</div><div className="text-title-sm font-bold mt-1 flex items-center gap-2">{running ? <><div className="h-2 w-2 rounded-full bg-nexus-green animate-pulse" />Rodando</> : "Pausado"}</div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="text-meta text-muted-foreground">Total runs</div><div className="text-2xl font-bold">{variants.reduce((s, v) => s + v.runs, 0).toLocaleString("pt-BR")}</div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="text-meta text-muted-foreground">Confiança estatística</div><div className="text-2xl font-bold text-nexus-green">{confidence}%</div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="text-meta text-muted-foreground">Lift do vencedor</div><div className="text-2xl font-bold">+{lift.toFixed(1)}%</div></CardContent></Card>
@@ -89,19 +89,19 @@ export default function PromptABTestPage() {
               <div className="grid grid-cols-2 gap-3 text-meta">
                 <div className="p-2.5 bg-muted/30 rounded">
                   <div className="text-muted-foreground">Runs</div>
-                  <div className="text-lg font-bold mt-0.5">{v.runs.toLocaleString("pt-BR")}</div>
+                  <div className="text-title-sm font-bold mt-0.5">{v.runs.toLocaleString("pt-BR")}</div>
                 </div>
                 <div className="p-2.5 bg-muted/30 rounded">
                   <div className="text-muted-foreground">Latência média</div>
-                  <div className="text-lg font-bold mt-0.5">{v.avgLatency}ms</div>
+                  <div className="text-title-sm font-bold mt-0.5">{v.avgLatency}ms</div>
                 </div>
                 <div className="p-2.5 bg-muted/30 rounded">
                   <div className="text-muted-foreground">Custo médio</div>
-                  <div className="text-lg font-bold mt-0.5">${v.avgCost.toFixed(4)}</div>
+                  <div className="text-title-sm font-bold mt-0.5">${v.avgCost.toFixed(4)}</div>
                 </div>
                 <div className="p-2.5 bg-muted/30 rounded">
                   <div className="text-muted-foreground">Conversão</div>
-                  <div className="text-lg font-bold mt-0.5 text-nexus-green">{v.conversion}%</div>
+                  <div className="text-title-sm font-bold mt-0.5 text-nexus-green">{v.conversion}%</div>
                 </div>
               </div>
 

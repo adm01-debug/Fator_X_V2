@@ -205,7 +205,7 @@ function SkillCard({ skill, onOpen }: { skill: MarketplaceSkill; onOpen: () => v
         </div>
         <div className="flex items-center justify-between pt-2 border-t border-border/40">
           <div>
-            <div className="text-lg font-bold">{formatPrice(skill.price_cents)}</div>
+            <div className="text-title-sm font-bold">{formatPrice(skill.price_cents)}</div>
             <div className="text-meta text-muted-foreground capitalize">{skill.pricing_model.replace('_', ' ')}</div>
           </div>
           <Button size="sm" onClick={(e) => { e.stopPropagation(); onOpen(); }}>Ver detalhes</Button>

@@ -152,7 +152,7 @@ export default function OpenclawDeployPage() {
         <TabsContent value="overview" className="mt-6">
           <Card className="bg-card border-border">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-base">
+              <CardTitle className="flex items-center gap-2 text-title-sm">
                 <Server className="h-4 w-4 text-primary" /> Status do Runtime
               </CardTitle>
             </CardHeader>
@@ -258,7 +258,7 @@ export default function OpenclawDeployPage() {
         <TabsContent value="deploy" className="mt-6">
           <Card className="bg-card border-border">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-base">
+              <CardTitle className="flex items-center gap-2 text-title-sm">
                 <Upload className="h-4 w-4 text-nexus-emerald" /> Deploy de SKILL.md
               </CardTitle>
             </CardHeader>

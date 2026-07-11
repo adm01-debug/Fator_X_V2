@@ -76,7 +76,7 @@ function ApiKeysPanel() {
             <Key className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-foreground">API Keys</h3>
+            <h3 className="text-title-sm font-bold text-foreground">API Keys</h3>
             <p className="text-meta text-muted-foreground font-medium uppercase tracking-wider">Integrações Seguras</p>
           </div>
         </div>
@@ -187,7 +187,7 @@ export default function SecurityPage() {
                 <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Fortaleza de Segurança</h1>
                 <Badge className="bg-nexus-cyan/10 text-nexus-cyan border-none font-black px-3 py-1 rounded-full text-meta tracking-widest uppercase">Grade Industrial</Badge>
               </div>
-              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+              <p className="text-title-sm text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Governança neural avançada. Controle guardrails, compliance, auditoria e resiliência em um ecossistema blindado.
               </p>
             </div>

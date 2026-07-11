@@ -194,7 +194,7 @@ export default function PostmortemsPage() {
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between gap-2 flex-wrap">
-            <CardTitle className="text-base">Lista</CardTitle>
+            <CardTitle className="text-title-sm">Lista</CardTitle>
             <div className="flex gap-2 flex-wrap">
               <Input placeholder="Buscar título…" value={search} onChange={(e) => setSearch(e.target.value)} className="w-48" />
               <Select value={filterSev} onValueChange={setFilterSev}>

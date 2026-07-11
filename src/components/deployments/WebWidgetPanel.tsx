@@ -79,7 +79,7 @@ export function WebWidgetPanel({ agentId: initialAgentId, agentName }: WebWidget
   return (
     <Card className="bg-card border-border">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="flex items-center gap-2 text-title-sm">
           <Globe className="h-4 w-4 text-primary" />
           Web Widget Embed
           {agentName && <Badge variant="outline" className="text-meta border-border">{agentName}</Badge>}

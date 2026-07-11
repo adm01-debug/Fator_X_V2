@@ -108,7 +108,7 @@ export default function BudgetSettingsPage() {
                 <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Budget & Limits</h1>
                 <Badge className="bg-primary/10 text-primary border-none font-black px-3 py-1 rounded-full text-meta tracking-widest uppercase">Guardrails de Gasto</Badge>
               </div>
-              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+              <p className="text-title-sm text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Proteção financeira automatizada. Configure limites rígidos e avisos de consumo para evitar surpresas no faturamento LLM.
               </p>
             </div>
@@ -185,7 +185,7 @@ export default function BudgetSettingsPage() {
             <div className="flex items-start gap-3">
               <ShieldOff className="h-5 w-5 text-destructive mt-0.5" />
               <div>
-                <Label className="text-base">Bloqueio rígido (hard stop)</Label>
+                <Label className="text-title-sm">Bloqueio rígido (hard stop)</Label>
                 <p className="text-body-sm text-muted-foreground">Ao atingir 100%, bloqueia chamadas e pausa agentes ativos.</p>
               </div>
             </div>

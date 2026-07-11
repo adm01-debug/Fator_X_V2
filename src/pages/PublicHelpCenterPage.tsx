@@ -35,7 +35,7 @@ export default function PublicHelpCenterPage() {
           <p className="text-muted-foreground mb-6">{hc.description}</p>
           <div className="relative max-w-xl">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar artigos..." className="pl-12 h-12 bg-card text-base" />
+            <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar artigos..." className="pl-12 h-12 bg-card text-title-sm" />
           </div>
         </div>
       </header>
@@ -65,7 +65,7 @@ function ArticleList({ helpCenterId, hcSlug, search, primaryColor }: { helpCente
   return (
     <div className="grid md:grid-cols-3 gap-8">
       <div className="md:col-span-2 space-y-3">
-        <h2 className="text-lg font-heading font-semibold mb-4">Artigos</h2>
+        <h2 className="text-title-sm font-heading font-semibold mb-4">Artigos</h2>
         {filtered.length === 0 ? (
           <p className="text-body-sm text-muted-foreground py-8 text-center">Nenhum artigo encontrado.</p>
         ) : filtered.map((a) => (
@@ -86,7 +86,7 @@ function ArticleList({ helpCenterId, hcSlug, search, primaryColor }: { helpCente
       </div>
       <aside>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-heading font-semibold">Comunidade</h2>
+          <h2 className="text-title-sm font-heading font-semibold">Comunidade</h2>
           <Button size="sm" variant="outline" onClick={() => navigate(`/help/${hcSlug}/forum`)}>Ver fórum</Button>
         </div>
         <div className="space-y-2">

@@ -103,7 +103,7 @@ export function AuditTrailPanel() {
     <Card className="bg-card border-border">
       <CardHeader>
         <div className="flex items-center justify-between gap-4 flex-wrap">
-          <CardTitle className="flex items-center gap-2 text-base">
+          <CardTitle className="flex items-center gap-2 text-title-sm">
             <Shield className="h-4 w-4 text-nexus-purple" />
             Audit Trail
             <Badge variant="outline" className="text-meta border-border">

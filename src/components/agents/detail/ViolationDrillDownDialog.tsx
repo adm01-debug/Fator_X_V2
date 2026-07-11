@@ -179,7 +179,7 @@ export function ViolationDrillDownDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl max-h-[88vh] flex flex-col p-0 gap-0">
         <DialogHeader className="p-5 pb-3 border-b border-border/50">
-          <DialogTitle className="font-heading text-lg flex items-center gap-2">
+          <DialogTitle className="font-heading text-title-sm flex items-center gap-2">
             <meta.Icon className={`h-4 w-4 ${meta.color}`} />
             Drill-down de violações
           </DialogTitle>

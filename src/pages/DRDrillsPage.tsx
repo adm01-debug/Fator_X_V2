@@ -253,7 +253,7 @@ export default function DRDrillsPage() {
 
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center gap-2"><Database className="h-4 w-4" /> Drills programados</CardTitle>
+          <CardTitle className="text-title-sm flex items-center gap-2"><Database className="h-4 w-4" /> Drills programados</CardTitle>
           <CardDescription>Cadência recomendada: críticas semanal · workspace mensal · full trimestral</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">

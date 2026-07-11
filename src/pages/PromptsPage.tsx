@@ -57,7 +57,7 @@ export default function PromptsPage() {
                   <Zap className="h-3 w-3 animate-pulse" /> Neural Versioning
                 </div>
               </div>
-              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+              <p className="text-title-sm text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Repositório central de inteligência. Gerencie versões, realize testes A/B determinísticos e otimize a precisão dos seus agentes em escala industrial.
               </p>
             </div>
@@ -101,7 +101,7 @@ export default function PromptsPage() {
                 placeholder="Pesquisar inteligência..." 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-12 h-14 rounded-2xl bg-card border-border/40 focus:ring-primary/20 text-base"
+                className="pl-12 h-14 rounded-2xl bg-card border-border/40 focus:ring-primary/20 text-title-sm"
               />
             </div>
             <Button variant="outline" size="lg" className="h-14 px-6 rounded-2xl border-border/40 font-bold gap-2">
@@ -123,7 +123,7 @@ export default function PromptsPage() {
                 <FileText className="h-12 w-12 text-primary/40" />
               </div>
               <h2 className="text-2xl font-heading font-black text-foreground mb-2">Engenharia de Prompts Vazia</h2>
-              <p className="text-base text-muted-foreground mb-8 max-w-md">Comece a estruturar o conhecimento dos seus agentes criando o primeiro prompt versionado.</p>
+              <p className="text-title-sm text-muted-foreground mb-8 max-w-md">Comece a estruturar o conhecimento dos seus agentes criando o primeiro prompt versionado.</p>
               <CreatePromptDialog agents={agents} onCreated={() => refetch()} />
             </div>
           ) : (

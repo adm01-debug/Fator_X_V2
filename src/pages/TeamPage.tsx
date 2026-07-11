@@ -87,7 +87,7 @@ export default function TeamPage() {
       ) : members.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <Users className="h-12 w-12 text-muted-foreground mb-4" />
-          <h2 className="text-lg font-semibold text-foreground mb-1">Nenhum membro</h2>
+          <h2 className="text-title-sm font-semibold text-foreground mb-1">Nenhum membro</h2>
           <p className="text-body-sm text-muted-foreground">Convide membros para colaborar no workspace.</p>
         </div>
       ) : (

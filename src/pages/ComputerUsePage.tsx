@@ -175,7 +175,7 @@ export default function ComputerUsePage() {
                 value={task} 
                 onChange={(e) => setTask(e.target.value)} 
                 placeholder="Ex: Entre no LinkedIn, pesquise por 'Lovable AI' e siga a página" 
-                className="pl-12 h-14 rounded-2xl bg-card border-border/40 focus:ring-primary/20 text-base"
+                className="pl-12 h-14 rounded-2xl bg-card border-border/40 focus:ring-primary/20 text-title-sm"
                 disabled={running}
               />
             </div>

@@ -205,21 +205,21 @@ export function EvalsModule() {
                           <div className="grid grid-cols-4 gap-3 mt-3 text-meta">
                             <div>
                               <div className="text-muted-foreground">Pass rate</div>
-                              <div className={`font-semibold text-base ${passRate >= 70 ? 'text-nexus-emerald' : passRate >= 40 ? 'text-nexus-amber' : 'text-destructive'}`}>
+                              <div className={`font-semibold text-title-sm ${passRate >= 70 ? 'text-nexus-emerald' : passRate >= 40 ? 'text-nexus-amber' : 'text-destructive'}`}>
                                 {passRate.toFixed(0)}%
                               </div>
                             </div>
                             <div>
                               <div className="text-muted-foreground">Score médio</div>
-                              <div className="font-semibold text-base">{Number(run.avg_score ?? 0).toFixed(2)}</div>
+                              <div className="font-semibold text-title-sm">{Number(run.avg_score ?? 0).toFixed(2)}</div>
                             </div>
                             <div>
                               <div className="text-muted-foreground">Latência</div>
-                              <div className="font-semibold text-base">{run.avg_latency_ms}ms</div>
+                              <div className="font-semibold text-title-sm">{run.avg_latency_ms}ms</div>
                             </div>
                             <div>
                               <div className="text-muted-foreground">Custo</div>
-                              <div className="font-semibold text-base">${Number(run.total_cost_usd ?? 0).toFixed(4)}</div>
+                              <div className="font-semibold text-title-sm">${Number(run.total_cost_usd ?? 0).toFixed(4)}</div>
                             </div>
                           </div>
                         </div>

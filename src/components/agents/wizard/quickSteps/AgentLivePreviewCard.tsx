@@ -119,7 +119,7 @@ export function AgentLivePreviewCard({ form }: Props) {
         </div>
         <div className="min-w-0 flex-1 space-y-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <p className="font-heading font-semibold text-foreground text-base truncate">
+            <p className="font-heading font-semibold text-foreground text-title-sm truncate">
               {debounced.name || 'Sem nome'}
             </p>
             {debounced.type && (

@@ -318,7 +318,7 @@ export function StepQuickPrompt({ form, errors, onPromptManualEdit, onRestore, o
     <div className="space-y-4">
       <div className="flex items-end justify-between gap-3 flex-wrap">
         <div>
-          <h2 className="text-lg font-heading font-semibold text-foreground">System Prompt</h2>
+          <h2 className="text-title-sm font-heading font-semibold text-foreground">System Prompt</h2>
           <p className="text-body-sm text-muted-foreground">Instruções de comportamento do agente.</p>
         </div>
         <div className="flex items-center gap-1.5">

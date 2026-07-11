@@ -37,7 +37,7 @@ function WorkflowNode({ data, selected }: { data: WorkflowNodeData; selected: bo
       `}
     >
       <div className="flex items-center gap-2 mb-1">
-        <span className="text-lg">{nodeInfo.icon}</span>
+        <span className="text-title-sm">{nodeInfo.icon}</span>
         <span className="text-body-sm font-semibold text-foreground truncate">
           {data.label || nodeInfo.label}
         </span>
@@ -102,7 +102,7 @@ function NodePalette({ onAddNode }: { onAddNode: (type: NodeType) => void }) {
                   draggable
                   onDragStart={(e) => e.dataTransfer.setData('nodeType', nodeType)}
                 >
-                  <span className="text-base">{info.icon}</span>
+                  <span className="text-title-sm">{info.icon}</span>
                   <span className="text-meta text-muted-foreground group-hover:text-foreground">
                     {info.label}
                   </span>
@@ -135,8 +135,8 @@ function WorkflowToolbar({
   return (
     <div className="h-14 bg-background border-b border-border flex items-center justify-between px-4">
       <div className="flex items-center gap-3">
-        <span className="text-lg">🔀</span>
-        <h2 className="text-base font-bold text-foreground">{name}</h2>
+        <span className="text-title-sm">🔀</span>
+        <h2 className="text-title-sm font-bold text-foreground">{name}</h2>
         {isDirty && <span className="text-meta text-nexus-amber">● Não salvo</span>}
       </div>
       <div className="flex items-center gap-2">
@@ -335,7 +335,7 @@ export function WorkflowCanvas() {
                     <span className="text-body-sm">➕</span>
                   </div>
                 </div>
-                <h3 className="text-lg font-heading font-bold text-foreground mb-2">
+                <h3 className="text-title-sm font-heading font-bold text-foreground mb-2">
                   Canvas Vazio
                 </h3>
                 <p className="text-body-sm text-muted-foreground leading-relaxed">

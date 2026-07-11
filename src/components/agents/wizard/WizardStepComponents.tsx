@@ -52,7 +52,7 @@ type FormType = Record<string, string | string[]>;
 export function StepIdentity({ form, update }: { form: FormType; update: (k: string, v: unknown) => void }) {
   return (
     <div className="nexus-card space-y-5">
-      <h2 className="text-lg font-heading font-semibold text-foreground">Identidade do agente</h2>
+      <h2 className="text-title-sm font-heading font-semibold text-foreground">Identidade do agente</h2>
       <div className="grid gap-4">
         <div><Label className="text-body-sm">Nome do agente *</Label><Input value={form.name} onChange={e => update("name", e.target.value)} placeholder="Ex: Atlas, Scout, Sentinel..." className="mt-1.5 bg-secondary/50 border-border/50" /></div>
         <div><Label className="text-body-sm">Descrição</Label><Textarea value={form.description} onChange={e => update("description", e.target.value)} placeholder="Descreva o propósito deste agente..." rows={3} className="mt-1.5 bg-secondary/50 border-border/50 resize-none" /></div>
@@ -65,7 +65,7 @@ export function StepIdentity({ form, update }: { form: FormType; update: (k: str
 export function StepType({ form, update }: { form: FormType; update: (k: string, v: unknown) => void }) {
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-heading font-semibold text-foreground">Tipo do agente</h2>
+      <h2 className="text-title-sm font-heading font-semibold text-foreground">Tipo do agente</h2>
       <p className="text-body-sm text-muted-foreground">Selecione o tipo que melhor descreve o papel deste agente.</p>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {AGENT_TYPES.map(t => {
@@ -89,7 +89,7 @@ export function StepType({ form, update }: { form: FormType; update: (k: string,
 export function StepModel({ form, update }: { form: FormType; update: (k: string, v: unknown) => void }) {
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-heading font-semibold text-foreground">Modelo base</h2>
+      <h2 className="text-title-sm font-heading font-semibold text-foreground">Modelo base</h2>
       <p className="text-body-sm text-muted-foreground">Escolha o modelo de linguagem para este agente.</p>
       <div className="grid gap-3 sm:grid-cols-2">
         {MODELS.map(m => {
@@ -116,7 +116,7 @@ export function StepModel({ form, update }: { form: FormType; update: (k: string
 export function StepPrompt({ form, update }: { form: FormType; update: (k: string, v: unknown) => void }) {
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-heading font-semibold text-foreground">System Prompt</h2>
+      <h2 className="text-title-sm font-heading font-semibold text-foreground">System Prompt</h2>
       <p className="text-body-sm text-muted-foreground">Defina as instruções de comportamento do agente.</p>
       <div className="nexus-card">
         <Textarea value={form.prompt} onChange={e => update("prompt", e.target.value)} rows={14} className="bg-secondary/50 border-border/50 font-mono text-meta leading-relaxed resize-none" />
@@ -128,7 +128,7 @@ export function StepPrompt({ form, update }: { form: FormType; update: (k: strin
 export function StepTools({ form, toggle }: { form: FormType; toggle: (id: string) => void }) {
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-heading font-semibold text-foreground">Ferramentas</h2>
+      <h2 className="text-title-sm font-heading font-semibold text-foreground">Ferramentas</h2>
       <p className="text-body-sm text-muted-foreground">Habilite as ferramentas que o agente poderá utilizar.</p>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {TOOLS.map(t => {
@@ -152,7 +152,7 @@ export function StepTools({ form, toggle }: { form: FormType; toggle: (id: strin
 export function StepMemory({ form, toggle }: { form: FormType; toggle: (id: string) => void }) {
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-heading font-semibold text-foreground">Memória</h2>
+      <h2 className="text-title-sm font-heading font-semibold text-foreground">Memória</h2>
       <p className="text-body-sm text-muted-foreground">Configure as camadas de memória do agente.</p>
       <div className="space-y-3">
         {MEMORY_OPTIONS.map(m => {
@@ -177,7 +177,7 @@ export function StepKnowledge({ form, toggle }: { form: FormType; toggle: (id: s
   ];
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-heading font-semibold text-foreground">Knowledge Base</h2>
+      <h2 className="text-title-sm font-heading font-semibold text-foreground">Knowledge Base</h2>
       <p className="text-body-sm text-muted-foreground">Vincule bases de conhecimento para RAG.</p>
       <div className="space-y-3">
         {kbs.map(kb => {
@@ -208,7 +208,7 @@ export function StepDeploy({ form, update }: { form: FormType; update: (k: strin
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-heading font-semibold text-foreground">Revisão & Deploy</h2>
+      <h2 className="text-title-sm font-heading font-semibold text-foreground">Revisão & Deploy</h2>
       <div className="nexus-card space-y-3">
         <h3 className="text-body-sm font-semibold text-foreground">Resumo</h3>
         <div className="grid grid-cols-2 gap-3 text-meta">

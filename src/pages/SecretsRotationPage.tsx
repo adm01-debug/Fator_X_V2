@@ -245,7 +245,7 @@ export default function SecretsRotationPage() {
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between flex-wrap gap-3">
-            <CardTitle className="text-base">Inventário ({filtered.length})</CardTitle>
+            <CardTitle className="text-title-sm">Inventário ({filtered.length})</CardTitle>
             <div className="flex gap-2 flex-wrap">
               <Select value={filterCategory} onValueChange={setFilterCategory}>
                 <SelectTrigger className="w-[160px] h-8"><SelectValue /></SelectTrigger>

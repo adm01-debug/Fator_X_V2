@@ -422,7 +422,7 @@ export default function BCPPage() {
 
                 <TabsContent value="tests" className="space-y-4 pt-4">
                   <Card>
-                    <CardHeader><CardTitle className="text-base">Registrar novo teste</CardTitle></CardHeader>
+                    <CardHeader><CardTitle className="text-title-sm">Registrar novo teste</CardTitle></CardHeader>
                     <CardContent className="space-y-3">
                       <div className="grid grid-cols-2 gap-3">
                         <div>

@@ -703,7 +703,7 @@ function FullDiffView({
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
           </Button>
           <div className="min-w-0">
-            <DialogTitle className="flex items-center gap-2 text-base">
+            <DialogTitle className="flex items-center gap-2 text-title-sm">
               <Eye className="h-4 w-4 text-primary" aria-hidden="true" />
               Diff detalhado — prompt & modelo
             </DialogTitle>

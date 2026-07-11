@@ -147,7 +147,7 @@ export default function DataHubPage() {
                 <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">DataHub</h1>
                 <Badge className="bg-nexus-cyan/10 text-nexus-cyan border-none font-black px-3 py-1 rounded-full text-meta tracking-widest uppercase">Grid de Dados Industrial</Badge>
               </div>
-              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+              <p className="text-title-sm text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Orquestração unificada de dados. Gerencie entidades, conexões federadas e mapeamentos cross-database com precisão industrial.
               </p>
             </div>
