@@ -311,6 +311,7 @@ const App = () => {
       </I18nProvider>
     </ThemeProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;
