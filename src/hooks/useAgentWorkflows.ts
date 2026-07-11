@@ -68,8 +68,8 @@ export function useAgentWorkflows(agentId?: string) {
           workspace_id: input.workspace_id,
           name: input.name,
           description: input.description,
-          nodes: (input.nodes ?? []) as any,
-          edges: (input.edges ?? []) as any,
+          nodes: (input.nodes ?? []) as unknown as never,
+          edges: (input.edges ?? []) as unknown as never,
           created_by: u.user.id,
         })
         .select()
@@ -87,7 +87,7 @@ export function useAgentWorkflows(agentId?: string) {
   const updateWorkflow = useMutation({
     mutationFn: async (input: { id: string; nodes?: unknown[]; edges?: unknown[]; name?: string; description?: string; status?: string }) => {
       const { id, ...patch } = input;
-      const { error } = await supabase.from('agent_workflows').update(patch as any).eq('id', id);
+      const { error } = await supabase.from('agent_workflows').update(patch as unknown as never).eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
