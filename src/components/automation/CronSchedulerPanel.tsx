@@ -30,7 +30,7 @@ export function CronSchedulerPanel() {
   const [newName, setNewName] = useState('');
   const [newCron, setNewCron] = useState('* * * * *');
   const [saving, setSaving] = useState(false);
-  const [targetType, setTargetType] = useState('agent');
+  const [targetType, setTargetType] = useState<CronSchedule['target_type']>('agent');
   const [targetId, setTargetId] = useState('');
 
   const loadData = async () => {
