@@ -11,7 +11,8 @@ import { logger } from '@/lib/logger';
  * Returns a typed Supabase client for a specific table.
  * Using 'any' for table name to avoid deep type instantiation issues in build.
  */
-export const fromTable = (table: string) => (supabase as unknown as { from: (t: string) => ReturnType<typeof supabase.from> }).from(table);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const fromTable = (table: string): any => (supabase as unknown as { from: (t: string) => unknown }).from(table);
 
 /**
  * Checks if a user is locked out due to multiple failed login attempts.
