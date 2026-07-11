@@ -162,7 +162,12 @@ function SafePage({ children }: { children: ReactNode }) {
   );
 }
 
-const App = () => (
+const App = () => {
+  // Pré-carrega em idle os chunks das rotas mais acessadas para tornar a
+  // navegação instantânea após o primeiro paint.
+  useEffect(() => { prefetchIdleRoutes(); }, []);
+
+  return (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
       <I18nProvider>
