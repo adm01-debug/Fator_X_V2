@@ -448,7 +448,7 @@ export function DeployModule() {
                 ].map((env) => (
                   <button
                     key={env.id}
-                    onClick={() => updateAgent({ status: env.id as any })}
+                    onClick={() => updateAgent({ status: env.id as 'staging' | 'production' })}
                     className={cn(
                       "flex flex-col p-4 rounded-2xl border text-left transition-all duration-300",
                       agent.status === env.id 

@@ -314,7 +314,7 @@ export function BillingModule() {
                 mantendo a latência abaixo de 2s.
               </p>
             </div>
-            <Button onClick={() => updateAgent({ model: idealModel.model as any })} className="gap-2 shrink-0">
+            <Button onClick={() => updateAgent({ model: idealModel.model as import('@/types/agentTypes').LLMModel })} className="gap-2 shrink-0">
               <Check className="h-4 w-4" /> Aplicar Modelo
             </Button>
           </div>
