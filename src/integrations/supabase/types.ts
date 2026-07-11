@@ -8086,6 +8086,7 @@ export type Database = {
         }
         Returns: string
       }
+      refresh_agent_daily_metrics: { Args: never; Returns: undefined }
       refresh_secrets_status: { Args: never; Returns: Json }
       register_asset: {
         Args: {
