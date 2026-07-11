@@ -30,7 +30,7 @@ export function CronSchedulerPanel() {
   const [newName, setNewName] = useState('');
   const [newCron, setNewCron] = useState('* * * * *');
   const [saving, setSaving] = useState(false);
-  const [targetType, setTargetType] = useState('agent');
+  const [targetType, setTargetType] = useState<CronSchedule['target_type']>('agent');
   const [targetId, setTargetId] = useState('');
 
   const loadData = async () => {
@@ -86,7 +86,7 @@ export function CronSchedulerPanel() {
         name: newName.trim(),
         frequency: 'cron',
         cron_expression: newCron,
-        target_type: targetType as any,
+        target_type: targetType,
         target_id: targetId.trim(),
       });
       toast({ title: 'Agendamento criado!' });
@@ -151,7 +151,7 @@ export function CronSchedulerPanel() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label className="text-meta font-black uppercase text-muted-foreground tracking-widest">Target Type</Label>
-                    <Select value={targetType} onValueChange={setTargetType}>
+                    <Select value={targetType} onValueChange={(v) => setTargetType(v as CronSchedule['target_type'])}>
                       <SelectTrigger className="h-11 rounded-xl bg-secondary/30">
                         <SelectValue />
                       </SelectTrigger>

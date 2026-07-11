@@ -27,7 +27,7 @@ export function computeReadinessScore(agent: AgentConfig): ReadinessResult {
     { id: 'guardrails', label: '≥ 1 guardrail ativo', passed: (agent.guardrails ?? []).some((g: any) => g.enabled), tabId: 'guardrails' },
     { id: 'tests', label: '≥ 1 caso de teste', passed: (agent.test_cases ?? []).length >= 1, tabId: 'testing' },
     { id: 'observability', label: 'Logging habilitado', passed: !!agent.logging_enabled, tabId: 'observability' },
-    { id: 'deploy', label: 'Canal de deploy configurado', passed: ((agent as any).deploy_channels ?? []).length > 0 || !!(agent as any).deploy_channel, tabId: 'deploy' },
+    { id: 'deploy', label: 'Canal de deploy configurado', passed: (((agent as unknown as { deploy_channels?: unknown[]; deploy_channel?: unknown }).deploy_channels ?? []).length > 0 || !!(agent as unknown as { deploy_channel?: unknown }).deploy_channel), tabId: 'deploy' },
     { id: 'billing', label: 'Budget mensal definido', passed: !!agent.monthly_budget && agent.monthly_budget > 0, tabId: 'billing' },
     { id: 'memory', label: '≥ 1 tipo de memória ativa', passed: !!(agent.memory_short_term || agent.memory_episodic || agent.memory_semantic), tabId: 'memory' },
   ];

@@ -67,7 +67,7 @@ export function OrchestratorModule() {
 
   const handleSave = () => {
     if (!active) return;
-    updateWorkflow.mutate({ id: active.id, nodes: nodes as any, edges: edges as any });
+    updateWorkflow.mutate({ id: active.id, nodes: nodes as unknown[], edges: edges as unknown[] });
   };
 
   const handleRun = async () => {

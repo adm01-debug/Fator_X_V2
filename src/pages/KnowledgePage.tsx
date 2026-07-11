@@ -471,7 +471,7 @@ function VectorIndexesStatus() {
           {indexes.map((idx: any) => (
             <div key={idx.id} className="group p-2.5 rounded-lg bg-secondary/30 border border-border/10 hover:border-primary/30 transition-colors">
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-meta font-bold truncate max-w-[120px]">{(idx.knowledge_bases as any)?.name || 'Índice Ativo'}</span>
+                <span className="text-meta font-bold truncate max-w-[120px]">{(idx.knowledge_bases as { name?: string } | null)?.name || 'Índice Ativo'}</span>
                 <Badge variant="outline" className="text-[8px] h-4 py-0 border-nexus-emerald/30 text-nexus-emerald">Nominal</Badge>
               </div>
               <div className="flex items-center gap-2 text-[9px] text-muted-foreground font-mono">
