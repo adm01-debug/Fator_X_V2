@@ -32,7 +32,7 @@ export default function VoiceAgentsPage() {
   const audioCtxRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
-    listAgentSummaries(50).then(data => setAgents((data as { agents?: unknown[] }).agents || [])).catch(() => {});
+    listAgentSummaries(50).then(data => setAgents(((data as { agents?: { id: string; name: string }[] }).agents) || [])).catch(() => {});
     refreshHistory();
   }, []);
 
