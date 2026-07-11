@@ -4744,6 +4744,39 @@ export type Database = {
         }
         Relationships: []
       }
+      pg_net_smoke_runs: {
+        Row: {
+          error_msg: string | null
+          id: string
+          latency_ms: number | null
+          request_id: number | null
+          run_at: string
+          status_code: number | null
+          succeeded: boolean
+          target_url: string
+        }
+        Insert: {
+          error_msg?: string | null
+          id?: string
+          latency_ms?: number | null
+          request_id?: number | null
+          run_at?: string
+          status_code?: number | null
+          succeeded?: boolean
+          target_url: string
+        }
+        Update: {
+          error_msg?: string | null
+          id?: string
+          latency_ms?: number | null
+          request_id?: number | null
+          run_at?: string
+          status_code?: number | null
+          succeeded?: boolean
+          target_url?: string
+        }
+        Relationships: []
+      }
       postmortem_action_items: {
         Row: {
           completed_at: string | null
@@ -7857,6 +7890,19 @@ export type Database = {
         Args: { p_notes?: string; p_vendor_id: string }
         Returns: undefined
       }
+      pg_net_schema: { Args: never; Returns: string }
+      pg_net_smoke_post: {
+        Args: { _body?: Json; _url: string }
+        Returns: number
+      }
+      pg_net_smoke_response: {
+        Args: { _request_id: number }
+        Returns: {
+          content_length: number
+          error_msg: string
+          status_code: number
+        }[]
+      }
       promote_experiment_winner: {
         Args: { p_experiment_id: string; p_winner: string }
         Returns: Json
@@ -8043,6 +8089,7 @@ export type Database = {
         Args: { p_change_id: string; p_post_mortem_url: string }
         Returns: undefined
       }
+      run_pg_net_smoke_test: { Args: never; Returns: undefined }
       run_prune_traces_retention_monitored: {
         Args: { _days?: number }
         Returns: string
