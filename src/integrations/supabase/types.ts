@@ -7153,6 +7153,19 @@ export type Database = {
       }
     }
     Views: {
+      agent_daily_metrics: {
+        Row: {
+          agent_id: string | null
+          avg_latency_ms: number | null
+          day: string | null
+          errors: number | null
+          executions: number | null
+          p95_latency_ms: number | null
+          total_cost_usd: number | null
+          total_tokens: number | null
+        }
+        Relationships: []
+      }
       audit_log_safe: {
         Row: {
           action: string | null
