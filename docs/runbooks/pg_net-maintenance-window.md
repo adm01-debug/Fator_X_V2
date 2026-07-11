@@ -112,3 +112,41 @@ UPDATE cron.job SET active = true WHERE command ILIKE '%net.http_%';
 - Linter reporta 0 ocorrências de `0014_extension_in_public`.
 - `net.http_post` respondendo com `request_id` numérico em < 300ms.
 - Nenhum cron job em estado `failed` nas 24h seguintes.
+
+---
+
+## Execução em staging (obrigatório antes de produção)
+
+O projeto Lovable atual **não tem um ambiente staging separado provisionado** pela plataforma. Para executar o plano em staging com segurança, use uma das duas abordagens abaixo antes de aplicar em produção:
+
+### Opção A — Projeto staging dedicado (recomendado)
+
+1. Provisione um segundo projeto Supabase (via Lovable Cloud ou console) para servir como *staging permanente*.
+2. Faça snapshot do schema atual (`pg_dump --schema-only`) e restaure no staging.
+3. Popule dados sintéticos: `INSERT INTO webhook_events (...) SELECT ... FROM generate_series(1, 1000)` e alguns `cron.schedule(...)` de teste apontando para `net.http_post`.
+4. Execute o script passo-a-passo desta runbook contra o staging.
+5. Rode o smoke test + o job `edge-contracts` do CI apontado para a URL de staging (`VITE_SUPABASE_URL` sobrescrito).
+6. Aguarde 24h e valide que nenhum cron job entrou em `failed`.
+7. Só então agende a janela de produção.
+
+### Opção B — Branch de banco (Supabase Database Branching)
+
+Se a organização tiver Branching habilitado:
+
+1. Crie um branch `pg_net-maintenance` do banco atual.
+2. Execute o script no branch. O branch é isolado, então cron/webhooks reais não sofrem.
+3. Valide `SELECT net.http_post(...)` e `SELECT * FROM cron.job WHERE active = false`.
+4. Descarte o branch.
+5. Aplique em produção via a janela agendada.
+
+### Validação pós-staging
+
+Antes de liberar produção, confirme no staging:
+
+- [ ] `SELECT extnamespace::regnamespace FROM pg_extension WHERE extname = 'pg_net'` retorna `extensions`.
+- [ ] `supabase--linter` reporta 0 ocorrências de `0014_extension_in_public`.
+- [ ] `webhook_events` últimas 15 min: 0 registros com `status = 'failed'` cuja causa seja timeout/connection.
+- [ ] `retention_job_runs` (após 03:15 UTC) tem uma linha com `status = 'success'` e `partitions_dropped >= 0`.
+- [ ] `security_alerts` categoria `retention_job_watchdog` sem alertas novos nas últimas 26h.
+
+Se qualquer item falhar em staging, **abortar** a janela de produção e investigar antes de re-agendar.

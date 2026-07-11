@@ -5136,6 +5136,45 @@ export type Database = {
         }
         Relationships: []
       }
+      retention_job_runs: {
+        Row: {
+          created_at: string
+          details: Json
+          duration_ms: number | null
+          error_message: string | null
+          finished_at: string | null
+          id: string
+          job_name: string
+          partitions_dropped: number
+          started_at: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          details?: Json
+          duration_ms?: number | null
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          job_name: string
+          partitions_dropped?: number
+          started_at?: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          details?: Json
+          duration_ms?: number | null
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          job_name?: string
+          partitions_dropped?: number
+          started_at?: string
+          status?: string
+        }
+        Relationships: []
+      }
       risk_register: {
         Row: {
           category: string
@@ -7565,6 +7604,7 @@ export type Database = {
         Returns: string
       }
       check_budget: { Args: { p_workspace_id: string }; Returns: Json }
+      check_retention_job_health: { Args: never; Returns: undefined }
       cleanup_old_auth_attempts: { Args: never; Returns: undefined }
       close_risk: {
         Args: { p_notes?: string; p_risk_id: string }
@@ -8002,6 +8042,10 @@ export type Database = {
       rollback_change: {
         Args: { p_change_id: string; p_post_mortem_url: string }
         Returns: undefined
+      }
+      run_prune_traces_retention_monitored: {
+        Args: { _days?: number }
+        Returns: string
       }
       search_context_l0: {
         Args: { p_collection_id?: string; p_limit?: number; p_query: string }

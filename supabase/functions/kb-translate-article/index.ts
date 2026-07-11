@@ -64,17 +64,17 @@ Deno.serve(async (req) => {
     });
     if (!r.ok) throw new Error(`AI gateway error: ${r.status}`);
     const j = await r.json();
-    const raw = j.choices?.[0]?.message?.content ?? "{}";
-    const cleaned = raw.replace(/```json\n?/g, "").replace(/```/g, "").trim();
-    const parsed = JSON.parse(cleaned);
+    const aiRaw = j.choices?.[0]?.message?.content ?? "{}";
+    const cleaned = aiRaw.replace(/```json\n?/g, "").replace(/```/g, "").trim();
+    const aiParsed = JSON.parse(cleaned);
 
     const { data: inserted, error } = await supabase.from("kb_translations").insert({
       article_id,
       source_language: article.language,
       target_language,
       source_hash: hash,
-      translated_title: parsed.title ?? article.title,
-      translated_content_json: parsed.content ?? {},
+      translated_title: aiParsed.title ?? article.title,
+      translated_content_json: aiParsed.content ?? {},
       translation_method: "ai",
     }).select().single();
     if (error) throw error;
