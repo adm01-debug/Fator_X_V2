@@ -40,8 +40,8 @@ export const syncExternalAuth = (token: string | null) => {
 /**
  * Executes a Supabase RPC call.
  */
-export const rpcCall = async (fnName: string, params: Record<string, unknown>) => {
-  return await (supabase as unknown as { rpc: (fn: string, p: Record<string, unknown>) => Promise<{ data: unknown; error: unknown }> }).rpc(fnName, params);
+export const rpcCall = async (fnName: string, params: Record<string, unknown>): Promise<{ data: unknown; error: { message: string } | null }> => {
+  return await (supabase as unknown as { rpc: (fn: string, p: Record<string, unknown>) => Promise<{ data: unknown; error: { message: string } | null }> }).rpc(fnName, params);
 };
 
 /**
