@@ -250,7 +250,7 @@ export default function IncidentPlaybooksPage() {
         <TabsContent value="templates" className="grid gap-3 md:grid-cols-2">
           {PLAYBOOK_TEMPLATES.map((t, i) => (
             <Card key={i} className="hover:border-primary/40 transition-colors">
-              <CardHeader><CardTitle className="text-base">{t.name}</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="text-title-sm">{t.name}</CardTitle></CardHeader>
               <CardContent className="space-y-3">
                 <p className="text-body-sm text-muted-foreground">{t.description}</p>
                 <div className="flex flex-wrap gap-1">

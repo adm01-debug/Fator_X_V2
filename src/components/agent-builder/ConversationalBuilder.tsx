@@ -173,7 +173,7 @@ export function ConversationalBuilder({ open, onOpenChange }: ConversationalBuil
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full sm:max-w-md p-0 flex flex-col">
         <SheetHeader className="px-5 py-4 border-b shrink-0">
-          <SheetTitle className="flex items-center gap-2 text-base">
+          <SheetTitle className="flex items-center gap-2 text-title-sm">
             <Sparkles className="h-4 w-4 text-primary" />
             Builder Conversacional
           </SheetTitle>

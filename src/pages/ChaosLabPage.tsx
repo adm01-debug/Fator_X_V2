@@ -133,7 +133,7 @@ export default function ChaosLabPage() {
                 <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Chaos Lab</h1>
                 <Badge className="bg-nexus-amber/10 text-nexus-amber border-none font-black px-3 py-1 rounded-full text-meta tracking-widest uppercase">Injeção de Falhas</Badge>
               </div>
-              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+              <p className="text-title-sm text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Valide a resiliência do Nexus injetando latência e erros controlados. Teste seus SLOs e mecanismos de autocura sob stress.
               </p>
             </div>
@@ -229,7 +229,7 @@ export default function ChaosLabPage() {
                  <Slider value={[durationMin]} onValueChange={(v) => setDurationMin(v[0])} min={1} max={60} step={1} />
                </div>
 
-               <Button onClick={handleCreate} disabled={submitting || !name.trim()} className="w-full h-14 rounded-2xl nexus-gradient-bg text-primary-foreground font-bold text-lg shadow-xl shadow-primary/20">
+               <Button onClick={handleCreate} disabled={submitting || !name.trim()} className="w-full h-14 rounded-2xl nexus-gradient-bg text-primary-foreground font-bold text-title-sm shadow-xl shadow-primary/20">
                  {submitting ? <Loader2 className="animate-spin mr-2" /> : <Play className="mr-2 h-5 w-5" />}
                  Disparar Experimento
                </Button>
@@ -241,7 +241,7 @@ export default function ChaosLabPage() {
            <Card className="border-border/40 rounded-[2rem]">
              <CardHeader className="p-8 border-b">
                <div className="flex items-center justify-between">
-                 <CardTitle className="text-lg font-bold flex items-center gap-2">
+                 <CardTitle className="text-title-sm font-bold flex items-center gap-2">
                    <Activity className="w-4 h-4 text-primary" /> Histórico Live
                  </CardTitle>
                  <Badge variant="outline">{experiments.length}</Badge>

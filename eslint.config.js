@@ -32,14 +32,14 @@ export default tseslint.config(
       "no-restricted-syntax": [
         "error",
         {
-          selector: "Literal[value=/(?:^|\\s)text-(?:xs|sm|\\[10px\\]|\\[11px\\])(?:\\s|$)/]",
+          selector: "Literal[value=/(?:^|\\s)text-(?:xs|sm|base|lg|\\[10px\\]|\\[11px\\])(?:\\s|$)/]",
           message:
-            "Use os tokens de tipografia semânticos (text-meta, text-body-sm, text-title-sm, etc.) em vez de text-xs, text-sm, text-[10px] ou text-[11px]. Ver src/pages/TypographyDocsPage.tsx.",
+            "Use os tokens de tipografia semânticos (text-meta, text-body-sm, text-body, text-ui, text-title-sm, etc.) em vez de text-xs, text-sm, text-base, text-lg, text-[10px] ou text-[11px]. Ver /docs/typography.",
         },
         {
-          selector: "TemplateElement[value.raw=/(?:^|\\s)text-(?:xs|sm|\\[10px\\]|\\[11px\\])(?:\\s|$)/]",
+          selector: "TemplateElement[value.raw=/(?:^|\\s)text-(?:xs|sm|base|lg|\\[10px\\]|\\[11px\\])(?:\\s|$)/]",
           message:
-            "Use os tokens de tipografia semânticos (text-meta, text-body-sm, text-title-sm, etc.) em vez de text-xs, text-sm, text-[10px] ou text-[11px].",
+            "Use os tokens de tipografia semânticos (text-meta, text-body-sm, text-body, text-ui, text-title-sm, etc.) em vez de text-xs, text-sm, text-base, text-lg, text-[10px] ou text-[11px].",
         },
       ],
     },

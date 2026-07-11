@@ -49,7 +49,7 @@ export default function ObservabilityOTelPage() {
                 <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">OpenTelemetry</h1>
                 <Badge className="bg-primary/10 text-primary border-none font-black px-3 py-1 rounded-full text-meta tracking-widest uppercase">GenAI Semantic Conventions</Badge>
               </div>
-              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+              <p className="text-title-sm text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Observabilidade total do ciclo de vida das requisições IA. Rastreamento granular de spans, tokens e latência P95.
               </p>
             </div>
@@ -145,7 +145,7 @@ export default function ObservabilityOTelPage() {
         <div className="space-y-8">
            <Card className="border-border/40 rounded-[2.5rem] bg-card/50 backdrop-blur-xl">
              <CardHeader className="p-8 border-b">
-               <CardTitle className="text-lg font-bold flex items-center gap-2">
+               <CardTitle className="text-title-sm font-bold flex items-center gap-2">
                  <Box className="h-5 w-5 text-primary" /> Active Exporters
                </CardTitle>
              </CardHeader>
@@ -175,7 +175,7 @@ export default function ObservabilityOTelPage() {
                <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
                   <Database className="h-6 w-6 text-primary" />
                </div>
-               <h3 className="text-lg font-bold">Cold Storage (L2)</h3>
+               <h3 className="text-title-sm font-bold">Cold Storage (L2)</h3>
                <p className="text-meta text-muted-foreground leading-relaxed">
                  Traces com mais de 30 dias são comprimidos e movidos para armazenamento frio, mantendo apenas metadados para busca histórica.
                </p>

@@ -43,7 +43,7 @@ export default function CostOptimizerPage() {
                 <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Cost Optimizer</h1>
                 <Badge className="bg-nexus-emerald/10 text-nexus-emerald border-none font-black px-3 py-1 rounded-full text-meta tracking-widest uppercase">FinOps Neural</Badge>
               </div>
-              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+              <p className="text-title-sm text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Maximização de eficiência cognitiva. Recomendações automáticas baseadas em padrões reais de consumo e qualidade de modelos.
               </p>
             </div>
@@ -90,7 +90,7 @@ export default function CostOptimizerPage() {
                         )}>
                           Impacto {r.impact}
                         </Badge>
-                        <h4 className="text-base font-bold text-foreground">{r.title}</h4>
+                        <h4 className="text-title-sm font-bold text-foreground">{r.title}</h4>
                       </div>
                       <p className="text-body-sm text-muted-foreground leading-relaxed max-w-2xl">{r.description}</p>
                       {r.applied && (
@@ -120,7 +120,7 @@ export default function CostOptimizerPage() {
         <div className="space-y-8">
            <Card className="border-border/40 rounded-[2.5rem] bg-card/50 backdrop-blur-xl">
              <CardHeader className="p-8 border-b">
-               <CardTitle className="text-lg font-bold flex items-center gap-2">
+               <CardTitle className="text-title-sm font-bold flex items-center gap-2">
                  <PieChart className="h-5 w-5 text-primary" /> Cost Distribution
                </CardTitle>
              </CardHeader>
@@ -153,7 +153,7 @@ export default function CostOptimizerPage() {
                <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
                   <DollarSign className="h-6 w-6 text-primary" />
                </div>
-               <h3 className="text-lg font-bold">Budget Guardrails</h3>
+               <h3 className="text-title-sm font-bold">Budget Guardrails</h3>
                <p className="text-meta text-muted-foreground leading-relaxed">
                  O Nexus bloqueia automaticamente chamadas se o orçamento diário for atingido, prevenindo picos de custo por loops infinitos ou ataques.
                </p>

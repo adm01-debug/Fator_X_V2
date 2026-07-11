@@ -91,7 +91,7 @@ export default function AgentDetailPage() {
     return (
       <div className="flex flex-col items-center justify-center h-[60vh] text-center">
         <Bot className="h-12 w-12 text-muted-foreground mb-4" />
-        <h2 className="text-lg font-semibold text-foreground mb-1">Agente não encontrado</h2>
+        <h2 className="text-title-sm font-semibold text-foreground mb-1">Agente não encontrado</h2>
         <p className="text-body-sm text-muted-foreground mb-4">O agente pode ter sido removido.</p>
         <Button onClick={() => navigate('/agents')}>Voltar para agentes</Button>
       </div>

@@ -69,7 +69,7 @@ export function StepQuickIdentity({ form, errors, update, highlightField, highli
   return (
     <div className="nexus-card space-y-5">
       <div>
-        <h2 className="text-lg font-heading font-semibold text-foreground">Identidade do agente</h2>
+        <h2 className="text-title-sm font-heading font-semibold text-foreground">Identidade do agente</h2>
         <p className="text-body-sm text-muted-foreground">Como ele se chama e qual o seu propósito.</p>
       </div>
 
@@ -111,7 +111,7 @@ export function StepQuickIdentity({ form, errors, update, highlightField, highli
                   key={e}
                   type="button"
                   onClick={() => update('emoji', e)}
-                  className={`h-8 w-8 rounded-md text-lg transition-colors ${
+                  className={`h-8 w-8 rounded-md text-title-sm transition-colors ${
                     form.emoji === e ? 'bg-primary/20 ring-1 ring-primary' : 'bg-secondary/50 hover:bg-secondary'
                   }`}
                   aria-label={`Escolher ${e}`}

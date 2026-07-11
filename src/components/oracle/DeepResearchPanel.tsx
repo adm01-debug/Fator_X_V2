@@ -73,7 +73,7 @@ export function DeepResearchPanel() {
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Ex: Análise completa do mercado de semicondutores e tendências para chips de IA em 2027..."
           rows={3}
-          className="w-full bg-secondary/40 border border-border/60 rounded-2xl p-4 text-base text-foreground placeholder-muted-foreground/60 resize-none focus:ring-primary focus:border-primary transition-all shadow-inner"
+          className="w-full bg-secondary/40 border border-border/60 rounded-2xl p-4 text-title-sm text-foreground placeholder-muted-foreground/60 resize-none focus:ring-primary focus:border-primary transition-all shadow-inner"
         />
         <div className="absolute bottom-3 right-3 text-meta font-mono text-muted-foreground/50 uppercase tracking-widest">
           Protocolo Web-Browsing Ativo

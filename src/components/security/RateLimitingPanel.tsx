@@ -29,7 +29,7 @@ export function RateLimitingPanel() {
           return (
             <div key={l.name} className="p-3 rounded-lg bg-secondary/20 border border-border/30">
               <p className="text-meta font-medium text-foreground">{l.name}</p>
-              <p className="text-lg font-heading font-bold text-foreground mt-1">
+              <p className="text-title-sm font-heading font-bold text-foreground mt-1">
                 {l.current}<span className="text-meta font-normal text-muted-foreground">/{l.max} {l.unit}</span>
               </p>
               <div className="mt-2 h-1.5 rounded-full bg-secondary overflow-hidden">

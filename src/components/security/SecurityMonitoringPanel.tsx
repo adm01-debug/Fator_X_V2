@@ -121,7 +121,7 @@ export function SecurityMonitoringPanel() {
             <div className="h-16 w-16 rounded-full bg-nexus-emerald/10 flex items-center justify-center mb-4">
               <ShieldCheck className="h-8 w-8 text-nexus-emerald" />
             </div>
-            <h3 className="text-lg font-bold text-foreground">Sistema Íntegro</h3>
+            <h3 className="text-title-sm font-bold text-foreground">Sistema Íntegro</h3>
             <p className="text-body-sm text-muted-foreground max-w-xs mt-2 font-medium">
               Nenhum alerta detectado.
             </p>

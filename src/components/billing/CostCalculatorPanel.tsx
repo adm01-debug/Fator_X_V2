@@ -138,15 +138,15 @@ export function CostCalculatorPanel() {
       {result && (
         <div className="grid grid-cols-3 gap-2.5 animate-fade-in">
           <div className="rounded-lg border border-border bg-muted/20 p-3 text-center">
-            <p className="text-lg font-black text-foreground">{formatCostUsd(result.totalCostUsd)}</p>
+            <p className="text-title-sm font-black text-foreground">{formatCostUsd(result.totalCostUsd)}</p>
             <p className="text-meta text-muted-foreground">Custo USD</p>
           </div>
           <div className="rounded-lg border border-border bg-muted/20 p-3 text-center">
-            <p className="text-lg font-black text-foreground">{formatCostBrl(result.totalCostUsd)}</p>
+            <p className="text-title-sm font-black text-foreground">{formatCostBrl(result.totalCostUsd)}</p>
             <p className="text-meta text-muted-foreground">Custo BRL</p>
           </div>
           <div className="rounded-lg border border-border bg-muted/20 p-3 text-center">
-            <p className="text-lg font-black text-foreground">{result.totalTokens.toLocaleString()}</p>
+            <p className="text-title-sm font-black text-foreground">{result.totalTokens.toLocaleString()}</p>
             <p className="text-meta text-muted-foreground">Total Tokens</p>
           </div>
         </div>

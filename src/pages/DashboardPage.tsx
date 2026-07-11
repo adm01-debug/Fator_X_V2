@@ -87,7 +87,7 @@ export default function DashboardPage() {
               <div className="flex items-center gap-3">
                 <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-6xl">{getGreeting()}, {user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'Nexus'}</h1>
               </div>
-              <p className="text-lg text-muted-foreground max-w-2xl font-medium leading-relaxed">
+              <p className="text-title-sm text-muted-foreground max-w-2xl font-medium leading-relaxed">
                 Bem-vindo ao Centro de Comando Nexus. Sua infraestrutura de agentes está processando em alta performance.
               </p>
               <div className="flex items-center gap-4 pt-2">
@@ -105,7 +105,7 @@ export default function DashboardPage() {
             <AccessControl permission="agents.create">
               <Button onClick={() => navigate('/agents/new')} className="nexus-gradient-bg text-primary-foreground gap-3 h-14 px-8 rounded-2xl shadow-xl shadow-primary/25 hover:scale-[1.03] active:scale-[0.98] transition-all duration-300 group overflow-hidden relative">
                 <Plus className="h-6 w-6 group-hover:rotate-90 transition-transform duration-300" /> 
-                <span className="font-bold text-lg tracking-tight">Novo Agente</span>
+                <span className="font-bold text-title-sm tracking-tight">Novo Agente</span>
               </Button>
             </AccessControl>
           </div>
@@ -226,7 +226,7 @@ export default function DashboardPage() {
                         <div className="flex items-center gap-5">
                           <div className="h-14 w-14 rounded-2xl bg-muted/30 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-sm">{agent.avatar_emoji || '🤖'}</div>
                           <div>
-                            <p className="text-base font-black text-foreground group-hover:text-primary transition-colors line-clamp-1">{agent.name}</p>
+                            <p className="text-title-sm font-black text-foreground group-hover:text-primary transition-colors line-clamp-1">{agent.name}</p>
                             <div className="flex items-center gap-2 mt-1">
                               <Badge variant="outline" className="text-[9px] font-black uppercase tracking-tighter border-primary/20 text-primary">{agent.model?.split('-')[0]}</Badge>
                               <span className="h-1 w-1 rounded-full bg-muted-foreground/30" />
@@ -262,7 +262,7 @@ export default function DashboardPage() {
                             trace.level === 'error' ? 'bg-destructive shadow-[0_0_12px_rgba(239,68,68,0.6)]' : 'bg-nexus-emerald shadow-[0_0_12px_rgba(16,185,129,0.6)]'
                           )} />
                           <div className="min-w-0">
-                            <p className="text-base font-black text-foreground group-hover:text-nexus-emerald transition-colors truncate">{trace.event}</p>
+                            <p className="text-title-sm font-black text-foreground group-hover:text-nexus-emerald transition-colors truncate">{trace.event}</p>
                             <div className="flex items-center gap-2 mt-1">
                               <span className="text-meta font-black text-muted-foreground uppercase tracking-widest">{new Date(trace.created_at).toLocaleTimeString('pt-BR')}</span>
                               <span className="h-1 w-1 rounded-full bg-muted-foreground/30" />

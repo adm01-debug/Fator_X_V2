@@ -47,7 +47,7 @@ export function DashboardInsight({ agents, usageStats, recentTraces }: InsightPr
             insight.type === 'success' ? 'bg-nexus-emerald/5 border-nexus-emerald/10 text-nexus-emerald/90' :
             'bg-primary/5 border-primary/10 text-muted-foreground'
           }`}>
-            <span className="shrink-0 text-base" aria-hidden="true">{insight.icon}</span>
+            <span className="shrink-0 text-title-sm" aria-hidden="true">{insight.icon}</span>
             <p className="leading-relaxed font-medium">{insight.text}</p>
           </div>
         ))}

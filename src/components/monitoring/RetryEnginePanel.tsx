@@ -58,10 +58,10 @@ export function RetryEnginePanel() {
         <div className="rounded-lg bg-secondary/20 border border-border/30 p-4 space-y-2">
           <h4 className="text-meta font-semibold text-foreground">Configuração: {PRESET_META[selectedPreset]?.label}</h4>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
-            <div><p className="text-lg font-heading font-bold text-foreground">{preset.max_attempts}</p><p className="text-meta text-muted-foreground">Tentativas</p></div>
-            <div><p className="text-lg font-heading font-bold text-foreground">{preset.initial_delay_ms}ms</p><p className="text-meta text-muted-foreground">Delay inicial</p></div>
-            <div><p className="text-lg font-heading font-bold text-foreground">{(preset.max_delay_ms / 1000).toFixed(0)}s</p><p className="text-meta text-muted-foreground">Delay máximo</p></div>
-            <div><p className="text-lg font-heading font-bold text-foreground">{(preset.timeout_ms / 1000).toFixed(0)}s</p><p className="text-meta text-muted-foreground">Timeout</p></div>
+            <div><p className="text-title-sm font-heading font-bold text-foreground">{preset.max_attempts}</p><p className="text-meta text-muted-foreground">Tentativas</p></div>
+            <div><p className="text-title-sm font-heading font-bold text-foreground">{preset.initial_delay_ms}ms</p><p className="text-meta text-muted-foreground">Delay inicial</p></div>
+            <div><p className="text-title-sm font-heading font-bold text-foreground">{(preset.max_delay_ms / 1000).toFixed(0)}s</p><p className="text-meta text-muted-foreground">Delay máximo</p></div>
+            <div><p className="text-title-sm font-heading font-bold text-foreground">{(preset.timeout_ms / 1000).toFixed(0)}s</p><p className="text-meta text-muted-foreground">Timeout</p></div>
           </div>
           <div className="flex flex-wrap gap-1 mt-2">
             <span className="text-meta text-muted-foreground mr-1">Erros retentáveis:</span>
@@ -81,10 +81,10 @@ export function RetryEnginePanel() {
           <Shield className="h-3.5 w-3.5 text-nexus-amber" /> Circuit Breaker (Default)
         </h4>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
-          <div><p className="text-lg font-heading font-bold text-foreground">{DEFAULT_CIRCUIT_CONFIG.failure_threshold}</p><p className="text-meta text-muted-foreground">Falhas p/ abrir</p></div>
-          <div><p className="text-lg font-heading font-bold text-foreground">{DEFAULT_CIRCUIT_CONFIG.success_threshold}</p><p className="text-meta text-muted-foreground">Sucesso p/ fechar</p></div>
-          <div><p className="text-lg font-heading font-bold text-foreground">{(DEFAULT_CIRCUIT_CONFIG.timeout_ms / 1000).toFixed(0)}s</p><p className="text-meta text-muted-foreground">Timeout reset</p></div>
-          <div><p className="text-lg font-heading font-bold text-foreground">{DEFAULT_CIRCUIT_CONFIG.half_open_max_calls}</p><p className="text-meta text-muted-foreground">Half-open calls</p></div>
+          <div><p className="text-title-sm font-heading font-bold text-foreground">{DEFAULT_CIRCUIT_CONFIG.failure_threshold}</p><p className="text-meta text-muted-foreground">Falhas p/ abrir</p></div>
+          <div><p className="text-title-sm font-heading font-bold text-foreground">{DEFAULT_CIRCUIT_CONFIG.success_threshold}</p><p className="text-meta text-muted-foreground">Sucesso p/ fechar</p></div>
+          <div><p className="text-title-sm font-heading font-bold text-foreground">{(DEFAULT_CIRCUIT_CONFIG.timeout_ms / 1000).toFixed(0)}s</p><p className="text-meta text-muted-foreground">Timeout reset</p></div>
+          <div><p className="text-title-sm font-heading font-bold text-foreground">{DEFAULT_CIRCUIT_CONFIG.half_open_max_calls}</p><p className="text-meta text-muted-foreground">Half-open calls</p></div>
         </div>
       </div>
     </div>

@@ -143,7 +143,7 @@ export default function VoiceAgentStudioPage() {
                 </div>
 
                 <div className="text-center space-y-2 mt-4">
-                  <div className="text-lg font-bold tracking-tight">
+                  <div className="text-title-sm font-bold tracking-tight">
                     {connected ? "Monitoramento em Tempo Real" : "Sessão Inativa"}
                   </div>
                   <div className="flex items-center justify-center gap-4 text-meta text-muted-foreground">

@@ -104,7 +104,7 @@ function renderMarkdown(text: string, thinByHeading: Map<number, ThinHit> = new 
       bucketHeadingLine = i;
       bucket.push(<h3 key={i} className="text-body-sm font-heading font-semibold text-foreground mt-3">{line.slice(3)}</h3>);
     } else if (line.startsWith('# ')) {
-      bucket.push(<h2 key={i} className="text-base font-heading font-bold text-foreground mt-3">{line.slice(2)}</h2>);
+      bucket.push(<h2 key={i} className="text-title-sm font-heading font-bold text-foreground mt-3">{line.slice(2)}</h2>);
     } else if (line.startsWith('> ')) {
       bucket.push(
         <blockquote key={i} className="border-l-2 border-primary/40 pl-2.5 text-muted-foreground italic my-1.5 text-meta">

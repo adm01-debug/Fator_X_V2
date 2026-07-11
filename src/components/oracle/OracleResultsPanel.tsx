@@ -131,7 +131,7 @@ export function OracleResultsPanel() {
               </div>
             </div>
 
-            <div className="text-foreground whitespace-pre-wrap text-base leading-relaxed prose prose-neutral max-w-none dark:prose-invert relative">
+            <div className="text-foreground whitespace-pre-wrap text-title-sm leading-relaxed prose prose-neutral max-w-none dark:prose-invert relative">
               {results.final_response}
             </div>
 

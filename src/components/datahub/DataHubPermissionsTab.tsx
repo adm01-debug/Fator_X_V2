@@ -248,7 +248,7 @@ export function DataHubPermissionsTab() {
                 {ENTITY_LIST.map((e) => (
                   <th key={e.id} className="px-2 py-2 font-medium text-meta uppercase tracking-wider text-muted-foreground text-center">
                     <div className="flex flex-col items-center gap-0.5">
-                      <span className="text-base">{e.icon}</span>
+                      <span className="text-title-sm">{e.icon}</span>
                       <span className="text-[9px]">{e.name}</span>
                     </div>
                   </th>

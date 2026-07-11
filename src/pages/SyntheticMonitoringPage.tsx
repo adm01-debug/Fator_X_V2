@@ -94,7 +94,7 @@ function CheckCard({ check, onChanged }: { check: SyntheticCheck; onChanged: () 
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <CardTitle className="text-base truncate">{check.name}</CardTitle>
+            <CardTitle className="text-title-sm truncate">{check.name}</CardTitle>
             <div className="flex flex-wrap gap-2 mt-1">
               <Badge variant="outline">{check.target}</Badge>
               <Badge variant="outline">a cada {check.interval_minutes}min</Badge>
@@ -111,15 +111,15 @@ function CheckCard({ check, onChanged }: { check: SyntheticCheck; onChanged: () 
         <div className="grid grid-cols-3 gap-3 text-body-sm">
           <div>
             <div className="text-meta text-muted-foreground">Uptime 24h</div>
-            <div className={`text-lg font-semibold ${uptimeColor}`}>{summary?.uptime_pct?.toFixed(1) ?? "—"}%</div>
+            <div className={`text-title-sm font-semibold ${uptimeColor}`}>{summary?.uptime_pct?.toFixed(1) ?? "—"}%</div>
           </div>
           <div>
             <div className="text-meta text-muted-foreground">P95</div>
-            <div className="text-lg font-semibold">{summary?.p95_latency_ms ?? "—"}ms</div>
+            <div className="text-title-sm font-semibold">{summary?.p95_latency_ms ?? "—"}ms</div>
           </div>
           <div>
             <div className="text-meta text-muted-foreground">Runs</div>
-            <div className="text-lg font-semibold">{summary?.total_runs ?? 0}</div>
+            <div className="text-title-sm font-semibold">{summary?.total_runs ?? 0}</div>
           </div>
         </div>
         <Sparkline data={summary?.recent ?? []} />

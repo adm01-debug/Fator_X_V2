@@ -484,7 +484,7 @@ export default function ChangeManagementPage() {
                   )}
                   {(selected.status === "completed" || selected.status === "failed" || selected.status === "in_progress") && (
                     <Card>
-                      <CardHeader><CardTitle className="text-base flex items-center gap-2"><ShieldAlert className="h-4 w-4" /> Rollback</CardTitle></CardHeader>
+                      <CardHeader><CardTitle className="text-title-sm flex items-center gap-2"><ShieldAlert className="h-4 w-4" /> Rollback</CardTitle></CardHeader>
                       <CardContent className="space-y-2">
                         <Input value={rollbackUrl} onChange={(e) => setRollbackUrl(e.target.value)} placeholder="URL do post-mortem (obrigatório)" />
                         <Button onClick={handleRollback} variant="outline" className="w-full">Registrar rollback</Button>

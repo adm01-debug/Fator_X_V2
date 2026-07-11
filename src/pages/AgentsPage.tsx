@@ -198,7 +198,7 @@ export default function AgentsPage() {
             </div>
             <div className="space-y-1">
               <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Agentes</h1>
-              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+              <p className="text-title-sm text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Orquestre sua frota neural com precisão industrial. Gerencie, monitore e escale seus agentes autônomos.
               </p>
             </div>
@@ -216,7 +216,7 @@ export default function AgentsPage() {
             <AccessControl permission="agents.create">
               <Button onClick={() => navigate('/agents/new')} className="nexus-gradient-bg text-primary-foreground gap-2.5 h-12 px-8 rounded-2xl shadow-xl shadow-primary/25 hover:scale-[1.03] active:scale-[0.98] transition-all duration-300 group">
                 <Plus className="h-5 w-5 group-hover:rotate-90 transition-transform duration-300" /> 
-                <span className="font-bold text-lg tracking-tight">Criar Agente</span>
+                <span className="font-bold text-title-sm tracking-tight">Criar Agente</span>
               </Button>
             </AccessControl>
           </div>
@@ -285,7 +285,7 @@ export default function AgentsPage() {
       )}
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+        <h2 className="text-title-sm font-bold text-foreground flex items-center gap-2">
           Sua Frota de Agentes
           <Badge variant="secondary" className="font-mono text-meta">{sorted.length}</Badge>
         </h2>
@@ -322,7 +322,7 @@ export default function AgentsPage() {
               <Bot className="h-10 w-10 text-primary" />
             </div>
           </div>
-          <h2 className="text-lg font-heading font-semibold text-foreground mb-1">Faça login para ver seus agentes</h2>
+          <h2 className="text-title-sm font-heading font-semibold text-foreground mb-1">Faça login para ver seus agentes</h2>
           <p className="text-body-sm text-muted-foreground mb-6 max-w-md">Seus agentes são salvos na nuvem e vinculados à sua conta.</p>
           <Button onClick={() => navigate("/auth")} className="nexus-gradient-bg text-primary-foreground gap-2">Entrar</Button>
         </div>

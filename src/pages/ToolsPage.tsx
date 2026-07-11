@@ -553,7 +553,7 @@ export default function ToolsPage() {
         <div className="nexus-card bg-card/50 backdrop-blur-sm border-border/40 p-6 space-y-6">
           <div className="flex items-center justify-between border-b border-border/40 pb-4">
             <div>
-              <h3 className="text-base font-bold text-foreground">Conectores Enterprise</h3>
+              <h3 className="text-title-sm font-bold text-foreground">Conectores Enterprise</h3>
               <p className="text-meta text-muted-foreground">Pontes de dados de alto volume e CRM Sync</p>
             </div>
             <Badge variant="outline" className="border-primary/30 text-primary">Priority</Badge>

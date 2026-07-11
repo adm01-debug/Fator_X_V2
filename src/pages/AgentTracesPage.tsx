@@ -723,7 +723,7 @@ function Kpi({ icon: Icon, label, value, accent }: {
         </div>
         <div className="min-w-0">
           <p className="text-meta uppercase text-muted-foreground">{label}</p>
-          <p className="text-base font-semibold tabular-nums">{value}</p>
+          <p className="text-title-sm font-semibold tabular-nums">{value}</p>
         </div>
       </CardContent>
     </Card>

@@ -64,7 +64,7 @@ export function RagVersionControl() {
             <History className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-foreground">Pipeline Versioning</h3>
+            <h3 className="text-title-sm font-bold text-foreground">Pipeline Versioning</h3>
             <p className="text-meta text-muted-foreground">Gerencie o histórico e reversão do pipeline RAG</p>
           </div>
         </div>

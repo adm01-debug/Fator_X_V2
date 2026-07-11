@@ -163,7 +163,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
         <Button variant="ghost" size="sm" onClick={onBack} className="gap-1.5">
           <ArrowLeft className="h-4 w-4" /> Voltar
         </Button>
-        <h2 className="text-lg font-heading font-semibold text-foreground">{kbName}</h2>
+        <h2 className="text-title-sm font-heading font-semibold text-foreground">{kbName}</h2>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-4">

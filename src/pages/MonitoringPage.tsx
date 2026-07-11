@@ -62,7 +62,7 @@ export default function MonitoringPage() {
                   <Radio className="h-3 w-3 animate-pulse" /> Live
                 </div>
               </div>
-              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+              <p className="text-title-sm text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Central de telemetria em tempo real. Monitore saúde, latência e custos de toda a infraestrutura neural.
               </p>
             </div>
@@ -108,7 +108,7 @@ export default function MonitoringPage() {
 
         <TabsContent value="traces">
           {isLoading ? <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
-          : filteredTraces.length === 0 ? <div className="flex flex-col items-center justify-center py-20 text-center"><Activity className="h-12 w-12 text-muted-foreground mb-4" /><h2 className="text-lg font-semibold text-foreground mb-1">Nenhum trace registrado</h2><p className="text-body-sm text-muted-foreground">Traces aparecerão aqui quando agentes estiverem em produção.</p></div>
+          : filteredTraces.length === 0 ? <div className="flex flex-col items-center justify-center py-20 text-center"><Activity className="h-12 w-12 text-muted-foreground mb-4" /><h2 className="text-title-sm font-semibold text-foreground mb-1">Nenhum trace registrado</h2><p className="text-body-sm text-muted-foreground">Traces aparecerão aqui quando agentes estiverem em produção.</p></div>
           : <>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
                 <div className="bg-card border border-border/40 p-6 rounded-3xl flex flex-col items-center justify-center gap-1 group hover:border-primary/20 transition-all">
@@ -159,9 +159,9 @@ export default function MonitoringPage() {
                       {selected.metadata && Object.keys(selected.metadata as object).length > 0 && <div><p className="text-meta font-semibold text-foreground mb-1">Metadata</p><pre className="text-meta text-muted-foreground bg-secondary/30 p-3 rounded-lg overflow-x-auto max-h-[200px]">{JSON.stringify(selected.metadata, null, 2)}</pre></div>}
                     </div>
                     <div className="mt-4 pt-4 border-t border-border/50 grid grid-cols-3 gap-4 text-center">
-                      <div><p className="text-lg font-heading font-bold text-foreground">{selected.latency_ms ? (selected.latency_ms / 1000).toFixed(1) + 's' : '—'}</p><p className="text-meta text-muted-foreground">Latência</p></div>
-                      <div><p className="text-lg font-heading font-bold text-foreground">{selected.tokens_used?.toLocaleString() || '—'}</p><p className="text-meta text-muted-foreground">Tokens</p></div>
-                      <div><p className="text-lg font-heading font-bold text-foreground">{selected.cost_usd != null ? `$${Number(selected.cost_usd).toFixed(3)}` : '—'}</p><p className="text-meta text-muted-foreground">Custo</p></div>
+                      <div><p className="text-title-sm font-heading font-bold text-foreground">{selected.latency_ms ? (selected.latency_ms / 1000).toFixed(1) + 's' : '—'}</p><p className="text-meta text-muted-foreground">Latência</p></div>
+                      <div><p className="text-title-sm font-heading font-bold text-foreground">{selected.tokens_used?.toLocaleString() || '—'}</p><p className="text-meta text-muted-foreground">Tokens</p></div>
+                      <div><p className="text-title-sm font-heading font-bold text-foreground">{selected.cost_usd != null ? `$${Number(selected.cost_usd).toFixed(3)}` : '—'}</p><p className="text-meta text-muted-foreground">Custo</p></div>
                     </div>
                   </div>
                 )}
@@ -171,7 +171,7 @@ export default function MonitoringPage() {
 
         <TabsContent value="sessions">
           {loadingSessions ? <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
-          : sessions.length === 0 ? <div className="flex flex-col items-center justify-center py-20 text-center"><Layers className="h-12 w-12 text-muted-foreground mb-4" /><h2 className="text-lg font-semibold text-foreground mb-1">Nenhuma sessão registrada</h2></div>
+          : sessions.length === 0 ? <div className="flex flex-col items-center justify-center py-20 text-center"><Layers className="h-12 w-12 text-muted-foreground mb-4" /><h2 className="text-title-sm font-semibold text-foreground mb-1">Nenhuma sessão registrada</h2></div>
           : <div className="space-y-3">
               {sessions.map((session) => (
                 <div key={session.id} className="nexus-card">
@@ -222,7 +222,7 @@ export default function MonitoringPage() {
 
         <TabsContent value="alerts">
           {loadingAlerts ? <div className="flex justify-center py-12"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>
-          : alerts.length === 0 ? <div className="flex flex-col items-center justify-center py-20 text-center"><Bell className="h-12 w-12 text-muted-foreground mb-4" /><h2 className="text-lg font-semibold text-foreground mb-1">Nenhum alerta</h2></div>
+          : alerts.length === 0 ? <div className="flex flex-col items-center justify-center py-20 text-center"><Bell className="h-12 w-12 text-muted-foreground mb-4" /><h2 className="text-title-sm font-semibold text-foreground mb-1">Nenhum alerta</h2></div>
           : <div className="space-y-3">
               {alerts.map((alert: any) => (
                 <div key={alert.id} className={`nexus-card flex items-start gap-3 ${alert.is_resolved ? 'opacity-60' : ''}`}>

@@ -77,7 +77,7 @@ export function DayDrillDownDrawer({ open, onOpenChange, agentId, day }: Props) 
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="max-h-[85vh]">
         <DrawerHeader className="text-left border-b border-border/50">
-          <DrawerTitle className="font-heading text-lg capitalize">
+          <DrawerTitle className="font-heading text-title-sm capitalize">
             {formatLongDate(day.date)}
           </DrawerTitle>
           <DrawerDescription>

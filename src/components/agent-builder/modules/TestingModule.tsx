@@ -150,7 +150,7 @@ export function TestingModule() {
                   className="rounded-xl border border-border bg-card p-4 text-center"
                 >
                   <div className={`flex justify-center mb-2 ${meta.color}`}>{meta.icon}</div>
-                  <p className="text-lg font-bold text-foreground">{count}</p>
+                  <p className="text-title-sm font-bold text-foreground">{count}</p>
                   <p className="text-meta text-muted-foreground">{meta.label}</p>
                 </div>
               );
@@ -403,7 +403,7 @@ export function TestingModule() {
                 key={item.label}
                 className="rounded-xl border border-border bg-card p-4 text-center"
               >
-                <p className="text-lg font-bold text-foreground">{item.value}</p>
+                <p className="text-title-sm font-bold text-foreground">{item.value}</p>
                 <p className="text-meta text-muted-foreground">{item.label}</p>
               </div>
             ))}

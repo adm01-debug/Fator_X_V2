@@ -125,7 +125,7 @@ export function BlueprintModule() {
       <div className="rounded-xl border border-border bg-card p-4 space-y-2">
         {checks.map((check) => (
           <div key={check.label} className="flex items-center gap-3 text-body-sm">
-            <span className={`text-lg ${check.ok ? '' : 'opacity-50'}`}>{check.ok ? '✅' : '❌'}</span>
+            <span className={`text-title-sm ${check.ok ? '' : 'opacity-50'}`}>{check.ok ? '✅' : '❌'}</span>
             <span className={check.ok ? 'text-muted-foreground' : 'text-foreground'}>{check.label}</span>
           </div>
         ))}

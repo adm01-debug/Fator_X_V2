@@ -63,7 +63,7 @@ export function Bitrix24ApiTester() {
             <Terminal className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h3 className="text-lg font-heading font-black text-foreground flex items-center gap-2">
+            <h3 className="text-title-sm font-heading font-black text-foreground flex items-center gap-2">
               Bitrix24 SDK Console
               <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 font-black text-meta tracking-widest uppercase">
                 Developer

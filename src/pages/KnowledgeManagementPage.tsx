@@ -75,7 +75,7 @@ export default function KnowledgeManagementPage() {
 
         <TabsContent value="help-centers" className="space-y-4 mt-6">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold">Centrais de Ajuda Públicas</h3>
+            <h3 className="text-title-sm font-semibold">Centrais de Ajuda Públicas</h3>
             <CreateHelpCenterDialog workspaceId={workspace?.id} kbs={kbs} onCreated={() => qc.invalidateQueries({ queryKey: ["help_centers"] })} />
           </div>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -87,7 +87,7 @@ export default function KnowledgeManagementPage() {
                   </div>
                   <Badge variant={hc.is_published ? "default" : "secondary"}>{hc.is_published ? "Publicado" : "Rascunho"}</Badge>
                 </div>
-                <h3 className="text-base font-semibold text-foreground mb-1">{hc.title}</h3>
+                <h3 className="text-title-sm font-semibold text-foreground mb-1">{hc.title}</h3>
                 <p className="text-meta text-muted-foreground mb-3 line-clamp-2">{hc.description || "Sem descrição"}</p>
                 <p className="text-meta text-muted-foreground font-mono mb-3">/help/{hc.slug}</p>
                 <div className="flex gap-2">
@@ -106,7 +106,7 @@ export default function KnowledgeManagementPage() {
 
         <TabsContent value="articles" className="space-y-4 mt-6">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold">Artigos</h3>
+            <h3 className="text-title-sm font-semibold">Artigos</h3>
             <CreateArticleDialog kbId={selectedKb} helpCenters={helpCenters} onCreated={(id) => navigate(`/knowledge-management/article/${id}`)} />
           </div>
           {!selectedKb ? (
@@ -136,7 +136,7 @@ export default function KnowledgeManagementPage() {
 
         <TabsContent value="gaps" className="space-y-4 mt-6">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold">Lacunas de Conhecimento</h3>
+            <h3 className="text-title-sm font-semibold">Lacunas de Conhecimento</h3>
             <Button onClick={async () => {
               if (!selectedKb) return toast.error("Selecione uma base");
               toast.info("Analisando...");

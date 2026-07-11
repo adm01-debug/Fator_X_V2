@@ -105,7 +105,7 @@ export function ExpertDiscoveryTab() {
               {agents.map(expert => (
                 <div key={expert.id} className="p-3 rounded-lg bg-secondary/30 border border-border/20">
                   <div className="flex items-start gap-2">
-                    <span className="text-lg">{expert.emoji}</span>
+                    <span className="text-title-sm">{expert.emoji}</span>
                     <div className="flex-1 min-w-0">
                       <p className="text-meta font-semibold text-foreground">{expert.name}</p>
                       {expert.mission && <p className="text-meta text-muted-foreground mt-0.5 line-clamp-2">{expert.mission}</p>}
@@ -142,7 +142,7 @@ export function ExpertDiscoveryTab() {
               {humans.map(expert => (
                 <div key={expert.id} className="p-3 rounded-lg bg-secondary/30 border border-border/20">
                   <div className="flex items-center gap-2">
-                    <span className="text-lg">{expert.emoji}</span>
+                    <span className="text-title-sm">{expert.emoji}</span>
                     <div className="flex-1">
                       <p className="text-meta font-semibold text-foreground">{expert.name}</p>
                       <div className="flex gap-1 mt-1">

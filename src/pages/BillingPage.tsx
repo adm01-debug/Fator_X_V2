@@ -95,7 +95,7 @@ export default function BillingPage() {
                 <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Billing & Usage</h1>
                 <Badge className="bg-primary/10 text-primary border-none font-black px-3 py-1 rounded-full text-meta tracking-widest uppercase">FinOps Hub</Badge>
               </div>
-              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+              <p className="text-title-sm text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Gestão centralizada de orçamentos e consumo de tokens. Monitore custos em tempo real e configure limites operacionais.
               </p>
             </div>
@@ -125,7 +125,7 @@ export default function BillingPage() {
           ) : usage.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-center">
               <BarChart3 className="h-12 w-12 text-muted-foreground mb-4" />
-              <h2 className="text-lg font-semibold text-foreground mb-1">Sem dados de uso</h2>
+              <h2 className="text-title-sm font-semibold text-foreground mb-1">Sem dados de uso</h2>
               <p className="text-body-sm text-muted-foreground">Dados de uso aparecerão após o primeiro agente ativo.</p>
             </div>
           ) : (

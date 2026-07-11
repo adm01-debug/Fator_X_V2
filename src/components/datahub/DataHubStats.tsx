@@ -28,7 +28,7 @@ export function DataHubStats({ entityCount, connectionCount, connectedCount, tot
               <Icon className={`h-4 w-4 ${s.color}`} />
             </div>
             <div className="min-w-0">
-              <p className="text-lg font-heading font-bold text-foreground leading-tight">{s.value}</p>
+              <p className="text-title-sm font-heading font-bold text-foreground leading-tight">{s.value}</p>
               <p className="text-meta text-muted-foreground truncate">{s.label}</p>
             </div>
           </div>

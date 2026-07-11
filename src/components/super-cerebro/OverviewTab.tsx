@@ -165,7 +165,7 @@ export function OverviewTab() {
               ].map((l) => (
                 <div key={l.title} className="p-3 rounded-lg bg-secondary/30 border border-border/30">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="text-lg">{l.icon}</span>
+                    <span className="text-title-sm">{l.icon}</span>
                     <span className="text-meta font-semibold text-foreground">{l.title}</span>
                     <Badge variant="outline" className="text-meta ml-auto border-nexus-emerald/30 text-nexus-emerald">Ativo</Badge>
                   </div>

@@ -205,7 +205,7 @@ export function OracleComparisonPanel() {
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Qual cenário você deseja comparar?"
             rows={2}
-            className="bg-secondary/40 border-border/60 rounded-2xl p-4 text-base focus:ring-primary shadow-inner italic"
+            className="bg-secondary/40 border-border/60 rounded-2xl p-4 text-title-sm focus:ring-primary shadow-inner italic"
           />
         </div>
 
@@ -230,7 +230,7 @@ export function OracleComparisonPanel() {
                   />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-lg">{modeInfo.icon}</span>
+                      <span className="text-title-sm">{modeInfo.icon}</span>
                       <span className="text-meta font-bold uppercase tracking-tight">{modeInfo.label}</span>
                     </div>
                     <p className="text-meta leading-relaxed mt-1 line-clamp-2">{modeInfo.description}</p>

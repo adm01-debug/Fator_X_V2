@@ -305,7 +305,7 @@ export function BillingModule() {
             </div>
             <div className="flex-1 space-y-1 text-center md:text-left">
               <div className="flex items-center justify-center md:justify-start gap-2">
-                <h4 className="font-bold text-lg">Recomendação: {idealModel.label}</h4>
+                <h4 className="font-bold text-title-sm">Recomendação: {idealModel.label}</h4>
                 <Badge className="bg-primary text-primary-foreground">Melhor Custo-Benefício</Badge>
               </div>
               <p className="text-body-sm text-muted-foreground">

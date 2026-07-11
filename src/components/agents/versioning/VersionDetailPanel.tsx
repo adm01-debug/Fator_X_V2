@@ -32,7 +32,7 @@ export function VersionDetailPanel({ version, isCurrent, currentVersion, nextVer
         <div className="flex items-start justify-between mb-3">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <h3 className="text-base font-heading font-semibold text-foreground">v{version.version}</h3>
+              <h3 className="text-title-sm font-heading font-semibold text-foreground">v{version.version}</h3>
               {isCurrent && <Badge className="bg-primary/10 text-primary text-meta">atual</Badge>}
             </div>
             <p className="text-meta text-muted-foreground">

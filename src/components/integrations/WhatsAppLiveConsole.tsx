@@ -49,7 +49,7 @@ export function WhatsAppLiveConsole() {
             <Smartphone className="h-6 w-6 text-nexus-emerald animate-pulse" />
           </div>
           <div>
-            <h3 className="text-lg font-heading font-black text-foreground flex items-center gap-2">
+            <h3 className="text-title-sm font-heading font-black text-foreground flex items-center gap-2">
               WhatsApp Live Console
               <Badge variant="outline" className="bg-nexus-emerald/10 text-nexus-emerald border-nexus-emerald/30 font-black text-meta tracking-widest uppercase">
                 Enterprise

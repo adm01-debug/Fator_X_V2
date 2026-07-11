@@ -741,7 +741,7 @@ export default function SLODashboard() {
             SLO Dashboard
             {sanitizeWindowName(windowName) && (
               <span
-                className="ml-3 align-middle text-base font-semibold text-primary bg-primary/10 border border-primary/20 px-2.5 py-0.5 rounded-md"
+                className="ml-3 align-middle text-title-sm font-semibold text-primary bg-primary/10 border border-primary/20 px-2.5 py-0.5 rounded-md"
                 title="Nome desta janela de avaliação"
               >
                 {sanitizeWindowName(windowName)}
@@ -999,7 +999,7 @@ export default function SLODashboard() {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-16 text-center">
             <Activity className="h-12 w-12 text-muted-foreground/40 mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Sem dados ainda</h3>
+            <h3 className="text-title-sm font-semibold mb-2">Sem dados ainda</h3>
             <p className="text-body-sm text-muted-foreground max-w-md">
               Execute um agente ou workflow para gerar traces — as métricas de SLO aparecerão aqui em tempo real.
             </p>

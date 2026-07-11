@@ -133,7 +133,7 @@ export function AgentContextPanel({ agentId, executions, loading }: Props) {
         <div className="p-4 border-b border-border/40 bg-card/40">
           <div className="flex items-start gap-3">
             <div
-              className="h-10 w-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-lg shrink-0"
+              className="h-10 w-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-title-sm shrink-0"
               aria-hidden
             >
               {(agent.avatar_emoji as string) || '🤖'}

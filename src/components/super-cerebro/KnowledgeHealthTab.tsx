@@ -82,19 +82,19 @@ export function KnowledgeHealthTab() {
         <>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div className="nexus-card text-center py-3">
-              <p className="text-lg font-bold text-nexus-emerald">{data.summary?.fresh || 0}</p>
+              <p className="text-title-sm font-bold text-nexus-emerald">{data.summary?.fresh || 0}</p>
               <p className="text-meta text-muted-foreground flex items-center justify-center gap-1"><CheckCircle className="h-3 w-3" /> Atualizados</p>
             </div>
             <div className="nexus-card text-center py-3">
-              <p className="text-lg font-bold text-nexus-amber">{data.summary?.aging || 0}</p>
+              <p className="text-title-sm font-bold text-nexus-amber">{data.summary?.aging || 0}</p>
               <p className="text-meta text-muted-foreground flex items-center justify-center gap-1"><Clock className="h-3 w-3" /> Envelhecendo</p>
             </div>
             <div className="nexus-card text-center py-3">
-              <p className="text-lg font-bold text-destructive">{data.summary?.stale || 0}</p>
+              <p className="text-title-sm font-bold text-destructive">{data.summary?.stale || 0}</p>
               <p className="text-meta text-muted-foreground flex items-center justify-center gap-1"><AlertTriangle className="h-3 w-3" /> Desatualizados</p>
             </div>
             <div className="nexus-card text-center py-3">
-              <p className="text-lg font-bold text-primary">{data.chunks?.done || 0}</p>
+              <p className="text-title-sm font-bold text-primary">{data.chunks?.done || 0}</p>
               <p className="text-meta text-muted-foreground">Chunks embeddados</p>
               {((data.chunks?.pending ?? 0) > 0 || (data.chunks?.failed ?? 0) > 0) && (
                 <p className="text-meta text-muted-foreground mt-0.5">

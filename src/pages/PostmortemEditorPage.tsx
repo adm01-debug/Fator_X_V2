@@ -257,7 +257,7 @@ export default function PostmortemEditorPage() {
       </div>
 
       <Card>
-        <CardHeader><CardTitle className="text-base">Resumo executivo</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-title-sm">Resumo executivo</CardTitle></CardHeader>
         <CardContent>
           <Textarea
             value={summary}
@@ -271,7 +271,7 @@ export default function PostmortemEditorPage() {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-base flex items-center gap-2"><Clock className="h-4 w-4" /> Timeline</CardTitle>
+            <CardTitle className="text-title-sm flex items-center gap-2"><Clock className="h-4 w-4" /> Timeline</CardTitle>
             <Button size="sm" variant="outline" onClick={addTimelineRow}><Plus className="h-3.5 w-3.5 mr-1" /> Evento</Button>
           </div>
         </CardHeader>
@@ -306,7 +306,7 @@ export default function PostmortemEditorPage() {
       </Card>
 
       <Card>
-        <CardHeader><CardTitle className="text-base">Causa raiz</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-title-sm">Causa raiz</CardTitle></CardHeader>
         <CardContent className="space-y-2">
           <Textarea
             value={rootCause}
@@ -342,7 +342,7 @@ export default function PostmortemEditorPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2"><ListChecks className="h-4 w-4" /> Action items ({actions.length})</CardTitle>
+          <CardTitle className="text-title-sm flex items-center gap-2"><ListChecks className="h-4 w-4" /> Action items ({actions.length})</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="grid grid-cols-12 gap-2 items-end">

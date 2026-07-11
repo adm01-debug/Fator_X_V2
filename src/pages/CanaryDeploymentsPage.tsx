@@ -101,15 +101,15 @@ export default function CanaryDeploymentsPage() {
               <div className="grid grid-cols-3 gap-2 text-meta">
                 <div className="p-2.5 bg-muted/30 rounded">
                   <div className="text-muted-foreground">Error rate</div>
-                  <div className={`text-lg font-bold mt-0.5 ${d.errorRate > 1 ? "text-nexus-red" : "text-nexus-green"}`}>{d.errorRate}%</div>
+                  <div className={`text-title-sm font-bold mt-0.5 ${d.errorRate > 1 ? "text-nexus-red" : "text-nexus-green"}`}>{d.errorRate}%</div>
                 </div>
                 <div className="p-2.5 bg-muted/30 rounded">
                   <div className="text-muted-foreground">p95</div>
-                  <div className="text-lg font-bold mt-0.5">{d.p95Latency}ms</div>
+                  <div className="text-title-sm font-bold mt-0.5">{d.p95Latency}ms</div>
                 </div>
                 <div className="p-2.5 bg-muted/30 rounded">
                   <div className="text-muted-foreground">CSAT</div>
-                  <div className="text-lg font-bold mt-0.5">{d.satisfaction}%</div>
+                  <div className="text-title-sm font-bold mt-0.5">{d.satisfaction}%</div>
                 </div>
               </div>
               <div>

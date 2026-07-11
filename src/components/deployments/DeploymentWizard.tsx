@@ -123,7 +123,7 @@ export function DeploymentWizard({ agentName, isOpen, onOpenChange, onDeploy }: 
               <div className="h-16 w-16 bg-nexus-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <AlertTriangle className="h-8 w-8 text-nexus-amber" />
               </div>
-              <h4 className="text-lg font-bold">Confirmação Final</h4>
+              <h4 className="text-title-sm font-bold">Confirmação Final</h4>
               <p className="text-body-sm text-muted-foreground leading-relaxed">
                 Você está prestes a implantar a versão <span className="font-bold text-primary">v2.4.1</span> em <span className="font-black text-foreground uppercase tracking-widest">{targetEnv}</span>. 
                 Isso afetará todos os canais conectados.

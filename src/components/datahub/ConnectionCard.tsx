@@ -32,7 +32,7 @@ export function ConnectionCard({ conn }: { conn: ConnectionDef }) {
     <div className={`nexus-card group transition-colors ${isHibernated ? 'opacity-60' : 'hover:border-primary/30'}`}>
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-lg">{conn.icon}</div>
+          <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-title-sm">{conn.icon}</div>
           <div>
             <h3 className="text-body-sm font-semibold text-foreground">{conn.label}</h3>
             <p className="text-meta text-muted-foreground font-mono">{conn.id}</p>

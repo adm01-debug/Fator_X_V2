@@ -172,7 +172,7 @@ export function OracleInputArea() {
           placeholder="Qual decisão complexa o conselho deve analisar hoje?"
           value={store.query}
           onChange={(e) => store.setQuery(e.target.value)}
-          className="min-h-[140px] bg-secondary/40 border-border/60 rounded-2xl p-6 text-base focus:ring-primary focus:border-primary transition-all shadow-inner placeholder:italic"
+          className="min-h-[140px] bg-secondary/40 border-border/60 rounded-2xl p-6 text-title-sm focus:ring-primary focus:border-primary transition-all shadow-inner placeholder:italic"
         />
         {store.query.length > 0 && (
           <div className="absolute bottom-4 right-4 text-meta font-mono text-muted-foreground bg-card px-2 py-0.5 rounded border border-border/40">

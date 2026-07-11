@@ -249,7 +249,7 @@ function MetricBox({ icon, label, value }: { icon: React.ReactNode; label: strin
   return (
     <div className="rounded-xl border border-border bg-card p-4 text-center">
       <div className="flex justify-center mb-2">{icon}</div>
-      <p className="text-lg font-bold text-foreground">{value}</p>
+      <p className="text-title-sm font-bold text-foreground">{value}</p>
       <p className="text-meta text-muted-foreground">{label}</p>
     </div>
   );

@@ -64,7 +64,7 @@ export function AgentCard({
             />
           </div>
           <div className="space-y-0.5">
-            <h3 className="text-base font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1">{agent.name}</h3>
+            <h3 className="text-title-sm font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1">{agent.name}</h3>
             <div className="flex items-center gap-2">
               <Badge variant="secondary" className="px-1.5 py-0 h-4 text-[9px] font-mono bg-primary/5 text-primary border-none">
                 {agent.model?.split('-').slice(0, 2).join('-') || 'unknown'}

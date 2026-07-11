@@ -185,7 +185,7 @@ export function CompareTracesSheet({ open, onOpenChange, a, b }: Props) {
         className="w-full sm:max-w-3xl lg:max-w-4xl p-0 flex flex-col gap-0"
       >
         <SheetHeader className="p-5 border-b border-border/40 space-y-2">
-          <SheetTitle className="text-base font-semibold">Comparar execuções</SheetTitle>
+          <SheetTitle className="text-title-sm font-semibold">Comparar execuções</SheetTitle>
           <SheetDescription asChild>
             <div className="flex items-center gap-2 text-meta text-muted-foreground">
               <span className="px-2 py-0.5 rounded bg-secondary/60">A</span>

@@ -24,7 +24,7 @@ export function StepQuickModel({ form, errors, update, highlightField }: Props) 
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-lg font-heading font-semibold text-foreground">Modelo base</h2>
+        <h2 className="text-title-sm font-heading font-semibold text-foreground">Modelo base</h2>
         <p className="text-body-sm text-muted-foreground">
           Escolha o LLM. Marcamos com ⭐ o recomendado para o tipo selecionado.
         </p>

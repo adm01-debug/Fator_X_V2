@@ -99,11 +99,11 @@ function EvalCard({ ev }: { ev: Record<string, unknown> }) {
         <>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
             <div className="text-center rounded-lg bg-secondary/30 p-3">
-              <p className={`text-lg font-heading font-bold ${passRate >= 80 ? 'text-nexus-emerald' : passRate >= 50 ? 'text-nexus-amber' : 'text-destructive'}`}>{passRate}%</p>
+              <p className={`text-title-sm font-heading font-bold ${passRate >= 80 ? 'text-nexus-emerald' : passRate >= 50 ? 'text-nexus-amber' : 'text-destructive'}`}>{passRate}%</p>
               <p className="text-meta text-muted-foreground mt-0.5">Pass rate</p>
             </div>
             <div className="text-center rounded-lg bg-secondary/30 p-3">
-              <p className="text-lg font-heading font-bold text-foreground">{testCases}</p>
+              <p className="text-title-sm font-heading font-bold text-foreground">{testCases}</p>
               <p className="text-meta text-muted-foreground mt-0.5">Test cases</p>
             </div>
             <div className="text-center rounded-lg bg-secondary/30 p-3">
@@ -116,7 +116,7 @@ function EvalCard({ ev }: { ev: Record<string, unknown> }) {
               <p className="text-meta text-muted-foreground mt-2">Score visual</p>
             </div>
             <div className="text-center rounded-lg bg-secondary/30 p-3">
-              <p className="text-lg font-heading font-bold text-foreground">
+              <p className="text-title-sm font-heading font-bold text-foreground">
                 {completedAt && createdAt ? `${Math.round((new Date(completedAt).getTime() - new Date(createdAt).getTime()) / 1000)}s` : '—'}
               </p>
               <p className="text-meta text-muted-foreground mt-0.5">Duração</p>

@@ -154,7 +154,7 @@ export function OracleAnalyticsPanel() {
                 </div>
                 <div>
                   <p className="text-meta font-extrabold text-primary uppercase tracking-widest">Configuração com Maior Acurácia</p>
-                  <p className="text-lg font-bold text-foreground">
+                  <p className="text-title-sm font-bold text-foreground">
                     {ORACLE_MODES[totals.bestMode.mode as OracleMode]?.icon}{' '}
                     {ORACLE_MODES[totals.bestMode.mode as OracleMode]?.label ?? totals.bestMode.mode}
                     <span className="text-meta text-primary font-mono ml-3 px-2 py-0.5 rounded bg-primary/10">
@@ -189,7 +189,7 @@ export function OracleAnalyticsPanel() {
                       <tr key={m.mode} className="border-b border-border/10 hover:bg-secondary/40 transition-colors group">
                         <td className="py-3 px-2">
                           <div className="flex items-center gap-2">
-                            <span className="text-lg group-hover:scale-110 transition-transform">{modeInfo?.icon ?? '❓'}</span>
+                            <span className="text-title-sm group-hover:scale-110 transition-transform">{modeInfo?.icon ?? '❓'}</span>
                             <span className="font-bold text-foreground">{modeInfo?.label ?? m.mode}</span>
                           </div>
                         </td>

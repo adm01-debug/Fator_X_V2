@@ -311,7 +311,7 @@ export function WorkflowTimeTravelPanel({
       {/* Header Stats */}
       <Card className="bg-card border-border">
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center justify-between gap-2 text-base text-foreground">
+          <CardTitle className="flex items-center justify-between gap-2 text-title-sm text-foreground">
             <span className="flex items-center gap-2">
               <Clock className="w-4 h-4 text-primary" />
               Time-Travel Debugger

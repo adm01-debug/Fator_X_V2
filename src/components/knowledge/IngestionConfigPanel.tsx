@@ -20,7 +20,7 @@ export function IngestionConfigPanel() {
             <Settings2 className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-foreground">Pipeline Tuning</h3>
+            <h3 className="text-title-sm font-bold text-foreground">Pipeline Tuning</h3>
             <p className="text-meta text-muted-foreground">Configure os parâmetros de ingestão neural</p>
           </div>
         </div>

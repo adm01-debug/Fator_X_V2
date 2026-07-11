@@ -134,7 +134,7 @@ export default function WorkflowsPage() {
                 <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Workflows</h1>
                 <Badge className="bg-primary/10 text-primary border-none font-bold px-3 py-1 rounded-full text-meta">BETA</Badge>
               </div>
-              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+              <p className="text-title-sm text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Desenhe arquiteturas multi-agente complexas com orquestração streaming em tempo real.
               </p>
             </div>
@@ -145,7 +145,7 @@ export default function WorkflowsPage() {
                 <AccessControl permission="workflows.create">
                   <Button className="nexus-gradient-bg text-primary-foreground gap-2.5 h-12 px-8 rounded-2xl shadow-xl shadow-primary/25 hover:scale-[1.03] active:scale-[0.98] transition-all duration-300 group">
                     <Plus className="h-5 w-5 group-hover:rotate-90 transition-transform duration-300" /> 
-                    <span className="font-bold text-lg tracking-tight">Novo Workflow</span>
+                    <span className="font-bold text-title-sm tracking-tight">Novo Workflow</span>
                   </Button>
                 </AccessControl>
               </DialogTrigger>
@@ -172,7 +172,7 @@ export default function WorkflowsPage() {
                       className="h-12 rounded-xl bg-secondary/30 border-border/30 focus:ring-primary/20" 
                     />
                   </div>
-                  <Button onClick={handleCreate} className="w-full h-12 nexus-gradient-bg text-primary-foreground rounded-xl font-bold text-lg shadow-lg shadow-primary/20">
+                  <Button onClick={handleCreate} className="w-full h-12 nexus-gradient-bg text-primary-foreground rounded-xl font-bold text-title-sm shadow-lg shadow-primary/20">
                     Instanciar Workflow
                   </Button>
                 </div>

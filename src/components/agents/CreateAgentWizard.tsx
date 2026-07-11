@@ -263,7 +263,7 @@ Sempre priorize a precisão e a utilidade das informações fornecidas.
                   <div className="flex items-center gap-3">
                     <span className="text-3xl">{magicPreview.emoji || '🤖'}</span>
                     <div>
-                      <p className="font-bold text-lg">{magicPreview.name}</p>
+                      <p className="font-bold text-title-sm">{magicPreview.name}</p>
                       <p className="text-meta text-muted-foreground uppercase tracking-wider font-semibold">{TYPE_LABEL[magicPreview.type] || magicPreview.type}</p>
                     </div>
                   </div>

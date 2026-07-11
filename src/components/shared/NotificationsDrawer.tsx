@@ -250,7 +250,7 @@ export function NotificationsDrawer() {
       </SheetTrigger>
       <SheetContent className="w-[400px] sm:w-[440px] p-0">
         <SheetHeader className="px-5 pt-5 pb-3 border-b border-border/50">
-          <SheetTitle className="text-base font-heading font-bold text-foreground flex items-center justify-between">
+          <SheetTitle className="text-title-sm font-heading font-bold text-foreground flex items-center justify-between">
             Notificações
             {notifications.length > 0 && (
               <Button variant="ghost" size="sm" className="text-meta text-muted-foreground h-7" onClick={markAllRead}>

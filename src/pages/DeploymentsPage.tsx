@@ -61,7 +61,7 @@ export default function DeploymentsPage() {
                 <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Implantações</h1>
                 <Badge className="bg-nexus-emerald/10 text-nexus-emerald border-none font-black px-3 py-1 rounded-full text-meta tracking-widest uppercase">Live Operations</Badge>
               </div>
-              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+              <p className="text-title-sm text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Orquestre a distribuição global dos seus agentes. Gerencie canais, WebWidgets e endpoints de API em tempo real.
               </p>
             </div>
@@ -108,7 +108,7 @@ export default function DeploymentsPage() {
                           {dep.emoji || '🤖'}
                         </div>
                         <div>
-                          <h3 className="text-base font-bold text-foreground group-hover:text-primary transition-colors">{dep.name}</h3>
+                          <h3 className="text-title-sm font-bold text-foreground group-hover:text-primary transition-colors">{dep.name}</h3>
                           <div className="flex items-center gap-2 mt-1">
                             <span className="text-meta font-black text-muted-foreground uppercase tracking-widest">{dep.environment}</span>
                             <div className="h-1 w-1 rounded-full bg-border" />

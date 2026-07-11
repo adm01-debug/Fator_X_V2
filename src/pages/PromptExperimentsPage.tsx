@@ -134,7 +134,7 @@ function ExperimentCard({
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between gap-3">
           <div className="space-y-1 min-w-0">
-            <CardTitle className="text-base truncate flex items-center gap-2">
+            <CardTitle className="text-title-sm truncate flex items-center gap-2">
               {experiment.name}
               {experiment.winner && <Trophy className="h-4 w-4 text-nexus-green shrink-0" />}
             </CardTitle>

@@ -113,10 +113,10 @@ export function QueueMonitorPanel() {
                   </div>
                 </div>
                 <div className="grid grid-cols-4 gap-4 text-center text-meta">
-                  <div><p className="text-lg font-bold text-primary">{q.current_size}</p><p className="text-muted-foreground">Na fila</p></div>
-                  <div><p className="text-lg font-bold text-nexus-emerald">{q.processed_count}</p><p className="text-muted-foreground">Processados</p></div>
-                  <div><p className="text-lg font-bold text-destructive">{q.failed_count}</p><p className="text-muted-foreground">Falhas</p></div>
-                  <div><p className="text-lg font-bold text-nexus-purple">{q.avg_processing_ms}ms</p><p className="text-muted-foreground">Avg Time</p></div>
+                  <div><p className="text-title-sm font-bold text-primary">{q.current_size}</p><p className="text-muted-foreground">Na fila</p></div>
+                  <div><p className="text-title-sm font-bold text-nexus-emerald">{q.processed_count}</p><p className="text-muted-foreground">Processados</p></div>
+                  <div><p className="text-title-sm font-bold text-destructive">{q.failed_count}</p><p className="text-muted-foreground">Falhas</p></div>
+                  <div><p className="text-title-sm font-bold text-nexus-purple">{q.avg_processing_ms}ms</p><p className="text-muted-foreground">Avg Time</p></div>
                 </div>
               </CardContent>
             </Card>

@@ -199,21 +199,21 @@ export default function SmolagentPage() {
               </div>
               <div className="grid grid-cols-4 gap-2">
                 <div className="rounded-lg border border-border p-3 text-center">
-                  <p className="text-lg font-bold">{result.total_steps}</p>
+                  <p className="text-title-sm font-bold">{result.total_steps}</p>
                   <p className="text-meta text-muted-foreground">Passos</p>
                 </div>
                 <div className="rounded-lg border border-border p-3 text-center">
-                  <p className="text-lg font-bold">{result.total_tokens?.toLocaleString()}</p>
+                  <p className="text-title-sm font-bold">{result.total_tokens?.toLocaleString()}</p>
                   <p className="text-meta text-muted-foreground">Tokens</p>
                 </div>
                 <div className="rounded-lg border border-border p-3 text-center">
-                  <p className="text-lg font-bold">
+                  <p className="text-title-sm font-bold">
                     {((result.total_latency_ms || 0) / 1000).toFixed(1)}s
                   </p>
                   <p className="text-meta text-muted-foreground">Latência</p>
                 </div>
                 <div className="rounded-lg border border-border p-3 text-center">
-                  <p className="text-lg font-bold">${result.total_cost_usd?.toFixed(4)}</p>
+                  <p className="text-title-sm font-bold">${result.total_cost_usd?.toFixed(4)}</p>
                   <p className="text-meta text-muted-foreground">Custo</p>
                 </div>
               </div>
@@ -289,7 +289,7 @@ export default function SmolagentPage() {
           {!result && !loading && (
             <div className="flex flex-col items-center justify-center py-20 text-center">
               <div className="text-5xl mb-4">🤖</div>
-              <h2 className="text-lg font-semibold mb-1">Smolagent Runtime</h2>
+              <h2 className="text-title-sm font-semibold mb-1">Smolagent Runtime</h2>
               <p className="text-body-sm text-muted-foreground max-w-md">
                 Descreva uma tarefa e o agente autônomo irá executá-la.
               </p>

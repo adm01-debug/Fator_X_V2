@@ -37,7 +37,7 @@ export default function DataResidencyPage() {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card><CardContent className="p-4"><div className="text-meta text-muted-foreground">Região primária</div><div className="text-lg font-bold mt-1">🇧🇷 BR São Paulo</div></CardContent></Card>
+        <Card><CardContent className="p-4"><div className="text-meta text-muted-foreground">Região primária</div><div className="text-title-sm font-bold mt-1">🇧🇷 BR São Paulo</div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="text-meta text-muted-foreground">Tenants ativos</div><div className="text-2xl font-bold">{TENANTS.length}</div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="text-meta text-muted-foreground">Dados armazenados</div><div className="text-2xl font-bold">{TENANTS.reduce((s, t) => s + t.dataGB, 0)} GB</div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="text-meta text-muted-foreground">Compliance</div><div className="flex gap-1 mt-1"><Badge className="text-meta bg-nexus-green/15 text-nexus-green border-nexus-green/30">LGPD</Badge><Badge className="text-meta bg-nexus-blue/15 text-nexus-blue border-nexus-blue/30">GDPR</Badge></div></CardContent></Card>
@@ -46,7 +46,7 @@ export default function DataResidencyPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2"><MapPin className="h-4 w-4" />Regiões disponíveis</CardTitle>
+            <CardTitle className="text-title-sm flex items-center gap-2"><MapPin className="h-4 w-4" />Regiões disponíveis</CardTitle>
             <CardDescription>Escolha onde seus dados são armazenados e processados</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
@@ -79,7 +79,7 @@ export default function DataResidencyPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2"><Lock className="h-4 w-4" />Criptografia & Controles</CardTitle>
+            <CardTitle className="text-title-sm flex items-center gap-2"><Lock className="h-4 w-4" />Criptografia & Controles</CardTitle>
             <CardDescription>Proteção em repouso, em trânsito e BYOK</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -122,7 +122,7 @@ export default function DataResidencyPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2"><Database className="h-4 w-4" />Tenants</CardTitle>
+          <CardTitle className="text-title-sm flex items-center gap-2"><Database className="h-4 w-4" />Tenants</CardTitle>
           <CardDescription>Workspaces ativos e seus modelos de isolamento</CardDescription>
         </CardHeader>
         <CardContent>

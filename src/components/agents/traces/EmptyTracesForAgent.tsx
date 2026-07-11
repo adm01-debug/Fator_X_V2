@@ -123,7 +123,7 @@ export function EmptyTracesForAgent({
         </div>
       </div>
 
-      <h3 className="text-base font-heading font-semibold text-foreground mb-1.5">
+      <h3 className="text-title-sm font-heading font-semibold text-foreground mb-1.5">
         Sem traces para <span className="text-primary">{agentName}</span>
       </h3>
       <p className="text-body-sm text-muted-foreground max-w-md leading-relaxed">

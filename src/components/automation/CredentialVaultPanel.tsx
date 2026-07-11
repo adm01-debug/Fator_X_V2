@@ -72,7 +72,7 @@ export function CredentialVaultPanel() {
           {credentials.map((c) => (
             <Card key={c.id} className="bg-card border-border">
               <CardContent className="p-3 flex items-center gap-3">
-                <span className="text-lg">{TYPE_ICONS[c.credential_type] ?? '🔑'}</span>
+                <span className="text-title-sm">{TYPE_ICONS[c.credential_type] ?? '🔑'}</span>
                 <div className="flex-1">
                   <p className="text-body-sm font-medium">{c.name}</p>
                   <p className="text-meta text-muted-foreground">{c.service_name} • {c.access_count} acessos</p>

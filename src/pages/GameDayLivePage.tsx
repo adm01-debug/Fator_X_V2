@@ -171,7 +171,7 @@ export default function GameDayLivePage() {
         <Card className="p-6 border-primary/30 bg-gradient-to-br from-primary/5 to-transparent">
           <div className="flex items-center gap-3 mb-4">
             <Trophy className="h-6 w-6 text-primary" />
-            <h2 className="text-lg font-semibold">Scorecard</h2>
+            <h2 className="text-title-sm font-semibold">Scorecard</h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
