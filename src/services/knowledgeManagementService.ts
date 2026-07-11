@@ -162,24 +162,42 @@ export async function updateGapStatus(id: string, status: string, resolvedArticl
 }
 
 // ============ Forum ============
+// Defense-in-depth: also filter is_published in queries (RLS enforces it too).
 export async function listThreads(helpCenterId: string) {
-  const { data, error } = await supabase.from("forum_threads").select("*").eq("help_center_id", helpCenterId).order("is_pinned", { ascending: false }).order("last_activity_at", { ascending: false });
+  const { data, error } = await supabase
+    .from("forum_threads")
+    .select("*")
+    .eq("help_center_id", helpCenterId)
+    .eq("is_published", true)
+    .order("is_pinned", { ascending: false })
+    .order("last_activity_at", { ascending: false });
   if (error) throw error;
   return data ?? [];
 }
 
 export async function getThread(id: string) {
-  const { data, error } = await supabase.from("forum_threads").select("*").eq("id", id).maybeSingle();
+  const { data, error } = await supabase
+    .from("forum_threads")
+    .select("*")
+    .eq("id", id)
+    .eq("is_published", true)
+    .maybeSingle();
   if (error) throw error;
   if (data) await supabase.from("forum_threads").update({ view_count: (data.view_count ?? 0) + 1 }).eq("id", id);
   return data;
 }
 
 export async function listPosts(threadId: string) {
-  const { data, error } = await supabase.from("forum_posts").select("*").eq("thread_id", threadId).order("created_at", { ascending: true });
+  const { data, error } = await supabase
+    .from("forum_posts")
+    .select("*")
+    .eq("thread_id", threadId)
+    .eq("is_published", true)
+    .order("created_at", { ascending: true });
   if (error) throw error;
   return data ?? [];
 }
+
 
 export async function createThread(payload: { help_center_id: string; title: string; body: string; category?: string; author_name?: string }) {
   const { data: { user } } = await supabase.auth.getUser();
