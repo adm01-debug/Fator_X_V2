@@ -429,7 +429,7 @@ code, pre, .font-mono, [class*="font-mono"] {
 
   .nexus-section-title {
     font-family: var(--font-heading);
-    @apply text-sm font-medium uppercase tracking-wider text-muted-foreground;
+    @apply text-body-sm font-medium uppercase tracking-wider text-muted-foreground;
   }
   /* Micro-interactions */
   .nexus-card-interactive {
