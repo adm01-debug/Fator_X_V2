@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getHelpCenterBySlug, listPublicArticles, getPublicArticleBySlug, rateArticle, listThreads } from "@/services/knowledgeManagementService";
 import { toast } from "sonner";
+import { toSafeHtml } from "@/lib/sanitize";
 
 export default function PublicHelpCenterPage() {
   const { slug, articleSlug } = useParams<{ slug: string; articleSlug?: string }>();
@@ -122,7 +123,7 @@ function ArticleView({ helpCenterId, articleSlug }: { helpCenterId: string; arti
         <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{new Date(article.updated_at).toLocaleDateString("pt-BR")}</span>
         <span className="flex items-center gap-1"><Eye className="h-3 w-3" />{article.view_count} visualizações</span>
       </div>
-      <div className="prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: article.content_html ?? "" }} />
+      <div className="prose prose-invert max-w-none" dangerouslySetInnerHTML={toSafeHtml(article.content_html ?? "", "rich")} />
       <div className="border-t border-border mt-12 pt-6">
         <p className="text-body-sm text-muted-foreground mb-3">Este artigo foi útil?</p>
         <div className="flex gap-2">
