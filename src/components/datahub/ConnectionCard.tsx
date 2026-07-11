@@ -34,37 +34,37 @@ export function ConnectionCard({ conn }: { conn: ConnectionDef }) {
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-lg">{conn.icon}</div>
           <div>
-            <h3 className="text-sm font-semibold text-foreground">{conn.label}</h3>
-            <p className="text-[11px] text-muted-foreground font-mono">{conn.id}</p>
+            <h3 className="text-body-sm font-semibold text-foreground">{conn.label}</h3>
+            <p className="text-meta text-muted-foreground font-mono">{conn.id}</p>
           </div>
         </div>
         <div className="flex flex-col items-end gap-1">
           {isHibernated ? (
-            <Badge variant="outline" className="gap-1 text-[11px] border-primary/30 text-primary">
+            <Badge variant="outline" className="gap-1 text-meta border-primary/30 text-primary">
               <Snowflake className="h-3 w-3" /> Hibernado
             </Badge>
           ) : (
             <StatusBadge status={conn.status === 'connected' ? 'active' : conn.status === 'error' ? 'error' : 'planned'} />
           )}
           {conn.lastTested && (
-            <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+            <span className="text-meta text-muted-foreground flex items-center gap-1">
               <Clock className="h-2.5 w-2.5" /> {timeAgo(conn.lastTested)}
             </span>
           )}
         </div>
       </div>
 
-      <p className="text-xs text-muted-foreground mb-3">{conn.desc}</p>
+      <p className="text-meta text-muted-foreground mb-3">{conn.desc}</p>
 
       <div className="space-y-2 border-t border-border/50 pt-3">
         {conn.status === 'connected' && conn.count !== undefined && (
-          <div className="flex justify-between text-xs">
+          <div className="flex justify-between text-meta">
             <span className="text-muted-foreground">Registros (tabela principal)</span>
             <span className="text-foreground font-mono">{conn.count.toLocaleString()}</span>
           </div>
         )}
         {!isHibernated && (
-          <div className="flex justify-between text-xs">
+          <div className="flex justify-between text-meta">
             <span className="text-muted-foreground">Tabelas mapeadas</span>
             <span className="text-foreground font-mono">{conn.tables}</span>
           </div>
@@ -72,14 +72,14 @@ export function ConnectionCard({ conn }: { conn: ConnectionDef }) {
         {entitiesUsing.length > 0 && (
           <div className="flex flex-wrap gap-1 mt-2">
             {entitiesUsing.map((e) => (
-              <Badge key={e.id} variant="secondary" className="text-[11px] gap-1">{e.icon} {e.name}</Badge>
+              <Badge key={e.id} variant="secondary" className="text-meta gap-1">{e.icon} {e.name}</Badge>
             ))}
           </div>
         )}
         {crossRefs.length > 0 && (
           <div className="flex flex-wrap gap-1">
             {crossRefs.map((e) => (
-              <Badge key={e.id} variant="outline" className="text-[11px] gap-1 border-nexus-cyan/30 text-nexus-cyan">
+              <Badge key={e.id} variant="outline" className="text-meta gap-1 border-nexus-cyan/30 text-nexus-cyan">
                 <Link2 className="h-2.5 w-2.5" /> {e.name}
               </Badge>
             ))}
@@ -88,17 +88,17 @@ export function ConnectionCard({ conn }: { conn: ConnectionDef }) {
       </div>
 
       {conn.status === 'error' && conn.error && (
-        <div className="mt-3 p-2 rounded-lg bg-destructive/10 border border-destructive/20 flex items-center gap-2 text-[11px] text-destructive">
+        <div className="mt-3 p-2 rounded-lg bg-destructive/10 border border-destructive/20 flex items-center gap-2 text-meta text-destructive">
           <XCircle className="h-3.5 w-3.5 shrink-0" />{conn.error}
         </div>
       )}
       {conn.status === 'disconnected' && (
-        <div className="mt-3 p-2 rounded-lg bg-nexus-amber/10 border border-nexus-amber/20 flex items-center gap-2 text-[11px] text-nexus-amber">
+        <div className="mt-3 p-2 rounded-lg bg-nexus-amber/10 border border-nexus-amber/20 flex items-center gap-2 text-meta text-nexus-amber">
           <AlertTriangle className="h-3.5 w-3.5 shrink-0" />Aguardando teste de conexão...
         </div>
       )}
       {isHibernated && (
-        <div className="mt-3 p-2 rounded-lg bg-primary/10 border border-primary/20 flex items-center gap-2 text-[11px] text-primary">
+        <div className="mt-3 p-2 rounded-lg bg-primary/10 border border-primary/20 flex items-center gap-2 text-meta text-primary">
           <Snowflake className="h-3.5 w-3.5 shrink-0" />Projeto Supabase pausado. Score: 0/100.
         </div>
       )}

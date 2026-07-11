@@ -29,10 +29,10 @@ export function CollapsibleCard({ icon, title, subtitle, badge, defaultOpen = fa
               {icon && <span className="text-lg">{icon}</span>}
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold text-foreground">{title}</span>
+                  <span className="text-body-sm font-semibold text-foreground">{title}</span>
                   {badge}
                 </div>
-                {subtitle && <p className="text-[11px] text-muted-foreground mt-0.5 truncate">{subtitle}</p>}
+                {subtitle && <p className="text-meta text-muted-foreground mt-0.5 truncate">{subtitle}</p>}
               </div>
             </div>
             <ChevronDown className={cn('h-4 w-4 text-muted-foreground transition-transform duration-200 shrink-0', open && 'rotate-180')} />

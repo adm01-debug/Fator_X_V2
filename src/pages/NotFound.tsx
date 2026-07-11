@@ -17,8 +17,8 @@ const NotFound = () => {
         <div className="text-7xl font-heading font-extrabold nexus-gradient-text select-none">404</div>
         <div className="space-y-2">
           <h1 className="text-xl font-heading font-bold text-foreground">Página não encontrada</h1>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            A rota <code className="text-xs bg-secondary/60 px-1.5 py-0.5 rounded font-mono">{location.pathname}</code> não existe ou foi movida.
+          <p className="text-body-sm text-muted-foreground leading-relaxed">
+            A rota <code className="text-meta bg-secondary/60 px-1.5 py-0.5 rounded font-mono">{location.pathname}</code> não existe ou foi movida.
           </p>
         </div>
         <div className="flex items-center justify-center gap-3">

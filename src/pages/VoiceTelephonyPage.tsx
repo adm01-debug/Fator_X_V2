@@ -46,10 +46,10 @@ export default function VoiceTelephonyPage() {
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card><CardContent className="pt-6"><div className="flex items-center justify-between"><div><p className="text-sm text-muted-foreground">Chamadas hoje</p><p className="text-2xl font-bold">128</p></div><Phone className="h-8 w-8 text-primary opacity-50" /></div></CardContent></Card>
-        <Card><CardContent className="pt-6"><div className="flex items-center justify-between"><div><p className="text-sm text-muted-foreground">Duração média</p><p className="text-2xl font-bold">3:42</p></div><Clock className="h-8 w-8 text-primary opacity-50" /></div></CardContent></Card>
-        <Card><CardContent className="pt-6"><div className="flex items-center justify-between"><div><p className="text-sm text-muted-foreground">Custo do mês</p><p className="text-2xl font-bold">$ 47.20</p></div><DollarSign className="h-8 w-8 text-primary opacity-50" /></div></CardContent></Card>
-        <Card><CardContent className="pt-6"><div className="flex items-center justify-between"><div><p className="text-sm text-muted-foreground">Taxa sucesso</p><p className="text-2xl font-bold">94%</p></div><Volume2 className="h-8 w-8 text-primary opacity-50" /></div></CardContent></Card>
+        <Card><CardContent className="pt-6"><div className="flex items-center justify-between"><div><p className="text-body-sm text-muted-foreground">Chamadas hoje</p><p className="text-2xl font-bold">128</p></div><Phone className="h-8 w-8 text-primary opacity-50" /></div></CardContent></Card>
+        <Card><CardContent className="pt-6"><div className="flex items-center justify-between"><div><p className="text-body-sm text-muted-foreground">Duração média</p><p className="text-2xl font-bold">3:42</p></div><Clock className="h-8 w-8 text-primary opacity-50" /></div></CardContent></Card>
+        <Card><CardContent className="pt-6"><div className="flex items-center justify-between"><div><p className="text-body-sm text-muted-foreground">Custo do mês</p><p className="text-2xl font-bold">$ 47.20</p></div><DollarSign className="h-8 w-8 text-primary opacity-50" /></div></CardContent></Card>
+        <Card><CardContent className="pt-6"><div className="flex items-center justify-between"><div><p className="text-body-sm text-muted-foreground">Taxa sucesso</p><p className="text-2xl font-bold">94%</p></div><Volume2 className="h-8 w-8 text-primary opacity-50" /></div></CardContent></Card>
       </div>
 
       <Tabs defaultValue="calls">
@@ -67,13 +67,13 @@ export default function VoiceTelephonyPage() {
                   {c.direction === "inbound" ? <PhoneIncoming className="h-6 w-6 text-success" /> : <PhoneOutgoing className="h-6 w-6 text-primary" />}
                   <div>
                     <p className="font-semibold">{c.number}</p>
-                    <p className="text-xs text-muted-foreground">{c.agent} • {c.date}</p>
+                    <p className="text-meta text-muted-foreground">{c.agent} • {c.date}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
                   <Badge variant={c.status === "completed" ? "default" : c.status === "failed" ? "destructive" : "secondary"}>{c.status}</Badge>
-                  <span className="text-sm font-mono">{Math.floor(c.duration / 60)}:{String(c.duration % 60).padStart(2, "0")}</span>
-                  <span className="text-sm font-bold">${c.cost.toFixed(2)}</span>
+                  <span className="text-body-sm font-mono">{Math.floor(c.duration / 60)}:{String(c.duration % 60).padStart(2, "0")}</span>
+                  <span className="text-body-sm font-bold">${c.cost.toFixed(2)}</span>
                   <Button size="sm" variant="outline" onClick={() => toast.info("Reproduzindo gravação...")}><Volume2 className="h-4 w-4" /></Button>
                 </div>
               </CardContent>

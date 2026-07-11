@@ -64,8 +64,8 @@ export function WorkflowListTab({ workflows, executing, onToggleStatus, onExecut
                   <GitBranch className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-foreground">{wf.name}</h3>
-                  <p className="text-[11px] text-muted-foreground">
+                  <h3 className="text-body-sm font-semibold text-foreground">{wf.name}</h3>
+                  <p className="text-meta text-muted-foreground">
                     {wf.steps.length} etapas • {wf.createdAt}
                   </p>
                 </div>
@@ -73,7 +73,7 @@ export function WorkflowListTab({ workflows, executing, onToggleStatus, onExecut
               <div className="flex items-center gap-1">
                 <Badge
                   variant="outline"
-                  className={`text-[11px] ${wf.status === 'active' ? 'border-nexus-emerald/30 text-nexus-emerald' : 'border-muted-foreground/30'}`}
+                  className={`text-meta ${wf.status === 'active' ? 'border-nexus-emerald/30 text-nexus-emerald' : 'border-muted-foreground/30'}`}
                 >
                   {wf.status === 'active' ? 'Ativo' : 'Rascunho'}
                 </Badge>
@@ -102,7 +102,7 @@ export function WorkflowListTab({ workflows, executing, onToggleStatus, onExecut
                       <div className="h-9 w-9 rounded-lg bg-secondary flex items-center justify-center">
                         <Icon className="h-4 w-4 text-foreground" />
                       </div>
-                      <p className="text-[11px] text-muted-foreground mt-1 text-center max-w-[60px] truncate">{step}</p>
+                      <p className="text-meta text-muted-foreground mt-1 text-center max-w-[60px] truncate">{step}</p>
                     </div>
                     {j < wf.steps.length - 1 && <ArrowRight className="h-3 w-3 text-muted-foreground shrink-0 mt-[-12px]" />}
                   </div>

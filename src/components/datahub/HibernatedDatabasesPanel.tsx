@@ -122,9 +122,9 @@ export function HibernatedDatabasesPanel() {
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-2">
           <Snowflake className="h-4 w-4 text-primary" />
-          <h3 className="text-sm font-semibold text-foreground">Bancos Hibernados</h3>
+          <h3 className="text-body-sm font-semibold text-foreground">Bancos Hibernados</h3>
           {report && (
-            <Badge variant="outline" className="text-[10px]">
+            <Badge variant="outline" className="text-meta">
               {report.hibernated_count} de {report.total} hibernado(s)
             </Badge>
           )}
@@ -133,7 +133,7 @@ export function HibernatedDatabasesPanel() {
           variant="outline"
           size="sm"
           onClick={() => queryClient.invalidateQueries({ queryKey: ['hibernated-databases'] })}
-          className="h-7 gap-1.5 text-xs"
+          className="h-7 gap-1.5 text-meta"
           disabled={isLoading}
         >
           {isLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
@@ -141,7 +141,7 @@ export function HibernatedDatabasesPanel() {
         </Button>
       </div>
 
-      <p className="text-[11px] text-muted-foreground">
+      <p className="text-meta text-muted-foreground">
         Projetos Supabase hibernam após inatividade. Use o botão "Reativar" para acordar o projeto enviando 3 requisições em sequência.
       </p>
 
@@ -150,7 +150,7 @@ export function HibernatedDatabasesPanel() {
           <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
         </div>
       ) : (report?.databases ?? []).length === 0 ? (
-        <p className="text-center text-xs text-muted-foreground italic py-4">
+        <p className="text-center text-meta text-muted-foreground italic py-4">
           Nenhum banco hibernado conhecido
         </p>
       ) : (
@@ -172,7 +172,7 @@ export function HibernatedDatabasesPanel() {
                     <Snowflake className="h-4 w-4 text-primary shrink-0" />
                   )}
                   <div className="min-w-0">
-                    <p className="text-xs font-semibold text-foreground">{db.name}</p>
+                    <p className="text-meta font-semibold text-foreground">{db.name}</p>
                     <code className="text-[9px] text-muted-foreground font-mono block truncate">
                       {db.project_ref}
                     </code>
@@ -189,7 +189,7 @@ export function HibernatedDatabasesPanel() {
                       size="sm"
                       onClick={() => handleWake(db)}
                       disabled={wakingRef === db.project_ref}
-                      className="h-7 text-xs gap-1.5"
+                      className="h-7 text-meta gap-1.5"
                     >
                       {wakingRef === db.project_ref ? (
                         <Loader2 className="h-3 w-3 animate-spin" />
@@ -202,7 +202,7 @@ export function HibernatedDatabasesPanel() {
                 </div>
               </div>
               {db.last_attempt && (
-                <p className="text-[10px] text-muted-foreground mt-1.5 flex items-center gap-1">
+                <p className="text-meta text-muted-foreground mt-1.5 flex items-center gap-1">
                   <Clock className="h-2.5 w-2.5" />
                   Última tentativa: {new Date(db.last_attempt).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
                 </p>
@@ -215,7 +215,7 @@ export function HibernatedDatabasesPanel() {
       {report && report.hibernated_count === 0 && report.total > 0 && (
         <div className="flex items-center gap-2 p-2 rounded-lg bg-nexus-emerald/10 border border-nexus-emerald/30">
           <CheckCircle2 className="h-3.5 w-3.5 text-nexus-emerald" />
-          <p className="text-xs text-nexus-emerald">Todos os bancos conhecidos estão ativos</p>
+          <p className="text-meta text-nexus-emerald">Todos os bancos conhecidos estão ativos</p>
         </div>
       )}
     </div>

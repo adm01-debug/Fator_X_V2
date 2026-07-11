@@ -172,14 +172,14 @@ export function DraftVersionsDialog({ open, onOpenChange }: DraftVersionsDialogP
         {/* Save form */}
         <div className="space-y-2 nexus-card !p-3 border-primary/30 bg-primary/5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-foreground">Salvar estado atual</span>
-            <Badge variant="outline" className="text-[10px]">local</Badge>
+            <span className="text-meta font-medium text-foreground">Salvar estado atual</span>
+            <Badge variant="outline" className="text-meta">local</Badge>
           </div>
           <Input
             placeholder='Ex: "Antes de trocar o prompt"'
             value={label}
             onChange={(e) => setLabel(e.target.value)}
-            className="h-8 text-xs"
+            className="h-8 text-meta"
             aria-label="Título do rascunho"
           />
           <Textarea
@@ -187,7 +187,7 @@ export function DraftVersionsDialog({ open, onOpenChange }: DraftVersionsDialogP
             value={note}
             onChange={(e) => setNote(e.target.value)}
             rows={2}
-            className="text-xs resize-none"
+            className="text-meta resize-none"
             aria-label="Anotação"
           />
 
@@ -221,7 +221,7 @@ export function DraftVersionsDialog({ open, onOpenChange }: DraftVersionsDialogP
 
         {/* List */}
         <div className="space-y-2">
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <div className="flex items-center justify-between text-meta text-muted-foreground">
             <span>{drafts.length} {drafts.length === 1 ? 'rascunho' : 'rascunhos'}</span>
             <span className="font-mono">limite 20</span>
           </div>
@@ -229,8 +229,8 @@ export function DraftVersionsDialog({ open, onOpenChange }: DraftVersionsDialogP
           {drafts.length === 0 ? (
             <div className="nexus-card !p-6 flex flex-col items-center text-center gap-2 text-muted-foreground">
               <Inbox className="h-8 w-8 opacity-50" aria-hidden />
-              <p className="text-sm">Nenhum rascunho salvo ainda</p>
-              <p className="text-[11px]">Use o formulário acima para salvar uma versão de trabalho.</p>
+              <p className="text-body-sm">Nenhum rascunho salvo ainda</p>
+              <p className="text-meta">Use o formulário acima para salvar uma versão de trabalho.</p>
             </div>
           ) : (
             <ScrollArea className="h-[280px] pr-2">
@@ -245,14 +245,14 @@ export function DraftVersionsDialog({ open, onOpenChange }: DraftVersionsDialogP
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-sm font-medium text-foreground truncate">{d.label}</span>
-                        <Badge variant="secondary" className="text-[10px]">{formatSize(d.size)}</Badge>
+                        <span className="text-body-sm font-medium text-foreground truncate">{d.label}</span>
+                        <Badge variant="secondary" className="text-meta">{formatSize(d.size)}</Badge>
                       </div>
-                      <p className="text-[11px] text-muted-foreground mt-0.5">
+                      <p className="text-meta text-muted-foreground mt-0.5">
                         {d.agentName} · {formatRelative(d.createdAt)}
                       </p>
                       {d.note && (
-                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{d.note}</p>
+                        <p className="text-meta text-muted-foreground mt-1 line-clamp-2">{d.note}</p>
                       )}
                     </div>
                     <div className="flex flex-col gap-1 shrink-0">
@@ -260,7 +260,7 @@ export function DraftVersionsDialog({ open, onOpenChange }: DraftVersionsDialogP
                         size="sm"
                         variant="outline"
                         onClick={() => handleResume(d)}
-                        className="gap-1.5 h-7 text-[11px]"
+                        className="gap-1.5 h-7 text-meta"
                         aria-label={`Retomar ${d.label}`}
                       >
                         <RotateCcw className="h-3 w-3" /> Retomar
@@ -269,7 +269,7 @@ export function DraftVersionsDialog({ open, onOpenChange }: DraftVersionsDialogP
                         size="sm"
                         variant="ghost"
                         onClick={() => handleDiscard(d)}
-                        className="gap-1.5 h-7 text-[11px] text-destructive hover:text-destructive"
+                        className="gap-1.5 h-7 text-meta text-destructive hover:text-destructive"
                         aria-label={`Descartar ${d.label}`}
                       >
                         <Trash2 className="h-3 w-3" /> Descartar

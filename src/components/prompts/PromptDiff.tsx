@@ -59,7 +59,7 @@ export function PromptDiff({ textA, textB, labelA, labelB }: Props) {
     return (
       <div
         key={idx}
-        className={`px-3 py-0.5 text-xs font-mono whitespace-pre-wrap min-h-[20px] border-l-2 ${
+        className={`px-3 py-0.5 text-meta font-mono whitespace-pre-wrap min-h-[20px] border-l-2 ${
           isRemoved
             ? 'bg-destructive/10 border-l-destructive text-destructive'
             : isAdded
@@ -80,7 +80,7 @@ export function PromptDiff({ textA, textB, labelA, labelB }: Props) {
     <div className="grid grid-cols-2 gap-3">
       <div className="rounded-lg border border-border overflow-hidden bg-muted/10">
         <div className="px-3 py-2 border-b border-border bg-destructive/5">
-          <p className="text-xs font-semibold text-muted-foreground">{labelA}</p>
+          <p className="text-meta font-semibold text-muted-foreground">{labelA}</p>
         </div>
         <div className="max-h-64 overflow-y-auto">
           {linesA.map((line, idx) => renderLine(line, idx))}
@@ -88,7 +88,7 @@ export function PromptDiff({ textA, textB, labelA, labelB }: Props) {
       </div>
       <div className="rounded-lg border border-border overflow-hidden bg-muted/10">
         <div className="px-3 py-2 border-b border-border bg-nexus-emerald/5">
-          <p className="text-xs font-semibold text-muted-foreground">{labelB}</p>
+          <p className="text-meta font-semibold text-muted-foreground">{labelB}</p>
         </div>
         <div className="max-h-64 overflow-y-auto">
           {linesB.map((line, idx) => renderLine(line, idx))}

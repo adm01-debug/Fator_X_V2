@@ -262,8 +262,8 @@ export function RestoreDiffPreview({ current, source, options }: Props) {
       <div className="rounded-lg border border-nexus-emerald/30 bg-nexus-emerald/5 p-3 flex items-center gap-2.5">
         <CheckCircle2 className="h-4 w-4 text-nexus-emerald shrink-0" aria-hidden="true" />
         <div>
-          <p className="text-xs font-semibold text-nexus-emerald">Nenhuma alteração efetiva</p>
-          <p className="text-[11px] text-muted-foreground">A versão de origem é idêntica à atual nos campos selecionados.</p>
+          <p className="text-meta font-semibold text-nexus-emerald">Nenhuma alteração efetiva</p>
+          <p className="text-meta text-muted-foreground">A versão de origem é idêntica à atual nos campos selecionados.</p>
         </div>
       </div>
     );
@@ -272,12 +272,12 @@ export function RestoreDiffPreview({ current, source, options }: Props) {
   return (
     <div className="rounded-lg border border-border/60 bg-card/40 overflow-hidden">
       <div className="flex items-center justify-between px-3 py-2 bg-secondary/40 border-b border-border/50">
-        <p className="text-xs font-semibold text-foreground">
+        <p className="text-meta font-semibold text-foreground">
           {filteredChanges.length === diff.changes.length
             ? <>{diff.changes.length} alteraç{diff.changes.length === 1 ? 'ão' : 'ões'} a aplicar</>
             : <>{filteredChanges.length} de {diff.changes.length} alteraç{diff.changes.length === 1 ? 'ão' : 'ões'}</>}
         </p>
-        <div className="flex items-center gap-1.5 text-[10px]">
+        <div className="flex items-center gap-1.5 text-meta">
           {diff.toolsAdded.length > 0 && (
             <span className="px-1.5 py-0.5 rounded bg-nexus-emerald/10 text-nexus-emerald font-mono">+{diff.toolsAdded.length} tool</span>
           )}
@@ -298,7 +298,7 @@ export function RestoreDiffPreview({ current, source, options }: Props) {
       <div className="px-3 py-2 bg-background/40 border-b border-border/50 space-y-1.5">
         <div className="flex items-center gap-1.5 flex-wrap">
           <Filter className="h-3 w-3 text-muted-foreground shrink-0" aria-hidden="true" />
-          <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mr-1">Filtrar por risco</span>
+          <span className="text-meta uppercase tracking-wider text-muted-foreground font-semibold mr-1">Filtrar por risco</span>
           {(['high_critical', 'critical_only', 'medium_low', 'all'] as const).map((preset) => {
             const labels: Record<typeof preset, string> = {
               high_critical: 'Alto + Crítico',
@@ -312,7 +312,7 @@ export function RestoreDiffPreview({ current, source, options }: Props) {
                 key={preset}
                 type="button"
                 onClick={() => applyPreset(preset)}
-                className={`px-1.5 py-0.5 rounded text-[10px] font-medium border transition-colors ${
+                className={`px-1.5 py-0.5 rounded text-meta font-medium border transition-colors ${
                   active
                     ? 'bg-primary/15 text-primary border-primary/40'
                     : 'bg-transparent text-muted-foreground border-border/50 hover:bg-muted/40 hover:text-foreground'
@@ -324,7 +324,7 @@ export function RestoreDiffPreview({ current, source, options }: Props) {
             );
           })}
           {currentPreset === 'custom' && (
-            <span className="px-1.5 py-0.5 rounded text-[10px] font-medium border bg-primary/10 text-primary border-primary/30">
+            <span className="px-1.5 py-0.5 rounded text-meta font-medium border bg-primary/10 text-primary border-primary/30">
               Personalizado
             </span>
           )}
@@ -342,7 +342,7 @@ export function RestoreDiffPreview({ current, source, options }: Props) {
                 type="button"
                 onClick={() => toggleRisk(level)}
                 disabled={disabled}
-                className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded border text-[10px] font-mono transition-colors ${
+                className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded border text-meta font-mono transition-colors ${
                   disabled
                     ? 'opacity-40 cursor-not-allowed border-border/40 text-muted-foreground'
                     : active
@@ -359,7 +359,7 @@ export function RestoreDiffPreview({ current, source, options }: Props) {
             );
           })}
           {hiddenCount > 0 && (
-            <span className="ml-auto text-[10px] text-muted-foreground italic">
+            <span className="ml-auto text-meta text-muted-foreground italic">
               {hiddenCount} oculta{hiddenCount === 1 ? '' : 's'} pelo filtro
             </span>
           )}
@@ -373,10 +373,10 @@ export function RestoreDiffPreview({ current, source, options }: Props) {
         <div className="px-3 py-2 bg-card/60 border-b border-border/50">
           <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
             <Flame className="h-3 w-3 text-nexus-amber shrink-0" aria-hidden="true" />
-            <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+            <span className="text-meta uppercase tracking-wider text-muted-foreground font-semibold">
               Pular para destaque
             </span>
-            <span className="text-[10px] text-muted-foreground">({highlights.length})</span>
+            <span className="text-meta text-muted-foreground">({highlights.length})</span>
 
             {/* Controles de ordenação dos chips — preferência salva em localStorage
                 para manter a mesma ordem entre sessões de comparação. O "pin"
@@ -391,7 +391,7 @@ export function RestoreDiffPreview({ current, source, options }: Props) {
                     key={mode}
                     type="button"
                     onClick={() => setHighlightSort(mode)}
-                    className={`px-1.5 py-0.5 rounded text-[10px] font-medium border transition-colors ${
+                    className={`px-1.5 py-0.5 rounded text-meta font-medium border transition-colors ${
                       active
                         ? 'bg-primary/15 text-primary border-primary/40'
                         : 'bg-transparent text-muted-foreground border-border/50 hover:bg-muted/40 hover:text-foreground'
@@ -406,7 +406,7 @@ export function RestoreDiffPreview({ current, source, options }: Props) {
               <button
                 type="button"
                 onClick={() => setHighlightPinned((v) => !v)}
-                className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded border text-[10px] font-medium transition-colors ${
+                className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded border text-meta font-medium transition-colors ${
                   highlightPinned
                     ? 'bg-nexus-amber/15 text-nexus-amber border-nexus-amber/40'
                     : 'bg-transparent text-muted-foreground border-border/50 hover:bg-muted/40 hover:text-foreground'
@@ -430,7 +430,7 @@ export function RestoreDiffPreview({ current, source, options }: Props) {
                   key={`${h.id}-${idx}`}
                   type="button"
                   onClick={() => scrollToChange(h.id)}
-                  className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded border text-[10px] font-medium transition-all hover:scale-[1.03] ${h.tone}`}
+                  className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded border text-meta font-medium transition-all hover:scale-[1.03] ${h.tone}`}
                   title={`${h.label} — ${h.sublabel} (impacto ${h.impact}/100)`}
                 >
                   <span className="font-mono opacity-60">{idx + 1}.</span>
@@ -446,7 +446,7 @@ export function RestoreDiffPreview({ current, source, options }: Props) {
 
       <div ref={scrollRef} className="max-h-[280px] overflow-y-auto divide-y divide-border/30">
         {filteredChanges.length === 0 && (
-          <div className="p-4 flex items-center justify-center gap-2 text-[11px] text-muted-foreground">
+          <div className="p-4 flex items-center justify-center gap-2 text-meta text-muted-foreground">
             <Filter className="h-3 w-3" aria-hidden="true" />
             Todas as mudanças foram filtradas. Ajuste os níveis de risco acima.
           </div>
@@ -458,8 +458,8 @@ export function RestoreDiffPreview({ current, source, options }: Props) {
             <div key={group} className="p-3 space-y-2">
               <div className="flex items-center gap-1.5">
                 <GroupIcon className={`h-3.5 w-3.5 ${meta.tone}`} aria-hidden="true" />
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground">{meta.label}</span>
-                <span className="text-[10px] text-muted-foreground">({items.length})</span>
+                <span className="text-meta font-semibold uppercase tracking-wider text-foreground">{meta.label}</span>
+                <span className="text-meta text-muted-foreground">({items.length})</span>
               </div>
 
               <ul className="space-y-1.5">
@@ -471,7 +471,7 @@ export function RestoreDiffPreview({ current, source, options }: Props) {
                   const riskBadge = (
                     <span className="inline-flex items-center gap-1">
                       <span
-                        className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded border text-[10px] font-mono ${riskMeta.chipTone}`}
+                        className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded border text-meta font-mono ${riskMeta.chipTone}`}
                         title={`Risco ${riskMeta.label.toLowerCase()} — ${c.reason} (impacto ${c.impact}/100)`}
                       >
                         <RiskIcon className="h-2.5 w-2.5" aria-hidden="true" />
@@ -496,14 +496,14 @@ export function RestoreDiffPreview({ current, source, options }: Props) {
                         key={c.field}
                         ref={registerItemRef(changeId(c))}
                         id={changeId(c)}
-                        className={`rounded-md border bg-background/50 p-2 text-[11px] space-y-1.5 transition-all duration-300 scroll-mt-2 ${
+                        className={`rounded-md border bg-background/50 p-2 text-meta space-y-1.5 transition-all duration-300 scroll-mt-2 ${
                           activeMarker === changeId(c)
                             ? 'border-nexus-amber ring-2 ring-nexus-amber/40 bg-nexus-amber/5'
                             : 'border-border/40'
                         }`}
                       >
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded border text-[10px] font-mono ${kindMeta.tone}`}>
+                          <span className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded border text-meta font-mono ${kindMeta.tone}`}>
                             <KindIcon className="h-2.5 w-2.5" aria-hidden="true" />
                             {kindMeta.label}
                           </span>
@@ -511,12 +511,12 @@ export function RestoreDiffPreview({ current, source, options }: Props) {
                           <span className="font-medium text-foreground">{c.label}</span>
                         </div>
                         {diff.toolsAdded.length > 0 && (
-                          <p className="text-nexus-emerald font-mono text-[10px]">
+                          <p className="text-nexus-emerald font-mono text-meta">
                             + {diff.toolsAdded.join(', ')}
                           </p>
                         )}
                         {diff.toolsRemoved.length > 0 && (
-                          <p className="text-destructive font-mono text-[10px]">
+                          <p className="text-destructive font-mono text-meta">
                             − {diff.toolsRemoved.join(', ')}
                           </p>
                         )}
@@ -531,14 +531,14 @@ export function RestoreDiffPreview({ current, source, options }: Props) {
                       key={c.field}
                       ref={registerItemRef(changeId(c))}
                       id={changeId(c)}
-                      className={`rounded-md border bg-background/50 p-2 text-[11px] transition-all duration-300 scroll-mt-2 ${
+                      className={`rounded-md border bg-background/50 p-2 text-meta transition-all duration-300 scroll-mt-2 ${
                         activeMarker === changeId(c)
                           ? 'border-nexus-amber ring-2 ring-nexus-amber/40 bg-nexus-amber/5'
                           : 'border-border/40'
                       }`}
                     >
                       <div className="flex items-center gap-1.5 mb-1 flex-wrap">
-                        <span className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded border text-[10px] font-mono ${kindMeta.tone}`}>
+                        <span className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded border text-meta font-mono ${kindMeta.tone}`}>
                           <KindIcon className="h-2.5 w-2.5" aria-hidden="true" />
                           {kindMeta.label}
                         </span>
@@ -548,7 +548,7 @@ export function RestoreDiffPreview({ current, source, options }: Props) {
                         {isPrompt && (
                           <button 
                             onClick={() => togglePromptExpand(c.field)}
-                            className="ml-auto flex items-center gap-1 text-[10px] text-primary hover:underline font-medium"
+                            className="ml-auto flex items-center gap-1 text-meta text-primary hover:underline font-medium"
                           >
                             {isExpanded ? (
                               <><ChevronUp className="h-2.5 w-2.5" /> Esconder diff</>
@@ -561,11 +561,11 @@ export function RestoreDiffPreview({ current, source, options }: Props) {
 
                       {isPrompt && isExpanded ? (
                         <div className="mt-2 space-y-2">
-                          <p className="text-[10px] text-muted-foreground uppercase font-semibold tracking-tighter">Comparação visual de palavras:</p>
+                          <p className="text-meta text-muted-foreground uppercase font-semibold tracking-tighter">Comparação visual de palavras:</p>
                           <DiffViewer oldText={String(c.before || '')} newText={String(c.after || '')} />
                         </div>
                       ) : (
-                        <div className="flex items-center gap-2 font-mono text-[10px] text-muted-foreground">
+                        <div className="flex items-center gap-2 font-mono text-meta text-muted-foreground">
                           <span className="line-through opacity-70 truncate max-w-[40%]" title={String(c.before)}>{preview(c.before)}</span>
                           <ArrowRight className="h-2.5 w-2.5 shrink-0" aria-hidden="true" />
                           <span className="text-foreground truncate max-w-[55%]" title={String(c.after)}>{preview(c.after)}</span>
@@ -581,7 +581,7 @@ export function RestoreDiffPreview({ current, source, options }: Props) {
 
         {diff.unchangedGroups.length > 0 && filteredChanges.length > 0 && (
           <div className="px-3 py-2 bg-secondary/20">
-            <p className="text-[10px] text-muted-foreground">
+            <p className="text-meta text-muted-foreground">
               <CheckCircle2 className="h-2.5 w-2.5 inline-block mr-1 text-nexus-emerald" aria-hidden="true" />
               Sem mudanças em: {diff.unchangedGroups.map((g) => GROUP_META[g].label.toLowerCase()).join(', ')}
             </p>

@@ -10,7 +10,7 @@ export function WorkflowRunsHistory() {
   });
 
   if (isLoading) return <div className="flex justify-center py-12"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>;
-  if (runs.length === 0) return <div className="text-center py-12 text-sm text-muted-foreground">Nenhuma execução registrada. Execute um workflow salvo no banco.</div>;
+  if (runs.length === 0) return <div className="text-center py-12 text-body-sm text-muted-foreground">Nenhuma execução registrada. Execute um workflow salvo no banco.</div>;
 
   return (
     <div className="space-y-3">
@@ -20,17 +20,17 @@ export function WorkflowRunsHistory() {
           <div key={String(run.id)} className="nexus-card">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-semibold text-foreground">{(wfData?.name as string) || 'Workflow'}</p>
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-body-sm font-semibold text-foreground">{(wfData?.name as string) || 'Workflow'}</p>
+                <p className="text-meta text-muted-foreground">
                   {String(run.total_steps)} etapas • {String(run.current_step || 0)} tokens
                   {run.started_at && ` • ${new Date(String(run.started_at)).toLocaleString('pt-BR')}`}
                 </p>
               </div>
-              <Badge variant={run.status === 'completed' ? 'default' : run.status === 'failed' ? 'destructive' : 'outline'} className="text-[11px]">
+              <Badge variant={run.status === 'completed' ? 'default' : run.status === 'failed' ? 'destructive' : 'outline'} className="text-meta">
                 {String(run.status)}
               </Badge>
             </div>
-            {run.error && <p className="text-xs text-destructive mt-2">{String(run.error)}</p>}
+            {run.error && <p className="text-meta text-destructive mt-2">{String(run.error)}</p>}
           </div>
         );
       })}

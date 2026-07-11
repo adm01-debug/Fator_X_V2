@@ -23,12 +23,12 @@ export function SandboxExecuteTab({
     <Card className="bg-card border-border">
       <CardContent className="pt-4 space-y-3">
         <div className="flex items-center gap-2">
-          <label className="text-xs text-muted-foreground">Linguagem:</label>
+          <label className="text-meta text-muted-foreground">Linguagem:</label>
           <div className="flex gap-1">
             {config.allowedLanguages.map((lang) => (
               <Badge
                 key={lang}
-                className={`cursor-pointer text-[10px] ${language === lang ? 'bg-primary text-foreground' : 'bg-muted text-muted-foreground hover:bg-muted'}`}
+                className={`cursor-pointer text-meta ${language === lang ? 'bg-primary text-foreground' : 'bg-muted text-muted-foreground hover:bg-muted'}`}
                 onClick={() => setLanguage(lang)}
               >
                 {lang}
@@ -41,7 +41,7 @@ export function SandboxExecuteTab({
           <textarea
             value={codeInput}
             onChange={(e) => setCodeInput(e.target.value)}
-            className="w-full h-40 p-3 bg-background border border-border rounded-lg text-sm font-mono text-muted-foreground resize-none focus:border-primary focus:outline-none"
+            className="w-full h-40 p-3 bg-background border border-border rounded-lg text-body-sm font-mono text-muted-foreground resize-none focus:border-primary focus:outline-none"
             placeholder={`# Escreva seu código ${language} aqui...`}
             spellCheck={false}
           />
@@ -64,7 +64,7 @@ export function SandboxExecuteTab({
         {config.runtime === 'none' && (
           <div className="flex items-center gap-2 p-3 rounded-lg bg-nexus-amber/10 border border-nexus-amber/30">
             <AlertTriangle className="w-4 h-4 text-nexus-amber" />
-            <span className="text-xs text-nexus-amber">Execução de código está desabilitada. Selecione um runtime na aba Configuração.</span>
+            <span className="text-meta text-nexus-amber">Execução de código está desabilitada. Selecione um runtime na aba Configuração.</span>
           </div>
         )}
       </CardContent>

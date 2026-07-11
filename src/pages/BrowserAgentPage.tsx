@@ -81,16 +81,16 @@ export default function BrowserAgentPage() {
             <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/60 bg-clip-text text-transparent">
               Browser Agent
             </h1>
-            <p className="text-sm text-muted-foreground">Agentes autônomos que navegam e extraem informação na web</p>
+            <p className="text-body-sm text-muted-foreground">Agentes autônomos que navegam e extraem informação na web</p>
           </div>
         </div>
       </header>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card><CardContent className="pt-6"><div className="flex items-center gap-3"><ListChecks className="h-5 w-5 text-muted-foreground" /><div><p className="text-2xl font-bold">{totalSessions}</p><p className="text-xs text-muted-foreground">Sessões totais</p></div></div></CardContent></Card>
-        <Card><CardContent className="pt-6"><div className="flex items-center gap-3"><CheckCircle2 className="h-5 w-5 text-emerald-500" /><div><p className="text-2xl font-bold">{completed}</p><p className="text-xs text-muted-foreground">Completadas</p></div></div></CardContent></Card>
-        <Card><CardContent className="pt-6"><div className="flex items-center gap-3"><Clock className="h-5 w-5 text-muted-foreground" /><div><p className="text-2xl font-bold">{totalSteps}</p><p className="text-xs text-muted-foreground">Steps executados</p></div></div></CardContent></Card>
-        <Card><CardContent className="pt-6"><div className="flex items-center gap-3"><DollarSign className="h-5 w-5 text-muted-foreground" /><div><p className="text-2xl font-bold">${(totalCostCents / 100).toFixed(2)}</p><p className="text-xs text-muted-foreground">Custo total</p></div></div></CardContent></Card>
+        <Card><CardContent className="pt-6"><div className="flex items-center gap-3"><ListChecks className="h-5 w-5 text-muted-foreground" /><div><p className="text-2xl font-bold">{totalSessions}</p><p className="text-meta text-muted-foreground">Sessões totais</p></div></div></CardContent></Card>
+        <Card><CardContent className="pt-6"><div className="flex items-center gap-3"><CheckCircle2 className="h-5 w-5 text-emerald-500" /><div><p className="text-2xl font-bold">{completed}</p><p className="text-meta text-muted-foreground">Completadas</p></div></div></CardContent></Card>
+        <Card><CardContent className="pt-6"><div className="flex items-center gap-3"><Clock className="h-5 w-5 text-muted-foreground" /><div><p className="text-2xl font-bold">{totalSteps}</p><p className="text-meta text-muted-foreground">Steps executados</p></div></div></CardContent></Card>
+        <Card><CardContent className="pt-6"><div className="flex items-center gap-3"><DollarSign className="h-5 w-5 text-muted-foreground" /><div><p className="text-2xl font-bold">${(totalCostCents / 100).toFixed(2)}</p><p className="text-meta text-muted-foreground">Custo total</p></div></div></CardContent></Card>
       </div>
 
       <Card>
@@ -100,7 +100,7 @@ export default function BrowserAgentPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Objetivo</label>
+            <label className="text-body-sm font-medium">Objetivo</label>
             <Textarea
               placeholder="Ex: Encontre o preço atual do iPhone 15 Pro Max no site da Apple Brasil"
               value={goal}
@@ -111,11 +111,11 @@ export default function BrowserAgentPage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div className="md:col-span-2 space-y-2">
-              <label className="text-sm font-medium">URL inicial</label>
+              <label className="text-body-sm font-medium">URL inicial</label>
               <Input value={startUrl} onChange={(e) => setStartUrl(e.target.value)} placeholder="https://..." />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">Max steps</label>
+              <label className="text-body-sm font-medium">Max steps</label>
               <Input type="number" min={1} max={25} value={maxSteps} onChange={(e) => setMaxSteps(parseInt(e.target.value) || 10)} />
             </div>
           </div>
@@ -149,13 +149,13 @@ export default function BrowserAgentPage() {
               <ScrollArea className="h-full border rounded-lg bg-black/5 p-4">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between sticky top-0 bg-background/80 backdrop-blur pb-2">
-                    <h3 className="text-sm font-bold flex items-center gap-2">
+                    <h3 className="text-body-sm font-bold flex items-center gap-2">
                       <ListChecks className="h-4 w-4" /> Log de Execução
                     </h3>
                     <Badge variant="outline">Step {activeSession.steps_count + 1}</Badge>
                   </div>
                   {activeSession.steps.map((s, i) => (
-                    <div key={i} className="text-xs p-3 rounded-lg bg-card border shadow-sm space-y-2 animate-in slide-in-from-bottom-2">
+                    <div key={i} className="text-meta p-3 rounded-lg bg-card border shadow-sm space-y-2 animate-in slide-in-from-bottom-2">
                       <div className="flex items-center gap-2">
                         <Badge variant="secondary" className="uppercase text-[9px] font-black">{s.action}</Badge>
                         <span className="text-muted-foreground truncate flex-1">{s.url}</span>
@@ -171,7 +171,7 @@ export default function BrowserAgentPage() {
                   {activeSession.steps.length === 0 && (
                     <div className="flex flex-col items-center justify-center h-40 text-muted-foreground gap-2">
                       <Loader2 className="h-6 w-6 animate-spin" />
-                      <p className="text-sm">Iniciando motor de navegação...</p>
+                      <p className="text-body-sm">Iniciando motor de navegação...</p>
                     </div>
                   )}
                 </div>
@@ -179,7 +179,7 @@ export default function BrowserAgentPage() {
               
               <div className="h-full border rounded-lg bg-muted flex flex-col">
                 <div className="p-2 border-b bg-background flex items-center justify-between">
-                  <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">Live Agent Viewport</span>
+                  <span className="text-meta font-mono text-muted-foreground uppercase tracking-widest">Live Agent Viewport</span>
                   <div className="flex gap-1">
                     <div className="w-2 h-2 rounded-full bg-red-500" />
                     <div className="w-2 h-2 rounded-full bg-yellow-500" />
@@ -196,7 +196,7 @@ export default function BrowserAgentPage() {
                   ) : (
                     <div className="text-center space-y-3">
                       <Globe2 className="h-12 w-12 mx-auto text-muted-foreground/30 animate-pulse" />
-                      <p className="text-xs text-muted-foreground">Aguardando sinal visual...</p>
+                      <p className="text-meta text-muted-foreground">Aguardando sinal visual...</p>
                     </div>
                   )}
                 </div>
@@ -213,7 +213,7 @@ export default function BrowserAgentPage() {
         </CardHeader>
         <CardContent>
           {sessions.length === 0 ? (
-            <p className="text-center text-sm text-muted-foreground py-8">Nenhuma sessão ainda. Execute a primeira acima.</p>
+            <p className="text-center text-body-sm text-muted-foreground py-8">Nenhuma sessão ainda. Execute a primeira acima.</p>
           ) : (
             <Table>
               <TableHeader>
@@ -252,7 +252,7 @@ export default function BrowserAgentPage() {
           </DialogHeader>
           {replaySession && (
             <div className="space-y-4">
-              <div className="flex items-center gap-2 text-sm">
+              <div className="flex items-center gap-2 text-body-sm">
                 {statusBadge(replaySession.status)}
                 <span className="text-muted-foreground">·</span>
                 <span>{replaySession.steps_count} steps</span>
@@ -261,14 +261,14 @@ export default function BrowserAgentPage() {
               </div>
               {replaySession.final_result && (
                 <div className="p-3 rounded-md bg-emerald-500/10 border border-emerald-500/30">
-                  <p className="text-xs font-medium text-emerald-500 mb-1">Resultado final</p>
-                  <p className="text-sm whitespace-pre-wrap">{replaySession.final_result}</p>
+                  <p className="text-meta font-medium text-emerald-500 mb-1">Resultado final</p>
+                  <p className="text-body-sm whitespace-pre-wrap">{replaySession.final_result}</p>
                 </div>
               )}
               {replaySession.error_message && (
                 <div className="p-3 rounded-md bg-destructive/10 border border-destructive/30">
-                  <p className="text-xs font-medium text-destructive mb-1">Erro</p>
-                  <p className="text-sm">{replaySession.error_message}</p>
+                  <p className="text-meta font-medium text-destructive mb-1">Erro</p>
+                  <p className="text-body-sm">{replaySession.error_message}</p>
                 </div>
               )}
               <ScrollArea className="h-96">
@@ -276,14 +276,14 @@ export default function BrowserAgentPage() {
                   {replaySession.steps.map((s, i) => (
                     <div key={i} className="border-l-2 border-primary/40 pl-3 py-2">
                       <div className="flex items-center gap-2 mb-1">
-                        <Badge variant="outline" className="text-[10px]">Step {s.step_index + 1}</Badge>
-                        <Badge className="text-[10px]">{s.action}</Badge>
-                        {s.args.idx !== undefined && <span className="text-xs text-muted-foreground">idx={s.args.idx}</span>}
+                        <Badge variant="outline" className="text-meta">Step {s.step_index + 1}</Badge>
+                        <Badge className="text-meta">{s.action}</Badge>
+                        {s.args.idx !== undefined && <span className="text-meta text-muted-foreground">idx={s.args.idx}</span>}
                       </div>
-                      <p className="text-xs text-muted-foreground truncate mb-1">URL: {s.url}</p>
-                      <p className="text-sm">{s.reasoning}</p>
-                      {s.args.text && <p className="text-xs mt-1 font-mono bg-muted/40 px-2 py-1 rounded">{s.args.text}</p>}
-                      {s.args.result && <p className="text-xs mt-1 italic">→ {s.args.result}</p>}
+                      <p className="text-meta text-muted-foreground truncate mb-1">URL: {s.url}</p>
+                      <p className="text-body-sm">{s.reasoning}</p>
+                      {s.args.text && <p className="text-meta mt-1 font-mono bg-muted/40 px-2 py-1 rounded">{s.args.text}</p>}
+                      {s.args.result && <p className="text-meta mt-1 italic">→ {s.args.result}</p>}
                     </div>
                   ))}
                 </div>

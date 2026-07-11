@@ -94,29 +94,29 @@ export function RestoreFeedbackBanner({ info, onJumpToField, onDismiss, onCopyDe
 
       <div className="min-w-0 flex-1 space-y-1.5">
         <div className="flex items-center gap-1.5 flex-wrap">
-          <span id={titleId} className="text-[11px] uppercase tracking-wider text-muted-foreground/70">
+          <span id={titleId} className="text-meta uppercase tracking-wider text-muted-foreground/70">
             Restaurado{info.mode === 'partial' ? ' (parcial)' : ''} — primeiro item a corrigir
           </span>
         </div>
 
         <div className="flex items-center gap-1.5 flex-wrap">
-          <span className={`inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border font-medium ${typeTone}`}>
+          <span className={`inline-flex items-center gap-1 text-meta px-2 py-0.5 rounded-full border font-medium ${typeTone}`}>
             {typeLabel}
           </span>
-          <span className="text-[11px] text-muted-foreground">no campo</span>
+          <span className="text-meta text-muted-foreground">no campo</span>
           <span className="text-[12px] font-mono font-semibold text-foreground bg-secondary/60 px-1.5 py-0.5 rounded border border-border/50">
             {fieldLabel}
           </span>
           {info.stepLabel && (
             <>
-              <span className="text-[11px] text-muted-foreground/60">·</span>
-              <span className="text-[11px] text-muted-foreground">passo {info.stepLabel}</span>
+              <span className="text-meta text-muted-foreground/60">·</span>
+              <span className="text-meta text-muted-foreground">passo {info.stepLabel}</span>
             </>
           )}
         </div>
 
         {info.errorMessage && (
-          <p className="text-[11px] text-muted-foreground italic leading-snug">
+          <p className="text-meta text-muted-foreground italic leading-snug">
             "{info.errorMessage}"
           </p>
         )}
@@ -128,7 +128,7 @@ export function RestoreFeedbackBanner({ info, onJumpToField, onDismiss, onCopyDe
             type="button"
             onClick={handleCopy}
             aria-label={copied ? 'Link copiado para a área de transferência' : `Copiar link que reabre o wizard no campo ${fieldLabel}`}
-            className="inline-flex items-center gap-1 h-7 px-2 rounded-md text-[11px] font-medium bg-secondary/60 text-foreground hover:bg-secondary transition-colors"
+            className="inline-flex items-center gap-1 h-7 px-2 rounded-md text-meta font-medium bg-secondary/60 text-foreground hover:bg-secondary transition-colors"
             title="Copiar link que reabre o wizard com este campo destacado"
           >
             {copied ? (
@@ -148,7 +148,7 @@ export function RestoreFeedbackBanner({ info, onJumpToField, onDismiss, onCopyDe
             onClick={onFixNow}
             data-testid="rfb-fix-now"
             aria-label={`Corrigir agora: ir ao passo${info.stepLabel ? ` ${info.stepLabel}` : ''} e focar o campo ${fieldLabel}`}
-            className="inline-flex items-center gap-1 h-7 px-2 rounded-md text-[11px] font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+            className="inline-flex items-center gap-1 h-7 px-2 rounded-md text-meta font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
             title="Ir ao passo correto e focar o campo inválido"
           >
             <Wrench className="h-3 w-3" aria-hidden /> Corrigir agora
@@ -158,7 +158,7 @@ export function RestoreFeedbackBanner({ info, onJumpToField, onDismiss, onCopyDe
           type="button"
           onClick={onJumpToField}
           aria-label={`Ir ao campo ${fieldLabel} e destacá-lo`}
-          className="inline-flex items-center gap-1 h-7 px-2 rounded-md text-[11px] font-medium bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+          className="inline-flex items-center gap-1 h-7 px-2 rounded-md text-meta font-medium bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
           title="Rolar até o campo destacado"
         >
           Ir ao campo <ArrowRight className="h-3 w-3" />

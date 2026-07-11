@@ -155,7 +155,7 @@ export function OrchestratorModule() {
 
   if (!agent.id) {
     return (
-      <div className="text-center py-12 text-muted-foreground text-sm">
+      <div className="text-center py-12 text-muted-foreground text-body-sm">
         Salve o agente primeiro para criar workflows visuais.
       </div>
     );
@@ -170,20 +170,20 @@ export function OrchestratorModule() {
         <div className="space-y-4">
           <Card className="p-3">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-xs font-semibold">Workflows</p>
+              <p className="text-meta font-semibold">Workflows</p>
               <Button size="sm" variant="ghost" onClick={handleCreate}>
                 <Plus className="h-3.5 w-3.5" />
               </Button>
             </div>
             <div className="space-y-1 max-h-[180px] overflow-y-auto">
               {workflows.data?.length === 0 && (
-                <p className="text-xs text-muted-foreground py-2 text-center">Nenhum workflow</p>
+                <p className="text-meta text-muted-foreground py-2 text-center">Nenhum workflow</p>
               )}
               {workflows.data?.map((w: AgentWorkflow) => (
                 <button
                   key={w.id}
                   onClick={() => setActiveId(w.id)}
-                  className={`w-full text-left px-2 py-1.5 rounded text-xs flex items-center justify-between group ${
+                  className={`w-full text-left px-2 py-1.5 rounded text-meta flex items-center justify-between group ${
                     activeId === w.id ? 'bg-primary/10 text-primary' : 'hover:bg-muted'
                   }`}
                 >
@@ -202,18 +202,18 @@ export function OrchestratorModule() {
 
           {active && (
             <Card className="p-3">
-              <p className="text-xs font-semibold mb-2">Paleta de Nós</p>
+              <p className="text-meta font-semibold mb-2">Paleta de Nós</p>
               <div className="space-y-1">
                 {NODE_PALETTE.map((p) => (
                   <button
                     key={p.type}
                     onClick={() => addNode(p.type)}
-                    className="w-full text-left px-2 py-1.5 rounded text-xs hover:bg-muted flex items-center gap-2"
+                    className="w-full text-left px-2 py-1.5 rounded text-meta hover:bg-muted flex items-center gap-2"
                   >
                     <span>{p.icon}</span>
                     <div className="flex-1">
                       <div className="font-medium">{p.label}</div>
-                      <div className="text-[10px] text-muted-foreground">{p.desc}</div>
+                      <div className="text-meta text-muted-foreground">{p.desc}</div>
                     </div>
                   </button>
                 ))}
@@ -231,12 +231,12 @@ export function OrchestratorModule() {
                   <Input
                     value={active.name}
                     onChange={(e) => updateWorkflow.mutate({ id: active.id, name: e.target.value })}
-                    className="max-w-xs h-8 text-sm"
+                    className="max-w-xs h-8 text-body-sm"
                   />
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    className="h-8 text-xs text-primary gap-1.5"
+                    className="h-8 text-meta text-primary gap-1.5"
                     onClick={handleGenerateDoc}
                     disabled={isGeneratingDoc}
                   >
@@ -262,12 +262,12 @@ export function OrchestratorModule() {
                 <Card className="bg-primary/5 border-primary/20 p-3 animate-in fade-in slide-in-from-top-1 duration-300">
                   <div className="flex items-center gap-2 mb-1.5">
                     <BookOpen className="h-3.5 w-3.5 text-primary" />
-                    <span className="text-[10px] font-bold text-primary uppercase">Documentação Automática (IA)</span>
+                    <span className="text-meta font-bold text-primary uppercase">Documentação Automática (IA)</span>
                     <button onClick={() => setAutoDoc(null)} className="ml-auto text-muted-foreground hover:text-foreground">
                       <Plus className="h-3 w-3 rotate-45" />
                     </button>
                   </div>
-                  <p className="text-xs text-foreground leading-relaxed italic">{autoDoc}</p>
+                  <p className="text-meta text-foreground leading-relaxed italic">{autoDoc}</p>
                 </Card>
               )}
 
@@ -288,22 +288,22 @@ export function OrchestratorModule() {
               </div>
 
               <Card className="p-3">
-                <p className="text-xs font-semibold mb-2">Input de Teste (JSON ou texto)</p>
+                <p className="text-meta font-semibold mb-2">Input de Teste (JSON ou texto)</p>
                 <Textarea
                   value={testInput}
                   onChange={(e) => setTestInput(e.target.value)}
                   rows={2}
-                  className="text-xs font-mono"
+                  className="text-meta font-mono"
                   placeholder='Ex: "Olá" ou {"query":"..."}'
                 />
               </Card>
 
               <Card className="p-3">
-                <p className="text-xs font-semibold mb-2">Histórico de Runs ({runs?.length || 0})</p>
+                <p className="text-meta font-semibold mb-2">Histórico de Runs ({runs?.length || 0})</p>
                 <div className="space-y-1 max-h-[200px] overflow-y-auto">
-                  {runs?.length === 0 && <p className="text-xs text-muted-foreground">Sem execuções</p>}
+                  {runs?.length === 0 && <p className="text-meta text-muted-foreground">Sem execuções</p>}
                   {runs?.map((r) => (
-                    <div key={r.id} className="text-xs flex items-center justify-between p-2 rounded bg-muted/40">
+                    <div key={r.id} className="text-meta flex items-center justify-between p-2 rounded bg-muted/40">
                       <div className="flex items-center gap-2">
                         <Badge variant={r.status === 'completed' ? 'default' : r.status === 'failed' ? 'destructive' : 'secondary'}>
                           {r.status}
@@ -317,7 +317,7 @@ export function OrchestratorModule() {
               </Card>
             </>
           ) : (
-            <div className="h-[480px] rounded-lg border border-dashed flex items-center justify-center text-muted-foreground text-sm">
+            <div className="h-[480px] rounded-lg border border-dashed flex items-center justify-center text-muted-foreground text-body-sm">
               Selecione ou crie um workflow para começar
             </div>
           )}

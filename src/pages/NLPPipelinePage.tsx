@@ -58,7 +58,7 @@ export default function NLPPipelinePage() {
         {/* Input */}
         <Card className="nexus-card p-5 space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+            <h3 className="text-body-sm font-bold text-foreground flex items-center gap-2">
               <Brain className="h-4 w-4 text-nexus-purple" />
               Texto de entrada
             </h3>
@@ -71,18 +71,18 @@ export default function NLPPipelinePage() {
             placeholder="Cole aqui um texto livre — uma mensagem de cliente, e-mail, ticket, transcrição..."
             value={text}
             onChange={(e) => setText(e.target.value)}
-            className="text-sm min-h-[200px] font-mono"
+            className="text-body-sm min-h-[200px] font-mono"
           />
 
           <div className="space-y-2">
-            <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wide">Pipelines</p>
+            <p className="text-meta text-muted-foreground font-semibold uppercase tracking-wide">Pipelines</p>
             <div className="flex gap-4">
-              <label className="flex items-center gap-2 text-xs cursor-pointer">
+              <label className="flex items-center gap-2 text-meta cursor-pointer">
                 <Checkbox checked={usesNer} onCheckedChange={(v) => setUsesNer(v === true)} />
                 <Tag className="h-3.5 w-3.5 text-nexus-blue" />
                 NER (entidades)
               </label>
-              <label className="flex items-center gap-2 text-xs cursor-pointer">
+              <label className="flex items-center gap-2 text-meta cursor-pointer">
                 <Checkbox checked={usesSentiment} onCheckedChange={(v) => setUsesSentiment(v === true)} />
                 <Heart className="h-3.5 w-3.5 text-nexus-pink" />
                 Sentimento
@@ -91,14 +91,14 @@ export default function NLPPipelinePage() {
           </div>
 
           <div className="space-y-2">
-            <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wide">Exemplos</p>
+            <p className="text-meta text-muted-foreground font-semibold uppercase tracking-wide">Exemplos</p>
             <div className="flex flex-wrap gap-1.5">
               {SAMPLE_TEXTS.map((sample, i) => (
                 <Button
                   key={i}
                   variant="outline"
                   size="sm"
-                  className="text-[10px] h-7"
+                  className="text-meta h-7"
                   onClick={() => setText(sample)}
                 >
                   Exemplo {i + 1}
@@ -117,7 +117,7 @@ export default function NLPPipelinePage() {
           </Button>
 
           {error && (
-            <div className="text-xs text-destructive bg-destructive/10 border border-destructive/30 rounded-lg p-2">
+            <div className="text-meta text-destructive bg-destructive/10 border border-destructive/30 rounded-lg p-2">
               {error}
             </div>
           )}
@@ -126,13 +126,13 @@ export default function NLPPipelinePage() {
         {/* Output */}
         <Card className="nexus-card p-5 space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+            <h3 className="text-body-sm font-bold text-foreground flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-nexus-emerald" />
               Resultado
             </h3>
             {result && (
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-[10px]">
+                <Badge variant="outline" className="text-meta">
                   {result.processing_time_ms}ms · v{result.version}
                 </Badge>
                 <Button variant="ghost" size="sm" onClick={handleCopy}>
@@ -143,7 +143,7 @@ export default function NLPPipelinePage() {
           </div>
 
           {!result && !loading && (
-            <div className="text-xs text-muted-foreground text-center py-12 bg-secondary/30 rounded-lg">
+            <div className="text-meta text-muted-foreground text-center py-12 bg-secondary/30 rounded-lg">
               Cole um texto e clique em "Analisar texto" para ver o resultado.
             </div>
           )}
@@ -160,13 +160,13 @@ export default function NLPPipelinePage() {
                 <div className="rounded-lg border border-border bg-card p-3">
                   <div className="flex items-center gap-2 mb-2">
                     <Heart className="h-4 w-4 text-nexus-pink" />
-                    <span className="text-xs font-semibold">Sentimento</span>
+                    <span className="text-meta font-semibold">Sentimento</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="text-3xl">{result.sentiment.emoji}</span>
                     <div>
                       <Badge
-                        className={`text-[10px] ${
+                        className={`text-meta ${
                           result.sentiment.label === 'positive'
                             ? 'bg-nexus-emerald/10 text-nexus-emerald'
                             : result.sentiment.label === 'negative'
@@ -178,7 +178,7 @@ export default function NLPPipelinePage() {
                       >
                         {result.sentiment.label.toUpperCase()}
                       </Badge>
-                      <p className="text-[11px] text-muted-foreground mt-0.5">
+                      <p className="text-meta text-muted-foreground mt-0.5">
                         Confiança: {(result.sentiment.score * 100).toFixed(0)}%
                       </p>
                     </div>
@@ -190,11 +190,11 @@ export default function NLPPipelinePage() {
                 <div className="rounded-lg border border-border bg-card p-3">
                   <div className="flex items-center gap-2 mb-2">
                     <Tag className="h-4 w-4 text-nexus-blue" />
-                    <span className="text-xs font-semibold">Entidades detectadas ({result.ner.entity_count})</span>
+                    <span className="text-meta font-semibold">Entidades detectadas ({result.ner.entity_count})</span>
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     {result.ner.entities.map((e, i) => (
-                      <Badge key={i} variant="outline" className="text-[10px] gap-1">
+                      <Badge key={i} variant="outline" className="text-meta gap-1">
                         <span className="font-bold">{e.type}</span>: {e.value}
                         <span className="text-muted-foreground">({(e.confidence * 100).toFixed(0)}%)</span>
                       </Badge>
@@ -210,9 +210,9 @@ export default function NLPPipelinePage() {
                   <div className="rounded-lg border border-nexus-emerald/30 bg-nexus-emerald/5 p-3">
                     <div className="flex items-center gap-2 mb-2">
                       <Package className="h-4 w-4 text-nexus-emerald" />
-                      <span className="text-xs font-semibold">Pedido estruturado</span>
+                      <span className="text-meta font-semibold">Pedido estruturado</span>
                     </div>
-                    <div className="grid grid-cols-2 gap-2 text-[11px]">
+                    <div className="grid grid-cols-2 gap-2 text-meta">
                       {Object.entries(result.ner.structured_order).map(([key, val]) =>
                         val ? (
                           <div key={key} className="bg-background/50 rounded px-2 py-1">

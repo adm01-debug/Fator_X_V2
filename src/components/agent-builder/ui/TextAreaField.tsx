@@ -17,9 +17,9 @@ export function TextAreaField({ label, value, onChange, placeholder, rows = 4, m
   return (
     <div className={cn('space-y-1.5', className)}>
       <div className="flex items-center justify-between">
-        <label className="text-xs font-medium text-foreground">{label}</label>
+        <label className="text-meta font-medium text-foreground">{label}</label>
         {maxLength && (
-          <span className="text-[11px] font-mono text-muted-foreground">
+          <span className="text-meta font-mono text-muted-foreground">
             {value.length}/{maxLength}
           </span>
         )}
@@ -31,12 +31,12 @@ export function TextAreaField({ label, value, onChange, placeholder, rows = 4, m
         rows={rows}
         maxLength={maxLength}
         className={cn(
-          'bg-muted/30 border-border text-sm resize-none',
-          mono && 'font-mono text-xs'
+          'bg-muted/30 border-border text-body-sm resize-none',
+          mono && 'font-mono text-meta'
         )}
       />
       {hint && (
-        <p className="text-[11px] text-muted-foreground flex items-start gap-1">
+        <p className="text-meta text-muted-foreground flex items-start gap-1">
           <span>💡</span> {hint}
         </p>
       )}

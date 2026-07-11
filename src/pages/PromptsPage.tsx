@@ -53,7 +53,7 @@ export default function PromptsPage() {
             <div className="space-y-1">
               <div className="flex items-center gap-3">
                 <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Engine de Prompts</h1>
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-nexus-cyan/10 text-nexus-cyan text-[10px] font-bold uppercase tracking-widest border border-nexus-cyan/20">
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-nexus-cyan/10 text-nexus-cyan text-meta font-bold uppercase tracking-widest border border-nexus-cyan/20">
                   <Zap className="h-3 w-3 animate-pulse" /> Neural Versioning
                 </div>
               </div>
@@ -64,10 +64,10 @@ export default function PromptsPage() {
           </div>
           <div className="flex items-center gap-3">
             <div className="flex flex-col items-end gap-1 mr-4">
-              <div className="flex items-center gap-2 text-nexus-emerald font-black text-sm uppercase tracking-tighter">
+              <div className="flex items-center gap-2 text-nexus-emerald font-black text-body-sm uppercase tracking-tighter">
                 <CheckCircle className="h-4 w-4" /> Versioning Nominal
               </div>
-              <p className="text-[10px] text-muted-foreground font-bold tracking-widest uppercase">Safe-Rollback Enabled</p>
+              <p className="text-meta text-muted-foreground font-bold tracking-widest uppercase">Safe-Rollback Enabled</p>
             </div>
             <div className="h-10 w-px bg-border/40 mx-2" />
             <div className="flex items-center gap-3">
@@ -149,8 +149,8 @@ export default function PromptsPage() {
                               {(agent as any)?.name || 'Agente Sem Nome'}
                             </h3>
                             <div className="flex items-center gap-2 mt-1">
-                              <Badge variant="outline" className="text-[10px] h-5 px-1.5 bg-primary/5 border-primary/20 text-primary font-mono">v{p.version}</Badge>
-                              <span className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">
+                              <Badge variant="outline" className="text-meta h-5 px-1.5 bg-primary/5 border-primary/20 text-primary font-mono">v{p.version}</Badge>
+                              <span className="text-meta text-muted-foreground font-black uppercase tracking-widest">
                                 {new Date(p.created_at).toLocaleDateString('pt-BR')}
                               </span>
                             </div>
@@ -160,11 +160,11 @@ export default function PromptsPage() {
                       </div>
 
                       <div className="space-y-3 p-5 rounded-2xl bg-secondary/20 border border-border/10 group-hover:border-primary/20 transition-colors">
-                        <div className="flex items-center gap-2 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                        <div className="flex items-center gap-2 text-meta font-black text-muted-foreground uppercase tracking-widest">
                           <Target className="h-3.5 w-3.5" />
                           <span>Last Neural Commit</span>
                         </div>
-                        <p className="text-sm text-foreground/80 leading-relaxed line-clamp-3 italic font-medium">
+                        <p className="text-body-sm text-foreground/80 leading-relaxed line-clamp-3 italic font-medium">
                           "{p.change_summary || 'Nenhum sumário fornecido para esta versão.'}"
                         </p>
                       </div>
@@ -174,12 +174,12 @@ export default function PromptsPage() {
                       <div className="flex items-center gap-2">
                         <div className="flex -space-x-2">
                           {[1, 2, 3].map(i => (
-                            <div key={i} className="h-7 w-7 rounded-lg border-2 border-card bg-secondary/50 flex items-center justify-center text-[10px] font-black">
+                            <div key={i} className="h-7 w-7 rounded-lg border-2 border-card bg-secondary/50 flex items-center justify-center text-meta font-black">
                               {i}
                             </div>
                           ))}
                         </div>
-                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-tighter ml-1">+12 testes</span>
+                        <span className="text-meta font-bold text-muted-foreground uppercase tracking-tighter ml-1">+12 testes</span>
                       </div>
                       <div className="h-12 w-12 rounded-2xl bg-secondary/50 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-110 group-hover:rotate-12 transition-all duration-500 shadow-lg">
                         <ArrowRight className="h-6 w-6" />
@@ -196,7 +196,7 @@ export default function PromptsPage() {
           <div className="nexus-card flex flex-col items-center justify-center py-32 text-center bg-card/30 border-dashed">
             <Beaker className="h-16 w-16 text-primary/30 mb-6 animate-pulse" />
             <h2 className="text-xl font-black text-foreground mb-2">Sandbox de Testes Unitários</h2>
-            <p className="text-sm text-muted-foreground max-w-sm mb-8">Valide seus prompts contra cenários críticos e meça a regressão de inteligência em tempo real.</p>
+            <p className="text-body-sm text-muted-foreground max-w-sm mb-8">Valide seus prompts contra cenários críticos e meça a regressão de inteligência em tempo real.</p>
             <Button size="lg" className="rounded-2xl gap-2"><Plus className="h-5 w-5" /> Criar Suite de Teste</Button>
           </div>
         </TabsContent>
@@ -205,7 +205,7 @@ export default function PromptsPage() {
           <div className="nexus-card flex flex-col items-center justify-center py-32 text-center bg-card/30 border-dashed">
             <Sparkles className="h-16 w-16 text-nexus-cyan/30 mb-6 animate-float" />
             <h2 className="text-xl font-black text-foreground mb-2">Neural Prompt Optimizer</h2>
-            <p className="text-sm text-muted-foreground max-w-sm mb-8">Utilize IA para analisar e reescrever seus prompts, otimizando tokens e clareza semântica.</p>
+            <p className="text-body-sm text-muted-foreground max-w-sm mb-8">Utilize IA para analisar e reescrever seus prompts, otimizando tokens e clareza semântica.</p>
             <Button variant="outline" size="lg" className="rounded-2xl gap-2 border-nexus-cyan/20 text-nexus-cyan hover:bg-nexus-cyan/5"><Activity className="h-5 w-5" /> Analisar Biblioteca</Button>
           </div>
         </TabsContent>

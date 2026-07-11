@@ -90,7 +90,7 @@ export function ContradictionWordDiff({ prompt, fix }: Props) {
       />
 
       {/* Compact "what happens to the prompt" summary */}
-      <div className="rounded-md border border-border/50 bg-muted/20 px-2.5 py-2 text-[10px] text-muted-foreground space-y-1">
+      <div className="rounded-md border border-border/50 bg-muted/20 px-2.5 py-2 text-meta text-muted-foreground space-y-1">
         <p className="flex items-center gap-1.5 font-medium text-foreground/80">
           <ArrowRight className="h-3 w-3" />
           Operação no prompt
@@ -129,7 +129,7 @@ function DiffPane({
     >
       <div
         className={cn(
-          'px-2.5 py-1.5 border-b text-[10px] font-semibold uppercase tracking-wider',
+          'px-2.5 py-1.5 border-b text-meta font-semibold uppercase tracking-wider',
           tone === 'removed'
             ? 'border-destructive/20 text-destructive/90 bg-destructive/10'
             : 'border-nexus-emerald/20 text-nexus-emerald bg-nexus-emerald/10',
@@ -137,7 +137,7 @@ function DiffPane({
       >
         {label}
       </div>
-      <div className="px-3 py-2 text-xs font-mono leading-relaxed whitespace-pre-wrap text-foreground/90">
+      <div className="px-3 py-2 text-meta font-mono leading-relaxed whitespace-pre-wrap text-foreground/90">
         {children}
       </div>
     </div>
@@ -146,7 +146,7 @@ function DiffPane({
 
 function TokenLegend({ removed, added }: { removed: number; added: number }) {
   return (
-    <div className="flex items-center justify-center gap-3 text-[10px] text-muted-foreground">
+    <div className="flex items-center justify-center gap-3 text-meta text-muted-foreground">
       <span className="flex items-center gap-1">
         <Minus className="h-3 w-3 text-destructive" />
         <span className="font-mono text-destructive font-medium">{removed}</span>

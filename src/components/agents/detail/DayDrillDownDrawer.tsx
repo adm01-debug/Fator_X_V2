@@ -133,7 +133,7 @@ export function DayDrillDownDrawer({ open, onOpenChange, agentId, day }: Props) 
                           : 0;
                         return (
                           <div key={m.model} className="space-y-1">
-                            <div className="flex items-center justify-between gap-2 text-xs">
+                            <div className="flex items-center justify-between gap-2 text-meta">
                               <span className="font-mono text-foreground truncate">{m.model}</span>
                               <div className="flex items-center gap-3 shrink-0 text-muted-foreground tabular-nums">
                                 <span>{m.count}×</span>
@@ -171,7 +171,7 @@ export function DayDrillDownDrawer({ open, onOpenChange, agentId, day }: Props) 
                         const pct = maxToolCount > 0 ? (t.count / maxToolCount) * 100 : 0;
                         return (
                           <div key={t.tool} className="space-y-1">
-                            <div className="flex items-center justify-between gap-2 text-xs">
+                            <div className="flex items-center justify-between gap-2 text-meta">
                               <span className="font-mono text-foreground truncate">{t.tool}</span>
                               <div className="flex items-center gap-3 shrink-0 text-muted-foreground tabular-nums">
                                 <span className="font-semibold text-foreground">{t.count}×</span>
@@ -203,7 +203,7 @@ export function DayDrillDownDrawer({ open, onOpenChange, agentId, day }: Props) 
                   count={data?.traces.length ?? 0}
                   trailing={
                     data && data.totals.errorCount > 0 ? (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-destructive bg-destructive/10 border border-destructive/20 px-2 py-0.5 rounded-full">
+                      <span className="inline-flex items-center gap-1 text-meta font-semibold text-destructive bg-destructive/10 border border-destructive/20 px-2 py-0.5 rounded-full">
                         <AlertCircle className="h-3 w-3" /> {data.totals.errorCount} erro{data.totals.errorCount !== 1 ? 's' : ''}
                       </span>
                     ) : null
@@ -226,7 +226,7 @@ export function DayDrillDownDrawer({ open, onOpenChange, agentId, day }: Props) 
                         return (
                           <div
                             key={t.id}
-                            className="flex items-center justify-between gap-2 py-1.5 px-2 rounded-md text-xs hover:bg-secondary/40 transition-colors"
+                            className="flex items-center justify-between gap-2 py-1.5 px-2 rounded-md text-meta hover:bg-secondary/40 transition-colors"
                           >
                             <div className="flex items-center gap-2 min-w-0">
                               <span className="font-mono text-muted-foreground tabular-nums">{time}</span>
@@ -245,7 +245,7 @@ export function DayDrillDownDrawer({ open, onOpenChange, agentId, day }: Props) 
                         );
                       })}
                       {data.traces.length > 20 && (
-                        <p className="text-[11px] text-muted-foreground text-center pt-2">
+                        <p className="text-meta text-muted-foreground text-center pt-2">
                           + {data.traces.length - 20} traces adicionais
                         </p>
                       )}
@@ -292,11 +292,11 @@ function HeaderMetric({
 }) {
   return (
     <div className="rounded-lg bg-secondary/40 border border-border/40 p-2">
-      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-muted-foreground">
+      <div className="flex items-center gap-1.5 text-meta uppercase tracking-wider text-muted-foreground">
         <Icon className="h-3 w-3" />
         {label}
       </div>
-      <p className={`mt-0.5 font-mono font-semibold text-sm ${accent === 'amber' ? 'text-nexus-amber' : 'text-foreground'}`}>
+      <p className={`mt-0.5 font-mono font-semibold text-body-sm ${accent === 'amber' ? 'text-nexus-amber' : 'text-foreground'}`}>
         {value}
       </p>
     </div>
@@ -319,7 +319,7 @@ function Section({
   return (
     <section>
       <div className="flex items-center justify-between mb-2">
-        <h4 className="text-xs font-heading font-semibold text-foreground flex items-center gap-1.5">
+        <h4 className="text-meta font-heading font-semibold text-foreground flex items-center gap-1.5">
           <Icon className="h-3.5 w-3.5 text-muted-foreground" />
           {title}
           <span className="text-muted-foreground font-normal">({count})</span>
@@ -332,5 +332,5 @@ function Section({
 }
 
 function EmptySection({ label }: { label: string }) {
-  return <p className="text-xs text-muted-foreground italic py-3 text-center">{label}</p>;
+  return <p className="text-meta text-muted-foreground italic py-3 text-center">{label}</p>;
 }

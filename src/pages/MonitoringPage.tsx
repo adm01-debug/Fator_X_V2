@@ -58,7 +58,7 @@ export default function MonitoringPage() {
             <div className="space-y-1">
               <div className="flex items-center gap-3">
                 <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Observabilidade</h1>
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-nexus-emerald/10 text-nexus-emerald text-[10px] font-bold uppercase tracking-widest border border-nexus-emerald/20">
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-nexus-emerald/10 text-nexus-emerald text-meta font-bold uppercase tracking-widest border border-nexus-emerald/20">
                   <Radio className="h-3 w-3 animate-pulse" /> Live
                 </div>
               </div>
@@ -69,7 +69,7 @@ export default function MonitoringPage() {
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <Select value={agentFilter} onValueChange={setAgentFilter}>
-              <SelectTrigger className="w-[240px] h-12 rounded-2xl bg-background/50 border-border/50 hover:border-primary/30 transition-all font-bold text-sm">
+              <SelectTrigger className="w-[240px] h-12 rounded-2xl bg-background/50 border-border/50 hover:border-primary/30 transition-all font-bold text-body-sm">
                 <Filter className="h-4 w-4 mr-2 text-muted-foreground" />
                 <SelectValue placeholder="Filtrar Agente" />
               </SelectTrigger>
@@ -95,10 +95,10 @@ export default function MonitoringPage() {
         <TabsList className="bg-muted/50 p-1.5 rounded-2xl border border-border/40 h-auto flex-wrap gap-1">
           <TabsTrigger value="traces" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm gap-2 font-bold">Traces</TabsTrigger>
           <TabsTrigger value="sessions" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm gap-2 font-bold">
-            <Layers className="h-4 w-4" /> Sessões {sessions.length > 0 && <Badge className="bg-primary/10 text-primary border-none font-bold text-[10px] ml-1">{sessions.length}</Badge>}
+            <Layers className="h-4 w-4" /> Sessões {sessions.length > 0 && <Badge className="bg-primary/10 text-primary border-none font-bold text-meta ml-1">{sessions.length}</Badge>}
           </TabsTrigger>
           <TabsTrigger value="alerts" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm gap-2 font-bold">
-            Alertas {unresolvedCount > 0 && <Badge variant="destructive" className="font-bold text-[10px] ml-1">{unresolvedCount}</Badge>}
+            Alertas {unresolvedCount > 0 && <Badge variant="destructive" className="font-bold text-meta ml-1">{unresolvedCount}</Badge>}
           </TabsTrigger>
           <TabsTrigger value="tracing" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm gap-2 font-bold"><Zap className="h-4 w-4" /> Tracing</TabsTrigger>
           <TabsTrigger value="vitals" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm gap-2 font-bold">⚡ Vitals</TabsTrigger>
@@ -108,38 +108,38 @@ export default function MonitoringPage() {
 
         <TabsContent value="traces">
           {isLoading ? <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
-          : filteredTraces.length === 0 ? <div className="flex flex-col items-center justify-center py-20 text-center"><Activity className="h-12 w-12 text-muted-foreground mb-4" /><h2 className="text-lg font-semibold text-foreground mb-1">Nenhum trace registrado</h2><p className="text-sm text-muted-foreground">Traces aparecerão aqui quando agentes estiverem em produção.</p></div>
+          : filteredTraces.length === 0 ? <div className="flex flex-col items-center justify-center py-20 text-center"><Activity className="h-12 w-12 text-muted-foreground mb-4" /><h2 className="text-lg font-semibold text-foreground mb-1">Nenhum trace registrado</h2><p className="text-body-sm text-muted-foreground">Traces aparecerão aqui quando agentes estiverem em produção.</p></div>
           : <>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
                 <div className="bg-card border border-border/40 p-6 rounded-3xl flex flex-col items-center justify-center gap-1 group hover:border-primary/20 transition-all">
                   <p className="text-3xl font-heading font-black text-foreground group-hover:scale-110 transition-transform duration-300">{stats.total}</p>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Total Traces</p>
+                  <p className="text-meta font-bold uppercase tracking-widest text-muted-foreground">Total Traces</p>
                 </div>
                 <div className="bg-card border border-border/40 p-6 rounded-3xl flex flex-col items-center justify-center gap-1 group hover:border-destructive/20 transition-all">
                   <p className="text-3xl font-heading font-black text-destructive group-hover:scale-110 transition-transform duration-300">{stats.errors}</p>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Eventos Críticos</p>
+                  <p className="text-meta font-bold uppercase tracking-widest text-muted-foreground">Eventos Críticos</p>
                 </div>
                 <div className="bg-card border border-border/40 p-6 rounded-3xl flex flex-col items-center justify-center gap-1 group hover:border-nexus-cyan/20 transition-all">
                   <p className="text-3xl font-heading font-black text-foreground group-hover:scale-110 transition-transform duration-300">{stats.avgLatency}ms</p>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Latência Média</p>
+                  <p className="text-meta font-bold uppercase tracking-widest text-muted-foreground">Latência Média</p>
                 </div>
                 <div className="bg-card border border-border/40 p-6 rounded-3xl flex flex-col items-center justify-center gap-1 group hover:border-nexus-emerald/20 transition-all">
                   <p className="text-3xl font-heading font-black text-nexus-emerald group-hover:scale-110 transition-transform duration-300">${stats.totalCost.toFixed(3)}</p>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Custo Alocado</p>
+                  <p className="text-meta font-bold uppercase tracking-widest text-muted-foreground">Custo Alocado</p>
                 </div>
               </div>
               <div className="grid lg:grid-cols-2 gap-4">
-                <div className="nexus-card"><h3 className="text-sm font-heading font-semibold text-foreground mb-3">Latência por evento</h3><LightBarChart data={latencyData} xKey="time" height={180} yFormatter={(v) => `${v}ms`} tooltipFormatter={(v) => `${v}ms`} series={[{ dataKey: 'latency', name: 'Latência', color: 'hsl(var(--primary))', radius: 3 }]} /></div>
-                <div className="nexus-card"><h3 className="text-sm font-heading font-semibold text-foreground mb-3">Distribuição por nível</h3><LightPieChart data={pieData.map((p: any, i: number) => ({ ...p, color: PIE_COLORS[i % PIE_COLORS.length] }))} height={180} innerRadius={40} outerRadius={70} /></div>
+                <div className="nexus-card"><h3 className="text-body-sm font-heading font-semibold text-foreground mb-3">Latência por evento</h3><LightBarChart data={latencyData} xKey="time" height={180} yFormatter={(v) => `${v}ms`} tooltipFormatter={(v) => `${v}ms`} series={[{ dataKey: 'latency', name: 'Latência', color: 'hsl(var(--primary))', radius: 3 }]} /></div>
+                <div className="nexus-card"><h3 className="text-body-sm font-heading font-semibold text-foreground mb-3">Distribuição por nível</h3><LightPieChart data={pieData.map((p: any, i: number) => ({ ...p, color: PIE_COLORS[i % PIE_COLORS.length] }))} height={180} innerRadius={40} outerRadius={70} /></div>
               </div>
               <div className="grid lg:grid-cols-3 gap-4">
                 <div className="space-y-2 max-h-[500px] overflow-y-auto">
-                  <h3 className="text-xs font-heading font-semibold text-muted-foreground uppercase tracking-wider mb-2">Eventos recentes</h3>
+                  <h3 className="text-meta font-heading font-semibold text-muted-foreground uppercase tracking-wider mb-2">Eventos recentes</h3>
                   {filteredTraces.map((trace: any) => (
                     <div key={trace.id} className={`nexus-card cursor-pointer p-3 ${selected?.id === trace.id ? 'border-primary/40 nexus-glow-sm' : ''}`} onClick={() => setSelectedId(trace.id)}>
-                      <div className="flex items-center justify-between mb-1.5"><p className="text-xs font-medium text-foreground truncate">{trace.event}</p><StatusBadge status={trace.level || 'info'} /></div>
-                      <p className="text-[11px] text-muted-foreground">{trace.session_id || trace.id.slice(0, 8)}</p>
-                      <div className="flex items-center gap-3 mt-2 text-[11px] text-muted-foreground">
+                      <div className="flex items-center justify-between mb-1.5"><p className="text-meta font-medium text-foreground truncate">{trace.event}</p><StatusBadge status={trace.level || 'info'} /></div>
+                      <p className="text-meta text-muted-foreground">{trace.session_id || trace.id.slice(0, 8)}</p>
+                      <div className="flex items-center gap-3 mt-2 text-meta text-muted-foreground">
                         {trace.latency_ms && <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {(trace.latency_ms / 1000).toFixed(1)}s</span>}
                         {trace.cost_usd != null && <span className="flex items-center gap-1"><DollarSign className="h-3 w-3" /> ${Number(trace.cost_usd).toFixed(3)}</span>}
                         {trace.tokens_used && <span className="flex items-center gap-1"><Wrench className="h-3 w-3" /> {String(trace.tokens_used)}</span>}
@@ -150,18 +150,18 @@ export default function MonitoringPage() {
                 {selected && (
                   <div className="lg:col-span-2 nexus-card">
                     <div className="flex items-center justify-between mb-4 pb-3 border-b border-border/50">
-                      <div><h3 className="text-sm font-heading font-semibold text-foreground">{selected.event}</h3><p className="text-[11px] text-muted-foreground mt-0.5">{selected.session_id} • {new Date(selected.created_at).toLocaleString('pt-BR')}</p></div>
+                      <div><h3 className="text-body-sm font-heading font-semibold text-foreground">{selected.event}</h3><p className="text-meta text-muted-foreground mt-0.5">{selected.session_id} • {new Date(selected.created_at).toLocaleString('pt-BR')}</p></div>
                       <StatusBadge status={selected.level || 'info'} />
                     </div>
                     <div className="space-y-3">
-                      {selected.input && <div><p className="text-xs font-semibold text-foreground mb-1">Input</p><pre className="text-[11px] text-muted-foreground bg-secondary/30 p-3 rounded-lg overflow-x-auto max-h-[200px]">{JSON.stringify(selected.input, null, 2)}</pre></div>}
-                      {selected.output && <div><p className="text-xs font-semibold text-foreground mb-1">Output</p><pre className="text-[11px] text-muted-foreground bg-secondary/30 p-3 rounded-lg overflow-x-auto max-h-[200px]">{JSON.stringify(selected.output, null, 2)}</pre></div>}
-                      {selected.metadata && Object.keys(selected.metadata as object).length > 0 && <div><p className="text-xs font-semibold text-foreground mb-1">Metadata</p><pre className="text-[11px] text-muted-foreground bg-secondary/30 p-3 rounded-lg overflow-x-auto max-h-[200px]">{JSON.stringify(selected.metadata, null, 2)}</pre></div>}
+                      {selected.input && <div><p className="text-meta font-semibold text-foreground mb-1">Input</p><pre className="text-meta text-muted-foreground bg-secondary/30 p-3 rounded-lg overflow-x-auto max-h-[200px]">{JSON.stringify(selected.input, null, 2)}</pre></div>}
+                      {selected.output && <div><p className="text-meta font-semibold text-foreground mb-1">Output</p><pre className="text-meta text-muted-foreground bg-secondary/30 p-3 rounded-lg overflow-x-auto max-h-[200px]">{JSON.stringify(selected.output, null, 2)}</pre></div>}
+                      {selected.metadata && Object.keys(selected.metadata as object).length > 0 && <div><p className="text-meta font-semibold text-foreground mb-1">Metadata</p><pre className="text-meta text-muted-foreground bg-secondary/30 p-3 rounded-lg overflow-x-auto max-h-[200px]">{JSON.stringify(selected.metadata, null, 2)}</pre></div>}
                     </div>
                     <div className="mt-4 pt-4 border-t border-border/50 grid grid-cols-3 gap-4 text-center">
-                      <div><p className="text-lg font-heading font-bold text-foreground">{selected.latency_ms ? (selected.latency_ms / 1000).toFixed(1) + 's' : '—'}</p><p className="text-[11px] text-muted-foreground">Latência</p></div>
-                      <div><p className="text-lg font-heading font-bold text-foreground">{selected.tokens_used?.toLocaleString() || '—'}</p><p className="text-[11px] text-muted-foreground">Tokens</p></div>
-                      <div><p className="text-lg font-heading font-bold text-foreground">{selected.cost_usd != null ? `$${Number(selected.cost_usd).toFixed(3)}` : '—'}</p><p className="text-[11px] text-muted-foreground">Custo</p></div>
+                      <div><p className="text-lg font-heading font-bold text-foreground">{selected.latency_ms ? (selected.latency_ms / 1000).toFixed(1) + 's' : '—'}</p><p className="text-meta text-muted-foreground">Latência</p></div>
+                      <div><p className="text-lg font-heading font-bold text-foreground">{selected.tokens_used?.toLocaleString() || '—'}</p><p className="text-meta text-muted-foreground">Tokens</p></div>
+                      <div><p className="text-lg font-heading font-bold text-foreground">{selected.cost_usd != null ? `$${Number(selected.cost_usd).toFixed(3)}` : '—'}</p><p className="text-meta text-muted-foreground">Custo</p></div>
                     </div>
                   </div>
                 )}
@@ -178,26 +178,26 @@ export default function MonitoringPage() {
                   <div className="flex items-center justify-between cursor-pointer" onClick={() => setExpandedSessionId(expandedSessionId === session.id ? null : session.id)}>
                     <div>
                       <div className="flex items-center gap-2">
-                        <p className="text-sm font-semibold text-foreground font-mono">{session.id.substring(0, 12)}...</p>
-                        <Badge variant={session.status === 'active' ? 'default' : 'secondary'} className="text-[11px]">{session.status}</Badge>
+                        <p className="text-body-sm font-semibold text-foreground font-mono">{session.id.substring(0, 12)}...</p>
+                        <Badge variant={session.status === 'active' ? 'default' : 'secondary'} className="text-meta">{session.status}</Badge>
                       </div>
-                      <p className="text-[11px] text-muted-foreground mt-0.5">Agente: {agentName(session.agent_id)} • Início: {session.started_at ? new Date(session.started_at).toLocaleString('pt-BR') : '—'}</p>
+                      <p className="text-meta text-muted-foreground mt-0.5">Agente: {agentName(session.agent_id)} • Início: {session.started_at ? new Date(session.started_at).toLocaleString('pt-BR') : '—'}</p>
                     </div>
                   </div>
                   {expandedSessionId === session.id && (
                     <div className="mt-3 pt-3 border-t border-border/30 space-y-2">
-                      {sessionTraces.length === 0 ? <p className="text-xs text-muted-foreground text-center py-4">Nenhum trace nesta sessão</p>
+                      {sessionTraces.length === 0 ? <p className="text-meta text-muted-foreground text-center py-4">Nenhum trace nesta sessão</p>
                       : sessionTraces.map((st) => (
                         <div key={st.id} className="rounded-lg bg-secondary/20 p-2.5">
-                          <div className="flex items-center gap-3 text-xs cursor-pointer" onClick={() => setExpandedTraceId(expandedTraceId === st.id ? null : st.id)}>
-                            <Badge variant="outline" className="text-[11px] shrink-0">{st.trace_type}</Badge>
+                          <div className="flex items-center gap-3 text-meta cursor-pointer" onClick={() => setExpandedTraceId(expandedTraceId === st.id ? null : st.id)}>
+                            <Badge variant="outline" className="text-meta shrink-0">{st.trace_type}</Badge>
                             <span className="text-foreground truncate flex-1">{st.latency_ms ? `${st.latency_ms}ms` : ''} {st.tokens_used ? `• ${st.tokens_used}t` : ''}</span>
                             <span className="text-muted-foreground shrink-0 font-mono">{new Date(st.created_at || '').toLocaleTimeString('pt-BR')}</span>
                           </div>
                           {expandedTraceId === st.id && traceEvents.length > 0 && (
                             <div className="mt-2 pt-2 border-t border-border/20 space-y-1 pl-4">
                               {traceEvents.map((ev) => (
-                                <div key={ev.id} className="flex items-center gap-2 text-[11px]">
+                                <div key={ev.id} className="flex items-center gap-2 text-meta">
                                   <span className="text-muted-foreground font-mono w-[55px] shrink-0">{new Date(ev.created_at || '').toLocaleTimeString('pt-BR')}</span>
                                   <Badge variant="outline" className="text-[8px] shrink-0">{ev.event_type}</Badge>
                                   {ev.data && <span className="text-muted-foreground truncate">{JSON.stringify(ev.data).substring(0, 80)}</span>}
@@ -207,8 +207,8 @@ export default function MonitoringPage() {
                           )}
                           {expandedTraceId === st.id && (
                             <div className="mt-2 space-y-2">
-                              {st.input ? <div><p className="text-[11px] font-semibold text-foreground">Input</p><pre className="text-[11px] text-muted-foreground bg-secondary/30 p-2 rounded max-h-[120px] overflow-auto">{String(typeof st.input === 'string' ? st.input : JSON.stringify(st.input as Record<string, unknown>, null, 2))}</pre></div> : null}
-                              {st.output ? <div><p className="text-[11px] font-semibold text-foreground">Output</p><pre className="text-[11px] text-muted-foreground bg-secondary/30 p-2 rounded max-h-[120px] overflow-auto">{String(typeof st.output === 'string' ? st.output : JSON.stringify(st.output as Record<string, unknown>, null, 2))}</pre></div> : null}
+                              {st.input ? <div><p className="text-meta font-semibold text-foreground">Input</p><pre className="text-meta text-muted-foreground bg-secondary/30 p-2 rounded max-h-[120px] overflow-auto">{String(typeof st.input === 'string' ? st.input : JSON.stringify(st.input as Record<string, unknown>, null, 2))}</pre></div> : null}
+                              {st.output ? <div><p className="text-meta font-semibold text-foreground">Output</p><pre className="text-meta text-muted-foreground bg-secondary/30 p-2 rounded max-h-[120px] overflow-auto">{String(typeof st.output === 'string' ? st.output : JSON.stringify(st.output as Record<string, unknown>, null, 2))}</pre></div> : null}
                             </div>
                           )}
                         </div>
@@ -230,10 +230,10 @@ export default function MonitoringPage() {
                     <Bell className={`h-4 w-4 ${alert.severity === 'critical' ? 'text-destructive' : alert.severity === 'warning' ? 'text-nexus-amber' : 'text-primary'}`} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1"><p className="text-sm font-medium text-foreground">{alert.title}</p><Badge variant={alert.severity === 'critical' ? 'destructive' : 'outline'} className="text-[11px]">{alert.severity}</Badge>{alert.is_resolved && <Badge variant="secondary" className="text-[11px] gap-1"><CheckCircle className="h-2.5 w-2.5" /> Resolvido</Badge>}</div>
-                    {alert.message && <p className="text-xs text-muted-foreground">{alert.message}</p>}
+                    <div className="flex items-center gap-2 mb-1"><p className="text-body-sm font-medium text-foreground">{alert.title}</p><Badge variant={alert.severity === 'critical' ? 'destructive' : 'outline'} className="text-meta">{alert.severity}</Badge>{alert.is_resolved && <Badge variant="secondary" className="text-meta gap-1"><CheckCircle className="h-2.5 w-2.5" /> Resolvido</Badge>}</div>
+                    {alert.message && <p className="text-meta text-muted-foreground">{alert.message}</p>}
                   </div>
-                  {!alert.is_resolved && <Button variant="outline" size="sm" className="text-xs shrink-0" onClick={() => handleResolveAlert(alert.id)}>Resolver</Button>}
+                  {!alert.is_resolved && <Button variant="outline" size="sm" className="text-meta shrink-0" onClick={() => handleResolveAlert(alert.id)}>Resolver</Button>}
                 </div>
               ))}
             </div>}

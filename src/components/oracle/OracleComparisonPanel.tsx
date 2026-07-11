@@ -190,7 +190,7 @@ export function OracleComparisonPanel() {
           </div>
           <div>
             <h3 className="text-xl font-bold text-foreground">Modo Benchmarking</h3>
-            <p className="text-xs text-muted-foreground max-w-lg leading-relaxed">
+            <p className="text-meta text-muted-foreground max-w-lg leading-relaxed">
               Compare a eficácia e o custo de múltiplos algoritmos do conselho simultaneamente para o mesmo dilema.
             </p>
           </div>
@@ -210,7 +210,7 @@ export function OracleComparisonPanel() {
         </div>
 
         <div className="space-y-3">
-          <span className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-widest ml-1">Estratégias para Confronto:</span>
+          <span className="text-meta font-extrabold text-muted-foreground uppercase tracking-widest ml-1">Estratégias para Confronto:</span>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {COMPARISON_MODES.map((cfg) => {
               const modeInfo = ORACLE_MODES[cfg.mode];
@@ -231,9 +231,9 @@ export function OracleComparisonPanel() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <span className="text-lg">{modeInfo.icon}</span>
-                      <span className="text-xs font-bold uppercase tracking-tight">{modeInfo.label}</span>
+                      <span className="text-meta font-bold uppercase tracking-tight">{modeInfo.label}</span>
                     </div>
-                    <p className="text-[10px] leading-relaxed mt-1 line-clamp-2">{modeInfo.description}</p>
+                    <p className="text-meta leading-relaxed mt-1 line-clamp-2">{modeInfo.description}</p>
                   </div>
                 </label>
               );
@@ -257,14 +257,14 @@ export function OracleComparisonPanel() {
       {successfulRuns.length > 0 && (
         <div className="mt-10 space-y-6 animate-in fade-in duration-700">
           <div className="flex items-center justify-between px-1">
-            <h4 className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+            <h4 className="text-meta font-extrabold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
               <Activity className="h-3.5 w-3.5" /> Performance Consolidada
             </h4>
             <Button
               variant="ghost"
               size="sm"
               onClick={handleExport}
-              className="h-8 rounded-lg gap-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
+              className="h-8 rounded-lg gap-2 text-meta font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
             >
               <Download className="h-3.5 w-3.5" /> Exportar Análise JSON
             </Button>
@@ -279,7 +279,7 @@ export function OracleComparisonPanel() {
             ].map(m => (
               <Card key={m.label} className="p-4 bg-secondary/20 border-border/40 text-center">
                 <div className="flex justify-center mb-1.5 opacity-60">{m.icon}</div>
-                <p className={`text-sm font-extrabold ${m.cls}`}>{m.value}</p>
+                <p className={`text-body-sm font-extrabold ${m.cls}`}>{m.value}</p>
                 <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">{m.label}</p>
               </Card>
             ))}
@@ -306,7 +306,7 @@ export function OracleComparisonPanel() {
                   <div className="flex items-center justify-between gap-2 pb-3 border-b border-border/40">
                     <div className="flex items-center gap-2 min-w-0">
                       <span className="text-xl">{modeInfo.icon}</span>
-                      <p className="text-xs font-bold uppercase tracking-tight truncate">{modeInfo.label}</p>
+                      <p className="text-meta font-bold uppercase tracking-tight truncate">{modeInfo.label}</p>
                     </div>
                     {run.status === 'pending' && <Badge variant="outline" className="text-[9px] uppercase font-bold opacity-40">Turno 0</Badge>}
                     {run.status === 'running' && (
@@ -331,19 +331,19 @@ export function OracleComparisonPanel() {
                       <div className="grid grid-cols-3 gap-1">
                         <div className="text-center p-1.5 rounded-lg bg-secondary/40 border border-border/30">
                           <p className="text-[9px] font-bold text-muted-foreground uppercase mb-0.5">Conf.</p>
-                          <p className="text-xs font-mono font-extrabold text-foreground">{((run.result.confidence_score ?? 0) * 100).toFixed(0)}%</p>
+                          <p className="text-meta font-mono font-extrabold text-foreground">{((run.result.confidence_score ?? 0) * 100).toFixed(0)}%</p>
                         </div>
                         <div className="text-center p-1.5 rounded-lg bg-secondary/40 border border-border/30">
                           <p className="text-[9px] font-bold text-muted-foreground uppercase mb-0.5">Cons.</p>
-                          <p className="text-xs font-mono font-extrabold text-foreground">{((run.result.consensus_degree ?? 0) * 100).toFixed(0)}%</p>
+                          <p className="text-meta font-mono font-extrabold text-foreground">{((run.result.consensus_degree ?? 0) * 100).toFixed(0)}%</p>
                         </div>
                         <div className="text-center p-1.5 rounded-lg bg-secondary/40 border border-border/30">
                           <p className="text-[9px] font-bold text-muted-foreground uppercase mb-0.5">Custo</p>
-                          <p className="text-xs font-mono font-extrabold text-foreground">${(run.result.metrics?.total_cost_usd ?? 0).toFixed(4)}</p>
+                          <p className="text-meta font-mono font-extrabold text-foreground">${(run.result.metrics?.total_cost_usd ?? 0).toFixed(4)}</p>
                         </div>
                       </div>
 
-                      <div className="text-[11px] text-foreground/80 leading-relaxed max-h-[200px] overflow-y-auto pr-1 bg-secondary/20 p-3 rounded-xl border border-border/40 scrollbar-hide italic">
+                      <div className="text-meta text-foreground/80 leading-relaxed max-h-[200px] overflow-y-auto pr-1 bg-secondary/20 p-3 rounded-xl border border-border/40 scrollbar-hide italic">
                         "{run.result.final_response ?? 'Nenhuma resposta sintetizada.'}"
                       </div>
                       
@@ -356,7 +356,7 @@ export function OracleComparisonPanel() {
                   {run.status === 'failed' && (
                     <div className="py-10 text-center">
                       <XCircle className="h-8 w-8 text-destructive/30 mx-auto mb-2" />
-                      <p className="text-[10px] text-destructive font-bold uppercase tracking-tight">Falha Crítica</p>
+                      <p className="text-meta text-destructive font-bold uppercase tracking-tight">Falha Crítica</p>
                       <p className="text-[9px] text-muted-foreground mt-1 line-clamp-3">{run.error ?? 'Orquestrador Offline'}</p>
                     </div>
                   )}
@@ -364,14 +364,14 @@ export function OracleComparisonPanel() {
                   {run.status === 'pending' && (
                     <div className="py-10 text-center opacity-40">
                       <Clock className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                      <p className="text-[10px] font-bold uppercase tracking-widest">Aguardando Fila</p>
+                      <p className="text-meta font-bold uppercase tracking-widest">Aguardando Fila</p>
                     </div>
                   )}
 
                   {run.status === 'running' && (
                     <div className="py-10 text-center">
                       <Loader2 className="h-8 w-8 text-primary/40 animate-spin mx-auto mb-2" />
-                      <p className="text-[10px] font-bold uppercase tracking-widest animate-pulse">Sintetizando...</p>
+                      <p className="text-meta font-bold uppercase tracking-widest animate-pulse">Sintetizando...</p>
                     </div>
                   )}
                 </Card>

@@ -326,7 +326,7 @@ export default function BCPPage() {
             <div className="text-center py-12 text-muted-foreground">
               <LifeBuoy className="h-12 w-12 mx-auto mb-3 opacity-30" />
               <p>Nenhum sistema cadastrado.</p>
-              <p className="text-sm mt-1">Comece registrando seus serviços críticos para definir RTO/RPO.</p>
+              <p className="text-body-sm mt-1">Comece registrando seus serviços críticos para definir RTO/RPO.</p>
             </div>
           ) : (
             <Table>
@@ -349,15 +349,15 @@ export default function BCPPage() {
                       onClick={() => { setSelected(s); refreshTests(s); }}>
                       <TableCell className="font-medium">{s.name}</TableCell>
                       <TableCell><Badge variant="outline" className={tierBadgeClass(s.criticality)}>{TIER_LABEL[s.criticality].split(" — ")[0]}</Badge></TableCell>
-                      <TableCell className="text-sm text-muted-foreground">{CATEGORY_LABEL[s.category]}</TableCell>
-                      <TableCell className="text-sm tabular-nums">{formatDuration(s.rto_minutes)} / {formatDuration(s.rpo_minutes)}</TableCell>
+                      <TableCell className="text-body-sm text-muted-foreground">{CATEGORY_LABEL[s.category]}</TableCell>
+                      <TableCell className="text-body-sm tabular-nums">{formatDuration(s.rto_minutes)} / {formatDuration(s.rpo_minutes)}</TableCell>
                       <TableCell><Badge variant="outline" className={statusBadgeClass(s.status)}>{STATUS_LABEL[s.status]}</Badge></TableCell>
                       <TableCell>
                         {s.next_test_due ? (
                           <Badge variant="outline" className={overdue ? "bg-destructive/15 text-destructive border-destructive/30 animate-pulse" : (dleft ?? 0) < 30 ? "bg-nexus-amber/15 text-nexus-amber border-nexus-amber/30" : "bg-nexus-emerald/15 text-nexus-emerald border-nexus-emerald/30"}>
                             {overdue ? `Vencido há ${Math.abs(dleft ?? 0)}d` : `${dleft}d`}
                           </Badge>
-                        ) : <span className="text-xs text-muted-foreground">—</span>}
+                        ) : <span className="text-meta text-muted-foreground">—</span>}
                       </TableCell>
                     </TableRow>
                   );
@@ -387,7 +387,7 @@ export default function BCPPage() {
                 </TabsList>
 
                 <TabsContent value="details" className="space-y-4 pt-4">
-                  <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="grid grid-cols-2 gap-4 text-body-sm">
                     <Field label="Categoria" value={CATEGORY_LABEL[selected.category]} />
                     <Field label="MTPD" value={`${selected.mtpd_hours}h`} />
                     <Field label="RTO objetivo" value={formatDuration(selected.rto_minutes)} />
@@ -396,7 +396,7 @@ export default function BCPPage() {
                     <Field label="Próximo teste" value={selected.next_test_due ? new Date(selected.next_test_due).toLocaleDateString("pt-BR") : "—"} />
                   </div>
                   <div>
-                    <Label className="text-xs text-muted-foreground">Status operacional</Label>
+                    <Label className="text-meta text-muted-foreground">Status operacional</Label>
                     <Select value={selected.status} onValueChange={(v) => handleStatusChange(v as BcpSystemStatus)}>
                       <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
                       <SelectContent>
@@ -406,7 +406,7 @@ export default function BCPPage() {
                   </div>
                   {selected.dependencies.length > 0 && (
                     <div>
-                      <Label className="text-xs text-muted-foreground">Dependências</Label>
+                      <Label className="text-meta text-muted-foreground">Dependências</Label>
                       <div className="flex flex-wrap gap-1 mt-1">
                         {selected.dependencies.map((d) => <Badge key={d} variant="secondary">{d}</Badge>)}
                       </div>
@@ -414,8 +414,8 @@ export default function BCPPage() {
                   )}
                   {selected.recovery_strategy && (
                     <div>
-                      <Label className="text-xs text-muted-foreground">Estratégia de recuperação</Label>
-                      <p className="text-sm mt-1 p-3 bg-secondary/40 rounded-md whitespace-pre-wrap">{selected.recovery_strategy}</p>
+                      <Label className="text-meta text-muted-foreground">Estratégia de recuperação</Label>
+                      <p className="text-body-sm mt-1 p-3 bg-secondary/40 rounded-md whitespace-pre-wrap">{selected.recovery_strategy}</p>
                     </div>
                   )}
                 </TabsContent>
@@ -426,7 +426,7 @@ export default function BCPPage() {
                     <CardContent className="space-y-3">
                       <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <Label className="text-xs">Tipo</Label>
+                          <Label className="text-meta">Tipo</Label>
                           <Select value={testForm.test_type} onValueChange={(v) => setTestForm({ ...testForm, test_type: v as BcpTestType })}>
                             <SelectTrigger><SelectValue /></SelectTrigger>
                             <SelectContent>
@@ -435,7 +435,7 @@ export default function BCPPage() {
                           </Select>
                         </div>
                         <div>
-                          <Label className="text-xs">Sucesso</Label>
+                          <Label className="text-meta">Sucesso</Label>
                           <Select value={testForm.success ? "yes" : "no"} onValueChange={(v) => setTestForm({ ...testForm, success: v === "yes" })}>
                             <SelectTrigger><SelectValue /></SelectTrigger>
                             <SelectContent>
@@ -446,29 +446,29 @@ export default function BCPPage() {
                         </div>
                       </div>
                       <div>
-                        <Label className="text-xs">Cenário *</Label>
+                        <Label className="text-meta">Cenário *</Label>
                         <Textarea rows={2} value={testForm.scenario} onChange={(e) => setTestForm({ ...testForm, scenario: e.target.value })}
                           placeholder="Ex.: Falha total da região primária; failover para us-west-2" />
                       </div>
                       <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <Label className="text-xs">RTO real (min)</Label>
+                          <Label className="text-meta">RTO real (min)</Label>
                           <Input type="number" min={0} value={testForm.actual_rto_minutes}
                             onChange={(e) => setTestForm({ ...testForm, actual_rto_minutes: e.target.value })} />
                         </div>
                         <div>
-                          <Label className="text-xs">RPO real (min)</Label>
+                          <Label className="text-meta">RPO real (min)</Label>
                           <Input type="number" min={0} value={testForm.actual_rpo_minutes}
                             onChange={(e) => setTestForm({ ...testForm, actual_rpo_minutes: e.target.value })} />
                         </div>
                       </div>
                       <div>
-                        <Label className="text-xs">Gaps identificados (separados por vírgula)</Label>
+                        <Label className="text-meta">Gaps identificados (separados por vírgula)</Label>
                         <Input value={testForm.gaps} onChange={(e) => setTestForm({ ...testForm, gaps: e.target.value })}
                           placeholder="DNS demorou 8min, runbook desatualizado" />
                       </div>
                       <div>
-                        <Label className="text-xs">Action items</Label>
+                        <Label className="text-meta">Action items</Label>
                         <Textarea rows={2} value={testForm.action_items} onChange={(e) => setTestForm({ ...testForm, action_items: e.target.value })} />
                       </div>
                       <Button onClick={handleRecordTest} disabled={recordingTest} className="w-full">
@@ -478,11 +478,11 @@ export default function BCPPage() {
                   </Card>
 
                   <div className="space-y-2">
-                    <h4 className="text-sm font-semibold">Histórico</h4>
+                    <h4 className="text-body-sm font-semibold">Histórico</h4>
                     {testsLoading ? (
                       <Skeleton className="h-20 w-full" />
                     ) : tests.length === 0 ? (
-                      <p className="text-sm text-muted-foreground text-center py-6">Nenhum teste registrado ainda.</p>
+                      <p className="text-body-sm text-muted-foreground text-center py-6">Nenhum teste registrado ainda.</p>
                     ) : tests.map((t) => {
                       const rtoBreach = isRtoBreach(t, selected);
                       const rpoBreach = isRpoBreach(t, selected);
@@ -496,11 +496,11 @@ export default function BCPPage() {
                                   {t.success ? "Sucesso" : "Falha"}
                                 </Badge>
                               </div>
-                              <span className="text-xs text-muted-foreground">{new Date(t.executed_at).toLocaleString("pt-BR")}</span>
+                              <span className="text-meta text-muted-foreground">{new Date(t.executed_at).toLocaleString("pt-BR")}</span>
                             </div>
-                            <p className="text-sm">{t.scenario}</p>
+                            <p className="text-body-sm">{t.scenario}</p>
                             {(t.actual_rto_minutes != null || t.actual_rpo_minutes != null) && (
-                              <div className="flex gap-2 text-xs">
+                              <div className="flex gap-2 text-meta">
                                 {t.actual_rto_minutes != null && (
                                   <Badge variant="outline" className={rtoBreach ? "bg-destructive/15 text-destructive border-destructive/30 animate-pulse" : "bg-nexus-emerald/15 text-nexus-emerald border-nexus-emerald/30"}>
                                     RTO: {formatDuration(t.actual_rto_minutes)} {rtoBreach && `(>${formatDuration(selected.rto_minutes)})`}
@@ -514,12 +514,12 @@ export default function BCPPage() {
                               </div>
                             )}
                             {t.gaps.length > 0 && (
-                              <div className="text-xs">
+                              <div className="text-meta">
                                 <span className="font-semibold text-muted-foreground">Gaps: </span>
                                 {t.gaps.join(", ")}
                               </div>
                             )}
-                            {t.action_items && <p className="text-xs italic text-muted-foreground">→ {t.action_items}</p>}
+                            {t.action_items && <p className="text-meta italic text-muted-foreground">→ {t.action_items}</p>}
                           </CardContent>
                         </Card>
                       );
@@ -540,7 +540,7 @@ function StatCard({ label, value, icon, loading, highlight }: { label: string; v
     <Card className={highlight ? "border-destructive/40" : ""}>
       <CardContent className="pt-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-xs text-muted-foreground">{label}</span>
+          <span className="text-meta text-muted-foreground">{label}</span>
           {icon}
         </div>
         {loading ? <Skeleton className="h-7 w-16" /> : <div className="text-2xl font-bold tabular-nums">{value}</div>}
@@ -552,7 +552,7 @@ function StatCard({ label, value, icon, loading, highlight }: { label: string; v
 function Field({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <Label className="text-xs text-muted-foreground">{label}</Label>
+      <Label className="text-meta text-muted-foreground">{label}</Label>
       <p className="font-medium">{value}</p>
     </div>
   );

@@ -126,19 +126,19 @@ export function PromptUnlockDiffDialog({
                 )}
               >
                 <div className="flex items-center gap-1.5 mb-1">
-                  <span className={cn('text-xs font-semibold', isActive ? 'text-primary' : 'text-foreground')}>
+                  <span className={cn('text-meta font-semibold', isActive ? 'text-primary' : 'text-foreground')}>
                     {meta.label}
                   </span>
                   {s.identical && (
-                    <span className="ml-auto inline-flex items-center gap-0.5 text-[10px] font-mono text-nexus-emerald">
+                    <span className="ml-auto inline-flex items-center gap-0.5 text-meta font-mono text-nexus-emerald">
                       <Check className="h-2.5 w-2.5" />
                       idêntico
                     </span>
                   )}
                 </div>
-                <p className="text-[11px] text-muted-foreground leading-snug mb-1.5">{meta.description}</p>
+                <p className="text-meta text-muted-foreground leading-snug mb-1.5">{meta.description}</p>
                 {!s.identical && (
-                  <div className="flex items-center gap-2 text-[10px] font-mono">
+                  <div className="flex items-center gap-2 text-meta font-mono">
                     <span className="text-nexus-emerald">+{s.added}</span>
                     <span className="text-destructive">−{s.removed}</span>
                     <span className="text-muted-foreground">linhas</span>
@@ -151,7 +151,7 @@ export function PromptUnlockDiffDialog({
 
         {/* Diff preview */}
         <div className="rounded-lg border border-border/60 overflow-hidden">
-          <div className="flex items-center gap-2 px-3 py-1.5 border-b border-border/60 bg-secondary/40 text-[11px] text-muted-foreground">
+          <div className="flex items-center gap-2 px-3 py-1.5 border-b border-border/60 bg-secondary/40 text-meta text-muted-foreground">
             <ArrowLeftRight className="h-3 w-3" />
             <span className="font-medium text-foreground">Texto atual</span>
             <span className="opacity-50">→</span>
@@ -169,7 +169,7 @@ export function PromptUnlockDiffDialog({
           </div>
           <div className="max-h-[45vh] overflow-y-auto">
             {targetStats.identical ? (
-              <p className="text-xs text-muted-foreground italic py-6 px-3 text-center">
+              <p className="text-meta text-muted-foreground italic py-6 px-3 text-center">
                 O texto atual é idêntico a esta variação — restaurar não muda nada.
               </p>
             ) : (

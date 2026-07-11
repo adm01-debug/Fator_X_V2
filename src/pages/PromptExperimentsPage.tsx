@@ -74,12 +74,12 @@ export default function PromptExperimentsPage() {
       />
 
       {isLoading ? (
-        <Card><CardContent className="py-12 text-center text-sm text-muted-foreground">Carregando…</CardContent></Card>
+        <Card><CardContent className="py-12 text-center text-body-sm text-muted-foreground">Carregando…</CardContent></Card>
       ) : experiments.length === 0 ? (
         <Card>
           <CardContent className="py-16 text-center space-y-3">
             <Beaker className="h-12 w-12 mx-auto text-muted-foreground/50" />
-            <div className="text-sm text-muted-foreground">Nenhum experimento ainda. Crie seu primeiro A/B test.</div>
+            <div className="text-body-sm text-muted-foreground">Nenhum experimento ainda. Crie seu primeiro A/B test.</div>
             <Button onClick={() => setCreateOpen(true)}><Plus className="h-4 w-4 mr-2" />Criar experimento</Button>
           </CardContent>
         </Card>
@@ -138,7 +138,7 @@ function ExperimentCard({
               {experiment.name}
               {experiment.winner && <Trophy className="h-4 w-4 text-nexus-green shrink-0" />}
             </CardTitle>
-            <div className="text-xs text-muted-foreground line-clamp-1">{experiment.description || 'Sem descrição'}</div>
+            <div className="text-meta text-muted-foreground line-clamp-1">{experiment.description || 'Sem descrição'}</div>
           </div>
           <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
             <Badge variant={STATUS_VARIANT[experiment.status]}>{STATUS_LABEL[experiment.status]}</Badge>
@@ -152,7 +152,7 @@ function ExperimentCard({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-xs">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-meta">
           <Metric label="Métrica" value={experiment.success_metric} />
           <Metric label="Split" value={`${experiment.traffic_split}/${100 - experiment.traffic_split}`} />
           <Metric label="Runs" value={totalRuns.toLocaleString('pt-BR')} />
@@ -168,7 +168,7 @@ function Metric({ label, value, highlight }: { label: string; value: string | nu
   return (
     <div>
       <div className="text-muted-foreground">{label}</div>
-      <div className={`text-sm font-semibold mt-0.5 ${highlight ? 'text-nexus-green' : ''}`}>{value}</div>
+      <div className={`text-body-sm font-semibold mt-0.5 ${highlight ? 'text-nexus-green' : ''}`}>{value}</div>
     </div>
   );
 }
@@ -237,7 +237,7 @@ function ExperimentDetail({ experimentId }: { experimentId: string }) {
       && winner.avg_quality >= experiment.guardrails.min_quality;
   }, [stats, experiment]);
 
-  if (!experiment) return <div className="py-8 text-center text-sm text-muted-foreground">Carregando…</div>;
+  if (!experiment) return <div className="py-8 text-center text-body-sm text-muted-foreground">Carregando…</div>;
 
   const canPromote = stats?.significant && guardrailsOk && experiment.status !== 'completed';
 
@@ -256,10 +256,10 @@ function ExperimentDetail({ experimentId }: { experimentId: string }) {
               <div className="flex items-center gap-3">
                 <Activity className="h-8 w-8 text-primary" />
                 <div>
-                  <div className="text-sm font-semibold">
+                  <div className="text-body-sm font-semibold">
                     Significância: p={stats.p_value.toFixed(4)} {stats.significant ? '✓ significativo' : '— ainda não'}
                   </div>
-                  <div className="text-xs text-muted-foreground">
+                  <div className="text-meta text-muted-foreground">
                     n={stats.variant_a.runs + stats.variant_b.runs} · z={stats.z_score.toFixed(2)} · winner candidato: {stats.winner_candidate.toUpperCase()}
                   </div>
                 </div>
@@ -304,10 +304,10 @@ function ExperimentDetail({ experimentId }: { experimentId: string }) {
               </TableHeader>
               <TableBody>
                 {runs.length === 0 ? (
-                  <TableRow><TableCell colSpan={6} className="text-center text-sm text-muted-foreground py-8">Sem runs ainda</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={6} className="text-center text-body-sm text-muted-foreground py-8">Sem runs ainda</TableCell></TableRow>
                 ) : runs.map((r) => (
                   <TableRow key={r.id}>
-                    <TableCell className="text-xs">{format(new Date(r.created_at), 'dd/MM HH:mm:ss', { locale: ptBR })}</TableCell>
+                    <TableCell className="text-meta">{format(new Date(r.created_at), 'dd/MM HH:mm:ss', { locale: ptBR })}</TableCell>
                     <TableCell><Badge variant="outline">{r.variant.toUpperCase()}</Badge></TableCell>
                     <TableCell>{r.latency_ms}ms</TableCell>
                     <TableCell>${Number(r.cost_cents).toFixed(4)}</TableCell>
@@ -323,7 +323,7 @@ function ExperimentDetail({ experimentId }: { experimentId: string }) {
 
       <TabsContent value="config">
         <Card>
-          <CardContent className="p-4 space-y-3 text-sm">
+          <CardContent className="p-4 space-y-3 text-body-sm">
             <div className="grid grid-cols-2 gap-3">
               <div><span className="text-muted-foreground">Métrica:</span> <b>{experiment.success_metric}</b></div>
               <div><span className="text-muted-foreground">Split:</span> <b>{experiment.traffic_split}/{100 - experiment.traffic_split}</b></div>
@@ -331,8 +331,8 @@ function ExperimentDetail({ experimentId }: { experimentId: string }) {
               <div><span className="text-muted-foreground">Criado:</span> <b>{format(new Date(experiment.created_at), 'dd/MM/yyyy', { locale: ptBR })}</b></div>
             </div>
             <div className="pt-2 border-t">
-              <div className="text-xs font-semibold mb-2">Guardrails</div>
-              <div className="grid grid-cols-3 gap-3 text-xs">
+              <div className="text-meta font-semibold mb-2">Guardrails</div>
+              <div className="grid grid-cols-3 gap-3 text-meta">
                 <div><span className="text-muted-foreground">Custo máx:</span> +{experiment.guardrails.max_cost_increase_pct}%</div>
                 <div><span className="text-muted-foreground">Latência máx:</span> +{experiment.guardrails.max_latency_increase_ms}ms</div>
                 <div><span className="text-muted-foreground">Qualidade mín:</span> {experiment.guardrails.min_quality}</div>
@@ -349,12 +349,12 @@ function VariantCard({ label, variant, stats, winner }: { label: string; variant
   return (
     <Card className={winner ? 'border-nexus-green/40 shadow-[0_0_20px_hsl(var(--nexus-green)/0.12)]' : ''}>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm flex items-center gap-2">
+        <CardTitle className="text-body-sm flex items-center gap-2">
           <Badge>{variant.toUpperCase()}</Badge>{label}
           {winner && <Trophy className="h-4 w-4 text-nexus-green ml-auto" />}
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-3 text-xs">
+      <CardContent className="space-y-3 text-meta">
         <div className="grid grid-cols-2 gap-3">
           <Metric label="Runs" value={stats.runs} />
           <Metric label="Sucesso" value={`${(stats.success_rate * 100).toFixed(1)}%`} />

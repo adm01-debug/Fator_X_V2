@@ -100,15 +100,15 @@ export function PreflightReviewSummary({ form, compact = false, onJumpToSection,
             {allGood ? <Rocket className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-heading font-semibold text-foreground">
+            <p className="text-body-sm font-heading font-semibold text-foreground">
               {allGood ? 'Pronto para criar' : 'Revisão antes de criar'}
             </p>
-            <p className="text-[11px] text-muted-foreground truncate">
+            <p className="text-meta text-muted-foreground truncate">
               {form.emoji} {form.name || 'Sem nome'} · {form.type} · {form.model}
             </p>
           </div>
         </div>
-        <div className="text-[10px] font-mono text-muted-foreground flex items-center gap-1.5 flex-wrap">
+        <div className="text-meta font-mono text-muted-foreground flex items-center gap-1.5 flex-wrap">
           <span>{compiled.stats.chars.toLocaleString('pt-BR')} chars</span>
           <span className="opacity-50">·</span>
           <span>~{compiled.stats.estimatedTokens.toLocaleString('pt-BR')} tokens</span>
@@ -117,7 +117,7 @@ export function PreflightReviewSummary({ form, compact = false, onJumpToSection,
 
       {/* Sections checklist with depth */}
       <div className="space-y-1.5">
-        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+        <p className="text-meta uppercase tracking-wider text-muted-foreground">
           Seções obrigatórias ({presentOk}/{totalSections} completas)
         </p>
         <div className="flex flex-wrap gap-1.5">
@@ -132,7 +132,7 @@ export function PreflightReviewSummary({ form, compact = false, onJumpToSection,
                 type={canJump ? 'button' : undefined}
                 onClick={canJump ? () => onJumpToSection!(r.key) : undefined}
                 className={cn(
-                  'inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] font-medium transition-colors',
+                  'inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-meta font-medium transition-colors',
                   isOk
                     ? 'border-nexus-emerald/30 bg-nexus-emerald/10 text-nexus-emerald'
                     : 'border-nexus-amber/40 bg-nexus-amber/10 text-nexus-amber',
@@ -160,11 +160,11 @@ export function PreflightReviewSummary({ form, compact = false, onJumpToSection,
 
       {/* Variables */}
       <div className="space-y-1.5">
-        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+        <p className="text-meta uppercase tracking-wider text-muted-foreground">
           Variáveis ({compiled.detectedVariables.length})
         </p>
         {compiled.detectedVariables.length === 0 ? (
-          <p className="text-[11px] text-muted-foreground/70 italic">Nenhuma variável detectada no prompt.</p>
+          <p className="text-meta text-muted-foreground/70 italic">Nenhuma variável detectada no prompt.</p>
         ) : (
           <div className="flex flex-wrap gap-1.5">
             {compiled.detectedVariables.map((v) => {
@@ -173,7 +173,7 @@ export function PreflightReviewSummary({ form, compact = false, onJumpToSection,
                 <span
                   key={v}
                   className={cn(
-                    'inline-flex items-center gap-1 px-2 py-0.5 rounded-full font-mono border text-[10px]',
+                    'inline-flex items-center gap-1 px-2 py-0.5 rounded-full font-mono border text-meta',
                     unresolved
                       ? 'border-nexus-amber/40 bg-nexus-amber/10 text-nexus-amber'
                       : 'border-nexus-emerald/30 bg-nexus-emerald/10 text-nexus-emerald',
@@ -191,7 +191,7 @@ export function PreflightReviewSummary({ form, compact = false, onJumpToSection,
       {/* Conflitos detectados */}
       {hasContradictions && (
         <div className="space-y-1.5">
-          <p className="text-[10px] uppercase tracking-wider text-nexus-amber flex items-center gap-1.5">
+          <p className="text-meta uppercase tracking-wider text-nexus-amber flex items-center gap-1.5">
             <GitMerge className="h-3 w-3" />
             Conflitos detectados ({contradictions.length})
           </p>
@@ -205,7 +205,7 @@ export function PreflightReviewSummary({ form, compact = false, onJumpToSection,
 
       {/* Warnings */}
       {(hasUnresolved || hasMissingSections || hasThinSections || hasContradictions) && (
-        <div className="text-[11px] text-nexus-amber bg-nexus-amber/10 border border-nexus-amber/30 rounded-md px-2.5 py-1.5 space-y-0.5">
+        <div className="text-meta text-nexus-amber bg-nexus-amber/10 border border-nexus-amber/30 rounded-md px-2.5 py-1.5 space-y-0.5">
           {hasMissingSections && (
             <p>
               ⚠ Faltam seções:{' '}
@@ -274,7 +274,7 @@ function ConflictCard({
 
   return (
     <div className="rounded-md border border-nexus-amber/40 bg-nexus-amber/10 px-2.5 py-1.5 space-y-1.5">
-      <div className="flex items-center gap-1.5 text-[10px] font-mono">
+      <div className="flex items-center gap-1.5 text-meta font-mono">
         <span className="px-1.5 py-0.5 rounded-full bg-nexus-amber/20 text-nexus-amber font-semibold">
           {CONTRADICTION_KIND_LABEL[c.kind]}
         </span>
@@ -291,8 +291,8 @@ function ConflictCard({
           <span className="text-muted-foreground">linha {c.lineA} ↔ {c.lineB}</span>
         )}
       </div>
-      <p className="text-[11px] text-nexus-amber/90 leading-snug">{c.reason}</p>
-      <div className="text-[10px] font-mono text-muted-foreground/80 space-y-0.5">
+      <p className="text-meta text-nexus-amber/90 leading-snug">{c.reason}</p>
+      <div className="text-meta font-mono text-muted-foreground/80 space-y-0.5">
         <div className="truncate">A: {c.snippetA}</div>
         <div className="truncate">B: {c.snippetB}</div>
       </div>
@@ -301,7 +301,7 @@ function ConflictCard({
         type="button"
         onClick={() => setExpanded((x) => !x)}
         aria-expanded={expanded}
-        className="flex items-center gap-1 text-[10px] font-medium text-nexus-amber hover:text-nexus-amber/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-nexus-amber/50 rounded transition-colors"
+        className="flex items-center gap-1 text-meta font-medium text-nexus-amber hover:text-nexus-amber/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-nexus-amber/50 rounded transition-colors"
       >
         <Lightbulb className="h-3 w-3" />
         {expanded ? 'Ocultar sugestões' : `Ver ${suggestions.length} sugestões de reescrita`}
@@ -321,8 +321,8 @@ function ConflictCard({
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="space-y-0.5 flex-1 min-w-0">
-                    <p className="text-[11px] font-medium text-foreground">{s.title}</p>
-                    <p className="text-[10px] text-muted-foreground leading-snug">
+                    <p className="text-meta font-medium text-foreground">{s.title}</p>
+                    <p className="text-meta text-muted-foreground leading-snug">
                       {s.rationale}
                     </p>
                   </div>
@@ -331,7 +331,7 @@ function ConflictCard({
                     onClick={() => copyRewrite(s.rewrite, idx)}
                     aria-label={`Copiar sugestão: ${s.title}`}
                     className={cn(
-                      'shrink-0 inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50',
+                      'shrink-0 inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-meta font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50',
                       isCopied
                         ? 'bg-nexus-emerald/20 text-nexus-emerald'
                         : 'bg-secondary hover:bg-secondary/80 text-foreground',
@@ -350,7 +350,7 @@ function ConflictCard({
                     )}
                   </button>
                 </div>
-                <pre className="text-[10px] font-mono leading-relaxed text-foreground/80 whitespace-pre-wrap break-words bg-secondary/40 rounded px-1.5 py-1 border border-border/40">
+                <pre className="text-meta font-mono leading-relaxed text-foreground/80 whitespace-pre-wrap break-words bg-secondary/40 rounded px-1.5 py-1 border border-border/40">
                   {s.rewrite}
                 </pre>
               </div>

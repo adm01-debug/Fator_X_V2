@@ -100,8 +100,8 @@ export function SecurityMonitoringPanel() {
           <div className="flex items-center gap-2">
             <Tabs value={filter} onValueChange={(v) => { setFilter(v as any); loadAlerts(); }} className="w-auto">
               <TabsList className="h-8 p-1 bg-secondary/50">
-                <TabsTrigger value="unresolved" className="text-[10px] px-3 h-6">Pendentes</TabsTrigger>
-                <TabsTrigger value="all" className="text-[10px] px-3 h-6">Todos</TabsTrigger>
+                <TabsTrigger value="unresolved" className="text-meta px-3 h-6">Pendentes</TabsTrigger>
+                <TabsTrigger value="all" className="text-meta px-3 h-6">Todos</TabsTrigger>
               </TabsList>
             </Tabs>
             <Button size="icon" variant="ghost" className="h-8 w-8" onClick={loadAlerts}>
@@ -114,7 +114,7 @@ export function SecurityMonitoringPanel() {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
             <Loader2 className="h-10 w-10 animate-spin text-primary/20" />
-            <p className="text-sm font-medium text-muted-foreground animate-pulse">Sincronizando...</p>
+            <p className="text-body-sm font-medium text-muted-foreground animate-pulse">Sincronizando...</p>
           </div>
         ) : alerts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center px-6">
@@ -122,7 +122,7 @@ export function SecurityMonitoringPanel() {
               <ShieldCheck className="h-8 w-8 text-nexus-emerald" />
             </div>
             <h3 className="text-lg font-bold text-foreground">Sistema Íntegro</h3>
-            <p className="text-sm text-muted-foreground max-w-xs mt-2 font-medium">
+            <p className="text-body-sm text-muted-foreground max-w-xs mt-2 font-medium">
               Nenhum alerta detectado.
             </p>
           </div>
@@ -139,7 +139,7 @@ export function SecurityMonitoringPanel() {
                       <Badge variant="outline" className="text-[9px] uppercase tracking-widest font-black py-0 px-1.5 h-4">
                         {alert.category}
                       </Badge>
-                      <span className="text-xs text-muted-foreground flex items-center gap-1 font-medium">
+                      <span className="text-meta text-muted-foreground flex items-center gap-1 font-medium">
                         <Clock className="h-3 w-3" />
                         {format(new Date(alert.created_at), "HH:mm, dd 'de' MMM", { locale: ptBR })}
                       </span>
@@ -148,17 +148,17 @@ export function SecurityMonitoringPanel() {
                       <Button 
                         size="sm" 
                         variant="ghost" 
-                        className="opacity-0 group-hover:opacity-100 h-7 text-[10px] px-2 rounded-lg hover:bg-nexus-emerald/10 hover:text-nexus-emerald"
+                        className="opacity-0 group-hover:opacity-100 h-7 text-meta px-2 rounded-lg hover:bg-nexus-emerald/10 hover:text-nexus-emerald"
                         onClick={() => resolveAlert(alert.id)}
                       >
                         <CheckCircle className="h-3 w-3 mr-1" /> Resolver
                       </Button>
                     )}
                   </div>
-                  <h4 className="text-sm font-bold text-foreground leading-snug">{alert.message}</h4>
+                  <h4 className="text-body-sm font-bold text-foreground leading-snug">{alert.message}</h4>
                   {alert.metadata && Object.keys(alert.metadata).length > 0 && (
                     <div className="bg-secondary/20 p-2 rounded-lg border border-border/20 mt-2">
-                      <pre className="text-[10px] font-mono text-muted-foreground overflow-auto">
+                      <pre className="text-meta font-mono text-muted-foreground overflow-auto">
                         {JSON.stringify(alert.metadata, null, 2)}
                       </pre>
                     </div>

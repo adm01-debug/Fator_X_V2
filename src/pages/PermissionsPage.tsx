@@ -77,15 +77,15 @@ export default function PermissionsPage() {
           <Loader2 className="w-6 h-6 animate-spin text-primary" />
         </div>
       ) : grouped.length === 0 ? (
-        <Card className="p-10 text-center text-sm text-muted-foreground">Nenhuma permissão encontrada.</Card>
+        <Card className="p-10 text-center text-body-sm text-muted-foreground">Nenhuma permissão encontrada.</Card>
       ) : (
         <div className="space-y-6">
           {grouped.map(([module, modulePerms]) => (
             <Card key={module} className="p-5">
               <div className="flex items-center gap-2 mb-4">
                 <Lock className="w-4 h-4 text-primary" />
-                <h3 className="text-sm font-bold text-foreground capitalize">{module}</h3>
-                <Badge variant="outline" className="text-[10px]">{modulePerms.length}</Badge>
+                <h3 className="text-body-sm font-bold text-foreground capitalize">{module}</h3>
+                <Badge variant="outline" className="text-meta">{modulePerms.length}</Badge>
               </div>
               <div className="grid gap-2 md:grid-cols-2">
                 {modulePerms.map((p) => (
@@ -95,11 +95,11 @@ export default function PermissionsPage() {
                   >
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <code className="text-[11px] font-mono text-primary truncate">{p.key}</code>
+                        <code className="text-meta font-mono text-primary truncate">{p.key}</code>
                       </div>
-                      <p className="text-xs text-foreground mt-0.5">{p.name}</p>
+                      <p className="text-meta text-foreground mt-0.5">{p.name}</p>
                       {p.description && (
-                        <p className="text-[10px] text-muted-foreground mt-0.5 line-clamp-1">{p.description}</p>
+                        <p className="text-meta text-muted-foreground mt-0.5 line-clamp-1">{p.description}</p>
                       )}
                     </div>
                     {p.category && (

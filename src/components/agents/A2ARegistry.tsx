@@ -37,9 +37,9 @@ export function A2ARegistry() {
             <Globe className="h-6 w-6 text-primary" />
             Registro Global A2A
           </h2>
-          <p className="text-sm text-muted-foreground">Agentes disponíveis para descoberta via protocolo A2A v1.0</p>
+          <p className="text-body-sm text-muted-foreground">Agentes disponíveis para descoberta via protocolo A2A v1.0</p>
         </div>
-        <Badge variant="outline" className="px-3 py-1 font-mono uppercase tracking-widest text-[10px] bg-primary/5">
+        <Badge variant="outline" className="px-3 py-1 font-mono uppercase tracking-widest text-meta bg-primary/5">
           {cards.length} Agentes Ativos
         </Badge>
       </div>
@@ -53,8 +53,8 @@ export function A2ARegistry() {
                   <Bot className="h-6 w-6 text-primary" />
                 </div>
                 <div className="flex gap-2">
-                  {card.capabilities.streaming && <Badge variant="secondary" className="text-[10px] bg-nexus-emerald/10 text-nexus-emerald">SSE</Badge>}
-                  {card.capabilities.mcpVersion && <Badge variant="secondary" className="text-[10px] bg-purple-500/10 text-purple-500">MCP {card.capabilities.mcpVersion}</Badge>}
+                  {card.capabilities.streaming && <Badge variant="secondary" className="text-meta bg-nexus-emerald/10 text-nexus-emerald">SSE</Badge>}
+                  {card.capabilities.mcpVersion && <Badge variant="secondary" className="text-meta bg-purple-500/10 text-purple-500">MCP {card.capabilities.mcpVersion}</Badge>}
                 </div>
               </div>
               <div className="mt-4">
@@ -64,15 +64,15 @@ export function A2ARegistry() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Skills</p>
+                <p className="text-meta font-bold uppercase tracking-widest text-muted-foreground">Skills</p>
                 <div className="flex flex-wrap gap-1.5">
                   {card.skills.slice(0, 4).map(skill => (
-                    <Badge key={skill.id} variant="outline" className="text-[10px] border-border/60">
+                    <Badge key={skill.id} variant="outline" className="text-meta border-border/60">
                       {skill.name}
                     </Badge>
                   ))}
                   {card.skills.length > 4 && (
-                    <Badge variant="outline" className="text-[10px] border-border/60">
+                    <Badge variant="outline" className="text-meta border-border/60">
                       +{card.skills.length - 4}
                     </Badge>
                   )}
@@ -82,15 +82,15 @@ export function A2ARegistry() {
               <div className="pt-4 border-t border-border/40 grid grid-cols-3 gap-2">
                 <div className="flex flex-col items-center gap-1">
                   <Cpu className="h-3.5 w-3.5 text-muted-foreground" />
-                  <span className="text-[10px] text-muted-foreground">v{card.agentVersion}</span>
+                  <span className="text-meta text-muted-foreground">v{card.agentVersion}</span>
                 </div>
                 <div className="flex flex-col items-center gap-1">
                   <Shield className="h-3.5 w-3.5 text-muted-foreground" />
-                  <span className="text-[10px] text-muted-foreground">{card.authentication.schemes[0].scheme}</span>
+                  <span className="text-meta text-muted-foreground">{card.authentication.schemes[0].scheme}</span>
                 </div>
                 <div className="flex flex-col items-center gap-1">
                   <Network className="h-3.5 w-3.5 text-muted-foreground" />
-                  <span className="text-[10px] text-muted-foreground">JSON-Cards</span>
+                  <span className="text-meta text-muted-foreground">JSON-Cards</span>
                 </div>
               </div>
 

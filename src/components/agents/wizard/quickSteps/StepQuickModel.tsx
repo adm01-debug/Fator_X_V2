@@ -25,7 +25,7 @@ export function StepQuickModel({ form, errors, update, highlightField }: Props) 
     <div className="space-y-4">
       <div>
         <h2 className="text-lg font-heading font-semibold text-foreground">Modelo base</h2>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-body-sm text-muted-foreground">
           Escolha o LLM. Marcamos com ⭐ o recomendado para o tipo selecionado.
         </p>
       </div>
@@ -44,13 +44,13 @@ export function StepQuickModel({ form, errors, update, highlightField }: Props) 
               }`}
             >
               <div className="flex items-center justify-between mb-2 gap-2">
-                <span className="font-semibold text-sm text-foreground flex items-center gap-1.5">
+                <span className="font-semibold text-body-sm text-foreground flex items-center gap-1.5">
                   {isRecommended && <Star className="h-3.5 w-3.5 fill-nexus-amber text-nexus-amber" />}
                   {m.name}
                 </span>
-                <Badge variant="outline" className="text-[11px]">{m.provider}</Badge>
+                <Badge variant="outline" className="text-meta">{m.provider}</Badge>
               </div>
-              <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
+              <div className="flex flex-wrap gap-3 text-meta text-muted-foreground">
                 <span>Custo: <strong className="text-foreground">{m.cost}</strong></span>
                 <span>Velocidade: <strong className="text-foreground">{m.speed}</strong></span>
                 <span>Qualidade: <strong className="text-foreground">{m.quality}</strong></span>
@@ -61,7 +61,7 @@ export function StepQuickModel({ form, errors, update, highlightField }: Props) 
         })}
       </div>
 
-      {errors.model && <p className="text-xs text-destructive">{errors.model}</p>}
+      {errors.model && <p className="text-meta text-destructive">{errors.model}</p>}
     </div>
   );
 }

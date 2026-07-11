@@ -98,7 +98,7 @@ export default function SkillsMarketplacePage() {
       )}
 
       {data && data.total > 0 && (
-        <p className="text-xs text-muted-foreground text-center">
+        <p className="text-meta text-muted-foreground text-center">
           {skills.length} de {data.total} skills
         </p>
       )}
@@ -114,25 +114,25 @@ function SkillCard({ skill }: { skill: AgentSkillDefinition }) {
       <div className="flex items-start justify-between">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="text-sm font-semibold text-foreground truncate">{skill.name}</h3>
+            <h3 className="text-body-sm font-semibold text-foreground truncate">{skill.name}</h3>
             {skill.is_verified && (
               <Shield className="h-3.5 w-3.5 text-nexus-emerald shrink-0" />
             )}
           </div>
-          <p className="text-xs text-muted-foreground line-clamp-2">{skill.description}</p>
+          <p className="text-meta text-muted-foreground line-clamp-2">{skill.description}</p>
         </div>
       </div>
 
       <div className="flex items-center gap-2 flex-wrap">
-        <Badge variant="outline" className={`text-[10px] ${colorClass}`}>
+        <Badge variant="outline" className={`text-meta ${colorClass}`}>
           {skill.category}
         </Badge>
-        <span className="text-[10px] text-muted-foreground">v{skill.version}</span>
-        <span className="text-[10px] text-muted-foreground">por {skill.author}</span>
+        <span className="text-meta text-muted-foreground">v{skill.version}</span>
+        <span className="text-meta text-muted-foreground">por {skill.author}</span>
       </div>
 
       <div className="flex items-center justify-between mt-auto pt-2 border-t border-border/50">
-        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+        <div className="flex items-center gap-3 text-meta text-muted-foreground">
           <span className="flex items-center gap-1">
             <Download className="h-3 w-3" /> {skill.install_count}
           </span>
@@ -143,7 +143,7 @@ function SkillCard({ skill }: { skill: AgentSkillDefinition }) {
         <Button
           size="sm"
           variant="outline"
-          className="h-7 text-xs gap-1"
+          className="h-7 text-meta gap-1"
           onClick={() => toast.info(`Selecione um agente para instalar "${skill.name}"`)}
         >
           <CheckCircle2 className="h-3 w-3" /> Instalar
@@ -153,7 +153,7 @@ function SkillCard({ skill }: { skill: AgentSkillDefinition }) {
       {skill.tags && skill.tags.length > 0 && (
         <div className="flex gap-1 flex-wrap">
           {skill.tags.slice(0, 3).map(tag => (
-            <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded bg-secondary text-muted-foreground">
+            <span key={tag} className="text-meta px-1.5 py-0.5 rounded bg-secondary text-muted-foreground">
               {tag}
             </span>
           ))}

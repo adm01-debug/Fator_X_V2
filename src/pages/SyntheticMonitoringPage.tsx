@@ -28,7 +28,7 @@ import {
 import { getWorkspaceId } from "@/lib/agentService";
 
 function Sparkline({ data }: { data: SyntheticSummary["recent"] }) {
-  if (!data.length) return <div className="text-xs text-muted-foreground">Sem dados</div>;
+  if (!data.length) return <div className="text-meta text-muted-foreground">Sem dados</div>;
   const max = Math.max(...data.map((d) => d.latency_ms ?? 0), 1);
   return (
     <div className="flex items-end gap-px h-10">
@@ -108,17 +108,17 @@ function CheckCard({ check, onChanged }: { check: SyntheticCheck; onChanged: () 
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
-        <div className="grid grid-cols-3 gap-3 text-sm">
+        <div className="grid grid-cols-3 gap-3 text-body-sm">
           <div>
-            <div className="text-xs text-muted-foreground">Uptime 24h</div>
+            <div className="text-meta text-muted-foreground">Uptime 24h</div>
             <div className={`text-lg font-semibold ${uptimeColor}`}>{summary?.uptime_pct?.toFixed(1) ?? "—"}%</div>
           </div>
           <div>
-            <div className="text-xs text-muted-foreground">P95</div>
+            <div className="text-meta text-muted-foreground">P95</div>
             <div className="text-lg font-semibold">{summary?.p95_latency_ms ?? "—"}ms</div>
           </div>
           <div>
-            <div className="text-xs text-muted-foreground">Runs</div>
+            <div className="text-meta text-muted-foreground">Runs</div>
             <div className="text-lg font-semibold">{summary?.total_runs ?? 0}</div>
           </div>
         </div>

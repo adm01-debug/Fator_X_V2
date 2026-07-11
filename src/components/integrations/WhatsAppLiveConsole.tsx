@@ -51,20 +51,20 @@ export function WhatsAppLiveConsole() {
           <div>
             <h3 className="text-lg font-heading font-black text-foreground flex items-center gap-2">
               WhatsApp Live Console
-              <Badge variant="outline" className="bg-nexus-emerald/10 text-nexus-emerald border-nexus-emerald/30 font-black text-[10px] tracking-widest uppercase">
+              <Badge variant="outline" className="bg-nexus-emerald/10 text-nexus-emerald border-nexus-emerald/30 font-black text-meta tracking-widest uppercase">
                 Enterprise
               </Badge>
             </h3>
-            <p className="text-xs text-muted-foreground font-medium">Monitoramento de eventos inbound via Evolution API</p>
+            <p className="text-meta text-muted-foreground font-medium">Monitoramento de eventos inbound via Evolution API</p>
           </div>
         </div>
         
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-nexus-emerald/10 border border-nexus-emerald/20">
             <div className="h-2 w-2 rounded-full bg-nexus-emerald animate-pulse" />
-            <span className="text-[10px] font-bold text-nexus-emerald uppercase tracking-widest">Conexão Ativa</span>
+            <span className="text-meta font-bold text-nexus-emerald uppercase tracking-widest">Conexão Ativa</span>
           </div>
-          <Button variant="outline" size="sm" onClick={() => refetch()} className="h-9 rounded-xl gap-2 border-border/40 font-bold text-xs">
+          <Button variant="outline" size="sm" onClick={() => refetch()} className="h-9 rounded-xl gap-2 border-border/40 font-bold text-meta">
             <Zap className="h-3.5 w-3.5 text-primary" /> Forçar Sync
           </Button>
         </div>
@@ -78,7 +78,7 @@ export function WhatsAppLiveConsole() {
             placeholder="Buscar por telefone ou conteúdo..." 
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 h-10 rounded-xl bg-secondary/30 border-border/30 focus:ring-primary/20 text-xs"
+            className="pl-9 h-10 rounded-xl bg-secondary/30 border-border/30 focus:ring-primary/20 text-meta"
           />
         </div>
         
@@ -90,7 +90,7 @@ export function WhatsAppLiveConsole() {
               size="sm"
               onClick={() => setFilter(f)}
               className={cn(
-                "h-8 rounded-lg text-[10px] font-bold uppercase tracking-wider",
+                "h-8 rounded-lg text-meta font-bold uppercase tracking-wider",
                 filter === f ? "bg-primary/10 text-primary border border-primary/20" : "text-muted-foreground"
               )}
             >
@@ -106,7 +106,7 @@ export function WhatsAppLiveConsole() {
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-20 gap-4">
               <Loader2 className="h-8 w-8 animate-spin text-primary/40" />
-              <p className="text-xs text-muted-foreground font-mono uppercase tracking-widest">Interceptando fluxo neural...</p>
+              <p className="text-meta text-muted-foreground font-mono uppercase tracking-widest">Interceptando fluxo neural...</p>
             </div>
           ) : filteredEvents.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
@@ -114,8 +114,8 @@ export function WhatsAppLiveConsole() {
                 <MessageSquare className="h-8 w-8 text-muted-foreground/30" />
               </div>
               <div>
-                <p className="text-sm font-bold text-foreground">Nenhum evento capturado</p>
-                <p className="text-xs text-muted-foreground mt-1">Aguardando sinais do provedor WhatsApp...</p>
+                <p className="text-body-sm font-bold text-foreground">Nenhum evento capturado</p>
+                <p className="text-meta text-muted-foreground mt-1">Aguardando sinais do provedor WhatsApp...</p>
               </div>
             </div>
           ) : (
@@ -133,7 +133,7 @@ export function WhatsAppLiveConsole() {
                   <div className="flex-1 min-w-0 space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <span className="text-sm font-bold text-foreground flex items-center gap-1.5">
+                        <span className="text-body-sm font-bold text-foreground flex items-center gap-1.5">
                           <Phone className="h-3 w-3 text-nexus-emerald" />
                           {event.from_phone || "Desconhecido"}
                         </span>
@@ -142,7 +142,7 @@ export function WhatsAppLiveConsole() {
                         </Badge>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-mono text-muted-foreground flex items-center gap-1">
+                        <span className="text-meta font-mono text-muted-foreground flex items-center gap-1">
                           <Clock className="h-2.5 w-2.5" />
                           {new Date(event.received_at).toLocaleTimeString('pt-BR')}
                         </span>
@@ -150,7 +150,7 @@ export function WhatsAppLiveConsole() {
                     </div>
                     
                     <div className="p-3 rounded-xl bg-background/40 border border-border/20">
-                      <p className="text-xs text-foreground leading-relaxed">
+                      <p className="text-meta text-foreground leading-relaxed">
                         {event.body_preview || <span className="italic text-muted-foreground/60">[Mídia ou evento de sistema]</span>}
                       </p>
                     </div>
@@ -160,16 +160,16 @@ export function WhatsAppLiveConsole() {
                         <Badge className={cn("text-[9px] font-black tracking-widest uppercase h-5", status.bg, status.color)}>
                           {status.label}
                         </Badge>
-                        <span className="text-[10px] text-muted-foreground font-mono">
+                        <span className="text-meta text-muted-foreground font-mono">
                           ID: {event.id.slice(0, 8)}...
                         </span>
                       </div>
                       
                       <div className="flex items-center gap-2">
-                         <Button variant="ghost" size="sm" className="h-7 text-[10px] font-bold uppercase tracking-wider gap-1.5 hover:bg-primary/5 hover:text-primary">
+                         <Button variant="ghost" size="sm" className="h-7 text-meta font-bold uppercase tracking-wider gap-1.5 hover:bg-primary/5 hover:text-primary">
                           Ver Trace <ExternalLink className="h-3 w-3" />
                         </Button>
-                        <Button variant="ghost" size="sm" className="h-7 text-[10px] font-bold uppercase tracking-wider gap-1.5 hover:bg-nexus-emerald/5 hover:text-nexus-emerald">
+                        <Button variant="ghost" size="sm" className="h-7 text-meta font-bold uppercase tracking-wider gap-1.5 hover:bg-nexus-emerald/5 hover:text-nexus-emerald">
                           Agente <ArrowRight className="h-3 w-3" />
                         </Button>
                       </div>
@@ -187,14 +187,14 @@ export function WhatsAppLiveConsole() {
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1.5">
             <ShieldCheck className="h-3.5 w-3.5 text-nexus-emerald" />
-            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Processamento Criptografado</span>
+            <span className="text-meta font-bold text-muted-foreground uppercase tracking-widest">Processamento Criptografado</span>
           </div>
           <div className="h-3 w-px bg-border/40" />
-          <span className="text-[10px] text-muted-foreground font-medium">Uptime: 99.98%</span>
+          <span className="text-meta text-muted-foreground font-medium">Uptime: 99.98%</span>
         </div>
         
         <div className="flex items-center gap-3">
-          <span className="text-[10px] text-muted-foreground">Log retention: 30 days</span>
+          <span className="text-meta text-muted-foreground">Log retention: 30 days</span>
           <Badge variant="outline" className="text-[9px] border-primary/20 text-primary">v1.2.4-EVO</Badge>
         </div>
       </div>

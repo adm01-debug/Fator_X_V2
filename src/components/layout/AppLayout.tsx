@@ -195,12 +195,12 @@ export function AppLayout({ children }: AppLayoutProps) {
                   onClick={() => {
                     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true }));
                   }}
-                  className="hidden md:flex items-center gap-3 rounded-xl bg-secondary/30 border border-border/30 px-4 py-2 text-sm text-muted-foreground cursor-pointer hover:bg-secondary/50 hover:border-primary/30 transition-all focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:outline-none ml-auto group"
+                  className="hidden md:flex items-center gap-3 rounded-xl bg-secondary/30 border border-border/30 px-4 py-2 text-body-sm text-muted-foreground cursor-pointer hover:bg-secondary/50 hover:border-primary/30 transition-all focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:outline-none ml-auto group"
                   aria-label="Abrir busca rápida (⌘K)"
                 >
                   <Search className="h-4 w-4 group-hover:text-primary transition-colors" aria-hidden="true" />
                   <span className="font-medium group-hover:text-foreground transition-colors">Busca Global...</span>
-                  <kbd className="ml-6 inline-flex h-6 items-center gap-1 rounded-lg border border-border/40 bg-background/50 px-2 text-[10px] font-black font-mono text-muted-foreground/60 shadow-sm" aria-hidden="true">
+                  <kbd className="ml-6 inline-flex h-6 items-center gap-1 rounded-lg border border-border/40 bg-background/50 px-2 text-meta font-black font-mono text-muted-foreground/60 shadow-sm" aria-hidden="true">
                     <Command className="h-3 w-3" />K
                   </kbd>
                 </button>
@@ -226,7 +226,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                       {user?.user_metadata?.avatar_url ? (
                         <img src={user.user_metadata.avatar_url} alt="" className="h-full w-full object-cover" referrerPolicy="no-referrer" />
                       ) : (
-                        <div className="h-full w-full nexus-gradient-bg flex items-center justify-center text-sm font-black text-primary-foreground">
+                        <div className="h-full w-full nexus-gradient-bg flex items-center justify-center text-body-sm font-black text-primary-foreground">
                           {(user?.email?.[0] || 'U').toUpperCase()}
                         </div>
                       )}
@@ -237,26 +237,26 @@ export function AppLayout({ children }: AppLayoutProps) {
                   <DropdownMenuContent align="end" className="w-64 rounded-2xl border-border/40 shadow-2xl p-2">
                     <DropdownMenuLabel className="font-normal px-4 py-3">
                       <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-black text-foreground uppercase tracking-tight">Comando Central</p>
-                        <p className="text-xs font-medium text-muted-foreground truncate">{user?.email}</p>
+                        <p className="text-body-sm font-black text-foreground uppercase tracking-tight">Comando Central</p>
+                        <p className="text-meta font-medium text-muted-foreground truncate">{user?.email}</p>
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator className="bg-border/40" />
                     <div className="p-1 space-y-1">
-                      <DropdownMenuItem onClick={() => navigate('/settings')} className="gap-3 cursor-pointer rounded-xl py-2.5 font-bold text-xs uppercase tracking-wider">
+                      <DropdownMenuItem onClick={() => navigate('/settings')} className="gap-3 cursor-pointer rounded-xl py-2.5 font-bold text-meta uppercase tracking-wider">
                         <Settings className="h-4 w-4 text-primary" /> Configurações
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => {
                         const event = new KeyboardEvent('keydown', { key: '?' });
                         window.dispatchEvent(event);
-                      }} className="gap-3 cursor-pointer rounded-xl py-2.5 font-bold text-xs uppercase tracking-wider">
+                      }} className="gap-3 cursor-pointer rounded-xl py-2.5 font-bold text-meta uppercase tracking-wider">
                         <Keyboard className="h-4 w-4 text-primary" /> Atalhos
-                        <kbd className="ml-auto h-5 px-1.5 flex items-center justify-center rounded border border-border/40 bg-muted/50 text-[10px] font-black">?</kbd>
+                        <kbd className="ml-auto h-5 px-1.5 flex items-center justify-center rounded border border-border/40 bg-muted/50 text-meta font-black">?</kbd>
                       </DropdownMenuItem>
                     </div>
                     <DropdownMenuSeparator className="bg-border/40" />
                     <div className="p-1">
-                      <DropdownMenuItem onClick={signOut} className="gap-3 cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10 rounded-xl py-2.5 font-black text-xs uppercase tracking-wider">
+                      <DropdownMenuItem onClick={signOut} className="gap-3 cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10 rounded-xl py-2.5 font-black text-meta uppercase tracking-wider">
                         <LogOut className="h-4 w-4" /> Encerrar Sessão
                       </DropdownMenuItem>
                     </div>

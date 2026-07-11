@@ -30,31 +30,31 @@ export function ModelCard({ response, rank, showThinking }: ModelCardProps) {
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-[11px] font-mono">{shortName}</Badge>
+          <Badge variant="outline" className="text-meta font-mono">{shortName}</Badge>
           {rank && (
-            <Badge variant="default" className="text-[11px] bg-primary/20 text-primary border-primary/30">
+            <Badge variant="default" className="text-meta bg-primary/20 text-primary border-primary/30">
               #{rank}
             </Badge>
           )}
           {(response as any).failover && (
-            <Badge variant="outline" className="text-[10px] bg-nexus-amber/10 text-nexus-amber border-nexus-amber/30 animate-pulse">
+            <Badge variant="outline" className="text-meta bg-nexus-amber/10 text-nexus-amber border-nexus-amber/30 animate-pulse">
               FAILOVER
             </Badge>
           )}
         </div>
-        <Badge variant={response.success ? 'default' : 'destructive'} className="text-[11px]">
+        <Badge variant={response.success ? 'default' : 'destructive'} className="text-meta">
           {response.success ? '✓' : '✗'}
         </Badge>
       </div>
 
-      <p className="text-[11px] text-muted-foreground mb-2 font-medium">{response.persona}</p>
+      <p className="text-meta text-muted-foreground mb-2 font-medium">{response.persona}</p>
 
       {/* Thinking toggle */}
       {showThinking && thinking && (
         <div className="mb-2">
           <button
             onClick={() => setExpanded(!expanded)}
-            className="flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors"
+            className="flex items-center gap-1 text-meta text-muted-foreground hover:text-foreground transition-colors"
           >
             {expanded ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
             💭 {expanded ? 'Ocultar raciocínio' : 'Ver raciocínio'}
@@ -63,7 +63,7 @@ export function ModelCard({ response, rank, showThinking }: ModelCardProps) {
               <div
                 className="overflow-hidden"
               >
-                <div className="mt-2 p-2.5 rounded-md bg-secondary/40 border border-border/30 text-[11px] text-muted-foreground whitespace-pre-wrap max-h-[200px] overflow-y-auto">
+                <div className="mt-2 p-2.5 rounded-md bg-secondary/40 border border-border/30 text-meta text-muted-foreground whitespace-pre-wrap max-h-[200px] overflow-y-auto">
                   {thinking}
                 </div>
               </div>
@@ -73,12 +73,12 @@ export function ModelCard({ response, rank, showThinking }: ModelCardProps) {
       )}
 
       {/* Main content */}
-      <div className="text-xs text-foreground whitespace-pre-wrap max-h-[300px] overflow-y-auto">
+      <div className="text-meta text-foreground whitespace-pre-wrap max-h-[300px] overflow-y-auto">
         {mainContent}
       </div>
 
       {/* Footer metrics */}
-      <div className="flex gap-3 mt-3 pt-2 border-t border-border/30 text-[11px] text-muted-foreground">
+      <div className="flex gap-3 mt-3 pt-2 border-t border-border/30 text-meta text-muted-foreground">
         <span>{response.tokens?.total || 0} tok</span>
         <span>⏱️ {(response.latency_ms / 1000).toFixed(1)}s</span>
         <span>💰 ${(response.cost_usd || 0).toFixed(4)}</span>

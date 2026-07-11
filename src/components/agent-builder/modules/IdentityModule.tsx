@@ -61,8 +61,8 @@ export function IdentityModule() {
           <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg flex items-start gap-3">
             <Sparkles className="h-4 w-4 text-primary shrink-0 mt-0.5" />
             <div>
-              <p className="text-xs font-bold text-primary uppercase">Sugestão de Preenchimento</p>
-              <p className="text-[11px] text-muted-foreground leading-relaxed mt-0.5">
+              <p className="text-meta font-bold text-primary uppercase">Sugestão de Preenchimento</p>
+              <p className="text-meta text-muted-foreground leading-relaxed mt-0.5">
                 Utilize o <strong>IA Builder</strong> no cabeçalho para gerar nome, missão e prompt a partir de uma ideia simples.
               </p>
             </div>
@@ -82,7 +82,7 @@ export function IdentityModule() {
             hint="Uma frase clara que define o propósito principal"
           />
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-foreground">Avatar</label>
+            <label className="text-meta font-medium text-foreground">Avatar</label>
             <div className="flex flex-wrap gap-2">
               {AVATAR_EMOJIS.map((emoji) => (
                 <button
@@ -151,7 +151,7 @@ export function IdentityModule() {
           </div>
 
           <div className="relative h-[300px] w-full flex flex-col items-center justify-center bg-muted/20 rounded-2xl border border-border overflow-hidden p-4">
-            <div className="absolute top-4 left-4 flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+            <div className="absolute top-4 left-4 flex items-center gap-1.5 text-meta font-bold text-muted-foreground uppercase tracking-widest">
               <Sparkles className="h-3 w-3" /> Digital DNA
             </div>
             <ResponsiveContainer width="100%" height="100%">
@@ -177,14 +177,14 @@ export function IdentityModule() {
               <Info className="h-12 w-12" />
             </div>
             <div className="flex items-center gap-2 mb-2">
-              <Badge className="bg-primary/20 text-primary hover:bg-primary/30 border-none text-[10px] px-1.5 py-0">
+              <Badge className="bg-primary/20 text-primary hover:bg-primary/30 border-none text-meta px-1.5 py-0">
                 PREVIEW DA VOZ
               </Badge>
-              <span className="text-[10px] text-muted-foreground italic">
+              <span className="text-meta text-muted-foreground italic">
                 Baseado nos ajustes de personalidade acima
               </span>
             </div>
-            <p className="text-sm text-foreground leading-relaxed italic">
+            <p className="text-body-sm text-foreground leading-relaxed italic">
               "{personaPreview}"
             </p>
           </Card>
@@ -208,22 +208,22 @@ export function IdentityModule() {
           <div className="p-4 rounded-xl border border-nexus-emerald/20 bg-nexus-emerald/5">
             <div className="flex items-center gap-2 mb-3">
               <CheckCircle2 className="h-4 w-4 text-nexus-emerald" />
-              <h4 className="text-xs font-bold text-foreground uppercase tracking-tight">Validação de Identidade</h4>
+              <h4 className="text-meta font-bold text-foreground uppercase tracking-tight">Validação de Identidade</h4>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="flex items-center gap-2 text-[11px]">
+              <div className="flex items-center gap-2 text-meta">
                 <div className={cn("h-1.5 w-1.5 rounded-full", agent.name ? "bg-nexus-emerald" : "bg-muted")} />
                 <span className={cn(agent.name ? "text-foreground" : "text-muted-foreground")}>Nome configurado</span>
               </div>
-              <div className="flex items-center gap-2 text-[11px]">
+              <div className="flex items-center gap-2 text-meta">
                 <div className={cn("h-1.5 w-1.5 rounded-full", agent.mission ? "bg-nexus-emerald" : "bg-muted")} />
                 <span className={cn(agent.mission ? "text-foreground" : "text-muted-foreground")}>Missão definida</span>
               </div>
-              <div className="flex items-center gap-2 text-[11px]">
+              <div className="flex items-center gap-2 text-meta">
                 <div className={cn("h-1.5 w-1.5 rounded-full", agent.scope.length > 50 ? "bg-nexus-emerald" : "bg-muted")} />
                 <span className={cn(agent.scope.length > 50 ? "text-foreground" : "text-muted-foreground")}>Escopo detalhado</span>
               </div>
-              <div className="flex items-center gap-2 text-[11px]">
+              <div className="flex items-center gap-2 text-meta">
                 <div className={cn("h-1.5 w-1.5 rounded-full", agent.avatar_emoji ? "bg-nexus-emerald" : "bg-muted")} />
                 <span className={cn(agent.avatar_emoji ? "text-foreground" : "text-muted-foreground")}>Avatar selecionado</span>
               </div>

@@ -110,7 +110,7 @@ export default function AgentTemplatesPage() {
             </div>
             <div>
               <h1 className="text-3xl font-heading font-extrabold text-foreground tracking-tight">Galeria de Blueprints</h1>
-              <p className="text-sm text-muted-foreground max-w-md">Estruturas pré-validadas para acelerar o deploy da sua frota digital</p>
+              <p className="text-body-sm text-muted-foreground max-w-md">Estruturas pré-validadas para acelerar o deploy da sua frota digital</p>
             </div>
           </div>
           <Button variant="outline" size="sm" className="gap-1.5 h-10 rounded-xl" onClick={() => navigate("/agents")}>
@@ -130,7 +130,7 @@ export default function AgentTemplatesPage() {
           />
         </div>
         <div className="flex items-center gap-2">
-          <Badge variant="secondary" className="gap-1.5 h-11 px-4 rounded-xl bg-primary/10 text-primary border-primary/20 text-xs font-bold uppercase tracking-wider">
+          <Badge variant="secondary" className="gap-1.5 h-11 px-4 rounded-xl bg-primary/10 text-primary border-primary/20 text-meta font-bold uppercase tracking-wider">
             <Sparkles className="h-4 w-4" />
             {filtered.length} Blueprints
           </Badge>
@@ -154,7 +154,7 @@ export default function AgentTemplatesPage() {
               {cat === ALL ? "Todos os Setores" : cat}
               <Badge
                 variant="secondary"
-                className={`ml-0.5 h-5 px-1.5 text-[10px] font-bold tabular-nums rounded-full ${
+                className={`ml-0.5 h-5 px-1.5 text-meta font-bold tabular-nums rounded-full ${
                   cat === category ? "bg-primary-foreground/20 text-primary-foreground" : ""
                 }`}
               >
@@ -169,7 +169,7 @@ export default function AgentTemplatesPage() {
       {filtered.length === 0 ? (
         <Card className="p-12 text-center border-dashed">
           <Wand2 className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
-          <p className="text-sm text-muted-foreground">
+          <p className="text-body-sm text-muted-foreground">
             Nenhum template encontrado para "{search}"
           </p>
         </Card>
@@ -189,7 +189,7 @@ export default function AgentTemplatesPage() {
                   </div>
                   <div className="min-w-0">
                     <h3 className="font-bold text-foreground text-lg group-hover:text-primary transition-colors truncate">{t.name}</h3>
-                    <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
+                    <div className="flex items-center gap-1.5 text-meta text-muted-foreground font-bold uppercase tracking-wider">
                       <span>{t.category}</span>
                       <span>•</span>
                       <span className="text-nexus-emerald flex items-center gap-0.5">
@@ -198,26 +198,26 @@ export default function AgentTemplatesPage() {
                     </div>
                   </div>
                 </div>
-                <div className="text-[10px] font-mono text-muted-foreground bg-secondary/50 px-2 py-0.5 rounded flex items-center gap-1">
+                <div className="text-meta font-mono text-muted-foreground bg-secondary/50 px-2 py-0.5 rounded flex items-center gap-1">
                   <Sparkles className="h-2.5 w-2.5" /> {(Math.random() * 5 + 1).toFixed(1)}k
                 </div>
               </div>
 
-              <p className="text-sm text-muted-foreground line-clamp-3 mb-6 leading-relaxed flex-1 italic">
+              <p className="text-body-sm text-muted-foreground line-clamp-3 mb-6 leading-relaxed flex-1 italic">
                 "{t.description}"
               </p>
 
               <div className="grid grid-cols-2 gap-3 mb-6 p-3 bg-secondary/30 rounded-xl border border-border/40">
                 <div className="space-y-1">
                   <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Base Model</p>
-                  <div className="flex items-center gap-1.5 text-[11px] font-mono text-foreground font-semibold">
+                  <div className="flex items-center gap-1.5 text-meta font-mono text-foreground font-semibold">
                     <Cpu className="h-3 w-3 text-primary" />
                     <span className="truncate">{t.config.model}</span>
                   </div>
                 </div>
                 <div className="space-y-1">
                   <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Capabilities</p>
-                  <div className="flex items-center gap-1.5 text-[11px] text-foreground font-semibold">
+                  <div className="flex items-center gap-1.5 text-meta text-foreground font-semibold">
                     <Wrench className="h-3 w-3 text-primary" />
                     <span className="truncate">
                       {t.config.tools.length > 0
@@ -276,8 +276,8 @@ export default function AgentTemplatesPage() {
                   <div className="text-left">
                     <DialogTitle className="text-2xl font-bold">{selectedTemplateForDetail.name}</DialogTitle>
                     <DialogDescription className="flex items-center gap-2 mt-1">
-                      <Badge variant="outline" className="text-[10px] font-bold uppercase">{selectedTemplateForDetail.category}</Badge>
-                      <span className="text-xs text-muted-foreground">• {selectedTemplateForDetail.config.model}</span>
+                      <Badge variant="outline" className="text-meta font-bold uppercase">{selectedTemplateForDetail.category}</Badge>
+                      <span className="text-meta text-muted-foreground">• {selectedTemplateForDetail.config.model}</span>
                     </DialogDescription>
                   </div>
                 </div>
@@ -286,45 +286,45 @@ export default function AgentTemplatesPage() {
               <div className="grid gap-6 py-6 md:grid-cols-2">
                 <div className="space-y-6">
                   <div className="space-y-3">
-                    <h4 className="text-sm font-bold flex items-center gap-2 text-foreground">
+                    <h4 className="text-body-sm font-bold flex items-center gap-2 text-foreground">
                       <LayoutTemplate className="h-4 w-4 text-primary" />
                       Configuração do Blueprint
                     </h4>
                     <div className="bg-secondary/30 rounded-xl p-4 border border-border/50 space-y-4">
                       <div>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Prompt do Sistema</p>
-                        <p className="text-xs text-muted-foreground line-clamp-4 italic bg-background/50 p-2 rounded border border-border/30">
+                        <p className="text-meta font-bold text-muted-foreground uppercase tracking-widest mb-1">Prompt do Sistema</p>
+                        <p className="text-meta text-muted-foreground line-clamp-4 italic bg-background/50 p-2 rounded border border-border/30">
                           {selectedTemplateForDetail.config.system_prompt}
                         </p>
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Temperatura</p>
-                          <p className="text-sm font-mono font-bold text-primary">{selectedTemplateForDetail.config.temperature}</p>
+                          <p className="text-meta font-bold text-muted-foreground uppercase tracking-widest mb-1">Temperatura</p>
+                          <p className="text-body-sm font-mono font-bold text-primary">{selectedTemplateForDetail.config.temperature}</p>
                         </div>
                         <div>
-                          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Ferramentas</p>
-                          <p className="text-sm font-bold text-foreground">{selectedTemplateForDetail.config.tools.length}</p>
+                          <p className="text-meta font-bold text-muted-foreground uppercase tracking-widest mb-1">Ferramentas</p>
+                          <p className="text-body-sm font-bold text-foreground">{selectedTemplateForDetail.config.tools.length}</p>
                         </div>
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-3">
-                    <h4 className="text-sm font-bold flex items-center gap-2 text-foreground">
+                    <h4 className="text-body-sm font-bold flex items-center gap-2 text-foreground">
                       <Check className="h-4 w-4 text-nexus-emerald" />
                       Recomendações de Uso
                     </h4>
                     <ul className="space-y-2">
-                      <li className="text-xs text-muted-foreground flex items-start gap-2">
+                      <li className="text-meta text-muted-foreground flex items-start gap-2">
                         <span className="h-1.5 w-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
                         Ideal para fluxos de {selectedTemplateForDetail.category.toLowerCase()} com alto volume.
                       </li>
-                      <li className="text-xs text-muted-foreground flex items-start gap-2">
+                      <li className="text-meta text-muted-foreground flex items-start gap-2">
                         <span className="h-1.5 w-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
                         Integre com bases de conhecimento para respostas mais precisas.
                       </li>
-                      <li className="text-xs text-muted-foreground flex items-start gap-2">
+                      <li className="text-meta text-muted-foreground flex items-start gap-2">
                         <span className="h-1.5 w-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
                         Acompanhe os logs de execução nas primeiras 24h.
                       </li>
@@ -334,22 +334,22 @@ export default function AgentTemplatesPage() {
 
                 <div className="space-y-6">
                   <div className="space-y-3">
-                    <h4 className="text-sm font-bold flex items-center gap-2 text-foreground">
+                    <h4 className="text-body-sm font-bold flex items-center gap-2 text-foreground">
                       <Rocket className="h-4 w-4 text-nexus-purple" />
                       Impacto Esperado
                     </h4>
                     <div className="grid grid-cols-1 gap-3">
                       <div className="p-3 bg-nexus-emerald/5 border border-nexus-emerald/10 rounded-xl">
-                        <p className="text-[10px] font-bold text-nexus-emerald uppercase mb-1">Produtividade</p>
-                        <p className="text-lg font-bold text-foreground">+45% <span className="text-xs font-normal text-muted-foreground">de eficiência operacional</span></p>
+                        <p className="text-meta font-bold text-nexus-emerald uppercase mb-1">Produtividade</p>
+                        <p className="text-lg font-bold text-foreground">+45% <span className="text-meta font-normal text-muted-foreground">de eficiência operacional</span></p>
                       </div>
                       <div className="p-3 bg-primary/5 border border-primary/10 rounded-xl">
-                        <p className="text-[10px] font-bold text-primary uppercase mb-1">Tempo de Resposta</p>
-                        <p className="text-lg font-bold text-foreground">-60% <span className="text-xs font-normal text-muted-foreground">de latência média</span></p>
+                        <p className="text-meta font-bold text-primary uppercase mb-1">Tempo de Resposta</p>
+                        <p className="text-lg font-bold text-foreground">-60% <span className="text-meta font-normal text-muted-foreground">de latência média</span></p>
                       </div>
                       <div className="p-3 bg-nexus-amber/5 border border-nexus-amber/10 rounded-xl">
-                        <p className="text-[10px] font-bold text-nexus-amber uppercase mb-1">Custo-Benefício</p>
-                        <p className="text-lg font-bold text-foreground">Excelente <span className="text-xs font-normal text-muted-foreground">em modelos {selectedTemplateForDetail.config.model.includes('4') ? 'Large' : 'Small'}</span></p>
+                        <p className="text-meta font-bold text-nexus-amber uppercase mb-1">Custo-Benefício</p>
+                        <p className="text-lg font-bold text-foreground">Excelente <span className="text-meta font-normal text-muted-foreground">em modelos {selectedTemplateForDetail.config.model.includes('4') ? 'Large' : 'Small'}</span></p>
                       </div>
                     </div>
                   </div>

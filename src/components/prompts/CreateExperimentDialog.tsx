@@ -134,7 +134,7 @@ export function CreateExperimentDialog({ open, onOpenChange, workspaceId }: Prop
           </div>
 
           <div>
-            <div className="flex justify-between mb-1.5"><Label>Split traffic</Label><span className="text-xs text-muted-foreground">A {split}% · B {100 - split}%</span></div>
+            <div className="flex justify-between mb-1.5"><Label>Split traffic</Label><span className="text-meta text-muted-foreground">A {split}% · B {100 - split}%</span></div>
             <Slider value={[split]} onValueChange={(v) => setSplit(v[0])} min={5} max={95} step={5} />
           </div>
 
@@ -152,18 +152,18 @@ export function CreateExperimentDialog({ open, onOpenChange, workspaceId }: Prop
           </div>
 
           <div className="space-y-2 p-3 bg-muted/30 rounded">
-            <div className="text-xs font-semibold">Guardrails</div>
+            <div className="text-meta font-semibold">Guardrails</div>
             <div className="grid grid-cols-3 gap-3">
               <div>
-                <Label className="text-xs">Custo máx +%</Label>
+                <Label className="text-meta">Custo máx +%</Label>
                 <Input type="number" value={maxCost} onChange={(e) => setMaxCost(Number(e.target.value))} className="h-8" />
               </div>
               <div>
-                <Label className="text-xs">Latência máx +ms</Label>
+                <Label className="text-meta">Latência máx +ms</Label>
                 <Input type="number" value={maxLat} onChange={(e) => setMaxLat(Number(e.target.value))} className="h-8" />
               </div>
               <div>
-                <Label className="text-xs">Qualidade mín</Label>
+                <Label className="text-meta">Qualidade mín</Label>
                 <Input type="number" step="0.05" min="0" max="1" value={minQual} onChange={(e) => setMinQual(Number(e.target.value))} className="h-8" />
               </div>
             </div>

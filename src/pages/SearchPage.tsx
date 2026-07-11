@@ -87,7 +87,7 @@ export default function SearchPage() {
           </div>
 
           {imageDescription && (
-            <div className="rounded-md border border-border/50 bg-muted/40 p-3 text-sm">
+            <div className="rounded-md border border-border/50 bg-muted/40 p-3 text-body-sm">
               <span className="font-medium text-muted-foreground">
                 Descrição da imagem:
               </span>{" "}
@@ -105,7 +105,7 @@ export default function SearchPage() {
             )}
           </h2>
           {cached && (
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-meta">
               cache hit
             </Badge>
           )}
@@ -140,18 +140,18 @@ export default function SearchPage() {
                   <div className="flex items-center gap-2">
                     <Badge
                       variant={r.matched_via === "vector" ? "default" : "secondary"}
-                      className="text-xs"
+                      className="text-meta"
                     >
                       {r.matched_via}
                     </Badge>
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="text-meta">
                       {(r.similarity * 100).toFixed(0)}%
                     </Badge>
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-2">
-                <p className="line-clamp-3 text-sm text-muted-foreground">
+                <p className="line-clamp-3 text-body-sm text-muted-foreground">
                   {r.content}
                 </p>
                 {r.source_url && (
@@ -159,7 +159,7 @@ export default function SearchPage() {
                     href={r.source_url}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                    className="inline-flex items-center gap-1 text-meta text-primary hover:underline"
                   >
                     <ExternalLink className="h-3 w-3" />
                     Abrir fonte

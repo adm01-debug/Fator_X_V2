@@ -60,18 +60,18 @@ export function KnowledgeAreasTab() {
         <div className="flex items-center gap-3 flex-wrap">
           <div className="px-3 py-1.5 rounded-lg bg-secondary/30 border border-border/30 flex items-center gap-2">
             <Database className="h-3.5 w-3.5 text-primary" />
-            <span className="text-xs text-muted-foreground">Bases:</span>
-            <span className="text-sm font-semibold">{totals.knowledge_bases}</span>
+            <span className="text-meta text-muted-foreground">Bases:</span>
+            <span className="text-body-sm font-semibold">{totals.knowledge_bases}</span>
           </div>
           <div className="px-3 py-1.5 rounded-lg bg-secondary/30 border border-border/30 flex items-center gap-2">
             <FileText className="h-3.5 w-3.5 text-nexus-emerald" />
-            <span className="text-xs text-muted-foreground">Documentos:</span>
-            <span className="text-sm font-semibold">{totals.documents}</span>
+            <span className="text-meta text-muted-foreground">Documentos:</span>
+            <span className="text-body-sm font-semibold">{totals.documents}</span>
           </div>
           <div className="px-3 py-1.5 rounded-lg bg-secondary/30 border border-border/30 flex items-center gap-2">
             <Layers className="h-3.5 w-3.5 text-nexus-purple" />
-            <span className="text-xs text-muted-foreground">Chunks:</span>
-            <span className="text-sm font-semibold">{totals.chunks}</span>
+            <span className="text-meta text-muted-foreground">Chunks:</span>
+            <span className="text-body-sm font-semibold">{totals.chunks}</span>
           </div>
         </div>
         <Button
@@ -103,39 +103,39 @@ export function KnowledgeAreasTab() {
                 style={{ borderLeftColor: area.color, borderLeftWidth: '3px' }}
               >
                 <div className="text-3xl mb-3">{area.icon}</div>
-                <h3 className="text-sm font-semibold text-foreground">{area.title}</h3>
-                <p className="text-[11px] text-muted-foreground mt-1 mb-3 line-clamp-2">{area.desc}</p>
+                <h3 className="text-body-sm font-semibold text-foreground">{area.title}</h3>
+                <p className="text-meta text-muted-foreground mt-1 mb-3 line-clamp-2">{area.desc}</p>
 
                 <div className="grid grid-cols-3 gap-1 mb-3 text-center">
                   <div className="p-1.5 rounded bg-secondary/30">
-                    <p className="text-[10px] text-muted-foreground">KBs</p>
-                    <p className="text-sm font-bold" style={{ color: area.color }}>
+                    <p className="text-meta text-muted-foreground">KBs</p>
+                    <p className="text-body-sm font-bold" style={{ color: area.color }}>
                       {s?.knowledge_bases ?? 0}
                     </p>
                   </div>
                   <div className="p-1.5 rounded bg-secondary/30">
-                    <p className="text-[10px] text-muted-foreground">Docs</p>
-                    <p className="text-sm font-bold" style={{ color: area.color }}>
+                    <p className="text-meta text-muted-foreground">Docs</p>
+                    <p className="text-body-sm font-bold" style={{ color: area.color }}>
                       {s?.documents ?? 0}
                     </p>
                   </div>
                   <div className="p-1.5 rounded bg-secondary/30">
-                    <p className="text-[10px] text-muted-foreground">Chunks</p>
-                    <p className="text-sm font-bold" style={{ color: area.color }}>
+                    <p className="text-meta text-muted-foreground">Chunks</p>
+                    <p className="text-body-sm font-bold" style={{ color: area.color }}>
                       {s?.chunks ?? 0}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-center justify-between pt-2 border-t border-border/30">
-                  <Badge variant="outline" className="text-[11px]">{area.domain}</Badge>
-                  <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                  <Badge variant="outline" className="text-meta">{area.domain}</Badge>
+                  <div className="flex items-center gap-1 text-meta text-muted-foreground">
                     <Clock className="h-2.5 w-2.5" />
                     {formatRelative(s?.last_updated_at ?? null)}
                   </div>
                 </div>
                 {!populated && (
-                  <p className="text-[10px] text-muted-foreground/70 italic mt-2 text-center">
+                  <p className="text-meta text-muted-foreground/70 italic mt-2 text-center">
                     Vazio — adicione bases marcadas com este domínio
                   </p>
                 )}

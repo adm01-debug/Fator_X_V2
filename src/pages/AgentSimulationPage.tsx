@@ -73,7 +73,7 @@ export default function AgentSimulationPage() {
                     Conv: {r.conversionScore}%
                   </Badge>
                 </div>
-                <div className="grid grid-cols-3 gap-3 text-sm">
+                <div className="grid grid-cols-3 gap-3 text-body-sm">
                   <div><span className="text-muted-foreground">Satisfação:</span> <span className="font-bold">{r.satisfaction}%</span></div>
                   <div><span className="text-muted-foreground">Conversão:</span> <span className="font-bold">{r.conversionScore}%</span></div>
                   <div className="flex items-center gap-1"><MessageSquare className="h-3 w-3" /><span>{r.messages} msgs</span></div>

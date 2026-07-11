@@ -148,12 +148,12 @@ export function CostOptimizationPanel() {
             <TrendingDown className="h-4 w-4 text-nexus-emerald" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-foreground">Otimização de Custos</h3>
-            <p className="text-[11px] text-muted-foreground">Recomendações baseadas no seu uso</p>
+            <h3 className="text-body-sm font-bold text-foreground">Otimização de Custos</h3>
+            <p className="text-meta text-muted-foreground">Recomendações baseadas no seu uso</p>
           </div>
         </div>
         {totalSavings > 0 && (
-          <Badge className="bg-nexus-amber/10 text-nexus-amber border-nexus-amber/20 text-[11px] gap-1">
+          <Badge className="bg-nexus-amber/10 text-nexus-amber border-nexus-amber/20 text-meta gap-1">
             <Zap className="h-3 w-3" /> {totalSavings} ação{totalSavings > 1 ? 'ões' : ''} prioritária{totalSavings > 1 ? 's' : ''}
           </Badge>
         )}
@@ -166,20 +166,20 @@ export function CostOptimizationPanel() {
               <div className="shrink-0 mt-0.5">{severityIcons[rec.severity]}</div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <p className="text-xs font-semibold">{rec.title}</p>
+                  <p className="text-meta font-semibold">{rec.title}</p>
                   {rec.savingsEstimate && (
-                    <Badge variant="outline" className="text-[10px] gap-1 shrink-0">
+                    <Badge variant="outline" className="text-meta gap-1 shrink-0">
                       <DollarSign className="h-2.5 w-2.5" /> Economia: {rec.savingsEstimate}
                     </Badge>
                   )}
                 </div>
-                <p className="text-[11px] opacity-80 mt-0.5">{rec.description}</p>
+                <p className="text-meta opacity-80 mt-0.5">{rec.description}</p>
               </div>
               {rec.actionPath && (
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="shrink-0 h-7 text-[11px] gap-1"
+                  className="shrink-0 h-7 text-meta gap-1"
                   onClick={() => navigate(rec.actionPath!)}
                 >
                   {rec.actionLabel} <ArrowRight className="h-3 w-3" />

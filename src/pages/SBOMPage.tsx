@@ -117,9 +117,9 @@ export default function SBOMPage() {
       <Card>
         <CardHeader><CardTitle>Snapshots</CardTitle></CardHeader>
         <CardContent>
-          {loading ? <div className="text-sm text-muted-foreground py-6 text-center">Carregando…</div> :
+          {loading ? <div className="text-body-sm text-muted-foreground py-6 text-center">Carregando…</div> :
             snapshots.length === 0 ? (
-              <div className="text-sm text-muted-foreground py-12 text-center">
+              <div className="text-body-sm text-muted-foreground py-12 text-center">
                 Nenhum SBOM ainda. Crie um colando o conteúdo do <code>package.json</code>.
               </div>
             ) : (
@@ -148,11 +148,11 @@ export default function SBOMPage() {
                             {c.medium > 0 && <Badge className={sevColor("medium")}>M {c.medium}</Badge>}
                             {c.low > 0 && <Badge className={sevColor("low")}>L {c.low}</Badge>}
                             {c.critical + c.high + c.medium + c.low === 0 &&
-                              <span className="text-xs text-muted-foreground">— nenhuma</span>}
+                              <span className="text-meta text-muted-foreground">— nenhuma</span>}
                           </div>
                         </TableCell>
                         <TableCell><Badge variant="outline">{s.source}</Badge></TableCell>
-                        <TableCell className="text-xs text-muted-foreground">
+                        <TableCell className="text-meta text-muted-foreground">
                           {new Date(s.created_at).toLocaleString("pt-BR")}
                         </TableCell>
                         <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
@@ -187,7 +187,7 @@ export default function SBOMPage() {
                 value={pkgJson}
                 onChange={(e) => setPkgJson(e.target.value)}
                 rows={12}
-                className="font-mono text-xs"
+                className="font-mono text-meta"
                 placeholder='{ "dependencies": { "react": "^18.0.0" }, "devDependencies": {} }'
               />
             </div>
@@ -214,8 +214,8 @@ export default function SBOMPage() {
                   <TableBody>
                     {components.map((c) => (
                       <TableRow key={c.id}>
-                        <TableCell className="font-mono text-xs">{c.name}</TableCell>
-                        <TableCell className="text-xs">{c.version}</TableCell>
+                        <TableCell className="font-mono text-meta">{c.name}</TableCell>
+                        <TableCell className="text-meta">{c.version}</TableCell>
                         <TableCell><Badge variant={c.direct ? "default" : "secondary"}>{c.direct ? "direct" : "dev"}</Badge></TableCell>
                       </TableRow>
                     ))}
@@ -224,7 +224,7 @@ export default function SBOMPage() {
               </TabsContent>
               <TabsContent value="vulns">
                 {detailVulns.length === 0 ? (
-                  <div className="text-sm text-muted-foreground py-6 text-center">Nenhuma vulnerabilidade. Execute "Escanear" para verificar.</div>
+                  <div className="text-body-sm text-muted-foreground py-6 text-center">Nenhuma vulnerabilidade. Execute "Escanear" para verificar.</div>
                 ) : (
                   <div className="space-y-2">
                     {detailVulns.map((v) => (
@@ -232,15 +232,15 @@ export default function SBOMPage() {
                         <div className="flex items-center justify-between">
                           <div className="flex gap-2 items-center">
                             <Badge className={sevColor(v.severity)}>{v.severity.toUpperCase()}</Badge>
-                            <code className="text-xs">{v.cve_id}</code>
-                            {v.cvss_score && <span className="text-xs text-muted-foreground">CVSS {v.cvss_score}</span>}
+                            <code className="text-meta">{v.cve_id}</code>
+                            {v.cvss_score && <span className="text-meta text-muted-foreground">CVSS {v.cvss_score}</span>}
                           </div>
                           <Badge variant="outline">{v.status}</Badge>
                         </div>
-                        {v.summary && <p className="text-xs text-muted-foreground">{v.summary}</p>}
-                        {v.fixed_version && <p className="text-xs">Fix: <code>{v.fixed_version}</code></p>}
+                        {v.summary && <p className="text-meta text-muted-foreground">{v.summary}</p>}
+                        {v.fixed_version && <p className="text-meta">Fix: <code>{v.fixed_version}</code></p>}
                         {v.reference_url && (
-                          <a href={v.reference_url} target="_blank" rel="noreferrer" className="text-xs text-primary inline-flex items-center gap-1">
+                          <a href={v.reference_url} target="_blank" rel="noreferrer" className="text-meta text-primary inline-flex items-center gap-1">
                             Detalhes <ExternalLink className="h-3 w-3" />
                           </a>
                         )}

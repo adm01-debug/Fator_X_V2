@@ -201,11 +201,11 @@ export default function ReplayForkPage() {
       <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr_320px] gap-4">
         {/* LEFT: executions list */}
         <Card>
-          <CardHeader className="pb-3"><CardTitle className="text-sm flex items-center gap-2"><Layers className="h-4 w-4" />Execuções</CardTitle></CardHeader>
+          <CardHeader className="pb-3"><CardTitle className="text-body-sm flex items-center gap-2"><Layers className="h-4 w-4" />Execuções</CardTitle></CardHeader>
           <CardContent className="p-0">
             <ScrollArea className="h-[640px]">
-              {loading && <div className="p-4 text-sm text-muted-foreground">Carregando...</div>}
-              {!loading && executions.length === 0 && <div className="p-4 text-sm text-muted-foreground">Nenhuma execução com snapshots forenses ainda.</div>}
+              {loading && <div className="p-4 text-body-sm text-muted-foreground">Carregando...</div>}
+              {!loading && executions.length === 0 && <div className="p-4 text-body-sm text-muted-foreground">Nenhuma execução com snapshots forenses ainda.</div>}
               <div className="divide-y divide-border/40">
                 {executions.map((e) => {
                   const forkCount = forks.filter(f => f.parent_execution_id === e.id).length;
@@ -216,14 +216,14 @@ export default function ReplayForkPage() {
                       className={`w-full text-left p-3 hover:bg-muted/40 transition-colors ${selectedExec === e.id ? "bg-primary/8" : ""}`}
                     >
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs font-mono text-muted-foreground truncate">{e.id.slice(0, 14)}...</span>
+                        <span className="text-meta font-mono text-muted-foreground truncate">{e.id.slice(0, 14)}...</span>
                         {forkCount > 0 && (
                           <Badge variant="outline" className="text-[9px] h-4 px-1 gap-1">
                             <GitBranch className="h-2 w-2" />{forkCount}
                           </Badge>
                         )}
                       </div>
-                      <div className="text-[11px] text-muted-foreground mt-1 flex items-center gap-2 flex-wrap">
+                      <div className="text-meta text-muted-foreground mt-1 flex items-center gap-2 flex-wrap">
                         <span>{e.count} steps</span>
                         <span>·</span>
                         <span>{new Date(e.start).toLocaleString("pt-BR")}</span>
@@ -240,9 +240,9 @@ export default function ReplayForkPage() {
         <Card>
           <CardHeader className="pb-3 flex-row items-center justify-between">
             <div className="flex items-center gap-2">
-              <CardTitle className="text-sm">Time-travel</CardTitle>
+              <CardTitle className="text-body-sm">Time-travel</CardTitle>
               {selectedExec && (
-                <Badge variant={chainCheck.valid ? "outline" : "destructive"} className="text-[10px] gap-1">
+                <Badge variant={chainCheck.valid ? "outline" : "destructive"} className="text-meta gap-1">
                   {chainCheck.valid
                     ? <><ShieldCheck className="h-3 w-3" /> Cadeia íntegra</>
                     : <><ShieldAlert className="h-3 w-3" /> Quebra @ step {chainCheck.brokenAt}</>}
@@ -259,22 +259,22 @@ export default function ReplayForkPage() {
             )}
           </CardHeader>
           <CardContent>
-            {!selectedExec && <div className="h-[580px] flex items-center justify-center text-muted-foreground text-sm">Selecione uma execução à esquerda</div>}
-            {selectedExec && execSnapshots.length === 0 && <div className="h-[580px] flex items-center justify-center text-muted-foreground text-sm">Sem snapshots</div>}
+            {!selectedExec && <div className="h-[580px] flex items-center justify-center text-muted-foreground text-body-sm">Selecione uma execução à esquerda</div>}
+            {selectedExec && execSnapshots.length === 0 && <div className="h-[580px] flex items-center justify-center text-muted-foreground text-body-sm">Sem snapshots</div>}
             {current && (
               <div className="space-y-4">
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="text-xs">Step {current.step_index + 1} / {execSnapshots.length}</Badge>
-                      <Badge variant="outline" className="text-xs">{current.decision_type}</Badge>
+                      <Badge variant="outline" className="text-meta">Step {current.step_index + 1} / {execSnapshots.length}</Badge>
+                      <Badge variant="outline" className="text-meta">{current.decision_type}</Badge>
                     </div>
-                    <span className="text-[10px] text-muted-foreground">{new Date(current.created_at).toLocaleString("pt-BR")}</span>
+                    <span className="text-meta text-muted-foreground">{new Date(current.created_at).toLocaleString("pt-BR")}</span>
                   </div>
                   <Slider value={[step]} onValueChange={(v) => setStep(v[0])} min={0} max={Math.max(0, execSnapshots.length - 1)} step={1} />
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 text-[11px]">
+                <div className="grid grid-cols-2 gap-3 text-meta">
                   <div className="p-2 bg-muted/30 rounded"><div className="flex items-center gap-1 text-muted-foreground"><Hash className="h-3 w-3" />Input</div><div className="font-mono mt-1 truncate">{current.input_hash.slice(0, 24)}...</div></div>
                   <div className="p-2 bg-muted/30 rounded"><div className="flex items-center gap-1 text-muted-foreground"><Hash className="h-3 w-3" />Output</div><div className="font-mono mt-1 truncate">{current.output_hash.slice(0, 24)}...</div></div>
                   <div className="p-2 bg-muted/30 rounded col-span-2"><div className="flex items-center gap-1 text-muted-foreground"><Hash className="h-3 w-3" />Chain hash</div><div className="font-mono mt-1 truncate">{current.chain_hash}</div></div>
@@ -291,13 +291,13 @@ export default function ReplayForkPage() {
                     <StateDiff before={current.state_before} after={current.state_after} />
                   </TabsContent>
                   <TabsContent value="rationale">
-                    <Card><CardContent className="p-4 text-sm">{current.decision_rationale || <span className="text-muted-foreground">Sem rationale registrado.</span>}</CardContent></Card>
+                    <Card><CardContent className="p-4 text-body-sm">{current.decision_rationale || <span className="text-muted-foreground">Sem rationale registrado.</span>}</CardContent></Card>
                   </TabsContent>
                   <TabsContent value="before">
-                    <pre className="text-[10px] bg-muted/30 p-3 rounded overflow-auto max-h-[320px] font-mono">{JSON.stringify(current.state_before, null, 2)}</pre>
+                    <pre className="text-meta bg-muted/30 p-3 rounded overflow-auto max-h-[320px] font-mono">{JSON.stringify(current.state_before, null, 2)}</pre>
                   </TabsContent>
                   <TabsContent value="after">
-                    <pre className="text-[10px] bg-muted/30 p-3 rounded overflow-auto max-h-[320px] font-mono">{JSON.stringify(current.state_after, null, 2)}</pre>
+                    <pre className="text-meta bg-muted/30 p-3 rounded overflow-auto max-h-[320px] font-mono">{JSON.stringify(current.state_after, null, 2)}</pre>
                   </TabsContent>
                 </Tabs>
               </div>
@@ -318,32 +318,32 @@ export default function ReplayForkPage() {
           {selectedFork && (
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm flex items-center gap-2">
+                <CardTitle className="text-body-sm flex items-center gap-2">
                   <Sparkles className="h-4 w-4" />
                   Resultado do fork
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2 text-xs">
+              <CardContent className="space-y-2 text-meta">
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="p-2 bg-muted/30 rounded"><div className="text-[10px] text-muted-foreground">Status</div><div className="font-medium">{selectedFork.status}</div></div>
-                  <div className="p-2 bg-muted/30 rounded"><div className="text-[10px] text-muted-foreground">Custo</div><div className="font-medium">${selectedFork.cost_usd.toFixed(4)}</div></div>
-                  <div className="p-2 bg-muted/30 rounded"><div className="text-[10px] text-muted-foreground">Steps</div><div className="font-medium">{selectedFork.total_steps}</div></div>
-                  <div className="p-2 bg-muted/30 rounded"><div className="text-[10px] text-muted-foreground">Latência</div><div className="font-medium">{selectedFork.duration_ms ?? "—"}ms</div></div>
+                  <div className="p-2 bg-muted/30 rounded"><div className="text-meta text-muted-foreground">Status</div><div className="font-medium">{selectedFork.status}</div></div>
+                  <div className="p-2 bg-muted/30 rounded"><div className="text-meta text-muted-foreground">Custo</div><div className="font-medium">${selectedFork.cost_usd.toFixed(4)}</div></div>
+                  <div className="p-2 bg-muted/30 rounded"><div className="text-meta text-muted-foreground">Steps</div><div className="font-medium">{selectedFork.total_steps}</div></div>
+                  <div className="p-2 bg-muted/30 rounded"><div className="text-meta text-muted-foreground">Latência</div><div className="font-medium">{selectedFork.duration_ms ?? "—"}ms</div></div>
                 </div>
                 {selectedFork.deterministic_seed && (
                   <div className="p-2 bg-muted/30 rounded">
-                    <div className="text-[10px] text-muted-foreground">Seed determinístico</div>
-                    <div className="font-mono text-[10px] truncate">{selectedFork.deterministic_seed}</div>
+                    <div className="text-meta text-muted-foreground">Seed determinístico</div>
+                    <div className="font-mono text-meta truncate">{selectedFork.deterministic_seed}</div>
                   </div>
                 )}
                 {selectedFork.new_execution_id && (
                   <div className="p-2 bg-muted/30 rounded">
-                    <div className="text-[10px] text-muted-foreground">Nova execução</div>
-                    <div className="font-mono text-[10px] truncate">{selectedFork.new_execution_id}</div>
+                    <div className="text-meta text-muted-foreground">Nova execução</div>
+                    <div className="font-mono text-meta truncate">{selectedFork.new_execution_id}</div>
                   </div>
                 )}
                 {selectedFork.error_message && (
-                  <div className="p-2 bg-destructive/10 text-destructive rounded text-[11px]">
+                  <div className="p-2 bg-destructive/10 text-destructive rounded text-meta">
                     {selectedFork.error_message}
                   </div>
                 )}
@@ -364,23 +364,23 @@ export default function ReplayForkPage() {
           </DialogHeader>
           <div className="space-y-3">
             <div>
-              <Label className="text-xs">Nome do fork</Label>
+              <Label className="text-meta">Nome do fork</Label>
               <Input value={forkName} onChange={e => setForkName(e.target.value)} className="mt-1" />
             </div>
             <div>
-              <Label className="text-xs">Override input (JSON, opcional)</Label>
+              <Label className="text-meta">Override input (JSON, opcional)</Label>
               <Textarea
                 value={overrideInput}
                 onChange={e => setOverrideInput(e.target.value)}
-                className="mt-1 font-mono text-xs"
+                className="mt-1 font-mono text-meta"
                 rows={4}
                 placeholder='{"prompt": "novo input..."}'
               />
             </div>
             <div>
-              <Label className="text-xs">Seed determinístico</Label>
-              <Input value={seed} onChange={e => setSeed(e.target.value)} className="mt-1 font-mono text-xs" />
-              <p className="text-[10px] text-muted-foreground mt-1">
+              <Label className="text-meta">Seed determinístico</Label>
+              <Input value={seed} onChange={e => setSeed(e.target.value)} className="mt-1 font-mono text-meta" />
+              <p className="text-meta text-muted-foreground mt-1">
                 Mesmo seed + mesmo input = resultado idêntico (replay reproduzível).
               </p>
             </div>

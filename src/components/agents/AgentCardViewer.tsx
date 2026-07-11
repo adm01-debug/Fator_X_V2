@@ -62,7 +62,7 @@ export function AgentCardViewer({ agentId, agentName }: Props) {
   return (
     <Dialog open={open} onOpenChange={handleOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-1.5 text-xs">
+        <Button variant="outline" size="sm" className="gap-1.5 text-meta">
           <IdCard className="h-3.5 w-3.5" />
           Agent Card
         </Button>
@@ -72,7 +72,7 @@ export function AgentCardViewer({ agentId, agentName }: Props) {
           <DialogTitle className="flex items-center gap-2">
             <IdCard className="h-5 w-5" />
             Agent Card — {agentName}
-            <Badge variant="outline" className="text-[10px]">A2A Protocol</Badge>
+            <Badge variant="outline" className="text-meta">A2A Protocol</Badge>
           </DialogTitle>
         </DialogHeader>
 
@@ -83,11 +83,11 @@ export function AgentCardViewer({ agentId, agentName }: Props) {
         ) : card ? (
           <>
             <div className="flex gap-2 mb-3">
-              <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={handleCopy}>
+              <Button variant="outline" size="sm" className="gap-1.5 text-meta" onClick={handleCopy}>
                 {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
                 {copied ? 'Copiado!' : 'Copiar JSON'}
               </Button>
-              <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={handleDownload}>
+              <Button variant="outline" size="sm" className="gap-1.5 text-meta" onClick={handleDownload}>
                 <Download className="h-3 w-3" /> Download
               </Button>
             </div>
@@ -95,28 +95,28 @@ export function AgentCardViewer({ agentId, agentName }: Props) {
             {/* Summary cards */}
             <div className="grid grid-cols-3 gap-2 mb-3">
               <div className="rounded-lg border border-border bg-muted/20 p-2.5 text-center">
-                <p className="text-xs font-semibold">{card.skills.length}</p>
-                <p className="text-[10px] text-muted-foreground">Skills</p>
+                <p className="text-meta font-semibold">{card.skills.length}</p>
+                <p className="text-meta text-muted-foreground">Skills</p>
               </div>
               <div className="rounded-lg border border-border bg-muted/20 p-2.5 text-center">
-                <p className="text-xs font-semibold">{card.capabilities.streaming ? '✅' : '❌'}</p>
-                <p className="text-[10px] text-muted-foreground">Streaming</p>
+                <p className="text-meta font-semibold">{card.capabilities.streaming ? '✅' : '❌'}</p>
+                <p className="text-meta text-muted-foreground">Streaming</p>
               </div>
               <div className="rounded-lg border border-border bg-muted/20 p-2.5 text-center">
-                <p className="text-xs font-semibold">v{card.capabilities.a2aVersion}</p>
-                <p className="text-[10px] text-muted-foreground">A2A Version</p>
+                <p className="text-meta font-semibold">v{card.capabilities.a2aVersion}</p>
+                <p className="text-meta text-muted-foreground">A2A Version</p>
               </div>
             </div>
 
             {/* JSON viewer */}
             <div className="flex-1 overflow-auto rounded-lg border border-border bg-secondary/30 p-4">
-              <pre className="text-[11px] font-mono text-foreground whitespace-pre-wrap break-words">
+              <pre className="text-meta font-mono text-foreground whitespace-pre-wrap break-words">
                 {JSON.stringify(card, null, 2)}
               </pre>
             </div>
           </>
         ) : (
-          <div className="py-12 text-center text-sm text-muted-foreground">
+          <div className="py-12 text-center text-body-sm text-muted-foreground">
             Erro ao carregar Agent Card
           </div>
         )}

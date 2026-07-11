@@ -264,33 +264,33 @@ Sempre priorize a precisão e a utilidade das informações fornecidas.
                     <span className="text-3xl">{magicPreview.emoji || '🤖'}</span>
                     <div>
                       <p className="font-bold text-lg">{magicPreview.name}</p>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">{TYPE_LABEL[magicPreview.type] || magicPreview.type}</p>
+                      <p className="text-meta text-muted-foreground uppercase tracking-wider font-semibold">{TYPE_LABEL[magicPreview.type] || magicPreview.type}</p>
                     </div>
                   </div>
-                  <Badge className={READINESS_COLORS[readiness.level].bg + " " + READINESS_COLORS[readiness.level].text + " px-3 py-1 text-xs font-bold"}>
+                  <Badge className={READINESS_COLORS[readiness.level].bg + " " + READINESS_COLORS[readiness.level].text + " px-3 py-1 text-meta font-bold"}>
                     Score: {readiness.score}/10
                   </Badge>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4 py-2 border-y border-border/50">
                   <div className="space-y-1">
-                    <span className="text-[10px] text-muted-foreground font-bold uppercase">Modelo</span>
-                    <div className="flex items-center gap-1.5 text-sm font-medium"><Brain className="h-3.5 w-3.5 text-primary" /> {magicPreview.model}</div>
+                    <span className="text-meta text-muted-foreground font-bold uppercase">Modelo</span>
+                    <div className="flex items-center gap-1.5 text-body-sm font-medium"><Brain className="h-3.5 w-3.5 text-primary" /> {magicPreview.model}</div>
                   </div>
                   <div className="space-y-1">
-                    <span className="text-[10px] text-muted-foreground font-bold uppercase">Ferramentas</span>
-                    <div className="flex items-center gap-1.5 text-sm font-medium"><Wrench className="h-3.5 w-3.5 text-primary" /> {magicPreview.tools?.length || 0} habilitadas</div>
+                    <span className="text-meta text-muted-foreground font-bold uppercase">Ferramentas</span>
+                    <div className="flex items-center gap-1.5 text-body-sm font-medium"><Wrench className="h-3.5 w-3.5 text-primary" /> {magicPreview.tools?.length || 0} habilitadas</div>
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-[10px] text-muted-foreground font-bold uppercase">Missão & Comportamento</span>
-                  <p className="text-sm italic leading-relaxed text-foreground/80 bg-primary/5 p-3 rounded-lg border border-primary/10">"{magicPreview.mission}"</p>
+                  <span className="text-meta text-muted-foreground font-bold uppercase">Missão & Comportamento</span>
+                  <p className="text-body-sm italic leading-relaxed text-foreground/80 bg-primary/5 p-3 rounded-lg border border-primary/10">"{magicPreview.mission}"</p>
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-[10px] text-muted-foreground font-bold uppercase">Prévia do System Prompt</span>
-                  <div className="text-[11px] font-mono bg-secondary/30 p-3 rounded-lg border line-clamp-3">
+                  <span className="text-meta text-muted-foreground font-bold uppercase">Prévia do System Prompt</span>
+                  <div className="text-meta font-mono bg-secondary/30 p-3 rounded-lg border line-clamp-3">
                     {magicPreview.system_prompt}
                   </div>
                 </div>
@@ -337,8 +337,8 @@ Sempre priorize a precisão e a utilidade das informações fornecidas.
           <div className="grid grid-cols-3 gap-4">
             {filteredTemplates.map(t => (
               <Card key={t.id} className="p-4 cursor-pointer hover:border-primary transition-colors" onClick={() => handleTemplateClick(t)}>
-                <div className="flex items-center gap-3"><span className="text-2xl">{t.emoji}</span><div className="font-medium text-sm">{t.name}</div></div>
-                <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{t.description}</p>
+                <div className="flex items-center gap-3"><span className="text-2xl">{t.emoji}</span><div className="font-medium text-body-sm">{t.name}</div></div>
+                <p className="text-meta text-muted-foreground mt-2 line-clamp-2">{t.description}</p>
               </Card>
             ))}
           </div>
@@ -355,9 +355,9 @@ Sempre priorize a precisão e a utilidade das informações fornecidas.
               <div>
                 <DialogTitle className="text-2xl font-bold tracking-tight">{viewingTemplate?.name}</DialogTitle>
                 <div className="flex items-center gap-2 mt-1">
-                  <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-wider">{viewingTemplate?.category}</Badge>
-                  <span className="text-xs text-muted-foreground">•</span>
-                  <span className="text-xs text-muted-foreground">{viewingTemplate?.model}</span>
+                  <Badge variant="outline" className="text-meta font-bold uppercase tracking-wider">{viewingTemplate?.category}</Badge>
+                  <span className="text-meta text-muted-foreground">•</span>
+                  <span className="text-meta text-muted-foreground">{viewingTemplate?.model}</span>
                 </div>
               </div>
             </div>
@@ -366,40 +366,40 @@ Sempre priorize a precisão e a utilidade das informações fornecidas.
           <ScrollArea className="flex-1 px-6">
             <div className="py-4 space-y-6">
               <div className="space-y-2">
-                <h4 className="text-sm font-bold flex items-center gap-2"><Info className="h-4 w-4 text-primary" /> Descrição do Blueprint</h4>
-                <p className="text-muted-foreground text-sm leading-relaxed">{viewingTemplate?.description}</p>
+                <h4 className="text-body-sm font-bold flex items-center gap-2"><Info className="h-4 w-4 text-primary" /> Descrição do Blueprint</h4>
+                <p className="text-muted-foreground text-body-sm leading-relaxed">{viewingTemplate?.description}</p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-4 rounded-xl border bg-secondary/20 space-y-2">
-                  <h5 className="text-[11px] font-bold uppercase text-muted-foreground tracking-widest">Configuração</h5>
+                  <h5 className="text-meta font-bold uppercase text-muted-foreground tracking-widest">Configuração</h5>
                   <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-sm"><Brain className="h-3.5 w-3.5 text-primary/70" /> {viewingTemplate?.model}</div>
-                    <div className="flex items-center gap-2 text-sm"><Wrench className="h-3.5 w-3.5 text-primary/70" /> {viewingTemplate?.tools?.length || 0} ferramentas</div>
-                    <div className="flex items-center gap-2 text-sm"><ShieldAlert className="h-3.5 w-3.5 text-primary/70" /> Guardrails habilitados</div>
+                    <div className="flex items-center gap-2 text-body-sm"><Brain className="h-3.5 w-3.5 text-primary/70" /> {viewingTemplate?.model}</div>
+                    <div className="flex items-center gap-2 text-body-sm"><Wrench className="h-3.5 w-3.5 text-primary/70" /> {viewingTemplate?.tools?.length || 0} ferramentas</div>
+                    <div className="flex items-center gap-2 text-body-sm"><ShieldAlert className="h-3.5 w-3.5 text-primary/70" /> Guardrails habilitados</div>
                   </div>
                 </div>
                 <div className="p-4 rounded-xl border bg-primary/5 border-primary/20 space-y-2">
-                  <h5 className="text-[11px] font-bold uppercase text-primary tracking-widest">Impacto Esperado</h5>
+                  <h5 className="text-meta font-bold uppercase text-primary tracking-widest">Impacto Esperado</h5>
                   <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-sm font-medium"><Zap className="h-3.5 w-3.5 text-nexus-amber" /> Eficiência +45%</div>
-                    <div className="flex items-center gap-2 text-sm font-medium text-nexus-emerald"><Check className="h-3.5 w-3.5" /> ROI em &lt; 2 semanas</div>
+                    <div className="flex items-center gap-2 text-body-sm font-medium"><Zap className="h-3.5 w-3.5 text-nexus-amber" /> Eficiência +45%</div>
+                    <div className="flex items-center gap-2 text-body-sm font-medium text-nexus-emerald"><Check className="h-3.5 w-3.5" /> ROI em &lt; 2 semanas</div>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-3">
-                <h4 className="text-sm font-bold flex items-center gap-2"><TrendingUp className="h-4 w-4 text-primary" /> Recomendações de Uso</h4>
+                <h4 className="text-body-sm font-bold flex items-center gap-2"><TrendingUp className="h-4 w-4 text-primary" /> Recomendações de Uso</h4>
                 <ul className="grid grid-cols-1 gap-2">
-                  <li className="flex items-start gap-2 text-sm text-muted-foreground">
+                  <li className="flex items-start gap-2 text-body-sm text-muted-foreground">
                     <div className="h-1.5 w-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
                     Ideal para fluxos de {viewingTemplate?.category.toLowerCase()} com alto volume.
                   </li>
-                  <li className="flex items-start gap-2 text-sm text-muted-foreground">
+                  <li className="flex items-start gap-2 text-body-sm text-muted-foreground">
                     <div className="h-1.5 w-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
                     Conecte fontes de conhecimento via RAG para maior precisão.
                   </li>
-                  <li className="flex items-start gap-2 text-sm text-muted-foreground">
+                  <li className="flex items-start gap-2 text-body-sm text-muted-foreground">
                     <div className="h-1.5 w-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
                     Personalize o prompt com tom de voz da sua marca.
                   </li>

@@ -126,7 +126,7 @@ export function EmptyTracesForAgent({
       <h3 className="text-base font-heading font-semibold text-foreground mb-1.5">
         Sem traces para <span className="text-primary">{agentName}</span>
       </h3>
-      <p className="text-sm text-muted-foreground max-w-md leading-relaxed">
+      <p className="text-body-sm text-muted-foreground max-w-md leading-relaxed">
         {hasAbsoluteWindow
           ? 'A janela de tempo deep-linkada não retornou execuções. Tente liberá-la ou aplique uma sugestão abaixo.'
           : 'Nenhuma execução encontrada para os filtros atuais. Experimente uma das sugestões:'}
@@ -136,7 +136,7 @@ export function EmptyTracesForAgent({
         <Button
           size="sm"
           variant="outline"
-          className="mt-4 h-8 text-xs gap-1.5"
+          className="mt-4 h-8 text-meta gap-1.5"
           onClick={onReleaseWindow}
         >
           <CalendarClock className="h-3.5 w-3.5" aria-hidden />
@@ -159,10 +159,10 @@ export function EmptyTracesForAgent({
                     <Icon className="h-3.5 w-3.5 text-primary" aria-hidden />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-foreground group-hover:text-primary transition-colors">
+                    <p className="text-meta font-medium text-foreground group-hover:text-primary transition-colors">
                       {s.label}
                     </p>
-                    <p className="text-[11px] text-muted-foreground mt-0.5 leading-snug">
+                    <p className="text-meta text-muted-foreground mt-0.5 leading-snug">
                       {s.helper}
                     </p>
                   </div>
@@ -182,7 +182,7 @@ export function EmptyTracesForAgent({
         <button
           type="button"
           onClick={() => onApply(removeAgent.action)}
-          className="text-xs text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded px-2 py-1"
+          className="text-meta text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded px-2 py-1"
         >
           <UserX className="h-3 w-3" aria-hidden />
           {removeAgent.label}

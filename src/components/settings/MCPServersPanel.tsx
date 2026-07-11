@@ -65,13 +65,13 @@ export function MCPServersPanel() {
           <Server className="h-4 w-4 text-nexus-blue" />
         </div>
         <div>
-          <h3 className="text-sm font-bold text-foreground">MCP Servers</h3>
-          <p className="text-[11px] text-muted-foreground">
+          <h3 className="text-body-sm font-bold text-foreground">MCP Servers</h3>
+          <p className="text-meta text-muted-foreground">
             Conecte servidores MCP para expandir as capacidades dos agentes
           </p>
         </div>
         <div className="ml-auto flex items-center gap-2">
-          <Badge variant="outline" className="text-[10px]">
+          <Badge variant="outline" className="text-meta">
             <Wrench className="h-3 w-3 mr-1" />{tools.length} tools
           </Badge>
           <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={refresh} disabled={loading}>
@@ -86,15 +86,15 @@ export function MCPServersPanel() {
           placeholder="Nome do server"
           value={newName}
           onChange={e => setNewName(e.target.value)}
-          className="h-8 text-xs w-1/3"
+          className="h-8 text-meta w-1/3"
         />
         <Input
           placeholder="https://mcp-server.example.com"
           value={newUrl}
           onChange={e => setNewUrl(e.target.value)}
-          className="h-8 text-xs flex-1"
+          className="h-8 text-meta flex-1"
         />
-        <Button size="sm" className="gap-1.5 text-xs shrink-0" onClick={handleAdd} disabled={adding || !newUrl.trim()}>
+        <Button size="sm" className="gap-1.5 text-meta shrink-0" onClick={handleAdd} disabled={adding || !newUrl.trim()}>
           {adding ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plus className="h-3 w-3" />}
           Conectar
         </Button>
@@ -104,8 +104,8 @@ export function MCPServersPanel() {
       {servers.length === 0 ? (
         <div className="text-center py-6">
           <Server className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
-          <p className="text-xs text-muted-foreground">Nenhum MCP server conectado</p>
-          <p className="text-[10px] text-muted-foreground mt-1">Clique em "Atualizar" para descobrir servers existentes</p>
+          <p className="text-meta text-muted-foreground">Nenhum MCP server conectado</p>
+          <p className="text-meta text-muted-foreground mt-1">Clique em "Atualizar" para descobrir servers existentes</p>
         </div>
       ) : (
         <div className="space-y-1.5">
@@ -119,8 +119,8 @@ export function MCPServersPanel() {
                 <Server className="h-4 w-4 text-muted-foreground shrink-0" />
               )}
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium truncate">{server.name}</p>
-                <p className="text-[10px] text-muted-foreground truncate">{server.url}</p>
+                <p className="text-meta font-medium truncate">{server.name}</p>
+                <p className="text-meta text-muted-foreground truncate">{server.url}</p>
               </div>
               <Badge variant="outline" className="text-[9px]">{server.tools.length} tools</Badge>
               <Badge variant="outline" className={`text-[9px] ${

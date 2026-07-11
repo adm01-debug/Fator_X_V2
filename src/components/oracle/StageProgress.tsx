@@ -19,16 +19,16 @@ export function StageProgress({ mode, currentStage }: StageProgressProps) {
             {!store.error ? (
               <>
                 <Loader2 className="h-4 w-4 text-primary animate-spin" />
-                <span className="text-sm font-bold text-foreground">{stageLabel || 'Processando...'}</span>
+                <span className="text-body-sm font-bold text-foreground">{stageLabel || 'Processando...'}</span>
               </>
             ) : (
               <>
                 <AlertTriangle className="h-4 w-4 text-destructive" />
-                <span className="text-sm font-bold text-destructive">Falha crítica no estágio</span>
+                <span className="text-body-sm font-bold text-destructive">Falha crítica no estágio</span>
               </>
             )}
           </div>
-          <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">
+          <span className="text-meta font-mono text-muted-foreground uppercase tracking-widest">
             Etapa {currentStage} de {stages.length}
           </span>
         </div>
@@ -41,7 +41,7 @@ export function StageProgress({ mode, currentStage }: StageProgressProps) {
             return (
               <div key={stage} className="flex items-center gap-2 flex-1">
                 <div
-                  className={`h-10 w-10 rounded-xl flex items-center justify-center text-xs font-bold shrink-0 transition-all duration-500 ${
+                  className={`h-10 w-10 rounded-xl flex items-center justify-center text-meta font-bold shrink-0 transition-all duration-500 ${
                     isCompleted
                       ? 'bg-nexus-emerald/10 text-nexus-emerald border border-nexus-emerald/20'
                       : isCurrent

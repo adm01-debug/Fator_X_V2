@@ -118,17 +118,17 @@ export function PromptHistoryPanel({ prompt, type, onRestore }: Props) {
           <CollapsibleTrigger asChild>
             <button
               type="button"
-              className="flex items-center gap-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
+              className="flex items-center gap-2 text-body-sm font-medium text-foreground hover:text-primary transition-colors"
             >
               {open ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
               <History className="h-4 w-4" />
               <span>Histórico do prompt</span>
-              <Badge variant="secondary" className="ml-1 text-[10px]">
+              <Badge variant="secondary" className="ml-1 text-meta">
                 {snapshots.length}
               </Badge>
             </button>
           </CollapsibleTrigger>
-          <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+          <div className="flex items-center gap-2 text-meta text-muted-foreground">
             {lastSavedLabel ? (
               <span className="flex items-center gap-1">
                 <Check className="h-3 w-3 text-primary" />
@@ -142,7 +142,7 @@ export function PromptHistoryPanel({ prompt, type, onRestore }: Props) {
 
         <CollapsibleContent className="mt-3 space-y-2">
           {snapshots.length === 0 ? (
-            <p className="text-xs text-muted-foreground py-4 text-center">
+            <p className="text-meta text-muted-foreground py-4 text-center">
               Nenhuma versão salva ainda. Edite o prompt — uma cópia será salva automaticamente.
             </p>
           ) : (
@@ -161,22 +161,22 @@ export function PromptHistoryPanel({ prompt, type, onRestore }: Props) {
                     >
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-xs font-medium text-foreground">
+                          <span className="text-meta font-medium text-foreground">
                             {idx === 0 ? 'Mais recente' : `Versão ${snapshots.length - idx}`}
                           </span>
                           {isCurrent && (
-                            <Badge variant="outline" className="text-[10px] border-primary/40 text-primary">
+                            <Badge variant="outline" className="text-meta border-primary/40 text-primary">
                               atual
                             </Badge>
                           )}
                           <span
-                            className="text-[10px] text-muted-foreground"
+                            className="text-meta text-muted-foreground"
                             title={formatAbsolute(s.savedAt)}
                           >
                             {formatRelative(s.savedAt)} · {formatAbsolute(s.savedAt)}
                           </span>
                         </div>
-                        <p className="text-[11px] text-muted-foreground mt-0.5 truncate font-mono">
+                        <p className="text-meta text-muted-foreground mt-0.5 truncate font-mono">
                           {s.length} chars · {s.prompt.trim().slice(0, 80) || '—'}
                         </p>
                       </div>
@@ -185,7 +185,7 @@ export function PromptHistoryPanel({ prompt, type, onRestore }: Props) {
                           type="button"
                           size="sm"
                           variant="ghost"
-                          className="h-7 px-2 text-[11px] gap-1"
+                          className="h-7 px-2 text-meta gap-1"
                           onClick={() => handleRestore(s)}
                           disabled={isCurrent}
                         >
@@ -212,7 +212,7 @@ export function PromptHistoryPanel({ prompt, type, onRestore }: Props) {
                   type="button"
                   size="sm"
                   variant="ghost"
-                  className="h-7 text-[11px] text-muted-foreground hover:text-destructive"
+                  className="h-7 text-meta text-muted-foreground hover:text-destructive"
                   onClick={() => setConfirmClearAll(true)}
                 >
                   Limpar histórico

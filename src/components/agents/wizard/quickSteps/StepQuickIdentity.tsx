@@ -20,7 +20,7 @@ interface Props {
 
 function FieldError({ msg }: { msg?: string }) {
   if (!msg) return null;
-  return <p className="text-xs text-destructive mt-1">{msg}</p>;
+  return <p className="text-meta text-destructive mt-1">{msg}</p>;
 }
 
 export function StepQuickIdentity({ form, errors, update, highlightField, highlightHint }: Props) {
@@ -70,12 +70,12 @@ export function StepQuickIdentity({ form, errors, update, highlightField, highli
     <div className="nexus-card space-y-5">
       <div>
         <h2 className="text-lg font-heading font-semibold text-foreground">Identidade do agente</h2>
-        <p className="text-sm text-muted-foreground">Como ele se chama e qual o seu propósito.</p>
+        <p className="text-body-sm text-muted-foreground">Como ele se chama e qual o seu propósito.</p>
       </div>
 
       <div className="grid gap-4">
         <div>
-          <Label htmlFor="qa-name" className="text-sm">Nome <span className="text-destructive">*</span></Label>
+          <Label htmlFor="qa-name" className="text-body-sm">Nome <span className="text-destructive">*</span></Label>
           <Input
             id="qa-name"
             value={form.name}
@@ -88,13 +88,13 @@ export function StepQuickIdentity({ form, errors, update, highlightField, highli
           />
           <div className="flex justify-between items-start mt-1">
             <FieldError msg={errors.name} />
-            <span className="text-[10px] text-muted-foreground ml-auto font-mono">{form.name.length}/60</span>
+            <span className="text-meta text-muted-foreground ml-auto font-mono">{form.name.length}/60</span>
           </div>
           {hintFor('name')}
         </div>
 
         <div>
-          <Label htmlFor="qa-emoji" className="text-sm">Emoji <span className="text-destructive">*</span></Label>
+          <Label htmlFor="qa-emoji" className="text-body-sm">Emoji <span className="text-destructive">*</span></Label>
           <div className="mt-1.5 flex items-center gap-3">
             <Input
               id="qa-emoji"
@@ -126,7 +126,7 @@ export function StepQuickIdentity({ form, errors, update, highlightField, highli
         </div>
 
         <div>
-          <Label htmlFor="qa-mission" className="text-sm">Missão <span className="text-destructive">*</span></Label>
+          <Label htmlFor="qa-mission" className="text-body-sm">Missão <span className="text-destructive">*</span></Label>
           <Textarea
             id="qa-mission"
             value={form.mission}
@@ -140,13 +140,13 @@ export function StepQuickIdentity({ form, errors, update, highlightField, highli
           />
           <div className="flex justify-between items-start mt-1">
             <FieldError msg={errors.mission} />
-            <span className="text-[10px] text-muted-foreground ml-auto font-mono">{form.mission.length}/500</span>
+            <span className="text-meta text-muted-foreground ml-auto font-mono">{form.mission.length}/500</span>
           </div>
           {hintFor('mission')}
         </div>
 
         <div>
-          <Label htmlFor="qa-desc" className="text-sm">Descrição curta (opcional)</Label>
+          <Label htmlFor="qa-desc" className="text-body-sm">Descrição curta (opcional)</Label>
           <Input
             id="qa-desc"
             value={form.description}
@@ -158,7 +158,7 @@ export function StepQuickIdentity({ form, errors, update, highlightField, highli
           />
           <div className="flex justify-between items-start mt-1">
             <FieldError msg={errors.description} />
-            <span className="text-[10px] text-muted-foreground ml-auto font-mono">{form.description.length}/300</span>
+            <span className="text-meta text-muted-foreground ml-auto font-mono">{form.description.length}/300</span>
           </div>
           {hintFor('description')}
         </div>

@@ -66,10 +66,10 @@ export function DecayDetectionTab() {
   return (
     <div className="space-y-4">
       <div>
-        <h3 className="text-sm font-heading font-semibold text-foreground flex items-center gap-2">
+        <h3 className="text-body-sm font-heading font-semibold text-foreground flex items-center gap-2">
           <TrendingDown className="h-4 w-4 text-primary" /> Knowledge Decay Detection
         </h3>
-        <p className="text-[11px] text-muted-foreground mt-0.5">
+        <p className="text-meta text-muted-foreground mt-0.5">
           Detecta conhecimento envelhecido ou de baixa relevância. Score combina idade (60%) + baixa importância (40%).
         </p>
       </div>
@@ -78,8 +78,8 @@ export function DecayDetectionTab() {
       <div className="nexus-card space-y-4">
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label className="text-xs">Memórias a escanear</Label>
-            <span className="text-xs font-mono font-semibold text-primary">{scanLimit}</span>
+            <Label className="text-meta">Memórias a escanear</Label>
+            <span className="text-meta font-mono font-semibold text-primary">{scanLimit}</span>
           </div>
           <Slider
             value={[scanLimit]}
@@ -151,14 +151,14 @@ export function DecayDetectionTab() {
               <p className="text-xl font-bold mt-1" style={{ color: cfg.color }}>
                 {count ?? 0}
               </p>
-              <p className="text-[11px] text-muted-foreground">{cfg.label}</p>
+              <p className="text-meta text-muted-foreground">{cfg.label}</p>
             </button>
           );
         })}
       </div>
 
       {filterLevel !== 'all' && (
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
+        <div className="flex items-center justify-between text-meta text-muted-foreground">
           <span>Filtrando por: <span className="font-semibold" style={{ color: LEVEL_CONFIG[filterLevel].color }}>{LEVEL_CONFIG[filterLevel].label}</span></span>
           <button onClick={() => setFilterLevel('all')} className="text-primary hover:underline">
             Limpar filtro
@@ -174,7 +174,7 @@ export function DecayDetectionTab() {
       ) : filteredItems.length === 0 ? (
         <div className="nexus-card text-center py-12">
           <CheckCircle2 className="h-12 w-12 mx-auto text-nexus-emerald/50 mb-3" />
-          <p className="text-sm text-muted-foreground">
+          <p className="text-body-sm text-muted-foreground">
             {filterLevel === 'all' ? 'Nenhum item para escanear' : `Nenhum item no nível ${LEVEL_CONFIG[filterLevel].label}`}
           </p>
         </div>
@@ -190,25 +190,25 @@ export function DecayDetectionTab() {
                       <Badge variant="outline" className="text-[9px]" style={{ borderColor: cfg.color + '80', color: cfg.color }}>
                         {cfg.label}
                       </Badge>
-                      <span className="text-[10px] text-muted-foreground">
+                      <span className="text-meta text-muted-foreground">
                         {item.age_days.toFixed(0)}d atrás
                       </span>
                       {item.importance != null && (
-                        <span className="text-[10px] text-muted-foreground">
+                        <span className="text-meta text-muted-foreground">
                           imp: {(item.importance * 100).toFixed(0)}%
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-foreground line-clamp-2">{item.content_preview}</p>
+                    <p className="text-meta text-foreground line-clamp-2">{item.content_preview}</p>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Decay</p>
-                    <p className="text-sm font-bold font-mono" style={{ color: cfg.color }}>
+                    <p className="text-meta text-muted-foreground uppercase tracking-wider">Decay</p>
+                    <p className="text-body-sm font-bold font-mono" style={{ color: cfg.color }}>
                       {(item.decay_score * 100).toFixed(0)}%
                     </p>
                   </div>
                 </div>
-                <p className="text-[10px] text-muted-foreground italic pl-1 border-l-2 border-border/30 ml-1">
+                <p className="text-meta text-muted-foreground italic pl-1 border-l-2 border-border/30 ml-1">
                   {item.recommendation}
                 </p>
               </div>

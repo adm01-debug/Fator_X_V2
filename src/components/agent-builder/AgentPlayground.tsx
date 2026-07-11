@@ -176,8 +176,8 @@ export function AgentPlayground() {
               <div className="flex items-center gap-2">
                 <span className="text-lg">{agent.avatar_emoji || '🤖'}</span>
                 <div>
-                  <SheetTitle className="text-sm font-heading font-bold text-foreground">{agent.name || 'Agente'}</SheetTitle>
-                  <p className="text-[11px] text-muted-foreground">{agent.model} • Playground</p>
+                  <SheetTitle className="text-body-sm font-heading font-bold text-foreground">{agent.name || 'Agente'}</SheetTitle>
+                  <p className="text-meta text-muted-foreground">{agent.model} • Playground</p>
                 </div>
               </div>
               <div className="flex items-center gap-1">
@@ -199,10 +199,10 @@ export function AgentPlayground() {
           {playgroundSeed && (
             <div className="px-5 py-2 bg-primary/10 border-b border-primary/30 shrink-0 flex items-center justify-between gap-2">
               <div className="flex items-center gap-2 min-w-0">
-                <Badge className="bg-primary/20 text-primary text-[10px] h-5 gap-1 shrink-0">
+                <Badge className="bg-primary/20 text-primary text-meta h-5 gap-1 shrink-0">
                   <Repeat className="h-3 w-3" /> REPLAY
                 </Badge>
-                <p className="text-[11px] text-muted-foreground truncate font-mono">
+                <p className="text-meta text-muted-foreground truncate font-mono">
                   trace {playgroundSeed.traceId.slice(0, 8)}…
                 </p>
               </div>
@@ -214,8 +214,8 @@ export function AgentPlayground() {
 
           {debugMode && (
             <div className="px-5 py-2 bg-secondary/30 border-b border-border/50 shrink-0">
-              <p className="text-[11px] font-mono text-muted-foreground">System Prompt:</p>
-              <pre className="text-[11px] text-foreground font-mono whitespace-pre-wrap max-h-32 overflow-y-auto mt-1">
+              <p className="text-meta font-mono text-muted-foreground">System Prompt:</p>
+              <pre className="text-meta text-foreground font-mono whitespace-pre-wrap max-h-32 overflow-y-auto mt-1">
                 {buildSystemPrompt()}
               </pre>
             </div>
@@ -226,51 +226,51 @@ export function AgentPlayground() {
             <div className="px-5 py-2 border-b border-border/50 bg-secondary/20 shrink-0">
               <div className="flex items-center gap-3 flex-wrap">
                 {streaming.isStreaming && (
-                  <Badge className="bg-primary/20 text-primary text-[10px] h-5 animate-pulse gap-1">
+                  <Badge className="bg-primary/20 text-primary text-meta h-5 animate-pulse gap-1">
                     <Activity className="h-3 w-3" />
                     STREAMING
                   </Badge>
                 )}
                 {streaming.isComplete && !streaming.error && (
-                  <Badge className="bg-nexus-emerald/20 text-nexus-emerald text-[10px] h-5 gap-1">
+                  <Badge className="bg-nexus-emerald/20 text-nexus-emerald text-meta h-5 gap-1">
                     <Zap className="h-3 w-3" />
                     CONCLUÍDO
                   </Badge>
                 )}
                 {streaming.error && (
-                  <Badge variant="destructive" className="text-[10px] h-5">
+                  <Badge variant="destructive" className="text-meta h-5">
                     ERRO
                   </Badge>
                 )}
-                <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                <span className="flex items-center gap-1 text-meta text-muted-foreground">
                   <Hash className="h-3 w-3" />
                   {streaming.tokens} tokens
                 </span>
-                <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                <span className="flex items-center gap-1 text-meta text-muted-foreground">
                   <Clock className="h-3 w-3" />
                   {(streaming.latencyMs / 1000).toFixed(1)}s
                 </span>
                 {tokensPerSec && (
-                  <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                  <span className="flex items-center gap-1 text-meta text-muted-foreground">
                     <Zap className="h-3 w-3" />
                     {tokensPerSec} tok/s
                   </span>
                 )}
                 {streaming.provider && (
-                  <Badge variant="outline" className="text-[10px] h-5">{streaming.provider}</Badge>
+                  <Badge variant="outline" className="text-meta h-5">{streaming.provider}</Badge>
                 )}
                 {streaming.model && (
-                  <Badge variant="outline" className="text-[10px] h-5">{streaming.model}</Badge>
+                  <Badge variant="outline" className="text-meta h-5">{streaming.model}</Badge>
                 )}
                 {streaming.retryCount > 0 && (
-                  <span className="flex items-center gap-1 text-[10px] text-nexus-amber">
+                  <span className="flex items-center gap-1 text-meta text-nexus-amber">
                     <RefreshCw className="h-3 w-3" />
                     retry #{streaming.retryCount}
                   </span>
                 )}
               </div>
               {streaming.error && (
-                <p className="text-[10px] text-destructive mt-1">{streaming.error}</p>
+                <p className="text-meta text-destructive mt-1">{streaming.error}</p>
               )}
             </div>
           )}
@@ -279,23 +279,23 @@ export function AgentPlayground() {
             {messages.length === 0 && (
               <div className="flex flex-col items-center justify-center h-full text-center">
                 <MessageSquare className="h-10 w-10 text-muted-foreground mb-3" />
-                <p className="text-sm text-muted-foreground">Envie uma mensagem para testar o agente</p>
+                <p className="text-body-sm text-muted-foreground">Envie uma mensagem para testar o agente</p>
               </div>
             )}
             {messages.map((msg, i) => (
               <div key={i}>
-                <div className={`rounded-xl p-3 text-sm ${
+                <div className={`rounded-xl p-3 text-body-sm ${
                   msg.role === 'user'
                     ? 'bg-primary/10 text-foreground ml-8'
                     : 'bg-secondary/50 text-foreground mr-4'
                 }`}>
-                  <p className="text-[11px] font-medium text-muted-foreground mb-1">
+                  <p className="text-meta font-medium text-muted-foreground mb-1">
                     {msg.role === 'user' ? 'Você' : agent.name || 'Assistente'}
                   </p>
                   {msg.role === 'user' ? (
-                    <div className="whitespace-pre-wrap text-xs leading-relaxed">{msg.content}</div>
+                    <div className="whitespace-pre-wrap text-meta leading-relaxed">{msg.content}</div>
                   ) : (
-                    <div className="prose prose-sm prose-invert max-w-none text-xs leading-relaxed [&_p]:mb-1.5 [&_ul]:mb-1.5 [&_ol]:mb-1.5 [&_pre]:bg-background/50 [&_pre]:rounded-md [&_pre]:p-2 [&_code]:text-[11px] [&_h1]:text-sm [&_h2]:text-xs [&_h3]:text-xs [&_li]:text-xs">
+                    <div className="prose prose-sm prose-invert max-w-none text-meta leading-relaxed [&_p]:mb-1.5 [&_ul]:mb-1.5 [&_ol]:mb-1.5 [&_pre]:bg-background/50 [&_pre]:rounded-md [&_pre]:p-2 [&_code]:text-[11px] [&_h1]:text-sm [&_h2]:text-xs [&_h3]:text-xs [&_li]:text-xs">
                       <ReactMarkdown>
                         {msg.content || (streaming.isStreaming && i === messages.length - 1 ? '' : '...')}
                       </ReactMarkdown>
@@ -307,10 +307,10 @@ export function AgentPlayground() {
                 </div>
                 {msg.metadata && !streaming.isStreaming && (
                   <div className="flex items-center gap-2 mt-1 ml-1">
-                    {msg.metadata.model && <Badge variant="outline" className="text-[11px] h-4">{msg.metadata.provider || msg.metadata.model}</Badge>}
-                    {msg.metadata.tokens && <span className="text-[11px] text-muted-foreground">{msg.metadata.tokens.total} tokens</span>}
-                    {msg.metadata.latency_ms && <span className="text-[11px] text-muted-foreground">{(msg.metadata.latency_ms / 1000).toFixed(1)}s</span>}
-                    {msg.metadata.cost_usd != null && <span className="text-[11px] text-muted-foreground">${msg.metadata.cost_usd.toFixed(4)}</span>}
+                    {msg.metadata.model && <Badge variant="outline" className="text-meta h-4">{msg.metadata.provider || msg.metadata.model}</Badge>}
+                    {msg.metadata.tokens && <span className="text-meta text-muted-foreground">{msg.metadata.tokens.total} tokens</span>}
+                    {msg.metadata.latency_ms && <span className="text-meta text-muted-foreground">{(msg.metadata.latency_ms / 1000).toFixed(1)}s</span>}
+                    {msg.metadata.cost_usd != null && <span className="text-meta text-muted-foreground">${msg.metadata.cost_usd.toFixed(4)}</span>}
                   </div>
                 )}
               </div>
@@ -318,7 +318,7 @@ export function AgentPlayground() {
             {loading && (
               <div className="flex items-center gap-2 text-muted-foreground ml-1">
                 <Loader2 className="h-4 w-4 animate-spin" />
-                <span className="text-xs">Pensando...</span>
+                <span className="text-meta">Pensando...</span>
               </div>
             )}
           </div>
@@ -333,7 +333,7 @@ export function AgentPlayground() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
-                className="min-h-[40px] max-h-[120px] text-xs bg-secondary/50 border-border/50 resize-none"
+                className="min-h-[40px] max-h-[120px] text-meta bg-secondary/50 border-border/50 resize-none"
                 rows={1}
               />
               <Button size="icon" onClick={sendMessage} disabled={!input.trim() || loading || streaming.isStreaming} className="shrink-0 nexus-gradient-bg text-primary-foreground hover:opacity-90 h-10 w-10">

@@ -6,7 +6,7 @@ interface NodeProps {
   selected?: boolean;
 }
 
-const nodeBase = 'rounded-lg border bg-card px-4 py-2 shadow-sm min-w-[140px] text-center text-xs font-medium transition-all';
+const nodeBase = 'rounded-lg border bg-card px-4 py-2 shadow-sm min-w-[140px] text-center text-meta font-medium transition-all';
 
 function makeNode(icon: string, label: string, color: string, hasIn: boolean, hasOut: boolean) {
   return function Node({ data, selected }: NodeProps) {

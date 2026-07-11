@@ -28,7 +28,7 @@ export function SystemStatusIndicator() {
   }, [isOnline]);
 
   return (
-    <div className="flex items-center gap-4 px-4 py-2 bg-secondary/10 border-t border-border/40 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+    <div className="flex items-center gap-4 px-4 py-2 bg-secondary/10 border-t border-border/40 text-meta font-bold uppercase tracking-widest text-muted-foreground/60">
       <div className="flex items-center gap-1.5 group cursor-help">
         <div className={cn(
           "h-2 w-2 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.2)]",
@@ -48,7 +48,7 @@ export function SystemStatusIndicator() {
             <span>Encriptação Ativa</span>
           </div>
         </TooltipTrigger>
-        <TooltipContent className="text-[10px] font-bold">TLS 1.3 / AES-256 GCM</TooltipContent>
+        <TooltipContent className="text-meta font-bold">TLS 1.3 / AES-256 GCM</TooltipContent>
       </Tooltip>
 
       <div className="h-3 w-px bg-border/40" />

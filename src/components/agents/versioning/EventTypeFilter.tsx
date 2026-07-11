@@ -89,7 +89,7 @@ export function EventTypeFilter({ active, onToggle, onClear, counts }: Props) {
   return (
     <TooltipProvider delayDuration={200}>
       <div className="flex items-center gap-1.5 mb-2 flex-wrap">
-        <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+        <span className="text-meta uppercase tracking-wider text-muted-foreground font-semibold">
           Tipo
         </span>
         {EVENT_TYPES.map(({ tag, label, icon: Icon, description, activeClass }) => {
@@ -104,7 +104,7 @@ export function EventTypeFilter({ active, onToggle, onClear, counts }: Props) {
                   variant="ghost"
                   aria-pressed={isOn}
                   onClick={() => onToggle(tag)}
-                  className={`h-6 px-2 text-[11px] gap-1 border transition-colors ${
+                  className={`h-6 px-2 text-meta gap-1 border transition-colors ${
                     isOn
                       ? activeClass
                       : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-secondary/50'
@@ -121,7 +121,7 @@ export function EventTypeFilter({ active, onToggle, onClear, counts }: Props) {
                   )}
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom" className="max-w-[220px] text-xs">
+              <TooltipContent side="bottom" className="max-w-[220px] text-meta">
                 {description}
               </TooltipContent>
             </Tooltip>
@@ -133,7 +133,7 @@ export function EventTypeFilter({ active, onToggle, onClear, counts }: Props) {
             size="sm"
             variant="ghost"
             onClick={onClear}
-            className="h-6 px-2 text-[10px] text-muted-foreground hover:text-destructive gap-1"
+            className="h-6 px-2 text-meta text-muted-foreground hover:text-destructive gap-1"
             title="Remover todos os filtros de tipo"
           >
             <X className="h-2.5 w-2.5" /> Limpar

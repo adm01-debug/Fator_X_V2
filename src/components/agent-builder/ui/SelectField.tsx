@@ -20,9 +20,9 @@ interface SelectFieldProps {
 export function SelectField({ label, value, onChange, options, placeholder, className, disabled, hint }: SelectFieldProps) {
   return (
     <div className={cn('space-y-1.5', className)}>
-      <label className="text-xs font-medium text-foreground">{label}</label>
+      <label className="text-meta font-medium text-foreground">{label}</label>
       <Select value={value} onValueChange={onChange} disabled={disabled}>
-        <SelectTrigger className="bg-muted/30 border-border text-sm">
+        <SelectTrigger className="bg-muted/30 border-border text-body-sm">
           <SelectValue placeholder={placeholder ?? 'Selecione...'} />
         </SelectTrigger>
         <SelectContent>
@@ -33,7 +33,7 @@ export function SelectField({ label, value, onChange, options, placeholder, clas
           ))}
         </SelectContent>
       </Select>
-      {hint && <p className="text-[11px] text-muted-foreground">{hint}</p>}
+      {hint && <p className="text-meta text-muted-foreground">{hint}</p>}
     </div>
   );
 }

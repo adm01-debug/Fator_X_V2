@@ -22,7 +22,7 @@ export function AutomationOverviewWidget() {
       <Card className="bg-card border-border">
         <CardContent className="p-6 text-center text-muted-foreground">
           <Zap size={20} className="mx-auto mb-2 animate-pulse" />
-          <p className="text-sm">Carregando automações...</p>
+          <p className="text-body-sm">Carregando automações...</p>
         </CardContent>
       </Card>
     );
@@ -72,13 +72,13 @@ export function AutomationOverviewWidget() {
       onClick={() => navigate('/automation')}
     >
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm flex items-center justify-between">
+        <CardTitle className="text-body-sm flex items-center justify-between">
           <span className="flex items-center gap-2">
             <Zap size={16} className="text-nexus-amber" />
             Automation Center
           </span>
           {hasAlerts && (
-            <Badge className="bg-nexus-amber/20 text-nexus-amber text-[10px]">
+            <Badge className="bg-nexus-amber/20 text-nexus-amber text-meta">
               <AlertTriangle size={10} className="mr-1" />
               Atenção
             </Badge>
@@ -91,17 +91,17 @@ export function AutomationOverviewWidget() {
             <div key={i} className="flex items-center gap-2">
               <m.icon size={14} style={{ color: m.color }} />
               <div>
-                <p className="text-sm font-bold" style={{ color: m.color }}>
+                <p className="text-body-sm font-bold" style={{ color: m.color }}>
                   {m.value}
                 </p>
-                <p className="text-[10px] text-muted-foreground">{m.sub}</p>
+                <p className="text-meta text-muted-foreground">{m.sub}</p>
               </div>
             </div>
           ))}
         </div>
         {data.circuitBreakers.filter((cb) => cb.state === 'open').length > 0 && (
           <div className="mt-3 p-2 rounded bg-destructive/10 border border-destructive/20">
-            <p className="text-xs text-destructive">
+            <p className="text-meta text-destructive">
               ⚠️ {data.circuitBreakers.filter((cb) => cb.state === 'open').length} circuit
               breaker(s) aberto(s)
             </p>

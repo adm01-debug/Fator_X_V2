@@ -135,7 +135,7 @@ export default function IncidentPlaybooksPage() {
           <h1 className="text-3xl font-heading font-bold bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
             Playbooks de Incidente
           </h1>
-          <p className="text-muted-foreground text-sm mt-1">Auto-remediação para reduzir MTTR de minutos para segundos</p>
+          <p className="text-muted-foreground text-body-sm mt-1">Auto-remediação para reduzir MTTR de minutos para segundos</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
@@ -202,12 +202,12 @@ export default function IncidentPlaybooksPage() {
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="font-semibold">{pb.name}</h3>
                       <Badge variant="outline">{TRIGGER_LABELS[pb.trigger_type]}</Badge>
-                      <Badge variant="secondary" className="text-[10px]">cooldown {pb.cooldown_minutes}m</Badge>
-                      <Badge variant="secondary" className="text-[10px]">{pb.run_count} execuções</Badge>
+                      <Badge variant="secondary" className="text-meta">cooldown {pb.cooldown_minutes}m</Badge>
+                      <Badge variant="secondary" className="text-meta">{pb.run_count} execuções</Badge>
                     </div>
-                    {pb.description && <p className="text-sm text-muted-foreground">{pb.description}</p>}
+                    {pb.description && <p className="text-body-sm text-muted-foreground">{pb.description}</p>}
                     <div className="flex flex-wrap gap-1 mt-2">
-                      {pb.actions.map((a, i) => <Badge key={i} variant="outline" className="text-[10px]">{ACTION_LABELS[a.type]}</Badge>)}
+                      {pb.actions.map((a, i) => <Badge key={i} variant="outline" className="text-meta">{ACTION_LABELS[a.type]}</Badge>)}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -232,11 +232,11 @@ export default function IncidentPlaybooksPage() {
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-medium text-sm">{pb?.name ?? 'Playbook removido'}</span>
+                        <span className="font-medium text-body-sm">{pb?.name ?? 'Playbook removido'}</span>
                         <Badge variant={r.status === 'succeeded' ? 'default' : r.status === 'failed' ? 'destructive' : 'secondary'}>{r.status}</Badge>
-                        <span className="text-xs text-muted-foreground">{formatDistanceToNow(new Date(r.started_at), { addSuffix: true, locale: ptBR })}</span>
+                        <span className="text-meta text-muted-foreground">{formatDistanceToNow(new Date(r.started_at), { addSuffix: true, locale: ptBR })}</span>
                       </div>
-                      <div className="text-xs text-muted-foreground mt-1">
+                      <div className="text-meta text-muted-foreground mt-1">
                         {r.action_results.length} ações · origem: {r.triggered_by ?? 'sistema'}
                       </div>
                     </div>
@@ -252,10 +252,10 @@ export default function IncidentPlaybooksPage() {
             <Card key={i} className="hover:border-primary/40 transition-colors">
               <CardHeader><CardTitle className="text-base">{t.name}</CardTitle></CardHeader>
               <CardContent className="space-y-3">
-                <p className="text-sm text-muted-foreground">{t.description}</p>
+                <p className="text-body-sm text-muted-foreground">{t.description}</p>
                 <div className="flex flex-wrap gap-1">
                   <Badge variant="outline">{TRIGGER_LABELS[t.trigger_type]}</Badge>
-                  {t.actions.map((a, j) => <Badge key={j} variant="secondary" className="text-[10px]">{ACTION_LABELS[a.type]}</Badge>)}
+                  {t.actions.map((a, j) => <Badge key={j} variant="secondary" className="text-meta">{ACTION_LABELS[a.type]}</Badge>)}
                 </div>
                 <Button size="sm" className="w-full" onClick={() => useTemplate(i)}>Usar template</Button>
               </CardContent>

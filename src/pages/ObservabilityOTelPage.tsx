@@ -47,7 +47,7 @@ export default function ObservabilityOTelPage() {
             <div className="space-y-1">
               <div className="flex items-center gap-3">
                 <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">OpenTelemetry</h1>
-                <Badge className="bg-primary/10 text-primary border-none font-black px-3 py-1 rounded-full text-[10px] tracking-widest uppercase">GenAI Semantic Conventions</Badge>
+                <Badge className="bg-primary/10 text-primary border-none font-black px-3 py-1 rounded-full text-meta tracking-widest uppercase">GenAI Semantic Conventions</Badge>
               </div>
               <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Observabilidade total do ciclo de vida das requisições IA. Rastreamento granular de spans, tokens e latência P95.
@@ -78,7 +78,7 @@ export default function ObservabilityOTelPage() {
                 <CardTitle className="text-xl font-bold flex items-center gap-3">
                   <Terminal className="h-5 w-5 text-primary" /> Trace Stream (Live)
                 </CardTitle>
-                <CardDescription className="text-xs uppercase tracking-widest font-black mt-1">Spans compatíveis com OTel GenAI v1.2</CardDescription>
+                <CardDescription className="text-meta uppercase tracking-widest font-black mt-1">Spans compatíveis com OTel GenAI v1.2</CardDescription>
               </div>
               <div className="flex gap-2">
                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-lg"><Search className="h-4 w-4" /></Button>
@@ -90,12 +90,12 @@ export default function ObservabilityOTelPage() {
                 {tracesLoading ? (
                   <div className="p-10 text-center text-muted-foreground">
                      <Activity className="h-10 w-10 mx-auto mb-4 animate-pulse opacity-20" />
-                     <p className="text-xs uppercase font-black tracking-widest">Interceptando Fluxo...</p>
+                     <p className="text-meta uppercase font-black tracking-widest">Interceptando Fluxo...</p>
                   </div>
                 ) : traces.length === 0 ? (
                   <div className="p-20 text-center opacity-30">
                     <Database className="h-12 w-12 mx-auto mb-4" />
-                    <p className="text-xs font-black uppercase tracking-widest">Nenhum rastro capturado</p>
+                    <p className="text-meta font-black uppercase tracking-widest">Nenhum rastro capturado</p>
                   </div>
                 ) : (
                   traces.map((trace) => (
@@ -105,26 +105,26 @@ export default function ObservabilityOTelPage() {
                            {trace.event_type.includes('error') ? <AlertCircle className="h-6 w-6 text-destructive" /> : <Cpu className="h-6 w-6 text-primary/60" />}
                         </div>
                         <div className="min-w-0">
-                          <p className="font-mono text-sm font-bold text-foreground truncate">{trace.event_type}</p>
+                          <p className="font-mono text-body-sm font-bold text-foreground truncate">{trace.event_type}</p>
                           <div className="flex items-center gap-3 mt-1.5">
                              <Badge variant="outline" className="text-[9px] font-black h-4 px-1.5 border-border/60 bg-background/50">OTEL_SPAN</Badge>
-                             <span className="text-[10px] text-muted-foreground font-mono truncate max-w-[200px]">{trace.id}</span>
+                             <span className="text-meta text-muted-foreground font-mono truncate max-w-[200px]">{trace.id}</span>
                           </div>
                         </div>
                       </div>
                       
                       <div className="flex items-center gap-8 shrink-0">
                          <div className="text-right">
-                           <p className="text-[10px] font-black uppercase text-muted-foreground tracking-tighter">Latência</p>
-                           <p className="text-sm font-bold font-mono text-nexus-amber">{(trace.data as any)?.latency_ms || Math.floor(Math.random() * 800)}ms</p>
+                           <p className="text-meta font-black uppercase text-muted-foreground tracking-tighter">Latência</p>
+                           <p className="text-body-sm font-bold font-mono text-nexus-amber">{(trace.data as any)?.latency_ms || Math.floor(Math.random() * 800)}ms</p>
                          </div>
                          <div className="text-right w-24 hidden md:block">
-                           <p className="text-[10px] font-black uppercase text-muted-foreground tracking-tighter">Consumo</p>
-                           <p className="text-sm font-bold font-mono text-primary">{(trace.data as any)?.tokens || Math.floor(Math.random() * 2000)} tks</p>
+                           <p className="text-meta font-black uppercase text-muted-foreground tracking-tighter">Consumo</p>
+                           <p className="text-body-sm font-bold font-mono text-primary">{(trace.data as any)?.tokens || Math.floor(Math.random() * 2000)} tks</p>
                          </div>
                          <div className="text-right">
-                           <p className="text-[10px] font-black uppercase text-muted-foreground tracking-tighter">Time</p>
-                           <p className="text-[11px] font-medium text-foreground opacity-60">{new Date(trace.created_at).toLocaleTimeString('pt-BR')}</p>
+                           <p className="text-meta font-black uppercase text-muted-foreground tracking-tighter">Time</p>
+                           <p className="text-meta font-medium text-foreground opacity-60">{new Date(trace.created_at).toLocaleTimeString('pt-BR')}</p>
                          </div>
                       </div>
                     </div>
@@ -132,7 +132,7 @@ export default function ObservabilityOTelPage() {
                 )}
               </div>
               <div className="p-6 border-t border-border/40 bg-muted/10">
-                 <Button variant="outline" className="w-full h-12 rounded-2xl font-bold uppercase text-[10px] tracking-widest border-border/40 shadow-sm" asChild>
+                 <Button variant="outline" className="w-full h-12 rounded-2xl font-bold uppercase text-meta tracking-widest border-border/40 shadow-sm" asChild>
                     <a href="https://jaeger.nexus.local" target="_blank" rel="noreferrer">
                        Full Jaeger UI Breakdown <ArrowUpRight className="ml-2 h-4 w-4" />
                     </a>
@@ -160,11 +160,11 @@ export default function ObservabilityOTelPage() {
                    <div className="flex items-center gap-3">
                      <div className={cn("h-2 w-2 rounded-full", exp.color, exp.status === 'Active' && "animate-pulse")} />
                      <div>
-                       <p className="text-xs font-bold text-foreground">{exp.name}</p>
-                       <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">{exp.status}</p>
+                       <p className="text-meta font-bold text-foreground">{exp.name}</p>
+                       <p className="text-meta text-muted-foreground uppercase font-black tracking-widest">{exp.status}</p>
                      </div>
                    </div>
-                   <span className="text-[10px] font-mono font-bold text-primary">{exp.latency}</span>
+                   <span className="text-meta font-mono font-bold text-primary">{exp.latency}</span>
                  </div>
                ))}
              </CardContent>
@@ -176,10 +176,10 @@ export default function ObservabilityOTelPage() {
                   <Database className="h-6 w-6 text-primary" />
                </div>
                <h3 className="text-lg font-bold">Cold Storage (L2)</h3>
-               <p className="text-xs text-muted-foreground leading-relaxed">
+               <p className="text-meta text-muted-foreground leading-relaxed">
                  Traces com mais de 30 dias são comprimidos e movidos para armazenamento frio, mantendo apenas metadados para busca histórica.
                </p>
-               <Button variant="link" className="p-0 h-auto text-primary font-bold text-xs uppercase tracking-widest">Explorar Arquivos →</Button>
+               <Button variant="link" className="p-0 h-auto text-primary font-bold text-meta uppercase tracking-widest">Explorar Arquivos →</Button>
              </CardContent>
            </Card>
         </div>
@@ -205,9 +205,9 @@ function MetricCard({ label, value, icon: Icon, trend, subLabel, color = "text-f
          <span className={color}>{value}</span>
       </p>
       <div className="flex items-center gap-2">
-         <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{label}</p>
+         <p className="text-meta font-black uppercase tracking-widest text-muted-foreground">{label}</p>
          <span className="h-1 w-1 rounded-full bg-border" />
-         <p className="text-[10px] font-medium text-muted-foreground opacity-60">{subLabel}</p>
+         <p className="text-meta font-medium text-muted-foreground opacity-60">{subLabel}</p>
       </div>
     </Card>
   );

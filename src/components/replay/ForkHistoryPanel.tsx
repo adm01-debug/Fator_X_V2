@@ -28,19 +28,19 @@ export function ForkHistoryPanel({ forks, loading, onExecute, onDelete, onSelect
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm flex items-center gap-2">
+        <CardTitle className="text-body-sm flex items-center gap-2">
           <GitBranch className="h-4 w-4" />
           Histórico de Forks
-          <Badge variant="outline" className="ml-auto text-[10px]">{forks.length}</Badge>
+          <Badge variant="outline" className="ml-auto text-meta">{forks.length}</Badge>
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <ScrollArea className="h-[300px]">
           {loading && (
-            <div className="p-4 text-xs text-muted-foreground">Carregando forks...</div>
+            <div className="p-4 text-meta text-muted-foreground">Carregando forks...</div>
           )}
           {!loading && forks.length === 0 && (
-            <div className="p-4 text-xs text-muted-foreground">
+            <div className="p-4 text-meta text-muted-foreground">
               Nenhum fork ainda. Selecione um step e clique em <strong>Fork</strong>.
             </div>
           )}
@@ -56,10 +56,10 @@ export function ForkHistoryPanel({ forks, loading, onExecute, onDelete, onSelect
                 >
                   <button onClick={() => onSelect(f)} className="w-full text-left">
                     <div className="flex items-center justify-between gap-2 mb-1">
-                      <span className="text-xs font-medium truncate">{f.name}</span>
+                      <span className="text-meta font-medium truncate">{f.name}</span>
                       <Icon className={`h-3 w-3 shrink-0 ${cfg.color}`} />
                     </div>
-                    <div className="text-[10px] text-muted-foreground flex items-center gap-2 flex-wrap">
+                    <div className="text-meta text-muted-foreground flex items-center gap-2 flex-wrap">
                       <span>step {f.fork_step_index}</span>
                       <span>·</span>
                       <span>{cfg.label}</span>
@@ -69,7 +69,7 @@ export function ForkHistoryPanel({ forks, loading, onExecute, onDelete, onSelect
                   </button>
                   <div className="flex gap-1 mt-2">
                     {(f.status === "pending" || f.status === "failed") && (
-                      <Button size="sm" variant="outline" className="h-6 text-[10px] flex-1" onClick={() => onExecute(f.id)}>
+                      <Button size="sm" variant="outline" className="h-6 text-meta flex-1" onClick={() => onExecute(f.id)}>
                         <Play className="h-2.5 w-2.5 mr-1" /> Executar
                       </Button>
                     )}

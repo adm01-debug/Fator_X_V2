@@ -300,7 +300,7 @@ export function WorkflowTimeTravelPanel({
       <Card className="bg-card border-border">
         <CardContent className="flex items-center justify-center py-12">
           <Loader2 className="w-6 h-6 animate-spin text-primary" />
-          <span className="ml-2 text-sm text-muted-foreground">Carregando timeline...</span>
+          <span className="ml-2 text-body-sm text-muted-foreground">Carregando timeline...</span>
         </CardContent>
       </Card>
     );
@@ -315,7 +315,7 @@ export function WorkflowTimeTravelPanel({
             <span className="flex items-center gap-2">
               <Clock className="w-4 h-4 text-primary" />
               Time-Travel Debugger
-              <Badge className="bg-primary/20 text-primary text-[10px] ml-2">
+              <Badge className="bg-primary/20 text-primary text-meta ml-2">
                 {timeline.length} checkpoints
               </Badge>
             </span>
@@ -325,7 +325,7 @@ export function WorkflowTimeTravelPanel({
                   <Button
                     size="sm"
                     variant="outline"
-                    className="h-7 text-xs border-border hover:bg-nexus-amber/20 hover:text-nexus-amber"
+                    className="h-7 text-meta border-border hover:bg-nexus-amber/20 hover:text-nexus-amber"
                     disabled={timeline.length === 0}
                   >
                     <Download className="w-3 h-3 mr-1" />
@@ -333,12 +333,12 @@ export function WorkflowTimeTravelPanel({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel className="text-xs">
+                  <DropdownMenuLabel className="text-meta">
                     Compartilhar execução
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
-                    className="text-xs cursor-pointer"
+                    className="text-meta cursor-pointer"
                     onClick={() => {
                       openPrintablePdf({
                         executionId,
@@ -359,7 +359,7 @@ export function WorkflowTimeTravelPanel({
                     PDF (imprimir)
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    className="text-xs cursor-pointer"
+                    className="text-meta cursor-pointer"
                     onClick={() => {
                       downloadMarkdown({
                         executionId,
@@ -385,7 +385,7 @@ export function WorkflowTimeTravelPanel({
               <Button
                 size="sm"
                 variant={compareMode ? 'default' : 'outline'}
-                className={`h-7 text-xs ${
+                className={`h-7 text-meta ${
                   compareMode
                     ? 'bg-nexus-purple text-primary-foreground hover:bg-nexus-purple/90'
                     : 'border-border hover:bg-nexus-purple/20 hover:text-nexus-purple'
@@ -404,7 +404,7 @@ export function WorkflowTimeTravelPanel({
             </div>
           </CardTitle>
           {compareMode && (
-            <p className="text-[11px] text-muted-foreground mt-2">
+            <p className="text-meta text-muted-foreground mt-2">
               {!compareAId
                 ? 'Clique em um step para escolher A.'
                 : !compareBId
@@ -420,22 +420,22 @@ export function WorkflowTimeTravelPanel({
             <div className="flex items-center gap-2">
               <DollarSign className="w-4 h-4 text-nexus-emerald" />
               <div>
-                <p className="text-xs text-muted-foreground">Custo Total</p>
-                <p className="text-sm font-medium text-foreground">{formatCost(totalCost)}</p>
+                <p className="text-meta text-muted-foreground">Custo Total</p>
+                <p className="text-body-sm font-medium text-foreground">{formatCost(totalCost)}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <Zap className="w-4 h-4 text-nexus-amber" />
               <div>
-                <p className="text-xs text-muted-foreground">Tokens</p>
-                <p className="text-sm font-medium text-foreground">{formatTokens(totalTokens)}</p>
+                <p className="text-meta text-muted-foreground">Tokens</p>
+                <p className="text-body-sm font-medium text-foreground">{formatTokens(totalTokens)}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4 text-nexus-purple" />
               <div>
-                <p className="text-xs text-muted-foreground">Duração</p>
-                <p className="text-sm font-medium text-foreground">{formatDuration(totalDuration)}</p>
+                <p className="text-meta text-muted-foreground">Duração</p>
+                <p className="text-body-sm font-medium text-foreground">{formatDuration(totalDuration)}</p>
               </div>
             </div>
           </div>
@@ -446,13 +446,13 @@ export function WorkflowTimeTravelPanel({
       {error && (
         <div className="flex items-center gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/30">
           <AlertCircle className="w-4 h-4 text-destructive" />
-          <span className="text-sm text-destructive">{error}</span>
+          <span className="text-body-sm text-destructive">{error}</span>
         </div>
       )}
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-2 px-1">
-        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+        <div className="flex items-center gap-1.5 text-meta text-muted-foreground">
           <Filter className="w-3.5 h-3.5" />
           <span>Status:</span>
         </div>
@@ -467,7 +467,7 @@ export function WorkflowTimeTravelPanel({
               pressed={active}
               onPressedChange={() => toggleStatus(s)}
               disabled={count === 0}
-              className="h-6 px-2 text-[11px] gap-1 data-[state=on]:bg-primary/15 data-[state=on]:text-foreground border border-border/60 data-[state=on]:border-primary/50"
+              className="h-6 px-2 text-meta gap-1 data-[state=on]:bg-primary/15 data-[state=on]:text-foreground border border-border/60 data-[state=on]:border-primary/50"
               aria-label={`Filtrar ${meta.label}`}
             >
               <span style={{ color: meta.color }}>{meta.icon}</span>
@@ -479,7 +479,7 @@ export function WorkflowTimeTravelPanel({
 
         <div className="w-px h-4 bg-border mx-1" />
 
-        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+        <div className="flex items-center gap-1.5 text-meta text-muted-foreground">
           <span>Tipo:</span>
         </div>
         {(Object.keys(KIND_FILTER_META) as KindFilter[]).map((k) => {
@@ -492,7 +492,7 @@ export function WorkflowTimeTravelPanel({
               pressed={active}
               onPressedChange={() => toggleKind(k)}
               disabled={count === 0}
-              className="h-6 px-2 text-[11px] gap-1 data-[state=on]:bg-nexus-purple/15 data-[state=on]:text-foreground border border-border/60 data-[state=on]:border-nexus-purple/50"
+              className="h-6 px-2 text-meta gap-1 data-[state=on]:bg-nexus-purple/15 data-[state=on]:text-foreground border border-border/60 data-[state=on]:border-nexus-purple/50"
               aria-label={`Filtrar ${KIND_FILTER_META[k].label}`}
             >
               {KIND_FILTER_META[k].label}
@@ -505,7 +505,7 @@ export function WorkflowTimeTravelPanel({
           <Button
             size="sm"
             variant="ghost"
-            className="h-6 px-2 text-[11px] text-muted-foreground hover:text-foreground ml-auto"
+            className="h-6 px-2 text-meta text-muted-foreground hover:text-foreground ml-auto"
             onClick={clearFilters}
           >
             <X className="w-3 h-3 mr-1" />
@@ -520,7 +520,7 @@ export function WorkflowTimeTravelPanel({
           <ScrollArea className="h-[400px]">
             <div className="p-4 space-y-1">
               {filteredTimeline.length === 0 && timeline.length > 0 && (
-                <div className="text-center py-12 text-xs text-muted-foreground">
+                <div className="text-center py-12 text-meta text-muted-foreground">
                   Nenhum step corresponde aos filtros selecionados.
                 </div>
               )}
@@ -582,17 +582,17 @@ export function WorkflowTimeTravelPanel({
                     >
                       <div className="flex items-start justify-between">
                         <div>
-                          <p className="text-sm font-medium text-foreground">
+                          <p className="text-body-sm font-medium text-foreground">
                             #{entry.step_index} · {entry.node_type}
                           </p>
-                          <p className="text-xs text-muted-foreground mt-0.5">
+                          <p className="text-meta text-muted-foreground mt-0.5">
                             Node: {entry.node_id}
                           </p>
                         </div>
                         <div className="flex items-center gap-1">
                           <Badge
                             variant="outline"
-                            className="text-[10px] border-border"
+                            className="text-meta border-border"
                             style={{ color: statusCfg.color }}
                           >
                             {statusCfg.label}
@@ -601,7 +601,7 @@ export function WorkflowTimeTravelPanel({
                       </div>
 
                       {/* Metrics */}
-                      <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-3 mt-2 text-meta text-muted-foreground">
                         <span>{formatCost(entry.cost_usd)}</span>
                         <span>·</span>
                         <span>{formatTokens(entry.tokens_used)} tokens</span>
@@ -611,7 +611,7 @@ export function WorkflowTimeTravelPanel({
 
                       {/* Error message */}
                       {entry.error && (
-                        <p className="text-xs text-destructive mt-1 truncate">
+                        <p className="text-meta text-destructive mt-1 truncate">
                           ⚠ {entry.error}
                         </p>
                       )}
@@ -622,7 +622,7 @@ export function WorkflowTimeTravelPanel({
                           <Button
                             size="sm"
                             variant="outline"
-                            className="h-7 text-xs border-border hover:bg-primary/20 hover:text-primary"
+                            className="h-7 text-meta border-border hover:bg-primary/20 hover:text-primary"
                             onClick={(e) => {
                               e.stopPropagation();
                               handleInspect(entry.id);
@@ -634,7 +634,7 @@ export function WorkflowTimeTravelPanel({
                           <Button
                             size="sm"
                             variant="outline"
-                            className="h-7 text-xs border-border hover:bg-nexus-purple/20 hover:text-nexus-purple"
+                            className="h-7 text-meta border-border hover:bg-nexus-purple/20 hover:text-nexus-purple"
                             disabled={forking}
                             onClick={(e) => {
                               e.stopPropagation();
@@ -647,7 +647,7 @@ export function WorkflowTimeTravelPanel({
                           <Button
                             size="sm"
                             variant="outline"
-                            className="h-7 text-xs border-border hover:bg-nexus-emerald/20 hover:text-nexus-emerald"
+                            className="h-7 text-meta border-border hover:bg-nexus-emerald/20 hover:text-nexus-emerald"
                             onClick={(e) => {
                               e.stopPropagation();
                               handleResume(entry.id);
@@ -671,7 +671,7 @@ export function WorkflowTimeTravelPanel({
       {!compareMode && inspectedState && (
         <Card className="bg-card border-border">
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center justify-between text-sm text-foreground">
+            <CardTitle className="flex items-center justify-between text-body-sm text-foreground">
               <span className="flex items-center gap-2">
                 <Eye className="w-4 h-4 text-nexus-orange" />
                 Estado do Checkpoint
@@ -679,7 +679,7 @@ export function WorkflowTimeTravelPanel({
               <Button
                 size="sm"
                 variant="ghost"
-                className="h-6 text-xs text-muted-foreground"
+                className="h-6 text-meta text-muted-foreground"
                 onClick={() => setInspectedState(null)}
               >
                 Fechar
@@ -688,7 +688,7 @@ export function WorkflowTimeTravelPanel({
           </CardHeader>
           <CardContent>
             <ScrollArea className="h-[200px]">
-              <pre className="text-xs text-muted-foreground font-mono whitespace-pre-wrap break-all">
+              <pre className="text-meta text-muted-foreground font-mono whitespace-pre-wrap break-all">
                 {JSON.stringify(inspectedState, null, 2)}
               </pre>
             </ScrollArea>

@@ -20,10 +20,10 @@ export function SecurityPosture() {
   return (
     <div className="nexus-card">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-heading font-semibold text-foreground flex items-center gap-2">
+        <h3 className="text-body-sm font-heading font-semibold text-foreground flex items-center gap-2">
           <ShieldCheck className="h-4 w-4 text-primary" /> Postura de Segurança
         </h3>
-        <div className={`text-xs font-bold px-2 py-0.5 rounded-full ${score >= 80 ? 'bg-nexus-emerald/10 text-nexus-emerald' : 'bg-nexus-amber/10 text-nexus-amber'}`}>
+        <div className={`text-meta font-bold px-2 py-0.5 rounded-full ${score >= 80 ? 'bg-nexus-emerald/10 text-nexus-emerald' : 'bg-nexus-amber/10 text-nexus-amber'}`}>
           {score}% ({passCount}/{checks.length})
         </div>
       </div>
@@ -37,10 +37,10 @@ export function SecurityPosture() {
               </div>
               <div>
                 <div className="flex items-center gap-1.5">
-                  <p className="text-xs font-medium text-foreground">{check.title}</p>
+                  <p className="text-meta font-medium text-foreground">{check.title}</p>
                   {check.status === 'pass' ? <CheckCircle className="h-3 w-3 text-nexus-emerald" /> : <AlertTriangle className="h-3 w-3 text-nexus-amber" />}
                 </div>
-                <p className="text-[11px] text-muted-foreground mt-0.5">{check.desc}</p>
+                <p className="text-meta text-muted-foreground mt-0.5">{check.desc}</p>
               </div>
             </div>
           );

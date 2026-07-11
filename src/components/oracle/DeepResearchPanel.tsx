@@ -59,9 +59,9 @@ export function DeepResearchPanel() {
         <div>
           <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
             Deep Research v2
-            <Badge className="bg-primary/20 text-primary border-none text-[10px] font-bold px-2 py-0">EXPERIMENTAL</Badge>
+            <Badge className="bg-primary/20 text-primary border-none text-meta font-bold px-2 py-0">EXPERIMENTAL</Badge>
           </h3>
-          <p className="text-xs text-muted-foreground max-w-lg leading-relaxed">
+          <p className="text-meta text-muted-foreground max-w-lg leading-relaxed">
             Pesquisa iterativa profunda com agentes autônomos que buscam, validam e sintetizam relatórios técnicos em múltiplos domínios.
           </p>
         </div>
@@ -75,20 +75,20 @@ export function DeepResearchPanel() {
           rows={3}
           className="w-full bg-secondary/40 border border-border/60 rounded-2xl p-4 text-base text-foreground placeholder-muted-foreground/60 resize-none focus:ring-primary focus:border-primary transition-all shadow-inner"
         />
-        <div className="absolute bottom-3 right-3 text-[10px] font-mono text-muted-foreground/50 uppercase tracking-widest">
+        <div className="absolute bottom-3 right-3 text-meta font-mono text-muted-foreground/50 uppercase tracking-widest">
           Protocolo Web-Browsing Ativo
         </div>
       </div>
 
       <div className="flex flex-col sm:flex-row items-center justify-between gap-6 p-4 bg-secondary/30 rounded-2xl border border-border/40">
         <div className="flex items-center gap-4">
-          <span className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-widest ml-1">Profundidade:</span>
+          <span className="text-meta font-extrabold text-muted-foreground uppercase tracking-widest ml-1">Profundidade:</span>
           <div className="flex gap-1">
             {(['quick', 'standard', 'deep'] as const).map(d => (
               <button
                 key={d}
                 onClick={() => setDepth(d)}
-                className={`px-4 py-1.5 text-[10px] font-bold rounded-lg uppercase tracking-tighter transition-all ${
+                className={`px-4 py-1.5 text-meta font-bold rounded-lg uppercase tracking-tighter transition-all ${
                   depth === d 
                     ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20' 
                     : 'bg-card text-muted-foreground hover:bg-secondary hover:text-foreground border border-border/60'
@@ -111,7 +111,7 @@ export function DeepResearchPanel() {
 
       {error && (
         <Card className="mt-6 bg-destructive/5 border-destructive/20 p-4 animate-in shake-1 duration-500">
-          <p className="text-xs text-destructive font-medium flex items-center gap-2">
+          <p className="text-meta text-destructive font-medium flex items-center gap-2">
             <AlertTriangle className="h-3.5 w-3.5" /> {error}
           </p>
         </Card>
@@ -139,13 +139,13 @@ export function DeepResearchPanel() {
                 <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
                   <FileText className="w-4 h-4 text-primary" />
                 </div>
-                <h4 className="text-sm font-bold text-foreground">Relatório Executivo Gerado</h4>
+                <h4 className="text-body-sm font-bold text-foreground">Relatório Executivo Gerado</h4>
               </div>
-              <Button variant="ghost" size="sm" className="h-8 rounded-lg gap-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              <Button variant="ghost" size="sm" className="h-8 rounded-lg gap-2 text-meta font-bold uppercase tracking-widest text-muted-foreground">
                 <Download className="h-3.5 w-3.5" /> Salvar Relatório
               </Button>
             </div>
-            <div className="text-sm text-foreground whitespace-pre-wrap leading-relaxed prose prose-neutral max-w-none dark:prose-invert">
+            <div className="text-body-sm text-foreground whitespace-pre-wrap leading-relaxed prose prose-neutral max-w-none dark:prose-invert">
               {result.report}
             </div>
           </Card>
@@ -154,7 +154,7 @@ export function DeepResearchPanel() {
             <div className="space-y-4">
               <button 
                 onClick={() => setShowSteps(!showSteps)} 
-                className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-widest px-1"
+                className="flex items-center gap-2 text-meta font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-widest px-1"
               >
                 {showSteps ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                 {showSteps ? 'Ocultar' : 'Ver'} Log de Iterações ({result.steps.length})
@@ -164,11 +164,11 @@ export function DeepResearchPanel() {
                 <div className="grid grid-cols-1 gap-3 animate-in fade-in slide-in-from-top-2 duration-500">
                   {result.steps.map((step, i) => (
                     <Card key={i} className="p-4 bg-secondary/20 border-border/40 flex gap-4">
-                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary shrink-0">
+                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-meta font-bold text-primary shrink-0">
                         {step.iteration}
                       </div>
                       <div className="space-y-2">
-                        <p className="text-xs text-foreground/80 leading-relaxed italic">"{step.findings.substring(0, 250)}..."</p>
+                        <p className="text-meta text-foreground/80 leading-relaxed italic">"{step.findings.substring(0, 250)}..."</p>
                         {step.gaps_identified.length > 0 && (
                           <div className="flex flex-wrap gap-2">
                             {step.gaps_identified.map((gap, j) => (
@@ -188,14 +188,14 @@ export function DeepResearchPanel() {
 
           {result.sources.length > 0 && (
             <div className="p-4 bg-muted/30 rounded-2xl border border-border/40">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-3 px-1">Referências Consultadas</p>
+              <p className="text-meta font-bold text-muted-foreground uppercase tracking-widest mb-3 px-1">Referências Consultadas</p>
               <div className="flex flex-wrap gap-2">
                 {result.sources.slice(0, 8).map((src, i) => (
-                  <Badge key={i} variant="outline" className="text-[10px] bg-card border-border/60 text-muted-foreground font-mono">
+                  <Badge key={i} variant="outline" className="text-meta bg-card border-border/60 text-muted-foreground font-mono">
                     {src.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]}
                   </Badge>
                 ))}
-                {result.sources.length > 8 && <span className="text-[10px] text-muted-foreground font-bold ml-1">+{result.sources.length - 8} fontes</span>}
+                {result.sources.length > 8 && <span className="text-meta text-muted-foreground font-bold ml-1">+{result.sources.length - 8} fontes</span>}
               </div>
             </div>
           )}

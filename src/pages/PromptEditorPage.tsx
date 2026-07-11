@@ -152,7 +152,7 @@ export default function PromptEditorPage() {
         actions={
           <div className="flex items-center gap-2">
             {activeVersion && dirty && (
-              <Button variant="outline" size="sm" className="gap-1.5 text-xs"
+              <Button variant="outline" size="sm" className="gap-1.5 text-meta"
                 onClick={() => updateVersionMut.mutate(activeVersion.id)}
                 disabled={updateVersionMut.isPending}
               >
@@ -160,7 +160,7 @@ export default function PromptEditorPage() {
                 Atualizar v{activeVersion.version}
               </Button>
             )}
-            <Button size="sm" className="gap-1.5 text-xs nexus-gradient-bg text-primary-foreground hover:opacity-90"
+            <Button size="sm" className="gap-1.5 text-meta nexus-gradient-bg text-primary-foreground hover:opacity-90"
               onClick={() => createVersionMut.mutate()}
               disabled={createVersionMut.isPending || !content.trim()}
             >
@@ -173,16 +173,16 @@ export default function PromptEditorPage() {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="bg-secondary/50 border border-border/50 p-1 rounded-xl h-12">
-          <TabsTrigger value="editor" className="text-xs font-bold data-[state=active]:bg-background px-6 rounded-lg">
+          <TabsTrigger value="editor" className="text-meta font-bold data-[state=active]:bg-background px-6 rounded-lg">
             <Layout className="h-3.5 w-3.5 mr-2" /> Editor
           </TabsTrigger>
-          <TabsTrigger value="versions" className="text-xs font-bold data-[state=active]:bg-background px-6 rounded-lg">
+          <TabsTrigger value="versions" className="text-meta font-bold data-[state=active]:bg-background px-6 rounded-lg">
             <History className="h-3.5 w-3.5 mr-2" /> Versões ({versions.length})
           </TabsTrigger>
-          <TabsTrigger value="score" className="text-xs font-bold data-[state=active]:bg-background px-6 rounded-lg">
+          <TabsTrigger value="score" className="text-meta font-bold data-[state=active]:bg-background px-6 rounded-lg">
             <Target className="h-3.5 w-3.5 mr-2" /> Score & Análise
           </TabsTrigger>
-          <TabsTrigger value="telemetry" className="text-xs font-bold data-[state=active]:bg-background px-6 rounded-lg">
+          <TabsTrigger value="telemetry" className="text-meta font-bold data-[state=active]:bg-background px-6 rounded-lg">
             <Activity className="h-3.5 w-3.5 mr-2" /> Telemetria
           </TabsTrigger>
         </TabsList>
@@ -194,9 +194,9 @@ export default function PromptEditorPage() {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
                     <FileText className="h-4 w-4 text-primary" />
-                    <Label className="text-sm font-black uppercase tracking-widest text-foreground">Conteúdo do Prompt</Label>
+                    <Label className="text-body-sm font-black uppercase tracking-widest text-foreground">Conteúdo do Prompt</Label>
                   </div>
-                  {dirty && <Badge variant="outline" className="text-[10px] font-black uppercase text-nexus-amber border-nexus-amber/30 bg-nexus-amber/5">Dirty State</Badge>}
+                  {dirty && <Badge variant="outline" className="text-meta font-black uppercase text-nexus-amber border-nexus-amber/30 bg-nexus-amber/5">Dirty State</Badge>}
                 </div>
                 <Textarea
                   value={content}
@@ -207,17 +207,17 @@ export default function PromptEditorPage() {
                 <div className="flex items-center justify-between mt-4">
                   <div className="flex items-center gap-4">
                     <div className="flex flex-col">
-                      <span className="text-[10px] font-black text-muted-foreground uppercase tracking-tighter">Caracteres</span>
-                      <span className="text-sm font-bold">{content.length.toLocaleString()}</span>
+                      <span className="text-meta font-black text-muted-foreground uppercase tracking-tighter">Caracteres</span>
+                      <span className="text-body-sm font-bold">{content.length.toLocaleString()}</span>
                     </div>
                     <Separator orientation="vertical" className="h-8 bg-border/40" />
                     <div className="flex flex-col">
-                      <span className="text-[10px] font-black text-muted-foreground uppercase tracking-tighter">Palavras</span>
-                      <span className="text-sm font-bold">{content.split(/\s+/).filter(Boolean).length.toLocaleString()}</span>
+                      <span className="text-meta font-black text-muted-foreground uppercase tracking-tighter">Palavras</span>
+                      <span className="text-body-sm font-bold">{content.split(/\s+/).filter(Boolean).length.toLocaleString()}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge variant="secondary" className="bg-secondary/50 font-mono text-[10px]">text-embedding-3-small</Badge>
+                    <Badge variant="secondary" className="bg-secondary/50 font-mono text-meta">text-embedding-3-small</Badge>
                   </div>
                 </div>
               </div>
@@ -225,20 +225,20 @@ export default function PromptEditorPage() {
               <div className="nexus-card p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Save className="h-4 w-4 text-primary" />
-                  <Label className="text-sm font-black uppercase tracking-widest text-foreground">Sumário do Commit</Label>
+                  <Label className="text-body-sm font-black uppercase tracking-widest text-foreground">Sumário do Commit</Label>
                 </div>
                 <Input
                   value={summary}
                   onChange={e => setSummary(e.target.value)}
                   placeholder="Descreva o que mudou nesta versão neural..."
-                  className="bg-secondary/30 border-border/40 text-sm h-12 rounded-xl"
+                  className="bg-secondary/30 border-border/40 text-body-sm h-12 rounded-xl"
                 />
               </div>
             </div>
 
             <div className="space-y-6">
               <Card className="p-6 bg-card/30 border-border/40">
-                <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-4">Quality Guardrails</h3>
+                <h3 className="text-meta font-black uppercase tracking-widest text-muted-foreground mb-4">Quality Guardrails</h3>
                 <div className="space-y-4">
                   {[
                     { label: 'Clareza Semântica', value: scorePercent, color: 'text-nexus-emerald' },
@@ -246,7 +246,7 @@ export default function PromptEditorPage() {
                     { label: 'Otimização de Contexto', value: 85, color: 'text-primary' }
                   ].map(m => (
                     <div key={m.label} className="space-y-1.5">
-                      <div className="flex justify-between text-[10px] font-black uppercase tracking-tight">
+                      <div className="flex justify-between text-meta font-black uppercase tracking-tight">
                         <span>{m.label}</span>
                         <span className={m.color}>{m.value}%</span>
                       </div>
@@ -257,7 +257,7 @@ export default function PromptEditorPage() {
               </Card>
 
               <Card className="p-6 bg-card/30 border-border/40">
-                <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-4">Neural Tokens (Estimated)</h3>
+                <h3 className="text-meta font-black uppercase tracking-widest text-muted-foreground mb-4">Neural Tokens (Estimated)</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-3 rounded-xl bg-secondary/20 border border-border/10">
                     <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-tighter">System Tokens</p>
@@ -273,10 +273,10 @@ export default function PromptEditorPage() {
               <div className="p-6 rounded-[2rem] bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 space-y-4">
                 <div className="flex items-center gap-2">
                   <Wand2 className="h-4 w-4 text-primary" />
-                  <h4 className="text-xs font-black uppercase tracking-widest text-primary">Prompt Optimizer</h4>
+                  <h4 className="text-meta font-black uppercase tracking-widest text-primary">Prompt Optimizer</h4>
                 </div>
-                <p className="text-[11px] text-muted-foreground font-medium leading-relaxed">Nossa IA analisou seu prompt e sugere 3 otimizações para reduzir latência em 15%.</p>
-                <Button variant="outline" size="sm" className="w-full rounded-xl border-primary/30 text-primary hover:bg-primary/5 font-black text-[10px] uppercase tracking-widest">Ver Sugestões</Button>
+                <p className="text-meta text-muted-foreground font-medium leading-relaxed">Nossa IA analisou seu prompt e sugere 3 otimizações para reduzir latência em 15%.</p>
+                <Button variant="outline" size="sm" className="w-full rounded-xl border-primary/30 text-primary hover:bg-primary/5 font-black text-meta uppercase tracking-widest">Ver Sugestões</Button>
               </div>
             </div>
           </div>
@@ -286,7 +286,7 @@ export default function PromptEditorPage() {
           <div className="grid lg:grid-cols-2 gap-6">
             <Card className="bg-card/30 border-border/40 overflow-hidden">
               <div className="p-4 bg-muted/20 border-b border-border/40 flex items-center justify-between">
-                <h3 className="text-xs font-black uppercase tracking-widest text-foreground flex items-center gap-2">
+                <h3 className="text-meta font-black uppercase tracking-widest text-foreground flex items-center gap-2">
                   <History className="h-4 w-4 text-primary" /> Timeline de Versões
                 </h3>
               </div>
@@ -308,10 +308,10 @@ export default function PromptEditorPage() {
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className="text-sm font-black font-mono">v{v.version}</span>
+                              <span className="text-body-sm font-black font-mono">v{v.version}</span>
                               {v.is_active && <Badge className="bg-nexus-emerald/10 text-nexus-emerald border-nexus-emerald/20 text-[9px] uppercase font-black">Live</Badge>}
                             </div>
-                            <p className="text-[11px] text-muted-foreground font-mono">{new Date(v.created_at).toLocaleString('pt-BR')}</p>
+                            <p className="text-meta text-muted-foreground font-mono">{new Date(v.created_at).toLocaleString('pt-BR')}</p>
                           </div>
                         </div>
                         <AccessControl permission="workflows.delete">
@@ -331,7 +331,7 @@ export default function PromptEditorPage() {
                           />
                         </AccessControl>
                       </div>
-                      <p className="text-xs text-foreground/80 font-medium italic mt-2">"{v.change_summary}"</p>
+                      <p className="text-meta text-foreground/80 font-medium italic mt-2">"{v.change_summary}"</p>
                     </div>
                   ))}
                 </div>
@@ -346,15 +346,15 @@ export default function PromptEditorPage() {
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="text-[10px] font-black uppercase tracking-widest border-primary/30 text-primary">v{diffVersion.version}</Badge>
+                        <Badge variant="outline" className="text-meta font-black uppercase tracking-widest border-primary/30 text-primary">v{diffVersion.version}</Badge>
                         <h3 className="text-lg font-black text-foreground">Visualizador de Inteligência</h3>
                       </div>
-                      <p className="text-xs text-muted-foreground font-medium">Analisando regressão semântica entre versões</p>
+                      <p className="text-meta text-muted-foreground font-medium">Analisando regressão semântica entre versões</p>
                     </div>
                     <Button 
                       variant="outline" 
                       size="sm" 
-                      className="rounded-xl border-nexus-emerald/30 text-nexus-emerald hover:bg-nexus-emerald/5 gap-2 font-black text-[10px] uppercase tracking-widest"
+                      className="rounded-xl border-nexus-emerald/30 text-nexus-emerald hover:bg-nexus-emerald/5 gap-2 font-black text-meta uppercase tracking-widest"
                       onClick={() => restoreVersionMut.mutate(diffVersion)}
                       disabled={restoreVersionMut.isPending || !!diffVersion.is_active}
                     >
@@ -380,17 +380,17 @@ export default function PromptEditorPage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="p-4 rounded-2xl bg-secondary/30 border border-border/10">
-                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Impacto Estimado</p>
+                      <p className="text-meta font-black text-muted-foreground uppercase tracking-widest mb-1">Impacto Estimado</p>
                       <div className="flex items-center gap-2">
                         <ArrowRight className="h-4 w-4 text-nexus-cyan" />
-                        <span className="text-sm font-bold">+12.4% Precisão</span>
+                        <span className="text-body-sm font-bold">+12.4% Precisão</span>
                       </div>
                     </div>
                     <div className="p-4 rounded-2xl bg-secondary/30 border border-border/10">
-                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Densidade de Tokens</p>
+                      <p className="text-meta font-black text-muted-foreground uppercase tracking-widest mb-1">Densidade de Tokens</p>
                       <div className="flex items-center gap-2">
                         <Layers className="h-4 w-4 text-primary" />
-                        <span className="text-sm font-bold">1.2x Otimizado</span>
+                        <span className="text-body-sm font-bold">1.2x Otimizado</span>
                       </div>
                     </div>
                   </div>
@@ -401,8 +401,8 @@ export default function PromptEditorPage() {
                     <History className="h-10 w-10 text-muted-foreground" />
                   </div>
                   <div className="space-y-1">
-                    <h3 className="text-sm font-black uppercase tracking-widest">Selecione uma Snapshot</h3>
-                    <p className="text-xs font-medium max-w-[200px]">Compare as mudanças semânticas para validar a evolução do agente.</p>
+                    <h3 className="text-body-sm font-black uppercase tracking-widest">Selecione uma Snapshot</h3>
+                    <p className="text-meta font-medium max-w-[200px]">Compare as mudanças semânticas para validar a evolução do agente.</p>
                   </div>
                 </div>
               )}
@@ -416,7 +416,7 @@ export default function PromptEditorPage() {
               <ShieldCheck className="h-10 w-10 text-nexus-emerald mx-auto" />
               <div>
                 <h3 className="text-2xl font-black text-foreground">{scorePercent}%</h3>
-                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Quality Score</p>
+                <p className="text-meta font-black text-muted-foreground uppercase tracking-widest">Quality Score</p>
               </div>
             </Card>
             {/* ... other metrics ... */}

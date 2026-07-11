@@ -223,7 +223,7 @@ export function AppSidebar() {
                   aria-expanded={!isCollapsedSection}
                   aria-controls={`nav-section-${section.key}`}
                 >
-                  <SidebarGroupLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 pointer-events-none p-0 h-auto">
+                  <SidebarGroupLabel className="text-meta font-black uppercase tracking-[0.2em] text-muted-foreground/60 pointer-events-none p-0 h-auto">
                     {section.label}
                   </SidebarGroupLabel>
                   <ChevronDown
@@ -249,7 +249,7 @@ export function AppSidebar() {
                           <NavLink
                             to={item.url}
                             end={item.url === "/"}
-                            className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all duration-300 group/navitem ${
+                            className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-body-sm transition-all duration-300 group/navitem ${
                               isActive
                                 ? 'text-primary font-black bg-primary/10 shadow-sm shadow-primary/5'
                                 : 'text-sidebar-foreground/70 hover:bg-secondary/40 hover:text-foreground hover:translate-x-1'
@@ -260,7 +260,7 @@ export function AppSidebar() {
                             <item.icon className={`h-4 w-4 shrink-0 transition-all duration-200 group-hover/navitem:scale-110 ${isActive ? 'text-primary' : ''}`} />
                             {!collapsed && <span className="transition-colors duration-150">{item.title}</span>}
                             {!collapsed && badgeCounts[item.url] > 0 && (
-                              <span className="ml-auto text-[10px] font-semibold bg-primary/15 text-primary rounded-full px-1.5 py-0.5 tabular-nums leading-none">
+                              <span className="ml-auto text-meta font-semibold bg-primary/15 text-primary rounded-full px-1.5 py-0.5 tabular-nums leading-none">
                                 {badgeCounts[item.url]}
                               </span>
                             )}
@@ -285,20 +285,20 @@ export function AppSidebar() {
             <Separator className="bg-border/30" />
             <div className="rounded-2xl bg-secondary/30 border border-border/40 p-4 shadow-sm">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80">Vazão do Workspace</p>
+                <p className="text-meta font-black uppercase tracking-widest text-muted-foreground/80">Vazão do Workspace</p>
                 <Badge variant="outline" className="bg-primary/5 text-primary border-none text-[9px] font-black">{planLabel}</Badge>
               </div>
               <div className="h-1.5 rounded-full bg-secondary/50 mb-2 overflow-hidden" role="progressbar" aria-valuenow={usage} aria-valuemin={0} aria-valuemax={100} aria-label="Uso de agentes">
                 <div className={cn("h-full rounded-full transition-all duration-1000", usage >= 100 ? 'bg-destructive' : 'nexus-gradient-bg')} style={{ width: `${Math.max(usage, 4)}%` }} />
               </div>
-              <div className="flex justify-between items-center text-[10px] font-bold text-muted-foreground mb-3">
+              <div className="flex justify-between items-center text-meta font-bold text-muted-foreground mb-3">
                 <span>{agentCount} Agentes</span>
                 <span>Limit {maxAgents}</span>
               </div>
               {usage >= 80 && planLabel === 'Free' && (
                 <Button
                   onClick={() => navigate('/billing')}
-                  className="w-full h-8 rounded-xl bg-nexus-amber/10 border border-nexus-amber/20 text-nexus-amber hover:bg-nexus-amber/20 text-[10px] font-black uppercase tracking-widest gap-2"
+                  className="w-full h-8 rounded-xl bg-nexus-amber/10 border border-nexus-amber/20 text-nexus-amber hover:bg-nexus-amber/20 text-meta font-black uppercase tracking-widest gap-2"
                 >
                   <Crown className="h-3 w-3" /> UPGRADE
                 </Button>
@@ -311,15 +311,15 @@ export function AppSidebar() {
                   {user.user_metadata?.avatar_url ? (
                     <img src={user.user_metadata.avatar_url} alt="" className="h-9 w-9 rounded-xl object-cover border border-white/10" referrerPolicy="no-referrer" />
                   ) : (
-                    <div className="h-9 w-9 rounded-xl nexus-gradient-bg flex items-center justify-center text-xs font-black text-primary-foreground shadow-sm">
+                    <div className="h-9 w-9 rounded-xl nexus-gradient-bg flex items-center justify-center text-meta font-black text-primary-foreground shadow-sm">
                       {(wsInfo?.userName?.[0] || user.email?.[0] || 'U').toUpperCase()}
                     </div>
                   )}
                   <div className="absolute -bottom-1 -right-1 h-3 w-3 rounded-full bg-nexus-emerald border-2 border-background shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-black text-foreground uppercase tracking-tight truncate">{wsInfo?.userName || 'Operador'}</p>
-                  <p className="text-[10px] font-medium text-muted-foreground truncate">{user.email}</p>
+                  <p className="text-meta font-black text-foreground uppercase tracking-tight truncate">{wsInfo?.userName || 'Operador'}</p>
+                  <p className="text-meta font-medium text-muted-foreground truncate">{user.email}</p>
                 </div>
                 <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-xl" onClick={signOut} aria-label="Sair da conta">
                   <LogOut className="h-4 w-4" />
@@ -342,7 +342,7 @@ export function AppSidebar() {
           variant="ghost"
           size="sm"
           onClick={toggleSidebar}
-          className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground text-xs h-8"
+          className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground text-meta h-8"
           aria-label={collapsed ? "Expandir sidebar" : "Recolher sidebar"}
         >
           {collapsed ? <PanelLeft className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}

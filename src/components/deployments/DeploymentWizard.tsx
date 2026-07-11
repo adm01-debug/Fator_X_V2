@@ -46,7 +46,7 @@ export function DeploymentWizard({ agentName, isOpen, onOpenChange, onDeploy }: 
             </div>
             <DialogTitle className="text-2xl font-black font-heading">Pipeline de Implantação</DialogTitle>
           </div>
-          <DialogDescription className="text-sm font-medium">
+          <DialogDescription className="text-body-sm font-medium">
             Promovendo <span className="text-foreground font-bold">{agentName}</span> através do funil industrial de entrega.
           </DialogDescription>
         </DialogHeader>
@@ -57,7 +57,7 @@ export function DeploymentWizard({ agentName, isOpen, onOpenChange, onDeploy }: 
             {[1, 2, 3].map(i => (
               <div key={i} className="flex items-center">
                 <div className={cn(
-                  "h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-500",
+                  "h-8 w-8 rounded-full flex items-center justify-center text-meta font-bold transition-all duration-500",
                   step >= i ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "bg-muted text-muted-foreground"
                 )}>
                   {step > i ? <CheckCircle2 className="h-4 w-4" /> : i}
@@ -69,7 +69,7 @@ export function DeploymentWizard({ agentName, isOpen, onOpenChange, onDeploy }: 
 
           {step === 1 && (
             <div className="space-y-4 animate-in fade-in slide-in-from-right-4">
-              <p className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-4">Selecione o Ambiente de Destino</p>
+              <p className="text-meta font-black uppercase tracking-widest text-muted-foreground mb-4">Selecione o Ambiente de Destino</p>
               <div className="grid grid-cols-2 gap-4">
                 <button 
                   onClick={() => setTargetEnv('staging')}
@@ -79,8 +79,8 @@ export function DeploymentWizard({ agentName, isOpen, onOpenChange, onDeploy }: 
                   )}
                 >
                   <ShieldCheck className={cn("h-10 w-10 mb-3", targetEnv === 'staging' ? "text-primary" : "text-muted-foreground")} />
-                  <span className="font-bold text-sm">Staging</span>
-                  <span className="text-[10px] uppercase font-black opacity-50 mt-1">Validação IA</span>
+                  <span className="font-bold text-body-sm">Staging</span>
+                  <span className="text-meta uppercase font-black opacity-50 mt-1">Validação IA</span>
                 </button>
                 <button 
                   onClick={() => setTargetEnv('production')}
@@ -90,8 +90,8 @@ export function DeploymentWizard({ agentName, isOpen, onOpenChange, onDeploy }: 
                   )}
                 >
                   <Rocket className={cn("h-10 w-10 mb-3", targetEnv === 'production' ? "text-nexus-emerald" : "text-muted-foreground")} />
-                  <span className="font-bold text-sm">Produção</span>
-                  <span className="text-[10px] uppercase font-black opacity-50 mt-1">Live Ops</span>
+                  <span className="font-bold text-body-sm">Produção</span>
+                  <span className="text-meta uppercase font-black opacity-50 mt-1">Live Ops</span>
                 </button>
               </div>
             </div>
@@ -99,7 +99,7 @@ export function DeploymentWizard({ agentName, isOpen, onOpenChange, onDeploy }: 
 
           {step === 2 && (
             <div className="space-y-4 animate-in fade-in slide-in-from-right-4">
-              <p className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-4">Checklist de Integridade</p>
+              <p className="text-meta font-black uppercase tracking-widest text-muted-foreground mb-4">Checklist de Integridade</p>
               <div className="space-y-3">
                 {[
                   { label: "Verificação de Guardrails", status: "Passou", icon: ShieldCheck },
@@ -109,9 +109,9 @@ export function DeploymentWizard({ agentName, isOpen, onOpenChange, onDeploy }: 
                   <div key={i} className="flex items-center justify-between p-4 rounded-2xl bg-secondary/30 border border-border/20">
                     <div className="flex items-center gap-3">
                       <item.icon className="h-4 w-4 text-nexus-emerald" />
-                      <span className="text-xs font-bold text-foreground">{item.label}</span>
+                      <span className="text-meta font-bold text-foreground">{item.label}</span>
                     </div>
-                    <Badge className="bg-nexus-emerald/10 text-nexus-emerald border-none text-[10px] font-black">{item.status}</Badge>
+                    <Badge className="bg-nexus-emerald/10 text-nexus-emerald border-none text-meta font-black">{item.status}</Badge>
                   </div>
                 ))}
               </div>
@@ -124,7 +124,7 @@ export function DeploymentWizard({ agentName, isOpen, onOpenChange, onDeploy }: 
                 <AlertTriangle className="h-8 w-8 text-nexus-amber" />
               </div>
               <h4 className="text-lg font-bold">Confirmação Final</h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-body-sm text-muted-foreground leading-relaxed">
                 Você está prestes a implantar a versão <span className="font-bold text-primary">v2.4.1</span> em <span className="font-black text-foreground uppercase tracking-widest">{targetEnv}</span>. 
                 Isso afetará todos os canais conectados.
               </p>
@@ -134,7 +134,7 @@ export function DeploymentWizard({ agentName, isOpen, onOpenChange, onDeploy }: 
 
         <DialogFooter className="gap-2">
           {step > 1 && (
-            <Button variant="ghost" onClick={handlePrev} className="rounded-xl font-bold uppercase text-[10px] tracking-widest">
+            <Button variant="ghost" onClick={handlePrev} className="rounded-xl font-bold uppercase text-meta tracking-widest">
               Voltar
             </Button>
           )}

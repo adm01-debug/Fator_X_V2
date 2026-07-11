@@ -68,12 +68,12 @@ export function Bitrix24Connect() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-bold text-foreground">Bitrix24 CRM</span>
+              <span className="text-body-sm font-bold text-foreground">Bitrix24 CRM</span>
               <Badge variant={connected ? 'default' : 'outline'} className={`text-[9px] uppercase tracking-widest font-black ${connected ? 'bg-nexus-emerald/20 text-nexus-emerald border-nexus-emerald/30' : ''}`}>
                 {connected ? '● Active' : 'Disconnected'}
               </Badge>
             </div>
-            {domain && <span className="text-[10px] font-mono text-muted-foreground">{domain}</span>}
+            {domain && <span className="text-meta font-mono text-muted-foreground">{domain}</span>}
           </div>
         </div>
 
@@ -84,7 +84,7 @@ export function Bitrix24Connect() {
               size="sm" 
               onClick={handleTest} 
               disabled={testing}
-              className="h-8 rounded-xl border-border/40 text-[10px] font-bold uppercase tracking-wider"
+              className="h-8 rounded-xl border-border/40 text-meta font-bold uppercase tracking-wider"
             >
               {testing ? <RefreshCw className="w-3 h-3 mr-1.5 animate-spin" /> : <ShieldCheck className="w-3 h-3 mr-1.5 text-nexus-emerald" />}
               Testar API
@@ -94,7 +94,7 @@ export function Bitrix24Connect() {
             onClick={connected ? undefined : handleConnect} 
             variant={connected ? 'ghost' : 'default'} 
             size="sm"
-            className={`h-8 rounded-xl text-[10px] font-bold uppercase tracking-wider ${connected ? 'text-muted-foreground hover:text-destructive hover:bg-destructive/5' : 'nexus-gradient-bg text-primary-foreground'}`}
+            className={`h-8 rounded-xl text-meta font-bold uppercase tracking-wider ${connected ? 'text-muted-foreground hover:text-destructive hover:bg-destructive/5' : 'nexus-gradient-bg text-primary-foreground'}`}
           >
             {connected ? <><Unlink className="w-3 h-3 mr-1.5" /> Disconnect</> : <><ExternalLink className="w-3 h-3 mr-1.5" /> Connect</>}
           </Button>
@@ -105,11 +105,11 @@ export function Bitrix24Connect() {
         <div className="pt-3 border-t border-border/20 grid grid-cols-2 gap-4">
           <div className="flex flex-col">
             <span className="text-[9px] text-muted-foreground uppercase font-black tracking-widest">Protocol</span>
-            <span className="text-[10px] font-bold text-foreground">OAuth 2.0 (REST)</span>
+            <span className="text-meta font-bold text-foreground">OAuth 2.0 (REST)</span>
           </div>
           <div className="flex flex-col">
             <span className="text-[9px] text-muted-foreground uppercase font-black tracking-widest">Scope</span>
-            <span className="text-[10px] font-bold text-foreground">CRM, User, Entity</span>
+            <span className="text-meta font-bold text-foreground">CRM, User, Entity</span>
           </div>
         </div>
       )}

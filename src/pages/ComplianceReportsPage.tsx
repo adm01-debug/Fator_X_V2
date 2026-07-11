@@ -213,15 +213,15 @@ export default function ComplianceReportsPage() {
       />
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Frameworks disponíveis</div><div className="text-2xl font-bold mt-1">{frameworks.length}</div></CardContent></Card>
-        <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Relatórios gerados</div><div className="text-2xl font-bold mt-1">{stats.total}</div></CardContent></Card>
-        <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Publicados</div><div className="text-2xl font-bold mt-1 text-nexus-green">{stats.published}</div></CardContent></Card>
-        <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Score médio</div><div className="text-2xl font-bold mt-1">{stats.avgScore}%</div></CardContent></Card>
+        <Card><CardContent className="p-4"><div className="text-meta text-muted-foreground">Frameworks disponíveis</div><div className="text-2xl font-bold mt-1">{frameworks.length}</div></CardContent></Card>
+        <Card><CardContent className="p-4"><div className="text-meta text-muted-foreground">Relatórios gerados</div><div className="text-2xl font-bold mt-1">{stats.total}</div></CardContent></Card>
+        <Card><CardContent className="p-4"><div className="text-meta text-muted-foreground">Publicados</div><div className="text-2xl font-bold mt-1 text-nexus-green">{stats.published}</div></CardContent></Card>
+        <Card><CardContent className="p-4"><div className="text-meta text-muted-foreground">Score médio</div><div className="text-2xl font-bold mt-1">{stats.avgScore}%</div></CardContent></Card>
       </div>
 
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm flex items-center gap-2"><FileCheck2 className="h-4 w-4" />Relatórios do workspace</CardTitle>
+          <CardTitle className="text-body-sm flex items-center gap-2"><FileCheck2 className="h-4 w-4" />Relatórios do workspace</CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -229,7 +229,7 @@ export default function ComplianceReportsPage() {
           ) : reports.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               <ShieldCheck className="h-10 w-10 mx-auto mb-2 opacity-50" />
-              <div className="text-sm">Nenhum relatório ainda. Gere o primeiro acima.</div>
+              <div className="text-body-sm">Nenhum relatório ainda. Gere o primeiro acima.</div>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -240,22 +240,22 @@ export default function ComplianceReportsPage() {
                 return (
                   <Card key={r.id} className="hover:shadow-md transition-shadow">
                     <CardHeader className="pb-3">
-                      <CardTitle className="text-sm flex items-center gap-2">
+                      <CardTitle className="text-body-sm flex items-center gap-2">
                         <ShieldCheck className={`h-4 w-4 ${score >= 95 ? "text-nexus-green" : score >= 80 ? "text-nexus-amber" : "text-nexus-red"}`} />
                         <span className="truncate">{r.name}</span>
                         {r.status === "published" && <BadgeCheck className="h-4 w-4 text-nexus-green ml-auto" />}
                       </CardTitle>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-2 text-meta text-muted-foreground">
                         <Badge variant="outline">{fw?.code ?? "—"}</Badge>
                         <Badge variant={r.status === "published" ? "default" : "secondary"}>{r.status}</Badge>
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-3">
                       <div>
-                        <div className="flex justify-between text-xs mb-1.5"><span>Score</span><span className="font-bold">{score}%</span></div>
+                        <div className="flex justify-between text-meta mb-1.5"><span>Score</span><span className="font-bold">{score}%</span></div>
                         <Progress value={score} />
                       </div>
-                      <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div className="grid grid-cols-2 gap-2 text-meta">
                         <div className="p-2 bg-nexus-green/10 rounded">
                           <div className="text-muted-foreground">Passando</div>
                           <div className="font-bold text-nexus-green">{r.passed_controls}/{r.total_controls}</div>
@@ -265,7 +265,7 @@ export default function ComplianceReportsPage() {
                           <div className={`font-bold ${failing > 0 ? "text-nexus-red" : ""}`}>{failing}</div>
                         </div>
                       </div>
-                      <div className="text-[11px] text-muted-foreground flex items-center gap-1.5">
+                      <div className="text-meta text-muted-foreground flex items-center gap-1.5">
                         <Calendar className="h-3 w-3" />
                         {r.period_start} → {r.period_end}
                       </div>
@@ -295,13 +295,13 @@ export default function ComplianceReportsPage() {
           </SheetHeader>
           {activeReport && (
             <div className="space-y-4 mt-4">
-              <div className="grid grid-cols-3 gap-2 text-xs">
+              <div className="grid grid-cols-3 gap-2 text-meta">
                 <Card><CardContent className="p-3"><div className="text-muted-foreground">Score</div><div className="text-xl font-bold">{Number(activeReport.score ?? 0)}%</div></CardContent></Card>
                 <Card><CardContent className="p-3"><div className="text-muted-foreground">Passando</div><div className="text-xl font-bold text-nexus-green">{activeReport.passed_controls}</div></CardContent></Card>
                 <Card><CardContent className="p-3"><div className="text-muted-foreground">Falhando</div><div className="text-xl font-bold text-nexus-red">{activeReport.failed_controls}</div></CardContent></Card>
               </div>
               <div className="space-y-2">
-                <h3 className="text-sm font-semibold">Evidências por controle</h3>
+                <h3 className="text-body-sm font-semibold">Evidências por controle</h3>
                 <div className="space-y-2">
                   {evidence.map((ev) => {
                     const ctrl = controlById.get(ev.control_id);
@@ -311,11 +311,11 @@ export default function ComplianceReportsPage() {
                         <div className="mt-0.5">{statusIcon(ev.status)}</div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="text-[10px]">{ctrl?.code}</Badge>
-                            <span className="text-sm font-medium truncate">{ctrl?.title}</span>
+                            <Badge variant="outline" className="text-meta">{ctrl?.code}</Badge>
+                            <span className="text-body-sm font-medium truncate">{ctrl?.title}</span>
                           </div>
-                          <div className="text-xs text-muted-foreground mt-1">{ctrl?.description}</div>
-                          <div className={`text-[11px] mt-1 ${statusColor(ev.status)}`}>
+                          <div className="text-meta text-muted-foreground mt-1">{ctrl?.description}</div>
+                          <div className={`text-meta mt-1 ${statusColor(ev.status)}`}>
                             {ev.status === "passed" && `✓ ${checkCount} registros encontrados`}
                             {ev.status === "failed" && `✗ Sem evidências (${checkCount})`}
                             {ev.status === "pending" && "⏳ Verificação manual necessária"}

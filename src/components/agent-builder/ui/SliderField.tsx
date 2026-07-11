@@ -17,8 +17,8 @@ export function SliderField({ label, value, onChange, min = 0, max = 100, step =
   return (
     <div className={cn('space-y-2', className)}>
       <div className="flex items-center justify-between">
-        <label className="text-xs font-medium text-foreground">{label}</label>
-        <span className="text-xs font-mono text-primary font-semibold">
+        <label className="text-meta font-medium text-foreground">{label}</label>
+        <span className="text-meta font-mono text-primary font-semibold">
           {value}{unit}
         </span>
       </div>
@@ -30,7 +30,7 @@ export function SliderField({ label, value, onChange, min = 0, max = 100, step =
         step={step}
         className="w-full"
       />
-      {description && <p className="text-[11px] text-muted-foreground">{description}</p>}
+      {description && <p className="text-meta text-muted-foreground">{description}</p>}
     </div>
   );
 }

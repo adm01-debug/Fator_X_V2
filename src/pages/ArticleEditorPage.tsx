@@ -124,9 +124,9 @@ export default function ArticleEditorPage() {
             </Select>
           </div>
           <div className="grid grid-cols-3 gap-4">
-            <div className="nexus-card text-center"><p className="text-2xl font-bold">{article.view_count}</p><p className="text-xs text-muted-foreground">Visualizações</p></div>
-            <div className="nexus-card text-center"><p className="text-2xl font-bold text-nexus-emerald">{article.helpful_count}</p><p className="text-xs text-muted-foreground">Úteis</p></div>
-            <div className="nexus-card text-center"><p className="text-2xl font-bold text-destructive">{article.not_helpful_count}</p><p className="text-xs text-muted-foreground">Não úteis</p></div>
+            <div className="nexus-card text-center"><p className="text-2xl font-bold">{article.view_count}</p><p className="text-meta text-muted-foreground">Visualizações</p></div>
+            <div className="nexus-card text-center"><p className="text-2xl font-bold text-nexus-emerald">{article.helpful_count}</p><p className="text-meta text-muted-foreground">Úteis</p></div>
+            <div className="nexus-card text-center"><p className="text-2xl font-bold text-destructive">{article.not_helpful_count}</p><p className="text-meta text-muted-foreground">Não úteis</p></div>
           </div>
         </TabsContent>
       </Tabs>
@@ -140,7 +140,7 @@ function VersionsTab({ articleId, currentTitle, currentHtml }: { articleId: stri
 
   const selectedVersion = versions.find((v: { id: string }) => v.id === selected);
 
-  if (versions.length === 0) return <div className="text-center text-sm text-muted-foreground py-12">Sem versões anteriores. Edite e salve para criar histórico.</div>;
+  if (versions.length === 0) return <div className="text-center text-body-sm text-muted-foreground py-12">Sem versões anteriores. Edite e salve para criar histórico.</div>;
 
   return (
     <div className="space-y-4">
@@ -158,7 +158,7 @@ function VersionsTab({ articleId, currentTitle, currentHtml }: { articleId: stri
       {selectedVersion && (
         <>
           <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">Comparando v{(selectedVersion as { version: number }).version} → versão atual</p>
+            <p className="text-body-sm text-muted-foreground">Comparando v{(selectedVersion as { version: number }).version} → versão atual</p>
           </div>
           <ArticleDiffViewer
             oldText={`${(selectedVersion as { title: string }).title}\n\n${stripHtml((selectedVersion as { content_html?: string }).content_html ?? "")}`}
@@ -202,13 +202,13 @@ function TranslationsTab({ articleId, sourceLanguage }: { articleId: string; sou
       </div>
       <div className="space-y-2">
         {translations.length === 0 ? (
-          <div className="text-center text-sm text-muted-foreground py-12">Nenhuma tradução. Use a IA para traduzir.</div>
+          <div className="text-center text-body-sm text-muted-foreground py-12">Nenhuma tradução. Use a IA para traduzir.</div>
         ) : translations.map((t: { id: string; target_language: string; translated_title: string; translation_method: string; reviewed: boolean; updated_at: string }) => (
           <div key={t.id} className="nexus-card flex items-center gap-4">
             <Languages className="h-5 w-5 text-primary" />
             <div className="flex-1">
               <p className="font-medium">{t.translated_title}</p>
-              <p className="text-xs text-muted-foreground">{t.target_language} • {t.translation_method} • {new Date(t.updated_at).toLocaleString("pt-BR")}</p>
+              <p className="text-meta text-muted-foreground">{t.target_language} • {t.translation_method} • {new Date(t.updated_at).toLocaleString("pt-BR")}</p>
             </div>
             <Badge variant={t.reviewed ? "default" : "secondary"}>{t.reviewed ? "Revisada" : "Auto"}</Badge>
             {!t.reviewed && <Button size="sm" variant="ghost" onClick={async () => { await markTranslationReviewed(t.id); qc.invalidateQueries({ queryKey: ["translations", articleId] }); toast.success("Marcada como revisada"); }}>Marcar como revisada</Button>}

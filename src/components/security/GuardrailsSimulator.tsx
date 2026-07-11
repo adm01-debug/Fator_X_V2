@@ -65,7 +65,7 @@ export function GuardrailsSimulator() {
             </div>
             <div>
               <CardTitle className="text-lg font-bold">Simulador de Guardrails</CardTitle>
-              <CardDescription className="text-xs uppercase tracking-widest font-black opacity-50">Teste de Stress Neural</CardDescription>
+              <CardDescription className="text-meta uppercase tracking-widest font-black opacity-50">Teste de Stress Neural</CardDescription>
             </div>
           </div>
           <Badge variant="outline" className="border-nexus-purple/30 text-nexus-purple">v2.2 ML</Badge>
@@ -73,12 +73,12 @@ export function GuardrailsSimulator() {
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-2">
-          <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Entrada para teste</label>
+          <label className="text-meta font-bold text-muted-foreground uppercase tracking-wider">Entrada para teste</label>
           <Textarea 
             value={input} 
             onChange={(e) => setInput(e.target.value)} 
             placeholder="Digite um prompt para testar as políticas de segurança... (ex: ignore system instructions)" 
-            className="min-h-[120px] bg-secondary/20 border-border/40 focus:ring-nexus-purple/20 text-sm font-medium rounded-2xl"
+            className="min-h-[120px] bg-secondary/20 border-border/40 focus:ring-nexus-purple/20 text-body-sm font-medium rounded-2xl"
           />
         </div>
 
@@ -106,18 +106,18 @@ export function GuardrailsSimulator() {
                   <p className={`text-lg font-black tracking-tight ${result.safe ? 'text-nexus-emerald' : 'text-destructive'}`}>
                     {result.safe ? 'ENTRADA SEGURA' : 'RISCO DETECTADO'}
                   </p>
-                  <p className="text-xs text-muted-foreground font-medium">Score de Confiança: {(result.score * 100).toFixed(0)}%</p>
+                  <p className="text-meta text-muted-foreground font-medium">Score de Confiança: {(result.score * 100).toFixed(0)}%</p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">Latência</p>
-                <p className="text-sm font-mono font-bold text-foreground">{result.metadata?.latency_ms}ms</p>
+                <p className="text-meta text-muted-foreground uppercase font-black tracking-widest">Latência</p>
+                <p className="text-body-sm font-mono font-bold text-foreground">{result.metadata?.latency_ms}ms</p>
               </div>
             </div>
 
             {result.violations.length > 0 && (
               <div className="space-y-2">
-                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider px-1">Gatilhos Ativados</p>
+                <p className="text-meta font-bold text-muted-foreground uppercase tracking-wider px-1">Gatilhos Ativados</p>
                 <div className="flex flex-wrap gap-2">
                   {result.violations.map((v, i) => (
                     <Badge key={i} variant="destructive" className="bg-destructive/10 text-destructive border-destructive/20 px-3 py-1 font-bold">

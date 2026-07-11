@@ -106,7 +106,7 @@ export default function BudgetSettingsPage() {
             <div className="space-y-1">
               <div className="flex items-center gap-3">
                 <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Budget & Limits</h1>
-                <Badge className="bg-primary/10 text-primary border-none font-black px-3 py-1 rounded-full text-[10px] tracking-widest uppercase">Guardrails de Gasto</Badge>
+                <Badge className="bg-primary/10 text-primary border-none font-black px-3 py-1 rounded-full text-meta tracking-widest uppercase">Guardrails de Gasto</Badge>
               </div>
               <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Proteção financeira automatizada. Configure limites rígidos e avisos de consumo para evitar surpresas no faturamento LLM.
@@ -120,36 +120,36 @@ export default function BudgetSettingsPage() {
         <div className="grid gap-4 md:grid-cols-2">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Gasto mensal</CardTitle>
+              <CardTitle className="text-body-sm font-medium">Gasto mensal</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="flex items-baseline justify-between">
                 <span className={`text-2xl font-bold ${monthlyColor}`}>
                   ${Number(status.monthly_spend ?? 0).toFixed(2)}
                 </span>
-                <span className="text-sm text-muted-foreground">
+                <span className="text-body-sm text-muted-foreground">
                   / ${Number(status.monthly_limit ?? 0).toFixed(2)}
                 </span>
               </div>
               <Progress value={Math.min(monthlyPct, 100)} className="h-2" />
-              <p className="text-xs text-muted-foreground">{monthlyPct.toFixed(1)}% utilizado</p>
+              <p className="text-meta text-muted-foreground">{monthlyPct.toFixed(1)}% utilizado</p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Gasto diário</CardTitle>
+              <CardTitle className="text-body-sm font-medium">Gasto diário</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="flex items-baseline justify-between">
                 <span className={`text-2xl font-bold ${dailyColor}`}>
                   ${Number(status.daily_spend ?? 0).toFixed(2)}
                 </span>
-                <span className="text-sm text-muted-foreground">
+                <span className="text-body-sm text-muted-foreground">
                   / ${Number(status.daily_limit ?? 0).toFixed(2)}
                 </span>
               </div>
               <Progress value={Math.min(dailyPct, 100)} className="h-2" />
-              <p className="text-xs text-muted-foreground">{dailyPct.toFixed(1)}% utilizado</p>
+              <p className="text-meta text-muted-foreground">{dailyPct.toFixed(1)}% utilizado</p>
             </CardContent>
           </Card>
         </div>
@@ -178,7 +178,7 @@ export default function BudgetSettingsPage() {
               <Badge variant="outline">{threshold}%</Badge>
             </div>
             <Slider value={[threshold]} onValueChange={(v) => setThreshold(v[0])} min={50} max={99} step={5} />
-            <p className="text-xs text-muted-foreground">Ao atingir esta porcentagem, um aviso é emitido.</p>
+            <p className="text-meta text-muted-foreground">Ao atingir esta porcentagem, um aviso é emitido.</p>
           </div>
 
           <div className="flex items-center justify-between rounded-lg border p-4">
@@ -186,7 +186,7 @@ export default function BudgetSettingsPage() {
               <ShieldOff className="h-5 w-5 text-destructive mt-0.5" />
               <div>
                 <Label className="text-base">Bloqueio rígido (hard stop)</Label>
-                <p className="text-sm text-muted-foreground">Ao atingir 100%, bloqueia chamadas e pausa agentes ativos.</p>
+                <p className="text-body-sm text-muted-foreground">Ao atingir 100%, bloqueia chamadas e pausa agentes ativos.</p>
               </div>
             </div>
             <Switch checked={hardStop} onCheckedChange={setHardStop} />
@@ -221,7 +221,7 @@ export default function BudgetSettingsPage() {
         </CardHeader>
         <CardContent>
           {events.length === 0 ? (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground py-6 justify-center">
+            <div className="flex items-center gap-2 text-body-sm text-muted-foreground py-6 justify-center">
               <Info className="h-4 w-4" />
               Nenhum evento registrado ainda.
             </div>
@@ -233,12 +233,12 @@ export default function BudgetSettingsPage() {
                   <div key={e.id} className="flex items-center justify-between border-b last:border-b-0 py-2">
                     <div className="flex items-center gap-3">
                       <Badge variant={meta.variant}>{meta.text}</Badge>
-                      <span className="text-sm">
+                      <span className="text-body-sm">
                         ${Number(e.period_spend_usd).toFixed(2)} / ${Number(e.period_limit_usd).toFixed(2)} ({e.pct_used}%)
                       </span>
-                      <span className="text-xs text-muted-foreground">{e.period === "daily" ? "diário" : "mensal"}</span>
+                      <span className="text-meta text-muted-foreground">{e.period === "daily" ? "diário" : "mensal"}</span>
                     </div>
-                    <span className="text-xs text-muted-foreground">{new Date(e.triggered_at).toLocaleString("pt-BR")}</span>
+                    <span className="text-meta text-muted-foreground">{new Date(e.triggered_at).toLocaleString("pt-BR")}</span>
                   </div>
                 );
               })}

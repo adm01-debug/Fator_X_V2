@@ -45,11 +45,11 @@ export default function EmailCalendarTriggersPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-sm">{t.name}</span>
-                    <Badge variant="outline" className="text-[10px]">{t.provider}</Badge>
-                    <Badge variant="outline" className="text-[10px]"><Filter className="h-2.5 w-2.5 mr-0.5" />{t.filter}</Badge>
+                    <span className="font-semibold text-body-sm">{t.name}</span>
+                    <Badge variant="outline" className="text-meta">{t.provider}</Badge>
+                    <Badge variant="outline" className="text-meta"><Filter className="h-2.5 w-2.5 mr-0.5" />{t.filter}</Badge>
                   </div>
-                  <div className="text-xs text-muted-foreground mt-1">→ {t.agent} · {t.runs.toLocaleString("pt-BR")} execuções</div>
+                  <div className="text-meta text-muted-foreground mt-1">→ {t.agent} · {t.runs.toLocaleString("pt-BR")} execuções</div>
                 </div>
                 <Switch checked={t.enabled} onCheckedChange={() => toggle(t.id)} />
                 <Button variant="ghost" size="sm" onClick={() => remove(t.id)}><Trash2 className="h-4 w-4" /></Button>
@@ -60,23 +60,23 @@ export default function EmailCalendarTriggersPage() {
 
         <TabsContent value="new">
           <Card>
-            <CardHeader><CardTitle className="text-sm">Configurar novo trigger</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-body-sm">Configurar novo trigger</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <button className="p-4 rounded-lg border-2 border-primary bg-primary/5 text-left">
                   <Mail className="h-6 w-6 text-nexus-blue mb-2" />
-                  <div className="text-sm font-semibold">Email recebido</div>
-                  <div className="text-[11px] text-muted-foreground mt-0.5">IMAP/Gmail/Outlook polling</div>
+                  <div className="text-body-sm font-semibold">Email recebido</div>
+                  <div className="text-meta text-muted-foreground mt-0.5">IMAP/Gmail/Outlook polling</div>
                 </button>
                 <button className="p-4 rounded-lg border-2 border-border/40 hover:border-primary/40 text-left">
                   <Calendar className="h-6 w-6 text-nexus-purple mb-2" />
-                  <div className="text-sm font-semibold">Evento de calendário</div>
-                  <div className="text-[11px] text-muted-foreground mt-0.5">Google/Outlook calendar webhooks</div>
+                  <div className="text-body-sm font-semibold">Evento de calendário</div>
+                  <div className="text-meta text-muted-foreground mt-0.5">Google/Outlook calendar webhooks</div>
                 </button>
               </div>
-              <div><Label className="text-xs">Nome do trigger</Label><Input placeholder="Ex: Triagem de tickets" className="mt-1" /></div>
-              <div><Label className="text-xs">Filtro (Gmail query syntax)</Label><Input placeholder="from:cliente@empresa.com is:unread" className="mt-1 font-mono" /></div>
-              <div><Label className="text-xs">Agente que processa</Label><Input placeholder="Selecione um agente" className="mt-1" /></div>
+              <div><Label className="text-meta">Nome do trigger</Label><Input placeholder="Ex: Triagem de tickets" className="mt-1" /></div>
+              <div><Label className="text-meta">Filtro (Gmail query syntax)</Label><Input placeholder="from:cliente@empresa.com is:unread" className="mt-1 font-mono" /></div>
+              <div><Label className="text-meta">Agente que processa</Label><Input placeholder="Selecione um agente" className="mt-1" /></div>
               <Button className="w-full" onClick={() => toast.success("Trigger criado")}><Plus className="h-4 w-4 mr-2" />Criar trigger</Button>
             </CardContent>
           </Card>

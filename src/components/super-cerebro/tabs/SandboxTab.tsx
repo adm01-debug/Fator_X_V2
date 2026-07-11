@@ -79,21 +79,21 @@ export function SandboxTab() {
     <div className="space-y-6">
       {/* Input */}
       <div className="bg-card rounded-xl border border-border p-6">
-        <h3 className="text-sm font-bold text-foreground mb-3">🧪 Perguntas para testar</h3>
-        <p className="text-xs text-muted-foreground mb-3">Uma pergunta por linha. O cérebro responderá cada uma.</p>
+        <h3 className="text-body-sm font-bold text-foreground mb-3">🧪 Perguntas para testar</h3>
+        <p className="text-meta text-muted-foreground mb-3">Uma pergunta por linha. O cérebro responderá cada uma.</p>
         <textarea
           value={questions}
           onChange={(e) => setQuestions(e.target.value)}
           placeholder={`Qual fornecedor de canetas atende SP com prazo < 5 dias?\nQuem é o vendedor responsável pela empresa X?\nQual o prazo médio de entrega do fornecedor Y?`}
           rows={6}
-          className="w-full bg-background border border-border rounded-lg p-3 text-sm text-foreground placeholder-muted-foreground resize-none focus:border-primary focus:outline-none"
+          className="w-full bg-background border border-border rounded-lg p-3 text-body-sm text-foreground placeholder-muted-foreground resize-none focus:border-primary focus:outline-none"
         />
         <div className="flex items-center justify-between mt-3">
-          <span className="text-xs text-muted-foreground">{questions.split('\n').filter(l => l.trim()).length} perguntas</span>
+          <span className="text-meta text-muted-foreground">{questions.split('\n').filter(l => l.trim()).length} perguntas</span>
           <button
             onClick={runTest}
             disabled={isRunning || !questions.trim()}
-            className="px-4 py-2 text-sm text-foreground bg-gradient-to-r from-primary to-nexus-emerald rounded-lg hover:opacity-90 disabled:opacity-50 transition-opacity"
+            className="px-4 py-2 text-body-sm text-foreground bg-gradient-to-r from-primary to-nexus-emerald rounded-lg hover:opacity-90 disabled:opacity-50 transition-opacity"
           >
             {isRunning ? `⏳ Testando... ${progress}%` : '▶️ Executar Teste'}
           </button>
@@ -117,7 +117,7 @@ export function SandboxTab() {
           ].map(m => (
             <div key={m.label} className="bg-card rounded-xl border border-border p-4 text-center">
               <div className="text-2xl font-bold" style={{ color: m.color }}>{m.value}</div>
-              <div className="text-xs text-muted-foreground mt-1">{m.label}</div>
+              <div className="text-meta text-muted-foreground mt-1">{m.label}</div>
             </div>
           ))}
         </div>
@@ -127,7 +127,7 @@ export function SandboxTab() {
       {results.length > 0 && (
         <div className="bg-card rounded-xl border border-border overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-body-sm">
               <thead>
                 <tr className="border-b border-border">
                   <th className="text-left p-3 text-muted-foreground font-medium">#</th>
@@ -145,7 +145,7 @@ export function SandboxTab() {
                     <td className="p-3 text-foreground max-w-[200px] truncate">{r.question}</td>
                     <td className="p-3 text-foreground max-w-[300px] truncate">{r.answer}</td>
                     <td className="p-3 text-center">
-                      <span className={`px-2 py-0.5 rounded-full text-xs ${r.confidence > 0.7 ? 'bg-nexus-emerald/10 text-nexus-emerald' : r.confidence > 0.4 ? 'bg-nexus-amber/10 text-nexus-amber' : 'bg-destructive/10 text-destructive'}`}>
+                      <span className={`px-2 py-0.5 rounded-full text-meta ${r.confidence > 0.7 ? 'bg-nexus-emerald/10 text-nexus-emerald' : r.confidence > 0.4 ? 'bg-nexus-amber/10 text-nexus-amber' : 'bg-destructive/10 text-destructive'}`}>
                         {Math.round(r.confidence * 100)}%
                       </span>
                     </td>

@@ -65,16 +65,16 @@ export function InviteMemberDialog({ onInvited }: InviteMemberDialogProps) {
         </DialogHeader>
         <div className="space-y-4 mt-2">
           <div className="space-y-1.5">
-            <Label className="text-xs">Email *</Label>
+            <Label className="text-meta">Email *</Label>
             <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="membro@empresa.com" className={`bg-secondary/50 ${errors.email ? 'border-destructive' : ''}`} />
-            {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
+            {errors.email && <p className="text-meta text-destructive">{errors.email}</p>}
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Nome</Label>
+            <Label className="text-meta">Nome</Label>
             <Input value={name} onChange={e => setName(e.target.value)} placeholder="Nome do membro" className="bg-secondary/50" />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Papel</Label>
+            <Label className="text-meta">Papel</Label>
             <Select value={role} onValueChange={(v) => setRole(v as typeof role)}>
               <SelectTrigger className="bg-secondary/50"><SelectValue /></SelectTrigger>
               <SelectContent>

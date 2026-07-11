@@ -66,7 +66,7 @@ export function PromptVariantDiffDialog({
                   </>
                 )}
               </p>
-              <div className="flex items-center gap-3 text-xs font-mono">
+              <div className="flex items-center gap-3 text-meta font-mono">
                 <span className="text-nexus-emerald">+{stats.added} adicionadas</span>
                 <span className="text-destructive">−{stats.removed} removidas</span>
                 <span className="text-muted-foreground">{stats.same} inalteradas</span>

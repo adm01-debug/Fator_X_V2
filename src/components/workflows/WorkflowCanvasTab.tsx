@@ -83,14 +83,14 @@ export function WorkflowCanvasTab() {
       </InfoHint>
 
       <div className="flex items-center gap-3 flex-wrap">
-        <Input value={canvasName} onChange={(e) => setCanvasName(e.target.value)} placeholder="Nome do pipeline" className="max-w-[220px] bg-secondary/50 text-sm" />
+        <Input value={canvasName} onChange={(e) => setCanvasName(e.target.value)} placeholder="Nome do pipeline" className="max-w-[220px] bg-secondary/50 text-body-sm" />
         <WorkflowTemplatesGallery />
         <Button size="sm" className="gap-1.5" onClick={handleSave} disabled={persistence.saving}>
           {persistence.saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
           {persistence.selectedId ? 'Atualizar' : 'Salvar'}
         </Button>
         {persistence.selectedId && (
-          <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+          <span className="text-meta text-muted-foreground flex items-center gap-1">
             {autoSaving ? (
               <><Loader2 className="h-3 w-3 animate-spin" /> Salvando...</>
             ) : autosavedAt ? (
@@ -103,7 +103,7 @@ export function WorkflowCanvasTab() {
 
         {persistence.workflows.length > 0 && (
           <Select onValueChange={handleLoad} value={persistence.selectedId ?? undefined}>
-            <SelectTrigger className="max-w-[220px] text-sm">
+            <SelectTrigger className="max-w-[220px] text-body-sm">
               <FolderOpen className="h-3.5 w-3.5 mr-1.5 shrink-0" />
               <SelectValue placeholder="Carregar workflow..." />
             </SelectTrigger>
@@ -117,7 +117,7 @@ export function WorkflowCanvasTab() {
 
         {persistence.selectedId && (
           <>
-            <Badge variant="outline" className="text-[11px] border-primary/30 text-primary">Salvo no banco</Badge>
+            <Badge variant="outline" className="text-meta border-primary/30 text-primary">Salvo no banco</Badge>
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button size="sm" variant="ghost" className="gap-1.5 text-destructive hover:text-destructive">

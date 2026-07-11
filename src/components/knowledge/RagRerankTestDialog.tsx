@@ -57,7 +57,7 @@ export function RagRerankTestDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-1.5 text-xs">
+        <Button variant="outline" size="sm" className="gap-1.5 text-meta">
           <FlaskConical className="h-3.5 w-3.5" />
           Testar Rerank
         </Button>
@@ -89,7 +89,7 @@ export function RagRerankTestDialog() {
               value={chunksRaw}
               onChange={(e) => setChunksRaw(e.target.value)}
               rows={6}
-              className="bg-secondary/50 text-xs font-mono resize-none"
+              className="bg-secondary/50 text-meta font-mono resize-none"
             />
           </div>
 
@@ -110,19 +110,19 @@ export function RagRerankTestDialog() {
             <div className="space-y-2 pt-2 border-t border-border">
               <div className="flex items-center justify-between">
                 <Label>Resultados Rerankeados</Label>
-                {method && <span className="text-[11px] text-muted-foreground">método: <code>{method}</code></span>}
+                {method && <span className="text-meta text-muted-foreground">método: <code>{method}</code></span>}
               </div>
               {results.length === 0 ? (
-                <p className="text-xs text-muted-foreground italic">Nenhum resultado retornado.</p>
+                <p className="text-meta text-muted-foreground italic">Nenhum resultado retornado.</p>
               ) : (
                 <div className="space-y-2">
                   {results.map((r, i) => (
                     <div key={i} className="p-3 rounded-lg bg-secondary/30 border border-border/50">
                       <div className="flex items-start justify-between gap-3">
-                        <p className="text-xs flex-1">{String(r.chunk.content ?? "")}</p>
+                        <p className="text-meta flex-1">{String(r.chunk.content ?? "")}</p>
                         <div className="flex items-center gap-1 shrink-0">
                           {i === 0 && <Trophy className="h-3.5 w-3.5 text-nexus-amber" />}
-                          <span className="text-[11px] font-mono text-primary">
+                          <span className="text-meta font-mono text-primary">
                             {(r.relevance_score * 100).toFixed(1)}%
                           </span>
                         </div>

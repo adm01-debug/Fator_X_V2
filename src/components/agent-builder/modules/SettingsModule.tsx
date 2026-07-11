@@ -85,8 +85,8 @@ export function SettingsModule() {
             {securityHealth >= 80 ? <ShieldCheck className="h-5 w-5 text-nexus-emerald" /> : <ShieldAlert className="h-5 w-5 text-nexus-amber" />}
           </div>
           <div>
-            <p className="text-xs font-bold">Security Score: {securityHealth.toFixed(0)}%</p>
-            <p className="text-[10px] text-muted-foreground">Saúde das chaves de integração.</p>
+            <p className="text-meta font-bold">Security Score: {securityHealth.toFixed(0)}%</p>
+            <p className="text-meta text-muted-foreground">Saúde das chaves de integração.</p>
           </div>
         </div>
         <div className="rounded-xl border border-border bg-card p-4 flex items-center gap-4">
@@ -94,8 +94,8 @@ export function SettingsModule() {
             <Lock className="h-5 w-5 text-nexus-blue" />
           </div>
           <div>
-            <p className="text-xs font-bold">AES-256 Storage</p>
-            <p className="text-[10px] text-muted-foreground">Chaves criptografadas no repouso.</p>
+            <p className="text-meta font-bold">AES-256 Storage</p>
+            <p className="text-meta text-muted-foreground">Chaves criptografadas no repouso.</p>
           </div>
         </div>
         <div className="rounded-xl border border-border bg-card p-4 flex items-center gap-4">
@@ -103,8 +103,8 @@ export function SettingsModule() {
             <Key className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <p className="text-xs font-bold">{configuredCount} de {API_KEYS.length}</p>
-            <p className="text-[10px] text-muted-foreground">Integrações prontas para uso.</p>
+            <p className="text-meta font-bold">{configuredCount} de {API_KEYS.length}</p>
+            <p className="text-meta text-muted-foreground">Integrações prontas para uso.</p>
           </div>
         </div>
       </div>
@@ -123,13 +123,13 @@ export function SettingsModule() {
               <div key={key_name} className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-foreground">{label}</p>
-                    <p className="text-[11px] text-muted-foreground">{description}</p>
+                    <p className="text-body-sm font-medium text-foreground">{label}</p>
+                    <p className="text-meta text-muted-foreground">{description}</p>
                   </div>
                   {stored?.saved ? (
-                    <span className="flex items-center gap-1 text-xs text-nexus-emerald"><Check className="h-3.5 w-3.5" /> Configurada</span>
+                    <span className="flex items-center gap-1 text-meta text-nexus-emerald"><Check className="h-3.5 w-3.5" /> Configurada</span>
                   ) : (
-                    <span className="flex items-center gap-1 text-xs text-nexus-amber"><AlertTriangle className="h-3.5 w-3.5" /> Não configurada</span>
+                    <span className="flex items-center gap-1 text-meta text-nexus-amber"><AlertTriangle className="h-3.5 w-3.5" /> Não configurada</span>
                   )}
                 </div>
 
@@ -140,7 +140,7 @@ export function SettingsModule() {
                       value={editValue}
                       onChange={(e) => setEditValue(e.target.value)}
                       placeholder={placeholder}
-                      className="flex-1 rounded-lg border border-border bg-secondary/50 px-3 py-2 text-sm text-foreground"
+                      className="flex-1 rounded-lg border border-border bg-secondary/50 px-3 py-2 text-body-sm text-foreground"
                     />
                     <Button size="sm" onClick={() => saveKey(key_name)} disabled={saving || !editValue}>
                       {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : 'Salvar'}
@@ -149,7 +149,7 @@ export function SettingsModule() {
                   </div>
                 ) : (
                   <div className="flex items-center gap-2">
-                    <code className="flex-1 text-xs text-muted-foreground font-mono bg-secondary/30 px-3 py-2 rounded-lg">
+                    <code className="flex-1 text-meta text-muted-foreground font-mono bg-secondary/30 px-3 py-2 rounded-lg">
                       {stored?.saved ? maskKey(stored.value) : '—'}
                     </code>
                     <Button size="sm" variant="outline" onClick={() => { setEditingKey(key_name); setEditValue(''); }}>
@@ -163,7 +163,7 @@ export function SettingsModule() {
         )}
 
         <div className="mt-4 p-3 rounded-lg bg-primary/5 border border-primary/10">
-          <p className="text-xs text-muted-foreground">
+          <p className="text-meta text-muted-foreground">
             💡 <strong>Dica:</strong> O OpenRouter permite acessar 200+ modelos (Claude, GPT, Gemini, Llama, Mistral...) com uma única API key.
             Recomendado para o Oráculo (Multi-LLM Council). Obtenha em: <a href="https://openrouter.ai" target="_blank" rel="noopener" className="text-primary underline">openrouter.ai</a>
           </p>
@@ -175,8 +175,8 @@ export function SettingsModule() {
       <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-semibold text-foreground">Exportar todos os dados</p>
-            <p className="text-xs text-muted-foreground">Baixar configuração do agente atual em JSON</p>
+            <p className="text-body-sm font-semibold text-foreground">Exportar todos os dados</p>
+            <p className="text-meta text-muted-foreground">Baixar configuração do agente atual em JSON</p>
           </div>
           <button
             onClick={() => {
@@ -188,19 +188,19 @@ export function SettingsModule() {
               URL.revokeObjectURL(url);
               toast.success('Dados exportados!');
             }}
-            className="px-4 py-2 rounded-lg border border-border text-sm text-foreground hover:bg-muted transition-all"
+            className="px-4 py-2 rounded-lg border border-border text-body-sm text-foreground hover:bg-muted transition-all"
           >
             📦 Exportar
           </button>
         </div>
         <div className="border-t border-destructive/20 pt-4 flex items-center justify-between">
           <div>
-            <p className="text-sm font-semibold text-destructive">Resetar agente atual</p>
-            <p className="text-xs text-muted-foreground">Limpar todas as configurações do agente em edição</p>
+            <p className="text-body-sm font-semibold text-destructive">Resetar agente atual</p>
+            <p className="text-meta text-muted-foreground">Limpar todas as configurações do agente em edição</p>
           </div>
           <ConfirmDialog
             trigger={
-              <button className="px-4 py-2 rounded-lg bg-destructive text-destructive-foreground text-sm hover:opacity-90 transition-all">
+              <button className="px-4 py-2 rounded-lg bg-destructive text-destructive-foreground text-body-sm hover:opacity-90 transition-all">
                 🗑️ Resetar
               </button>
             }

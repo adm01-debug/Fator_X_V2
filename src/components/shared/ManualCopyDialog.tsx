@@ -82,15 +82,15 @@ export function ManualCopyDialog({
           <DialogTitle>Copiar manualmente</DialogTitle>
           <DialogDescription>
             {reason ?? 'Não foi possível acessar a área de transferência automaticamente.'}
-            {' '}Selecione o texto abaixo e use <kbd className="px-1.5 py-0.5 rounded border bg-muted text-[11px] font-mono">Ctrl</kbd>
-            {' '}+ <kbd className="px-1.5 py-0.5 rounded border bg-muted text-[11px] font-mono">C</kbd>
-            {' '}(ou <kbd className="px-1.5 py-0.5 rounded border bg-muted text-[11px] font-mono">⌘</kbd>
-            {' '}+ <kbd className="px-1.5 py-0.5 rounded border bg-muted text-[11px] font-mono">C</kbd>) para copiar.
+            {' '}Selecione o texto abaixo e use <kbd className="px-1.5 py-0.5 rounded border bg-muted text-meta font-mono">Ctrl</kbd>
+            {' '}+ <kbd className="px-1.5 py-0.5 rounded border bg-muted text-meta font-mono">C</kbd>
+            {' '}(ou <kbd className="px-1.5 py-0.5 rounded border bg-muted text-meta font-mono">⌘</kbd>
+            {' '}+ <kbd className="px-1.5 py-0.5 rounded border bg-muted text-meta font-mono">C</kbd>) para copiar.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-2">
-          <label className="text-xs font-medium text-muted-foreground" htmlFor="manual-copy-textarea">
+          <label className="text-meta font-medium text-muted-foreground" htmlFor="manual-copy-textarea">
             {label}
           </label>
           <textarea
@@ -99,7 +99,7 @@ export function ManualCopyDialog({
             readOnly
             value={value}
             rows={3}
-            className="w-full font-mono text-xs p-3 rounded-md border border-input bg-secondary/30 focus-ring resize-none break-all"
+            className="w-full font-mono text-meta p-3 rounded-md border border-input bg-secondary/30 focus-ring resize-none break-all"
             onFocus={(e) => e.currentTarget.select()}
             onClick={(e) => e.currentTarget.select()}
           />

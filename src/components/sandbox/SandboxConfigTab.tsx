@@ -25,8 +25,8 @@ function SliderField({ label, value, min, max, step, unit, onChange }: {
   return (
     <div className="space-y-1">
       <div className="flex items-center justify-between">
-        <label className="text-xs text-muted-foreground">{label}</label>
-        <span className="text-xs font-medium text-foreground">{value} {unit}</span>
+        <label className="text-meta text-muted-foreground">{label}</label>
+        <span className="text-meta font-medium text-foreground">{value} {unit}</span>
       </div>
       <input type="range" min={min} max={max} step={step} value={value} onChange={(e) => onChange(Number(e.target.value))} className="w-full h-1.5 bg-muted rounded-lg appearance-none cursor-pointer accent-primary" />
     </div>
@@ -42,7 +42,7 @@ export function SandboxConfigTab({ config, onUpdate }: SandboxConfigTabProps) {
   return (
     <div className="pt-4 space-y-4">
       <div className="space-y-2">
-        <label className="text-xs text-muted-foreground font-medium">Runtime</label>
+        <label className="text-meta text-muted-foreground font-medium">Runtime</label>
         <div className="grid grid-cols-2 gap-2">
           {RUNTIME_OPTIONS.map((rt) => (
             <div
@@ -51,10 +51,10 @@ export function SandboxConfigTab({ config, onUpdate }: SandboxConfigTabProps) {
               onClick={() => onUpdate({ runtime: rt.id })}
             >
               <div className="flex items-center justify-between mb-1">
-                <span className="text-sm font-medium text-foreground">{rt.name}</span>
+                <span className="text-body-sm font-medium text-foreground">{rt.name}</span>
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: SECURITY_LEVEL_COLORS[rt.securityLevel] }} />
               </div>
-              <p className="text-xs text-muted-foreground">{rt.description}</p>
+              <p className="text-meta text-muted-foreground">{rt.description}</p>
             </div>
           ))}
         </div>
@@ -62,7 +62,7 @@ export function SandboxConfigTab({ config, onUpdate }: SandboxConfigTabProps) {
 
       {config.runtime !== 'none' && (
         <div className="space-y-3">
-          <label className="text-xs text-muted-foreground font-medium">Limites de Recursos</label>
+          <label className="text-meta text-muted-foreground font-medium">Limites de Recursos</label>
           <SliderField label="CPU" value={config.cpuLimit} min={0.25} max={4} step={0.25} unit="cores" onChange={(v) => onUpdate({ cpuLimit: v })} />
           <SliderField label="Memória" value={config.memoryLimitMb} min={128} max={4096} step={128} unit="MB" onChange={(v) => onUpdate({ memoryLimitMb: v })} />
           <SliderField label="Timeout" value={config.timeoutSeconds} min={5} max={300} step={5} unit="seg" onChange={(v) => onUpdate({ timeoutSeconds: v })} />

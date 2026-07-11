@@ -127,7 +127,7 @@ export default function AutomationsPage() {
         </TabsList>
 
         <TabsContent value="rules" className="space-y-3 mt-4">
-          {loading && <p className="text-muted-foreground text-sm">Carregando…</p>}
+          {loading && <p className="text-muted-foreground text-body-sm">Carregando…</p>}
           {!loading && rules.length === 0 && (
             <Card><CardContent className="py-12 text-center text-muted-foreground">
               <Zap className="h-10 w-10 mx-auto mb-3 opacity-40" />
@@ -142,8 +142,8 @@ export default function AutomationsPage() {
                     {r.name}
                     <Badge variant={r.is_active ? 'default' : 'secondary'}>{r.is_active ? 'Ativa' : 'Pausada'}</Badge>
                   </CardTitle>
-                  {r.description && <p className="text-sm text-muted-foreground mt-1">{r.description}</p>}
-                  <div className="flex gap-2 mt-2 text-xs">
+                  {r.description && <p className="text-body-sm text-muted-foreground mt-1">{r.description}</p>}
+                  <div className="flex gap-2 mt-2 text-meta">
                     <Badge variant="outline">{TRIGGERS.find(t => t.value === r.trigger_type)?.label}</Badge>
                     <span className="text-muted-foreground">→</span>
                     <Badge variant="outline">{ACTIONS.find(a => a.value === r.action_type)?.label}</Badge>
@@ -155,7 +155,7 @@ export default function AutomationsPage() {
                   <Button size="icon" variant="ghost" onClick={() => deleteRule(r.id)} title="Excluir"><Trash2 className="h-4 w-4" /></Button>
                 </div>
               </CardHeader>
-              <CardContent className="pt-0 text-xs text-muted-foreground">
+              <CardContent className="pt-0 text-meta text-muted-foreground">
                 Execuções: {r.run_count}
                 {r.last_run_at && ` • Última: ${formatDistanceToNow(new Date(r.last_run_at), { locale: ptBR, addSuffix: true })}`}
               </CardContent>
@@ -164,15 +164,15 @@ export default function AutomationsPage() {
         </TabsContent>
 
         <TabsContent value="logs" className="space-y-2 mt-4">
-          {logs.length === 0 && <p className="text-muted-foreground text-sm">Sem execuções ainda.</p>}
+          {logs.length === 0 && <p className="text-muted-foreground text-body-sm">Sem execuções ainda.</p>}
           {logs.map((l) => (
             <Card key={l.id}>
               <CardContent className="py-3 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   {l.status === 'success' ? <CheckCircle2 className="h-4 w-4 text-success" /> : <AlertCircle className="h-4 w-4 text-destructive" />}
                   <div>
-                    <p className="text-sm font-medium">{rules.find(r => r.id === l.rule_id)?.name ?? l.rule_id}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-body-sm font-medium">{rules.find(r => r.id === l.rule_id)?.name ?? l.rule_id}</p>
+                    <p className="text-meta text-muted-foreground">
                       {formatDistanceToNow(new Date(l.created_at), { locale: ptBR, addSuffix: true })}
                       {l.duration_ms && ` • ${l.duration_ms}ms`}
                     </p>

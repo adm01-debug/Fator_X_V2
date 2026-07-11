@@ -170,7 +170,7 @@ export default function PostmortemsPage() {
           <h1 className="font-heading text-3xl font-extrabold tracking-tight bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
             Postmortems
           </h1>
-          <p className="text-muted-foreground mt-1.5 text-sm">
+          <p className="text-muted-foreground mt-1.5 text-body-sm">
             Aprendizado estruturado pós-incidente — blameless, acionável, publicado em até 5 dias.
           </p>
         </div>
@@ -235,7 +235,7 @@ export default function PostmortemsPage() {
           ) : filtered.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               <FileText className="h-10 w-10 mx-auto mb-3 opacity-50" />
-              <p className="text-sm">Nenhum postmortem encontrado.</p>
+              <p className="text-body-sm">Nenhum postmortem encontrado.</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -249,8 +249,8 @@ export default function PostmortemsPage() {
                   >
                     <Icon className="h-5 w-5 text-muted-foreground shrink-0" />
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm truncate">{pm.title}</p>
-                      <p className="text-xs text-muted-foreground truncate">
+                      <p className="font-medium text-body-sm truncate">{pm.title}</p>
+                      <p className="text-meta text-muted-foreground truncate">
                         {pm.summary || "Sem resumo ainda"}
                       </p>
                     </div>
@@ -258,7 +258,7 @@ export default function PostmortemsPage() {
                     <Badge variant="outline" className={STATUS_COLORS[pm.status]}>
                       {pm.status === "draft" ? "Rascunho" : pm.status === "review" ? "Revisão" : "Publicado"}
                     </Badge>
-                    <span className="text-xs text-muted-foreground tabular-nums whitespace-nowrap">
+                    <span className="text-meta text-muted-foreground tabular-nums whitespace-nowrap">
                       {new Date(pm.created_at).toLocaleDateString("pt-BR")}
                     </span>
                   </button>
@@ -318,25 +318,25 @@ export default function PostmortemsPage() {
           </div>
           <div className="max-h-80 overflow-y-auto space-y-1.5">
             {genTab === "incident" && recentIncidents.length === 0 && (
-              <p className="text-sm text-muted-foreground py-4 text-center">Nenhum incident run recente.</p>
+              <p className="text-body-sm text-muted-foreground py-4 text-center">Nenhum incident run recente.</p>
             )}
             {genTab === "incident" && recentIncidents.map((r) => (
               <button key={r.id} onClick={() => handleGenIncident(r.id)}
                 className="w-full text-left p-2.5 rounded-md border border-border hover:bg-secondary/40 transition-colors flex items-center gap-2">
-                <span className="text-xs text-muted-foreground tabular-nums">{new Date(r.started_at).toLocaleString("pt-BR")}</span>
-                <Badge variant="outline" className="text-[10px]">{r.status}</Badge>
-                <span className="text-xs text-muted-foreground truncate flex-1">trigger: {r.triggered_by}</span>
+                <span className="text-meta text-muted-foreground tabular-nums">{new Date(r.started_at).toLocaleString("pt-BR")}</span>
+                <Badge variant="outline" className="text-meta">{r.status}</Badge>
+                <span className="text-meta text-muted-foreground truncate flex-1">trigger: {r.triggered_by}</span>
               </button>
             ))}
             {genTab === "gameday" && recentGamedays.length === 0 && (
-              <p className="text-sm text-muted-foreground py-4 text-center">Nenhum game day finalizado.</p>
+              <p className="text-body-sm text-muted-foreground py-4 text-center">Nenhum game day finalizado.</p>
             )}
             {genTab === "gameday" && recentGamedays.map((g) => (
               <button key={g.id} onClick={() => handleGenGameday(g.id)}
                 className="w-full text-left p-2.5 rounded-md border border-border hover:bg-secondary/40 transition-colors flex items-center gap-2">
                 <Activity className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium truncate flex-1">{g.title}</span>
-                <Badge variant="outline" className="text-[10px]">{g.scenario}</Badge>
+                <span className="text-body-sm font-medium truncate flex-1">{g.title}</span>
+                <Badge variant="outline" className="text-meta">{g.scenario}</Badge>
               </button>
             ))}
           </div>
@@ -350,7 +350,7 @@ function StatCard({ label, value, accent }: { label: string; value: number; acce
   return (
     <Card>
       <CardContent className="p-4">
-        <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">{label}</p>
+        <p className="text-meta text-muted-foreground uppercase tracking-wider font-semibold">{label}</p>
         <p className={`text-2xl font-bold tabular-nums mt-1 ${accent ?? ""}`}>{value}</p>
       </CardContent>
     </Card>

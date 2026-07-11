@@ -37,12 +37,12 @@ export function StateDiff({ before, after }: { before: unknown; after: unknown }
   }), [lines]);
 
   if (lines.length === 0) {
-    return <div className="text-xs text-muted-foreground p-3">Sem diferenças.</div>;
+    return <div className="text-meta text-muted-foreground p-3">Sem diferenças.</div>;
   }
 
   return (
     <div className="rounded-md border border-border/50 bg-muted/20 overflow-hidden">
-      <div className="flex items-center gap-3 px-3 py-2 border-b border-border/50 bg-muted/40 text-[11px]">
+      <div className="flex items-center gap-3 px-3 py-2 border-b border-border/50 bg-muted/40 text-meta">
         <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
           <Plus className="h-3 w-3" /> {stats.added} adições
         </span>
@@ -51,7 +51,7 @@ export function StateDiff({ before, after }: { before: unknown; after: unknown }
         </span>
         <span className="text-muted-foreground ml-auto">{lines.length} linhas</span>
       </div>
-      <pre className="text-[10px] font-mono overflow-auto max-h-[320px] p-2">
+      <pre className="text-meta font-mono overflow-auto max-h-[320px] p-2">
         {lines.map((l, i) => (
           <div
             key={i}
@@ -74,7 +74,7 @@ export function StateDiff({ before, after }: { before: unknown; after: unknown }
 
 export function EmptyDiff() {
   return (
-    <div className="flex items-center justify-center py-8 text-xs text-muted-foreground gap-2">
+    <div className="flex items-center justify-center py-8 text-meta text-muted-foreground gap-2">
       <Equal className="h-3 w-3" /> Nenhuma mudança detectada
     </div>
   );

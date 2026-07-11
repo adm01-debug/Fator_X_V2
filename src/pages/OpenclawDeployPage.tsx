@@ -158,26 +158,26 @@ export default function OpenclawDeployPage() {
             </CardHeader>
             <CardContent>
               {healthLoading ? (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2 text-body-sm text-muted-foreground">
                   <Loader2 className="h-4 w-4 animate-spin" /> Verificando saúde do OpenClaw...
                 </div>
               ) : healthError ? (
-                <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/30 text-sm text-destructive">
+                <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/30 text-body-sm text-destructive">
                   Falha ao contatar OpenClaw: {healthError instanceof Error ? healthError.message : "erro desconhecido"}
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="p-3 rounded-lg bg-background border border-border">
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Status</p>
-                    <p className="text-sm font-mono mt-1">{health?.status ?? "—"}</p>
+                    <p className="text-meta text-muted-foreground uppercase tracking-wider">Status</p>
+                    <p className="text-body-sm font-mono mt-1">{health?.status ?? "—"}</p>
                   </div>
                   <div className="p-3 rounded-lg bg-background border border-border">
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Versão</p>
-                    <p className="text-sm font-mono mt-1">{health?.version ?? "—"}</p>
+                    <p className="text-meta text-muted-foreground uppercase tracking-wider">Versão</p>
+                    <p className="text-body-sm font-mono mt-1">{health?.version ?? "—"}</p>
                   </div>
                   <div className="p-3 rounded-lg bg-background border border-border">
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Uptime</p>
-                    <p className="text-sm font-mono mt-1">
+                    <p className="text-meta text-muted-foreground uppercase tracking-wider">Uptime</p>
+                    <p className="text-body-sm font-mono mt-1">
                       {typeof health?.uptime === "number" ? `${Math.round(health.uptime)}s` : "—"}
                     </p>
                   </div>
@@ -206,11 +206,11 @@ export default function OpenclawDeployPage() {
                   <CardContent className="p-3 flex items-center gap-3">
                     <Bot className="h-4 w-4 text-primary" />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium">{a.name}</p>
-                      {a.description && <p className="text-xs text-muted-foreground truncate">{a.description}</p>}
+                      <p className="text-body-sm font-medium">{a.name}</p>
+                      {a.description && <p className="text-meta text-muted-foreground truncate">{a.description}</p>}
                     </div>
                     {a.status && (
-                      <Badge variant="outline" className="text-[10px] border-border">
+                      <Badge variant="outline" className="text-meta border-border">
                         {a.status}
                       </Badge>
                     )}
@@ -240,11 +240,11 @@ export default function OpenclawDeployPage() {
                   <CardContent className="p-3 flex items-center gap-3">
                     <Package className="h-4 w-4 text-nexus-purple" />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium">{s.name}</p>
-                      {s.description && <p className="text-xs text-muted-foreground truncate">{s.description}</p>}
+                      <p className="text-body-sm font-medium">{s.name}</p>
+                      {s.description && <p className="text-meta text-muted-foreground truncate">{s.description}</p>}
                     </div>
                     {s.version && (
-                      <Badge variant="outline" className="text-[10px] border-border font-mono">
+                      <Badge variant="outline" className="text-meta border-border font-mono">
                         v{s.version}
                       </Badge>
                     )}
@@ -302,7 +302,7 @@ export default function OpenclawDeployPage() {
                   value={skillContent}
                   onChange={(e) => setSkillContent(e.target.value)}
                   rows={12}
-                  className="bg-background border-border font-mono text-xs resize-none"
+                  className="bg-background border-border font-mono text-meta resize-none"
                 />
               </div>
               <div className="flex justify-end">
@@ -316,7 +316,7 @@ export default function OpenclawDeployPage() {
                 </Button>
               </div>
               {!healthOk && (
-                <p className="text-xs text-destructive text-right">
+                <p className="text-meta text-destructive text-right">
                   ⚠ OpenClaw offline — verifique o VPS antes de tentar deploy.
                 </p>
               )}

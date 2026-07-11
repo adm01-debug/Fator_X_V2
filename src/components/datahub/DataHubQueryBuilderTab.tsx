@@ -150,10 +150,10 @@ export function DataHubQueryBuilderTab() {
   return (
     <div className="space-y-4">
       <div>
-        <h3 className="text-sm font-heading font-semibold text-foreground flex items-center gap-2">
+        <h3 className="text-body-sm font-heading font-semibold text-foreground flex items-center gap-2">
           <Code2 className="h-4 w-4 text-primary" /> Query Builder
         </h3>
-        <p className="text-[11px] text-muted-foreground mt-0.5">
+        <p className="text-meta text-muted-foreground mt-0.5">
           Execute SQL diretamente em qualquer um dos 5 bancos do DataHub. Read-only — use com cuidado.
         </p>
       </div>
@@ -161,9 +161,9 @@ export function DataHubQueryBuilderTab() {
       <div className="nexus-card space-y-3">
         <div className="flex gap-2 items-end flex-wrap">
           <div className="flex-1 min-w-[260px] space-y-1.5">
-            <Label className="text-xs">Banco de dados</Label>
+            <Label className="text-meta">Banco de dados</Label>
             <Select value={project} onValueChange={(v) => { setProject(v); setQuery(SAMPLE_QUERIES[v] ?? ''); }}>
-              <SelectTrigger className="bg-secondary/50 text-xs">
+              <SelectTrigger className="bg-secondary/50 text-meta">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -178,7 +178,7 @@ export function DataHubQueryBuilderTab() {
               </SelectContent>
             </Select>
           </div>
-          <Button variant="outline" size="sm" onClick={handleLoadSample} className="gap-1.5 h-9 text-xs">
+          <Button variant="outline" size="sm" onClick={handleLoadSample} className="gap-1.5 h-9 text-meta">
             <Save className="h-3.5 w-3.5" /> Exemplo
           </Button>
         </div>
@@ -188,12 +188,12 @@ export function DataHubQueryBuilderTab() {
           onChange={(e) => setQuery(e.target.value)}
           rows={8}
           placeholder="SELECT * FROM ..."
-          className="bg-background border-border font-mono text-xs resize-none"
+          className="bg-background border-border font-mono text-meta resize-none"
           spellCheck={false}
         />
 
         <div className="flex justify-between items-center">
-          <p className="text-[10px] text-muted-foreground">
+          <p className="text-meta text-muted-foreground">
             {query.length} caracteres
           </p>
           <Button
@@ -210,8 +210,8 @@ export function DataHubQueryBuilderTab() {
       {/* Error */}
       {error && (
         <div className="nexus-card border-destructive/50 bg-destructive/10">
-          <p className="text-xs font-semibold text-destructive mb-1">Erro de execução</p>
-          <p className="text-[11px] text-destructive font-mono whitespace-pre-wrap">{error}</p>
+          <p className="text-meta font-semibold text-destructive mb-1">Erro de execução</p>
+          <p className="text-meta text-destructive font-mono whitespace-pre-wrap">{error}</p>
         </div>
       )}
 
@@ -220,25 +220,25 @@ export function DataHubQueryBuilderTab() {
         <div className="nexus-card">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <Badge variant="outline" className="text-[10px]">
+              <Badge variant="outline" className="text-meta">
                 {result.row_count} linha(s)
               </Badge>
-              <Badge variant="outline" className="text-[10px]">
+              <Badge variant="outline" className="text-meta">
                 {result.columns.length} colunas
               </Badge>
-              <Badge variant="outline" className="text-[10px]">
+              <Badge variant="outline" className="text-meta">
                 {result.duration_ms}ms
               </Badge>
             </div>
           </div>
 
           {result.row_count === 0 ? (
-            <p className="text-center py-6 text-xs text-muted-foreground italic">
+            <p className="text-center py-6 text-meta text-muted-foreground italic">
               Nenhuma linha retornada
             </p>
           ) : (
             <div className="overflow-x-auto max-h-[400px] overflow-y-auto">
-              <table className="w-full text-xs">
+              <table className="w-full text-meta">
                 <thead className="sticky top-0 bg-secondary/80 backdrop-blur">
                   <tr>
                     {result.columns.map((col) => (
@@ -260,7 +260,7 @@ export function DataHubQueryBuilderTab() {
                                         typeof v === 'object' ? JSON.stringify(v) :
                                         String(v);
                         return (
-                          <td key={col} className="px-3 py-1.5 font-mono text-[11px] max-w-[300px] truncate">
+                          <td key={col} className="px-3 py-1.5 font-mono text-meta max-w-[300px] truncate">
                             {display}
                           </td>
                         );
@@ -278,12 +278,12 @@ export function DataHubQueryBuilderTab() {
       {history.length > 0 && (
         <div className="nexus-card">
           <div className="flex items-center justify-between mb-3">
-            <h4 className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+            <h4 className="text-meta font-semibold text-foreground flex items-center gap-1.5">
               <History className="h-3.5 w-3.5" /> Histórico ({history.length})
             </h4>
             <button
               onClick={handleClearHistory}
-              className="text-[10px] text-muted-foreground hover:text-destructive flex items-center gap-1"
+              className="text-meta text-muted-foreground hover:text-destructive flex items-center gap-1"
             >
               <Trash2 className="h-2.5 w-2.5" /> Limpar
             </button>
@@ -303,7 +303,7 @@ export function DataHubQueryBuilderTab() {
                       {new Date(h.timestamp).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
-                  <code className="text-[10px] text-muted-foreground line-clamp-1 font-mono block">
+                  <code className="text-meta text-muted-foreground line-clamp-1 font-mono block">
                     {h.query.replace(/\s+/g, ' ').slice(0, 80)}
                   </code>
                 </button>

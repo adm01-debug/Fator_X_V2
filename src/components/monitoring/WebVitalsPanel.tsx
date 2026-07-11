@@ -121,11 +121,11 @@ export function WebVitalsPanel() {
           <Gauge className="h-4 w-4 text-nexus-cyan" />
         </div>
         <div>
-          <h3 className="text-sm font-bold text-foreground">Web Vitals</h3>
-          <p className="text-[11px] text-muted-foreground">Performance real do navegador — CLS, INP, LCP, FCP, TTFB</p>
+          <h3 className="text-body-sm font-bold text-foreground">Web Vitals</h3>
+          <p className="text-meta text-muted-foreground">Performance real do navegador — CLS, INP, LCP, FCP, TTFB</p>
         </div>
         <div className="ml-auto flex items-center gap-2">
-          <Badge variant="outline" className={`text-[10px] ${overallScore >= 0.8 ? 'border-nexus-emerald/50 text-nexus-emerald' : overallScore >= 0.5 ? 'border-nexus-amber/50 text-nexus-amber' : 'border-destructive/50 text-destructive'}`}>
+          <Badge variant="outline" className={`text-meta ${overallScore >= 0.8 ? 'border-nexus-emerald/50 text-nexus-emerald' : overallScore >= 0.5 ? 'border-nexus-amber/50 text-nexus-amber' : 'border-destructive/50 text-destructive'}`}>
             {Math.round(overallScore * 100)}% saudável
           </Badge>
           <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={collectMetrics} disabled={collecting}>
@@ -140,13 +140,13 @@ export function WebVitalsPanel() {
           return (
             <div key={key} className="rounded-xl border border-border bg-card p-3">
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[11px] font-bold text-foreground">{key}</span>
-                {metric ? RATING_ICONS[metric.rating] : <span className="text-[10px] text-muted-foreground">—</span>}
+                <span className="text-meta font-bold text-foreground">{key}</span>
+                {metric ? RATING_ICONS[metric.rating] : <span className="text-meta text-muted-foreground">—</span>}
               </div>
               <p className="text-xl font-black text-foreground tabular-nums">
                 {metric ? `${metric.value}${config.unit}` : '—'}
               </p>
-              <p className="text-[10px] text-muted-foreground mt-0.5">{config.description}</p>
+              <p className="text-meta text-muted-foreground mt-0.5">{config.description}</p>
               {metric && (
                 <div className="mt-2 h-1.5 rounded-full bg-secondary overflow-hidden">
                   <div
@@ -163,11 +163,11 @@ export function WebVitalsPanel() {
         {metrics.HEAP && (
           <div className="rounded-xl border border-border bg-card p-3">
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[11px] font-bold text-foreground">HEAP</span>
+              <span className="text-meta font-bold text-foreground">HEAP</span>
               {RATING_ICONS[metrics.HEAP.rating]}
             </div>
             <p className="text-xl font-black text-foreground tabular-nums">{metrics.HEAP.value}MB</p>
-            <p className="text-[10px] text-muted-foreground mt-0.5">Memória JS heap usada</p>
+            <p className="text-meta text-muted-foreground mt-0.5">Memória JS heap usada</p>
           </div>
         )}
       </div>

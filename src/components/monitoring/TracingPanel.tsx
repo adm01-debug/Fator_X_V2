@@ -20,17 +20,17 @@ function TraceCard({ trace }: { trace: { id: string; event_type: string; created
               open ? <ChevronDown className="h-3.5 w-3.5 text-muted-foreground shrink-0" /> : <ChevronRight className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
             ) : <span className="w-3.5 shrink-0" />}
             <Zap className={`h-4 w-4 shrink-0 ${status === 'error' ? 'text-destructive' : 'text-nexus-emerald'}`} />
-            <span className="text-xs font-medium text-foreground truncate">{trace.event_type}</span>
-            <Badge variant="outline" className="text-[10px]">{status}</Badge>
-            <code className="text-[10px] text-muted-foreground font-mono truncate hidden sm:inline">{traceId.slice(0, 8)}</code>
+            <span className="text-meta font-medium text-foreground truncate">{trace.event_type}</span>
+            <Badge variant="outline" className="text-meta">{status}</Badge>
+            <code className="text-meta text-muted-foreground font-mono truncate hidden sm:inline">{traceId.slice(0, 8)}</code>
           </div>
-          <span className="text-[11px] text-muted-foreground shrink-0 ml-2">{new Date(trace.created_at).toLocaleString('pt-BR')}</span>
+          <span className="text-meta text-muted-foreground shrink-0 ml-2">{new Date(trace.created_at).toLocaleString('pt-BR')}</span>
         </div>
         <div className="grid grid-cols-4 gap-2 text-center">
-          <div className="p-2 rounded bg-secondary/30"><p className="text-sm font-bold text-foreground">{d.duration_ms ? `${Number(d.duration_ms)}ms` : '-'}</p><p className="text-[10px] text-muted-foreground">Duração</p></div>
-          <div className="p-2 rounded bg-secondary/30"><p className="text-sm font-bold text-foreground">{typeof d.token_count === 'number' ? (d.token_count as number).toLocaleString() : '-'}</p><p className="text-[10px] text-muted-foreground">Tokens</p></div>
-          <div className="p-2 rounded bg-secondary/30"><p className="text-sm font-bold text-foreground">{d.cost_usd ? `$${Number(d.cost_usd).toFixed(4)}` : '-'}</p><p className="text-[10px] text-muted-foreground">Custo</p></div>
-          <div className="p-2 rounded bg-secondary/30"><p className="text-sm font-bold text-foreground">{spans.length || '-'}</p><p className="text-[10px] text-muted-foreground">Spans</p></div>
+          <div className="p-2 rounded bg-secondary/30"><p className="text-body-sm font-bold text-foreground">{d.duration_ms ? `${Number(d.duration_ms)}ms` : '-'}</p><p className="text-meta text-muted-foreground">Duração</p></div>
+          <div className="p-2 rounded bg-secondary/30"><p className="text-body-sm font-bold text-foreground">{typeof d.token_count === 'number' ? (d.token_count as number).toLocaleString() : '-'}</p><p className="text-meta text-muted-foreground">Tokens</p></div>
+          <div className="p-2 rounded bg-secondary/30"><p className="text-body-sm font-bold text-foreground">{d.cost_usd ? `$${Number(d.cost_usd).toFixed(4)}` : '-'}</p><p className="text-meta text-muted-foreground">Custo</p></div>
+          <div className="p-2 rounded bg-secondary/30"><p className="text-body-sm font-bold text-foreground">{spans.length || '-'}</p><p className="text-meta text-muted-foreground">Spans</p></div>
         </div>
       </button>
       {open && spans.length > 0 && (
@@ -56,17 +56,17 @@ export function TracingPanel() {
     <div className="flex flex-col items-center justify-center py-20 text-center">
       <Zap className="h-12 w-12 text-muted-foreground mb-4" />
       <h2 className="text-lg font-semibold text-foreground mb-1">Nenhum trace registrado</h2>
-      <p className="text-sm text-muted-foreground">Traces OpenTelemetry aparecerão quando agentes executarem com tracing instrumentado.</p>
+      <p className="text-body-sm text-muted-foreground">Traces OpenTelemetry aparecerão quando agentes executarem com tracing instrumentado.</p>
     </div>
   );
 
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-heading font-semibold text-foreground">Trace Events ({traceData.length})</h3>
-        <Badge variant="outline" className="text-[10px]">OTel GenAI</Badge>
+        <h3 className="text-body-sm font-heading font-semibold text-foreground">Trace Events ({traceData.length})</h3>
+        <Badge variant="outline" className="text-meta">OTel GenAI</Badge>
       </div>
-      <p className="text-[11px] text-muted-foreground">Clique em um trace para expandir a árvore de spans.</p>
+      <p className="text-meta text-muted-foreground">Clique em um trace para expandir a árvore de spans.</p>
       {traceData.map(trace => (
         <TraceCard key={trace.id} trace={trace as { id: string; event_type: string; created_at: string; data: Record<string, unknown> }} />
       ))}

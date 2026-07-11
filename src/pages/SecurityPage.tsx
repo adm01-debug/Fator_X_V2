@@ -77,7 +77,7 @@ function ApiKeysPanel() {
           </div>
           <div>
             <h3 className="text-lg font-bold text-foreground">API Keys</h3>
-            <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Integrações Seguras</p>
+            <p className="text-meta text-muted-foreground font-medium uppercase tracking-wider">Integrações Seguras</p>
           </div>
         </div>
         <Badge variant="secondary" className="bg-primary/5 text-primary border-none px-3 font-bold">{keys.length} Ativas</Badge>
@@ -87,11 +87,11 @@ function ApiKeysPanel() {
         <div className="bg-nexus-emerald/10 border border-nexus-emerald/30 rounded-2xl p-4 animate-in fade-in slide-in-from-top-2">
           <div className="flex items-center gap-2 mb-2">
             <ShieldCheck className="w-4 h-4 text-nexus-emerald" />
-            <p className="text-nexus-emerald font-black text-xs uppercase tracking-widest">Nova Chave Mestra</p>
+            <p className="text-nexus-emerald font-black text-meta uppercase tracking-widest">Nova Chave Mestra</p>
           </div>
-          <p className="text-[11px] text-nexus-emerald/80 font-medium mb-3 italic">Copie agora — esta chave não será exibida novamente por motivos de segurança.</p>
+          <p className="text-meta text-nexus-emerald/80 font-medium mb-3 italic">Copie agora — esta chave não será exibida novamente por motivos de segurança.</p>
           <div className="flex items-center gap-2 bg-background/50 p-2 rounded-xl border border-nexus-emerald/20">
-            <code className="px-2 py-1 font-mono text-nexus-emerald flex-1 truncate text-xs">{newRawKey}</code>
+            <code className="px-2 py-1 font-mono text-nexus-emerald flex-1 truncate text-meta">{newRawKey}</code>
             <Button size="sm" variant="ghost" className="hover:bg-nexus-emerald/20 h-8 w-8 p-0" onClick={() => { navigator.clipboard.writeText(newRawKey); toast.success('Copiada!'); }}>
               <Copy className="w-3.5 h-3.5" />
             </Button>
@@ -104,7 +104,7 @@ function ApiKeysPanel() {
           value={newKeyName} 
           onChange={(e) => setNewKeyName(e.target.value)} 
           placeholder="Nome do identificador (ex: Produção Externo)" 
-          className="h-12 rounded-xl bg-secondary/30 border-border/30 focus:ring-primary/20 text-sm font-medium" 
+          className="h-12 rounded-xl bg-secondary/30 border-border/30 focus:ring-primary/20 text-body-sm font-medium" 
         />
         <Button onClick={handleCreate} disabled={creating || !newKeyName.trim()} className="h-12 px-6 rounded-xl nexus-gradient-bg text-primary-foreground font-bold">
           {creating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Plus className="w-5 h-5 mr-2" />}
@@ -117,7 +117,7 @@ function ApiKeysPanel() {
       ) : keys.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 bg-secondary/10 border border-dashed border-border/40 rounded-2xl text-center">
           <Terminal className="w-10 h-10 text-muted-foreground/30 mb-3" />
-          <p className="text-sm text-muted-foreground font-medium">Nenhuma chave de integração ativa no momento.</p>
+          <p className="text-body-sm text-muted-foreground font-medium">Nenhuma chave de integração ativa no momento.</p>
         </div>
       ) : (
         <div className="grid gap-3">
@@ -128,9 +128,9 @@ function ApiKeysPanel() {
                   <Fingerprint className="w-5 h-5 text-muted-foreground/60 group-hover:text-primary transition-colors" />
                 </div>
                 <div>
-                  <span className="text-sm font-bold text-foreground">{k.name}</span>
+                  <span className="text-body-sm font-bold text-foreground">{k.name}</span>
                   <div className="flex items-center gap-3 mt-1">
-                    <code className="text-[10px] text-muted-foreground font-mono bg-background/50 px-1.5 py-0.5 rounded uppercase tracking-wider">{k.key_prefix}...****</code>
+                    <code className="text-meta text-muted-foreground font-mono bg-background/50 px-1.5 py-0.5 rounded uppercase tracking-wider">{k.key_prefix}...****</code>
                     <div className={cn(
                       "h-1.5 w-1.5 rounded-full animate-pulse",
                       k.is_active ? "bg-nexus-emerald" : "bg-destructive"
@@ -185,7 +185,7 @@ export default function SecurityPage() {
             <div className="space-y-1">
               <div className="flex items-center gap-3">
                 <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Fortaleza de Segurança</h1>
-                <Badge className="bg-nexus-cyan/10 text-nexus-cyan border-none font-black px-3 py-1 rounded-full text-[10px] tracking-widest uppercase">Grade Industrial</Badge>
+                <Badge className="bg-nexus-cyan/10 text-nexus-cyan border-none font-black px-3 py-1 rounded-full text-meta tracking-widest uppercase">Grade Industrial</Badge>
               </div>
               <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Governança neural avançada. Controle guardrails, compliance, auditoria e resiliência em um ecossistema blindado.
@@ -194,10 +194,10 @@ export default function SecurityPage() {
           </div>
           <div className="flex items-center gap-3">
             <div className="flex flex-col items-end gap-1">
-              <div className="flex items-center gap-2 text-nexus-emerald font-black text-sm uppercase tracking-tighter">
+              <div className="flex items-center gap-2 text-nexus-emerald font-black text-body-sm uppercase tracking-tighter">
                 <ShieldCheck className="h-4 w-4" /> Postura Segura
               </div>
-              <p className="text-[10px] text-muted-foreground font-bold tracking-widest uppercase">Monitoramento 24/7 Ativo</p>
+              <p className="text-meta text-muted-foreground font-bold tracking-widest uppercase">Monitoramento 24/7 Ativo</p>
             </div>
           </div>
         </div>

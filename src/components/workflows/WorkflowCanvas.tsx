@@ -38,25 +38,25 @@ function WorkflowNode({ data, selected }: { data: WorkflowNodeData; selected: bo
     >
       <div className="flex items-center gap-2 mb-1">
         <span className="text-lg">{nodeInfo.icon}</span>
-        <span className="text-sm font-semibold text-foreground truncate">
+        <span className="text-body-sm font-semibold text-foreground truncate">
           {data.label || nodeInfo.label}
         </span>
       </div>
 
       <div className="flex items-center gap-2">
         <span
-          className="text-[10px] px-2 py-0.5 rounded-full font-medium"
+          className="text-meta px-2 py-0.5 rounded-full font-medium"
           style={{ backgroundColor: `${nodeInfo.color}22`, color: nodeInfo.color }}
         >
           {nodeInfo.label}
         </span>
         {data.status === 'running' && (
-          <span className="text-[10px] text-primary animate-pulse">Executando...</span>
+          <span className="text-meta text-primary animate-pulse">Executando...</span>
         )}
         {data.status === 'success' && (
-          <span className="text-[10px] text-nexus-emerald">✓ Concluído</span>
+          <span className="text-meta text-nexus-emerald">✓ Concluído</span>
         )}
-        {data.status === 'error' && <span className="text-[10px] text-destructive">✗ Erro</span>}
+        {data.status === 'error' && <span className="text-meta text-destructive">✗ Erro</span>}
       </div>
 
       {data.type !== 'start' && (
@@ -85,10 +85,10 @@ function WorkflowNode({ data, selected }: { data: WorkflowNodeData; selected: bo
 function NodePalette({ onAddNode }: { onAddNode: (type: NodeType) => void }) {
   return (
     <div className="w-64 bg-background border-r border-border p-4 overflow-y-auto">
-      <h3 className="text-sm font-bold text-foreground mb-4">Blocos Disponíveis</h3>
+      <h3 className="text-body-sm font-bold text-foreground mb-4">Blocos Disponíveis</h3>
       {NODE_CATEGORIES.map((cat) => (
         <div key={cat.id} className="mb-4">
-          <h4 className="text-xs text-muted-foreground uppercase tracking-wider mb-2">
+          <h4 className="text-meta text-muted-foreground uppercase tracking-wider mb-2">
             {cat.label}
           </h4>
           <div className="space-y-1">
@@ -103,7 +103,7 @@ function NodePalette({ onAddNode }: { onAddNode: (type: NodeType) => void }) {
                   onDragStart={(e) => e.dataTransfer.setData('nodeType', nodeType)}
                 >
                   <span className="text-base">{info.icon}</span>
-                  <span className="text-xs text-muted-foreground group-hover:text-foreground">
+                  <span className="text-meta text-muted-foreground group-hover:text-foreground">
                     {info.label}
                   </span>
                 </button>
@@ -137,26 +137,26 @@ function WorkflowToolbar({
       <div className="flex items-center gap-3">
         <span className="text-lg">🔀</span>
         <h2 className="text-base font-bold text-foreground">{name}</h2>
-        {isDirty && <span className="text-xs text-nexus-amber">● Não salvo</span>}
+        {isDirty && <span className="text-meta text-nexus-amber">● Não salvo</span>}
       </div>
       <div className="flex items-center gap-2">
         <button
           onClick={onClear}
-          className="px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground border border-border rounded-lg hover:bg-secondary transition-colors"
+          className="px-3 py-1.5 text-meta text-muted-foreground hover:text-foreground border border-border rounded-lg hover:bg-secondary transition-colors"
         >
           Limpar
         </button>
         <button
           onClick={onSave}
           disabled={!isDirty}
-          className="px-3 py-1.5 text-xs text-foreground bg-secondary rounded-lg hover:bg-secondary/80 disabled:opacity-50 transition-colors"
+          className="px-3 py-1.5 text-meta text-foreground bg-secondary rounded-lg hover:bg-secondary/80 disabled:opacity-50 transition-colors"
         >
           💾 Salvar
         </button>
         <button
           onClick={onExecute}
           disabled={isExecuting}
-          className="px-4 py-1.5 text-xs text-primary-foreground nexus-gradient-bg rounded-lg hover:opacity-90 disabled:opacity-50 transition-opacity"
+          className="px-4 py-1.5 text-meta text-primary-foreground nexus-gradient-bg rounded-lg hover:opacity-90 disabled:opacity-50 transition-opacity"
         >
           {isExecuting ? '⏳ Executando...' : '▶️ Executar'}
         </button>
@@ -332,17 +332,17 @@ export function WorkflowCanvas() {
                     🔀
                   </span>
                   <div className="absolute -bottom-2 -right-2 h-8 w-8 rounded-lg bg-card border border-border flex items-center justify-center shadow-md">
-                    <span className="text-sm">➕</span>
+                    <span className="text-body-sm">➕</span>
                   </div>
                 </div>
                 <h3 className="text-lg font-heading font-bold text-foreground mb-2">
                   Canvas Vazio
                 </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
+                <p className="text-body-sm text-muted-foreground leading-relaxed">
                   Arraste blocos da barra lateral ou clique para adicionar ao canvas. Conecte-os
                   para criar seu pipeline de automação.
                 </p>
-                <p className="text-[11px] text-primary/60 mt-3">
+                <p className="text-meta text-primary/60 mt-3">
                   💡 Dica: comece com "Início / Trigger" para definir o ponto de partida
                 </p>
               </div>
@@ -356,7 +356,7 @@ export function WorkflowCanvas() {
             >
               −
             </button>
-            <span className="text-xs text-muted-foreground w-12 text-center">
+            <span className="text-meta text-muted-foreground w-12 text-center">
               {Math.round(zoom * 100)}%
             </span>
             <button
@@ -367,7 +367,7 @@ export function WorkflowCanvas() {
             </button>
             <button
               onClick={() => setZoom(1)}
-              className="text-xs text-primary ml-1 hover:underline"
+              className="text-meta text-primary ml-1 hover:underline"
             >
               Reset
             </button>

@@ -87,9 +87,9 @@ export function PromptSectionGutter({ locations, totalLines, activeKey, onJump }
                     <span className="sr-only">{tooltip}</span>
                   </button>
                 </TooltipTrigger>
-                <TooltipContent side="left" className="text-xs">
+                <TooltipContent side="left" className="text-meta">
                   <div className="font-medium">{loc.label}</div>
-                  <div className="text-[10px] text-muted-foreground">
+                  <div className="text-meta text-muted-foreground">
                     {loc.status === 'ok' && `Linha ${loc.headingLine + 1} · OK`}
                     {loc.status === 'thin' && `Linha ${loc.headingLine + 1} · ${loc.thinReason}`}
                     {loc.status === 'missing' && `Inserir antes da linha ${loc.headingLine + 1}`}

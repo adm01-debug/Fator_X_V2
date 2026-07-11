@@ -114,19 +114,19 @@ export default function MarketplaceMonetizedPage() {
 
         <TabsContent value="purchases">
           <Card>
-            <CardHeader><CardTitle className="text-sm">Histórico de compras</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-body-sm">Histórico de compras</CardTitle></CardHeader>
             <CardContent className="space-y-2">
               {purchases.length === 0 ? (
                 <EmptyState icon={Download} title="Nenhuma compra ainda" description="Explore o marketplace para descobrir skills." />
               ) : purchases.map((p) => (
-                <div key={p.id} className="flex items-center justify-between p-3 bg-muted/30 rounded text-sm">
+                <div key={p.id} className="flex items-center justify-between p-3 bg-muted/30 rounded text-body-sm">
                   <div>
-                    <div className="font-mono text-xs">{p.skill_id.slice(0, 8)}…</div>
-                    <div className="text-xs text-muted-foreground">{new Date(p.created_at).toLocaleDateString('pt-BR')} · {p.payment_provider}</div>
+                    <div className="font-mono text-meta">{p.skill_id.slice(0, 8)}…</div>
+                    <div className="text-meta text-muted-foreground">{new Date(p.created_at).toLocaleDateString('pt-BR')} · {p.payment_provider}</div>
                   </div>
                   <div className="text-right">
                     <div className="font-medium">{formatPrice(p.amount_cents)}</div>
-                    <Badge variant="outline" className="text-[10px]">{p.status}</Badge>
+                    <Badge variant="outline" className="text-meta">{p.status}</Badge>
                   </div>
                 </div>
               ))}
@@ -141,19 +141,19 @@ export default function MarketplaceMonetizedPage() {
             <StatCard icon={BarChart3} label="Vendas" value={String(earnings?.total_sales ?? 0)} />
           </div>
           <Card>
-            <CardHeader><CardTitle className="text-sm">Vendas recentes</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-body-sm">Vendas recentes</CardTitle></CardHeader>
             <CardContent className="space-y-2">
               {sales.length === 0 ? (
                 <EmptyState icon={Upload} title="Nenhuma venda ainda" description="Publique skills no painel de Skills Marketplace para começar a vender." />
               ) : sales.map((s) => (
-                <div key={s.id} className="flex items-center justify-between p-3 bg-muted/30 rounded text-sm">
+                <div key={s.id} className="flex items-center justify-between p-3 bg-muted/30 rounded text-body-sm">
                   <div>
-                    <div className="font-mono text-xs">{s.skill_id.slice(0, 8)}…</div>
-                    <div className="text-xs text-muted-foreground">{new Date(s.created_at).toLocaleDateString('pt-BR')}</div>
+                    <div className="font-mono text-meta">{s.skill_id.slice(0, 8)}…</div>
+                    <div className="text-meta text-muted-foreground">{new Date(s.created_at).toLocaleDateString('pt-BR')}</div>
                   </div>
                   <div className="text-right">
                     <div className="font-medium text-nexus-green">+{formatPrice(s.creator_payout_cents)}</div>
-                    <div className="text-[10px] text-muted-foreground">de {formatPrice(s.amount_cents)}</div>
+                    <div className="text-meta text-muted-foreground">de {formatPrice(s.amount_cents)}</div>
                   </div>
                 </div>
               ))}
@@ -173,7 +173,7 @@ function StatCard({ icon: Icon, label, value, accent }: { icon: React.ElementTyp
   return (
     <Card>
       <CardContent className="p-4">
-        <div className="flex items-center gap-2 text-xs text-muted-foreground"><Icon className="h-3.5 w-3.5" />{label}</div>
+        <div className="flex items-center gap-2 text-meta text-muted-foreground"><Icon className="h-3.5 w-3.5" />{label}</div>
         <div className={`text-2xl font-bold mt-1 ${accent ? 'text-nexus-green' : ''}`}>{value}</div>
       </CardContent>
     </Card>
@@ -187,15 +187,15 @@ function SkillCard({ skill, onOpen }: { skill: MarketplaceSkill; onOpen: () => v
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
             <div className="flex items-center gap-1.5">
-              <div className="font-semibold text-sm truncate">{skill.name}</div>
+              <div className="font-semibold text-body-sm truncate">{skill.name}</div>
               {skill.verified && <Shield className="h-3.5 w-3.5 text-nexus-emerald shrink-0" />}
             </div>
-            <div className="text-xs text-muted-foreground mt-0.5 truncate">por {skill.author}</div>
+            <div className="text-meta text-muted-foreground mt-0.5 truncate">por {skill.author}</div>
           </div>
-          <Badge variant="outline" className="text-[10px] shrink-0">{skill.category}</Badge>
+          <Badge variant="outline" className="text-meta shrink-0">{skill.category}</Badge>
         </div>
-        <p className="text-xs text-muted-foreground line-clamp-2">{skill.description}</p>
-        <div className="flex items-center gap-3 text-xs">
+        <p className="text-meta text-muted-foreground line-clamp-2">{skill.description}</p>
+        <div className="flex items-center gap-3 text-meta">
           <span className="flex items-center gap-1">
             <Star className="h-3 w-3 fill-nexus-amber text-nexus-amber" />
             {skill.avg_rating > 0 ? skill.avg_rating.toFixed(1) : '—'}
@@ -206,7 +206,7 @@ function SkillCard({ skill, onOpen }: { skill: MarketplaceSkill; onOpen: () => v
         <div className="flex items-center justify-between pt-2 border-t border-border/40">
           <div>
             <div className="text-lg font-bold">{formatPrice(skill.price_cents)}</div>
-            <div className="text-[10px] text-muted-foreground capitalize">{skill.pricing_model.replace('_', ' ')}</div>
+            <div className="text-meta text-muted-foreground capitalize">{skill.pricing_model.replace('_', ' ')}</div>
           </div>
           <Button size="sm" onClick={(e) => { e.stopPropagation(); onOpen(); }}>Ver detalhes</Button>
         </div>
@@ -262,9 +262,9 @@ function SkillDetailDialog({ skillId, onClose }: { skillId: string; onClose: () 
             </DialogHeader>
 
             <div className="space-y-4">
-              <p className="text-sm">{skill.description}</p>
+              <p className="text-body-sm">{skill.description}</p>
 
-              <div className="flex items-center gap-4 text-sm">
+              <div className="flex items-center gap-4 text-body-sm">
                 <span className="flex items-center gap-1">
                   <Star className="h-4 w-4 fill-nexus-amber text-nexus-amber" />
                   <strong>{skill.avg_rating > 0 ? skill.avg_rating.toFixed(1) : '—'}</strong>
@@ -276,7 +276,7 @@ function SkillDetailDialog({ skillId, onClose }: { skillId: string; onClose: () 
               <div className="flex items-center justify-between p-4 rounded-lg bg-muted/40 border border-border/40">
                 <div>
                   <div className="text-2xl font-bold">{formatPrice(skill.price_cents)}</div>
-                  <div className="text-xs text-muted-foreground capitalize">{skill.pricing_model.replace('_', ' ')}</div>
+                  <div className="text-meta text-muted-foreground capitalize">{skill.pricing_model.replace('_', ' ')}</div>
                 </div>
                 <Button onClick={() => buyMut.mutate()} disabled={buyMut.isPending}>
                   {buyMut.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
@@ -285,7 +285,7 @@ function SkillDetailDialog({ skillId, onClose }: { skillId: string; onClose: () 
               </div>
 
               <div className="space-y-3">
-                <h4 className="text-sm font-semibold">Deixar uma avaliação</h4>
+                <h4 className="text-body-sm font-semibold">Deixar uma avaliação</h4>
                 <div className="flex gap-1">
                   {[1, 2, 3, 4, 5].map((n) => (
                     <button key={n} onClick={() => setRating(n)} className="p-0.5">
@@ -298,16 +298,16 @@ function SkillDetailDialog({ skillId, onClose }: { skillId: string; onClose: () 
               </div>
 
               <div className="space-y-2 max-h-[200px] overflow-y-auto">
-                <h4 className="text-sm font-semibold">Avaliações ({reviews.length})</h4>
+                <h4 className="text-body-sm font-semibold">Avaliações ({reviews.length})</h4>
                 {reviews.length === 0 ? (
-                  <p className="text-xs text-muted-foreground">Seja o primeiro a avaliar.</p>
+                  <p className="text-meta text-muted-foreground">Seja o primeiro a avaliar.</p>
                 ) : reviews.map((r) => (
-                  <div key={r.id} className="p-3 rounded bg-muted/30 text-sm">
+                  <div key={r.id} className="p-3 rounded bg-muted/30 text-body-sm">
                     <div className="flex items-center gap-1 mb-1">
                       {Array.from({ length: r.rating }).map((_, i) => <Star key={i} className="h-3 w-3 fill-nexus-amber text-nexus-amber" />)}
-                      <span className="text-[10px] text-muted-foreground ml-2">{new Date(r.created_at).toLocaleDateString('pt-BR')}</span>
+                      <span className="text-meta text-muted-foreground ml-2">{new Date(r.created_at).toLocaleDateString('pt-BR')}</span>
                     </div>
-                    {r.comment && <p className="text-xs">{r.comment}</p>}
+                    {r.comment && <p className="text-meta">{r.comment}</p>}
                   </div>
                 ))}
               </div>

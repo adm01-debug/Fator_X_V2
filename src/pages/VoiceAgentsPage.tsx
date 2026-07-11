@@ -176,7 +176,7 @@ export default function VoiceAgentsPage() {
             <div className="space-y-1">
               <div className="flex items-center gap-3">
                 <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Interface de Voz</h1>
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-nexus-cyan/10 text-nexus-cyan text-[10px] font-bold uppercase tracking-widest border border-nexus-cyan/20">
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-nexus-cyan/10 text-nexus-cyan text-meta font-bold uppercase tracking-widest border border-nexus-cyan/20">
                   <Radio className="h-3 w-3 animate-pulse" /> Real-time
                 </div>
               </div>
@@ -187,10 +187,10 @@ export default function VoiceAgentsPage() {
           </div>
           <div className="flex items-center gap-3">
              <div className="flex flex-col items-end gap-1">
-              <div className="flex items-center gap-2 text-nexus-emerald font-black text-sm uppercase tracking-tighter">
+              <div className="flex items-center gap-2 text-nexus-emerald font-black text-body-sm uppercase tracking-tighter">
                 <ShieldCheck className="h-4 w-4" /> Gateway Ativo
               </div>
-              <p className="text-[10px] text-muted-foreground font-bold tracking-widest uppercase">Latência Sub-500ms</p>
+              <p className="text-meta text-muted-foreground font-bold tracking-widest uppercase">Latência Sub-500ms</p>
             </div>
           </div>
         </div>
@@ -208,7 +208,7 @@ export default function VoiceAgentsPage() {
               <stat.icon className={cn("h-7 w-7", stat.color)} />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{stat.label}</p>
+              <p className="text-meta font-bold uppercase tracking-widest text-muted-foreground">{stat.label}</p>
               <p className="text-2xl font-black text-foreground">{stat.value}</p>
             </div>
           </div>
@@ -236,7 +236,7 @@ export default function VoiceAgentsPage() {
               <Button size="lg" variant="gradient" className="h-16 text-lg w-full md:w-auto" onClick={handleStart}>
                 <Mic className="mr-2 h-5 w-5" /> Iniciar Conversa
               </Button>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-meta text-muted-foreground">
                 Microfone necessário. Use Chrome/Edge para melhor reconhecimento de voz pt-BR.
               </p>
             </div>
@@ -245,10 +245,10 @@ export default function VoiceAgentsPage() {
               <VoiceWaveform stream={stream} active={state === "listening"} />
               <ScrollArea className="h-[320px] rounded-lg border p-4 bg-secondary/20">
                 <div className="space-y-3">
-                  {transcript.length === 0 && <p className="text-sm text-muted-foreground text-center py-8">Aguardando sua fala...</p>}
+                  {transcript.length === 0 && <p className="text-body-sm text-muted-foreground text-center py-8">Aguardando sua fala...</p>}
                   {transcript.map((t, i) => (
                     <div key={i} className={`flex ${t.role === "user" ? "justify-end" : "justify-start"}`}>
-                      <div className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm ${t.role === "user" ? "bg-primary text-primary-foreground" : "bg-card border"}`}>
+                      <div className={`max-w-[80%] rounded-2xl px-4 py-2 text-body-sm ${t.role === "user" ? "bg-primary text-primary-foreground" : "bg-card border"}`}>
                         {t.text}
                       </div>
                     </div>
@@ -257,7 +257,7 @@ export default function VoiceAgentsPage() {
                     <div className="flex justify-start">
                       <div className="bg-card border rounded-2xl px-4 py-2 flex items-center gap-2">
                         <Loader2 className="h-3 w-3 animate-spin" />
-                        <span className="text-xs text-muted-foreground">processando...</span>
+                        <span className="text-meta text-muted-foreground">processando...</span>
                       </div>
                     </div>
                   )}
@@ -275,19 +275,19 @@ export default function VoiceAgentsPage() {
         <CardHeader><CardTitle>Histórico</CardTitle></CardHeader>
         <CardContent>
           {history.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-8">Nenhuma sessão ainda.</p>
+            <p className="text-body-sm text-muted-foreground text-center py-8">Nenhuma sessão ainda.</p>
           ) : (
             <div className="space-y-2">
               {history.map((h) => (
                 <div key={h.id} className="flex items-center justify-between rounded-lg border px-4 py-3 hover:bg-secondary/30 transition-colors">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <Badge variant={h.status === "ended" ? "secondary" : "default"} className="text-[10px]">{h.status}</Badge>
-                      <span className="text-sm font-medium">
+                      <Badge variant={h.status === "ended" ? "secondary" : "default"} className="text-meta">{h.status}</Badge>
+                      <span className="text-body-sm font-medium">
                         {(h.duration_ms / 1000).toFixed(1)}s · {h.transcript.length} turnos
                       </span>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-0.5">
+                    <p className="text-meta text-muted-foreground mt-0.5">
                       {new Date(h.started_at).toLocaleString("pt-BR")} · ${(h.cost_cents / 100).toFixed(4)}
                     </p>
                   </div>

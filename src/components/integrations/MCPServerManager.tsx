@@ -60,8 +60,8 @@ export function MCPServerManager() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Wrench className="w-5 h-5 text-primary" />
-          <h3 className="text-sm font-bold text-foreground">MCP Servers</h3>
-          <Badge variant="outline" className="text-[10px]">{servers.length} registrados</Badge>
+          <h3 className="text-body-sm font-bold text-foreground">MCP Servers</h3>
+          <Badge variant="outline" className="text-meta">{servers.length} registrados</Badge>
         </div>
       </div>
 
@@ -70,13 +70,13 @@ export function MCPServerManager() {
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
           placeholder="Nome (ex: GitHub)"
-          className="bg-secondary/50 border-border/50 text-xs h-8"
+          className="bg-secondary/50 border-border/50 text-meta h-8"
         />
         <Input
           value={newUrl}
           onChange={(e) => setNewUrl(e.target.value)}
           placeholder="URL do MCP server"
-          className="bg-secondary/50 border-border/50 text-xs h-8 flex-1"
+          className="bg-secondary/50 border-border/50 text-meta h-8 flex-1"
         />
         <Button onClick={addServer} disabled={adding || !newName || !newUrl} size="sm" className="h-8">
           {adding ? <Loader2 className="w-3 h-3 animate-spin" /> : <Plus className="w-3 h-3" />}
@@ -84,9 +84,9 @@ export function MCPServerManager() {
       </div>
 
       {loading ? (
-        <div className="text-xs text-muted-foreground text-center py-4">Carregando...</div>
+        <div className="text-meta text-muted-foreground text-center py-4">Carregando...</div>
       ) : servers.length === 0 ? (
-        <div className="text-xs text-muted-foreground text-center py-8 bg-secondary/30 rounded-lg">
+        <div className="text-meta text-muted-foreground text-center py-8 bg-secondary/30 rounded-lg">
           Nenhum MCP server registrado. Adicione acima para conectar a ferramentas externas.
         </div>
       ) : (
@@ -95,15 +95,15 @@ export function MCPServerManager() {
             <div key={s.id} className="bg-secondary/30 rounded-lg p-3 flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-foreground">{s.name}</span>
-                  <Badge variant="outline" className={`text-[10px] ${s.status === 'connected' ? 'border-nexus-emerald text-nexus-emerald' : ''}`}>
+                  <span className="text-body-sm font-medium text-foreground">{s.name}</span>
+                  <Badge variant="outline" className={`text-meta ${s.status === 'connected' ? 'border-nexus-emerald text-nexus-emerald' : ''}`}>
                     {s.status}
                   </Badge>
                   {Array.isArray(s.tools_discovered) && s.tools_discovered.length > 0 && (
-                    <span className="text-[10px] text-muted-foreground">{s.tools_discovered.length} tools</span>
+                    <span className="text-meta text-muted-foreground">{s.tools_discovered.length} tools</span>
                   )}
                 </div>
-                <span className="text-[10px] text-muted-foreground font-mono">{s.url}</span>
+                <span className="text-meta text-muted-foreground font-mono">{s.url}</span>
               </div>
               <div className="flex gap-1">
                 <Button variant="ghost" size="sm" className="h-7 w-7 p-0" aria-label="Ação">

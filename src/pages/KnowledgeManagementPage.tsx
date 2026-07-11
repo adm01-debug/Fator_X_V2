@@ -57,7 +57,7 @@ export default function KnowledgeManagementPage() {
       />
 
       <div className="flex items-center gap-3">
-        <Label className="text-sm">Base de conhecimento:</Label>
+        <Label className="text-body-sm">Base de conhecimento:</Label>
         <Select value={selectedKb} onValueChange={setSelectedKb}>
           <SelectTrigger className="w-[300px]"><SelectValue placeholder="Selecione uma base..." /></SelectTrigger>
           <SelectContent>
@@ -88,8 +88,8 @@ export default function KnowledgeManagementPage() {
                   <Badge variant={hc.is_published ? "default" : "secondary"}>{hc.is_published ? "Publicado" : "Rascunho"}</Badge>
                 </div>
                 <h3 className="text-base font-semibold text-foreground mb-1">{hc.title}</h3>
-                <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{hc.description || "Sem descrição"}</p>
-                <p className="text-[11px] text-muted-foreground font-mono mb-3">/help/{hc.slug}</p>
+                <p className="text-meta text-muted-foreground mb-3 line-clamp-2">{hc.description || "Sem descrição"}</p>
+                <p className="text-meta text-muted-foreground font-mono mb-3">/help/{hc.slug}</p>
                 <div className="flex gap-2">
                   <Button size="sm" variant="outline" className="flex-1" onClick={() => window.open(`/help/${hc.slug}`, "_blank")}><ExternalLink className="h-3 w-3 mr-1" />Visitar</Button>
                   <Button size="sm" variant="outline" onClick={async () => {
@@ -100,7 +100,7 @@ export default function KnowledgeManagementPage() {
                 </div>
               </div>
             ))}
-            {helpCenters.length === 0 && <div className="col-span-full text-center text-sm text-muted-foreground py-8">Nenhum Help Center criado.</div>}
+            {helpCenters.length === 0 && <div className="col-span-full text-center text-body-sm text-muted-foreground py-8">Nenhum Help Center criado.</div>}
           </div>
         </TabsContent>
 
@@ -110,9 +110,9 @@ export default function KnowledgeManagementPage() {
             <CreateArticleDialog kbId={selectedKb} helpCenters={helpCenters} onCreated={(id) => navigate(`/knowledge-management/article/${id}`)} />
           </div>
           {!selectedKb ? (
-            <div className="text-center text-sm text-muted-foreground py-12">Selecione uma base de conhecimento.</div>
+            <div className="text-center text-body-sm text-muted-foreground py-12">Selecione uma base de conhecimento.</div>
           ) : articles.length === 0 ? (
-            <div className="text-center text-sm text-muted-foreground py-12">Nenhum artigo. Crie o primeiro.</div>
+            <div className="text-center text-body-sm text-muted-foreground py-12">Nenhum artigo. Crie o primeiro.</div>
           ) : (
             <div className="space-y-2">
               {articles.map((a: { id: string; title: string; status: string; language: string; current_version: number; view_count: number; helpful_count: number; updated_at: string }) => (
@@ -120,9 +120,9 @@ export default function KnowledgeManagementPage() {
                   <FileText className="h-5 w-5 text-primary shrink-0" />
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-foreground truncate">{a.title}</p>
-                    <p className="text-xs text-muted-foreground">v{a.current_version} • {a.language} • atualizado {new Date(a.updated_at).toLocaleDateString("pt-BR")}</p>
+                    <p className="text-meta text-muted-foreground">v{a.current_version} • {a.language} • atualizado {new Date(a.updated_at).toLocaleDateString("pt-BR")}</p>
                   </div>
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-3 text-meta text-muted-foreground">
                     <span className="flex items-center gap-1"><Eye className="h-3 w-3" />{a.view_count}</span>
                     <span className="flex items-center gap-1"><ThumbsUp className="h-3 w-3" />{a.helpful_count}</span>
                     <Badge variant={a.status === "published" ? "default" : "secondary"}>{a.status}</Badge>
@@ -148,7 +148,7 @@ export default function KnowledgeManagementPage() {
             }}><AlertCircle className="h-4 w-4 mr-2" />Analisar Lacunas</Button>
           </div>
           {gaps.length === 0 ? (
-            <div className="text-center text-sm text-muted-foreground py-12">Nenhuma lacuna. Execute uma análise.</div>
+            <div className="text-center text-body-sm text-muted-foreground py-12">Nenhuma lacuna. Execute uma análise.</div>
           ) : (
             <div className="space-y-2">
               {(gaps as Array<{ id: string; query: string; occurrences: number; status: string; suggested_topic: string | null; suggested_outline: unknown }>).map((g) => (
@@ -156,13 +156,13 @@ export default function KnowledgeManagementPage() {
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex-1">
                       <p className="font-medium text-foreground">{g.query}</p>
-                      <p className="text-xs text-muted-foreground mt-1">{g.occurrences} ocorrências</p>
+                      <p className="text-meta text-muted-foreground mt-1">{g.occurrences} ocorrências</p>
                       {g.suggested_topic && (
                         <div className="mt-3 p-3 rounded-lg bg-primary/5 border border-primary/20">
-                          <p className="text-xs font-medium text-primary mb-1">Sugestão de artigo:</p>
-                          <p className="text-sm font-semibold text-foreground">{g.suggested_topic}</p>
+                          <p className="text-meta font-medium text-primary mb-1">Sugestão de artigo:</p>
+                          <p className="text-body-sm font-semibold text-foreground">{g.suggested_topic}</p>
                           {Array.isArray(g.suggested_outline) && (
-                            <ul className="mt-2 list-disc list-inside text-xs text-muted-foreground space-y-0.5">
+                            <ul className="mt-2 list-disc list-inside text-meta text-muted-foreground space-y-0.5">
                               {(g.suggested_outline as string[]).map((s, i) => <li key={i}>{s}</li>)}
                             </ul>
                           )}

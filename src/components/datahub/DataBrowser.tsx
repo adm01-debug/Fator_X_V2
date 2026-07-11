@@ -231,32 +231,32 @@ export function DataBrowser({ entityId, onClose }: { entityId: string; onClose: 
           <Button size="sm" variant="ghost" onClick={onClose}><ChevronLeft className="h-4 w-4" /></Button>
           <Icon className="h-5 w-5 text-primary" />
           <h3 className="text-lg font-heading font-bold text-foreground">{mapping?.name ?? entityId}</h3>
-          <Badge variant="secondary" className="text-[11px]">{total.toLocaleString()} registros</Badge>
+          <Badge variant="secondary" className="text-meta">{total.toLocaleString()} registros</Badge>
         </div>
         <div className="flex items-center gap-2">
-          <Button size="sm" className="gap-1.5 text-xs nexus-gradient-bg text-primary-foreground" onClick={() => setCreateOpen(true)}>
+          <Button size="sm" className="gap-1.5 text-meta nexus-gradient-bg text-primary-foreground" onClick={() => setCreateOpen(true)}>
             <Plus className="h-3.5 w-3.5" /> Novo {mapping?.name}
           </Button>
           {someSelected && (
             <>
-              <Button size="sm" variant="default" className="gap-1.5 text-xs" onClick={() => setBulkEditOpen(true)}>
+              <Button size="sm" variant="default" className="gap-1.5 text-meta" onClick={() => setBulkEditOpen(true)}>
                 <Pencil className="h-3.5 w-3.5" />
                 Editar {selectedIds.size}
               </Button>
-              <Button size="sm" variant="destructive" className="gap-1.5 text-xs" onClick={() => setConfirmDeleteOpen(true)}>
+              <Button size="sm" variant="destructive" className="gap-1.5 text-meta" onClick={() => setConfirmDeleteOpen(true)}>
                 <Trash2 className="h-3.5 w-3.5" />
                 Excluir {selectedIds.size}
               </Button>
             </>
           )}
-          <Button size="sm" variant="outline" className="gap-1.5 text-xs" onClick={() => setShowFilters(v => !v)}>
+          <Button size="sm" variant="outline" className="gap-1.5 text-meta" onClick={() => setShowFilters(v => !v)}>
             <Filter className="h-3.5 w-3.5" />
-            Filtros {filters.length > 0 && <Badge variant="default" className="text-[11px] h-4 ml-1">{filters.length}</Badge>}
+            Filtros {filters.length > 0 && <Badge variant="default" className="text-meta h-4 ml-1">{filters.length}</Badge>}
           </Button>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button size="sm" variant="outline" className="gap-1.5 text-xs" onClick={handleExportCSV} disabled={!data.length}>
+                <Button size="sm" variant="outline" className="gap-1.5 text-meta" onClick={handleExportCSV} disabled={!data.length}>
                   <Download className="h-3.5 w-3.5" /> CSV
                 </Button>
               </TooltipTrigger>
@@ -266,7 +266,7 @@ export function DataBrowser({ entityId, onClose }: { entityId: string; onClose: 
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button size="sm" variant="outline" className="gap-1.5 text-xs" onClick={handleExportJSON} disabled={!data.length}>
+                <Button size="sm" variant="outline" className="gap-1.5 text-meta" onClick={handleExportJSON} disabled={!data.length}>
                   <FileJson className="h-3.5 w-3.5" /> JSON
                 </Button>
               </TooltipTrigger>
@@ -293,7 +293,7 @@ export function DataBrowser({ entityId, onClose }: { entityId: string; onClose: 
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+              <div className="flex items-center gap-1.5 text-meta text-muted-foreground">
                 <Keyboard className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">← → navegar · Esc voltar</span>
               </div>
@@ -322,7 +322,7 @@ export function DataBrowser({ entityId, onClose }: { entityId: string; onClose: 
 
       {/* Hint for inline editing */}
       {!loading && data.length > 0 && (
-        <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+        <p className="text-meta text-muted-foreground flex items-center gap-1">
           <Pencil className="h-3 w-3" /> Duplo clique em uma célula para editar inline · Use checkboxes para edição em massa
         </p>
       )}

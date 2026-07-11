@@ -72,7 +72,7 @@ export default function RolePermissionsPage() {
   if (!role) {
     return (
       <div className="p-10 text-center">
-        <p className="text-sm text-muted-foreground">Função não encontrada.</p>
+        <p className="text-body-sm text-muted-foreground">Função não encontrada.</p>
         <Link to="/rbac/roles">
           <Button variant="outline" className="mt-4 gap-2">
             <ArrowLeft className="w-3 h-3" /> Voltar
@@ -86,7 +86,7 @@ export default function RolePermissionsPage() {
 
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
-      <Link to="/rbac/roles" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
+      <Link to="/rbac/roles" className="inline-flex items-center gap-1 text-meta text-muted-foreground hover:text-foreground">
         <ArrowLeft className="w-3 h-3" /> Voltar para funções
       </Link>
 
@@ -97,12 +97,12 @@ export default function RolePermissionsPage() {
 
       <Card className="p-5 flex items-center justify-between">
         <div>
-          <p className="text-xs text-muted-foreground">Total de permissões concedidas</p>
+          <p className="text-meta text-muted-foreground">Total de permissões concedidas</p>
           <p className="text-2xl font-bold text-foreground">
-            {grantedCount} <span className="text-sm text-muted-foreground font-normal">/ {allPerms.length}</span>
+            {grantedCount} <span className="text-body-sm text-muted-foreground font-normal">/ {allPerms.length}</span>
           </p>
         </div>
-        <Badge variant="outline" className="text-[10px]" style={{ color: role.color, borderColor: `${role.color}50` }}>
+        <Badge variant="outline" className="text-meta" style={{ color: role.color, borderColor: `${role.color}50` }}>
           Nível {role.level}
         </Badge>
       </Card>
@@ -110,7 +110,7 @@ export default function RolePermissionsPage() {
       <div className="space-y-4">
         {Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b)).map(([module, perms]) => (
           <Card key={module} className="p-5">
-            <h3 className="text-sm font-bold text-foreground capitalize mb-3">{module}</h3>
+            <h3 className="text-body-sm font-bold text-foreground capitalize mb-3">{module}</h3>
             <div className="grid gap-2 md:grid-cols-2">
               {perms.map((p) => {
                 const has = granted.has(p.id);
@@ -125,8 +125,8 @@ export default function RolePermissionsPage() {
                       <XCircle className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
                     )}
                     <div className="min-w-0 flex-1">
-                      <code className="text-[11px] font-mono text-foreground truncate block">{p.key}</code>
-                      <p className="text-[10px] text-muted-foreground line-clamp-1">{p.name}</p>
+                      <code className="text-meta font-mono text-foreground truncate block">{p.key}</code>
+                      <p className="text-meta text-muted-foreground line-clamp-1">{p.name}</p>
                     </div>
                     {p.category && (
                       <Badge variant="outline" className={`text-[9px] shrink-0 ${CATEGORY_COLORS[p.category] ?? ""}`}>

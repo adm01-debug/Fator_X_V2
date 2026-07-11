@@ -67,7 +67,7 @@ export function DataBrowserTable({
                   </td>
                 ))}
                 <td className="p-2">
-                  <Button size="sm" variant="ghost" className="h-6 text-[11px] gap-1" onClick={() => onViewRecord(row.id as string)}>
+                  <Button size="sm" variant="ghost" className="h-6 text-meta gap-1" onClick={() => onViewRecord(row.id as string)}>
                     <Eye className="h-3 w-3" /> Ver
                   </Button>
                 </td>

@@ -66,12 +66,12 @@ export function KnowledgeHealthTab() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-heading font-semibold text-foreground flex items-center gap-2">
+          <h3 className="text-body-sm font-heading font-semibold text-foreground flex items-center gap-2">
             <Activity className="h-4 w-4 text-primary" /> Saúde do Conhecimento
           </h3>
-          <p className="text-[11px] text-muted-foreground mt-0.5">Detecção de degradação, gaps e frescor dos dados</p>
+          <p className="text-meta text-muted-foreground mt-0.5">Detecção de degradação, gaps e frescor dos dados</p>
         </div>
-        <Button size="sm" variant="outline" onClick={() => refetch()} className="gap-1.5 text-xs">
+        <Button size="sm" variant="outline" onClick={() => refetch()} className="gap-1.5 text-meta">
           <RefreshCw className="h-3.5 w-3.5" /> Analisar
         </Button>
       </div>
@@ -83,21 +83,21 @@ export function KnowledgeHealthTab() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div className="nexus-card text-center py-3">
               <p className="text-lg font-bold text-nexus-emerald">{data.summary?.fresh || 0}</p>
-              <p className="text-[11px] text-muted-foreground flex items-center justify-center gap-1"><CheckCircle className="h-3 w-3" /> Atualizados</p>
+              <p className="text-meta text-muted-foreground flex items-center justify-center gap-1"><CheckCircle className="h-3 w-3" /> Atualizados</p>
             </div>
             <div className="nexus-card text-center py-3">
               <p className="text-lg font-bold text-nexus-amber">{data.summary?.aging || 0}</p>
-              <p className="text-[11px] text-muted-foreground flex items-center justify-center gap-1"><Clock className="h-3 w-3" /> Envelhecendo</p>
+              <p className="text-meta text-muted-foreground flex items-center justify-center gap-1"><Clock className="h-3 w-3" /> Envelhecendo</p>
             </div>
             <div className="nexus-card text-center py-3">
               <p className="text-lg font-bold text-destructive">{data.summary?.stale || 0}</p>
-              <p className="text-[11px] text-muted-foreground flex items-center justify-center gap-1"><AlertTriangle className="h-3 w-3" /> Desatualizados</p>
+              <p className="text-meta text-muted-foreground flex items-center justify-center gap-1"><AlertTriangle className="h-3 w-3" /> Desatualizados</p>
             </div>
             <div className="nexus-card text-center py-3">
               <p className="text-lg font-bold text-primary">{data.chunks?.done || 0}</p>
-              <p className="text-[11px] text-muted-foreground">Chunks embeddados</p>
+              <p className="text-meta text-muted-foreground">Chunks embeddados</p>
               {((data.chunks?.pending ?? 0) > 0 || (data.chunks?.failed ?? 0) > 0) && (
-                <p className="text-[11px] text-muted-foreground mt-0.5">
+                <p className="text-meta text-muted-foreground mt-0.5">
                   {(data.chunks?.pending ?? 0) > 0 && <span className="text-nexus-amber">{data.chunks?.pending} pendentes</span>}
                   {(data.chunks?.pending ?? 0) > 0 && (data.chunks?.failed ?? 0) > 0 && ' • '}
                   {(data.chunks?.failed ?? 0) > 0 && <span className="text-destructive">{data.chunks?.failed} falhas</span>}
@@ -108,12 +108,12 @@ export function KnowledgeHealthTab() {
 
           {(data.gaps?.length ?? 0) > 0 && (
             <div className="nexus-card border-nexus-amber/30">
-              <h4 className="text-xs font-semibold text-nexus-amber mb-2 flex items-center gap-1.5">
+              <h4 className="text-meta font-semibold text-nexus-amber mb-2 flex items-center gap-1.5">
                 <Target className="h-3.5 w-3.5" /> Gaps Identificados ({data.gaps?.length})
               </h4>
               <div className="space-y-1.5">
                 {data.gaps?.map((g, i) => (
-                  <div key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
+                  <div key={i} className="flex items-start gap-2 text-meta text-muted-foreground">
                     <AlertTriangle className="h-3 w-3 text-nexus-amber mt-0.5 shrink-0" />
                     <span>{g}</span>
                   </div>
@@ -123,32 +123,32 @@ export function KnowledgeHealthTab() {
           )}
 
           <div className="nexus-card">
-            <h4 className="text-xs font-semibold text-foreground mb-3">📋 Inventário de Conhecimento ({data.items?.length || 0})</h4>
+            <h4 className="text-meta font-semibold text-foreground mb-3">📋 Inventário de Conhecimento ({data.items?.length || 0})</h4>
             <div className="space-y-2 max-h-[300px] overflow-y-auto">
               {data.items?.map(item => (
                 <div key={item.id} className="flex items-center gap-3 p-2.5 rounded-lg bg-secondary/30 border border-border/20">
                   {freshnessIcon(item.freshness)}
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-foreground truncate">{item.name}</p>
-                    <p className="text-[11px] text-muted-foreground">
+                    <p className="text-meta font-medium text-foreground truncate">{item.name}</p>
+                    <p className="text-meta text-muted-foreground">
                       {item.type === 'knowledge_base' ? '📚 Base de Conhecimento' : '🤖 Agente'}
                       {item.docs != null && ` • ${item.docs} docs`}
                       {item.status && ` • ${item.status}`}
                     </p>
                   </div>
                   <div className="text-right">
-                    <Badge variant="outline" className={`text-[11px] ${
+                    <Badge variant="outline" className={`text-meta ${
                       item.freshness === 'fresh' ? 'border-nexus-emerald/30 text-nexus-emerald' :
                       item.freshness === 'aging' ? 'border-nexus-amber/30 text-nexus-amber' :
                       'border-destructive/30 text-destructive'
                     }`}>{freshnessLabel(item.freshness)}</Badge>
-                    <p className="text-[11px] text-muted-foreground mt-0.5">{item.daysSinceUpdate}d atrás</p>
+                    <p className="text-meta text-muted-foreground mt-0.5">{item.daysSinceUpdate}d atrás</p>
                   </div>
                   {item.type === 'knowledge_base' && item.freshness !== 'fresh' && (
                     <Button
                       variant="outline"
                       size="sm"
-                      className="h-7 gap-1.5 text-[11px] shrink-0"
+                      className="h-7 gap-1.5 text-meta shrink-0"
                       disabled={reindexingId === item.id}
                       onClick={() => handleReindex(item)}
                     >

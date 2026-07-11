@@ -59,17 +59,17 @@ export function PromptDiagnosticsPanel({ prompt, onJumpToLine, onApplyFix }: Pro
           >
             <div className="flex items-center gap-2">
               <Stethoscope className="h-3.5 w-3.5 text-muted-foreground" />
-              <span className="text-xs font-semibold">Diagnóstico técnico</span>
+              <span className="text-meta font-semibold">Diagnóstico técnico</span>
               <span className="flex items-center gap-1">
                 {errorCount > 0 && (
-                  <Badge variant="destructive" className="h-4 px-1.5 text-[10px] font-mono">
+                  <Badge variant="destructive" className="h-4 px-1.5 text-meta font-mono">
                     {errorCount} erro{errorCount > 1 ? 's' : ''}
                   </Badge>
                 )}
                 {warnCount > 0 && (
                   <Badge
                     variant="outline"
-                    className="h-4 px-1.5 text-[10px] font-mono border-nexus-amber/50 text-nexus-amber"
+                    className="h-4 px-1.5 text-meta font-mono border-nexus-amber/50 text-nexus-amber"
                   >
                     {warnCount} aviso{warnCount > 1 ? 's' : ''}
                   </Badge>
@@ -84,7 +84,7 @@ export function PromptDiagnosticsPanel({ prompt, onJumpToLine, onApplyFix }: Pro
 
         <CollapsibleContent>
           <div className="px-2.5 pb-2.5 pt-1 space-y-2">
-            <p className="text-[10px] text-muted-foreground">
+            <p className="text-meta text-muted-foreground">
               Cada cartão mostra a regra interna que disparou, quantas vezes ocorreu e uma amostra do trecho afetado.
             </p>
             {issues.map((issue) => (
@@ -125,19 +125,19 @@ function DiagnosticCard({ issue, onJump, onApply }: CardProps) {
           <Icon className={cn('h-3.5 w-3.5 shrink-0 mt-0.5', isError ? 'text-destructive' : 'text-nexus-amber')} />
           <div className="min-w-0">
             <div className="flex items-center gap-1.5 flex-wrap">
-              <span className={cn('text-xs font-semibold', isError ? 'text-destructive' : 'text-nexus-amber')}>
+              <span className={cn('text-meta font-semibold', isError ? 'text-destructive' : 'text-nexus-amber')}>
                 {issue.title}
               </span>
-              <code className="text-[10px] font-mono text-muted-foreground bg-muted/60 px-1 py-0.5 rounded">
+              <code className="text-meta font-mono text-muted-foreground bg-muted/60 px-1 py-0.5 rounded">
                 {issue.id}
               </code>
             </div>
-            <p className="text-[11px] text-muted-foreground mt-0.5 leading-snug">{issue.description}</p>
+            <p className="text-meta text-muted-foreground mt-0.5 leading-snug">{issue.description}</p>
           </div>
         </div>
       </div>
 
-      <div className="flex items-center gap-2 flex-wrap text-[10px] text-muted-foreground pl-5">
+      <div className="flex items-center gap-2 flex-wrap text-meta text-muted-foreground pl-5">
         <span>
           Regra: <code className="font-mono bg-muted/60 px-1 py-0.5 rounded">{issue.rulePattern}</code>
         </span>
@@ -161,7 +161,7 @@ function DiagnosticCard({ issue, onJump, onApply }: CardProps) {
 
       {issue.sample && (
         <div className="ml-5 rounded border border-border/60 bg-background/60 p-1.5 overflow-x-auto">
-          <div className="text-[10px] text-muted-foreground mb-0.5">
+          <div className="text-meta text-muted-foreground mb-0.5">
             Amostra (linha {issue.sample.line}, col {issue.sample.column}
             {issue.sample.escapedMatch && (
               <>
@@ -171,12 +171,12 @@ function DiagnosticCard({ issue, onJump, onApply }: CardProps) {
             )}
             ):
           </div>
-          <pre className="text-[11px] font-mono whitespace-pre leading-tight m-0">
+          <pre className="text-meta font-mono whitespace-pre leading-tight m-0">
             {issue.sample.context || '(linha vazia)'}
           </pre>
           <pre
             className={cn(
-              'text-[11px] font-mono whitespace-pre leading-tight m-0',
+              'text-meta font-mono whitespace-pre leading-tight m-0',
               isError ? 'text-destructive' : 'text-nexus-amber',
             )}
             aria-hidden
@@ -192,7 +192,7 @@ function DiagnosticCard({ issue, onJump, onApply }: CardProps) {
             type="button"
             size="sm"
             variant="outline"
-            className="h-6 px-2 text-[10px] gap-1"
+            className="h-6 px-2 text-meta gap-1"
             onClick={() => onJump(firstLine)}
           >
             <ArrowRight className="h-3 w-3" />
@@ -204,7 +204,7 @@ function DiagnosticCard({ issue, onJump, onApply }: CardProps) {
             type="button"
             size="sm"
             variant="default"
-            className="h-6 px-2 text-[10px] gap-1"
+            className="h-6 px-2 text-meta gap-1"
             onClick={onApply}
           >
             <Wrench className="h-3 w-3" />

@@ -99,8 +99,8 @@ export default function MemoryPage() {
             <button key={mt.key} onClick={() => setActiveType(mt.key)}
               className={`nexus-card text-left transition-all ${isActive ? 'ring-1 ring-primary border-primary' : 'hover:border-primary/30'}`}>
               <Icon className={`h-5 w-5 mb-2 ${mt.color}`} />
-              <div className="text-xs font-semibold text-foreground">{mt.title}</div>
-              <div className="text-[11px] text-muted-foreground mt-0.5">{mt.desc}</div>
+              <div className="text-meta font-semibold text-foreground">{mt.title}</div>
+              <div className="text-meta text-muted-foreground mt-0.5">{mt.desc}</div>
             </button>
           );
         })}
@@ -111,17 +111,17 @@ export default function MemoryPage() {
         <div className="flex gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-            <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar memórias (semântica via memory-tools)..." className="pl-9 bg-secondary/50 text-xs" />
+            <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar memórias (semântica via memory-tools)..." className="pl-9 bg-secondary/50 text-meta" />
           </div>
-          <Button size="sm" variant="outline" onClick={handleCompact} disabled={compacting} className="gap-1.5 text-xs shrink-0">
+          <Button size="sm" variant="outline" onClick={handleCompact} disabled={compacting} className="gap-1.5 text-meta shrink-0">
             {compacting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Archive className="h-3.5 w-3.5" />}
             Compactar
           </Button>
         </div>
         <div className="space-y-2">
-          <Textarea value={newContent} onChange={e => setNewContent(e.target.value)} placeholder="Conteúdo da memória..." rows={2} className="bg-secondary/50 text-xs" />
+          <Textarea value={newContent} onChange={e => setNewContent(e.target.value)} placeholder="Conteúdo da memória..." rows={2} className="bg-secondary/50 text-meta" />
           <div className="flex gap-2">
-            <Input value={newSource} onChange={e => setNewSource(e.target.value)} placeholder="Fonte (opcional)" className="bg-secondary/50 text-xs flex-1" />
+            <Input value={newSource} onChange={e => setNewSource(e.target.value)} placeholder="Fonte (opcional)" className="bg-secondary/50 text-meta flex-1" />
             <Button size="sm" onClick={handleAdd} disabled={saving} className="gap-1.5">
               {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Plus className="h-3.5 w-3.5" />}
               Adicionar
@@ -138,15 +138,15 @@ export default function MemoryPage() {
           <div className="h-16 w-16 rounded-2xl bg-nexus-cyan/10 flex items-center justify-center mb-4">
             <Brain className="h-8 w-8 text-nexus-cyan" />
           </div>
-          <p className="text-sm text-muted-foreground">{search ? 'Nenhuma memória encontrada para essa busca' : 'Nenhuma memória deste tipo ainda. Adicione acima para começar.'}</p>
+          <p className="text-body-sm text-muted-foreground">{search ? 'Nenhuma memória encontrada para essa busca' : 'Nenhuma memória deste tipo ainda. Adicione acima para começar.'}</p>
         </div>
       ) : (
         <div className="space-y-2">
           {memories.map((entry) => (
             <div key={entry.id} className="nexus-card flex items-start gap-3">
               <div className="flex-1 min-w-0">
-                <p className="text-xs text-foreground leading-relaxed">{entry.content}</p>
-                <div className="flex items-center gap-2 mt-1.5 text-[11px] text-muted-foreground">
+                <p className="text-meta text-foreground leading-relaxed">{entry.content}</p>
+                <div className="flex items-center gap-2 mt-1.5 text-meta text-muted-foreground">
                   <span>{entry.source}</span>
                   <span>•</span>
                   <span>{new Date(entry.created_at).toLocaleDateString('pt-BR')}</span>

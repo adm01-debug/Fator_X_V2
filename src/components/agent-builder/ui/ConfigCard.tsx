@@ -49,10 +49,10 @@ export function ConfigCard({
         {icon && <span className="text-xl shrink-0 mt-0.5">{icon}</span>}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold text-foreground">{title}</span>
+            <span className="text-body-sm font-semibold text-foreground">{title}</span>
             {badge}
           </div>
-          {description && <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{description}</p>}
+          {description && <p className="text-meta text-muted-foreground mt-1 leading-relaxed">{description}</p>}
           {children && <div className="mt-3">{children}</div>}
         </div>
       </div>

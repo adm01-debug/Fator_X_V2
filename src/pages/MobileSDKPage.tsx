@@ -66,9 +66,9 @@ export default function MobileSDKPage() {
               className={`p-4 rounded-lg border-2 text-left transition-all ${selected === s.platform ? "border-primary bg-primary/8 shadow-md" : "border-border/40 hover:border-border"}`}
             >
               <Icon className="h-6 w-6 mb-2 text-primary" />
-              <div className="text-sm font-semibold">{s.platform}</div>
-              <div className="text-[11px] text-muted-foreground mt-0.5">v{s.version} · {s.lang}</div>
-              <div className="text-[10px] text-muted-foreground/70 mt-1">{s.min} · {s.downloads} downloads</div>
+              <div className="text-body-sm font-semibold">{s.platform}</div>
+              <div className="text-meta text-muted-foreground mt-0.5">v{s.version} · {s.lang}</div>
+              <div className="text-meta text-muted-foreground/70 mt-1">{s.min} · {s.downloads} downloads</div>
             </button>
           );
         })}
@@ -77,7 +77,7 @@ export default function MobileSDKPage() {
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-4">
         <Card>
           <CardHeader className="pb-3 flex-row items-center justify-between">
-            <CardTitle className="text-sm flex items-center gap-2"><Code2 className="h-4 w-4" />Quickstart {selected}</CardTitle>
+            <CardTitle className="text-body-sm flex items-center gap-2"><Code2 className="h-4 w-4" />Quickstart {selected}</CardTitle>
             <Button size="sm" variant="outline" onClick={() => { navigator.clipboard.writeText(snippet); toast.success("Snippet copiado"); }}>
               <Copy className="h-3.5 w-3.5 mr-1" />Copiar
             </Button>
@@ -91,7 +91,7 @@ export default function MobileSDKPage() {
                 <TabsTrigger value="streaming">4. Streaming</TabsTrigger>
               </TabsList>
               <TabsContent value="install">
-                <pre className="text-xs bg-muted/30 p-4 rounded font-mono overflow-x-auto">
+                <pre className="text-meta bg-muted/30 p-4 rounded font-mono overflow-x-auto">
 {selected === "iOS" && `# Package.swift
 .package(url: "https://github.com/fatorx/nexus-ios", from: "1.4.2")`}
 {selected === "Android" && `// build.gradle
@@ -105,13 +105,13 @@ dependencies:
                 </pre>
               </TabsContent>
               <TabsContent value="init">
-                <pre className="text-xs bg-muted/30 p-4 rounded font-mono overflow-x-auto">{snippet}</pre>
+                <pre className="text-meta bg-muted/30 p-4 rounded font-mono overflow-x-auto">{snippet}</pre>
               </TabsContent>
               <TabsContent value="chat">
-                <pre className="text-xs bg-muted/30 p-4 rounded font-mono overflow-x-auto">{snippet}</pre>
+                <pre className="text-meta bg-muted/30 p-4 rounded font-mono overflow-x-auto">{snippet}</pre>
               </TabsContent>
               <TabsContent value="streaming">
-                <pre className="text-xs bg-muted/30 p-4 rounded font-mono overflow-x-auto">
+                <pre className="text-meta bg-muted/30 p-4 rounded font-mono overflow-x-auto">
 {`for await chunk in agent.streamChat("Olá!") {
   print(chunk.delta)
 }`}
@@ -123,8 +123,8 @@ dependencies:
 
         <div className="space-y-4">
           <Card>
-            <CardHeader className="pb-3"><CardTitle className="text-sm">Recursos suportados</CardTitle></CardHeader>
-            <CardContent className="space-y-2 text-xs">
+            <CardHeader className="pb-3"><CardTitle className="text-body-sm">Recursos suportados</CardTitle></CardHeader>
+            <CardContent className="space-y-2 text-meta">
               {[
                 { name: "Chat (sync + streaming)", on: true },
                 { name: "Voice (mic + speaker)", on: true },
@@ -137,18 +137,18 @@ dependencies:
               ].map((f) => (
                 <div key={f.name} className="flex items-center justify-between">
                   <span>{f.name}</span>
-                  <Badge variant={f.on ? "default" : "outline"} className="text-[10px]">{f.on ? "✓" : "Em breve"}</Badge>
+                  <Badge variant={f.on ? "default" : "outline"} className="text-meta">{f.on ? "✓" : "Em breve"}</Badge>
                 </div>
               ))}
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="pb-3"><CardTitle className="text-sm">Form factors</CardTitle></CardHeader>
+            <CardHeader className="pb-3"><CardTitle className="text-body-sm">Form factors</CardTitle></CardHeader>
             <CardContent className="grid grid-cols-3 gap-2 text-center">
-              <div className="p-3 rounded-md bg-primary/8"><Phone className="h-5 w-5 mx-auto text-primary" /><div className="text-[10px] mt-1">Phone</div></div>
-              <div className="p-3 rounded-md bg-primary/8"><Tablet className="h-5 w-5 mx-auto text-primary" /><div className="text-[10px] mt-1">Tablet</div></div>
-              <div className="p-3 rounded-md bg-muted/30"><Watch className="h-5 w-5 mx-auto text-muted-foreground" /><div className="text-[10px] mt-1">Watch</div></div>
+              <div className="p-3 rounded-md bg-primary/8"><Phone className="h-5 w-5 mx-auto text-primary" /><div className="text-meta mt-1">Phone</div></div>
+              <div className="p-3 rounded-md bg-primary/8"><Tablet className="h-5 w-5 mx-auto text-primary" /><div className="text-meta mt-1">Tablet</div></div>
+              <div className="p-3 rounded-md bg-muted/30"><Watch className="h-5 w-5 mx-auto text-muted-foreground" /><div className="text-meta mt-1">Watch</div></div>
             </CardContent>
           </Card>
 

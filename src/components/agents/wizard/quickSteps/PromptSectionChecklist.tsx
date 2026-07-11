@@ -140,10 +140,10 @@ export function PromptSectionChecklist({
     >
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <div className="min-w-0">
-          <p className="text-sm font-heading font-semibold text-foreground">
+          <p className="text-body-sm font-heading font-semibold text-foreground">
             Checklist do prompt
           </p>
-          <p className="text-[11px] text-muted-foreground">
+          <p className="text-meta text-muted-foreground">
             {hasVariant
               ? `Cobertura mínima — fonte: variação "${activeVariantLabel}"`
               : customLocked
@@ -161,7 +161,7 @@ export function PromptSectionChecklist({
               />
               <Label
                 htmlFor="checklist-auto-unlock"
-                className="text-[10px] text-muted-foreground cursor-pointer inline-flex items-center gap-1 leading-none"
+                className="text-meta text-muted-foreground cursor-pointer inline-flex items-center gap-1 leading-none"
                 title="Quando ligado, inserir Persona/Escopo/Formato/Regras pelo checklist sai do modo customizado e reativa a detecção automática de variações."
               >
                 <Unlock className="h-2.5 w-2.5" />
@@ -174,7 +174,7 @@ export function PromptSectionChecklist({
           {/* Variant badge — clarifies the "4/4" reference. */}
           {hasVariant && activeVariantLabel && (
             <span
-              className="text-[10px] uppercase tracking-wider font-mono px-2 py-0.5 rounded-full border inline-flex items-center gap-1 border-primary/40 bg-primary/10 text-primary"
+              className="text-meta uppercase tracking-wider font-mono px-2 py-0.5 rounded-full border inline-flex items-center gap-1 border-primary/40 bg-primary/10 text-primary"
               title={`O preenchimento das seções pendentes virá da variação "${activeVariantLabel}".`}
             >
               <Sparkles className="h-2.5 w-2.5" />
@@ -183,7 +183,7 @@ export function PromptSectionChecklist({
           )}
           {customLocked && (
             <span
-              className="text-[10px] uppercase tracking-wider font-mono px-2 py-0.5 rounded-full border inline-flex items-center gap-1 border-nexus-amber/40 bg-nexus-amber/10 text-nexus-amber"
+              className="text-meta uppercase tracking-wider font-mono px-2 py-0.5 rounded-full border inline-flex items-center gap-1 border-nexus-amber/40 bg-nexus-amber/10 text-nexus-amber"
               title="Edição manual detectada — usando snippets genéricos."
             >
               <Lock className="h-2.5 w-2.5" />
@@ -197,7 +197,7 @@ export function PromptSectionChecklist({
                 type="button"
                 size="sm"
                 variant="outline"
-                className="h-7 gap-1.5 text-[11px]"
+                className="h-7 gap-1.5 text-meta"
                 aria-label="Inspecionar conteúdo extraído de cada seção"
                 title="Ver corpo extraído + contagem de palavras de cada seção"
               >
@@ -241,14 +241,14 @@ export function PromptSectionChecklist({
                           ) : (
                             <Circle className="h-4 w-4 text-muted-foreground shrink-0" aria-hidden />
                           )}
-                          <h3 className="text-sm font-medium text-foreground truncate">
+                          <h3 className="text-body-sm font-medium text-foreground truncate">
                             ## {r.label}
                           </h3>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
                           <span
                             className={cn(
-                              'text-[10px] font-mono px-2 py-0.5 rounded-full border',
+                              'text-meta font-mono px-2 py-0.5 rounded-full border',
                               isOk
                                 ? 'border-nexus-emerald/40 bg-nexus-emerald/10 text-nexus-emerald'
                                 : isThin
@@ -265,7 +265,7 @@ export function PromptSectionChecklist({
                               size="sm"
                               variant="ghost"
                               onClick={() => { onJumpToSection(r.key); setDrawerOpen(false); }}
-                              className="h-6 gap-1 text-[10px] text-primary hover:bg-primary/10 px-2"
+                              className="h-6 gap-1 text-meta text-primary hover:bg-primary/10 px-2"
                               aria-label={`Ir para a seção ${r.label} no editor`}
                             >
                               <Crosshair className="h-3 w-3" /> Ir
@@ -278,7 +278,7 @@ export function PromptSectionChecklist({
                           {body.body.trim()}
                         </pre>
                       ) : (
-                        <p className="text-[11px] italic text-muted-foreground">
+                        <p className="text-meta italic text-muted-foreground">
                           Seção não encontrada no prompt atual.
                           {hasVariant
                             ? ` "Inserir + ir" preencheria com ~${effectiveSnippets[r.key].words} palavras da variação ${activeVariantLabel}.`
@@ -311,7 +311,7 @@ export function PromptSectionChecklist({
                   for (const it of items) onInsert(it.snippet, it.key);
                 }
               }}
-              className="h-7 gap-1.5 text-[11px] border-nexus-amber/40 text-nexus-amber hover:bg-nexus-amber/10 hover:text-nexus-amber hover:border-nexus-amber/60"
+              className="h-7 gap-1.5 text-meta border-nexus-amber/40 text-nexus-amber hover:bg-nexus-amber/10 hover:text-nexus-amber hover:border-nexus-amber/60"
               aria-label={
                 hasVariant
                   ? `Completar com variação ${activeVariantLabel} (${incompleteKeys.length} pendentes)`
@@ -326,7 +326,7 @@ export function PromptSectionChecklist({
           )}
           <span
             className={cn(
-              'text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full border',
+              'text-meta font-mono font-semibold px-2 py-0.5 rounded-full border',
               allOk
                 ? 'border-nexus-emerald/40 bg-nexus-emerald/15 text-nexus-emerald'
                 : 'border-nexus-amber/50 bg-nexus-amber/15 text-nexus-amber',
@@ -346,7 +346,7 @@ export function PromptSectionChecklist({
           return (
             <li
               key={r.key}
-              className="flex items-center justify-between gap-2 text-xs"
+              className="flex items-center justify-between gap-2 text-meta"
             >
               <div className="flex items-center gap-2 min-w-0">
                 {isOk ? (
@@ -366,7 +366,7 @@ export function PromptSectionChecklist({
                 </span>
                 <span
                   className={cn(
-                    'text-[10px] font-mono truncate hidden sm:inline',
+                    'text-meta font-mono truncate hidden sm:inline',
                     isThin ? 'text-nexus-amber/80' : 'text-muted-foreground/70',
                   )}
                 >
@@ -386,7 +386,7 @@ export function PromptSectionChecklist({
                     size="sm"
                     variant="ghost"
                     onClick={() => onJumpToSection(r.key)}
-                    className="h-7 gap-1 text-[11px] text-nexus-amber hover:bg-nexus-amber/10"
+                    className="h-7 gap-1 text-meta text-nexus-amber hover:bg-nexus-amber/10"
                     aria-label={`Ir para a seção ${r.label} no editor`}
                     title="Pular para esta seção no editor"
                   >
@@ -409,7 +409,7 @@ export function PromptSectionChecklist({
                           if (onJumpToSection) onJumpToSection(r.key);
                         }
                       }}
-                      className="h-7 gap-1 text-[11px] text-primary hover:bg-primary/10 rounded-r-none border-r border-border/40 pr-1.5"
+                      className="h-7 gap-1 text-meta text-primary hover:bg-primary/10 rounded-r-none border-r border-border/40 pr-1.5"
                       aria-label={`${isThin ? 'Reinserir' : 'Inserir'} seção ${r.label}${eff.fromVariant ? ` da variação ${activeVariantLabel}` : ''}`}
                     >
                       <Plus className="h-3 w-3" /> {isThin ? 'Expandir' : 'Inserir + ir'}
@@ -436,7 +436,7 @@ export function PromptSectionChecklist({
       </ul>
 
       {!allOk && (
-        <div className="text-[11px] text-nexus-amber pt-1 border-t border-nexus-amber/20 space-y-0.5">
+        <div className="text-meta text-nexus-amber pt-1 border-t border-nexus-amber/20 space-y-0.5">
           {missingCount > 0 && (
             <p>
               ⚠ {missingCount === 1 ? 'Falta 1 seção obrigatória.' : `Faltam ${missingCount} seções obrigatórias.`}
@@ -488,11 +488,11 @@ function SectionTemplatePicker({
       </PopoverTrigger>
       <PopoverContent align="end" className="w-80 p-2">
         <div className="px-2 py-1.5 mb-1 border-b border-border/40">
-          <p className="text-xs font-heading font-semibold text-foreground flex items-center gap-1.5">
+          <p className="text-meta font-heading font-semibold text-foreground flex items-center gap-1.5">
             <FileText className="h-3 w-3 text-primary" />
             Templates para {sectionLabel}
           </p>
-          <p className="text-[10px] text-muted-foreground mt-0.5">
+          <p className="text-meta text-muted-foreground mt-0.5">
             Cada template já passa na validação de profundidade.
           </p>
         </div>
@@ -510,14 +510,14 @@ function SectionTemplatePicker({
                   className="w-full text-left rounded-md px-2 py-1.5 hover:bg-primary/10 focus-visible:bg-primary/10 focus-visible:outline-none transition-colors group"
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-medium text-foreground group-hover:text-primary">
+                    <span className="text-meta font-medium text-foreground group-hover:text-primary">
                       {tpl.label}
                     </span>
-                    <span className="text-[10px] font-mono text-muted-foreground tabular-nums">
+                    <span className="text-meta font-mono text-muted-foreground tabular-nums">
                       {words}p
                     </span>
                   </div>
-                  <p className="text-[10px] text-muted-foreground mt-0.5 leading-snug">
+                  <p className="text-meta text-muted-foreground mt-0.5 leading-snug">
                     {tpl.description}
                   </p>
                 </button>

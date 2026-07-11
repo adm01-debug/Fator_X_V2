@@ -27,7 +27,7 @@ export function FullPageLoader({ label }: { label?: string }) {
     <div className="flex-1 flex items-center justify-center min-h-[300px]">
       <div className="flex flex-col items-center gap-3">
         <LoadingSpinner size="lg" label={label} />
-        {label && <p className="text-sm text-muted-foreground animate-pulse">{label}</p>}
+        {label && <p className="text-body-sm text-muted-foreground animate-pulse">{label}</p>}
       </div>
     </div>
   );

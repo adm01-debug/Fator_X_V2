@@ -89,9 +89,9 @@ export default function VulnerabilitiesPage() {
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card><CardContent className="pt-6"><div className="text-2xl font-bold">{stats.totalOpen}</div><div className="text-xs text-muted-foreground mt-1">Total em aberto</div></CardContent></Card>
-        <Card><CardContent className="pt-6"><div className="text-2xl font-bold text-destructive">{stats.critical}</div><div className="text-xs text-muted-foreground mt-1">Critical (SLA: 24h)</div></CardContent></Card>
-        <Card><CardContent className="pt-6"><div className="text-2xl font-bold">{stats.mttrHours}h</div><div className="text-xs text-muted-foreground mt-1">MTTR médio (corrigidas)</div></CardContent></Card>
+        <Card><CardContent className="pt-6"><div className="text-2xl font-bold">{stats.totalOpen}</div><div className="text-meta text-muted-foreground mt-1">Total em aberto</div></CardContent></Card>
+        <Card><CardContent className="pt-6"><div className="text-2xl font-bold text-destructive">{stats.critical}</div><div className="text-meta text-muted-foreground mt-1">Critical (SLA: 24h)</div></CardContent></Card>
+        <Card><CardContent className="pt-6"><div className="text-2xl font-bold">{stats.mttrHours}h</div><div className="text-meta text-muted-foreground mt-1">MTTR médio (corrigidas)</div></CardContent></Card>
       </div>
 
       <Card>
@@ -123,9 +123,9 @@ export default function VulnerabilitiesPage() {
           </div>
         </CardHeader>
         <CardContent>
-          {loading ? <div className="text-sm text-muted-foreground py-6 text-center">Carregando…</div> :
+          {loading ? <div className="text-body-sm text-muted-foreground py-6 text-center">Carregando…</div> :
             filtered.length === 0 ? (
-              <div className="text-sm text-muted-foreground py-12 text-center">
+              <div className="text-body-sm text-muted-foreground py-12 text-center">
                 Nenhuma vulnerabilidade encontrada com os filtros atuais.
               </div>
             ) : (
@@ -144,14 +144,14 @@ export default function VulnerabilitiesPage() {
                   {filtered.map((f) => (
                     <TableRow key={f.id}>
                       <TableCell><Badge className={sevColor(f.severity)}>{f.severity.toUpperCase()}</Badge></TableCell>
-                      <TableCell className="font-mono text-xs">
+                      <TableCell className="font-mono text-meta">
                         <a href={f.reference_url || `https://osv.dev/vulnerability/${f.cve_id}`} target="_blank" rel="noreferrer" className="text-primary inline-flex items-center gap-1">
                           {f.cve_id} <ExternalLink className="h-3 w-3" />
                         </a>
                       </TableCell>
-                      <TableCell className="max-w-md truncate text-xs text-muted-foreground">{f.summary || "—"}</TableCell>
+                      <TableCell className="max-w-md truncate text-meta text-muted-foreground">{f.summary || "—"}</TableCell>
                       <TableCell><Badge variant="outline">{f.status}</Badge></TableCell>
-                      <TableCell className="text-xs text-muted-foreground">{new Date(f.discovered_at).toLocaleDateString("pt-BR")}</TableCell>
+                      <TableCell className="text-meta text-muted-foreground">{new Date(f.discovered_at).toLocaleDateString("pt-BR")}</TableCell>
                       <TableCell className="text-right">
                         {f.status === "open" && (
                           <Button size="sm" variant="outline" onClick={() => setActionTarget({ finding: f, type: "ack" })}>
@@ -181,7 +181,7 @@ export default function VulnerabilitiesPage() {
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-2">
-            <p className="text-xs text-muted-foreground"><code>{actionTarget?.finding.cve_id}</code></p>
+            <p className="text-meta text-muted-foreground"><code>{actionTarget?.finding.cve_id}</code></p>
             <Label>Notas</Label>
             <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={4} placeholder="Justificativa, link para PR, etc." />
           </div>

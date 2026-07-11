@@ -37,7 +37,7 @@ export function Breadcrumbs() {
 
   return (
     <nav 
-      className="flex items-center text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40" 
+      className="flex items-center text-meta font-black uppercase tracking-[0.2em] text-muted-foreground/40" 
       aria-label="Navegação hierárquica"
     >
       <Link
