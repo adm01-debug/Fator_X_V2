@@ -3051,6 +3051,7 @@ export type Database = {
           created_at: string
           id: string
           is_answer: boolean
+          is_published: boolean
           parent_post_id: string | null
           thread_id: string
           updated_at: string
@@ -3063,6 +3064,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_answer?: boolean
+          is_published?: boolean
           parent_post_id?: string | null
           thread_id: string
           updated_at?: string
@@ -3075,6 +3077,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_answer?: boolean
+          is_published?: boolean
           parent_post_id?: string | null
           thread_id?: string
           updated_at?: string
@@ -3136,6 +3139,7 @@ export type Database = {
           id: string
           is_locked: boolean
           is_pinned: boolean
+          is_published: boolean
           is_resolved: boolean
           last_activity_at: string
           reply_count: number
@@ -3153,6 +3157,7 @@ export type Database = {
           id?: string
           is_locked?: boolean
           is_pinned?: boolean
+          is_published?: boolean
           is_resolved?: boolean
           last_activity_at?: string
           reply_count?: number
@@ -3170,6 +3175,7 @@ export type Database = {
           id?: string
           is_locked?: boolean
           is_pinned?: boolean
+          is_published?: boolean
           is_resolved?: boolean
           last_activity_at?: string
           reply_count?: number
@@ -7814,6 +7820,14 @@ export type Database = {
       promote_experiment_winner: {
         Args: { p_experiment_id: string; p_winner: string }
         Returns: Json
+      }
+      prune_traces_retention: {
+        Args: { _days?: number }
+        Returns: {
+          dropped: boolean
+          partition_name: string
+          table_name: string
+        }[]
       }
       publish_compliance_report: {
         Args: { _report_id: string }
