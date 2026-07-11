@@ -9,11 +9,19 @@
  * Se o LLM falhar ou estiver indisponível, retorna ranking lexical puro (graceful).
  */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
+import { z } from "https://esm.sh/zod@3.23.8";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+const InputSchema = z.object({
+  query: z.string().max(500).default(""),
+  limit: z.number().int().min(1).max(20).default(8),
+  semantic: z.boolean().optional(),
+});
+
 
 interface SearchHit {
   type: "agent" | "knowledge_base" | "article" | "workflow" | "eval_dataset" | "automation" | "document";
@@ -31,16 +39,24 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const body = await req.json();
-    const query = String(body?.query ?? "").trim();
-    const limit = Math.min(Math.max(Number(body?.limit ?? 8), 1), 20);
-    const semanticEnabled = body?.semantic !== false; // default true
+    const raw = await req.json().catch(() => null);
+    const parsed = InputSchema.safeParse(raw);
+    if (!parsed.success) {
+      return new Response(JSON.stringify({ error: "Payload inválido", details: parsed.error.flatten() }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const query = parsed.data.query.trim();
+    const limit = parsed.data.limit;
+    const semanticEnabled = parsed.data.semantic !== false;
 
     if (query.length < 2) {
       return new Response(JSON.stringify({ results: [], total: 0, mode: "empty" }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
 
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {

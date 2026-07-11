@@ -15,6 +15,14 @@
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { z } from "https://esm.sh/zod@3.23.8";
+
+const InputSchema = z.object({
+  query: z.string().min(2).max(2000),
+  knowledge_base_id: z.string().uuid().nullish(),
+  top_k: z.number().int().min(1).max(50).default(10),
+});
+
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -44,17 +52,17 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
 
   try {
-    const body = await req.json();
-    const query = String(body?.query ?? "").trim();
-    const knowledgeBaseId: string | null = body?.knowledge_base_id ?? null;
-    const topK = Math.min(Math.max(Number(body?.top_k ?? 10), 1), 50);
-
-    if (!query || query.length < 2) {
+    const raw = await req.json().catch(() => null);
+    const parsed = InputSchema.safeParse(raw);
+    if (!parsed.success) {
       return new Response(
-        JSON.stringify({ error: "query must be at least 2 chars" }),
+        JSON.stringify({ error: "Payload inválido", details: parsed.error.flatten() }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
+    const { query, knowledge_base_id, top_k: topK } = parsed.data;
+    const knowledgeBaseId = knowledge_base_id ?? null;
+
 
     // ── Cache lookup ─────────────────────────────────────────────
     const key = cacheKey(query, knowledgeBaseId, topK);

@@ -1,10 +1,17 @@
 // Multi-Agent Graph Executor (LangGraph-style BFS)
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { z } from "https://esm.sh/zod@3.23.8";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+const InputSchema = z.object({
+  graph_id: z.string().uuid(),
+  input: z.string().min(1).max(20000),
+});
+
 
 const MAX_NODES = 15;
 const LOVABLE_KEY = Deno.env.get('LOVABLE_API_KEY')!;
@@ -58,10 +65,13 @@ Deno.serve(async (req) => {
     const user = userData?.user;
     if (!user) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
-    const { graph_id, input } = await req.json();
-    if (!graph_id || typeof input !== 'string') {
-      return new Response(JSON.stringify({ error: 'graph_id and input required' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    const raw = await req.json().catch(() => null);
+    const parsed = InputSchema.safeParse(raw);
+    if (!parsed.success) {
+      return new Response(JSON.stringify({ error: 'Payload inválido', details: parsed.error.flatten() }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
+    const { graph_id, input } = parsed.data;
+
 
     const { data: graph, error: ge } = await supabase.from('agent_graphs').select('*').eq('id', graph_id).single();
     if (ge || !graph) return new Response(JSON.stringify({ error: 'Graph not found' }), { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
