@@ -6,9 +6,9 @@
  *
  * NUNCA passe conteúdo não sanitizado para `dangerouslySetInnerHTML`.
  */
-import DOMPurify from "dompurify";
+import DOMPurify, { type Config } from "dompurify";
 
-const RICH_TEXT_CONFIG: DOMPurify.Config = {
+const RICH_TEXT_CONFIG: Config = {
   ALLOWED_TAGS: [
     "a", "b", "i", "em", "strong", "u", "s", "code", "pre",
     "p", "br", "hr", "blockquote",
