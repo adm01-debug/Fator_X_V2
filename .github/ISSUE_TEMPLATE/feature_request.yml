@@ -1,0 +1,44 @@
+name: ✨ Feature request
+description: Propor uma nova funcionalidade ou melhoria de arquitetura
+title: "[feat] "
+labels: ["enhancement", "triage"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema / oportunidade
+      description: Qual dor real do usuário ou limitação técnica motiva esta proposta?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposta
+      description: Descreva a solução desejada, incluindo escopo e não-escopo.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativas consideradas
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Impacto esperado
+      options:
+        - "Alto — desbloqueia receita ou remove risco"
+        - "Médio — melhora fluxo existente"
+        - "Baixo — nice-to-have"
+    validations:
+      required: true
+  - type: checkboxes
+    id: areas
+    attributes:
+      label: Áreas afetadas
+      options:
+        - label: Frontend / UX
+        - label: Backend / Supabase
+        - label: Edge Functions
+        - label: Segurança / Compliance
+        - label: Observabilidade
+        - label: Documentação

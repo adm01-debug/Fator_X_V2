@@ -1,0 +1,67 @@
+name: 🐛 Bug report
+description: Reportar um comportamento inesperado ou regressão
+title: "[bug] "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por reportar! Preencha o máximo possível — quanto mais contexto, mais rápido corrigimos.
+        ⚠️ Se envolver dados sensíveis ou vulnerabilidade, use o [Security Advisory](../security/advisories/new) em vez desta issue.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Resumo
+      description: Descreva o bug em 1-2 frases.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Passos para reproduzir
+      placeholder: |
+        1. Acesse '...'
+        2. Clique em '...'
+        3. Veja o erro
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportamento esperado
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Comportamento observado
+      description: Inclua mensagens de erro, screenshots, IDs de trace do Sentry se houver.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Ambiente
+      placeholder: "produção | staging | local | commit sha"
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severidade percebida
+      options:
+        - "S1 — bloqueia produção"
+        - "S2 — degrada funcionalidade crítica"
+        - "S3 — funcionalidade secundária"
+        - "S4 — cosmético"
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Antes de submeter
+      options:
+        - label: Busquei issues abertas/fechadas com o mesmo comportamento
+          required: true
+        - label: Não incluí segredos, tokens ou PII no relato
+          required: true
