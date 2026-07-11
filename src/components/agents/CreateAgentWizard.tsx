@@ -74,7 +74,7 @@ export function CreateAgentWizard() {
   useEffect(() => {
     supabaseExternal.from('agent_templates').select('*').eq('is_public', true).then(({ data }) => {
       if (data && data.length > 0) {
-        setAgentTemplates(data as any);
+        setAgentTemplates(data as unknown as AgentTemplate[]);
       }
     });
   }, []);
@@ -108,15 +108,15 @@ export function CreateAgentWizard() {
       agent: {
         name: t.name,
         mission: t.description,
-        persona: t.type as any,
-        model: mappedModel as any,
+        persona: t.type as unknown as never,
+        model: mappedModel as unknown as never,
         system_prompt: t.prompt,
         avatar_emoji: t.emoji,
         version: 1,
         status: 'draft',
         tags: t.tags || [],
-        tools: t.tools.map(tn => ({ name: tn, enabled: true })) as any
-      } as any,
+        tools: t.tools.map(tn => ({ name: tn, enabled: true })) as unknown as never,
+      } as unknown as never,
       label: `Blueprint: ${t.name}`,
       note: 'Auto-salvamento após seleção de blueprint.'
     });
@@ -205,16 +205,16 @@ Sempre priorize a precisão e a utilidade das informações fornecidas.
         agent: {
           name: magicPreview.name,
           mission: magicPreview.mission,
-          persona: magicPreview.type as any,
-          model: magicPreview.model as any,
+          persona: magicPreview.type as unknown as never,
+          model: magicPreview.model as unknown as never,
           system_prompt: magicPreview.system_prompt,
           avatar_emoji: magicPreview.emoji || '🤖',
           version: 1,
           status: 'draft',
           tags: ['magic-generation'],
-          tools: (magicPreview.tools || []).map((tn: any) => ({ name: tn.name, enabled: true })) as any,
-          guardrails: (magicPreview.guardrails || []).map((g: any) => ({ name: g.name, enabled: true })) as any
-        } as any,
+          tools: (magicPreview.tools || []).map((tn: { name: string }) => ({ name: tn.name, enabled: true })) as unknown as never,
+          guardrails: (magicPreview.guardrails || []).map((g: { name: string }) => ({ name: g.name, enabled: true })) as unknown as never,
+        } as unknown as never,
         label: `Geração Mágica: ${magicPreview.name}`,
         note: `Configuração inicial automatizada a partir da ideia: ${magicIdea}`
       });

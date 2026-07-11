@@ -14,9 +14,20 @@ interface SecurityAlert {
   severity: 'low' | 'medium' | 'high' | 'critical';
   category: string;
   message: string;
-  metadata: any;
+  metadata: Record<string, unknown> | null;
   is_resolved: boolean;
   created_at: string;
+}
+
+interface RealtimePayload<T> {
+  new: T;
+  old?: T;
+  eventType: 'INSERT' | 'UPDATE' | 'DELETE';
+}
+
+interface RealtimeChannelLike {
+  on: (event: string, filter: { event: string; table: string }, cb: (payload: RealtimePayload<SecurityAlert>) => void) => RealtimeChannelLike;
+  subscribe: () => RealtimeChannelLike;
 }
 
 export function SecurityMonitoringPanel() {
@@ -26,18 +37,19 @@ export function SecurityMonitoringPanel() {
 
   useEffect(() => {
     loadAlerts();
-    
+
     // Subscribe to new alerts
-    const channel = (supabaseExternal as any)
+    const client = supabaseExternal as unknown as { channel: (name: string) => RealtimeChannelLike };
+    const channel = client
       .channel('security_alerts_changes')
-      .on('postgres_changes', { event: 'INSERT', table: 'security_alerts' }, (payload: any) => {
-        setAlerts(prev => [payload.new as SecurityAlert, ...prev]);
+      .on('postgres_changes', { event: 'INSERT', table: 'security_alerts' }, (payload) => {
+        setAlerts(prev => [payload.new, ...prev]);
         toast.error(`Alerta de Segurança: ${payload.new.message}`);
       })
       .subscribe();
 
     return () => {
-      supabaseExternal.removeChannel(channel);
+      (supabaseExternal as unknown as { removeChannel: (c: RealtimeChannelLike) => void }).removeChannel(channel);
     };
   }, []);
 
@@ -55,7 +67,7 @@ export function SecurityMonitoringPanel() {
 
       const { data, error } = await query;
       if (error) throw error;
-      setAlerts((data || []) as any as SecurityAlert[]);
+      setAlerts((data || []) as unknown as SecurityAlert[]);
     } catch (err) {
       console.error('Failed to load alerts', err);
     } finally {
@@ -98,7 +110,7 @@ export function SecurityMonitoringPanel() {
             <CardDescription>Alertas em tempo real sobre RLS e RBAC</CardDescription>
           </div>
           <div className="flex items-center gap-2">
-            <Tabs value={filter} onValueChange={(v) => { setFilter(v as any); loadAlerts(); }} className="w-auto">
+            <Tabs value={filter} onValueChange={(v) => { setFilter(v as 'all' | 'unresolved'); loadAlerts(); }} className="w-auto">
               <TabsList className="h-8 p-1 bg-secondary/50">
                 <TabsTrigger value="unresolved" className="text-meta px-3 h-6">Pendentes</TabsTrigger>
                 <TabsTrigger value="all" className="text-meta px-3 h-6">Todos</TabsTrigger>

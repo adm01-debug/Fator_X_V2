@@ -38,7 +38,7 @@ export async function startExecution(
       source_name: sourceName,
       status: 'running',
       trigger,
-      input_data: inputData as any,
+      input_data: inputData as unknown as never,
       steps: [],
       tokens_used: 0,
       cost_brl: 0,
@@ -121,7 +121,7 @@ export async function recordStep(
   const steps = [...((existing?.steps as unknown as ExecutionStepRecord[]) ?? []), step];
 
   const { error } = await fromTable('execution_history')
-    .update({ steps: steps as any })
+    .update({ steps: steps as unknown as never })
     .eq('id', executionId);
   if (error) throw error;
 }
