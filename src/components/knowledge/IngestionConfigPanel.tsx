@@ -21,10 +21,10 @@ export function IngestionConfigPanel() {
           </div>
           <div>
             <h3 className="text-lg font-bold text-foreground">Pipeline Tuning</h3>
-            <p className="text-xs text-muted-foreground">Configure os parâmetros de ingestão neural</p>
+            <p className="text-meta text-muted-foreground">Configure os parâmetros de ingestão neural</p>
           </div>
         </div>
-        <Badge variant="outline" className="text-[10px] border-primary/20 text-primary">v2.4 (Active)</Badge>
+        <Badge variant="outline" className="text-meta border-primary/20 text-primary">v2.4 (Active)</Badge>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -32,13 +32,13 @@ export function IngestionConfigPanel() {
         <div className="space-y-6">
           <div className="flex items-center gap-2">
             <Layers className="h-4 w-4 text-purple-500" />
-            <h4 className="text-xs font-black uppercase tracking-widest text-foreground">Chunking Strategy</h4>
+            <h4 className="text-meta font-black uppercase tracking-widest text-foreground">Chunking Strategy</h4>
           </div>
 
           <div className="space-y-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <Label className="text-xs font-bold uppercase tracking-tight">Chunk Size: {chunkSize}</Label>
+                <Label className="text-meta font-bold uppercase tracking-tight">Chunk Size: {chunkSize}</Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger><Info className="h-3 w-3 text-muted-foreground" /></TooltipTrigger>
@@ -58,7 +58,7 @@ export function IngestionConfigPanel() {
 
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <Label className="text-xs font-bold uppercase tracking-tight">Overlap: {overlap}</Label>
+                <Label className="text-meta font-bold uppercase tracking-tight">Overlap: {overlap}</Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger><Info className="h-3 w-3 text-muted-foreground" /></TooltipTrigger>
@@ -77,7 +77,7 @@ export function IngestionConfigPanel() {
             </div>
 
             <div className="space-y-3">
-              <Label className="text-xs font-bold uppercase tracking-tight">Splitter Type</Label>
+              <Label className="text-meta font-bold uppercase tracking-tight">Splitter Type</Label>
               <Select defaultValue="recursive">
                 <SelectTrigger className="bg-secondary/20 border-border/40 h-10">
                   <SelectValue placeholder="Select splitter" />
@@ -97,12 +97,12 @@ export function IngestionConfigPanel() {
         <div className="space-y-6">
           <div className="flex items-center gap-2">
             <Cpu className="h-4 w-4 text-nexus-amber" />
-            <h4 className="text-xs font-black uppercase tracking-widest text-foreground">Neural Encoding</h4>
+            <h4 className="text-meta font-black uppercase tracking-widest text-foreground">Neural Encoding</h4>
           </div>
 
           <div className="space-y-4">
             <div className="space-y-3">
-              <Label className="text-xs font-bold uppercase tracking-tight">Embedding Model</Label>
+              <Label className="text-meta font-bold uppercase tracking-tight">Embedding Model</Label>
               <Select defaultValue="text-embedding-3-small">
                 <SelectTrigger className="bg-secondary/20 border-border/40 h-10">
                   <SelectValue placeholder="Select model" />
@@ -117,18 +117,18 @@ export function IngestionConfigPanel() {
 
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <Label className="text-xs font-bold uppercase tracking-tight">L2 Normalization</Label>
+                <Label className="text-meta font-bold uppercase tracking-tight">L2 Normalization</Label>
                 <Switch defaultChecked />
               </div>
-              <p className="text-[10px] text-muted-foreground">Normaliza vetores para busca por similaridade de cosseno.</p>
+              <p className="text-meta text-muted-foreground">Normaliza vetores para busca por similaridade de cosseno.</p>
             </div>
 
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <Label className="text-xs font-bold uppercase tracking-tight">Rerank Filter</Label>
+                <Label className="text-meta font-bold uppercase tracking-tight">Rerank Filter</Label>
                 <Switch defaultChecked />
               </div>
-              <p className="text-[10px] text-muted-foreground">Adiciona camada secundária de precisão após a recuperação vetorial.</p>
+              <p className="text-meta text-muted-foreground">Adiciona camada secundária de precisão após a recuperação vetorial.</p>
             </div>
           </div>
         </div>

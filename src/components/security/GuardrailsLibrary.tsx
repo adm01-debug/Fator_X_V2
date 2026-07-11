@@ -85,11 +85,11 @@ export function GuardrailsLibrary() {
         <div className="flex items-center gap-2">
           <Library className="h-5 w-5 text-primary" />
           <h3 className="font-heading font-semibold text-foreground">Biblioteca de Guardrails</h3>
-          <Badge variant="outline" className="text-[10px]">
+          <Badge variant="outline" className="text-meta">
             {GUARDRAIL_PRESETS.length} presets · {totalInstalled} instalados
           </Badge>
         </div>
-        <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+        <div className="flex items-center gap-2 text-meta text-muted-foreground">
           <Sparkles className="h-3 w-3" />
           Curado com base em OWASP LLM, NIST AI RMF, LGPD
         </div>
@@ -107,13 +107,13 @@ export function GuardrailsLibrary() {
 
       <Tabs value={activeCat} onValueChange={(v) => setActiveCat(v as GuardrailPresetCategory | "all")}>
         <TabsList className="flex flex-wrap h-auto gap-1 bg-transparent p-0">
-          <TabsTrigger value="all" className="text-xs data-[state=active]:bg-primary/10">
+          <TabsTrigger value="all" className="text-meta data-[state=active]:bg-primary/10">
             Todos ({GUARDRAIL_PRESETS.length})
           </TabsTrigger>
           {PRESET_CATEGORIES.map(cat => {
             const count = GUARDRAIL_PRESETS.filter(p => p.category === cat.id).length;
             return (
-              <TabsTrigger key={cat.id} value={cat.id} className="text-xs data-[state=active]:bg-primary/10 gap-1.5">
+              <TabsTrigger key={cat.id} value={cat.id} className="text-meta data-[state=active]:bg-primary/10 gap-1.5">
                 <span>{cat.icon}</span>
                 {cat.label} ({count})
               </TabsTrigger>
@@ -125,14 +125,14 @@ export function GuardrailsLibrary() {
           {/* Bulk install button when category selected */}
           {activeCat !== "all" && (
             <div className="flex items-center justify-between bg-primary/5 border border-primary/20 rounded-lg px-3 py-2">
-              <div className="flex items-center gap-2 text-xs">
+              <div className="flex items-center gap-2 text-meta">
                 <Shield className="h-3.5 w-3.5 text-primary" />
                 <span className="text-foreground">Instalar todos os presets desta categoria de uma vez</span>
               </div>
               <Button
                 size="sm"
                 variant="outline"
-                className="text-xs h-7"
+                className="text-meta h-7"
                 onClick={() => handleInstallCategory(activeCat as GuardrailPresetCategory)}
               >
                 <Plus className="h-3 w-3 mr-1" /> Instalar pacote
@@ -141,7 +141,7 @@ export function GuardrailsLibrary() {
           )}
 
           {filtered.length === 0 ? (
-            <div className="text-center py-8 text-xs text-muted-foreground">
+            <div className="text-center py-8 text-meta text-muted-foreground">
               Nenhum preset encontrado para "{search}"
             </div>
           ) : (
@@ -155,7 +155,7 @@ export function GuardrailsLibrary() {
                       <div className="flex items-center gap-2 min-w-0">
                         <span className="text-lg shrink-0">{meta.icon}</span>
                         <div className="min-w-0">
-                          <p className="text-xs font-semibold text-foreground truncate">{preset.name}</p>
+                          <p className="text-meta font-semibold text-foreground truncate">{preset.name}</p>
                           <div className="flex items-center gap-1 mt-0.5">
                             {Array.from({ length: 5 }).map((_, i) => (
                               <Star
@@ -178,15 +178,15 @@ export function GuardrailsLibrary() {
                       </Badge>
                     </div>
 
-                    <p className="text-[11px] text-muted-foreground line-clamp-2 mb-2">{preset.description}</p>
+                    <p className="text-meta text-muted-foreground line-clamp-2 mb-2">{preset.description}</p>
 
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <p className="text-[10px] text-muted-foreground/70 italic line-clamp-1 mb-3 cursor-help">
+                        <p className="text-meta text-muted-foreground/70 italic line-clamp-1 mb-3 cursor-help">
                           💡 {preset.rationale}
                         </p>
                       </TooltipTrigger>
-                      <TooltipContent className="max-w-xs text-xs">
+                      <TooltipContent className="max-w-xs text-meta">
                         {preset.rationale}
                       </TooltipContent>
                     </Tooltip>
@@ -207,7 +207,7 @@ export function GuardrailsLibrary() {
                     <Button
                       size="sm"
                       variant={isInstalled ? "outline" : "default"}
-                      className={`w-full text-xs h-7 ${isInstalled ? "" : "nexus-gradient-bg text-primary-foreground"}`}
+                      className={`w-full text-meta h-7 ${isInstalled ? "" : "nexus-gradient-bg text-primary-foreground"}`}
                       disabled={isInstalled || installing === preset.id}
                       onClick={() => handleInstall(preset)}
                     >

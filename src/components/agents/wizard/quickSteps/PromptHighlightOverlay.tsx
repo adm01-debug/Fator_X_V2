@@ -183,7 +183,7 @@ export function PromptHighlightOverlay({ prompt, locations, textareaRef, padding
       aria-hidden
       className={cn(
         'absolute inset-0 m-0 overflow-hidden whitespace-pre-wrap break-words pointer-events-none',
-        'font-mono text-xs leading-relaxed',
+        'font-mono text-meta leading-relaxed',
         'rounded-lg border border-transparent',
       )}
       style={{

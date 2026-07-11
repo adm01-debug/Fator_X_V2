@@ -84,7 +84,7 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
           type="button"
           size="sm"
           variant={isActive ? 'default' : 'ghost'}
-          className={`h-6 px-2 text-[11px] gap-1 ${
+          className={`h-6 px-2 text-meta gap-1 ${
             isActive
               ? 'bg-primary/15 text-primary hover:bg-primary/25 border border-primary/30'
               : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
@@ -118,14 +118,14 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
       </PopoverTrigger>
       <PopoverContent align="start" className="w-[320px] p-3 space-y-3">
         <div>
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-1.5">
+          <p className="text-meta uppercase tracking-wider text-muted-foreground font-semibold mb-1.5">
             Tipo de intervalo
           </p>
           <div className="flex items-center gap-1">
             <Button
               type="button" size="sm"
               variant={range.mode === 'off' ? 'default' : 'ghost'}
-              className="h-6 px-2 text-[11px] flex-1"
+              className="h-6 px-2 text-meta flex-1"
               onClick={() => setMode('off')}
             >
               Desligado
@@ -133,7 +133,7 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
             <Button
               type="button" size="sm"
               variant={range.mode === 'version' ? 'default' : 'ghost'}
-              className="h-6 px-2 text-[11px] gap-1 flex-1"
+              className="h-6 px-2 text-meta gap-1 flex-1"
               onClick={() => setMode('version')}
             >
               <GitBranch className="h-3 w-3" aria-hidden /> Versão
@@ -141,7 +141,7 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
             <Button
               type="button" size="sm"
               variant={range.mode === 'time' ? 'default' : 'ghost'}
-              className="h-6 px-2 text-[11px] gap-1 flex-1"
+              className="h-6 px-2 text-meta gap-1 flex-1"
               onClick={() => setMode('time')}
             >
               <Clock className="h-3 w-3" aria-hidden /> Tempo
@@ -151,11 +151,11 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
 
         {range.mode === 'version' && (
           <div className="space-y-2">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+            <p className="text-meta uppercase tracking-wider text-muted-foreground font-semibold">
               Entre dois checkpoints (v{minVersion}–v{maxVersion})
             </p>
             <div className="grid grid-cols-2 gap-2">
-              <label className="text-[11px] text-muted-foreground space-y-1">
+              <label className="text-meta text-muted-foreground space-y-1">
                 <span>De (vMin)</span>
                 <Input
                   type="number"
@@ -163,11 +163,11 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
                   min={minVersion}
                   max={maxVersion}
                   value={range.vMin ?? minVersion}
-                  className="h-7 text-xs font-mono"
+                  className="h-7 text-meta font-mono"
                   onChange={(e) => onChange({ ...range, mode: 'version', vMin: Number(e.target.value) || minVersion })}
                 />
               </label>
-              <label className="text-[11px] text-muted-foreground space-y-1">
+              <label className="text-meta text-muted-foreground space-y-1">
                 <span>Até (vMax)</span>
                 <Input
                   type="number"
@@ -175,12 +175,12 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
                   min={minVersion}
                   max={maxVersion}
                   value={range.vMax ?? maxVersion}
-                  className="h-7 text-xs font-mono"
+                  className="h-7 text-meta font-mono"
                   onChange={(e) => onChange({ ...range, mode: 'version', vMax: Number(e.target.value) || maxVersion })}
                 />
               </label>
             </div>
-            <p className="text-[10px] text-muted-foreground">
+            <p className="text-meta text-muted-foreground">
               Dica: você pode usar isso para focar nos passos entre os checkpoints A e B.
             </p>
           </div>
@@ -188,7 +188,7 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
 
         {range.mode === 'time' && (
           <div className="space-y-2">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+            <p className="text-meta uppercase tracking-wider text-muted-foreground font-semibold">
               Janela rápida
             </p>
             <div className="flex flex-wrap gap-1">
@@ -199,7 +199,7 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
                     key={w.label}
                     type="button" size="sm"
                     variant={isCurrent ? 'default' : 'ghost'}
-                    className={`h-6 px-2 text-[11px] ${
+                    className={`h-6 px-2 text-meta ${
                       isCurrent
                         ? 'bg-primary/15 text-primary border border-primary/30'
                         : 'text-muted-foreground hover:text-foreground'
@@ -212,24 +212,24 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
               })}
             </div>
 
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold pt-1">
+            <p className="text-meta uppercase tracking-wider text-muted-foreground font-semibold pt-1">
               Janela absoluta
             </p>
             <div className="grid grid-cols-2 gap-2">
-              <label className="text-[11px] text-muted-foreground space-y-1">
+              <label className="text-meta text-muted-foreground space-y-1">
                 <span>De</span>
                 <Input
                   type="datetime-local"
-                  className="h-7 text-xs"
+                  className="h-7 text-meta"
                   value={range.fromIso ? toLocalInput(range.fromIso) : ''}
                   onChange={(e) => onChange({ mode: 'time', lastMinutes: undefined, fromIso: fromLocalInput(e.target.value), toIso: range.toIso })}
                 />
               </label>
-              <label className="text-[11px] text-muted-foreground space-y-1">
+              <label className="text-meta text-muted-foreground space-y-1">
                 <span>Até</span>
                 <Input
                   type="datetime-local"
-                  className="h-7 text-xs"
+                  className="h-7 text-meta"
                   value={range.toIso ? toLocalInput(range.toIso) : ''}
                   onChange={(e) => onChange({ mode: 'time', lastMinutes: undefined, fromIso: range.fromIso, toIso: fromLocalInput(e.target.value) })}
                 />
@@ -239,10 +239,10 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
         )}
 
         <div className="flex items-center justify-between pt-1 border-t border-border/50">
-          <p className="text-[10px] text-muted-foreground">{isActive ? summary : 'Sem filtro de intervalo'}</p>
+          <p className="text-meta text-muted-foreground">{isActive ? summary : 'Sem filtro de intervalo'}</p>
           <Button
             type="button" size="sm" variant="ghost"
-            className="h-6 px-2 text-[10px] text-muted-foreground hover:text-foreground"
+            className="h-6 px-2 text-meta text-muted-foreground hover:text-foreground"
             onClick={() => { onChange({ mode: 'off' }); setOpen(false); }}
           >
             Limpar

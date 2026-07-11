@@ -64,7 +64,7 @@ export function BookmarkButton({
       size={variant === 'icon' ? 'icon' : 'sm'}
       variant={isMarked ? 'secondary' : 'outline'}
       className={cn(
-        variant === 'icon' ? 'h-7 w-7' : 'h-7 px-2 gap-1.5 text-[11px]',
+        variant === 'icon' ? 'h-7 w-7' : 'h-7 px-2 gap-1.5 text-meta',
         isMarked && 'text-nexus-amber border-nexus-amber/40 bg-nexus-amber/10 hover:bg-nexus-amber/20',
       )}
       aria-label={isMarked ? 'Editar marcador' : 'Marcar este passo'}
@@ -90,7 +90,7 @@ export function BookmarkButton({
           {isMarked
             ? <BookmarkCheck className="h-3.5 w-3.5 text-nexus-amber" />
             : <Bookmark className="h-3.5 w-3.5 text-primary" />}
-          <p className="text-xs font-semibold text-foreground">
+          <p className="text-meta font-semibold text-foreground">
             {isMarked ? 'Editar marcador' : 'Marcar passo'} <span className="font-mono text-muted-foreground">#{stepIndex + 1}</span>
           </p>
         </div>
@@ -99,14 +99,14 @@ export function BookmarkButton({
           onChange={(e) => setNote(e.target.value)}
           placeholder="Anotação opcional (ex: erro de timeout aqui, validar prompt, etc.)"
           rows={3}
-          className="text-xs resize-none"
+          className="text-meta resize-none"
           maxLength={280}
           autoFocus
           onKeyDown={(e) => {
             if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); handleSave(); }
           }}
         />
-        <p className="text-[10px] text-muted-foreground">
+        <p className="text-meta text-muted-foreground">
           {note.length}/280 · <kbd className="font-mono">⌘/Ctrl+Enter</kbd> para salvar
         </p>
         <div className="flex items-center justify-between gap-2 pt-1">
@@ -115,17 +115,17 @@ export function BookmarkButton({
               type="button"
               size="sm"
               variant="ghost"
-              className="h-7 text-[11px] text-destructive hover:text-destructive hover:bg-destructive/10"
+              className="h-7 text-meta text-destructive hover:text-destructive hover:bg-destructive/10"
               onClick={handleRemove}
             >
               <Trash2 className="h-3 w-3 mr-1" /> Remover
             </Button>
           ) : <span />}
           <div className="flex items-center gap-1.5">
-            <Button type="button" size="sm" variant="ghost" className="h-7 text-[11px]" onClick={() => setOpen(false)}>
+            <Button type="button" size="sm" variant="ghost" className="h-7 text-meta" onClick={() => setOpen(false)}>
               Cancelar
             </Button>
-            <Button type="button" size="sm" className="h-7 text-[11px]" onClick={handleSave}>
+            <Button type="button" size="sm" className="h-7 text-meta" onClick={handleSave}>
               Salvar
             </Button>
           </div>

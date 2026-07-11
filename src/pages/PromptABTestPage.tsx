@@ -42,10 +42,10 @@ export default function PromptABTestPage() {
       />
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Status</div><div className="text-lg font-bold mt-1 flex items-center gap-2">{running ? <><div className="h-2 w-2 rounded-full bg-nexus-green animate-pulse" />Rodando</> : "Pausado"}</div></CardContent></Card>
-        <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Total runs</div><div className="text-2xl font-bold">{variants.reduce((s, v) => s + v.runs, 0).toLocaleString("pt-BR")}</div></CardContent></Card>
-        <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Confiança estatística</div><div className="text-2xl font-bold text-nexus-green">{confidence}%</div></CardContent></Card>
-        <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Lift do vencedor</div><div className="text-2xl font-bold">+{lift.toFixed(1)}%</div></CardContent></Card>
+        <Card><CardContent className="p-4"><div className="text-meta text-muted-foreground">Status</div><div className="text-lg font-bold mt-1 flex items-center gap-2">{running ? <><div className="h-2 w-2 rounded-full bg-nexus-green animate-pulse" />Rodando</> : "Pausado"}</div></CardContent></Card>
+        <Card><CardContent className="p-4"><div className="text-meta text-muted-foreground">Total runs</div><div className="text-2xl font-bold">{variants.reduce((s, v) => s + v.runs, 0).toLocaleString("pt-BR")}</div></CardContent></Card>
+        <Card><CardContent className="p-4"><div className="text-meta text-muted-foreground">Confiança estatística</div><div className="text-2xl font-bold text-nexus-green">{confidence}%</div></CardContent></Card>
+        <Card><CardContent className="p-4"><div className="text-meta text-muted-foreground">Lift do vencedor</div><div className="text-2xl font-bold">+{lift.toFixed(1)}%</div></CardContent></Card>
       </div>
 
       <Card className="border-nexus-green/30 bg-nexus-green/5">
@@ -53,8 +53,8 @@ export default function PromptABTestPage() {
           <div className="flex items-center gap-3">
             <Trophy className="h-8 w-8 text-nexus-green" />
             <div>
-              <div className="text-sm font-semibold">Vencedor estatístico: Variante {winner.id}</div>
-              <div className="text-xs text-muted-foreground mt-0.5">+{lift.toFixed(1)}% conversão · {confidence}% confiança · p-value &lt; 0.05</div>
+              <div className="text-body-sm font-semibold">Vencedor estatístico: Variante {winner.id}</div>
+              <div className="text-meta text-muted-foreground mt-0.5">+{lift.toFixed(1)}% conversão · {confidence}% confiança · p-value &lt; 0.05</div>
             </div>
           </div>
           <div className="flex gap-2">
@@ -68,8 +68,8 @@ export default function PromptABTestPage() {
         {variants.map((v) => (
           <Card key={v.id} className={v.id === winner.id ? "border-nexus-green/50 shadow-[0_0_20px_hsl(var(--nexus-green)/0.15)]" : ""}>
             <CardHeader className="pb-3 flex-row items-center justify-between">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <Badge className="text-[10px]">{v.id}</Badge>
+              <CardTitle className="text-body-sm flex items-center gap-2">
+                <Badge className="text-meta">{v.id}</Badge>
                 {v.name}
                 {v.id === winner.id && <Trophy className="h-4 w-4 text-nexus-green" />}
               </CardTitle>
@@ -77,16 +77,16 @@ export default function PromptABTestPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label className="text-xs">Prompt</Label>
-                <Textarea value={v.prompt} readOnly className="mt-1 text-xs h-20" />
+                <Label className="text-meta">Prompt</Label>
+                <Textarea value={v.prompt} readOnly className="mt-1 text-meta h-20" />
               </div>
 
               <div>
-                <div className="flex justify-between text-xs mb-1.5"><Label>Split traffic</Label><span className="text-muted-foreground">{v.traffic}%</span></div>
+                <div className="flex justify-between text-meta mb-1.5"><Label>Split traffic</Label><span className="text-muted-foreground">{v.traffic}%</span></div>
                 <Slider value={[v.traffic]} onValueChange={(val) => updateTraffic(v.id, val)} min={0} max={100} step={5} disabled={!running} />
               </div>
 
-              <div className="grid grid-cols-2 gap-3 text-xs">
+              <div className="grid grid-cols-2 gap-3 text-meta">
                 <div className="p-2.5 bg-muted/30 rounded">
                   <div className="text-muted-foreground">Runs</div>
                   <div className="text-lg font-bold mt-0.5">{v.runs.toLocaleString("pt-BR")}</div>
@@ -106,7 +106,7 @@ export default function PromptABTestPage() {
               </div>
 
               <div>
-                <div className="flex justify-between text-xs mb-1"><Label>Satisfação (CSAT)</Label><span className="font-semibold">{v.satisfaction}%</span></div>
+                <div className="flex justify-between text-meta mb-1"><Label>Satisfação (CSAT)</Label><span className="font-semibold">{v.satisfaction}%</span></div>
                 <Progress value={v.satisfaction} />
               </div>
             </CardContent>
@@ -115,21 +115,21 @@ export default function PromptABTestPage() {
       </div>
 
       <Card>
-        <CardHeader className="pb-3"><CardTitle className="text-sm flex items-center gap-2"><BarChart3 className="h-4 w-4" />Critérios de promoção automática</CardTitle></CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+        <CardHeader className="pb-3"><CardTitle className="text-body-sm flex items-center gap-2"><BarChart3 className="h-4 w-4" />Critérios de promoção automática</CardTitle></CardHeader>
+        <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-3 text-meta">
           <div className="p-3 bg-muted/30 rounded">
-            <Label className="text-xs">Confiança mínima</Label>
+            <Label className="text-meta">Confiança mínima</Label>
             <div className="flex items-center gap-2 mt-1.5">
               <Input type="number" defaultValue={95} className="h-7 w-20" />
               <span className="text-muted-foreground">%</span>
             </div>
           </div>
           <div className="p-3 bg-muted/30 rounded">
-            <Label className="text-xs">Mínimo de samples</Label>
+            <Label className="text-meta">Mínimo de samples</Label>
             <Input type="number" defaultValue={1000} className="h-7 mt-1.5" />
           </div>
           <div className="p-3 bg-muted/30 rounded">
-            <Label className="text-xs">Lift mínimo</Label>
+            <Label className="text-meta">Lift mínimo</Label>
             <div className="flex items-center gap-2 mt-1.5">
               <Input type="number" defaultValue={5} className="h-7 w-20" />
               <span className="text-muted-foreground">%</span>

@@ -37,7 +37,7 @@ export function WhatsAppSendDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-1.5 text-xs">
+        <Button variant="outline" size="sm" className="gap-1.5 text-meta">
           <MessageSquare className="h-3.5 w-3.5" />
           Enviar WhatsApp
         </Button>
@@ -47,28 +47,28 @@ export function WhatsAppSendDialog() {
           <DialogTitle className="flex items-center gap-2">
             <MessageSquare className="h-5 w-5 text-nexus-emerald" />
             Enviar Mensagem WhatsApp
-            <Badge variant="outline" className="text-[10px]">Multi-provider</Badge>
+            <Badge variant="outline" className="text-meta">Multi-provider</Badge>
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground">Número (E.164)</label>
+            <label className="text-meta font-medium text-muted-foreground">Número (E.164)</label>
             <Input
               placeholder="+5511999887766"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="text-sm"
+              className="text-body-sm"
             />
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground">Mensagem</label>
+            <label className="text-meta font-medium text-muted-foreground">Mensagem</label>
             <Textarea
               placeholder="Digite sua mensagem..."
               value={text}
               onChange={(e) => setText(e.target.value)}
-              className="text-sm min-h-[80px]"
+              className="text-body-sm min-h-[80px]"
             />
           </div>
 

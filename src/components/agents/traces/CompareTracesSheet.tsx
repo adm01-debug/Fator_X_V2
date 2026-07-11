@@ -124,11 +124,11 @@ function MetricRow({ label, icon: Icon, valueA, valueB, delta }: MetricCellProps
     <div className="grid grid-cols-[1fr_auto_1fr_auto] items-center gap-3 py-2 border-b border-border/30 last:border-0">
       <div className="flex items-center gap-2 min-w-0">
         <Icon className="h-3.5 w-3.5 text-muted-foreground shrink-0" aria-hidden />
-        <span className="text-xs text-muted-foreground truncate">{label}</span>
+        <span className="text-meta text-muted-foreground truncate">{label}</span>
       </div>
-      <span className="text-sm font-mono tabular-nums text-foreground text-right min-w-[80px]">{valueA}</span>
-      <span className="text-sm font-mono tabular-nums text-foreground text-right min-w-[80px]">{valueB}</span>
-      <span className={`text-xs font-mono tabular-nums text-right min-w-[70px] ${toneClass(delta.tone)}`}>
+      <span className="text-body-sm font-mono tabular-nums text-foreground text-right min-w-[80px]">{valueA}</span>
+      <span className="text-body-sm font-mono tabular-nums text-foreground text-right min-w-[80px]">{valueB}</span>
+      <span className={`text-meta font-mono tabular-nums text-right min-w-[70px] ${toneClass(delta.tone)}`}>
         {delta.text}
       </span>
     </div>
@@ -187,7 +187,7 @@ export function CompareTracesSheet({ open, onOpenChange, a, b }: Props) {
         <SheetHeader className="p-5 border-b border-border/40 space-y-2">
           <SheetTitle className="text-base font-semibold">Comparar execuções</SheetTitle>
           <SheetDescription asChild>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <div className="flex items-center gap-2 text-meta text-muted-foreground">
               <span className="px-2 py-0.5 rounded bg-secondary/60">A</span>
               <ShortId value={a.session_id} />
               <ArrowRight className="h-3 w-3" aria-hidden />
@@ -201,11 +201,11 @@ export function CompareTracesSheet({ open, onOpenChange, a, b }: Props) {
           <div className="p-5 space-y-6">
             {/* Summary deltas */}
             <section>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+              <h3 className="text-meta font-semibold uppercase tracking-wider text-muted-foreground mb-2">
                 Resumo
               </h3>
               <div className="rounded-lg border border-border/40 bg-card/40 px-3">
-                <div className="grid grid-cols-[1fr_auto_1fr_auto] items-center gap-3 py-2 border-b border-border/40 text-[10px] uppercase tracking-wider text-muted-foreground">
+                <div className="grid grid-cols-[1fr_auto_1fr_auto] items-center gap-3 py-2 border-b border-border/40 text-meta uppercase tracking-wider text-muted-foreground">
                   <span>Métrica</span>
                   <span className="text-right min-w-[80px]">A</span>
                   <span className="text-right min-w-[80px]">B</span>
@@ -265,17 +265,17 @@ export function CompareTracesSheet({ open, onOpenChange, a, b }: Props) {
 
             {/* Event timeline diff */}
             <section>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+              <h3 className="text-meta font-semibold uppercase tracking-wider text-muted-foreground mb-2">
                 Timeline de eventos
               </h3>
-              <div className="flex items-center gap-3 mb-2 text-[10px] text-muted-foreground">
+              <div className="flex items-center gap-3 mb-2 text-meta text-muted-foreground">
                 <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-sm bg-nexus-emerald/60" />Apenas em A</span>
                 <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-sm bg-destructive/60" />Apenas em B</span>
                 <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-sm bg-muted" />Em ambos</span>
               </div>
               <div className="rounded-lg border border-border/40 overflow-hidden">
                 {eventDiff.length === 0 ? (
-                  <p className="text-xs text-muted-foreground px-3 py-4 text-center">Sem eventos para comparar.</p>
+                  <p className="text-meta text-muted-foreground px-3 py-4 text-center">Sem eventos para comparar.</p>
                 ) : (
                   <ul className="divide-y divide-border/30">
                     {eventDiff.map((row) => {
@@ -286,7 +286,7 @@ export function CompareTracesSheet({ open, onOpenChange, a, b }: Props) {
                       return (
                         <li
                           key={row.event}
-                          className={`grid grid-cols-[1fr_auto_auto] items-center gap-3 px-3 py-1.5 text-xs ${stripeClass}`}
+                          className={`grid grid-cols-[1fr_auto_auto] items-center gap-3 px-3 py-1.5 text-meta ${stripeClass}`}
                         >
                           <span className="font-mono truncate text-foreground/90" title={row.event}>{row.event}</span>
                           <span className={`font-mono tabular-nums text-right min-w-[40px] ${row.countA === 0 ? 'text-muted-foreground/50' : 'text-foreground'}`}>
@@ -305,17 +305,17 @@ export function CompareTracesSheet({ open, onOpenChange, a, b }: Props) {
 
             {/* Tool calls diff */}
             <section>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+              <h3 className="text-meta font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
                 <Wrench className="h-3 w-3" aria-hidden /> Ferramentas chamadas
               </h3>
               <div className="rounded-lg border border-border/40 overflow-hidden">
                 {toolDiff.length === 0 ? (
-                  <p className="text-xs text-muted-foreground px-3 py-4 text-center">
+                  <p className="text-meta text-muted-foreground px-3 py-4 text-center">
                     Nenhuma chamada de ferramenta detectada em qualquer lado.
                   </p>
                 ) : (
                   <>
-                    <div className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-3 px-3 py-2 bg-secondary/30 text-[10px] uppercase tracking-wider text-muted-foreground border-b border-border/40">
+                    <div className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-3 px-3 py-2 bg-secondary/30 text-meta uppercase tracking-wider text-muted-foreground border-b border-border/40">
                       <span>Tool</span>
                       <span className="text-right min-w-[40px]">A</span>
                       <span className="text-right min-w-[40px]">B</span>
@@ -325,7 +325,7 @@ export function CompareTracesSheet({ open, onOpenChange, a, b }: Props) {
                       {toolDiff.map((row) => {
                         const tone = row.delta === 0 ? 'text-muted-foreground' : row.delta > 0 ? 'text-nexus-amber' : 'text-nexus-emerald';
                         return (
-                          <li key={row.tool} className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-3 px-3 py-1.5 text-xs">
+                          <li key={row.tool} className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-3 px-3 py-1.5 text-meta">
                             <span className="font-mono truncate text-foreground/90" title={row.tool}>{row.tool}</span>
                             <span className={`font-mono tabular-nums text-right min-w-[40px] ${row.countA === 0 ? 'text-muted-foreground/50' : 'text-foreground'}`}>
                               {row.countA}
@@ -347,24 +347,24 @@ export function CompareTracesSheet({ open, onOpenChange, a, b }: Props) {
 
             {/* Errors side-by-side */}
             <section>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+              <h3 className="text-meta font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
                 <XCircle className="h-3 w-3" aria-hidden /> Erros
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div className="rounded-lg border border-border/40 overflow-hidden">
-                  <div className="px-3 py-1.5 bg-secondary/30 text-[10px] uppercase tracking-wider text-muted-foreground flex items-center justify-between">
+                  <div className="px-3 py-1.5 bg-secondary/30 text-meta uppercase tracking-wider text-muted-foreground flex items-center justify-between">
                     <span>A — {errorsA.length} erro{errorsA.length === 1 ? '' : 's'}</span>
-                    <Badge variant="outline" className="text-[10px] h-4 px-1">{summaryA.error}</Badge>
+                    <Badge variant="outline" className="text-meta h-4 px-1">{summaryA.error}</Badge>
                   </div>
                   {errorsA.length === 0 ? (
-                    <p className="text-xs text-nexus-emerald px-3 py-3 flex items-center gap-1.5">
+                    <p className="text-meta text-nexus-emerald px-3 py-3 flex items-center gap-1.5">
                       <CheckCircle2 className="h-3 w-3" aria-hidden /> Sem erros
                     </p>
                   ) : (
                     <ul className="divide-y divide-border/30 max-h-64 overflow-auto">
                       {errorsA.map((t) => (
-                        <li key={t.id} className="px-3 py-2 text-xs space-y-0.5">
-                          <p className="font-mono text-[10px] text-muted-foreground">{t.event}</p>
+                        <li key={t.id} className="px-3 py-2 text-meta space-y-0.5">
+                          <p className="font-mono text-meta text-muted-foreground">{t.event}</p>
                           <p className="text-foreground/90 break-words">{errorMessageOf(t)}</p>
                         </li>
                       ))}
@@ -372,19 +372,19 @@ export function CompareTracesSheet({ open, onOpenChange, a, b }: Props) {
                   )}
                 </div>
                 <div className="rounded-lg border border-border/40 overflow-hidden">
-                  <div className="px-3 py-1.5 bg-secondary/30 text-[10px] uppercase tracking-wider text-muted-foreground flex items-center justify-between">
+                  <div className="px-3 py-1.5 bg-secondary/30 text-meta uppercase tracking-wider text-muted-foreground flex items-center justify-between">
                     <span>B — {errorsB.length} erro{errorsB.length === 1 ? '' : 's'}</span>
-                    <Badge variant="outline" className="text-[10px] h-4 px-1">{summaryB.error}</Badge>
+                    <Badge variant="outline" className="text-meta h-4 px-1">{summaryB.error}</Badge>
                   </div>
                   {errorsB.length === 0 ? (
-                    <p className="text-xs text-nexus-emerald px-3 py-3 flex items-center gap-1.5">
+                    <p className="text-meta text-nexus-emerald px-3 py-3 flex items-center gap-1.5">
                       <CheckCircle2 className="h-3 w-3" aria-hidden /> Sem erros
                     </p>
                   ) : (
                     <ul className="divide-y divide-border/30 max-h-64 overflow-auto">
                       {errorsB.map((t) => (
-                        <li key={t.id} className="px-3 py-2 text-xs space-y-0.5">
-                          <p className="font-mono text-[10px] text-muted-foreground">{t.event}</p>
+                        <li key={t.id} className="px-3 py-2 text-meta space-y-0.5">
+                          <p className="font-mono text-meta text-muted-foreground">{t.event}</p>
                           <p className="text-foreground/90 break-words">{errorMessageOf(t)}</p>
                         </li>
                       ))}

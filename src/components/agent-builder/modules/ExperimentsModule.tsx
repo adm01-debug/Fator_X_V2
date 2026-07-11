@@ -112,21 +112,21 @@ export function ExperimentsModule() {
                   <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <p className="text-sm font-medium text-foreground truncate">{exp.name}</p>
-                        <Badge variant="outline" className={`text-[10px] ${st.className}`}>
+                        <p className="text-body-sm font-medium text-foreground truncate">{exp.name}</p>
+                        <Badge variant="outline" className={`text-meta ${st.className}`}>
                           {st.label}
                         </Badge>
                         {exp.winner && (
-                          <Badge className="text-[10px] gap-1 bg-nexus-amber/15 text-nexus-amber border-nexus-amber/30">
+                          <Badge className="text-meta gap-1 bg-nexus-amber/15 text-nexus-amber border-nexus-amber/30">
                             <Trophy className="h-3 w-3" /> Vencedor: {exp.winner.toUpperCase()}
                           </Badge>
                         )}
                       </div>
                       {exp.description && (
-                        <p className="text-[11px] text-muted-foreground truncate mt-0.5">{exp.description}</p>
+                        <p className="text-meta text-muted-foreground truncate mt-0.5">{exp.description}</p>
                       )}
                     </div>
-                    <span className="text-[11px] text-muted-foreground shrink-0">
+                    <span className="text-meta text-muted-foreground shrink-0">
                       Split A {100 - exp.traffic_split}% / B {exp.traffic_split}%
                     </span>
                   </div>
@@ -223,7 +223,7 @@ function ExperimentDetail({
 
       {/* Traffic split visualization */}
       <div className="rounded-xl border border-border bg-card p-4 space-y-2">
-        <div className="flex justify-between text-[11px] text-muted-foreground">
+        <div className="flex justify-between text-meta text-muted-foreground">
           <span>Distribuição de execuções</span>
           <span>{totalRuns} runs totais</span>
         </div>
@@ -231,7 +231,7 @@ function ExperimentDetail({
           <div className="bg-primary transition-all" style={{ width: `${pctA}%` }} />
           <div className="bg-nexus-orange transition-all" style={{ width: `${100 - pctA}%` }} />
         </div>
-        <div className="flex justify-between text-[11px]">
+        <div className="flex justify-between text-meta">
           <span className="text-primary font-medium">A · {statsA.runs} runs</span>
           <span className="text-nexus-orange font-medium">B · {statsB.runs} runs</span>
         </div>
@@ -304,14 +304,14 @@ function VariantPanel({
     >
       <div className="flex items-start justify-between gap-2">
         <div>
-          <p className={`text-xs font-semibold text-${color}`}>{label}</p>
+          <p className={`text-meta font-semibold text-${color}`}>{label}</p>
           {isWinner && (
-            <Badge className="mt-1 gap-1 bg-nexus-amber/15 text-nexus-amber border-nexus-amber/30 text-[10px]">
+            <Badge className="mt-1 gap-1 bg-nexus-amber/15 text-nexus-amber border-nexus-amber/30 text-meta">
               <Trophy className="h-3 w-3" /> Vencedor
             </Badge>
           )}
         </div>
-        <span className="text-[11px] text-muted-foreground">{sharePct.toFixed(0)}%</span>
+        <span className="text-meta text-muted-foreground">{sharePct.toFixed(0)}%</span>
       </div>
 
       <Progress value={sharePct} className="h-1.5" />
@@ -325,11 +325,11 @@ function VariantPanel({
 
       {/* Config preview */}
       {Object.keys(config).length > 0 && (
-        <details className="text-[11px]">
+        <details className="text-meta">
           <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
             Ver configuração ({Object.keys(config).length} campos)
           </summary>
-          <pre className="mt-2 p-2 rounded bg-muted/30 overflow-auto max-h-32 text-[10px]">
+          <pre className="mt-2 p-2 rounded bg-muted/30 overflow-auto max-h-32 text-meta">
             {JSON.stringify(config, null, 2)}
           </pre>
         </details>
@@ -337,12 +337,12 @@ function VariantPanel({
 
       <div className="flex gap-2 pt-1">
         {!experiment.winner && experiment.status !== 'draft' && stats.runs > 0 && (
-          <Button size="sm" variant="outline" className="flex-1 text-xs gap-1" onClick={onDeclare}>
+          <Button size="sm" variant="outline" className="flex-1 text-meta gap-1" onClick={onDeclare}>
             <Trophy className="h-3 w-3" /> Declarar vencedor
           </Button>
         )}
         {isWinner && (
-          <Button size="sm" className="flex-1 text-xs gap-1" onClick={onApply}>
+          <Button size="sm" className="flex-1 text-meta gap-1" onClick={onApply}>
             Aplicar ao agente
           </Button>
         )}
@@ -354,10 +354,10 @@ function VariantPanel({
 function Metric({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
     <div className="rounded-lg bg-muted/30 p-2">
-      <div className="flex items-center gap-1 text-muted-foreground text-[10px] mb-0.5">
+      <div className="flex items-center gap-1 text-muted-foreground text-meta mb-0.5">
         {icon} {label}
       </div>
-      <p className="text-sm font-semibold text-foreground">{value}</p>
+      <p className="text-body-sm font-semibold text-foreground">{value}</p>
     </div>
   );
 }
@@ -430,29 +430,29 @@ function CreateExperimentDialog({
 
         <div className="space-y-4">
           <div className="space-y-1.5">
-            <Label className="text-xs">Nome</Label>
+            <Label className="text-meta">Nome</Label>
             <Input
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Ex: Modelo flash vs pro"
-              className="text-sm"
+              className="text-body-sm"
             />
           </div>
 
           <div className="space-y-1.5">
-            <Label className="text-xs">Descrição (opcional)</Label>
+            <Label className="text-meta">Descrição (opcional)</Label>
             <Textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Hipótese a ser testada..."
-              className="text-sm min-h-[60px]"
+              className="text-body-sm min-h-[60px]"
             />
           </div>
 
           <div className="space-y-1.5">
-            <Label className="text-xs">Campo a comparar</Label>
+            <Label className="text-meta">Campo a comparar</Label>
             <Select value={variantField} onValueChange={(v) => setVariantField(v as typeof variantField)}>
-              <SelectTrigger className="text-sm">
+              <SelectTrigger className="text-body-sm">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -465,45 +465,45 @@ function CreateExperimentDialog({
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label className="text-xs text-primary">Variante A (controle)</Label>
+              <Label className="text-meta text-primary">Variante A (controle)</Label>
               {variantField === 'system_prompt' ? (
                 <Textarea
                   value={valueA}
                   onChange={(e) => setValueA(e.target.value)}
                   placeholder={String(currentConfig[variantField] ?? '(atual)')}
-                  className="text-xs min-h-[80px]"
+                  className="text-meta min-h-[80px]"
                 />
               ) : (
                 <Input
                   value={valueA}
                   onChange={(e) => setValueA(e.target.value)}
                   placeholder={String(currentConfig[variantField] ?? '(atual)')}
-                  className="text-sm"
+                  className="text-body-sm"
                 />
               )}
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs text-nexus-orange">Variante B (teste)</Label>
+              <Label className="text-meta text-nexus-orange">Variante B (teste)</Label>
               {variantField === 'system_prompt' ? (
                 <Textarea
                   value={valueB}
                   onChange={(e) => setValueB(e.target.value)}
                   placeholder="Novo valor..."
-                  className="text-xs min-h-[80px]"
+                  className="text-meta min-h-[80px]"
                 />
               ) : (
                 <Input
                   value={valueB}
                   onChange={(e) => setValueB(e.target.value)}
                   placeholder="Novo valor..."
-                  className="text-sm"
+                  className="text-body-sm"
                 />
               )}
             </div>
           </div>
 
           <div className="space-y-2">
-            <div className="flex justify-between text-xs">
+            <div className="flex justify-between text-meta">
               <Label>Split de tráfego</Label>
               <span className="text-muted-foreground">
                 A {100 - split}% / B {split}%

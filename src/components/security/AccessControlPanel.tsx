@@ -73,7 +73,7 @@ export function AccessControlPanel() {
           </CardTitle>
           <DiagnoseButton workspaceId={workspaceId} />
         </div>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-body-sm text-muted-foreground">
           Restrinja o acesso ao workspace por IP/CIDR ou país de origem.
           Tentativas bloqueadas são auditadas.
         </p>
@@ -166,7 +166,7 @@ function IpWhitelistManager({ workspaceId }: { workspaceId: string }) {
           placeholder="IP ou CIDR (ex: 192.168.1.0/24)"
           value={ip}
           onChange={(e) => setIp(e.target.value)}
-          className="font-mono text-sm"
+          className="font-mono text-body-sm"
         />
         <Input
           placeholder="Rótulo (ex: Escritório)"
@@ -179,7 +179,7 @@ function IpWhitelistManager({ workspaceId }: { workspaceId: string }) {
       </div>
 
       {rules.length === 0 && !isLoading && (
-        <div className="rounded-md border border-dashed p-6 text-center text-sm text-muted-foreground">
+        <div className="rounded-md border border-dashed p-6 text-center text-body-sm text-muted-foreground">
           Nenhuma regra. Quando vazia, todos os IPs são permitidos.
         </div>
       )}
@@ -191,9 +191,9 @@ function IpWhitelistManager({ workspaceId }: { workspaceId: string }) {
             className="flex items-center justify-between gap-3 rounded-md border bg-card p-3"
           >
             <div className="min-w-0 flex-1">
-              <code className="font-mono text-sm">{r.ip_address}</code>
+              <code className="font-mono text-body-sm">{r.ip_address}</code>
               {r.label && (
-                <span className="ml-2 text-xs text-muted-foreground">
+                <span className="ml-2 text-meta text-muted-foreground">
                   · {r.label}
                 </span>
               )}
@@ -273,7 +273,7 @@ function GeoBlockingManager({ workspaceId }: { workspaceId: string }) {
       </div>
 
       <div>
-        <p className="mb-2 text-xs font-medium text-muted-foreground">
+        <p className="mb-2 text-meta font-medium text-muted-foreground">
           Sugestões rápidas:
         </p>
         <div className="flex flex-wrap gap-2">
@@ -292,7 +292,7 @@ function GeoBlockingManager({ workspaceId }: { workspaceId: string }) {
       </div>
 
       {countries.length === 0 ? (
-        <div className="rounded-md border border-dashed p-6 text-center text-sm text-muted-foreground">
+        <div className="rounded-md border border-dashed p-6 text-center text-body-sm text-muted-foreground">
           <Globe className="mx-auto mb-2 h-6 w-6 opacity-40" />
           Nenhum país listado. Quando vazio, todos os países são permitidos.
         </div>
@@ -302,11 +302,11 @@ function GeoBlockingManager({ workspaceId }: { workspaceId: string }) {
             <Badge
               key={c.id}
               variant="secondary"
-              className="gap-1 px-3 py-1.5 text-sm"
+              className="gap-1 px-3 py-1.5 text-body-sm"
             >
               {c.country_code}
               {c.country_name && (
-                <span className="text-xs text-muted-foreground">· {c.country_name}</span>
+                <span className="text-meta text-muted-foreground">· {c.country_name}</span>
               )}
               <button
                 aria-label="remover"
@@ -346,7 +346,7 @@ function BlockedLogPanel({ workspaceId }: { workspaceId: string }) {
 
   if (log.length === 0) {
     return (
-      <div className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
+      <div className="rounded-md border border-dashed p-8 text-center text-body-sm text-muted-foreground">
         <Shield className="mx-auto mb-2 h-6 w-6 opacity-40" />
         Nenhum bloqueio registrado.
       </div>
@@ -358,24 +358,24 @@ function BlockedLogPanel({ workspaceId }: { workspaceId: string }) {
       {log.map((e) => (
         <div
           key={e.id}
-          className="flex items-start gap-3 rounded-md border bg-card p-3 text-sm"
+          className="flex items-start gap-3 rounded-md border bg-card p-3 text-body-sm"
         >
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="destructive" className="text-[10px]">
+              <Badge variant="destructive" className="text-meta">
                 {e.reason}
               </Badge>
               {e.ip_address && (
-                <code className="font-mono text-xs">{e.ip_address}</code>
+                <code className="font-mono text-meta">{e.ip_address}</code>
               )}
               {e.country_code && (
-                <Badge variant="outline" className="text-[10px]">
+                <Badge variant="outline" className="text-meta">
                   {e.country_code}
                 </Badge>
               )}
             </div>
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p className="mt-1 text-meta text-muted-foreground">
               {new Date(e.created_at).toLocaleString("pt-BR")}
               {e.user_agent && (
                 <span className="ml-2 truncate">· {e.user_agent.slice(0, 60)}</span>

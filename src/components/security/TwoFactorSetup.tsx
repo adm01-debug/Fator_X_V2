@@ -53,24 +53,24 @@ export function TwoFactorSetup() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           {enabled ? <ShieldCheck className="w-5 h-5 text-nexus-emerald" /> : <ShieldOff className="w-5 h-5 text-muted-foreground" />}
-          <h3 className="text-sm font-bold text-foreground">Autenticação de Dois Fatores (2FA)</h3>
-          <Badge variant="outline" className={`text-[10px] ${enabled ? "border-nexus-emerald text-nexus-emerald" : ""}`}>
+          <h3 className="text-body-sm font-bold text-foreground">Autenticação de Dois Fatores (2FA)</h3>
+          <Badge variant="outline" className={`text-meta ${enabled ? "border-nexus-emerald text-nexus-emerald" : ""}`}>
             {enabled ? "Ativo" : "Inativo"}
           </Badge>
         </div>
       </div>
 
-      <p className="text-xs text-muted-foreground">
+      <p className="text-meta text-muted-foreground">
         Use um app autenticador (Google Authenticator, Authy, 1Password) para gerar códigos de 6 dígitos a cada login.
       </p>
 
       {backupCodes && (
         <div className="bg-nexus-amber/10 border border-nexus-amber/30 rounded-lg p-3 space-y-2">
-          <p className="text-xs font-bold text-nexus-amber">⚠️ Códigos de backup — copie e guarde em local seguro:</p>
-          <div className="grid grid-cols-2 gap-1.5 font-mono text-[11px]">
+          <p className="text-meta font-bold text-nexus-amber">⚠️ Códigos de backup — copie e guarde em local seguro:</p>
+          <div className="grid grid-cols-2 gap-1.5 font-mono text-meta">
             {backupCodes.map((c) => <code key={c} className="bg-secondary px-2 py-1 rounded">{c}</code>)}
           </div>
-          <Button size="sm" variant="ghost" className="h-7 text-xs gap-1" onClick={() => { navigator.clipboard.writeText(backupCodes.join("\n")); toast.success("Copiados!"); }}>
+          <Button size="sm" variant="ghost" className="h-7 text-meta gap-1" onClick={() => { navigator.clipboard.writeText(backupCodes.join("\n")); toast.success("Copiados!"); }}>
             <Copy className="w-3 h-3" /> Copiar todos
           </Button>
         </div>
@@ -84,8 +84,8 @@ export function TwoFactorSetup() {
         <div className="space-y-4 bg-secondary/30 p-4 rounded-lg">
           <div className="flex flex-col items-center gap-3">
             <div className="bg-white p-3 rounded-lg"><QRCodeSVG value={setup.uri} size={180} /></div>
-            <p className="text-[11px] text-muted-foreground text-center">Escaneie com seu app autenticador, depois insira o código de 6 dígitos abaixo.</p>
-            <code className="text-[10px] font-mono text-muted-foreground break-all">{setup.secret}</code>
+            <p className="text-meta text-muted-foreground text-center">Escaneie com seu app autenticador, depois insira o código de 6 dígitos abaixo.</p>
+            <code className="text-meta font-mono text-muted-foreground break-all">{setup.secret}</code>
           </div>
           <div className="flex gap-2">
             <Input value={token} onChange={(e) => setToken(e.target.value)} placeholder="000000" maxLength={6} className="text-center font-mono tracking-widest" />
@@ -93,7 +93,7 @@ export function TwoFactorSetup() {
               {busy ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}
             </Button>
           </div>
-          <Button variant="ghost" size="sm" onClick={() => setSetup(null)} className="w-full text-xs">Cancelar</Button>
+          <Button variant="ghost" size="sm" onClick={() => setSetup(null)} className="w-full text-meta">Cancelar</Button>
         </div>
       )}
 

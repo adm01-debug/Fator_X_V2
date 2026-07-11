@@ -30,7 +30,7 @@ export function RoutingEventsMonitor() {
   return (
     <Card className="nexus-card overflow-hidden">
       <CardHeader className="bg-muted/30 border-b border-border/40 py-4 flex flex-row items-center justify-between">
-        <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
+        <CardTitle className="text-body-sm font-black uppercase tracking-widest flex items-center gap-2">
           <Clock className="h-4 w-4 text-primary" />
           Live Webhook Feed
         </CardTitle>
@@ -41,10 +41,10 @@ export function RoutingEventsMonitor() {
       <CardContent className="p-0">
         <Tabs defaultValue="bitrix24" className="w-full">
           <TabsList className="w-full justify-start rounded-none border-b border-border/40 bg-transparent px-4 h-11">
-            <TabsTrigger value="bitrix24" className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none h-11 px-4 gap-2 text-xs font-bold">
+            <TabsTrigger value="bitrix24" className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none h-11 px-4 gap-2 text-meta font-bold">
               <Building2 className="h-3.5 w-3.5" /> Bitrix24
             </TabsTrigger>
-            <TabsTrigger value="whatsapp" className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none h-11 px-4 gap-2 text-xs font-bold">
+            <TabsTrigger value="whatsapp" className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none h-11 px-4 gap-2 text-meta font-bold">
               <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
             </TabsTrigger>
           </TabsList>
@@ -53,7 +53,7 @@ export function RoutingEventsMonitor() {
             {loadingBitrix ? (
               <div className="flex justify-center py-8"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>
             ) : bitrixEvents.length === 0 ? (
-              <div className="py-12 text-center text-xs text-muted-foreground">Nenhum evento Bitrix24 recebido.</div>
+              <div className="py-12 text-center text-meta text-muted-foreground">Nenhum evento Bitrix24 recebido.</div>
             ) : (
               <div className="max-h-[400px] overflow-y-auto divide-y divide-border/20">
                 {bitrixEvents.map((e) => {
@@ -63,18 +63,18 @@ export function RoutingEventsMonitor() {
                     <div key={e.id} className="p-4 flex items-center justify-between hover:bg-muted/30 transition-colors">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <code className="text-[11px] font-mono font-bold text-foreground">{e.event_type}</code>
-                          <span className="text-[10px] text-muted-foreground">#{e.bitrix_event_id?.slice(0, 8)}</span>
+                          <code className="text-meta font-mono font-bold text-foreground">{e.event_type}</code>
+                          <span className="text-meta text-muted-foreground">#{e.bitrix_event_id?.slice(0, 8)}</span>
                         </div>
-                        <p className="text-[10px] text-muted-foreground">{new Date(e.received_at).toLocaleString('pt-BR')}</p>
+                        <p className="text-meta text-muted-foreground">{new Date(e.received_at).toLocaleString('pt-BR')}</p>
                       </div>
                       <div className="flex items-center gap-4">
-                        <Badge variant="outline" className={`text-[10px] gap-1.5 px-2 py-0.5 ${cfg.color}`}>
+                        <Badge variant="outline" className={`text-meta gap-1.5 px-2 py-0.5 ${cfg.color}`}>
                           <Icon className={`h-3 w-3 ${e.routing_status === 'pending' ? 'animate-spin' : ''}`} />
                           {cfg.label}
                         </Badge>
                         {e.trace_id && (
-                          <a href={`/monitoring?trace=${e.trace_id}`} className="text-[10px] font-mono text-primary hover:underline">
+                          <a href={`/monitoring?trace=${e.trace_id}`} className="text-meta font-mono text-primary hover:underline">
                             {e.trace_id.slice(0, 8)}
                           </a>
                         )}
@@ -90,7 +90,7 @@ export function RoutingEventsMonitor() {
             {loadingWhatsApp ? (
               <div className="flex justify-center py-8"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>
             ) : whatsappEvents.length === 0 ? (
-              <div className="py-12 text-center text-xs text-muted-foreground">Nenhum evento WhatsApp recebido.</div>
+              <div className="py-12 text-center text-meta text-muted-foreground">Nenhum evento WhatsApp recebido.</div>
             ) : (
               <div className="max-h-[400px] overflow-y-auto divide-y divide-border/20">
                 {whatsappEvents.map((e) => {
@@ -101,21 +101,21 @@ export function RoutingEventsMonitor() {
                       <div className="space-y-1 flex-1 min-w-0 mr-4">
                         <div className="flex items-center gap-2">
                           <Badge variant="outline" className="text-[9px] uppercase tracking-tighter">{e.provider}</Badge>
-                          <span className="text-[11px] font-bold text-foreground truncate">{e.body_preview || e.event_type}</span>
+                          <span className="text-meta font-bold text-foreground truncate">{e.body_preview || e.event_type}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                        <div className="flex items-center gap-2 text-meta text-muted-foreground">
                           <span>{e.from_phone}</span>
                           <span className="opacity-40">•</span>
                           <span>{new Date(e.received_at).toLocaleString('pt-BR')}</span>
                         </div>
                       </div>
                       <div className="flex items-center gap-4">
-                        <Badge variant="outline" className={`text-[10px] gap-1.5 px-2 py-0.5 ${cfg.color}`}>
+                        <Badge variant="outline" className={`text-meta gap-1.5 px-2 py-0.5 ${cfg.color}`}>
                           <Icon className={`h-3 w-3 ${e.routing_status === 'pending' ? 'animate-spin' : ''}`} />
                           {cfg.label}
                         </Badge>
                         {e.trace_id && (
-                          <a href={`/monitoring?trace=${e.trace_id}`} className="text-[10px] font-mono text-primary hover:underline">
+                          <a href={`/monitoring?trace=${e.trace_id}`} className="text-meta font-mono text-primary hover:underline">
                             {e.trace_id.slice(0, 8)}
                           </a>
                         )}

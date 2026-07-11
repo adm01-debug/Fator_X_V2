@@ -69,7 +69,7 @@ export function AgentCard({
               <Badge variant="secondary" className="px-1.5 py-0 h-4 text-[9px] font-mono bg-primary/5 text-primary border-none">
                 {agent.model?.split('-').slice(0, 2).join('-') || 'unknown'}
               </Badge>
-              <span className="text-[10px] text-muted-foreground/60 font-medium uppercase tracking-wider">
+              <span className="text-meta text-muted-foreground/60 font-medium uppercase tracking-wider">
                 {(config.type as string) || agent.persona || 'Generalist'}
               </span>
             </div>
@@ -99,7 +99,7 @@ export function AgentCard({
         </div>
       </div>
 
-      <p className="text-xs text-muted-foreground/80 line-clamp-2 mb-4 leading-relaxed min-h-[32px]">
+      <p className="text-meta text-muted-foreground/80 line-clamp-2 mb-4 leading-relaxed min-h-[32px]">
         {agent.mission || 'Agente de inteligência autônoma orquestrado para alta performance no ecossistema Nexus.'}
       </p>
 
@@ -110,33 +110,33 @@ export function AgentCard({
             <MessageSquare className="h-3 w-3" />
             <span className="text-[9px] font-semibold uppercase tracking-tighter">Calls</span>
           </div>
-          <span className="text-[11px] font-bold font-mono">{metrics.calls || '1.2k'}</span>
+          <span className="text-meta font-bold font-mono">{metrics.calls || '1.2k'}</span>
         </div>
         <div className="flex flex-col items-center justify-center gap-1 border-x border-border/30">
           <div className="flex items-center gap-1 text-muted-foreground/60">
             <Activity className="h-3 w-3" />
             <span className="text-[9px] font-semibold uppercase tracking-tighter">Health</span>
           </div>
-          <span className="text-[11px] font-bold font-mono text-nexus-emerald">{metrics.accuracy || '98'}%</span>
+          <span className="text-meta font-bold font-mono text-nexus-emerald">{metrics.accuracy || '98'}%</span>
         </div>
         <div className="flex flex-col items-center justify-center gap-1">
           <div className="flex items-center gap-1 text-muted-foreground/60">
             <Zap className="h-3 w-3" />
             <span className="text-[9px] font-semibold uppercase tracking-tighter">Lat</span>
           </div>
-          <span className="text-[11px] font-bold font-mono">{metrics.latency || '240'}ms</span>
+          <span className="text-meta font-bold font-mono">{metrics.latency || '240'}ms</span>
         </div>
       </div>
 
       <div className="flex items-center gap-2 flex-wrap mt-auto pt-3 border-t border-border/20">
         <StatusBadge status={agent.status || 'draft'} />
         {(agent.tags ?? []).slice(0, 2).map(tag => (
-          <Badge key={tag} variant="outline" className="text-[10px] h-5 bg-background/50 border-border/50 font-medium px-2 py-0">
+          <Badge key={tag} variant="outline" className="text-meta h-5 bg-background/50 border-border/50 font-medium px-2 py-0">
             {tag}
           </Badge>
         ))}
         {(agent.tags ?? []).length > 2 && <span className="text-[9px] text-muted-foreground font-semibold">+{(agent.tags ?? []).length - 2}</span>}
-        <div className="flex items-center gap-2 ml-auto text-[10px] text-muted-foreground font-mono font-medium">
+        <div className="flex items-center gap-2 ml-auto text-meta text-muted-foreground font-mono font-medium">
           <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-muted/50">
             <GitBranch className="h-2.5 w-2.5" /> v{agent.version || 1}
           </div>

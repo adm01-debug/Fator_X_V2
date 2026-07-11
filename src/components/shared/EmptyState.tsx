@@ -43,7 +43,7 @@ export function EmptyState({
 
       <h3 className="text-lg font-heading font-semibold text-foreground mb-1.5">{title}</h3>
       {description && (
-        <p className="text-sm text-muted-foreground max-w-md leading-relaxed">{description}</p>
+        <p className="text-body-sm text-muted-foreground max-w-md leading-relaxed">{description}</p>
       )}
 
       <div className="flex items-center gap-2 mt-5">

@@ -224,7 +224,7 @@ export default function RiskRegisterPage() {
                     <SelectContent>
                       {TREATMENTS.map(t => (
                         <SelectItem key={t.value} value={t.value}>
-                          <div><div className="font-medium">{t.label}</div><div className="text-xs text-muted-foreground">{t.description}</div></div>
+                          <div><div className="font-medium">{t.label}</div><div className="text-meta text-muted-foreground">{t.description}</div></div>
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -235,16 +235,16 @@ export default function RiskRegisterPage() {
                 <div className="space-y-2">
                   <Label>Likelihood: <span className="font-bold text-primary">{likelihood}</span></Label>
                   <Slider value={[likelihood]} onValueChange={([v]) => setLikelihood(v)} min={1} max={5} step={1} />
-                  <p className="text-xs text-muted-foreground">1 = Raro · 5 = Quase certo</p>
+                  <p className="text-meta text-muted-foreground">1 = Raro · 5 = Quase certo</p>
                 </div>
                 <div className="space-y-2">
                   <Label>Impact: <span className="font-bold text-primary">{impact}</span></Label>
                   <Slider value={[impact]} onValueChange={([v]) => setImpact(v)} min={1} max={5} step={1} />
-                  <p className="text-xs text-muted-foreground">1 = Negligível · 5 = Catastrófico</p>
+                  <p className="text-meta text-muted-foreground">1 = Negligível · 5 = Catastrófico</p>
                 </div>
               </div>
               <div className="rounded-lg border bg-secondary/30 p-3 flex items-center justify-between">
-                <span className="text-sm font-medium">Inherent Score (L × I):</span>
+                <span className="text-body-sm font-medium">Inherent Score (L × I):</span>
                 <Badge className={getRiskLevelColor(inherentLevel)}>
                   {inherentScore} — {inherentLevel.toUpperCase()}
                 </Badge>
@@ -281,7 +281,7 @@ export default function RiskRegisterPage() {
         </CardHeader>
         <CardContent>
           <div className="flex gap-3">
-            <div className="flex flex-col justify-between text-xs text-muted-foreground py-2 -rotate-180" style={{ writingMode: 'vertical-rl' }}>
+            <div className="flex flex-col justify-between text-meta text-muted-foreground py-2 -rotate-180" style={{ writingMode: 'vertical-rl' }}>
               <span>Impact →</span>
             </div>
             <div className="flex-1">
@@ -295,7 +295,7 @@ export default function RiskRegisterPage() {
                     return (
                       <div
                         key={`${ri}-${ci}`}
-                        className="aspect-square rounded-md flex items-center justify-center text-sm font-bold border border-border/30 transition-all hover:scale-105"
+                        className="aspect-square rounded-md flex items-center justify-center text-body-sm font-bold border border-border/30 transition-all hover:scale-105"
                         style={{
                           backgroundColor: `hsl(var(--${level === 'critical' ? 'destructive' : level === 'high' ? 'nexus-amber' : level === 'medium' ? 'primary' : 'muted'}) / ${opacity})`,
                         }}
@@ -307,10 +307,10 @@ export default function RiskRegisterPage() {
                   })
                 )}
               </div>
-              <div className="grid grid-cols-5 gap-1.5 mt-2 text-center text-xs text-muted-foreground">
+              <div className="grid grid-cols-5 gap-1.5 mt-2 text-center text-meta text-muted-foreground">
                 {[1, 2, 3, 4, 5].map(n => <span key={n}>L{n}</span>)}
               </div>
-              <p className="text-center text-xs text-muted-foreground mt-1">Likelihood →</p>
+              <p className="text-center text-meta text-muted-foreground mt-1">Likelihood →</p>
             </div>
           </div>
         </CardContent>
@@ -375,18 +375,18 @@ export default function RiskRegisterPage() {
                         <Badge className={getRiskLevelColor(inhLvl)}>{r.inherent_score}</Badge>
                       </TableCell>
                       <TableCell className="text-center">
-                        {resLvl ? <Badge className={getRiskLevelColor(resLvl)}>{r.residual_score}</Badge> : <span className="text-muted-foreground text-xs">—</span>}
+                        {resLvl ? <Badge className={getRiskLevelColor(resLvl)}>{r.residual_score}</Badge> : <span className="text-muted-foreground text-meta">—</span>}
                       </TableCell>
                       <TableCell><Badge variant="secondary">{TREATMENTS.find(t => t.value === r.treatment)?.label}</Badge></TableCell>
                       <TableCell><Badge variant={r.status === 'closed' ? 'outline' : 'default'}>{r.status}</Badge></TableCell>
                       <TableCell>
-                        {r.status === 'closed' ? <span className="text-muted-foreground text-xs">—</span> :
+                        {r.status === 'closed' ? <span className="text-muted-foreground text-meta">—</span> :
                           overdue ? (
                             <Badge variant="destructive" className="animate-pulse">
                               Vencido {formatDistanceToNow(new Date(r.next_review_due), { locale: ptBR })}
                             </Badge>
                           ) : (
-                            <span className="text-xs text-muted-foreground">
+                            <span className="text-meta text-muted-foreground">
                               em {formatDistanceToNow(new Date(r.next_review_due), { locale: ptBR })}
                             </span>
                           )}
@@ -424,19 +424,19 @@ export default function RiskRegisterPage() {
 
                 {selectedRisk.mitigation_plan && (
                   <div className="space-y-1">
-                    <Label className="text-xs uppercase text-muted-foreground">Plano de mitigação</Label>
-                    <p className="text-sm whitespace-pre-wrap rounded-md border bg-secondary/30 p-3">{selectedRisk.mitigation_plan}</p>
+                    <Label className="text-meta uppercase text-muted-foreground">Plano de mitigação</Label>
+                    <p className="text-body-sm whitespace-pre-wrap rounded-md border bg-secondary/30 p-3">{selectedRisk.mitigation_plan}</p>
                   </div>
                 )}
 
                 {selectedRisk.status !== 'closed' && (
                   <Card>
-                    <CardHeader className="pb-3"><CardTitle className="text-sm">Registrar review</CardTitle></CardHeader>
+                    <CardHeader className="pb-3"><CardTitle className="text-body-sm">Registrar review</CardTitle></CardHeader>
                     <CardContent className="space-y-3">
                       <div className="space-y-1">
-                        <Label className="text-xs">Novo residual score: <span className="font-bold text-primary">{reviewScore}</span></Label>
+                        <Label className="text-meta">Novo residual score: <span className="font-bold text-primary">{reviewScore}</span></Label>
                         <Slider value={[reviewScore]} onValueChange={([v]) => setReviewScore(v)} min={1} max={25} step={1} />
-                        <p className="text-xs text-muted-foreground">Score após mitigação aplicada (1-25)</p>
+                        <p className="text-meta text-muted-foreground">Score após mitigação aplicada (1-25)</p>
                       </div>
                       <Textarea placeholder="Notas do review (opcional)" value={reviewNotes} onChange={e => setReviewNotes(e.target.value)} rows={2} />
                       <div className="flex gap-2">
@@ -452,22 +452,22 @@ export default function RiskRegisterPage() {
                 )}
 
                 <div className="space-y-2">
-                  <Label className="text-xs uppercase text-muted-foreground">Histórico de reviews ({reviews.length})</Label>
+                  <Label className="text-meta uppercase text-muted-foreground">Histórico de reviews ({reviews.length})</Label>
                   {reviews.length === 0 ? (
-                    <p className="text-sm text-muted-foreground italic">Nenhum review registrado ainda.</p>
+                    <p className="text-body-sm text-muted-foreground italic">Nenhum review registrado ainda.</p>
                   ) : (
                     <div className="space-y-2">
                       {reviews.map(rv => (
-                        <div key={rv.id} className="rounded-md border p-3 text-sm space-y-1">
+                        <div key={rv.id} className="rounded-md border p-3 text-body-sm space-y-1">
                           <div className="flex justify-between">
                             <span className="font-medium">
                               {rv.previous_residual_score ?? '—'} → {rv.new_residual_score ?? '—'}
                             </span>
-                            <span className="text-xs text-muted-foreground">
+                            <span className="text-meta text-muted-foreground">
                               {formatDistanceToNow(new Date(rv.reviewed_at), { addSuffix: true, locale: ptBR })}
                             </span>
                           </div>
-                          {rv.notes && <p className="text-muted-foreground text-xs">{rv.notes}</p>}
+                          {rv.notes && <p className="text-muted-foreground text-meta">{rv.notes}</p>}
                         </div>
                       ))}
                     </div>
@@ -490,7 +490,7 @@ function StatCard({ title, value, icon, loading, variant }: {
     <Card>
       <CardContent className="pt-5 pb-4">
         <div className="flex items-center justify-between mb-1">
-          <span className="text-xs text-muted-foreground font-medium uppercase tracking-wide">{title}</span>
+          <span className="text-meta text-muted-foreground font-medium uppercase tracking-wide">{title}</span>
           <span className={colorClass}>{icon}</span>
         </div>
         {loading ? <Skeleton className="h-8 w-16" /> : <p className={`text-3xl font-bold tabular-nums ${value > 0 && variant ? colorClass : ''}`}>{value}</p>}
@@ -502,8 +502,8 @@ function StatCard({ title, value, icon, loading, variant }: {
 function InfoBox({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-md border bg-secondary/20 p-2.5">
-      <p className="text-[10px] uppercase text-muted-foreground tracking-wide font-medium">{label}</p>
-      <p className="text-sm font-medium mt-0.5 truncate">{value}</p>
+      <p className="text-meta uppercase text-muted-foreground tracking-wide font-medium">{label}</p>
+      <p className="text-body-sm font-medium mt-0.5 truncate">{value}</p>
     </div>
   );
 }

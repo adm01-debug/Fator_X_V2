@@ -62,7 +62,7 @@ export function KeyboardShortcutsDialog() {
         <div className="flex items-center justify-between px-5 py-4 border-b border-border/50">
           <div className="flex items-center gap-2">
             <Keyboard className="h-4 w-4 text-primary" />
-            <h2 className="text-sm font-heading font-semibold text-foreground">Atalhos de teclado</h2>
+            <h2 className="text-body-sm font-heading font-semibold text-foreground">Atalhos de teclado</h2>
           </div>
           <button
             onClick={() => setOpen(false)}
@@ -76,16 +76,16 @@ export function KeyboardShortcutsDialog() {
         <div className="p-5 space-y-5 max-h-[60vh] overflow-y-auto">
           {categories.map((cat) => (
             <div key={cat}>
-              <p className="text-[11px] uppercase tracking-wider text-muted-foreground/70 mb-2">{cat}</p>
+              <p className="text-meta uppercase tracking-wider text-muted-foreground/70 mb-2">{cat}</p>
               <div className="space-y-1.5">
                 {SHORTCUTS.filter((s) => s.category === cat).map((s) => (
                   <div key={s.description} className="flex items-center justify-between py-1.5">
-                    <span className="text-xs text-foreground">{s.description}</span>
+                    <span className="text-meta text-foreground">{s.description}</span>
                     <div className="flex items-center gap-1">
                       {s.keys.map((k) => (
                         <kbd
                           key={k}
-                          className="inline-flex h-6 min-w-[24px] items-center justify-center rounded border border-border bg-secondary/50 px-1.5 text-[11px] font-mono text-muted-foreground"
+                          className="inline-flex h-6 min-w-[24px] items-center justify-center rounded border border-border bg-secondary/50 px-1.5 text-meta font-mono text-muted-foreground"
                         >
                           {k}
                         </kbd>
@@ -99,8 +99,8 @@ export function KeyboardShortcutsDialog() {
         </div>
 
         <div className="px-5 py-3 border-t border-border/50">
-          <p className="text-[11px] text-muted-foreground text-center">
-            Pressione <kbd className="inline-flex h-5 items-center rounded border border-border bg-secondary/50 px-1 text-[11px] font-mono">?</kbd> para abrir/fechar
+          <p className="text-meta text-muted-foreground text-center">
+            Pressione <kbd className="inline-flex h-5 items-center rounded border border-border bg-secondary/50 px-1 text-meta font-mono">?</kbd> para abrir/fechar
           </p>
         </div>
       </div>

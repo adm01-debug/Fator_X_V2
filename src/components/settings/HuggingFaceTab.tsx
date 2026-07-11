@@ -17,20 +17,20 @@ export function HuggingFaceTab() {
         <Sparkles className="h-5 w-5 text-nexus-amber" />
         <h3 className="font-semibold">HuggingFace Integration</h3>
       </div>
-      <p className="text-sm text-muted-foreground">
+      <p className="text-body-sm text-muted-foreground">
         Modelos open-source gratuitos para guardrails, RAG, classificação e inferência.
-        Configure o token HF na aba API Keys com o nome <code className="text-xs bg-muted px-1 py-0.5 rounded">huggingface_api_key</code>.
+        Configure o token HF na aba API Keys com o nome <code className="text-meta bg-muted px-1 py-0.5 rounded">huggingface_api_key</code>.
       </p>
       <div className="space-y-3 pt-2">
-        <h4 className="text-sm font-medium">Funcionalidades Ativas</h4>
+        <h4 className="text-body-sm font-medium">Funcionalidades Ativas</h4>
         <div className="grid gap-3">
           {FEATURES.map((f) => (
             <div key={f.name} className="flex items-center justify-between p-3 rounded-md bg-muted/50">
               <div>
-                <p className="text-sm font-medium">{f.name}</p>
-                <p className="text-xs text-muted-foreground">{f.desc}</p>
+                <p className="text-body-sm font-medium">{f.name}</p>
+                <p className="text-meta text-muted-foreground">{f.desc}</p>
               </div>
-              <span className={`text-xs px-2 py-0.5 rounded ${f.status === 'active' ? 'bg-nexus-emerald/12 text-nexus-emerald' : 'bg-primary/12 text-primary'}`}>
+              <span className={`text-meta px-2 py-0.5 rounded ${f.status === 'active' ? 'bg-nexus-emerald/12 text-nexus-emerald' : 'bg-primary/12 text-primary'}`}>
                 {f.status === 'active' ? 'Ativo' : 'Disponível'}
               </span>
             </div>
@@ -38,13 +38,13 @@ export function HuggingFaceTab() {
         </div>
       </div>
       <div className="pt-3 border-t space-y-2">
-        <h4 className="text-sm font-medium">Self-Hosted (TEI)</h4>
-        <p className="text-xs text-muted-foreground">
+        <h4 className="text-body-sm font-medium">Self-Hosted (TEI)</h4>
+        <p className="text-meta text-muted-foreground">
           Para alto volume, deploy TEI localmente com GPU. Configure os endpoints nas env vars
           <code className="bg-muted px-1 py-0.5 rounded ml-1">HF_TEI_ENDPOINT</code> e
           <code className="bg-muted px-1 py-0.5 rounded ml-1">HF_TEI_RERANK_ENDPOINT</code>.
         </p>
-        <div className="bg-muted/30 p-3 rounded text-xs font-mono text-muted-foreground whitespace-pre-wrap">
+        <div className="bg-muted/30 p-3 rounded text-meta font-mono text-muted-foreground whitespace-pre-wrap">
 {`docker run -p 8080:80 \\
   ghcr.io/huggingface/tei:latest \\
   --model-id BAAI/bge-reranker-v2-m3`}

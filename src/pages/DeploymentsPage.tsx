@@ -59,7 +59,7 @@ export default function DeploymentsPage() {
             <div className="space-y-1">
               <div className="flex items-center gap-3">
                 <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Implantações</h1>
-                <Badge className="bg-nexus-emerald/10 text-nexus-emerald border-none font-black px-3 py-1 rounded-full text-[10px] tracking-widest uppercase">Live Operations</Badge>
+                <Badge className="bg-nexus-emerald/10 text-nexus-emerald border-none font-black px-3 py-1 rounded-full text-meta tracking-widest uppercase">Live Operations</Badge>
               </div>
               <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Orquestre a distribuição global dos seus agentes. Gerencie canais, WebWidgets e endpoints de API em tempo real.
@@ -86,7 +86,7 @@ export default function DeploymentsPage() {
                 </div>
                 <h3 className="text-xl font-heading font-black text-foreground">Frota Ativa</h3>
               </div>
-              <Badge variant="outline" className="h-8 px-4 rounded-xl text-xs font-bold border-border/40 bg-card/50">{deployments.length} Ativos</Badge>
+              <Badge variant="outline" className="h-8 px-4 rounded-xl text-meta font-bold border-border/40 bg-card/50">{deployments.length} Ativos</Badge>
             </div>
 
             {isLoading ? (
@@ -110,9 +110,9 @@ export default function DeploymentsPage() {
                         <div>
                           <h3 className="text-base font-bold text-foreground group-hover:text-primary transition-colors">{dep.name}</h3>
                           <div className="flex items-center gap-2 mt-1">
-                            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{dep.environment}</span>
+                            <span className="text-meta font-black text-muted-foreground uppercase tracking-widest">{dep.environment}</span>
                             <div className="h-1 w-1 rounded-full bg-border" />
-                            <span className="text-[10px] font-mono text-primary font-bold">v{dep.version}</span>
+                            <span className="text-meta font-mono text-primary font-bold">v{dep.version}</span>
                           </div>
                         </div>
                       </div>
@@ -127,7 +127,7 @@ export default function DeploymentsPage() {
                               key={c.name} 
                               variant="secondary" 
                               className={cn(
-                                "h-7 px-3 rounded-xl border-none font-bold text-[10px] tracking-tight transition-all",
+                                "h-7 px-3 rounded-xl border-none font-bold text-meta tracking-tight transition-all",
                                 c.status === 'active' ? 'bg-nexus-emerald/10 text-nexus-emerald' : 'bg-muted text-muted-foreground'
                               )}
                             >
@@ -138,14 +138,14 @@ export default function DeploymentsPage() {
                         </div>
                       ) : (
                         <div className="h-7 flex items-center px-3 rounded-xl bg-muted/30 border border-dashed border-border/40">
-                          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Nenhum Canal Conectado</span>
+                          <span className="text-meta font-bold text-muted-foreground uppercase tracking-widest">Nenhum Canal Conectado</span>
                         </div>
                       )}
 
                       <div className="flex items-center justify-between pt-4 border-t border-border/20">
                         <div className="flex items-center gap-2">
                           <Zap className="h-3.5 w-3.5 text-nexus-amber" />
-                          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Updated {new Date(dep.updated).toLocaleDateString('pt-BR')}</span>
+                          <span className="text-meta font-bold text-muted-foreground uppercase tracking-widest">Updated {new Date(dep.updated).toLocaleDateString('pt-BR')}</span>
                         </div>
                         <div className="flex gap-2">
                           <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-lg hover:bg-primary/10" onClick={() => handleDeployClick(dep)}>
@@ -172,7 +172,7 @@ export default function DeploymentsPage() {
               </div>
               <h3 className="text-xl font-heading font-black text-foreground">Orquestração A2A</h3>
             </div>
-            <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
+            <p className="text-body-sm text-muted-foreground mb-6 leading-relaxed">
               Protocolo Nexus Agent-to-Agent para comunicação inter-agentes em clusters distribuídos.
             </p>
             <A2APanel />
@@ -198,16 +198,16 @@ export default function DeploymentsPage() {
               ].map((s, i) => (
                 <div key={i} className="flex items-center justify-between p-3.5 rounded-2xl bg-secondary/30 border border-border/20 group hover:border-primary/20 transition-all">
                   <div className="flex flex-col">
-                    <span className="text-xs font-bold text-foreground">{s.label}</span>
+                    <span className="text-meta font-bold text-foreground">{s.label}</span>
                     <span className="text-[9px] text-muted-foreground uppercase font-black tracking-widest">{s.status}</span>
                   </div>
                   <div className="text-right">
-                    <span className={cn("text-xs font-black font-mono", s.color)}>{s.val}</span>
+                    <span className={cn("text-meta font-black font-mono", s.color)}>{s.val}</span>
                   </div>
                 </div>
               ))}
             </div>
-            <Button variant="outline" className="w-full mt-6 h-10 rounded-xl text-[10px] font-bold uppercase tracking-widest border-border/40" asChild>
+            <Button variant="outline" className="w-full mt-6 h-10 rounded-xl text-meta font-bold uppercase tracking-widest border-border/40" asChild>
                <a href="/observability">Ver Detalhes OTel</a>
             </Button>
           </div>
@@ -261,9 +261,9 @@ function EndpointGeneratorButton() {
         </DialogHeader>
         <div className="space-y-6 mt-6">
           <div className="bg-secondary/30 border border-border/40 p-5 rounded-2xl relative group">
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-3">Endpoint Base de Produção</p>
+            <p className="text-meta font-black text-muted-foreground uppercase tracking-widest mb-3">Endpoint Base de Produção</p>
             <div className="flex items-center gap-3">
-              <code className="flex-1 bg-background/50 p-2.5 rounded-xl text-xs font-mono text-primary truncate">{baseUrl}</code>
+              <code className="flex-1 bg-background/50 p-2.5 rounded-xl text-meta font-mono text-primary truncate">{baseUrl}</code>
               <Button size="icon" variant="ghost" className="h-10 w-10 rounded-xl hover:bg-primary/10 transition-colors" onClick={() => handleCopy(baseUrl, 'base')}>
                 {copied === 'base' ? <CheckCircle className="h-4 w-4 text-nexus-emerald" /> : <Copy className="h-4 w-4" />}
               </Button>
@@ -282,15 +282,15 @@ function EndpointGeneratorButton() {
                         <Layers className="h-4 w-4 text-primary" />
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-foreground">{ep.name}</p>
-                        <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-tight">{ep.desc}</p>
+                        <p className="text-body-sm font-bold text-foreground">{ep.name}</p>
+                        <p className="text-meta text-muted-foreground font-medium uppercase tracking-tight">{ep.desc}</p>
                       </div>
                     </div>
-                    <Badge variant="outline" className="bg-primary/5 text-primary border-none text-[10px] font-black">{ep.method}</Badge>
+                    <Badge variant="outline" className="bg-primary/5 text-primary border-none text-meta font-black">{ep.method}</Badge>
                   </div>
                   <div className="flex items-center gap-3 bg-muted/30 p-2 rounded-xl">
-                    <code className="text-[11px] text-muted-foreground font-mono truncate flex-1">{url}</code>
-                    <Button size="sm" variant="ghost" className="h-8 px-3 rounded-lg hover:bg-primary/10 text-[10px] font-bold" onClick={() => handleCopy(curl, ep.path)}>
+                    <code className="text-meta text-muted-foreground font-mono truncate flex-1">{url}</code>
+                    <Button size="sm" variant="ghost" className="h-8 px-3 rounded-lg hover:bg-primary/10 text-meta font-bold" onClick={() => handleCopy(curl, ep.path)}>
                       {copied === ep.path ? "COPIADO" : "COPIAR CURL"}
                     </Button>
                   </div>
@@ -301,7 +301,7 @@ function EndpointGeneratorButton() {
 
           <div className="flex items-center gap-3 p-4 rounded-2xl bg-nexus-amber/10 border border-nexus-amber/20">
             <Zap className="h-5 w-5 text-nexus-amber shrink-0" />
-            <p className="text-[11px] text-nexus-amber/80 font-bold leading-relaxed">
+            <p className="text-meta text-nexus-amber/80 font-bold leading-relaxed">
               AVISO: Utilize sua 'ANON_KEY' no header de autorização para chamadas seguras. 
               Para automações internas críticas, utilize a 'SERVICE_ROLE_KEY' com extrema cautela.
             </p>

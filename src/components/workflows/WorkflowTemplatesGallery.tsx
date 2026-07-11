@@ -56,7 +56,7 @@ export function WorkflowTemplatesGallery() {
               <button
                 key={cat.value}
                 onClick={() => setActiveCategory(cat.value)}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                className={`px-3 py-1.5 rounded-full text-meta font-medium transition-all ${
                   activeCategory === cat.value
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-secondary/40 text-muted-foreground hover:bg-secondary/60'
@@ -84,7 +84,7 @@ export function WorkflowTemplatesGallery() {
                     <div className="flex items-center gap-2 min-w-0 flex-1">
                       <span className="text-2xl">{tpl.emoji}</span>
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold truncate">{tpl.name}</p>
+                        <p className="text-body-sm font-semibold truncate">{tpl.name}</p>
                         <Badge
                           variant="outline"
                           className="text-[9px] mt-0.5"
@@ -94,25 +94,25 @@ export function WorkflowTemplatesGallery() {
                         </Badge>
                       </div>
                     </div>
-                    <div className="flex items-center gap-1 text-[10px] text-muted-foreground shrink-0">
+                    <div className="flex items-center gap-1 text-meta text-muted-foreground shrink-0">
                       <Clock className="h-2.5 w-2.5" />
                       {tpl.estimated_minutes}min
                     </div>
                   </div>
 
-                  <p className="text-[11px] text-muted-foreground line-clamp-2 mb-3">
+                  <p className="text-meta text-muted-foreground line-clamp-2 mb-3">
                     {tpl.description}
                   </p>
 
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                    <div className="flex items-center gap-1 text-meta text-muted-foreground">
                       <Layers className="h-2.5 w-2.5" />
                       {tpl.nodes.length} nós · {tpl.edges.length} conexões
                     </div>
                     <Button
                       size="sm"
                       variant={isPreviewing ? 'default' : 'outline'}
-                      className="h-7 text-xs gap-1"
+                      className="h-7 text-meta gap-1"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleUseTemplate(tpl);
@@ -127,18 +127,18 @@ export function WorkflowTemplatesGallery() {
                   {isPreviewing && (
                     <div className="mt-3 pt-3 border-t border-border/30 space-y-3">
                       <div>
-                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2">
+                        <p className="text-meta text-muted-foreground uppercase tracking-wider mb-2">
                           Pré-visualização do canvas
                         </p>
                         <TemplateCanvasPreview nodes={tpl.nodes} edges={tpl.edges} height={130} />
                       </div>
                       <div>
-                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2">
+                        <p className="text-meta text-muted-foreground uppercase tracking-wider mb-2">
                           Etapas do workflow
                         </p>
                         <div className="space-y-1">
                           {tpl.nodes.map((n, i) => (
-                            <div key={n.id} className="flex items-start gap-2 text-[11px]">
+                            <div key={n.id} className="flex items-start gap-2 text-meta">
                               <span className="text-muted-foreground font-mono shrink-0 w-5">
                                 {String(i + 1).padStart(2, '0')}
                               </span>
@@ -164,7 +164,7 @@ export function WorkflowTemplatesGallery() {
           {templates.length === 0 && (
             <div className="text-center py-8 text-muted-foreground">
               <Layers className="h-10 w-10 mx-auto mb-2 opacity-30" />
-              <p className="text-xs">Nenhum template nesta categoria</p>
+              <p className="text-meta">Nenhum template nesta categoria</p>
             </div>
           )}
         </div>

@@ -42,11 +42,11 @@ export function PromptVariantSelector({ type, activeVariant, onSelect, customLoc
     <div className="nexus-card space-y-2.5">
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <div className="min-w-0">
-          <p className="text-sm font-heading font-semibold text-foreground flex items-center gap-1.5">
+          <p className="text-body-sm font-heading font-semibold text-foreground flex items-center gap-1.5">
             <Sparkles className="h-3.5 w-3.5 text-primary" />
             Variações de prompt para "{template.suggestedName}"
           </p>
-          <p className="text-[11px] text-muted-foreground">
+          <p className="text-meta text-muted-foreground">
             {showLocked
               ? 'Modo customizado travado — clique numa variação para substituir o texto atual.'
               : 'Escolha um estilo para preencher o editor — você pode editar depois.'}
@@ -56,7 +56,7 @@ export function PromptVariantSelector({ type, activeVariant, onSelect, customLoc
           <div className="flex items-center gap-1.5 shrink-0">
             <span
               className={cn(
-                'text-[10px] uppercase tracking-wider font-mono px-2 py-0.5 rounded-full border inline-flex items-center gap-1',
+                'text-meta uppercase tracking-wider font-mono px-2 py-0.5 rounded-full border inline-flex items-center gap-1',
                 showLocked
                   ? 'border-primary/40 bg-primary/10 text-primary'
                   : 'border-nexus-amber/40 bg-nexus-amber/10 text-nexus-amber',
@@ -79,7 +79,7 @@ export function PromptVariantSelector({ type, activeVariant, onSelect, customLoc
                 trigger={
                   <button
                     type="button"
-                    className="text-[10px] inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-border/60 bg-secondary/50 text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+                    className="text-meta inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-border/60 bg-secondary/50 text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
                     title="Ver prévia do que muda em cada variação antes de destravar. Atalho: Ctrl/Cmd+U destrava direto."
                   >
                     <Unlock className="h-2.5 w-2.5" />
@@ -95,7 +95,7 @@ export function PromptVariantSelector({ type, activeVariant, onSelect, customLoc
                 <button
                   type="button"
                   onClick={onUnlock}
-                  className="text-[10px] inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-border/60 bg-secondary/50 text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+                  className="text-meta inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-border/60 bg-secondary/50 text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
                   title="Manter o texto e voltar à detecção automática das variações."
                 >
                   <Unlock className="h-2.5 w-2.5" />
@@ -148,17 +148,17 @@ export function PromptVariantSelector({ type, activeVariant, onSelect, customLoc
                 />
                 <span
                   className={cn(
-                    'text-xs font-semibold',
+                    'text-meta font-semibold',
                     isActive ? 'text-primary' : 'text-foreground',
                   )}
                 >
                   {meta.label}
                 </span>
-                <span className="ml-auto text-[10px] font-mono text-muted-foreground/80">
+                <span className="ml-auto text-meta font-mono text-muted-foreground/80">
                   {charCount.toLocaleString('pt-BR')}c
                 </span>
               </div>
-              <p className="text-[11px] text-muted-foreground leading-snug">
+              <p className="text-meta text-muted-foreground leading-snug">
                 {meta.description}
               </p>
             </button>

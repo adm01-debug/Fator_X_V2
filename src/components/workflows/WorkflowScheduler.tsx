@@ -48,14 +48,14 @@ export function WorkflowScheduler({ workflows }: { workflows: Array<Record<strin
     <div className="space-y-4">
       <InfoHint title="Agendamento de Workflows">Configure execuções automáticas de workflows em intervalos regulares.</InfoHint>
       <div className="nexus-card">
-        <h3 className="text-sm font-heading font-semibold text-foreground mb-3 flex items-center gap-2"><Clock className="h-4 w-4 text-primary" /> Novo Agendamento</h3>
+        <h3 className="text-body-sm font-heading font-semibold text-foreground mb-3 flex items-center gap-2"><Clock className="h-4 w-4 text-primary" /> Novo Agendamento</h3>
         <div className="flex items-end gap-3 flex-wrap">
           <div className="space-y-1 flex-1 min-w-[180px]">
-            <Label className="text-xs">Workflow</Label>
+            <Label className="text-meta">Workflow</Label>
             <Select value={selWf} onValueChange={setSelWf}><SelectTrigger className="bg-secondary/50"><SelectValue placeholder="Selecione..." /></SelectTrigger><SelectContent>{workflows.map((wf) => <SelectItem key={String(wf.id)} value={String(wf.id)}>{String(wf.name)}</SelectItem>)}</SelectContent></Select>
           </div>
           <div className="space-y-1 min-w-[160px]">
-            <Label className="text-xs">Frequência</Label>
+            <Label className="text-meta">Frequência</Label>
             <Select value={selCron} onValueChange={setSelCron}><SelectTrigger className="bg-secondary/50"><SelectValue /></SelectTrigger><SelectContent>{Object.entries(cronLabels).map(([k, v]) => <SelectItem key={k} value={k}>{v.label}</SelectItem>)}</SelectContent></Select>
           </div>
           <Button onClick={handleAdd} className="gap-1.5 nexus-gradient-bg text-primary-foreground"><Plus className="h-3.5 w-3.5" /> Agendar</Button>
@@ -72,8 +72,8 @@ export function WorkflowScheduler({ workflows }: { workflows: Array<Record<strin
               <div key={String(s.id)} className="nexus-card flex items-center gap-3">
                 <Calendar className={`h-4 w-4 shrink-0 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground">{String(s.name || wf?.name || 'Workflow')}</p>
-                  <p className="text-[11px] text-muted-foreground font-mono">{String(s.cron_expression)} • Próxima: {nextRun}</p>
+                  <p className="text-body-sm font-medium text-foreground">{String(s.name || wf?.name || 'Workflow')}</p>
+                  <p className="text-meta text-muted-foreground font-mono">{String(s.cron_expression)} • Próxima: {nextRun}</p>
                 </div>
                 <Switch checked={isActive} onCheckedChange={() => handleToggle(String(s.id), isActive)} />
                 <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => handleRemove(String(s.id))}><Trash2 className="h-3.5 w-3.5" /></Button>
@@ -82,7 +82,7 @@ export function WorkflowScheduler({ workflows }: { workflows: Array<Record<strin
           })}
         </div>
       )}
-      {schedules.length === 0 && <div className="text-center py-8 text-sm text-muted-foreground">Nenhum agendamento configurado.</div>}
+      {schedules.length === 0 && <div className="text-center py-8 text-body-sm text-muted-foreground">Nenhum agendamento configurado.</div>}
     </div>
   );
 }

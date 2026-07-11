@@ -14,7 +14,7 @@ export function SectionTitle({ icon, title, subtitle, badge }: SectionTitleProps
           <h2 className="text-base font-semibold text-foreground tracking-tight font-heading">{title}</h2>
           {badge}
         </div>
-        {subtitle && <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>}
+        {subtitle && <p className="text-meta text-muted-foreground mt-0.5">{subtitle}</p>}
       </div>
     </div>
   );

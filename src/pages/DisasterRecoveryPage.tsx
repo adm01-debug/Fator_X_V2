@@ -30,29 +30,29 @@ export default function DisasterRecoveryPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="pt-6">
-            <div className="flex items-center gap-2 mb-1"><CheckCircle2 className="h-4 w-4 text-success" /><p className="text-sm text-muted-foreground">RPO atual</p></div>
+            <div className="flex items-center gap-2 mb-1"><CheckCircle2 className="h-4 w-4 text-success" /><p className="text-body-sm text-muted-foreground">RPO atual</p></div>
             <p className="text-2xl font-bold">3min</p>
-            <p className="text-xs text-muted-foreground">Meta: 5min ✓</p>
+            <p className="text-meta text-muted-foreground">Meta: 5min ✓</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div className="flex items-center gap-2 mb-1"><CheckCircle2 className="h-4 w-4 text-success" /><p className="text-sm text-muted-foreground">RTO atual</p></div>
+            <div className="flex items-center gap-2 mb-1"><CheckCircle2 className="h-4 w-4 text-success" /><p className="text-body-sm text-muted-foreground">RTO atual</p></div>
             <p className="text-2xl font-bold">12min</p>
-            <p className="text-xs text-muted-foreground">Meta: 15min ✓</p>
+            <p className="text-meta text-muted-foreground">Meta: 15min ✓</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div className="flex items-center gap-2 mb-1"><Database className="h-4 w-4 text-primary" /><p className="text-sm text-muted-foreground">Backups (30d)</p></div>
+            <div className="flex items-center gap-2 mb-1"><Database className="h-4 w-4 text-primary" /><p className="text-body-sm text-muted-foreground">Backups (30d)</p></div>
             <p className="text-2xl font-bold">30</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div className="flex items-center gap-2 mb-1"><Cloud className="h-4 w-4 text-primary" /><p className="text-sm text-muted-foreground">Regiões</p></div>
+            <div className="flex items-center gap-2 mb-1"><Cloud className="h-4 w-4 text-primary" /><p className="text-body-sm text-muted-foreground">Regiões</p></div>
             <p className="text-2xl font-bold">3</p>
-            <p className="text-xs text-muted-foreground">us-east, eu-west, sa-east</p>
+            <p className="text-meta text-muted-foreground">us-east, eu-west, sa-east</p>
           </CardContent>
         </Card>
       </div>
@@ -64,7 +64,7 @@ export default function DisasterRecoveryPage() {
         </CardHeader>
         <CardContent className="space-y-3">
           <div>
-            <div className="flex items-center justify-between text-sm mb-1"><span>Saúde da replicação</span><span className="font-bold">98%</span></div>
+            <div className="flex items-center justify-between text-body-sm mb-1"><span>Saúde da replicação</span><span className="font-bold">98%</span></div>
             <Progress value={98} />
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -80,8 +80,8 @@ export default function DisasterRecoveryPage() {
           {backups.map(b => (
             <div key={b.id} className="flex items-center justify-between p-3 border border-border rounded-lg">
               <div>
-                <p className="font-mono text-sm">{b.date}</p>
-                <p className="text-xs text-muted-foreground">{b.size} • {b.region}</p>
+                <p className="font-mono text-body-sm">{b.date}</p>
+                <p className="text-meta text-muted-foreground">{b.size} • {b.region}</p>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant={b.type === "full" ? "default" : "secondary"}>{b.type}</Badge>

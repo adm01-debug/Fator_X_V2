@@ -51,11 +51,11 @@ export function ApprovalQueuePanel() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <ShieldCheck className="h-5 w-5 text-nexus-amber" />
-            <CardTitle className="text-sm font-black uppercase tracking-widest text-nexus-amber">
+            <CardTitle className="text-body-sm font-black uppercase tracking-widest text-nexus-amber">
               Fila de Aprovação Crítica
             </CardTitle>
           </div>
-          <Badge variant="outline" className="bg-nexus-amber/20 text-nexus-amber border-none text-[10px] font-black">
+          <Badge variant="outline" className="bg-nexus-amber/20 text-nexus-amber border-none text-meta font-black">
             {pending.length} Pendentes
           </Badge>
         </div>
@@ -66,12 +66,12 @@ export function ApprovalQueuePanel() {
             <div key={run.id} className="p-4 flex items-center justify-between gap-4 hover:bg-nexus-amber/[0.03] transition-colors">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <p className="text-sm font-bold text-foreground truncate">{run.workflows?.name || 'Workflow'}</p>
+                  <p className="text-body-sm font-bold text-foreground truncate">{run.workflows?.name || 'Workflow'}</p>
                   <Badge variant="secondary" className="text-[9px] font-mono opacity-60">
                     Step {run.current_step}/{run.total_steps}
                   </Badge>
                 </div>
-                <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                <div className="flex items-center gap-2 text-meta text-muted-foreground">
                   <Clock className="h-3 w-3" />
                   <span>Há {new Date(run.started_at).toLocaleTimeString()}</span>
                   <span className="opacity-40">•</span>
@@ -95,7 +95,7 @@ export function ApprovalQueuePanel() {
                 >
                   <CheckCircle className="h-4 w-4" />
                 </Button>
-                <Button size="sm" variant="outline" className="h-8 px-3 rounded-xl text-[10px] font-bold gap-1.5" asChild>
+                <Button size="sm" variant="outline" className="h-8 px-3 rounded-xl text-meta font-bold gap-1.5" asChild>
                   <a href={`/workflows?run=${run.id}`}>
                     <ExternalLink className="h-3 w-3" /> Ver
                   </a>
@@ -118,7 +118,7 @@ export function ApprovalQueuePanel() {
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-body-sm text-muted-foreground">
               {selectedRun?.type === 'approve' 
                 ? "O workflow continuará sua execução a partir do ponto de suspensão."
                 : "A execução será encerrada permanentemente."

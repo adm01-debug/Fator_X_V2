@@ -10,7 +10,7 @@ export function ChartTooltip({ tooltip }: Props) {
 
   return (
     <div
-      className="absolute pointer-events-none z-50 rounded-lg border border-border/50 bg-card px-2.5 py-1.5 text-xs shadow-xl min-w-[160px] max-w-[260px]"
+      className="absolute pointer-events-none z-50 rounded-lg border border-border/50 bg-card px-2.5 py-1.5 text-meta shadow-xl min-w-[160px] max-w-[260px]"
       style={{
         left: tooltip.x,
         top: tooltip.y,
@@ -18,7 +18,7 @@ export function ChartTooltip({ tooltip }: Props) {
       }}
     >
       {tooltip.title && (
-        <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">
+        <div className="text-meta font-semibold uppercase tracking-wide text-muted-foreground mb-1">
           {tooltip.title}
         </div>
       )}
@@ -32,7 +32,7 @@ export function ChartTooltip({ tooltip }: Props) {
       {tooltip.extras?.map((section, si) => (
         <div key={si} className="mt-1.5 pt-1.5 border-t border-border/40">
           {section.title && (
-            <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">
+            <div className="text-meta font-semibold uppercase tracking-wide text-muted-foreground mb-1">
               {section.title}
             </div>
           )}

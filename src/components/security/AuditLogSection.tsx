@@ -48,15 +48,15 @@ export function AuditLogSection() {
   return (
     <div className="nexus-card">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-heading font-semibold text-foreground flex items-center gap-2">
+        <h3 className="text-body-sm font-heading font-semibold text-foreground flex items-center gap-2">
           <ShieldCheck className="h-4 w-4 text-primary" /> Audit Trail
         </h3>
         {logs.length > 0 && (
           <div className="flex items-center gap-1.5">
-            <Button variant="outline" size="sm" className="h-7 text-xs gap-1" onClick={() => handleExport('csv')}>
+            <Button variant="outline" size="sm" className="h-7 text-meta gap-1" onClick={() => handleExport('csv')}>
               CSV
             </Button>
-            <Button variant="outline" size="sm" className="h-7 text-xs gap-1" onClick={() => handleExport('json')}>
+            <Button variant="outline" size="sm" className="h-7 text-meta gap-1" onClick={() => handleExport('json')}>
               JSON
             </Button>
           </div>
@@ -65,14 +65,14 @@ export function AuditLogSection() {
       {isLoading ? (
         <div className="flex justify-center py-8"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>
       ) : logs.length === 0 ? (
-        <p className="text-xs text-muted-foreground py-4 text-center">Nenhum evento registrado</p>
+        <p className="text-meta text-muted-foreground py-4 text-center">Nenhum evento registrado</p>
       ) : (
         <div className="space-y-1 max-h-[300px] overflow-y-auto">
           {logs.map((log: any, i: number) => (
             <div key={(log.id as string) || i}
-              className="flex items-center gap-3 py-2 px-2 rounded hover:bg-secondary/30 text-xs">
-              <span className="text-muted-foreground w-[130px] shrink-0 font-mono text-[11px]">{new Date(log.created_at as string).toLocaleString('pt-BR')}</span>
-              <Badge variant="outline" className="text-[11px] shrink-0">{(log.action as string) || 'action'}</Badge>
+              className="flex items-center gap-3 py-2 px-2 rounded hover:bg-secondary/30 text-meta">
+              <span className="text-muted-foreground w-[130px] shrink-0 font-mono text-meta">{new Date(log.created_at as string).toLocaleString('pt-BR')}</span>
+              <Badge variant="outline" className="text-meta shrink-0">{(log.action as string) || 'action'}</Badge>
               <span className="text-foreground truncate">{(log.description as string) || (log.details as string) || JSON.stringify(log.metadata || {}).substring(0, 100)}</span>
               <span className="text-muted-foreground ml-auto shrink-0">{(log.user_email as string) || ''}</span>
             </div>

@@ -189,8 +189,8 @@ export function InteractiveSLOPanel({ agentId, agentName, slo, traces, daily, on
     <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden" role="region" aria-label="Painel SLO interativo">
       <div className="flex items-center justify-between gap-3 p-6 border-b border-border/50 flex-wrap bg-secondary/10">
         <div>
-          <h3 className="text-sm font-bold text-foreground">Painel Operacional SLO</h3>
-          <p className="text-[11px] text-muted-foreground">
+          <h3 className="text-body-sm font-bold text-foreground">Painel Operacional SLO</h3>
+          <p className="text-meta text-muted-foreground">
             Gestão dinâmica de service levels · janela:{' '}
             <span className="font-mono text-foreground font-semibold">{activeWindow.label}</span>
           </p>
@@ -211,7 +211,7 @@ export function InteractiveSLOPanel({ agentId, agentName, slo, traces, daily, on
                   role="tab"
                   aria-selected={active}
                   onClick={() => setWindowKey(w.key)}
-                  className={`px-2 h-6 text-[11px] font-mono rounded transition-colors ${
+                  className={`px-2 h-6 text-meta font-mono rounded transition-colors ${
                     active
                       ? 'bg-primary text-primary-foreground'
                       : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
@@ -227,34 +227,34 @@ export function InteractiveSLOPanel({ agentId, agentName, slo, traces, daily, on
               <Button
                 variant="outline"
                 size="sm"
-                className="gap-1.5 text-xs h-7"
+                className="gap-1.5 text-meta h-7"
                 aria-label="Exportar timeline e classificações de violação"
               >
                 <Download className="h-3 w-3" /> Exportar
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel className="text-[10px] uppercase tracking-wide text-muted-foreground">
+              <DropdownMenuLabel className="text-meta uppercase tracking-wide text-muted-foreground">
                 Janela {activeWindow.label} · {timeline.length} bucket{timeline.length !== 1 ? 's' : ''}
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onSelect={handleExportCsv} className="gap-2 text-xs cursor-pointer">
+              <DropdownMenuItem onSelect={handleExportCsv} className="gap-2 text-meta cursor-pointer">
                 <FileSpreadsheet className="h-3.5 w-3.5 text-nexus-emerald" />
                 <div className="flex flex-col">
                   <span>Baixar CSV</span>
-                  <span className="text-[10px] text-muted-foreground">Buckets e classificações</span>
+                  <span className="text-meta text-muted-foreground">Buckets e classificações</span>
                 </div>
               </DropdownMenuItem>
-              <DropdownMenuItem onSelect={handleExportPdf} className="gap-2 text-xs cursor-pointer">
+              <DropdownMenuItem onSelect={handleExportPdf} className="gap-2 text-meta cursor-pointer">
                 <FileText className="h-3.5 w-3.5 text-primary" />
                 <div className="flex flex-col">
                   <span>Baixar PDF</span>
-                  <span className="text-[10px] text-muted-foreground">Relatório completo SLO</span>
+                  <span className="text-meta text-muted-foreground">Relatório completo SLO</span>
                 </div>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button variant="ghost" size="sm" className="gap-1.5 text-xs h-7" onClick={reset}>
+          <Button variant="ghost" size="sm" className="gap-1.5 text-meta h-7" onClick={reset}>
             <RotateCcw className="h-3 w-3" /> Resetar metas
           </Button>
         </div>
@@ -268,8 +268,8 @@ export function InteractiveSLOPanel({ agentId, agentName, slo, traces, daily, on
           return (
             <div key={c.key} className={`rounded-lg border ${style.border} ${style.bg} p-3`}>
               <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-medium text-foreground">{c.label}</p>
-                <div className={`flex items-center gap-1 text-[10px] font-semibold ${style.color}`}>
+                <p className="text-meta font-medium text-foreground">{c.label}</p>
+                <div className={`flex items-center gap-1 text-meta font-semibold ${style.color}`}>
                   <style.Icon className="h-3 w-3" />
                   {style.label}
                 </div>
@@ -278,7 +278,7 @@ export function InteractiveSLOPanel({ agentId, agentName, slo, traces, daily, on
                 <span className="text-xl font-heading font-extrabold text-foreground tabular-nums">
                   {c.valueFmt(c.value)}
                 </span>
-                <span className="text-[10px] text-muted-foreground ml-auto font-mono">
+                <span className="text-meta text-muted-foreground ml-auto font-mono">
                   alvo: {c.targetFmt(targets[c.key])}
                 </span>
               </div>
@@ -290,7 +290,7 @@ export function InteractiveSLOPanel({ agentId, agentName, slo, traces, daily, on
                 onValueChange={(v) => setTargets({ [c.key]: v[0] } as Partial<SLOTargetsConfig>)}
                 aria-label={`Meta ${c.label}`}
               />
-              <div className="flex justify-between text-[10px] text-muted-foreground mt-1 font-mono">
+              <div className="flex justify-between text-meta text-muted-foreground mt-1 font-mono">
                 <span>{c.targetFmt(c.min)}</span>
                 <span>{c.targetFmt(c.max)}</span>
               </div>
@@ -305,9 +305,9 @@ export function InteractiveSLOPanel({ agentId, agentName, slo, traces, daily, on
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <Flame className={`h-3.5 w-3.5 ${burnStyle.color}`} />
-            <p className="text-xs font-medium text-foreground">Error budget burn</p>
+            <p className="text-meta font-medium text-foreground">Error budget burn</p>
           </div>
-          <div className={`flex items-center gap-1 text-[10px] font-semibold ${burnStyle.color}`}>
+          <div className={`flex items-center gap-1 text-meta font-semibold ${burnStyle.color}`}>
             <burnStyle.Icon className="h-3 w-3" />
             {burnStyle.label}
           </div>
@@ -316,8 +316,8 @@ export function InteractiveSLOPanel({ agentId, agentName, slo, traces, daily, on
           <span className="text-xl font-heading font-extrabold text-foreground tabular-nums">
             {burn.consumedPct.toFixed(0)}%
           </span>
-          <span className="text-[11px] text-muted-foreground">do budget consumido</span>
-          <span className="text-[10px] text-muted-foreground ml-auto font-mono">
+          <span className="text-meta text-muted-foreground">do budget consumido</span>
+          <span className="text-meta text-muted-foreground ml-auto font-mono">
             {effectiveSlo.errorRate.toFixed(2)}% / {targets.errorBudget.toFixed(1)}%
           </span>
         </div>
@@ -327,7 +327,7 @@ export function InteractiveSLOPanel({ agentId, agentName, slo, traces, daily, on
             style={{ width: `${Math.min(100, burn.consumedPct)}%` }}
           />
         </div>
-        <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-2">
+        <div className="flex items-center justify-between text-meta text-muted-foreground mb-2">
           <span>
             {burn.daysToExhaustion === null
               ? 'Sem dados suficientes para previsão'
@@ -337,7 +337,7 @@ export function InteractiveSLOPanel({ agentId, agentName, slo, traces, daily, on
           </span>
         </div>
         <div className="pt-2 border-t border-border/50">
-          <div className="flex items-center justify-between text-[10px] text-muted-foreground mb-1.5">
+          <div className="flex items-center justify-between text-meta text-muted-foreground mb-1.5">
             <span>Meta de erro permitida</span>
             <span className="font-mono">{targets.errorBudget.toFixed(1)}%</span>
           </div>
@@ -357,11 +357,11 @@ export function InteractiveSLOPanel({ agentId, agentName, slo, traces, daily, on
         <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
           <div className="flex items-center gap-2">
             <Activity className="h-3.5 w-3.5 text-muted-foreground" />
-            <h4 className="text-xs font-heading font-semibold text-foreground">
+            <h4 className="text-meta font-heading font-semibold text-foreground">
               Timeline de violações ({activeWindow.label})
             </h4>
           </div>
-          <span className="text-[10px] text-muted-foreground">
+          <span className="text-meta text-muted-foreground">
             {activeWindow.buckets} bucket{activeWindow.buckets !== 1 ? 's' : ''}
             <span className="hidden sm:inline"> · hover para detalhes</span>
             <span className="sm:hidden"> · toque p/ detalhes</span>
@@ -396,7 +396,7 @@ export function InteractiveSLOPanel({ agentId, agentName, slo, traces, daily, on
             onViolationClick={handleViolationClick}
           />
         )}
-        <div className="flex items-center gap-x-3 gap-y-1.5 mt-3 text-[10px] text-muted-foreground flex-wrap">
+        <div className="flex items-center gap-x-3 gap-y-1.5 mt-3 text-meta text-muted-foreground flex-wrap">
           <LegendDot color="bg-nexus-emerald" label="Saudável" />
           <LegendDot color="bg-nexus-amber" label="Acima de p95" />
           <LegendDot color="bg-destructive" label="Acima de p99 / erro" />
@@ -476,8 +476,8 @@ function EmptyTimelineState({
         className="rounded-lg border border-dashed border-border/60 bg-secondary/20 px-4 py-8 text-center"
       >
         <Activity className="h-5 w-5 mx-auto text-muted-foreground/60 mb-2" aria-hidden />
-        <p className="text-xs font-medium text-foreground">Sem traces na janela de {windowLabel}</p>
-        <p className="text-[11px] text-muted-foreground mt-1 max-w-xs mx-auto">
+        <p className="text-meta font-medium text-foreground">Sem traces na janela de {windowLabel}</p>
+        <p className="text-meta text-muted-foreground mt-1 max-w-xs mx-auto">
           Execute o agente ou amplie a janela acima para ver violações distribuídas no tempo.
         </p>
       </div>
@@ -491,10 +491,10 @@ function EmptyTimelineState({
     >
       <CheckCircle2 className="h-4 w-4 text-nexus-emerald shrink-0 mt-0.5" aria-hidden />
       <div className="flex-1 min-w-0">
-        <p className="text-xs font-medium text-foreground">
+        <p className="text-meta font-medium text-foreground">
           Tudo dentro dos SLOs nas últimas {windowLabel}
         </p>
-        <p className="text-[11px] text-muted-foreground mt-0.5">
+        <p className="text-meta text-muted-foreground mt-0.5">
           {traceCount ?? 0} trace{traceCount === 1 ? '' : 's'} avaliado{traceCount === 1 ? '' : 's'} · nenhuma violação de p95, p99 ou erro detectada.
         </p>
       </div>

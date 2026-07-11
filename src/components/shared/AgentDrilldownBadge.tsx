@@ -34,7 +34,7 @@ export function AgentDrilldownBadge() {
 
   return (
     <div
-      className="hidden sm:flex items-center gap-1.5 rounded-full bg-primary/10 border border-primary/30 pl-2 pr-1 py-0.5 text-xs animate-fade-in-up"
+      className="hidden sm:flex items-center gap-1.5 rounded-full bg-primary/10 border border-primary/30 pl-2 pr-1 py-0.5 text-meta animate-fade-in-up"
       role="status"
       aria-label={`Filtro de agente ativo: ${label}`}
     >

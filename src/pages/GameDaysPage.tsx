@@ -187,8 +187,8 @@ export default function GameDaysPage() {
                     <Badge variant={STATUS_VARIANTS[gd.status]}>{gd.status}</Badge>
                     <Badge variant="outline">{SCENARIO_LABELS[gd.scenario]}</Badge>
                   </div>
-                  {gd.description && <p className="text-sm text-muted-foreground mb-2">{gd.description}</p>}
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                  {gd.description && <p className="text-body-sm text-muted-foreground mb-2">{gd.description}</p>}
+                  <div className="flex items-center gap-4 text-meta text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
                       {new Date(gd.scheduled_at).toLocaleString('pt-BR')}
@@ -230,13 +230,13 @@ export default function GameDaysPage() {
             <DialogTitle>Iniciar Game Day: {startTarget?.title}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-body-sm text-muted-foreground">
               Cenário: <strong>{startTarget && SCENARIO_LABELS[startTarget.scenario]}</strong>
             </p>
             <div className="flex items-center justify-between rounded-lg border p-3">
               <div>
                 <Label className="font-semibold">Injetar chaos automaticamente</Label>
-                <p className="text-xs text-muted-foreground mt-0.5">
+                <p className="text-meta text-muted-foreground mt-0.5">
                   Cria experimento controlado (50% probabilidade, expira em 2h)
                 </p>
               </div>

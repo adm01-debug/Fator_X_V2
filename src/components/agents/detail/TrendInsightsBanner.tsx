@@ -38,13 +38,13 @@ export function TrendInsightsBanner({ insights }: Props) {
         <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center">
           <Sparkles className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
         </div>
-        <h3 className="text-sm font-heading font-semibold text-foreground">
+        <h3 className="text-body-sm font-heading font-semibold text-foreground">
           Tendência: últimos 7 dias vs 7 dias anteriores
         </h3>
       </div>
 
       {relevant.length === 0 ? (
-        <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+        <p className="text-meta text-muted-foreground flex items-center gap-1.5">
           <Minus className="h-3.5 w-3.5" aria-hidden="true" />
           Métricas estáveis nos últimos 7 dias vs 7 dias anteriores.
         </p>
@@ -60,7 +60,7 @@ export function TrendInsightsBanner({ insights }: Props) {
             const unit = cmp.deltaUnit ?? '%';
             const digits = unit === 'pp' ? 2 : 1;
             return (
-              <li key={i.key} className="flex items-start gap-2 text-xs">
+              <li key={i.key} className="flex items-start gap-2 text-meta">
                 <Icon className={`h-3.5 w-3.5 mt-0.5 shrink-0 ${color}`} aria-hidden="true" />
                 <p className="text-muted-foreground">
                   <span className={`font-semibold ${color}`}>

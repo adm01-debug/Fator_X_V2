@@ -42,8 +42,8 @@ export function AlertRulesList({
           <Bell className="h-5 w-5 text-primary" aria-hidden />
         </div>
         <div>
-          <p className="text-sm font-medium text-foreground">Nenhuma regra criada</p>
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-body-sm font-medium text-foreground">Nenhuma regra criada</p>
+          <p className="text-meta text-muted-foreground mt-1">
             Crie regras para receber alertas automáticos quando métricas saírem do esperado.
           </p>
         </div>
@@ -78,8 +78,8 @@ export function AlertRulesList({
                     <Icon className="h-3.5 w-3.5" aria-hidden />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-foreground truncate">{rule.name}</p>
-                    <p className="text-[11px] text-muted-foreground font-mono truncate">
+                    <p className="text-body-sm font-medium text-foreground truncate">{rule.name}</p>
+                    <p className="text-meta text-muted-foreground font-mono truncate">
                       {rule.metric} · {rule.aggregation} {rule.operator} {rule.threshold}
                     </p>
                   </div>
@@ -105,7 +105,7 @@ export function AlertRulesList({
                     onCheckedChange={(v) => onToggle(rule, v)}
                     aria-label={`${rule.is_enabled ? 'Desativar' : 'Ativar'} regra ${rule.name}`}
                   />
-                  <span className="text-[10px] text-muted-foreground">
+                  <span className="text-meta text-muted-foreground">
                     {rule.is_enabled ? 'Ativa' : 'Pausada'}
                   </span>
                 </div>

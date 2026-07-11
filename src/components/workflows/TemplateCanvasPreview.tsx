@@ -91,7 +91,7 @@ export function TemplateCanvasPreview({ nodes, edges, height = 140 }: Props) {
   if (!layout) {
     return (
       <div
-        className="rounded-md border border-border/30 bg-secondary/20 flex items-center justify-center text-[10px] text-muted-foreground"
+        className="rounded-md border border-border/30 bg-secondary/20 flex items-center justify-center text-meta text-muted-foreground"
         style={{ height }}
       >
         Sem nós para visualizar

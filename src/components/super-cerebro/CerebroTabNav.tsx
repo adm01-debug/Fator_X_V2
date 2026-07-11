@@ -26,7 +26,7 @@ export function CerebroTabNav() {
           key={tab.id}
           onClick={() => setActiveTab(tab.id)}
           className={`
-            flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm whitespace-nowrap transition-all
+            flex items-center gap-2 px-4 py-2.5 rounded-lg text-body-sm whitespace-nowrap transition-all
             ${activeTab === tab.id
               ? 'bg-primary/5 text-primary border border-primary/25'
               : 'text-muted-foreground hover:text-foreground hover:bg-card'

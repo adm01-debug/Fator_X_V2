@@ -18,7 +18,7 @@ export function InfoHint({ title, children, defaultOpen = false }: InfoHintProps
         aria-expanded={open}
       >
         <Info className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden="true" />
-        <p className="text-xs font-semibold text-foreground flex-1">{title}</p>
+        <p className="text-meta font-semibold text-foreground flex-1">{title}</p>
         <ChevronDown
           className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
           aria-hidden="true"
@@ -28,7 +28,7 @@ export function InfoHint({ title, children, defaultOpen = false }: InfoHintProps
         className={`grid transition-all duration-200 ${open ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
       >
         <div className="overflow-hidden">
-          <p className="px-3.5 pb-3 pt-0 text-xs text-muted-foreground leading-relaxed pl-9">
+          <p className="px-3.5 pb-3 pt-0 text-meta text-muted-foreground leading-relaxed pl-9">
             {children}
           </p>
         </div>

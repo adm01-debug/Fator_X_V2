@@ -202,8 +202,8 @@ export default function DRDrillsPage() {
               <div className="grid grid-cols-3 gap-2">
                 {DR_TEMPLATES.map((tpl) => (
                   <Button key={tpl.id} variant="outline" size="sm" onClick={() => applyTemplate(tpl.id)} className="h-auto py-2 flex flex-col items-start text-left">
-                    <span className="text-xs font-semibold">{tpl.name}</span>
-                    <span className="text-[10px] text-muted-foreground line-clamp-2 font-normal">{tpl.description}</span>
+                    <span className="text-meta font-semibold">{tpl.name}</span>
+                    <span className="text-meta text-muted-foreground line-clamp-2 font-normal">{tpl.description}</span>
                   </Button>
                 ))}
               </div>
@@ -257,11 +257,11 @@ export default function DRDrillsPage() {
           <CardDescription>Cadência recomendada: críticas semanal · workspace mensal · full trimestral</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
-          {loading && <p className="text-sm text-muted-foreground">Carregando…</p>}
+          {loading && <p className="text-body-sm text-muted-foreground">Carregando…</p>}
           {!loading && drills.length === 0 && (
             <div className="text-center py-10 space-y-2">
               <Archive className="h-10 w-10 mx-auto text-muted-foreground/50" />
-              <p className="text-sm text-muted-foreground">Nenhum drill agendado ainda.</p>
+              <p className="text-body-sm text-muted-foreground">Nenhum drill agendado ainda.</p>
               <Button size="sm" onClick={() => setOpenDialog(true)}>Criar o primeiro</Button>
             </div>
           )}
@@ -278,10 +278,10 @@ export default function DRDrillsPage() {
                       <div className="flex items-center gap-2 flex-wrap">
                         <p className="font-semibold truncate">{d.name}</p>
                         <Badge className={variant.cls}>{variant.label}</Badge>
-                        <Badge variant="outline" className="text-[10px]">{d.scope}</Badge>
+                        <Badge variant="outline" className="text-meta">{d.scope}</Badge>
                       </div>
-                      {d.description && <p className="text-xs text-muted-foreground line-clamp-1">{d.description}</p>}
-                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                      {d.description && <p className="text-meta text-muted-foreground line-clamp-1">{d.description}</p>}
+                      <div className="flex items-center gap-4 text-meta text-muted-foreground">
                         <span className="flex items-center gap-1"><Clock className="h-3 w-3" />Agendado {new Date(d.scheduled_at).toLocaleString("pt-BR")}</span>
                         <span>{d.target_tables.length} tabela(s)</span>
                       </div>
@@ -303,21 +303,21 @@ export default function DRDrillsPage() {
 
                   <div className="grid grid-cols-2 gap-3">
                     <div className="bg-secondary/30 rounded p-2 space-y-1">
-                      <div className="flex items-center justify-between text-xs">
+                      <div className="flex items-center justify-between text-meta">
                         <span className="text-muted-foreground">RTO (atual / meta)</span>
                         <span className={`font-mono font-semibold ${rto.color}`}>{rto.label}</span>
                       </div>
-                      <div className="font-mono text-sm">{fmtDuration(d.actual_rto_seconds)} <span className="text-muted-foreground text-xs">/ {fmtDuration(d.rto_target_seconds)}</span></div>
+                      <div className="font-mono text-body-sm">{fmtDuration(d.actual_rto_seconds)} <span className="text-muted-foreground text-meta">/ {fmtDuration(d.rto_target_seconds)}</span></div>
                       {d.actual_rto_seconds !== null && (
                         <Progress value={Math.min((d.actual_rto_seconds / d.rto_target_seconds) * 100, 150)} className="h-1.5" />
                       )}
                     </div>
                     <div className="bg-secondary/30 rounded p-2 space-y-1">
-                      <div className="flex items-center justify-between text-xs">
+                      <div className="flex items-center justify-between text-meta">
                         <span className="text-muted-foreground">RPO (atual / meta)</span>
                         <span className={`font-mono font-semibold ${rpo.color}`}>{rpo.label}</span>
                       </div>
-                      <div className="font-mono text-sm">{fmtDuration(d.actual_rpo_seconds)} <span className="text-muted-foreground text-xs">/ {fmtDuration(d.rpo_target_seconds)}</span></div>
+                      <div className="font-mono text-body-sm">{fmtDuration(d.actual_rpo_seconds)} <span className="text-muted-foreground text-meta">/ {fmtDuration(d.rpo_target_seconds)}</span></div>
                       {d.actual_rpo_seconds !== null && (
                         <Progress value={Math.min((d.actual_rpo_seconds / d.rpo_target_seconds) * 100, 150)} className="h-1.5" />
                       )}
@@ -325,7 +325,7 @@ export default function DRDrillsPage() {
                   </div>
 
                   {d.error_message && (
-                    <div className="flex items-start gap-2 text-xs bg-destructive/10 text-destructive rounded p-2">
+                    <div className="flex items-start gap-2 text-meta bg-destructive/10 text-destructive rounded p-2">
                       <AlertTriangle className="h-3 w-3 shrink-0 mt-0.5" />
                       <span>{d.error_message}</span>
                     </div>
@@ -333,22 +333,22 @@ export default function DRDrillsPage() {
 
                   <CollapsibleContent className="space-y-3 pt-2 border-t border-border/50">
                     <div>
-                      <p className="text-xs font-semibold mb-2">Snapshots ({(snapshots[d.id] ?? []).length})</p>
+                      <p className="text-meta font-semibold mb-2">Snapshots ({(snapshots[d.id] ?? []).length})</p>
                       <div className="space-y-1 max-h-40 overflow-auto">
                         {(snapshots[d.id] ?? []).map((s) => (
-                          <div key={s.id} className="flex items-center justify-between text-xs font-mono bg-secondary/20 rounded px-2 py-1">
+                          <div key={s.id} className="flex items-center justify-between text-meta font-mono bg-secondary/20 rounded px-2 py-1">
                             <span>{s.table_name}</span>
                             <span className="text-muted-foreground">{s.row_count.toLocaleString("pt-BR")} rows · {s.checksum.slice(0, 8)}</span>
                           </div>
                         ))}
-                        {(snapshots[d.id] ?? []).length === 0 && <p className="text-xs text-muted-foreground">Sem snapshots.</p>}
+                        {(snapshots[d.id] ?? []).length === 0 && <p className="text-meta text-muted-foreground">Sem snapshots.</p>}
                       </div>
                     </div>
                     <div>
-                      <p className="text-xs font-semibold mb-2">Timeline ({(logs[d.id] ?? []).length})</p>
+                      <p className="text-meta font-semibold mb-2">Timeline ({(logs[d.id] ?? []).length})</p>
                       <div className="space-y-1 max-h-60 overflow-auto">
                         {(logs[d.id] ?? []).map((l) => (
-                          <div key={l.id} className="flex items-start gap-2 text-xs border-l-2 border-border pl-2 py-1">
+                          <div key={l.id} className="flex items-start gap-2 text-meta border-l-2 border-border pl-2 py-1">
                             {l.status === "succeeded" && <CheckCircle2 className="h-3 w-3 text-success shrink-0 mt-0.5" />}
                             {l.status === "failed" && <XCircle className="h-3 w-3 text-destructive shrink-0 mt-0.5" />}
                             {l.status === "started" && <Clock className="h-3 w-3 text-primary shrink-0 mt-0.5 animate-pulse" />}
@@ -362,7 +362,7 @@ export default function DRDrillsPage() {
                             </div>
                           </div>
                         ))}
-                        {(logs[d.id] ?? []).length === 0 && <p className="text-xs text-muted-foreground">Sem eventos.</p>}
+                        {(logs[d.id] ?? []).length === 0 && <p className="text-meta text-muted-foreground">Sem eventos.</p>}
                       </div>
                     </div>
                   </CollapsibleContent>

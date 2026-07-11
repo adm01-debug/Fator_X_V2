@@ -67,7 +67,7 @@ export function DrilldownAuditPanel({ entries, onClear }: DrilldownAuditPanelPro
           {entries.length > 0 && (
             <Badge
               variant="secondary"
-              className="ml-0.5 h-4 px-1 text-[10px] font-mono tabular-nums"
+              className="ml-0.5 h-4 px-1 text-meta font-mono tabular-nums"
             >
               {entries.length > 99 ? '99+' : entries.length}
             </Badge>
@@ -88,7 +88,7 @@ export function DrilldownAuditPanel({ entries, onClear }: DrilldownAuditPanelPro
         </SheetHeader>
 
         <div className="flex items-center justify-between px-6 py-3 border-b border-border/40 bg-secondary/20">
-          <p className="text-xs text-muted-foreground">
+          <p className="text-meta text-muted-foreground">
             {entries.length === 0
               ? 'Nenhum evento ainda'
               : `${entries.length} evento${entries.length === 1 ? '' : 's'} nesta sessão`}
@@ -98,7 +98,7 @@ export function DrilldownAuditPanel({ entries, onClear }: DrilldownAuditPanelPro
               type="button"
               variant="ghost"
               size="sm"
-              className="h-7 gap-1.5 text-xs text-muted-foreground hover:text-destructive"
+              className="h-7 gap-1.5 text-meta text-muted-foreground hover:text-destructive"
               onClick={() => {
                 onClear();
                 toast.success('Histórico limpo');
@@ -114,10 +114,10 @@ export function DrilldownAuditPanel({ entries, onClear }: DrilldownAuditPanelPro
           {entries.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
               <History className="h-8 w-8 text-muted-foreground/40 mb-3" />
-              <p className="text-sm font-medium text-foreground mb-1">
+              <p className="text-body-sm font-medium text-foreground mb-1">
                 Nada para mostrar ainda
               </p>
-              <p className="text-xs text-muted-foreground max-w-xs">
+              <p className="text-meta text-muted-foreground max-w-xs">
                 Ajuste a janela, baseline, filtros ou toggles do drill-down para
                 começar a registrar eventos aqui.
               </p>
@@ -144,13 +144,13 @@ export function DrilldownAuditPanel({ entries, onClear }: DrilldownAuditPanelPro
                   <div className="space-y-2 rounded-md border border-border/40 bg-card p-3 hover:border-primary/30 transition-colors">
                     <div className="flex items-baseline justify-between gap-2">
                       <time
-                        className="text-[11px] font-medium text-muted-foreground tabular-nums"
+                        className="text-meta font-medium text-muted-foreground tabular-nums"
                         dateTime={entry.ts}
                         title={new Date(entry.ts).toLocaleString('pt-BR')}
                       >
                         {formatRelative(entry.ts)}
                       </time>
-                      <span className="text-[10px] text-muted-foreground/70 font-mono">
+                      <span className="text-meta text-muted-foreground/70 font-mono">
                         {new Date(entry.ts).toLocaleTimeString('pt-BR', {
                           hour: '2-digit', minute: '2-digit', second: '2-digit',
                         })}
@@ -159,7 +159,7 @@ export function DrilldownAuditPanel({ entries, onClear }: DrilldownAuditPanelPro
 
                     <ul className="space-y-1">
                       {entry.changes.map((c) => (
-                        <li key={c.field} className="text-xs leading-relaxed">
+                        <li key={c.field} className="text-meta leading-relaxed">
                           <span className="font-semibold text-foreground">{c.label}: </span>
                           <span className="text-muted-foreground line-through decoration-destructive/40">
                             {c.from}
@@ -175,7 +175,7 @@ export function DrilldownAuditPanel({ entries, onClear }: DrilldownAuditPanelPro
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="h-6 gap-1 text-[10px] px-1.5 text-muted-foreground hover:text-foreground"
+                        className="h-6 gap-1 text-meta px-1.5 text-muted-foreground hover:text-foreground"
                         onClick={() => handleCopy(entry)}
                       >
                         {copiedId === entry.id ? (
@@ -194,7 +194,7 @@ export function DrilldownAuditPanel({ entries, onClear }: DrilldownAuditPanelPro
                         href={entry.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 h-6 px-1.5 rounded text-[10px] text-muted-foreground hover:text-primary hover:bg-secondary/40 transition-colors"
+                        className="inline-flex items-center gap-1 h-6 px-1.5 rounded text-meta text-muted-foreground hover:text-primary hover:bg-secondary/40 transition-colors"
                         title="Abrir este estado em uma nova aba"
                       >
                         <ExternalLink className="h-3 w-3" />

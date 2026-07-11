@@ -42,7 +42,7 @@ export default function DataStoragePage() {
           ].map(s => (
             <div key={s.label} className="nexus-card text-center py-3">
               <p className="text-lg font-heading font-bold text-foreground">{s.value}</p>
-              <p className="text-[11px] text-muted-foreground">{s.label}</p>
+              <p className="text-meta text-muted-foreground">{s.label}</p>
             </div>
           ))}
         </div>
@@ -57,14 +57,14 @@ export default function DataStoragePage() {
                   <s.icon className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-foreground">{s.name}</h3>
-                  <p className="text-[11px] text-muted-foreground">{s.type}</p>
+                  <h3 className="text-body-sm font-semibold text-foreground">{s.name}</h3>
+                  <p className="text-meta text-muted-foreground">{s.type}</p>
                 </div>
               </div>
               <StatusBadge status={s.status} />
             </div>
-            <p className="text-xs text-muted-foreground mb-3">{s.desc}</p>
-            <div className="text-xs border-t border-border/50 pt-3">
+            <p className="text-meta text-muted-foreground mb-3">{s.desc}</p>
+            <div className="text-meta border-t border-border/50 pt-3">
               <div className="flex justify-between"><span className="text-muted-foreground">Latência típica</span><span className="text-foreground font-mono">{s.latency}</span></div>
             </div>
           </div>

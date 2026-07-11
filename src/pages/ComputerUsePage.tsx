@@ -113,15 +113,15 @@ export default function ComputerUsePage() {
           <Card className="overflow-hidden border-border/40 shadow-2xl">
             <CardHeader className="pb-3 border-b bg-muted/30">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm flex items-center gap-2">
+                <CardTitle className="text-body-sm flex items-center gap-2">
                   <Monitor className="h-4 w-4 text-primary" />
                   Live Viewport (Sandbox Isolated)
                 </CardTitle>
                 <div className="flex gap-2">
-                   <Badge variant="outline" className="text-[10px] bg-nexus-emerald/5 text-nexus-emerald border-nexus-emerald/20">
+                   <Badge variant="outline" className="text-meta bg-nexus-emerald/5 text-nexus-emerald border-nexus-emerald/20">
                      <Globe className="h-3 w-3 mr-1" /> 1280x720
                    </Badge>
-                   {running && <Badge variant="secondary" className="text-[10px] animate-pulse">STREAMING</Badge>}
+                   {running && <Badge variant="secondary" className="text-meta animate-pulse">STREAMING</Badge>}
                 </div>
               </div>
             </CardHeader>
@@ -148,9 +148,9 @@ export default function ComputerUsePage() {
                    <div className="bg-black/60 backdrop-blur-md border border-white/10 p-3 rounded-xl max-w-xs animate-in slide-in-from-left-4">
                       <div className="flex items-center gap-2 mb-1.5">
                         <Brain className="h-3.5 w-3.5 text-primary" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-white">Neural Reasoning</span>
+                        <span className="text-meta font-black uppercase tracking-widest text-white">Neural Reasoning</span>
                       </div>
-                      <p className="text-xs text-white/90 leading-relaxed italic">
+                      <p className="text-meta text-white/90 leading-relaxed italic">
                         {currentThought}
                       </p>
                    </div>
@@ -160,7 +160,7 @@ export default function ComputerUsePage() {
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center">
                       <Monitor className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-20" />
-                      <p className="text-sm text-muted-foreground font-medium uppercase tracking-widest">Aguardando Convocação</p>
+                      <p className="text-body-sm text-muted-foreground font-medium uppercase tracking-widest">Aguardando Convocação</p>
                     </div>
                   </div>
                 )}
@@ -196,7 +196,7 @@ export default function ComputerUsePage() {
         <div className="space-y-6">
           <Card className="border-border/40 bg-card/50 backdrop-blur-sm h-full flex flex-col">
             <CardHeader className="pb-3 border-b">
-              <CardTitle className="text-sm flex items-center gap-2">
+              <CardTitle className="text-body-sm flex items-center gap-2">
                 <FastForward className="h-4 w-4 text-primary" />
                 Trajetória Sináptica
               </CardTitle>
@@ -206,7 +206,7 @@ export default function ComputerUsePage() {
                 {actions.length === 0 && !running && (
                   <div className="text-center py-20 opacity-40">
                     <Sparkles className="h-10 w-10 mx-auto mb-3" />
-                    <p className="text-xs uppercase font-black tracking-widest">Nenhuma atividade registrada</p>
+                    <p className="text-meta uppercase font-black tracking-widest">Nenhuma atividade registrada</p>
                   </div>
                 )}
                 <div className="space-y-4">
@@ -215,18 +215,18 @@ export default function ComputerUsePage() {
                       <div className="absolute -left-1.5 top-0 h-3 w-3 rounded-full bg-primary border-4 border-background" />
                       <div className="flex flex-col gap-1.5">
                         <div className="flex items-center gap-2">
-                          <Badge variant="outline" className="text-[10px] font-mono h-5 bg-primary/5 border-primary/20 text-primary uppercase">
+                          <Badge variant="outline" className="text-meta font-mono h-5 bg-primary/5 border-primary/20 text-primary uppercase">
                             {a.type}
                           </Badge>
                           <span className="text-[9px] text-muted-foreground font-mono">
                             {new Date(a.ts).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                           </span>
                         </div>
-                        {a.params?.url && <p className="text-[11px] font-mono text-muted-foreground truncate">URL: {a.params.url}</p>}
-                        {a.params?.text && <p className="text-xs font-medium text-foreground">Typing: "{a.params.text}"</p>}
-                        {a.coord && <p className="text-[10px] text-muted-foreground">Coord: [{a.coord.x}, {a.coord.y}]</p>}
+                        {a.params?.url && <p className="text-meta font-mono text-muted-foreground truncate">URL: {a.params.url}</p>}
+                        {a.params?.text && <p className="text-meta font-medium text-foreground">Typing: "{a.params.text}"</p>}
+                        {a.coord && <p className="text-meta text-muted-foreground">Coord: [{a.coord.x}, {a.coord.y}]</p>}
                         <div className="bg-muted/40 rounded-lg p-2.5 mt-1 border border-border/10">
-                           <p className="text-[11px] leading-relaxed text-foreground/80 italic">"{a.thought}"</p>
+                           <p className="text-meta leading-relaxed text-foreground/80 italic">"{a.thought}"</p>
                         </div>
                       </div>
                     </div>
@@ -241,12 +241,12 @@ export default function ComputerUsePage() {
                       <Target className="h-4 w-4 text-primary" />
                     </div>
                     <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Neural Settings</p>
-                      <p className="text-xs font-bold text-foreground">Vision Optimization ON</p>
+                      <p className="text-meta font-black uppercase tracking-widest text-muted-foreground">Neural Settings</p>
+                      <p className="text-meta font-bold text-foreground">Vision Optimization ON</p>
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <div className="flex justify-between text-[10px] font-bold uppercase">
+                    <div className="flex justify-between text-meta font-bold uppercase">
                        <span className="text-muted-foreground">Confidence Score</span>
                        <span className="text-primary">98.4%</span>
                     </div>

@@ -106,7 +106,7 @@ export function ImageAnalysisDialog() {
       }}
     >
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-1.5 text-xs">
+        <Button variant="outline" size="sm" className="gap-1.5 text-meta">
           <Eye className="h-3.5 w-3.5" />
           Análise de imagem
         </Button>
@@ -131,7 +131,7 @@ export function ImageAnalysisDialog() {
                 type="file"
                 accept="image/*"
                 onChange={handleFile}
-                className="flex-1 text-xs file:mr-3 file:px-3 file:py-1.5 file:rounded-md file:border-0 file:bg-background file:text-foreground hover:file:bg-muted"
+                className="flex-1 text-meta file:mr-3 file:px-3 file:py-1.5 file:rounded-md file:border-0 file:bg-background file:text-foreground hover:file:bg-muted"
               />
               <Upload className="h-4 w-4 text-muted-foreground" />
             </div>
@@ -201,7 +201,7 @@ export function ImageAnalysisDialog() {
           {analysis && (
             <div className="space-y-2">
               <Label>Resultado</Label>
-              <div className="bg-background rounded-lg border border-border p-3 text-xs text-foreground whitespace-pre-wrap max-h-64 overflow-y-auto">
+              <div className="bg-background rounded-lg border border-border p-3 text-meta text-foreground whitespace-pre-wrap max-h-64 overflow-y-auto">
                 {analysis}
               </div>
             </div>
@@ -219,7 +219,7 @@ export function ImageAnalysisDialog() {
                 className="h-5 w-5"
                 style={{ color: nsfwFlag ? "#FF6B6B" : "#6BCB77" }}
               />
-              <span className="text-sm font-medium text-foreground">
+              <span className="text-body-sm font-medium text-foreground">
                 {nsfwFlag ? "Conteúdo NSFW detectado" : "Conteúdo seguro"}
               </span>
             </div>
@@ -230,9 +230,9 @@ export function ImageAnalysisDialog() {
               <Label>Classes / scores</Label>
               <div className="bg-background rounded-lg border border-border p-3 space-y-1 max-h-48 overflow-y-auto">
                 {classes.map((c, i) => (
-                  <div key={i} className="flex items-center justify-between text-xs">
+                  <div key={i} className="flex items-center justify-between text-meta">
                     <span className="text-foreground">{c.label}</span>
-                    <Badge variant="outline" className="text-[10px]">
+                    <Badge variant="outline" className="text-meta">
                       {(c.score * 100).toFixed(1)}%
                     </Badge>
                   </div>

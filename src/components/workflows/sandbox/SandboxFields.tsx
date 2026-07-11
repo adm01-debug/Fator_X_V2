@@ -9,8 +9,8 @@ export function SliderField({
   return (
     <div className="space-y-1">
       <div className="flex items-center justify-between">
-        <label className="text-xs text-muted-foreground">{label}</label>
-        <span className="text-xs font-medium text-foreground">{value} {unit}</span>
+        <label className="text-meta text-muted-foreground">{label}</label>
+        <span className="text-meta font-medium text-foreground">{value} {unit}</span>
       </div>
       <input
         type="range" min={min} max={max} step={step} value={value}
@@ -35,8 +35,8 @@ export function ToggleField({
       <div className="flex items-center gap-3">
         {Icon && <Icon className="w-4 h-4 text-muted-foreground" />}
         <div>
-          <p className="text-sm text-foreground">{label}</p>
-          {description && <p className="text-xs text-muted-foreground">{description}</p>}
+          <p className="text-body-sm text-foreground">{label}</p>
+          {description && <p className="text-meta text-muted-foreground">{description}</p>}
         </div>
       </div>
       <div className={`w-10 h-5 rounded-full flex items-center transition-colors ${checked ? 'bg-primary' : 'bg-muted'}`}>

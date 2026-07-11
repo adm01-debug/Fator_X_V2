@@ -28,7 +28,7 @@ export function StepIndicator({ currentTab, variant = 'text', className }: StepI
   }
 
   return (
-    <span className={cn('text-xs font-mono text-muted-foreground', className)}>
+    <span className={cn('text-meta font-mono text-muted-foreground', className)}>
       {current} / {TABS.length}
     </span>
   );

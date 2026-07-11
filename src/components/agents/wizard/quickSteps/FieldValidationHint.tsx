@@ -65,13 +65,13 @@ export function FieldValidationHint({ info, id, className = '' }: Props) {
           Erro de validação: {label}.{info.errorMessage ? ` ${info.errorMessage}.` : ''} Corrija este campo para continuar.
         </span>
         <div className="flex items-center gap-1.5 flex-wrap" aria-hidden="true">
-          <span className="text-[10px] font-semibold uppercase tracking-wider">
+          <span className="text-meta font-semibold uppercase tracking-wider">
             {label}
           </span>
-          <span className="text-[10px] opacity-70">— motivo da validação</span>
+          <span className="text-meta opacity-70">— motivo da validação</span>
         </div>
         {info.errorMessage && (
-          <p className="text-[11px] leading-snug italic opacity-90" aria-hidden="true">
+          <p className="text-meta leading-snug italic opacity-90" aria-hidden="true">
             "{info.errorMessage}"
           </p>
         )}

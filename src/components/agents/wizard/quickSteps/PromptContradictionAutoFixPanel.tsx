@@ -128,7 +128,7 @@ export function PromptContradictionAutoFixPanel({ prompt, onApply }: Props) {
       {fixes.length > 0 && (
         <div className="rounded-lg border border-nexus-amber/40 bg-nexus-amber/5 p-2.5 space-y-2">
           <div className="flex items-center justify-between gap-2 flex-wrap">
-            <p className="text-xs font-semibold text-nexus-amber flex items-center gap-1.5">
+            <p className="text-meta font-semibold text-nexus-amber flex items-center gap-1.5">
               <GitMerge className="h-3.5 w-3.5" />
               Corrigir contradições automaticamente ({fixes.length})
             </p>
@@ -144,7 +144,7 @@ export function PromptContradictionAutoFixPanel({ prompt, onApply }: Props) {
                     `${allAtOnce.resolved} contradição(ões) resolvida(s) em sequência.`,
                   )
                 }
-                className="h-7 gap-1.5 text-[11px] bg-nexus-amber hover:bg-nexus-amber/90 text-background"
+                className="h-7 gap-1.5 text-meta bg-nexus-amber hover:bg-nexus-amber/90 text-background"
               >
                 <Sparkles className="h-3 w-3" />
                 🪄 Resolver tudo ({allAtOnce.resolved})
@@ -188,10 +188,10 @@ export function PromptContradictionAutoFixPanel({ prompt, onApply }: Props) {
         >
           <Undo2 className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" aria-hidden />
           <div className="min-w-0 flex-1 space-y-0.5">
-            <p className="text-[11px] font-semibold text-foreground">
+            <p className="text-meta font-semibold text-foreground">
               Última correção de contradição aplicada
             </p>
-            <p className="text-[10px] text-muted-foreground leading-snug truncate" title={lastApplied.summary}>
+            <p className="text-meta text-muted-foreground leading-snug truncate" title={lastApplied.summary}>
               {lastApplied.summary}
             </p>
           </div>
@@ -200,7 +200,7 @@ export function PromptContradictionAutoFixPanel({ prompt, onApply }: Props) {
             size="sm"
             variant="outline"
             onClick={undoLast}
-            className="h-7 gap-1 text-[11px] border-primary/40 text-primary hover:bg-primary/10 hover:text-primary shrink-0"
+            className="h-7 gap-1 text-meta border-primary/40 text-primary hover:bg-primary/10 hover:text-primary shrink-0"
             aria-label="Desfazer a última aplicação do painel de contradições"
           >
             <Undo2 className="h-3 w-3" /> Desfazer
@@ -220,7 +220,7 @@ export function PromptContradictionAutoFixPanel({ prompt, onApply }: Props) {
               {preview.title}
             </AlertDialogTitle>
             <AlertDialogDescription asChild>
-              <p className="text-xs">{preview.summary}</p>
+              <p className="text-meta">{preview.summary}</p>
             </AlertDialogDescription>
           </AlertDialogHeader>
 
@@ -286,7 +286,7 @@ function FixRow({ prompt, conflict, onPreview, onApply }: FixRowProps) {
   const { unifiedRule, rationale } = builtFix;
 
   return (
-    <li className="flex flex-col gap-2 text-xs bg-background/60 rounded-md px-2 py-1.5 border border-border/40">
+    <li className="flex flex-col gap-2 text-meta bg-background/60 rounded-md px-2 py-1.5 border border-border/40">
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-start gap-2 min-w-0 flex-1">
           <span
@@ -301,10 +301,10 @@ function FixRow({ prompt, conflict, onPreview, onApply }: FixRowProps) {
             <p className="text-foreground font-medium">
               Linhas {conflict.lineA} ↔ {conflict.lineB} → regra unificada
             </p>
-            <p className="text-[10px] font-mono text-muted-foreground/90 truncate" title={unifiedRule}>
+            <p className="text-meta font-mono text-muted-foreground/90 truncate" title={unifiedRule}>
               {unifiedRule}
             </p>
-            <p className="text-[10px] text-muted-foreground/70 leading-snug">{rationale}</p>
+            <p className="text-meta text-muted-foreground/70 leading-snug">{rationale}</p>
           </div>
         </div>
         <div className="flex items-center gap-1 shrink-0">
@@ -313,7 +313,7 @@ function FixRow({ prompt, conflict, onPreview, onApply }: FixRowProps) {
             size="sm"
             variant="ghost"
             onClick={() => onPreview(builtFix)}
-            className="h-7 gap-1 text-[11px]"
+            className="h-7 gap-1 text-meta"
             aria-label={`Pré-visualizar correção da contradição nas linhas ${conflict.lineA} e ${conflict.lineB}`}
           >
             <Eye className="h-3 w-3" /> Prévia
@@ -323,7 +323,7 @@ function FixRow({ prompt, conflict, onPreview, onApply }: FixRowProps) {
             size="sm"
             variant="outline"
             onClick={() => onApply(builtFix)}
-            className="h-7 gap-1 text-[11px] border-nexus-amber/40 text-nexus-amber hover:bg-nexus-amber/10 hover:text-nexus-amber"
+            className="h-7 gap-1 text-meta border-nexus-amber/40 text-nexus-amber hover:bg-nexus-amber/10 hover:text-nexus-amber"
             aria-label={`Aplicar correção da contradição nas linhas ${conflict.lineA} e ${conflict.lineB}`}
           >
             <Wand2 className="h-3 w-3" /> Aplicar
@@ -338,7 +338,7 @@ function FixRow({ prompt, conflict, onPreview, onApply }: FixRowProps) {
           <legend className="sr-only">
             Escolha qual sugestão unificada usar para esta contradição
           </legend>
-          <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70 mr-1">
+          <span className="text-meta uppercase tracking-wider text-muted-foreground/70 mr-1">
             Sugestão:
           </span>
           {suggestions.map((s, i) => {
@@ -351,7 +351,7 @@ function FixRow({ prompt, conflict, onPreview, onApply }: FixRowProps) {
                 aria-pressed={active}
                 title={s.rationale}
                 className={cn(
-                  'h-6 px-2 rounded-full text-[10px] font-medium border transition-colors',
+                  'h-6 px-2 rounded-full text-meta font-medium border transition-colors',
                   active
                     ? 'bg-nexus-amber/20 text-nexus-amber border-nexus-amber/40'
                     : 'bg-secondary/40 text-muted-foreground border-border/50 hover:bg-secondary',

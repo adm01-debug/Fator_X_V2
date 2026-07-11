@@ -79,7 +79,7 @@ export function OracleResultsPanel() {
               {m.icon}
             </div>
             <p className={`text-2xl font-heading font-extrabold tracking-tight ${m.c}`}>{m.v}</p>
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1">{m.l}</p>
+            <p className="text-meta font-bold text-muted-foreground uppercase tracking-widest mt-1">{m.l}</p>
           </Card>
         ))}
       </div>
@@ -107,10 +107,10 @@ export function OracleResultsPanel() {
             
             <div className="flex items-center justify-between mb-8 relative">
               <div className="flex items-center gap-3">
-                <Badge variant="outline" className="rounded-lg px-2.5 py-1 bg-primary/5 text-primary border-primary/20 text-[10px] font-bold uppercase tracking-wider">
+                <Badge variant="outline" className="rounded-lg px-2.5 py-1 bg-primary/5 text-primary border-primary/20 text-meta font-bold uppercase tracking-wider">
                   {modeConfig.icon} {modeConfig.label}
                 </Badge>
-                <Badge variant="outline" className="rounded-lg px-2.5 py-1 bg-muted/50 text-muted-foreground border-border/50 text-[10px] font-bold uppercase">
+                <Badge variant="outline" className="rounded-lg px-2.5 py-1 bg-muted/50 text-muted-foreground border-border/50 text-meta font-bold uppercase">
                   Presidente: {store.chairmanModel.split('/').pop()}
                 </Badge>
               </div>
@@ -139,7 +139,7 @@ export function OracleResultsPanel() {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="rounded-xl gap-2 text-muted-foreground hover:text-primary transition-all font-bold uppercase tracking-widest text-[10px]" 
+                className="rounded-xl gap-2 text-muted-foreground hover:text-primary transition-all font-bold uppercase tracking-widest text-meta" 
                 onClick={() => { store.clearResults(); store.submitQuery(); }}
               >
                 <RefreshCw className="h-4 w-4" /> Solicitar Nova Revisão ao Conselho
@@ -162,18 +162,18 @@ export function OracleResultsPanel() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card className="p-6 rounded-2xl border-nexus-emerald/20 bg-nexus-emerald/5">
-                <p className="text-xs font-extrabold text-nexus-emerald uppercase tracking-wider mb-4 flex items-center gap-2">
+                <p className="text-meta font-extrabold text-nexus-emerald uppercase tracking-wider mb-4 flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4" /> Pontos de Consenso
                 </p>
-                <div className="text-sm text-foreground whitespace-pre-wrap leading-relaxed opacity-80">
+                <div className="text-body-sm text-foreground whitespace-pre-wrap leading-relaxed opacity-80">
                   {results.final_response.match(/## Pontos de Consenso[\s\S]*?(?=##|$)/)?.[0] || 'Análise de consenso disponível na síntese principal.'}
                 </div>
               </Card>
               <Card className="p-6 rounded-2xl border-nexus-amber/20 bg-nexus-amber/5">
-                <p className="text-xs font-extrabold text-nexus-amber uppercase tracking-wider mb-4 flex items-center gap-2">
+                <p className="text-meta font-extrabold text-nexus-amber uppercase tracking-wider mb-4 flex items-center gap-2">
                   <AlertTriangle className="h-4 w-4" /> Divergências Identificadas
                 </p>
-                <div className="text-sm text-foreground whitespace-pre-wrap leading-relaxed opacity-80">
+                <div className="text-body-sm text-foreground whitespace-pre-wrap leading-relaxed opacity-80">
                   {results.final_response.match(/## Divergências[\s\S]*?(?=##|$)/)?.[0] || 'Nenhuma divergência crítica encontrada pelo conselho.'}
                 </div>
               </Card>
@@ -183,7 +183,7 @@ export function OracleResultsPanel() {
 
         <TabsContent value="metrics" className="mt-0 focus-visible:outline-none">
           <Card className="p-8 rounded-3xl border-border/60">
-            <h4 className="text-xs font-extrabold text-muted-foreground uppercase tracking-widest mb-6 flex items-center gap-2">
+            <h4 className="text-meta font-extrabold text-muted-foreground uppercase tracking-widest mb-6 flex items-center gap-2">
               <Activity className="h-4 w-4" /> Relatório de Auditoria da Sessão
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
@@ -200,13 +200,13 @@ export function OracleResultsPanel() {
                 }),
               ].map(([k, v]) => (
                 <div key={k as string} className="flex justify-between items-center py-2 border-b border-border/30">
-                  <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-tight">{k}</span>
-                  <span className="text-xs font-bold text-foreground font-mono">{v}</span>
+                  <span className="text-meta font-bold text-muted-foreground uppercase tracking-tight">{k}</span>
+                  <span className="text-meta font-bold text-foreground font-mono">{v}</span>
                 </div>
               ))}
             </div>
             <div className="mt-8 flex justify-between items-center p-4 bg-primary/5 rounded-xl border border-primary/20">
-              <span className="text-sm font-bold text-primary uppercase tracking-wider">Tempo Total de Processamento</span>
+              <span className="text-body-sm font-bold text-primary uppercase tracking-wider">Tempo Total de Processamento</span>
               <span className="text-2xl font-heading font-extrabold text-primary font-mono">{(results.metrics.total_latency_ms / 1000).toFixed(1)}s</span>
             </div>
           </Card>

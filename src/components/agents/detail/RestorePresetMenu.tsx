@@ -101,7 +101,7 @@ export function RestorePresetMenu({ current, onApply, onPresetsLoaded, disabled 
           type="button"
           variant="outline"
           size="sm"
-          className="h-6 px-2 text-[10px] gap-1 border-border/60"
+          className="h-6 px-2 text-meta gap-1 border-border/60"
           disabled={disabled}
           title="Gerenciar presets de campos"
         >
@@ -115,7 +115,7 @@ export function RestorePresetMenu({ current, onApply, onPresetsLoaded, disabled 
       </PopoverTrigger>
       <PopoverContent align="end" className="w-72 p-0" onOpenAutoFocus={(e) => e.preventDefault()}>
         <div className="px-3 py-2 border-b border-border/60 flex items-center justify-between">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground">
+          <span className="text-meta font-semibold uppercase tracking-wider text-foreground">
             Presets de campos
           </span>
           {!creating && (
@@ -123,7 +123,7 @@ export function RestorePresetMenu({ current, onApply, onPresetsLoaded, disabled 
               type="button"
               variant="ghost"
               size="sm"
-              className="h-6 px-1.5 text-[10px] gap-1"
+              className="h-6 px-1.5 text-meta gap-1"
               onClick={() => setCreating(true)}
               disabled={!canSaveCurrent}
               title={!canSaveCurrent ? 'Marque ao menos um campo' : 'Salvar seleção atual'}
@@ -148,10 +148,10 @@ export function RestorePresetMenu({ current, onApply, onPresetsLoaded, disabled 
               onChange={(e) => setNewName(e.target.value)}
               placeholder="Nome do preset (ex.: Só prompt)"
               maxLength={60}
-              className="h-7 text-xs"
+              className="h-7 text-meta"
               disabled={createMut.isPending}
             />
-            <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+            <div className="flex items-center gap-1.5 text-meta text-muted-foreground">
               <span>Captura:</span>
               {[
                 current.copyPrompt && 'prompt',
@@ -159,7 +159,7 @@ export function RestorePresetMenu({ current, onApply, onPresetsLoaded, disabled 
                 current.copyModel && 'modelo',
               ].filter(Boolean).join(' · ') || 'nada'}
             </div>
-            <label className="flex items-center gap-1.5 text-[11px] text-foreground/90 cursor-pointer">
+            <label className="flex items-center gap-1.5 text-meta text-foreground/90 cursor-pointer">
               <Checkbox
                 checked={newAsDefault}
                 onCheckedChange={(v) => setNewAsDefault(!!v)}
@@ -172,7 +172,7 @@ export function RestorePresetMenu({ current, onApply, onPresetsLoaded, disabled 
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="h-6 px-2 text-[10px]"
+                className="h-6 px-2 text-meta"
                 onClick={() => { setCreating(false); setNewName(''); setNewAsDefault(false); }}
                 disabled={createMut.isPending}
               >
@@ -181,7 +181,7 @@ export function RestorePresetMenu({ current, onApply, onPresetsLoaded, disabled 
               <Button
                 type="submit"
                 size="sm"
-                className="h-6 px-2 text-[10px] gap-1"
+                className="h-6 px-2 text-meta gap-1"
                 disabled={!newName.trim() || createMut.isPending}
               >
                 {createMut.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
@@ -193,12 +193,12 @@ export function RestorePresetMenu({ current, onApply, onPresetsLoaded, disabled 
 
         <div className="max-h-64 overflow-y-auto py-1">
           {isLoading && (
-            <div className="px-3 py-4 text-center text-[11px] text-muted-foreground flex items-center justify-center gap-1.5">
+            <div className="px-3 py-4 text-center text-meta text-muted-foreground flex items-center justify-center gap-1.5">
               <Loader2 className="h-3 w-3 animate-spin" /> Carregando presets…
             </div>
           )}
           {!isLoading && presets.length === 0 && !creating && (
-            <div className="px-3 py-4 text-center text-[11px] text-muted-foreground">
+            <div className="px-3 py-4 text-center text-meta text-muted-foreground">
               Nenhum preset salvo. Marque os campos desejados e clique em <strong>Salvar atual</strong>.
             </div>
           )}
@@ -207,7 +207,7 @@ export function RestorePresetMenu({ current, onApply, onPresetsLoaded, disabled 
             return (
               <div
                 key={p.id}
-                className={`group flex items-center gap-1 px-2 py-1.5 mx-1 rounded text-[11px] hover:bg-muted/40 transition-colors ${
+                className={`group flex items-center gap-1 px-2 py-1.5 mx-1 rounded text-meta hover:bg-muted/40 transition-colors ${
                   active ? 'bg-primary/10' : ''
                 }`}
               >

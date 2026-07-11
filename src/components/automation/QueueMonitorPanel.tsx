@@ -61,15 +61,15 @@ export function QueueMonitorPanel() {
     <div className="space-y-6">
       <Card className="bg-card border-border">
         <CardContent className="p-4">
-          <p className="text-sm text-muted-foreground mb-3">Presets de Fila</p>
+          <p className="text-body-sm text-muted-foreground mb-3">Presets de Fila</p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {Object.entries(QUEUE_PRESETS).map(([key, preset]) => (
               <div key={key} className="p-3 rounded-lg bg-background border border-border hover:border-destructive/50 cursor-pointer">
-                <p className="font-medium text-sm">{preset.name}</p>
-                <p className="text-[10px] text-muted-foreground mt-1">{preset.description}</p>
+                <p className="font-medium text-body-sm">{preset.name}</p>
+                <p className="text-meta text-muted-foreground mt-1">{preset.description}</p>
                 <div className="flex gap-1 mt-2">
-                  <Badge variant="outline" className="text-[10px] border-border">{STRATEGY_LABELS[preset.strategy ?? 'fifo']}</Badge>
-                  <Badge variant="outline" className="text-[10px] border-border">{preset.max_concurrency} threads</Badge>
+                  <Badge variant="outline" className="text-meta border-border">{STRATEGY_LABELS[preset.strategy ?? 'fifo']}</Badge>
+                  <Badge variant="outline" className="text-meta border-border">{preset.max_concurrency} threads</Badge>
                 </div>
               </div>
             ))}
@@ -90,7 +90,7 @@ export function QueueMonitorPanel() {
                   <div className="flex items-center gap-2">
                     <ListOrdered size={16} className="text-destructive" />
                     <p className="font-medium">{q.name}</p>
-                    <Badge variant="outline" className="text-[10px] border-border">{STRATEGY_LABELS[q.strategy]}</Badge>
+                    <Badge variant="outline" className="text-meta border-border">{STRATEGY_LABELS[q.strategy]}</Badge>
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge className={q.is_paused ? 'bg-nexus-amber/20 text-nexus-amber' : 'bg-nexus-emerald/20 text-nexus-emerald'}>
@@ -99,7 +99,7 @@ export function QueueMonitorPanel() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="h-7 text-xs gap-1.5 border-border hover:bg-accent hover:border-destructive"
+                      className="h-7 text-meta gap-1.5 border-border hover:bg-accent hover:border-destructive"
                       disabled={runningId === q.id || q.is_paused || q.current_size === 0}
                       onClick={() => handleRunWorker(q)}
                     >
@@ -112,7 +112,7 @@ export function QueueMonitorPanel() {
                     </Button>
                   </div>
                 </div>
-                <div className="grid grid-cols-4 gap-4 text-center text-xs">
+                <div className="grid grid-cols-4 gap-4 text-center text-meta">
                   <div><p className="text-lg font-bold text-primary">{q.current_size}</p><p className="text-muted-foreground">Na fila</p></div>
                   <div><p className="text-lg font-bold text-nexus-emerald">{q.processed_count}</p><p className="text-muted-foreground">Processados</p></div>
                   <div><p className="text-lg font-bold text-destructive">{q.failed_count}</p><p className="text-muted-foreground">Falhas</p></div>

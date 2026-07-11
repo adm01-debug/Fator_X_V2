@@ -84,8 +84,8 @@ export function AgentFailuresTable({ agentId }: Props) {
     <div className="nexus-card" role="region" aria-label="Tabela de falhas e erros">
       <div className="flex items-start justify-between mb-4 gap-3 flex-wrap">
         <div>
-          <h3 className="text-sm font-heading font-semibold text-foreground">Falhas e erros</h3>
-          <p className="text-[11px] text-muted-foreground">
+          <h3 className="text-body-sm font-heading font-semibold text-foreground">Falhas e erros</h3>
+          <p className="text-meta text-muted-foreground">
             Consolida alerts e traces com nível de erro/aviso · {total} resultado{total !== 1 ? 's' : ''} de {failures.length}
           </p>
         </div>
@@ -104,12 +104,12 @@ export function AgentFailuresTable({ agentId }: Props) {
             placeholder="Buscar mensagem, evento ou categoria…"
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(0); }}
-            className="h-8 text-xs pl-8"
+            className="h-8 text-meta pl-8"
             aria-label="Buscar falhas"
           />
         </div>
         <Select value={sourceFilter} onValueChange={(v: 'all' | 'alert' | 'trace') => { setSourceFilter(v); setPage(0); }}>
-          <SelectTrigger className="h-8 w-[130px] text-xs"><SelectValue /></SelectTrigger>
+          <SelectTrigger className="h-8 w-[130px] text-meta"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todas as fontes</SelectItem>
             <SelectItem value="alert">Alerts</SelectItem>
@@ -117,7 +117,7 @@ export function AgentFailuresTable({ agentId }: Props) {
           </SelectContent>
         </Select>
         <Select value={categoryFilter} onValueChange={(v) => { setCategoryFilter(v); setPage(0); }}>
-          <SelectTrigger className="h-8 w-[160px] text-xs"><SelectValue /></SelectTrigger>
+          <SelectTrigger className="h-8 w-[160px] text-meta"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todas categorias</SelectItem>
             {categories.map((c) => (
@@ -126,7 +126,7 @@ export function AgentFailuresTable({ agentId }: Props) {
           </SelectContent>
         </Select>
         <Select value={statusFilter} onValueChange={(v: 'all' | 'unresolved' | 'resolved') => { setStatusFilter(v); setPage(0); }}>
-          <SelectTrigger className="h-8 w-[150px] text-xs"><SelectValue /></SelectTrigger>
+          <SelectTrigger className="h-8 w-[150px] text-meta"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos status</SelectItem>
             <SelectItem value="unresolved">Não resolvidos</SelectItem>
@@ -134,7 +134,7 @@ export function AgentFailuresTable({ agentId }: Props) {
           </SelectContent>
         </Select>
         {hasFilters && (
-          <Button variant="ghost" size="sm" className="h-8 text-xs" onClick={resetFilters}>Limpar</Button>
+          <Button variant="ghost" size="sm" className="h-8 text-meta" onClick={resetFilters}>Limpar</Button>
         )}
       </div>
 
@@ -143,12 +143,12 @@ export function AgentFailuresTable({ agentId }: Props) {
           <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
         </div>
       ) : pageRows.length === 0 ? (
-        <div className="text-center py-10 text-xs text-muted-foreground">
+        <div className="text-center py-10 text-meta text-muted-foreground">
           {failures.length === 0 ? 'Nenhuma falha registrada para este agente.' : 'Nenhum resultado para os filtros aplicados.'}
         </div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full text-xs">
+          <table className="w-full text-meta">
             <thead>
               <tr className="text-left text-muted-foreground border-b border-border/50">
                 <th className="py-2 px-2 font-medium">Categoria</th>
@@ -168,13 +168,13 @@ export function AgentFailuresTable({ agentId }: Props) {
       {total > 0 && (
         <div className="flex items-center justify-between flex-wrap gap-2 mt-3 pt-3 border-t border-border/50">
           <div className="flex items-center gap-3">
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-meta text-muted-foreground">
               Mostrando {safePage * pageSize + 1}–{Math.min((safePage + 1) * pageSize, total)} de {total.toLocaleString('pt-BR')}
             </p>
             <div className="flex items-center gap-1.5">
-              <span className="text-[11px] text-muted-foreground">Por página:</span>
+              <span className="text-meta text-muted-foreground">Por página:</span>
               <Select value={String(pageSize)} onValueChange={(v) => { setPageSize(Number(v)); setPage(0); }}>
-                <SelectTrigger className="h-7 w-[65px] text-[11px]"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="h-7 w-[65px] text-meta"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {PAGE_SIZE_OPTIONS.map((s) => (
                     <SelectItem key={s} value={String(s)}>{s}</SelectItem>
@@ -184,9 +184,9 @@ export function AgentFailuresTable({ agentId }: Props) {
             </div>
           </div>
           <div className="flex items-center gap-1">
-            <Button size="sm" variant="outline" className="h-7 text-xs" disabled={safePage === 0} onClick={() => setPage(safePage - 1)}>Anterior</Button>
-            <span className="text-[11px] text-muted-foreground px-2 min-w-[60px] text-center font-mono">{safePage + 1} / {totalPages}</span>
-            <Button size="sm" variant="outline" className="h-7 text-xs" disabled={safePage >= totalPages - 1} onClick={() => setPage(safePage + 1)}>Próxima</Button>
+            <Button size="sm" variant="outline" className="h-7 text-meta" disabled={safePage === 0} onClick={() => setPage(safePage - 1)}>Anterior</Button>
+            <span className="text-meta text-muted-foreground px-2 min-w-[60px] text-center font-mono">{safePage + 1} / {totalPages}</span>
+            <Button size="sm" variant="outline" className="h-7 text-meta" disabled={safePage >= totalPages - 1} onClick={() => setPage(safePage + 1)}>Próxima</Button>
           </div>
         </div>
       )}
@@ -196,7 +196,7 @@ export function AgentFailuresTable({ agentId }: Props) {
 
 function SummaryChip({ label, value, className }: { label: string; value: number; className: string }) {
   return (
-    <span className={`inline-flex items-center gap-1.5 text-[10px] font-semibold border px-2 py-0.5 rounded-full ${className}`}>
+    <span className={`inline-flex items-center gap-1.5 text-meta font-semibold border px-2 py-0.5 rounded-full ${className}`}>
       <span className="tabular-nums">{value}</span>
       <span className="font-medium opacity-80">{label}</span>
     </span>
@@ -212,13 +212,13 @@ function FailureRow({ failure }: { failure: FailureRecord }) {
   return (
     <tr className="border-b border-border/30 hover:bg-secondary/30 transition-colors">
       <td className="py-2 px-2">
-        <span className={`inline-flex items-center gap-1 text-[10px] font-semibold border px-2 py-0.5 rounded-full ${style.color} ${style.bg} ${style.border}`}>
+        <span className={`inline-flex items-center gap-1 text-meta font-semibold border px-2 py-0.5 rounded-full ${style.color} ${style.bg} ${style.border}`}>
           <style.Icon className="h-3 w-3" />
           {style.label}
         </span>
       </td>
       <td className="py-2 px-2">
-        <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+        <span className="inline-flex items-center gap-1 text-meta text-muted-foreground">
           <SourceIcon className="h-3 w-3" />
           {failure.source === 'alert' ? 'Alert' : 'Trace'}
         </span>
@@ -226,16 +226,16 @@ function FailureRow({ failure }: { failure: FailureRecord }) {
       <td className="py-2 px-2 max-w-[420px]">
         <p className="text-foreground truncate" title={failure.message}>{failure.message}</p>
         {failure.event && failure.source === 'trace' && (
-          <p className="text-[10px] text-muted-foreground font-mono truncate">evento: {failure.event}</p>
+          <p className="text-meta text-muted-foreground font-mono truncate">evento: {failure.event}</p>
         )}
       </td>
       <td className="py-2 px-2">
         {failure.source === 'alert' ? (
           failure.is_resolved
-            ? <span className="text-[10px] text-nexus-emerald font-semibold">Resolvido</span>
-            : <span className="text-[10px] text-destructive font-semibold">Aberto</span>
+            ? <span className="text-meta text-nexus-emerald font-semibold">Resolvido</span>
+            : <span className="text-meta text-destructive font-semibold">Aberto</span>
         ) : (
-          <span className="text-[10px] text-muted-foreground">—</span>
+          <span className="text-meta text-muted-foreground">—</span>
         )}
       </td>
       <td className="py-2 px-2 text-right tabular-nums text-muted-foreground font-mono">{whenLabel}</td>

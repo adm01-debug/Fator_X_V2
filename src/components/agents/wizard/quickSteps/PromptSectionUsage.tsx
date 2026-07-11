@@ -365,7 +365,7 @@ function PromptSectionUsageImpl({ prompt, onJumpToSection }: Props) {
     <div className={cn('nexus-card space-y-3 transition-opacity', isPending && 'opacity-90')}>
       <div className="flex items-start justify-between gap-2 flex-wrap">
         <div className="min-w-0">
-          <p className="text-sm font-heading font-semibold text-foreground flex items-center gap-1.5">
+          <p className="text-body-sm font-heading font-semibold text-foreground flex items-center gap-1.5">
             <Gauge className="h-3.5 w-3.5 text-primary" />
             Uso por seção
             {isPending && (
@@ -377,15 +377,15 @@ function PromptSectionUsageImpl({ prompt, onJumpToSection }: Props) {
               </span>
             )}
           </p>
-          <p className="text-[11px] text-muted-foreground">
+          <p className="text-meta text-muted-foreground">
             Quanto cada seção pesa no orçamento total — identifique o que cortar primeiro.
           </p>
         </div>
         <div className="text-right shrink-0">
-          <div className={cn('text-[11px] font-mono font-semibold tabular-nums', totalTone.text)}>
+          <div className={cn('text-meta font-mono font-semibold tabular-nums', totalTone.text)}>
             {totalChars.toLocaleString('pt-BR')} / {limit.toLocaleString('pt-BR')}
           </div>
-          <div className="text-[10px] font-mono text-muted-foreground">
+          <div className="text-meta font-mono text-muted-foreground">
             {totalPct.toFixed(0)}% do limite
           </div>
         </div>
@@ -430,7 +430,7 @@ function PromptSectionUsageImpl({ prompt, onJumpToSection }: Props) {
                     )}
                     <span
                       className={cn(
-                        'text-xs font-medium truncate',
+                        'text-meta font-medium truncate',
                         isMissing ? 'text-muted-foreground' : 'text-foreground',
                       )}
                     >
@@ -445,7 +445,7 @@ function PromptSectionUsageImpl({ prompt, onJumpToSection }: Props) {
                       </span>
                     )}
                   </div>
-                  <div className="text-[10px] font-mono tabular-nums text-muted-foreground shrink-0">
+                  <div className="text-meta font-mono tabular-nums text-muted-foreground shrink-0">
                     {isMissing ? (
                       <span className="italic">— ausente</span>
                     ) : isOthers ? (
@@ -492,7 +492,7 @@ function PromptSectionUsageImpl({ prompt, onJumpToSection }: Props) {
         <div className="space-y-2 pt-2 border-t border-border/40">
           <div className="flex items-center gap-1.5">
             <Sparkles className="h-3.5 w-3.5 text-primary" aria-hidden />
-            <p className="text-[11px] font-heading font-semibold text-foreground">
+            <p className="text-meta font-heading font-semibold text-foreground">
               Reduções recomendadas
             </p>
             <span className="text-[9px] font-mono uppercase tracking-wider text-muted-foreground/70">
@@ -522,10 +522,10 @@ function PromptSectionUsageImpl({ prompt, onJumpToSection }: Props) {
                       <div className="flex items-start gap-1.5 min-w-0 flex-1">
                         <Scissors className="h-3 w-3 text-primary shrink-0 mt-0.5" aria-hidden />
                         <div className="min-w-0">
-                          <p className="text-xs font-medium text-foreground leading-snug">
+                          <p className="text-meta font-medium text-foreground leading-snug">
                             {s.title}
                           </p>
-                          <p className="text-[10px] text-muted-foreground leading-snug mt-0.5">
+                          <p className="text-meta text-muted-foreground leading-snug mt-0.5">
                             <span className="text-foreground/70">{s.sectionLabel}</span>
                             {' · '}
                             {s.rationale}
@@ -533,7 +533,7 @@ function PromptSectionUsageImpl({ prompt, onJumpToSection }: Props) {
                         </div>
                       </div>
                       <span
-                        className="inline-flex items-center text-[10px] font-mono tabular-nums px-1.5 py-0.5 rounded-full border border-nexus-emerald/30 bg-nexus-emerald/10 text-nexus-emerald shrink-0"
+                        className="inline-flex items-center text-meta font-mono tabular-nums px-1.5 py-0.5 rounded-full border border-nexus-emerald/30 bg-nexus-emerald/10 text-nexus-emerald shrink-0"
                         title={`Estimativa: ~${s.estCharsSaved} chars / ~${s.estTokensSaved} tokens economizados`}
                       >
                         −{s.estCharsSaved.toLocaleString('pt-BR')} chars · ~−{s.estTokensSaved.toLocaleString('pt-BR')} tk
@@ -547,7 +547,7 @@ function PromptSectionUsageImpl({ prompt, onJumpToSection }: Props) {
         </div>
       )}
 
-      <div className="text-[10px] font-mono text-muted-foreground pt-2 border-t border-border/40 flex items-center justify-between gap-2 flex-wrap">
+      <div className="text-meta font-mono text-muted-foreground pt-2 border-t border-border/40 flex items-center justify-between gap-2 flex-wrap">
         <span>
           total: <span className={cn('font-semibold', totalTone.text)}>{totalChars.toLocaleString('pt-BR')}</span> / {limit.toLocaleString('pt-BR')} chars ({totalPct.toFixed(0)}%)
         </span>

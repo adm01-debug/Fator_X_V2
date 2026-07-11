@@ -44,20 +44,20 @@ export function VersionComparePanel({ versionA, versionB }: Props) {
       <div className="nexus-card">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <Badge className="bg-destructive/10 text-destructive font-mono text-xs">v{versionA.version}</Badge>
+            <Badge className="bg-destructive/10 text-destructive font-mono text-meta">v{versionA.version}</Badge>
             <ArrowRight className="h-3.5 w-3.5 text-muted-foreground" aria-hidden />
-            <Badge className="bg-nexus-emerald/10 text-nexus-emerald font-mono text-xs">v{versionB.version}</Badge>
+            <Badge className="bg-nexus-emerald/10 text-nexus-emerald font-mono text-meta">v{versionB.version}</Badge>
           </div>
-          <Badge variant="outline" className="text-[11px]">{changelog.length} mudança(s)</Badge>
+          <Badge variant="outline" className="text-meta">{changelog.length} mudança(s)</Badge>
         </div>
 
-        <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Changelog automático</h4>
+        <h4 className="text-meta font-semibold text-muted-foreground uppercase tracking-wide mb-2">Changelog automático</h4>
         {changelog.length === 0 ? (
-          <p className="text-xs text-muted-foreground italic py-3 text-center">Nenhuma diferença estrutural detectada entre as versões.</p>
+          <p className="text-meta text-muted-foreground italic py-3 text-center">Nenhuma diferença estrutural detectada entre as versões.</p>
         ) : (
           <ul className="space-y-1.5">
             {changelog.map((e, i) => (
-              <li key={i} className="flex items-start gap-2 text-xs leading-relaxed">
+              <li key={i} className="flex items-start gap-2 text-meta leading-relaxed">
                 <span className="mt-0.5">{entryIcon(e.kind)}</span>
                 <span className="text-foreground">
                   <span className="font-medium">{e.label}</span>
@@ -68,7 +68,7 @@ export function VersionComparePanel({ versionA, versionB }: Props) {
                       <span className="text-nexus-emerald">{String(e.to)}</span>
                     </span>
                   )}
-                  {e.detail && <span className="ml-1.5 text-[11px] text-primary">{e.detail}</span>}
+                  {e.detail && <span className="ml-1.5 text-meta text-primary">{e.detail}</span>}
                 </span>
               </li>
             ))}
@@ -77,9 +77,9 @@ export function VersionComparePanel({ versionA, versionB }: Props) {
       </div>
 
       <div className="nexus-card">
-        <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Diff do system prompt</h4>
+        <h4 className="text-meta font-semibold text-muted-foreground uppercase tracking-wide mb-3">Diff do system prompt</h4>
         {promptA === promptB ? (
-          <p className="text-xs text-muted-foreground italic py-3 text-center">Prompt idêntico nas duas versões.</p>
+          <p className="text-meta text-muted-foreground italic py-3 text-center">Prompt idêntico nas duas versões.</p>
         ) : (
           <PromptDiff textA={promptA} textB={promptB} labelA={`v${versionA.version}`} labelB={`v${versionB.version}`} />
         )}
@@ -100,12 +100,12 @@ function DiffTable({ title, rows, versionA, versionB }: {
 }) {
   return (
     <div className="nexus-card">
-      <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">{title}</h4>
+      <h4 className="text-meta font-semibold text-muted-foreground uppercase tracking-wide mb-3">{title}</h4>
       {rows.length === 0 ? (
-        <p className="text-xs text-muted-foreground italic">Nenhum item nas duas versões.</p>
+        <p className="text-meta text-muted-foreground italic">Nenhum item nas duas versões.</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full text-xs">
+          <table className="w-full text-meta">
             <thead>
               <tr className="border-b border-border/50">
                 <th className="text-left py-1.5 font-medium text-muted-foreground">Nome</th>
@@ -128,8 +128,8 @@ function DiffTable({ title, rows, versionA, versionB }: {
                     </td>
                     <td className="py-1.5 pl-2">
                       {status === 'kept' && <span className="text-muted-foreground">=</span>}
-                      {status === 'added' && <Badge className="bg-nexus-emerald/10 text-nexus-emerald text-[10px] px-1.5 py-0">+ adicionada</Badge>}
-                      {status === 'removed' && <Badge className="bg-destructive/10 text-destructive text-[10px] px-1.5 py-0">− removida</Badge>}
+                      {status === 'added' && <Badge className="bg-nexus-emerald/10 text-nexus-emerald text-meta px-1.5 py-0">+ adicionada</Badge>}
+                      {status === 'removed' && <Badge className="bg-destructive/10 text-destructive text-meta px-1.5 py-0">− removida</Badge>}
                     </td>
                   </tr>
                 );

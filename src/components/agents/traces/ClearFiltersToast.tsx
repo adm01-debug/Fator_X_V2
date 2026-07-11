@@ -29,15 +29,15 @@ export function ClearFiltersToast({ toastId, cleared, storageKeys, onUndo, onClo
           <Sparkles className="h-3.5 w-3.5" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold tracking-tight">Filtros limpos</p>
-          <p className="text-[11px] text-muted-foreground">
+          <p className="text-body-sm font-semibold tracking-tight">Filtros limpos</p>
+          <p className="text-meta text-muted-foreground">
             {cleared.length} {cleared.length === 1 ? 'filtro voltou' : 'filtros voltaram'} ao padrão
           </p>
         </div>
       </div>
 
       {cleared.length > 0 && (
-        <ul className="space-y-1 text-[11px] max-h-32 overflow-y-auto pr-1">
+        <ul className="space-y-1 text-meta max-h-32 overflow-y-auto pr-1">
           {cleared.map((c) => (
             <li key={c.label} className="flex items-baseline gap-1.5">
               <span className="font-medium text-foreground/90">{c.label}:</span>
@@ -50,13 +50,13 @@ export function ClearFiltersToast({ toastId, cleared, storageKeys, onUndo, onClo
       )}
 
       {storageKeys.length > 0 && (
-        <div className="flex items-start gap-1.5 text-[10px] text-muted-foreground bg-muted/40 rounded-md p-2">
+        <div className="flex items-start gap-1.5 text-meta text-muted-foreground bg-muted/40 rounded-md p-2">
           <Trash2 className="h-3 w-3 mt-0.5 shrink-0" />
           <div className="min-w-0">
             Removido do storage:{' '}
             {storageKeys.map((k, i) => (
               <span key={k}>
-                <code className="font-mono text-[10px]">{k}</code>
+                <code className="font-mono text-meta">{k}</code>
                 {i < storageKeys.length - 1 ? ', ' : ''}
               </span>
             ))}
@@ -69,13 +69,13 @@ export function ClearFiltersToast({ toastId, cleared, storageKeys, onUndo, onClo
           size="sm"
           variant="outline"
           onClick={() => { onUndo(); onClose(); }}
-          className="h-7 text-xs gap-1.5"
+          className="h-7 text-meta gap-1.5"
         >
           <Undo2 className="h-3 w-3" /> Desfazer
         </Button>
         <button
           onClick={onClose}
-          className="text-[11px] text-muted-foreground hover:text-foreground transition-colors"
+          className="text-meta text-muted-foreground hover:text-foreground transition-colors"
           aria-label="Fechar notificação"
         >
           Dispensar

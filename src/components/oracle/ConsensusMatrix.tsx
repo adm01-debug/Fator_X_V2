@@ -37,12 +37,12 @@ export function ConsensusMatrix({ points, overallConsensus }: ConsensusMatrixPro
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+        <h3 className="text-body-sm font-semibold text-foreground flex items-center gap-2">
           📊 Mapa de Consenso
         </h3>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground">Consenso geral:</span>
-          <Badge variant="outline" className={`text-xs ${overallConsensus >= 80 ? 'border-nexus-emerald/50 text-nexus-emerald' : overallConsensus >= 50 ? 'border-nexus-amber/50 text-nexus-amber' : 'border-nexus-rose/50 text-nexus-rose'}`}>
+          <span className="text-meta text-muted-foreground">Consenso geral:</span>
+          <Badge variant="outline" className={`text-meta ${overallConsensus >= 80 ? 'border-nexus-emerald/50 text-nexus-emerald' : overallConsensus >= 50 ? 'border-nexus-amber/50 text-nexus-amber' : 'border-nexus-rose/50 text-nexus-rose'}`}>
             {overallConsensus}%
           </Badge>
         </div>
@@ -51,7 +51,7 @@ export function ConsensusMatrix({ points, overallConsensus }: ConsensusMatrixPro
       {/* Summary badges */}
       <div className="flex gap-2 flex-wrap">
         {Object.entries(grouped).map(([level, pts]) => pts.length > 0 && (
-          <Badge key={level} variant="outline" className={`text-[11px] ${levelConfig[level as keyof typeof levelConfig].color}`}>
+          <Badge key={level} variant="outline" className={`text-meta ${levelConfig[level as keyof typeof levelConfig].color}`}>
             {levelConfig[level as keyof typeof levelConfig].icon} {pts.length} {levelConfig[level as keyof typeof levelConfig].label}
           </Badge>
         ))}
@@ -60,7 +60,7 @@ export function ConsensusMatrix({ points, overallConsensus }: ConsensusMatrixPro
       {/* Table */}
       <div className="rounded-lg border border-border/50 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-xs">
+          <table className="w-full text-meta">
             <thead>
               <tr className="bg-secondary/50 border-b border-border/50">
                 <th className="text-left p-2.5 text-muted-foreground font-medium">Ponto</th>
@@ -75,7 +75,7 @@ export function ConsensusMatrix({ points, overallConsensus }: ConsensusMatrixPro
                 <tr key={point.id} className={`border-b border-border/30 ${i % 2 === 0 ? 'bg-background' : 'bg-secondary/20'}`}>
                   <td className="p-2.5 text-foreground max-w-[200px]">
                     <span className="line-clamp-2">{point.claim}</span>
-                    <Badge variant="outline" className="text-[11px] mt-1 opacity-60">{point.category}</Badge>
+                    <Badge variant="outline" className="text-meta mt-1 opacity-60">{point.category}</Badge>
                   </td>
                   {models.map(m => {
                     const pos = point.modelPositions.find(mp => mp.model === m);

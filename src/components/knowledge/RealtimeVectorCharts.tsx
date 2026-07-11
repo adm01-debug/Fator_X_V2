@@ -42,7 +42,7 @@ export function RealtimeVectorCharts() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <BarChart3 className="h-4 w-4 text-primary" />
-          <h3 className="text-xs font-black uppercase tracking-widest text-foreground">Vector Telemetry</h3>
+          <h3 className="text-meta font-black uppercase tracking-widest text-foreground">Vector Telemetry</h3>
         </div>
         <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-nexus-emerald/10 text-nexus-emerald text-[9px] font-black uppercase border border-nexus-emerald/20">
           <RefreshCw className="h-2.5 w-2.5 animate-spin-slow" /> Live
@@ -53,11 +53,11 @@ export function RealtimeVectorCharts() {
         {/* Retrieval Latency Area Chart */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground uppercase">
+            <div className="flex items-center gap-1.5 text-meta font-bold text-muted-foreground uppercase">
               <Zap className="h-3 w-3 text-nexus-amber" />
               Retrieval Latency (ms)
             </div>
-            <span className="text-xs font-black text-foreground">48ms avg</span>
+            <span className="text-meta font-black text-foreground">48ms avg</span>
           </div>
           <div className="h-[100px] w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -99,11 +99,11 @@ export function RealtimeVectorCharts() {
         {/* Score Distribution Bar Chart */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground uppercase">
+            <div className="flex items-center gap-1.5 text-meta font-bold text-muted-foreground uppercase">
               <Target className="h-3 w-3 text-nexus-emerald" />
               Score Distribution
             </div>
-            <div className="flex items-center gap-1 text-nexus-emerald text-[10px] font-bold">
+            <div className="flex items-center gap-1 text-nexus-emerald text-meta font-bold">
               94.2% <ArrowUpRight className="h-2.5 w-2.5" />
             </div>
           </div>
@@ -142,14 +142,14 @@ export function RealtimeVectorCharts() {
           <div className="p-2.5 rounded-xl bg-secondary/20 border border-border/10 space-y-1">
             <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-tighter">Success Rate</p>
             <div className="flex items-baseline gap-1">
-              <span className="text-sm font-black text-foreground">99.98%</span>
+              <span className="text-body-sm font-black text-foreground">99.98%</span>
               <div className="h-1.5 w-1.5 rounded-full bg-nexus-emerald animate-pulse" />
             </div>
           </div>
           <div className="p-2.5 rounded-xl bg-secondary/20 border border-border/10 space-y-1">
             <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-tighter">Cache Hit</p>
             <div className="flex items-baseline gap-1">
-              <span className="text-sm font-black text-foreground">84.5%</span>
+              <span className="text-body-sm font-black text-foreground">84.5%</span>
               <span className="text-[8px] font-bold text-nexus-cyan">HNSW</span>
             </div>
           </div>

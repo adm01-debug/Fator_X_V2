@@ -13,8 +13,8 @@ export function ProductMockupPanel() {
           <ImageIcon className="h-5 w-5 text-nexus-orange" />
         </div>
         <div>
-          <h3 className="text-sm font-semibold text-foreground">Promo Brindes — Estúdio de Imagens</h3>
-          <p className="text-xs text-muted-foreground">
+          <h3 className="text-body-sm font-semibold text-foreground">Promo Brindes — Estúdio de Imagens</h3>
+          <p className="text-meta text-muted-foreground">
             Pipeline AI para fotografia de produto: mockup, upscale, inpaint e segmentação
           </p>
         </div>

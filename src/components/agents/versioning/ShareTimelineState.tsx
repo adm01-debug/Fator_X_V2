@@ -94,51 +94,51 @@ export function ShareTimelineState({
     <div className="rounded-lg border border-border/60 bg-card/40 overflow-hidden">
       <div className="flex items-center gap-1.5 px-3 py-2 bg-secondary/40 border-b border-border/50">
         <Share2 className="h-3.5 w-3.5 text-primary" aria-hidden />
-        <span className="text-xs font-semibold text-foreground">Compartilhar visão atual</span>
+        <span className="text-meta font-semibold text-foreground">Compartilhar visão atual</span>
       </div>
 
       {/* Chips do estado */}
       <div className="px-3 pt-2.5 flex flex-wrap gap-1.5">
-        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium border border-primary/40 bg-primary/10 text-primary">
+        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-meta font-medium border border-primary/40 bg-primary/10 text-primary">
           {mode === 'compare'
             ? <><GitCompare className="h-2.5 w-2.5" /> Comparação</>
             : <><Eye className="h-2.5 w-2.5" /> Detalhe</>}
         </span>
         {selected && (
-          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-mono border border-border/60 bg-secondary/60 text-foreground">
+          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-meta font-mono border border-border/60 bg-secondary/60 text-foreground">
             sel: v{selected.version}
           </span>
         )}
         {mode === 'compare' && versionA && (
-          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-mono border border-destructive/40 bg-destructive/10 text-destructive">
+          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-meta font-mono border border-destructive/40 bg-destructive/10 text-destructive">
             A: v{versionA.version}
           </span>
         )}
         {mode === 'compare' && versionB && (
-          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-mono border border-nexus-emerald/40 bg-nexus-emerald/10 text-nexus-emerald">
+          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-meta font-mono border border-nexus-emerald/40 bg-nexus-emerald/10 text-nexus-emerald">
             B: v{versionB.version}
           </span>
         )}
         {presetLabel && presetLabel !== 'Todas' && (
-          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] border border-border/60 bg-secondary/60 text-muted-foreground">
+          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-meta border border-border/60 bg-secondary/60 text-muted-foreground">
             <Filter className="h-2.5 w-2.5" /> {presetLabel}
           </span>
         )}
         {hasTypes && (
-          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] border border-nexus-violet/40 bg-nexus-violet/10 text-nexus-violet">
+          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-meta border border-nexus-violet/40 bg-nexus-violet/10 text-nexus-violet">
             <Tag className="h-2.5 w-2.5" /> {typesLabels!.join(' · ')}
           </span>
         )}
         {runId && (
           <span
-            className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-mono border border-nexus-cyan/40 bg-nexus-cyan/10 text-nexus-cyan"
+            className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-meta font-mono border border-nexus-cyan/40 bg-nexus-cyan/10 text-nexus-cyan"
             title={runId}
           >
             <Activity className="h-2.5 w-2.5" /> run …{runShort}
           </span>
         )}
         {rangeLabel && (
-          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] border border-border/60 bg-secondary/60 text-muted-foreground">
+          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-meta border border-border/60 bg-secondary/60 text-muted-foreground">
             {rangeLabel}
           </span>
         )}
@@ -147,13 +147,13 @@ export function ShareTimelineState({
       {/* Link */}
       <div className="px-3 py-2 flex items-center gap-2">
         <Link2 className="h-3 w-3 text-muted-foreground shrink-0" aria-hidden />
-        <code className="flex-1 min-w-0 truncate text-[10px] font-mono text-muted-foreground bg-background/40 border border-border/40 rounded px-1.5 py-1">
+        <code className="flex-1 min-w-0 truncate text-meta font-mono text-muted-foreground bg-background/40 border border-border/40 rounded px-1.5 py-1">
           {url}
         </code>
         <button
           type="button"
           onClick={() => handleCopy(url, 'link')}
-          className={`inline-flex items-center gap-1 px-2 py-1 rounded text-[10px] font-semibold border transition-colors shrink-0 ${
+          className={`inline-flex items-center gap-1 px-2 py-1 rounded text-meta font-semibold border transition-colors shrink-0 ${
             copiedLink
               ? 'bg-nexus-emerald/15 text-nexus-emerald border-nexus-emerald/40'
               : 'bg-secondary/60 text-foreground border-border/60 hover:bg-secondary'
@@ -168,13 +168,13 @@ export function ShareTimelineState({
       {/* Markdown preview + copiar */}
       <div className="px-3 pb-3 space-y-1.5">
         <div className="flex items-center justify-between">
-          <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+          <span className="text-meta uppercase tracking-wider text-muted-foreground font-semibold">
             Resumo (markdown)
           </span>
           <button
             type="button"
             onClick={() => handleCopy(markdown, 'md')}
-            className={`inline-flex items-center gap-1 px-2 py-1 rounded text-[10px] font-semibold border transition-colors ${
+            className={`inline-flex items-center gap-1 px-2 py-1 rounded text-meta font-semibold border transition-colors ${
               copiedMd
                 ? 'bg-nexus-emerald/15 text-nexus-emerald border-nexus-emerald/40'
                 : 'bg-primary/15 text-primary border-primary/40 hover:bg-primary/25'
@@ -188,7 +188,7 @@ export function ShareTimelineState({
         <textarea
           readOnly
           value={markdown}
-          className="w-full h-32 p-2 text-[10px] font-mono bg-background/40 text-foreground border border-border/40 rounded resize-y focus:outline-none focus:border-primary/40"
+          className="w-full h-32 p-2 text-meta font-mono bg-background/40 text-foreground border border-border/40 rounded resize-y focus:outline-none focus:border-primary/40"
           onFocus={(e) => e.currentTarget.select()}
           aria-label="Resumo da visão atual em markdown"
         />

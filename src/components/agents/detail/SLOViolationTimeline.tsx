@@ -54,7 +54,7 @@ export function SLOViolationTimeline({ data, daily, onDayClick, onViolationClick
                     grid-cols-[40px_1fr] sm:grid-cols-[44px_1fr_auto]
                   "
                 >
-                  <span className="text-[11px] font-mono text-muted-foreground tabular-nums">{day.label}</span>
+                  <span className="text-meta font-mono text-muted-foreground tabular-nums">{day.label}</span>
 
                   {/* Strip — span full row on mobile (pills go on second row) */}
                   <div className="flex items-center gap-0.5 col-start-2 sm:col-auto" aria-hidden>
@@ -74,14 +74,14 @@ export function SLOViolationTimeline({ data, daily, onDayClick, onViolationClick
                     sm:min-w-[80px]
                   ">
                     {totalViolations === 0 ? (
-                      <span className="text-[11px] tabular-nums text-muted-foreground">sem violações</span>
+                      <span className="text-meta tabular-nums text-muted-foreground">sem violações</span>
                     ) : (
                       <>
                         {day.p95Violations > 0 && (
                           <button
                             type="button"
                             onClick={(e) => handleViolationClick(e, 'p95')}
-                            className="px-1.5 py-0.5 text-[10px] font-mono font-semibold rounded bg-nexus-amber/15 text-nexus-amber hover:bg-nexus-amber/25 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nexus-amber"
+                            className="px-1.5 py-0.5 text-meta font-mono font-semibold rounded bg-nexus-amber/15 text-nexus-amber hover:bg-nexus-amber/25 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nexus-amber"
                             aria-label={`${day.p95Violations} violações p95 — abrir drill-down`}
                             title="Detalhar violações p95"
                           >
@@ -92,7 +92,7 @@ export function SLOViolationTimeline({ data, daily, onDayClick, onViolationClick
                           <button
                             type="button"
                             onClick={(e) => handleViolationClick(e, 'p99')}
-                            className="px-1.5 py-0.5 text-[10px] font-mono font-semibold rounded bg-destructive/15 text-destructive hover:bg-destructive/25 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive"
+                            className="px-1.5 py-0.5 text-meta font-mono font-semibold rounded bg-destructive/15 text-destructive hover:bg-destructive/25 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive"
                             aria-label={`${day.p99Violations} violações p99 — abrir drill-down`}
                             title="Detalhar violações p99"
                           >
@@ -103,7 +103,7 @@ export function SLOViolationTimeline({ data, daily, onDayClick, onViolationClick
                           <button
                             type="button"
                             onClick={(e) => handleViolationClick(e, 'error')}
-                            className="px-1.5 py-0.5 text-[10px] font-mono font-semibold rounded bg-destructive/15 text-destructive hover:bg-destructive/25 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive"
+                            className="px-1.5 py-0.5 text-meta font-mono font-semibold rounded bg-destructive/15 text-destructive hover:bg-destructive/25 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive"
                             aria-label={`${day.errors} erros — abrir drill-down`}
                             title="Detalhar erros / critical"
                           >
@@ -115,12 +115,12 @@ export function SLOViolationTimeline({ data, daily, onDayClick, onViolationClick
                   </div>
                 </div>
               </TooltipTrigger>
-              <TooltipContent side="top" className="text-xs max-w-[280px]">
+              <TooltipContent side="top" className="text-meta max-w-[280px]">
                 <div className="space-y-1">
                   <p className="font-semibold">{day.label} · {day.total} trace{day.total !== 1 ? 's' : ''}</p>
 
                   <div className="pt-1 border-t border-border/50 space-y-0.5">
-                    <p className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">Latência observada</p>
+                    <p className="text-meta uppercase tracking-wide text-muted-foreground font-semibold">Latência observada</p>
                     <div className="flex justify-between gap-3 font-mono">
                       <span className="text-muted-foreground">p50</span>
                       <span>{day.p50Ms}ms</span>
@@ -141,7 +141,7 @@ export function SLOViolationTimeline({ data, daily, onDayClick, onViolationClick
 
                   {day.matchedRules.length > 0 ? (
                     <div className="pt-1 border-t border-border/50 space-y-0.5">
-                      <p className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">
+                      <p className="text-meta uppercase tracking-wide text-muted-foreground font-semibold">
                         Regras correspondidas ({day.matchedRules.length})
                       </p>
                       {day.matchedRules.includes('p95') && (
@@ -170,7 +170,7 @@ export function SLOViolationTimeline({ data, daily, onDayClick, onViolationClick
                     <p className="pt-1 border-t border-border/50 text-nexus-emerald">✓ dentro dos SLOs</p>
                   )}
 
-                  <p className="text-muted-foreground pt-1 border-t border-border/50 text-[10px]">
+                  <p className="text-muted-foreground pt-1 border-t border-border/50 text-meta">
                     Clique numa pílula para drill-down · linha = visão geral
                   </p>
                 </div>

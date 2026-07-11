@@ -85,21 +85,21 @@ export function WebhookManagerPanel() {
           <Card key={i} className="bg-card border-border">
             <CardContent className="p-4 text-center">
               <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
-              <p className="text-xs text-muted-foreground">{s.label}</p>
+              <p className="text-meta text-muted-foreground">{s.label}</p>
             </CardContent>
           </Card>
         ))}
       </div>
 
       <Card className="bg-card border-border">
-        <CardHeader className="pb-3"><CardTitle className="text-sm text-muted-foreground">Templates Prontos</CardTitle></CardHeader>
+        <CardHeader className="pb-3"><CardTitle className="text-body-sm text-muted-foreground">Templates Prontos</CardTitle></CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {Object.entries(WEBHOOK_TEMPLATES).map(([key, tpl]) => (
               <div key={key} className="p-3 rounded-lg bg-background border border-border hover:border-nexus-purple/50 cursor-pointer">
-                <p className="font-medium text-sm">{tpl.name}</p>
-                <p className="text-xs text-muted-foreground mt-1">{tpl.description}</p>
-                <Badge variant="outline" className="mt-2 text-[10px] border-border">{tpl.auth_type ? AUTH_LABELS[tpl.auth_type] ?? tpl.auth_type : 'N/A'}</Badge>
+                <p className="font-medium text-body-sm">{tpl.name}</p>
+                <p className="text-meta text-muted-foreground mt-1">{tpl.description}</p>
+                <Badge variant="outline" className="mt-2 text-meta border-border">{tpl.auth_type ? AUTH_LABELS[tpl.auth_type] ?? tpl.auth_type : 'N/A'}</Badge>
               </div>
             ))}
           </div>
@@ -123,19 +123,19 @@ export function WebhookManagerPanel() {
                 <div className="flex items-center justify-between gap-4">
                   <div className="min-w-0 flex-1">
                     <p className="font-medium">{w.name}</p>
-                    <code className="text-xs text-muted-foreground font-mono">{w.path}</code>
+                    <code className="text-meta text-muted-foreground font-mono">{w.path}</code>
                     <div className="flex gap-2 mt-1 flex-wrap">
-                      {w.methods.map(m => <Badge key={m} variant="outline" className="text-[10px] border-border">{m}</Badge>)}
-                      <Badge variant="outline" className="text-[10px] border-border">{AUTH_LABELS[w.auth_type] ?? w.auth_type}</Badge>
+                      {w.methods.map(m => <Badge key={m} variant="outline" className="text-meta border-border">{m}</Badge>)}
+                      <Badge variant="outline" className="text-meta border-border">{AUTH_LABELS[w.auth_type] ?? w.auth_type}</Badge>
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-2 shrink-0">
                     <Badge className={w.status === 'active' ? 'bg-nexus-emerald/20 text-nexus-emerald' : 'bg-destructive/20 text-destructive'}>{w.status}</Badge>
-                    <p className="text-xs text-muted-foreground">{w.request_count} requests</p>
+                    <p className="text-meta text-muted-foreground">{w.request_count} requests</p>
                     <Button
                       size="sm"
                       variant="outline"
-                      className="h-7 text-xs gap-1.5 border-border hover:bg-accent hover:border-primary"
+                      className="h-7 text-meta gap-1.5 border-border hover:bg-accent hover:border-primary"
                       disabled={w.status !== 'active'}
                       onClick={() => openTestDialog(w)}
                     >
@@ -161,20 +161,20 @@ export function WebhookManagerPanel() {
           </DialogHeader>
           <div className="space-y-6 mt-4">
             <div className="space-y-2">
-              <Label className="text-xs font-black uppercase text-muted-foreground tracking-widest">Webhook Alvo</Label>
+              <Label className="text-meta font-black uppercase text-muted-foreground tracking-widest">Webhook Alvo</Label>
               <div className="p-3 rounded-xl bg-secondary/30 border border-border/20">
-                <p className="text-sm font-bold text-foreground">{selectedWebhook?.name}</p>
-                <code className="text-[10px] text-muted-foreground">{selectedWebhook?.path}</code>
+                <p className="text-body-sm font-bold text-foreground">{selectedWebhook?.name}</p>
+                <code className="text-meta text-muted-foreground">{selectedWebhook?.path}</code>
               </div>
             </div>
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label className="text-xs font-black uppercase text-muted-foreground tracking-widest">JSON Payload</Label>
+                <Label className="text-meta font-black uppercase text-muted-foreground tracking-widest">JSON Payload</Label>
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="h-6 text-[10px] gap-1"
+                  className="h-6 text-meta gap-1"
                   onClick={() => navigator.clipboard.writeText(testPayload)}
                 >
                   <Clipboard className="h-3 w-3" /> Copiar
@@ -183,7 +183,7 @@ export function WebhookManagerPanel() {
               <Textarea 
                 value={testPayload} 
                 onChange={(e) => setTestPayload(e.target.value)} 
-                className="font-mono text-xs min-h-[160px] rounded-xl bg-secondary/20"
+                className="font-mono text-meta min-h-[160px] rounded-xl bg-secondary/20"
               />
             </div>
 

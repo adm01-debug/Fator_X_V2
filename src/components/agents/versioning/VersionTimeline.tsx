@@ -74,8 +74,8 @@ export function VersionTimeline({
   return (
     <div className="nexus-card">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-heading font-semibold text-foreground">Linha do tempo</h3>
-        <Badge variant="outline" className="text-[11px]">{versions.length} versões</Badge>
+        <h3 className="text-body-sm font-heading font-semibold text-foreground">Linha do tempo</h3>
+        <Badge variant="outline" className="text-meta">{versions.length} versões</Badge>
       </div>
 
       <div className="space-y-1.5 max-h-[600px] overflow-y-auto pr-1">
@@ -111,15 +111,15 @@ export function VersionTimeline({
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <span className="text-xs font-mono font-semibold text-foreground">v{v.version}</span>
-                      {isCurrent && <Badge className="bg-primary/10 text-primary text-[10px] px-1.5 py-0">atual</Badge>}
-                      {isA && <Badge className="bg-destructive/10 text-destructive text-[10px] px-1.5 py-0">A</Badge>}
-                      {isB && <Badge className="bg-nexus-emerald/10 text-nexus-emerald text-[10px] px-1.5 py-0">B</Badge>}
+                      <span className="text-meta font-mono font-semibold text-foreground">v{v.version}</span>
+                      {isCurrent && <Badge className="bg-primary/10 text-primary text-meta px-1.5 py-0">atual</Badge>}
+                      {isA && <Badge className="bg-destructive/10 text-destructive text-meta px-1.5 py-0">A</Badge>}
+                      {isB && <Badge className="bg-nexus-emerald/10 text-nexus-emerald text-meta px-1.5 py-0">B</Badge>}
                     </div>
-                    <p className="text-xs text-foreground/80 truncate">
+                    <p className="text-meta text-foreground/80 truncate">
                       {v.change_summary || 'Sem resumo'}
                     </p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">
+                    <p className="text-meta text-muted-foreground mt-0.5">
                       {formatWhen(v.created_at)} · {String(v.model ?? '—')}
                     </p>
                   </div>
@@ -129,14 +129,14 @@ export function VersionTimeline({
               <div className="flex gap-1 mt-1 mb-2 pl-6">
                 <Button
                   variant="ghost" size="sm"
-                  className={`h-5 px-2 text-[10px] gap-1 ${isA ? 'bg-destructive/10 text-destructive' : 'text-muted-foreground'}`}
+                  className={`h-5 px-2 text-meta gap-1 ${isA ? 'bg-destructive/10 text-destructive' : 'text-muted-foreground'}`}
                   onClick={(e) => { e.stopPropagation(); onPickA(v.id); }}
                 >
                   <GitBranch className="h-2.5 w-2.5" /> A
                 </Button>
                 <Button
                   variant="ghost" size="sm"
-                  className={`h-5 px-2 text-[10px] gap-1 ${isB ? 'bg-nexus-emerald/10 text-nexus-emerald' : 'text-muted-foreground'}`}
+                  className={`h-5 px-2 text-meta gap-1 ${isB ? 'bg-nexus-emerald/10 text-nexus-emerald' : 'text-muted-foreground'}`}
                   onClick={(e) => { e.stopPropagation(); onPickB(v.id); }}
                 >
                   <GitBranch className="h-2.5 w-2.5" /> B
@@ -145,7 +145,7 @@ export function VersionTimeline({
                     timeline já posicionada na versão, sem query params. */}
                 <Button
                   variant="ghost" size="sm"
-                  className={`h-5 px-2 text-[10px] gap-1 ml-auto ${
+                  className={`h-5 px-2 text-meta gap-1 ml-auto ${
                     copiedId === v.id ? 'text-nexus-emerald' : 'text-muted-foreground hover:text-foreground'
                   }`}
                   onClick={(e) => { e.stopPropagation(); handleCopyLink(v.id, v.version); }}

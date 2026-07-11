@@ -173,10 +173,10 @@ function RunRow({ run, isActive, onPick, highlight = 'time' }: RunRowProps) {
       }`}
     >
       <div className="flex items-center justify-between gap-2 w-full">
-        <span className="text-[11px] font-mono font-semibold text-foreground truncate">
+        <span className="text-meta font-mono font-semibold text-foreground truncate">
           {run.session_id}
         </span>
-        <span className="text-[10px] text-muted-foreground shrink-0 flex items-center gap-1.5">
+        <span className="text-meta text-muted-foreground shrink-0 flex items-center gap-1.5">
           {highlight === 'slow' && (
             <span className="text-nexus-amber font-semibold">{formatDuration(run.duration_ms)}</span>
           )}
@@ -187,7 +187,7 @@ function RunRow({ run, isActive, onPick, highlight = 'time' }: RunRowProps) {
           {highlight !== 'slow' && <span>· {formatDuration(run.duration_ms)}</span>}
         </span>
       </div>
-      <div className="text-[10px] text-muted-foreground truncate">
+      <div className="text-meta text-muted-foreground truncate">
         {formatWhen(run.start_at)}
         {run.first_event ? <> · primeiro: <span className="font-mono">{run.first_event}</span></> : null}
       </div>
@@ -248,7 +248,7 @@ export function RunFilter({ agentId, currentRange, activeRunId, onApply }: Props
           type="button"
           size="sm"
           variant={activeRun ? 'default' : 'ghost'}
-          className={`h-6 px-2 text-[11px] gap-1 ${
+          className={`h-6 px-2 text-meta gap-1 ${
             activeRun
               ? 'bg-nexus-emerald/15 text-nexus-emerald hover:bg-nexus-emerald/25 border border-nexus-emerald/30'
               : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
@@ -294,13 +294,13 @@ export function RunFilter({ agentId, currentRange, activeRunId, onApply }: Props
         >
           <CommandInput
             placeholder="Buscar por session id ou evento…"
-            className="text-xs"
+            className="text-meta"
           />
           <CommandList className="max-h-[360px]">
             {isLoading ? (
               <div className="flex flex-col items-center justify-center py-8 gap-2 text-muted-foreground">
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-                <span className="text-[10px]">Carregando execuções…</span>
+                <span className="text-meta">Carregando execuções…</span>
               </div>
             ) : runs.length === 0 ? (
               // Estado "agente nunca executou" — diferente de "busca sem match".
@@ -312,7 +312,7 @@ export function RunFilter({ agentId, currentRange, activeRunId, onApply }: Props
                 <p className="text-[12px] font-semibold text-foreground">
                   Nenhuma execução ainda
                 </p>
-                <p className="text-[10px] text-muted-foreground leading-relaxed max-w-[260px]">
+                <p className="text-meta text-muted-foreground leading-relaxed max-w-[260px]">
                   Este agente não tem traces registrados. Rode uma conversa ou
                   acione uma automação para que execuções apareçam aqui.
                 </p>
@@ -330,7 +330,7 @@ export function RunFilter({ agentId, currentRange, activeRunId, onApply }: Props
                     <p className="text-[12px] font-semibold text-foreground">
                       Nada encontrado
                     </p>
-                    <p className="text-[10px] text-muted-foreground leading-relaxed max-w-[260px]">
+                    <p className="text-meta text-muted-foreground leading-relaxed max-w-[260px]">
                       Tente buscar pelos últimos 6 caracteres do session id ou
                       pelo nome de um evento (ex: <span className="font-mono">tool_call</span>).
                     </p>
@@ -424,12 +424,12 @@ export function RunFilter({ agentId, currentRange, activeRunId, onApply }: Props
 
         {activeRun && (
           <div className="flex items-center justify-between p-2 border-t border-border/50">
-            <span className="text-[10px] text-muted-foreground truncate">
+            <span className="text-meta text-muted-foreground truncate">
               Janela: {formatWhen(activeRun.start_at)} → {formatWhen(activeRun.end_at)}
             </span>
             <Button
               type="button" size="sm" variant="ghost"
-              className="h-6 px-2 text-[10px] text-muted-foreground hover:text-foreground"
+              className="h-6 px-2 text-meta text-muted-foreground hover:text-foreground"
               onClick={handleClear}
             >
               Limpar

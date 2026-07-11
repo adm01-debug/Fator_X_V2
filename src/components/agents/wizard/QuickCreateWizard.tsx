@@ -963,7 +963,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
         </Button>
         <div>
           <h1 className="text-xl font-heading font-bold text-foreground">Criação rápida ⚡</h1>
-          <p className="text-sm text-muted-foreground">Passo {step + 1} de {STEPS.length}</p>
+          <p className="text-body-sm text-muted-foreground">Passo {step + 1} de {STEPS.length}</p>
         </div>
       </div>
 
@@ -977,7 +977,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
               onClick={() => goToStep(i)}
               role="tab"
               aria-selected={isActive}
-              className={`flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium transition-all whitespace-nowrap ${
+              className={`flex items-center gap-2 rounded-lg px-3 py-2 text-meta font-medium transition-all whitespace-nowrap ${
                 isActive
                   ? 'bg-primary/15 text-primary'
                   : isDone
@@ -986,7 +986,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
               }`}
             >
               <div
-                className={`h-6 w-6 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 ${
+                className={`h-6 w-6 rounded-full flex items-center justify-center text-meta font-bold shrink-0 ${
                   isDone
                     ? 'bg-primary text-primary-foreground'
                     : isActive
@@ -1009,8 +1009,8 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
           agente" se o prompt atual não atingir o nível selecionado. */}
       <div className="flex flex-wrap items-center gap-3 rounded-lg border border-border/50 bg-secondary/30 px-3 py-2">
         <div className="flex flex-col">
-          <span className="text-xs font-medium text-foreground">Profundidade mínima do prompt</span>
-          <span className="text-[11px] text-muted-foreground">
+          <span className="text-meta font-medium text-foreground">Profundidade mínima do prompt</span>
+          <span className="text-meta text-muted-foreground">
             Atual: <span className={`font-mono tabular-nums ${meetsDepth ? 'text-nexus-emerald' : 'text-nexus-amber'}`}>{promptWordCount}</span> palavra{promptWordCount === 1 ? '' : 's'}
             {' · '}mínimo exigido: <span className="font-mono tabular-nums">{minPromptDepth}</span>
           </span>
@@ -1034,7 +1034,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
                     : opt === 8 ? 'Equilibrado — recomendado'
                     : 'Rigoroso — exige descrição mais detalhada'
                 }
-                className={`text-xs font-medium px-3 py-1 rounded transition-colors ${
+                className={`text-meta font-medium px-3 py-1 rounded transition-colors ${
                   active
                     ? 'bg-primary text-primary-foreground shadow-sm'
                     : 'text-muted-foreground hover:text-foreground hover:bg-secondary/60'
@@ -1051,7 +1051,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
         <Button variant="ghost" onClick={goPrev} className="gap-2">
           <ArrowLeft className="h-4 w-4" /> Voltar
         </Button>
-        <div className="text-xs text-muted-foreground hidden sm:block">
+        <div className="text-meta text-muted-foreground hidden sm:block">
           {step + 1} de {STEPS.length}
           {isLast && <span className="ml-2 opacity-60">(Ctrl+Enter para criar)</span>}
         </div>

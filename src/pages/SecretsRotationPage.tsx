@@ -176,7 +176,7 @@ export default function SecretsRotationPage() {
                   <Label>Templates</Label>
                   <div className="flex flex-wrap gap-1.5 mt-1.5">
                     {SECRET_TEMPLATES.map(t => (
-                      <Button key={t.name} type="button" variant="outline" size="sm" onClick={() => applyTemplate(t)} className="h-7 text-xs">
+                      <Button key={t.name} type="button" variant="outline" size="sm" onClick={() => applyTemplate(t)} className="h-7 text-meta">
                         {t.name} ({t.rotation_interval_days}d)
                       </Button>
                     ))}
@@ -280,9 +280,9 @@ export default function SecretsRotationPage() {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="text-center py-12 text-muted-foreground text-sm">Carregando…</div>
+            <div className="text-center py-12 text-muted-foreground text-body-sm">Carregando…</div>
           ) : filtered.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground text-sm">
+            <div className="text-center py-12 text-muted-foreground text-body-sm">
               Nenhum secret cadastrado. Comece adicionando suas credenciais críticas.
             </div>
           ) : (
@@ -306,25 +306,25 @@ export default function SecretsRotationPage() {
                     <TableRow key={s.id}>
                       <TableCell className="font-medium">
                         <div>{s.name}</div>
-                        {s.provider && <div className="text-xs text-muted-foreground">{s.provider}</div>}
+                        {s.provider && <div className="text-meta text-muted-foreground">{s.provider}</div>}
                       </TableCell>
                       <TableCell>
                         <Badge variant="secondary" className="font-normal">{SECRET_CATEGORY_LABELS[s.category]}</Badge>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={s.environment === 'prod' ? 'default' : 'outline'} className="font-normal text-xs">
+                        <Badge variant={s.environment === 'prod' ? 'default' : 'outline'} className="font-normal text-meta">
                           {s.environment}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
+                      <TableCell className="text-body-sm text-muted-foreground">
                         {s.last_rotated_at ? new Date(s.last_rotated_at).toLocaleDateString('pt-BR') : '—'}
                       </TableCell>
-                      <TableCell className="text-sm">
+                      <TableCell className="text-body-sm">
                         {s.next_rotation_due ? (
                           <div>
                             <div>{new Date(s.next_rotation_due).toLocaleDateString('pt-BR')}</div>
                             {days !== null && s.status !== 'retired' && (
-                              <div className={`text-xs ${days < 0 ? 'text-destructive' : days < 7 ? 'text-amber-500' : 'text-muted-foreground'}`}>
+                              <div className={`text-meta ${days < 0 ? 'text-destructive' : days < 7 ? 'text-amber-500' : 'text-muted-foreground'}`}>
                                 {days < 0 ? `${Math.abs(days)}d atrasado` : `em ${days}d`}
                               </div>
                             )}
@@ -337,10 +337,10 @@ export default function SecretsRotationPage() {
                       <TableCell className="text-right">
                         {s.status !== 'retired' && (
                           <div className="flex justify-end gap-1">
-                            <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" onClick={() => setRotateSecret(s)}>
+                            <Button size="sm" variant="ghost" className="h-7 px-2 text-meta" onClick={() => setRotateSecret(s)}>
                               <RotateCw className="h-3 w-3 mr-1" /> Rotacionar
                             </Button>
-                            <Button size="sm" variant="ghost" className="h-7 px-2 text-xs text-muted-foreground" onClick={() => handleRetire(s)}>
+                            <Button size="sm" variant="ghost" className="h-7 px-2 text-meta text-muted-foreground" onClick={() => handleRetire(s)}>
                               <Archive className="h-3 w-3" />
                             </Button>
                           </div>
@@ -403,7 +403,7 @@ function StatCard({ label, value, icon, tone, pulse }: { label: string; value: n
     <Card className={pulse ? 'animate-pulse-subtle border-destructive/40' : ''}>
       <CardContent className="p-4">
         <div className="flex items-center justify-between">
-          <span className="text-xs text-muted-foreground uppercase tracking-wide">{label}</span>
+          <span className="text-meta text-muted-foreground uppercase tracking-wide">{label}</span>
           <span className={toneClasses[tone]}>{icon}</span>
         </div>
         <div className={`text-2xl font-bold mt-1 tabular-nums ${toneClasses[tone]}`}>{value}</div>
@@ -421,7 +421,7 @@ function StatusBadge({ variant }: { variant: 'overdue' | 'urgent' | 'soon' | 'ok
     retired: { label: 'Aposentado', cls: 'bg-muted text-muted-foreground border-border' },
   }[variant];
   return (
-    <Badge variant="outline" className={`${config.cls} font-medium text-xs`}>
+    <Badge variant="outline" className={`${config.cls} font-medium text-meta`}>
       {config.label}
     </Badge>
   );

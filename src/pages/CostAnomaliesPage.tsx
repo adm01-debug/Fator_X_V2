@@ -88,7 +88,7 @@ export default function CostAnomaliesPage() {
           <CardContent className="py-16 text-center">
             <CheckCircle2 className="h-12 w-12 text-success mx-auto mb-4" />
             <p className="text-lg font-medium">Sem anomalias detectadas</p>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-body-sm text-muted-foreground mt-1">
               Custos dentro do esperado ✅
             </p>
           </CardContent>
@@ -115,7 +115,7 @@ function AlertCard({ alert, onAck }: { alert: CostAlert; onAck: (id: string) => 
               <CardTitle className="text-base">
                 {alert.scope_label ?? `${alert.scope}`}
               </CardTitle>
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-meta text-muted-foreground mt-1">
                 Disparado {new Date(alert.triggered_at).toLocaleString("pt-BR")}
               </p>
             </div>
@@ -124,24 +124,24 @@ function AlertCard({ alert, onAck }: { alert: CostAlert; onAck: (id: string) => 
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-3 gap-4 text-sm">
+        <div className="grid grid-cols-3 gap-4 text-body-sm">
           <div>
-            <p className="text-muted-foreground text-xs">Observado</p>
+            <p className="text-muted-foreground text-meta">Observado</p>
             <p className="font-mono font-bold text-lg">${alert.observed_cost_usd.toFixed(2)}</p>
           </div>
           <div>
-            <p className="text-muted-foreground text-xs">Baseline</p>
+            <p className="text-muted-foreground text-meta">Baseline</p>
             <p className="font-mono text-lg">${alert.baseline_cost_usd.toFixed(2)}</p>
           </div>
           <div>
-            <p className="text-muted-foreground text-xs">Z-score</p>
+            <p className="text-muted-foreground text-meta">Z-score</p>
             <p className="font-mono font-bold text-lg flex items-center gap-1">
               <TrendingUp className="h-4 w-4" />
               {alert.z_score.toFixed(1)}σ
             </p>
           </div>
         </div>
-        <div className="text-xs text-muted-foreground">
+        <div className="text-meta text-muted-foreground">
           +${delta.toFixed(2)} ({pct > 0 ? "+" : ""}{pct.toFixed(0)}%) acima do esperado para esta hora/dia
         </div>
         {!alert.acknowledged_at && (
@@ -161,7 +161,7 @@ function AlertCard({ alert, onAck }: { alert: CostAlert; onAck: (id: string) => 
           </div>
         )}
         {alert.acknowledged_at && (
-          <p className="text-xs text-muted-foreground">
+          <p className="text-meta text-muted-foreground">
             ✓ Tratado em {new Date(alert.acknowledged_at).toLocaleString("pt-BR")}
           </p>
         )}

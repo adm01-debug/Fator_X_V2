@@ -39,7 +39,7 @@ export function ExecutionHistoryPanel() {
           <Card key={i} className="bg-card border-border">
             <CardContent className="p-3 text-center">
               <p className="text-xl font-bold" style={{ color: s.color }}>{s.value}</p>
-              <p className="text-[10px] text-muted-foreground">{s.label}</p>
+              <p className="text-meta text-muted-foreground">{s.label}</p>
             </CardContent>
           </Card>
         ))}
@@ -61,17 +61,17 @@ export function ExecutionHistoryPanel() {
               <CardContent className="p-3 flex items-center gap-3">
                 <span className="text-lg">{TYPE_ICONS[e.execution_type] ?? '⚡'}</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{e.source_name}</p>
-                  <p className="text-[10px] text-muted-foreground">{e.trigger} • {e.steps.length} steps • {e.tokens_used} tokens</p>
+                  <p className="text-body-sm font-medium truncate">{e.source_name}</p>
+                  <p className="text-meta text-muted-foreground">{e.trigger} • {e.steps.length} steps • {e.tokens_used} tokens</p>
                 </div>
                 <div className="text-right shrink-0">
                   <Badge className={STATUS_COLORS[e.status] ?? 'bg-muted text-muted-foreground'}>{e.status}</Badge>
-                  <p className="text-[10px] text-muted-foreground mt-1">{e.duration_ms ? `${(e.duration_ms / 1000).toFixed(1)}s` : '...'}</p>
+                  <p className="text-meta text-muted-foreground mt-1">{e.duration_ms ? `${(e.duration_ms / 1000).toFixed(1)}s` : '...'}</p>
                 </div>
               </CardContent>
             </Card>
           ))}
-          <p className="text-xs text-muted-foreground text-center">Mostrando {executions.length} de {total} execuções</p>
+          <p className="text-meta text-muted-foreground text-center">Mostrando {executions.length} de {total} execuções</p>
         </div>
       )}
     </div>

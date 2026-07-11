@@ -82,8 +82,8 @@ export function ErrorAnalysisPanel({ runs }: Props) {
       <div className="rounded-lg border border-nexus-emerald/30 bg-nexus-emerald/5 p-3 flex items-center gap-2.5">
         <ShieldCheck className="h-4 w-4 text-nexus-emerald shrink-0" aria-hidden="true" />
         <div>
-          <p className="text-xs font-semibold text-nexus-emerald">Nenhum erro nesta simulação</p>
-          <p className="text-[11px] text-muted-foreground">Mantenha os guardrails atuais e considere expandir os casos de teste.</p>
+          <p className="text-meta font-semibold text-nexus-emerald">Nenhum erro nesta simulação</p>
+          <p className="text-meta text-muted-foreground">Mantenha os guardrails atuais e considere expandir os casos de teste.</p>
         </div>
       </div>
     );
@@ -97,7 +97,7 @@ export function ErrorAnalysisPanel({ runs }: Props) {
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <ShieldAlert className="h-4 w-4 text-destructive shrink-0" aria-hidden="true" />
-          <h4 className="text-xs font-semibold text-foreground">
+          <h4 className="text-meta font-semibold text-foreground">
             Análise de erros
             <span className="ml-1.5 font-normal text-muted-foreground">
               · {errors.length}/{total} falharam ({errorRatePct.toFixed(0)}%)
@@ -105,7 +105,7 @@ export function ErrorAnalysisPanel({ runs }: Props) {
           </h4>
         </div>
         {topErrorType && (
-          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-destructive/15 text-destructive">
+          <span className="text-meta font-mono px-1.5 py-0.5 rounded bg-destructive/15 text-destructive">
             top: {ERROR_META[topErrorType].label.toLowerCase()}
           </span>
         )}
@@ -119,7 +119,7 @@ export function ErrorAnalysisPanel({ runs }: Props) {
           const widthPct = (count / errors.length) * 100;
           return (
             <div key={type} className="space-y-0.5">
-              <div className="flex items-center justify-between text-[11px]">
+              <div className="flex items-center justify-between text-meta">
                 <span className="inline-flex items-center gap-1.5 text-foreground">
                   <Icon className="h-3 w-3 text-destructive" aria-hidden="true" />
                   {meta.label}
@@ -146,7 +146,7 @@ export function ErrorAnalysisPanel({ runs }: Props) {
 
       {/* Guardrail recommendations — top 3 */}
       <div className="border-t border-destructive/20 pt-2.5 space-y-2">
-        <div className="flex items-center gap-1.5 text-[11px] font-semibold text-foreground">
+        <div className="flex items-center gap-1.5 text-meta font-semibold text-foreground">
           <AlertTriangle className="h-3 w-3 text-nexus-amber" aria-hidden="true" />
           Guardrails sugeridos
           <span className="font-normal text-muted-foreground">(priorizados pelos erros mais frequentes)</span>
@@ -158,9 +158,9 @@ export function ErrorAnalysisPanel({ runs }: Props) {
             return (
               <li
                 key={type}
-                className="rounded-md bg-card/50 border border-border/40 p-2 text-[11px] flex gap-2"
+                className="rounded-md bg-card/50 border border-border/40 p-2 text-meta flex gap-2"
               >
-                <span className="shrink-0 inline-flex items-center justify-center h-5 w-5 rounded bg-primary/10 text-primary font-mono font-bold text-[10px]">
+                <span className="shrink-0 inline-flex items-center justify-center h-5 w-5 rounded bg-primary/10 text-primary font-mono font-bold text-meta">
                   {idx + 1}
                 </span>
                 <div className="space-y-0.5 min-w-0">

@@ -139,10 +139,10 @@ export function DataHubSyncTab() {
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h3 className="text-sm font-heading font-semibold text-foreground flex items-center gap-2">
+          <h3 className="text-body-sm font-heading font-semibold text-foreground flex items-center gap-2">
             <Brain className="h-4 w-4 text-primary" /> Sync para Super Cérebro
           </h3>
-          <p className="text-[11px] text-muted-foreground mt-0.5">
+          <p className="text-meta text-muted-foreground mt-0.5">
             Sincroniza dados dos 5 bancos do DataHub para o knowledge graph do Super Cérebro como fatos consumíveis pelos agentes.
           </p>
         </div>
@@ -159,24 +159,24 @@ export function DataHubSyncTab() {
       {/* Overview */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="nexus-card text-center py-3">
-          <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Tabelas Configuradas</p>
+          <p className="text-meta text-muted-foreground uppercase tracking-wider">Tabelas Configuradas</p>
           <p className="text-xl font-bold text-primary mt-1">{report?.configured_count ?? 0}</p>
         </div>
         <div className="nexus-card text-center py-3">
-          <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Total de Registros</p>
+          <p className="text-meta text-muted-foreground uppercase tracking-wider">Total de Registros</p>
           <p className="text-xl font-bold text-nexus-purple mt-1">
             {report?.total_records?.toLocaleString('pt-BR') ?? 0}
           </p>
         </div>
         <div className="nexus-card text-center py-3">
-          <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Sincronizados</p>
+          <p className="text-meta text-muted-foreground uppercase tracking-wider">Sincronizados</p>
           <p className="text-xl font-bold text-nexus-emerald mt-1">
             {report?.synced_records?.toLocaleString('pt-BR') ?? 0}
           </p>
         </div>
         <div className="nexus-card text-center py-3">
-          <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Última Execução</p>
-          <p className="text-sm font-semibold text-foreground mt-1">
+          <p className="text-meta text-muted-foreground uppercase tracking-wider">Última Execução</p>
+          <p className="text-body-sm font-semibold text-foreground mt-1">
             {formatRelativeTime(report?.last_run_at ?? null)}
           </p>
         </div>
@@ -185,8 +185,8 @@ export function DataHubSyncTab() {
       {/* Progress bar */}
       <div className="nexus-card">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-xs text-muted-foreground">Progresso de sincronização</span>
-          <span className="text-xs font-mono font-semibold text-primary">
+          <span className="text-meta text-muted-foreground">Progresso de sincronização</span>
+          <span className="text-meta font-mono font-semibold text-primary">
             {syncProgress.toFixed(1)}%
           </span>
         </div>
@@ -206,8 +206,8 @@ export function DataHubSyncTab() {
       ) : (report?.statuses?.length ?? 0) === 0 ? (
         <div className="nexus-card text-center py-12">
           <Database className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
-          <p className="text-sm text-muted-foreground">Nenhuma tabela configurada para sincronização</p>
-          <p className="text-[11px] text-muted-foreground/70 mt-1">
+          <p className="text-body-sm text-muted-foreground">Nenhuma tabela configurada para sincronização</p>
+          <p className="text-meta text-muted-foreground/70 mt-1">
             Configure mapeamentos de entidade na aba Schema para ativar a sincronização
           </p>
         </div>
@@ -227,9 +227,9 @@ export function DataHubSyncTab() {
                       className={`h-4 w-4 shrink-0 ${s.status === 'syncing' ? 'animate-spin' : ''}`}
                       style={{ color: cfg.color }}
                     />
-                    <Badge variant="outline" className="text-[10px] shrink-0">{dbLabel}</Badge>
+                    <Badge variant="outline" className="text-meta shrink-0">{dbLabel}</Badge>
                     <ArrowRight className="h-3 w-3 text-muted-foreground shrink-0" />
-                    <code className="text-xs font-mono truncate">{s.source_table}</code>
+                    <code className="text-meta font-mono truncate">{s.source_table}</code>
                     <ArrowRight className="h-3 w-3 text-muted-foreground shrink-0" />
                     <Brain className="h-3 w-3 text-primary shrink-0" />
                   </div>
@@ -248,7 +248,7 @@ export function DataHubSyncTab() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-3 text-[11px] text-muted-foreground mb-2">
+                <div className="grid grid-cols-3 gap-3 text-meta text-muted-foreground mb-2">
                   <span>
                     Total: <span className="text-foreground font-semibold">{s.records_total.toLocaleString('pt-BR')}</span>
                   </span>
@@ -271,7 +271,7 @@ export function DataHubSyncTab() {
                 </div>
 
                 {s.error && (
-                  <p className="text-[10px] text-destructive mt-2 italic">{s.error}</p>
+                  <p className="text-meta text-destructive mt-2 italic">{s.error}</p>
                 )}
               </div>
             );

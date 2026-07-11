@@ -19,14 +19,14 @@ export function PipelineFlow({ steps, className }: PipelineFlowProps) {
       {steps.map((step, i) => (
         <div key={i} className="flex items-center gap-1 shrink-0">
           <div
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg border bg-card text-xs transition-all hover:bg-muted/30"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg border bg-card text-meta transition-all hover:bg-muted/30"
             style={step.color ? { borderColor: `${step.color}40` } : undefined}
           >
-            <span className="text-sm">{step.icon}</span>
+            <span className="text-body-sm">{step.icon}</span>
             <div className="min-w-0">
               <span className="font-medium text-foreground whitespace-nowrap">{step.label}</span>
               {step.sublabel && (
-                <span className="block text-[11px] text-muted-foreground">{step.sublabel}</span>
+                <span className="block text-meta text-muted-foreground">{step.sublabel}</span>
               )}
             </div>
           </div>

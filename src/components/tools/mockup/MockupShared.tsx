@@ -25,7 +25,7 @@ export function FilePicker({
             const f = e.target.files?.[0];
             if (f) onFile(f);
           }}
-          className="flex-1 text-xs file:mr-3 file:px-3 file:py-1.5 file:rounded-md file:border-0 file:bg-background file:text-foreground hover:file:bg-muted"
+          className="flex-1 text-meta file:mr-3 file:px-3 file:py-1.5 file:rounded-md file:border-0 file:bg-background file:text-foreground hover:file:bg-muted"
         />
         <Upload className="h-4 w-4 text-muted-foreground" />
       </div>

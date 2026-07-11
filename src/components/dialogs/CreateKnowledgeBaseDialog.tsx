@@ -64,17 +64,17 @@ export function CreateKnowledgeBaseDialog({ onCreated }: CreateKnowledgeBaseDial
         </DialogHeader>
         <div className="space-y-4 mt-2">
           <div className="space-y-1.5">
-            <Label className="text-xs">Nome *</Label>
+            <Label className="text-meta">Nome *</Label>
             <Input value={name} onChange={e => setName(e.target.value)} placeholder="Ex: Documentação Técnica" className={`bg-secondary/50 ${errors.name ? 'border-destructive' : ''}`} />
-            {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
+            {errors.name && <p className="text-meta text-destructive">{errors.name}</p>}
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Descrição</Label>
+            <Label className="text-meta">Descrição</Label>
             <Textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Para que serve esta base..." className="bg-secondary/50" rows={3} />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label className="text-xs">Vector DB</Label>
+              <Label className="text-meta">Vector DB</Label>
               <Select value={vectorDb} onValueChange={(v) => setVectorDb(v as typeof vectorDb)}>
                 <SelectTrigger className="bg-secondary/50"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -84,7 +84,7 @@ export function CreateKnowledgeBaseDialog({ onCreated }: CreateKnowledgeBaseDial
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Embedding Model</Label>
+              <Label className="text-meta">Embedding Model</Label>
               <Select value={embeddingModel} onValueChange={(v) => setEmbeddingModel(v as typeof embeddingModel)}>
                 <SelectTrigger className="bg-secondary/50"><SelectValue /></SelectTrigger>
                 <SelectContent>

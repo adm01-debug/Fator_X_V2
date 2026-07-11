@@ -151,7 +151,7 @@ export function TestingModule() {
                 >
                   <div className={`flex justify-center mb-2 ${meta.color}`}>{meta.icon}</div>
                   <p className="text-lg font-bold text-foreground">{count}</p>
-                  <p className="text-[11px] text-muted-foreground">{meta.label}</p>
+                  <p className="text-meta text-muted-foreground">{meta.label}</p>
                 </div>
               );
             })}
@@ -162,7 +162,7 @@ export function TestingModule() {
         {agent.test_cases.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <Card className="p-4 bg-card border-border flex flex-col items-center justify-center min-h-[220px]">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase mb-4 self-start flex items-center gap-1.5">
+              <p className="text-meta font-bold text-muted-foreground uppercase mb-4 self-start flex items-center gap-1.5">
                 <BarChart3 className="h-3 w-3" /> Cobertura por Categoria
               </p>
               {coverageData.length > 0 ? (
@@ -190,7 +190,7 @@ export function TestingModule() {
                   </ResponsiveContainer>
                 </div>
               ) : (
-                <p className="text-xs text-muted-foreground">Adicione categorias aos testes para ver a cobertura.</p>
+                <p className="text-meta text-muted-foreground">Adicione categorias aos testes para ver a cobertura.</p>
               )}
             </Card>
 
@@ -200,8 +200,8 @@ export function TestingModule() {
                   <ShieldCheck className="h-5 w-5 text-nexus-blue" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold">Health Score: {(statusCounts.passed / (agent.test_cases.length || 1) * 100).toFixed(0)}%</p>
-                  <p className="text-[10px] text-muted-foreground">Percentual de testes passando atualmente.</p>
+                  <p className="text-meta font-bold">Health Score: {(statusCounts.passed / (agent.test_cases.length || 1) * 100).toFixed(0)}%</p>
+                  <p className="text-meta text-muted-foreground">Percentual de testes passando atualmente.</p>
                 </div>
               </div>
               <div className="rounded-xl border border-border bg-card p-4 flex items-center gap-4">
@@ -209,8 +209,8 @@ export function TestingModule() {
                   <Target className="h-5 w-5 text-nexus-amber" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold">Ready for Production?</p>
-                  <p className="text-[10px] text-muted-foreground">
+                  <p className="text-meta font-bold">Ready for Production?</p>
+                  <p className="text-meta text-muted-foreground">
                     {statusCounts.failed > 0 ? '⛔ Bloqueado por falhas críticas.' : 
                      agent.test_cases.length < 5 ? '⚠️ Mínimo de 5 testes recomendado.' : 
                      '✅ Pronto para deploy.'}
@@ -300,7 +300,7 @@ export function TestingModule() {
                         onChange={(e) =>
                           updateTestCase(tc.id, { status: e.target.value as TestCase['status'] })
                         }
-                        className="rounded-md border border-border bg-muted/30 px-2 py-1 text-xs text-foreground"
+                        className="rounded-md border border-border bg-muted/30 px-2 py-1 text-meta text-foreground"
                       >
                         <option value="pending">⏳ Pendente</option>
                         <option value="passed">✅ Aprovado</option>
@@ -353,14 +353,14 @@ export function TestingModule() {
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium text-foreground">{metric.name}</p>
+                    <p className="text-body-sm font-medium text-foreground">{metric.name}</p>
                     {metric.is_blocker && (
-                      <span className="rounded-full bg-destructive/10 text-destructive px-2 py-0.5 text-[11px] font-medium">
+                      <span className="rounded-full bg-destructive/10 text-destructive px-2 py-0.5 text-meta font-medium">
                         Blocker
                       </span>
                     )}
                   </div>
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="text-meta text-muted-foreground">
                     Target: {metric.target}
                     {metric.unit} · Peso: {metric.weight}%
                   </p>
@@ -371,9 +371,9 @@ export function TestingModule() {
                   type="number"
                   value={metric.target}
                   onChange={(e) => updateMetric(metric.id, { target: Number(e.target.value) })}
-                  className="w-20 rounded-md border border-border bg-muted/30 px-2 py-1 text-xs text-foreground text-right"
+                  className="w-20 rounded-md border border-border bg-muted/30 px-2 py-1 text-meta text-foreground text-right"
                 />
-                <span className="text-xs text-muted-foreground">{metric.unit}</span>
+                <span className="text-meta text-muted-foreground">{metric.unit}</span>
               </div>
             </div>
           ))}
@@ -404,7 +404,7 @@ export function TestingModule() {
                 className="rounded-xl border border-border bg-card p-4 text-center"
               >
                 <p className="text-lg font-bold text-foreground">{item.value}</p>
-                <p className="text-[11px] text-muted-foreground">{item.label}</p>
+                <p className="text-meta text-muted-foreground">{item.label}</p>
               </div>
             ))}
           </div>

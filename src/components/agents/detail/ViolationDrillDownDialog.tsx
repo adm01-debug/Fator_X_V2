@@ -183,7 +183,7 @@ export function ViolationDrillDownDialog({
             <meta.Icon className={`h-4 w-4 ${meta.color}`} />
             Drill-down de violações
           </DialogTitle>
-          <DialogDescription className="flex items-center gap-2 text-xs">
+          <DialogDescription className="flex items-center gap-2 text-meta">
             <Clock className="h-3 w-3" />
             <span className="font-mono">{formatBucketRange(bucket.date, bucketMs)}</span>
             <span>·</span>
@@ -209,7 +209,7 @@ export function ViolationDrillDownDialog({
                       : 'border-border bg-secondary/30 hover:bg-secondary/50'
                   }`}
                 >
-                  <div className="flex items-center gap-1.5 text-[11px] font-semibold">
+                  <div className="flex items-center gap-1.5 text-meta font-semibold">
                     <m.Icon className={`h-3 w-3 ${m.color}`} />
                     <span className={active ? 'text-foreground' : 'text-muted-foreground'}>{m.label}</span>
                   </div>
@@ -226,7 +226,7 @@ export function ViolationDrillDownDialog({
           <div className="p-5 space-y-5">
             {/* Description + summary stats */}
             <div className={`rounded-lg border ${meta.border} ${meta.bg} p-3`}>
-              <p className="text-xs text-foreground mb-3">{meta.description}</p>
+              <p className="text-meta text-foreground mb-3">{meta.description}</p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 <Stat label="Violações" value={formatNumber(stats.count)} accent={meta.color} />
                 {kind === 'error' ? (
@@ -247,12 +247,12 @@ export function ViolationDrillDownDialog({
 
             {/* Latency chart */}
             <section>
-              <h4 className="text-xs font-heading font-semibold text-foreground flex items-center gap-1.5 mb-2">
+              <h4 className="text-meta font-heading font-semibold text-foreground flex items-center gap-1.5 mb-2">
                 <Activity className="h-3.5 w-3.5 text-muted-foreground" />
                 Latência durante o bucket
               </h4>
               {latencyChart.length === 0 || bucketTraces.length === 0 ? (
-                <p className="text-xs text-muted-foreground italic py-6 text-center">
+                <p className="text-meta text-muted-foreground italic py-6 text-center">
                   Sem dados de latência neste período.
                 </p>
               ) : (
@@ -276,11 +276,11 @@ export function ViolationDrillDownDialog({
 
             {/* Top events */}
             <section>
-              <h4 className="text-xs font-heading font-semibold text-foreground mb-2">
+              <h4 className="text-meta font-heading font-semibold text-foreground mb-2">
                 Eventos mais afetados
               </h4>
               {topEvents.length === 0 ? (
-                <p className="text-xs text-muted-foreground italic py-3 text-center">
+                <p className="text-meta text-muted-foreground italic py-3 text-center">
                   Sem violações desse tipo neste bucket.
                 </p>
               ) : (
@@ -289,7 +289,7 @@ export function ViolationDrillDownDialog({
                     const pct = maxEventCount > 0 ? (count / maxEventCount) * 100 : 0;
                     return (
                       <div key={evt} className="space-y-1">
-                        <div className="flex items-center justify-between text-xs gap-2">
+                        <div className="flex items-center justify-between text-meta gap-2">
                           <span className="font-mono text-foreground truncate">{evt}</span>
                           <span className="font-semibold tabular-nums text-foreground shrink-0">{count}×</span>
                         </div>
@@ -308,12 +308,12 @@ export function ViolationDrillDownDialog({
 
             {/* Trace list */}
             <section>
-              <h4 className="text-xs font-heading font-semibold text-foreground mb-2">
+              <h4 className="text-meta font-heading font-semibold text-foreground mb-2">
                 Traces com violação
                 <span className="text-muted-foreground font-normal ml-1">({filtered.length})</span>
               </h4>
               {filtered.length === 0 ? (
-                <p className="text-xs text-muted-foreground italic py-3 text-center">
+                <p className="text-meta text-muted-foreground italic py-3 text-center">
                   Nenhum trace correspondente.
                 </p>
               ) : (
@@ -330,7 +330,7 @@ export function ViolationDrillDownDialog({
                     const overP99 = lat > targets.p99;
                     const latColor = overP99 ? 'text-destructive' : lat > targets.p95 ? 'text-nexus-amber' : 'text-foreground';
                     return (
-                      <div key={idx} className="flex items-center justify-between gap-2 px-3 py-2 text-xs hover:bg-secondary/30">
+                      <div key={idx} className="flex items-center justify-between gap-2 px-3 py-2 text-meta hover:bg-secondary/30">
                         <div className="flex items-center gap-2 min-w-0">
                           <span className="font-mono text-muted-foreground tabular-nums shrink-0">{time}</span>
                           <span className="text-foreground truncate">{t.event || '(sem evento)'}</span>
@@ -345,7 +345,7 @@ export function ViolationDrillDownDialog({
                     );
                   })}
                   {filtered.length > 30 && (
-                    <div className="text-[11px] text-muted-foreground text-center py-2">
+                    <div className="text-meta text-muted-foreground text-center py-2">
                       + {filtered.length - 30} traces adicionais
                     </div>
                   )}
@@ -362,8 +362,8 @@ export function ViolationDrillDownDialog({
 function Stat({ label, value, accent }: { label: string; value: string; accent?: string }) {
   return (
     <div className="rounded-md bg-background/60 border border-border/40 p-2">
-      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
-      <div className={`mt-0.5 font-mono font-semibold text-sm ${accent ?? 'text-foreground'}`}>{value}</div>
+      <div className="text-meta uppercase tracking-wider text-muted-foreground">{label}</div>
+      <div className={`mt-0.5 font-mono font-semibold text-body-sm ${accent ?? 'text-foreground'}`}>{value}</div>
     </div>
   );
 }

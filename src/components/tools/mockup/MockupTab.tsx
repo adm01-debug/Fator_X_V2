@@ -61,7 +61,7 @@ export function MockupTab() {
         {loading ? <><Loader2 className="h-4 w-4 animate-spin mr-2" />Processando…</> : "Gerar mockup"}
       </Button>
       {steps.length > 0 && (
-        <div className="space-y-1 text-xs">
+        <div className="space-y-1 text-meta">
           {steps.map((s, i) => (
             <div key={i} className="flex items-center gap-2">
               <Badge variant="outline" style={{
@@ -71,7 +71,7 @@ export function MockupTab() {
                 {s.status}
               </Badge>
               <span className="text-muted-foreground">{s.step}</span>
-              {s.details && <span className="text-[10px] text-muted-foreground">— {s.details}</span>}
+              {s.details && <span className="text-meta text-muted-foreground">— {s.details}</span>}
             </div>
           ))}
         </div>

@@ -132,7 +132,7 @@ export function VersionDiffDialog({ open, onOpenChange, versions, agentId }: Pro
 
         <div className="grid grid-cols-2 gap-3 mt-2">
           <div className="space-y-1">
-            <label className="text-xs font-medium text-muted-foreground">Versão A (anterior)</label>
+            <label className="text-meta font-medium text-muted-foreground">Versão A (anterior)</label>
             <Select value={vA} onValueChange={setVA}>
               <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
               <SelectContent>
@@ -145,7 +145,7 @@ export function VersionDiffDialog({ open, onOpenChange, versions, agentId }: Pro
             </Select>
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-medium text-muted-foreground">Versão B (nova)</label>
+            <label className="text-meta font-medium text-muted-foreground">Versão B (nova)</label>
             <Select value={vB} onValueChange={setVB}>
               <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
               <SelectContent>
@@ -163,15 +163,15 @@ export function VersionDiffDialog({ open, onOpenChange, versions, agentId }: Pro
           <div className="mt-4 space-y-3">
             {/* Resumo de mudanças */}
             <div className="rounded-lg border border-border bg-muted/30 p-3">
-              <p className="text-xs font-semibold text-foreground mb-2">
+              <p className="text-meta font-semibold text-foreground mb-2">
                 Resumo de mudanças ({deltas.length})
               </p>
               {deltas.length === 0 ? (
-                <p className="text-xs text-muted-foreground">Nenhuma diferença estrutural detectada.</p>
+                <p className="text-meta text-muted-foreground">Nenhuma diferença estrutural detectada.</p>
               ) : (
                 <div className="flex flex-wrap gap-1.5">
                   {deltas.map((d, i) => (
-                    <Badge key={i} variant="outline" className="text-[11px] gap-1 font-mono">
+                    <Badge key={i} variant="outline" className="text-meta gap-1 font-mono">
                       <span className="text-muted-foreground">{d.label}:</span>
                       <span>{String(d.from)}</span>
                       <ArrowRight className="h-2.5 w-2.5 text-muted-foreground" />
@@ -187,7 +187,7 @@ export function VersionDiffDialog({ open, onOpenChange, versions, agentId }: Pro
                 <Button
                   variant="outline"
                   size="sm"
-                  className="gap-1.5 text-xs h-7"
+                  className="gap-1.5 text-meta h-7"
                   disabled={restoring}
                   onClick={() => handleRestore(verA)}
                 >
@@ -197,7 +197,7 @@ export function VersionDiffDialog({ open, onOpenChange, versions, agentId }: Pro
                 <Button
                   variant="outline"
                   size="sm"
-                  className="gap-1.5 text-xs h-7"
+                  className="gap-1.5 text-meta h-7"
                   disabled={restoring}
                   onClick={() => handleRestore(verB)}
                 >
@@ -215,9 +215,9 @@ export function VersionDiffDialog({ open, onOpenChange, versions, agentId }: Pro
             />
           </div>
         ) : vA && vB && vA === vB ? (
-          <p className="text-xs text-muted-foreground text-center py-8">Selecione versões diferentes para comparar.</p>
+          <p className="text-meta text-muted-foreground text-center py-8">Selecione versões diferentes para comparar.</p>
         ) : (
-          <p className="text-xs text-muted-foreground text-center py-8">Selecione duas versões para visualizar as diferenças.</p>
+          <p className="text-meta text-muted-foreground text-center py-8">Selecione duas versões para visualizar as diferenças.</p>
         )}
       </DialogContent>
     </Dialog>

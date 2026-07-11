@@ -42,10 +42,10 @@ export default function KnowledgeGraphPage() {
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card><CardContent className="pt-6"><p className="text-sm text-muted-foreground">Entidades</p><p className="text-2xl font-bold">2.847</p></CardContent></Card>
-        <Card><CardContent className="pt-6"><p className="text-sm text-muted-foreground">Relações</p><p className="text-2xl font-bold">8.512</p></CardContent></Card>
-        <Card><CardContent className="pt-6"><p className="text-sm text-muted-foreground">Tipos</p><p className="text-2xl font-bold">14</p></CardContent></Card>
-        <Card><CardContent className="pt-6"><p className="text-sm text-muted-foreground">Densidade</p><p className="text-2xl font-bold">2.99</p></CardContent></Card>
+        <Card><CardContent className="pt-6"><p className="text-body-sm text-muted-foreground">Entidades</p><p className="text-2xl font-bold">2.847</p></CardContent></Card>
+        <Card><CardContent className="pt-6"><p className="text-body-sm text-muted-foreground">Relações</p><p className="text-2xl font-bold">8.512</p></CardContent></Card>
+        <Card><CardContent className="pt-6"><p className="text-body-sm text-muted-foreground">Tipos</p><p className="text-2xl font-bold">14</p></CardContent></Card>
+        <Card><CardContent className="pt-6"><p className="text-body-sm text-muted-foreground">Densidade</p><p className="text-2xl font-bold">2.99</p></CardContent></Card>
       </div>
 
       <Card>
@@ -69,9 +69,9 @@ export default function KnowledgeGraphPage() {
               <div key={e.id} className="flex items-center justify-between p-3 border border-border rounded-lg hover:border-primary/40 transition-colors">
                 <div>
                   <p className="font-semibold">{e.label}</p>
-                  <Badge variant="secondary" className="text-xs">{e.type}</Badge>
+                  <Badge variant="secondary" className="text-meta">{e.type}</Badge>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2 text-body-sm text-muted-foreground">
                   <GitBranch className="h-4 w-4" />{e.connections}
                 </div>
               </div>
@@ -85,9 +85,9 @@ export default function KnowledgeGraphPage() {
           <CardContent className="space-y-2">
             {relations.map((r, i) => (
               <div key={i} className="p-3 border border-border rounded-lg">
-                <div className="flex items-center gap-2 text-sm">
+                <div className="flex items-center gap-2 text-body-sm">
                   <span className="font-semibold">{r.from}</span>
-                  <Badge variant="outline" className="text-xs">{r.type}</Badge>
+                  <Badge variant="outline" className="text-meta">{r.type}</Badge>
                   <span className="font-semibold">{r.to}</span>
                 </div>
               </div>

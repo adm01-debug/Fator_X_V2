@@ -61,17 +61,17 @@ export function TestExecutionPanel({ testCases }: TestExecutionPanelProps) {
     <section className="space-y-4">
       <div className="rounded-xl border border-dashed border-primary/30 bg-primary/5 p-6 text-center">
         <Play className="h-8 w-8 text-primary mx-auto mb-3" />
-        <p className="text-sm font-semibold text-foreground mb-1">Executar Suite de Testes</p>
-        <p className="text-xs text-muted-foreground mb-4">{testCases.length} test cases • Modelo: {agent.model}</p>
+        <p className="text-body-sm font-semibold text-foreground mb-1">Executar Suite de Testes</p>
+        <p className="text-meta text-muted-foreground mb-4">{testCases.length} test cases • Modelo: {agent.model}</p>
         <Button variant="default" size="sm" onClick={handleRun} disabled={running || testCases.length === 0}>
           {running ? (<><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Executando ({results.length}/{testCases.length})...</>) : (<><Play className="h-4 w-4 mr-2" /> Executar Testes</>)}
         </Button>
       </div>
       {results.length > 0 && (
         <div className="space-y-2">
-          <p className="text-xs font-semibold text-foreground">Resultados: {results.filter((r) => r.passed).length}/{results.length} aprovados</p>
+          <p className="text-meta font-semibold text-foreground">Resultados: {results.filter((r) => r.passed).length}/{results.length} aprovados</p>
           {results.map((r, i) => (
-            <div key={i} className={`nexus-card text-xs ${r.passed ? 'border-nexus-emerald/30' : 'border-nexus-rose/30'}`}>
+            <div key={i} className={`nexus-card text-meta ${r.passed ? 'border-nexus-emerald/30' : 'border-nexus-rose/30'}`}>
               <div className="flex items-center gap-2 mb-1">
                 {r.passed ? <CheckCircle2 className="h-3.5 w-3.5 text-nexus-emerald" /> : <XCircle className="h-3.5 w-3.5 text-nexus-rose" />}
                 <span className="font-mono text-muted-foreground">{r.latency_ms}ms</span>

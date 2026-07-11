@@ -66,7 +66,7 @@ export function PromptLockEventLog({ events, max = 8 }: Props) {
   const isLocked = last.kind === 'locked-manual-edit' || last.kind === 'locked-paste';
 
   return (
-    <div className="rounded-lg border border-border/60 bg-secondary/30 text-xs overflow-hidden">
+    <div className="rounded-lg border border-border/60 bg-secondary/30 text-meta overflow-hidden">
       <button
         type="button"
         onClick={() => setOpen((x) => !x)}
@@ -74,10 +74,10 @@ export function PromptLockEventLog({ events, max = 8 }: Props) {
         className="w-full flex items-center gap-2 px-2.5 py-1.5 hover:bg-secondary/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 transition-colors"
       >
         <History className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-        <span className="text-[11px] font-medium text-foreground">Histórico de bloqueio Custom</span>
+        <span className="text-meta font-medium text-foreground">Histórico de bloqueio Custom</span>
         <span
           className={cn(
-            'ml-1 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-mono',
+            'ml-1 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-meta font-mono',
             isLocked
               ? 'bg-nexus-amber/15 text-nexus-amber'
               : 'bg-nexus-emerald/15 text-nexus-emerald',
@@ -87,7 +87,7 @@ export function PromptLockEventLog({ events, max = 8 }: Props) {
           {isLocked ? <Lock className="h-2.5 w-2.5" /> : <Unlock className="h-2.5 w-2.5" />}
           {isLocked ? 'Travado' : 'Destravado'}
         </span>
-        <span className="ml-auto text-[10px] text-muted-foreground font-mono">
+        <span className="ml-auto text-meta text-muted-foreground font-mono">
           {events.length} evento{events.length === 1 ? '' : 's'}
         </span>
         <ChevronDown
@@ -111,14 +111,14 @@ export function PromptLockEventLog({ events, max = 8 }: Props) {
                   {locked ? <Lock className="h-2.5 w-2.5" /> : <Unlock className="h-2.5 w-2.5" />}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="text-[11px] text-foreground leading-snug">
+                  <p className="text-meta text-foreground leading-snug">
                     {KIND_LABEL[ev.kind]}
                     {ev.detail && (
                       <span className="text-muted-foreground"> — {ev.detail}</span>
                     )}
                   </p>
                 </div>
-                <span className="text-[10px] font-mono text-muted-foreground shrink-0">
+                <span className="text-meta font-mono text-muted-foreground shrink-0">
                   {formatTime(ev.at)}
                 </span>
               </li>

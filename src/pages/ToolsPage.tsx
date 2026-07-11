@@ -235,7 +235,7 @@ export default function ToolsPage() {
                   </DialogHeader>
                   <div className="space-y-4 mt-4">
                     <div className="space-y-2">
-                      <Label className="text-[11px] uppercase tracking-wider text-muted-foreground font-bold">Identificador da Ferramenta</Label>
+                      <Label className="text-meta uppercase tracking-wider text-muted-foreground font-bold">Identificador da Ferramenta</Label>
                       <Input
                         value={toolName}
                         onChange={(e) => setToolName(e.target.value)}
@@ -244,7 +244,7 @@ export default function ToolsPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[11px] uppercase tracking-wider text-muted-foreground font-bold">Resumo Operacional</Label>
+                      <Label className="text-meta uppercase tracking-wider text-muted-foreground font-bold">Resumo Operacional</Label>
                       <Input
                         value={toolDesc}
                         onChange={(e) => setToolDesc(e.target.value)}
@@ -253,7 +253,7 @@ export default function ToolsPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[11px] uppercase tracking-wider text-muted-foreground font-bold">Protocolo de Conexão</Label>
+                      <Label className="text-meta uppercase tracking-wider text-muted-foreground font-bold">Protocolo de Conexão</Label>
                       <Select value={toolType} onValueChange={setToolType}>
                         <SelectTrigger className="bg-background/50 border-border/40">
                           <SelectValue />
@@ -321,10 +321,10 @@ export default function ToolsPage() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" className="text-xs gap-1.5 border-border/40">
+              <Button variant="outline" size="sm" className="text-meta gap-1.5 border-border/40">
                 <Filter className="h-3.5 w-3.5" /> Categorias
               </Button>
-              <Button variant="outline" size="sm" className="text-xs gap-1.5 border-border/40">
+              <Button variant="outline" size="sm" className="text-meta gap-1.5 border-border/40">
                 <Activity className="h-3.5 w-3.5" /> Performance
               </Button>
             </div>
@@ -338,7 +338,7 @@ export default function ToolsPage() {
                   <Wrench className="h-4 w-4 text-primary/50" />
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground animate-pulse font-mono uppercase tracking-widest">Sincronizando mesh de ferramentas...</p>
+              <p className="text-body-sm text-muted-foreground animate-pulse font-mono uppercase tracking-widest">Sincronizando mesh de ferramentas...</p>
             </div>
           ) : viewMode === 'grid' ? (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -364,27 +364,27 @@ export default function ToolsPage() {
                     </div>
                     
                     <div className="space-y-1 mb-3">
-                      <h3 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors truncate">{tool.name}</h3>
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-tight">{tool.category}</p>
+                      <h3 className="text-body-sm font-bold text-foreground group-hover:text-primary transition-colors truncate">{tool.name}</h3>
+                      <p className="text-meta text-muted-foreground uppercase tracking-tight">{tool.category}</p>
                     </div>
                     
-                    <p className="text-xs text-muted-foreground line-clamp-2 h-8 leading-relaxed mb-4">{tool.desc}</p>
+                    <p className="text-meta text-muted-foreground line-clamp-2 h-8 leading-relaxed mb-4">{tool.desc}</p>
                     
                     <div className="flex items-center justify-between pt-4 border-t border-border/20">
                       <div className="flex items-center gap-1.5">
                         <Activity className="h-3 w-3 text-muted-foreground" />
-                        <span className="text-[10px] font-mono text-muted-foreground">{tool.latency}</span>
+                        <span className="text-meta font-mono text-muted-foreground">{tool.latency}</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <div className="h-1 w-1 rounded-full bg-nexus-emerald" />
-                        <span className="text-[10px] text-nexus-emerald uppercase font-bold">Stable</span>
+                        <span className="text-meta text-nexus-emerald uppercase font-bold">Stable</span>
                       </div>
                     </div>
                   </div>
 
                   {!tool.built_in && (
                     <div className="bg-secondary/10 px-5 py-3 border-t border-border/30 flex items-center justify-between">
-                      <Button variant="ghost" size="sm" className="h-7 text-[10px] font-bold uppercase tracking-wider p-0 hover:bg-transparent hover:text-primary">
+                      <Button variant="ghost" size="sm" className="h-7 text-meta font-bold uppercase tracking-wider p-0 hover:bg-transparent hover:text-primary">
                         Configurar <ArrowUpRight className="h-3 w-3 ml-1" />
                       </Button>
                       <AccessControl permission="agents.delete">
@@ -419,11 +419,11 @@ export default function ToolsPage() {
               <table className="w-full text-left">
                 <thead className="bg-secondary/30 border-b border-border/40">
                   <tr>
-                    <th className="px-6 py-3 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Capacidade</th>
-                    <th className="px-6 py-3 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Protocolo / Tipo</th>
-                    <th className="px-6 py-3 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Latência</th>
-                    <th className="px-6 py-3 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Status</th>
-                    <th className="px-6 py-3 text-[10px] font-bold text-muted-foreground uppercase tracking-widest text-right">Controle</th>
+                    <th className="px-6 py-3 text-meta font-bold text-muted-foreground uppercase tracking-widest">Capacidade</th>
+                    <th className="px-6 py-3 text-meta font-bold text-muted-foreground uppercase tracking-widest">Protocolo / Tipo</th>
+                    <th className="px-6 py-3 text-meta font-bold text-muted-foreground uppercase tracking-widest">Latência</th>
+                    <th className="px-6 py-3 text-meta font-bold text-muted-foreground uppercase tracking-widest">Status</th>
+                    <th className="px-6 py-3 text-meta font-bold text-muted-foreground uppercase tracking-widest text-right">Controle</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/20">
@@ -435,21 +435,21 @@ export default function ToolsPage() {
                             <tool.icon className={`h-4 w-4 ${tool.color}`} />
                           </div>
                           <div className="flex flex-col">
-                            <span className="text-sm font-semibold">{tool.name}</span>
-                            <span className="text-[10px] text-muted-foreground line-clamp-1">{tool.desc}</span>
+                            <span className="text-body-sm font-semibold">{tool.name}</span>
+                            <span className="text-meta text-muted-foreground line-clamp-1">{tool.desc}</span>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <Badge variant="outline" className="text-[10px] font-mono border-border/40">{tool.category}</Badge>
+                        <Badge variant="outline" className="text-meta font-mono border-border/40">{tool.category}</Badge>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="text-xs font-mono text-muted-foreground">{tool.latency}</span>
+                        <span className="text-meta font-mono text-muted-foreground">{tool.latency}</span>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <div className="h-1.5 w-1.5 rounded-full bg-nexus-emerald shadow-[0_0_4px_rgba(16,185,129,0.5)]" />
-                          <span className="text-[10px] text-foreground font-medium">Nominal</span>
+                          <span className="text-meta text-foreground font-medium">Nominal</span>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-right">
@@ -465,7 +465,7 @@ export default function ToolsPage() {
                             </Button>
                           </div>
                         ) : (
-                          <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">System Core</span>
+                          <span className="text-meta text-muted-foreground uppercase font-bold tracking-tighter">System Core</span>
                         )}
                       </td>
                     </tr>
@@ -479,37 +479,37 @@ export default function ToolsPage() {
         <div className="space-y-6">
           <div className="nexus-card bg-primary/5 border-primary/20 p-5 space-y-4">
             <div className="flex items-center justify-between">
-              <h4 className="text-xs font-bold uppercase tracking-widest text-primary flex items-center gap-2">
+              <h4 className="text-meta font-bold uppercase tracking-widest text-primary flex items-center gap-2">
                 <Network className="h-4 w-4" /> Mesh Health
               </h4>
               <Badge className="bg-nexus-emerald/10 text-nexus-emerald border-none text-[9px]">Optimal</Badge>
             </div>
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <div className="flex justify-between text-[10px] font-bold uppercase tracking-tight">
+                <div className="flex justify-between text-meta font-bold uppercase tracking-tight">
                   <span>Throughput Global</span>
                   <span className="text-primary">98.4%</span>
                 </div>
                 <Progress value={98} className="h-1 bg-primary/10" />
               </div>
               <div className="space-y-1.5">
-                <div className="flex justify-between text-[10px] font-bold uppercase tracking-tight">
+                <div className="flex justify-between text-meta font-bold uppercase tracking-tight">
                   <span>Segurança das Chamadas</span>
                   <span className="text-nexus-emerald">100% AES-256</span>
                 </div>
                 <Progress value={100} className="h-1 bg-nexus-emerald/10" />
               </div>
             </div>
-            <p className="text-[10px] text-muted-foreground leading-relaxed">
+            <p className="text-meta text-muted-foreground leading-relaxed">
               Monitoramento granular de latência e payloads ativos em 128 endpoints.
             </p>
           </div>
 
           <div className="nexus-card p-5 space-y-4">
-            <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+            <h4 className="text-meta font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
               <Puzzle className="h-4 w-4" /> Skills Marketplace
             </h4>
-            <p className="text-[10px] text-muted-foreground leading-relaxed mb-4">
+            <p className="text-meta text-muted-foreground leading-relaxed mb-4">
               Instale pacotes de habilidades cognitivas pré-configuradas para resposta imediata.
             </p>
             <div className="grid grid-cols-2 gap-2">
@@ -523,13 +523,13 @@ export default function ToolsPage() {
                 </div>
               ))}
             </div>
-            <Button variant="outline" className="w-full text-[10px] h-8 border-border/40 hover:bg-primary/5 mt-2 font-bold uppercase tracking-widest">
+            <Button variant="outline" className="w-full text-meta h-8 border-border/40 hover:bg-primary/5 mt-2 font-bold uppercase tracking-widest">
               Explorar Store
             </Button>
           </div>
 
           <div className="nexus-card p-5 space-y-4 bg-gradient-to-br from-secondary/50 to-background border-border/40">
-            <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Últimos Eventos</h4>
+            <h4 className="text-meta font-bold uppercase tracking-widest text-muted-foreground">Últimos Eventos</h4>
             <div className="space-y-3">
               {[
                 { label: 'Bitrix24_Sync', event: 'Webhook Received', time: '2m ago' },
@@ -538,10 +538,10 @@ export default function ToolsPage() {
               ].map((ev, i) => (
                 <div key={i} className="flex flex-col border-l-2 border-primary/20 pl-3 py-0.5">
                   <div className="flex justify-between items-center">
-                    <span className="text-[10px] font-bold text-foreground truncate max-w-[100px]">{ev.label}</span>
+                    <span className="text-meta font-bold text-foreground truncate max-w-[100px]">{ev.label}</span>
                     <span className="text-[9px] text-muted-foreground">{ev.time}</span>
                   </div>
-                  <span className="text-[10px] text-muted-foreground">{ev.event}</span>
+                  <span className="text-meta text-muted-foreground">{ev.event}</span>
                 </div>
               ))}
             </div>
@@ -554,7 +554,7 @@ export default function ToolsPage() {
           <div className="flex items-center justify-between border-b border-border/40 pb-4">
             <div>
               <h3 className="text-base font-bold text-foreground">Conectores Enterprise</h3>
-              <p className="text-xs text-muted-foreground">Pontes de dados de alto volume e CRM Sync</p>
+              <p className="text-meta text-muted-foreground">Pontes de dados de alto volume e CRM Sync</p>
             </div>
             <Badge variant="outline" className="border-primary/30 text-primary">Priority</Badge>
           </div>

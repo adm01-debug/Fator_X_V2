@@ -50,19 +50,19 @@ export function RiskExplainPopover({ riskLabel, riskTone, level, impact, criteri
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5">
               <Calculator className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
-              <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+              <span className="text-meta uppercase tracking-wider text-muted-foreground font-semibold">
                 Por que esse risco?
               </span>
             </div>
-            <span className={`px-1.5 py-0.5 rounded border text-[10px] font-mono ${riskTone}`}>
+            <span className={`px-1.5 py-0.5 rounded border text-meta font-mono ${riskTone}`}>
               {riskLabel} · {impact}/100
             </span>
           </div>
-          <p className="text-[11px] text-foreground mt-1 leading-snug">{reason}</p>
+          <p className="text-meta text-foreground mt-1 leading-snug">{reason}</p>
         </div>
 
         <div className="p-3 space-y-2">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+          <p className="text-meta uppercase tracking-wider text-muted-foreground font-semibold">
             Critérios que somaram
           </p>
           <ul className="space-y-1.5">
@@ -75,15 +75,15 @@ export function RiskExplainPopover({ riskLabel, riskTone, level, impact, criteri
                   : 'text-nexus-amber bg-nexus-amber/10 border-nexus-amber/30'
                 : 'text-nexus-emerald bg-nexus-emerald/10 border-nexus-emerald/30';
               return (
-                <li key={idx} className="flex items-start gap-2 text-[11px]">
-                  <span className={`shrink-0 inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded border font-mono text-[10px] ${pointsTone}`}>
+                <li key={idx} className="flex items-start gap-2 text-meta">
+                  <span className={`shrink-0 inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded border font-mono text-meta ${pointsTone}`}>
                     <Icon className="h-2.5 w-2.5" aria-hidden="true" />
                     {Math.abs(c.points)}
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="text-foreground font-medium leading-snug">{c.label}</p>
                     {c.detail && (
-                      <p className="text-[10px] text-muted-foreground leading-snug">{c.detail}</p>
+                      <p className="text-meta text-muted-foreground leading-snug">{c.detail}</p>
                     )}
                   </div>
                 </li>
@@ -92,26 +92,26 @@ export function RiskExplainPopover({ riskLabel, riskTone, level, impact, criteri
           </ul>
 
           <div className="pt-2 border-t border-border/40 space-y-1">
-            <div className="flex items-center justify-between text-[11px]">
+            <div className="flex items-center justify-between text-meta">
               <span className="text-muted-foreground">Soma dos critérios</span>
               <span className="font-mono text-foreground">{totalPoints} pts</span>
             </div>
             {adjustment !== 0 && (
-              <div className="flex items-center justify-between text-[10px]">
+              <div className="flex items-center justify-between text-meta">
                 <span className="text-muted-foreground italic">
                   {adjustment > 0 ? 'Ajuste mínimo' : 'Cap aplicado'}
                 </span>
                 <span className="font-mono text-muted-foreground">{adjustment > 0 ? '+' : ''}{adjustment} pts</span>
               </div>
             )}
-            <div className="flex items-center justify-between text-[11px]">
+            <div className="flex items-center justify-between text-meta">
               <span className="font-semibold text-foreground">Score final</span>
               <span className={`font-mono font-semibold ${riskTone.split(' ')[0]}`}>{impact}/100</span>
             </div>
           </div>
 
           <div className="pt-2 border-t border-border/40">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-1">
+            <p className="text-meta uppercase tracking-wider text-muted-foreground font-semibold mb-1">
               Faixa de classificação
             </p>
             <ul className="space-y-0.5">
@@ -120,7 +120,7 @@ export function RiskExplainPopover({ riskLabel, riskTone, level, impact, criteri
                 return (
                   <li
                     key={t.level}
-                    className={`flex items-center justify-between text-[10px] px-1.5 py-0.5 rounded ${
+                    className={`flex items-center justify-between text-meta px-1.5 py-0.5 rounded ${
                       isCurrent ? 'bg-muted/60 font-semibold text-foreground' : 'text-muted-foreground'
                     }`}
                   >

@@ -63,8 +63,8 @@ function Row({ icon: Icon, label, children }: RowProps) {
     <div className="flex items-start gap-2.5 py-1.5">
       <Icon className="h-3.5 w-3.5 text-muted-foreground shrink-0 mt-0.5" aria-hidden />
       <div className="min-w-0 flex-1">
-        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
-        <div className="text-xs text-foreground/90 mt-0.5 break-words">{children}</div>
+        <p className="text-meta uppercase tracking-wider text-muted-foreground">{label}</p>
+        <div className="text-meta text-foreground/90 mt-0.5 break-words">{children}</div>
       </div>
     </div>
   );
@@ -113,7 +113,7 @@ export function AgentContextPanel({ agentId, executions, loading }: Props) {
     return (
       <Card className="border-border/60">
         <CardContent className="p-4">
-          <p className="text-xs text-muted-foreground">Agente não encontrado.</p>
+          <p className="text-meta text-muted-foreground">Agente não encontrado.</p>
         </CardContent>
       </Card>
     );
@@ -140,18 +140,18 @@ export function AgentContextPanel({ agentId, executions, loading }: Props) {
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <h3 className="text-sm font-semibold truncate">{agent.name}</h3>
-                <Badge variant={status.variant} className="text-[10px] h-4 px-1.5 shrink-0">
+                <h3 className="text-body-sm font-semibold truncate">{agent.name}</h3>
+                <Badge variant={status.variant} className="text-meta h-4 px-1.5 shrink-0">
                   {status.label}
                 </Badge>
               </div>
               {agent.persona && (
-                <p className="text-[11px] text-muted-foreground mt-0.5 capitalize">
+                <p className="text-meta text-muted-foreground mt-0.5 capitalize">
                   {String(agent.persona).replace(/_/g, ' ')}
                 </p>
               )}
               {agent.mission && (
-                <p className="text-[11px] text-muted-foreground/80 mt-1 line-clamp-2 leading-relaxed">
+                <p className="text-meta text-muted-foreground/80 mt-1 line-clamp-2 leading-relaxed">
                   {agent.mission as string}
                 </p>
               )}
@@ -165,14 +165,14 @@ export function AgentContextPanel({ agentId, executions, loading }: Props) {
             <div className="flex items-center gap-1.5 flex-wrap">
               <span className="font-mono">{model.name}</span>
               {model.provider && (
-                <span className="text-[10px] text-muted-foreground">· {model.provider}</span>
+                <span className="text-meta text-muted-foreground">· {model.provider}</span>
               )}
             </div>
           </Row>
 
           {agent.reasoning && (
             <Row icon={Brain} label="Raciocínio">
-              <span className="font-mono uppercase text-[11px]">{agent.reasoning as string}</span>
+              <span className="font-mono uppercase text-meta">{agent.reasoning as string}</span>
             </Row>
           )}
 
@@ -180,7 +180,7 @@ export function AgentContextPanel({ agentId, executions, loading }: Props) {
             <div className="flex items-center gap-1.5 flex-wrap">
               <span className="font-mono">v{(agent.version as number | null) ?? 1}</span>
               {systemPrompt && (
-                <span className="text-[10px] text-muted-foreground">
+                <span className="text-meta text-muted-foreground">
                   · {systemPrompt.length.toLocaleString('pt-BR')} chars
                 </span>
               )}
@@ -189,7 +189,7 @@ export function AgentContextPanel({ agentId, executions, loading }: Props) {
 
           {systemPrompt && (
             <Row icon={FileText} label="System prompt (preview)">
-              <p className="text-[11px] text-muted-foreground/90 font-mono leading-relaxed line-clamp-2">
+              <p className="text-meta text-muted-foreground/90 font-mono leading-relaxed line-clamp-2">
                 {systemPrompt.slice(0, 160)}
                 {systemPrompt.length > 160 && '…'}
               </p>
@@ -200,27 +200,27 @@ export function AgentContextPanel({ agentId, executions, loading }: Props) {
         {/* Observed cost/usage in the current window */}
         <div className="px-4 py-3 border-t border-border/40 bg-card/40">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+            <p className="text-meta uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
               <Coins className="h-3 w-3" aria-hidden /> Estimativa na janela
             </p>
-            <span className="text-[10px] text-muted-foreground tabular-nums">{observed.runs} exec.</span>
+            <span className="text-meta text-muted-foreground tabular-nums">{observed.runs} exec.</span>
           </div>
           <div className="grid grid-cols-3 gap-2">
             <div>
-              <p className="text-sm font-mono tabular-nums">${observed.cost.toFixed(4)}</p>
-              <p className="text-[10px] text-muted-foreground">Custo total</p>
+              <p className="text-body-sm font-mono tabular-nums">${observed.cost.toFixed(4)}</p>
+              <p className="text-meta text-muted-foreground">Custo total</p>
             </div>
             <div>
-              <p className="text-sm font-mono tabular-nums">
+              <p className="text-body-sm font-mono tabular-nums">
                 {observed.tokens >= 1000 ? `${(observed.tokens / 1000).toFixed(1)}k` : observed.tokens}
               </p>
-              <p className="text-[10px] text-muted-foreground">Tokens</p>
+              <p className="text-meta text-muted-foreground">Tokens</p>
             </div>
             <div>
-              <p className="text-sm font-mono tabular-nums">
+              <p className="text-body-sm font-mono tabular-nums">
                 ${observed.avgCostPerRun.toFixed(4)}
               </p>
-              <p className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+              <p className="text-meta text-muted-foreground flex items-center gap-0.5">
                 <TrendingUp className="h-2.5 w-2.5" aria-hidden /> Média/exec
               </p>
             </div>
@@ -229,12 +229,12 @@ export function AgentContextPanel({ agentId, executions, loading }: Props) {
 
         {/* Quick actions */}
         <div className="px-4 py-2.5 border-t border-border/40 flex items-center gap-1.5">
-          <Button asChild variant="ghost" size="sm" className="h-7 text-xs flex-1 justify-start">
+          <Button asChild variant="ghost" size="sm" className="h-7 text-meta flex-1 justify-start">
             <Link to={`/agents/${agentId}`}>
               <Pencil className="h-3 w-3 mr-1.5" aria-hidden /> Editar agente
             </Link>
           </Button>
-          <Button asChild variant="ghost" size="sm" className="h-7 text-xs flex-1 justify-start">
+          <Button asChild variant="ghost" size="sm" className="h-7 text-meta flex-1 justify-start">
             <Link to={`/agents/${agentId}`}>
               Detalhes <ArrowUpRight className="h-3 w-3 ml-1" aria-hidden />
             </Link>

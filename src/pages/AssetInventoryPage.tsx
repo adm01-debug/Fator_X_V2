@@ -382,11 +382,11 @@ export default function AssetInventoryPage() {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <p className="text-sm text-muted-foreground">Carregando...</p>
+            <p className="text-body-sm text-muted-foreground">Carregando...</p>
           ) : filtered.length === 0 ? (
             <div className="text-center py-12">
               <Boxes className="h-10 w-10 mx-auto text-muted-foreground/50 mb-3" />
-              <p className="text-sm text-muted-foreground">Nenhum ativo encontrado.</p>
+              <p className="text-body-sm text-muted-foreground">Nenhum ativo encontrado.</p>
             </div>
           ) : (
             <Table>
@@ -413,21 +413,21 @@ export default function AssetInventoryPage() {
                       <TableCell><Badge variant={CLASSIFICATION_VARIANT[a.classification]}>{a.classification}</Badge></TableCell>
                       <TableCell><Badge variant="outline">{a.environment}</Badge></TableCell>
                       <TableCell><Badge variant={STATUS_VARIANT[a.status]}>{a.status}</Badge></TableCell>
-                      <TableCell className="text-xs text-muted-foreground">
+                      <TableCell className="text-meta text-muted-foreground">
                         {a.hostname ?? "—"}{a.ip_address ? ` / ${a.ip_address}` : ""}
                       </TableCell>
                       <TableCell>
                         {a.warranty_until ? (
-                          <span className={warnExp ? "text-nexus-amber font-medium animate-glow-pulse" : "text-xs text-muted-foreground"}>
+                          <span className={warnExp ? "text-nexus-amber font-medium animate-glow-pulse" : "text-meta text-muted-foreground"}>
                             {a.warranty_until}
                           </span>
-                        ) : <span className="text-xs text-muted-foreground">—</span>}
+                        ) : <span className="text-meta text-muted-foreground">—</span>}
                       </TableCell>
                       <TableCell>
                         {auditOver ? (
                           <Badge variant="destructive" className="animate-glow-pulse">Atrasada</Badge>
                         ) : (
-                          <span className="text-xs text-muted-foreground">{a.last_seen_at ? new Date(a.last_seen_at).toLocaleDateString("pt-BR") : "Nunca"}</span>
+                          <span className="text-meta text-muted-foreground">{a.last_seen_at ? new Date(a.last_seen_at).toLocaleDateString("pt-BR") : "Nunca"}</span>
                         )}
                       </TableCell>
                     </TableRow>
@@ -456,7 +456,7 @@ export default function AssetInventoryPage() {
                   <TabsTrigger value="audits">Auditorias ({audits.length})</TabsTrigger>
                 </TabsList>
                 <TabsContent value="details" className="space-y-4">
-                  <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div className="grid grid-cols-2 gap-3 text-body-sm">
                     <Field label="Status" value={<Badge variant={STATUS_VARIANT[drillAsset.status]}>{drillAsset.status}</Badge>} />
                     <Field label="Categoria" value={drillAsset.category ?? "—"} />
                     <Field label="Fornecedor" value={drillAsset.vendor ?? "—"} />
@@ -482,7 +482,7 @@ export default function AssetInventoryPage() {
                 <TabsContent value="audits" className="space-y-4">
                   {isAdmin && (
                     <div className="space-y-3 p-3 rounded-lg border bg-secondary/20">
-                      <p className="text-sm font-medium">Nova auditoria</p>
+                      <p className="text-body-sm font-medium">Nova auditoria</p>
                       <Textarea
                         placeholder="Achados..."
                         value={auditForm.findings}
@@ -504,17 +504,17 @@ export default function AssetInventoryPage() {
                     </div>
                   )}
                   {audits.length === 0 ? (
-                    <p className="text-sm text-muted-foreground text-center py-6">Nenhuma auditoria registrada.</p>
+                    <p className="text-body-sm text-muted-foreground text-center py-6">Nenhuma auditoria registrada.</p>
                   ) : (
                     <div className="space-y-2">
                       {audits.map(a => (
                         <div key={a.id} className="p-3 rounded-lg border bg-card">
                           <div className="flex items-center justify-between mb-1">
                             <Badge variant={STATUS_VARIANT[a.status_after]}>{a.status_after}</Badge>
-                            <span className="text-xs text-muted-foreground">{new Date(a.audited_at).toLocaleString("pt-BR")}</span>
+                            <span className="text-meta text-muted-foreground">{new Date(a.audited_at).toLocaleString("pt-BR")}</span>
                           </div>
-                          <p className="text-sm">{a.findings}</p>
-                          {a.notes && <p className="text-xs text-muted-foreground mt-1">{a.notes}</p>}
+                          <p className="text-body-sm">{a.findings}</p>
+                          {a.notes && <p className="text-meta text-muted-foreground mt-1">{a.notes}</p>}
                         </div>
                       ))}
                     </div>
@@ -538,7 +538,7 @@ function StatCard({ label, value, icon: Icon, variant = "ok", pulse }: {
     <Card>
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-1">
-          <p className="text-xs text-muted-foreground">{label}</p>
+          <p className="text-meta text-muted-foreground">{label}</p>
           <Icon className={`h-4 w-4 ${color} ${pulse ? "animate-glow-pulse" : ""}`} />
         </div>
         <p className={`text-2xl font-bold tabular-nums ${color}`}>{value}</p>
@@ -550,7 +550,7 @@ function StatCard({ label, value, icon: Icon, variant = "ok", pulse }: {
 function Field({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div>
-      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="text-meta text-muted-foreground">{label}</p>
       <div className="font-medium">{value}</div>
     </div>
   );

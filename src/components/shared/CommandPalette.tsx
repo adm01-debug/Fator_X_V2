@@ -205,10 +205,10 @@ export function CommandPalette() {
                     <div className="flex flex-col min-w-0 flex-1">
                       <span className="truncate">{hit.title}</span>
                       {hit.snippet && (
-                        <span className="text-[11px] text-muted-foreground truncate">{hit.snippet}</span>
+                        <span className="text-meta text-muted-foreground truncate">{hit.snippet}</span>
                       )}
                     </div>
-                    <span className="ml-auto text-[10px] uppercase tracking-wide text-muted-foreground/70 shrink-0">
+                    <span className="ml-auto text-meta uppercase tracking-wide text-muted-foreground/70 shrink-0">
                       {meta.label}
                     </span>
                   </CommandItem>
@@ -252,9 +252,9 @@ export function CommandPalette() {
             <CommandGroup heading="Agentes">
               {agents.map(agent => (
                 <CommandItem key={agent.id} onSelect={() => go(`/builder/${agent.id}`)} className="gap-2" keywords={[agent.persona || '', agent.model || '', agent.name]}>
-                  <span className="text-sm" aria-hidden="true">{agent.avatar_emoji || '🤖'}</span>
+                  <span className="text-body-sm" aria-hidden="true">{agent.avatar_emoji || '🤖'}</span>
                   <span>{agent.name}</span>
-                  <span className="ml-auto text-[11px] text-muted-foreground">{agent.model}</span>
+                  <span className="ml-auto text-meta text-muted-foreground">{agent.model}</span>
                 </CommandItem>
               ))}
             </CommandGroup>
@@ -270,7 +270,7 @@ export function CommandPalette() {
                 <CommandItem key={kb.id} onSelect={() => go('/knowledge')} className="gap-2" keywords={[kb.name, 'rag', 'documento', 'knowledge']}>
                   <BookOpen className="h-4 w-4 text-nexus-emerald" />
                   <span>{kb.name}</span>
-                  <span className="ml-auto text-[11px] text-muted-foreground">{kb.document_count ?? 0} docs</span>
+                  <span className="ml-auto text-meta text-muted-foreground">{kb.document_count ?? 0} docs</span>
                 </CommandItem>
               ))}
             </CommandGroup>
@@ -286,7 +286,7 @@ export function CommandPalette() {
                 <CommandItem key={wf.id} onSelect={() => go('/workflows')} className="gap-2" keywords={[wf.name, 'automação', 'fluxo', 'workflow']}>
                   <GitBranch className="h-4 w-4 text-nexus-cyan" />
                   <span>{wf.name}</span>
-                  <span className={`ml-auto text-[11px] ${wf.status === 'active' ? 'text-nexus-emerald' : 'text-muted-foreground'}`}>{wf.status}</span>
+                  <span className={`ml-auto text-meta ${wf.status === 'active' ? 'text-nexus-emerald' : 'text-muted-foreground'}`}>{wf.status}</span>
                 </CommandItem>
               ))}
             </CommandGroup>
@@ -302,7 +302,7 @@ export function CommandPalette() {
                 <CommandItem key={tool.id} onSelect={() => go('/tools')} className="gap-2" keywords={[tool.name, tool.type, 'ferramenta', 'integração']}>
                   <Puzzle className="h-4 w-4 text-nexus-amber" />
                   <span>{tool.name}</span>
-                  <span className="ml-auto text-[11px] text-muted-foreground">{tool.type}</span>
+                  <span className="ml-auto text-meta text-muted-foreground">{tool.type}</span>
                 </CommandItem>
               ))}
             </CommandGroup>
@@ -317,7 +317,7 @@ export function CommandPalette() {
               <p.icon className="h-4 w-4 text-muted-foreground" />
               <span>{p.name}</span>
               {p.href === location.pathname && (
-                <span className="ml-auto text-[11px] text-primary font-medium">atual</span>
+                <span className="ml-auto text-meta text-primary font-medium">atual</span>
               )}
             </CommandItem>
           ))}

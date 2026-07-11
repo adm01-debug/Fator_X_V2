@@ -105,7 +105,7 @@ export function AudioUploadDialog() {
       }}
     >
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-1.5 text-xs">
+        <Button variant="outline" size="sm" className="gap-1.5 text-meta">
           <Mic className="h-3.5 w-3.5" />
           Transcrever áudio
         </Button>
@@ -130,12 +130,12 @@ export function AudioUploadDialog() {
                 type="file"
                 accept="audio/*"
                 onChange={handleFileChange}
-                className="flex-1 text-xs file:mr-3 file:px-3 file:py-1.5 file:rounded-md file:border-0 file:bg-background file:text-foreground hover:file:bg-muted"
+                className="flex-1 text-meta file:mr-3 file:px-3 file:py-1.5 file:rounded-md file:border-0 file:bg-background file:text-foreground hover:file:bg-muted"
               />
               <Upload className="h-4 w-4 text-muted-foreground" />
             </div>
             {file && (
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-meta text-muted-foreground">
                 {file.name} · {(file.size / 1024 / 1024).toFixed(2)} MB
               </p>
             )}
@@ -193,7 +193,7 @@ export function AudioUploadDialog() {
                 value={result}
                 readOnly
                 rows={8}
-                className="bg-background border-border font-mono text-xs"
+                className="bg-background border-border font-mono text-meta"
               />
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" onClick={handleCopy} className="gap-1.5">

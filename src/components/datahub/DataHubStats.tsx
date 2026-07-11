@@ -29,7 +29,7 @@ export function DataHubStats({ entityCount, connectionCount, connectedCount, tot
             </div>
             <div className="min-w-0">
               <p className="text-lg font-heading font-bold text-foreground leading-tight">{s.value}</p>
-              <p className="text-[11px] text-muted-foreground truncate">{s.label}</p>
+              <p className="text-meta text-muted-foreground truncate">{s.label}</p>
             </div>
           </div>
         );

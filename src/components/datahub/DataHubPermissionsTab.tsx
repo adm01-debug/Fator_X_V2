@@ -182,24 +182,24 @@ export function DataHubPermissionsTab() {
       {/* Header */}
       <div className="flex items-center gap-2">
         <Shield className="h-4 w-4 text-primary" />
-        <h3 className="text-sm font-heading font-semibold text-foreground">Matriz de Permissões</h3>
-        <Badge variant="outline" className="text-[10px]">
+        <h3 className="text-body-sm font-heading font-semibold text-foreground">Matriz de Permissões</h3>
+        <Badge variant="outline" className="text-meta">
           {ROLES.length} papéis · {ENTITY_LIST.length} entidades
         </Badge>
       </div>
 
       <Tabs value={view} onValueChange={(v) => setView(v as "declared" | "live")} className="space-y-4">
         <TabsList className="bg-secondary/50">
-          <TabsTrigger value="declared" className="gap-1.5 text-xs">
+          <TabsTrigger value="declared" className="gap-1.5 text-meta">
             <Lock className="h-3 w-3" /> Declarado
           </TabsTrigger>
-          <TabsTrigger value="live" className="gap-1.5 text-xs">
+          <TabsTrigger value="live" className="gap-1.5 text-meta">
             <Server className="h-3 w-3" /> RLS ao vivo
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="declared" className="space-y-4">
-          <p className="text-[11px] text-muted-foreground">
+          <p className="text-meta text-muted-foreground">
             Controle de acesso por papel e entidade. As regras vivem nos arquivos de RLS dos projetos
             Supabase remotos; esta matriz é o contrato declarado pelo time.
           </p>
@@ -215,10 +215,10 @@ export function DataHubPermissionsTab() {
             <div key={lvl} className="nexus-card">
               <div className="flex items-center gap-2 mb-1">
                 <Icon className={`h-3.5 w-3.5 ${cfg.color}`} />
-                <span className="text-[11px] uppercase tracking-wider text-muted-foreground">{cfg.label}</span>
+                <span className="text-meta uppercase tracking-wider text-muted-foreground">{cfg.label}</span>
               </div>
               <p className="text-xl font-heading font-bold text-foreground tabular-nums">
-                {count} <span className="text-[10px] font-normal text-muted-foreground">({pct}%)</span>
+                {count} <span className="text-meta font-normal text-muted-foreground">({pct}%)</span>
               </p>
             </div>
           );
@@ -232,21 +232,21 @@ export function DataHubPermissionsTab() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Filtrar papéis..."
-          className="h-8 pl-7 text-xs bg-secondary/40"
+          className="h-8 pl-7 text-meta bg-secondary/40"
         />
       </div>
 
       {/* Matrix table */}
       <div className="nexus-card overflow-hidden p-0">
         <div className="overflow-x-auto">
-          <table className="w-full text-xs">
+          <table className="w-full text-meta">
             <thead className="bg-secondary/30 border-b border-border/40">
               <tr>
-                <th className="text-left px-3 py-2 font-medium text-[10px] uppercase tracking-wider text-muted-foreground sticky left-0 bg-secondary/30">
+                <th className="text-left px-3 py-2 font-medium text-meta uppercase tracking-wider text-muted-foreground sticky left-0 bg-secondary/30">
                   Papel
                 </th>
                 {ENTITY_LIST.map((e) => (
-                  <th key={e.id} className="px-2 py-2 font-medium text-[10px] uppercase tracking-wider text-muted-foreground text-center">
+                  <th key={e.id} className="px-2 py-2 font-medium text-meta uppercase tracking-wider text-muted-foreground text-center">
                     <div className="flex flex-col items-center gap-0.5">
                       <span className="text-base">{e.icon}</span>
                       <span className="text-[9px]">{e.name}</span>
@@ -258,7 +258,7 @@ export function DataHubPermissionsTab() {
             <tbody>
               {filteredRoles.length === 0 ? (
                 <tr>
-                  <td colSpan={ENTITY_LIST.length + 1} className="text-center py-8 text-muted-foreground text-[11px]">
+                  <td colSpan={ENTITY_LIST.length + 1} className="text-center py-8 text-muted-foreground text-meta">
                     Nenhum papel encontrado
                   </td>
                 </tr>
@@ -268,7 +268,7 @@ export function DataHubPermissionsTab() {
                     <td className="px-3 py-2 sticky left-0 bg-card">
                       <div className="flex flex-col">
                         <span className="font-medium text-foreground">{role.label}</span>
-                        <span className="text-[10px] text-muted-foreground line-clamp-1" title={role.description}>
+                        <span className="text-meta text-muted-foreground line-clamp-1" title={role.description}>
                           {role.description}
                         </span>
                       </div>
@@ -287,7 +287,7 @@ export function DataHubPermissionsTab() {
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap items-center gap-3 text-[10px] text-muted-foreground">
+      <div className="flex flex-wrap items-center gap-3 text-meta text-muted-foreground">
         <span className="font-medium text-foreground">Legenda:</span>
         {(['admin', 'write', 'read', 'none'] as AccessLevel[]).map((lvl) => {
           const cfg = LEVEL_CONFIG[lvl];
@@ -304,7 +304,7 @@ export function DataHubPermissionsTab() {
       {/* Note */}
       <div className="flex items-start gap-2 p-3 rounded-md bg-nexus-amber/10 border border-nexus-amber/30">
         <AlertCircle className="h-4 w-4 text-nexus-amber shrink-0 mt-0.5" />
-        <div className="text-[11px] text-foreground">
+        <div className="text-meta text-foreground">
           <p className="font-medium">Esta matriz é declarativa.</p>
           <p className="text-muted-foreground mt-0.5">
             As regras reais são aplicadas via Row Level Security nos projetos Supabase remotos.

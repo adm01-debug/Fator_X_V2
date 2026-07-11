@@ -47,13 +47,13 @@ export default function AgentDebuggerPage() {
           <Button size="sm" variant="outline">Step into</Button>
           <Button size="sm" variant="outline">Step out</Button>
           <div className="flex-1" />
-          <Badge variant="outline" className="text-[10px]">Sessão: sess_a4f2e1 · Pausado em #4</Badge>
+          <Badge variant="outline" className="text-meta">Sessão: sess_a4f2e1 · Pausado em #4</Badge>
         </CardContent>
       </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-4">
         <Card>
-          <CardHeader className="pb-3"><CardTitle className="text-sm flex items-center gap-2"><Bug className="h-4 w-4" />Trajetória de execução</CardTitle></CardHeader>
+          <CardHeader className="pb-3"><CardTitle className="text-body-sm flex items-center gap-2"><Bug className="h-4 w-4" />Trajetória de execução</CardTitle></CardHeader>
           <CardContent>
             <ScrollArea className="h-[480px]">
               <div className="space-y-1">
@@ -61,7 +61,7 @@ export default function AgentDebuggerPage() {
                   const isBp = breakpoints.has(s.idx);
                   return (
                     <div key={s.idx}
-                      className={`flex items-center gap-3 p-2.5 rounded-md text-xs border ${
+                      className={`flex items-center gap-3 p-2.5 rounded-md text-meta border ${
                         s.status === "current" ? "border-nexus-amber/50 bg-nexus-amber/8 ring-1 ring-nexus-amber/30" :
                         s.status === "breakpoint" ? "border-nexus-red/40 bg-nexus-red/5" :
                         s.status === "done" ? "border-border/30 bg-muted/20" :
@@ -71,10 +71,10 @@ export default function AgentDebuggerPage() {
                         className={`h-3 w-3 rounded-full border-2 transition-all ${isBp ? "bg-nexus-red border-nexus-red" : "border-border hover:border-nexus-red/50"}`}
                         title="Toggle breakpoint" />
                       <span className="font-mono text-muted-foreground w-6">{s.idx}</span>
-                      <Badge variant="outline" className="text-[10px] capitalize w-16 justify-center">{s.type}</Badge>
+                      <Badge variant="outline" className="text-meta capitalize w-16 justify-center">{s.type}</Badge>
                       <span className="flex-1 font-mono">{s.name}</span>
                       {s.duration !== undefined && s.duration > 0 && <span className="text-muted-foreground font-mono">{s.duration}ms</span>}
-                      {s.status === "current" && <Badge className="text-[10px] bg-nexus-amber/20 text-nexus-amber">⏸ aqui</Badge>}
+                      {s.status === "current" && <Badge className="text-meta bg-nexus-amber/20 text-nexus-amber">⏸ aqui</Badge>}
                     </div>
                   );
                 })}
@@ -84,7 +84,7 @@ export default function AgentDebuggerPage() {
         </Card>
 
         <Card>
-          <CardHeader className="pb-3"><CardTitle className="text-sm">Inspetor</CardTitle></CardHeader>
+          <CardHeader className="pb-3"><CardTitle className="text-body-sm">Inspetor</CardTitle></CardHeader>
           <CardContent>
             <Tabs defaultValue="vars">
               <TabsList className="w-full">
@@ -92,7 +92,7 @@ export default function AgentDebuggerPage() {
                 <TabsTrigger value="messages" className="flex-1"><MessageSquare className="h-3 w-3 mr-1" />Msgs</TabsTrigger>
                 <TabsTrigger value="tools" className="flex-1"><Wrench className="h-3 w-3 mr-1" />Tools</TabsTrigger>
               </TabsList>
-              <TabsContent value="vars" className="text-xs space-y-1.5 font-mono max-h-[420px] overflow-auto">
+              <TabsContent value="vars" className="text-meta space-y-1.5 font-mono max-h-[420px] overflow-auto">
                 {[
                   { k: "user_id", v: "usr_8f2a1e", t: "string" },
                   { k: "intent", v: "'support_query'", t: "string" },
@@ -109,11 +109,11 @@ export default function AgentDebuggerPage() {
                   </div>
                 ))}
               </TabsContent>
-              <TabsContent value="messages" className="text-xs space-y-2 max-h-[420px] overflow-auto">
-                <div className="p-2.5 bg-muted/30 rounded"><Badge className="text-[10px] mb-1">user</Badge><div>Como cancelo minha assinatura?</div></div>
-                <div className="p-2.5 bg-primary/8 rounded"><Badge className="text-[10px] mb-1">assistant</Badge><div className="text-muted-foreground">[gerando resposta...]</div></div>
+              <TabsContent value="messages" className="text-meta space-y-2 max-h-[420px] overflow-auto">
+                <div className="p-2.5 bg-muted/30 rounded"><Badge className="text-meta mb-1">user</Badge><div>Como cancelo minha assinatura?</div></div>
+                <div className="p-2.5 bg-primary/8 rounded"><Badge className="text-meta mb-1">assistant</Badge><div className="text-muted-foreground">[gerando resposta...]</div></div>
               </TabsContent>
-              <TabsContent value="tools" className="text-xs space-y-1.5 max-h-[420px] overflow-auto">
+              <TabsContent value="tools" className="text-meta space-y-1.5 max-h-[420px] overflow-auto">
                 {["search_knowledge_base", "create_ticket", "send_email", "log_interaction", "fetch_user_plan"].map((t) => (
                   <div key={t} className="p-2 bg-muted/30 rounded font-mono">{t}()</div>
                 ))}

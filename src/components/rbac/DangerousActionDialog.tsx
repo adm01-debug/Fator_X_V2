@@ -193,21 +193,21 @@ export function DangerousActionDialog({
           </AlertDialogTitle>
           {description && (
             <AlertDialogDescription asChild>
-              <div className="text-sm text-muted-foreground space-y-2">{description}</div>
+              <div className="text-body-sm text-muted-foreground space-y-2">{description}</div>
             </AlertDialogDescription>
           )}
         </AlertDialogHeader>
 
         <div className="space-y-4 py-2">
           {resourceName && (
-            <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/30 text-xs">
+            <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/30 text-meta">
               <span className="text-muted-foreground">Recurso: </span>
               <span className="font-mono font-medium">{resourceName}</span>
             </div>
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="danger-reason" className="text-xs">
+            <Label htmlFor="danger-reason" className="text-meta">
               Motivo <span className="text-destructive">*</span>
               <span className="text-muted-foreground ml-1">(mín. {minReasonLength} caracteres)</span>
             </Label>
@@ -217,11 +217,11 @@ export function DangerousActionDialog({
               onChange={(e) => setReason(e.target.value)}
               placeholder="Explique por que esta ação é necessária..."
               rows={3}
-              className="bg-secondary/50 text-sm resize-none"
+              className="bg-secondary/50 text-body-sm resize-none"
               disabled={loading}
             />
             {reason.length > 0 && !reasonOk && (
-              <p className="text-[11px] text-destructive">
+              <p className="text-meta text-destructive">
                 Faltam {minReasonLength - reason.trim().length} caracteres
               </p>
             )}
@@ -229,8 +229,8 @@ export function DangerousActionDialog({
 
           {confirmText && (
             <div className="space-y-2">
-              <Label htmlFor="danger-confirm-text" className="text-xs">
-                Digite <code className="px-1 py-0.5 rounded bg-secondary font-mono text-[11px]">{confirmText}</code>{' '}
+              <Label htmlFor="danger-confirm-text" className="text-meta">
+                Digite <code className="px-1 py-0.5 rounded bg-secondary font-mono text-meta">{confirmText}</code>{' '}
                 para confirmar <span className="text-destructive">*</span>
               </Label>
               <Input
@@ -238,7 +238,7 @@ export function DangerousActionDialog({
                 value={typedConfirm}
                 onChange={(e) => setTypedConfirm(e.target.value)}
                 placeholder={confirmText}
-                className="bg-secondary/50 font-mono text-sm"
+                className="bg-secondary/50 font-mono text-body-sm"
                 disabled={loading}
                 autoComplete="off"
               />
@@ -247,7 +247,7 @@ export function DangerousActionDialog({
 
           {requirePassword && (
             <div className="space-y-2">
-              <Label htmlFor="danger-password" className="text-xs">
+              <Label htmlFor="danger-password" className="text-meta">
                 Senha <span className="text-destructive">*</span>
               </Label>
               <Input
@@ -256,7 +256,7 @@ export function DangerousActionDialog({
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Sua senha atual"
-                className="bg-secondary/50 text-sm"
+                className="bg-secondary/50 text-body-sm"
                 disabled={loading}
                 autoComplete="current-password"
               />

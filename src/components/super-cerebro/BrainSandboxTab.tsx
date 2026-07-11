@@ -87,10 +87,10 @@ export function BrainSandboxTab() {
   return (
     <div className="space-y-4">
       <div>
-        <h3 className="text-sm font-heading font-semibold text-foreground flex items-center gap-2">
+        <h3 className="text-body-sm font-heading font-semibold text-foreground flex items-center gap-2">
           <FlaskConical className="h-4 w-4 text-primary" /> Brain Sandbox
         </h3>
-        <p className="text-[11px] text-muted-foreground mt-0.5">Teste como o Super Cérebro responde com diferentes contextos — compare respostas lado a lado</p>
+        <p className="text-meta text-muted-foreground mt-0.5">Teste como o Super Cérebro responde com diferentes contextos — compare respostas lado a lado</p>
       </div>
 
       <div className="nexus-card space-y-4">
@@ -98,14 +98,14 @@ export function BrainSandboxTab() {
           value={query}
           onChange={e => setQuery(e.target.value)}
           placeholder="Faça uma pergunta para testar com diferentes contextos..."
-          className="bg-secondary/50 min-h-[60px] text-sm"
+          className="bg-secondary/50 min-h-[60px] text-body-sm"
         />
 
         <div className="flex gap-3 items-end">
           <div className="flex-1 space-y-1.5">
-            <label className="text-[11px] text-muted-foreground font-medium">Modo de Contexto</label>
+            <label className="text-meta text-muted-foreground font-medium">Modo de Contexto</label>
             <Select value={contextMode} onValueChange={setContextMode}>
-              <SelectTrigger className="bg-secondary/50 text-xs"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="bg-secondary/50 text-meta"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="full">🧠 Completo (Fatos + RAG)</SelectItem>
                 <SelectItem value="facts_only">📊 Apenas Fatos da plataforma</SelectItem>
@@ -130,7 +130,7 @@ export function BrainSandboxTab() {
             Comparar Todos
           </Button>
           {results.length > 0 && !isRunningAll && (
-            <Button variant="outline" size="sm" onClick={() => setResults([])} className="text-xs">Limpar</Button>
+            <Button variant="outline" size="sm" onClick={() => setResults([])} className="text-meta">Limpar</Button>
           )}
         </div>
       </div>
@@ -140,12 +140,12 @@ export function BrainSandboxTab() {
           {results.map((r, i) => (
             <div key={i} className="nexus-card">
               <div className="flex items-center justify-between mb-2">
-                <Badge variant="outline" className="text-[11px]">{modeLabels[r.mode] || r.mode}</Badge>
-                <span className="text-[11px] text-muted-foreground">
+                <Badge variant="outline" className="text-meta">{modeLabels[r.mode] || r.mode}</Badge>
+                <span className="text-meta text-muted-foreground">
                   {r.context_size} chars • ${r.cost.toFixed(6)}
                 </span>
               </div>
-              <div className="text-xs text-foreground whitespace-pre-wrap leading-relaxed max-h-[300px] overflow-y-auto">
+              <div className="text-meta text-foreground whitespace-pre-wrap leading-relaxed max-h-[300px] overflow-y-auto">
                 {r.response}
               </div>
             </div>

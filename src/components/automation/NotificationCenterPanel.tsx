@@ -115,7 +115,7 @@ export function NotificationCenterPanel() {
             <Card key={i} className="bg-card border-border">
               <CardContent className="p-4 text-center">
                 <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
-                <p className="text-xs text-muted-foreground">{s.label}</p>
+                <p className="text-meta text-muted-foreground">{s.label}</p>
               </CardContent>
             </Card>
           ))}
@@ -128,7 +128,7 @@ export function NotificationCenterPanel() {
             <Button
               variant="outline"
               size="sm"
-              className="gap-1.5 text-xs border-border hover:bg-accent hover:border-primary"
+              className="gap-1.5 text-meta border-border hover:bg-accent hover:border-primary"
             >
               <Send className="h-3.5 w-3.5" />
               Enviar Teste
@@ -215,7 +215,7 @@ export function NotificationCenterPanel() {
       </div>
 
       <Card className="bg-card border-border">
-        <CardHeader className="pb-3"><CardTitle className="text-sm text-muted-foreground">Presets de Notificação — Promo Brindes</CardTitle></CardHeader>
+        <CardHeader className="pb-3"><CardTitle className="text-body-sm text-muted-foreground">Presets de Notificação — Promo Brindes</CardTitle></CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {Object.entries(NOTIFICATION_PRESETS).map(([key, preset]) => {
@@ -224,12 +224,12 @@ export function NotificationCenterPanel() {
                 <div key={key} className="p-3 rounded-lg bg-background border border-border">
                   <div className="flex items-center gap-2 mb-1">
                     <Icon size={14} className="text-primary" />
-                    <p className="font-medium text-sm">{preset.subject.replace(/\{\{.*?\}\}/g, '...')}</p>
+                    <p className="font-medium text-body-sm">{preset.subject.replace(/\{\{.*?\}\}/g, '...')}</p>
                   </div>
-                  <p className="text-xs text-muted-foreground line-clamp-2">{preset.body.replace(/\{\{.*?\}\}/g, '...')}</p>
+                  <p className="text-meta text-muted-foreground line-clamp-2">{preset.body.replace(/\{\{.*?\}\}/g, '...')}</p>
                   <div className="flex gap-2 mt-2">
-                    <Badge variant="outline" className="text-[10px] border-border">{preset.channel}</Badge>
-                    <Badge variant="outline" className="text-[10px] border-border">{preset.category}</Badge>
+                    <Badge variant="outline" className="text-meta border-border">{preset.channel}</Badge>
+                    <Badge variant="outline" className="text-meta border-border">{preset.category}</Badge>
                   </div>
                 </div>
               );
@@ -251,12 +251,12 @@ export function NotificationCenterPanel() {
                 <CardContent className="p-3 flex items-center gap-3">
                   <Icon size={16} className="text-primary shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{n.subject}</p>
-                    <p className="text-xs text-muted-foreground truncate">{n.recipient_address}</p>
+                    <p className="text-body-sm font-medium truncate">{n.subject}</p>
+                    <p className="text-meta text-muted-foreground truncate">{n.recipient_address}</p>
                   </div>
                   <div className="text-right shrink-0">
-                    <span className={`text-xs ${STATUS_COLORS[n.status] ?? 'text-muted-foreground'}`}>{n.status}</span>
-                    <p className="text-[10px] text-muted-foreground">{n.sent_at ? new Date(n.sent_at).toLocaleString('pt-BR') : '—'}</p>
+                    <span className={`text-meta ${STATUS_COLORS[n.status] ?? 'text-muted-foreground'}`}>{n.status}</span>
+                    <p className="text-meta text-muted-foreground">{n.sent_at ? new Date(n.sent_at).toLocaleString('pt-BR') : '—'}</p>
                   </div>
                 </CardContent>
               </Card>

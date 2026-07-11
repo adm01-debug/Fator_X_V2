@@ -91,10 +91,10 @@ export default function DashboardPage() {
                 Bem-vindo ao Centro de Comando Nexus. Sua infraestrutura de agentes está processando em alta performance.
               </p>
               <div className="flex items-center gap-4 pt-2">
-                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-nexus-emerald/10 text-nexus-emerald text-[10px] font-bold uppercase tracking-widest border border-nexus-emerald/20">
+                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-nexus-emerald/10 text-nexus-emerald text-meta font-bold uppercase tracking-widest border border-nexus-emerald/20">
                   <Globe className="h-3 w-3" /> Sistema Nominal
                 </div>
-                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest border border-primary/20">
+                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-meta font-bold uppercase tracking-widest border border-primary/20">
                   <Activity className="h-3 w-3" /> {usageStats?.totalRequests || 0} Requests
                 </div>
               </div>
@@ -143,14 +143,14 @@ export default function DashboardPage() {
                 <metric.icon className={cn("h-7 w-7", metric.color)} />
               </div>
               <div className="flex flex-col items-end gap-1">
-                <Badge className="bg-muted/50 text-muted-foreground border-none font-black text-[10px] px-2.5 py-1 uppercase tracking-widest">
+                <Badge className="bg-muted/50 text-muted-foreground border-none font-black text-meta px-2.5 py-1 uppercase tracking-widest">
                   {metric.trend}
                 </Badge>
                 <span className="text-[9px] font-black text-nexus-emerald uppercase tracking-tighter">{metric.status}</span>
               </div>
             </div>
             <div className="space-y-1">
-              <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">{metric.label}</p>
+              <p className="text-meta font-black uppercase tracking-widest text-muted-foreground/60">{metric.label}</p>
               <div className="flex items-baseline gap-1">
                 <p className="text-5xl font-black text-foreground tracking-tighter">
                   <AnimatedCounter value={metric.value} prefix={metric.prefix} decimals={metric.decimals} />
@@ -160,7 +160,7 @@ export default function DashboardPage() {
                 <div className="h-1 flex-1 bg-border/40 rounded-full overflow-hidden">
                   <div className={cn("h-full rounded-full transition-all duration-1000", i === 0 ? 'w-[75%] bg-primary' : i === 1 ? 'w-[90%] bg-nexus-emerald' : i === 2 ? 'w-[45%] bg-nexus-amber' : 'w-[82%] bg-nexus-cyan')} />
                 </div>
-                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{metric.subLabel}</span>
+                <span className="text-meta font-black text-muted-foreground uppercase tracking-widest">{metric.subLabel}</span>
               </div>
             </div>
           </div>
@@ -186,7 +186,7 @@ export default function DashboardPage() {
             <div className={cn("h-16 w-16 rounded-[1.5rem] flex items-center justify-center relative z-10 transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 shadow-lg", action.bg)}>
               <action.icon className={cn("h-8 w-8", action.color)} />
             </div>
-            <span className="text-sm font-black text-foreground group-hover:text-primary transition-colors relative z-10 uppercase tracking-tight">{action.label}</span>
+            <span className="text-body-sm font-black text-foreground group-hover:text-primary transition-colors relative z-10 uppercase tracking-tight">{action.label}</span>
           </button>
         ))}
       </div>
@@ -201,7 +201,7 @@ export default function DashboardPage() {
                     </div>
                     <div>
                       <h3 className="text-2xl font-heading font-black text-foreground tracking-tight">Utilização da Infraestrutura</h3>
-                      <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">Sincronização em Tempo Real</p>
+                      <p className="text-meta font-bold text-muted-foreground uppercase tracking-widest mt-1">Sincronização em Tempo Real</p>
                     </div>
                   </div>
                 </div>
@@ -218,7 +218,7 @@ export default function DashboardPage() {
                       </div>
                       <h3 className="text-xl font-heading font-black text-foreground tracking-tight">Top Agentes</h3>
                     </div>
-                    <Button variant="ghost" size="sm" onClick={() => navigate('/agents')} className="text-[10px] font-black h-8 px-4 rounded-xl hover:bg-primary/10 tracking-widest uppercase">Full Fleet</Button>
+                    <Button variant="ghost" size="sm" onClick={() => navigate('/agents')} className="text-meta font-black h-8 px-4 rounded-xl hover:bg-primary/10 tracking-widest uppercase">Full Fleet</Button>
                   </div>
                   <div className="space-y-4 flex-1">
                     {agents.slice(0, 4).map(agent => (
@@ -230,7 +230,7 @@ export default function DashboardPage() {
                             <div className="flex items-center gap-2 mt-1">
                               <Badge variant="outline" className="text-[9px] font-black uppercase tracking-tighter border-primary/20 text-primary">{agent.model?.split('-')[0]}</Badge>
                               <span className="h-1 w-1 rounded-full bg-muted-foreground/30" />
-                              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Active</span>
+                              <span className="text-meta font-bold text-muted-foreground uppercase tracking-widest">Active</span>
                             </div>
                           </div>
                         </div>
@@ -251,7 +251,7 @@ export default function DashboardPage() {
                       </div>
                       <h3 className="text-xl font-heading font-black text-foreground tracking-tight">Live Telemetria</h3>
                     </div>
-                    <Button variant="ghost" size="sm" onClick={() => navigate('/monitoring')} className="text-[10px] font-black h-8 px-4 rounded-xl hover:bg-nexus-emerald/10 tracking-widest uppercase">Logs</Button>
+                    <Button variant="ghost" size="sm" onClick={() => navigate('/monitoring')} className="text-meta font-black h-8 px-4 rounded-xl hover:bg-nexus-emerald/10 tracking-widest uppercase">Logs</Button>
                   </div>
                   <div className="space-y-4 flex-1">
                     {recentTraces.slice(0, 4).map((trace: any) => (
@@ -264,13 +264,13 @@ export default function DashboardPage() {
                           <div className="min-w-0">
                             <p className="text-base font-black text-foreground group-hover:text-nexus-emerald transition-colors truncate">{trace.event}</p>
                             <div className="flex items-center gap-2 mt-1">
-                              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{new Date(trace.created_at).toLocaleTimeString('pt-BR')}</span>
+                              <span className="text-meta font-black text-muted-foreground uppercase tracking-widest">{new Date(trace.created_at).toLocaleTimeString('pt-BR')}</span>
                               <span className="h-1 w-1 rounded-full bg-muted-foreground/30" />
                               <Badge variant="outline" className="text-[9px] font-black uppercase tracking-tighter border-nexus-emerald/20 text-nexus-emerald">Verified</Badge>
                             </div>
                           </div>
                         </div>
-                        {trace.latency_ms && <span className="text-[10px] font-black text-muted-foreground/60 bg-muted px-2.5 py-1 rounded-lg border border-border/40">{trace.latency_ms}ms</span>}
+                        {trace.latency_ms && <span className="text-meta font-black text-muted-foreground/60 bg-muted px-2.5 py-1 rounded-lg border border-border/40">{trace.latency_ms}ms</span>}
                       </div>
                     ))}
                   </div>

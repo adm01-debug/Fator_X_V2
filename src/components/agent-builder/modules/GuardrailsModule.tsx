@@ -128,8 +128,8 @@ export function GuardrailsModule() {
             return (
               <div key={cat} className="rounded-xl border border-border bg-card p-4 text-center">
                 <div className="flex justify-center mb-2 text-muted-foreground">{meta.icon}</div>
-                <p className="text-xs font-medium text-foreground">{active}/{catGuardrails.length}</p>
-                <p className="text-[11px] text-muted-foreground">{meta.label}</p>
+                <p className="text-meta font-medium text-foreground">{active}/{catGuardrails.length}</p>
+                <p className="text-meta text-muted-foreground">{meta.label}</p>
               </div>
             );
           })}
@@ -161,15 +161,15 @@ export function GuardrailsModule() {
             >
               <div className="flex items-center gap-2 text-destructive">
                 {attack.icon}
-                <span className="text-[11px] font-bold uppercase">{attack.name}</span>
+                <span className="text-meta font-bold uppercase">{attack.name}</span>
               </div>
-              <p className="text-[10px] text-muted-foreground line-clamp-1">{attack.text}</p>
+              <p className="text-meta text-muted-foreground line-clamp-1">{attack.text}</p>
             </Button>
           ))}
         </div>
         <div className="mt-4 p-3 rounded-lg bg-nexus-amber/10 border border-nexus-amber/20 flex items-start gap-3">
           <AlertTriangle className="h-4 w-4 text-nexus-amber shrink-0 mt-0.5" />
-          <p className="text-[11px] text-nexus-amber leading-relaxed">
+          <p className="text-meta text-nexus-amber leading-relaxed">
             <strong>Aviso de Segurança:</strong> Realizar red-teaming ajuda a identificar GAPs nos seus guardrails antes que o agente vá para produção. 
             Recomendamos ativar "Detecção de Injection" para todos os agentes voltados ao público.
           </p>
@@ -189,14 +189,14 @@ export function GuardrailsModule() {
             placeholder="Digite um texto para testar contra os guardrails ML..."
             value={mlTestText}
             onChange={(e) => setMlTestText(e.target.value)}
-            className="text-sm"
+            className="text-body-sm"
           />
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => handleMLTest('input')} disabled={mlTesting || !mlTestText.trim()}>
+            <Button variant="outline" size="sm" className="gap-1.5 text-meta" onClick={() => handleMLTest('input')} disabled={mlTesting || !mlTestText.trim()}>
               {mlTesting ? <Loader2 className="h-3 w-3 animate-spin" /> : <Brain className="h-3 w-3" />}
               Testar Input
             </Button>
-            <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => handleMLTest('output')} disabled={mlTesting || !mlTestText.trim()}>
+            <Button variant="outline" size="sm" className="gap-1.5 text-meta" onClick={() => handleMLTest('output')} disabled={mlTesting || !mlTestText.trim()}>
               {mlTesting ? <Loader2 className="h-3 w-3 animate-spin" /> : <Brain className="h-3 w-3" />}
               Testar Output
             </Button>
@@ -210,8 +210,8 @@ export function GuardrailsModule() {
                       {mlResult.allowed ? <CheckCircle2 className="h-5 w-5 text-nexus-emerald" /> : <XCircle className="h-5 w-5 text-destructive" />}
                     </div>
                     <div>
-                      <span className="text-sm font-black uppercase tracking-tight">{mlResult.allowed ? 'Aprovado' : `Bloqueado (${mlResult.blocked_count})`}</span>
-                      <p className="text-[10px] text-muted-foreground font-medium">v{mlResult.version} • {mlResult.direction}</p>
+                      <span className="text-body-sm font-black uppercase tracking-tight">{mlResult.allowed ? 'Aprovado' : `Bloqueado (${mlResult.blocked_count})`}</span>
+                      <p className="text-meta text-muted-foreground font-medium">v{mlResult.version} • {mlResult.direction}</p>
                     </div>
                   </div>
                   <Badge variant="outline" className="font-mono text-[9px] opacity-60">ID: {mlResult.request_id?.slice(0, 8) || 'N/A'}</Badge>
@@ -219,7 +219,7 @@ export function GuardrailsModule() {
                 
                 <div className="grid gap-2 mb-4">
                   {mlResult.results.map((r, i) => (
-                    <div key={i} className="flex items-center gap-3 text-[11px] bg-background/40 p-2 rounded-lg border border-border/20">
+                    <div key={i} className="flex items-center gap-3 text-meta bg-background/40 p-2 rounded-lg border border-border/20">
                       <div className="w-5 flex justify-center">
                         {r.passed ? <CheckCircle2 className="h-3.5 w-3.5 text-nexus-emerald" /> : <XCircle className="h-3.5 w-3.5 text-destructive" />}
                       </div>
@@ -236,11 +236,11 @@ export function GuardrailsModule() {
                   <div className="flex items-center gap-4">
                     <div className="flex flex-col">
                       <span className="text-[9px] font-black uppercase text-muted-foreground tracking-widest">Latência</span>
-                      <span className="text-xs font-bold text-foreground">{mlResult.latency_ms || 42}ms</span>
+                      <span className="text-meta font-bold text-foreground">{mlResult.latency_ms || 42}ms</span>
                     </div>
                     <div className="flex flex-col">
                       <span className="text-[9px] font-black uppercase text-muted-foreground tracking-widest">Segurança</span>
-                      <span className="text-xs font-bold text-foreground">{( (mlResult.score_average || 0.98) * 100).toFixed(1)}%</span>
+                      <span className="text-meta font-bold text-foreground">{( (mlResult.score_average || 0.98) * 100).toFixed(1)}%</span>
                     </div>
                   </div>
                   <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 text-[9px] font-black">LOCAL INFERENCE</Badge>
@@ -277,15 +277,15 @@ export function GuardrailsModule() {
                       onCheckedChange={(v) => updateGuardrail(g.id, { enabled: v })}
                     />
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-foreground">{g.name}</p>
-                      <p className="text-[11px] text-muted-foreground truncate">{g.description}</p>
+                      <p className="text-body-sm font-medium text-foreground">{g.name}</p>
+                      <p className="text-meta text-muted-foreground truncate">{g.description}</p>
                     </div>
                   </div>
                   <select
                     aria-label={`Severidade de ${g.name}`}
                     value={g.severity}
                     onChange={(e) => updateGuardrail(g.id, { severity: e.target.value as GuardrailConfig['severity'] })}
-                    className="ml-3 rounded-md border border-border bg-muted/30 px-2 py-1 text-xs text-foreground"
+                    className="ml-3 rounded-md border border-border bg-muted/30 px-2 py-1 text-meta text-foreground"
                     disabled={!g.enabled}
                   >
                     {SEVERITY_OPTIONS.map((opt) => (
@@ -346,7 +346,7 @@ export function GuardrailsModule() {
             <div key={idx} className="flex items-center gap-2">
               <input
                 aria-label={`Tópico bloqueado ${idx + 1}`}
-                className="flex-1 rounded-lg border border-border bg-muted/30 px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground"
+                className="flex-1 rounded-lg border border-border bg-muted/30 px-3 py-2 text-body-sm text-foreground placeholder:text-muted-foreground"
                 value={topic}
                 onChange={(e) => updateBlockedTopic(idx, e.target.value)}
                 placeholder="Ex: política, religião, investimentos financeiros"
@@ -375,7 +375,7 @@ export function GuardrailsModule() {
             <div key={idx} className="flex items-center gap-2">
               <input
                 aria-label={`Domínio permitido ${idx + 1}`}
-                className="flex-1 rounded-lg border border-border bg-muted/30 px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground"
+                className="flex-1 rounded-lg border border-border bg-muted/30 px-3 py-2 text-body-sm text-foreground placeholder:text-muted-foreground"
                 value={domain}
                 onChange={(e) => updateDomain(idx, e.target.value)}
                 placeholder="Ex: *.empresa.com, api.exemplo.com"

@@ -148,12 +148,12 @@ export function OrchestrationModule() {
           />
           {agent.human_in_loop && (
             <div className="space-y-3 pl-2 border-l-2 border-primary/20">
-              <p className="text-xs font-medium text-foreground">Gatilhos de aprovação</p>
+              <p className="text-meta font-medium text-foreground">Gatilhos de aprovação</p>
               {agent.human_in_loop_triggers.map((trigger, idx) => (
                 <div key={idx} className="flex items-center gap-2">
                    <input
                     aria-label={`Gatilho de aprovação ${idx + 1}`}
-                    className="flex-1 rounded-lg border border-border bg-muted/30 px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground"
+                    className="flex-1 rounded-lg border border-border bg-muted/30 px-3 py-2 text-body-sm text-foreground placeholder:text-muted-foreground"
                     value={trigger}
                     onChange={(e) => updateTrigger(idx, e.target.value)}
                     placeholder="Ex: Enviar email, deletar dados, valor > R$1000"
@@ -214,27 +214,27 @@ export function OrchestrationModule() {
             <p className="text-2xl mb-1">
               {ORCHESTRATION_PATTERNS.find((p) => p.id === agent.orchestration_pattern)?.icon}
             </p>
-            <p className="text-xs font-medium text-foreground">
+            <p className="text-meta font-medium text-foreground">
               {ORCHESTRATION_PATTERNS.find((p) => p.id === agent.orchestration_pattern)?.title}
             </p>
-            <p className="text-[11px] text-muted-foreground">Padrão</p>
+            <p className="text-meta text-muted-foreground">Padrão</p>
           </div>
           <div className="rounded-xl border border-border bg-card p-4 text-center">
             <p className="text-2xl mb-1">🤖</p>
-            <p className="text-xs font-medium text-foreground">{agent.sub_agents.length}</p>
-            <p className="text-[11px] text-muted-foreground">Sub-agentes</p>
+            <p className="text-meta font-medium text-foreground">{agent.sub_agents.length}</p>
+            <p className="text-meta text-muted-foreground">Sub-agentes</p>
           </div>
           <div className="rounded-xl border border-border bg-card p-4 text-center">
             <p className="text-2xl mb-1">{agent.human_in_loop ? '✅' : '❌'}</p>
-            <p className="text-xs font-medium text-foreground">
+            <p className="text-meta font-medium text-foreground">
               {agent.human_in_loop ? 'Ativo' : 'Inativo'}
             </p>
-            <p className="text-[11px] text-muted-foreground">Human-in-Loop</p>
+            <p className="text-meta text-muted-foreground">Human-in-Loop</p>
           </div>
           <div className="rounded-xl border border-border bg-card p-4 text-center">
             <p className="text-2xl mb-1">⏱️</p>
-            <p className="text-xs font-medium text-foreground">{agent.timeout_seconds}s</p>
-            <p className="text-[11px] text-muted-foreground">Timeout</p>
+            <p className="text-meta font-medium text-foreground">{agent.timeout_seconds}s</p>
+            <p className="text-meta text-muted-foreground">Timeout</p>
           </div>
         </div>
       </section>

@@ -319,7 +319,7 @@ export function StepQuickPrompt({ form, errors, onPromptManualEdit, onRestore, o
       <div className="flex items-end justify-between gap-3 flex-wrap">
         <div>
           <h2 className="text-lg font-heading font-semibold text-foreground">System Prompt</h2>
-          <p className="text-sm text-muted-foreground">Instruções de comportamento do agente.</p>
+          <p className="text-body-sm text-muted-foreground">Instruções de comportamento do agente.</p>
         </div>
         <div className="flex items-center gap-1.5">
           <Button type="button" variant="ghost" size="sm" onClick={onRestore} className="gap-1.5">
@@ -340,18 +340,18 @@ export function StepQuickPrompt({ form, errors, onPromptManualEdit, onRestore, o
               <AlertDialogHeader>
                 <AlertDialogTitle>Resetar para estado seguro?</AlertDialogTitle>
                 <AlertDialogDescription asChild>
-                  <div className="space-y-2 text-sm text-muted-foreground">
+                  <div className="space-y-2 text-body-sm text-muted-foreground">
                     <p>
                       Esta ação volta o <strong>system prompt</strong> e o <strong>preview do agente</strong>{' '}
                       para o template base do tipo selecionado, em um estado conhecido e validado.
                     </p>
-                    <ul className="list-disc pl-5 space-y-1 text-xs">
+                    <ul className="list-disc pl-5 space-y-1 text-meta">
                       <li>Substitui o prompt atual pelo template padrão (sanitizado).</li>
                       <li>Limpa a variação ativa e o bloqueio "customizado".</li>
                       <li>Restaura o emoji do tipo de agente.</li>
                       <li>Mantém nome, missão, descrição e modelo intactos.</li>
                     </ul>
-                    <p className="text-xs text-destructive">
+                    <p className="text-meta text-destructive">
                       Suas edições atuais no prompt serão perdidas — considere salvar uma versão antes.
                     </p>
                   </div>
@@ -395,7 +395,7 @@ export function StepQuickPrompt({ form, errors, onPromptManualEdit, onRestore, o
           <div
             role="status"
             aria-live="polite"
-            className="text-[11px] text-nexus-amber bg-nexus-amber/10 border border-nexus-amber/30 rounded-md px-2.5 py-1 flex items-center justify-between gap-2"
+            className="text-meta text-nexus-amber bg-nexus-amber/10 border border-nexus-amber/30 rounded-md px-2.5 py-1 flex items-center justify-between gap-2"
           >
             <span>
               📍 Ancorado em <strong>## {pulsedSection.charAt(0).toUpperCase() + pulsedSection.slice(1)}</strong> — corrija e clique para sair.
@@ -429,7 +429,7 @@ export function StepQuickPrompt({ form, errors, onPromptManualEdit, onRestore, o
             aria-describedby="qa-prompt-feedback"
             placeholder="## Persona&#10;...&#10;&#10;## Escopo&#10;...&#10;&#10;## Formato&#10;...&#10;&#10;## Regras&#10;..."
             style={{ paddingLeft: EDITOR_PADDING_LEFT, position: 'relative', zIndex: 2, background: 'transparent' }}
-            className={`bg-secondary/50 border-border/50 font-mono text-xs leading-relaxed resize-none ${
+            className={`bg-secondary/50 border-border/50 font-mono text-meta leading-relaxed resize-none ${
               errors.prompt ? 'border-destructive' : ''
             } ${promptPulsing ? FIELD_HIGHLIGHT_CLS : ''} ${
               pulsedSection ? 'border-nexus-amber/50' : ''
@@ -452,7 +452,7 @@ export function StepQuickPrompt({ form, errors, onPromptManualEdit, onRestore, o
                   )
                 }
                 aria-label={`${pending.length} seção(ões) pendente(s). Ir para ${first.label}.`}
-                className="absolute bottom-2 right-2 z-10 flex items-center gap-1.5 rounded-full bg-nexus-amber/15 hover:bg-nexus-amber/25 border border-nexus-amber/40 px-2.5 py-1 text-[11px] font-medium text-nexus-amber shadow-sm backdrop-blur transition-colors animate-fade-in"
+                className="absolute bottom-2 right-2 z-10 flex items-center gap-1.5 rounded-full bg-nexus-amber/15 hover:bg-nexus-amber/25 border border-nexus-amber/40 px-2.5 py-1 text-meta font-medium text-nexus-amber shadow-sm backdrop-blur transition-colors animate-fade-in"
               >
                 <span className="relative flex h-2 w-2">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-nexus-amber opacity-60" />
@@ -465,7 +465,7 @@ export function StepQuickPrompt({ form, errors, onPromptManualEdit, onRestore, o
           })()}
         </div>
         {errors.prompt && (
-          <div className="text-[11px] text-destructive" role="alert">
+          <div className="text-meta text-destructive" role="alert">
             {errors.prompt}
           </div>
         )}

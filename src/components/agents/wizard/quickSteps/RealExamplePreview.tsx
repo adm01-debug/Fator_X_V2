@@ -219,32 +219,32 @@ export function RealExamplePreview({ form, activeVariantLabel = null, lastChange
             <Send className="h-4 w-4 text-primary" />
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-heading font-semibold text-foreground flex items-center gap-1.5 flex-wrap">
+            <p className="text-body-sm font-heading font-semibold text-foreground flex items-center gap-1.5 flex-wrap">
               Exemplo real de envio
               {activeVariantLabel && (
-                <Badge variant="outline" className="text-[10px] font-mono border-primary/30 text-primary bg-primary/5">
+                <Badge variant="outline" className="text-meta font-mono border-primary/30 text-primary bg-primary/5">
                   {activeVariantLabel}
                 </Badge>
               )}
               {isValidated && (
-                <Badge className="text-[10px] gap-1 bg-nexus-emerald/15 text-nexus-emerald border border-nexus-emerald/40 hover:bg-nexus-emerald/20">
+                <Badge className="text-meta gap-1 bg-nexus-emerald/15 text-nexus-emerald border border-nexus-emerald/40 hover:bg-nexus-emerald/20">
                   <CheckCircle2 className="h-3 w-3" /> Pronto para avançar
                 </Badge>
               )}
             </p>
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-meta text-muted-foreground">
               Veja exatamente como o agente vai receber sua chamada e simule o envio antes de salvar.
             </p>
           </div>
         </div>
-        <div className="text-[10px] font-mono text-muted-foreground/80 text-right shrink-0">
+        <div className="text-meta font-mono text-muted-foreground/80 text-right shrink-0">
           est. {estimate.totalTokens.toLocaleString('pt-BR')} tk · {formatBrl(estimate.costBrl)}
         </div>
       </div>
 
       {/* Scenario chips */}
       <div className="space-y-1.5">
-        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Cenário de teste</p>
+        <p className="text-meta uppercase tracking-wider text-muted-foreground">Cenário de teste</p>
         <div className="flex items-center gap-1.5 flex-wrap">
           {mocks.map((m) => {
             const active = selectedMockLabel === m.label;
@@ -257,7 +257,7 @@ export function RealExamplePreview({ form, activeVariantLabel = null, lastChange
                   setUserMessage(m.input);
                 }}
                 className={cn(
-                  'text-[11px] px-2.5 py-1 rounded-full border transition-colors',
+                  'text-meta px-2.5 py-1 rounded-full border transition-colors',
                   active
                     ? 'bg-primary/15 border-primary/40 text-primary'
                     : 'bg-secondary/40 border-border/60 text-muted-foreground hover:text-foreground hover:border-border',
@@ -271,7 +271,7 @@ export function RealExamplePreview({ form, activeVariantLabel = null, lastChange
             type="button"
             onClick={() => setSelectedMockLabel('custom')}
             className={cn(
-              'text-[11px] px-2.5 py-1 rounded-full border transition-colors',
+              'text-meta px-2.5 py-1 rounded-full border transition-colors',
               selectedMockLabel === 'custom'
                 ? 'bg-nexus-amber/15 border-nexus-amber/40 text-nexus-amber'
                 : 'bg-secondary/40 border-border/60 text-muted-foreground hover:text-foreground hover:border-border',
@@ -284,7 +284,7 @@ export function RealExamplePreview({ form, activeVariantLabel = null, lastChange
 
       {/* User message editor */}
       <div className="space-y-1.5">
-        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Mensagem do usuário</p>
+        <p className="text-meta uppercase tracking-wider text-muted-foreground">Mensagem do usuário</p>
         <Textarea
           value={userMessage}
           onChange={(e) => {
@@ -294,24 +294,24 @@ export function RealExamplePreview({ form, activeVariantLabel = null, lastChange
           rows={2}
           maxLength={4000}
           placeholder="Como o usuário vai abordar o agente…"
-          className="bg-secondary/50 border-border/50 text-sm resize-none"
+          className="bg-secondary/50 border-border/50 text-body-sm resize-none"
         />
       </div>
 
       {/* Tabs: visualization of payload */}
       <div>
-        <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5">
+        <p className="text-meta uppercase tracking-wider text-muted-foreground mb-1.5">
           Como o agente vai receber
         </p>
         <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)}>
           <TabsList className="h-8 bg-secondary/40">
-            <TabsTrigger value="conversation" className="text-[11px] gap-1.5 h-6">
+            <TabsTrigger value="conversation" className="text-meta gap-1.5 h-6">
               <MessageSquare className="h-3 w-3" /> Conversa
             </TabsTrigger>
-            <TabsTrigger value="json" className="text-[11px] gap-1.5 h-6">
+            <TabsTrigger value="json" className="text-meta gap-1.5 h-6">
               <Braces className="h-3 w-3" /> Payload JSON
             </TabsTrigger>
-            <TabsTrigger value="curl" className="text-[11px] gap-1.5 h-6">
+            <TabsTrigger value="curl" className="text-meta gap-1.5 h-6">
               <Terminal className="h-3 w-3" /> cURL
             </TabsTrigger>
           </TabsList>
@@ -324,10 +324,10 @@ export function RealExamplePreview({ form, activeVariantLabel = null, lastChange
                   <Sparkles className="h-3 w-3 text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[10px] font-mono uppercase tracking-wider text-primary/80 mb-1">
+                  <p className="text-meta font-mono uppercase tracking-wider text-primary/80 mb-1">
                     system
                   </p>
-                  <pre className="text-[11px] font-mono text-foreground/85 whitespace-pre-wrap break-words bg-primary/5 border border-primary/15 rounded-md p-2.5 max-h-48 overflow-auto">
+                  <pre className="text-meta font-mono text-foreground/85 whitespace-pre-wrap break-words bg-primary/5 border border-primary/15 rounded-md p-2.5 max-h-48 overflow-auto">
                     {compiled.text}
                   </pre>
                 </div>
@@ -338,10 +338,10 @@ export function RealExamplePreview({ form, activeVariantLabel = null, lastChange
                   <UserIcon className="h-3 w-3 text-nexus-amber" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[10px] font-mono uppercase tracking-wider text-nexus-amber/80 mb-1">
+                  <p className="text-meta font-mono uppercase tracking-wider text-nexus-amber/80 mb-1">
                     user
                   </p>
-                  <div className="text-xs text-foreground/90 bg-nexus-amber/5 border border-nexus-amber/20 rounded-md p-2.5 whitespace-pre-wrap break-words">
+                  <div className="text-meta text-foreground/90 bg-nexus-amber/5 border border-nexus-amber/20 rounded-md p-2.5 whitespace-pre-wrap break-words">
                     {userMessage.trim() || (
                       <span className="text-muted-foreground italic">(mensagem vazia)</span>
                     )}
@@ -358,12 +358,12 @@ export function RealExamplePreview({ form, activeVariantLabel = null, lastChange
                 size="sm"
                 variant="ghost"
                 onClick={() => copy(payloadJson, 'json')}
-                className="absolute top-1.5 right-1.5 h-6 gap-1 text-[10px]"
+                className="absolute top-1.5 right-1.5 h-6 gap-1 text-meta"
               >
                 {copied === 'json' ? <Check className="h-3 w-3 text-nexus-emerald" /> : <Copy className="h-3 w-3" />}
                 {copied === 'json' ? 'Copiado' : 'Copiar JSON'}
               </Button>
-              <pre className="text-[11px] font-mono leading-relaxed text-foreground/85 whitespace-pre-wrap break-words p-3 pr-24">
+              <pre className="text-meta font-mono leading-relaxed text-foreground/85 whitespace-pre-wrap break-words p-3 pr-24">
                 {payloadJson}
               </pre>
             </div>
@@ -376,15 +376,15 @@ export function RealExamplePreview({ form, activeVariantLabel = null, lastChange
                 size="sm"
                 variant="ghost"
                 onClick={() => copy(curlCommand, 'curl')}
-                className="absolute top-1.5 right-1.5 h-6 gap-1 text-[10px]"
+                className="absolute top-1.5 right-1.5 h-6 gap-1 text-meta"
               >
                 {copied === 'curl' ? <Check className="h-3 w-3 text-nexus-emerald" /> : <Copy className="h-3 w-3" />}
                 {copied === 'curl' ? 'Copiado' : 'Copiar cURL'}
               </Button>
-              <pre className="text-[11px] font-mono leading-relaxed text-foreground/85 whitespace-pre-wrap break-words p-3 pr-24">
+              <pre className="text-meta font-mono leading-relaxed text-foreground/85 whitespace-pre-wrap break-words p-3 pr-24">
                 {curlCommand}
               </pre>
-              <p className="text-[10px] text-muted-foreground/70 px-3 pb-2 font-mono">
+              <p className="text-meta text-muted-foreground/70 px-3 pb-2 font-mono">
                 Cole no terminal para reproduzir a chamada exatamente como o app faz.
               </p>
             </div>
@@ -394,13 +394,13 @@ export function RealExamplePreview({ form, activeVariantLabel = null, lastChange
 
       {/* Validation hints */}
       {!promptValid && (
-        <div className="flex items-start gap-2 text-[11px] text-nexus-amber bg-nexus-amber/5 border border-nexus-amber/30 rounded-md p-2">
+        <div className="flex items-start gap-2 text-meta text-nexus-amber bg-nexus-amber/5 border border-nexus-amber/30 rounded-md p-2">
           <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
           <span>Complete as 4 seções obrigatórias do system prompt antes de simular.</span>
         </div>
       )}
       {promptChangedAfterRun && (
-        <div className="flex items-start gap-2 text-[11px] text-nexus-amber bg-nexus-amber/5 border border-nexus-amber/30 rounded-md p-2">
+        <div className="flex items-start gap-2 text-meta text-nexus-amber bg-nexus-amber/5 border border-nexus-amber/30 rounded-md p-2">
           <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
           <span>O prompt mudou desde a última simulação — re-rode o exemplo para revalidar.</span>
         </div>
@@ -408,7 +408,7 @@ export function RealExamplePreview({ form, activeVariantLabel = null, lastChange
 
       {/* Run button */}
       <div className="flex items-center justify-between gap-2 flex-wrap pt-1 border-t border-border/40">
-        <p className="text-[10px] text-muted-foreground/80 font-mono">
+        <p className="text-meta text-muted-foreground/80 font-mono">
           modelo: {form.model} · max_tokens: {MAX_TOKENS}
         </p>
         <Button
@@ -440,7 +440,7 @@ export function RealExamplePreview({ form, activeVariantLabel = null, lastChange
       {error && (
         <div
           role="alert"
-          className="flex items-start gap-2 text-xs text-destructive bg-destructive/5 border border-destructive/30 rounded-md p-2.5"
+          className="flex items-start gap-2 text-meta text-destructive bg-destructive/5 border border-destructive/30 rounded-md p-2.5"
         >
           <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
           <span>{error}</span>
@@ -455,10 +455,10 @@ export function RealExamplePreview({ form, activeVariantLabel = null, lastChange
           className="rounded-lg border border-nexus-emerald/30 bg-nexus-emerald/5 p-3 space-y-2 animate-page-enter"
         >
           <div className="flex items-center justify-between gap-2 flex-wrap">
-            <p className="text-[11px] uppercase tracking-wider text-nexus-emerald font-semibold flex items-center gap-1.5">
+            <p className="text-meta uppercase tracking-wider text-nexus-emerald font-semibold flex items-center gap-1.5">
               <Bot className="h-3 w-3" /> Resposta do agente
             </p>
-            <div className="flex items-center gap-1.5 text-[10px] font-mono text-muted-foreground">
+            <div className="flex items-center gap-1.5 text-meta font-mono text-muted-foreground">
               <span>{formatLatency(result.latency_ms)}</span>
               <span className="opacity-50">·</span>
               <span>{result.input_tokens}→{result.output_tokens} tk</span>
@@ -466,10 +466,10 @@ export function RealExamplePreview({ form, activeVariantLabel = null, lastChange
               <span className="text-nexus-emerald">{formatBrl(result.cost_brl)}</span>
             </div>
           </div>
-          <pre className="whitespace-pre-wrap break-words text-xs text-foreground font-sans leading-relaxed max-h-64 overflow-y-auto">
+          <pre className="whitespace-pre-wrap break-words text-meta text-foreground font-sans leading-relaxed max-h-64 overflow-y-auto">
             {result.response || <span className="text-muted-foreground italic">(resposta vazia)</span>}
           </pre>
-          <p className="text-[10px] font-mono text-muted-foreground/70 pt-1 border-t border-nexus-emerald/15">
+          <p className="text-meta font-mono text-muted-foreground/70 pt-1 border-t border-nexus-emerald/15">
             servido por: {result.model_used}
           </p>
         </div>

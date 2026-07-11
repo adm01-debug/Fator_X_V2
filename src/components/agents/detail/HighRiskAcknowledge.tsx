@@ -59,14 +59,14 @@ export function HighRiskAcknowledge({ diff, acknowledged, onAcknowledgedChange, 
       <div className={`flex items-center gap-2 px-3 py-2 border-b ${borderColor} ${bgColor}`}>
         <ShieldAlert className={`h-4 w-4 ${headerColor}`} aria-hidden />
         <div className="flex-1 min-w-0">
-          <p className={`text-xs font-bold ${headerColor}`}>
+          <p className={`text-meta font-bold ${headerColor}`}>
             {isCritical ? 'Risco crítico — revisão obrigatória' : 'Risco alto — revisão obrigatória'}
           </p>
-          <p className="text-[11px] text-muted-foreground leading-tight">
+          <p className="text-meta text-muted-foreground leading-tight">
             Revise os {flagged.length} item(s) abaixo antes de continuar.
           </p>
         </div>
-        <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold border ${
+        <span className={`px-1.5 py-0.5 rounded text-meta font-mono font-bold border ${
           isCritical ? 'bg-destructive/20 text-destructive border-destructive/50' : 'bg-nexus-amber/20 text-nexus-amber border-nexus-amber/50'
         }`}>
           {diff.overallImpact}/100
@@ -84,15 +84,15 @@ export function HighRiskAcknowledge({ diff, acknowledged, onAcknowledgedChange, 
               />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="text-xs font-semibold text-foreground">{c.label}</span>
+                  <span className="text-meta font-semibold text-foreground">{c.label}</span>
                   <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-bold border ${meta.chip}`}>
                     {meta.label}
                   </span>
-                  <span className="text-[10px] text-muted-foreground font-mono">
+                  <span className="text-meta text-muted-foreground font-mono">
                     impacto {c.impact}
                   </span>
                 </div>
-                <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">{c.reason}</p>
+                <p className="text-meta text-muted-foreground leading-snug mt-0.5">{c.reason}</p>
               </div>
             </li>
           );
@@ -113,11 +113,11 @@ export function HighRiskAcknowledge({ diff, acknowledged, onAcknowledgedChange, 
           className="mt-0.5"
         />
         <div className="min-w-0">
-          <p className="text-xs font-semibold text-foreground flex items-center gap-1">
+          <p className="text-meta font-semibold text-foreground flex items-center gap-1">
             {!acknowledged && <AlertTriangle className="h-3 w-3 text-destructive" aria-hidden />}
             Revisei explicitamente os itens marcados acima
           </p>
-          <p className="text-[11px] text-muted-foreground leading-snug">
+          <p className="text-meta text-muted-foreground leading-snug">
             Confirme que entendeu o impacto antes de prosseguir. Esta opção é resetada se você
             mudar a versão de origem ou os campos selecionados.
           </p>

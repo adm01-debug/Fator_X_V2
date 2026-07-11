@@ -70,11 +70,11 @@ export function RestoreChangelogEditor({
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5">
           <Sparkles className="h-3.5 w-3.5 text-primary" aria-hidden />
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground">
+          <span className="text-meta font-semibold uppercase tracking-wider text-foreground">
             Changelog para v{nextVersion}
           </span>
         </div>
-        <span className="text-[10px] font-mono text-muted-foreground">
+        <span className="text-meta font-mono text-muted-foreground">
           {totalChanges} {totalChanges === 1 ? "alteração" : "alterações"}
         </span>
       </div>
@@ -112,7 +112,7 @@ export function RestoreChangelogEditor({
         <div className="flex items-center justify-between">
           <label
             htmlFor="restore-summary-editor"
-            className="text-[10px] uppercase tracking-wider text-muted-foreground"
+            className="text-meta uppercase tracking-wider text-muted-foreground"
           >
             Descrição (editável){edited && <span className="text-primary normal-case ml-1.5 tracking-normal">· personalizado</span>}
           </label>
@@ -121,7 +121,7 @@ export function RestoreChangelogEditor({
               type="button"
               variant="ghost"
               size="sm"
-              className="h-6 px-2 text-[10px] gap-1"
+              className="h-6 px-2 text-meta gap-1"
               onClick={() => {
                 onEditedChange(false);
                 onChange(auto);
@@ -144,9 +144,9 @@ export function RestoreChangelogEditor({
           disabled={disabled}
           maxLength={240}
           rows={2}
-          className="text-xs font-mono resize-none bg-background/60"
+          className="text-meta font-mono resize-none bg-background/60"
         />
-        <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+        <div className="flex items-center justify-between text-meta text-muted-foreground">
           <span>Aparecerá no histórico da v{nextVersion}</span>
           <span className="font-mono">{value.length}/240</span>
         </div>
@@ -172,7 +172,7 @@ function ChangelogStat({
 }) {
   return (
     <div
-      className={`rounded-md border px-2 py-1.5 text-[10px] transition-colors ${
+      className={`rounded-md border px-2 py-1.5 text-meta transition-colors ${
         active
           ? count > 0
             ? "border-primary/40 bg-primary/10 text-foreground"
@@ -185,7 +185,7 @@ function ChangelogStat({
         <span className="font-semibold uppercase tracking-wider">{label}</span>
       </div>
       <div className="flex items-baseline gap-1">
-        <span className="text-sm font-mono font-bold text-foreground">{active ? count : "—"}</span>
+        <span className="text-body-sm font-mono font-bold text-foreground">{active ? count : "—"}</span>
         {active && extra && <span className="font-mono text-[9px] text-muted-foreground">{extra}</span>}
         {active && delta !== undefined && delta !== 0 && (
           <span

@@ -43,21 +43,21 @@ export function AutomationTemplatesPanel() {
               <div className="flex items-center gap-3 mb-3">
                 <span className="text-2xl">{tpl.icon}</span>
                 <div>
-                  <p className="font-semibold text-sm">{tpl.name}</p>
+                  <p className="font-semibold text-body-sm">{tpl.name}</p>
                   <Badge className={DIFFICULTY_COLORS[tpl.difficulty] ?? ''} >{tpl.difficulty}</Badge>
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{tpl.description}</p>
+              <p className="text-meta text-muted-foreground mb-3 line-clamp-2">{tpl.description}</p>
               <div className="flex flex-wrap gap-1 mb-3">
                 {tpl.required_integrations.map((i) => (
-                  <Badge key={i} variant="outline" className="text-[10px] border-border">{i}</Badge>
+                  <Badge key={i} variant="outline" className="text-meta border-border">{i}</Badge>
                 ))}
               </div>
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <div className="flex items-center justify-between text-meta text-muted-foreground">
                 <span>{tpl.steps.length} etapas</span>
                 <span>~{tpl.estimated_setup_minutes}min setup</span>
               </div>
-              <div className="mt-3 text-xs text-muted-foreground border-t border-border pt-3">
+              <div className="mt-3 text-meta text-muted-foreground border-t border-border pt-3">
                 <p className="font-medium text-muted-foreground mb-1">Fluxo:</p>
                 {tpl.steps.map((step, i) => (
                   <span key={i} className="inline-flex items-center">

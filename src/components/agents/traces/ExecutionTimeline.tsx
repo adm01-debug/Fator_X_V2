@@ -259,13 +259,13 @@ function ExecutionSummary({
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <div className="flex items-center gap-2 min-w-0">
           <Hash className="h-3.5 w-3.5 text-muted-foreground shrink-0" aria-hidden />
-          <code className="text-[11px] font-mono text-foreground truncate">
+          <code className="text-meta font-mono text-foreground truncate">
             {isAuto ? '∅ sem session_id' : session_id}
           </code>
           {hasBookmarks && (
             <Badge
               variant="outline"
-              className="text-[10px] gap-1 text-nexus-amber border-nexus-amber/40 bg-nexus-amber/10 cursor-pointer hover:bg-nexus-amber/20"
+              className="text-meta gap-1 text-nexus-amber border-nexus-amber/40 bg-nexus-amber/10 cursor-pointer hover:bg-nexus-amber/20"
               onClick={() => onJumpBookmark(1)}
               title="Pular para próximo marcador (b)"
             >
@@ -278,7 +278,7 @@ function ExecutionSummary({
             variant="outline"
             aria-live="polite"
             className={cn(
-              'text-[10px] gap-1 transition-all duration-200 select-none',
+              'text-meta gap-1 transition-all duration-200 select-none',
               focused
                 ? 'border-primary/60 bg-primary/10 text-primary shadow-[0_0_8px_hsl(var(--primary)/0.25)]'
                 : 'border-border/50 bg-muted/30 text-muted-foreground',
@@ -322,7 +322,7 @@ function ExecutionSummary({
           >
             <ChevronLeft className="h-3.5 w-3.5" />
           </Button>
-          <Badge variant="outline" className="text-[10px] tabular-nums">
+          <Badge variant="outline" className="text-meta tabular-nums">
             {Math.min(step + 1, traces.length)} / {traces.length}
           </Badge>
           <Button
@@ -388,11 +388,11 @@ function ExecutionSummary({
                 <Keyboard className="h-3.5 w-3.5" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent align="end" className="w-64 p-3 text-xs">
+            <PopoverContent align="end" className="w-64 p-3 text-meta">
               <p className="font-semibold text-foreground mb-2 flex items-center gap-1.5">
                 <Keyboard className="h-3.5 w-3.5 text-primary" /> Atalhos de teclado
               </p>
-              <p className="text-[10px] text-muted-foreground mb-2">
+              <p className="text-meta text-muted-foreground mb-2">
                 Clique na timeline para focar e use:
               </p>
               <ul className="space-y-1.5">
@@ -418,7 +418,7 @@ function ExecutionSummary({
             value={stepSearch}
             onChange={(e) => onStepSearch(e.target.value)}
             placeholder="Buscar nos eventos: erro, nome de tool, trecho do prompt/resposta..."
-            className="h-7 pl-7 pr-7 text-[11px]"
+            className="h-7 pl-7 pr-7 text-meta"
             aria-label="Buscar dentro desta execução"
           />
           {hasSearch && (
@@ -438,7 +438,7 @@ function ExecutionSummary({
             <Badge
               variant={matchCount > 0 ? 'secondary' : 'outline'}
               className={cn(
-                'text-[10px] tabular-nums shrink-0',
+                'text-meta tabular-nums shrink-0',
                 matchCount === 0 && 'text-muted-foreground',
               )}
             >
@@ -472,7 +472,7 @@ function ExecutionSummary({
         )}
       </div>
 
-      <div className="flex items-center gap-3 flex-wrap text-[11px] text-muted-foreground">
+      <div className="flex items-center gap-3 flex-wrap text-meta text-muted-foreground">
         <SummaryStat icon={CheckCircle2} value={counts.info} className="text-nexus-emerald" label="info" />
         {counts.warning > 0 && (
           <SummaryStat icon={AlertTriangle} value={counts.warning} className="text-nexus-amber" label="warning" />
@@ -491,7 +491,7 @@ function ExecutionSummary({
       </div>
 
       {current && (
-        <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+        <div className="flex items-center gap-2 text-meta text-muted-foreground">
           <div className="truncate flex-1 min-w-0">
             <span className="font-medium text-foreground">↳</span> {current.event}
             <span className="font-mono ml-2">{new Date(current.created_at).toLocaleTimeString('pt-BR')}</span>
@@ -520,7 +520,7 @@ function ShortcutRow({ keys, label }: { keys: string[]; label: string }) {
         {keys.map((k, i) => (
           <kbd
             key={i}
-            className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded border border-border/60 bg-muted/60 text-[10px] font-mono text-foreground"
+            className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded border border-border/60 bg-muted/60 text-meta font-mono text-foreground"
           >
             {k}
           </kbd>
@@ -614,7 +614,7 @@ const TraceItem = forwardRef<HTMLLIElement, TraceItemProps>(
             aria-hidden
           />
         )}
-        <div className="flex items-center gap-2 text-xs">
+        <div className="flex items-center gap-2 text-meta">
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); handleClick(); }}
@@ -625,12 +625,12 @@ const TraceItem = forwardRef<HTMLLIElement, TraceItemProps>(
               ? <ChevronDown className="h-3 w-3 text-muted-foreground shrink-0" />
               : <ChevronRight className="h-3 w-3 text-muted-foreground shrink-0" />}
             <span className={cn(
-              'font-mono text-[10px] tabular-nums w-8 shrink-0',
+              'font-mono text-meta tabular-nums w-8 shrink-0',
               active ? 'text-primary font-semibold' : 'text-muted-foreground',
             )}>
               #{index + 1}
             </span>
-            <span className="font-mono text-[10px] text-muted-foreground tabular-nums shrink-0">{ts}</span>
+            <span className="font-mono text-meta text-muted-foreground tabular-nums shrink-0">{ts}</span>
             {LEVEL_ICON[trace.level]}
             {isBookmarked && (
               <BookmarkCheck
@@ -641,7 +641,7 @@ const TraceItem = forwardRef<HTMLLIElement, TraceItemProps>(
             <span className={cn('font-medium truncate', active ? 'text-foreground' : 'text-foreground/90')}>
               <Highlighted text={trace.event} query={highlight} />
             </span>
-            <span className="ml-auto flex items-center gap-2 text-[10px] text-muted-foreground shrink-0">
+            <span className="ml-auto flex items-center gap-2 text-meta text-muted-foreground shrink-0">
               {trace.latency_ms != null && <span className="tabular-nums">{trace.latency_ms}ms</span>}
               {trace.tokens_used != null && trace.tokens_used > 0 && <span className="tabular-nums">{trace.tokens_used} tk</span>}
               {trace.cost_usd != null && Number(trace.cost_usd) > 0 && <span className="tabular-nums">${Number(trace.cost_usd).toFixed(5)}</span>}
@@ -670,7 +670,7 @@ const TraceItem = forwardRef<HTMLLIElement, TraceItemProps>(
         {open && (
           <div className="mt-2 ml-6 space-y-2" onClick={(e) => e.stopPropagation()}>
             {isBookmarked && bookmark.note && (
-              <div className="rounded border border-nexus-amber/30 bg-nexus-amber/10 p-2 text-[11px] text-foreground flex items-start gap-1.5">
+              <div className="rounded border border-nexus-amber/30 bg-nexus-amber/10 p-2 text-meta text-foreground flex items-start gap-1.5">
                 <BookmarkCheck className="h-3 w-3 text-nexus-amber mt-0.5 shrink-0" />
                 <span className="italic">{bookmark.note}</span>
               </div>
@@ -729,7 +729,7 @@ function JsonBlock({ label, data, highlight }: { label: string; data: unknown; h
   const hasMatch = highlight && body.toLowerCase().includes(highlight.toLowerCase());
   return (
     <div>
-      <p className="text-[10px] uppercase font-semibold text-muted-foreground mb-1 flex items-center gap-1.5">
+      <p className="text-meta uppercase font-semibold text-muted-foreground mb-1 flex items-center gap-1.5">
         {label}
         {hasMatch && (
           <Badge variant="secondary" className="h-3.5 px-1 text-[8px] font-mono normal-case">match</Badge>

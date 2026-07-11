@@ -31,7 +31,7 @@ function severityBadge(sev?: string) {
     log: 'bg-muted text-muted-foreground',
   };
   return (
-    <Badge className={`${map[sev] ?? 'bg-secondary text-foreground'} text-[10px] px-1.5 py-0 font-mono`}>
+    <Badge className={`${map[sev] ?? 'bg-secondary text-foreground'} text-meta px-1.5 py-0 font-mono`}>
       {sev}
     </Badge>
   );
@@ -57,8 +57,8 @@ export function GuardrailsDiffPanel({ versionA, versionB }: Props) {
   if (!hasAny) {
     return (
       <div className="nexus-card">
-        <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Guardrails</h4>
-        <p className="text-xs text-muted-foreground italic py-3 text-center">Nenhum guardrail configurado em nenhuma das versões.</p>
+        <h4 className="text-meta font-semibold text-muted-foreground uppercase tracking-wide mb-2">Guardrails</h4>
+        <p className="text-meta text-muted-foreground italic py-3 text-center">Nenhum guardrail configurado em nenhuma das versões.</p>
       </div>
     );
   }
@@ -71,36 +71,36 @@ export function GuardrailsDiffPanel({ versionA, versionB }: Props) {
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-4 w-4 text-primary" aria-hidden />
-          <h4 className="text-xs font-semibold text-foreground uppercase tracking-wide">Guardrails</h4>
-          <span className="text-[11px] text-muted-foreground">
+          <h4 className="text-meta font-semibold text-foreground uppercase tracking-wide">Guardrails</h4>
+          <span className="text-meta text-muted-foreground">
             {allA.length} → {allB.length} totais · {totalChanges} mudança(s)
           </span>
         </div>
         <div className="flex items-center gap-1.5">
           {diff.summary.added > 0 && (
-            <Badge className="bg-nexus-emerald/10 text-nexus-emerald text-[10px] px-1.5 py-0 gap-0.5">
+            <Badge className="bg-nexus-emerald/10 text-nexus-emerald text-meta px-1.5 py-0 gap-0.5">
               <Plus className="h-2.5 w-2.5" aria-hidden /> {diff.summary.added}
             </Badge>
           )}
           {diff.summary.removed > 0 && (
-            <Badge className="bg-destructive/10 text-destructive text-[10px] px-1.5 py-0 gap-0.5">
+            <Badge className="bg-destructive/10 text-destructive text-meta px-1.5 py-0 gap-0.5">
               <Minus className="h-2.5 w-2.5" aria-hidden /> {diff.summary.removed}
             </Badge>
           )}
           {diff.summary.modified > 0 && (
-            <Badge className="bg-nexus-amber/10 text-nexus-amber text-[10px] px-1.5 py-0 gap-0.5">
+            <Badge className="bg-nexus-amber/10 text-nexus-amber text-meta px-1.5 py-0 gap-0.5">
               <Settings2 className="h-2.5 w-2.5" aria-hidden /> {diff.summary.modified}
             </Badge>
           )}
           {totalChanges === 0 && (
-            <Badge variant="outline" className="text-[10px] px-1.5 py-0">sem mudanças</Badge>
+            <Badge variant="outline" className="text-meta px-1.5 py-0">sem mudanças</Badge>
           )}
         </div>
       </div>
 
       {/* Por categoria */}
       <div>
-        <h5 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">Por categoria</h5>
+        <h5 className="text-meta font-semibold text-muted-foreground uppercase tracking-wide mb-2">Por categoria</h5>
         <ul className="space-y-1">
           {categoryEntries.map(([cat, c]) => {
             const meta = CATEGORY_LABEL[cat] ?? { label: cat, icon: '·' };
@@ -108,7 +108,7 @@ export function GuardrailsDiffPanel({ versionA, versionB }: Props) {
               c.delta > 0 ? 'text-nexus-emerald' : c.delta < 0 ? 'text-destructive' : 'text-muted-foreground';
             const deltaLabel = c.delta === 0 ? '=' : c.delta > 0 ? `+${c.delta}` : `${c.delta}`;
             return (
-              <li key={cat} className="flex items-center justify-between text-xs py-1">
+              <li key={cat} className="flex items-center justify-between text-meta py-1">
                 <span className="flex items-center gap-2">
                   <span aria-hidden>{meta.icon}</span>
                   <span className="text-foreground">{meta.label}</span>
@@ -126,7 +126,7 @@ export function GuardrailsDiffPanel({ versionA, versionB }: Props) {
       {/* Severidade */}
       {diff.kept.some((k) => k.severityChanged) && (
         <div>
-          <h5 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+          <h5 className="text-meta font-semibold text-muted-foreground uppercase tracking-wide mb-2">
             Severidade alterada
           </h5>
           <ul className="space-y-1.5">
@@ -137,13 +137,13 @@ export function GuardrailsDiffPanel({ versionA, versionB }: Props) {
               const Icon = cmp === 'stricter' ? ArrowUp : cmp === 'looser' ? ArrowDown : ArrowRight;
               const judgment = cmp === 'stricter' ? 'mais estrito' : cmp === 'looser' ? 'mais leve' : 'lateral';
               return (
-                <li key={k.key} className="flex items-center justify-between text-xs">
+                <li key={k.key} className="flex items-center justify-between text-meta">
                   <span className="font-mono text-foreground truncate max-w-[200px]">{k.key}</span>
                   <span className="flex items-center gap-2">
                     {severityBadge(change.from)}
                     <Icon className={`h-3 w-3 ${color}`} aria-hidden />
                     {severityBadge(change.to)}
-                    <span className={`text-[10px] ${color}`}>{judgment}</span>
+                    <span className={`text-meta ${color}`}>{judgment}</span>
                   </span>
                 </li>
               );
@@ -155,18 +155,18 @@ export function GuardrailsDiffPanel({ versionA, versionB }: Props) {
       {/* Thresholds / config */}
       {diff.kept.some((k) => k.configChanges.length > 0) && (
         <div>
-          <h5 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+          <h5 className="text-meta font-semibold text-muted-foreground uppercase tracking-wide mb-2">
             Thresholds / config
           </h5>
           <ul className="space-y-1">
             {diff.kept.flatMap((k) =>
               k.configChanges.map((c) => (
-                <li key={`${k.key}.${c.key}`} className="flex items-center justify-between text-xs py-0.5">
+                <li key={`${k.key}.${c.key}`} className="flex items-center justify-between text-meta py-0.5">
                   <span className="text-foreground">
                     <span className="font-mono">{k.key}</span>
                     <span className="text-muted-foreground"> · {c.key}</span>
                   </span>
-                  <span className="font-mono text-[11px]">
+                  <span className="font-mono text-meta">
                     <span className="text-destructive/80">{formatValue(c.from)}</span>
                     <ArrowRight className="inline h-2.5 w-2.5 mx-1 text-muted-foreground" aria-hidden />
                     <span className="text-nexus-emerald">{formatValue(c.to)}</span>
@@ -183,12 +183,12 @@ export function GuardrailsDiffPanel({ versionA, versionB }: Props) {
         <div className="grid sm:grid-cols-2 gap-3 pt-2 border-t border-border/40">
           {diff.added.length > 0 && (
             <div>
-              <h5 className="text-[11px] font-semibold text-nexus-emerald uppercase tracking-wide mb-1.5 flex items-center gap-1">
+              <h5 className="text-meta font-semibold text-nexus-emerald uppercase tracking-wide mb-1.5 flex items-center gap-1">
                 <Plus className="h-3 w-3" aria-hidden /> Adicionadas
               </h5>
               <ul className="space-y-1">
                 {diff.added.map((g) => (
-                  <li key={g.name || g.id} className="flex items-center justify-between text-xs">
+                  <li key={g.name || g.id} className="flex items-center justify-between text-meta">
                     <span className="font-mono text-foreground truncate max-w-[160px]">{g.name || g.id}</span>
                     {severityBadge(g.severity)}
                   </li>
@@ -198,12 +198,12 @@ export function GuardrailsDiffPanel({ versionA, versionB }: Props) {
           )}
           {diff.removed.length > 0 && (
             <div>
-              <h5 className="text-[11px] font-semibold text-destructive uppercase tracking-wide mb-1.5 flex items-center gap-1">
+              <h5 className="text-meta font-semibold text-destructive uppercase tracking-wide mb-1.5 flex items-center gap-1">
                 <Minus className="h-3 w-3" aria-hidden /> Removidas
               </h5>
               <ul className="space-y-1">
                 {diff.removed.map((g) => (
-                  <li key={g.name || g.id} className="flex items-center justify-between text-xs">
+                  <li key={g.name || g.id} className="flex items-center justify-between text-meta">
                     <span className="font-mono text-foreground truncate max-w-[160px]">{g.name || g.id}</span>
                     {severityBadge(g.severity)}
                   </li>
@@ -216,7 +216,7 @@ export function GuardrailsDiffPanel({ versionA, versionB }: Props) {
 
       {/* Detalhes */}
       <Collapsible open={open} onOpenChange={setOpen}>
-        <CollapsibleTrigger className="flex items-center gap-1 text-[11px] text-primary hover:underline">
+        <CollapsibleTrigger className="flex items-center gap-1 text-meta text-primary hover:underline">
           <ChevronDown className={`h-3 w-3 transition-transform ${open ? 'rotate-180' : ''}`} aria-hidden />
           {open ? 'Ocultar detalhes' : 'Ver detalhes de todos os guardrails'}
         </CollapsibleTrigger>
@@ -244,7 +244,7 @@ function FullTable({
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-xs">
+      <table className="w-full text-meta">
         <thead>
           <tr className="border-b border-border/50">
             <th className="text-left py-1.5 font-medium text-muted-foreground">Nome</th>
@@ -271,9 +271,9 @@ function FullTable({
                 <td className="py-1.5 text-center">{severityBadge(gb?.severity)}</td>
                 <td className="py-1.5 pl-2">
                   {status === 'kept' && <span className="text-muted-foreground">=</span>}
-                  {status === 'added' && <Badge className="bg-nexus-emerald/10 text-nexus-emerald text-[10px] px-1.5 py-0">+ adicionada</Badge>}
-                  {status === 'removed' && <Badge className="bg-destructive/10 text-destructive text-[10px] px-1.5 py-0">− removida</Badge>}
-                  {status === 'modified' && <Badge className="bg-nexus-amber/10 text-nexus-amber text-[10px] px-1.5 py-0">⚙ alterada</Badge>}
+                  {status === 'added' && <Badge className="bg-nexus-emerald/10 text-nexus-emerald text-meta px-1.5 py-0">+ adicionada</Badge>}
+                  {status === 'removed' && <Badge className="bg-destructive/10 text-destructive text-meta px-1.5 py-0">− removida</Badge>}
+                  {status === 'modified' && <Badge className="bg-nexus-amber/10 text-nexus-amber text-meta px-1.5 py-0">⚙ alterada</Badge>}
                 </td>
               </tr>
             );

@@ -64,7 +64,7 @@ export function EvalsModule() {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-semibold flex items-center gap-2">🧪 Avaliação de Qualidade</h2>
-        <p className="text-sm text-muted-foreground mt-1">
+        <p className="text-body-sm text-muted-foreground mt-1">
           Crie datasets de teste e meça accuracy, latência e custo do seu agente automaticamente.
         </p>
       </div>
@@ -100,7 +100,7 @@ export function EvalsModule() {
                       <Card key={i}>
                         <CardContent className="pt-4 space-y-2">
                           <div className="flex items-center justify-between">
-                            <span className="text-xs font-semibold text-muted-foreground">Caso #{i + 1}</span>
+                            <span className="text-meta font-semibold text-muted-foreground">Caso #{i + 1}</span>
                             {items.length > 1 && (
                               <Button variant="ghost" size="sm" onClick={() => setItems(items.filter((_, idx) => idx !== i))}>
                                 <Trash2 className="h-3 w-3" />
@@ -162,8 +162,8 @@ export function EvalsModule() {
                   <CardContent className="pt-4 flex items-center justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="font-medium">{ds.name}</div>
-                      {ds.description && <div className="text-xs text-muted-foreground truncate">{ds.description}</div>}
-                      <div className="text-xs text-muted-foreground mt-1">{ds.items?.length ?? 0} casos de teste</div>
+                      {ds.description && <div className="text-meta text-muted-foreground truncate">{ds.description}</div>}
+                      <div className="text-meta text-muted-foreground mt-1">{ds.items?.length ?? 0} casos de teste</div>
                     </div>
                     <div className="flex gap-2">
                       <Button size="sm" onClick={() => handleRun(ds.id)} disabled={runEval.isPending}>
@@ -198,11 +198,11 @@ export function EvalsModule() {
                             <Badge variant={run.status === 'completed' ? 'default' : run.status === 'failed' ? 'destructive' : 'secondary'}>
                               {run.status}
                             </Badge>
-                            <span className="text-xs text-muted-foreground">
+                            <span className="text-meta text-muted-foreground">
                               {new Date(run.created_at).toLocaleString('pt-BR')}
                             </span>
                           </div>
-                          <div className="grid grid-cols-4 gap-3 mt-3 text-xs">
+                          <div className="grid grid-cols-4 gap-3 mt-3 text-meta">
                             <div>
                               <div className="text-muted-foreground">Pass rate</div>
                               <div className={`font-semibold text-base ${passRate >= 70 ? 'text-nexus-emerald' : passRate >= 40 ? 'text-nexus-amber' : 'text-destructive'}`}>
@@ -289,12 +289,12 @@ function RunDetails({ runId }: { runId: string | null }) {
       {filtered.map((r) => (
         <Card key={r.id}>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm flex items-center gap-2">
+            <CardTitle className="text-body-sm flex items-center gap-2">
               {r.passed ? <CheckCircle2 className="h-4 w-4 text-nexus-emerald" /> : <XCircle className="h-4 w-4 text-destructive" />}
               Caso #{r.item_index + 1} — score {Number(r.score).toFixed(2)} · {r.latency_ms}ms
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2 text-xs">
+          <CardContent className="space-y-2 text-meta">
             <div><span className="font-semibold">Input:</span> <div className="text-muted-foreground mt-1">{r.input}</div></div>
             {r.expected && <div><span className="font-semibold">Esperado:</span> <div className="text-muted-foreground mt-1">{r.expected}</div></div>}
             {r.actual && <div><span className="font-semibold">Real:</span> <div className="text-muted-foreground mt-1">{r.actual}</div></div>}

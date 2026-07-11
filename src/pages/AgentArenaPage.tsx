@@ -114,14 +114,14 @@ export default function AgentArenaPage() {
         <div className="col-span-12 lg:col-span-4 space-y-6">
           <Card className="nexus-card">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider">
+              <CardTitle className="flex items-center gap-2 text-body-sm font-bold uppercase tracking-wider">
                 <Swords className="h-4 w-4 text-primary" />
                 Configurar Duelo
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Competidor A</label>
+                <label className="text-meta font-bold uppercase tracking-wider text-muted-foreground">Competidor A</label>
                 <Select value={agentA} onValueChange={setAgentA}>
                   <SelectTrigger className="bg-secondary/30 h-11">
                     <SelectValue placeholder="Selecione Agente A" />
@@ -133,11 +133,11 @@ export default function AgentArenaPage() {
               </div>
 
               <div className="flex justify-center">
-                <Badge variant="outline" className="text-[10px] py-0 font-bold bg-muted/50">VS</Badge>
+                <Badge variant="outline" className="text-meta py-0 font-bold bg-muted/50">VS</Badge>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Competidor B</label>
+                <label className="text-meta font-bold uppercase tracking-wider text-muted-foreground">Competidor B</label>
                 <Select value={agentB} onValueChange={setAgentB}>
                   <SelectTrigger className="bg-secondary/30 h-11">
                     <SelectValue placeholder="Selecione Agente B" />
@@ -149,10 +149,10 @@ export default function AgentArenaPage() {
               </div>
 
               <div className="space-y-2 pt-4">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">O Desafio (Prompt)</label>
+                <label className="text-meta font-bold uppercase tracking-wider text-muted-foreground">O Desafio (Prompt)</label>
                 <Textarea 
                   placeholder="Ex: Escreva um código Python que ordene uma lista usando bubble sort..." 
-                  className="min-h-[120px] bg-secondary/20 text-sm"
+                  className="min-h-[120px] bg-secondary/20 text-body-sm"
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                 />
@@ -161,7 +161,7 @@ export default function AgentArenaPage() {
               <Button 
                 onClick={handleRunArena} 
                 disabled={running || !agentA || !agentB || !prompt.trim()}
-                className="w-full h-11 nexus-gradient-bg text-primary-foreground font-black uppercase tracking-widest text-xs"
+                className="w-full h-11 nexus-gradient-bg text-primary-foreground font-black uppercase tracking-widest text-meta"
               >
                 {running ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4 mr-2" />}
                 {running ? "Batalhando..." : "Iniciar Batalha"}
@@ -174,11 +174,11 @@ export default function AgentArenaPage() {
               <CardHeader className="pb-2">
                 <div className="flex items-center gap-2">
                   <Trophy className="h-4 w-4 text-nexus-emerald" />
-                  <CardTitle className="text-xs font-bold uppercase">Veredito do Oráculo</CardTitle>
+                  <CardTitle className="text-meta font-bold uppercase">Veredito do Oráculo</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-xs text-foreground leading-relaxed italic">
+                <p className="text-meta text-foreground leading-relaxed italic">
                   "{results.a.score > results.b.score ? results.a.reasoning : results.b.reasoning}"
                 </p>
               </CardContent>
@@ -193,7 +193,7 @@ export default function AgentArenaPage() {
                 <BarChart3 className="h-8 w-8 text-muted-foreground/30" />
               </div>
               <h3 className="text-lg font-bold text-foreground">Aguardando Arena</h3>
-              <p className="text-sm text-muted-foreground max-w-xs mt-2 leading-relaxed">
+              <p className="text-body-sm text-muted-foreground max-w-xs mt-2 leading-relaxed">
                 Selecione os competidores e inicie a batalha para ver as métricas de performance lado a lado.
               </p>
             </div>
@@ -226,13 +226,13 @@ function CompetidorResult({ label, name, result, isWinner, loading }: { label: s
     <Card className={`relative overflow-hidden transition-all duration-500 rounded-3xl ${isWinner ? 'ring-2 ring-nexus-emerald shadow-2xl shadow-nexus-emerald/10' : 'opacity-80 border-border/40'}`}>
       {isWinner && (
         <div className="absolute top-0 right-0 p-3">
-          <Badge className="bg-nexus-emerald text-white animate-bounce text-[10px] font-black">VENCEDOR</Badge>
+          <Badge className="bg-nexus-emerald text-white animate-bounce text-meta font-black">VENCEDOR</Badge>
         </div>
       )}
       
       <CardHeader className="bg-muted/30 p-6">
         <div className="flex items-center gap-2 mb-1">
-          <Badge variant="outline" className="text-[10px] uppercase font-bold tracking-tighter">{label}</Badge>
+          <Badge variant="outline" className="text-meta uppercase font-bold tracking-tighter">{label}</Badge>
         </div>
         <CardTitle className="text-xl font-black truncate">{name}</CardTitle>
       </CardHeader>
@@ -250,7 +250,7 @@ function CompetidorResult({ label, name, result, isWinner, loading }: { label: s
         ) : result ? (
           <>
             <div className="space-y-2">
-              <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              <div className="flex items-center justify-between text-meta font-bold uppercase tracking-widest text-muted-foreground">
                 <span>Score Qualidade</span>
                 <span className={isWinner ? "text-nexus-emerald" : ""}>{result.score}/100</span>
               </div>
@@ -264,8 +264,8 @@ function CompetidorResult({ label, name, result, isWinner, loading }: { label: s
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Resposta</label>
-              <div className="bg-muted/30 rounded-2xl p-4 border border-border/20 max-h-[250px] overflow-y-auto text-xs font-medium leading-relaxed scrollbar-hide">
+              <label className="text-meta font-bold uppercase tracking-widest text-muted-foreground">Resposta</label>
+              <div className="bg-muted/30 rounded-2xl p-4 border border-border/20 max-h-[250px] overflow-y-auto text-meta font-medium leading-relaxed scrollbar-hide">
                 {result.response}
               </div>
             </div>
@@ -281,7 +281,7 @@ function MetricItem({ icon: Icon, label, value }: { icon: React.ElementType; lab
     <div className="bg-secondary/10 p-2.5 rounded-2xl border border-border/20 text-center">
       <Icon className="h-3 w-3 mx-auto mb-1 text-muted-foreground" />
       <div className="text-[9px] text-muted-foreground uppercase font-bold mb-0.5 tracking-tighter">{label}</div>
-      <div className="text-[11px] font-black truncate">{value}</div>
+      <div className="text-meta font-black truncate">{value}</div>
     </div>
   );
 }

@@ -121,7 +121,7 @@ export default function SwarmOrchestrationPage() {
           
           <Card className="nexus-card overflow-hidden">
             <CardHeader className="bg-muted/30 border-b border-border/40">
-              <CardTitle className="text-sm flex items-center gap-2">
+              <CardTitle className="text-body-sm flex items-center gap-2">
                 <Play className="h-4 w-4 text-primary" />
                 Trigger Swarm Deliberation
               </CardTitle>
@@ -164,7 +164,7 @@ export default function SwarmOrchestrationPage() {
                 <div className="p-4 space-y-4" ref={scrollRef}>
                   {logs.map((log) => (
                     <div key={log.id} className="space-y-1.5 animate-in fade-in slide-in-from-right-2">
-                      <div className="flex items-center justify-between text-[10px]">
+                      <div className="flex items-center justify-between text-meta">
                         <div className="flex items-center gap-2">
                           {log.direction === 'outbound' ? 
                             <ArrowRightLeft className="h-3 w-3 text-primary" /> : 
@@ -184,7 +184,7 @@ export default function SwarmOrchestrationPage() {
                             {log.type}
                           </Badge>
                         </div>
-                        <pre className="text-[11px] font-mono text-foreground whitespace-pre-wrap overflow-x-auto">
+                        <pre className="text-meta font-mono text-foreground whitespace-pre-wrap overflow-x-auto">
                           {JSON.stringify(log.payload, null, 2)}
                         </pre>
                       </div>

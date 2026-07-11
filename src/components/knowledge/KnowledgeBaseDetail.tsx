@@ -170,16 +170,16 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
         {/* Collections panel */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-xs font-heading font-semibold text-muted-foreground uppercase tracking-wider">Collections</h3>
+            <h3 className="text-meta font-heading font-semibold text-muted-foreground uppercase tracking-wider">Collections</h3>
             <Dialog open={newCollOpen} onOpenChange={setNewCollOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-1 text-xs h-7"><Plus className="h-3 w-3" /> Nova</Button>
+                <Button variant="outline" size="sm" className="gap-1 text-meta h-7"><Plus className="h-3 w-3" /> Nova</Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[400px]">
                 <DialogHeader><DialogTitle>Nova Collection</DialogTitle></DialogHeader>
                 <div className="space-y-3 mt-2">
-                  <div className="space-y-1"><Label className="text-xs">Nome *</Label><Input value={collName} onChange={e => setCollName(e.target.value)} className="bg-secondary/50" placeholder="Ex: FAQs" /></div>
-                  <div className="space-y-1"><Label className="text-xs">Descrição</Label><Input value={collDesc} onChange={e => setCollDesc(e.target.value)} className="bg-secondary/50" /></div>
+                  <div className="space-y-1"><Label className="text-meta">Nome *</Label><Input value={collName} onChange={e => setCollName(e.target.value)} className="bg-secondary/50" placeholder="Ex: FAQs" /></div>
+                  <div className="space-y-1"><Label className="text-meta">Descrição</Label><Input value={collDesc} onChange={e => setCollDesc(e.target.value)} className="bg-secondary/50" /></div>
                   <Button onClick={handleCreateCollection} disabled={saving} className="w-full nexus-gradient-bg text-primary-foreground">
                     {saving && <Loader2 className="h-4 w-4 animate-spin mr-2" />} Criar
                   </Button>
@@ -193,7 +193,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
           ) : collections.length === 0 ? (
             <div className="text-center py-8">
               <FolderOpen className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-              <p className="text-xs text-muted-foreground">Nenhuma collection. Crie uma para organizar documentos.</p>
+              <p className="text-meta text-muted-foreground">Nenhuma collection. Crie uma para organizar documentos.</p>
             </div>
           ) : (
             collections.map((coll: any) => (
@@ -205,7 +205,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 min-w-0">
                     <FolderOpen className="h-4 w-4 text-primary shrink-0" />
-                    <span className="text-sm font-medium text-foreground truncate">{coll.name}</span>
+                    <span className="text-body-sm font-medium text-foreground truncate">{coll.name}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <AlertDialog>
@@ -222,7 +222,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
                     <ChevronRight className="h-3 w-3 text-muted-foreground" />
                   </div>
                 </div>
-                {coll.description && <p className="text-[11px] text-muted-foreground mt-1 truncate">{coll.description}</p>}
+                {coll.description && <p className="text-meta text-muted-foreground mt-1 truncate">{coll.description}</p>}
               </div>
             ))
           )}
@@ -231,20 +231,20 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
         {/* Documents panel */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-xs font-heading font-semibold text-muted-foreground uppercase tracking-wider">
+            <h3 className="text-meta font-heading font-semibold text-muted-foreground uppercase tracking-wider">
               Documentos {selectedCollection ? `— ${selectedCollection.name}` : ''}
             </h3>
             {selectedCollectionId && (
               <Dialog open={newDocOpen} onOpenChange={setNewDocOpen}>
                 <DialogTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-1 text-xs h-7"><Plus className="h-3 w-3" /> Adicionar</Button>
+                  <Button variant="outline" size="sm" className="gap-1 text-meta h-7"><Plus className="h-3 w-3" /> Adicionar</Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[480px]">
                   <DialogHeader><DialogTitle>Novo Documento</DialogTitle></DialogHeader>
                   <div className="space-y-3 mt-2">
-                    <div className="space-y-1"><Label className="text-xs">Título *</Label><Input value={docTitle} onChange={e => setDocTitle(e.target.value)} className="bg-secondary/50" placeholder="Ex: Guia de uso" /></div>
-                    <div className="space-y-1"><Label className="text-xs">URL da fonte (opcional)</Label><Input value={docSourceUrl} onChange={e => setDocSourceUrl(e.target.value)} className="bg-secondary/50" placeholder="https://..." /></div>
-                    <div className="space-y-1"><Label className="text-xs">Conteúdo (opcional — cria chunk automático)</Label><Textarea value={docContent} onChange={e => setDocContent(e.target.value)} className="bg-secondary/50" rows={5} placeholder="Cole o texto do documento aqui..." /></div>
+                    <div className="space-y-1"><Label className="text-meta">Título *</Label><Input value={docTitle} onChange={e => setDocTitle(e.target.value)} className="bg-secondary/50" placeholder="Ex: Guia de uso" /></div>
+                    <div className="space-y-1"><Label className="text-meta">URL da fonte (opcional)</Label><Input value={docSourceUrl} onChange={e => setDocSourceUrl(e.target.value)} className="bg-secondary/50" placeholder="https://..." /></div>
+                    <div className="space-y-1"><Label className="text-meta">Conteúdo (opcional — cria chunk automático)</Label><Textarea value={docContent} onChange={e => setDocContent(e.target.value)} className="bg-secondary/50" rows={5} placeholder="Cole o texto do documento aqui..." /></div>
                     <Button onClick={handleCreateDocument} disabled={saving} className="w-full nexus-gradient-bg text-primary-foreground">
                       {saving && <Loader2 className="h-4 w-4 animate-spin mr-2" />} Adicionar documento
                     </Button>
@@ -255,13 +255,13 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
           </div>
 
           {!selectedCollectionId ? (
-            <div className="text-center py-8"><p className="text-xs text-muted-foreground">Selecione uma collection à esquerda</p></div>
+            <div className="text-center py-8"><p className="text-meta text-muted-foreground">Selecione uma collection à esquerda</p></div>
           ) : loadingDocs ? (
             <div className="flex justify-center py-8"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>
           ) : documents.length === 0 ? (
             <div className="text-center py-8">
               <FileText className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-              <p className="text-xs text-muted-foreground">Nenhum documento nesta collection.</p>
+              <p className="text-meta text-muted-foreground">Nenhum documento nesta collection.</p>
             </div>
           ) : (
             documents.map((doc: any) => (
@@ -270,8 +270,8 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
                   <div className="flex items-center gap-2 min-w-0">
                     <FileText className="h-4 w-4 text-primary shrink-0" />
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-foreground truncate">{doc.title}</p>
-                      <p className="text-[11px] text-muted-foreground">{doc.source_type} • {doc.status}</p>
+                      <p className="text-body-sm font-medium text-foreground truncate">{doc.title}</p>
+                      <p className="text-meta text-muted-foreground">{doc.source_type} • {doc.status}</p>
                     </div>
                   </div>
                   <AlertDialog>
@@ -286,7 +286,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
                     </AlertDialogContent>
                   </AlertDialog>
                 </div>
-                {doc.source_url && <p className="text-[11px] text-muted-foreground mt-1 truncate">{doc.source_url}</p>}
+                {doc.source_url && <p className="text-meta text-muted-foreground mt-1 truncate">{doc.source_url}</p>}
               </div>
             ))
           )}
@@ -294,33 +294,33 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
 
         {/* Chunks panel */}
         <div className="space-y-3">
-          <h3 className="text-xs font-heading font-semibold text-muted-foreground uppercase tracking-wider">
-            Chunks <Badge variant="outline" className="text-[11px] ml-1">{chunks.length}</Badge>
+          <h3 className="text-meta font-heading font-semibold text-muted-foreground uppercase tracking-wider">
+            Chunks <Badge variant="outline" className="text-meta ml-1">{chunks.length}</Badge>
           </h3>
 
           {!selectedCollectionId ? (
-            <div className="text-center py-8"><p className="text-xs text-muted-foreground">Selecione uma collection</p></div>
+            <div className="text-center py-8"><p className="text-meta text-muted-foreground">Selecione uma collection</p></div>
           ) : loadingChunks ? (
             <div className="flex justify-center py-8"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>
           ) : chunks.length === 0 ? (
             <div className="text-center py-8">
               <Hash className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-              <p className="text-xs text-muted-foreground">Nenhum chunk encontrado.</p>
+              <p className="text-meta text-muted-foreground">Nenhum chunk encontrado.</p>
             </div>
           ) : (
             <div className="space-y-2 max-h-[600px] overflow-y-auto">
               {chunks.map((chunk: any) => (
                 <div key={chunk.id} className="nexus-card p-3">
                   <div className="flex items-center justify-between mb-1.5">
-                    <Badge variant="outline" className="text-[11px]">#{chunk.chunk_index}</Badge>
+                    <Badge variant="outline" className="text-meta">#{chunk.chunk_index}</Badge>
                     <div className="flex items-center gap-2">
-                      <span className="text-[11px] text-muted-foreground">{chunk.token_count ?? 0} tokens</span>
-                      <Badge variant={chunk.embedding_status === 'completed' ? 'default' : 'secondary'} className="text-[11px]">
+                      <span className="text-meta text-muted-foreground">{chunk.token_count ?? 0} tokens</span>
+                      <Badge variant={chunk.embedding_status === 'completed' ? 'default' : 'secondary'} className="text-meta">
                         {chunk.embedding_status}
                       </Badge>
                     </div>
                   </div>
-                  <p className="text-xs text-muted-foreground line-clamp-3">{chunk.content}</p>
+                  <p className="text-meta text-muted-foreground line-clamp-3">{chunk.content}</p>
                 </div>
               ))}
             </div>

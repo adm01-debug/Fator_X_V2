@@ -62,7 +62,7 @@ export function InlineEditCell({ row, col, entityId, onUpdate }: InlineEditCellP
           value={value}
           onChange={e => setValue(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter') handleSave(); if (e.key === 'Escape') handleCancel(); }}
-          className="h-6 text-[11px] font-mono bg-secondary/50 border-primary/30 px-1.5 min-w-[80px]"
+          className="h-6 text-meta font-mono bg-secondary/50 border-primary/30 px-1.5 min-w-[80px]"
           disabled={saving}
         />
         {saving ? (
@@ -79,7 +79,7 @@ export function InlineEditCell({ row, col, entityId, onUpdate }: InlineEditCellP
 
   return (
     <span
-      className={`font-mono text-[11px] truncate block max-w-[300px] ${
+      className={`font-mono text-meta truncate block max-w-[300px] ${
         isSensitive ? 'text-destructive/60' : 'text-foreground'
       } ${canEdit ? 'cursor-pointer hover:bg-primary/5 hover:text-primary rounded px-0.5 -mx-0.5 transition-colors' : ''}`}
       onDoubleClick={() => {

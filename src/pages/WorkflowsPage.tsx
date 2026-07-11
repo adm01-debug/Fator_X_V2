@@ -132,7 +132,7 @@ export default function WorkflowsPage() {
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Workflows</h1>
-                <Badge className="bg-primary/10 text-primary border-none font-bold px-3 py-1 rounded-full text-xs">BETA</Badge>
+                <Badge className="bg-primary/10 text-primary border-none font-bold px-3 py-1 rounded-full text-meta">BETA</Badge>
               </div>
               <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Desenhe arquiteturas multi-agente complexas com orquestração streaming em tempo real.
@@ -155,7 +155,7 @@ export default function WorkflowsPage() {
                 </DialogHeader>
                 <div className="space-y-6 mt-4">
                   <div className="space-y-2">
-                    <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Nome do Workflow</Label>
+                    <Label className="text-meta font-bold uppercase tracking-widest text-muted-foreground">Nome do Workflow</Label>
                     <Input 
                       value={newName} 
                       onChange={(e) => setNewName(e.target.value)} 
@@ -164,7 +164,7 @@ export default function WorkflowsPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Nodos Iniciais</Label>
+                    <Label className="text-meta font-bold uppercase tracking-widest text-muted-foreground">Nodos Iniciais</Label>
                     <Input 
                       value={newSteps} 
                       onChange={(e) => setNewSteps(e.target.value)} 
@@ -195,12 +195,12 @@ export default function WorkflowsPage() {
              <div className="flex-1 h-2 bg-secondary rounded-full overflow-hidden">
                 <div className="h-full bg-primary animate-progress-indeterminate w-1/3" />
              </div>
-             <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+             <span className="text-meta font-bold text-muted-foreground uppercase tracking-widest">
                {currentEvent?.label || 'Iniciando...'}
              </span>
           </div>
           {currentEvent?.output && (
-            <div className="mt-4 p-4 rounded-xl bg-card border border-border/40 font-mono text-xs max-h-40 overflow-y-auto">
+            <div className="mt-4 p-4 rounded-xl bg-card border border-border/40 font-mono text-meta max-h-40 overflow-y-auto">
               <p className="text-muted-foreground mb-2 italic">// Último output:</p>
               {typeof currentEvent.output === 'string' ? currentEvent.output : JSON.stringify(currentEvent.output, null, 2)}
             </div>
@@ -221,7 +221,7 @@ export default function WorkflowsPage() {
               <stat.icon className={cn("h-7 w-7", stat.color)} />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{stat.label}</p>
+              <p className="text-meta font-bold uppercase tracking-widest text-muted-foreground">{stat.label}</p>
               <p className="text-2xl font-black text-foreground">{stat.value}</p>
             </div>
           </div>
