@@ -7857,6 +7857,19 @@ export type Database = {
         Args: { p_notes?: string; p_vendor_id: string }
         Returns: undefined
       }
+      pg_net_schema: { Args: never; Returns: string }
+      pg_net_smoke_post: {
+        Args: { _body?: Json; _url: string }
+        Returns: number
+      }
+      pg_net_smoke_response: {
+        Args: { _request_id: number }
+        Returns: {
+          content_length: number
+          error_msg: string
+          status_code: number
+        }[]
+      }
       promote_experiment_winner: {
         Args: { p_experiment_id: string; p_winner: string }
         Returns: Json
