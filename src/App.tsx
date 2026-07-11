@@ -125,6 +125,7 @@ const PublicHelpCenterPage = lazy(() => import("./pages/PublicHelpCenterPage"));
 const PublicForumPage = lazy(() => import("./pages/PublicForumPage"));
 const SwarmOrchestrationPage = lazy(() => import("./pages/SwarmOrchestrationPage"));
 const AgentArenaPage = lazy(() => import("./pages/AgentArenaPage"));
+const AgentMetricsPage = lazy(() => import("./pages/AgentMetricsPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient({
@@ -219,6 +220,7 @@ const App = () => (
                       <Route path="/deployments" element={<SafePage><DeploymentsPage /></SafePage>} />
                       <Route path="/deploy/openclaw" element={<SafePage><OpenclawDeployPage /></SafePage>} />
                       <Route path="/monitoring" element={<SafePage><MonitoringPage /></SafePage>} />
+                      <Route path="/monitoring/metrics" element={<SafePage><AgentMetricsPage /></SafePage>} />
                       <Route path="/data-storage" element={<SafePage><DataStoragePage /></SafePage>} />
                       <Route path="/datahub" element={<SafePage><DataHubPage /></SafePage>} />
                       <Route path="/admin" element={<SafePage><ProtectedRoute permission="team.roles"><AdminPage /></ProtectedRoute></SafePage>} />

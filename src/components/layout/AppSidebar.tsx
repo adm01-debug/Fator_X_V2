@@ -85,6 +85,7 @@ const navSections = [
       { title: "Avaliações", url: "/evaluations", icon: FlaskConical },
       { title: "Implantações", url: "/deployments", icon: Rocket },
       { title: "Monitoramento", url: "/monitoring", icon: Activity },
+      { title: "Métricas Diárias", url: "/monitoring/metrics", icon: Activity },
       { title: "Traces & Spans", url: "/traces", icon: Activity },
       { title: "SLO Dashboard", url: "/observability/slo", icon: Activity },
       { title: "Chaos Lab", url: "/observability/chaos", icon: Zap },
