@@ -1,4 +1,6 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
+import { prefetchIdleRoutes } from "@/lib/routePrefetch";
+
 import { toast } from "sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
@@ -160,7 +162,12 @@ function SafePage({ children }: { children: ReactNode }) {
   );
 }
 
-const App = () => (
+const App = () => {
+  // Pré-carrega em idle os chunks das rotas mais acessadas para tornar a
+  // navegação instantânea após o primeiro paint.
+  useEffect(() => { prefetchIdleRoutes(); }, []);
+
+  return (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
       <I18nProvider>
@@ -304,6 +311,7 @@ const App = () => (
       </I18nProvider>
     </ThemeProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;
