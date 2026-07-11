@@ -1,0 +1,76 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":semanticCommits",
+    ":dependencyDashboard",
+    "group:allNonMajor",
+    "schedule:weekly"
+  ],
+  "timezone": "America/Sao_Paulo",
+  "labels": ["dependencies"],
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2,
+  "rangeStrategy": "bump",
+  "postUpdateOptions": ["npmDedupe"],
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security", "priority-high"],
+    "prPriority": 10,
+    "schedule": ["at any time"]
+  },
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 5am on monday"],
+    "commitMessageAction": "Refresh"
+  },
+  "packageRules": [
+    {
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true
+    },
+    {
+      "matchPackagePatterns": ["^@types/"],
+      "automerge": true,
+      "groupName": "type definitions"
+    },
+    {
+      "matchPackagePatterns": ["^eslint", "^@typescript-eslint/", "^prettier"],
+      "groupName": "lint & format tooling",
+      "automerge": true
+    },
+    {
+      "matchPackagePatterns": ["^@radix-ui/"],
+      "groupName": "Radix UI primitives",
+      "schedule": ["before 5am on monday"]
+    },
+    {
+      "matchPackageNames": ["react", "react-dom", "react-router-dom", "@tanstack/react-query", "@supabase/supabase-js"],
+      "matchUpdateTypes": ["major"],
+      "labels": ["dependencies", "major-review"],
+      "reviewers": ["team:nexus/architecture"],
+      "automerge": false
+    },
+    {
+      "matchPackagePatterns": ["^@sentry/"],
+      "groupName": "Sentry SDK",
+      "labels": ["dependencies", "observability"]
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "groupName": "GitHub Actions",
+      "automerge": true,
+      "pinDigests": true
+    },
+    {
+      "matchDatasources": ["docker"],
+      "enabled": false
+    }
+  ],
+  "osvVulnerabilityAlerts": true,
+  "dependencyDashboardTitle": "🤖 Renovate — Painel de Dependências",
+  "dependencyDashboardOSVVulnerabilitySummary": "all"
+}
