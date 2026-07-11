@@ -66,6 +66,7 @@ const RolesPage = lazy(() => import("./pages/RolesPage"));
 const PermissionsPage = lazy(() => import("./pages/PermissionsPage"));
 const RolePermissionsPage = lazy(() => import("./pages/RolePermissionsPage"));
 const SearchPage = lazy(() => import("./pages/SearchPage"));
+const TypographyDocsPage = lazy(() => import("./pages/TypographyDocsPage"));
 const NLPPipelinePage = lazy(() => import("./pages/NLPPipelinePage"));
 const TracesTimelinePage = lazy(() => import("./pages/TracesTimelinePage"));
 const VoiceAgentStudioPage = lazy(() => import("./pages/VoiceAgentStudioPage"));
