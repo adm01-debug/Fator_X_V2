@@ -86,7 +86,7 @@ export function CronSchedulerPanel() {
         name: newName.trim(),
         frequency: 'cron',
         cron_expression: newCron,
-        target_type: targetType as any,
+        target_type: targetType,
         target_id: targetId.trim(),
       });
       toast({ title: 'Agendamento criado!' });
