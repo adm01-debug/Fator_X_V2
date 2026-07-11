@@ -40,20 +40,20 @@ Deno.serve(async (req) => {
     }
 
     const body = await req.json().catch(() => null);
+    // Inline Zod-style validation without extra dep to keep function light.
     if (!body || typeof body !== 'object') {
       return jsonResponse({ error: 'Body inválido' }, 400);
     }
-
     const systemPrompt = String((body as Record<string, unknown>).system_prompt ?? '').trim();
     const userMessage = String((body as Record<string, unknown>).user_message ?? '').trim();
     const model = String((body as Record<string, unknown>).model ?? 'gpt-4o');
 
-    if (systemPrompt.length < 10) {
-      return jsonResponse({ error: 'system_prompt muito curto (min 10 chars)' }, 400);
-    }
-    if (userMessage.length === 0 || userMessage.length > 4000) {
-      return jsonResponse({ error: 'user_message vazio ou muito longo (max 4000)' }, 400);
-    }
+    const errors: string[] = [];
+    if (systemPrompt.length < 10 || systemPrompt.length > 20_000) errors.push('system_prompt: 10..20000 chars');
+    if (userMessage.length === 0 || userMessage.length > 4000) errors.push('user_message: 1..4000 chars');
+    if (model.length < 2 || model.length > 120) errors.push('model: 2..120 chars');
+    if (errors.length) return jsonResponse({ error: 'Payload inválido', details: errors }, 400);
+
 
     const mapped = mapModel(model);
     const startedAt = Date.now();

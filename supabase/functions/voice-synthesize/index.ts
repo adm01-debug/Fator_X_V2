@@ -1,9 +1,16 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { z } from "https://esm.sh/zod@3.23.8";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
+
+const InputSchema = z.object({
+  user_text: z.string().min(1).max(2048),
+  session_id: z.string().uuid().optional(),
+  agent_id: z.string().uuid().optional(),
+});
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -15,11 +22,11 @@ Deno.serve(async (req) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
-    const body = await req.json();
-    const { user_text, session_id, agent_id } = body || {};
-    if (!user_text || typeof user_text !== "string" || user_text.length > 2048) {
-      return new Response(JSON.stringify({ error: "user_text required (≤2KB)" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-    }
+    const raw = await req.json().catch(() => null);
+    const parsed = InputSchema.safeParse(raw);
+    if (!parsed.success) return new Response(JSON.stringify({ error: "Payload inválido", details: parsed.error.flatten() }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    const { user_text, session_id, agent_id } = parsed.data;
+
 
     let agentPersona = "Você é um assistente conversacional natural e cordial, falando em português do Brasil.";
     let history: any[] = [];

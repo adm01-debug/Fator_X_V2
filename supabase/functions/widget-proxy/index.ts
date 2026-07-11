@@ -9,11 +9,19 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
+import { z } from "https://esm.sh/zod@3.23.8";
 import {
   handleCorsPreflight, jsonResponse, errorResponse, getCorsHeaders,
   checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS,
   validateApiKey,
 } from "../_shared/mod.ts";
+
+const ChatInputSchema = z.object({
+  message: z.string().min(1).max(8000),
+  agent_id: z.string().uuid(),
+  session_id: z.string().uuid().optional(),
+});
+
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
@@ -41,8 +49,11 @@ serve(async (req) => {
     if (!rateCheck.allowed) return createRateLimitResponse(rateCheck);
 
     try {
-      const { message, agent_id, session_id } = await req.json() as Record<string, string>;
-      if (!message || !agent_id) return errorResponse(req, 'message and agent_id required', 400);
+      const raw = await req.json().catch(() => null);
+      const parsed = ChatInputSchema.safeParse(raw);
+      if (!parsed.success) return errorResponse(req, 'Payload inválido', 400, { details: parsed.error.flatten() });
+      const { message, agent_id, session_id } = parsed.data;
+
 
       // Validate API key or allow anonymous widget access
       const apiKeyResult = await validateApiKey(req);

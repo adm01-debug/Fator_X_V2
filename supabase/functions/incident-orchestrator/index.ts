@@ -1,5 +1,6 @@
 // Sprint 33: Incident Orchestrator — executes playbook actions sequentially
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
+import { z } from "https://esm.sh/zod@3.23.8";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -11,17 +12,23 @@ type Action = {
   config?: Record<string, unknown>;
 };
 
+const InputSchema = z.object({
+  playbook_id: z.string().uuid(),
+  trigger_event: z.record(z.unknown()).optional(),
+  triggered_by: z.string().max(120).optional(),
+});
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
-    const { playbook_id, trigger_event, triggered_by } = await req.json();
-    if (!playbook_id) {
-      return new Response(JSON.stringify({ error: 'playbook_id required' }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+    const raw = await req.json().catch(() => null);
+    const parsed = InputSchema.safeParse(raw);
+    if (!parsed.success) {
+      return new Response(JSON.stringify({ error: 'Payload inválido', details: parsed.error.flatten() }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
+    const { playbook_id, trigger_event, triggered_by } = parsed.data;
+
 
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
