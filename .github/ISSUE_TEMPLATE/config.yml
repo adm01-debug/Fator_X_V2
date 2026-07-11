@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🔒 Vulnerabilidade de segurança
+    url: https://github.com/lovable-dev/nexus/security/advisories/new
+    about: Reporte vulnerabilidades de forma privada via Security Advisory. NÃO abra issue pública.
+  - name: 💬 Dúvidas de uso
+    url: https://github.com/lovable-dev/nexus/discussions
+    about: Perguntas gerais e discussões pertencem ao Discussions.
