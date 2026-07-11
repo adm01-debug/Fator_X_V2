@@ -43,7 +43,7 @@ export default function TypographyDocsPage() {
     <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
       <PageHeader
         title="Tipografia"
-        subtitle="Escala semântica oficial — use estes tokens em todo componente novo."
+        description="Escala semântica oficial — use estes tokens em todo componente novo."
       />
 
       {/* Escala */}
