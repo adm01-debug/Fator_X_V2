@@ -221,6 +221,7 @@ const App = () => {
                       <Route path="/tools" element={<SafePage><ToolsPage /></SafePage>} />
                       <Route path="/mcp-servers" element={<SafePage><MCPServersPage /></SafePage>} />
                       <Route path="/cost-simulator" element={<SafePage><CostSimulatorPage /></SafePage>} />
+                      <Route path="/a2a" element={<SafePage><A2APanelPage /></SafePage>} />
                       <Route path="/routing" element={<SafePage><RoutingConfigPage /></SafePage>} />
                       <Route path="/prompts" element={<SafePage><PromptsPage /></SafePage>} />
                       <Route path="/prompts/experiments" element={<SafePage><PromptExperimentsPage /></SafePage>} />
