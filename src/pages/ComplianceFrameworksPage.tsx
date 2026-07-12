@@ -162,7 +162,7 @@ export default function ComplianceFrameworksPage() {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6">
           <Card>
-            <CardHeader><CardTitle className="text-base">Frameworks</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-body">Frameworks</CardTitle></CardHeader>
             <CardContent className="space-y-2">
               {frameworks.map((fw) => (
                 <button
@@ -175,10 +175,10 @@ export default function ComplianceFrameworksPage() {
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-sm">{fw.code}</span>
-                    {fw.version && <Badge variant="outline" className="text-xs">v{fw.version}</Badge>}
+                    <span className="font-semibold text-body-sm">{fw.code}</span>
+                    {fw.version && <Badge variant="outline" className="text-meta">v{fw.version}</Badge>}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{fw.name}</p>
+                  <p className="text-meta text-muted-foreground mt-1 line-clamp-2">{fw.name}</p>
                 </button>
               ))}
             </CardContent>
@@ -191,7 +191,7 @@ export default function ComplianceFrameworksPage() {
                   <div>
                     <CardTitle>{selected.name}</CardTitle>
                     {selected.description && (
-                      <p className="text-sm text-muted-foreground mt-1">{selected.description}</p>
+                      <p className="text-body-sm text-muted-foreground mt-1">{selected.description}</p>
                     )}
                   </div>
                   <Dialog open={ctrlOpen} onOpenChange={setCtrlOpen}>
@@ -218,7 +218,7 @@ export default function ComplianceFrameworksPage() {
                   </TabsList>
                   <TabsContent value="controls" className="mt-4">
                     {!controls || controls.length === 0 ? (
-                      <div className="text-center py-12 text-muted-foreground text-sm">
+                      <div className="text-center py-12 text-muted-foreground text-body-sm">
                         Nenhum controle mapeado para este framework.
                       </div>
                     ) : (
@@ -235,21 +235,21 @@ export default function ComplianceFrameworksPage() {
                         <TableBody>
                           {controls.map((c) => (
                             <TableRow key={c.id}>
-                              <TableCell className="font-mono text-xs">{c.code}</TableCell>
+                              <TableCell className="font-mono text-meta">{c.code}</TableCell>
                               <TableCell>
                                 {c.category ? <Badge variant="secondary">{c.category}</Badge> : "—"}
                               </TableCell>
                               <TableCell className="max-w-md">
-                                <div className="font-medium text-sm">{c.title}</div>
+                                <div className="font-medium text-body-sm">{c.title}</div>
                                 {c.description && (
-                                  <div className="text-xs text-muted-foreground line-clamp-2 mt-0.5">
+                                  <div className="text-meta text-muted-foreground line-clamp-2 mt-0.5">
                                     {c.description}
                                   </div>
                                 )}
                               </TableCell>
                               <TableCell>
                                 {c.evidence_type ? (
-                                  <Badge variant="outline" className="text-xs">{c.evidence_type}</Badge>
+                                  <Badge variant="outline" className="text-meta">{c.evidence_type}</Badge>
                                 ) : "—"}
                               </TableCell>
                               <TableCell>
@@ -268,7 +268,7 @@ export default function ComplianceFrameworksPage() {
                       </Table>
                     )}
                   </TabsContent>
-                  <TabsContent value="meta" className="mt-4 space-y-2 text-sm">
+                  <TabsContent value="meta" className="mt-4 space-y-2 text-body-sm">
                     <div><span className="text-muted-foreground">Código:</span> <span className="font-mono">{selected.code}</span></div>
                     <div><span className="text-muted-foreground">Versão:</span> {selected.version ?? "—"}</div>
                     <div><span className="text-muted-foreground">Criado em:</span> {format(new Date(selected.created_at), "PPP", { locale: ptBR })}</div>

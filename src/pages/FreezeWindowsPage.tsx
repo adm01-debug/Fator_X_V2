@@ -202,25 +202,25 @@ export default function FreezeWindowsPage() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Total</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">Total</CardTitle>
           </CardHeader>
           <CardContent className="text-3xl font-bold">{stats.total}</CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Ativas</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">Ativas</CardTitle>
           </CardHeader>
           <CardContent className="text-3xl font-bold text-nexus-amber">{stats.active}</CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Agendadas</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">Agendadas</CardTitle>
           </CardHeader>
           <CardContent className="text-3xl font-bold text-primary">{stats.scheduled}</CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Expiradas</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">Expiradas</CardTitle>
           </CardHeader>
           <CardContent className="text-3xl font-bold text-muted-foreground">
             {stats.expired}
@@ -294,8 +294,8 @@ export default function FreezeWindowsPage() {
                 </div>
                 <div className="flex items-center justify-between rounded-lg border p-3 bg-card/40">
                   <div>
-                    <p className="text-sm font-medium">Permitir mudanças emergenciais</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-body-sm font-medium">Permitir mudanças emergenciais</p>
+                    <p className="text-meta text-muted-foreground">
                       Se ativo, hotfixes com aprovação de admin ainda podem passar.
                     </p>
                   </div>
@@ -316,7 +316,7 @@ export default function FreezeWindowsPage() {
         <CardContent className="space-y-2">
           {isLoading && <Skeleton className="h-24 w-full" />}
           {!isLoading && (windows?.length ?? 0) === 0 && (
-            <p className="text-sm text-muted-foreground py-6 text-center">
+            <p className="text-body-sm text-muted-foreground py-6 text-center">
               Nenhuma janela cadastrada ainda.
             </p>
           )}
@@ -342,27 +342,27 @@ export default function FreezeWindowsPage() {
                     )}
                     {status === "expired" && <Badge variant="secondary">Expirada</Badge>}
                     {w.allow_emergency ? (
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-meta">
                         <ShieldCheck className="size-3 mr-1" /> Emergência permitida
                       </Badge>
                     ) : (
-                      <Badge variant="outline" className="text-xs text-destructive">
+                      <Badge variant="outline" className="text-meta text-destructive">
                         <ShieldAlert className="size-3 mr-1" /> Bloqueio total
                       </Badge>
                     )}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <p className="text-meta text-muted-foreground mt-1">
                     {format(new Date(w.starts_at), "dd 'de' MMM yyyy, HH:mm", { locale: ptBR })}
                     {" → "}
                     {format(new Date(w.ends_at), "dd 'de' MMM yyyy, HH:mm", { locale: ptBR })}
                   </p>
                   {w.reason && (
-                    <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{w.reason}</p>
+                    <p className="text-body-sm text-muted-foreground mt-1 line-clamp-2">{w.reason}</p>
                   )}
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground">Emergência</span>
+                    <span className="text-meta text-muted-foreground">Emergência</span>
                     <Switch
                       checked={w.allow_emergency}
                       onCheckedChange={(v) =>

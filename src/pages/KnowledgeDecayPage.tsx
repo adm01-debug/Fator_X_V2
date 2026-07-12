@@ -136,14 +136,14 @@ export default function KnowledgeDecayPage() {
           return (
             <Card key={lvl}>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
+                <CardTitle className="text-body-sm font-medium text-muted-foreground">
                   {meta.label}
                 </CardTitle>
                 <Icon className={`h-4 w-4 ${meta.className.split(" ")[0]}`} />
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">{value}</div>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-meta text-muted-foreground mt-1">
                   {total > 0 ? `${((value / total) * 100).toFixed(1)}%` : "0%"} do total
                 </p>
               </CardContent>
@@ -157,7 +157,7 @@ export default function KnowledgeDecayPage() {
           <CardTitle>Saúde geral do conhecimento</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
-          <div className="flex justify-between text-sm">
+          <div className="flex justify-between text-body-sm">
             <span className="text-muted-foreground">
               {total} item(s) escaneados • {healthy}% saudável
             </span>
@@ -248,7 +248,7 @@ export default function KnowledgeDecayPage() {
                   checked={selected.size === filtered.length && filtered.length > 0}
                   onCheckedChange={toggleAll}
                 />
-                <span className="text-sm text-muted-foreground">
+                <span className="text-body-sm text-muted-foreground">
                   Selecionar todos os {filtered.length} itens visíveis
                 </span>
               </div>
@@ -268,23 +268,23 @@ export default function KnowledgeDecayPage() {
                       />
                       <div className="flex-1 min-w-0 space-y-1">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-medium text-sm truncate">
+                          <span className="font-medium text-body-sm truncate">
                             {item.name || "(sem título)"}
                           </span>
                           <Badge variant={meta.variant} className={meta.className}>
                             <Icon className="h-3 w-3 mr-1" />
                             {meta.label}
                           </Badge>
-                          <Badge variant="secondary" className="text-xs">
+                          <Badge variant="secondary" className="text-meta">
                             decay {item.decay_score}
                           </Badge>
                         </div>
                         {item.content_preview && (
-                          <p className="text-xs text-muted-foreground line-clamp-2">
+                          <p className="text-meta text-muted-foreground line-clamp-2">
                             {item.content_preview}
                           </p>
                         )}
-                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-3 text-meta text-muted-foreground">
                           <span>{item.age_days} dias</span>
                           {item.importance !== null && (
                             <span>Relevância: {item.importance.toFixed(2)}</span>

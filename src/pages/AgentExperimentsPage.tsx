@@ -132,7 +132,7 @@ export default function AgentExperimentsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
+          <CardTitle className="flex items-center gap-2 text-body">
             <FlaskConical className="size-5 text-primary" />
             Selecione um agente
           </CardTitle>
@@ -189,7 +189,7 @@ export default function AgentExperimentsPage() {
                   <div className="space-y-2">
                     <Label>Variante A (JSON)</Label>
                     <Textarea
-                      className="font-mono text-xs"
+                      className="font-mono text-meta"
                       rows={6}
                       value={form.variant_a}
                       onChange={(e) => setForm({ ...form, variant_a: e.target.value })}
@@ -198,7 +198,7 @@ export default function AgentExperimentsPage() {
                   <div className="space-y-2">
                     <Label>Variante B (JSON)</Label>
                     <Textarea
-                      className="font-mono text-xs"
+                      className="font-mono text-meta"
                       rows={6}
                       value={form.variant_b}
                       onChange={(e) => setForm({ ...form, variant_b: e.target.value })}
@@ -236,12 +236,12 @@ export default function AgentExperimentsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <Card className="lg:col-span-1">
             <CardHeader>
-              <CardTitle className="text-base">Experimentos</CardTitle>
+              <CardTitle className="text-body">Experimentos</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 max-h-[600px] overflow-y-auto">
               {expLoading && <Skeleton className="h-20 w-full" />}
               {!expLoading && experiments?.length === 0 && (
-                <p className="text-sm text-muted-foreground text-center py-6">
+                <p className="text-body-sm text-muted-foreground text-center py-6">
                   Nenhum experimento ainda.
                 </p>
               )}
@@ -256,15 +256,15 @@ export default function AgentExperimentsPage() {
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <span className="font-medium text-sm truncate">{exp.name}</span>
+                    <span className="font-medium text-body-sm truncate">{exp.name}</span>
                     {statusBadge(exp.status)}
                   </div>
                   {exp.winner && (
-                    <div className="flex items-center gap-1 mt-1 text-xs text-nexus-amber">
+                    <div className="flex items-center gap-1 mt-1 text-meta text-nexus-amber">
                       <Trophy className="size-3" /> Vencedor: Variante {exp.winner.toUpperCase()}
                     </div>
                   )}
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <p className="text-meta text-muted-foreground mt-1">
                     {format(new Date(exp.created_at), "dd MMM yyyy", { locale: ptBR })} · Split{" "}
                     {exp.traffic_split}/{100 - exp.traffic_split}
                   </p>
@@ -291,7 +291,7 @@ export default function AgentExperimentsPage() {
                     <div>
                       <CardTitle>{selected.name}</CardTitle>
                       {selected.description && (
-                        <p className="text-sm text-muted-foreground mt-1">
+                        <p className="text-body-sm text-muted-foreground mt-1">
                           {selected.description}
                         </p>
                       )}
@@ -409,7 +409,7 @@ export default function AgentExperimentsPage() {
                     ).map(({ key, stats, tone }) => (
                       <Card key={key} className={tone}>
                         <CardHeader className="pb-3">
-                          <CardTitle className="flex items-center gap-2 text-base">
+                          <CardTitle className="flex items-center gap-2 text-body">
                             Variante {key.toUpperCase()}
                             {selected.winner === key && (
                               <Badge className="bg-nexus-amber/15 text-nexus-amber border-nexus-amber/30">
@@ -418,7 +418,7 @@ export default function AgentExperimentsPage() {
                             )}
                           </CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-2 text-sm">
+                        <CardContent className="space-y-2 text-body-sm">
                           <div className="flex justify-between">
                             <span className="text-muted-foreground">Execuções</span>
                             <span className="font-mono font-semibold">{stats.runs}</span>
@@ -447,20 +447,20 @@ export default function AgentExperimentsPage() {
                   <TabsContent value="configs" className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Card>
                       <CardHeader className="pb-2">
-                        <CardTitle className="text-base">Configuração A</CardTitle>
+                        <CardTitle className="text-body">Configuração A</CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <pre className="text-xs font-mono bg-muted/40 p-3 rounded-lg overflow-x-auto max-h-64">
+                        <pre className="text-meta font-mono bg-muted/40 p-3 rounded-lg overflow-x-auto max-h-64">
                           {JSON.stringify(selected.variant_a_config, null, 2)}
                         </pre>
                       </CardContent>
                     </Card>
                     <Card>
                       <CardHeader className="pb-2">
-                        <CardTitle className="text-base">Configuração B</CardTitle>
+                        <CardTitle className="text-body">Configuração B</CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <pre className="text-xs font-mono bg-muted/40 p-3 rounded-lg overflow-x-auto max-h-64">
+                        <pre className="text-meta font-mono bg-muted/40 p-3 rounded-lg overflow-x-auto max-h-64">
                           {JSON.stringify(selected.variant_b_config, null, 2)}
                         </pre>
                       </CardContent>
@@ -471,7 +471,7 @@ export default function AgentExperimentsPage() {
                     <Card>
                       <CardContent className="p-0">
                         {(runs?.length ?? 0) === 0 ? (
-                          <p className="text-sm text-muted-foreground text-center py-8">
+                          <p className="text-body-sm text-muted-foreground text-center py-8">
                             Nenhuma execução registrada ainda.
                           </p>
                         ) : (
@@ -479,7 +479,7 @@ export default function AgentExperimentsPage() {
                             {runs?.slice(0, 100).map((r) => (
                               <div
                                 key={r.id}
-                                className="p-3 flex items-center gap-3 text-xs font-mono"
+                                className="p-3 flex items-center gap-3 text-meta font-mono"
                               >
                                 <Badge
                                   variant="outline"

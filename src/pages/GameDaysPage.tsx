@@ -149,7 +149,7 @@ export default function GameDaysPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Agendados</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">Agendados</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-semibold">{stats.scheduled}</p>
@@ -157,7 +157,7 @@ export default function GameDaysPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Em Andamento</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">Em Andamento</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-semibold text-primary">{stats.running}</p>
@@ -165,7 +165,7 @@ export default function GameDaysPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Concluídos</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">Concluídos</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-semibold">{stats.completed}</p>
@@ -173,7 +173,7 @@ export default function GameDaysPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Abortados</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">Abortados</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-semibold text-destructive">{stats.aborted}</p>
@@ -197,9 +197,9 @@ export default function GameDaysPage() {
         </CardHeader>
         <CardContent className="space-y-3">
           {loading ? (
-            <p className="text-sm text-muted-foreground">Carregando…</p>
+            <p className="text-body-sm text-muted-foreground">Carregando…</p>
           ) : gameDays.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-8">
+            <p className="text-body-sm text-muted-foreground text-center py-8">
               Nenhum Game Day agendado. Crie um para validar seu runbook.
             </p>
           ) : (
@@ -218,9 +218,9 @@ export default function GameDaysPage() {
                       <Badge variant="outline">{scenarioLabel}</Badge>
                     </div>
                     {gd.description && (
-                      <p className="text-sm text-muted-foreground">{gd.description}</p>
+                      <p className="text-body-sm text-muted-foreground">{gd.description}</p>
                     )}
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
+                    <div className="flex items-center gap-3 text-meta text-muted-foreground flex-wrap">
                       <span className="flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
                         {format(new Date(gd.scheduled_at), "PPp", { locale: ptBR })}

@@ -124,31 +124,31 @@ export default function AgentSessionsPage() {
 
         <TabsContent value="voice" className="space-y-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Total</CardTitle></CardHeader><CardContent><p className="text-2xl font-semibold">{voiceStats.total}</p></CardContent></Card>
-            <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Ativas</CardTitle></CardHeader><CardContent><p className="text-2xl font-semibold text-primary">{voiceStats.active}</p></CardContent></Card>
-            <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Áudio total</CardTitle></CardHeader><CardContent><p className="text-2xl font-semibold">{Math.round(voiceStats.total_seconds)}s</p></CardContent></Card>
-            <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Custo total</CardTitle></CardHeader><CardContent><p className="text-2xl font-semibold">{fmtCost(voiceStats.total_cost)}</p></CardContent></Card>
+            <Card><CardHeader className="pb-2"><CardTitle className="text-body-sm text-muted-foreground">Total</CardTitle></CardHeader><CardContent><p className="text-2xl font-semibold">{voiceStats.total}</p></CardContent></Card>
+            <Card><CardHeader className="pb-2"><CardTitle className="text-body-sm text-muted-foreground">Ativas</CardTitle></CardHeader><CardContent><p className="text-2xl font-semibold text-primary">{voiceStats.active}</p></CardContent></Card>
+            <Card><CardHeader className="pb-2"><CardTitle className="text-body-sm text-muted-foreground">Áudio total</CardTitle></CardHeader><CardContent><p className="text-2xl font-semibold">{Math.round(voiceStats.total_seconds)}s</p></CardContent></Card>
+            <Card><CardHeader className="pb-2"><CardTitle className="text-body-sm text-muted-foreground">Custo total</CardTitle></CardHeader><CardContent><p className="text-2xl font-semibold">{fmtCost(voiceStats.total_cost)}</p></CardContent></Card>
           </div>
           <Card>
             <CardHeader><CardTitle>Sessões de voz recentes</CardTitle></CardHeader>
             <CardContent className="space-y-2">
               {loading ? (
-                <p className="text-sm text-muted-foreground">Carregando…</p>
+                <p className="text-body-sm text-muted-foreground">Carregando…</p>
               ) : voice.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-8">Nenhuma sessão de voz registrada.</p>
+                <p className="text-body-sm text-muted-foreground text-center py-8">Nenhuma sessão de voz registrada.</p>
               ) : (
                 voice.map((s) => (
                   <div key={s.id} className="flex items-center justify-between gap-3 rounded border border-border/60 p-3 hover:bg-muted/30 transition">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <Badge variant={STATUS_VARIANT[s.status] ?? "outline"}>{s.status}</Badge>
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-meta text-muted-foreground">
                           {format(new Date(s.started_at), "PPp", { locale: ptBR })}
                         </span>
                       </div>
-                      <p className="text-xs text-muted-foreground mt-1 truncate">Session ID: {s.id.slice(0, 8)}…</p>
+                      <p className="text-meta text-muted-foreground mt-1 truncate">Session ID: {s.id.slice(0, 8)}…</p>
                     </div>
-                    <div className="flex items-center gap-4 text-xs">
+                    <div className="flex items-center gap-4 text-meta">
                       <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {fmtDuration(s.duration_ms)}</span>
                       <span className="flex items-center gap-1"><DollarSign className="h-3 w-3" /> {fmtCost(s.cost_cents)}</span>
                     </div>
@@ -161,18 +161,18 @@ export default function AgentSessionsPage() {
 
         <TabsContent value="browser" className="space-y-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Total</CardTitle></CardHeader><CardContent><p className="text-2xl font-semibold">{browserStats.total}</p></CardContent></Card>
-            <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Rodando</CardTitle></CardHeader><CardContent><p className="text-2xl font-semibold text-primary">{browserStats.running}</p></CardContent></Card>
-            <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Falhas</CardTitle></CardHeader><CardContent><p className="text-2xl font-semibold text-destructive">{browserStats.failed}</p></CardContent></Card>
-            <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Custo total</CardTitle></CardHeader><CardContent><p className="text-2xl font-semibold">{fmtCost(browserStats.total_cost)}</p></CardContent></Card>
+            <Card><CardHeader className="pb-2"><CardTitle className="text-body-sm text-muted-foreground">Total</CardTitle></CardHeader><CardContent><p className="text-2xl font-semibold">{browserStats.total}</p></CardContent></Card>
+            <Card><CardHeader className="pb-2"><CardTitle className="text-body-sm text-muted-foreground">Rodando</CardTitle></CardHeader><CardContent><p className="text-2xl font-semibold text-primary">{browserStats.running}</p></CardContent></Card>
+            <Card><CardHeader className="pb-2"><CardTitle className="text-body-sm text-muted-foreground">Falhas</CardTitle></CardHeader><CardContent><p className="text-2xl font-semibold text-destructive">{browserStats.failed}</p></CardContent></Card>
+            <Card><CardHeader className="pb-2"><CardTitle className="text-body-sm text-muted-foreground">Custo total</CardTitle></CardHeader><CardContent><p className="text-2xl font-semibold">{fmtCost(browserStats.total_cost)}</p></CardContent></Card>
           </div>
           <Card>
             <CardHeader><CardTitle>Sessões de navegação recentes</CardTitle></CardHeader>
             <CardContent className="space-y-2">
               {loading ? (
-                <p className="text-sm text-muted-foreground">Carregando…</p>
+                <p className="text-body-sm text-muted-foreground">Carregando…</p>
               ) : browser.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-8">Nenhuma sessão de browser agent registrada.</p>
+                <p className="text-body-sm text-muted-foreground text-center py-8">Nenhuma sessão de browser agent registrada.</p>
               ) : (
                 browser.map((s) => (
                   <div key={s.id} className="rounded border border-border/60 p-3 hover:bg-muted/30 transition">
@@ -180,23 +180,23 @@ export default function AgentSessionsPage() {
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 flex-wrap">
                           <Badge variant={STATUS_VARIANT[s.status] ?? "outline"}>{s.status}</Badge>
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-meta text-muted-foreground">
                             {format(new Date(s.started_at), "PPp", { locale: ptBR })}
                           </span>
                         </div>
-                        {s.goal && <p className="text-sm mt-1 line-clamp-2">{s.goal}</p>}
-                        {s.start_url && <p className="text-xs text-muted-foreground truncate">→ {s.start_url}</p>}
+                        {s.goal && <p className="text-body-sm mt-1 line-clamp-2">{s.goal}</p>}
+                        {s.start_url && <p className="text-meta text-muted-foreground truncate">→ {s.start_url}</p>}
                       </div>
-                      <div className="flex flex-col items-end gap-1 text-xs">
+                      <div className="flex flex-col items-end gap-1 text-meta">
                         <span>{s.steps_count ?? 0} / {s.max_steps ?? "∞"} passos</span>
                         <span className="flex items-center gap-1"><DollarSign className="h-3 w-3" /> {fmtCost(s.cost_cents)}</span>
                       </div>
                     </div>
                     {s.error_message && (
-                      <p className="text-xs text-destructive mt-2 line-clamp-2">Erro: {s.error_message}</p>
+                      <p className="text-meta text-destructive mt-2 line-clamp-2">Erro: {s.error_message}</p>
                     )}
                     {s.final_result && !s.error_message && (
-                      <p className="text-xs text-muted-foreground mt-2 line-clamp-2">Resultado: {s.final_result}</p>
+                      <p className="text-meta text-muted-foreground mt-2 line-clamp-2">Resultado: {s.final_result}</p>
                     )}
                   </div>
                 ))

@@ -123,7 +123,7 @@ export default function WebhookEventsPage() {
   const kpi = (label: string, value: React.ReactNode, icon: React.ReactNode) => (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">
+        <CardTitle className="text-body-sm font-medium text-muted-foreground">
           {label}
         </CardTitle>
         {icon}
@@ -207,13 +207,13 @@ export default function WebhookEventsPage() {
                             <Badge variant="outline" className={statusColor(e.response_code)}>
                               {e.response_code ?? e.status}
                             </Badge>
-                            <span className="text-xs text-muted-foreground">
+                            <span className="text-meta text-muted-foreground">
                               webhook {e.webhook_id?.slice(0, 8) ?? "—"}…
                             </span>
                           </div>
                           <Eye className="h-4 w-4 text-muted-foreground" />
                         </div>
-                        <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground">
+                        <div className="mt-2 flex flex-wrap gap-3 text-meta text-muted-foreground">
                           <span>{timeAgo(e.created_at)}</span>
                           {e.source_ip && <span>de {e.source_ip}</span>}
                         </div>
@@ -251,14 +251,14 @@ export default function WebhookEventsPage() {
                         className="p-3 border rounded-lg bg-card hover:bg-accent/30 transition-colors"
                       >
                         <div className="flex items-center justify-between gap-2 flex-wrap">
-                          <span className="font-mono text-xs truncate max-w-[60%]">
+                          <span className="font-mono text-meta truncate max-w-[60%]">
                             {k.key}
                           </span>
                           <Badge variant="outline" className={statusColor(k.status_code)}>
                             {k.status_code}
                           </Badge>
                         </div>
-                        <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground">
+                        <div className="mt-2 flex flex-wrap gap-3 text-meta text-muted-foreground">
                           <span>Criada {timeAgo(k.created_at)}</span>
                           <span>Expira {timeAgo(k.expires_at)}</span>
                         </div>
@@ -308,11 +308,11 @@ export default function WebhookEventsPage() {
                               <Badge variant="secondary">{b.country_code}</Badge>
                             )}
                           </div>
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-meta text-muted-foreground">
                             {timeAgo(b.created_at)}
                           </span>
                         </div>
-                        <div className="mt-2 text-xs text-muted-foreground space-y-1">
+                        <div className="mt-2 text-meta text-muted-foreground space-y-1">
                           {b.ip_address && <div>IP: {b.ip_address}</div>}
                           {b.user_agent && (
                             <div className="truncate">UA: {b.user_agent}</div>
@@ -334,50 +334,50 @@ export default function WebhookEventsPage() {
             <DialogTitle>Detalhes do evento</DialogTitle>
           </DialogHeader>
           {selectedEvent && (
-            <div className="space-y-4 text-sm">
+            <div className="space-y-4 text-body-sm">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <div className="text-muted-foreground text-xs">Método</div>
+                  <div className="text-muted-foreground text-meta">Método</div>
                   <div className="font-mono">{selectedEvent.method}</div>
                 </div>
                 <div>
-                  <div className="text-muted-foreground text-xs">Status</div>
+                  <div className="text-muted-foreground text-meta">Status</div>
                   <div className="font-mono">
                     {selectedEvent.response_code ?? selectedEvent.status}
                   </div>
                 </div>
                 <div>
-                  <div className="text-muted-foreground text-xs">Origem</div>
+                  <div className="text-muted-foreground text-meta">Origem</div>
                   <div className="font-mono">{selectedEvent.source_ip ?? "—"}</div>
                 </div>
                 <div>
-                  <div className="text-muted-foreground text-xs">Recebido</div>
+                  <div className="text-muted-foreground text-meta">Recebido</div>
                   <div>{timeAgo(selectedEvent.created_at)}</div>
                 </div>
               </div>
 
               <div>
-                <div className="text-muted-foreground text-xs mb-1">Headers</div>
+                <div className="text-muted-foreground text-meta mb-1">Headers</div>
                 <ScrollArea className="h-32 rounded border bg-muted/30 p-2">
-                  <pre className="text-xs">
+                  <pre className="text-meta">
                     {JSON.stringify(selectedEvent.headers ?? {}, null, 2)}
                   </pre>
                 </ScrollArea>
               </div>
 
               <div>
-                <div className="text-muted-foreground text-xs mb-1">Query params</div>
+                <div className="text-muted-foreground text-meta mb-1">Query params</div>
                 <ScrollArea className="h-24 rounded border bg-muted/30 p-2">
-                  <pre className="text-xs">
+                  <pre className="text-meta">
                     {JSON.stringify(selectedEvent.query_params ?? {}, null, 2)}
                   </pre>
                 </ScrollArea>
               </div>
 
               <div>
-                <div className="text-muted-foreground text-xs mb-1">Body</div>
+                <div className="text-muted-foreground text-meta mb-1">Body</div>
                 <ScrollArea className="h-48 rounded border bg-muted/30 p-2">
-                  <pre className="text-xs">
+                  <pre className="text-meta">
                     {JSON.stringify(selectedEvent.body ?? {}, null, 2)}
                   </pre>
                 </ScrollArea>

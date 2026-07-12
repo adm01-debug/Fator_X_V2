@@ -159,7 +159,7 @@ export default function AgentEvalsPage() {
                     {parsedItems ? `${parsedItems.length} itens válidos` : "JSON inválido"}
                   </span>
                 </Label>
-                <Textarea rows={12} value={itemsRaw} onChange={(e) => setItemsRaw(e.target.value)} className="font-mono text-xs" />
+                <Textarea rows={12} value={itemsRaw} onChange={(e) => setItemsRaw(e.target.value)} className="font-mono text-meta" />
               </div>
             </div>
             <DialogFooter>
@@ -175,19 +175,19 @@ export default function AgentEvalsPage() {
 
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Execuções</CardTitle></CardHeader>
+          <CardHeader className="pb-2"><CardTitle className="text-body-sm text-muted-foreground">Execuções</CardTitle></CardHeader>
           <CardContent><p className="text-2xl font-bold">{summary.totalRuns}</p></CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Taxa de aprovação</CardTitle></CardHeader>
+          <CardHeader className="pb-2"><CardTitle className="text-body-sm text-muted-foreground">Taxa de aprovação</CardTitle></CardHeader>
           <CardContent><p className="text-2xl font-bold text-nexus-green">{(summary.passRate * 100).toFixed(1)}%</p></CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground flex items-center gap-1"><Clock className="h-3 w-3" />Latência média</CardTitle></CardHeader>
+          <CardHeader className="pb-2"><CardTitle className="text-body-sm text-muted-foreground flex items-center gap-1"><Clock className="h-3 w-3" />Latência média</CardTitle></CardHeader>
           <CardContent><p className="text-2xl font-bold">{summary.avgLatency.toFixed(0)}ms</p></CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground flex items-center gap-1"><DollarSign className="h-3 w-3" />Custo médio</CardTitle></CardHeader>
+          <CardHeader className="pb-2"><CardTitle className="text-body-sm text-muted-foreground flex items-center gap-1"><DollarSign className="h-3 w-3" />Custo médio</CardTitle></CardHeader>
           <CardContent><p className="text-2xl font-bold">${summary.avgCost.toFixed(4)}</p></CardContent>
         </Card>
       </div>
@@ -205,7 +205,7 @@ export default function AgentEvalsPage() {
               {loadingDatasets ? (
                 <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
               ) : datasets.length === 0 ? (
-                <p className="text-sm text-muted-foreground py-8 text-center">Nenhum dataset criado ainda.</p>
+                <p className="text-body-sm text-muted-foreground py-8 text-center">Nenhum dataset criado ainda.</p>
               ) : (
                 <Table>
                   <TableHeader>
@@ -221,10 +221,10 @@ export default function AgentEvalsPage() {
                       <TableRow key={d.id}>
                         <TableCell>
                           <div className="font-medium">{d.name}</div>
-                          {d.description && <div className="text-xs text-muted-foreground">{d.description}</div>}
+                          {d.description && <div className="text-meta text-muted-foreground">{d.description}</div>}
                         </TableCell>
                         <TableCell>{Array.isArray(d.items) ? d.items.length : 0}</TableCell>
-                        <TableCell className="text-xs text-muted-foreground">
+                        <TableCell className="text-meta text-muted-foreground">
                           {formatDistanceToNow(new Date(d.created_at), { addSuffix: true, locale: ptBR })}
                         </TableCell>
                         <TableCell className="text-right space-x-2">
@@ -247,7 +247,7 @@ export default function AgentEvalsPage() {
                 </Table>
               )}
               {!selectedAgent && datasets.length > 0 && (
-                <p className="text-xs text-muted-foreground mt-3">Selecione um agente acima para habilitar execução.</p>
+                <p className="text-meta text-muted-foreground mt-3">Selecione um agente acima para habilitar execução.</p>
               )}
             </CardContent>
           </Card>
@@ -261,7 +261,7 @@ export default function AgentEvalsPage() {
                 {loadingRuns ? (
                   <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
                 ) : runs.length === 0 ? (
-                  <p className="text-sm text-muted-foreground py-8 text-center">Sem execuções ainda.</p>
+                  <p className="text-body-sm text-muted-foreground py-8 text-center">Sem execuções ainda.</p>
                 ) : (
                   <ScrollArea className="h-[420px]">
                     <Table>
@@ -283,7 +283,7 @@ export default function AgentEvalsPage() {
                             <TableCell>{statusBadge(r.status)}</TableCell>
                             <TableCell>{r.passed}/{r.total_items}</TableCell>
                             <TableCell>{Number(r.avg_score || 0).toFixed(2)}</TableCell>
-                            <TableCell className="text-xs text-muted-foreground">
+                            <TableCell className="text-meta text-muted-foreground">
                               {formatDistanceToNow(new Date(r.created_at), { addSuffix: true, locale: ptBR })}
                             </TableCell>
                           </TableRow>
@@ -301,7 +301,7 @@ export default function AgentEvalsPage() {
               </CardHeader>
               <CardContent>
                 {!selectedRunId ? (
-                  <p className="text-sm text-muted-foreground py-8 text-center">Selecione uma execução para ver os itens julgados.</p>
+                  <p className="text-body-sm text-muted-foreground py-8 text-center">Selecione uma execução para ver os itens julgados.</p>
                 ) : results.length === 0 ? (
                   <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
                 ) : (
@@ -310,26 +310,26 @@ export default function AgentEvalsPage() {
                       {results.map((r) => (
                         <div key={r.id} className="p-3 rounded-md border border-border/60 bg-card/50">
                           <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-2 text-xs">
+                            <div className="flex items-center gap-2 text-meta">
                               {r.passed ? (
                                 <CheckCircle2 className="h-4 w-4 text-nexus-green" />
                               ) : (
                                 <XCircle className="h-4 w-4 text-destructive" />
                               )}
                               <span className="font-mono">#{r.item_index}</span>
-                              <Badge variant="outline" className="text-[10px]">Score {Number(r.score).toFixed(2)}</Badge>
+                              <Badge variant="outline" className="text-meta">Score {Number(r.score).toFixed(2)}</Badge>
                               <span className="text-muted-foreground">{r.latency_ms}ms · ${Number(r.cost_usd).toFixed(4)}</span>
                             </div>
                           </div>
-                          <p className="text-xs text-muted-foreground"><b>Input:</b> {r.input}</p>
-                          {r.expected && <p className="text-xs text-muted-foreground"><b>Esperado:</b> {r.expected}</p>}
-                          {r.actual && <p className="text-xs mt-1"><b>Resposta:</b> {r.actual}</p>}
+                          <p className="text-meta text-muted-foreground"><b>Input:</b> {r.input}</p>
+                          {r.expected && <p className="text-meta text-muted-foreground"><b>Esperado:</b> {r.expected}</p>}
+                          {r.actual && <p className="text-meta mt-1"><b>Resposta:</b> {r.actual}</p>}
                           {r.judge_reasoning && (
-                            <p className="text-[11px] text-muted-foreground italic mt-1 border-l-2 border-border pl-2">
+                            <p className="text-meta text-muted-foreground italic mt-1 border-l-2 border-border pl-2">
                               {r.judge_reasoning}
                             </p>
                           )}
-                          {r.error && <p className="text-xs text-destructive mt-1">Erro: {r.error}</p>}
+                          {r.error && <p className="text-meta text-destructive mt-1">Erro: {r.error}</p>}
                         </div>
                       ))}
                     </div>

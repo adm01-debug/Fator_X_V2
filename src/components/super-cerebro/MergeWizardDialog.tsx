@@ -238,7 +238,7 @@ export function MergeWizardDialog({ cluster, open, onOpenChange, onCompleted }: 
                 <p className="text-meta text-muted-foreground uppercase tracking-wider">
                   Serão apagadas
                 </p>
-                <p className="text-lg font-bold text-destructive mt-0.5">
+                <p className="text-title-sm font-bold text-destructive mt-0.5">
                   {duplicatesToDelete.length}
                 </p>
               </div>
@@ -246,7 +246,7 @@ export function MergeWizardDialog({ cluster, open, onOpenChange, onCompleted }: 
                 <p className="text-meta text-muted-foreground uppercase tracking-wider">
                   Mantidas separadas
                 </p>
-                <p className="text-lg font-bold text-nexus-amber mt-0.5">{keptAsOther.length}</p>
+                <p className="text-title-sm font-bold text-nexus-amber mt-0.5">{keptAsOther.length}</p>
               </div>
             </div>
           </div>

@@ -295,7 +295,7 @@ export function AgentPlayground() {
                   {msg.role === 'user' ? (
                     <div className="whitespace-pre-wrap text-meta leading-relaxed">{msg.content}</div>
                   ) : (
-                    <div className="prose prose-sm prose-invert max-w-none text-meta leading-relaxed [&_p]:mb-1.5 [&_ul]:mb-1.5 [&_ol]:mb-1.5 [&_pre]:bg-background/50 [&_pre]:rounded-md [&_pre]:p-2 [&_code]:text-[11px] [&_h1]:text-sm [&_h2]:text-xs [&_h3]:text-xs [&_li]:text-xs">
+                    <div className="prose prose-sm prose-invert max-w-none text-meta leading-relaxed [&_p]:mb-1.5 [&_ul]:mb-1.5 [&_ol]:mb-1.5 [&_pre]:bg-background/50 [&_pre]:rounded-md [&_pre]:p-2 [&_code]:text-meta [&_h1]:text-body-sm [&_h2]:text-meta [&_h3]:text-meta [&_li]:text-meta">
                       <ReactMarkdown>
                         {msg.content || (streaming.isStreaming && i === messages.length - 1 ? '' : '...')}
                       </ReactMarkdown>

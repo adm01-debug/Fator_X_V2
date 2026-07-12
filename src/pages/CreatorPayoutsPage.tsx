@@ -107,19 +107,19 @@ export default function CreatorPayoutsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Ciclos</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">Ciclos</CardTitle>
           </CardHeader>
           <CardContent className="text-3xl font-bold">{stats.count}</CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Total acumulado</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">Total acumulado</CardTitle>
           </CardHeader>
           <CardContent className="text-2xl font-bold">{formatBRL(stats.total)}</CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Pago</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">Pago</CardTitle>
           </CardHeader>
           <CardContent className="text-2xl font-bold text-nexus-emerald">
             {formatBRL(stats.paid)}
@@ -127,7 +127,7 @@ export default function CreatorPayoutsPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">A receber</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">A receber</CardTitle>
           </CardHeader>
           <CardContent className="text-2xl font-bold text-nexus-amber">
             {formatBRL(stats.pending)}
@@ -168,19 +168,19 @@ export default function CreatorPayoutsPage() {
                 <TableBody>
                   {payouts?.map((p) => (
                     <TableRow key={p.id}>
-                      <TableCell className="font-mono text-xs">
+                      <TableCell className="font-mono text-meta">
                         {format(new Date(p.period_start), "dd/MM/yy", { locale: ptBR })} —{" "}
                         {format(new Date(p.period_end), "dd/MM/yy", { locale: ptBR })}
                       </TableCell>
                       <TableCell className="font-semibold">{formatBRL(p.total_cents)}</TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
+                      <TableCell className="text-body-sm text-muted-foreground">
                         {p.payout_method ?? "—"}
                       </TableCell>
-                      <TableCell className="font-mono text-xs text-muted-foreground truncate max-w-[160px]">
+                      <TableCell className="font-mono text-meta text-muted-foreground truncate max-w-[160px]">
                         {p.payout_ref ?? "—"}
                       </TableCell>
                       <TableCell>{statusBadge(p.status)}</TableCell>
-                      <TableCell className="text-xs text-muted-foreground">
+                      <TableCell className="text-meta text-muted-foreground">
                         {format(new Date(p.created_at), "dd MMM yyyy", { locale: ptBR })}
                       </TableCell>
                     </TableRow>

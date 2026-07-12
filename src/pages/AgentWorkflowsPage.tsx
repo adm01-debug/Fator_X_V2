@@ -205,7 +205,7 @@ export default function AgentWorkflowsPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Total</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">Total</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">{stats.total}</div>
@@ -213,7 +213,7 @@ export default function AgentWorkflowsPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Ativos</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">Ativos</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-nexus-success">{stats.active}</div>
@@ -221,7 +221,7 @@ export default function AgentWorkflowsPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Execuções</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">Execuções</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">{stats.totalRuns}</div>
@@ -229,7 +229,7 @@ export default function AgentWorkflowsPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Falhas</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">Falhas</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-nexus-danger">{stats.failed}</div>
@@ -246,9 +246,9 @@ export default function AgentWorkflowsPage() {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <p className="text-sm text-muted-foreground">Carregando…</p>
+            <p className="text-body-sm text-muted-foreground">Carregando…</p>
           ) : workflows.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-body-sm text-muted-foreground">
               Nenhum workflow criado. Clique em "Novo Workflow" para começar.
             </p>
           ) : (
@@ -281,11 +281,11 @@ export default function AgentWorkflowsPage() {
                           )}
                         </div>
                         {wf.description && (
-                          <p className="text-sm text-muted-foreground mb-2">
+                          <p className="text-body-sm text-muted-foreground mb-2">
                             {wf.description}
                           </p>
                         )}
-                        <div className="flex items-center gap-4 text-xs text-muted-foreground flex-wrap">
+                        <div className="flex items-center gap-4 text-meta text-muted-foreground flex-wrap">
                           <span className="flex items-center gap-1">
                             <Activity className="h-3 w-3" />
                             {wfRuns.length} execuções

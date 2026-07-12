@@ -179,7 +179,7 @@ export default function PostmortemsPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Total</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">Total</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-semibold">{stats.total}</p>
@@ -187,7 +187,7 @@ export default function PostmortemsPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Publicados</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">Publicados</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-semibold text-primary">{stats.published}</p>
@@ -195,7 +195,7 @@ export default function PostmortemsPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Ações Abertas</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">Ações Abertas</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-semibold">{stats.open_actions}</p>
@@ -203,7 +203,7 @@ export default function PostmortemsPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">SEV1/SEV2</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">SEV1/SEV2</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-semibold text-destructive">{stats.sev1_sev2}</p>
@@ -225,9 +225,9 @@ export default function PostmortemsPage() {
         </CardHeader>
         <CardContent className="space-y-3">
           {loading ? (
-            <p className="text-sm text-muted-foreground">Carregando…</p>
+            <p className="text-body-sm text-muted-foreground">Carregando…</p>
           ) : items.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-8">
+            <p className="text-body-sm text-muted-foreground text-center py-8">
               Nenhum post-mortem ainda. Registre incidentes para melhoria contínua.
             </p>
           ) : (
@@ -248,8 +248,8 @@ export default function PostmortemsPage() {
                         <Badge variant={STATUS_META[pm.status].variant}>{STATUS_META[pm.status].label}</Badge>
                         <Badge variant="outline">{SOURCE_LABEL[pm.incident_source]}</Badge>
                       </div>
-                      {pm.summary && <p className="text-sm text-muted-foreground line-clamp-2">{pm.summary}</p>}
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
+                      {pm.summary && <p className="text-body-sm text-muted-foreground line-clamp-2">{pm.summary}</p>}
+                      <div className="flex items-center gap-3 text-meta text-muted-foreground flex-wrap">
                         <span>Criado {format(new Date(pm.created_at), "PPp", { locale: ptBR })}</span>
                         {openActs > 0 && (
                           <span className="flex items-center gap-1 text-nexus-amber">
@@ -344,7 +344,7 @@ export default function PostmortemsPage() {
               <DialogHeader>
                 <DialogTitle>{selected.title}</DialogTitle>
               </DialogHeader>
-              <div className="space-y-4 text-sm">
+              <div className="space-y-4 text-body-sm">
                 <div className="flex items-center gap-2 flex-wrap">
                   <Badge variant={SEV_META[selected.severity].variant}>{SEV_META[selected.severity].label}</Badge>
                   <Badge variant={STATUS_META[selected.status].variant}>{STATUS_META[selected.status].label}</Badge>
@@ -371,14 +371,14 @@ export default function PostmortemsPage() {
                 <section>
                   <h4 className="font-medium mb-2 flex items-center gap-2"><Clock className="h-4 w-4" /> Action Items</h4>
                   {actionsFor(selected.id).length === 0 ? (
-                    <p className="text-muted-foreground text-xs">Nenhuma ação registrada.</p>
+                    <p className="text-muted-foreground text-meta">Nenhuma ação registrada.</p>
                   ) : (
                     <ul className="space-y-2">
                       {actionsFor(selected.id).map((a) => (
                         <li key={a.id} className="rounded border p-2 flex justify-between gap-2">
                           <div>
                             <p>{a.description}</p>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-meta text-muted-foreground">
                               {a.owner_name ?? "Sem responsável"}
                               {a.due_date && ` • Prazo ${format(new Date(a.due_date), "PP", { locale: ptBR })}`}
                             </p>
