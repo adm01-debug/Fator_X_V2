@@ -8651,6 +8651,23 @@ export type Database = {
       get_bcp_summary: { Args: { p_workspace_id: string }; Returns: Json }
       get_change_summary: { Args: { p_workspace_id: string }; Returns: Json }
       get_creator_earnings: { Args: { p_creator_id?: string }; Returns: Json }
+      get_cron_job_health: {
+        Args: never
+        Returns: {
+          active: boolean
+          avg_duration_ms: number
+          failure_20: number
+          jobid: number
+          jobname: string
+          last_duration_ms: number
+          last_run_at: string
+          last_status: string
+          runs_20: number
+          schedule: string
+          success_20: number
+          success_rate: number
+        }[]
+      }
       get_current_oncall: {
         Args: { p_workspace_id: string }
         Returns: {

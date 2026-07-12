@@ -51,6 +51,21 @@ type EntityLog = {
   created_at: string;
 };
 
+type CronJobHealth = {
+  jobid: number;
+  jobname: string;
+  schedule: string;
+  active: boolean;
+  last_run_at: string | null;
+  last_status: string | null;
+  last_duration_ms: number | null;
+  runs_20: number;
+  success_20: number;
+  failure_20: number;
+  success_rate: number | null;
+  avg_duration_ms: number | null;
+};
+
 const statusBadge = (status: string) => {
   const s = status.toLowerCase();
   if (s.includes("success") || s.includes("complet") || s === "ok") {
@@ -134,12 +149,26 @@ export default function SystemJobsPage() {
     refetchInterval: 60_000,
   });
 
+  const cron = useQuery({
+    queryKey: ["system-jobs", "cron"],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_cron_job_health" as never);
+      if (error) throw error;
+      return (data ?? []) as unknown as CronJobHealth[];
+    },
+    refetchInterval: 30_000,
+  });
+
   const refetchAll = () => {
     retention.refetch();
     automation.refetch();
     pgnet.refetch();
     entity.refetch();
+    cron.refetch();
   };
+
+  const cronJobs = cron.data ?? [];
+  const cronFails = cronJobs.filter((c) => c.last_status && c.last_status !== "succeeded").length;
 
   const kpi = (label: string, value: number | string, icon: React.ReactNode) => (
     <Card>
@@ -181,7 +210,12 @@ export default function SystemJobsPage() {
         }
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        {kpi(
+          "pg_cron jobs",
+          `${cronJobs.length} • ${cronFails} falhas`,
+          <Activity className="h-4 w-4 text-primary" />
+        )}
         {kpi(
           "Retenção (últimas 50)",
           `${retentionRuns.length} • ${retentionFails} falhas`,
@@ -204,13 +238,82 @@ export default function SystemJobsPage() {
         )}
       </div>
 
-      <Tabs defaultValue="retention" className="w-full">
+      <Tabs defaultValue="cron" className="w-full">
         <TabsList>
+          <TabsTrigger value="cron">pg_cron</TabsTrigger>
           <TabsTrigger value="retention">Retenção</TabsTrigger>
           <TabsTrigger value="automation">Automações</TabsTrigger>
           <TabsTrigger value="pgnet">pg_net</TabsTrigger>
           <TabsTrigger value="entity">Entidades</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="cron">
+          <Card>
+            <CardHeader>
+              <CardTitle>Saúde dos jobs agendados (pg_cron)</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {cron.isLoading ? (
+                <Skeleton className="h-80 w-full" />
+              ) : cronJobs.length === 0 ? (
+                <Alert>
+                  <Info className="h-4 w-4" />
+                  <AlertTitle>Nenhum job agendado</AlertTitle>
+                  <AlertDescription>
+                    Requer permissão de administrador para visualizar. Se você é admin, aguarde a primeira execução.
+                  </AlertDescription>
+                </Alert>
+              ) : (
+                <ScrollArea className="h-[520px] pr-3">
+                  <div className="space-y-2">
+                    {cronJobs.map((c) => {
+                      const rate = c.success_rate;
+                      const rateColor =
+                        rate === null
+                          ? "text-muted-foreground border-muted"
+                          : rate >= 95
+                          ? "text-emerald-500 border-emerald-500/40"
+                          : rate >= 80
+                          ? "text-amber-500 border-amber-500/40"
+                          : "text-destructive border-destructive/40";
+                      return (
+                        <div
+                          key={c.jobid}
+                          className="p-3 border rounded-lg bg-card hover:bg-accent/30 transition-colors"
+                        >
+                          <div className="flex items-center justify-between gap-2 flex-wrap">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium text-sm">{c.jobname}</span>
+                              <Badge variant="secondary" className="font-mono text-[10px]">
+                                {c.schedule}
+                              </Badge>
+                              {!c.active && <Badge variant="outline">inativo</Badge>}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {c.last_status && statusBadge(c.last_status)}
+                              <Badge variant="outline" className={rateColor}>
+                                {rate === null ? "sem dados" : `${rate}% ok`}
+                              </Badge>
+                            </div>
+                          </div>
+                          <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground">
+                            <span>Última: {timeAgo(c.last_run_at)}</span>
+                            <span>Duração última: {c.last_duration_ms ?? "—"} ms</span>
+                            <span>Média (20): {c.avg_duration_ms ? Number(c.avg_duration_ms).toFixed(0) : "—"} ms</span>
+                            <span>
+                              20 execs: {c.success_20} ok • {c.failure_20} falhas
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </ScrollArea>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
 
         <TabsContent value="retention">
           <Card>
