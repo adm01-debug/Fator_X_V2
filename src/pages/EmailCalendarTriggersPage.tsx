@@ -103,7 +103,13 @@ export default function EmailCalendarTriggersPage() {
       setCreating(false);
       return;
     }
+    if (!workspaceId) {
+      toast.error("Workspace não encontrado");
+      setCreating(false);
+      return;
+    }
     const { error } = await supabase.from("automation_rules").insert({
+      workspace_id: workspaceId,
       name: form.name.trim(),
       description: null,
       trigger_type: form.type === "email" ? EMAIL_TRIGGER : CALENDAR_TRIGGER,
