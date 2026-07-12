@@ -60,6 +60,7 @@ const navSections = [
       { title: "Workflows de Agentes", url: "/agents/workflows", icon: GitBranch },
       { title: "Engenharia de Caos", url: "/security/chaos-experiments", icon: Zap },
       { title: "Testes BCP", url: "/security/bcp-tests", icon: LifeBuoy },
+      { title: "Sessões de Agentes", url: "/agent-sessions", icon: Mic },
       
       { title: "NLP Pipeline", url: "/nlp", icon: Languages },
       { title: "Computer Use", url: "/computer-use", icon: Monitor },
