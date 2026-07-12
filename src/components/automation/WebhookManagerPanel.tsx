@@ -183,16 +183,27 @@ export function WebhookManagerPanel() {
                   <div className="flex flex-col items-end gap-2 shrink-0">
                     <Badge className={w.status === 'active' ? 'bg-nexus-emerald/20 text-nexus-emerald' : 'bg-destructive/20 text-destructive'}>{w.status}</Badge>
                     <p className="text-meta text-muted-foreground">{w.request_count} requests</p>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="h-7 text-meta gap-1.5 border-border hover:bg-accent hover:border-primary"
-                      disabled={w.status !== 'active'}
-                      onClick={() => openTestDialog(w)}
-                    >
-                      <Send className="h-3 w-3" />
-                      Testar
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-7 text-meta gap-1.5 border-border hover:bg-accent hover:border-primary"
+                        onClick={() => openHistory(w)}
+                      >
+                        <History className="h-3 w-3" />
+                        Histórico
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-7 text-meta gap-1.5 border-border hover:bg-accent hover:border-primary"
+                        disabled={w.status !== 'active'}
+                        onClick={() => openTestDialog(w)}
+                      >
+                        <Send className="h-3 w-3" />
+                        Testar
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </CardContent>
