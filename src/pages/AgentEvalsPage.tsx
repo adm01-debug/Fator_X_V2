@@ -112,7 +112,6 @@ export default function AgentEvalsPage() {
       <PageHeader
         title="Avaliações de Agente"
         description="Datasets curados + LLM-as-judge para validar qualidade, custo e latência por versão."
-        icon={Beaker}
       />
 
       <div className="flex flex-wrap items-center gap-3">
