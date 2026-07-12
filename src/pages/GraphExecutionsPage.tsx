@@ -78,7 +78,6 @@ export default function GraphExecutionsPage() {
         <PageHeader
           title="Execuções de Grafos"
           description="Trilha completa de execução de agent graphs — nós visitados, custos e falhas"
-          icon={GitBranch}
         />
         <Button variant="outline" onClick={() => void load()} disabled={loading}>
           <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
