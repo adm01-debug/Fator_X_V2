@@ -156,9 +156,13 @@ export default function BudgetsPage() {
   const upsertWsMut = useMutation({
     mutationFn: async (payload: Partial<WorkspaceBudget>) => {
       if (!workspaceId) throw new Error("Workspace não encontrado");
+      const { data: userRes } = await supabaseExternal.auth.getUser();
+      const created_by = userRes.user?.id ?? null;
+      const row: Record<string, unknown> = { workspace_id: workspaceId, ...payload };
+      if (created_by) row.created_by = created_by;
       const { error } = await supabaseExternal
         .from("workspace_budgets")
-        .upsert({ workspace_id: workspaceId, ...payload }, { onConflict: "workspace_id" });
+        .upsert(row as never, { onConflict: "workspace_id" });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -181,8 +185,7 @@ export default function BudgetsPage() {
     <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
       <PageHeader
         title="Orçamentos e Custos"
-        subtitle="Controle limites de gastos por workspace e por escopo, com alertas automáticos"
-        icon={Wallet}
+        description="Controle limites de gastos por workspace e por escopo, com alertas automáticos"
       />
 
       {overThreshold.length > 0 && (
