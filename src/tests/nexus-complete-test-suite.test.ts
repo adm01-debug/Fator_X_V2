@@ -239,7 +239,7 @@ describe('C. Funções Puras — Retry', () => {
   });
   it('circuit breaker abre', () => {
     const svc = 'cb-' + Date.now();
-    getCircuitBreaker(svc, { ...DEFAULT_RETRY_POLICY, failure_threshold: 2, success_threshold: 1, timeout_ms: 1000, half_open_max_calls: 1, monitor_window_ms: 5000 } as any);
+    getCircuitBreaker(svc, { ...DEFAULT_RETRY_POLICY, failure_threshold: 2, success_threshold: 1, timeout_ms: 1000, half_open_max_calls: 1, monitor_window_ms: 5000 } as unknown as Parameters<typeof getCircuitBreaker>[1]);
     recordCircuitFailure(svc);
     recordCircuitFailure(svc);
     expect(canExecute(svc)).toBe(false);
