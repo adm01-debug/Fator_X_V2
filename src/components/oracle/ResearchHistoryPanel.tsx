@@ -243,6 +243,7 @@ export function ResearchHistoryPanel() {
 
                     {isOpen && (
                       <div className="mt-4 space-y-3 animate-in fade-in slide-in-from-top-1 duration-300">
+                        <ConfigSummary config={run.config} />
                         {run.errorMessage && (
                           <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/20 text-meta text-destructive">
                             <strong className="font-bold">Erro:</strong> {run.errorMessage}
