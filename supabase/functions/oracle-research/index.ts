@@ -255,6 +255,22 @@ serve(async (req) => {
     });
 
   } catch (error) {
-    return errorResponse(req, error instanceof Error ? error.message : 'Research failed', 500);
+    const message = error instanceof Error ? error.message : 'Research failed';
+    // Persist failure so it appears in ResearchHistoryPanel with status "Falha".
+    try {
+      if (supabaseForCatch && queryForCatch) {
+        await (supabaseForCatch as { from: (t: string) => { insert: (r: Record<string, unknown>) => Promise<unknown> } })
+          .from('oracle_history')
+          .insert({
+            query: queryForCatch,
+            mode: 'deep_research',
+            result: { error: message, strategy: strategyForCatch, depth: depthForCatch, failed_at: new Date().toISOString() },
+            total_tokens: 0,
+            total_cost: 0,
+            latency_ms: Date.now() - failureStartTime,
+          });
+      }
+    } catch { /* best-effort; do not mask original error */ }
+    return errorResponse(req, message, 500);
   }
 });
