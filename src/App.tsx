@@ -54,6 +54,7 @@ const AgentEvalsPage = lazy(() => import("./pages/AgentEvalsPage"));
 const KnowledgeDecayPage = lazy(() => import("./pages/KnowledgeDecayPage"));
 const SystemJobsPage = lazy(() => import("./pages/SystemJobsPage"));
 const WebhookEventsPage = lazy(() => import("./pages/WebhookEventsPage"));
+const GovernancePage = lazy(() => import("./pages/GovernancePage"));
 const DeploymentsPage = lazy(() => import("./pages/DeploymentsPage"));
 const OpenclawDeployPage = lazy(() => import("./pages/OpenclawDeployPage"));
 const MonitoringPage = lazy(() => import("./pages/MonitoringPage"));
