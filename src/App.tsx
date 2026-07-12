@@ -239,6 +239,7 @@ const App = () => {
                       <Route path="/agent-evals" element={<SafePage><AgentEvalsPage /></SafePage>} />
                       <Route path="/knowledge-decay" element={<SafePage><KnowledgeDecayPage /></SafePage>} />
                       <Route path="/system-jobs" element={<SafePage><SystemJobsPage /></SafePage>} />
+                      <Route path="/webhook-events" element={<SafePage><WebhookEventsPage /></SafePage>} />
                       <Route path="/deployments" element={<SafePage><DeploymentsPage /></SafePage>} />
                       <Route path="/deploy/openclaw" element={<SafePage><OpenclawDeployPage /></SafePage>} />
                       <Route path="/monitoring" element={<SafePage><MonitoringPage /></SafePage>} />
