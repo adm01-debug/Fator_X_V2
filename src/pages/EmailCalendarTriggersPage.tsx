@@ -32,6 +32,7 @@ const EMAIL_TRIGGER = "email_received";
 const CALENDAR_TRIGGER = "calendar_event";
 
 export default function EmailCalendarTriggersPage() {
+  const { data: workspaceId } = useWorkspaceId();
   const [rules, setRules] = useState<AutomationRule[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
