@@ -134,6 +134,7 @@ const navSections = [
       { title: "Inventário (CMDB)", url: "/security/assets", icon: Boxes },
       { title: "IP Whitelist", url: "/security/ip-whitelist", icon: Network },
       { title: "Pentest & Achados", url: "/security/pentests", icon: ShieldCheck },
+      { title: "Snapshots Forenses", url: "/security/forensic-snapshots", icon: Fingerprint },
       { title: "SSO Enterprise", url: "/sso", icon: KeyRound },
       { title: "Data Residency", url: "/residency", icon: Globe2 },
       { title: "LGPD", url: "/lgpd", icon: ShieldCheck },
