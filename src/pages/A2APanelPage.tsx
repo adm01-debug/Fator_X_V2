@@ -107,7 +107,7 @@ export default function A2APanelPage() {
                       <div className="flex-1 min-w-0">
                         <p className="text-body font-bold text-foreground truncate">{agent.name}</p>
                         <p className="text-meta text-muted-foreground line-clamp-2">
-                          {agent.description || "Sem descrição"}
+                          {agent.mission || "Sem missão definida"}
                         </p>
                       </div>
                     </div>
