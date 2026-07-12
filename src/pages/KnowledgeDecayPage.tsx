@@ -126,7 +126,6 @@ export default function KnowledgeDecayPage() {
       <PageHeader
         title="Decaimento de Conhecimento"
         description="Detecte, revise e arquive memórias e artefatos que perderam relevância ao longo do tempo."
-        icon={Sparkles}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
