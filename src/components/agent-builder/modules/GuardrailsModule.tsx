@@ -113,6 +113,16 @@ export function GuardrailsModule() {
 
   return (
     <div className="space-y-10">
+      {/* Policy persistida por agente (guardrail_policies) */}
+      <section>
+        <SectionTitle
+          icon="🔐"
+          title="Policy Persistente (Backend)"
+          subtitle="Rails ativos, thresholds e ações salvos em guardrail_policies e aplicados via guardrails-engine."
+        />
+        <GuardrailsPolicyEditor agentId={agent.id} />
+      </section>
+
       {/* Resumo */}
       <section>
         <SectionTitle
