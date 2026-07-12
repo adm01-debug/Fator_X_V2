@@ -8719,6 +8719,16 @@ export type Database = {
       }
       get_pentest_summary: { Args: { p_workspace_id: string }; Returns: Json }
       get_risk_summary: { Args: { p_workspace_id: string }; Returns: Json }
+      get_rollback_rate_per_min: {
+        Args: { window_minutes?: number }
+        Returns: {
+          minutes: number
+          rate_per_min: number
+          rollback_delta: number
+          window_end: string
+          window_start: string
+        }[]
+      }
       get_secrets_status_summary: {
         Args: { p_workspace_id: string }
         Returns: Json
