@@ -130,6 +130,7 @@ const IRPlaybooksPage = lazy(() => import("./pages/IRPlaybooksPage"));
 const AssetInventoryPage = lazy(() => import("./pages/AssetInventoryPage"));
 const IPWhitelistPage = lazy(() => import("./pages/IPWhitelistPage"));
 const FreezeWindowsPage = lazy(() => import("./pages/FreezeWindowsPage"));
+const AgentInstalledSkillsPage = lazy(() => import("./pages/AgentInstalledSkillsPage"));
 const AgentExperimentsPage = lazy(() => import("./pages/AgentExperimentsPage"));
 const CreatorPayoutsPage = lazy(() => import("./pages/CreatorPayoutsPage"));
 const SLODashboard = lazy(() => import("./pages/SLODashboard"));
@@ -328,6 +329,7 @@ const App = () => {
                       <Route path="/security/assets" element={<SafePage><ProtectedRoute permission="settings.api_keys"><AssetInventoryPage /></ProtectedRoute></SafePage>} />
                       <Route path="/security/ip-whitelist" element={<SafePage><ProtectedRoute permission="settings.api_keys"><IPWhitelistPage /></ProtectedRoute></SafePage>} />
                       <Route path="/governance/freeze-windows" element={<SafePage><ProtectedRoute permission="settings.api_keys"><FreezeWindowsPage /></ProtectedRoute></SafePage>} />
+                      <Route path="/agents/installed-skills" element={<SafePage><AgentInstalledSkillsPage /></SafePage>} />
                       <Route path="/agent-experiments" element={<SafePage><AgentExperimentsPage /></SafePage>} />
                       <Route path="/creator-payouts" element={<SafePage><CreatorPayoutsPage /></SafePage>} />
                       <Route path="/disaster-recovery" element={<SafePage><ProtectedRoute permission="settings.api_keys"><DisasterRecoveryPage /></ProtectedRoute></SafePage>} />
