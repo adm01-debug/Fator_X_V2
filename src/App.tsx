@@ -341,6 +341,7 @@ const App = () => {
                       <Route path="/security/bcp-tests" element={<SafePage><ProtectedRoute permission="settings.api_keys"><BCPTestRunsPage /></ProtectedRoute></SafePage>} />
                       <Route path="/agent-sessions" element={<SafePage><AgentSessionsPage /></SafePage>} />
                       <Route path="/graph-executions" element={<SafePage><GraphExecutionsPage /></SafePage>} />
+                      <Route path="/entity-resolution" element={<SafePage><EntityResolutionLogsPage /></SafePage>} />
                       
                       
                       <Route path="/agent-experiments" element={<SafePage><AgentExperimentsPage /></SafePage>} />
