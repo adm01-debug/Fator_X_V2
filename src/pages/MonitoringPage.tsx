@@ -34,13 +34,41 @@ export default function MonitoringPage() {
   const { data: traceEvents = [] } = useQuery({ queryKey: ['trace_events', expandedTraceId], enabled: !!expandedTraceId, queryFn: () => expandedTraceId ? getTraceEvents(expandedTraceId) : Promise.resolve([]) });
   const { data: alerts = [], isLoading: loadingAlerts } = useQuery({ queryKey: ['alerts'], queryFn: () => getAlerts({}) });
 
-  const selected = filteredTraces.find((t: any) => t.id === selectedId) || filteredTraces[0];
-  const stats = { total: filteredTraces.length, errors: filteredTraces.filter((t: any) => t.level === 'error' || t.level === 'critical').length, avgLatency: filteredTraces.length ? Math.round(filteredTraces.reduce((s: number, t: any) => s + (t.latency_ms || 0), 0) / filteredTraces.length) : 0, totalCost: filteredTraces.reduce((s: number, t: any) => s + Number(t.cost_usd || 0), 0) };
-  const levelCounts = filteredTraces.reduce((acc: Record<string, number>, t: any) => { const level = t.level || 'info'; acc[level] = (acc[level] || 0) + 1; return acc; }, {} as Record<string, number>);
+  interface TraceRow {
+    id: string;
+    event?: string | null;
+    session_id?: string | null;
+    level?: string | null;
+    latency_ms?: number | null;
+    tokens_used?: number | null;
+    cost_usd?: number | string | null;
+    created_at: string;
+    agent_id?: string | null;
+    input?: unknown;
+    output?: unknown;
+    metadata?: Record<string, unknown> | null;
+    [key: string]: unknown;
+  }
+
+  interface AlertRow { id: string; is_resolved: boolean; [key: string]: unknown; }
+  interface AgentListItem { id: string; name: string; }
+  const typedTraces = filteredTraces as TraceRow[];
+  const typedAlerts = alerts as AlertRow[];
+  const typedAgents = agentsList as AgentListItem[];
+
+  const selected = typedTraces.find((t) => t.id === selectedId) || typedTraces[0];
+  const stats = {
+    total: typedTraces.length,
+    errors: typedTraces.filter((t) => t.level === 'error' || t.level === 'critical').length,
+    avgLatency: typedTraces.length ? Math.round(typedTraces.reduce((s, t) => s + (t.latency_ms || 0), 0) / typedTraces.length) : 0,
+    totalCost: typedTraces.reduce((s, t) => s + Number(t.cost_usd || 0), 0),
+  };
+  const levelCounts = typedTraces.reduce<Record<string, number>>((acc, t) => { const level = t.level || 'info'; acc[level] = (acc[level] || 0) + 1; return acc; }, {});
   const pieData = Object.entries(levelCounts).map(([name, value]) => ({ name, value: value as number }));
-  const latencyData = filteredTraces.slice(0, 20).reverse().map((t: any) => ({ time: new Date(t.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }), latency: t.latency_ms || 0 }));
-  const unresolvedCount = alerts.filter((a: any) => !a.is_resolved).length;
-  const agentName = (id: string | null) => { if (!id) return '—'; const a = agentsList.find((ag: any) => ag.id === id); return a ? a.name : id.substring(0, 8); };
+  const latencyData = typedTraces.slice(0, 20).reverse().map((t) => ({ time: new Date(t.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }), latency: t.latency_ms || 0 }));
+  const unresolvedCount = typedAlerts.filter((a) => !a.is_resolved).length;
+  const agentName = (id: string | null) => { if (!id) return '—'; const a = typedAgents.find((ag) => ag.id === id); return a ? a.name : id.substring(0, 8); };
+
 
   const handleResolveAlert = async (id: string) => { try { await resolveAlert(id); toast.success('Alerta resolvido'); queryClient.invalidateQueries({ queryKey: ['alerts'] }); } catch (e: unknown) { toast.error(e instanceof Error ? e.message : 'Erro inesperado'); } };
 
@@ -154,8 +182,8 @@ export default function MonitoringPage() {
                       <StatusBadge status={selected.level || 'info'} />
                     </div>
                     <div className="space-y-3">
-                      {selected.input && <div><p className="text-meta font-semibold text-foreground mb-1">Input</p><pre className="text-meta text-muted-foreground bg-secondary/30 p-3 rounded-lg overflow-x-auto max-h-[200px]">{JSON.stringify(selected.input, null, 2)}</pre></div>}
-                      {selected.output && <div><p className="text-meta font-semibold text-foreground mb-1">Output</p><pre className="text-meta text-muted-foreground bg-secondary/30 p-3 rounded-lg overflow-x-auto max-h-[200px]">{JSON.stringify(selected.output, null, 2)}</pre></div>}
+                      {selected.input != null && <div><p className="text-meta font-semibold text-foreground mb-1">Input</p><pre className="text-meta text-muted-foreground bg-secondary/30 p-3 rounded-lg overflow-x-auto max-h-[200px]">{JSON.stringify(selected.input, null, 2)}</pre></div>}
+                      {selected.output != null && <div><p className="text-meta font-semibold text-foreground mb-1">Output</p><pre className="text-meta text-muted-foreground bg-secondary/30 p-3 rounded-lg overflow-x-auto max-h-[200px]">{JSON.stringify(selected.output, null, 2)}</pre></div>}
                       {selected.metadata && Object.keys(selected.metadata as object).length > 0 && <div><p className="text-meta font-semibold text-foreground mb-1">Metadata</p><pre className="text-meta text-muted-foreground bg-secondary/30 p-3 rounded-lg overflow-x-auto max-h-[200px]">{JSON.stringify(selected.metadata, null, 2)}</pre></div>}
                     </div>
                     <div className="mt-4 pt-4 border-t border-border/50 grid grid-cols-3 gap-4 text-center">
