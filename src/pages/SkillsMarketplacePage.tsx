@@ -15,6 +15,7 @@ import { Search, Package, Download, Star, CheckCircle2, Shield } from 'lucide-re
 import { useQuery } from '@tanstack/react-query';
 import { listSkills, type AgentSkillDefinition } from '@/services/skillsRegistryService';
 import { toast } from 'sonner';
+import { ProgressiveSkillLoaderPanel } from '@/components/skills/ProgressiveSkillLoaderPanel';
 
 const CATEGORIES = [
   { value: 'all', label: 'Todas' },
@@ -102,6 +103,8 @@ export default function SkillsMarketplacePage() {
           {skills.length} de {data.total} skills
         </p>
       )}
+
+      <ProgressiveSkillLoaderPanel />
     </div>
   );
 }
