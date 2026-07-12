@@ -2,17 +2,22 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Webhook, Loader2, Send, Clipboard, PlayCircle } from 'lucide-react';
+import { Webhook, Loader2, Send, Clipboard, PlayCircle, History, RotateCcw, CheckCircle2, XCircle } from 'lucide-react';
 import {
   listWebhooks,
   triggerWebhookViaEF,
+  getWebhookEvents,
   WEBHOOK_TEMPLATES,
   type WebhookEndpoint,
+  type WebhookEvent,
 } from '@/services/webhookTriggerService';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 const AUTH_LABELS: Record<string, string> = {
   none: 'Sem Auth', header: 'Header', hmac_sha256: 'HMAC SHA-256',
@@ -26,6 +31,11 @@ export function WebhookManagerPanel() {
   const [testDialogOpen, setTestDialogOpen] = useState(false);
   const [selectedWebhook, setSelectedWebhook] = useState<WebhookEndpoint | null>(null);
   const [testPayload, setTestPayload] = useState('{\n  "test": true,\n  "source": "nexus-studio",\n  "event": "manual_trigger"\n}');
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historyWebhook, setHistoryWebhook] = useState<WebhookEndpoint | null>(null);
+  const [historyEvents, setHistoryEvents] = useState<WebhookEvent[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [replayingId, setReplayingId] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -33,7 +43,48 @@ export function WebhookManagerPanel() {
       .then(setWebhooks)
       .catch(() => toast({ title: 'Erro ao carregar webhooks', variant: 'destructive' }))
       .finally(() => setLoading(false));
-  }, []);
+  }, [toast]);
+
+  const openHistory = async (w: WebhookEndpoint) => {
+    setHistoryWebhook(w);
+    setHistoryOpen(true);
+    setHistoryLoading(true);
+    try {
+      const events = await getWebhookEvents(w.id, 50);
+      setHistoryEvents(events);
+    } catch {
+      toast({ title: 'Erro ao carregar histórico', variant: 'destructive' });
+      setHistoryEvents([]);
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
+  const handleReplay = async (event: WebhookEvent) => {
+    if (!historyWebhook) return;
+    setReplayingId(event.id);
+    try {
+      const result = await triggerWebhookViaEF({
+        path: historyWebhook.path,
+        payload: (event.body ?? {}) as Record<string, unknown>,
+      });
+      toast({
+        title: 'Replay disparado',
+        description: `${historyWebhook.name} — status ${result.status}`,
+      });
+      // Recarrega histórico após replay
+      const events = await getWebhookEvents(historyWebhook.id, 50);
+      setHistoryEvents(events);
+    } catch (e) {
+      toast({
+        title: 'Falha no replay',
+        description: e instanceof Error ? e.message : 'Erro desconhecido',
+        variant: 'destructive',
+      });
+    } finally {
+      setReplayingId(null);
+    }
+  };
 
   const handleTest = async () => {
     if (!selectedWebhook) return;
@@ -132,16 +183,27 @@ export function WebhookManagerPanel() {
                   <div className="flex flex-col items-end gap-2 shrink-0">
                     <Badge className={w.status === 'active' ? 'bg-nexus-emerald/20 text-nexus-emerald' : 'bg-destructive/20 text-destructive'}>{w.status}</Badge>
                     <p className="text-meta text-muted-foreground">{w.request_count} requests</p>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="h-7 text-meta gap-1.5 border-border hover:bg-accent hover:border-primary"
-                      disabled={w.status !== 'active'}
-                      onClick={() => openTestDialog(w)}
-                    >
-                      <Send className="h-3 w-3" />
-                      Testar
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-7 text-meta gap-1.5 border-border hover:bg-accent hover:border-primary"
+                        onClick={() => openHistory(w)}
+                      >
+                        <History className="h-3 w-3" />
+                        Histórico
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-7 text-meta gap-1.5 border-border hover:bg-accent hover:border-primary"
+                        disabled={w.status !== 'active'}
+                        onClick={() => openTestDialog(w)}
+                      >
+                        <Send className="h-3 w-3" />
+                        Testar
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -195,6 +257,117 @@ export function WebhookManagerPanel() {
               </Button>
             </DialogFooter>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* History + Replay Dialog */}
+      <Dialog open={historyOpen} onOpenChange={setHistoryOpen}>
+        <DialogContent className="sm:max-w-[720px] rounded-[2rem] border-border/40 p-8 shadow-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-heading font-black flex items-center gap-2">
+              <History className="h-6 w-6 text-primary" />
+              Histórico & Replay
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 mt-4">
+            <div className="p-3 rounded-xl bg-secondary/30 border border-border/20">
+              <p className="text-body-sm font-bold text-foreground">{historyWebhook?.name}</p>
+              <code className="text-meta text-muted-foreground">{historyWebhook?.path}</code>
+            </div>
+            {historyLoading ? (
+              <div className="py-10 text-center text-muted-foreground">
+                <Loader2 className="h-5 w-5 animate-spin mx-auto mb-2" /> Carregando eventos...
+              </div>
+            ) : historyEvents.length === 0 ? (
+              <div className="py-10 text-center text-muted-foreground">
+                <History className="h-10 w-10 mx-auto mb-3 opacity-30" />
+                <p>Nenhum evento registrado ainda.</p>
+              </div>
+            ) : (
+              <ScrollArea className="h-[420px] pr-4">
+                <div className="space-y-2">
+                  {historyEvents.map((ev) => {
+                    const ok = ev.status === 'processed' || ev.status === 'received';
+                    return (
+                      <div
+                        key={ev.id}
+                        className="p-3 rounded-xl bg-background border border-border/40 hover:border-primary/40 transition-colors"
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <Badge variant="outline" className="text-meta border-border">
+                                {ev.method}
+                              </Badge>
+                              <Badge
+                                className={
+                                  ok
+                                    ? 'bg-nexus-emerald/20 text-nexus-emerald text-meta gap-1'
+                                    : 'bg-destructive/20 text-destructive text-meta gap-1'
+                                }
+                              >
+                                {ok ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
+                                {ev.status}
+                              </Badge>
+                              <span className="text-meta text-muted-foreground">HTTP {ev.response_code}</span>
+                              {ev.processing_time_ms != null && (
+                                <span className="text-meta text-muted-foreground">
+                                  {ev.processing_time_ms}ms
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-meta text-muted-foreground mt-1">
+                              {formatDistanceToNow(new Date(ev.created_at), {
+                                addSuffix: true,
+                                locale: ptBR,
+                              })}
+                              {ev.source_ip ? ` · ${ev.source_ip}` : ''}
+                            </p>
+                            {ev.error && (
+                              <p className="text-meta text-destructive mt-1 truncate">{ev.error}</p>
+                            )}
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-7 text-meta gap-1.5 border-border hover:border-primary shrink-0"
+                            disabled={replayingId === ev.id || historyWebhook?.status !== 'active'}
+                            onClick={() => handleReplay(ev)}
+                          >
+                            {replayingId === ev.id ? (
+                              <Loader2 className="h-3 w-3 animate-spin" />
+                            ) : (
+                              <RotateCcw className="h-3 w-3" />
+                            )}
+                            Replay
+                          </Button>
+                        </div>
+                        {ev.body && Object.keys(ev.body).length > 0 && (
+                          <details className="mt-2">
+                            <summary className="text-meta text-muted-foreground cursor-pointer hover:text-foreground">
+                              Ver payload
+                            </summary>
+                            <pre className="mt-2 p-2 rounded-lg bg-secondary/30 border border-border/20 text-meta font-mono overflow-x-auto max-h-40">
+                              {JSON.stringify(ev.body, null, 2)}
+                            </pre>
+                          </details>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </ScrollArea>
+            )}
+          </div>
+          <DialogFooter className="pt-4">
+            <Button
+              variant="outline"
+              onClick={() => setHistoryOpen(false)}
+              className="h-12 rounded-xl px-6"
+            >
+              Fechar
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
