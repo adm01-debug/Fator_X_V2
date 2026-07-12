@@ -58,6 +58,7 @@ const navSections = [
       { title: "Skills Marketplace", url: "/skills", icon: Package },
       { title: "Skills dos Agentes", url: "/agents/installed-skills", icon: Puzzle },
       { title: "Workflows de Agentes", url: "/agents/workflows", icon: GitBranch },
+      { title: "Engenharia de Caos", url: "/security/chaos-experiments", icon: Zap },
       { title: "NLP Pipeline", url: "/nlp", icon: Languages },
       { title: "Computer Use", url: "/computer-use", icon: Monitor },
       { title: "Browser Agent", url: "/browser-agent", icon: Globe2 },

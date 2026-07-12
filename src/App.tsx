@@ -132,6 +132,7 @@ const IPWhitelistPage = lazy(() => import("./pages/IPWhitelistPage"));
 const FreezeWindowsPage = lazy(() => import("./pages/FreezeWindowsPage"));
 const AgentInstalledSkillsPage = lazy(() => import("./pages/AgentInstalledSkillsPage"));
 const AgentWorkflowsPage = lazy(() => import("./pages/AgentWorkflowsPage"));
+const ChaosExperimentsPage = lazy(() => import("./pages/ChaosExperimentsPage"));
 const AgentExperimentsPage = lazy(() => import("./pages/AgentExperimentsPage"));
 const CreatorPayoutsPage = lazy(() => import("./pages/CreatorPayoutsPage"));
 const SLODashboard = lazy(() => import("./pages/SLODashboard"));
@@ -332,6 +333,7 @@ const App = () => {
                       <Route path="/governance/freeze-windows" element={<SafePage><ProtectedRoute permission="settings.api_keys"><FreezeWindowsPage /></ProtectedRoute></SafePage>} />
                       <Route path="/agents/installed-skills" element={<SafePage><AgentInstalledSkillsPage /></SafePage>} />
                       <Route path="/agents/workflows" element={<SafePage><AgentWorkflowsPage /></SafePage>} />
+                      <Route path="/security/chaos-experiments" element={<SafePage><ChaosExperimentsPage /></SafePage>} />
                       <Route path="/agent-experiments" element={<SafePage><AgentExperimentsPage /></SafePage>} />
                       <Route path="/creator-payouts" element={<SafePage><CreatorPayoutsPage /></SafePage>} />
                       <Route path="/disaster-recovery" element={<SafePage><ProtectedRoute permission="settings.api_keys"><DisasterRecoveryPage /></ProtectedRoute></SafePage>} />
