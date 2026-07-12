@@ -223,7 +223,8 @@ export default function SecurityPage() {
                 <RateLimitingPanel />
               </div>
             </div>
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-1 space-y-8">
+              <RollbackRateCard />
               <SecurityMonitoringPanel />
             </div>
           </div>
