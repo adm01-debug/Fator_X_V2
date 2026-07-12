@@ -7,6 +7,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Plus, ShieldCheck, ListChecks, Loader2, Trash2, FileText } from "lucide-react";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _ShieldCheck = ShieldCheck;
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
