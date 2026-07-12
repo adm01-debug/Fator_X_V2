@@ -176,7 +176,7 @@ export async function listWorkflowRuns(limit = 30): Promise<WorkflowRunRow[]> {
 export async function executeWorkflowStream(
   workflowId: string,
   input: string = '',
-  onEvent: (event: any) => void
+  onEvent: (event: unknown) => void
 ): Promise<void> {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session?.access_token) throw new Error('Not authenticated');

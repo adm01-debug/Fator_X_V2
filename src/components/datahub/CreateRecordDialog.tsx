@@ -68,7 +68,7 @@ const ENTITY_CREATE_FIELDS: Record<string, FormField[]> = {
 };
 
 /* ── Extra flags to set based on entity type ── */
-const ENTITY_EXTRA_FIELDS: Record<string, Record<string, any>> = {
+const ENTITY_EXTRA_FIELDS: Record<string, Record<string, unknown>> = {
   cliente: { is_customer: true },
   fornecedor: { is_supplier: true },
   transportadora: { is_carrier: true },
@@ -103,7 +103,7 @@ export function CreateRecordDialog({ open, onOpenChange, entityId, entityName, o
     if (!isValid) return;
     setSaving(true);
     try {
-      const payload: Record<string, any> = { ...values };
+      const payload: Record<string, unknown> = { ...values };
       // Add extra flags (is_customer, is_supplier, etc.)
       const extra = ENTITY_EXTRA_FIELDS[entityId];
       if (extra) Object.assign(payload, extra);

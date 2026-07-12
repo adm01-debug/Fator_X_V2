@@ -13,7 +13,7 @@ interface LineSeries {
 }
 
 interface Props {
-  data: Record<string, any>[];
+  data: Record<string, unknown>[];
   xKey: string;
   series: LineSeries[];
   height?: number;

@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 
 interface AuditReportProps {
   run: any;
-  results: any[];
+  results: unknown[];
 }
 
 export function AuditReportDialog({ run, results }: AuditReportProps) {

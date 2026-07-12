@@ -134,7 +134,7 @@ export function clusterCandidates(
   }
 
   // Only keep clusters with at least one duplicate
-  return clusters.filter((c: any) => c.duplicates.length > 0);
+  return clusters.filter((c: unknown) => c.duplicates.length > 0);
 }
 
 /**
@@ -158,7 +158,7 @@ export async function resolveMemoryEntities(
     }
 
     const candidates = ((data ?? []) as EntityCandidate[]).filter(
-      (c: any) => c.content && c.content.length >= 10
+      (c: unknown) => c.content && c.content.length >= 10
     );
 
     const clusters = clusterCandidates(candidates, threshold);

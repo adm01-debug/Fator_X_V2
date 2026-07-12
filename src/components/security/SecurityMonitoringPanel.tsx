@@ -187,6 +187,6 @@ export function SecurityMonitoringPanel() {
   );
 }
 
-function cn(...inputs: any[]) {
+function cn(...inputs: unknown[]) {
   return inputs.filter(Boolean).join(' ');
 }

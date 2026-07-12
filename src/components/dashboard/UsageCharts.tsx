@@ -128,7 +128,7 @@ export function UsageCharts({ data }: UsageChartsProps) {
     );
   }
 
-  const handleDrilldown = (d: any) => {
+  const handleDrilldown = (d: unknown) => {
     const from = new Date(d.date);
     from.setHours(0, 0, 0, 0);
     const to = new Date(d.date);
@@ -136,7 +136,7 @@ export function UsageCharts({ data }: UsageChartsProps) {
     navigate(`/traces?from=${from.toISOString()}&to=${to.toISOString()}`);
   };
 
-  const drilldownExtras = (d: any) => {
+  const drilldownExtras = (d: unknown) => {
     const sections: TooltipExtraSection[] = [];
     if (d.requests > 0 || d.errors > 0 || d.cost > 0) {
       sections.push({

@@ -13,7 +13,7 @@ export function GuardrailsSimulator() {
     safe: boolean;
     violations: string[];
     score: number;
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
   } | null>(null);
 
   const simulateAnalysis = async () => {

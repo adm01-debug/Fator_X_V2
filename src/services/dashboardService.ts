@@ -116,7 +116,7 @@ export async function getRecentDashboardTraces(limit = 5) {
       logger.error('Failed to fetch recent traces', { error: error.message });
       return [];
     }
-    return (data ?? []).map((t: any) => ({
+    return (data ?? []).map((t: unknown) => ({
       ...t,
       event: t.event || 'agent.execution'
     }));

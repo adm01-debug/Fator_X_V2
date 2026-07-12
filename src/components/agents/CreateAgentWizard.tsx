@@ -43,7 +43,7 @@ export function CreateAgentWizard() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [magicIdea, setMagicIdea] = useState("");
   const [isGeneratingMagic, setIsGeneratingMagic] = useState(false);
-  const [magicPreview, setMagicPreview] = useState<any>(null);
+  const [magicPreview, setMagicPreview] = useState<unknown>(null);
   const [viewingTemplate, setViewingTemplate] = useState<AgentTemplate | null>(null);
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
 

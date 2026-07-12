@@ -92,7 +92,7 @@ export async function getPermissionsForRole(roleKey: string): Promise<Permission
   if (error) throw error;
 
   // Fetch permissions by IDs
-  const permIds = (data ?? []).map((rp: any) => String(rp.permission_id));
+  const permIds = (data ?? []).map((rp: unknown) => String(rp.permission_id));
   if (permIds.length === 0) return [];
 
   const { data: perms } = await fromTable('permissions').select('*').in('id', permIds);
@@ -125,12 +125,12 @@ export async function getUserPermissions(userId: string, workspaceId: string): P
 
   if (error) throw error;
 
-  const permIds = (data ?? []).map((rp: any) => String(rp.permission_id));
+  const permIds = (data ?? []).map((rp: unknown) => String(rp.permission_id));
   if (permIds.length === 0) return new Set();
 
   const { data: perms } = await fromTable('permissions').select('key').in('id', permIds);
   const permissions = new Set<PermissionKey>();
-  (perms ?? []).forEach((p: any) => {
+  (perms ?? []).forEach((p: unknown) => {
     if (p.key) permissions.add(String(p.key) as PermissionKey);
   });
 

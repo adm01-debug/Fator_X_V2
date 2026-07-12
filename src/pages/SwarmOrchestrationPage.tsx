@@ -73,7 +73,7 @@ export default function SwarmOrchestrationPage() {
       });
       
       toast.success("Comunicação A2A concluída");
-    } catch (err: any) {
+    } catch (err: unknown) {
       addLog({
         direction: 'inbound',
         type: 'error',
