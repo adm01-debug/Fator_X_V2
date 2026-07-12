@@ -93,7 +93,7 @@ export function WebhookManagerPanel() {
       let payloadObj = { test: true };
       try {
         payloadObj = JSON.parse(testPayload);
-      } catch (e) {
+      } catch (_e) {
         toast({ title: 'JSON inválido', variant: 'destructive' });
         setTestingId(null);
         return;

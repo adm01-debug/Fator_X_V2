@@ -145,7 +145,6 @@ export async function installTemplate(
     .single();
   if (error) throw error;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   await rpcCall('increment_template_installs', { template_uuid: templateId });
 
   return data as InstalledTemplate;
