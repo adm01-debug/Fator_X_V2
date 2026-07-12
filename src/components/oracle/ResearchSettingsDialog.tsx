@@ -38,7 +38,7 @@ const MODEL_LABELS: Record<SynthesisModel, string> = {
 };
 
 export function ResearchSettingsDialog({ trigger }: Props) {
-  const [saved, updateSaved] = useResearchConfig();
+  const [saved, updateSaved, { loading: cfgLoading, userId }] = useResearchConfig();
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<ResearchConfig>(saved);
   const [errors, setErrors] = useState<FieldErrors>({});
