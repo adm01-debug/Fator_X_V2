@@ -63,7 +63,7 @@ export function ExecutionHistoryPanel() {
       ) : (
         <div className="space-y-2">
           {executions.map((e) => (
-            <Card key={e.id} className="bg-card border-border">
+            <Card key={e.id} className="bg-card border-border hover:border-primary/40 transition-colors">
               <CardContent className="p-3 flex items-center gap-3">
                 <span className="text-title-sm">{TYPE_ICONS[e.execution_type] ?? '⚡'}</span>
                 <div className="flex-1 min-w-0">
@@ -74,12 +74,28 @@ export function ExecutionHistoryPanel() {
                   <Badge className={STATUS_COLORS[e.status] ?? 'bg-muted text-muted-foreground'}>{e.status}</Badge>
                   <p className="text-meta text-muted-foreground mt-1">{e.duration_ms ? `${(e.duration_ms / 1000).toFixed(1)}s` : '...'}</p>
                 </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="gap-1 shrink-0"
+                  onClick={() => { setSelectedId(e.id); setDialogOpen(true); }}
+                >
+                  <Eye size={14} />
+                  <span className="hidden sm:inline">Timeline</span>
+                </Button>
               </CardContent>
             </Card>
           ))}
           <p className="text-meta text-muted-foreground text-center">Mostrando {executions.length} de {total} execuções</p>
         </div>
       )}
+
+      <ExecutionTimelineDialog
+        executionId={selectedId}
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+      />
     </div>
   );
+
 }
