@@ -101,6 +101,7 @@ const EmailCalendarTriggersPage = lazy(() => import("./pages/EmailCalendarTrigge
 const AgentDebuggerPage = lazy(() => import("./pages/AgentDebuggerPage"));
 const ComplianceReportsPage = lazy(() => import("./pages/ComplianceReportsPage"));
 const ComplianceFrameworksPage = lazy(() => import("./pages/ComplianceFrameworksPage"));
+const ForensicSnapshotsPage = lazy(() => import("./pages/ForensicSnapshotsPage"));
 const VoiceTelephonyPage = lazy(() => import("./pages/VoiceTelephonyPage"));
 const KnowledgeGraphPage = lazy(() => import("./pages/KnowledgeGraphPage"));
 const AgentSimulationPage = lazy(() => import("./pages/AgentSimulationPage"));
