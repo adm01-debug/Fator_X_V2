@@ -245,6 +245,22 @@ export default function SettingsPage() {
                 </div>
                 <Bitrix24Connect />
               </div>
+
+              <div className="nexus-card bg-card/50 backdrop-blur-sm border-border/40 p-6 space-y-4 mt-6">
+                <div className="border-b border-border/40 pb-4">
+                  <h3 className="text-title-sm font-semibold text-foreground">Console de Webhooks Bitrix24</h3>
+                  <p className="text-meta text-muted-foreground">Auditoria dos eventos recebidos, status de roteamento e assinatura HMAC</p>
+                </div>
+                <Bitrix24WebhookPanel />
+              </div>
+
+              <div className="nexus-card bg-card/50 backdrop-blur-sm border-border/40 p-6 space-y-4 mt-6">
+                <div className="border-b border-border/40 pb-4">
+                  <h3 className="text-title-sm font-semibold text-foreground">Testador de API Bitrix24</h3>
+                  <p className="text-meta text-muted-foreground">Dispare chamadas REST autenticadas para validar credenciais e endpoints</p>
+                </div>
+                <Bitrix24ApiTester />
+              </div>
             </TabsContent>
           </div>
 
