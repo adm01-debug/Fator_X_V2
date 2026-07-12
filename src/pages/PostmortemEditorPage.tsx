@@ -391,7 +391,7 @@ export default function PostmortemEditorPage() {
                   </SelectContent>
                 </Select>
                 <Button variant="ghost" size="icon" className="col-span-1 h-7 w-7" onClick={() => handleDeleteAction(a.id)}>
-                  {a.status === "done" ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> : <Trash2 className="h-3.5 w-3.5 text-destructive" />}
+                  {a.status === "done" ? <CheckCircle2 className="h-3.5 w-3.5 text-nexus-emerald" /> : <Trash2 className="h-3.5 w-3.5 text-destructive" />}
                 </Button>
               </div>
             ))}

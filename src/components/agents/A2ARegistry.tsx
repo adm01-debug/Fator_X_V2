@@ -54,7 +54,7 @@ export function A2ARegistry() {
                 </div>
                 <div className="flex gap-2">
                   {card.capabilities.streaming && <Badge variant="secondary" className="text-meta bg-nexus-emerald/10 text-nexus-emerald">SSE</Badge>}
-                  {card.capabilities.mcpVersion && <Badge variant="secondary" className="text-meta bg-purple-500/10 text-purple-500">MCP {card.capabilities.mcpVersion}</Badge>}
+                  {card.capabilities.mcpVersion && <Badge variant="secondary" className="text-meta bg-nexus-purple/10 text-nexus-purple">MCP {card.capabilities.mcpVersion}</Badge>}
                 </div>
               </div>
               <div className="mt-4">

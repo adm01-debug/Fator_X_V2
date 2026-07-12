@@ -19,7 +19,7 @@ import {
 const sevColor = (s: string) =>
   s === "critical" ? "bg-destructive text-destructive-foreground" :
   s === "high" ? "bg-nexus-amber text-background" :
-  s === "medium" ? "bg-yellow-500/80 text-background" :
+  s === "medium" ? "bg-nexus-yellow/80 text-background" :
   "bg-muted text-muted-foreground";
 
 export default function VulnerabilitiesPage() {

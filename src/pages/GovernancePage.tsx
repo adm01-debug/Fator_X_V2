@@ -268,8 +268,8 @@ export default function GovernancePage() {
       />
 
       {activeFreeze && (
-        <Alert className="border-amber-500/40 bg-amber-500/5">
-          <ShieldAlert className="h-4 w-4 text-amber-500" />
+        <Alert className="border-nexus-amber/40 bg-nexus-amber/5">
+          <ShieldAlert className="h-4 w-4 text-nexus-amber" />
           <AlertTitle>Janela de congelamento ativa</AlertTitle>
           <AlertDescription>
             <b>{activeFreeze.name}</b> — encerra em{" "}
@@ -293,13 +293,13 @@ export default function GovernancePage() {
 
       {/* Status geral de proteção */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className={ipProtectionOn ? "border-emerald-500/40" : "border-muted"}>
+        <Card className={ipProtectionOn ? "border-nexus-emerald/40" : "border-muted"}>
           <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
             <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
               <Network className="h-4 w-4" /> Proteção por IP
             </CardTitle>
             {ipProtectionOn ? (
-              <Badge className="bg-emerald-500/15 text-emerald-500 border-emerald-500/30">
+              <Badge className="bg-nexus-emerald/15 text-nexus-emerald border-nexus-emerald/30">
                 <ShieldCheck className="h-3 w-3 mr-1" /> Ativa
               </Badge>
             ) : (
@@ -321,13 +321,13 @@ export default function GovernancePage() {
           </CardContent>
         </Card>
 
-        <Card className={geoProtectionOn ? "border-emerald-500/40" : "border-muted"}>
+        <Card className={geoProtectionOn ? "border-nexus-emerald/40" : "border-muted"}>
           <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
             <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
               <Globe2 className="h-4 w-4" /> Restrição geográfica
             </CardTitle>
             {geoProtectionOn ? (
-              <Badge className="bg-emerald-500/15 text-emerald-500 border-emerald-500/30">
+              <Badge className="bg-nexus-emerald/15 text-nexus-emerald border-nexus-emerald/30">
                 <ShieldCheck className="h-3 w-3 mr-1" /> Ativa
               </Badge>
             ) : (
@@ -472,7 +472,7 @@ export default function GovernancePage() {
                       <CardTitle className="text-base">{w.name}</CardTitle>
                       <div className="flex items-center gap-2">
                         {isActive(w) && (
-                          <Badge className="bg-amber-500/20 text-amber-500 border-amber-500/40">
+                          <Badge className="bg-nexus-amber/20 text-nexus-amber border-nexus-amber/40">
                             Ativa
                           </Badge>
                         )}
@@ -630,7 +630,7 @@ export default function GovernancePage() {
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-base flex items-center gap-2">
-                  <ShieldCheck className="h-4 w-4 text-emerald-500" />
+                  <ShieldCheck className="h-4 w-4 text-nexus-emerald" />
                   Regras ativas ({activeIps.length})
                 </CardTitle>
               </CardHeader>

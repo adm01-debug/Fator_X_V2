@@ -277,7 +277,7 @@ export default function AgentInstalledSkillsPage() {
                       v{row.skill?.version}
                     </Badge>
                     {row.skill?.is_verified && (
-                      <Badge className="bg-emerald-500/15 text-emerald-500 border-emerald-500/30 text-xs">
+                      <Badge className="bg-nexus-emerald/15 text-nexus-emerald border-nexus-emerald/30 text-xs">
                         <CheckCircle2 className="size-3 mr-1" /> Verificada
                       </Badge>
                     )}
@@ -371,7 +371,7 @@ export default function AgentInstalledSkillsPage() {
                           {s.category}
                         </Badge>
                         {s.is_verified && (
-                          <Badge className="bg-emerald-500/15 text-emerald-500 border-emerald-500/30 text-xs">
+                          <Badge className="bg-nexus-emerald/15 text-nexus-emerald border-nexus-emerald/30 text-xs">
                             <CheckCircle2 className="size-3 mr-1" /> Verificada
                           </Badge>
                         )}

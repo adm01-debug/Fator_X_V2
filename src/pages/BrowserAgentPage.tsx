@@ -88,7 +88,7 @@ export default function BrowserAgentPage() {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card><CardContent className="pt-6"><div className="flex items-center gap-3"><ListChecks className="h-5 w-5 text-muted-foreground" /><div><p className="text-2xl font-bold">{totalSessions}</p><p className="text-meta text-muted-foreground">Sessões totais</p></div></div></CardContent></Card>
-        <Card><CardContent className="pt-6"><div className="flex items-center gap-3"><CheckCircle2 className="h-5 w-5 text-emerald-500" /><div><p className="text-2xl font-bold">{completed}</p><p className="text-meta text-muted-foreground">Completadas</p></div></div></CardContent></Card>
+        <Card><CardContent className="pt-6"><div className="flex items-center gap-3"><CheckCircle2 className="h-5 w-5 text-nexus-emerald" /><div><p className="text-2xl font-bold">{completed}</p><p className="text-meta text-muted-foreground">Completadas</p></div></div></CardContent></Card>
         <Card><CardContent className="pt-6"><div className="flex items-center gap-3"><Clock className="h-5 w-5 text-muted-foreground" /><div><p className="text-2xl font-bold">{totalSteps}</p><p className="text-meta text-muted-foreground">Steps executados</p></div></div></CardContent></Card>
         <Card><CardContent className="pt-6"><div className="flex items-center gap-3"><DollarSign className="h-5 w-5 text-muted-foreground" /><div><p className="text-2xl font-bold">${(totalCostCents / 100).toFixed(2)}</p><p className="text-meta text-muted-foreground">Custo total</p></div></div></CardContent></Card>
       </div>
@@ -181,9 +181,9 @@ export default function BrowserAgentPage() {
                 <div className="p-2 border-b bg-background flex items-center justify-between">
                   <span className="text-meta font-mono text-muted-foreground uppercase tracking-widest">Live Agent Viewport</span>
                   <div className="flex gap-1">
-                    <div className="w-2 h-2 rounded-full bg-red-500" />
-                    <div className="w-2 h-2 rounded-full bg-yellow-500" />
-                    <div className="w-2 h-2 rounded-full bg-green-500" />
+                    <div className="w-2 h-2 rounded-full bg-nexus-red" />
+                    <div className="w-2 h-2 rounded-full bg-nexus-yellow" />
+                    <div className="w-2 h-2 rounded-full bg-nexus-green" />
                   </div>
                 </div>
                 <div className="flex-1 flex items-center justify-center p-4">
@@ -260,8 +260,8 @@ export default function BrowserAgentPage() {
                 <span>${(replaySession.cost_cents / 100).toFixed(2)}</span>
               </div>
               {replaySession.final_result && (
-                <div className="p-3 rounded-md bg-emerald-500/10 border border-emerald-500/30">
-                  <p className="text-meta font-medium text-emerald-500 mb-1">Resultado final</p>
+                <div className="p-3 rounded-md bg-nexus-emerald/10 border border-nexus-emerald/30">
+                  <p className="text-meta font-medium text-nexus-emerald mb-1">Resultado final</p>
                   <p className="text-body-sm whitespace-pre-wrap">{replaySession.final_result}</p>
                 </div>
               )}

@@ -252,7 +252,7 @@ export default function PostmortemsPage() {
                       <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
                         <span>Criado {format(new Date(pm.created_at), "PPp", { locale: ptBR })}</span>
                         {openActs > 0 && (
-                          <span className="flex items-center gap-1 text-amber-500">
+                          <span className="flex items-center gap-1 text-nexus-amber">
                             <AlertCircle className="h-3 w-3" /> {openActs} ação(ões) pendente(s)
                           </span>
                         )}

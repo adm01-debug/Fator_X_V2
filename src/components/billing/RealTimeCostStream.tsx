@@ -115,7 +115,7 @@ export function RealTimeCostStream() {
           <div className="relative flex h-2.5 w-2.5">
             <span
               className={`absolute inline-flex h-full w-full rounded-full opacity-75 ${
-                connected && !paused ? "animate-ping bg-emerald-400" : ""
+                connected && !paused ? "animate-ping bg-nexus-emerald" : ""
               }`}
             />
             <span
@@ -123,7 +123,7 @@ export function RealTimeCostStream() {
                 paused
                   ? "bg-nexus-amber"
                   : connected
-                    ? "bg-emerald-500"
+                    ? "bg-nexus-emerald"
                     : "bg-muted-foreground"
               }`}
             />

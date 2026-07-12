@@ -23,12 +23,12 @@ function makeNode(icon: string, label: string, color: string, hasIn: boolean, ha
   };
 }
 
-export const TriggerNode = makeNode('▶️', 'Trigger', 'border-green-500/50 bg-green-500/10', false, true);
-export const AgentNode = makeNode('🤖', 'Agent', 'border-blue-500/50 bg-blue-500/10', true, true);
-export const ToolNode = makeNode('🔧', 'Tool', 'border-purple-500/50 bg-purple-500/10', true, true);
-export const ConditionNode = makeNode('🔀', 'Condition', 'border-yellow-500/50 bg-yellow-500/10', true, true);
-export const TransformNode = makeNode('✨', 'Transform', 'border-pink-500/50 bg-pink-500/10', true, true);
-export const OutputNode = makeNode('🎯', 'Output', 'border-red-500/50 bg-red-500/10', true, false);
+export const TriggerNode = makeNode('▶️', 'Trigger', 'border-nexus-green/50 bg-nexus-green/10', false, true);
+export const AgentNode = makeNode('🤖', 'Agent', 'border-nexus-blue/50 bg-nexus-blue/10', true, true);
+export const ToolNode = makeNode('🔧', 'Tool', 'border-nexus-purple/50 bg-nexus-purple/10', true, true);
+export const ConditionNode = makeNode('🔀', 'Condition', 'border-nexus-yellow/50 bg-nexus-yellow/10', true, true);
+export const TransformNode = makeNode('✨', 'Transform', 'border-nexus-rose/50 bg-nexus-rose/10', true, true);
+export const OutputNode = makeNode('🎯', 'Output', 'border-nexus-red/50 bg-nexus-red/10', true, false);
 
 export const nodeTypes = {
   trigger: TriggerNode,

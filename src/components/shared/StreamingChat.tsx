@@ -73,7 +73,7 @@ export function StreamingChat({ endpoint, placeholder = 'Digite sua mensagem...'
                     variant="outline" 
                     className="flex items-center gap-1.5 py-1 px-2 text-meta animate-in fade-in slide-in-from-left-2"
                   >
-                    <Zap className="w-3 h-3 text-yellow-500 animate-pulse" />
+                    <Zap className="w-3 h-3 text-nexus-yellow animate-pulse" />
                     <span>Executing: <strong>{tc.name}</strong></span>
                   </Badge>
                 ))}

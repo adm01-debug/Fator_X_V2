@@ -29,9 +29,9 @@ interface GraphExecution {
 }
 
 const statusColor: Record<string, string> = {
-  running: "bg-blue-500/15 text-blue-500 border-blue-500/30",
-  completed: "bg-green-500/15 text-green-500 border-green-500/30",
-  failed: "bg-red-500/15 text-red-500 border-red-500/30",
+  running: "bg-nexus-blue/15 text-nexus-blue border-nexus-blue/30",
+  completed: "bg-nexus-green/15 text-nexus-green border-nexus-green/30",
+  failed: "bg-nexus-red/15 text-nexus-red border-nexus-red/30",
   cancelled: "bg-slate-500/15 text-slate-400 border-slate-500/30",
 };
 
@@ -92,11 +92,11 @@ export default function GraphExecutionsPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Rodando</CardTitle></CardHeader>
-          <CardContent><div className="text-2xl font-bold text-blue-500">{running}</div></CardContent>
+          <CardContent><div className="text-2xl font-bold text-nexus-blue">{running}</div></CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Falharam</CardTitle></CardHeader>
-          <CardContent><div className="text-2xl font-bold text-red-500">{failed}</div></CardContent>
+          <CardContent><div className="text-2xl font-bold text-nexus-red">{failed}</div></CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Custo Total</CardTitle></CardHeader>
@@ -123,7 +123,7 @@ export default function GraphExecutionsPage() {
                       <span className="flex items-center gap-1"><DollarSign className="h-3 w-3" />${(r.total_cost_cents / 100).toFixed(4)}</span>
                       <span>{formatDistanceToNow(new Date(r.started_at), { addSuffix: true, locale: ptBR })}</span>
                       {r.current_node_id && <span>nó: {r.current_node_id}</span>}
-                      {r.error_message && <span className="text-red-500 flex items-center gap-1"><AlertCircle className="h-3 w-3" />erro</span>}
+                      {r.error_message && <span className="text-nexus-red flex items-center gap-1"><AlertCircle className="h-3 w-3" />erro</span>}
                     </div>
                   </div>
                   <Button size="sm" variant="ghost" onClick={() => setSelected(r)}>
@@ -160,8 +160,8 @@ export default function GraphExecutionsPage() {
                 )}
                 {selected.error_message && (
                   <div>
-                    <div className="text-xs font-semibold mb-1 text-red-500">Erro</div>
-                    <pre className="text-xs bg-red-500/10 border border-red-500/30 rounded p-3 whitespace-pre-wrap">{selected.error_message}</pre>
+                    <div className="text-xs font-semibold mb-1 text-nexus-red">Erro</div>
+                    <pre className="text-xs bg-nexus-red/10 border border-nexus-red/30 rounded p-3 whitespace-pre-wrap">{selected.error_message}</pre>
                   </div>
                 )}
                 <div>

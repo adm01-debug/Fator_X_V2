@@ -70,7 +70,7 @@ const statusBadge = (status: string) => {
   const s = status.toLowerCase();
   if (s.includes("success") || s.includes("complet") || s === "ok") {
     return (
-      <Badge variant="outline" className="text-emerald-500 border-emerald-500/40">
+      <Badge variant="outline" className="text-nexus-emerald border-nexus-emerald/40">
         <CheckCircle2 className="h-3 w-3 mr-1" /> {status}
       </Badge>
     );
@@ -83,7 +83,7 @@ const statusBadge = (status: string) => {
     );
   }
   return (
-    <Badge variant="outline" className="text-amber-500 border-amber-500/40">
+    <Badge variant="outline" className="text-nexus-amber border-nexus-amber/40">
       <Clock className="h-3 w-3 mr-1" /> {status}
     </Badge>
   );
@@ -272,9 +272,9 @@ export default function SystemJobsPage() {
                         rate === null
                           ? "text-muted-foreground border-muted"
                           : rate >= 95
-                          ? "text-emerald-500 border-emerald-500/40"
+                          ? "text-nexus-emerald border-nexus-emerald/40"
                           : rate >= 80
-                          ? "text-amber-500 border-amber-500/40"
+                          ? "text-nexus-amber border-nexus-amber/40"
                           : "text-destructive border-destructive/40";
                       return (
                         <div
@@ -443,7 +443,7 @@ export default function SystemJobsPage() {
                           {p.succeeded ? (
                             <Badge
                               variant="outline"
-                              className="text-emerald-500 border-emerald-500/40"
+                              className="text-nexus-emerald border-nexus-emerald/40"
                             >
                               <CheckCircle2 className="h-3 w-3 mr-1" />
                               {p.status_code ?? "OK"}

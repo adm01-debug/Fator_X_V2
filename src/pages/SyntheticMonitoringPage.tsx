@@ -85,8 +85,8 @@ function CheckCard({ check, onChanged }: { check: SyntheticCheck; onChanged: () 
   };
 
   const uptimeColor =
-    !summary || summary.uptime_pct >= 99 ? "text-emerald-500"
-    : summary.uptime_pct >= 95 ? "text-amber-500"
+    !summary || summary.uptime_pct >= 99 ? "text-nexus-emerald"
+    : summary.uptime_pct >= 95 ? "text-nexus-amber"
     : "text-destructive";
 
   return (

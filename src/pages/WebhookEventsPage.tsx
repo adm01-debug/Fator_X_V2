@@ -55,8 +55,8 @@ const timeAgo = (iso: string) =>
 
 const statusColor = (code: number | null) => {
   if (code === null) return "text-muted-foreground border-muted";
-  if (code >= 200 && code < 300) return "text-emerald-500 border-emerald-500/40";
-  if (code >= 400 && code < 500) return "text-amber-500 border-amber-500/40";
+  if (code >= 200 && code < 300) return "text-nexus-emerald border-nexus-emerald/40";
+  if (code >= 400 && code < 500) return "text-nexus-amber border-nexus-amber/40";
   if (code >= 500) return "text-destructive border-destructive/40";
   return "text-muted-foreground border-muted";
 };

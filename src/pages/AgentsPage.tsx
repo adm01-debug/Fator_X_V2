@@ -225,13 +225,13 @@ export default function AgentsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         {[
-          { label: 'Conhecimento', icon: BookOpen, path: '/knowledge', color: 'text-blue-500', bg: 'bg-blue-500/10' },
-          { label: 'Workflows', icon: GitBranch, path: '/workflows', color: 'text-purple-500', bg: 'bg-purple-500/10' },
-          { label: 'Monitoramento', icon: Activity, path: '/monitoring', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-          { label: 'Voz & Áudio', icon: Bot, path: '/voice-agents', color: 'text-orange-500', bg: 'bg-orange-500/10' },
-          { label: 'Visão', icon: Search, path: '/vision', color: 'text-cyan-500', bg: 'bg-cyan-500/10' },
-          { label: 'Templates', icon: BookOpen, path: '/agents/templates', color: 'text-pink-500', bg: 'bg-pink-500/10' },
-          { label: 'Enxame (A2A)', icon: Network, path: '/agents/swarm', color: 'text-amber-500', bg: 'bg-amber-500/10' },
+          { label: 'Conhecimento', icon: BookOpen, path: '/knowledge', color: 'text-nexus-blue', bg: 'bg-nexus-blue/10' },
+          { label: 'Workflows', icon: GitBranch, path: '/workflows', color: 'text-nexus-purple', bg: 'bg-nexus-purple/10' },
+          { label: 'Monitoramento', icon: Activity, path: '/monitoring', color: 'text-nexus-emerald', bg: 'bg-nexus-emerald/10' },
+          { label: 'Voz & Áudio', icon: Bot, path: '/voice-agents', color: 'text-nexus-orange', bg: 'bg-nexus-orange/10' },
+          { label: 'Visão', icon: Search, path: '/vision', color: 'text-nexus-cyan', bg: 'bg-nexus-cyan/10' },
+          { label: 'Templates', icon: BookOpen, path: '/agents/templates', color: 'text-nexus-rose', bg: 'bg-nexus-rose/10' },
+          { label: 'Enxame (A2A)', icon: Network, path: '/agents/swarm', color: 'text-nexus-amber', bg: 'bg-nexus-amber/10' },
         ].map((action, i) => (
           <button
             key={i}

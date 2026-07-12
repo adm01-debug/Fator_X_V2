@@ -54,7 +54,7 @@ const KIND_HEAT_COLOR: Record<string, string> = {
   guardrail: "bg-destructive/70",
   workflow: "bg-primary/70",
   http: "bg-nexus-emerald/70",
-  db: "bg-yellow-500/70",
+  db: "bg-nexus-yellow/70",
   custom: "bg-muted-foreground/50",
 };
 

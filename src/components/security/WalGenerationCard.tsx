@@ -58,11 +58,11 @@ export function WalGenerationCard() {
         <CheckCircle2 className="h-3 w-3" /> Saudável
       </Badge>
     ) : level === "medium" ? (
-      <Badge className="bg-yellow-500/20 text-yellow-500 border-yellow-500/30 gap-1">
+      <Badge className="bg-nexus-yellow/20 text-nexus-yellow border-nexus-yellow/30 gap-1">
         <AlertTriangle className="h-3 w-3" /> Atenção
       </Badge>
     ) : level === "high" ? (
-      <Badge className="bg-orange-500/20 text-orange-500 border-orange-500/30 gap-1">
+      <Badge className="bg-nexus-orange/20 text-nexus-orange border-nexus-orange/30 gap-1">
         <AlertTriangle className="h-3 w-3" /> Alto
       </Badge>
     ) : (

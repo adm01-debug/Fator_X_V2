@@ -46,12 +46,12 @@ function statusBadge(s: Payout["status"]) {
     processing: {
       label: "Processando",
       icon: Loader2,
-      className: "bg-sky-500/15 text-sky-500 border-sky-500/30",
+      className: "bg-nexus-cyan/15 text-nexus-cyan border-nexus-cyan/30",
     },
     paid: {
       label: "Pago",
       icon: CheckCircle2,
-      className: "bg-emerald-500/15 text-emerald-500 border-emerald-500/30",
+      className: "bg-nexus-emerald/15 text-nexus-emerald border-nexus-emerald/30",
     },
     failed: {
       label: "Falhou",
@@ -121,7 +121,7 @@ export default function CreatorPayoutsPage() {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground">Pago</CardTitle>
           </CardHeader>
-          <CardContent className="text-2xl font-bold text-emerald-500">
+          <CardContent className="text-2xl font-bold text-nexus-emerald">
             {formatBRL(stats.paid)}
           </CardContent>
         </Card>
@@ -129,7 +129,7 @@ export default function CreatorPayoutsPage() {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground">A receber</CardTitle>
           </CardHeader>
-          <CardContent className="text-2xl font-bold text-amber-500">
+          <CardContent className="text-2xl font-bold text-nexus-amber">
             {formatBRL(stats.pending)}
           </CardContent>
         </Card>
