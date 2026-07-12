@@ -62,7 +62,7 @@ const RUN_STATUS_ICON: Record<string, JSX.Element> = {
 };
 
 export default function AgentWorkflowsPage() {
-  const workspaceId = useWorkspaceId();
+  const { data: workspaceId } = useWorkspaceId();
   const [workflows, setWorkflows] = useState<WorkflowRow[]>([]);
   const [runs, setRuns] = useState<WorkflowRun[]>([]);
   const [agents, setAgents] = useState<Array<{ id: string; name: string }>>([]);
