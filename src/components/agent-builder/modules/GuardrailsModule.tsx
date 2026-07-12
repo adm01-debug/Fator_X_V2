@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import { useGuardrails } from '@/hooks/useGuardrails';
 import { SectionTitle, NexusBadge, ToggleField, SliderField } from '../ui';
+import { GuardrailsPolicyEditor } from '../GuardrailsPolicyEditor';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Trash2, Shield, ShieldAlert, ShieldCheck, Lock, Brain, Loader2, CheckCircle2, XCircle, Skull, Wand2, AlertTriangle } from 'lucide-react';
