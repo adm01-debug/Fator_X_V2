@@ -2,17 +2,22 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Webhook, Loader2, Send, Clipboard, PlayCircle } from 'lucide-react';
+import { Webhook, Loader2, Send, Clipboard, PlayCircle, History, RotateCcw, CheckCircle2, XCircle } from 'lucide-react';
 import {
   listWebhooks,
   triggerWebhookViaEF,
+  getWebhookEvents,
   WEBHOOK_TEMPLATES,
   type WebhookEndpoint,
+  type WebhookEvent,
 } from '@/services/webhookTriggerService';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 const AUTH_LABELS: Record<string, string> = {
   none: 'Sem Auth', header: 'Header', hmac_sha256: 'HMAC SHA-256',
