@@ -70,6 +70,7 @@ const navSections = [
       { title: "Email Triggers", url: "/email-triggers", icon: Mail },
       { title: "Agent Debugger", url: "/debugger", icon: Bug },
       { title: "Compliance Reports", url: "/compliance-reports", icon: FileCheck2 },
+      { title: "Frameworks Compliance", url: "/compliance-frameworks", icon: ShieldCheck },
       { title: "Voice & Telefonia", url: "/voice-telephony", icon: PhoneCall },
       { title: "Knowledge Graph", url: "/knowledge-graph", icon: Network },
       { title: "Simulation Lab", url: "/simulation", icon: FlaskRound },
