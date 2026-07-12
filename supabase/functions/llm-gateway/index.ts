@@ -391,6 +391,7 @@ serve(async (req) => {
 
   try {
     const authHeader = req.headers.get('Authorization');
+    const caller = (req.headers.get('x-caller-function') || req.headers.get('x-caller') || 'external').slice(0, 64);
     if (!authHeader) return errorResponse(req, 'Missing authorization', 401);
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
