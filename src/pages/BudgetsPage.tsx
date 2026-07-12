@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { AlertTriangle, DollarSign, Plus, Trash2, TrendingUp, Wallet } from "lucide-react";
+import { AlertTriangle, DollarSign, Plus, Trash2, TrendingUp } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
