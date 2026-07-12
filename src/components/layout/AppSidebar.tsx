@@ -62,6 +62,7 @@ const navSections = [
       { title: "Testes BCP", url: "/security/bcp-tests", icon: LifeBuoy },
       { title: "Sessões de Agentes", url: "/agent-sessions", icon: Mic },
       { title: "Execuções de Grafos", url: "/graph-executions", icon: GitBranch },
+      { title: "Resolução de Entidades", url: "/entity-resolution", icon: GitMerge },
       
       { title: "NLP Pipeline", url: "/nlp", icon: Languages },
       { title: "Computer Use", url: "/computer-use", icon: Monitor },
