@@ -85,11 +85,6 @@ export function WebhookManagerPanel() {
       setReplayingId(null);
     }
   };
-    listWebhooks()
-      .then(setWebhooks)
-      .catch(() => toast({ title: 'Erro ao carregar webhooks', variant: 'destructive' }))
-      .finally(() => setLoading(false));
-  }, []);
 
   const handleTest = async () => {
     if (!selectedWebhook) return;
