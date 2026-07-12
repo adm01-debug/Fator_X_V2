@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Zap, ChevronDown, ChevronRight } from 'lucide-react';
 import { SpanTreeView, type SpanLike } from '@/components/monitoring/SpanTreeView';
+import { LangfuseExporterDialog } from '@/components/monitoring/LangfuseExporterDialog';
 
 function TraceCard({ trace }: { trace: { id: string; event_type: string; created_at: string; data: Record<string, unknown> } }) {
   const [open, setOpen] = useState(false);
@@ -56,7 +57,8 @@ export function TracingPanel() {
     <div className="flex flex-col items-center justify-center py-20 text-center">
       <Zap className="h-12 w-12 text-muted-foreground mb-4" />
       <h2 className="text-title-sm font-semibold text-foreground mb-1">Nenhum trace registrado</h2>
-      <p className="text-body-sm text-muted-foreground">Traces OpenTelemetry aparecerão quando agentes executarem com tracing instrumentado.</p>
+      <p className="text-body-sm text-muted-foreground mb-4">Traces OpenTelemetry aparecerão quando agentes executarem com tracing instrumentado.</p>
+      <LangfuseExporterDialog />
     </div>
   );
 
@@ -64,7 +66,10 @@ export function TracingPanel() {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="text-body-sm font-heading font-semibold text-foreground">Trace Events ({traceData.length})</h3>
-        <Badge variant="outline" className="text-meta">OTel GenAI</Badge>
+        <div className="flex items-center gap-2">
+          <LangfuseExporterDialog />
+          <Badge variant="outline" className="text-meta">OTel GenAI</Badge>
+        </div>
       </div>
       <p className="text-meta text-muted-foreground">Clique em um trace para expandir a árvore de spans.</p>
       {traceData.map(trace => (

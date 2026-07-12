@@ -5,12 +5,16 @@ import "./index.css";
 import { initWebVitals } from "./lib/webVitals";
 import { initGlobalErrorHandlers } from "./lib/logger";
 import { initSentry } from "./lib/sentry";
+import { bootstrapLangfuseExporter } from "./components/monitoring/LangfuseExporterDialog";
 
 // Initialize Sentry first so subsequent errors are captured
 initSentry();
 
 // Initialize global error handlers before rendering
 initGlobalErrorHandlers();
+
+// Hydrate Langfuse exporter from persisted config (if enabled)
+bootstrapLangfuseExporter();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
