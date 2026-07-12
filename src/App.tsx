@@ -43,6 +43,7 @@ const MemoryPage = lazy(() => import("./pages/MemoryPage"));
 const ToolsPage = lazy(() => import("./pages/ToolsPage"));
 const MCPServersPage = lazy(() => import("./pages/MCPServersPage"));
 const CostSimulatorPage = lazy(() => import("./pages/CostSimulatorPage"));
+const A2APanelPage = lazy(() => import("./pages/A2APanelPage"));
 const RoutingConfigPage = lazy(() => import("./pages/RoutingConfigPage"));
 const PromptsPage = lazy(() => import("./pages/PromptsPage"));
 const PromptEditorPage = lazy(() => import("./pages/PromptEditorPage"));
