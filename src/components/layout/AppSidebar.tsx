@@ -138,6 +138,7 @@ const navSections = [
       { title: "Aprovações", url: "/approvals", icon: CircleCheckBig },
       { title: "Equipe", url: "/team", icon: Users },
       { title: "Faturamento", url: "/billing", icon: CreditCard },
+      { title: "Payouts do Criador", url: "/creator-payouts", icon: Wallet },
       { title: "Orçamento", url: "/settings/budget", icon: Wallet },
       { title: "Configurações", url: "/settings", icon: Settings },
       { title: "Admin BD", url: "/admin", icon: ServerCog },
