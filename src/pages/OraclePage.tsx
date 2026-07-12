@@ -77,10 +77,11 @@ export default function OraclePage() {
               {store.results && <OracleResultsPanel />}
             </TabsContent>
 
-            <TabsContent value="research" className="mt-0">
+            <TabsContent value="research" className="mt-0 space-y-6">
               <AccessControl permission="oracle.write">
                 <DeepResearchPanel />
               </AccessControl>
+              <ResearchHistoryPanel />
             </TabsContent>
           </Tabs>
 
