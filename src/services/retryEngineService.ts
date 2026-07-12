@@ -54,9 +54,9 @@ export function calculateDelay(attempt: number, policy: RetryPolicy): number {
 /* ── Retry Engine ── */
 
 function isRetryable(error: string, policy: RetryPolicy): boolean {
-  if (policy.non_retryable_errors.some((e: any) => error.includes(e))) return false;
+  if (policy.non_retryable_errors.some((e: string) => error.includes(e))) return false;
   if (policy.retryable_errors.length === 0) return true;
-  return policy.retryable_errors.some((e: any) => error.includes(e));
+  return policy.retryable_errors.some((e: string) => error.includes(e));
 }
 
 function sleep(ms: number): Promise<void> { return new Promise((resolve) => setTimeout(resolve, ms)); }
@@ -154,5 +154,5 @@ export async function getDeadLetterStats(): Promise<{ total: number; pending: nu
   const { data, error } = await fromTable('dead_letter_queue').select('status');
   if (error) throw error;
   const items = data ?? [];
-  return { total: items.length, pending: items.filter((i: any) => i.status === 'pending').length, resolved: items.filter((i: any) => i.status === 'resolved').length, retried: items.filter((i: any) => i.status === 'retried').length, discarded: items.filter((i: any) => i.status === 'discarded').length };
+  return { total: items.length, pending: items.filter((i: { status: string }) => i.status === 'pending').length, resolved: items.filter((i: { status: string }) => i.status === 'resolved').length, retried: items.filter((i: { status: string }) => i.status === 'retried').length, discarded: items.filter((i: { status: string }) => i.status === 'discarded').length };
 }

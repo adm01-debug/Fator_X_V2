@@ -62,7 +62,7 @@ export default function WorkflowsPage() {
   const [newName, setNewName] = useState('');
   const [newSteps, setNewSteps] = useState('');
   const [executing, setExecuting] = useState<string | null>(null);
-  const [currentEvent, setCurrentEvent] = useState<Record<string, any> | null>(null);
+  const [currentEvent, setCurrentEvent] = useState<Record<string, unknown> | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleCreate = async () => {

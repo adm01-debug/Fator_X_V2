@@ -50,7 +50,7 @@ export default function EvaluationsPage() {
             />
           ) : (
             <div className="space-y-4">
-              {evaluations.map((ev: any) => (
+              {evaluations.map((ev: unknown) => (
                 <EvalCard key={ev.id} ev={ev} />
               ))}
             </div>

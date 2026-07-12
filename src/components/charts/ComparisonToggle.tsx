@@ -31,10 +31,10 @@ export function ComparisonToggle({ enabled, onToggle, label = 'Comparar período
 
 /** Generate comparison data by shifting data array back by `offset` positions */
 export function generateComparisonData(
-  data: Record<string, any>[],
+  data: Record<string, unknown>[],
   dataKeys: string[],
   offset?: number
-): Record<string, any>[] {
+): Record<string, unknown>[] {
   const shift = offset ?? Math.floor(data.length / 2);
   return data.map((d, i) => {
     const prev = data[i - shift];

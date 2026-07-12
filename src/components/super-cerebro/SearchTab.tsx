@@ -70,7 +70,7 @@ export function SearchTab() {
 
   useEffect(() => {
     listKnowledgeBases()
-      .then((kbs) => setKnowledgeBases(kbs.map((kb: any) => ({ id: kb.id, name: kb.name }))))
+      .then((kbs) => setKnowledgeBases(kbs.map((kb: unknown) => ({ id: kb.id, name: kb.name }))))
       .catch(() => {
         /* KBs unavailable — search still works without filter */
       });
@@ -164,7 +164,7 @@ export function SearchTab() {
       });
       setTieredResults(result);
       toast.success(`Busca hierárquica concluída! Economia: ${result.tokensSaved} tokens`);
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error('Erro na busca tiered: ' + e.message);
     } finally {
       setIsTieredSearching(false);

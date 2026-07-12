@@ -14,7 +14,7 @@ interface AreaSeries {
 }
 
 interface Props {
-  data: Record<string, any>[];
+  data: Record<string, string | number>[];
   xKey: string;
   series: AreaSeries[];
   height?: number;
@@ -22,13 +22,13 @@ interface Props {
   yFormatter?: (v: number) => string;
   tooltipFormatter?: (value: number, name: string) => string;
   /** Optional builder for the small title shown above tooltip items. */
-  tooltipTitle?: (datum: Record<string, any>, index: number) => string | undefined;
+  tooltipTitle?: (datum: Record<string, string | number>, index: number) => string | undefined;
   /** Optional builder for extra sections rendered below standard items. */
-  tooltipExtras?: (datum: Record<string, any>, index: number) => TooltipExtraSection[] | undefined;
+  tooltipExtras?: (datum: Record<string, string | number>, index: number) => TooltipExtraSection[] | undefined;
   showLegend?: boolean;
   showGrid?: boolean;
   /** Optional click handler on a data point. Receives the datum and its index. */
-  onPointClick?: (datum: Record<string, any>, index: number) => void;
+  onPointClick?: (datum: Record<string, string | number>, index: number) => void;
 }
 
 

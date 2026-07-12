@@ -13,7 +13,7 @@ interface BarSeries {
 }
 
 interface Props {
-  data: Record<string, any>[];
+  data: Record<string, unknown>[];
   xKey: string;
   series: BarSeries[];
   height?: number;
@@ -23,7 +23,7 @@ interface Props {
   showLegend?: boolean;
   showGrid?: boolean;
   /** Optional click handler on a bar/group. Receives the datum and its index. */
-  onBarClick?: (datum: Record<string, any>, index: number) => void;
+  onBarClick?: (datum: Record<string, unknown>, index: number) => void;
 }
 
 function niceMax(v: number) {

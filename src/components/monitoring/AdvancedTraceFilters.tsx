@@ -158,7 +158,7 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
   );
 }
 
-export function applyTraceFilters(traces: any[], filters: TraceFilters): any[] {
+export function applyTraceFilters(traces: unknown[], filters: TraceFilters): unknown[] {
   return traces.filter(t => {
     if (filters.dateFrom) {
       const traceDate = new Date(t.created_at).toISOString().split('T')[0];

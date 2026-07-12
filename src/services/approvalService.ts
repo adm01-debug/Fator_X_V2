@@ -5,7 +5,7 @@ export interface PendingApproval {
   id: string;
   workflow_id: string;
   status: string;
-  output: any; 
+  output: Record<string, unknown>; 
   started_at: string | null;
   current_step: number | null;
   total_steps: number | null;

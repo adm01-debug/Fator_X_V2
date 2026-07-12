@@ -10,7 +10,7 @@ import { updateKnowledgeBase } from '@/services/knowledgeService';
 import { editKnowledgeBaseSchema } from '@/lib/validations/dialogSchemas';
 import { toast } from 'sonner';
 
-interface KnowledgeBase {
+export interface KnowledgeBase {
   id: string;
   name: string;
   description: string | null;
@@ -18,6 +18,7 @@ interface KnowledgeBase {
   embedding_model: string | null;
   status: string | null;
 }
+
 
 interface EditKnowledgeBaseDialogProps {
   kb: KnowledgeBase | null;

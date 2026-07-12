@@ -4,8 +4,8 @@ import { Download, FileJson, CheckCircle2, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface AuditReportProps {
-  run: any;
-  results: any[];
+  run: Record<string, unknown>;
+  results: unknown[];
 }
 
 export function AuditReportDialog({ run, results }: AuditReportProps) {

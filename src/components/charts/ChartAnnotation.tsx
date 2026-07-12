@@ -11,7 +11,7 @@ interface ChartAnnotationProps {
   annotations: Annotation[];
   scaleX: (i: number) => number;
   scaleY: (v: number) => number;
-  data: Record<string, any>[];
+  data: Record<string, unknown>[];
   dataKey: string;
   innerHeight: number;
 }

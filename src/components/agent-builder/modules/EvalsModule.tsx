@@ -259,7 +259,7 @@ export function EvalsModule() {
   );
 }
 
-function AuditReportView({ runId, runs }: { runId: string | null; runs: any[] }) {
+function AuditReportView({ runId, runs }: { runId: string | null; runs: unknown[] }) {
   const { data: results = [] } = useEvalResults(runId);
   const run = runs.find(r => r.id === runId);
   if (!run) return null;

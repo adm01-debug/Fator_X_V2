@@ -38,7 +38,7 @@ export function WorkflowHandoffVisualizer() {
       </div>
 
       <div className="grid gap-4">
-        {handoffs.map((handoff: any) => {
+        {handoffs.map((handoff: unknown) => {
           const h = handoff as HandoffRecord;
           return (
             <Card key={h.id} className="nexus-card border-border/40 hover:border-primary/30 transition-all overflow-hidden">
