@@ -6,6 +6,7 @@ import { OracleResultsPanel } from '@/components/oracle/OracleResultsPanel';
 import { StageProgress } from '@/components/oracle/StageProgress';
 import { OracleHistory } from '@/components/oracle/OracleHistory';
 import { DeepResearchPanel } from '@/components/oracle/DeepResearchPanel';
+import { ResearchHistoryPanel } from '@/components/oracle/ResearchHistoryPanel';
 import { OracleComparisonPanel } from '@/components/oracle/OracleComparisonPanel';
 import { OracleAnalyticsPanel } from '@/components/oracle/OracleAnalyticsPanel';
 import { AccessControl } from '@/components/rbac';
@@ -76,10 +77,11 @@ export default function OraclePage() {
               {store.results && <OracleResultsPanel />}
             </TabsContent>
 
-            <TabsContent value="research" className="mt-0">
+            <TabsContent value="research" className="mt-0 space-y-6">
               <AccessControl permission="oracle.write">
                 <DeepResearchPanel />
               </AccessControl>
+              <ResearchHistoryPanel />
             </TabsContent>
           </Tabs>
 
