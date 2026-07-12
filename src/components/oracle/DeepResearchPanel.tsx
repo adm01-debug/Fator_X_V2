@@ -3,13 +3,15 @@
  * Pesquisa iterativa profunda com progresso em tempo real.
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { invokeOracleResearch } from '@/services/llmGatewayService';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Loader2, Search, FileText, ChevronDown, ChevronUp, AlertTriangle, Download } from 'lucide-react';
 import { ResearchProgress } from './ResearchProgress';
+import { ResearchSettingsDialog } from './ResearchSettingsDialog';
+import { useResearchConfig } from '@/lib/researchConfig';
 
 interface ResearchResult {
   report: string;
@@ -23,13 +25,19 @@ interface ResearchResult {
 const MAX_ITER: Record<'quick' | 'standard' | 'deep', number> = { quick: 2, standard: 5, deep: 10 };
 
 export function DeepResearchPanel() {
+  const [config] = useResearchConfig();
   const [query, setQuery] = useState('');
-  const [depth, setDepth] = useState<'quick' | 'standard' | 'deep'>('standard');
+  const [depth, setDepth] = useState<'quick' | 'standard' | 'deep'>(config.defaultDepth);
   const [isResearching, setIsResearching] = useState(false);
   const [startedAt, setStartedAt] = useState<number>(0);
   const [result, setResult] = useState<ResearchResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showSteps, setShowSteps] = useState(false);
+
+  // Sincroniza profundidade quando o padrão da configuração muda
+  useEffect(() => { setDepth(config.defaultDepth); }, [config.defaultDepth]);
+
+  const effectiveIterations = Math.min(config.maxIterations, MAX_ITER[depth]);
 
   const startResearch = useCallback(async () => {
     if (!query.trim()) return;
@@ -42,8 +50,19 @@ export function DeepResearchPanel() {
       const data = await invokeOracleResearch({
         query: query.trim(),
         depth,
-        max_iterations: MAX_ITER[depth],
-        language: 'pt',
+        max_iterations: effectiveIterations,
+        queries_per_iteration: config.queriesPerIteration,
+        strategy: config.strategy,
+        synthesis_model: config.synthesisModel,
+        language: config.language,
+        include_internal: config.includeInternal,
+        stop_on_no_gaps: config.stopOnNoGaps,
+        limits: {
+          max_tokens: config.maxTokens,
+          max_sources: config.maxSources,
+          max_latency_ms: config.maxLatencySec * 1000,
+          max_cost_usd: config.maxCostUsd,
+        },
       });
       setResult(data as ResearchResult);
     } catch (err) {
@@ -51,25 +70,28 @@ export function DeepResearchPanel() {
     } finally {
       setIsResearching(false);
     }
-  }, [query, depth]);
+  }, [query, depth, effectiveIterations, config]);
 
   return (
     <Card className="p-8 bg-card border-border rounded-3xl shadow-sm relative overflow-hidden group">
       <div className="absolute top-0 right-0 w-64 h-64 bg-primary/[0.02] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
       
-      <div className="flex items-center gap-4 mb-6 relative">
-        <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/15">
-          <Search className="w-6 h-6 text-primary" />
+      <div className="flex items-start justify-between gap-4 mb-6 relative">
+        <div className="flex items-center gap-4">
+          <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/15">
+            <Search className="w-6 h-6 text-primary" />
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
+              Deep Research v2
+              <Badge className="bg-primary/20 text-primary border-none text-meta font-bold px-2 py-0">EXPERIMENTAL</Badge>
+            </h3>
+            <p className="text-meta text-muted-foreground max-w-lg leading-relaxed">
+              Pesquisa iterativa profunda com agentes autônomos que buscam, validam e sintetizam relatórios técnicos em múltiplos domínios.
+            </p>
+          </div>
         </div>
-        <div>
-          <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
-            Deep Research v2
-            <Badge className="bg-primary/20 text-primary border-none text-meta font-bold px-2 py-0">EXPERIMENTAL</Badge>
-          </h3>
-          <p className="text-meta text-muted-foreground max-w-lg leading-relaxed">
-            Pesquisa iterativa profunda com agentes autônomos que buscam, validam e sintetizam relatórios técnicos em múltiplos domínios.
-          </p>
-        </div>
+        <ResearchSettingsDialog />
       </div>
 
       <div className="relative mb-6">
