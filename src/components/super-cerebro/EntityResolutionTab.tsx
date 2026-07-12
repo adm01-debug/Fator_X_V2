@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2, GitMerge, Layers, AlertTriangle, Trash2, Sparkles } from "lucide-react";
+import { Loader2, GitMerge, Layers, AlertTriangle, Trash2, Sparkles, Wand2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -13,12 +13,15 @@ import {
 } from "@/services/entityResolutionService";
 import { invokeCerebroBrain } from "@/services/cerebroService";
 import { AccessControl, DangerousActionDialog } from "@/components/rbac";
+import { MergeWizardDialog } from "./MergeWizardDialog";
 
 export function EntityResolutionTab() {
   const queryClient = useQueryClient();
   const [threshold, setThreshold] = useState(0.7);
   const [scanLimit, setScanLimit] = useState(200);
   const [mergingId, setMergingId] = useState<string | null>(null);
+  const [wizardCluster, setWizardCluster] = useState<EntityCluster | null>(null);
+
 
   const { data: report, isLoading, refetch, isFetching } = useQuery({
     queryKey: ['entity-resolution', threshold, scanLimit],
