@@ -80,7 +80,6 @@ export default function LlmCostByCallerPage() {
       <PageHeader
         title="Custo LLM por Edge Function"
         description="Rastreamento de gastos com LLM segregado pela função chamadora do gateway"
-        icon={Layers}
       />
 
       <div className="flex justify-end">
