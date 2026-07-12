@@ -8740,6 +8740,14 @@ export type Database = {
       }
       get_user_workspace_ids: { Args: { _user_id: string }; Returns: string[] }
       get_vendor_summary: { Args: { p_workspace_id: string }; Returns: Json }
+      get_wal_generation_rate: {
+        Args: { _minutes?: number }
+        Returns: {
+          bytes_per_min: number
+          captured_at: string
+          mb_per_min: number
+        }[]
+      }
       get_workspace_daily_usage_v2: {
         Args: { p_days?: number; p_workspace_id: string }
         Returns: {
