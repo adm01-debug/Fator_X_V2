@@ -101,6 +101,7 @@ const EmailCalendarTriggersPage = lazy(() => import("./pages/EmailCalendarTrigge
 const AgentDebuggerPage = lazy(() => import("./pages/AgentDebuggerPage"));
 const ComplianceReportsPage = lazy(() => import("./pages/ComplianceReportsPage"));
 const ComplianceFrameworksPage = lazy(() => import("./pages/ComplianceFrameworksPage"));
+const ForensicSnapshotsPage = lazy(() => import("./pages/ForensicSnapshotsPage"));
 const VoiceTelephonyPage = lazy(() => import("./pages/VoiceTelephonyPage"));
 const KnowledgeGraphPage = lazy(() => import("./pages/KnowledgeGraphPage"));
 const AgentSimulationPage = lazy(() => import("./pages/AgentSimulationPage"));
@@ -295,6 +296,7 @@ const App = () => {
                       <Route path="/compliance-reports" element={<SafePage><ProtectedRoute permission="settings.api_keys"><ComplianceReportsPage /></ProtectedRoute></SafePage>} />
                       <Route path="/compliance-frameworks" element={<SafePage><ProtectedRoute permission="settings.api_keys"><ComplianceFrameworksPage /></ProtectedRoute></SafePage>} />
                       <Route path="/security/secrets-rotation" element={<SafePage><ProtectedRoute permission="settings.api_keys"><SecretsRotationPage /></ProtectedRoute></SafePage>} />
+                      <Route path="/security/forensic-snapshots" element={<SafePage><ProtectedRoute permission="settings.api_keys"><ForensicSnapshotsPage /></ProtectedRoute></SafePage>} />
                       <Route path="/voice-telephony" element={<SafePage><VoiceTelephonyPage /></SafePage>} />
                       <Route path="/knowledge-graph" element={<SafePage><KnowledgeGraphPage /></SafePage>} />
                       <Route path="/simulation" element={<SafePage><AgentSimulationPage /></SafePage>} />
