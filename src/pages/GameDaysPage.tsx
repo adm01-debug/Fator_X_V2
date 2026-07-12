@@ -1,253 +1,319 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Swords, Plus, Play, Calendar, Trash2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
-import { Switch } from '@/components/ui/switch';
-import { toast } from 'sonner';
-import { listGameDays, createGameDay, deleteGameDay, startGameDay, type GameDay, type GameDayScenario, SCENARIO_LABELS } from '@/services/gameDayService';
-import { getWorkspaceId } from '@/lib/agentService';
-import { logger } from '@/lib/logger';
+import { useEffect, useState, useCallback } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useWorkspaceId } from "@/hooks/use-data";
+import { PageHeader } from "@/components/shared/PageHeader";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Swords, Plus, Play, CheckCircle2, XCircle, Calendar } from "lucide-react";
+import { toast } from "sonner";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
-const STATUS_VARIANTS: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
-  scheduled: 'outline',
-  running: 'default',
-  completed: 'secondary',
-  aborted: 'destructive',
+type GameDay = {
+  id: string;
+  title: string;
+  description: string | null;
+  scenario: string;
+  status: string;
+  scheduled_at: string;
+  started_at: string | null;
+  ended_at: string | null;
+  runbook_section: string | null;
+};
+
+const SCENARIOS = [
+  { value: "provider_outage", label: "Falha de Provedor LLM" },
+  { value: "cost_spike", label: "Pico de Custos" },
+  { value: "db_slowdown", label: "Lentidão no Banco" },
+  { value: "auth_failure", label: "Falha de Autenticação" },
+  { value: "custom", label: "Customizado" },
+] as const;
+
+const STATUS_META: Record<string, { label: string; variant: "default" | "secondary" | "outline" | "destructive" }> = {
+  scheduled: { label: "Agendado", variant: "outline" },
+  running: { label: "Em Andamento", variant: "default" },
+  completed: { label: "Concluído", variant: "secondary" },
+  aborted: { label: "Abortado", variant: "destructive" },
 };
 
 export default function GameDaysPage() {
+  const { data: workspaceId } = useWorkspaceId();
   const [gameDays, setGameDays] = useState<GameDay[]>([]);
   const [loading, setLoading] = useState(true);
-  const [workspaceId, setWorkspaceId] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const navigate = useNavigate();
+  const [form, setForm] = useState({
+    title: "",
+    description: "",
+    scenario: "provider_outage",
+    scheduled_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16),
+    runbook_section: "",
+  });
 
-  // Form state
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [scenario, setScenario] = useState<GameDayScenario>('provider_outage');
-  const [scheduledAt, setScheduledAt] = useState('');
-  const [runbookSection, setRunbookSection] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-
-  // Start dialog state
-  const [startTarget, setStartTarget] = useState<GameDay | null>(null);
-  const [injectChaos, setInjectChaos] = useState(true);
-
-  const loadData = async () => {
+  const load = useCallback(async () => {
+    if (!workspaceId) return;
     setLoading(true);
-    try {
-      const wsId = await getWorkspaceId();
-      setWorkspaceId(wsId);
-      const data = await listGameDays(wsId);
-      setGameDays(data);
-    } catch (e) {
-      logger.error('load game days', e);
-      toast.error('Falha ao carregar Game Days');
-    } finally {
-      setLoading(false);
-    }
-  };
+    const { data, error } = await supabase
+      .from("game_days")
+      .select("id,title,description,scenario,status,scheduled_at,started_at,ended_at,runbook_section")
+      .eq("workspace_id", workspaceId)
+      .order("scheduled_at", { ascending: false });
+    if (error) toast.error("Erro ao carregar Game Days");
+    else setGameDays((data ?? []) as GameDay[]);
+    setLoading(false);
+  }, [workspaceId]);
 
   useEffect(() => {
-    loadData();
-  }, []);
+    void load();
+  }, [load]);
 
   const handleCreate = async () => {
-    if (!workspaceId || !title || !scheduledAt) return;
-    setSubmitting(true);
-    try {
-      await createGameDay({
-        workspace_id: workspaceId,
-        title,
-        description,
-        scenario,
-        scheduled_at: new Date(scheduledAt).toISOString(),
-        runbook_section: runbookSection || undefined,
-      });
-      toast.success('Game Day agendado');
-      setDialogOpen(false);
-      setTitle(''); setDescription(''); setScheduledAt(''); setRunbookSection('');
-      loadData();
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Falha ao agendar');
-    } finally {
-      setSubmitting(false);
+    if (!workspaceId) return;
+    if (!form.title.trim()) {
+      toast.error("Título é obrigatório");
+      return;
+    }
+    const { data: userData } = await supabase.auth.getUser();
+    if (!userData.user) {
+      toast.error("Sessão inválida");
+      return;
+    }
+    const { error } = await supabase.from("game_days").insert({
+      workspace_id: workspaceId,
+      title: form.title.trim(),
+      description: form.description.trim() || null,
+      scenario: form.scenario,
+      scheduled_at: new Date(form.scheduled_at).toISOString(),
+      facilitator_id: userData.user.id,
+      runbook_section: form.runbook_section.trim() || null,
+    });
+    if (error) {
+      toast.error(`Falha ao criar: ${error.message}`);
+      return;
+    }
+    toast.success("Game Day agendado");
+    setDialogOpen(false);
+    setForm({
+      title: "",
+      description: "",
+      scenario: "provider_outage",
+      scheduled_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16),
+      runbook_section: "",
+    });
+    void load();
+  };
+
+  const transition = async (id: string, next: "running" | "completed" | "aborted") => {
+    const patch: Record<string, string> = { status: next };
+    if (next === "running") patch.started_at = new Date().toISOString();
+    if (next === "completed" || next === "aborted") patch.ended_at = new Date().toISOString();
+    const { error } = await supabase.from("game_days").update(patch).eq("id", id);
+    if (error) toast.error(`Falha: ${error.message}`);
+    else {
+      toast.success("Status atualizado");
+      void load();
     }
   };
 
-  const handleStart = async () => {
-    if (!startTarget) return;
-    try {
-      await startGameDay(startTarget.id, injectChaos);
-      toast.success('Game Day iniciado — modo war room ativo');
-      navigate(`/observability/game-days/${startTarget.id}/live`);
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Falha ao iniciar');
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    if (!confirm('Excluir este Game Day?')) return;
-    try {
-      await deleteGameDay(id);
-      toast.success('Excluído');
-      loadData();
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Falha ao excluir');
-    }
+  const stats = {
+    scheduled: gameDays.filter((g) => g.status === "scheduled").length,
+    running: gameDays.filter((g) => g.status === "running").length,
+    completed: gameDays.filter((g) => g.status === "completed").length,
+    aborted: gameDays.filter((g) => g.status === "aborted").length,
   };
 
   return (
-    <div className="container mx-auto py-8 space-y-6 animate-page-enter">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-heading font-bold flex items-center gap-3">
-            <Swords className="h-8 w-8 text-primary" />
-            Game Days
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Drills programados de resposta a incidentes — treine sua equipe sob pressão controlada
-          </p>
-        </div>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button variant="gradient">
-              <Plus className="h-4 w-4" />
-              Agendar Game Day
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Agendar novo Game Day</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <Label>Título</Label>
-                <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Ex: Q2 Provider Outage Drill" />
-              </div>
-              <div>
-                <Label>Cenário</Label>
-                <Select value={scenario} onValueChange={(v) => setScenario(v as GameDayScenario)}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(SCENARIO_LABELS).map(([k, v]) => (
-                      <SelectItem key={k} value={k}>{v}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Data e hora</Label>
-                <Input type="datetime-local" value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)} />
-              </div>
-              <div>
-                <Label>Descrição (opcional)</Label>
-                <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} />
-              </div>
-              <div>
-                <Label>Seção do runbook (opcional)</Label>
-                <Input value={runbookSection} onChange={(e) => setRunbookSection(e.target.value)} placeholder="Ex: docs/RUNBOOK.md#provider-outage" />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancelar</Button>
-              <Button onClick={handleCreate} loading={submitting} disabled={!title || !scheduledAt}>Agendar</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+    <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
+      <PageHeader
+        title="Game Days"
+        description="Simulações coordenadas de desastres para validar runbooks e resposta a incidentes"
+      />
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-muted-foreground">Agendados</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-semibold">{stats.scheduled}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-muted-foreground">Em Andamento</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-semibold text-primary">{stats.running}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-muted-foreground">Concluídos</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-semibold">{stats.completed}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-muted-foreground">Abortados</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-semibold text-destructive">{stats.aborted}</p>
+          </CardContent>
+        </Card>
       </div>
 
-      {loading ? (
-        <Card className="p-12 text-center text-muted-foreground">Carregando...</Card>
-      ) : gameDays.length === 0 ? (
-        <Card className="p-12 text-center">
-          <Swords className="h-12 w-12 text-muted-foreground/40 mx-auto mb-4" />
-          <h3 className="font-semibold text-title-sm mb-2">Nenhum Game Day agendado</h3>
-          <p className="text-muted-foreground mb-4">Drills mensais identificam gaps no runbook e melhoram MTTR.</p>
-          <Button onClick={() => setDialogOpen(true)} variant="gradient">
-            <Plus className="h-4 w-4" /> Agendar primeiro
-          </Button>
-        </Card>
-      ) : (
-        <div className="grid gap-4">
-          {gameDays.map((gd) => (
-            <Card key={gd.id} className="p-5 hover:shadow-elegant transition-shadow">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h3 className="font-semibold text-title-sm">{gd.title}</h3>
-                    <Badge variant={STATUS_VARIANTS[gd.status]}>{gd.status}</Badge>
-                    <Badge variant="outline">{SCENARIO_LABELS[gd.scenario]}</Badge>
-                  </div>
-                  {gd.description && <p className="text-body-sm text-muted-foreground mb-2">{gd.description}</p>}
-                  <div className="flex items-center gap-4 text-meta text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-3 w-3" />
-                      {new Date(gd.scheduled_at).toLocaleString('pt-BR')}
-                    </span>
-                    {gd.participants.length > 0 && <span>{gd.participants.length} participantes</span>}
-                  </div>
-                </div>
-                <div className="flex gap-2 shrink-0">
-                  {gd.status === 'scheduled' && (
-                    <Button size="sm" variant="gradient" onClick={() => setStartTarget(gd)}>
-                      <Play className="h-3.5 w-3.5" /> Iniciar
-                    </Button>
-                  )}
-                  {gd.status === 'running' && (
-                    <Button size="sm" onClick={() => navigate(`/observability/game-days/${gd.id}/live`)}>
-                      War Room
-                    </Button>
-                  )}
-                  {gd.status === 'completed' && (
-                    <Button size="sm" variant="outline" onClick={() => navigate(`/observability/game-days/${gd.id}/live`)}>
-                      Ver scorecard
-                    </Button>
-                  )}
-                  {gd.status === 'scheduled' && (
-                    <Button size="sm" variant="ghost" onClick={() => handleDelete(gd.id)}>
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </Button>
-                  )}
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-      )}
+      <div className="flex justify-end">
+        <Button onClick={() => setDialogOpen(true)}>
+          <Plus className="mr-2 h-4 w-4" />
+          Novo Game Day
+        </Button>
+      </div>
 
-      <Dialog open={!!startTarget} onOpenChange={(o) => !o && setStartTarget(null)}>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Swords className="h-5 w-5" />
+            Simulações
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {loading ? (
+            <p className="text-sm text-muted-foreground">Carregando…</p>
+          ) : gameDays.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-8">
+              Nenhum Game Day agendado. Crie um para validar seu runbook.
+            </p>
+          ) : (
+            gameDays.map((gd) => {
+              const meta = STATUS_META[gd.status] ?? STATUS_META.scheduled;
+              const scenarioLabel = SCENARIOS.find((s) => s.value === gd.scenario)?.label ?? gd.scenario;
+              return (
+                <div
+                  key={gd.id}
+                  className="rounded-lg border border-border/60 p-4 flex flex-col md:flex-row md:items-center gap-3 justify-between hover:bg-muted/30 transition"
+                >
+                  <div className="space-y-1 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="font-medium">{gd.title}</p>
+                      <Badge variant={meta.variant}>{meta.label}</Badge>
+                      <Badge variant="outline">{scenarioLabel}</Badge>
+                    </div>
+                    {gd.description && (
+                      <p className="text-sm text-muted-foreground">{gd.description}</p>
+                    )}
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
+                      <span className="flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        {format(new Date(gd.scheduled_at), "PPp", { locale: ptBR })}
+                      </span>
+                      {gd.runbook_section && <span>Runbook: {gd.runbook_section}</span>}
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    {gd.status === "scheduled" && (
+                      <Button size="sm" onClick={() => transition(gd.id, "running")}>
+                        <Play className="h-4 w-4 mr-1" />
+                        Iniciar
+                      </Button>
+                    )}
+                    {gd.status === "running" && (
+                      <>
+                        <Button size="sm" variant="secondary" onClick={() => transition(gd.id, "completed")}>
+                          <CheckCircle2 className="h-4 w-4 mr-1" />
+                          Concluir
+                        </Button>
+                        <Button size="sm" variant="destructive" onClick={() => transition(gd.id, "aborted")}>
+                          <XCircle className="h-4 w-4 mr-1" />
+                          Abortar
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </CardContent>
+      </Card>
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Iniciar Game Day: {startTarget?.title}</DialogTitle>
+            <DialogTitle>Novo Game Day</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-2">
-            <p className="text-body-sm text-muted-foreground">
-              Cenário: <strong>{startTarget && SCENARIO_LABELS[startTarget.scenario]}</strong>
-            </p>
-            <div className="flex items-center justify-between rounded-lg border p-3">
-              <div>
-                <Label className="font-semibold">Injetar chaos automaticamente</Label>
-                <p className="text-meta text-muted-foreground mt-0.5">
-                  Cria experimento controlado (50% probabilidade, expira em 2h)
-                </p>
-              </div>
-              <Switch checked={injectChaos} onCheckedChange={setInjectChaos} />
+          <div className="space-y-4">
+            <div>
+              <Label>Título</Label>
+              <Input
+                value={form.title}
+                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                placeholder="Ex: Simulação Black Friday - Falha OpenAI"
+              />
+            </div>
+            <div>
+              <Label>Descrição</Label>
+              <Textarea
+                value={form.description}
+                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                rows={3}
+              />
+            </div>
+            <div>
+              <Label>Cenário</Label>
+              <Select value={form.scenario} onValueChange={(v) => setForm({ ...form, scenario: v })}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {SCENARIOS.map((s) => (
+                    <SelectItem key={s.value} value={s.value}>
+                      {s.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Agendado para</Label>
+              <Input
+                type="datetime-local"
+                value={form.scheduled_at}
+                onChange={(e) => setForm({ ...form, scheduled_at: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label>Seção do Runbook (opcional)</Label>
+              <Input
+                value={form.runbook_section}
+                onChange={(e) => setForm({ ...form, runbook_section: e.target.value })}
+                placeholder="Ex: DR-001 Fallback de Provedor"
+              />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setStartTarget(null)}>Cancelar</Button>
-            <Button variant="gradient" onClick={handleStart}>
-              <Play className="h-4 w-4" /> Iniciar
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>
+              Cancelar
             </Button>
+            <Button onClick={handleCreate}>Agendar</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
