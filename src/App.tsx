@@ -137,6 +137,7 @@ const BCPTestRunsPage = lazy(() => import("./pages/BCPTestRunsPage"));
 const AgentSessionsPage = lazy(() => import("./pages/AgentSessionsPage"));
 const GraphExecutionsPage = lazy(() => import("./pages/GraphExecutionsPage"));
 const EntityResolutionLogsPage = lazy(() => import("./pages/EntityResolutionLogsPage"));
+const LlmCostByCallerPage = lazy(() => import("./pages/LlmCostByCallerPage"));
 const AgentExperimentsPage = lazy(() => import("./pages/AgentExperimentsPage"));
 const CreatorPayoutsPage = lazy(() => import("./pages/CreatorPayoutsPage"));
 const SLODashboard = lazy(() => import("./pages/SLODashboard"));
