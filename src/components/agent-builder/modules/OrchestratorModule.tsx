@@ -108,7 +108,7 @@ export function OrchestratorModule() {
 
       setAutoDoc(doc);
       toast.success('Documentação semântica gerada!');
-    } catch (e) {
+    } catch (_e) {
       toast.error('Erro ao gerar documentação');
     } finally {
       setIsGeneratingDoc(false);

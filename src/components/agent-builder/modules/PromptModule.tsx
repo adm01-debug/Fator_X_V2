@@ -85,7 +85,7 @@ export function PromptModule() {
         setVersionSummary(`IA: ${changes.join(', ')} e melhorou a clareza da persona.`);
       }
       toast.success('Resumo gerado com IA!');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Erro ao gerar resumo');
     } finally {
       setIsGeneratingSummary(false);

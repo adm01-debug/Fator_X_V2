@@ -179,7 +179,7 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
       
-      let tempResults: any = { 
+      const tempResults: { stage1_results: unknown[]; metrics: { total_latency_ms: number; total_cost_usd: number; total_tokens: number; models_used: number } } = { 
         stage1_results: [], 
         metrics: { total_latency_ms: 0, total_cost_usd: 0, total_tokens: 0, models_used: 0 } 
       };

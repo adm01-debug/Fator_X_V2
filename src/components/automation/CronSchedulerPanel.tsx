@@ -42,7 +42,7 @@ export function CronSchedulerPanel() {
       ]);
       setSchedules(schedulesData);
       setStats(statsData);
-    } catch (e) {
+    } catch (_e) {
       toast({ title: 'Erro ao carregar agendamentos', variant: 'destructive' });
     } finally {
       setLoading(false);
