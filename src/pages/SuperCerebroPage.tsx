@@ -4,7 +4,7 @@ import { InfoHint } from "@/components/shared/InfoHint";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Brain, Search, Network, BookOpen,
-  Activity, Users, FlaskConical, Zap, Clock, GitMerge, TrendingDown
+  Activity, Users, FlaskConical, Zap, Clock, GitMerge, TrendingDown, Layers
 } from "lucide-react";
 import { OverviewTab } from "@/components/super-cerebro/OverviewTab";
 import { SearchTab } from "@/components/super-cerebro/SearchTab";
@@ -17,6 +17,7 @@ import { BrainSandboxTab } from "@/components/super-cerebro/BrainSandboxTab";
 import { TemporalGraphTab } from "@/components/super-cerebro/TemporalGraphTab";
 import { EntityResolutionTab } from "@/components/super-cerebro/EntityResolutionTab";
 import { DecayDetectionTab } from "@/components/super-cerebro/DecayDetectionTab";
+import { ContextTiersTab } from "@/components/super-cerebro/ContextTiersTab";
 
 export default function SuperCerebroPage() {
   const [activeTab, setActiveTab] = useState('overview');
