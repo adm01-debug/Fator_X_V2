@@ -2,7 +2,7 @@
  * ResearchSettingsDialog — Tela de configuração do Deep Research.
  * Permite definir iterações, estratégia de busca, modelo de síntese e limites.
  */
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -18,6 +18,7 @@ import {
   useResearchConfig, DEFAULT_RESEARCH_CONFIG,
   type ResearchConfig, type ResearchDepth, type SearchStrategy, type SynthesisModel, type Language,
 } from '@/lib/researchConfig';
+import { validateResearchConfig, type FieldErrors } from '@/lib/validations/researchConfig';
 
 interface Props {
   trigger?: React.ReactNode;
