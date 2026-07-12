@@ -15,6 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { A2APanel } from '@/components/integrations/A2APanel';
 import { WebWidgetPanel } from '@/components/deployments/WebWidgetPanel';
 import { WhatsAppSendDialog } from '@/components/deployments/WhatsAppSendDialog';
+import { WhatsAppInboxPanel } from '@/components/deployments/WhatsAppInboxPanel';
 import { cn } from "@/lib/utils";
 import { ApprovalQueuePanel } from "@/components/deployments/ApprovalQueuePanel";
 import { DeploymentWizard } from "@/components/deployments/DeploymentWizard";
@@ -76,6 +77,7 @@ export default function DeploymentsPage() {
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
           <WebWidgetPanel agentId={deployments[0]?.id} agentName={deployments[0]?.name} />
+          <WhatsAppInboxPanel />
           <ApprovalQueuePanel />
           
           <div className="space-y-4">
