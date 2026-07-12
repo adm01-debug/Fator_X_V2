@@ -43,6 +43,7 @@ const MemoryPage = lazy(() => import("./pages/MemoryPage"));
 const ToolsPage = lazy(() => import("./pages/ToolsPage"));
 const MCPServersPage = lazy(() => import("./pages/MCPServersPage"));
 const CostSimulatorPage = lazy(() => import("./pages/CostSimulatorPage"));
+const A2APanelPage = lazy(() => import("./pages/A2APanelPage"));
 const RoutingConfigPage = lazy(() => import("./pages/RoutingConfigPage"));
 const PromptsPage = lazy(() => import("./pages/PromptsPage"));
 const PromptEditorPage = lazy(() => import("./pages/PromptEditorPage"));
@@ -220,6 +221,7 @@ const App = () => {
                       <Route path="/tools" element={<SafePage><ToolsPage /></SafePage>} />
                       <Route path="/mcp-servers" element={<SafePage><MCPServersPage /></SafePage>} />
                       <Route path="/cost-simulator" element={<SafePage><CostSimulatorPage /></SafePage>} />
+                      <Route path="/a2a" element={<SafePage><A2APanelPage /></SafePage>} />
                       <Route path="/routing" element={<SafePage><RoutingConfigPage /></SafePage>} />
                       <Route path="/prompts" element={<SafePage><PromptsPage /></SafePage>} />
                       <Route path="/prompts/experiments" element={<SafePage><PromptExperimentsPage /></SafePage>} />
