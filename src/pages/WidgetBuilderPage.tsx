@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Code2, Copy, Eye, MessageSquare, Palette, Settings2, Sparkles } from 'lucide-react';
-import { PageHeader } from '@/components/layout/PageHeader';
+import { PageHeader } from '@/components/shared/PageHeader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
