@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Loader2, Search, FileText, ChevronDown, ChevronUp, AlertTriangle, Download } from 'lucide-react';
+import { ResearchProgress } from './ResearchProgress';
 
 interface ResearchResult {
   report: string;
@@ -19,10 +20,13 @@ interface ResearchResult {
   steps: Array<{ iteration: number; findings: string; gaps_identified: string[] }>;
 }
 
+const MAX_ITER: Record<'quick' | 'standard' | 'deep', number> = { quick: 2, standard: 5, deep: 10 };
+
 export function DeepResearchPanel() {
   const [query, setQuery] = useState('');
   const [depth, setDepth] = useState<'quick' | 'standard' | 'deep'>('standard');
   const [isResearching, setIsResearching] = useState(false);
+  const [startedAt, setStartedAt] = useState<number>(0);
   const [result, setResult] = useState<ResearchResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showSteps, setShowSteps] = useState(false);
@@ -30,6 +34,7 @@ export function DeepResearchPanel() {
   const startResearch = useCallback(async () => {
     if (!query.trim()) return;
     setIsResearching(true);
+    setStartedAt(Date.now());
     setError(null);
     setResult(null);
 
@@ -37,7 +42,7 @@ export function DeepResearchPanel() {
       const data = await invokeOracleResearch({
         query: query.trim(),
         depth,
-        max_iterations: depth === 'quick' ? 2 : depth === 'standard' ? 5 : 10,
+        max_iterations: MAX_ITER[depth],
         language: 'pt',
       });
       setResult(data as ResearchResult);
