@@ -10,7 +10,7 @@ vi.mock('@/integrations/supabase/externalClient', () => ({
       select: vi.fn(() => ({
         order: vi.fn(() => ({
           eq: vi.fn(() => Promise.resolve({ data: [], error: null })),
-          then: (cb: any) => cb({ data: [], error: null })
+          then: (cb: (r: { data: unknown[]; error: null }) => unknown) => cb({ data: [], error: null })
         }))
       })),
     })),

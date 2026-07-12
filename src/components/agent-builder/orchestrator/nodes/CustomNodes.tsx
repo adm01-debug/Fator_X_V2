@@ -2,7 +2,7 @@ import { Handle, Position } from 'reactflow';
 import { cn } from '@/lib/utils';
 
 interface NodeProps {
-  data: { label?: string; [key: string]: any };
+  data: { label?: string; [key: string]: unknown };
   selected?: boolean;
 }
 

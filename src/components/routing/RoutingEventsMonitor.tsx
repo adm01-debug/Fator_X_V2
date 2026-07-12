@@ -19,7 +19,7 @@ export function RoutingEventsMonitor() {
     refetchInterval: 10000,
   });
 
-  const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
+  const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ComponentType<{ className?: string }> }> = {
     routed: { label: "Roteado", color: "text-nexus-emerald bg-nexus-emerald/10 border-nexus-emerald/20", icon: CheckCircle2 },
     no_route: { label: "Sem rota", color: "text-muted-foreground bg-muted/10 border-border/20", icon: AlertCircle },
     failed: { label: "Falhou", color: "text-destructive bg-destructive/10 border-destructive/20", icon: XCircle },

@@ -45,7 +45,7 @@ export function DataBrowser({ entityId, onClose }: { entityId: string; onClose: 
   ];
   const filterOptions = ENTITY_FILTER_OPTIONS[entityId] ?? [];
 
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<Record<string, unknown>[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState<number>(25);

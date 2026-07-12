@@ -188,7 +188,7 @@ export default function ObservabilityOTelPage() {
   );
 }
 
-function MetricCard({ label, value, icon: Icon, trend, subLabel, color = "text-foreground" }: any) {
+function MetricCard({ label, value, icon: Icon, trend, subLabel, color = "text-foreground" }: { label: string; value: string | number; icon: React.ComponentType<{ className?: string }>; trend?: string; subLabel?: string; color?: string }) {
   return (
     <Card className="bg-card/50 border-border/40 rounded-[2rem] p-6 shadow-sm group hover:border-primary/20 transition-all">
       <div className="flex items-start justify-between mb-4">
