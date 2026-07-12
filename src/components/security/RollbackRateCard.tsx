@@ -101,6 +101,24 @@ export function RollbackRateCard() {
           </span>
           <span className="text-body-sm text-muted-foreground font-medium">%</span>
         </div>
+        {ratePerMin && (
+          <div className="mt-3 flex items-center justify-between rounded-md bg-muted/30 px-3 py-2">
+            <span className="text-meta text-muted-foreground uppercase tracking-widest">
+              Rollbacks / min (60min)
+            </span>
+            <span
+              className={`text-body-sm font-bold tabular-nums ${
+                ratePerMin.rate_per_min > 10
+                  ? "text-destructive"
+                  : ratePerMin.rate_per_min > 1
+                    ? "text-yellow-500"
+                    : "text-nexus-emerald"
+              }`}
+            >
+              {ratePerMin.rate_per_min.toFixed(2)}
+            </span>
+          </div>
+        )}
         {stats && (
           <div className="grid grid-cols-3 gap-3 mt-4 pt-3 border-t border-border/30">
             <div>
