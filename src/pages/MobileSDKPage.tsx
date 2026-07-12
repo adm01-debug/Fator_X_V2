@@ -51,7 +51,18 @@ print(response.text);`,
 
 export default function MobileSDKPage() {
   const [selected, setSelected] = useState("iOS");
+  const [agentId, setAgentId] = useState("");
+  const [apiKey, setApiKey] = useState("nx_live_xxx");
+  const { data: agents = [] } = useAgents();
   const snippet = SNIPPETS[selected];
+  const deepLink = useMemo(() => {
+    const base = "nexusagents://open";
+    const params = new URLSearchParams();
+    if (agentId) params.set("agent", agentId);
+    if (apiKey && apiKey !== "nx_live_xxx") params.set("key", apiKey);
+    const qs = params.toString();
+    return qs ? `${base}?${qs}` : base;
+  }, [agentId, apiKey]);
 
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
