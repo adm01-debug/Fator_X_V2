@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2, GitMerge, Layers, AlertTriangle, Trash2, Sparkles } from "lucide-react";
+import { Loader2, GitMerge, Layers, AlertTriangle, Trash2, Sparkles, Wand2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -13,12 +13,15 @@ import {
 } from "@/services/entityResolutionService";
 import { invokeCerebroBrain } from "@/services/cerebroService";
 import { AccessControl, DangerousActionDialog } from "@/components/rbac";
+import { MergeWizardDialog } from "./MergeWizardDialog";
 
 export function EntityResolutionTab() {
   const queryClient = useQueryClient();
   const [threshold, setThreshold] = useState(0.7);
   const [scanLimit, setScanLimit] = useState(200);
   const [mergingId, setMergingId] = useState<string | null>(null);
+  const [wizardCluster, setWizardCluster] = useState<EntityCluster | null>(null);
+
 
   const { data: report, isLoading, refetch, isFetching } = useQuery({
     queryKey: ['entity-resolution', threshold, scanLimit],
@@ -154,44 +157,56 @@ export function EntityResolutionTab() {
                   </div>
                 </div>
                 <AccessControl permission="knowledge.delete">
-                  <DangerousActionDialog
-                    trigger={
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-7 text-meta gap-1.5 text-destructive"
-                        disabled={mergingId === cluster.canonical.id}
-                      >
-                        {mergingId === cluster.canonical.id ? (
-                          <Loader2 className="h-3 w-3 animate-spin" />
-                        ) : (
-                          <GitMerge className="h-3 w-3" />
-                        )}
-                        Mesclar
-                      </Button>
-                    }
-                    title="Mesclar cluster de duplicatas"
-                    description={
-                      <>
-                        <p>Esta ação manterá apenas a entrada canônica (mais longa) e excluirá as {cluster.duplicates.length} duplicatas restantes.</p>
-                        <p>Esta operação é irreversível.</p>
-                      </>
-                    }
-                    action="bulk_delete"
-                    resourceType="agent_memory_cluster"
-                    resourceName={`${cluster.duplicates.length} duplicatas`}
-                    minReasonLength={8}
-                    confirmLabel="Mesclar Cluster"
-                    metadata={{
-                      canonical_id: cluster.canonical.id,
-                      duplicate_ids: cluster.duplicates.map((d) => d.id),
-                      avg_similarity: cluster.avg_similarity,
-                    }}
-                    onConfirm={async () => {
-                      await handleMerge(cluster);
-                    }}
-                  />
+                  <div className="flex items-center gap-1.5">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-7 text-meta gap-1.5"
+                      onClick={() => setWizardCluster(cluster)}
+                    >
+                      <Wand2 className="h-3 w-3" />
+                      Wizard
+                    </Button>
+                    <DangerousActionDialog
+                      trigger={
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-7 text-meta gap-1.5 text-destructive"
+                          disabled={mergingId === cluster.canonical.id}
+                        >
+                          {mergingId === cluster.canonical.id ? (
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                          ) : (
+                            <GitMerge className="h-3 w-3" />
+                          )}
+                          Mesclar
+                        </Button>
+                      }
+                      title="Mesclar cluster de duplicatas"
+                      description={
+                        <>
+                          <p>Esta ação manterá apenas a entrada canônica (mais longa) e excluirá as {cluster.duplicates.length} duplicatas restantes.</p>
+                          <p>Esta operação é irreversível.</p>
+                        </>
+                      }
+                      action="bulk_delete"
+                      resourceType="agent_memory_cluster"
+                      resourceName={`${cluster.duplicates.length} duplicatas`}
+                      minReasonLength={8}
+                      confirmLabel="Mesclar Cluster"
+                      metadata={{
+                        canonical_id: cluster.canonical.id,
+                        duplicate_ids: cluster.duplicates.map((d) => d.id),
+                        avg_similarity: cluster.avg_similarity,
+                      }}
+                      onConfirm={async () => {
+                        await handleMerge(cluster);
+                      }}
+                    />
+                  </div>
                 </AccessControl>
+
               </div>
 
               {/* Canonical */}
@@ -226,6 +241,17 @@ export function EntityResolutionTab() {
           ))}
         </div>
       )}
+
+      <MergeWizardDialog
+        cluster={wizardCluster}
+        open={!!wizardCluster}
+        onOpenChange={(o) => !o && setWizardCluster(null)}
+        onCompleted={() => {
+          setWizardCluster(null);
+          queryClient.invalidateQueries({ queryKey: ['entity-resolution'] });
+        }}
+      />
     </div>
   );
 }
+
