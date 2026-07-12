@@ -11,7 +11,7 @@ import {
   Mic, GitBranch as GitBranchIcon, KeyRound, Globe2, Monitor, Eye, Smartphone, TestTube2,
   Store, Cpu, Wand2, GitMerge, Terminal, Mail, Bug, FileCheck2,
   PhoneCall, Network, FlaskRound, TrendingDown, Calculator,
-  Share2, Building2, Radar, ShieldAlert, Wallet, Swords, Phone, Archive, AlertOctagon, LifeBuoy, GitPullRequest, Boxes, MessageSquare, Fingerprint,
+  Share2, Building2, Radar, ShieldAlert, Wallet, Swords, Phone, Archive, AlertOctagon, LifeBuoy, GitPullRequest, Boxes, MessageSquare, Fingerprint, Snowflake,
 } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
@@ -92,6 +92,7 @@ const navSections = [
       { title: "Jobs de Sistema", url: "/system-jobs", icon: ServerCog },
       { title: "Eventos de Webhook", url: "/webhook-events", icon: Zap },
       { title: "Governança", url: "/governance", icon: ShieldCheck },
+      { title: "Janelas de Congelamento", url: "/governance/freeze-windows", icon: Snowflake },
       { title: "Orçamentos", url: "/budgets", icon: Wallet },
       { title: "Implantações", url: "/deployments", icon: Rocket },
       { title: "Widget Builder", url: "/widget-builder", icon: MessageSquare },
