@@ -217,6 +217,7 @@ const App = () => {
                       <Route path="/knowledge-management/article/:id" element={<SafePage><ArticleEditorPage /></SafePage>} />
                       <Route path="/memory" element={<SafePage><MemoryPage /></SafePage>} />
                       <Route path="/tools" element={<SafePage><ToolsPage /></SafePage>} />
+                      <Route path="/mcp-servers" element={<SafePage><MCPServersPage /></SafePage>} />
                       <Route path="/routing" element={<SafePage><RoutingConfigPage /></SafePage>} />
                       <Route path="/prompts" element={<SafePage><PromptsPage /></SafePage>} />
                       <Route path="/prompts/experiments" element={<SafePage><PromptExperimentsPage /></SafePage>} />
