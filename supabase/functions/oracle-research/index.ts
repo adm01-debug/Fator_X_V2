@@ -55,10 +55,18 @@ const STRATEGY_TUNING: Record<'broad' | 'balanced' | 'focused', { temp: number; 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
 
+  // Captured in outer scope so the catch block can persist failure telemetry.
+  let supabaseForCatch: ReturnType<typeof authenticateRequest> extends Promise<infer T> ? (T extends { supabase: infer S } ? S : null) : null = null as never;
+  let queryForCatch = '';
+  let depthForCatch: 'quick' | 'standard' | 'deep' = 'standard';
+  let strategyForCatch: 'broad' | 'balanced' | 'focused' = 'balanced';
+  const failureStartTime = Date.now();
+
   try {
     const auth = await authenticateRequest(req);
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
+    supabaseForCatch = supabase;
 
     const identifier = getRateLimitIdentifier(req, user.id);
     const rateCheck = checkRateLimit(identifier, RATE_LIMITS.oracle);
@@ -70,6 +78,9 @@ serve(async (req) => {
       query, max_iterations, queries_per_iteration, strategy, depth,
       synthesis_model, include_internal, stop_on_no_gaps, language, limits,
     } = parsed.data;
+    queryForCatch = query;
+    depthForCatch = depth;
+    strategyForCatch = strategy;
 
     const maxTokensBudget = limits.max_tokens ?? 60_000;
     const maxSources = limits.max_sources ?? 20;
