@@ -1,10 +1,14 @@
-import { useState } from "react";
-import { Smartphone, Apple, Code2, Copy, Download, Smartphone as Phone, Tablet, Watch } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
+import { useState, useMemo } from "react";
+import { Smartphone, Apple, Code2, Copy, Download, Smartphone as Phone, Tablet, Watch, QrCode } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageHeader } from "@/components/shared/PageHeader";
+import { QRCodeSVG } from "qrcode.react";
+import { useAgents } from "@/hooks/use-data";
 import { toast } from "sonner";
 
 const SDK_VERSIONS = [
