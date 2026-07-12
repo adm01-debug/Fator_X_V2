@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Zap, ChevronDown, ChevronRight } from 'lucide-react';
 import { SpanTreeView, type SpanLike } from '@/components/monitoring/SpanTreeView';
+import { LangfuseExporterDialog } from '@/components/monitoring/LangfuseExporterDialog';
 
 function TraceCard({ trace }: { trace: { id: string; event_type: string; created_at: string; data: Record<string, unknown> } }) {
   const [open, setOpen] = useState(false);
