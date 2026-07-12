@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import {
   CheckCircle2, AlertTriangle, XCircle, Clock, RefreshCw, Trash2,
   FileText, Layers, Link2, Loader2, ChevronDown, ChevronUp,
+  Settings2, Compass, Zap, Coins, Timer, Hash, Brain, Globe2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
