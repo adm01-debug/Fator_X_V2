@@ -223,7 +223,7 @@ async function recordTrace(supabase: any, p: {
       cost_usd: p.costUsd,
       input: { user_message: p.userInput, model: p.model, provider: p.provider },
       output: { content: p.assistantOutput?.substring(0, 5000) },
-      metadata: { prompt_tokens: p.promptTokens, completion_tokens: p.completionTokens, guardrails: p.guardrailsTriggered },
+      metadata: { prompt_tokens: p.promptTokens, completion_tokens: p.completionTokens, guardrails: p.guardrailsTriggered, caller },
     });
 
     // 2. Sessions lifecycle — upsert session + insert session_trace
@@ -269,7 +269,7 @@ async function recordTrace(supabase: any, p: {
       await supabase.from('usage_records').insert({
         workspace_id: p.workspaceId, agent_id: p.agentId || null, record_type: 'llm_call',
         tokens: p.totalTokens, cost_usd: p.costUsd,
-        metadata: { model: p.model, provider: p.provider, latency_ms: p.latencyMs },
+        metadata: { model: p.model, provider: p.provider, latency_ms: p.latencyMs, caller },
       });
       // 4. Daily aggregate
       if (p.userId) {
