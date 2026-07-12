@@ -10,7 +10,7 @@ import {
 
   Mic, GitBranch as GitBranchIcon, KeyRound, Globe2, Monitor, Eye, Smartphone, TestTube2,
   Store, Cpu, Wand2, GitMerge, Terminal, Mail, Bug, FileCheck2,
-  PhoneCall, Network, FlaskRound, TrendingDown,
+  PhoneCall, Network, FlaskRound, TrendingDown, Calculator,
   Share2, Building2, Radar, ShieldAlert, Wallet, Swords, Phone, Archive, AlertOctagon, LifeBuoy, GitPullRequest, Boxes,
 } from "lucide-react";
 import {
@@ -92,6 +92,7 @@ const navSections = [
       { title: "Chaos Lab", url: "/observability/chaos", icon: Zap },
       { title: "Synthetic Monitoring", url: "/observability/synthetic", icon: Radar },
       { title: "Anomalias de Custo", url: "/observability/cost-anomalies", icon: TrendingDown },
+      { title: "Simulador de Custos", url: "/cost-simulator", icon: Calculator },
       { title: "Game Days", url: "/observability/game-days", icon: Swords },
       { title: "Playbooks", url: "/observability/playbooks", icon: BookOpen },
       { title: "On-Call", url: "/observability/oncall", icon: Phone },
