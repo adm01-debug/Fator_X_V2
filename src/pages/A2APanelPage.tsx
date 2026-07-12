@@ -18,7 +18,7 @@ import { toast } from "sonner";
 interface AgentRow {
   id: string;
   name: string;
-  description: string | null;
+  mission: string | null;
   status: string | null;
 }
 
@@ -30,7 +30,7 @@ export default function A2APanelPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("agents")
-        .select("id, name, description, status")
+        .select("id, name, mission, status")
         .order("created_at", { ascending: false })
         .limit(50);
       if (error) throw error;
