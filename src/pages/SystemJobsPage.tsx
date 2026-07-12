@@ -149,6 +149,16 @@ export default function SystemJobsPage() {
     refetchInterval: 60_000,
   });
 
+  const cron = useQuery({
+    queryKey: ["system-jobs", "cron"],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_cron_job_health" as never);
+      if (error) throw error;
+      return (data ?? []) as unknown as CronJobHealth[];
+    },
+    refetchInterval: 30_000,
+  });
+
   const refetchAll = () => {
     retention.refetch();
     automation.refetch();
