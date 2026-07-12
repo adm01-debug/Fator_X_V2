@@ -126,6 +126,7 @@ const BCPPage = lazy(() => import("./pages/BCPPage"));
 const ChangeManagementPage = lazy(() => import("./pages/ChangeManagementPage"));
 const IRPlaybooksPage = lazy(() => import("./pages/IRPlaybooksPage"));
 const AssetInventoryPage = lazy(() => import("./pages/AssetInventoryPage"));
+const IPWhitelistPage = lazy(() => import("./pages/IPWhitelistPage"));
 const SLODashboard = lazy(() => import("./pages/SLODashboard"));
 const ChaosLabPage = lazy(() => import("./pages/ChaosLabPage"));
 const SyntheticMonitoringPage = lazy(() => import("./pages/SyntheticMonitoringPage"));
