@@ -129,6 +129,7 @@ const AssetInventoryPage = lazy(() => import("./pages/AssetInventoryPage"));
 const IPWhitelistPage = lazy(() => import("./pages/IPWhitelistPage"));
 const AgentExperimentsPage = lazy(() => import("./pages/AgentExperimentsPage"));
 const CreatorPayoutsPage = lazy(() => import("./pages/CreatorPayoutsPage"));
+const PentestPage = lazy(() => import("./pages/PentestPage"));
 const SLODashboard = lazy(() => import("./pages/SLODashboard"));
 const ChaosLabPage = lazy(() => import("./pages/ChaosLabPage"));
 const SyntheticMonitoringPage = lazy(() => import("./pages/SyntheticMonitoringPage"));
