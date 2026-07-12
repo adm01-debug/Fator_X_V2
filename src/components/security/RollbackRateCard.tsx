@@ -11,21 +11,43 @@ interface RollbackStats {
   deadlocks: number;
 }
 
+interface RatePerMin {
+  rate_per_min: number;
+  rollback_delta: number;
+  minutes: number;
+}
+
 /**
- * Exibe o rollback rate do banco (transações abortadas / total).
- * Threshold saudável < 1%. Refresh a cada 60s.
+ * Exibe o rollback rate do banco (transações abortadas / total) + taxa por minuto.
+ * Threshold saudável < 1% acumulado e < 10/min. Refresh a cada 60s.
  */
 export function RollbackRateCard() {
   const [stats, setStats] = useState<RollbackStats | null>(null);
+  const [ratePerMin, setRatePerMin] = useState<RatePerMin | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
     const load = async () => {
-      const { data, error } = await supabaseExternal.rpc("get_db_rollback_rate");
+      const [cumul, perMin] = await Promise.all([
+        supabaseExternal.rpc("get_db_rollback_rate"),
+        supabaseExternal.rpc("get_rollback_rate_per_min", { window_minutes: 60 }),
+      ]);
       if (!cancelled) {
-        if (!error && data && Array.isArray(data) && data.length > 0) {
-          setStats(data[0] as RollbackStats);
+        if (!cumul.error && Array.isArray(cumul.data) && cumul.data.length > 0) {
+          setStats(cumul.data[0] as RollbackStats);
+        }
+        if (!perMin.error && Array.isArray(perMin.data) && perMin.data.length > 0) {
+          const row = perMin.data[0] as {
+            rate_per_min: number | string;
+            rollback_delta: number;
+            minutes: number | string;
+          };
+          setRatePerMin({
+            rate_per_min: Number(row.rate_per_min),
+            rollback_delta: Number(row.rollback_delta),
+            minutes: Number(row.minutes),
+          });
         }
         setLoading(false);
       }
