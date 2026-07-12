@@ -65,7 +65,10 @@ export function TracingPanel() {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="text-body-sm font-heading font-semibold text-foreground">Trace Events ({traceData.length})</h3>
-        <Badge variant="outline" className="text-meta">OTel GenAI</Badge>
+        <div className="flex items-center gap-2">
+          <LangfuseExporterDialog />
+          <Badge variant="outline" className="text-meta">OTel GenAI</Badge>
+        </div>
       </div>
       <p className="text-meta text-muted-foreground">Clique em um trace para expandir a árvore de spans.</p>
       {traceData.map(trace => (
