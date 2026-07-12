@@ -443,14 +443,14 @@ serve(async (req) => {
     // ═══ PROMPT INJECTION DETECTION (Layer 1: ML via HuggingFace) ═══
     const injectionML = await detectInjectionML(userMessage);
     if (injectionML.detected) {
-      recordTrace(supabase, { workspaceId, agentId: agent_id, sessionId: session_id, userId: user.id, userInput: userMessage, assistantOutput: '[INJECTION_BLOCKED_ML]', model, provider: 'none', promptTokens: 0, completionTokens: 0, totalTokens: 0, costUsd: 0, latencyMs: 0, guardrailsTriggered: [{ name: `ml_${injectionML.label}`, severity: 'block', reason: `ML score: ${injectionML.score.toFixed(4)}` }], event: 'injection_block_ml', level: 'critical' });
+      recordTrace(supabase, { workspaceId, agentId: agent_id, sessionId: session_id, userId: user.id, userInput: userMessage, assistantOutput: '[INJECTION_BLOCKED_ML]', model, provider: 'none', promptTokens: 0, completionTokens: 0, totalTokens: 0, costUsd: 0, latencyMs: 0, guardrailsTriggered: [{ name: `ml_${injectionML.label}`, severity: 'block', reason: `ML score: ${injectionML.score.toFixed(4)}` }], event: 'injection_block_ml', level: 'critical', caller });
       return new Response(JSON.stringify({ error: 'Request blocked: prompt injection detected (ML)', detection: { label: injectionML.label, score: injectionML.score, method: 'ml' } }), { status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
     // ═══ PROMPT INJECTION DETECTION (Layer 2: Regex fallback) ═══
     const injection = detectInjection(userMessage);
     if (injection.detected && injection.riskLevel === 'critical') {
-      recordTrace(supabase, { workspaceId, agentId: agent_id, sessionId: session_id, userId: user.id, userInput: userMessage, assistantOutput: '[INJECTION_BLOCKED]', model, provider: 'none', promptTokens: 0, completionTokens: 0, totalTokens: 0, costUsd: 0, latencyMs: 0, guardrailsTriggered: injection.patterns.map(p => ({ name: p, severity: 'block', reason: 'prompt_injection_regex' })), event: 'injection_block', level: 'critical' });
+      recordTrace(supabase, { workspaceId, agentId: agent_id, sessionId: session_id, userId: user.id, userInput: userMessage, assistantOutput: '[INJECTION_BLOCKED]', model, provider: 'none', promptTokens: 0, completionTokens: 0, totalTokens: 0, costUsd: 0, latencyMs: 0, guardrailsTriggered: injection.patterns.map(p => ({ name: p, severity: 'block', reason: 'prompt_injection_regex' })), event: 'injection_block', level: 'critical', caller });
       return new Response(JSON.stringify({ error: 'Request blocked: potential prompt injection detected', patterns: injection.patterns }), { status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
@@ -473,7 +473,7 @@ serve(async (req) => {
             const toxic = labels.find((l: any) => l.label === 'toxic');
             toxicityScore = toxic?.score || 0;
             if (toxicityScore > 0.85) {
-              recordTrace(supabase, { workspaceId, agentId: agent_id, sessionId: session_id, userId: user.id, userInput: userMessage, assistantOutput: '[TOXICITY_BLOCKED]', model, provider: 'none', promptTokens: 0, completionTokens: 0, totalTokens: 0, costUsd: 0, latencyMs: 0, guardrailsTriggered: [{ name: 'toxicity', severity: 'block', reason: `toxic score: ${toxicityScore.toFixed(4)}` }], event: 'toxicity_block', level: 'warning' });
+              recordTrace(supabase, { workspaceId, agentId: agent_id, sessionId: session_id, userId: user.id, userInput: userMessage, assistantOutput: '[TOXICITY_BLOCKED]', model, provider: 'none', promptTokens: 0, completionTokens: 0, totalTokens: 0, costUsd: 0, latencyMs: 0, guardrailsTriggered: [{ name: 'toxicity', severity: 'block', reason: `toxic score: ${toxicityScore.toFixed(4)}` }], event: 'toxicity_block', level: 'warning', caller });
               return new Response(JSON.stringify({ error: 'Request blocked: toxic content detected', score: toxicityScore }), { status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
             }
           }
@@ -562,7 +562,7 @@ serve(async (req) => {
     // ═══ GUARDRAILS ═══
     const gr = await checkGuardrails(supabase, agent_id, userMessage);
     if (!gr.passed) {
-      recordTrace(supabase, { workspaceId, agentId: agent_id, sessionId: session_id, userId: user.id, userInput: userMessage, assistantOutput: '[BLOCKED]', model, provider: 'none', promptTokens: 0, completionTokens: 0, totalTokens: 0, costUsd: 0, latencyMs: 0, guardrailsTriggered: gr.triggered, event: 'guardrail_block', level: 'warning' });
+      recordTrace(supabase, { workspaceId, agentId: agent_id, sessionId: session_id, userId: user.id, userInput: userMessage, assistantOutput: '[BLOCKED]', model, provider: 'none', promptTokens: 0, completionTokens: 0, totalTokens: 0, costUsd: 0, latencyMs: 0, guardrailsTriggered: gr.triggered, event: 'guardrail_block', level: 'warning', caller });
       return new Response(JSON.stringify({ error: 'Blocked by guardrails', guardrails_triggered: gr.triggered }), { status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
@@ -672,7 +672,7 @@ serve(async (req) => {
               controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true, model: opt.model, provider: opt.provider, tokens: { prompt: promptTokens, completion: completionTokens, total: totalTokens }, cost_usd: costUsd, latency_ms: latencyMs })}\n\n`));
               controller.enqueue(encoder.encode('data: [DONE]\n\n'));
               controller.close();
-              recordTrace(supabase, { workspaceId, agentId: agent_id, sessionId: session_id, userId: user.id, userInput: userMessage, assistantOutput: cleanContent, model: opt.model, provider: opt.provider, promptTokens, completionTokens, totalTokens, costUsd, latencyMs, guardrailsTriggered: gr.triggered, event: 'llm_call_stream', level: injection.detected ? 'warning' : 'info' });
+              recordTrace(supabase, { workspaceId, agentId: agent_id, sessionId: session_id, userId: user.id, userInput: userMessage, assistantOutput: cleanContent, model: opt.model, provider: opt.provider, promptTokens, completionTokens, totalTokens, costUsd, latencyMs, guardrailsTriggered: gr.triggered, event: 'llm_call_stream', level: injection.detected ? 'warning' : 'info', caller });
             } catch (err) {
               console.error(`Stream fallback ${ci + 1} (${chain[ci].provider}) failed:`, err instanceof Error ? err.message : err);
               if (ci === chain.length - 1) {
@@ -722,7 +722,7 @@ serve(async (req) => {
     const latencyBreakdown = { guardrail_ms: guardrailMs, llm_ms: llmMs, total_ms: totalMs };
 
     // ═══ TRACE (non-blocking) ═══
-    recordTrace(supabase, { workspaceId, agentId: agent_id, sessionId: session_id, userId: user.id, userInput: userMessage, assistantOutput: result.content, model: usedModel, provider, promptTokens: result.usage.prompt_tokens, completionTokens: result.usage.completion_tokens, totalTokens: result.usage.total_tokens, costUsd, latencyMs: totalMs, guardrailsTriggered: gr.triggered, event: 'llm_call', level: fallbackErrors.length > 0 ? 'warning' : injection.detected ? 'warning' : 'info' });
+    recordTrace(supabase, { workspaceId, agentId: agent_id, sessionId: session_id, userId: user.id, userInput: userMessage, assistantOutput: result.content, model: usedModel, provider, promptTokens: result.usage.prompt_tokens, completionTokens: result.usage.completion_tokens, totalTokens: result.usage.total_tokens, costUsd, latencyMs: totalMs, guardrailsTriggered: gr.triggered, event: 'llm_call', level: fallbackErrors.length > 0 ? 'warning' : injection.detected ? 'warning' : 'info', caller });
 
     // ═══ OUTPUT GUARDRAILS (fire-and-forget) ═══
     const hfOutputToken = Deno.env.get('HF_API_TOKEN');
