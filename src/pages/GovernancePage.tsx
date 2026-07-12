@@ -21,10 +21,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Snowflake, Globe2, Plus, Trash2, ShieldAlert, Info } from "lucide-react";
+import { Snowflake, Globe2, Plus, Trash2, ShieldAlert, Info, Network, ShieldCheck, ShieldOff, ArrowUpRight, Ban } from "lucide-react";
 import { toast } from "sonner";
-import { format } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { Link } from "react-router-dom";
 
 type FreezeWindow = {
   id: string;
