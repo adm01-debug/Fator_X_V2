@@ -55,6 +55,7 @@ const KnowledgeDecayPage = lazy(() => import("./pages/KnowledgeDecayPage"));
 const SystemJobsPage = lazy(() => import("./pages/SystemJobsPage"));
 const WebhookEventsPage = lazy(() => import("./pages/WebhookEventsPage"));
 const GovernancePage = lazy(() => import("./pages/GovernancePage"));
+const BudgetsPage = lazy(() => import("./pages/BudgetsPage"));
 const DeploymentsPage = lazy(() => import("./pages/DeploymentsPage"));
 const OpenclawDeployPage = lazy(() => import("./pages/OpenclawDeployPage"));
 const MonitoringPage = lazy(() => import("./pages/MonitoringPage"));
@@ -242,6 +243,7 @@ const App = () => {
                       <Route path="/system-jobs" element={<SafePage><SystemJobsPage /></SafePage>} />
                       <Route path="/webhook-events" element={<SafePage><WebhookEventsPage /></SafePage>} />
                       <Route path="/governance" element={<SafePage><GovernancePage /></SafePage>} />
+                      <Route path="/budgets" element={<SafePage><BudgetsPage /></SafePage>} />
                       <Route path="/deployments" element={<SafePage><DeploymentsPage /></SafePage>} />
                       <Route path="/deploy/openclaw" element={<SafePage><OpenclawDeployPage /></SafePage>} />
                       <Route path="/monitoring" element={<SafePage><MonitoringPage /></SafePage>} />
