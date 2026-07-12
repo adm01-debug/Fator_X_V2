@@ -67,7 +67,7 @@ export function ResearchSettingsDialog({ trigger }: Props) {
     setOpen(o);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const result = validateResearchConfig(draft);
     if (!result.success) {
       setErrors(result.errors);
@@ -75,10 +75,14 @@ export function ResearchSettingsDialog({ trigger }: Props) {
       toast.error(firstMsg ?? 'Verifique os campos destacados');
       return;
     }
-    updateSaved(result.data as ResearchConfig);
-    setErrors({});
-    toast.success('Configuração salva');
-    setOpen(false);
+    try {
+      await updateSaved(result.data as ResearchConfig);
+      setErrors({});
+      toast.success(cfgLoading ? 'Configuração salva' : 'Configuração sincronizada');
+      setOpen(false);
+    } catch {
+      toast.error('Não foi possível salvar no servidor. Tente novamente.');
+    }
   };
 
   const handleReset = () => {
