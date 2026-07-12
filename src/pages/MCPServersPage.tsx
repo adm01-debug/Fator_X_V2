@@ -76,7 +76,6 @@ export default function MCPServersPage() {
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
       <PageHeader
-        icon={Boxes}
         title="MCP Servers"
         description="Gerencie servidores Model Context Protocol conectados ao workspace. Descubra e invoque tools remotas de forma padronizada."
         actions={
