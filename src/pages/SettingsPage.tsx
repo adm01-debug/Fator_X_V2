@@ -9,6 +9,8 @@ import { Palette, Globe, Bell, Key, Save, Server, Share2, Database, Activity, Ra
 import { MCPServerManager } from "@/components/integrations/MCPServerManager";
 import { MCPServersPanel } from "@/components/settings/MCPServersPanel";
 import { Bitrix24Connect } from "@/components/integrations/Bitrix24Connect";
+import { Bitrix24WebhookPanel } from "@/components/integrations/Bitrix24WebhookPanel";
+import { Bitrix24ApiTester } from "@/components/integrations/Bitrix24ApiTester";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { getWorkspace } from "@/services/settingsService";
