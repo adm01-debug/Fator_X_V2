@@ -76,19 +76,22 @@ export function DeepResearchPanel() {
     <Card className="p-8 bg-card border-border rounded-3xl shadow-sm relative overflow-hidden group">
       <div className="absolute top-0 right-0 w-64 h-64 bg-primary/[0.02] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
       
-      <div className="flex items-center gap-4 mb-6 relative">
-        <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/15">
-          <Search className="w-6 h-6 text-primary" />
+      <div className="flex items-start justify-between gap-4 mb-6 relative">
+        <div className="flex items-center gap-4">
+          <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/15">
+            <Search className="w-6 h-6 text-primary" />
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
+              Deep Research v2
+              <Badge className="bg-primary/20 text-primary border-none text-meta font-bold px-2 py-0">EXPERIMENTAL</Badge>
+            </h3>
+            <p className="text-meta text-muted-foreground max-w-lg leading-relaxed">
+              Pesquisa iterativa profunda com agentes autônomos que buscam, validam e sintetizam relatórios técnicos em múltiplos domínios.
+            </p>
+          </div>
         </div>
-        <div>
-          <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
-            Deep Research v2
-            <Badge className="bg-primary/20 text-primary border-none text-meta font-bold px-2 py-0">EXPERIMENTAL</Badge>
-          </h3>
-          <p className="text-meta text-muted-foreground max-w-lg leading-relaxed">
-            Pesquisa iterativa profunda com agentes autônomos que buscam, validam e sintetizam relatórios técnicos em múltiplos domínios.
-          </p>
-        </div>
+        <ResearchSettingsDialog />
       </div>
 
       <div className="relative mb-6">
