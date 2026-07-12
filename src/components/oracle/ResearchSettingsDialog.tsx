@@ -108,7 +108,7 @@ export function ResearchSettingsDialog({ trigger }: Props) {
             <Settings2 className="h-5 w-5 text-primary" /> Configuração do Deep Research
           </DialogTitle>
           <DialogDescription>
-            Ajuste iterações, estratégia de busca, modelo de síntese e limites de execução. As alterações são persistidas neste dispositivo.
+            Ajuste iterações, estratégia de busca, modelo de síntese e limites de execução. As alterações são sincronizadas na sua conta e disponíveis em todos os dispositivos.
           </DialogDescription>
         </DialogHeader>
 
