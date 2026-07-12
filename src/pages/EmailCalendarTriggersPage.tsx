@@ -11,6 +11,7 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { SharedEmptyState } from "@/components/shared/SharedEmptyState";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useWorkspaceId } from "@/hooks/use-data";
 
 type TriggerType = "email" | "calendar";
 
