@@ -42,8 +42,32 @@ interface ParsedRun {
   config: RunConfig;
 }
 
+function extractConfig(r: Record<string, unknown>): RunConfig {
+  const budgets = (r.budgets ?? {}) as Record<string, unknown>;
+  const num = (v: unknown): number | undefined => (typeof v === 'number' ? v : undefined);
+  const str = (v: unknown): string | undefined => (typeof v === 'string' ? v : undefined);
+  const bool = (v: unknown): boolean | undefined => (typeof v === 'boolean' ? v : undefined);
+  return {
+    depth: str(r.depth),
+    strategy: str(r.strategy),
+    maxIterations: num(r.max_iterations) ?? num(r.maxIterations),
+    queriesPerIteration: num(r.queries_per_iteration) ?? num(r.queriesPerIteration),
+    synthesisModel: str(r.synthesis_model) ?? str(r.synthesisModel),
+    language: str(r.language),
+    includeInternal: bool(r.include_internal) ?? bool(r.includeInternal),
+    stopOnNoGaps: bool(r.stop_on_no_gaps) ?? bool(r.stopOnNoGaps),
+    maxTokens: num(budgets.max_tokens) ?? num(r.max_tokens),
+    maxSources: num(budgets.max_sources) ?? num(r.max_sources),
+    maxLatencySec:
+      num(budgets.max_latency_sec) ??
+      (num(budgets.max_latency_ms) !== undefined ? Math.round((budgets.max_latency_ms as number) / 1000) : undefined),
+    maxCostUsd: num(budgets.max_cost_usd) ?? num(r.max_cost_usd),
+    stoppedReason: str(r.stopped_reason),
+  };
+}
+
 function parseRun(entry: OracleHistoryEntry): ParsedRun {
-  const r = (entry.results ?? {}) as unknown as {
+  const r = (entry.results ?? {}) as unknown as Record<string, unknown> & {
     report?: string;
     iterations?: number;
     sources?: unknown[];
@@ -62,6 +86,7 @@ function parseRun(entry: OracleHistoryEntry): ParsedRun {
     sourcesCount: Array.isArray(r.sources) ? r.sources.length : 0,
     reportPreview: report.slice(0, 220),
     errorMessage,
+    config: extractConfig(r),
   };
 }
 
