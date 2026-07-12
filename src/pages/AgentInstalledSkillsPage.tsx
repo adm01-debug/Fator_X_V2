@@ -185,7 +185,7 @@ export default function AgentInstalledSkillsPage() {
       }
       const { error } = await supabase
         .from("agent_installed_skills")
-        .update({ config_overrides: parsed })
+        .update({ config_overrides: parsed as never })
         .eq("id", configTarget.id);
       if (error) throw error;
     },
