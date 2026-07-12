@@ -74,12 +74,12 @@ export function OrchestratorModule() {
     if (!active) return;
     setRunning(true);
     try {
-      let parsed: any = testInput;
+      let parsed: unknown = testInput;
       try { parsed = JSON.parse(testInput); } catch {}
       const result = await runWorkflow(active.id, parsed);
       toast.success('Execução concluída');
       logger.info('Workflow execution result', { workflow_id: active.id, result });
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(e.message || 'Falha na execução');
     } finally {
       setRunning(false);
@@ -149,7 +149,7 @@ export function OrchestratorModule() {
     const name = prompt('Nome do workflow?');
     if (!name) return;
     createWorkflow.mutate({ name, workspace_id: workspaceId }, {
-      onSuccess: (w: any) => setActiveId(w.id),
+      onSuccess: (w: { id: string }) => setActiveId(w.id),
     });
   };
 

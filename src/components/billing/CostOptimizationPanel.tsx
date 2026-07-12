@@ -71,8 +71,8 @@ export function CostOptimizationPanel() {
       if ((agent.status === 'production' || agent.status === 'staging') && agent.updated_at) {
         const lastUpdate = new Date(agent.updated_at);
         if (lastUpdate < sevenDaysAgo) {
-          const agentUsage = usage.filter((u: any) => u.agent_id === agent.id);
-          const recentUsage = agentUsage.filter((u: any) => new Date(u.date) > sevenDaysAgo);
+          const agentUsage = usage.filter((u: { agent_id: string }) => u.agent_id === agent.id);
+          const recentUsage = agentUsage.filter((u: { date: string }) => new Date(u.date) > sevenDaysAgo);
           if (recentUsage.length === 0) {
             recs.push({
               id: `idle-${agent.id}`,
@@ -90,7 +90,7 @@ export function CostOptimizationPanel() {
 
     // 3. High error rate = wasted cost
     const agentUsageMap = new Map<string, { cost: number; errors: number; requests: number }>();
-    usage.forEach((u: any) => {
+    usage.forEach((u: { agent_id: string; model?: string; cost?: number; date: string; [k: string]: unknown }) => {
       const existing = agentUsageMap.get(u.agent_id) || { cost: 0, errors: 0, requests: 0 };
       existing.cost += Number(u.total_cost_usd || 0);
       existing.errors += Number(u.error_count || 0);

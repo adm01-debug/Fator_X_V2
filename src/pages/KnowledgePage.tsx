@@ -13,7 +13,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { listKnowledgeBases, deleteKnowledgeBase, listVectorIndexes, getChunkEmbeddingStats } from "@/services/knowledgeService";
 import { CreateKnowledgeBaseDialog } from "@/components/dialogs/CreateKnowledgeBaseDialog";
-import { EditKnowledgeBaseDialog } from "@/components/dialogs/EditKnowledgeBaseDialog";
+import { EditKnowledgeBaseDialog, type KnowledgeBase } from "@/components/dialogs/EditKnowledgeBaseDialog";
 import { KnowledgeBaseDetail } from "@/components/knowledge/KnowledgeBaseDetail";
 import { AudioUploadDialog } from "@/components/knowledge/AudioUploadDialog";
 import { DocOcrDialog } from "@/components/knowledge/DocOcrDialog";
@@ -42,8 +42,7 @@ const pipeline = [
 export default function KnowledgePage() {
   const [search, setSearch] = useState("");
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [editKb, setEditKb] = useState<any>(null);
+  const [editKb, setEditKb] = useState<KnowledgeBase | null>(null);
   const [selectedKb, setSelectedKb] = useState<{ id: string; name: string } | null>(null);
   const queryClient = useQueryClient();
 
@@ -52,7 +51,7 @@ export default function KnowledgePage() {
     queryFn: listKnowledgeBases,
   });
 
-  const filtered = knowledgeBases.filter((kb: any) =>
+  const filtered = knowledgeBases.filter((kb) =>
     kb.name.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -233,7 +232,7 @@ export default function KnowledgePage() {
                 </div>
               ) : viewMode === 'grid' ? (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  {filtered.map((kb: any) => (
+                  {filtered.map((kb) => (
                     <div key={kb.id}
                       className="nexus-card group cursor-pointer hover:border-primary/40 transition-all hover:shadow-2xl hover:shadow-primary/5 p-0 overflow-hidden"
                       onClick={() => setSelectedKb({ id: kb.id, name: kb.name })}
@@ -309,7 +308,7 @@ export default function KnowledgePage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border/20">
-                      {filtered.map((kb: any) => (
+                      {filtered.map((kb) => (
                         <tr key={kb.id} className="hover:bg-primary/5 transition-colors cursor-pointer group" onClick={() => setSelectedKb({ id: kb.id, name: kb.name })}>
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-3">
@@ -468,7 +467,7 @@ function VectorIndexesStatus() {
       {indexes.length > 0 && (
         <div className="space-y-2 pt-2 border-t border-border/20">
           <p className="text-meta font-bold text-muted-foreground uppercase tracking-tight mb-2">Índices Vetoriais</p>
-          {indexes.map((idx: any) => (
+          {indexes.map((idx: { id: string; provider: string; dimensions: number; model: string; knowledge_bases?: { name?: string } | null }) => (
             <div key={idx.id} className="group p-2.5 rounded-lg bg-secondary/30 border border-border/10 hover:border-primary/30 transition-colors">
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-meta font-bold truncate max-w-[120px]">{(idx.knowledge_bases as { name?: string } | null)?.name || 'Índice Ativo'}</span>
