@@ -210,8 +210,9 @@ async function recordTrace(supabase: any, p: {
   userInput: string; assistantOutput: string; model: string; provider: string;
   promptTokens: number; completionTokens: number; totalTokens: number;
   costUsd: number; latencyMs: number; guardrailsTriggered: any[];
-  event: string; level: string;
+  event: string; level: string; caller?: string;
 }) {
+  const caller = p.caller || 'external';
   try {
     // 1. agent_traces (primary observability)
     await supabase.from('agent_traces').insert({
