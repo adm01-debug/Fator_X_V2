@@ -1,10 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { History, Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { History, Search, Eye } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { listExecutions, getExecutionStats, type ExecutionRecord } from '@/services/executionHistoryService';
 import { useToast } from '@/hooks/use-toast';
+import { ExecutionTimelineDialog } from './ExecutionTimelineDialog';
+
 
 const STATUS_COLORS: Record<string, string> = { running: 'bg-nexus-blue/20 text-nexus-blue', success: 'bg-nexus-emerald/20 text-nexus-emerald', failed: 'bg-destructive/20 text-destructive', cancelled: 'bg-muted text-muted-foreground', timeout: 'bg-nexus-orange/20 text-nexus-orange', waiting: 'bg-nexus-amber/20 text-nexus-amber' };
 const TYPE_ICONS: Record<string, string> = { workflow: '🔄', agent: '🤖', automation: '⚡', webhook: '🔗', schedule: '⏰', manual: '👤' };
