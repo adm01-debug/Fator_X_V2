@@ -123,7 +123,8 @@ export function NotificationCenterPanel() {
         </div>
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-2">
+        <MultiChannelComposer onSent={loadAll} />
         <Dialog open={testOpen} onOpenChange={setTestOpen}>
           <DialogTrigger asChild>
             <Button
