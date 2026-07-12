@@ -184,10 +184,10 @@ export async function getNotificationStats(): Promise<NotificationStats> {
   const byPriority = {} as Record<NotificationPriority, number>;
   let totalDeliveryTime = 0, deliveryCount = 0;
 
-  const sent = items.filter((i: any) => i.status !== 'pending' && i.status !== 'cancelled');
-  const delivered = items.filter((i: any) => ['delivered', 'read'].includes(i.status));
-  const failed = items.filter((i: any) => i.status === 'failed');
-  const read = items.filter((i: any) => i.status === 'read');
+  const sent = items.filter((i: { status: string }) => i.status !== 'pending' && i.status !== 'cancelled');
+  const delivered = items.filter((i: { status: string }) => ['delivered', 'read'].includes(i.status));
+  const failed = items.filter((i: { status: string }) => i.status === 'failed');
+  const read = items.filter((i: { status: string }) => i.status === 'read');
 
   for (const item of items) {
     if (!byChannel[item.channel]) byChannel[item.channel] = { sent: 0, delivered: 0, failed: 0 };
