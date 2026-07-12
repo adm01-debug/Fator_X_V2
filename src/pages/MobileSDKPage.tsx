@@ -167,6 +167,45 @@ dependencies:
             </CardContent>
           </Card>
 
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-body-sm flex items-center gap-2"><QrCode className="h-4 w-4" />Deep link + QR Code</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div>
+                <Label className="text-meta">Agente</Label>
+                <select
+                  value={agentId}
+                  onChange={(e) => setAgentId(e.target.value)}
+                  className="mt-1 w-full h-9 rounded-md border border-input bg-background px-3 text-body-sm"
+                >
+                  <option value="">— Selecione —</option>
+                  {agents.map((a) => (
+                    <option key={a.id} value={a.id}>{a.avatar_emoji ?? "🤖"} {a.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <Label className="text-meta">API Key</Label>
+                <Input value={apiKey} onChange={(e) => setApiKey(e.target.value)} className="mt-1 font-mono text-meta" />
+              </div>
+              <div className="flex flex-col items-center gap-2 pt-2">
+                <div className="p-3 bg-white rounded-md">
+                  <QRCodeSVG value={deepLink} size={160} level="M" />
+                </div>
+                <code className="text-meta text-muted-foreground break-all text-center max-w-full">{deepLink}</code>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => { navigator.clipboard.writeText(deepLink); toast.success("Deep link copiado"); }}
+                >
+                  <Copy className="h-3.5 w-3.5 mr-1.5" />Copiar deep link
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
           <Button className="w-full" variant="outline"><Download className="h-4 w-4 mr-2" />Baixar exemplo completo</Button>
         </div>
       </div>
