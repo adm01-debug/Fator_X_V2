@@ -46,6 +46,7 @@ const navSections = [
       { title: "Conhecimento / RAG", url: "/knowledge", icon: BookOpen },
       { title: "Memória", url: "/memory", icon: Brain },
       { title: "Ferramentas", url: "/tools", icon: Puzzle },
+      { title: "MCP Servers", url: "/mcp-servers", icon: Boxes },
       { title: "Prompts", url: "/prompts", icon: FileText },
       { title: "Workflows", url: "/workflows", icon: GitBranch },
       { title: "Orquestração Multi-Agente", url: "/orchestration", icon: Network },

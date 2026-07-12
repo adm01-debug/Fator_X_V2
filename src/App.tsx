@@ -41,6 +41,7 @@ const OraclePage = lazy(() => import("./pages/OraclePage"));
 const KnowledgePage = lazy(() => import("./pages/KnowledgePage"));
 const MemoryPage = lazy(() => import("./pages/MemoryPage"));
 const ToolsPage = lazy(() => import("./pages/ToolsPage"));
+const MCPServersPage = lazy(() => import("./pages/MCPServersPage"));
 const RoutingConfigPage = lazy(() => import("./pages/RoutingConfigPage"));
 const PromptsPage = lazy(() => import("./pages/PromptsPage"));
 const PromptEditorPage = lazy(() => import("./pages/PromptEditorPage"));
@@ -216,6 +217,7 @@ const App = () => {
                       <Route path="/knowledge-management/article/:id" element={<SafePage><ArticleEditorPage /></SafePage>} />
                       <Route path="/memory" element={<SafePage><MemoryPage /></SafePage>} />
                       <Route path="/tools" element={<SafePage><ToolsPage /></SafePage>} />
+                      <Route path="/mcp-servers" element={<SafePage><MCPServersPage /></SafePage>} />
                       <Route path="/routing" element={<SafePage><RoutingConfigPage /></SafePage>} />
                       <Route path="/prompts" element={<SafePage><PromptsPage /></SafePage>} />
                       <Route path="/prompts/experiments" element={<SafePage><PromptExperimentsPage /></SafePage>} />

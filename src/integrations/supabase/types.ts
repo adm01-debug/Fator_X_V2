@@ -4910,6 +4910,54 @@ export type Database = {
           },
         ]
       }
+      mcp_servers: {
+        Row: {
+          created_at: string
+          error: string | null
+          id: string
+          last_connected: string | null
+          name: string
+          owner_id: string
+          resources: Json
+          status: string
+          tools: Json
+          tools_discovered: Json
+          transport: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          last_connected?: string | null
+          name: string
+          owner_id?: string
+          resources?: Json
+          status?: string
+          tools?: Json
+          tools_discovered?: Json
+          transport?: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          last_connected?: string | null
+          name?: string
+          owner_id?: string
+          resources?: Json
+          status?: string
+          tools?: Json
+          tools_discovered?: Json
+          transport?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
       model_pricing: {
         Row: {
           created_at: string
