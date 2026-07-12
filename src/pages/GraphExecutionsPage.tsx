@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { GitBranch, RefreshCw, Eye, Clock, DollarSign, AlertCircle } from "lucide-react";
+import { RefreshCw, Eye, Clock, DollarSign, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { logger } from "@/lib/logger";
 import { formatDistanceToNow } from "date-fns";
