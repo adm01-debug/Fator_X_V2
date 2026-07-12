@@ -3,7 +3,7 @@
  * Consome hooks useAgentEvals: datasets, runs e resultados detalhados.
  */
 import { useMemo, useState } from "react";
-import { Beaker, Play, Plus, Trash2, CheckCircle2, XCircle, Loader2, Clock, DollarSign } from "lucide-react";
+import { Play, Plus, Trash2, CheckCircle2, XCircle, Loader2, Clock, DollarSign } from "lucide-react";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
