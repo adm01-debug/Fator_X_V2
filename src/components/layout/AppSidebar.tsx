@@ -50,6 +50,7 @@ const navSections = [
       { title: "Prompts", url: "/prompts", icon: FileText },
       { title: "Workflows", url: "/workflows", icon: GitBranch },
       { title: "Orquestração Multi-Agente", url: "/orchestration", icon: Network },
+      { title: "Painel A2A", url: "/a2a", icon: Share2 },
       { title: "Automação", url: "/automation", icon: Zap },
       { title: "Roteamento", url: "/routing", icon: RouteIcon },
       { title: "Fine-tuning", url: "/fine-tuning", icon: Dna },
