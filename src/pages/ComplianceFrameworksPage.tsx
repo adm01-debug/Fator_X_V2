@@ -42,7 +42,7 @@ type Control = {
   id: string;
   framework_id: string;
   code: string;
-  category: string | null;
+  category: string;
   title: string;
   description: string | null;
   evidence_type: string | null;
