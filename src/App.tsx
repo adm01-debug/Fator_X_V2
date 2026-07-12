@@ -135,6 +135,7 @@ const AgentWorkflowsPage = lazy(() => import("./pages/AgentWorkflowsPage"));
 const ChaosExperimentsPage = lazy(() => import("./pages/ChaosExperimentsPage"));
 const BCPTestRunsPage = lazy(() => import("./pages/BCPTestRunsPage"));
 const AgentSessionsPage = lazy(() => import("./pages/AgentSessionsPage"));
+const GraphExecutionsPage = lazy(() => import("./pages/GraphExecutionsPage"));
 const AgentExperimentsPage = lazy(() => import("./pages/AgentExperimentsPage"));
 const CreatorPayoutsPage = lazy(() => import("./pages/CreatorPayoutsPage"));
 const SLODashboard = lazy(() => import("./pages/SLODashboard"));
@@ -338,6 +339,7 @@ const App = () => {
                       <Route path="/security/chaos-experiments" element={<SafePage><ChaosExperimentsPage /></SafePage>} />
                       <Route path="/security/bcp-tests" element={<SafePage><ProtectedRoute permission="settings.api_keys"><BCPTestRunsPage /></ProtectedRoute></SafePage>} />
                       <Route path="/agent-sessions" element={<SafePage><AgentSessionsPage /></SafePage>} />
+                      <Route path="/graph-executions" element={<SafePage><GraphExecutionsPage /></SafePage>} />
                       
                       
                       <Route path="/agent-experiments" element={<SafePage><AgentExperimentsPage /></SafePage>} />
