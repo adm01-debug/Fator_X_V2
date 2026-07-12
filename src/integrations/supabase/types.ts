@@ -8266,6 +8266,27 @@ export type Database = {
           },
         ]
       }
+      llm_cost_by_caller: {
+        Row: {
+          caller: string | null
+          calls: number | null
+          cost_usd: number | null
+          day: string | null
+          model: string | null
+          provider: string | null
+          tokens: number | null
+          workspace_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usage_records_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       oncall_schedule_safe: {
         Row: {
           created_at: string | null

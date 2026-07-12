@@ -63,6 +63,7 @@ const navSections = [
       { title: "Sessões de Agentes", url: "/agent-sessions", icon: Mic },
       { title: "Execuções de Grafos", url: "/graph-executions", icon: GitBranch },
       { title: "Resolução de Entidades", url: "/entity-resolution", icon: GitMerge },
+      { title: "Custo LLM por Função", url: "/llm-cost-by-caller", icon: Calculator },
       
       { title: "NLP Pipeline", url: "/nlp", icon: Languages },
       { title: "Computer Use", url: "/computer-use", icon: Monitor },
