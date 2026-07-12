@@ -111,7 +111,7 @@ export default function AgentEvalsPage() {
     <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
       <PageHeader
         title="Avaliações de Agente"
-        subtitle="Datasets curados + LLM-as-judge para validar qualidade, custo e latência por versão."
+        description="Datasets curados + LLM-as-judge para validar qualidade, custo e latência por versão."
         icon={Beaker}
       />
 
