@@ -8644,6 +8644,15 @@ export type Database = {
         Args: { p_period?: string; p_workspace_id: string }
         Returns: number
       }
+      get_db_rollback_rate: {
+        Args: never
+        Returns: {
+          commits: number
+          deadlocks: number
+          rollback_rate_pct: number
+          rollbacks: number
+        }[]
+      }
       get_ir_summary: { Args: { p_workspace_id: string }; Returns: Json }
       get_masked_secrets: {
         Args: { p_workspace_id: string }
