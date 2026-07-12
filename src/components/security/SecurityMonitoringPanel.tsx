@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import { logger } from "@/lib/logger";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -86,6 +87,7 @@ export function SecurityMonitoringPanel() {
       setAlerts(prev => prev.filter(a => a.id !== id));
       toast.success('Alerta resolvido');
     } catch (err) {
+      logger.error("Failed to resolve security alert", { alert_id: id, error: err instanceof Error ? err.message : String(err) });
       toast.error('Falha ao resolver alerta');
     }
   }
