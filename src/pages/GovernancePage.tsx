@@ -114,6 +114,38 @@ export default function GovernancePage() {
     },
   });
 
+  const ipQuery = useQuery({
+    queryKey: ["governance", "ip_whitelist", workspaceId],
+    enabled: !!workspaceId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("ip_whitelist")
+        .select("id, ip_address, label, is_active, created_at")
+        .eq("workspace_id", workspaceId!)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as IPEntry[];
+    },
+  });
+
+  const blockedQuery = useQuery({
+    queryKey: ["governance", "access_blocked", workspaceId],
+    enabled: !!workspaceId,
+    refetchInterval: 30_000,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("access_blocked_log")
+        .select("id, ip_address, country_code, reason, created_at")
+        .eq("workspace_id", workspaceId!)
+        .order("created_at", { ascending: false })
+        .limit(10);
+      if (error) throw error;
+      return (data ?? []) as BlockedEntry[];
+    },
+  });
+
+
+
   const [freezeOpen, setFreezeOpen] = useState(false);
   const [fName, setFName] = useState("");
   const [fReason, setFReason] = useState("");
