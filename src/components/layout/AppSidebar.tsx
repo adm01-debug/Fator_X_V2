@@ -92,6 +92,7 @@ const navSections = [
       { title: "Chaos Lab", url: "/observability/chaos", icon: Zap },
       { title: "Synthetic Monitoring", url: "/observability/synthetic", icon: Radar },
       { title: "Anomalias de Custo", url: "/observability/cost-anomalies", icon: TrendingDown },
+      { title: "Simulador de Custos", url: "/cost-simulator", icon: Calculator },
       { title: "Game Days", url: "/observability/game-days", icon: Swords },
       { title: "Playbooks", url: "/observability/playbooks", icon: BookOpen },
       { title: "On-Call", url: "/observability/oncall", icon: Phone },
