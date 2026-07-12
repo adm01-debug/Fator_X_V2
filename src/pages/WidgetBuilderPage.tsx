@@ -79,11 +79,10 @@ export default function WidgetBuilderPage() {
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
       <PageHeader
-        icon={Sparkles}
         title="Widget Builder"
-        subtitle="Construa um widget de chat embarcável para seu site com preview em tempo real"
-        badge={<Badge className="bg-primary/15 text-primary border-none">Embed</Badge>}
+        description="Construa um widget de chat embarcável para seu site com preview em tempo real"
       />
+
 
       <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
         {/* Config */}
