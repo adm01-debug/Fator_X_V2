@@ -51,6 +51,21 @@ type EntityLog = {
   created_at: string;
 };
 
+type CronJobHealth = {
+  jobid: number;
+  jobname: string;
+  schedule: string;
+  active: boolean;
+  last_run_at: string | null;
+  last_status: string | null;
+  last_duration_ms: number | null;
+  runs_20: number;
+  success_20: number;
+  failure_20: number;
+  success_rate: number | null;
+  avg_duration_ms: number | null;
+};
+
 const statusBadge = (status: string) => {
   const s = status.toLowerCase();
   if (s.includes("success") || s.includes("complet") || s === "ok") {
