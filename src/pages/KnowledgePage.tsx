@@ -32,8 +32,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 
 const pipeline = [
-  { name: 'Parsing', icon: FileText, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-  { name: 'Chunking', icon: Layers, color: 'text-purple-500', bg: 'bg-purple-500/10' },
+  { name: 'Parsing', icon: FileText, color: 'text-nexus-blue', bg: 'bg-nexus-blue/10' },
+  { name: 'Chunking', icon: Layers, color: 'text-nexus-purple', bg: 'bg-nexus-purple/10' },
   { name: 'Metadata', icon: Shield, color: 'text-nexus-emerald', bg: 'bg-nexus-emerald/10' },
   { name: 'Embeddings', icon: BrainCircuit, color: 'text-nexus-amber', bg: 'bg-nexus-amber/10' },
   { name: 'Indexing', icon: Database, color: 'text-primary', bg: 'bg-primary/10' }
@@ -374,7 +374,7 @@ export default function KnowledgePage() {
                   {[
                     { icon: Globe, color: 'text-nexus-cyan' },
                     { icon: Database, color: 'text-primary' },
-                    { icon: Layers, color: 'text-purple-500' },
+                    { icon: Layers, color: 'text-nexus-purple' },
                   ].map((s, i) => (
                     <div key={i} className="flex flex-col items-center justify-center p-3 rounded-xl bg-secondary/20 border border-border/10">
                       <s.icon className={cn("h-4 w-4 mb-1", s.color)} />

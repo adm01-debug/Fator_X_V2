@@ -177,8 +177,8 @@ export default function FreezeWindowsPage() {
       />
 
       {stats.active > 0 && (
-        <Alert className="border-amber-500/40 bg-amber-500/10">
-          <ShieldAlert className="size-4 text-amber-500" />
+        <Alert className="border-nexus-amber/40 bg-nexus-amber/10">
+          <ShieldAlert className="size-4 text-nexus-amber" />
           <AlertTitle>Congelamento em vigor</AlertTitle>
           <AlertDescription>
             {stats.active} janela{stats.active > 1 ? "s" : ""} ativa
@@ -210,7 +210,7 @@ export default function FreezeWindowsPage() {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground">Ativas</CardTitle>
           </CardHeader>
-          <CardContent className="text-3xl font-bold text-amber-500">{stats.active}</CardContent>
+          <CardContent className="text-3xl font-bold text-nexus-amber">{stats.active}</CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
@@ -331,7 +331,7 @@ export default function FreezeWindowsPage() {
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-semibold">{w.name}</span>
                     {status === "active" && (
-                      <Badge className="bg-amber-500/15 text-amber-500 border-amber-500/30">
+                      <Badge className="bg-nexus-amber/15 text-nexus-amber border-nexus-amber/30">
                         <ShieldAlert className="size-3 mr-1" /> Congelamento ativo
                       </Badge>
                     )}

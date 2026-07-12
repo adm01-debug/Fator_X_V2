@@ -155,7 +155,7 @@ export default function IPWhitelistPage() {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground">Ativas</CardTitle>
           </CardHeader>
-          <CardContent className="text-3xl font-bold text-emerald-500">
+          <CardContent className="text-3xl font-bold text-nexus-emerald">
             {stats.active}
           </CardContent>
         </Card>
@@ -235,7 +235,7 @@ export default function IPWhitelistPage() {
                     </Badge>
                   )}
                   {entry.is_active ? (
-                    <Badge className="bg-emerald-500/15 text-emerald-500 border-emerald-500/30">
+                    <Badge className="bg-nexus-emerald/15 text-nexus-emerald border-nexus-emerald/30">
                       <ShieldCheck className="size-3 mr-1" /> Ativo
                     </Badge>
                   ) : (

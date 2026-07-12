@@ -311,7 +311,7 @@ export default function SmolagentPage() {
                 <p className="text-meta text-muted-foreground uppercase tracking-wider">ReAct Loop Playground</p>
               </div>
             </div>
-            <Badge variant="outline" className="text-meta bg-green-500/10 text-green-500 border-green-500/20">
+            <Badge variant="outline" className="text-meta bg-nexus-green/10 text-nexus-green border-nexus-green/20">
               Streaming Active
             </Badge>
           </div>

@@ -72,7 +72,7 @@ export function OverviewTab() {
     { label: 'Entidades', value: stats?.entities ?? 0, icon: '🏢', color: 'text-nexus-blue' },
     { label: 'Relações', value: stats?.relations ?? 0, icon: '🔗', color: 'text-nexus-amber' },
     { label: 'Traces', value: stats?.traces ?? 0, icon: '📊', color: 'text-nexus-rose' },
-    { label: 'Consultas Hoje', value: stats?.today_traces ?? 0, icon: '🔍', color: 'text-teal-400' },
+    { label: 'Consultas Hoje', value: stats?.today_traces ?? 0, icon: '🔍', color: 'text-nexus-teal' },
     { label: 'Ferramentas', value: stats?.tools ?? 0, icon: '🔧', color: 'text-nexus-amber' },
   ];
 

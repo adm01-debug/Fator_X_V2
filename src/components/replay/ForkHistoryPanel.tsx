@@ -19,9 +19,9 @@ interface Props {
 
 const statusConfig = {
   pending: { icon: Clock, color: "text-muted-foreground", label: "Pendente" },
-  running: { icon: Loader2, color: "text-blue-500 animate-spin", label: "Executando" },
-  completed: { icon: CheckCircle2, color: "text-emerald-500", label: "Concluído" },
-  failed: { icon: XCircle, color: "text-rose-500", label: "Falhou" },
+  running: { icon: Loader2, color: "text-nexus-blue animate-spin", label: "Executando" },
+  completed: { icon: CheckCircle2, color: "text-nexus-emerald", label: "Concluído" },
+  failed: { icon: XCircle, color: "text-nexus-rose", label: "Falhou" },
 } as const;
 
 export function ForkHistoryPanel({ forks, loading, onExecute, onDelete, onSelect, selectedId }: Props) {

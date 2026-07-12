@@ -31,7 +31,7 @@ export function IngestionConfigPanel() {
         {/* Chunking Strategy */}
         <div className="space-y-6">
           <div className="flex items-center gap-2">
-            <Layers className="h-4 w-4 text-purple-500" />
+            <Layers className="h-4 w-4 text-nexus-purple" />
             <h4 className="text-meta font-black uppercase tracking-widest text-foreground">Chunking Strategy</h4>
           </div>
 

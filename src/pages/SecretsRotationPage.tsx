@@ -324,7 +324,7 @@ export default function SecretsRotationPage() {
                           <div>
                             <div>{new Date(s.next_rotation_due).toLocaleDateString('pt-BR')}</div>
                             {days !== null && s.status !== 'retired' && (
-                              <div className={`text-meta ${days < 0 ? 'text-destructive' : days < 7 ? 'text-amber-500' : 'text-muted-foreground'}`}>
+                              <div className={`text-meta ${days < 0 ? 'text-destructive' : days < 7 ? 'text-nexus-amber' : 'text-muted-foreground'}`}>
                                 {days < 0 ? `${Math.abs(days)}d atrasado` : `em ${days}d`}
                               </div>
                             )}
@@ -395,8 +395,8 @@ function StatCard({ label, value, icon, tone, pulse }: { label: string; value: n
   const toneClasses = {
     default: 'text-foreground',
     destructive: 'text-destructive',
-    warning: 'text-amber-500',
-    success: 'text-emerald-500',
+    warning: 'text-nexus-amber',
+    success: 'text-nexus-emerald',
     muted: 'text-muted-foreground',
   };
   return (
@@ -415,9 +415,9 @@ function StatCard({ label, value, icon, tone, pulse }: { label: string; value: n
 function StatusBadge({ variant }: { variant: 'overdue' | 'urgent' | 'soon' | 'ok' | 'retired' }) {
   const config = {
     overdue: { label: 'Overdue', cls: 'bg-destructive/15 text-destructive border-destructive/30 animate-pulse-subtle' },
-    urgent: { label: '<7d', cls: 'bg-amber-500/15 text-amber-500 border-amber-500/30' },
-    soon: { label: '<30d', cls: 'bg-yellow-500/15 text-yellow-600 border-yellow-500/30' },
-    ok: { label: 'OK', cls: 'bg-emerald-500/15 text-emerald-500 border-emerald-500/30' },
+    urgent: { label: '<7d', cls: 'bg-nexus-amber/15 text-nexus-amber border-nexus-amber/30' },
+    soon: { label: '<30d', cls: 'bg-nexus-yellow/15 text-nexus-yellow border-nexus-yellow/30' },
+    ok: { label: 'OK', cls: 'bg-nexus-emerald/15 text-nexus-emerald border-nexus-emerald/30' },
     retired: { label: 'Aposentado', cls: 'bg-muted text-muted-foreground border-border' },
   }[variant];
   return (

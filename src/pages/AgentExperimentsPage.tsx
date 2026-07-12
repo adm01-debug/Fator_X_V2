@@ -52,10 +52,10 @@ function statusBadge(status: ExperimentStatus) {
     draft: { label: "Rascunho", className: "bg-muted text-muted-foreground" },
     running: {
       label: "Em execução",
-      className: "bg-emerald-500/15 text-emerald-500 border-emerald-500/30",
+      className: "bg-nexus-emerald/15 text-nexus-emerald border-nexus-emerald/30",
     },
-    paused: { label: "Pausado", className: "bg-amber-500/15 text-amber-500 border-amber-500/30" },
-    completed: { label: "Concluído", className: "bg-sky-500/15 text-sky-500 border-sky-500/30" },
+    paused: { label: "Pausado", className: "bg-nexus-amber/15 text-nexus-amber border-nexus-amber/30" },
+    completed: { label: "Concluído", className: "bg-nexus-cyan/15 text-nexus-cyan border-nexus-cyan/30" },
   };
   const cfg = map[status];
   return <Badge className={cfg.className}>{cfg.label}</Badge>;
@@ -260,7 +260,7 @@ export default function AgentExperimentsPage() {
                     {statusBadge(exp.status)}
                   </div>
                   {exp.winner && (
-                    <div className="flex items-center gap-1 mt-1 text-xs text-amber-500">
+                    <div className="flex items-center gap-1 mt-1 text-xs text-nexus-amber">
                       <Trophy className="size-3" /> Vencedor: Variante {exp.winner.toUpperCase()}
                     </div>
                   )}
@@ -403,8 +403,8 @@ export default function AgentExperimentsPage() {
                   <TabsContent value="metrics" className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {(
                       [
-                        { key: "a", stats: statsA, tone: "border-sky-500/30 bg-sky-500/5" },
-                        { key: "b", stats: statsB, tone: "border-fuchsia-500/30 bg-fuchsia-500/5" },
+                        { key: "a", stats: statsA, tone: "border-nexus-cyan/30 bg-nexus-cyan/5" },
+                        { key: "b", stats: statsB, tone: "border-nexus-purple/30 bg-nexus-purple/5" },
                       ] as const
                     ).map(({ key, stats, tone }) => (
                       <Card key={key} className={tone}>
@@ -412,7 +412,7 @@ export default function AgentExperimentsPage() {
                           <CardTitle className="flex items-center gap-2 text-base">
                             Variante {key.toUpperCase()}
                             {selected.winner === key && (
-                              <Badge className="bg-amber-500/15 text-amber-500 border-amber-500/30">
+                              <Badge className="bg-nexus-amber/15 text-nexus-amber border-nexus-amber/30">
                                 <Trophy className="size-3 mr-1" /> Vencedor
                               </Badge>
                             )}
@@ -485,8 +485,8 @@ export default function AgentExperimentsPage() {
                                   variant="outline"
                                   className={
                                     r.variant === "a"
-                                      ? "border-sky-500/40 text-sky-500"
-                                      : "border-fuchsia-500/40 text-fuchsia-500"
+                                      ? "border-nexus-cyan/40 text-nexus-cyan"
+                                      : "border-nexus-purple/40 text-nexus-purple"
                                   }
                                 >
                                   {r.variant.toUpperCase()}

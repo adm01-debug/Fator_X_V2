@@ -41,19 +41,19 @@ const LEVEL_META: Record<
     label: "Fresco",
     icon: Sparkles,
     variant: "outline",
-    className: "text-emerald-500 border-emerald-500/40",
+    className: "text-nexus-emerald border-nexus-emerald/40",
   },
   review: {
     label: "Revisar",
     icon: Clock,
     variant: "outline",
-    className: "text-amber-500 border-amber-500/40",
+    className: "text-nexus-amber border-nexus-amber/40",
   },
   refresh: {
     label: "Atualizar",
     icon: RefreshCw,
     variant: "outline",
-    className: "text-orange-500 border-orange-500/40",
+    className: "text-nexus-orange border-nexus-orange/40",
   },
   archive: {
     label: "Arquivar",

@@ -239,8 +239,8 @@ export default function SettingsPage() {
                     <h3 className="text-title-sm font-semibold text-foreground">Bitrix24 CRM Sync</h3>
                     <p className="text-meta text-muted-foreground">Ponte de dados para automação comercial e gestão de leads</p>
                   </div>
-                  <div className="h-8 w-8 rounded bg-blue-500/10 flex items-center justify-center border border-blue-500/20">
-                    <span className="text-blue-500 text-meta font-bold italic">B24</span>
+                  <div className="h-8 w-8 rounded bg-nexus-blue/10 flex items-center justify-center border border-nexus-blue/20">
+                    <span className="text-nexus-blue text-meta font-bold italic">B24</span>
                   </div>
                 </div>
                 <Bitrix24Connect />

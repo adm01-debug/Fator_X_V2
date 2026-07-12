@@ -84,7 +84,7 @@ export function RollbackRateCard() {
               <CheckCircle2 className="h-3 w-3" /> Saudável
             </Badge>
           ) : warning ? (
-            <Badge className="bg-yellow-500/20 text-yellow-500 border-yellow-500/30 gap-1">
+            <Badge className="bg-nexus-yellow/20 text-nexus-yellow border-nexus-yellow/30 gap-1">
               <AlertTriangle className="h-3 w-3" /> Atenção
             </Badge>
           ) : (
@@ -111,7 +111,7 @@ export function RollbackRateCard() {
                 ratePerMin.rate_per_min > 10
                   ? "text-destructive"
                   : ratePerMin.rate_per_min > 1
-                    ? "text-yellow-500"
+                    ? "text-nexus-yellow"
                     : "text-nexus-emerald"
               }`}
             >

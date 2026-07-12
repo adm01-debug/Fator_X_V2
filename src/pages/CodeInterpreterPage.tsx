@@ -149,7 +149,7 @@ export default function CodeInterpreterPage() {
                   <pre className="text-meta bg-muted/30 p-4 rounded font-mono whitespace-pre-wrap min-h-[180px] max-h-[300px] overflow-auto border border-border/40">
                     {liveStdout || (running ? "▶ Inicializando container..." : "Aguardando execução...")}
                   </pre>
-                  {running && <div className="absolute top-2 right-2 flex gap-1"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse delay-75" /></div>}
+                  {running && <div className="absolute top-2 right-2 flex gap-1"><div className="w-1.5 h-1.5 rounded-full bg-nexus-emerald animate-pulse" /><div className="w-1.5 h-1.5 rounded-full bg-nexus-emerald animate-pulse delay-75" /></div>}
                 </div>
               </TabsContent>
               <TabsContent value="stderr">
@@ -220,7 +220,7 @@ export default function CodeInterpreterPage() {
                   </div>
 
                   {current?.simulated && (
-                    <div className="p-3 rounded-lg bg-amber-500/5 border border-amber-500/20 text-amber-600 dark:text-amber-400 flex items-start gap-3">
+                    <div className="p-3 rounded-lg bg-nexus-amber/5 border border-nexus-amber/20 text-nexus-amber dark:text-nexus-amber flex items-start gap-3">
                       <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
                       <div className="text-meta leading-relaxed">
                         <p className="font-semibold">Ambiente Virtualizado</p>
@@ -257,7 +257,7 @@ export default function CodeInterpreterPage() {
                       className={`w-full text-left p-2.5 rounded border transition-all hover:border-primary/40 ${current?.id === h.id ? "border-primary bg-primary/5" : "border-border/40 bg-muted/20"}`}>
                       <div className="flex items-center justify-between mb-1">
                         <Badge variant="outline" className="text-[9px] uppercase">{h.runtime}</Badge>
-                        <span className={`text-meta ${h.status === "completed" ? "text-emerald-500" : "text-destructive"}`}>{h.status}</span>
+                        <span className={`text-meta ${h.status === "completed" ? "text-nexus-emerald" : "text-destructive"}`}>{h.status}</span>
                       </div>
                       <pre className="text-meta font-mono text-muted-foreground truncate">{h.code.split("\n")[0].slice(0, 50)}</pre>
                       <div className="text-meta text-muted-foreground mt-1 flex items-center gap-2">

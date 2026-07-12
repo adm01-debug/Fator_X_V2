@@ -170,12 +170,12 @@ export default function DashboardPage() {
       {/* Industrial Quick Actions Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
         {[
-          { label: 'Conhecimento', icon: BookOpen, path: '/knowledge', color: 'text-blue-500', bg: 'bg-blue-500/10' },
-          { label: 'Workflows', icon: GitBranch, path: '/workflows', color: 'text-purple-500', bg: 'bg-purple-500/10' },
-          { label: 'Monitoramento', icon: Activity, path: '/monitoring', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-          { label: 'Segurança', icon: Shield, path: '/security', color: 'text-orange-500', bg: 'bg-orange-500/10' },
-          { label: 'Ferramentas', icon: Zap, path: '/tools', color: 'text-cyan-500', bg: 'bg-cyan-500/10' },
-          { label: 'Analytics', icon: BarChart3, path: '/monitoring', color: 'text-pink-500', bg: 'bg-pink-500/10' },
+          { label: 'Conhecimento', icon: BookOpen, path: '/knowledge', color: 'text-nexus-blue', bg: 'bg-nexus-blue/10' },
+          { label: 'Workflows', icon: GitBranch, path: '/workflows', color: 'text-nexus-purple', bg: 'bg-nexus-purple/10' },
+          { label: 'Monitoramento', icon: Activity, path: '/monitoring', color: 'text-nexus-emerald', bg: 'bg-nexus-emerald/10' },
+          { label: 'Segurança', icon: Shield, path: '/security', color: 'text-nexus-orange', bg: 'bg-nexus-orange/10' },
+          { label: 'Ferramentas', icon: Zap, path: '/tools', color: 'text-nexus-cyan', bg: 'bg-nexus-cyan/10' },
+          { label: 'Analytics', icon: BarChart3, path: '/monitoring', color: 'text-nexus-rose', bg: 'bg-nexus-rose/10' },
         ].map((action, i) => (
           <button
             key={i}
@@ -213,8 +213,8 @@ export default function DashboardPage() {
                 <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem] flex flex-col shadow-xl shadow-primary/[0.02] hover:shadow-2xl hover:shadow-primary/[0.04] transition-all duration-500">
                   <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-2xl bg-blue-500/10 flex items-center justify-center">
-                        <Layers className="h-6 w-6 text-blue-500" />
+                      <div className="h-12 w-12 rounded-2xl bg-nexus-blue/10 flex items-center justify-center">
+                        <Layers className="h-6 w-6 text-nexus-blue" />
                       </div>
                       <h3 className="text-xl font-heading font-black text-foreground tracking-tight">Top Agentes</h3>
                     </div>

@@ -95,9 +95,9 @@ export function SecurityMonitoringPanel() {
   const getSeverityColor = (sev: string) => {
     switch (sev) {
       case 'critical': return 'bg-destructive/20 text-destructive border-destructive/30';
-      case 'high': return 'bg-orange-500/20 text-orange-500 border-orange-500/30';
-      case 'medium': return 'bg-yellow-500/20 text-yellow-500 border-yellow-500/30';
-      default: return 'bg-blue-500/20 text-blue-500 border-blue-500/30';
+      case 'high': return 'bg-nexus-orange/20 text-nexus-orange border-nexus-orange/30';
+      case 'medium': return 'bg-nexus-yellow/20 text-nexus-yellow border-nexus-yellow/30';
+      default: return 'bg-nexus-blue/20 text-nexus-blue border-nexus-blue/30';
     }
   };
 

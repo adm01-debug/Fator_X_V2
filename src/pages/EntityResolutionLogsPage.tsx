@@ -62,9 +62,9 @@ export default function EntityResolutionLogsPage() {
 
   const confColor = (c: number | null) => {
     const v = c ?? 0;
-    if (v >= 0.9) return "bg-green-500/15 text-green-500 border-green-500/30";
-    if (v >= 0.7) return "bg-amber-500/15 text-amber-500 border-amber-500/30";
-    return "bg-red-500/15 text-red-500 border-red-500/30";
+    if (v >= 0.9) return "bg-nexus-green/15 text-nexus-green border-nexus-green/30";
+    if (v >= 0.7) return "bg-nexus-amber/15 text-nexus-amber border-nexus-amber/30";
+    return "bg-nexus-red/15 text-nexus-red border-nexus-red/30";
   };
 
   return (
@@ -86,9 +86,9 @@ export default function EntityResolutionLogsPage() {
         <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Confiança média</CardTitle></CardHeader>
           <CardContent><div className="text-2xl font-bold">{avgConfidence.toFixed(1)}%</div></CardContent></Card>
         <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Alta confiança</CardTitle></CardHeader>
-          <CardContent><div className="text-2xl font-bold text-green-500">{highConf}</div></CardContent></Card>
+          <CardContent><div className="text-2xl font-bold text-nexus-green">{highConf}</div></CardContent></Card>
         <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Revisar</CardTitle></CardHeader>
-          <CardContent><div className="text-2xl font-bold text-red-500">{lowConf}</div></CardContent></Card>
+          <CardContent><div className="text-2xl font-bold text-nexus-red">{lowConf}</div></CardContent></Card>
       </div>
 
       <Card>

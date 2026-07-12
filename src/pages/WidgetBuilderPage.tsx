@@ -272,7 +272,7 @@ export default function WidgetBuilderPage() {
 {embedCode}
                   </pre>
                   {!agentId && (
-                    <p className="text-xs text-amber-500 mt-3">
+                    <p className="text-xs text-nexus-amber mt-3">
                       ⚠ Selecione um agente antes de copiar — o código atual contém apenas o placeholder <code>AGENT_ID</code>.
                     </p>
                   )}

@@ -36,7 +36,7 @@ export function KnowledgeGraphTab() {
     agent: { emoji: '🤖', label: 'Agentes', color: 'border-primary/50 bg-primary/5' },
     knowledge_base: { emoji: '📚', label: 'Bases de Conhecimento', color: 'border-nexus-emerald/50 bg-nexus-emerald/5' },
     tool: { emoji: '🔧', label: 'Ferramentas', color: 'border-nexus-amber/50 bg-nexus-amber/5' },
-    workflow: { emoji: '🔄', label: 'Workflows', color: 'border-cyan-500/50 bg-cyan-500/5' },
+    workflow: { emoji: '🔄', label: 'Workflows', color: 'border-nexus-cyan/50 bg-nexus-cyan/5' },
     person: { emoji: '👤', label: 'Pessoas', color: 'border-nexus-blue/50 bg-nexus-blue/5' },
     organization: { emoji: '🏢', label: 'Empresas', color: 'border-nexus-purple/50 bg-nexus-purple/5' },
     concept: { emoji: '💡', label: 'Conceitos', color: 'border-nexus-orange/50 bg-nexus-orange/5' },
