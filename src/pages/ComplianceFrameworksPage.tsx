@@ -396,7 +396,7 @@ function ControlDialog({
           onClick={() => onSubmit({
             framework_id: frameworkId,
             code, title,
-            category: category || null,
+            category: category || "",
             description: description || null,
             evidence_type: evidenceType,
             auto_check_query: null,
