@@ -4,7 +4,7 @@ import { InfoHint } from "@/components/shared/InfoHint";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Brain, Search, Network, BookOpen,
-  Activity, Users, FlaskConical, Zap, Clock, GitMerge, TrendingDown
+  Activity, Users, FlaskConical, Zap, Clock, GitMerge, TrendingDown, Layers
 } from "lucide-react";
 import { OverviewTab } from "@/components/super-cerebro/OverviewTab";
 import { SearchTab } from "@/components/super-cerebro/SearchTab";
@@ -17,6 +17,7 @@ import { BrainSandboxTab } from "@/components/super-cerebro/BrainSandboxTab";
 import { TemporalGraphTab } from "@/components/super-cerebro/TemporalGraphTab";
 import { EntityResolutionTab } from "@/components/super-cerebro/EntityResolutionTab";
 import { DecayDetectionTab } from "@/components/super-cerebro/DecayDetectionTab";
+import { ContextTiersTab } from "@/components/super-cerebro/ContextTiersTab";
 
 export default function SuperCerebroPage() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -36,7 +37,8 @@ export default function SuperCerebroPage() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="bg-secondary/50 border border-border/50 flex-wrap h-auto gap-1 p-1">
           <TabsTrigger value="overview" className="text-meta gap-1.5"><Brain className="h-3.5 w-3.5" /> Visão Geral</TabsTrigger>
-          <TabsTrigger value="search" className="text-meta gap-1.5"><Search className="h-3.5 w-3.5" /> Context Tiers</TabsTrigger>
+          <TabsTrigger value="search" className="text-meta gap-1.5"><Search className="h-3.5 w-3.5" /> Busca</TabsTrigger>
+          <TabsTrigger value="tiers" className="text-meta gap-1.5"><Layers className="h-3.5 w-3.5" /> Context Tiers</TabsTrigger>
           <TabsTrigger value="knowledge" className="text-meta gap-1.5"><BookOpen className="h-3.5 w-3.5" /> Áreas</TabsTrigger>
           <TabsTrigger value="graph" className="text-meta gap-1.5"><Network className="h-3.5 w-3.5" /> Knowledge Graph</TabsTrigger>
           <TabsTrigger value="temporal" className="text-meta gap-1.5"><Clock className="h-3.5 w-3.5" /> Temporal</TabsTrigger>
@@ -50,6 +52,7 @@ export default function SuperCerebroPage() {
 
         <TabsContent value="overview" className="animate-in fade-in-50 duration-500"><OverviewTab /></TabsContent>
         <TabsContent value="search" className="animate-in fade-in-50 duration-500"><SearchTab /></TabsContent>
+        <TabsContent value="tiers" className="animate-in fade-in-50 duration-500"><ContextTiersTab /></TabsContent>
         <TabsContent value="knowledge" className="animate-in fade-in-50 duration-500"><KnowledgeAreasTab /></TabsContent>
         <TabsContent value="graph" className="animate-in fade-in-50 duration-500"><KnowledgeGraphTab /></TabsContent>
         <TabsContent value="temporal" className="animate-in fade-in-50 duration-500"><TemporalGraphTab /></TabsContent>
