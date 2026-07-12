@@ -16,6 +16,22 @@ import { toast } from 'sonner';
 
 type Status = 'success' | 'partial' | 'error';
 
+interface RunConfig {
+  depth?: string;
+  strategy?: string;
+  maxIterations?: number;
+  queriesPerIteration?: number;
+  synthesisModel?: string;
+  language?: string;
+  includeInternal?: boolean;
+  stopOnNoGaps?: boolean;
+  maxTokens?: number;
+  maxSources?: number;
+  maxLatencySec?: number;
+  maxCostUsd?: number;
+  stoppedReason?: string;
+}
+
 interface ParsedRun {
   entry: OracleHistoryEntry;
   status: Status;
@@ -23,6 +39,7 @@ interface ParsedRun {
   sourcesCount: number;
   reportPreview: string;
   errorMessage?: string;
+  config: RunConfig;
 }
 
 function parseRun(entry: OracleHistoryEntry): ParsedRun {
