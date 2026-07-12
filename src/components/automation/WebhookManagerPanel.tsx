@@ -31,9 +31,60 @@ export function WebhookManagerPanel() {
   const [testDialogOpen, setTestDialogOpen] = useState(false);
   const [selectedWebhook, setSelectedWebhook] = useState<WebhookEndpoint | null>(null);
   const [testPayload, setTestPayload] = useState('{\n  "test": true,\n  "source": "nexus-studio",\n  "event": "manual_trigger"\n}');
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historyWebhook, setHistoryWebhook] = useState<WebhookEndpoint | null>(null);
+  const [historyEvents, setHistoryEvents] = useState<WebhookEvent[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [replayingId, setReplayingId] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
+    listWebhooks()
+      .then(setWebhooks)
+      .catch(() => toast({ title: 'Erro ao carregar webhooks', variant: 'destructive' }))
+      .finally(() => setLoading(false));
+  }, [toast]);
+
+  const openHistory = async (w: WebhookEndpoint) => {
+    setHistoryWebhook(w);
+    setHistoryOpen(true);
+    setHistoryLoading(true);
+    try {
+      const events = await getWebhookEvents(w.id, 50);
+      setHistoryEvents(events);
+    } catch {
+      toast({ title: 'Erro ao carregar histórico', variant: 'destructive' });
+      setHistoryEvents([]);
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
+  const handleReplay = async (event: WebhookEvent) => {
+    if (!historyWebhook) return;
+    setReplayingId(event.id);
+    try {
+      const result = await triggerWebhookViaEF({
+        path: historyWebhook.path,
+        payload: (event.body ?? {}) as Record<string, unknown>,
+      });
+      toast({
+        title: 'Replay disparado',
+        description: `${historyWebhook.name} — status ${result.status}`,
+      });
+      // Recarrega histórico após replay
+      const events = await getWebhookEvents(historyWebhook.id, 50);
+      setHistoryEvents(events);
+    } catch (e) {
+      toast({
+        title: 'Falha no replay',
+        description: e instanceof Error ? e.message : 'Erro desconhecido',
+        variant: 'destructive',
+      });
+    } finally {
+      setReplayingId(null);
+    }
+  };
     listWebhooks()
       .then(setWebhooks)
       .catch(() => toast({ title: 'Erro ao carregar webhooks', variant: 'destructive' }))
