@@ -38,7 +38,7 @@ const MODEL_LABELS: Record<SynthesisModel, string> = {
 };
 
 export function ResearchSettingsDialog({ trigger }: Props) {
-  const [saved, updateSaved] = useResearchConfig();
+  const [saved, updateSaved, { loading: cfgLoading }] = useResearchConfig();
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<ResearchConfig>(saved);
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -67,7 +67,7 @@ export function ResearchSettingsDialog({ trigger }: Props) {
     setOpen(o);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const result = validateResearchConfig(draft);
     if (!result.success) {
       setErrors(result.errors);
@@ -75,10 +75,14 @@ export function ResearchSettingsDialog({ trigger }: Props) {
       toast.error(firstMsg ?? 'Verifique os campos destacados');
       return;
     }
-    updateSaved(result.data as ResearchConfig);
-    setErrors({});
-    toast.success('Configuração salva');
-    setOpen(false);
+    try {
+      await updateSaved(result.data as ResearchConfig);
+      setErrors({});
+      toast.success(cfgLoading ? 'Configuração salva' : 'Configuração sincronizada');
+      setOpen(false);
+    } catch {
+      toast.error('Não foi possível salvar no servidor. Tente novamente.');
+    }
   };
 
   const handleReset = () => {
@@ -104,7 +108,7 @@ export function ResearchSettingsDialog({ trigger }: Props) {
             <Settings2 className="h-5 w-5 text-primary" /> Configuração do Deep Research
           </DialogTitle>
           <DialogDescription>
-            Ajuste iterações, estratégia de busca, modelo de síntese e limites de execução. As alterações são persistidas neste dispositivo.
+            Ajuste iterações, estratégia de busca, modelo de síntese e limites de execução. As alterações são sincronizadas na sua conta e disponíveis em todos os dispositivos.
           </DialogDescription>
         </DialogHeader>
 
