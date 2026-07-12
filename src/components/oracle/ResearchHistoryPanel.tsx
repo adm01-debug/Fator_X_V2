@@ -111,7 +111,105 @@ function formatDate(iso: string): string {
   return d.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
 }
 
+const STRATEGY_LABEL: Record<string, string> = {
+  broad: 'Ampla',
+  balanced: 'Equilibrada',
+  focused: 'Focada',
+};
+
+const DEPTH_LABEL: Record<string, string> = {
+  quick: 'Rápida',
+  standard: 'Padrão',
+  deep: 'Profunda',
+};
+
+const STOP_REASON_LABEL: Record<string, string> = {
+  completed: 'Concluído',
+  no_gaps: 'Sem novos gaps',
+  budget_tokens: 'Limite de tokens',
+  budget_time: 'Limite de latência',
+  budget_sources: 'Limite de fontes',
+  budget_cost: 'Limite de custo',
+};
+
+function ConfigItem({ icon: Icon, label, value }: { icon: typeof Settings2; label: string; value: string }) {
+  return (
+    <div className="flex items-start gap-2 min-w-0">
+      <Icon className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+      <div className="min-w-0">
+        <div className="text-meta uppercase tracking-widest text-muted-foreground">{label}</div>
+        <div className="text-body-sm font-semibold text-foreground truncate">{value}</div>
+      </div>
+    </div>
+  );
+}
+
+function ConfigSummary({ config }: { config: RunConfig }) {
+  const items: React.ReactNode[] = [];
+  if (config.depth)
+    items.push(<ConfigItem key="depth" icon={Zap} label="Profundidade" value={DEPTH_LABEL[config.depth] ?? config.depth} />);
+  if (config.strategy)
+    items.push(<ConfigItem key="strategy" icon={Compass} label="Estratégia" value={STRATEGY_LABEL[config.strategy] ?? config.strategy} />);
+  if (typeof config.maxIterations === 'number')
+    items.push(<ConfigItem key="iter" icon={Layers} label="Máx. iterações" value={String(config.maxIterations)} />);
+  if (typeof config.queriesPerIteration === 'number')
+    items.push(<ConfigItem key="qpi" icon={Hash} label="Queries/iteração" value={String(config.queriesPerIteration)} />);
+  if (config.synthesisModel)
+    items.push(<ConfigItem key="model" icon={Brain} label="Modelo síntese" value={config.synthesisModel} />);
+  if (config.language)
+    items.push(<ConfigItem key="lang" icon={Globe2} label="Idioma" value={config.language.toUpperCase()} />);
+  if (typeof config.maxTokens === 'number')
+    items.push(<ConfigItem key="tokens" icon={FileText} label="Máx. tokens" value={config.maxTokens.toLocaleString('pt-BR')} />);
+  if (typeof config.maxSources === 'number')
+    items.push(<ConfigItem key="sources" icon={Link2} label="Máx. fontes" value={String(config.maxSources)} />);
+  if (typeof config.maxLatencySec === 'number')
+    items.push(<ConfigItem key="lat" icon={Timer} label="Latência máx." value={`${config.maxLatencySec}s`} />);
+  if (typeof config.maxCostUsd === 'number')
+    items.push(<ConfigItem key="cost" icon={Coins} label="Custo máx." value={`US$ ${config.maxCostUsd.toFixed(2)}`} />);
+
+  if (items.length === 0 && !config.stoppedReason) {
+    return (
+      <div className="p-3 rounded-lg bg-secondary/30 border border-border/50 text-meta text-muted-foreground italic">
+        Configuração não registrada para esta execução.
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-3 rounded-lg bg-secondary/30 border border-border/50 space-y-3">
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 text-meta font-bold uppercase tracking-widest text-muted-foreground">
+          <Settings2 className="h-3.5 w-3.5 text-primary" /> Configuração usada
+        </div>
+        {config.stoppedReason && (
+          <Badge variant="outline" className="text-meta font-bold">
+            Encerrado: {STOP_REASON_LABEL[config.stoppedReason] ?? config.stoppedReason}
+          </Badge>
+        )}
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-2.5">
+        {items}
+      </div>
+      {(config.includeInternal !== undefined || config.stopOnNoGaps !== undefined) && (
+        <div className="flex flex-wrap gap-2 pt-1">
+          {config.includeInternal !== undefined && (
+            <Badge variant="outline" className="text-meta">
+              Base interna: {config.includeInternal ? 'sim' : 'não'}
+            </Badge>
+          )}
+          {config.stopOnNoGaps !== undefined && (
+            <Badge variant="outline" className="text-meta">
+              Parar sem gaps: {config.stopOnNoGaps ? 'sim' : 'não'}
+            </Badge>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 type FilterKey = 'all' | Status;
+
 
 export function ResearchHistoryPanel() {
   const [runs, setRuns] = useState<ParsedRun[]>([]);
