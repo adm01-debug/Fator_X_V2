@@ -114,6 +114,12 @@ export function DeepResearchPanel() {
         </Button>
       </div>
 
+      {isResearching && (
+        <div className="mt-6">
+          <ResearchProgress depth={depth} maxIterations={MAX_ITER[depth]} startedAt={startedAt} />
+        </div>
+      )}
+
       {error && (
         <Card className="mt-6 bg-destructive/5 border-destructive/20 p-4 animate-in shake-1 duration-500">
           <p className="text-meta text-destructive font-medium flex items-center gap-2">
