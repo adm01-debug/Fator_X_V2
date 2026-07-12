@@ -132,7 +132,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
       queryClient.invalidateQueries({ queryKey: ['documents', selectedCollectionId] });
       queryClient.invalidateQueries({ queryKey: ['chunks'] });
     } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : undefined || 'Erro na ingestão');
+      toast.error(e instanceof Error ? e.message : 'Erro na ingestão');
     } finally { setSaving(false); }
   };
 
@@ -264,7 +264,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
               <p className="text-meta text-muted-foreground">Nenhum documento nesta collection.</p>
             </div>
           ) : (
-            documents.map((doc: { id: string; title: string; source_type: string; status: string; source_url?: string | null }) => (
+            documents.map((doc: { id: string; title: string; source_type: string | null; status: string | null; source_url: string | null }) => (
               <div key={doc.id} className="nexus-card p-3 group">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 min-w-0">
@@ -309,7 +309,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
             </div>
           ) : (
             <div className="space-y-2 max-h-[600px] overflow-y-auto">
-              {chunks.map((chunk: { id: string; chunk_index: number; token_count?: number | null; embedding_status: string; content?: string }) => (
+              {chunks.map((chunk: { id: string; chunk_index: number; token_count: number | null; embedding_status: string | null }) => (
                 <div key={chunk.id} className="nexus-card p-3">
                   <div className="flex items-center justify-between mb-1.5">
                     <Badge variant="outline" className="text-meta">#{chunk.chunk_index}</Badge>

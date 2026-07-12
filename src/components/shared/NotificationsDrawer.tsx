@@ -48,7 +48,7 @@ export function NotificationsDrawer() {
         .in('level', ['warning', 'error', 'critical'])
         .order('created_at', { ascending: false })
         .limit(20);
-      const traceNotifs = (traces ?? []).map((a: Record<string, unknown>) => ({
+      const traceNotifs = (traces ?? []).map((a: { id: string; event: string; level: string | null; created_at: string; metadata: unknown }) => ({
         id: a.id,
         type: 'trace' as const,
         title: a.event,
@@ -63,7 +63,7 @@ export function NotificationsDrawer() {
         .eq('is_resolved', false)
         .order('created_at', { ascending: false })
         .limit(20);
-      const alertNotifs: Notification[] = (alerts ?? []).map((a: Record<string, unknown>) => ({
+      const alertNotifs: Notification[] = (alerts ?? []).map((a: { id: string; title: string; message: string | null; severity: string | null; created_at: string | null }) => ({
         id: `alert-${a.id}`,
         type: 'trace' as const,
         title: a.title,

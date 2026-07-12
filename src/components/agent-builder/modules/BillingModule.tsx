@@ -140,7 +140,7 @@ export function BillingModule() {
       {/* Category Breakdown */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {COST_CATEGORIES.map((cat) => {
-          const total = billing.dailyUsage.reduce((s: number, d: Record<string, number>) => s + (d[cat.key] || 0), 0);
+          const total = billing.dailyUsage.reduce((s: number, d) => s + (Number((d as unknown as Record<string, number>)[cat.key]) || 0), 0);
           const pct = (total / totalWeek) * 100;
           return (
             <div key={cat.key} className="rounded-xl border border-border bg-card p-4 space-y-2">
