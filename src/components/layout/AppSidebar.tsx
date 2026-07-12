@@ -85,6 +85,7 @@ const navSections = [
     key: "ops",
     items: [
       { title: "Avaliações", url: "/evaluations", icon: FlaskConical },
+      { title: "Eval de Agente", url: "/agent-evals", icon: FlaskConical },
       { title: "Implantações", url: "/deployments", icon: Rocket },
       { title: "Widget Builder", url: "/widget-builder", icon: MessageSquare },
       { title: "Monitoramento", url: "/monitoring", icon: Activity },
