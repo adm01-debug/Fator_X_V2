@@ -21,10 +21,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Snowflake, Globe2, Plus, Trash2, ShieldAlert, Info } from "lucide-react";
+import { Snowflake, Globe2, Plus, Trash2, ShieldAlert, Info, Network, ShieldCheck, ShieldOff, ArrowUpRight, Ban } from "lucide-react";
 import { toast } from "sonner";
-import { format } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { Link } from "react-router-dom";
 
 type FreezeWindow = {
   id: string;
@@ -42,6 +43,22 @@ type GeoCountry = {
   workspace_id: string;
   country_code: string;
   country_name: string | null;
+  created_at: string;
+};
+
+type IPEntry = {
+  id: string;
+  ip_address: string;
+  label: string | null;
+  is_active: boolean;
+  created_at: string;
+};
+
+type BlockedEntry = {
+  id: string;
+  ip_address: string | null;
+  country_code: string | null;
+  reason: string;
   created_at: string;
 };
 
@@ -96,6 +113,38 @@ export default function GovernancePage() {
       return (data ?? []) as GeoCountry[];
     },
   });
+
+  const ipQuery = useQuery({
+    queryKey: ["governance", "ip_whitelist", workspaceId],
+    enabled: !!workspaceId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("ip_whitelist")
+        .select("id, ip_address, label, is_active, created_at")
+        .eq("workspace_id", workspaceId!)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as IPEntry[];
+    },
+  });
+
+  const blockedQuery = useQuery({
+    queryKey: ["governance", "access_blocked", workspaceId],
+    enabled: !!workspaceId,
+    refetchInterval: 30_000,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("access_blocked_log")
+        .select("id, ip_address, country_code, reason, created_at")
+        .eq("workspace_id", workspaceId!)
+        .order("created_at", { ascending: false })
+        .limit(10);
+      if (error) throw error;
+      return (data ?? []) as BlockedEntry[];
+    },
+  });
+
+
 
   const [freezeOpen, setFreezeOpen] = useState(false);
   const [fName, setFName] = useState("");
@@ -199,8 +248,17 @@ export default function GovernancePage() {
 
   const freezes = freezeQuery.data ?? [];
   const countries = geoQuery.data ?? [];
+  const ipEntries = ipQuery.data ?? [];
+  const blocked = blockedQuery.data ?? [];
   const activeFreeze = freezes.find(isActive);
   const enabledCodes = new Set(countries.map((c) => c.country_code));
+  const activeIps = ipEntries.filter((i) => i.is_active);
+  const cidrCount = ipEntries.filter((i) => i.ip_address.includes("/")).length;
+  const ipProtectionOn = activeIps.length > 0;
+  const geoProtectionOn = countries.length > 0;
+  const last24hBlocks = blocked.filter(
+    (b) => Date.now() - new Date(b.created_at).getTime() < 24 * 60 * 60 * 1000,
+  ).length;
 
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
@@ -223,6 +281,84 @@ export default function GovernancePage() {
         </Alert>
       )}
 
+      {last24hBlocks > 0 && (
+        <Alert className="border-destructive/40 bg-destructive/5">
+          <Ban className="h-4 w-4 text-destructive" />
+          <AlertTitle>{last24hBlocks} tentativa(s) de acesso bloqueada(s) nas últimas 24h</AlertTitle>
+          <AlertDescription>
+            Consulte a aba <b>IP Whitelist</b> para detalhes e ajuste de políticas.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {/* Status geral de proteção */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Card className={ipProtectionOn ? "border-emerald-500/40" : "border-muted"}>
+          <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
+            <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
+              <Network className="h-4 w-4" /> Proteção por IP
+            </CardTitle>
+            {ipProtectionOn ? (
+              <Badge className="bg-emerald-500/15 text-emerald-500 border-emerald-500/30">
+                <ShieldCheck className="h-3 w-3 mr-1" /> Ativa
+              </Badge>
+            ) : (
+              <Badge variant="secondary">
+                <ShieldOff className="h-3 w-3 mr-1" /> Aberta
+              </Badge>
+            )}
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {activeIps.length}
+              <span className="text-sm font-normal text-muted-foreground">
+                {" "}/ {ipEntries.length} regras
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {cidrCount} bloco(s) CIDR configurado(s)
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className={geoProtectionOn ? "border-emerald-500/40" : "border-muted"}>
+          <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
+            <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
+              <Globe2 className="h-4 w-4" /> Restrição geográfica
+            </CardTitle>
+            {geoProtectionOn ? (
+              <Badge className="bg-emerald-500/15 text-emerald-500 border-emerald-500/30">
+                <ShieldCheck className="h-3 w-3 mr-1" /> Ativa
+              </Badge>
+            ) : (
+              <Badge variant="secondary">
+                <ShieldOff className="h-3 w-3 mr-1" /> Aberta
+              </Badge>
+            )}
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{countries.length}</div>
+            <p className="text-xs text-muted-foreground mt-1">países permitidos</p>
+          </CardContent>
+        </Card>
+
+        <Card className={last24hBlocks > 0 ? "border-destructive/40" : "border-muted"}>
+          <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
+            <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
+              <Ban className="h-4 w-4" /> Bloqueios (24h)
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className={`text-2xl font-bold ${last24hBlocks > 0 ? "text-destructive" : ""}`}>
+              {last24hBlocks}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {blocked.length} evento(s) recentes
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
       <Tabs defaultValue="freeze" className="w-full">
         <TabsList>
           <TabsTrigger value="freeze">
@@ -233,7 +369,12 @@ export default function GovernancePage() {
             <Globe2 className="h-4 w-4 mr-2" />
             Restrições Geográficas
           </TabsTrigger>
+          <TabsTrigger value="ip">
+            <Network className="h-4 w-4 mr-2" />
+            IP Whitelist
+          </TabsTrigger>
         </TabsList>
+
 
         <TabsContent value="freeze" className="space-y-4">
           <div className="flex justify-end">
@@ -465,7 +606,122 @@ export default function GovernancePage() {
             </Card>
           )}
         </TabsContent>
+
+        <TabsContent value="ip" className="space-y-4">
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <Alert className="flex-1 min-w-[280px]">
+              <Info className="h-4 w-4" />
+              <AlertTitle>Whitelist de IP</AlertTitle>
+              <AlertDescription>
+                {ipProtectionOn
+                  ? `${activeIps.length} regra(s) ativas restringem o acesso administrativo. Requisições fora dos IPs/CIDRs cadastrados são bloqueadas e registradas abaixo.`
+                  : "Nenhuma regra ativa — o acesso administrativo está aberto a qualquer origem. Configure IPs confiáveis para elevar a postura de segurança."}
+              </AlertDescription>
+            </Alert>
+            <Button asChild variant="outline">
+              <Link to="/security/ip-whitelist">
+                Gerenciar IPs
+                <ArrowUpRight className="h-4 w-4 ml-2" />
+              </Link>
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <ShieldCheck className="h-4 w-4 text-emerald-500" />
+                  Regras ativas ({activeIps.length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2 max-h-[320px] overflow-y-auto">
+                {ipQuery.isLoading ? (
+                  <Skeleton className="h-20 w-full" />
+                ) : ipEntries.length === 0 ? (
+                  <p className="text-sm text-muted-foreground py-4 text-center">
+                    Nenhum IP cadastrado.
+                  </p>
+                ) : (
+                  ipEntries.slice(0, 8).map((entry) => (
+                    <div
+                      key={entry.id}
+                      className="flex items-center justify-between gap-2 p-2 rounded-md border bg-card/40"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <code className="text-xs font-mono font-semibold">
+                            {entry.ip_address}
+                          </code>
+                          {entry.ip_address.includes("/") && (
+                            <Badge variant="outline" className="text-[10px] px-1">CIDR</Badge>
+                          )}
+                          {!entry.is_active && (
+                            <Badge variant="secondary" className="text-[10px]">Inativo</Badge>
+                          )}
+                        </div>
+                        {entry.label && (
+                          <p className="text-xs text-muted-foreground truncate">{entry.label}</p>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                )}
+                {ipEntries.length > 8 && (
+                  <p className="text-xs text-muted-foreground text-center pt-2">
+                    +{ipEntries.length - 8} outras regras
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Ban className="h-4 w-4 text-destructive" />
+                  Tentativas bloqueadas (10 recentes)
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2 max-h-[320px] overflow-y-auto">
+                {blockedQuery.isLoading ? (
+                  <Skeleton className="h-20 w-full" />
+                ) : blocked.length === 0 ? (
+                  <p className="text-sm text-muted-foreground py-4 text-center">
+                    Nenhum bloqueio registrado. ✅
+                  </p>
+                ) : (
+                  blocked.map((b) => (
+                    <div
+                      key={b.id}
+                      className="flex items-center justify-between gap-2 p-2 rounded-md border border-destructive/20 bg-destructive/5"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <code className="text-xs font-mono">{b.ip_address ?? "—"}</code>
+                          {b.country_code && (
+                            <Badge variant="outline" className="text-[10px] px-1">
+                              {b.country_code}
+                            </Badge>
+                          )}
+                          <Badge variant="destructive" className="text-[10px]">
+                            {b.reason}
+                          </Badge>
+                        </div>
+                        <p className="text-[11px] text-muted-foreground">
+                          {formatDistanceToNow(new Date(b.created_at), {
+                            addSuffix: true,
+                            locale: ptBR,
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
       </Tabs>
+
     </div>
   );
 }
