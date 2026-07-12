@@ -234,7 +234,10 @@ export function ResearchSettingsDialog({ trigger }: Props) {
                   id="maxTokens" type="number" min={1000} max={500_000} step={1000}
                   value={draft.maxTokens}
                   onChange={e => set('maxTokens', Number(e.target.value) || 0)}
+                  aria-invalid={!!errors.maxTokens}
+                  className={errors.maxTokens ? 'border-destructive focus-visible:ring-destructive' : ''}
                 />
+                {errors.maxTokens && <p className="text-meta text-destructive">{errors.maxTokens}</p>}
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="maxSources" className="text-meta text-muted-foreground uppercase tracking-widest">Máx. fontes</Label>
@@ -242,7 +245,10 @@ export function ResearchSettingsDialog({ trigger }: Props) {
                   id="maxSources" type="number" min={5} max={50} step={1}
                   value={draft.maxSources}
                   onChange={e => set('maxSources', Number(e.target.value) || 0)}
+                  aria-invalid={!!errors.maxSources}
+                  className={errors.maxSources ? 'border-destructive focus-visible:ring-destructive' : ''}
                 />
+                {errors.maxSources && <p className="text-meta text-destructive">{errors.maxSources}</p>}
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="maxLatency" className="text-meta text-muted-foreground uppercase tracking-widest">Latência máx. (s)</Label>
@@ -250,7 +256,10 @@ export function ResearchSettingsDialog({ trigger }: Props) {
                   id="maxLatency" type="number" min={30} max={600} step={10}
                   value={draft.maxLatencySec}
                   onChange={e => set('maxLatencySec', Number(e.target.value) || 0)}
+                  aria-invalid={!!errors.maxLatencySec}
+                  className={errors.maxLatencySec ? 'border-destructive focus-visible:ring-destructive' : ''}
                 />
+                {errors.maxLatencySec && <p className="text-meta text-destructive">{errors.maxLatencySec}</p>}
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="maxCost" className="text-meta text-muted-foreground uppercase tracking-widest">Custo máx. (USD)</Label>
@@ -258,7 +267,10 @@ export function ResearchSettingsDialog({ trigger }: Props) {
                   id="maxCost" type="number" min={0.1} max={50} step={0.1}
                   value={draft.maxCostUsd}
                   onChange={e => set('maxCostUsd', Number(e.target.value) || 0)}
+                  aria-invalid={!!errors.maxCostUsd}
+                  className={errors.maxCostUsd ? 'border-destructive focus-visible:ring-destructive' : ''}
                 />
+                {errors.maxCostUsd && <p className="text-meta text-destructive">{errors.maxCostUsd}</p>}
               </div>
             </Card>
           </section>
