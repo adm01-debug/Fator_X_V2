@@ -241,6 +241,17 @@ export function EntityResolutionTab() {
           ))}
         </div>
       )}
+
+      <MergeWizardDialog
+        cluster={wizardCluster}
+        open={!!wizardCluster}
+        onOpenChange={(o) => !o && setWizardCluster(null)}
+        onCompleted={() => {
+          setWizardCluster(null);
+          queryClient.invalidateQueries({ queryKey: ['entity-resolution'] });
+        }}
+      />
     </div>
   );
 }
+
