@@ -41,37 +41,52 @@ export function ResearchSettingsDialog({ trigger }: Props) {
   const [saved, updateSaved] = useResearchConfig();
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<ResearchConfig>(saved);
+  const [errors, setErrors] = useState<FieldErrors>({});
 
-  const set = <K extends keyof ResearchConfig>(k: K, v: ResearchConfig[K]) =>
-    setDraft(prev => ({ ...prev, [k]: v }));
+  const set = <K extends keyof ResearchConfig>(k: K, v: ResearchConfig[K]) => {
+    setDraft(prev => {
+      const next = { ...prev, [k]: v };
+      // Revalida em tempo real, mas só mostra o erro daquele campo depois do primeiro save
+      const result = validateResearchConfig(next);
+      setErrors(prevErr => {
+        if (result.success) return {};
+        // preserva erros existentes + atualiza apenas para o campo alterado
+        const merged: FieldErrors = { ...prevErr };
+        if (result.errors[k]) merged[k] = result.errors[k];
+        else delete merged[k];
+        return merged;
+      });
+      return next;
+    });
+  };
+
+  const isValid = useMemo(() => validateResearchConfig(draft).success, [draft]);
 
   const handleOpenChange = (o: boolean) => {
-    if (o) setDraft(saved);
+    if (o) { setDraft(saved); setErrors({}); }
     setOpen(o);
   };
 
   const handleSave = () => {
-    if (draft.maxIterations < 1 || draft.maxIterations > 10) {
-      toast.error('Iterações devem estar entre 1 e 10');
+    const result = validateResearchConfig(draft);
+    if (!result.success) {
+      setErrors(result.errors);
+      const firstMsg = Object.values(result.errors)[0];
+      toast.error(firstMsg ?? 'Verifique os campos destacados');
       return;
     }
-    if (draft.queriesPerIteration < 1 || draft.queriesPerIteration > 5) {
-      toast.error('Queries por iteração devem estar entre 1 e 5');
-      return;
-    }
-    if (draft.maxCostUsd <= 0 || draft.maxCostUsd > 50) {
-      toast.error('Custo máximo deve estar entre 0.01 e 50 USD');
-      return;
-    }
-    updateSaved(draft);
+    updateSaved(result.data as ResearchConfig);
+    setErrors({});
     toast.success('Configuração salva');
     setOpen(false);
   };
 
   const handleReset = () => {
     setDraft(DEFAULT_RESEARCH_CONFIG);
+    setErrors({});
     toast.info('Configuração restaurada aos padrões');
   };
+
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
