@@ -51,6 +51,7 @@ const PromptEditorPage = lazy(() => import("./pages/PromptEditorPage"));
 const WorkflowsPage = lazy(() => import("./pages/WorkflowsPage"));
 const EvaluationsPage = lazy(() => import("./pages/EvaluationsPage"));
 const AgentEvalsPage = lazy(() => import("./pages/AgentEvalsPage"));
+const KnowledgeDecayPage = lazy(() => import("./pages/KnowledgeDecayPage"));
 const DeploymentsPage = lazy(() => import("./pages/DeploymentsPage"));
 const OpenclawDeployPage = lazy(() => import("./pages/OpenclawDeployPage"));
 const MonitoringPage = lazy(() => import("./pages/MonitoringPage"));
