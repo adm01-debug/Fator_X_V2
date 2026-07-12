@@ -300,7 +300,7 @@ export function ResearchSettingsDialog({ trigger }: Props) {
           </Button>
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
-            <Button onClick={handleSave} className="nexus-gradient-bg gap-2 font-bold">
+            <Button onClick={handleSave} disabled={!isValid} className="nexus-gradient-bg gap-2 font-bold">
               <Save className="h-4 w-4" /> Salvar
             </Button>
           </div>
