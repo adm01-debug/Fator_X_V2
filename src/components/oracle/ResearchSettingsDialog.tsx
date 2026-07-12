@@ -2,7 +2,7 @@
  * ResearchSettingsDialog — Tela de configuração do Deep Research.
  * Permite definir iterações, estratégia de busca, modelo de síntese e limites.
  */
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -18,6 +18,7 @@ import {
   useResearchConfig, DEFAULT_RESEARCH_CONFIG,
   type ResearchConfig, type ResearchDepth, type SearchStrategy, type SynthesisModel, type Language,
 } from '@/lib/researchConfig';
+import { validateResearchConfig, type FieldErrors } from '@/lib/validations/researchConfig';
 
 interface Props {
   trigger?: React.ReactNode;
@@ -40,37 +41,52 @@ export function ResearchSettingsDialog({ trigger }: Props) {
   const [saved, updateSaved] = useResearchConfig();
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<ResearchConfig>(saved);
+  const [errors, setErrors] = useState<FieldErrors>({});
 
-  const set = <K extends keyof ResearchConfig>(k: K, v: ResearchConfig[K]) =>
-    setDraft(prev => ({ ...prev, [k]: v }));
+  const set = <K extends keyof ResearchConfig>(k: K, v: ResearchConfig[K]) => {
+    setDraft(prev => {
+      const next = { ...prev, [k]: v };
+      // Revalida em tempo real, mas só mostra o erro daquele campo depois do primeiro save
+      const result = validateResearchConfig(next);
+      setErrors(prevErr => {
+        if (result.success) return {};
+        // preserva erros existentes + atualiza apenas para o campo alterado
+        const merged: FieldErrors = { ...prevErr };
+        if (result.errors[k]) merged[k] = result.errors[k];
+        else delete merged[k];
+        return merged;
+      });
+      return next;
+    });
+  };
+
+  const isValid = useMemo(() => validateResearchConfig(draft).success, [draft]);
 
   const handleOpenChange = (o: boolean) => {
-    if (o) setDraft(saved);
+    if (o) { setDraft(saved); setErrors({}); }
     setOpen(o);
   };
 
   const handleSave = () => {
-    if (draft.maxIterations < 1 || draft.maxIterations > 10) {
-      toast.error('Iterações devem estar entre 1 e 10');
+    const result = validateResearchConfig(draft);
+    if (!result.success) {
+      setErrors(result.errors);
+      const firstMsg = Object.values(result.errors)[0];
+      toast.error(firstMsg ?? 'Verifique os campos destacados');
       return;
     }
-    if (draft.queriesPerIteration < 1 || draft.queriesPerIteration > 5) {
-      toast.error('Queries por iteração devem estar entre 1 e 5');
-      return;
-    }
-    if (draft.maxCostUsd <= 0 || draft.maxCostUsd > 50) {
-      toast.error('Custo máximo deve estar entre 0.01 e 50 USD');
-      return;
-    }
-    updateSaved(draft);
+    updateSaved(result.data as ResearchConfig);
+    setErrors({});
     toast.success('Configuração salva');
     setOpen(false);
   };
 
   const handleReset = () => {
     setDraft(DEFAULT_RESEARCH_CONFIG);
+    setErrors({});
     toast.info('Configuração restaurada aos padrões');
   };
+
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -218,7 +234,10 @@ export function ResearchSettingsDialog({ trigger }: Props) {
                   id="maxTokens" type="number" min={1000} max={500_000} step={1000}
                   value={draft.maxTokens}
                   onChange={e => set('maxTokens', Number(e.target.value) || 0)}
+                  aria-invalid={!!errors.maxTokens}
+                  className={errors.maxTokens ? 'border-destructive focus-visible:ring-destructive' : ''}
                 />
+                {errors.maxTokens && <p className="text-meta text-destructive">{errors.maxTokens}</p>}
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="maxSources" className="text-meta text-muted-foreground uppercase tracking-widest">Máx. fontes</Label>
@@ -226,7 +245,10 @@ export function ResearchSettingsDialog({ trigger }: Props) {
                   id="maxSources" type="number" min={5} max={50} step={1}
                   value={draft.maxSources}
                   onChange={e => set('maxSources', Number(e.target.value) || 0)}
+                  aria-invalid={!!errors.maxSources}
+                  className={errors.maxSources ? 'border-destructive focus-visible:ring-destructive' : ''}
                 />
+                {errors.maxSources && <p className="text-meta text-destructive">{errors.maxSources}</p>}
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="maxLatency" className="text-meta text-muted-foreground uppercase tracking-widest">Latência máx. (s)</Label>
@@ -234,7 +256,10 @@ export function ResearchSettingsDialog({ trigger }: Props) {
                   id="maxLatency" type="number" min={30} max={600} step={10}
                   value={draft.maxLatencySec}
                   onChange={e => set('maxLatencySec', Number(e.target.value) || 0)}
+                  aria-invalid={!!errors.maxLatencySec}
+                  className={errors.maxLatencySec ? 'border-destructive focus-visible:ring-destructive' : ''}
                 />
+                {errors.maxLatencySec && <p className="text-meta text-destructive">{errors.maxLatencySec}</p>}
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="maxCost" className="text-meta text-muted-foreground uppercase tracking-widest">Custo máx. (USD)</Label>
@@ -242,7 +267,10 @@ export function ResearchSettingsDialog({ trigger }: Props) {
                   id="maxCost" type="number" min={0.1} max={50} step={0.1}
                   value={draft.maxCostUsd}
                   onChange={e => set('maxCostUsd', Number(e.target.value) || 0)}
+                  aria-invalid={!!errors.maxCostUsd}
+                  className={errors.maxCostUsd ? 'border-destructive focus-visible:ring-destructive' : ''}
                 />
+                {errors.maxCostUsd && <p className="text-meta text-destructive">{errors.maxCostUsd}</p>}
               </div>
             </Card>
           </section>
@@ -272,7 +300,7 @@ export function ResearchSettingsDialog({ trigger }: Props) {
           </Button>
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
-            <Button onClick={handleSave} className="nexus-gradient-bg gap-2 font-bold">
+            <Button onClick={handleSave} disabled={!isValid} className="nexus-gradient-bg gap-2 font-bold">
               <Save className="h-4 w-4" /> Salvar
             </Button>
           </div>
