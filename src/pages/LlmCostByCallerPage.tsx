@@ -94,9 +94,9 @@ export default function LlmCostByCallerPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card><CardHeader><CardTitle className="text-sm">Chamadas</CardTitle></CardHeader><CardContent className="text-2xl font-semibold">{totals.calls.toLocaleString('pt-BR')}</CardContent></Card>
-        <Card><CardHeader><CardTitle className="text-sm">Tokens</CardTitle></CardHeader><CardContent className="text-2xl font-semibold">{totals.tokens.toLocaleString('pt-BR')}</CardContent></Card>
-        <Card><CardHeader><CardTitle className="text-sm">Custo total</CardTitle></CardHeader><CardContent className="text-2xl font-semibold">${totals.cost.toFixed(4)}</CardContent></Card>
+        <Card><CardHeader><CardTitle className="text-body-sm">Chamadas</CardTitle></CardHeader><CardContent className="text-2xl font-semibold">{totals.calls.toLocaleString('pt-BR')}</CardContent></Card>
+        <Card><CardHeader><CardTitle className="text-body-sm">Tokens</CardTitle></CardHeader><CardContent className="text-2xl font-semibold">{totals.tokens.toLocaleString('pt-BR')}</CardContent></Card>
+        <Card><CardHeader><CardTitle className="text-body-sm">Custo total</CardTitle></CardHeader><CardContent className="text-2xl font-semibold">${totals.cost.toFixed(4)}</CardContent></Card>
       </div>
 
       <Card>
@@ -108,7 +108,7 @@ export default function LlmCostByCallerPage() {
             <EmptyState title="Sem dados no período" description="Nenhuma chamada LLM registrada neste intervalo." />
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-body-sm">
                 <thead className="text-left text-muted-foreground">
                   <tr>
                     <th className="py-2 pr-4">Caller</th>

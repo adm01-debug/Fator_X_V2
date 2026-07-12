@@ -155,7 +155,7 @@ export function WhatsAppInboxPanel() {
             key={s.label}
             className="rounded-2xl border border-border/30 bg-secondary/30 p-3 text-center"
           >
-            <div className={cn("text-lg font-black font-mono", s.color)}>{s.val}</div>
+            <div className={cn("text-title-sm font-black font-mono", s.color)}>{s.val}</div>
             <div className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">
               {s.label}
             </div>
@@ -306,7 +306,7 @@ export function WhatsAppInboxPanel() {
                     <span className="text-meta font-bold">Copiar</span>
                   </Button>
                 </div>
-                <pre className="p-4 rounded-2xl bg-background/60 border border-border/40 text-[11px] font-mono text-muted-foreground max-h-64 overflow-auto">
+                <pre className="p-4 rounded-2xl bg-background/60 border border-border/40 text-meta font-mono text-muted-foreground max-h-64 overflow-auto">
                   {JSON.stringify(selected.raw_payload, null, 2)}
                 </pre>
               </div>

@@ -81,13 +81,13 @@ export default function EntityResolutionLogsPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Total</CardTitle></CardHeader>
+        <Card><CardHeader className="pb-2"><CardTitle className="text-body-sm text-muted-foreground">Total</CardTitle></CardHeader>
           <CardContent><div className="text-2xl font-bold">{rows.length}</div></CardContent></Card>
-        <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Confiança média</CardTitle></CardHeader>
+        <Card><CardHeader className="pb-2"><CardTitle className="text-body-sm text-muted-foreground">Confiança média</CardTitle></CardHeader>
           <CardContent><div className="text-2xl font-bold">{avgConfidence.toFixed(1)}%</div></CardContent></Card>
-        <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Alta confiança</CardTitle></CardHeader>
+        <Card><CardHeader className="pb-2"><CardTitle className="text-body-sm text-muted-foreground">Alta confiança</CardTitle></CardHeader>
           <CardContent><div className="text-2xl font-bold text-nexus-green">{highConf}</div></CardContent></Card>
-        <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Revisar</CardTitle></CardHeader>
+        <Card><CardHeader className="pb-2"><CardTitle className="text-body-sm text-muted-foreground">Revisar</CardTitle></CardHeader>
           <CardContent><div className="text-2xl font-bold text-nexus-red">{lowConf}</div></CardContent></Card>
       </div>
 
@@ -95,21 +95,21 @@ export default function EntityResolutionLogsPage() {
         <CardHeader><CardTitle>Últimos merges</CardTitle></CardHeader>
         <CardContent>
           {loading ? (
-            <div className="text-sm text-muted-foreground py-8 text-center">Carregando…</div>
+            <div className="text-body-sm text-muted-foreground py-8 text-center">Carregando…</div>
           ) : rows.length === 0 ? (
-            <div className="text-sm text-muted-foreground py-8 text-center">Nenhum merge registrado.</div>
+            <div className="text-body-sm text-muted-foreground py-8 text-center">Nenhum merge registrado.</div>
           ) : (
             <div className="space-y-2">
               {rows.map((r) => (
                 <div key={r.id} className="flex items-center gap-3 p-3 rounded-md border border-border/40 hover:bg-accent/30 transition-colors">
                   <Merge className="h-4 w-4 text-muted-foreground shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium truncate">
+                    <div className="text-body-sm font-medium truncate">
                       {r.primary_name || r.primary_entity_id?.slice(0, 8) || "—"}
                       <span className="text-muted-foreground mx-2">←</span>
-                      <span className="text-muted-foreground font-mono text-xs">{r.merged_entity_id?.slice(0, 8) ?? "—"}</span>
+                      <span className="text-muted-foreground font-mono text-meta">{r.merged_entity_id?.slice(0, 8) ?? "—"}</span>
                     </div>
-                    <div className="text-xs text-muted-foreground mt-0.5">
+                    <div className="text-meta text-muted-foreground mt-0.5">
                       método: {r.resolution_method ?? "—"} • {formatDistanceToNow(new Date(r.created_at), { addSuffix: true, locale: ptBR })}
                     </div>
                   </div>

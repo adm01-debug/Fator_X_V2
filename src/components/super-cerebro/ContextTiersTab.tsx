@@ -81,14 +81,14 @@ export function ContextTiersTab() {
             <Layers className="h-5 w-5 text-primary" />
             Busca hierárquica L0 → L1 → L2
           </CardTitle>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-body-sm text-muted-foreground">
             L0 (100 tokens) filtra relevância · L1 (2K) planeja · L2 detalha somente o essencial. Economia média: ~80% de tokens.
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-3 md:grid-cols-[1fr_260px_auto]">
             <div>
-              <Label className="text-xs">Consulta</Label>
+              <Label className="text-meta">Consulta</Label>
               <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -97,7 +97,7 @@ export function ContextTiersTab() {
               />
             </div>
             <div>
-              <Label className="text-xs">Collection ID (opcional)</Label>
+              <Label className="text-meta">Collection ID (opcional)</Label>
               <Input
                 value={collectionId}
                 onChange={(e) => setCollectionId(e.target.value)}
@@ -151,9 +151,9 @@ export function ContextTiersTab() {
               </div>
 
               <div>
-                <h4 className="text-sm font-medium mb-2">Chunks selecionados (L2)</h4>
+                <h4 className="text-body-sm font-medium mb-2">Chunks selecionados (L2)</h4>
                 {result.l2Results.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-body-sm text-muted-foreground">
                     Nenhum chunk retornado — a RPC <code>search_context_l0</code> pode não estar disponível ou a coleção está vazia.
                   </p>
                 ) : (
@@ -162,14 +162,14 @@ export function ContextTiersTab() {
                       {result.l2Results.map((c) => (
                         <div key={c.chunk_id} className="rounded-md bg-secondary/40 p-3">
                           <div className="flex items-center gap-2 mb-1">
-                            <Badge variant="outline" className="text-xs">
+                            <Badge variant="outline" className="text-meta">
                               {c.token_count} tokens
                             </Badge>
-                            <code className="text-xs text-muted-foreground truncate">
+                            <code className="text-meta text-muted-foreground truncate">
                               {c.chunk_id.slice(0, 8)}…
                             </code>
                           </div>
-                          <p className="text-sm whitespace-pre-wrap line-clamp-6">{c.l2_content}</p>
+                          <p className="text-body-sm whitespace-pre-wrap line-clamp-6">{c.l2_content}</p>
                         </div>
                       ))}
                     </div>
@@ -187,7 +187,7 @@ export function ContextTiersTab() {
             <Zap className="h-5 w-5 text-primary" />
             Gerador de tiers (preview)
           </CardTitle>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-body-sm text-muted-foreground">
             Cole um conteúdo bruto e veja como o resumo L0 e o overview L1 seriam gerados.
           </p>
         </CardHeader>
@@ -196,7 +196,7 @@ export function ContextTiersTab() {
             value={previewContent}
             onChange={(e) => setPreviewContent(e.target.value)}
             placeholder="Cole aqui um parágrafo ou documento…"
-            className="w-full min-h-[120px] rounded-md border border-input bg-background p-3 text-sm"
+            className="w-full min-h-[120px] rounded-md border border-input bg-background p-3 text-body-sm"
           />
           <Button variant="outline" onClick={runPreview}>
             Gerar L0 / L1
@@ -206,16 +206,16 @@ export function ContextTiersTab() {
               <div className="rounded-md border border-border/50 bg-secondary/30 p-3">
                 <div className="flex items-center gap-2 mb-1">
                   <Badge>L0</Badge>
-                  <span className="text-xs text-muted-foreground">~100 tokens · relevância</span>
+                  <span className="text-meta text-muted-foreground">~100 tokens · relevância</span>
                 </div>
-                <p className="text-sm">{preview.l0}</p>
+                <p className="text-body-sm">{preview.l0}</p>
               </div>
               <div className="rounded-md border border-border/50 bg-secondary/30 p-3">
                 <div className="flex items-center gap-2 mb-1">
                   <Badge variant="secondary">L1</Badge>
-                  <span className="text-xs text-muted-foreground">~2K tokens · planejamento</span>
+                  <span className="text-meta text-muted-foreground">~2K tokens · planejamento</span>
                 </div>
-                <p className="text-sm whitespace-pre-wrap">{preview.l1}</p>
+                <p className="text-body-sm whitespace-pre-wrap">{preview.l1}</p>
               </div>
             </div>
           )}
@@ -244,12 +244,12 @@ function MetricCard({
         highlight ? 'border-primary/50 bg-primary/5' : 'border-border/50 bg-secondary/30'
       }`}
     >
-      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+      <div className="flex items-center gap-2 text-meta text-muted-foreground mb-1">
         {icon}
         {label}
       </div>
       <div className="text-2xl font-semibold tracking-tight">{value}</div>
-      <div className="text-xs text-muted-foreground mt-0.5">{hint}</div>
+      <div className="text-meta text-muted-foreground mt-0.5">{hint}</div>
     </div>
   );
 }

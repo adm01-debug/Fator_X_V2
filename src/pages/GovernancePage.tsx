@@ -295,7 +295,7 @@ export default function GovernancePage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card className={ipProtectionOn ? "border-nexus-emerald/40" : "border-muted"}>
           <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
-            <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
+            <CardTitle className="text-body-sm text-muted-foreground flex items-center gap-2">
               <Network className="h-4 w-4" /> Proteção por IP
             </CardTitle>
             {ipProtectionOn ? (
@@ -311,11 +311,11 @@ export default function GovernancePage() {
           <CardContent>
             <div className="text-2xl font-bold">
               {activeIps.length}
-              <span className="text-sm font-normal text-muted-foreground">
+              <span className="text-body-sm font-normal text-muted-foreground">
                 {" "}/ {ipEntries.length} regras
               </span>
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-meta text-muted-foreground mt-1">
               {cidrCount} bloco(s) CIDR configurado(s)
             </p>
           </CardContent>
@@ -323,7 +323,7 @@ export default function GovernancePage() {
 
         <Card className={geoProtectionOn ? "border-nexus-emerald/40" : "border-muted"}>
           <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
-            <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
+            <CardTitle className="text-body-sm text-muted-foreground flex items-center gap-2">
               <Globe2 className="h-4 w-4" /> Restrição geográfica
             </CardTitle>
             {geoProtectionOn ? (
@@ -338,13 +338,13 @@ export default function GovernancePage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{countries.length}</div>
-            <p className="text-xs text-muted-foreground mt-1">países permitidos</p>
+            <p className="text-meta text-muted-foreground mt-1">países permitidos</p>
           </CardContent>
         </Card>
 
         <Card className={last24hBlocks > 0 ? "border-destructive/40" : "border-muted"}>
           <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
-            <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
+            <CardTitle className="text-body-sm text-muted-foreground flex items-center gap-2">
               <Ban className="h-4 w-4" /> Bloqueios (24h)
             </CardTitle>
           </CardHeader>
@@ -352,7 +352,7 @@ export default function GovernancePage() {
             <div className={`text-2xl font-bold ${last24hBlocks > 0 ? "text-destructive" : ""}`}>
               {last24hBlocks}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-meta text-muted-foreground mt-1">
               {blocked.length} evento(s) recentes
             </p>
           </CardContent>
@@ -430,8 +430,8 @@ export default function GovernancePage() {
                   </div>
                   <div className="flex items-center justify-between rounded-lg border p-3">
                     <div>
-                      <div className="font-medium text-sm">Permitir emergências</div>
-                      <div className="text-xs text-muted-foreground">
+                      <div className="font-medium text-body-sm">Permitir emergências</div>
+                      <div className="text-meta text-muted-foreground">
                         Deploys críticos podem passar com aprovação dupla.
                       </div>
                     </div>
@@ -469,7 +469,7 @@ export default function GovernancePage() {
                 <Card key={w.id}>
                   <CardHeader className="pb-2">
                     <div className="flex items-center justify-between gap-2">
-                      <CardTitle className="text-base">{w.name}</CardTitle>
+                      <CardTitle className="text-body">{w.name}</CardTitle>
                       <div className="flex items-center gap-2">
                         {isActive(w) && (
                           <Badge className="bg-nexus-amber/20 text-nexus-amber border-nexus-amber/40">
@@ -489,9 +489,9 @@ export default function GovernancePage() {
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="text-sm space-y-1">
+                  <CardContent className="text-body-sm space-y-1">
                     {w.reason && <p className="text-muted-foreground">{w.reason}</p>}
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-meta text-muted-foreground">
                       {format(new Date(w.starts_at), "dd/MM/yyyy HH:mm", { locale: ptBR })} →{" "}
                       {format(new Date(w.ends_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}
                     </div>
@@ -514,7 +514,7 @@ export default function GovernancePage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Países comuns</CardTitle>
+              <CardTitle className="text-body">Países comuns</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
               {COMMON_COUNTRIES.map((c) => {
@@ -532,10 +532,10 @@ export default function GovernancePage() {
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-mono text-xs">{c.code}</span>
+                      <span className="font-mono text-meta">{c.code}</span>
                       {enabled && <Badge variant="secondary">Ativo</Badge>}
                     </div>
-                    <div className="text-sm mt-1">{c.name}</div>
+                    <div className="text-body-sm mt-1">{c.name}</div>
                   </button>
                 );
               })}
@@ -544,7 +544,7 @@ export default function GovernancePage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Adicionar país personalizado</CardTitle>
+              <CardTitle className="text-body">Adicionar país personalizado</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-wrap gap-3 items-end">
               <div>
@@ -580,7 +580,7 @@ export default function GovernancePage() {
           {countries.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">
+                <CardTitle className="text-body">
                   Países permitidos ({countries.length})
                 </CardTitle>
               </CardHeader>
@@ -629,7 +629,7 @@ export default function GovernancePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-base flex items-center gap-2">
+                <CardTitle className="text-body flex items-center gap-2">
                   <ShieldCheck className="h-4 w-4 text-nexus-emerald" />
                   Regras ativas ({activeIps.length})
                 </CardTitle>
@@ -638,7 +638,7 @@ export default function GovernancePage() {
                 {ipQuery.isLoading ? (
                   <Skeleton className="h-20 w-full" />
                 ) : ipEntries.length === 0 ? (
-                  <p className="text-sm text-muted-foreground py-4 text-center">
+                  <p className="text-body-sm text-muted-foreground py-4 text-center">
                     Nenhum IP cadastrado.
                   </p>
                 ) : (
@@ -649,25 +649,25 @@ export default function GovernancePage() {
                     >
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <code className="text-xs font-mono font-semibold">
+                          <code className="text-meta font-mono font-semibold">
                             {entry.ip_address}
                           </code>
                           {entry.ip_address.includes("/") && (
-                            <Badge variant="outline" className="text-[10px] px-1">CIDR</Badge>
+                            <Badge variant="outline" className="text-meta px-1">CIDR</Badge>
                           )}
                           {!entry.is_active && (
-                            <Badge variant="secondary" className="text-[10px]">Inativo</Badge>
+                            <Badge variant="secondary" className="text-meta">Inativo</Badge>
                           )}
                         </div>
                         {entry.label && (
-                          <p className="text-xs text-muted-foreground truncate">{entry.label}</p>
+                          <p className="text-meta text-muted-foreground truncate">{entry.label}</p>
                         )}
                       </div>
                     </div>
                   ))
                 )}
                 {ipEntries.length > 8 && (
-                  <p className="text-xs text-muted-foreground text-center pt-2">
+                  <p className="text-meta text-muted-foreground text-center pt-2">
                     +{ipEntries.length - 8} outras regras
                   </p>
                 )}
@@ -676,7 +676,7 @@ export default function GovernancePage() {
 
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-base flex items-center gap-2">
+                <CardTitle className="text-body flex items-center gap-2">
                   <Ban className="h-4 w-4 text-destructive" />
                   Tentativas bloqueadas (10 recentes)
                 </CardTitle>
@@ -685,7 +685,7 @@ export default function GovernancePage() {
                 {blockedQuery.isLoading ? (
                   <Skeleton className="h-20 w-full" />
                 ) : blocked.length === 0 ? (
-                  <p className="text-sm text-muted-foreground py-4 text-center">
+                  <p className="text-body-sm text-muted-foreground py-4 text-center">
                     Nenhum bloqueio registrado. ✅
                   </p>
                 ) : (
@@ -696,17 +696,17 @@ export default function GovernancePage() {
                     >
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <code className="text-xs font-mono">{b.ip_address ?? "—"}</code>
+                          <code className="text-meta font-mono">{b.ip_address ?? "—"}</code>
                           {b.country_code && (
-                            <Badge variant="outline" className="text-[10px] px-1">
+                            <Badge variant="outline" className="text-meta px-1">
                               {b.country_code}
                             </Badge>
                           )}
-                          <Badge variant="destructive" className="text-[10px]">
+                          <Badge variant="destructive" className="text-meta">
                             {b.reason}
                           </Badge>
                         </div>
-                        <p className="text-[11px] text-muted-foreground">
+                        <p className="text-meta text-muted-foreground">
                           {formatDistanceToNow(new Date(b.created_at), {
                             addSuffix: true,
                             locale: ptBR,

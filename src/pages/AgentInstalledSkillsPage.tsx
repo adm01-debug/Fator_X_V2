@@ -222,7 +222,7 @@ export default function AgentInstalledSkillsPage() {
           {agentsLoading ? (
             <Skeleton className="h-10 w-full max-w-md" />
           ) : (agents?.length ?? 0) === 0 ? (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-body-sm text-muted-foreground">
               Nenhum agente disponível — crie um agente primeiro.
             </p>
           ) : (
@@ -273,22 +273,22 @@ export default function AgentInstalledSkillsPage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-semibold">{row.skill?.name ?? "—"}</span>
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="text-meta">
                       v{row.skill?.version}
                     </Badge>
                     {row.skill?.is_verified && (
-                      <Badge className="bg-nexus-emerald/15 text-nexus-emerald border-nexus-emerald/30 text-xs">
+                      <Badge className="bg-nexus-emerald/15 text-nexus-emerald border-nexus-emerald/30 text-meta">
                         <CheckCircle2 className="size-3 mr-1" /> Verificada
                       </Badge>
                     )}
-                    <Badge variant="secondary" className="text-xs">
+                    <Badge variant="secondary" className="text-meta">
                       {row.skill?.category}
                     </Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                  <p className="text-body-sm text-muted-foreground mt-1 line-clamp-2">
                     {row.skill?.description}
                   </p>
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <p className="text-meta text-muted-foreground mt-1">
                     Instalada em{" "}
                     {format(new Date(row.installed_at), "dd 'de' MMM yyyy, HH:mm", {
                       locale: ptBR,
@@ -350,7 +350,7 @@ export default function AgentInstalledSkillsPage() {
           </div>
           <div className="overflow-y-auto space-y-2 flex-1">
             {filteredCatalog.length === 0 ? (
-              <p className="text-sm text-muted-foreground py-8 text-center">
+              <p className="text-body-sm text-muted-foreground py-8 text-center">
                 Nenhuma skill encontrada.
               </p>
             ) : (
@@ -364,22 +364,22 @@ export default function AgentInstalledSkillsPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-semibold">{s.name}</span>
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-meta">
                           v{s.version}
                         </Badge>
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge variant="secondary" className="text-meta">
                           {s.category}
                         </Badge>
                         {s.is_verified && (
-                          <Badge className="bg-nexus-emerald/15 text-nexus-emerald border-nexus-emerald/30 text-xs">
+                          <Badge className="bg-nexus-emerald/15 text-nexus-emerald border-nexus-emerald/30 text-meta">
                             <CheckCircle2 className="size-3 mr-1" /> Verificada
                           </Badge>
                         )}
                       </div>
-                      <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                      <p className="text-body-sm text-muted-foreground mt-1 line-clamp-2">
                         {s.description}
                       </p>
-                      <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-3 mt-2 text-meta text-muted-foreground">
                         <span className="flex items-center gap-1">
                           <Star className="size-3" /> {Number(s.rating).toFixed(1)}
                         </span>
@@ -417,9 +417,9 @@ export default function AgentInstalledSkillsPage() {
               value={configJson}
               onChange={(e) => setConfigJson(e.target.value)}
               rows={12}
-              className="font-mono text-sm"
+              className="font-mono text-body-sm"
             />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-meta text-muted-foreground">
               Sobrepõe a configuração padrão da skill apenas para este agente.
             </p>
           </div>

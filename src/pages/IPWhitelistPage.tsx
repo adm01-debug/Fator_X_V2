@@ -147,13 +147,13 @@ export default function IPWhitelistPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Entradas totais</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">Entradas totais</CardTitle>
           </CardHeader>
           <CardContent className="text-3xl font-bold">{stats.total}</CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Ativas</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">Ativas</CardTitle>
           </CardHeader>
           <CardContent className="text-3xl font-bold text-nexus-emerald">
             {stats.active}
@@ -161,7 +161,7 @@ export default function IPWhitelistPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Blocos CIDR</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">Blocos CIDR</CardTitle>
           </CardHeader>
           <CardContent className="text-3xl font-bold">{stats.cidrs}</CardContent>
         </Card>
@@ -217,7 +217,7 @@ export default function IPWhitelistPage() {
         <CardContent className="space-y-2">
           {isLoading && <Skeleton className="h-24 w-full" />}
           {!isLoading && entries?.length === 0 && (
-            <p className="text-sm text-muted-foreground py-6 text-center">
+            <p className="text-body-sm text-muted-foreground py-6 text-center">
               Nenhum IP cadastrado ainda.
             </p>
           )}
@@ -228,9 +228,9 @@ export default function IPWhitelistPage() {
             >
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <code className="text-sm font-mono font-semibold">{entry.ip_address}</code>
+                  <code className="text-body-sm font-mono font-semibold">{entry.ip_address}</code>
                   {entry.ip_address.includes("/") && (
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="text-meta">
                       CIDR
                     </Badge>
                   )}
@@ -245,9 +245,9 @@ export default function IPWhitelistPage() {
                   )}
                 </div>
                 {entry.label && (
-                  <p className="text-sm text-muted-foreground mt-1">{entry.label}</p>
+                  <p className="text-body-sm text-muted-foreground mt-1">{entry.label}</p>
                 )}
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-meta text-muted-foreground mt-1">
                   Adicionado em{" "}
                   {format(new Date(entry.created_at), "dd 'de' MMM yyyy, HH:mm", { locale: ptBR })}
                 </p>

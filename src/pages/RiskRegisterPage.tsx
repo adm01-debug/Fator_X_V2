@@ -177,18 +177,18 @@ export default function RiskRegisterPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Matriz de Risco (Probabilidade × Impacto)</CardTitle>
+          <CardTitle className="text-body">Matriz de Risco (Probabilidade × Impacto)</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
             <div className="inline-grid gap-1" style={{ gridTemplateColumns: 'auto repeat(5, minmax(64px, 1fr))' }}>
               <div />
               {[1, 2, 3, 4, 5].map((i) => (
-                <div key={`h-${i}`} className="text-center text-xs text-muted-foreground pb-1">Impacto {i}</div>
+                <div key={`h-${i}`} className="text-center text-meta text-muted-foreground pb-1">Impacto {i}</div>
               ))}
               {[5, 4, 3, 2, 1].map((likelihood) => (
                 <>
-                  <div key={`l-${likelihood}`} className="text-xs text-muted-foreground pr-2 self-center whitespace-nowrap">
+                  <div key={`l-${likelihood}`} className="text-meta text-muted-foreground pr-2 self-center whitespace-nowrap">
                     Prob. {likelihood}
                   </div>
                   {[1, 2, 3, 4, 5].map((impact) => {
@@ -198,12 +198,12 @@ export default function RiskRegisterPage() {
                       <div
                         key={`${likelihood}-${impact}`}
                         className={cn(
-                          'rounded-md p-2 min-h-[64px] flex flex-col items-center justify-center text-xs font-medium',
+                          'rounded-md p-2 min-h-[64px] flex flex-col items-center justify-center text-meta font-medium',
                           scoreColor(score),
                         )}
                         title={`Score ${score} — ${cell.length} risco(s)`}
                       >
-                        <span className="text-lg font-bold">{cell.length}</span>
+                        <span className="text-title-sm font-bold">{cell.length}</span>
                         <span className="opacity-80">score {score}</span>
                       </div>
                     );
@@ -217,13 +217,13 @@ export default function RiskRegisterPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Riscos Registrados</CardTitle>
+          <CardTitle className="text-body">Riscos Registrados</CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <p className="text-sm text-muted-foreground">Carregando...</p>
+            <p className="text-body-sm text-muted-foreground">Carregando...</p>
           ) : risks.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Nenhum risco registrado. Clique em "Novo Risco" para começar.</p>
+            <p className="text-body-sm text-muted-foreground">Nenhum risco registrado. Clique em "Novo Risco" para começar.</p>
           ) : (
             <Table>
               <TableHeader>
@@ -245,15 +245,15 @@ export default function RiskRegisterPage() {
                       <Badge variant="outline" className="capitalize">{r.category}</Badge>
                     </TableCell>
                     <TableCell className="text-center">
-                      <span className={cn('inline-flex items-center justify-center rounded-md px-2 py-1 text-xs font-bold min-w-[32px]', scoreColor(r.inherent_score))}>
+                      <span className={cn('inline-flex items-center justify-center rounded-md px-2 py-1 text-meta font-bold min-w-[32px]', scoreColor(r.inherent_score))}>
                         {r.inherent_score}
                       </span>
                     </TableCell>
-                    <TableCell className="capitalize text-sm">{r.treatment}</TableCell>
+                    <TableCell className="capitalize text-body-sm">{r.treatment}</TableCell>
                     <TableCell>
                       <Badge className={cn('capitalize', statusColor[r.status])}>{r.status}</Badge>
                     </TableCell>
-                    <TableCell className="text-xs text-muted-foreground">
+                    <TableCell className="text-meta text-muted-foreground">
                       {new Date(r.next_review_due).toLocaleDateString('pt-BR')}
                     </TableCell>
                     <TableCell className="text-right">
@@ -261,7 +261,7 @@ export default function RiskRegisterPage() {
                         value={r.status}
                         onValueChange={(v) => updateStatus.mutate({ id: r.id, status: v as RiskStatus })}
                       >
-                        <SelectTrigger className="w-32 h-8 text-xs ml-auto">
+                        <SelectTrigger className="w-32 h-8 text-meta ml-auto">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -301,7 +301,7 @@ function StatCard({ icon: Icon, label, value, tone }: StatCardProps) {
       <CardContent className="pt-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs text-muted-foreground">{label}</p>
+            <p className="text-meta text-muted-foreground">{label}</p>
             <p className="text-2xl font-bold mt-1">{value}</p>
           </div>
           <Icon className={cn('h-8 w-8', toneClass)} />
@@ -406,7 +406,7 @@ function NewRiskDialog({ onSubmit, isPending }: NewRiskDialogProps) {
         </div>
         <div className="rounded-md bg-muted p-3 flex items-center gap-3">
           <CheckCircle2 className="h-4 w-4 text-nexus-primary" />
-          <span className="text-sm">
+          <span className="text-body-sm">
             Score inerente: <strong className={cn('px-2 py-0.5 rounded', scoreColor(likelihood * impact))}>{likelihood * impact}</strong>
           </span>
         </div>

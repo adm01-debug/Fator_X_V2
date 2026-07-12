@@ -160,7 +160,7 @@ export default function BCPTestRunsPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Total de Testes</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">Total de Testes</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-semibold">{stats.total}</p>
@@ -168,7 +168,7 @@ export default function BCPTestRunsPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Aprovados</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">Aprovados</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-semibold text-primary">{stats.passed}</p>
@@ -176,7 +176,7 @@ export default function BCPTestRunsPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Falharam</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">Falharam</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-semibold text-destructive">{stats.failed}</p>
@@ -184,7 +184,7 @@ export default function BCPTestRunsPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Gaps Identificados</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">Gaps Identificados</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-semibold">{stats.gaps}</p>
@@ -208,9 +208,9 @@ export default function BCPTestRunsPage() {
         </CardHeader>
         <CardContent className="space-y-3">
           {loading ? (
-            <p className="text-sm text-muted-foreground">Carregando…</p>
+            <p className="text-body-sm text-muted-foreground">Carregando…</p>
           ) : runs.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-8">
+            <p className="text-body-sm text-muted-foreground text-center py-8">
               Nenhum teste registrado. Registre um tabletop para começar sua trilha BCP.
             </p>
           ) : (
@@ -244,8 +244,8 @@ export default function BCPTestRunsPage() {
                     {rtoBreach && <Badge variant="destructive">RTO estourado</Badge>}
                     {rpoBreach && <Badge variant="destructive">RPO estourado</Badge>}
                   </div>
-                  <p className="text-sm text-muted-foreground">{run.scenario}</p>
-                  <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
+                  <p className="text-body-sm text-muted-foreground">{run.scenario}</p>
+                  <div className="flex flex-wrap gap-3 text-meta text-muted-foreground">
                     <span>Executado em: {format(new Date(run.executed_at), "PPp", { locale: ptBR })}</span>
                     {run.actual_rto_minutes != null && (
                       <span>
@@ -261,13 +261,13 @@ export default function BCPTestRunsPage() {
                     )}
                   </div>
                   {run.gaps.length > 0 && (
-                    <div className="text-xs">
+                    <div className="text-meta">
                       <span className="font-medium">Gaps: </span>
                       {run.gaps.join(" • ")}
                     </div>
                   )}
                   {run.action_items && (
-                    <p className="text-xs">
+                    <p className="text-meta">
                       <span className="font-medium">Ações: </span>
                       {run.action_items}
                     </p>
@@ -350,7 +350,7 @@ export default function BCPTestRunsPage() {
             <div className="flex items-center justify-between rounded-lg border p-3">
               <div>
                 <Label>Sucesso</Label>
-                <p className="text-xs text-muted-foreground">O teste atendeu aos critérios de aceite</p>
+                <p className="text-meta text-muted-foreground">O teste atendeu aos critérios de aceite</p>
               </div>
               <Switch
                 checked={form.success}

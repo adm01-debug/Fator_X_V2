@@ -173,7 +173,7 @@ export default function SystemJobsPage() {
   const kpi = (label: string, value: number | string, icon: React.ReactNode) => (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">
+        <CardTitle className="text-body-sm font-medium text-muted-foreground">
           {label}
         </CardTitle>
         {icon}
@@ -283,8 +283,8 @@ export default function SystemJobsPage() {
                         >
                           <div className="flex items-center justify-between gap-2 flex-wrap">
                             <div className="flex items-center gap-2">
-                              <span className="font-medium text-sm">{c.jobname}</span>
-                              <Badge variant="secondary" className="font-mono text-[10px]">
+                              <span className="font-medium text-body-sm">{c.jobname}</span>
+                              <Badge variant="secondary" className="font-mono text-meta">
                                 {c.schedule}
                               </Badge>
                               {!c.active && <Badge variant="outline">inativo</Badge>}
@@ -296,7 +296,7 @@ export default function SystemJobsPage() {
                               </Badge>
                             </div>
                           </div>
-                          <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground">
+                          <div className="mt-2 flex flex-wrap gap-3 text-meta text-muted-foreground">
                             <span>Última: {timeAgo(c.last_run_at)}</span>
                             <span>Duração última: {c.last_duration_ms ?? "—"} ms</span>
                             <span>Média (20): {c.avg_duration_ms ? Number(c.avg_duration_ms).toFixed(0) : "—"} ms</span>
@@ -344,16 +344,16 @@ export default function SystemJobsPage() {
                         className="p-3 border rounded-lg bg-card hover:bg-accent/30 transition-colors"
                       >
                         <div className="flex items-center justify-between gap-2 flex-wrap">
-                          <span className="font-medium text-sm">{r.job_name}</span>
+                          <span className="font-medium text-body-sm">{r.job_name}</span>
                           {statusBadge(r.status)}
                         </div>
-                        <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground">
+                        <div className="mt-2 flex flex-wrap gap-3 text-meta text-muted-foreground">
                           <span>Iniciado {timeAgo(r.started_at)}</span>
                           <span>Duração: {r.duration_ms ?? "—"} ms</span>
                           <span>Partições removidas: {r.partitions_dropped ?? 0}</span>
                         </div>
                         {r.error_message && (
-                          <p className="mt-2 text-xs text-destructive break-words">
+                          <p className="mt-2 text-meta text-destructive break-words">
                             {r.error_message}
                           </p>
                         )}
@@ -391,17 +391,17 @@ export default function SystemJobsPage() {
                         className="p-3 border rounded-lg bg-card hover:bg-accent/30 transition-colors"
                       >
                         <div className="flex items-center justify-between gap-2 flex-wrap">
-                          <span className="font-medium text-sm">
+                          <span className="font-medium text-body-sm">
                             Regra {a.rule_id?.slice(0, 8) ?? "—"}…
                           </span>
                           {statusBadge(a.status)}
                         </div>
-                        <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground">
+                        <div className="mt-2 flex flex-wrap gap-3 text-meta text-muted-foreground">
                           <span>{timeAgo(a.created_at)}</span>
                           <span>Duração: {a.duration_ms ?? "—"} ms</span>
                         </div>
                         {a.error_message && (
-                          <p className="mt-2 text-xs text-destructive break-words">
+                          <p className="mt-2 text-meta text-destructive break-words">
                             {a.error_message}
                           </p>
                         )}
@@ -439,7 +439,7 @@ export default function SystemJobsPage() {
                         className="p-3 border rounded-lg bg-card hover:bg-accent/30 transition-colors"
                       >
                         <div className="flex items-center justify-between gap-2 flex-wrap">
-                          <span className="font-medium text-sm truncate">{p.target_url}</span>
+                          <span className="font-medium text-body-sm truncate">{p.target_url}</span>
                           {p.succeeded ? (
                             <Badge
                               variant="outline"
@@ -458,12 +458,12 @@ export default function SystemJobsPage() {
                             </Badge>
                           )}
                         </div>
-                        <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground">
+                        <div className="mt-2 flex flex-wrap gap-3 text-meta text-muted-foreground">
                           <span>{timeAgo(p.run_at)}</span>
                           <span>Latência: {p.latency_ms ?? "—"} ms</span>
                         </div>
                         {p.error_msg && (
-                          <p className="mt-2 text-xs text-destructive break-words">
+                          <p className="mt-2 text-meta text-destructive break-words">
                             {p.error_msg}
                           </p>
                         )}
@@ -501,12 +501,12 @@ export default function SystemJobsPage() {
                         className="p-3 border rounded-lg bg-card hover:bg-accent/30 transition-colors"
                       >
                         <div className="flex items-center justify-between gap-2 flex-wrap">
-                          <span className="font-medium text-sm">
+                          <span className="font-medium text-body-sm">
                             {e.primary_entity_id.slice(0, 8)}… ← {e.merged_entity_id.slice(0, 8)}…
                           </span>
                           <Badge variant="secondary">{e.resolution_method}</Badge>
                         </div>
-                        <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground">
+                        <div className="mt-2 flex flex-wrap gap-3 text-meta text-muted-foreground">
                           <span>{timeAgo(e.created_at)}</span>
                           <span>Confiança: {(e.confidence * 100).toFixed(1)}%</span>
                         </div>

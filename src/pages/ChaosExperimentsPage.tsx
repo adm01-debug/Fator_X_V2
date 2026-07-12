@@ -162,7 +162,7 @@ export default function ChaosExperimentsPage() {
 
       <div className="rounded-lg border border-nexus-warning/40 bg-nexus-warning/10 p-4 flex gap-3">
         <AlertTriangle className="h-5 w-5 text-nexus-warning flex-shrink-0 mt-0.5" />
-        <div className="text-sm">
+        <div className="text-body-sm">
           <p className="font-semibold text-nexus-warning">Atenção</p>
           <p className="text-muted-foreground">
             Experimentos injetam falhas reais em rotas de produção. Comece com
@@ -174,7 +174,7 @@ export default function ChaosExperimentsPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Total</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">Total</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">{stats.total}</div>
@@ -182,7 +182,7 @@ export default function ChaosExperimentsPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Ativos agora</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">Ativos agora</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-nexus-warning">{stats.active}</div>
@@ -190,7 +190,7 @@ export default function ChaosExperimentsPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Alvos</CardTitle>
+            <CardTitle className="text-body-sm text-muted-foreground">Alvos</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">{TARGETS.length}</div>
@@ -207,9 +207,9 @@ export default function ChaosExperimentsPage() {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <p className="text-sm text-muted-foreground">Carregando…</p>
+            <p className="text-body-sm text-muted-foreground">Carregando…</p>
           ) : experiments.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-body-sm text-muted-foreground">
               Nenhum experimento. Clique em "Novo Experimento".
             </p>
           ) : (
@@ -239,7 +239,7 @@ export default function ChaosExperimentsPage() {
                           <Badge variant="outline">desativado</Badge>
                         )}
                       </div>
-                      <div className="text-xs text-muted-foreground flex gap-4 flex-wrap">
+                      <div className="text-meta text-muted-foreground flex gap-4 flex-wrap">
                         {exp.latency_ms !== null && (
                           <span>Latência: {exp.latency_ms}ms</span>
                         )}

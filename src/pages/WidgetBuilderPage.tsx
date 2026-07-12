@@ -166,14 +166,14 @@ export default function WidgetBuilderPage() {
                   <Label>Cor inicial</Label>
                   <div className="flex gap-2">
                     <Input type="color" value={fromColor} onChange={(e) => setFromColor(e.target.value)} className="w-14 h-10 p-1" />
-                    <Input value={fromColor} onChange={(e) => setFromColor(e.target.value)} className="font-mono text-xs" />
+                    <Input value={fromColor} onChange={(e) => setFromColor(e.target.value)} className="font-mono text-meta" />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label>Cor final</Label>
                   <div className="flex gap-2">
                     <Input type="color" value={toColor} onChange={(e) => setToColor(e.target.value)} className="w-14 h-10 p-1" />
-                    <Input value={toColor} onChange={(e) => setToColor(e.target.value)} className="font-mono text-xs" />
+                    <Input value={toColor} onChange={(e) => setToColor(e.target.value)} className="font-mono text-meta" />
                   </div>
                 </div>
               </div>
@@ -196,7 +196,7 @@ export default function WidgetBuilderPage() {
             <TabsContent value="preview" className="mt-4">
               <Card className="nexus-card overflow-hidden">
                 <div className="relative bg-gradient-to-br from-muted/30 to-muted/60 h-[600px] rounded-lg border border-dashed border-border/60">
-                  <div className="absolute inset-6 rounded-xl bg-background/40 backdrop-blur-sm p-6 flex items-center justify-center text-muted-foreground text-sm">
+                  <div className="absolute inset-6 rounded-xl bg-background/40 backdrop-blur-sm p-6 flex items-center justify-center text-muted-foreground text-body-sm">
                     <div className="text-center space-y-2">
                       <MessageSquare className="h-10 w-10 mx-auto opacity-40" />
                       <p>Seu site aparecerá aqui — o widget flutua no canto configurado.</p>
@@ -218,17 +218,17 @@ export default function WidgetBuilderPage() {
                             {selectedAgent?.avatar_emoji ?? '🤖'}
                           </div>
                           <div>
-                            <p className="font-bold text-sm">{title}</p>
-                            <p className="text-xs opacity-90">{subtitle}</p>
+                            <p className="font-bold text-body-sm">{title}</p>
+                            <p className="text-meta opacity-90">{subtitle}</p>
                           </div>
                         </div>
                       </div>
                       <div className="p-4 bg-background max-h-64 overflow-y-auto space-y-2">
                         <div className="flex gap-2">
-                          <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-sm shrink-0">
+                          <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-body-sm shrink-0">
                             {selectedAgent?.avatar_emoji ?? '🤖'}
                           </div>
-                          <div className="bg-muted rounded-2xl rounded-tl-sm p-3 text-sm max-w-[80%]">
+                          <div className="bg-muted rounded-2xl rounded-tl-sm p-3 text-body-sm max-w-[80%]">
                             {greeting}
                           </div>
                         </div>
@@ -253,7 +253,7 @@ export default function WidgetBuilderPage() {
                 </div>
               </Card>
               {!agentId && (
-                <p className="text-center text-xs text-muted-foreground mt-3">
+                <p className="text-center text-meta text-muted-foreground mt-3">
                   Selecione um agente para visualizar a janela de chat.
                 </p>
               )}
@@ -268,11 +268,11 @@ export default function WidgetBuilderPage() {
                   </Button>
                 </CardHeader>
                 <CardContent>
-                  <pre className="bg-muted/60 rounded-xl p-4 text-xs font-mono overflow-x-auto whitespace-pre-wrap break-all border border-border/60">
+                  <pre className="bg-muted/60 rounded-xl p-4 text-meta font-mono overflow-x-auto whitespace-pre-wrap break-all border border-border/60">
 {embedCode}
                   </pre>
                   {!agentId && (
-                    <p className="text-xs text-nexus-amber mt-3">
+                    <p className="text-meta text-nexus-amber mt-3">
                       ⚠ Selecione um agente antes de copiar — o código atual contém apenas o placeholder <code>AGENT_ID</code>.
                     </p>
                   )}
@@ -284,7 +284,7 @@ export default function WidgetBuilderPage() {
                   <CardTitle className="text-title-sm">URL do widget</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <code className="text-xs font-mono text-muted-foreground break-all">{widgetUrl}</code>
+                  <code className="text-meta font-mono text-muted-foreground break-all">{widgetUrl}</code>
                 </CardContent>
               </Card>
             </TabsContent>

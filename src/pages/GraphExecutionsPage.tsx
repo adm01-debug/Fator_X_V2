@@ -87,19 +87,19 @@ export default function GraphExecutionsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Total</CardTitle></CardHeader>
+          <CardHeader className="pb-2"><CardTitle className="text-body-sm text-muted-foreground">Total</CardTitle></CardHeader>
           <CardContent><div className="text-2xl font-bold">{rows.length}</div></CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Rodando</CardTitle></CardHeader>
+          <CardHeader className="pb-2"><CardTitle className="text-body-sm text-muted-foreground">Rodando</CardTitle></CardHeader>
           <CardContent><div className="text-2xl font-bold text-nexus-blue">{running}</div></CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Falharam</CardTitle></CardHeader>
+          <CardHeader className="pb-2"><CardTitle className="text-body-sm text-muted-foreground">Falharam</CardTitle></CardHeader>
           <CardContent><div className="text-2xl font-bold text-nexus-red">{failed}</div></CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Custo Total</CardTitle></CardHeader>
+          <CardHeader className="pb-2"><CardTitle className="text-body-sm text-muted-foreground">Custo Total</CardTitle></CardHeader>
           <CardContent><div className="text-2xl font-bold">${totalCost.toFixed(4)}</div></CardContent>
         </Card>
       </div>
@@ -108,17 +108,17 @@ export default function GraphExecutionsPage() {
         <CardHeader><CardTitle>Últimas 200 execuções</CardTitle></CardHeader>
         <CardContent>
           {loading ? (
-            <div className="text-sm text-muted-foreground py-8 text-center">Carregando…</div>
+            <div className="text-body-sm text-muted-foreground py-8 text-center">Carregando…</div>
           ) : rows.length === 0 ? (
-            <div className="text-sm text-muted-foreground py-8 text-center">Nenhuma execução registrada.</div>
+            <div className="text-body-sm text-muted-foreground py-8 text-center">Nenhuma execução registrada.</div>
           ) : (
             <div className="space-y-2">
               {rows.map((r) => (
                 <div key={r.id} className="flex items-center gap-3 p-3 rounded-md border border-border/40 hover:bg-accent/30 transition-colors">
                   <Badge variant="outline" className={statusColor[r.status] ?? ""}>{r.status}</Badge>
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium truncate">{r.input || "(sem input)"}</div>
-                    <div className="text-xs text-muted-foreground flex gap-3 mt-0.5">
+                    <div className="text-body-sm font-medium truncate">{r.input || "(sem input)"}</div>
+                    <div className="text-meta text-muted-foreground flex gap-3 mt-0.5">
                       <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{durationOf(r)}</span>
                       <span className="flex items-center gap-1"><DollarSign className="h-3 w-3" />${(r.total_cost_cents / 100).toFixed(4)}</span>
                       <span>{formatDistanceToNow(new Date(r.started_at), { addSuffix: true, locale: ptBR })}</span>
@@ -142,31 +142,31 @@ export default function GraphExecutionsPage() {
           {selected && (
             <ScrollArea className="max-h-[70vh]">
               <div className="space-y-4 pr-3">
-                <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="grid grid-cols-2 gap-3 text-body-sm">
                   <div><span className="text-muted-foreground">Status:</span> {selected.status}</div>
                   <div><span className="text-muted-foreground">Duração:</span> {durationOf(selected)}</div>
                   <div><span className="text-muted-foreground">Custo:</span> ${(selected.total_cost_cents / 100).toFixed(4)}</div>
                   <div><span className="text-muted-foreground">Nó atual:</span> {selected.current_node_id ?? "—"}</div>
                 </div>
                 <div>
-                  <div className="text-xs font-semibold mb-1 text-muted-foreground">Input</div>
-                  <pre className="text-xs bg-muted/40 rounded p-3 whitespace-pre-wrap">{selected.input}</pre>
+                  <div className="text-meta font-semibold mb-1 text-muted-foreground">Input</div>
+                  <pre className="text-meta bg-muted/40 rounded p-3 whitespace-pre-wrap">{selected.input}</pre>
                 </div>
                 {selected.final_output && (
                   <div>
-                    <div className="text-xs font-semibold mb-1 text-muted-foreground">Output final</div>
-                    <pre className="text-xs bg-muted/40 rounded p-3 whitespace-pre-wrap">{selected.final_output}</pre>
+                    <div className="text-meta font-semibold mb-1 text-muted-foreground">Output final</div>
+                    <pre className="text-meta bg-muted/40 rounded p-3 whitespace-pre-wrap">{selected.final_output}</pre>
                   </div>
                 )}
                 {selected.error_message && (
                   <div>
-                    <div className="text-xs font-semibold mb-1 text-nexus-red">Erro</div>
-                    <pre className="text-xs bg-nexus-red/10 border border-nexus-red/30 rounded p-3 whitespace-pre-wrap">{selected.error_message}</pre>
+                    <div className="text-meta font-semibold mb-1 text-nexus-red">Erro</div>
+                    <pre className="text-meta bg-nexus-red/10 border border-nexus-red/30 rounded p-3 whitespace-pre-wrap">{selected.error_message}</pre>
                   </div>
                 )}
                 <div>
-                  <div className="text-xs font-semibold mb-1 text-muted-foreground">Trace ({selected.trace?.length ?? 0} passos)</div>
-                  <pre className="text-xs bg-muted/40 rounded p-3 max-h-96 overflow-auto">{JSON.stringify(selected.trace, null, 2)}</pre>
+                  <div className="text-meta font-semibold mb-1 text-muted-foreground">Trace ({selected.trace?.length ?? 0} passos)</div>
+                  <pre className="text-meta bg-muted/40 rounded p-3 max-h-96 overflow-auto">{JSON.stringify(selected.trace, null, 2)}</pre>
                 </div>
               </div>
             </ScrollArea>
