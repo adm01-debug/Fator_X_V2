@@ -102,7 +102,7 @@ export default function ComplianceFrameworksPage() {
 
   const createControl = useMutation({
     mutationFn: async (input: Omit<Control, "id" | "created_at">) => {
-      const { error } = await supabase.from("compliance_controls").insert(input);
+      const { error } = await supabase.from("compliance_controls").insert([input]);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -136,7 +136,7 @@ export default function ComplianceFrameworksPage() {
       <PageHeader
         title="Frameworks de Compliance"
         description="Catálogo de frameworks regulatórios, controles e evidências (SOC2, ISO27001, LGPD, HIPAA)."
-        icon={ShieldCheck}
+        
         actions={
           <Dialog open={fwOpen} onOpenChange={setFwOpen}>
             <DialogTrigger asChild>
