@@ -46,6 +46,22 @@ type GeoCountry = {
   created_at: string;
 };
 
+type IPEntry = {
+  id: string;
+  ip_address: string;
+  label: string | null;
+  is_active: boolean;
+  created_at: string;
+};
+
+type BlockedEntry = {
+  id: string;
+  ip_address: string | null;
+  country_code: string | null;
+  reason: string;
+  created_at: string;
+};
+
 const COMMON_COUNTRIES: Array<{ code: string; name: string }> = [
   { code: "BR", name: "Brasil" },
   { code: "US", name: "Estados Unidos" },
