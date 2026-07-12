@@ -164,7 +164,11 @@ export default function SystemJobsPage() {
     automation.refetch();
     pgnet.refetch();
     entity.refetch();
+    cron.refetch();
   };
+
+  const cronJobs = cron.data ?? [];
+  const cronFails = cronJobs.filter((c) => c.last_status && c.last_status !== "succeeded").length;
 
   const kpi = (label: string, value: number | string, icon: React.ReactNode) => (
     <Card>
