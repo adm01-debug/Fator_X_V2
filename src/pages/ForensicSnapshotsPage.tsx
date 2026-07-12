@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Fingerprint, ShieldCheck, ShieldAlert, Search, Loader2, Link2, Eye } from "lucide-react";
+import { Fingerprint, ShieldCheck, ShieldAlert, Search, Link2, Eye } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/shared/PageHeader";
