@@ -90,7 +90,6 @@ export default function ForensicSnapshotsPage() {
   return (
     <main className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
       <PageHeader
-        icon={Fingerprint}
         title="Snapshots Forenses"
         description="Trilha imutável de decisões dos agentes com chain-hash criptográfico para auditoria forense e compliance."
       />
