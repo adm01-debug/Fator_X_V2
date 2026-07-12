@@ -31,6 +31,7 @@ import {
   type NotificationChannel,
 } from '@/services/notificationEngineService';
 import { useToast } from '@/hooks/use-toast';
+import { MultiChannelComposer } from './MultiChannelComposer';
 
 const CHANNEL_ICONS: Record<string, typeof Bell> = {
   email: Mail, whatsapp: MessageSquare, slack: Hash, push: Smartphone, sms: Send, in_app: Bell, webhook: Globe,
