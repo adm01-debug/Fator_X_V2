@@ -127,6 +127,7 @@ const ChangeManagementPage = lazy(() => import("./pages/ChangeManagementPage"));
 const IRPlaybooksPage = lazy(() => import("./pages/IRPlaybooksPage"));
 const AssetInventoryPage = lazy(() => import("./pages/AssetInventoryPage"));
 const IPWhitelistPage = lazy(() => import("./pages/IPWhitelistPage"));
+const AgentExperimentsPage = lazy(() => import("./pages/AgentExperimentsPage"));
 const SLODashboard = lazy(() => import("./pages/SLODashboard"));
 const ChaosLabPage = lazy(() => import("./pages/ChaosLabPage"));
 const SyntheticMonitoringPage = lazy(() => import("./pages/SyntheticMonitoringPage"));
@@ -320,6 +321,7 @@ const App = () => {
                       <Route path="/security/ir" element={<SafePage><ProtectedRoute permission="settings.api_keys"><IRPlaybooksPage /></ProtectedRoute></SafePage>} />
                       <Route path="/security/assets" element={<SafePage><ProtectedRoute permission="settings.api_keys"><AssetInventoryPage /></ProtectedRoute></SafePage>} />
                       <Route path="/security/ip-whitelist" element={<SafePage><ProtectedRoute permission="settings.api_keys"><IPWhitelistPage /></ProtectedRoute></SafePage>} />
+                      <Route path="/agent-experiments" element={<SafePage><AgentExperimentsPage /></SafePage>} />
                       <Route path="/disaster-recovery" element={<SafePage><ProtectedRoute permission="settings.api_keys"><DisasterRecoveryPage /></ProtectedRoute></SafePage>} />
                       <Route path="*" element={<SafePage><NotFound /></SafePage>} />
                     </Routes>

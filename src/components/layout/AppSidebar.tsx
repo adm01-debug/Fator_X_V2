@@ -86,6 +86,7 @@ const navSections = [
     items: [
       { title: "Avaliações", url: "/evaluations", icon: FlaskConical },
       { title: "Eval de Agente", url: "/agent-evals", icon: FlaskConical },
+      { title: "Experimentos A/B", url: "/agent-experiments", icon: FlaskConical },
       { title: "Decaimento de Conhecimento", url: "/knowledge-decay", icon: Archive },
       { title: "Jobs de Sistema", url: "/system-jobs", icon: ServerCog },
       { title: "Eventos de Webhook", url: "/webhook-events", icon: Zap },
