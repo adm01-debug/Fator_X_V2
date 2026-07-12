@@ -87,7 +87,7 @@ async function upsertRemoteConfig(userId: string, cfg: ResearchConfig): Promise<
   const { error } = await supabase
     .from('user_research_configs')
     .upsert(
-      { user_id: userId, config: cfg as unknown as Record<string, unknown> },
+      [{ user_id: userId, config: cfg as unknown as Record<string, unknown> }],
       { onConflict: 'user_id' },
     );
   if (error) {
