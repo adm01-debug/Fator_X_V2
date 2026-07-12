@@ -92,6 +92,7 @@ const navSections = [
       { title: "Jobs de Sistema", url: "/system-jobs", icon: ServerCog },
       { title: "Eventos de Webhook", url: "/webhook-events", icon: Zap },
       { title: "Governança", url: "/governance", icon: ShieldCheck },
+      { title: "Janelas de Congelamento", url: "/governance/freeze-windows", icon: Snowflake },
       { title: "Orçamentos", url: "/budgets", icon: Wallet },
       { title: "Implantações", url: "/deployments", icon: Rocket },
       { title: "Widget Builder", url: "/widget-builder", icon: MessageSquare },
