@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { SecurityPosture } from "@/components/security/SecurityPosture";
 import { SecurityMonitoringPanel } from "@/components/security/SecurityMonitoringPanel";
 import { RollbackRateCard } from "@/components/security/RollbackRateCard";
+import { WalGenerationCard } from "@/components/security/WalGenerationCard";
 import { ComplianceFrameworks } from "@/components/security/ComplianceFrameworks";
 import { GuardrailPolicies } from "@/components/security/GuardrailPolicies";
 import { SessionManagement } from "@/components/security/SessionManagement";
