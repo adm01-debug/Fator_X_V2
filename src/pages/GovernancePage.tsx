@@ -606,7 +606,122 @@ export default function GovernancePage() {
             </Card>
           )}
         </TabsContent>
+
+        <TabsContent value="ip" className="space-y-4">
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <Alert className="flex-1 min-w-[280px]">
+              <Info className="h-4 w-4" />
+              <AlertTitle>Whitelist de IP</AlertTitle>
+              <AlertDescription>
+                {ipProtectionOn
+                  ? `${activeIps.length} regra(s) ativas restringem o acesso administrativo. Requisições fora dos IPs/CIDRs cadastrados são bloqueadas e registradas abaixo.`
+                  : "Nenhuma regra ativa — o acesso administrativo está aberto a qualquer origem. Configure IPs confiáveis para elevar a postura de segurança."}
+              </AlertDescription>
+            </Alert>
+            <Button asChild variant="outline">
+              <Link to="/security/ip-whitelist">
+                Gerenciar IPs
+                <ArrowUpRight className="h-4 w-4 ml-2" />
+              </Link>
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <ShieldCheck className="h-4 w-4 text-emerald-500" />
+                  Regras ativas ({activeIps.length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2 max-h-[320px] overflow-y-auto">
+                {ipQuery.isLoading ? (
+                  <Skeleton className="h-20 w-full" />
+                ) : ipEntries.length === 0 ? (
+                  <p className="text-sm text-muted-foreground py-4 text-center">
+                    Nenhum IP cadastrado.
+                  </p>
+                ) : (
+                  ipEntries.slice(0, 8).map((entry) => (
+                    <div
+                      key={entry.id}
+                      className="flex items-center justify-between gap-2 p-2 rounded-md border bg-card/40"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <code className="text-xs font-mono font-semibold">
+                            {entry.ip_address}
+                          </code>
+                          {entry.ip_address.includes("/") && (
+                            <Badge variant="outline" className="text-[10px] px-1">CIDR</Badge>
+                          )}
+                          {!entry.is_active && (
+                            <Badge variant="secondary" className="text-[10px]">Inativo</Badge>
+                          )}
+                        </div>
+                        {entry.label && (
+                          <p className="text-xs text-muted-foreground truncate">{entry.label}</p>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                )}
+                {ipEntries.length > 8 && (
+                  <p className="text-xs text-muted-foreground text-center pt-2">
+                    +{ipEntries.length - 8} outras regras
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Ban className="h-4 w-4 text-destructive" />
+                  Tentativas bloqueadas (10 recentes)
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2 max-h-[320px] overflow-y-auto">
+                {blockedQuery.isLoading ? (
+                  <Skeleton className="h-20 w-full" />
+                ) : blocked.length === 0 ? (
+                  <p className="text-sm text-muted-foreground py-4 text-center">
+                    Nenhum bloqueio registrado. ✅
+                  </p>
+                ) : (
+                  blocked.map((b) => (
+                    <div
+                      key={b.id}
+                      className="flex items-center justify-between gap-2 p-2 rounded-md border border-destructive/20 bg-destructive/5"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <code className="text-xs font-mono">{b.ip_address ?? "—"}</code>
+                          {b.country_code && (
+                            <Badge variant="outline" className="text-[10px] px-1">
+                              {b.country_code}
+                            </Badge>
+                          )}
+                          <Badge variant="destructive" className="text-[10px]">
+                            {b.reason}
+                          </Badge>
+                        </div>
+                        <p className="text-[11px] text-muted-foreground">
+                          {formatDistanceToNow(new Date(b.created_at), {
+                            addSuffix: true,
+                            locale: ptBR,
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
       </Tabs>
+
     </div>
   );
 }
