@@ -7020,6 +7020,27 @@ export type Database = {
         }
         Relationships: []
       }
+      user_research_configs: {
+        Row: {
+          config: Json
+          created_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          config: Json
+          created_at?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           assigned_by: string | null
