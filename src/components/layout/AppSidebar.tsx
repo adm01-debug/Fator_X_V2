@@ -88,6 +88,7 @@ const navSections = [
       { title: "Eval de Agente", url: "/agent-evals", icon: FlaskConical },
       { title: "Decaimento de Conhecimento", url: "/knowledge-decay", icon: Archive },
       { title: "Jobs de Sistema", url: "/system-jobs", icon: ServerCog },
+      { title: "Eventos de Webhook", url: "/webhook-events", icon: Zap },
       { title: "Implantações", url: "/deployments", icon: Rocket },
       { title: "Widget Builder", url: "/widget-builder", icon: MessageSquare },
       { title: "Monitoramento", url: "/monitoring", icon: Activity },
