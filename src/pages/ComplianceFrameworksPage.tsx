@@ -45,7 +45,7 @@ type Control = {
   category: string;
   title: string;
   description: string | null;
-  evidence_type: string | null;
+  evidence_type: string;
   auto_check_query: string | null;
   created_at: string;
 };
