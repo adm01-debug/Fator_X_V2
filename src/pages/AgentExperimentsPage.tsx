@@ -112,7 +112,7 @@ export default function AgentExperimentsPage() {
     }
     await createExp.mutateAsync({
       agent_id: agentId,
-      workspace_id: activeAgent.workspace_id,
+      workspace_id: activeAgent.workspace_id ?? "",
       name: form.name.trim(),
       description: form.description.trim() || undefined,
       variant_a_config: a,
