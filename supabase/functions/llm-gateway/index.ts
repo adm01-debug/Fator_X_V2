@@ -340,7 +340,9 @@ async function resolveFallbackChain(supabase: SupabaseClient, workspaceId: strin
   return chain.sort((a, b) => a.priority - b.priority);
 }
 
-// ═══ Call with Fallback — tries each provider in chain ═══
+// ═══ Call with Fallback — tries each provider in chain (com Circuit Breaker) ═══
+import { getBreaker } from "../_shared/circuitBreaker.ts";
+
 async function callWithFallback(
   chain: ProviderOption[], callParams: LLMCallParams, supabaseUrl: string
 ): Promise<{ result: LLMResult; provider: string; model: string; attempt: number; errors: string[] }> {
@@ -348,6 +350,13 @@ async function callWithFallback(
 
   for (let i = 0; i < chain.length; i++) {
     const opt = chain[i];
+    const breaker = getBreaker(`llm:${opt.provider}`);
+    if (!breaker.canRequest()) {
+      const msg = `[${opt.provider}/${opt.model}] circuit_open`;
+      errors.push(msg);
+      console.warn(`Fallback attempt ${i + 1} skipped (circuit open):`, opt.provider);
+      continue;
+    }
     try {
       const params = { ...callParams, model: opt.model };
       const result = opt.provider === 'huggingface' ? await callHuggingFace(params, opt.apiKey)
@@ -356,8 +365,10 @@ async function callWithFallback(
         : opt.provider === 'anthropic' ? await callAnthropic(params, opt.apiKey)
         : await callOpenAICompatible(params, opt.apiKey, opt.provider);
 
+      breaker.recordSuccess();
       return { result, provider: opt.provider, model: opt.model, attempt: i + 1, errors };
     } catch (err) {
+      breaker.recordFailure(err);
       const errMsg = `[${opt.provider}/${opt.model}] ${err instanceof Error ? err.message : 'Unknown error'}`;
       errors.push(errMsg);
       console.error(`Fallback attempt ${i + 1} failed:`, errMsg);

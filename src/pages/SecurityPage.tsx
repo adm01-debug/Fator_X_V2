@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { SecurityPosture } from "@/components/security/SecurityPosture";
 import { SecurityMonitoringPanel } from "@/components/security/SecurityMonitoringPanel";
+import { RollbackRateCard } from "@/components/security/RollbackRateCard";
 import { ComplianceFrameworks } from "@/components/security/ComplianceFrameworks";
 import { GuardrailPolicies } from "@/components/security/GuardrailPolicies";
 import { SessionManagement } from "@/components/security/SessionManagement";
@@ -222,7 +223,8 @@ export default function SecurityPage() {
                 <RateLimitingPanel />
               </div>
             </div>
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-1 space-y-8">
+              <RollbackRateCard />
               <SecurityMonitoringPanel />
             </div>
           </div>
