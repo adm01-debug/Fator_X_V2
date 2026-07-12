@@ -343,6 +343,7 @@ const App = () => {
                       <Route path="/agent-sessions" element={<SafePage><AgentSessionsPage /></SafePage>} />
                       <Route path="/graph-executions" element={<SafePage><GraphExecutionsPage /></SafePage>} />
                       <Route path="/entity-resolution" element={<SafePage><EntityResolutionLogsPage /></SafePage>} />
+                      <Route path="/llm-cost-by-caller" element={<SafePage><LlmCostByCallerPage /></SafePage>} />
                       
                       
                       <Route path="/agent-experiments" element={<SafePage><AgentExperimentsPage /></SafePage>} />
