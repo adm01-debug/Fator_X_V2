@@ -35,6 +35,30 @@ jobs:
       - run: npm ci
       - run: npx tsc --noEmit
       - run: npx eslint src/ --ext .ts,.tsx --max-warnings 0
+      - name: Enforce nexus-design & no-explicit-any (zero regressions)
+        run: |
+          set -o pipefail
+          npx eslint src/ --ext .ts,.tsx \
+            --rule '{"@typescript-eslint/no-explicit-any":"error","nexus-design/no-hardcoded-colors":"error","nexus-design/no-adhoc-typography":"error"}' \
+            -f json -o eslint-report.json || true
+          node -e "
+            const r = require('./eslint-report.json');
+            const watched = new Set(['@typescript-eslint/no-explicit-any','nexus-design/no-hardcoded-colors','nexus-design/no-adhoc-typography']);
+            const violations = [];
+            for (const f of r) for (const m of f.messages) if (watched.has(m.ruleId)) violations.push({file:f.filePath,line:m.line,rule:m.ruleId,msg:m.message});
+            if (violations.length) {
+              console.error('❌ ' + violations.length + ' violação(ões) das regras protegidas detectada(s):');
+              for (const v of violations.slice(0,50)) console.error('  ' + v.rule + ' — ' + v.file + ':' + v.line + ' — ' + v.msg);
+              if (violations.length > 50) console.error('  … +' + (violations.length-50) + ' outras');
+              process.exit(1);
+            }
+            console.log('✅ Nenhuma nova violação de nexus-design ou no-explicit-any.');
+          "
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: eslint-guardrails-report
+          path: eslint-report.json
 
   unit-tests:
     name: Unit Tests
