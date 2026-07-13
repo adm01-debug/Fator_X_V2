@@ -7,7 +7,7 @@ import tseslint from "typescript-eslint";
 import nexusDesign from "./eslint-plugins/nexus-design.js";
 
 export default tseslint.config(
-  { ignores: ["dist", "eslint-plugins/**"] },
+  { ignores: ["dist", "eslint-plugins/**", "**/*.css"] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ["**/*.{ts,tsx}"],
