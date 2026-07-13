@@ -101,8 +101,8 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
     const results: Record<string, unknown> = { stage1_results: [], metrics: entry.metrics };
     for (const res of entry.stage1_results) {
       await new Promise(r => setTimeout(r, 800));
-      results.stage1_results.push(res);
-      set({ results: { ...results } as OracleResult });
+      (results.stage1_results as unknown[]).push(res);
+      set({ results: { ...results } as unknown as OracleResult });
     }
 
     // Simulate Stage 2
@@ -111,7 +111,7 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
       set({ currentStage: 2, stageLabel: 'Replay: Realizando Peer-Review...' });
       await new Promise(r => setTimeout(r, 1000));
       results.stage2_results = entry.stage2_results;
-      set({ results: { ...results } as OracleResult });
+      set({ results: { ...results } as unknown as OracleResult });
     }
 
     // Simulate Stage 3
