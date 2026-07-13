@@ -192,7 +192,7 @@ Deno.serve(async (req) => {
               memory_mb: resultData.memory_mb
             });
 
-            try { await Deno.remove(tmpFile); } catch (_) { }
+            try { await Deno.remove(tmpFile); } catch (_) { /* arquivo temporário pode não existir se a execução falhou antes de escrever */ }
           } else {
             // Simulated streaming with real AI analysis
             await sendEvent("stdout", { chunk: `[Sandbox ${body.runtime}] Inicializando container isolado...\n`, ts: new Date().toISOString() });
