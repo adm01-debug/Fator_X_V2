@@ -7,10 +7,11 @@ import { toast } from "sonner";
 import type { DbRow } from '@/types/dbRow';
 
 export function AuditLogSection() {
-  const { data: logs = [], isLoading } = useQuery({
+  const { data: logsRaw = [], isLoading } = useQuery({
     queryKey: ['audit_log'],
     queryFn: () => getAuditLog({ limit: 50 }),
   });
+  const logs = logsRaw as DbRow[];
 
   const handleExport = (format: 'csv' | 'json') => {
     if (logs.length === 0) return;
