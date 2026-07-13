@@ -128,17 +128,19 @@ export function UsageCharts({ data }: UsageChartsProps) {
     );
   }
 
-  const handleDrilldown = (d: unknown) => {
-    const from = new Date(d.date);
+  const handleDrilldown = (raw: unknown) => {
+    const d = (raw ?? {}) as { date?: string };
+    const from = new Date(d.date ?? '');
     from.setHours(0, 0, 0, 0);
-    const to = new Date(d.date);
+    const to = new Date(d.date ?? '');
     to.setHours(23, 59, 59, 999);
     navigate(`/traces?from=${from.toISOString()}&to=${to.toISOString()}`);
   };
 
-  const drilldownExtras = (d: unknown) => {
+  const drilldownExtras = (raw: unknown) => {
+    const d = (raw ?? {}) as { requests?: number; errors?: number; cost?: number };
     const sections: TooltipExtraSection[] = [];
-    if (d.requests > 0 || d.errors > 0 || d.cost > 0) {
+    if ((d.requests ?? 0) > 0 || (d.errors ?? 0) > 0 || (d.cost ?? 0) > 0) {
       sections.push({
         title: "Ações Rápidas",
         rows: [

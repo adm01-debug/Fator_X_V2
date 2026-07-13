@@ -206,7 +206,7 @@ export function LightBarChart({
                 className="fill-muted-foreground"
                 style={{ fontSize: 10 }}
               >
-                {d[xKey]}
+                {String(d[xKey] ?? '')}
               </text>
             );
           })}

@@ -165,7 +165,7 @@ export function AgentRichMetrics({ agentId, agentName, days = 14 }: Props) {
               height={200}
               tooltipFormatter={(v) => formatCost(v)}
               yFormatter={(v) => v < 1 ? `$${v.toFixed(2)}` : `$${v.toFixed(0)}`}
-              onBarClick={(d) => setSelectedDay(d as DailyPoint)}
+              onBarClick={(d) => setSelectedDay(d as unknown as DailyPoint)}
             />
           ) : (
             <EmptyChart label="Sem custos registrados" />
@@ -196,7 +196,7 @@ export function AgentRichMetrics({ agentId, agentName, days = 14 }: Props) {
               height={200}
               tooltipFormatter={(v) => `${formatNumber(v)} tokens`}
               yFormatter={(v) => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v)}
-              onBarClick={(d) => setSelectedDay(d as DailyPoint)}
+              onBarClick={(d) => setSelectedDay(d as unknown as DailyPoint)}
             />
           ) : (
             <EmptyChart label="Sem consumo de tokens" />

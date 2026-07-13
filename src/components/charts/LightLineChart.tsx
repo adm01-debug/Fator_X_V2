@@ -107,7 +107,7 @@ export function LightLineChart({
 
           {data.map((d, i) => (
             <text key={i} x={scaleX(i)} y={inner.height + 14} textAnchor="middle" className="fill-muted-foreground" style={{ fontSize: 10 }}>
-              {d[xKey]}
+              {String(d[xKey] ?? '')}
             </text>
           ))}
         </g>
