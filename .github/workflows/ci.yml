@@ -39,11 +39,11 @@ jobs:
         run: |
           set -o pipefail
           npx eslint src/ --ext .ts,.tsx \
-            --rule '{"@typescript-eslint/no-explicit-any":"error","nexus-design/no-hardcoded-colors":"error","nexus-design/no-adhoc-typography":"error"}' \
+            --rule '{"@typescript-eslint/no-explicit-any":"error","nexus-design/no-hardcoded-colors":"error","nexus-design/no-adhoc-typography":"error","nexus-design/no-adhoc-shadows":"error"}' \
             -f json -o eslint-report.json || true
           node -e "
             const r = require('./eslint-report.json');
-            const watched = new Set(['@typescript-eslint/no-explicit-any','nexus-design/no-hardcoded-colors','nexus-design/no-adhoc-typography']);
+            const watched = new Set(['@typescript-eslint/no-explicit-any','nexus-design/no-hardcoded-colors','nexus-design/no-adhoc-typography','nexus-design/no-adhoc-shadows']);
             const violations = [];
             for (const f of r) for (const m of f.messages) if (watched.has(m.ruleId)) violations.push({file:f.filePath,line:m.line,rule:m.ruleId,msg:m.message});
             if (violations.length) {
