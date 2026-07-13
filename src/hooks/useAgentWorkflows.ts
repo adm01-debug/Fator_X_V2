@@ -35,7 +35,7 @@ export interface WorkflowRun {
   status: string;
   input: unknown;
   output: unknown;
-  trace: unknown[];
+  trace: DbRow[];
   error_message: string | null;
   started_at: string;
   completed_at: string | null;
@@ -59,7 +59,7 @@ export function useAgentWorkflows(agentId?: string) {
   });
 
   const createWorkflow = useMutation({
-    mutationFn: async (input: { name: string; description?: string; workspace_id: string; nodes?: unknown[]; edges?: unknown[] }) => {
+    mutationFn: async (input: { name: string; description?: string; workspace_id: string; nodes?: DbRow[]; edges?: DbRow[] }) => {
       const { data: u } = await supabase.auth.getUser();
       if (!u.user) throw new Error('Não autenticado');
       const { data, error } = await supabase
@@ -86,7 +86,7 @@ export function useAgentWorkflows(agentId?: string) {
   });
 
   const updateWorkflow = useMutation({
-    mutationFn: async (input: { id: string; nodes?: unknown[]; edges?: unknown[]; name?: string; description?: string; status?: string }) => {
+    mutationFn: async (input: { id: string; nodes?: DbRow[]; edges?: DbRow[]; name?: string; description?: string; status?: string }) => {
       const { id, ...patch } = input;
       const { error } = await supabase.from('agent_workflows').update(patch as unknown as never).eq('id', id);
       if (error) throw error;

@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import type { DbRow } from '@/types/dbRow';
 
 export function AuditLogSection() {
   const { data: logs = [], isLoading } = useQuery({
@@ -26,7 +27,7 @@ export function AuditLogSection() {
         l.entity_id || '',
         JSON.stringify(l.metadata || {}),
       ]);
-      content = [headers.join(','), ...rows.map((r: unknown[]) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(','))].join('\n');
+      content = [headers.join(','), ...rows.map((r: DbRow[]) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(','))].join('\n');
       mime = 'text/csv';
       ext = 'csv';
     } else {

@@ -8,6 +8,7 @@ export type { OracleMode, OraclePreset, ModelResponse, ConsensusPoint, Citation,
 import type { OracleMode, OracleResult } from './types/oracleTypes';
 export { ORACLE_MODES, ORACLE_PRESETS } from './presets/oraclePresets';
 import { ORACLE_MODES, ORACLE_PRESETS } from './presets/oraclePresets';
+import type { DbRow } from '@/types/dbRow';
 
 interface OracleStore {
   query: string;
@@ -180,9 +181,9 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
       const decoder = new TextDecoder();
       
       const tempResults: {
-        stage1_results: unknown[];
-        stage2_results?: unknown[];
-        consensus_points?: unknown[];
+        stage1_results: DbRow[];
+        stage2_results?: DbRow[];
+        consensus_points?: DbRow[];
         metrics: { total_latency_ms: number; total_cost_usd: number; total_tokens: number; models_used: number };
       } = {
         stage1_results: [],

@@ -664,7 +664,7 @@ describe('Cenários Cruzados — Edge Cases', () => {
   });
 
   it('provider chain vazio gera erro 400', () => {
-    const chain: unknown[] = [];
+    const chain: DbRow[] = [];
     expect(chain.length).toBe(0);
   });
 

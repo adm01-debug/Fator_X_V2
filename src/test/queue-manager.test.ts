@@ -6,11 +6,12 @@
  * The DB-heavy CRUD/dequeue logic is exercised via the mocks.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { DbRow } from '@/types/dbRow';
 
 const mockInvoke = vi.fn();
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
-    functions: { invoke: (...args: unknown[]) => mockInvoke(...args) },
+    functions: { invoke: (...args: DbRow[]) => mockInvoke(...args) },
   },
 }));
 

@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { logger } from "@/lib/logger";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import type { DbRow } from '@/types/dbRow';
 
 interface SecurityAlert {
   id: string;
@@ -187,6 +188,6 @@ export function SecurityMonitoringPanel() {
   );
 }
 
-function cn(...inputs: unknown[]) {
+function cn(...inputs: DbRow[]) {
   return inputs.filter(Boolean).join(' ');
 }

@@ -4,6 +4,7 @@
  */
 import { supabase } from "@/integrations/supabase/client";
 import { logger } from "@/lib/logger";
+import type { DbRow } from '@/types/dbRow';
 
 export interface ReplayFork {
   id: string;
@@ -18,7 +19,7 @@ export interface ReplayFork {
   state_snapshot: unknown;
   deterministic_seed: string | null;
   status: "pending" | "running" | "completed" | "failed";
-  result: { steps?: unknown[]; summary?: string } | null;
+  result: { steps?: DbRow[]; summary?: string } | null;
   error_message: string | null;
   new_execution_id: string | null;
   total_steps: number;

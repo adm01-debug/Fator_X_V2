@@ -64,8 +64,8 @@ interface Delta { label: string; from: string | number; to: string | number; }
 interface CfgShape {
   temperature?: number;
   max_tokens?: number;
-  tools?: unknown[];
-  guardrails?: unknown[];
+  tools?: DbRow[];
+  guardrails?: DbRow[];
   system_prompt?: string;
 }
 

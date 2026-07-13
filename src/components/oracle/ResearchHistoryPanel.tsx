@@ -71,8 +71,8 @@ function parseRun(entry: OracleHistoryEntry): ParsedRun {
   const r = (entry.results ?? {}) as unknown as Record<string, unknown> & {
     report?: string;
     iterations?: number;
-    sources?: unknown[];
-    steps?: unknown[];
+    sources?: DbRow[];
+    steps?: DbRow[];
     error?: string;
   };
   const report = typeof r.report === 'string' ? r.report : '';

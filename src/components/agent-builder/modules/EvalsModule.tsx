@@ -21,6 +21,7 @@ import {
 } from '@/hooks/useAgentEvals';
 import { useWorkspaceId } from '@/hooks/use-data';
 import { toast } from 'sonner';
+import type { DbRow } from '@/types/dbRow';
 
 export function EvalsModule() {
   const { id: agentId } = useParams();
@@ -259,7 +260,7 @@ export function EvalsModule() {
   );
 }
 
-function AuditReportView({ runId, runs }: { runId: string | null; runs: unknown[] }) {
+function AuditReportView({ runId, runs }: { runId: string | null; runs: DbRow[] }) {
   const { data: results = [] } = useEvalResults(runId);
   const run = (runs as Array<{ id?: string }>).find((r) => r?.id === runId);
   if (!run) return null;

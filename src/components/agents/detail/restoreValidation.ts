@@ -186,7 +186,7 @@ export function validateRestore(
    * painel reflita imediatamente que a issue foi resolvida.
    */
   overrides?: {
-    config?: Partial<{ temperature: number | null; max_tokens: number | null; reasoning: string | null; tools: unknown[] | null }>;
+    config?: Partial<{ temperature: number | null; max_tokens: number | null; reasoning: string | null; tools: DbRow[] | null }>;
     model?: string | null;
   },
 ): RestoreValidation {
