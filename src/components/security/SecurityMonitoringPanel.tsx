@@ -71,7 +71,7 @@ export function SecurityMonitoringPanel() {
       if (error) throw error;
       setAlerts((data || []) as unknown as SecurityAlert[]);
     } catch (err) {
-      console.error('Failed to load alerts', err);
+      logger.error('Failed to load alerts', err);
     } finally {
       setLoading(false);
     }
