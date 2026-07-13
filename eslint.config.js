@@ -32,6 +32,7 @@ export default tseslint.config(
       // pelos tokens semânticos definidos em tailwind.config.ts / index.css.
       "nexus-design/no-hardcoded-colors": "error",
       "nexus-design/no-adhoc-typography": "error",
+      "nexus-design/no-adhoc-shadows": "error",
     },
   },
   {
@@ -39,6 +40,7 @@ export default tseslint.config(
     rules: {
       "nexus-design/no-adhoc-typography": "off",
       "nexus-design/no-hardcoded-colors": "off",
+      "nexus-design/no-adhoc-shadows": "off",
     },
   },
   {
