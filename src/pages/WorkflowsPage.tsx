@@ -204,7 +204,7 @@ export default function WorkflowsPage() {
               <p className="text-muted-foreground mb-2 italic">// Último output:</p>
               {typeof currentEvent.output === 'string' ? currentEvent.output : JSON.stringify(currentEvent.output, null, 2)}
             </div>
-          )}
+          ) : null}
         </Card>
       )}
 
