@@ -60,15 +60,18 @@ export default function AgentVersioningPage() {
     setSearchParams(next, { replace: opts?.replace ?? false });
   };
   const setSelectedId = (vid: string | null) =>
-    updateParams((p) => { vid ? p.set('sel', vid) : p.delete('sel'); });
+    updateParams((p) => { if (vid) p.set('sel', vid); else p.delete('sel'); });
   const setAId = (vid: string | null) =>
-    updateParams((p) => { vid ? p.set('a', vid) : p.delete('a'); });
+    updateParams((p) => { if (vid) p.set('a', vid); else p.delete('a'); });
   const setBId = (vid: string | null) =>
-    updateParams((p) => { vid ? p.set('b', vid) : p.delete('b'); });
+    updateParams((p) => { if (vid) p.set('b', vid); else p.delete('b'); });
   const setMode = (m: 'detail' | 'compare') =>
-    updateParams((p) => { m === 'compare' ? p.set('mode', 'compare') : p.delete('mode'); });
+    updateParams((p) => { if (m === 'compare') p.set('mode', 'compare'); else p.delete('mode'); });
   const setPreset = (pid: string) =>
-    updateParams((p) => { pid && pid !== 'all' ? p.set('preset', pid) : p.delete('preset'); });
+    updateParams((p) => {
+      if (pid && pid !== 'all') p.set('preset', pid);
+      else p.delete('preset');
+    });
 
   // Filtro multi-tag por tipo de evento — persiste na URL como `types=a,b,c`
   // e aplica AND com o preset ativo (preset filtra "modo de uso", types
@@ -84,9 +87,11 @@ export default function AgentVersioningPage() {
   }, [typesParam]);
   const toggleType = (tag: TimelineTag) => {
     const next = new Set(activeTypes);
-    next.has(tag) ? next.delete(tag) : next.add(tag);
+    if (next.has(tag)) next.delete(tag);
+    else next.add(tag);
     updateParams((p) => {
-      next.size > 0 ? p.set('types', Array.from(next).join(',')) : p.delete('types');
+      if (next.size > 0) p.set('types', Array.from(next).join(','));
+      else p.delete('types');
     });
   };
   const clearTypes = () =>
@@ -98,7 +103,8 @@ export default function AgentVersioningPage() {
   const setRange = (r: TimelineRange) =>
     updateParams((p) => {
       const s = serializeRange(r);
-      s ? p.set('range', s) : p.delete('range');
+      if (s) p.set('range', s);
+      else p.delete('range');
     });
   // Execução (sessão) escolhida — persistida como ?run=<session_id> além do
   // range absoluto. Isso torna o link autoexplicativo ("estou olhando a run X")
@@ -107,8 +113,10 @@ export default function AgentVersioningPage() {
   const setRunAndRange = (r: TimelineRange, rid: string | null) =>
     updateParams((p) => {
       const s = serializeRange(r);
-      s ? p.set('range', s) : p.delete('range');
-      rid ? p.set('run', rid) : p.delete('run');
+      if (s) p.set('range', s);
+      else p.delete('range');
+      if (rid) p.set('run', rid);
+      else p.delete('run');
     });
 
   const { data: agent } = useQuery({
