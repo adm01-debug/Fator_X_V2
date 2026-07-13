@@ -222,8 +222,8 @@ export default function ComputerUsePage() {
                             {new Date(a.ts).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                           </span>
                         </div>
-                        {a.params?.url && <p className="text-meta font-mono text-muted-foreground truncate">URL: {a.params.url}</p>}
-                        {a.params?.text && <p className="text-meta font-medium text-foreground">Typing: "{a.params.text}"</p>}
+                        {a.params?.url ? <p className="text-meta font-mono text-muted-foreground truncate">URL: {String(a.params.url)}</p> : null}
+                        {a.params?.text ? <p className="text-meta font-medium text-foreground">Typing: "{String(a.params.text)}"</p> : null}
                         {a.coord && <p className="text-meta text-muted-foreground">Coord: [{a.coord.x}, {a.coord.y}]</p>}
                         <div className="bg-muted/40 rounded-lg p-2.5 mt-1 border border-border/10">
                            <p className="text-meta leading-relaxed text-foreground/80 italic">"{a.thought}"</p>
