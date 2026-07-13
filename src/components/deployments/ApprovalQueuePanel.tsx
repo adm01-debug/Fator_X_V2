@@ -73,7 +73,7 @@ export function ApprovalQueuePanel() {
                 </div>
                 <div className="flex items-center gap-2 text-meta text-muted-foreground">
                   <Clock className="h-3 w-3" />
-                  <span>Há {new Date(run.started_at).toLocaleTimeString()}</span>
+                  <span>Há {new Date(run.started_at ?? Date.now()).toLocaleTimeString()}</span>
                   <span className="opacity-40">•</span>
                   <span className="font-mono">{run.id.slice(0, 8)}</span>
                 </div>
