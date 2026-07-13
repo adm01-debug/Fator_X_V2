@@ -209,6 +209,7 @@ export function GroupMembers({ entityId, grupoId, excludeId }: { entityId: strin
   if (loading) return <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />;
   if (!members.length) return null;
 
+  // eslint-disable-next-line @typescript-eslint/no-require-imports -- import dinâmico para evitar ciclo de importação com datahub-entities
   const { ENTITY_MAPPINGS } = require("@/config/datahub-entities");
   const mapping = ENTITY_MAPPINGS[entityId];
   const displayCol = mapping?.primary.display_column ?? 'id';
