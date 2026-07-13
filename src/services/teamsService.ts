@@ -6,7 +6,28 @@ import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import { supabase } from '@/integrations/supabase/client';
 import type { RoleKey } from './rbacService';
 
-export async function listMembers(workspaceId: string) {
+export interface WorkspaceMemberRow {
+  id: string;
+  workspace_id: string;
+  user_id: string | null;
+  email: string | null;
+  name: string | null;
+  role: string | null;
+  accepted_at: string | null;
+  invited_at: string | null;
+  [key: string]: unknown;
+}
+
+export interface PendingInviteRow {
+  id: string;
+  workspace_id: string;
+  email: string | null;
+  role: string | null;
+  invited_at: string | null;
+  [key: string]: unknown;
+}
+
+export async function listMembers(workspaceId: string): Promise<WorkspaceMemberRow[]> {
   const { data, error } = await supabaseExternal
     .from('workspace_members_safe')
     .select('*')
@@ -14,7 +35,7 @@ export async function listMembers(workspaceId: string) {
     .order('invited_at', { ascending: true });
 
   if (error) throw error;
-  return data ?? [];
+  return (data ?? []) as unknown as WorkspaceMemberRow[];
 }
 
 export async function inviteMember(
