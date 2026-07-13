@@ -27,7 +27,7 @@ export function AgentCard({
   onNavigate, onToggleFav, onClone, onAutoTag, onExport, onToggleSelect,
 }: AgentCardProps) {
   const config = (agent.config as Record<string, unknown>) ?? {};
-  const metrics = config.metrics || { calls: 0, accuracy: 0, latency: 0 };
+  const metrics = ((config.metrics as { calls?: number | string; accuracy?: number | string; latency?: number | string }) ?? { calls: 0, accuracy: 0, latency: 0 });
 
   return (
     <div

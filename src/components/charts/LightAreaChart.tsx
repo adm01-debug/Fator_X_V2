@@ -14,7 +14,7 @@ interface AreaSeries {
 }
 
 interface Props {
-  data: Record<string, string | number>[];
+  data: readonly object[];
   xKey: string;
   series: AreaSeries[];
   height?: number;
@@ -41,11 +41,12 @@ function niceMax(v: number) {
 }
 
 export function LightAreaChart({
-  data, xKey, series, height = 220, margin,
+  data: rawData, xKey, series, height = 220, margin,
   yFormatter = String, tooltipFormatter, tooltipTitle, tooltipExtras,
   showLegend = false, showGrid = true,
   onPointClick,
 }: Props) {
+  const data = rawData as ReadonlyArray<Record<string, string | number>>;
 
   const { ref, width, margin: m, inner } = useChartDimensions(margin);
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);

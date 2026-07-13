@@ -95,7 +95,7 @@ export function CronSchedulerPanel() {
       setTargetId('');
       await loadData();
     } catch (e: unknown) {
-      toast({ title: 'Erro ao criar', description: e.message, variant: 'destructive' });
+      toast({ title: 'Erro ao criar', description: e instanceof Error ? e.message : String(e), variant: 'destructive' });
     } finally {
       setSaving(false);
     }

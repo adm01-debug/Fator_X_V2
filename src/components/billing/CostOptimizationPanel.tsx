@@ -90,7 +90,7 @@ export function CostOptimizationPanel() {
 
     // 3. High error rate = wasted cost
     const agentUsageMap = new Map<string, { cost: number; errors: number; requests: number }>();
-    usage.forEach((u: { agent_id: string; model?: string; cost?: number; date: string; [k: string]: unknown }) => {
+    (usage as unknown as Array<{ agent_id: string; total_cost_usd?: number; error_count?: number; requests?: number }>).forEach((u) => {
       const existing = agentUsageMap.get(u.agent_id) || { cost: 0, errors: 0, requests: 0 };
       existing.cost += Number(u.total_cost_usd || 0);
       existing.errors += Number(u.error_count || 0);

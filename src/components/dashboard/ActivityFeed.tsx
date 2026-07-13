@@ -63,7 +63,8 @@ export function ActivityFeed() {
 
   return (
     <div className="space-y-1 max-h-[320px] overflow-y-auto">
-      {logs.map((log: unknown) => {
+      {logs.map((raw: unknown) => {
+        const log = (raw ?? {}) as { id?: string; action?: unknown; metadata?: unknown; created_at?: unknown };
         const action = String(log.action ?? '');
         const info = ACTION_LABELS[action] || { label: action, color: 'text-muted-foreground' };
         const meta = log.metadata as Record<string, string> | null;
@@ -80,7 +81,7 @@ export function ActivityFeed() {
               <span className={`font-medium ${info.color}`}>{info.label}</span>
               {detail && <span className="text-muted-foreground ml-1.5 truncate">— {detail}</span>}
             </div>
-            <span className="text-meta text-muted-foreground shrink-0 text-numeric">{getRelativeTime(log.created_at ?? '')}</span>
+            <span className="text-meta text-muted-foreground shrink-0 text-numeric">{getRelativeTime(String(log.created_at ?? ''))}</span>
           </div>
         );
       })}

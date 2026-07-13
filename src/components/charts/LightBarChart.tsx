@@ -13,7 +13,7 @@ interface BarSeries {
 }
 
 interface Props {
-  data: Record<string, unknown>[];
+  data: readonly object[];
   xKey: string;
   series: BarSeries[];
   height?: number;
@@ -35,10 +35,11 @@ function niceMax(v: number) {
 }
 
 export function LightBarChart({
-  data, xKey, series, height = 220, margin,
+  data: rawData, xKey, series, height = 220, margin,
   yFormatter = String, tooltipFormatter, showLegend = false, showGrid = true,
   onBarClick,
 }: Props) {
+  const data = rawData as ReadonlyArray<Record<string, unknown>>;
   const { ref, width, margin: m, inner } = useChartDimensions(margin);
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
 
@@ -205,7 +206,7 @@ export function LightBarChart({
                 className="fill-muted-foreground"
                 style={{ fontSize: 10 }}
               >
-                {d[xKey]}
+                {String(d[xKey] ?? '')}
               </text>
             );
           })}

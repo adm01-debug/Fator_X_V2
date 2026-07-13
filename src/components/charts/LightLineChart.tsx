@@ -13,7 +13,7 @@ interface LineSeries {
 }
 
 interface Props {
-  data: Record<string, unknown>[];
+  data: readonly object[];
   xKey: string;
   series: LineSeries[];
   height?: number;
@@ -32,9 +32,10 @@ function niceMax(v: number) {
 }
 
 export function LightLineChart({
-  data, xKey, series, height = 220, margin,
+  data: rawData, xKey, series, height = 220, margin,
   yFormatter = String, tooltipFormatter, showGrid = true,
 }: Props) {
+  const data = rawData as ReadonlyArray<Record<string, unknown>>;
   const { ref, width, margin: m, inner } = useChartDimensions(margin);
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
 
@@ -106,7 +107,7 @@ export function LightLineChart({
 
           {data.map((d, i) => (
             <text key={i} x={scaleX(i)} y={inner.height + 14} textAnchor="middle" className="fill-muted-foreground" style={{ fontSize: 10 }}>
-              {d[xKey]}
+              {String(d[xKey] ?? '')}
             </text>
           ))}
         </g>
