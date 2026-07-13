@@ -235,9 +235,10 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
         }
       }
     } catch (e) {
-      if (e.name === 'AbortError') return;
+      const err = e instanceof Error ? e : new Error(String(e));
+      if (err.name === 'AbortError') return;
       set({
-        error: e instanceof Error ? e.message : 'Erro ao consultar o Oráculo',
+        error: err.message || 'Erro ao consultar o Oráculo',
         isRunning: false,
         currentStage: 0,
         stageLabel: '',
@@ -245,7 +246,7 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
       });
       
       // Auto-retry once for network errors or transient 500s
-      if (e.message.includes('fetch') || e.message.includes('network') || e.message.includes('502') || e.message.includes('503')) {
+      if (err.message.includes('fetch') || err.message.includes('network') || err.message.includes('502') || err.message.includes('503')) {
         toast.info('Erro de conexão ou timeout. Tentando novamente em 3 segundos...');
         setTimeout(() => get().submitQuery(), 3000);
       }
