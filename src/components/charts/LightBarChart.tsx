@@ -35,10 +35,11 @@ function niceMax(v: number) {
 }
 
 export function LightBarChart({
-  data, xKey, series, height = 220, margin,
+  data: rawData, xKey, series, height = 220, margin,
   yFormatter = String, tooltipFormatter, showLegend = false, showGrid = true,
   onBarClick,
 }: Props) {
+  const data = rawData as ReadonlyArray<Record<string, unknown>>;
   const { ref, width, margin: m, inner } = useChartDimensions(margin);
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
 
