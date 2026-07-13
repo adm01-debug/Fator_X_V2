@@ -165,7 +165,7 @@ export function SearchTab() {
       setTieredResults(result);
       toast.success(`Busca hierárquica concluída! Economia: ${result.tokensSaved} tokens`);
     } catch (e) {
-      toast.error('Erro na busca tiered: ' + e.message);
+      toast.error('Erro na busca tiered: ' + (e instanceof Error ? e.message : String(e)));
     } finally {
       setIsTieredSearching(false);
     }
