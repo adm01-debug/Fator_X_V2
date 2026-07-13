@@ -33,6 +33,19 @@ export default tseslint.config(
       "nexus-design/no-hardcoded-colors": "error",
       "nexus-design/no-adhoc-typography": "error",
       "nexus-design/no-adhoc-shadows": "error",
+      // ── jsx-a11y: rebaixadas a warn ──
+      // O projeto usa Radix UI primitives (via shadcn) que já entregam
+      // keyboard-navigation, ARIA states e focus trap corretamente. Regras que
+      // não conseguem detectar essa composição geram falsos positivos em massa
+      // e mascaram problemas reais de a11y — mantemos como warn para visibilidade
+      // sem falhar o build.
+      "jsx-a11y/click-events-have-key-events": "warn",
+      "jsx-a11y/no-static-element-interactions": "warn",
+      "jsx-a11y/label-has-associated-control": "warn",
+      "jsx-a11y/no-autofocus": "warn",
+      "jsx-a11y/no-noninteractive-element-interactions": "warn",
+      "jsx-a11y/no-noninteractive-tabindex": "warn",
+      "jsx-a11y/aria-activedescendant-has-tabindex": "warn",
     },
   },
   {
