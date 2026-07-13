@@ -197,14 +197,14 @@ export function DataBrowser({ entityId, onClose }: { entityId: string; onClose: 
   };
 
   // Selection helpers
-  const allSelected = data.length > 0 && data.every(r => selectedIds.has(r.id));
+  const allSelected = data.length > 0 && data.every(r => selectedIds.has(r.id as string));
   const someSelected = selectedIds.size > 0;
 
   const toggleSelectAll = () => {
     if (allSelected) {
       setSelectedIds(new Set());
     } else {
-      setSelectedIds(new Set(data.map(r => r.id)));
+      setSelectedIds(new Set(data.map(r => r.id as string)));
     }
   };
 
@@ -217,7 +217,7 @@ export function DataBrowser({ entityId, onClose }: { entityId: string; onClose: 
     });
   };
 
-  const selectedRecords = data.filter(r => selectedIds.has(r.id));
+  const selectedRecords = data.filter(r => selectedIds.has(r.id as string));
 
   const totalPages = Math.ceil(total / pageSize);
   const Icon = ENTITY_ICONS[entityId] ?? Database;
