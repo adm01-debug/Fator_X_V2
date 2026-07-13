@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse, checkRateLimit, getRateLimitIdentifier, createRateLimitResponse, RATE_LIMITS } from "../_shared/mod.ts";
+import { getCorsHeaders, handleCorsPreflight, _jsonResponse, _errorResponse, _checkRateLimit, _getRateLimitIdentifier, _createRateLimitResponse, _RATE_LIMITS } from "../_shared/mod.ts";
 
 const encoder = new TextEncoder();
 
@@ -667,11 +667,11 @@ serve(async (req) => {
       if (!question) return new Response(JSON.stringify({ error: 'question required' }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
 
       const connId = connection_id || 'bancodadosclientes';
-      const client = getExternalClient(connId);
+      const _client = getExternalClient(connId);
 
       // Get table list for schema context
       const schemaHints: string[] = [];
-      for (const [entityName, mapping] of Object.entries(ENTITY_MAPPINGS)) {
+      for (const [_entityName, mapping] of Object.entries(ENTITY_MAPPINGS)) {
         if (mapping.primary.connection === connId) {
           const cols = mapping.primary.display_column ? [mapping.primary.id_column, mapping.primary.display_column] : [mapping.primary.id_column];
           schemaHints.push(`${mapping.primary.table} (${cols.join(', ')})`);
@@ -733,7 +733,7 @@ serve(async (req) => {
 
     // ═══ ACTION: table_qa — Perguntas sobre tabelas (#37) ═══
     if (action === 'table_qa') {
-      const { question: tqQuestion, entity: tqEntity, record_id: tqRecordId } = body;
+      const { question: tqQuestion, entity: tqEntity, record_id: _tqRecordId } = body;
       if (!tqQuestion || !tqEntity) return new Response(JSON.stringify({ error: 'question and entity required' }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
 
       const mapping = ENTITY_MAPPINGS[tqEntity];
@@ -882,7 +882,7 @@ serve(async (req) => {
     // ═══ ACTION: list_tables — List tables per connection ═══
     if (action === 'list_tables') {
       const tables: Record<string, string[]> = {};
-      for (const [connId, mapping] of Object.entries(ENTITY_MAPPINGS)) {
+      for (const [_connId, mapping] of Object.entries(ENTITY_MAPPINGS)) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         const conn = (mapping as any).primary.connection;
         if (!tables[conn]) tables[conn] = [];

@@ -75,7 +75,7 @@ function parseFormBody(body: string): Record<string, unknown> {
 }
 
 // ─── HMAC validation (Bitrix24 sends application_token in payload) ───
-async function validateSignature(parsed: Record<string, unknown>, rawBody: string): Promise<boolean> {
+async function validateSignature(parsed: Record<string, unknown>, _rawBody: string): Promise<boolean> {
   const expectedToken = Deno.env.get("BITRIX24_APP_TOKEN");
   if (!expectedToken) {
     console.error("BITRIX24_APP_TOKEN not configured");

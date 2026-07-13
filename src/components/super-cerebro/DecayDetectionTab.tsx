@@ -41,7 +41,7 @@ export function DecayDetectionTab() {
       try {
         await invokeCerebroBrain({ action: 'decay_detection' });
         return detectKnowledgeDecay(scanLimit);
-      } catch (e) {
+      } catch (_e) {
         return detectKnowledgeDecay(scanLimit);
       }
     },

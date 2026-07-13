@@ -30,7 +30,7 @@ serve(async (req) => {
 
     const parsed = await parseBody(req, ImageInput);
     if (parsed.error) return parsed.error;
-    const { action, image_base64, image_url, prompt, categories } = parsed.data;
+    const { action, image_base64, image_url, prompt, _categories } = parsed.data;
 
     const hfToken = Deno.env.get('HF_API_TOKEN');
     if (!hfToken) return errorResponse(req, 'HF_API_TOKEN not configured', 503);

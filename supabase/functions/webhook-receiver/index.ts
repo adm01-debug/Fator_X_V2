@@ -14,7 +14,7 @@ import { verifyHmac } from "../_shared/webhookSignature.ts";
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
-  const corsHeaders = getCorsHeaders(req);
+  const _corsHeaders = getCorsHeaders(req);
 
   const rateLimitResult = await checkRateLimit(req, { preset: "standard" });
   if (rateLimitResult) return rateLimitResult;
@@ -47,7 +47,7 @@ serve(async (req) => {
     }
 
     // Parse body with versioned contract validation
-    const { data: body, error: validationError, rawBody, version } = await parseBody(req, WebhookReceiverContracts, { 
+    const { data: body, error: validationError, rawBody, _version } = await parseBody(req, WebhookReceiverContracts, { 
       returnRawBody: true,
       defaultVersion: 'v1' 
     });

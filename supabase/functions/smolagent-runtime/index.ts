@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse, checkRateLimit, getRateLimitIdentifier, createRateLimitResponse, RATE_LIMITS } from "../_shared/mod.ts";
+import { getCorsHeaders, handleCorsPreflight, jsonResponse, _errorResponse, _checkRateLimit, _getRateLimitIdentifier, _createRateLimitResponse, _RATE_LIMITS } from "../_shared/mod.ts";
 
 // CORS handled by _shared/cors.ts — dynamic origin whitelist
 
@@ -381,7 +381,7 @@ async function runAgent(
     let response = '';
     const reader = llmResp.body?.getReader();
     if (!reader) throw new Error("No reader available from LLM Gateway");
-    const decoder = new TextEncoder();
+    const _decoder = new TextEncoder();
     const textDecoder = new TextDecoder();
 
     while (true) {
@@ -400,7 +400,7 @@ async function runAgent(
             response += token;
             onEvent?.({ type: 'TEXT_MESSAGE_CONTENT', data: { token } });
           }
-        } catch (e) {
+        } catch (_e) {
           // Skip parse errors for non-JSON lines
         }
       }

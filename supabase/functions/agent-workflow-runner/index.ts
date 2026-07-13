@@ -1,6 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.4';
 import { startEdgeTrace } from '../_shared/otel.ts';
-import { maybeInjectFault, applyFault } from '../_shared/chaos.ts';
+import { _maybeInjectFault, _applyFault } from '../_shared/chaos.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -84,7 +84,7 @@ Deno.serve(async (req) => {
 
   const isStream = req.headers.get('accept') === 'text/event-stream';
   const trace = startEdgeTrace(req, { rootName: 'agent-workflow-runner.handle' });
-  const rootSpan = trace.startSpan('agent-workflow-runner.handle', 'server');
+  const _rootSpan = trace.startSpan('agent-workflow-runner.handle', 'server');
 
   try {
     const auth = req.headers.get('Authorization');

@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, readdirSync, existsSync } from 'fs';
+import { _readFileSync, writeFileSync, readdirSync, existsSync } from 'fs';
 import { join } from 'path';
 
 const FUNCTIONS_DIR = join(process.cwd(), 'supabase/functions');

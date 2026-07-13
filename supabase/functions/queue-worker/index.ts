@@ -78,7 +78,7 @@ serve(async (req) => {
         }).eq('id', item.id).eq('status', 'pending');
 
         // Process item (dispatch to target if specified in payload)
-        const startTime = Date.now();
+        const _startTime = Date.now();
         try {
           const payload = item.payload as Record<string, unknown>;
           const targetFn = payload._target_function as string | undefined;

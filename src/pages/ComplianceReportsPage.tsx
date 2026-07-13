@@ -50,7 +50,7 @@ export default function ComplianceReportsPage() {
       try {
         const fw = await complianceService.listFrameworks();
         setFrameworks(fw);
-      } catch (e) {
+      } catch (_e) {
         toast.error("Erro ao carregar frameworks");
       }
     })();
@@ -68,7 +68,7 @@ export default function ComplianceReportsPage() {
     try {
       const r = await complianceService.listReports(workspaceId);
       setReports(r);
-    } catch (e) {
+    } catch (_e) {
       toast.error("Erro ao carregar relatórios");
     } finally {
       setLoading(false);
@@ -127,7 +127,7 @@ export default function ComplianceReportsPage() {
       ]);
       setEvidence(ev);
       setControls(ctrls);
-    } catch (e) {
+    } catch (_e) {
       toast.error("Erro ao carregar detalhes");
     }
   }

@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import {
-  handleCorsPreflight, jsonResponse, errorResponse, getCorsHeaders,
+  handleCorsPreflight, _jsonResponse, errorResponse, getCorsHeaders,
   authenticateRequest,
   checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS,
   parseBody, z,

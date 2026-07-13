@@ -53,7 +53,7 @@ serve(async (req) => {
 
     if (action === 'export_traces') {
       if (!agent_id) return hfJsonResponse(req, { error: 'agent_id required' }, 400);
-      const minScore = dataset_config?.min_quality_score || 3;
+      const _minScore = dataset_config?.min_quality_score || 3;
       const maxSamples = dataset_config?.max_samples || 1000;
       const { data: traces, error } = await supabase
         .from('agent_traces').select('input, output, metadata, cost_usd')

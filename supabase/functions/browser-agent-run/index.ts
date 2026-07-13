@@ -81,7 +81,7 @@ async function fetchAndSimplify(url: string): Promise<SimplifiedDOM> {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
 async function decideAction(goal: string, history: any[], dom: SimplifiedDOM, apiKey: string) {
-  const elementsList = dom.elements.map((e) =>
+  const _elementsList = dom.elements.map((e) =>
     `[${e.idx}] <${e.tag}${e.type ? ` type=${e.type}` : ""}${e.name ? ` name=${e.name}` : ""}${e.href ? ` href=${e.href.slice(0, 60)}` : ""}> ${e.text}`
   ).join("\n");
 

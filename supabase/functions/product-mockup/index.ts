@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse, checkRateLimit, getRateLimitIdentifier, createRateLimitResponse, RATE_LIMITS } from "../_shared/mod.ts";
+import { _getCorsHeaders, handleCorsPreflight, jsonResponse, _errorResponse, _checkRateLimit, _getRateLimitIdentifier, _createRateLimitResponse, _RATE_LIMITS } from "../_shared/mod.ts";
 
 // CORS handled by _shared/cors.ts — dynamic origin whitelist
 
@@ -21,7 +21,7 @@ function jsonResponse(data: unknown, status = 200) {
  */
 
 // Gradio Space endpoints (public, free with queue)
-const SPACES = {
+const _SPACES = {
   bg_removal: 'https://briaai-bria-rmbg-2-0.hf.space/api/predict',
   sdxl_inpaint: 'https://diffusers-stable-diffusion-xl-inpainting.hf.space/api/predict',
   upscaler: 'https://jasperai-flux-dev-upscaler.hf.space/api/predict',
@@ -77,7 +77,7 @@ serve(async (req) => {
 
       // Step 2: Generate new background with product description
       const bgPrompt = background_prompt || `Professional product photography of ${product_name || 'a promotional product'}, studio lighting, white gradient background, commercial quality, 4k`;
-      const finalImageBase64: string = cleanProductBase64;
+      const _finalImageBase64: string = cleanProductBase64;
 
       if (hfToken) {
         try {

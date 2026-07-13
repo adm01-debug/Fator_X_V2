@@ -136,7 +136,7 @@ function renderTemplate(template: string, vars: Record<string, unknown>): string
   });
 }
 
-async function sendEmail(subject: string, body: string, to: string): Promise<{ success: boolean; error?: string }> {
+async function sendEmail(_subject: string, _body: string, _to: string): Promise<{ success: boolean; error?: string }> {
   // Integration point: connect to SMTP, SendGrid, Resend, etc.
   // Using standard logging which follows no-console rules in non-deno environments
   // In Deno Edge Functions, console.log is the standard for Supabase Logs visibility

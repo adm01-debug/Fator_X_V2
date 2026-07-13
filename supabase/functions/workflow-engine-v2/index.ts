@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
-import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse, checkRateLimit, getRateLimitIdentifier, createRateLimitResponse, RATE_LIMITS } from "../_shared/mod.ts";
+import { getCorsHeaders, handleCorsPreflight, jsonResponse, _errorResponse, _checkRateLimit, _getRateLimitIdentifier, _createRateLimitResponse, _RATE_LIMITS } from "../_shared/mod.ts";
 
 // ═══ Types ═══
 interface GraphNode {
@@ -38,7 +38,7 @@ interface WorkflowState {
 // ═══ Constants ═══
 const MAX_ITERATIONS = 50;
 const STEP_TIMEOUT_MS = 30000;
-const SPACE_TIMEOUT = 120000;
+const _SPACE_TIMEOUT = 120000;
 
 // ═══ Helpers ═══
 function safeEvalCondition(condition: string, state: WorkflowState): boolean {

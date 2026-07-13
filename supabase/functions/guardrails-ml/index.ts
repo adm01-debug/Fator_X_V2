@@ -30,7 +30,7 @@ const GuardrailInput = z.object({
   direction: z.enum(['input', 'output']),
 });
 
-type Direction = 'input' | 'output';
+type _Direction = 'input' | 'output';
 
 interface LayerResult {
   passed: boolean;
