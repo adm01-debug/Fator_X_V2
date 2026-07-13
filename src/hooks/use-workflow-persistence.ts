@@ -181,7 +181,7 @@ export function useWorkflowPersistence() {
         return {
           id: String(cfg.node_id || `step_${step.step_order}`),
           type: String(cfg.type || step.role || 'executor'),
-          position: (cfg.position as { x: number; y: number }) || { x: step.step_order * 240, y: 100 },
+          position: (cfg.position as { x: number; y: number }) || { x: Number(step.step_order) * 240, y: 100 },
           data: {
             label: step.name,
             type: cfg.type || step.role,
