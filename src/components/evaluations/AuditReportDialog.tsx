@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import type { DbRow } from '@/types/dbRow';
 
 interface AuditReportProps {
-  run: Record<string, unknown>;
+  run: DbRow;
   results: DbRow[];
 }
 
