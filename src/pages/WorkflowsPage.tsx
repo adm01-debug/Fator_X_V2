@@ -78,7 +78,7 @@ export default function WorkflowsPage() {
       toast.success('Workflow salvo no banco!');
       setDialogOpen(false); setNewName(''); setNewSteps('');
       queryClient.invalidateQueries({ queryKey: ['workflows_list'] });
-    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : 'Erro inesperado'); }
+    } catch (e) { toast.error(e instanceof Error ? e.message : 'Erro inesperado'); }
   };
 
   const handleDelete = async (id: string) => {
@@ -112,7 +112,7 @@ export default function WorkflowsPage() {
           setExecuting(null);
         }
       });
-    } catch (e: unknown) { 
+    } catch (e) { 
       toast.error(e instanceof Error ? e.message : 'Erro inesperado'); 
       setExecuting(null);
     }
@@ -196,15 +196,15 @@ export default function WorkflowsPage() {
                 <div className="h-full bg-primary animate-progress-indeterminate w-1/3" />
              </div>
              <span className="text-meta font-bold text-muted-foreground uppercase tracking-widest">
-               {currentEvent?.label || 'Iniciando...'}
+               {(currentEvent?.label as string) || 'Iniciando...'}
              </span>
           </div>
-          {currentEvent?.output && (
+          {currentEvent?.output ? (
             <div className="mt-4 p-4 rounded-xl bg-card border border-border/40 font-mono text-meta max-h-40 overflow-y-auto">
               <p className="text-muted-foreground mb-2 italic">// Último output:</p>
               {typeof currentEvent.output === 'string' ? currentEvent.output : JSON.stringify(currentEvent.output, null, 2)}
             </div>
-          )}
+          ) : null}
         </Card>
       )}
 

@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import type { Json } from '@/integrations/supabase/types';
+import type { DbRow } from '@/types/dbRow';
 
 interface ExportedAgent {
   _format: 'nexus-agent-v1';
@@ -52,7 +53,7 @@ export function downloadJSON(content: string, filename: string) {
   URL.revokeObjectURL(url);
 }
 
-export function validateImportedAgent(data: unknown): ExportedAgent | null {
+export function validateImportedAgent(data: DbRow): ExportedAgent | null {
   if (!data || typeof data !== 'object') return null;
   const d = data as Record<string, unknown>;
   if (d._format !== 'nexus-agent-v1') return null;

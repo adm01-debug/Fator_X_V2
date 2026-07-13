@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { WorkflowCheckpoint } from "@/services/workflowCheckpointService";
+import type { DbRow } from '@/types/dbRow';
 
 interface Props {
   checkpointA: WorkflowCheckpoint;
@@ -33,7 +34,7 @@ type Section = {
   pickB: () => unknown;
 };
 
-function stringify(value: unknown): string {
+function stringify(value: DbRow): string {
   if (value === null || value === undefined) return "";
   if (typeof value === "string") return value;
   try {

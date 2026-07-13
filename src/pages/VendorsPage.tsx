@@ -64,7 +64,7 @@ export default function VendorsPage() {
   const [selected, setSelected] = useState<Vendor | null>(null);
 
   useEffect(() => {
-    if (user) getWorkspaceId().then(setWorkspaceId).catch((e: unknown) => logger.error("ws", e));
+    if (user) getWorkspaceId().then(setWorkspaceId).catch((e) => logger.error("ws", e));
   }, [user]);
 
   const { data: vendors = [], isLoading } = useQuery({

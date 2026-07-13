@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { logger } from '@/lib/logger';
 import type { CanvasNode, CanvasEdge } from '@/components/workflows/WorkflowCanvas';
 import type { Json } from '@/integrations/supabase/types';
+import type { DbRow } from '@/types/dbRow';
 
 interface WorkflowRecord {
   id: string;
@@ -37,7 +38,7 @@ export function useWorkflowPersistence() {
       return;
     }
 
-    const ids = (data ?? []).map((w: { id: string }) => w.id);
+    const ids = (data ?? []).map((w: DbRow) => w.id);
     const stepCounts: Record<string, number> = {};
 
     if (ids.length > 0) {
@@ -53,7 +54,7 @@ export function useWorkflowPersistence() {
       }
     }
 
-    setWorkflows((data ?? []).map((w: { id: string; name: string; description?: string | null; created_at: string; updated_at: string }) => ({
+    setWorkflows((data ?? []).map((w: DbRow) => ({
       ...(w as unknown as WorkflowRecord),
       step_count: stepCounts[w.id] || 0,
     })));
@@ -180,7 +181,7 @@ export function useWorkflowPersistence() {
         return {
           id: String(cfg.node_id || `step_${step.step_order}`),
           type: String(cfg.type || step.role || 'executor'),
-          position: (cfg.position as { x: number; y: number }) || { x: step.step_order * 240, y: 100 },
+          position: (cfg.position as { x: number; y: number }) || { x: Number(step.step_order) * 240, y: 100 },
           data: {
             label: step.name,
             type: cfg.type || step.role,

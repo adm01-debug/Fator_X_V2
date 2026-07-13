@@ -7,10 +7,11 @@ import {
 } from "lucide-react";
 import { formatCNPJ, formatPhone, formatDate } from "@/config/datahub-columns";
 import { toast } from "sonner";
+import type { DbRow } from '@/types/dbRow';
 
 const SENSITIVE_MARKER = /^\*{3}$|REDACTED/;
 
-function isSensitive(value: unknown): boolean {
+function isSensitive(value: DbRow): boolean {
   return typeof value === 'string' && SENSITIVE_MARKER.test(value);
 }
 
@@ -28,7 +29,7 @@ export function FieldValue({ label, value, sensitive, editable, onSave }: {
     if (editValue === String(value ?? '')) { setEditing(false); return; }
     setSaving(true);
     try { await onSave?.(editValue); setEditing(false); toast.success(`Campo "${label}" atualizado`); }
-    catch (e: unknown) { toast.error(`Erro ao salvar: ${e instanceof Error ? e.message : String(e)}`); }
+    catch (e) { toast.error(`Erro ao salvar: ${e instanceof Error ? e.message : String(e)}`); }
     finally { setSaving(false); }
   };
 

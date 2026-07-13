@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { AgentTraceRow, TraceLevel } from '@/services/agentTracesService';
+import type { DbRow } from '@/types/dbRow';
 
 interface Props {
   open: boolean;
@@ -30,7 +31,7 @@ const LEVEL_ICON: Record<TraceLevel, JSX.Element> = {
   error: <XCircle className="h-3 w-3 text-destructive" aria-hidden />,
 };
 
-function stringify(value: unknown): string {
+function stringify(value: DbRow): string {
   if (value === null || value === undefined) return '';
   if (typeof value === 'string') return value;
   try { return JSON.stringify(value, null, 2); } catch { return String(value); }

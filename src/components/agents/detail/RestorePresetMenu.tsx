@@ -27,10 +27,11 @@ import {
   type RestorePreset,
 } from '@/services/restorePresetsService';
 import { toast } from 'sonner';
+import type { DbRow } from '@/types/dbRow';
 
 interface Props {
   current: { copyPrompt: boolean; copyTools: boolean; copyModel: boolean };
-  onApply: (p: { copyPrompt: boolean; copyTools: boolean; copyModel: boolean }) => void;
+  onApply: (p: DbRow) => void;
   /** Notifica quando presets são carregados — usado para auto-aplicar default na abertura. */
   onPresetsLoaded?: (presets: RestorePreset[]) => void;
   disabled?: boolean;

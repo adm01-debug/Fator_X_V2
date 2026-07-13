@@ -24,6 +24,7 @@ import { SpanTreeView, type SpanLike } from "@/components/monitoring/SpanTreeVie
 import { supabaseExternal } from "@/integrations/supabase/externalClient";
 import { logger } from "@/lib/logger";
 import { toast } from "sonner";
+import type { DbRow } from '@/types/dbRow';
 
 interface TraceRecord {
   trace_id: string;
@@ -82,7 +83,7 @@ export default function TracesTimelinePage() {
           .limit(200);
         if (error) throw error;
 
-        const records: TraceRecord[] = (data ?? []).map((row: { id: string; data: unknown; created_at: string | null }) => {
+        const records: TraceRecord[] = (data ?? []).map((row: DbRow) => {
           const d = (row.data ?? {}) as Record<string, unknown>;
           const spans = (Array.isArray(d.spans) ? d.spans : []) as SpanLike[];
           let cost = 0;

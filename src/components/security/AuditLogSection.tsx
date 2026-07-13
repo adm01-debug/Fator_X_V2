@@ -4,12 +4,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import type { DbRow } from '@/types/dbRow';
 
 export function AuditLogSection() {
-  const { data: logs = [], isLoading } = useQuery({
+  const { data: logsRaw = [], isLoading } = useQuery({
     queryKey: ['audit_log'],
     queryFn: () => getAuditLog({ limit: 50 }),
   });
+  const logs = logsRaw as DbRow[];
 
   const handleExport = (format: 'csv' | 'json') => {
     if (logs.length === 0) return;
@@ -19,14 +21,14 @@ export function AuditLogSection() {
 
     if (format === 'csv') {
       const headers = ['Data', 'Ação', 'Tipo', 'Entity ID', 'Metadata'];
-      const rows = logs.map((l: unknown) => [
+      const rows = logs.map((l) => [
         new Date(l.created_at as string).toISOString(),
         l.action,
         l.entity_type,
         l.entity_id || '',
         JSON.stringify(l.metadata || {}),
       ]);
-      content = [headers.join(','), ...rows.map((r: unknown[]) => r.map((c: unknown) => `"${String(c).replace(/"/g, '""')}"`).join(','))].join('\n');
+      content = [headers.join(','), ...rows.map((r: DbRow[]) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(','))].join('\n');
       mime = 'text/csv';
       ext = 'csv';
     } else {
@@ -68,7 +70,7 @@ export function AuditLogSection() {
         <p className="text-meta text-muted-foreground py-4 text-center">Nenhum evento registrado</p>
       ) : (
         <div className="space-y-1 max-h-[300px] overflow-y-auto">
-          {logs.map((log: unknown, i: number) => (
+          {logs.map((log, i: number) => (
             <div key={(log.id as string) || i}
               className="flex items-center gap-3 py-2 px-2 rounded hover:bg-secondary/30 text-meta">
               <span className="text-muted-foreground w-[130px] shrink-0 font-mono text-meta">{new Date(log.created_at as string).toLocaleString('pt-BR')}</span>

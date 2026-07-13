@@ -37,7 +37,7 @@ export function MockupTab() {
       setResultUrl(base64ToDataUrl(data.product_clean));
       setSteps(data.steps);
       toast.success("Mockup gerado");
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro inesperado");
     } finally {
       setLoading(false);

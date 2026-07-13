@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { getHelpCenterBySlug, listPublicArticles, getPublicArticleBySlug, rateArticle, listThreads } from "@/services/knowledgeManagementService";
 import { toast } from "sonner";
 import { toSafeHtml } from "@/lib/sanitize";
+import type { DbRow } from '@/types/dbRow';
 
 export default function PublicHelpCenterPage() {
   const { slug, articleSlug } = useParams<{ slug: string; articleSlug?: string }>();
@@ -91,7 +92,7 @@ function ArticleList({ helpCenterId, hcSlug, search, primaryColor }: { helpCente
           <Button size="sm" variant="outline" onClick={() => navigate(`/help/${hcSlug}/forum`)}>Ver fórum</Button>
         </div>
         <div className="space-y-2">
-          {threads.slice(0, 5).map((t: { id: string; title: string; reply_count: number; is_resolved: boolean }) => (
+          {threads.slice(0, 5).map((t: DbRow) => (
             <Link key={t.id} to={`/help/${hcSlug}/forum/${t.id}`} className="block p-3 rounded-lg border border-border hover:border-primary/50 transition-colors">
               <p className="text-body-sm font-medium text-foreground line-clamp-1">{t.title}</p>
               <div className="flex items-center gap-2 mt-1">

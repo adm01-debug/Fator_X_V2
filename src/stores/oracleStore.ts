@@ -8,6 +8,7 @@ export type { OracleMode, OraclePreset, ModelResponse, ConsensusPoint, Citation,
 import type { OracleMode, OracleResult } from './types/oracleTypes';
 export { ORACLE_MODES, ORACLE_PRESETS } from './presets/oraclePresets';
 import { ORACLE_MODES, ORACLE_PRESETS } from './presets/oraclePresets';
+import type { DbRow } from '@/types/dbRow';
 
 interface OracleStore {
   query: string;
@@ -100,8 +101,8 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
     const results: Record<string, unknown> = { stage1_results: [], metrics: entry.metrics };
     for (const res of entry.stage1_results) {
       await new Promise(r => setTimeout(r, 800));
-      results.stage1_results.push(res);
-      set({ results: { ...results } as OracleResult });
+      (results.stage1_results as unknown[]).push(res);
+      set({ results: { ...results } as unknown as OracleResult });
     }
 
     // Simulate Stage 2
@@ -110,7 +111,7 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
       set({ currentStage: 2, stageLabel: 'Replay: Realizando Peer-Review...' });
       await new Promise(r => setTimeout(r, 1000));
       results.stage2_results = entry.stage2_results;
-      set({ results: { ...results } as OracleResult });
+      set({ results: { ...results } as unknown as OracleResult });
     }
 
     // Simulate Stage 3
@@ -180,9 +181,9 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
       const decoder = new TextDecoder();
       
       const tempResults: {
-        stage1_results: unknown[];
-        stage2_results?: unknown[];
-        consensus_points?: unknown[];
+        stage1_results: DbRow[];
+        stage2_results?: DbRow[];
+        consensus_points?: DbRow[];
         metrics: { total_latency_ms: number; total_cost_usd: number; total_tokens: number; models_used: number };
       } = {
         stage1_results: [],
@@ -233,10 +234,11 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
           }
         }
       }
-    } catch (e: unknown) {
-      if (e.name === 'AbortError') return;
+    } catch (e) {
+      const err = e instanceof Error ? e : new Error(String(e));
+      if (err.name === 'AbortError') return;
       set({
-        error: e instanceof Error ? e.message : 'Erro ao consultar o Oráculo',
+        error: err.message || 'Erro ao consultar o Oráculo',
         isRunning: false,
         currentStage: 0,
         stageLabel: '',
@@ -244,7 +246,7 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
       });
       
       // Auto-retry once for network errors or transient 500s
-      if (e.message.includes('fetch') || e.message.includes('network') || e.message.includes('502') || e.message.includes('503')) {
+      if (err.message.includes('fetch') || err.message.includes('network') || err.message.includes('502') || err.message.includes('503')) {
         toast.info('Erro de conexão ou timeout. Tentando novamente em 3 segundos...');
         setTimeout(() => get().submitQuery(), 3000);
       }

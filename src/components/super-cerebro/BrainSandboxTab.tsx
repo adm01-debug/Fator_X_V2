@@ -40,7 +40,7 @@ export function BrainSandboxTab() {
         context_size: data?.context_size || 0,
         cost: data?.cost_usd || 0,
       }]);
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro no sandbox');
     } finally {
       setIsTesting(false);
@@ -70,7 +70,7 @@ export function BrainSandboxTab() {
         });
         // Update progressively so user sees results streaming in
         setResults([...collected]);
-      } catch (e: unknown) {
+      } catch (e) {
         collected.push({
           mode,
           response: `[ERRO] ${e instanceof Error ? e.message : 'falhou'}`,

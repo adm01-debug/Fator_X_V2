@@ -1,3 +1,4 @@
+import type { DbRow } from '@/types/dbRow';
 /**
  * Nexus Agents Studio — Agent Handoff Protocol Service
  *
@@ -50,11 +51,11 @@ interface WorkflowHandoffRow {
 type HandoffTable = ReturnType<typeof fromTable>;
 const handoffs = (): HandoffTable => fromTable('workflow_handoffs');
 
-function toRecord(row: unknown): HandoffRecord {
+function toRecord(row: DbRow): HandoffRecord {
   return row as unknown as HandoffRecord;
 }
 
-function toRecords(rows: unknown): HandoffRecord[] {
+function toRecords(rows: DbRow): HandoffRecord[] {
   return (rows ?? []) as unknown as HandoffRecord[];
 }
 

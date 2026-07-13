@@ -53,7 +53,7 @@ export function DataBrowser({ entityId, onClose }: { entityId: string; onClose: 
   const debouncedSearch = useDebounce(searchTerm, 350);
   const [loading, setLoading] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<Record<string, unknown> | null>(null);
-  const [enrichedData, setEnrichedData] = useState<Record<string, unknown> | null>(null);
+  const [enrichedData, setEnrichedData] = useState<{ enriched: Record<string, unknown[]>; cross_db: Record<string, unknown[]> } | null>(null);
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [filters, setFilters] = useState<ActiveFilter[]>([]);
@@ -92,7 +92,7 @@ export function DataBrowser({ entityId, onClose }: { entityId: string; onClose: 
       if (error) throw error;
       setData(result.data ?? []);
       setTotal(result.total ?? 0);
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(`Erro ao buscar dados: ${e instanceof Error ? e.message : String(e)}`);
     } finally {
       setLoading(false);
@@ -127,7 +127,7 @@ export function DataBrowser({ entityId, onClose }: { entityId: string; onClose: 
       if (error) throw error;
       setSelectedRecord(result.record);
       setEnrichedData({ enriched: result.enriched, cross_db: result.cross_db });
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(`Erro: ${e instanceof Error ? e.message : String(e)}`);
     }
   };
@@ -186,7 +186,7 @@ export function DataBrowser({ entityId, onClose }: { entityId: string; onClose: 
       toast.success(`${deleted} registro(s) excluído(s)`);
       setSelectedIds(new Set());
       fetchData();
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(`Erro ao excluir: ${e instanceof Error ? e.message : String(e)}`);
     }
   };
@@ -197,14 +197,14 @@ export function DataBrowser({ entityId, onClose }: { entityId: string; onClose: 
   };
 
   // Selection helpers
-  const allSelected = data.length > 0 && data.every(r => selectedIds.has(r.id));
+  const allSelected = data.length > 0 && data.every(r => selectedIds.has(r.id as string));
   const someSelected = selectedIds.size > 0;
 
   const toggleSelectAll = () => {
     if (allSelected) {
       setSelectedIds(new Set());
     } else {
-      setSelectedIds(new Set(data.map(r => r.id)));
+      setSelectedIds(new Set(data.map(r => r.id as string)));
     }
   };
 
@@ -217,7 +217,7 @@ export function DataBrowser({ entityId, onClose }: { entityId: string; onClose: 
     });
   };
 
-  const selectedRecords = data.filter(r => selectedIds.has(r.id));
+  const selectedRecords = data.filter(r => selectedIds.has(r.id as string));
 
   const totalPages = Math.ceil(total / pageSize);
   const Icon = ENTITY_ICONS[entityId] ?? Database;

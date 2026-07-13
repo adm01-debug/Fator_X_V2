@@ -17,6 +17,7 @@ import type {
 
 export { configureLangfuse } from './tracing/tracingExporters';
 import { exportToSupabase, exportToLangfuse, exportUsageRecord } from './tracing/tracingExporters';
+import type { DbRow } from '@/types/dbRow';
 
 // ═══════════════════════════════════════════════════════════════
 // Helpers
@@ -52,10 +53,10 @@ export class Span {
     this.data = { span_id: cryptoRandomId(), parent_span_id: parentSpanId, trace_id: traceId, name, kind, start_time: Date.now(), end_time: null, duration_ms: null, status: 'unset', attributes: {}, events: [] };
   }
 
-  setAttribute(key: string, value: unknown): this { this.data.attributes[key] = value; return this; }
+  setAttribute(key: string, value: DbRow): this { this.data.attributes[key] = value; return this; }
   setAttributes(attrs: SpanAttributes): this { Object.assign(this.data.attributes, attrs); return this; }
-  setInput(input: unknown): this { this.data.input = input; return this; }
-  setOutput(output: unknown): this { this.data.output = output; return this; }
+  setInput(input: DbRow): this { this.data.input = input; return this; }
+  setOutput(output: DbRow): this { this.data.output = output; return this; }
   addEvent(name: string, attributes?: Record<string, unknown>): this { this.data.events.push({ name, timestamp: Date.now(), attributes }); return this; }
   setStatus(status: SpanStatus, message?: string): this { this.data.status = status; if (message) this.data.status_message = message; return this; }
 

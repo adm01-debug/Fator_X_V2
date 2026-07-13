@@ -19,6 +19,7 @@ import { WhatsAppInboxPanel } from '@/components/deployments/WhatsAppInboxPanel'
 import { cn } from "@/lib/utils";
 import { ApprovalQueuePanel } from "@/components/deployments/ApprovalQueuePanel";
 import { DeploymentWizard } from "@/components/deployments/DeploymentWizard";
+import type { DbRow } from '@/types/dbRow';
 
 export default function DeploymentsPage() {
   const [wizardOpen, setWizardOpen] = useState(false);
@@ -41,7 +42,7 @@ export default function DeploymentsPage() {
     refetchInterval: 30000,
   });
 
-  const handleDeployClick = (agent: unknown) => {
+  const handleDeployClick = (agent: DbRow) => {
     setSelectedAgent({ id: agent.id, name: agent.name });
     setWizardOpen(true);
   };
@@ -102,7 +103,7 @@ export default function DeploymentsPage() {
               />
             ) : (
               <div className="grid gap-6 md:grid-cols-2">
-                {deployments.map((dep: unknown) => (
+                {deployments.map((dep) => (
                   <div key={dep.id} className="nexus-card nexus-card-interactive group p-6 rounded-[2.5rem] bg-card/50 backdrop-blur-sm border-border/40 hover:border-primary/30 transition-all duration-500">
                     <div className="flex items-start justify-between mb-5">
                       <div className="flex items-center gap-4">
@@ -124,7 +125,7 @@ export default function DeploymentsPage() {
                     <div className="space-y-4">
                       {dep.channels.length > 0 ? (
                         <div className="flex flex-wrap gap-2">
-                          {dep.channels.map((c: unknown) => (
+                          {dep.channels.map((c) => (
                             <Badge 
                               key={c.name} 
                               variant="secondary" 

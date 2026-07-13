@@ -40,7 +40,7 @@ export function InlineEditCell({ row, col, entityId, onUpdate }: InlineEditCellP
       if (result?.record) onUpdate(String(row.id), result.record);
       setEditing(false);
       toast.success(`"${col.label}" atualizado`);
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(`Erro: ${e instanceof Error ? e.message : String(e)}`);
     } finally {
       setSaving(false);

@@ -19,6 +19,7 @@ import {
 } from "@/services/knowledgeManagementService";
 import { listKnowledgeBases } from "@/services/knowledgeService";
 import { getCurrentUserWorkspace } from "@/services/workspaceContextService";
+import type { DbRow } from '@/types/dbRow';
 
 export default function KnowledgeManagementPage() {
   const navigate = useNavigate();
@@ -61,7 +62,7 @@ export default function KnowledgeManagementPage() {
         <Select value={selectedKb} onValueChange={setSelectedKb}>
           <SelectTrigger className="w-[300px]"><SelectValue placeholder="Selecione uma base..." /></SelectTrigger>
           <SelectContent>
-            {kbs.map((kb: { id: string; name: string }) => <SelectItem key={kb.id} value={kb.id}>{kb.name}</SelectItem>)}
+            {kbs.map((kb: DbRow) => <SelectItem key={kb.id} value={kb.id}>{kb.name}</SelectItem>)}
           </SelectContent>
         </Select>
       </div>
@@ -70,7 +71,7 @@ export default function KnowledgeManagementPage() {
         <TabsList>
           <TabsTrigger value="help-centers"><Globe className="h-4 w-4 mr-2" />Help Centers</TabsTrigger>
           <TabsTrigger value="articles"><FileText className="h-4 w-4 mr-2" />Artigos</TabsTrigger>
-          <TabsTrigger value="gaps"><AlertCircle className="h-4 w-4 mr-2" />Lacunas <Badge variant="secondary" className="ml-2">{gaps.filter((g: { status: string }) => g.status === "open").length}</Badge></TabsTrigger>
+          <TabsTrigger value="gaps"><AlertCircle className="h-4 w-4 mr-2" />Lacunas <Badge variant="secondary" className="ml-2">{gaps.filter((g: DbRow) => g.status === "open").length}</Badge></TabsTrigger>
         </TabsList>
 
         <TabsContent value="help-centers" className="space-y-4 mt-6">
@@ -115,7 +116,7 @@ export default function KnowledgeManagementPage() {
             <div className="text-center text-body-sm text-muted-foreground py-12">Nenhum artigo. Crie o primeiro.</div>
           ) : (
             <div className="space-y-2">
-              {articles.map((a: { id: string; title: string; status: string; language: string; current_version: number; view_count: number; helpful_count: number; updated_at: string }) => (
+              {articles.map((a: DbRow) => (
                 <div key={a.id} className="nexus-card flex items-center gap-4 cursor-pointer hover:border-primary/50" onClick={() => navigate(`/knowledge-management/article/${a.id}`)}>
                   <FileText className="h-5 w-5 text-primary shrink-0" />
                   <div className="flex-1 min-w-0">

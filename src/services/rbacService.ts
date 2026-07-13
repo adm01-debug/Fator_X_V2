@@ -6,6 +6,7 @@
  */
 
 import { fromTable } from '@/lib/supabaseExtended';
+import type { DbRow } from '@/types/dbRow';
 
 // ═══ Types ═══
 
@@ -92,7 +93,7 @@ export async function getPermissionsForRole(roleKey: string): Promise<Permission
   if (error) throw error;
 
   // Fetch permissions by IDs
-  const permIds = (data ?? []).map((rp: unknown) => String(rp.permission_id));
+  const permIds = (data ?? []).map((rp: DbRow) => String(rp.permission_id));
   if (permIds.length === 0) return [];
 
   const { data: perms } = await fromTable('permissions').select('*').in('id', permIds);
@@ -125,12 +126,12 @@ export async function getUserPermissions(userId: string, workspaceId: string): P
 
   if (error) throw error;
 
-  const permIds = (data ?? []).map((rp: unknown) => String(rp.permission_id));
+  const permIds = (data ?? []).map((rp: DbRow) => String(rp.permission_id));
   if (permIds.length === 0) return new Set();
 
   const { data: perms } = await fromTable('permissions').select('key').in('id', permIds);
   const permissions = new Set<PermissionKey>();
-  (perms ?? []).forEach((p: unknown) => {
+  (perms ?? []).forEach((p: DbRow) => {
     if (p.key) permissions.add(String(p.key) as PermissionKey);
   });
 

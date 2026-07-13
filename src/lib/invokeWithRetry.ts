@@ -7,6 +7,7 @@
  *   const { data, error } = await invokeWithRetry(supabase, 'datahub-query', { body });
  */
 import type { SupabaseClient, FunctionInvokeOptions } from '@supabase/supabase-js';
+import type { DbRow } from '@/types/dbRow';
 
 const TRANSIENT_PATTERNS = [
   'SUPABASE_EDGE_RUNTIME_ERROR',
@@ -16,7 +17,7 @@ const TRANSIENT_PATTERNS = [
   '503',
 ];
 
-function isTransient(err: unknown): boolean {
+function isTransient(err: DbRow): boolean {
   if (!err) return false;
   const msg = err instanceof Error ? err.message : String(err);
   return TRANSIENT_PATTERNS.some((p) => msg.includes(p));

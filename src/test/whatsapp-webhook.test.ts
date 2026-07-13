@@ -1,3 +1,4 @@
+import type { DbRow } from '@/types/dbRow';
 /**
  * WhatsApp webhook routing tests (next-frontier sprint #2)
  *
@@ -13,7 +14,7 @@ function makeQB() {
   const chain = ['select', 'eq', 'order', 'limit', 'delete', 'update', 'in', 'is', 'neq', 'gte', 'lte'];
   for (const m of chain) qb[m] = vi.fn(() => qb);
   qb.upsert = vi.fn().mockResolvedValue({ data: null, error: null });
-  qb.then = (resolve: (v: { data: unknown[]; error: null }) => void) => resolve({ data: [], error: null });
+  qb.then = (resolve: (v: DbRow) => void) => resolve({ data: [], error: null });
   return qb;
 }
 
@@ -124,7 +125,7 @@ function parseFormBody(body: string): Record<string, string> {
 
 type Provider = 'twilio' | 'meta' | 'zapi' | 'evolution' | 'unknown';
 
-function detectProvider(headers: Record<string, string>, parsed: unknown): Provider {
+function detectProvider(headers: Record<string, string>, parsed: DbRow): Provider {
   if (headers['x-twilio-signature']) return 'twilio';
   if (headers['x-hub-signature-256']) return 'meta';
   if (parsed && typeof parsed === 'object') {

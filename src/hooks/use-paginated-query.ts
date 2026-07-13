@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import type { Database } from '@/integrations/supabase/types';
+import type { DbRow } from '@/types/dbRow';
 
 type TableName = keyof Database['public']['Tables'];
 
@@ -10,7 +11,7 @@ interface QueryBuilder {
   eq: (column: string, value: string) => QueryBuilder;
   order: (column: string, options: { ascending: boolean }) => QueryBuilder;
   range: (from: number, to: number) => QueryBuilder;
-  then: (onfulfilled?: (value: { data: unknown[] | null; count: number | null; error: Error | null }) => unknown) => Promise<unknown>;
+  then: (onfulfilled?: (value: { data: DbRow[] | null; count: number | null; error: Error | null }) => unknown) => Promise<unknown>;
 }
 
 export interface PaginationState {
@@ -94,7 +95,7 @@ export function usePaginatedQuery<T = Record<string, unknown>>(
 
         setData((rows ?? []) as T[]);
         setPagination({ page, pageSize, total, totalPages: Math.ceil(total / pageSize) });
-      } catch (err: unknown) {
+      } catch (err) {
         setError(err instanceof Error ? err.message : 'Query failed');
       } finally {
         setLoading(false);

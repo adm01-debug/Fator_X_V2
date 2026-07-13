@@ -10,6 +10,7 @@ import { ArrowLeft, MessageSquare, Pin, Lock, CheckCircle2, Plus, Eye } from "lu
 import { toast } from "sonner";
 import { getHelpCenterBySlug, listThreads, getThread, listPosts, createThread, createPost, markAsAnswer } from "@/services/knowledgeManagementService";
 import { useAuth } from "@/contexts/AuthContext";
+import type { DbRow } from '@/types/dbRow';
 
 export default function PublicForumPage() {
   const { slug, threadId } = useParams<{ slug: string; threadId?: string }>();
@@ -77,7 +78,7 @@ function ThreadList({ helpCenterId, hcSlug, primaryColor }: { helpCenterId: stri
         <div className="text-center text-body-sm text-muted-foreground py-12">Sem tópicos. Seja o primeiro!</div>
       ) : (
         <div className="space-y-2">
-          {threads.map((t: { id: string; title: string; body: string; author_name: string; reply_count: number; view_count: number; is_pinned: boolean; is_locked: boolean; is_resolved: boolean; created_at: string }) => (
+          {threads.map((t: DbRow) => (
             <Link key={t.id} to={`/help/${hcSlug}/forum/${t.id}`} className="nexus-card block hover:border-primary/50 transition-colors">
               <div className="flex items-start gap-3">
                 <div className="flex-1 min-w-0">
@@ -129,7 +130,7 @@ function ThreadView({ threadId, hcSlug, primaryColor }: { threadId: string; hcSl
       </div>
 
       <h2 className="text-title-sm font-semibold">{posts.length} respostas</h2>
-      {posts.map((p: { id: string; body: string; author_name: string; author_id: string; is_answer: boolean; created_at: string }) => (
+      {posts.map((p: DbRow) => (
         <div key={p.id} className={`nexus-card ${p.is_answer ? "border-nexus-emerald/50 bg-nexus-emerald/5" : ""}`}>
           {p.is_answer && <Badge className="bg-nexus-emerald mb-2"><CheckCircle2 className="h-3 w-3 mr-1" />Resposta aceita</Badge>}
           <div className="text-meta text-muted-foreground mb-2">{p.author_name} • {new Date(p.created_at).toLocaleString("pt-BR")}</div>

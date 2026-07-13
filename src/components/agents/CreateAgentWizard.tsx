@@ -22,6 +22,7 @@ import { saveDraftVersion } from "@/services/agentDraftVersionsService";
 import { AGENT_TEMPLATES as STATIC_TEMPLATES, type AgentTemplate } from "@/data/agentTemplates";
 import { QuickCreateWizard } from "./wizard/QuickCreateWizard";
 import { computeReadinessScore, READINESS_COLORS } from "@/lib/agentReadiness";
+import type { DbRow } from '@/types/dbRow';
 
 type WizardMode = "choose" | "template" | "scratch" | "quick";
 
@@ -223,8 +224,8 @@ Sempre priorize a precisão e a utilidade das informações fornecidas.
           version: 1,
           status: 'draft',
           tags: ['magic-generation'],
-          tools: (magicPreview.tools || []).map((tn: { name: string }) => ({ name: tn.name, enabled: true })) as unknown as never,
-          guardrails: (magicPreview.guardrails || []).map((g: { name: string }) => ({ name: g.name, enabled: true })) as unknown as never,
+          tools: (magicPreview.tools || []).map((tn: DbRow) => ({ name: tn.name, enabled: true })) as unknown as never,
+          guardrails: (magicPreview.guardrails || []).map((g: DbRow) => ({ name: g.name, enabled: true })) as unknown as never,
         } as unknown as never,
         label: `Geração Mágica: ${magicPreview.name}`,
         note: `Configuração inicial automatizada a partir da ideia: ${magicIdea}`

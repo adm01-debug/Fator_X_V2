@@ -5,6 +5,7 @@ import { ptBR } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { TooltipExtraSection } from "@/components/charts/types";
+import type { DbRow } from '@/types/dbRow';
 
 interface UsageRow {
   date: string;
@@ -128,7 +129,7 @@ export function UsageCharts({ data }: UsageChartsProps) {
     );
   }
 
-  const handleDrilldown = (raw: unknown) => {
+  const handleDrilldown = (raw: DbRow) => {
     const d = (raw ?? {}) as { date?: string };
     const from = new Date(d.date ?? '');
     from.setHours(0, 0, 0, 0);
@@ -137,7 +138,7 @@ export function UsageCharts({ data }: UsageChartsProps) {
     navigate(`/traces?from=${from.toISOString()}&to=${to.toISOString()}`);
   };
 
-  const drilldownExtras = (raw: unknown) => {
+  const drilldownExtras = (raw: DbRow) => {
     const d = (raw ?? {}) as { requests?: number; errors?: number; cost?: number };
     const sections: TooltipExtraSection[] = [];
     if ((d.requests ?? 0) > 0 || (d.errors ?? 0) > 0 || (d.cost ?? 0) > 0) {

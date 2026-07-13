@@ -5,6 +5,7 @@
  */
 import { logger } from '@/lib/logger';
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
+import type { DbRow } from '@/types/dbRow';
 
 export interface AgentDetail {
   id: string;
@@ -276,7 +277,7 @@ export interface RestoreOptions {
     temperature: number | null;
     max_tokens: number | null;
     reasoning: string | null;
-    tools: unknown[] | null;
+    tools: DbRow[] | null;
   }>;
   modelOverride?: string | null;
 }

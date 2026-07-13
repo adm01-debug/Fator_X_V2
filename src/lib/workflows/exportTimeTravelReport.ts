@@ -11,6 +11,7 @@
  */
 
 import type { WorkflowCheckpoint } from "@/services/workflowCheckpointService";
+import type { DbRow } from '@/types/dbRow';
 
 export type TimelineEntry = WorkflowCheckpoint & {
   cumulative_cost_usd: number;
@@ -44,7 +45,7 @@ function fmtTokens(n: number): string {
   if (n > 1000) return `${(n / 1000).toFixed(1)}K`;
   return String(n);
 }
-function safeJson(value: unknown): string {
+function safeJson(value: DbRow): string {
   if (value === null || value === undefined) return "—";
   try {
     return JSON.stringify(value, null, 2);

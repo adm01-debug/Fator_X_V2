@@ -69,16 +69,16 @@ export default function SwarmOrchestrationPage() {
         direction: 'inbound',
         type: 'response',
         agent: 'Nexus-A2A-Server',
-        payload: response
+        payload: response as Record<string, unknown>
       });
       
       toast.success("Comunicação A2A concluída");
-    } catch (err: unknown) {
+    } catch (err) {
       addLog({
         direction: 'inbound',
         type: 'error',
         agent: 'Nexus-A2A-Server',
-        payload: { error: err.message }
+        payload: { error: err instanceof Error ? err.message : String(err) }
       });
       toast.error("Erro na comunicação A2A");
     } finally {

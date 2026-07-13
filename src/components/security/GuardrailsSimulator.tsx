@@ -111,7 +111,7 @@ export function GuardrailsSimulator() {
               </div>
               <div className="text-right">
                 <p className="text-meta text-muted-foreground uppercase font-black tracking-widest">Latência</p>
-                <p className="text-body-sm font-mono font-bold text-foreground">{result.metadata?.latency_ms}ms</p>
+                <p className="text-body-sm font-mono font-bold text-foreground">{String(result.metadata?.latency_ms ?? '')}ms</p>
               </div>
             </div>
 

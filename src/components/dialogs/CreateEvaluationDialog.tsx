@@ -63,7 +63,7 @@ export function CreateEvaluationDialog({ onCreated }: CreateEvaluationDialogProp
           try {
             const judgeResult = await invokeEvalJudge({ agent_id: result.data.agentId, dataset_id: result.data.datasetId, evaluation_run_id: evalRun.id, mode: result.data.judgeMode });
             toast.success(`Judge concluído: score médio ${judgeResult?.average_score?.toFixed(1)}/5 (${judgeResult?.total_cases} cases)`);
-          } catch (judgeErr: unknown) {
+          } catch (judgeErr) {
             toast.warning(`Avaliação criada mas judge falhou: ${judgeErr instanceof Error ? judgeErr.message : 'Erro'}`);
             await updateEvaluationRun(evalRun.id, { status: 'failed' });
           }
@@ -73,7 +73,7 @@ export function CreateEvaluationDialog({ onCreated }: CreateEvaluationDialogProp
             const runResult = await invokeTestRunner({ agent_id: result.data.agentId, dataset_id: result.data.datasetId, evaluation_run_id: evalRun.id });
             const r = runResult as Record<string, unknown> | undefined;
             toast.success(`Testes concluídos: ${r?.passed || 0}/${r?.total || 0} aprovados (${(((r?.pass_rate as number) || 0) * 100).toFixed(0)}%)`);
-          } catch (runErr: unknown) {
+          } catch (runErr) {
             toast.warning(`Avaliação criada mas execução falhou: ${runErr instanceof Error ? runErr.message : 'Erro'}`);
             await updateEvaluationRun(evalRun.id, { status: 'failed' });
           }
@@ -85,7 +85,7 @@ export function CreateEvaluationDialog({ onCreated }: CreateEvaluationDialogProp
       setName('');
       setDatasetId('');
       onCreated?.();
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro ao criar avaliação');
     } finally {
       setLoading(false);

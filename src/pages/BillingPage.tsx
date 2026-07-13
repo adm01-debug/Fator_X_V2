@@ -62,7 +62,7 @@ export default function BillingPage() {
       setNewBudgetOpen(false);
       setBudgetName('');
       queryClient.invalidateQueries({ queryKey: ['budgets'] });
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro inesperado');
     } finally {
       setSaving(false);
@@ -74,7 +74,7 @@ export default function BillingPage() {
       await deleteBudget(id);
       toast.success('Orçamento removido');
       queryClient.invalidateQueries({ queryKey: ['budgets'] });
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro inesperado');
     }
   };

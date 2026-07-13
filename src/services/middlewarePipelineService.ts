@@ -19,6 +19,7 @@ import { logger } from '@/lib/logger';
 
 export type { LLMRequest, LLMResponse, MiddlewareContext, MiddlewareFn, MiddlewareConfig } from './types/middlewarePipelineTypes';
 import type { LLMRequest, LLMResponse, MiddlewareContext, MiddlewareConfig } from './types/middlewarePipelineTypes';
+import type { DbRow } from '@/types/dbRow';
 
 // ──────── Pipeline Class ────────
 
@@ -296,7 +297,7 @@ export function createRetryMiddleware(options?: {
  * Token counter middleware — counts tokens and tracks cost
  */
 export function createTokenCounterMiddleware(
-  onCount?: (data: { inputTokens: number; outputTokens: number; costUsd: number }) => void
+  onCount?: (data: DbRow) => void
 ): MiddlewareConfig {
   return {
     name: 'token-counter',
@@ -367,7 +368,7 @@ export function createDefaultPipeline(options?: {
   enablePiiRedaction?: boolean;
   enableLogging?: boolean;
   enableTokenCounter?: boolean;
-  onTokenCount?: (data: { inputTokens: number; outputTokens: number; costUsd: number }) => void;
+  onTokenCount?: (data: DbRow) => void;
   logFn?: (msg: string, data: Record<string, unknown>) => void;
 }): MiddlewarePipeline {
   const pipeline = new MiddlewarePipeline();

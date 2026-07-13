@@ -26,6 +26,7 @@ import { toast } from "sonner";
 import { format, formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Link } from "react-router-dom";
+import type { DbRow } from '@/types/dbRow';
 
 type FreezeWindow = {
   id: string;
@@ -199,7 +200,7 @@ export default function GovernancePage() {
   });
 
   const toggleCountry = useMutation({
-    mutationFn: async (opts: { code: string; name: string; enabled: boolean }) => {
+    mutationFn: async (opts: DbRow) => {
       if (!workspaceId) throw new Error("Workspace ausente");
       if (opts.enabled) {
         const { error } = await supabase.from("geo_allowed_countries").insert({

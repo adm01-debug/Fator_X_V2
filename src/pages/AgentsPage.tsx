@@ -76,7 +76,7 @@ export default function AgentsPage() {
       await cloneAgent(agent);
       toast.success('Agente clonado!');
       queryClient.invalidateQueries({ queryKey: ['agents'] });
-    } catch (err: unknown) {
+    } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Erro ao clonar');
     } finally {
       setCloning(null);
@@ -90,7 +90,7 @@ export default function AgentsPage() {
       if (result.added === 0) { toast.info('Nenhuma tag nova detectada'); return; }
       toast.success(`${result.added} tags adicionadas automaticamente`);
       queryClient.invalidateQueries({ queryKey: ['agents'] });
-    } catch (err: unknown) {
+    } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Erro ao auto-tag');
     }
   }, [queryClient]);
@@ -112,7 +112,7 @@ export default function AgentsPage() {
       toast.success('Agente importado com sucesso!');
       queryClient.invalidateQueries({ queryKey: ['agents'] });
       navigate(`/builder/${id}`);
-    } catch (err: unknown) {
+    } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Erro ao importar');
     } finally {
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -141,7 +141,7 @@ export default function AgentsPage() {
       toast.success(`${selectedIds.size} agente(s) arquivado(s)`);
       setSelectedIds(new Set());
       queryClient.invalidateQueries({ queryKey: ['agents'] });
-    } catch (err: unknown) {
+    } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Erro');
     } finally {
       setBulkLoading(false);
@@ -155,7 +155,7 @@ export default function AgentsPage() {
       toast.success(`${selectedIds.size} agente(s) removido(s)`);
       setSelectedIds(new Set());
       queryClient.invalidateQueries({ queryKey: ['agents'] });
-    } catch (err: unknown) {
+    } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Erro');
     } finally {
       setBulkLoading(false);

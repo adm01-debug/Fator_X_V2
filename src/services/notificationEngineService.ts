@@ -7,6 +7,7 @@
 import { fromTable } from '@/lib/supabaseExtended';
 import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/lib/logger';
+import type { DbRow } from '@/types/dbRow';
 
 // Re-export types from dedicated file
 export type {
@@ -184,10 +185,10 @@ export async function getNotificationStats(): Promise<NotificationStats> {
   const byPriority = {} as Record<NotificationPriority, number>;
   let totalDeliveryTime = 0, deliveryCount = 0;
 
-  const sent = items.filter((i: { status: string }) => i.status !== 'pending' && i.status !== 'cancelled');
-  const delivered = items.filter((i: { status: string }) => ['delivered', 'read'].includes(i.status));
-  const failed = items.filter((i: { status: string }) => i.status === 'failed');
-  const read = items.filter((i: { status: string }) => i.status === 'read');
+  const sent = items.filter((i: DbRow) => i.status !== 'pending' && i.status !== 'cancelled');
+  const delivered = items.filter((i: DbRow) => ['delivered', 'read'].includes(i.status));
+  const failed = items.filter((i: DbRow) => i.status === 'failed');
+  const read = items.filter((i: DbRow) => i.status === 'read');
 
   for (const item of items) {
     if (!byChannel[item.channel]) byChannel[item.channel] = { sent: 0, delivered: 0, failed: 0 };

@@ -18,6 +18,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { ArrowLeft, FolderOpen, FileText, Hash, Plus, Loader2, Trash2, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
+import type { DbRow } from '@/types/dbRow';
 
 interface KnowledgeBaseDetailProps {
   kbId: string;
@@ -48,7 +49,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
     enabled: !!selectedCollectionId,
   });
 
-  const selectedDocIds = documents.map((d: { id: string }) => d.id);
+  const selectedDocIds = documents.map((d: DbRow) => d.id);
   const { data: chunks = [], isLoading: loadingChunks } = useQuery({
     queryKey: ['chunks', selectedDocIds],
     queryFn: () => listChunksForDocuments(selectedDocIds),
@@ -64,7 +65,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
       setNewCollOpen(false);
       setCollName(''); setCollDesc('');
       queryClient.invalidateQueries({ queryKey: ['collections', kbId] });
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro');
     } finally { setSaving(false); }
   };
@@ -131,7 +132,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
       setDocTitle(''); setDocContent(''); setDocSourceUrl('');
       queryClient.invalidateQueries({ queryKey: ['documents', selectedCollectionId] });
       queryClient.invalidateQueries({ queryKey: ['chunks'] });
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro na ingestão');
     } finally { setSaving(false); }
   };
@@ -143,7 +144,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
       if (selectedCollectionId === id) setSelectedCollectionId(null);
       toast.success('Collection removida');
       queryClient.invalidateQueries({ queryKey: ['collections', kbId] });
-    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : 'Erro'); }
+    } catch (e) { toast.error(e instanceof Error ? e.message : 'Erro'); }
   };
 
   const handleDeleteDocument = async (id: string) => {
@@ -152,10 +153,10 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
       toast.success('Documento removido');
       queryClient.invalidateQueries({ queryKey: ['documents', selectedCollectionId] });
       queryClient.invalidateQueries({ queryKey: ['chunks'] });
-    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : 'Erro'); }
+    } catch (e) { toast.error(e instanceof Error ? e.message : 'Erro'); }
   };
 
-  const selectedCollection = collections.find((c: { id: string; name?: string }) => c.id === selectedCollectionId);
+  const selectedCollection = collections.find((c: DbRow) => c.id === selectedCollectionId);
 
   return (
     <div className="space-y-4">
@@ -196,7 +197,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
               <p className="text-meta text-muted-foreground">Nenhuma collection. Crie uma para organizar documentos.</p>
             </div>
           ) : (
-            collections.map((coll: { id: string; name: string; description?: string | null }) => (
+            collections.map((coll: DbRow) => (
               <div
                 key={coll.id}
                 className={`nexus-card cursor-pointer p-3 group ${selectedCollectionId === coll.id ? 'border-primary/40 nexus-glow-sm' : ''}`}
@@ -264,7 +265,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
               <p className="text-meta text-muted-foreground">Nenhum documento nesta collection.</p>
             </div>
           ) : (
-            documents.map((doc: { id: string; title: string; source_type: string | null; status: string | null; source_url: string | null }) => (
+            documents.map((doc: DbRow) => (
               <div key={doc.id} className="nexus-card p-3 group">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 min-w-0">
@@ -309,7 +310,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
             </div>
           ) : (
             <div className="space-y-2 max-h-[600px] overflow-y-auto">
-              {chunks.map((chunk: { id: string; chunk_index: number; token_count: number | null; embedding_status: string | null }) => (
+              {chunks.map((chunk: DbRow) => (
                 <div key={chunk.id} className="nexus-card p-3">
                   <div className="flex items-center justify-between mb-1.5">
                     <Badge variant="outline" className="text-meta">#{chunk.chunk_index}</Badge>

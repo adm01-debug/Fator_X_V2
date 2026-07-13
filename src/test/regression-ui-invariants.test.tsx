@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import type { DbRow } from '@/types/dbRow';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Fixtures
@@ -179,7 +180,7 @@ describe("Regressão de tipagem: serviços core sem `any` explícito", () => {
 // ────────────────────────────────────────────────────────────────────────────
 
 describe("Utilitário cn(): comportamento determinístico", () => {
-  const cnCases: Array<{ name: string; input: unknown[]; expected: (out: string) => boolean }> = [
+  const cnCases: Array<{ name: string; input: DbRow[]; expected: (out: string) => boolean }> = [
     { name: "string única", input: ["a"], expected: (o) => o === "a" },
     { name: "duas strings", input: ["a", "b"], expected: (o) => o === "a b" },
     { name: "undefined ignorado", input: ["a", undefined, "b"], expected: (o) => o === "a b" },

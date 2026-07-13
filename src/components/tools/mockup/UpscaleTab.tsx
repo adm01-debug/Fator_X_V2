@@ -21,7 +21,7 @@ export function UpscaleTab() {
       const data = await upscaleImage(base64, 2);
       setResultUrl(base64ToDataUrl(data.image_base64));
       toast.success(`Upscale x${data.scale} concluído (${data.model})`);
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro inesperado");
     } finally {
       setLoading(false);

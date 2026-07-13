@@ -9,6 +9,7 @@
  */
 
 import { fromTable } from '@/lib/supabaseExtended';
+import type { DbRow } from '@/types/dbRow';
 
 // ──────── Types ────────
 
@@ -113,7 +114,7 @@ export async function completeExecution(
     .eq('execution_id' as never, executionId);
 
   const totals = (checkpoints ?? []).reduce(
-    (acc: { cost: number; tokens: number; duration: number }, cp: unknown) => ({
+    (acc: DbRow, cp: DbRow) => ({
       cost: acc.cost + Number(cp.cost_usd ?? 0),
       tokens: acc.tokens + Number(cp.tokens_used ?? 0),
       duration: acc.duration + Number(cp.duration_ms ?? 0),

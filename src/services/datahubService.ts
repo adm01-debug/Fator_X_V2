@@ -4,8 +4,9 @@
  */
 import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/lib/logger';
+import type { DbRow } from '@/types/dbRow';
 
-export async function streamInvoke(action: string, payload: Record<string, unknown>, onEvent: (event: string, data: unknown) => void) {
+export async function streamInvoke(action: string, payload: Record<string, unknown>, onEvent: (event: string, data: DbRow) => void) {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) throw new Error('Not authenticated');
 

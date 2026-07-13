@@ -22,7 +22,7 @@ export function SegmentTab() {
       setSegments(data.segments);
       toast.success(`${data.segments.length} segmentos detectados (${data.model})`);
       if (data.note) toast.info(data.note);
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro inesperado");
     } finally {
       setLoading(false);

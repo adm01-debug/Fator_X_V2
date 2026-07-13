@@ -51,6 +51,7 @@ export interface ModelPricingRow {
 }
 import { fromTable } from '@/lib/supabaseExtended';
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
+import type { DbRow } from '@/types/dbRow';
 
 // ═══ Usage ═══
 
@@ -67,11 +68,11 @@ export async function getUsageSummary(period: 'day' | 'week' | 'month' = 'week')
   if (error) throw error;
 
   const records = data || [];
-  const totalCost = records.reduce((s: number, r: unknown) => s + Number(r.cost_usd || 0), 0);
-  const totalTokens = records.reduce((s: number, r: unknown) => s + Number(r.tokens || 0), 0);
+  const totalCost = records.reduce((s: number, r: DbRow) => s + Number(r.cost_usd || 0), 0);
+  const totalTokens = records.reduce((s: number, r: DbRow) => s + Number(r.tokens || 0), 0);
 
   const byType: Record<string, number> = {};
-  records.forEach((r: unknown) => {
+  records.forEach((r: DbRow) => {
     const type = String(r.record_type || 'llm');
     byType[type] = (byType[type] || 0) + Number(r.cost_usd || 0);
   });

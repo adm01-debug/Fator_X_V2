@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { X, SlidersHorizontal } from 'lucide-react';
+import type { DbRow } from '@/types/dbRow';
 
 export interface TraceFilters {
   dateFrom: string;
@@ -158,7 +159,7 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
   );
 }
 
-export function applyTraceFilters(traces: unknown[], filters: TraceFilters): unknown[] {
+export function applyTraceFilters(traces: DbRow[], filters: TraceFilters): DbRow[] {
   return traces.filter(t => {
     if (filters.dateFrom) {
       const traceDate = new Date(t.created_at).toISOString().split('T')[0];

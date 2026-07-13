@@ -1,3 +1,4 @@
+import type { DbRow } from '@/types/dbRow';
 /**
  * GuardrailsPolicyEditor — Editor persistente de policies por agente.
  * Grava em guardrail_policies (workspace-scoped) usando name='agent:<id>' e config JSONB.
@@ -38,7 +39,7 @@ export function GuardrailsPolicyEditor({ agentId }: Props) {
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<Array<Record<string, unknown>> | null>(null);
 
-  const mergeRules = useCallback((stored: unknown): GuardrailRule[] => {
+  const mergeRules = useCallback((stored: DbRow): GuardrailRule[] => {
     const arr = Array.isArray(stored) ? (stored as Partial<GuardrailRule>[]) : [];
     return DEFAULT_RULES.map((d) => {
       const found = arr.find((r) => r.rail === d.rail);

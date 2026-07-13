@@ -10,6 +10,7 @@
  * para o modelo escolhido).
  */
 import type { AgentVersion } from '@/services/agentsService';
+import type { DbRow } from '@/types/dbRow';
 
 export type IssueSeverity = 'error' | 'warning';
 
@@ -148,13 +149,13 @@ function cfgOf(v?: AgentVersion | null): Record<string, unknown> {
   return c as Record<string, unknown>;
 }
 
-function isToolEnabled(t: unknown): boolean {
+function isToolEnabled(t: DbRow): boolean {
   if (!t || typeof t !== 'object') return true;
   const e = (t as Record<string, unknown>).enabled;
   return e === undefined ? true : !!e;
 }
 
-function toolNameOf(t: unknown): string {
+function toolNameOf(t: DbRow): string {
   if (!t || typeof t !== 'object') return '';
   const o = t as Record<string, unknown>;
   return String(o.name ?? o.id ?? o.type ?? '').toLowerCase();
@@ -167,7 +168,7 @@ function extractPromptToolMentions(prompt: string, knownTools: string[]): string
   return knownTools.filter((name) => name && lower.includes(name));
 }
 
-function isFiniteNumber(x: unknown): x is number {
+function isFiniteNumber(x: DbRow): x is number {
   return typeof x === 'number' && Number.isFinite(x);
 }
 
@@ -185,7 +186,7 @@ export function validateRestore(
    * painel reflita imediatamente que a issue foi resolvida.
    */
   overrides?: {
-    config?: Partial<{ temperature: number | null; max_tokens: number | null; reasoning: string | null; tools: unknown[] | null }>;
+    config?: Partial<{ temperature: number | null; max_tokens: number | null; reasoning: string | null; tools: DbRow[] | null }>;
     model?: string | null;
   },
 ): RestoreValidation {

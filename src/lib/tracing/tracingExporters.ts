@@ -28,7 +28,7 @@ export async function exportToSupabase(trace: TraceData): Promise<void> {
       },
     };
     await (supabaseExternal.from('trace_events').insert as Function)(insertData);
-  } catch (err: unknown) {
+  } catch (err) {
     logger.error('Trace export to Supabase failed', {
       trace_id: trace.trace_id,
       error: err instanceof Error ? err.message : String(err),

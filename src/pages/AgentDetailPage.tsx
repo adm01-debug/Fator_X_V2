@@ -29,6 +29,7 @@ import {
   AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import type { DbRow } from '@/types/dbRow';
 
 export default function AgentDetailPage() {
   const { id } = useParams();
@@ -225,7 +226,7 @@ function VersionHistory({ agentId }: { agentId: string }) {
   // Overrides aplicados via "correções rápidas" das validações — repassados
   // para `restoreAgentVersion` via `configOverrides` / `modelOverride`.
   const [fixOverrides, setFixOverrides] = useState<{
-    config: Partial<{ temperature: number | null; max_tokens: number | null; reasoning: string | null; tools: unknown[] | null }>;
+    config: Partial<{ temperature: number | null; max_tokens: number | null; reasoning: string | null; tools: DbRow[] | null }>;
     model?: string | null;
   }>({ config: {} });
 

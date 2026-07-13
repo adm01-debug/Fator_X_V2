@@ -30,6 +30,7 @@ import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
+import type { DbRow } from '@/types/dbRow';
 
 const pipeline = [
   { name: 'Parsing', icon: FileText, color: 'text-nexus-blue', bg: 'bg-nexus-blue/10' },
@@ -467,7 +468,7 @@ function VectorIndexesStatus() {
       {indexes.length > 0 && (
         <div className="space-y-2 pt-2 border-t border-border/20">
           <p className="text-meta font-bold text-muted-foreground uppercase tracking-tight mb-2">Índices Vetoriais</p>
-          {indexes.map((idx: { id: string; provider: string; dimensions: number; model: string; knowledge_bases?: { name?: string } | null }) => (
+          {indexes.map((idx: DbRow) => (
             <div key={idx.id} className="group p-2.5 rounded-lg bg-secondary/30 border border-border/10 hover:border-primary/30 transition-colors">
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-meta font-bold truncate max-w-[120px]">{(idx.knowledge_bases as { name?: string } | null)?.name || 'Índice Ativo'}</span>

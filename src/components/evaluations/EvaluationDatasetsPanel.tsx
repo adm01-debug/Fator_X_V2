@@ -12,6 +12,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 
 import { Database, Plus, Loader2, Trash2, FileText, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
+import type { DbRow } from '@/types/dbRow';
 
 export function EvaluationDatasetsPanel() {
   const queryClient = useQueryClient();
@@ -50,7 +51,7 @@ export function EvaluationDatasetsPanel() {
       setNewDsOpen(false);
       setDsName(''); setDsDesc('');
       queryClient.invalidateQueries({ queryKey: ['evaluation_datasets'] });
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro inesperado');
     } finally {
       setSaving(false);
@@ -68,7 +69,7 @@ export function EvaluationDatasetsPanel() {
         tags: caseTags.trim() ? caseTags.split(',').map(t => t.trim()) : [],
       });
       await updateDatasetCaseCount(selectedDatasetId);
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro'); setSaving(false); return;
     }
 
@@ -85,7 +86,7 @@ export function EvaluationDatasetsPanel() {
       await deleteTestCase(id);
       toast.success('Test case removido');
       queryClient.invalidateQueries({ queryKey: ['test_cases', selectedDatasetId] });
-    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : 'Erro'); }
+    } catch (e) { toast.error(e instanceof Error ? e.message : 'Erro'); }
   };
 
   const handleDeleteDataset = async (id: string) => {
@@ -93,7 +94,7 @@ export function EvaluationDatasetsPanel() {
       const { supabaseExternal } = await import('@/integrations/supabase/externalClient');
       await supabaseExternal.from('test_cases').delete().eq('dataset_id', id);
       await supabaseExternal.from('evaluation_datasets').delete().eq('id', id);
-    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : 'Erro'); return; }
+    } catch (e) { toast.error(e instanceof Error ? e.message : 'Erro'); return; }
     if (selectedDatasetId === id) setSelectedDatasetId(null);
     toast.success('Dataset removido');
     queryClient.invalidateQueries({ queryKey: ['evaluation_datasets'] });
@@ -132,7 +133,7 @@ export function EvaluationDatasetsPanel() {
                 <p className="text-meta text-muted-foreground">Nenhum dataset criado</p>
               </div>
             ) : (
-              datasets.map((ds: { id: string; name: string; description?: string | null; created_at: string; test_case_count?: number }) => (
+              datasets.map((ds: DbRow) => (
                 <div
                   key={ds.id}
                   className={`nexus-card cursor-pointer p-3 group ${selectedDatasetId === ds.id ? 'border-primary/40 nexus-glow-sm' : ''}`}
@@ -200,7 +201,7 @@ export function EvaluationDatasetsPanel() {
               </div>
             ) : (
               <div className="space-y-2 max-h-[500px] overflow-y-auto">
-                {testCases.map((tc: { id: string; input: string; expected_output?: string | null; tags?: string[] | null }) => (
+                {testCases.map((tc: DbRow) => (
                   <div key={tc.id} className="nexus-card p-3 group">
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex flex-wrap gap-1">

@@ -9,6 +9,7 @@ import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import { fromTable } from '@/lib/supabaseExtended';
 import { withTrace } from '@/lib/tracing';
 import type { Json } from '@/integrations/supabase/types';
+import type { DbRow } from '@/types/dbRow';
 
 export interface WorkflowNode {
   id: string;
@@ -176,7 +177,7 @@ export async function listWorkflowRuns(limit = 30): Promise<WorkflowRunRow[]> {
 export async function executeWorkflowStream(
   workflowId: string,
   input: string = '',
-  onEvent: (event: unknown) => void
+  onEvent: (event: DbRow) => void
 ): Promise<void> {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session?.access_token) throw new Error('Not authenticated');

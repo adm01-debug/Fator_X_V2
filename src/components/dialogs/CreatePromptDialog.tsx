@@ -53,7 +53,7 @@ export function CreatePromptDialog({ agents, onCreated }: CreatePromptDialogProp
       setOpen(false);
       setContent(''); setSummary(''); setAgentId('');
       onCreated?.();
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro ao criar prompt');
     } finally {
       setLoading(false);

@@ -13,6 +13,7 @@ import {
   Settings2, Compass, Zap, Coins, Timer, Hash, Brain, Globe2,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import type { DbRow } from '@/types/dbRow';
 
 type Status = 'success' | 'partial' | 'error';
 
@@ -44,9 +45,9 @@ interface ParsedRun {
 
 function extractConfig(r: Record<string, unknown>): RunConfig {
   const budgets = (r.budgets ?? {}) as Record<string, unknown>;
-  const num = (v: unknown): number | undefined => (typeof v === 'number' ? v : undefined);
-  const str = (v: unknown): string | undefined => (typeof v === 'string' ? v : undefined);
-  const bool = (v: unknown): boolean | undefined => (typeof v === 'boolean' ? v : undefined);
+  const num = (v: DbRow): number | undefined => (typeof v === 'number' ? v : undefined);
+  const str = (v: DbRow): string | undefined => (typeof v === 'string' ? v : undefined);
+  const bool = (v: DbRow): boolean | undefined => (typeof v === 'boolean' ? v : undefined);
   return {
     depth: str(r.depth),
     strategy: str(r.strategy),
@@ -70,8 +71,8 @@ function parseRun(entry: OracleHistoryEntry): ParsedRun {
   const r = (entry.results ?? {}) as unknown as Record<string, unknown> & {
     report?: string;
     iterations?: number;
-    sources?: unknown[];
-    steps?: unknown[];
+    sources?: DbRow[];
+    steps?: DbRow[];
     error?: string;
   };
   const report = typeof r.report === 'string' ? r.report : '';

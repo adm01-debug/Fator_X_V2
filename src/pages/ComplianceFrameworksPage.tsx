@@ -28,6 +28,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { DbRow } from '@/types/dbRow';
 
 type Framework = {
   id: string;
@@ -287,7 +288,7 @@ export default function ComplianceFrameworksPage() {
 function FrameworkDialog({
   onSubmit, pending,
 }: {
-  onSubmit: (v: { code: string; name: string; description: string | null; version: string | null }) => void;
+  onSubmit: (v: DbRow) => void;
   pending: boolean;
 }) {
   const [code, setCode] = useState("");

@@ -11,6 +11,7 @@ import { ArrowLeft, Save, GitBranch, Languages } from "lucide-react";
 import { toast } from "sonner";
 import { RichEditor } from "@/components/knowledge/RichEditor";
 import { ArticleDiffViewer } from "@/components/knowledge/ArticleDiffViewer";
+import type { DbRow } from '@/types/dbRow';
 import {
   getArticle, updateArticle,
   listArticleVersions,
@@ -138,7 +139,7 @@ function VersionsTab({ articleId, currentTitle, currentHtml }: { articleId: stri
   const { data: versions = [] } = useQuery({ queryKey: ["versions", articleId], queryFn: () => listArticleVersions(articleId) });
   const [selected, setSelected] = useState<string>("");
 
-  const selectedVersion = versions.find((v: { id: string }) => v.id === selected);
+  const selectedVersion = versions.find((v: DbRow) => v.id === selected);
 
   if (versions.length === 0) return <div className="text-center text-body-sm text-muted-foreground py-12">Sem versões anteriores. Edite e salve para criar histórico.</div>;
 
@@ -149,7 +150,7 @@ function VersionsTab({ articleId, currentTitle, currentHtml }: { articleId: stri
         <Select value={selected} onValueChange={setSelected}>
           <SelectTrigger className="w-[300px]"><SelectValue placeholder="Escolha uma versão..." /></SelectTrigger>
           <SelectContent>
-            {versions.map((v: { id: string; version: number; created_at: string }) => (
+            {versions.map((v: DbRow) => (
               <SelectItem key={v.id} value={v.id}>v{v.version} — {new Date(v.created_at).toLocaleString("pt-BR")}</SelectItem>
             ))}
           </SelectContent>
@@ -203,7 +204,7 @@ function TranslationsTab({ articleId, sourceLanguage }: { articleId: string; sou
       <div className="space-y-2">
         {translations.length === 0 ? (
           <div className="text-center text-body-sm text-muted-foreground py-12">Nenhuma tradução. Use a IA para traduzir.</div>
-        ) : translations.map((t: { id: string; target_language: string; translated_title: string; translation_method: string; reviewed: boolean; updated_at: string }) => (
+        ) : translations.map((t: DbRow) => (
           <div key={t.id} className="nexus-card flex items-center gap-4">
             <Languages className="h-5 w-5 text-primary" />
             <div className="flex-1">

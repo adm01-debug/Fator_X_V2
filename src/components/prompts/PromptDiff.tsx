@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import type { DbRow } from '@/types/dbRow';
 
 interface Props {
   textA: string;
@@ -51,7 +52,7 @@ export function diffLines(a: string, b: string): { linesA: { text: string; type:
 export function PromptDiff({ textA, textB, labelA, labelB }: Props) {
   const { linesA, linesB } = useMemo(() => diffLines(textA, textB), [textA, textB]);
 
-  const renderLine = (line: { text: string; type: string }, idx: number) => {
+  const renderLine = (line: DbRow, idx: number) => {
     const isRemoved = line.type === 'removed';
     const isAdded = line.type === 'added';
     const isEmpty = line.text === '' && line.type === 'same';

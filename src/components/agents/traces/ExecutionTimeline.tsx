@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import type { AgentTraceRow, ExecutionGroup, TraceLevel } from '@/services/agentTracesService';
 import { listBookmarks, type TraceBookmark } from '@/lib/traceBookmarks';
 import { BookmarkButton } from './BookmarkButton';
+import type { DbRow } from '@/types/dbRow';
 
 const LEVEL_ICON: Record<TraceLevel, JSX.Element> = {
   info: <Info className="h-3 w-3 text-nexus-emerald" aria-hidden />,
@@ -35,7 +36,7 @@ interface Props {
 /** Stringify safely for in-step search. */
 function traceHaystack(t: AgentTraceRow): string {
   const parts: string[] = [t.event ?? '', t.level ?? ''];
-  const dump = (v: unknown) => {
+  const dump = (v: DbRow) => {
     if (v == null) return '';
     if (typeof v === 'string') return v;
     try { return JSON.stringify(v); } catch { return String(v); }

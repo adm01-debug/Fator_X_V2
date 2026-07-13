@@ -22,6 +22,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ENTITY_LIST } from "@/config/datahub-entities";
 import { queryEntity, getEntityDetail } from "@/services/datahubService";
 import { toast } from "sonner";
+import type { DbRow } from '@/types/dbRow';
 
 interface Row {
   id?: string | number;
@@ -30,7 +31,7 @@ interface Row {
 
 const PAGE_SIZE = 25;
 
-function formatValue(v: unknown): string {
+function formatValue(v: DbRow): string {
   if (v == null) return "—";
   if (typeof v === "boolean") return v ? "✓" : "✗";
   if (typeof v === "object") return JSON.stringify(v);
@@ -39,7 +40,7 @@ function formatValue(v: unknown): string {
 }
 
 function downloadCsv(rows: Row[], columns: string[], filename: string) {
-  const escape = (val: unknown) => {
+  const escape = (val: DbRow) => {
     if (val == null) return "";
     const s = typeof val === "object" ? JSON.stringify(val) : String(val);
     return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;

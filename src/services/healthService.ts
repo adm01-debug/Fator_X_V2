@@ -58,7 +58,7 @@ export async function getSystemHealth(): Promise<SystemHealth> {
       consecutiveFailures = 0;
     }
     return data as SystemHealth;
-  } catch (e: unknown) {
+  } catch (e) {
     const message = e instanceof Error ? e.message : String(e);
     consecutiveFailures++;
     if (consecutiveFailures === 1) {

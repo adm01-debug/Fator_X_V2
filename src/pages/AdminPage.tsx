@@ -13,6 +13,7 @@ import { AccessControl, DangerousActionDialog } from "@/components/rbac";
 import { AuditTrailPanel } from "@/components/admin/AuditTrailPanel";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import type { DbRow } from '@/types/dbRow';
 
 type TableName = "agents" | "agent_traces" | "knowledge_bases" | "prompt_versions" | "evaluation_runs" | "oracle_history";
 
@@ -78,7 +79,7 @@ const TABLE_CONFIG: { key: TableName; label: string; icon: React.ElementType; co
   },
 ];
 
-function formatCell(value: unknown, key: string): string {
+function formatCell(value: DbRow, key: string): string {
   if (value === null || value === undefined) return "—";
   if (key.includes("_at") || key === "created_at" || key === "updated_at") {
     try { return format(new Date(String(value)), "dd/MM/yy HH:mm"); } catch (err) { logger.error("Operation failed:", err); return String(value); }
@@ -111,7 +112,7 @@ function AdminTable({ config }: { config: typeof TABLE_CONFIG[0] }) {
       toast.success("Registro removido");
       refetch();
       queryClient.invalidateQueries({ queryKey: [config.key] });
-    } catch (e: unknown) {
+    } catch (e) {
       const msg = e instanceof Error ? e.message : "Erro desconhecido";
       toast.error(`Erro ao deletar: ${msg}`);
     }

@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { SecurityMonitoringPanel } from '@/components/security/SecurityMonitoringPanel';
 import '@testing-library/jest-dom';
+import type { DbRow } from '@/types/dbRow';
 
 // Mock Supabase client
 vi.mock('@/integrations/supabase/externalClient', () => ({
@@ -10,7 +11,7 @@ vi.mock('@/integrations/supabase/externalClient', () => ({
       select: vi.fn(() => ({
         order: vi.fn(() => ({
           eq: vi.fn(() => Promise.resolve({ data: [], error: null })),
-          then: (cb: (r: { data: unknown[]; error: null }) => unknown) => cb({ data: [], error: null })
+          then: (cb: (r: { data: DbRow[]; error: null }) => unknown) => cb({ data: [], error: null })
         }))
       })),
     })),

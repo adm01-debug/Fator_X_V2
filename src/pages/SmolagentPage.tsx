@@ -80,7 +80,7 @@ export default function SmolagentPage() {
       if (error) throw error;
       setResult(data as AgentResult);
       toast.success(`Completou em ${data.total_steps} passos`);
-    } catch (err: unknown) {
+    } catch (err) {
       toast.error('Erro', { description: err instanceof Error ? err.message : 'Erro' });
     } finally {
       setLoading(false);

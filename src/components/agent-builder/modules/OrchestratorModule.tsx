@@ -25,6 +25,7 @@ import { Plus, Save, Play, Trash2, Loader2, BookOpen, Wand2, LayoutDashboard } f
 import { nodeTypes, NODE_PALETTE } from '../orchestrator/nodes/CustomNodes';
 import { toast } from 'sonner';
 import { SectionTitle } from '../ui';
+import type { DbRow } from '@/types/dbRow';
 
 export function OrchestratorModule() {
   const agent = useAgentBuilderStore((s) => s.agent);
@@ -79,7 +80,7 @@ export function OrchestratorModule() {
       const result = await runWorkflow(active.id, parsed);
       toast.success('Execução concluída');
       logger.info('Workflow execution result', { workflow_id: active.id, result });
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error((e instanceof Error ? e.message : null) || 'Falha na execução');
     } finally {
       setRunning(false);
@@ -149,7 +150,7 @@ export function OrchestratorModule() {
     const name = prompt('Nome do workflow?');
     if (!name) return;
     createWorkflow.mutate({ name, workspace_id: workspaceId }, {
-      onSuccess: (w: { id: string }) => setActiveId(w.id),
+      onSuccess: (w: DbRow) => setActiveId(w.id),
     });
   };
 
