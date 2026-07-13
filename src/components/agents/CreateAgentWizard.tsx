@@ -35,6 +35,17 @@ const TYPE_LABEL: Record<string, string> = {
   orchestrator: 'Orquestrador',
 };
 
+type MagicPreview = {
+  name: string;
+  mission: string;
+  type: string;
+  model: string;
+  system_prompt: string;
+  emoji?: string;
+  tools?: Array<{ name: string }>;
+  guardrails?: Array<{ name: string }>;
+};
+
 export function CreateAgentWizard() {
   const { user } = useAuth();
   const [mode, setMode] = useState<WizardMode>("choose");
@@ -43,7 +54,7 @@ export function CreateAgentWizard() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [magicIdea, setMagicIdea] = useState("");
   const [isGeneratingMagic, setIsGeneratingMagic] = useState(false);
-  const [magicPreview, setMagicPreview] = useState<unknown>(null);
+  const [magicPreview, setMagicPreview] = useState<MagicPreview | null>(null);
   const [viewingTemplate, setViewingTemplate] = useState<AgentTemplate | null>(null);
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
 
@@ -195,7 +206,7 @@ Sempre priorize a precisão e a utilidade das informações fornecidas.
 
   const readiness = useMemo(() => {
     if (!magicPreview) return null;
-    return computeReadinessScore(magicPreview);
+    return computeReadinessScore(magicPreview as unknown as Parameters<typeof computeReadinessScore>[0]);
   }, [magicPreview]);
 
   const confirmMagicCreate = async () => {
