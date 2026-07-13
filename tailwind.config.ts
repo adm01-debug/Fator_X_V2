@@ -137,5 +137,6 @@ export default {
 
     },
   },
+  // eslint-disable-next-line @typescript-eslint/no-require-imports -- Tailwind config em CJS runtime aceita apenas require().
   plugins: [require("tailwindcss-animate")],
 } satisfies Config;
