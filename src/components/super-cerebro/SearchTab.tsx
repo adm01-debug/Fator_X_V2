@@ -186,7 +186,7 @@ export function SearchTab() {
   return (
     <div className="space-y-6">
       {/* ── Context Tiers (Hierarchical Search) ── */}
-      <div className="nexus-card space-y-4 border-primary/20 bg-primary/5 shadow-lg">
+      <div className="nexus-card space-y-4 border-primary/20 bg-primary/5 shadow-nexus-lg">
         <div className="flex items-center justify-between">
           <h3 className="text-title-sm font-heading font-bold text-foreground flex items-center gap-2">
             <Layers className="h-5 w-5 text-primary" /> Context Tiers L0/L1/L2
@@ -223,7 +223,7 @@ export function SearchTab() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Consulte o cérebro usando tiers... Ex: Qual o histórico de negociação com a Ambev?"
-            className="h-14 pl-12 bg-background border-primary/20 focus:ring-primary/20 text-title-sm rounded-2xl shadow-inner"
+            className="h-14 pl-12 bg-background border-primary/20 focus:ring-primary/20 text-title-sm rounded-2xl shadow-nexus-inner"
             onKeyDown={(e) => {
               if (e.key === 'Enter') handleTieredSearch();
             }}
@@ -235,7 +235,7 @@ export function SearchTab() {
             onClick={handleTieredSearch}
             disabled={isTieredSearching || !query.trim()}
             size="lg"
-            className="flex-1 gap-2 nexus-gradient-bg text-primary-foreground shadow-xl shadow-primary/20 h-12 font-bold"
+            className="flex-1 gap-2 nexus-gradient-bg text-primary-foreground shadow-nexus-xl shadow-primary/20 h-12 font-bold"
           >
             {isTieredSearching ? (
               <Loader2 className="h-5 w-5 animate-spin" />
@@ -260,15 +260,15 @@ export function SearchTab() {
         {tieredResults && (
           <div className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
             <div className="grid grid-cols-3 gap-3">
-              <div className="bg-background/40 backdrop-blur-sm rounded-xl p-3 text-center border border-border/20 shadow-sm">
+              <div className="bg-background/40 backdrop-blur-sm rounded-xl p-3 text-center border border-border/20 shadow-nexus-sm">
                 <p className="text-xl font-black text-primary">{tieredResults.l0Results}</p>
                 <p className="text-[9px] text-muted-foreground uppercase tracking-widest font-bold">L0 Matches</p>
               </div>
-              <div className="bg-background/40 backdrop-blur-sm rounded-xl p-3 text-center border border-border/20 shadow-sm">
+              <div className="bg-background/40 backdrop-blur-sm rounded-xl p-3 text-center border border-border/20 shadow-nexus-sm">
                 <p className="text-xl font-black text-nexus-amber">{tieredResults.l1Results}</p>
                 <p className="text-[9px] text-muted-foreground uppercase tracking-widest font-bold">L1 Filtered</p>
               </div>
-              <div className="bg-nexus-emerald/5 backdrop-blur-sm rounded-xl p-3 text-center border border-nexus-emerald/20 shadow-sm ring-1 ring-nexus-emerald/10">
+              <div className="bg-nexus-emerald/5 backdrop-blur-sm rounded-xl p-3 text-center border border-nexus-emerald/20 shadow-nexus-sm ring-1 ring-nexus-emerald/10">
                 <p className="text-xl font-black text-nexus-emerald">{tieredResults.tokensSaved}</p>
                 <p className="text-[9px] text-muted-foreground uppercase tracking-widest font-bold">Tokens Saved</p>
               </div>
@@ -280,7 +280,7 @@ export function SearchTab() {
               </h4>
               <div className="grid grid-cols-1 gap-2">
                 {tieredResults.l2Results.map((tier, idx) => (
-                  <div key={tier.chunk_id} className="group p-4 rounded-2xl bg-background/60 border border-border/40 hover:border-primary/40 transition-all hover:shadow-md">
+                  <div key={tier.chunk_id} className="group p-4 rounded-2xl bg-background/60 border border-border/40 hover:border-primary/40 transition-all hover:shadow-nexus-md">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <Badge variant="secondary" className="text-[9px] font-black">RANK #{idx + 1}</Badge>

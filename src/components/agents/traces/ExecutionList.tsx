@@ -140,7 +140,7 @@ export function ExecutionList({ executions, selectedId, onSelect, onReplay, load
           <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center border border-primary/10" aria-hidden>
             <span className="text-3xl">🔍</span>
           </div>
-          <div className="absolute -bottom-1 -right-1 h-8 w-8 rounded-xl bg-card border border-border flex items-center justify-center shadow-sm">
+          <div className="absolute -bottom-1 -right-1 h-8 w-8 rounded-xl bg-card border border-border flex items-center justify-center shadow-nexus-sm">
             <Filter className="h-4 w-4 text-muted-foreground" />
           </div>
         </div>

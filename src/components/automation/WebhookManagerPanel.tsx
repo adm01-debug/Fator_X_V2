@@ -214,7 +214,7 @@ export function WebhookManagerPanel() {
 
       {/* Test Webhook Dialog */}
       <Dialog open={testDialogOpen} onOpenChange={setTestDialogOpen}>
-        <DialogContent className="sm:max-w-[500px] rounded-[2rem] border-border/40 p-8 shadow-2xl">
+        <DialogContent className="sm:max-w-[500px] rounded-[2rem] border-border/40 p-8 shadow-nexus-2xl">
           <DialogHeader>
             <DialogTitle className="text-2xl font-heading font-black flex items-center gap-2">
               <PlayCircle className="h-6 w-6 text-primary" />
@@ -251,7 +251,7 @@ export function WebhookManagerPanel() {
 
             <DialogFooter className="pt-4">
               <Button variant="outline" onClick={() => setTestDialogOpen(false)} className="h-12 rounded-xl px-6">Cancelar</Button>
-              <Button onClick={handleTest} disabled={!!testingId} className="h-12 px-8 rounded-xl nexus-gradient-bg text-primary-foreground font-bold shadow-lg shadow-primary/20">
+              <Button onClick={handleTest} disabled={!!testingId} className="h-12 px-8 rounded-xl nexus-gradient-bg text-primary-foreground font-bold shadow-nexus-lg shadow-primary/20">
                 {testingId ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
                 <span className="ml-2">Disparar Agora</span>
               </Button>
@@ -262,7 +262,7 @@ export function WebhookManagerPanel() {
 
       {/* History + Replay Dialog */}
       <Dialog open={historyOpen} onOpenChange={setHistoryOpen}>
-        <DialogContent className="sm:max-w-[720px] rounded-[2rem] border-border/40 p-8 shadow-2xl">
+        <DialogContent className="sm:max-w-[720px] rounded-[2rem] border-border/40 p-8 shadow-nexus-2xl">
           <DialogHeader>
             <DialogTitle className="text-2xl font-heading font-black flex items-center gap-2">
               <History className="h-6 w-6 text-primary" />

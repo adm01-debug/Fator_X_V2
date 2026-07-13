@@ -246,7 +246,7 @@ export function ResearchHistoryPanel() {
   };
 
   return (
-    <Card className="p-6 rounded-2xl bg-card border border-border/60 shadow-sm">
+    <Card className="p-6 rounded-2xl bg-card border border-border/60 shadow-nexus-sm">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/15">
@@ -276,7 +276,7 @@ export function ResearchHistoryPanel() {
             onClick={() => setFilter(f.k)}
             className={`px-3 py-1.5 text-meta font-bold rounded-lg uppercase tracking-widest transition-all border ${
               filter === f.k
-                ? 'bg-primary text-primary-foreground border-primary shadow-sm'
+                ? 'bg-primary text-primary-foreground border-primary shadow-nexus-sm'
                 : 'bg-secondary/40 text-muted-foreground border-border/50 hover:text-foreground'
             }`}
           >

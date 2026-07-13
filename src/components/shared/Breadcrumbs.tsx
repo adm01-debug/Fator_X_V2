@@ -60,7 +60,7 @@ export function Breadcrumbs() {
           <div key={to} className="flex items-center">
             <ChevronRight className="h-3 w-3 mx-1 text-muted-foreground/20 stroke-[3px]" />
             {last ? (
-              <span className="text-foreground/90 font-black px-2 py-0.5 rounded-md bg-secondary/30 border border-border/40 shadow-sm animate-in fade-in slide-in-from-left-1 duration-300">
+              <span className="text-foreground/90 font-black px-2 py-0.5 rounded-md bg-secondary/30 border border-border/40 shadow-nexus-sm animate-in fade-in slide-in-from-left-1 duration-300">
                 {label}
               </span>
             ) : (

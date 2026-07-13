@@ -70,6 +70,7 @@
     --nexus-teal: 170 65% 45%;
     --nexus-muted: 220 10% 50%;
     --nexus-border: 220 15% 88%;
+    --nexus-shadow: 230 30% 20%;
   }
 
   .dark {
@@ -130,6 +131,7 @@
     --nexus-teal: 170 65% 50%;
     --nexus-muted: 220 10% 53%;
     --nexus-border: 235 30% 17%;
+    --nexus-shadow: 230 40% 2%;
   }
 }
 

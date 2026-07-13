@@ -346,7 +346,7 @@ export function CompiledPromptPreview({ form, defaultOpen = false, lastChangeKin
                 onClick={() => setView('preview')}
                 className={cn(
                   'inline-flex items-center gap-1.5 text-meta px-2.5 py-1 rounded-md transition-colors',
-                  view === 'preview' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground',
+                  view === 'preview' ? 'bg-background text-foreground shadow-nexus-sm' : 'text-muted-foreground hover:text-foreground',
                 )}
               >
                 <Eye className="h-3 w-3" /> Renderizado
@@ -356,7 +356,7 @@ export function CompiledPromptPreview({ form, defaultOpen = false, lastChangeKin
                 onClick={() => setView('raw')}
                 className={cn(
                   'inline-flex items-center gap-1.5 text-meta px-2.5 py-1 rounded-md transition-colors',
-                  view === 'raw' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground',
+                  view === 'raw' ? 'bg-background text-foreground shadow-nexus-sm' : 'text-muted-foreground hover:text-foreground',
                 )}
               >
                 <FileText className="h-3 w-3" /> Texto bruto

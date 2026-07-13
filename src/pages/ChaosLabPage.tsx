@@ -120,12 +120,12 @@ export default function ChaosLabPage() {
 
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-8 max-w-[1440px] mx-auto animate-page-enter">
-      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-xl shadow-nexus-amber/5 relative overflow-hidden group">
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-nexus-xl shadow-nexus-amber/5 relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-96 h-96 bg-nexus-amber/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
         
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative">
           <div className="flex items-center gap-7">
-            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-nexus-amber/20 to-nexus-amber/5 flex items-center justify-center border border-nexus-amber/20 shadow-2xl shadow-nexus-amber/10 group-hover:scale-105 transition-transform duration-500">
+            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-nexus-amber/20 to-nexus-amber/5 flex items-center justify-center border border-nexus-amber/20 shadow-nexus-2xl shadow-nexus-amber/10 group-hover:scale-105 transition-transform duration-500">
               <Zap className="h-11 w-11 text-nexus-amber" />
             </div>
             <div className="space-y-1">
@@ -140,7 +140,7 @@ export default function ChaosLabPage() {
           </div>
           <div className="flex items-center gap-4">
             {activeExperiments.length > 0 && (
-              <Button variant="destructive" size="lg" onClick={handleKillSwitch} className="h-14 px-8 rounded-2xl font-bold shadow-xl shadow-destructive/20 animate-pulse">
+              <Button variant="destructive" size="lg" onClick={handleKillSwitch} className="h-14 px-8 rounded-2xl font-bold shadow-nexus-xl shadow-destructive/20 animate-pulse">
                 <Power className="h-5 w-5 mr-3" />
                 Pânico: Parar Tudo ({activeExperiments.length})
               </Button>
@@ -229,7 +229,7 @@ export default function ChaosLabPage() {
                  <Slider value={[durationMin]} onValueChange={(v) => setDurationMin(v[0])} min={1} max={60} step={1} />
                </div>
 
-               <Button onClick={handleCreate} disabled={submitting || !name.trim()} className="w-full h-14 rounded-2xl nexus-gradient-bg text-primary-foreground font-bold text-title-sm shadow-xl shadow-primary/20">
+               <Button onClick={handleCreate} disabled={submitting || !name.trim()} className="w-full h-14 rounded-2xl nexus-gradient-bg text-primary-foreground font-bold text-title-sm shadow-nexus-xl shadow-primary/20">
                  {submitting ? <Loader2 className="animate-spin mr-2" /> : <Play className="mr-2 h-5 w-5" />}
                  Disparar Experimento
                </Button>

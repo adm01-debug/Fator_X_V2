@@ -126,7 +126,7 @@ function ApiKeysPanel() {
           {keys.map((k) => (
             <div key={k.id} className="bg-secondary/20 border border-border/20 rounded-2xl p-4 flex items-center justify-between group hover:border-primary/20 transition-all">
               <div className="flex items-center gap-4">
-                <div className="h-10 w-10 rounded-xl bg-background flex items-center justify-center shadow-sm">
+                <div className="h-10 w-10 rounded-xl bg-background flex items-center justify-center shadow-nexus-sm">
                   <Fingerprint className="w-5 h-5 text-muted-foreground/60 group-hover:text-primary transition-colors" />
                 </div>
                 <div>
@@ -176,12 +176,12 @@ export default function SecurityPage() {
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-8 max-w-[1440px] mx-auto animate-page-enter">
       {/* Header Elevated 10/10 */}
-      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-xl shadow-primary/5 mb-10 relative overflow-hidden group">
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-nexus-xl shadow-primary/5 mb-10 relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/[0.06] transition-colors duration-500 pointer-events-none" />
         
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative">
           <div className="flex items-center gap-7">
-            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
+            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-nexus-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
               <Shield className="h-11 w-11 text-primary" />
             </div>
             <div className="space-y-1">
@@ -207,12 +207,12 @@ export default function SecurityPage() {
 
       <Tabs defaultValue="overview" className="space-y-8">
         <TabsList className="bg-muted/50 p-1.5 rounded-2xl border border-border/40 h-auto flex-wrap gap-1">
-          <TabsTrigger value="overview" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm gap-2 font-bold">Visão Geral</TabsTrigger>
-          <TabsTrigger value="guardrails" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm gap-2 font-bold"><Lock className="h-4 w-4" /> Guardrails</TabsTrigger>
-          <TabsTrigger value="access" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm gap-2 font-bold"><Fingerprint className="h-4 w-4" /> Acesso & Chaves</TabsTrigger>
-          <TabsTrigger value="compliance" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm gap-2 font-bold">Compliance & Auditoria</TabsTrigger>
-          <TabsTrigger value="threats" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm gap-2 font-bold"><Activity className="h-4 w-4" /> Red Teaming</TabsTrigger>
-          <TabsTrigger value="audit" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-sm gap-2 font-bold">Audit Trail</TabsTrigger>
+          <TabsTrigger value="overview" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-nexus-sm gap-2 font-bold">Visão Geral</TabsTrigger>
+          <TabsTrigger value="guardrails" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-nexus-sm gap-2 font-bold"><Lock className="h-4 w-4" /> Guardrails</TabsTrigger>
+          <TabsTrigger value="access" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-nexus-sm gap-2 font-bold"><Fingerprint className="h-4 w-4" /> Acesso & Chaves</TabsTrigger>
+          <TabsTrigger value="compliance" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-nexus-sm gap-2 font-bold">Compliance & Auditoria</TabsTrigger>
+          <TabsTrigger value="threats" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-nexus-sm gap-2 font-bold"><Activity className="h-4 w-4" /> Red Teaming</TabsTrigger>
+          <TabsTrigger value="audit" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-nexus-sm gap-2 font-bold">Audit Trail</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-8 animate-in fade-in duration-500">

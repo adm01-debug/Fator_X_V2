@@ -44,9 +44,9 @@ export function SharedEmptyState({
         variant === 'minimal' && "scale-75"
       )}>
         <div className="absolute inset-0 bg-primary/20 blur-[60px] rounded-full scale-150 animate-pulse-slow" />
-        <div className="relative h-24 w-24 rounded-[2rem] bg-gradient-to-br from-card to-card/50 flex items-center justify-center border border-border/40 shadow-2xl shadow-primary/5 group">
+        <div className="relative h-24 w-24 rounded-[2rem] bg-gradient-to-br from-card to-card/50 flex items-center justify-center border border-border/40 shadow-nexus-2xl shadow-primary/5 group">
           <Icon className="h-12 w-12 text-primary/40 group-hover:text-primary transition-colors duration-500" />
-          <div className="absolute -bottom-2 -right-2 h-10 w-10 rounded-xl bg-background border border-border shadow-lg flex items-center justify-center">
+          <div className="absolute -bottom-2 -right-2 h-10 w-10 rounded-xl bg-background border border-border shadow-nexus-lg flex items-center justify-center">
              <div className="h-2 w-2 rounded-full bg-primary/50 animate-ping" />
           </div>
         </div>
@@ -79,7 +79,7 @@ export function SharedEmptyState({
             {actionLabel && onAction && (
               <Button 
                 onClick={onAction}
-                className="nexus-gradient-bg text-primary-foreground h-12 px-8 rounded-2xl shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all font-black gap-2"
+                className="nexus-gradient-bg text-primary-foreground h-12 px-8 rounded-2xl shadow-nexus-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all font-black gap-2"
               >
                 <Plus className="h-5 w-5" />
                 {actionLabel}

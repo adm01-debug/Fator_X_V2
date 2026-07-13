@@ -187,13 +187,13 @@ export default function AgentsPage() {
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-8 max-w-[1440px] mx-auto animate-page-enter">
       {/* Header Elevated 10/10 */}
-      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-xl shadow-primary/5 mb-10 relative overflow-hidden group">
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-nexus-xl shadow-primary/5 mb-10 relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/[0.06] transition-colors duration-500" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent/[0.03] rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2" />
         
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative">
           <div className="flex items-center gap-7">
-            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
+            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-nexus-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
               <Bot className="h-11 w-11 text-primary animate-float" />
             </div>
             <div className="space-y-1">
@@ -214,7 +214,7 @@ export default function AgentsPage() {
 
             
             <AccessControl permission="agents.create">
-              <Button onClick={() => navigate('/agents/new')} className="nexus-gradient-bg text-primary-foreground gap-2.5 h-12 px-8 rounded-2xl shadow-xl shadow-primary/25 hover:scale-[1.03] active:scale-[0.98] transition-all duration-300 group">
+              <Button onClick={() => navigate('/agents/new')} className="nexus-gradient-bg text-primary-foreground gap-2.5 h-12 px-8 rounded-2xl shadow-nexus-xl shadow-primary/25 hover:scale-[1.03] active:scale-[0.98] transition-all duration-300 group">
                 <Plus className="h-5 w-5 group-hover:rotate-90 transition-transform duration-300" /> 
                 <span className="font-bold text-title-sm tracking-tight">Criar Agente</span>
               </Button>
@@ -236,7 +236,7 @@ export default function AgentsPage() {
           <button
             key={i}
             onClick={() => navigate(action.path)}
-            className="flex items-center gap-3 p-4 rounded-2xl bg-card border border-border/40 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 group text-left"
+            className="flex items-center gap-3 p-4 rounded-2xl bg-card border border-border/40 hover:border-primary/30 hover:shadow-nexus-lg hover:shadow-primary/5 transition-all duration-300 group text-left"
           >
             <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110", action.bg)}>
               <action.icon className={cn("h-5 w-5", action.color)} />
@@ -292,10 +292,10 @@ export default function AgentsPage() {
         <div className="flex items-center gap-3">
           <div className="relative w-full md:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Buscar por nome ou tag..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 h-10 rounded-xl bg-card border-border shadow-sm focus:ring-primary" />
+            <Input placeholder="Buscar por nome ou tag..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 h-10 rounded-xl bg-card border-border shadow-nexus-sm focus:ring-primary" />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[160px] h-10 rounded-xl bg-card border-border shadow-sm">
+            <SelectTrigger className="w-[160px] h-10 rounded-xl bg-card border-border shadow-nexus-sm">
               <Filter className="h-3.5 w-3.5 mr-2 text-muted-foreground" />
               <SelectValue placeholder="Filtrar Status" />
             </SelectTrigger>

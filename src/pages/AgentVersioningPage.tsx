@@ -348,7 +348,7 @@ export default function AgentVersioningPage() {
             <CopyLinkButton />
             <Button
               size="sm"
-              className="gap-1.5 nexus-gradient-bg text-primary-foreground hover:opacity-90 font-bold px-4 rounded-xl shadow-lg shadow-primary/20"
+              className="gap-1.5 nexus-gradient-bg text-primary-foreground hover:opacity-90 font-bold px-4 rounded-xl shadow-nexus-lg shadow-primary/20"
               onClick={() => setNewOpen(true)}
               disabled={!selected}
             >

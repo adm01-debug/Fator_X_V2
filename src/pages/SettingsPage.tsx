@@ -40,12 +40,12 @@ export default function SettingsPage() {
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-10 max-w-[1440px] mx-auto animate-page-enter">
       {/* Header Elevated 10/10 */}
-      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-2xl shadow-primary/5 relative overflow-hidden group">
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-nexus-2xl shadow-primary/5 relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/[0.06] transition-colors duration-500 pointer-events-none" />
         
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative">
           <div className="flex items-center gap-7">
-            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
+            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-nexus-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
               <Cpu className="h-11 w-11 text-primary animate-float" />
             </div>
             <div className="space-y-1">
@@ -140,7 +140,7 @@ export default function SettingsPage() {
                 
                 <div className="pt-4 flex justify-end gap-3">
                   <Button variant="ghost" size="sm" className="text-meta text-muted-foreground hover:text-foreground">Resetar Alterações</Button>
-                  <Button size="sm" className="nexus-gradient-bg text-primary-foreground gap-1.5 px-6 shadow-lg shadow-primary/10 transition-all hover:scale-[1.02]">
+                  <Button size="sm" className="nexus-gradient-bg text-primary-foreground gap-1.5 px-6 shadow-nexus-lg shadow-primary/10 transition-all hover:scale-[1.02]">
                     <Save className="h-3.5 w-3.5" /> Aplicar Configurações
                   </Button>
                 </div>
@@ -165,7 +165,7 @@ export default function SettingsPage() {
                       onClick={() => setTheme(t.value)} 
                       className={`group p-5 rounded-xl border text-left transition-all relative overflow-hidden ${
                         theme === t.value 
-                          ? 'border-primary bg-primary/5 shadow-inner' 
+                          ? 'border-primary bg-primary/5 shadow-nexus-inner' 
                           : 'border-border/30 bg-background/20 hover:border-border/60 hover:bg-background/40'
                       }`}
                     >

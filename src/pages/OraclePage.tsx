@@ -22,11 +22,11 @@ export default function OraclePage() {
 
   return (
     <div className="p-6 sm:p-10 lg:p-12 space-y-8 max-w-[1400px] mx-auto animate-page-enter bg-secondary/5 min-h-screen">
-      <div className="bg-card border border-border p-8 rounded-3xl shadow-sm mb-8 relative overflow-hidden">
+      <div className="bg-card border border-border p-8 rounded-3xl shadow-nexus-sm mb-8 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/[0.03] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative">
           <div className="flex items-center gap-5">
-            <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/15 shadow-inner">
+            <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/15 shadow-nexus-inner">
               <Sparkles className="h-9 w-9 text-primary animate-pulse" />
             </div>
             <div>
@@ -38,7 +38,7 @@ export default function OraclePage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="default" size="sm" className="nexus-gradient-bg text-primary-foreground gap-1.5 h-10 rounded-xl px-5 font-bold shadow-lg shadow-primary/20" onClick={() => setActiveTab('research')}>
+            <Button variant="default" size="sm" className="nexus-gradient-bg text-primary-foreground gap-1.5 h-10 rounded-xl px-5 font-bold shadow-nexus-lg shadow-primary/20" onClick={() => setActiveTab('research')}>
               <Search className="h-4 w-4" /> Deep Research
             </Button>
              <Button variant="outline" size="sm" className="gap-1.5 h-10 rounded-xl" onClick={() => setShowHistory(!showHistory)}>
@@ -56,10 +56,10 @@ export default function OraclePage() {
         <div className="lg:col-span-8 space-y-8">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="bg-muted/50 p-1 rounded-2xl h-12 w-full max-w-[400px] mb-6">
-              <TabsTrigger value="consult" className="rounded-xl flex-1 gap-2 font-bold data-[state=active]:bg-card data-[state=active]:shadow-sm">
+              <TabsTrigger value="consult" className="rounded-xl flex-1 gap-2 font-bold data-[state=active]:bg-card data-[state=active]:shadow-nexus-sm">
                 <Brain className="h-4 w-4" /> Consultar
               </TabsTrigger>
-              <TabsTrigger value="research" className="rounded-xl flex-1 gap-2 font-bold data-[state=active]:bg-card data-[state=active]:shadow-sm">
+              <TabsTrigger value="research" className="rounded-xl flex-1 gap-2 font-bold data-[state=active]:bg-card data-[state=active]:shadow-nexus-sm">
                 <Search className="h-4 w-4" /> Pesquisar
               </TabsTrigger>
             </TabsList>

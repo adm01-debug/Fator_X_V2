@@ -238,7 +238,7 @@ export default function ComplianceReportsPage() {
                 const score = Number(r.score ?? 0);
                 const failing = r.failed_controls;
                 return (
-                  <Card key={r.id} className="hover:shadow-md transition-shadow">
+                  <Card key={r.id} className="hover:shadow-nexus-md transition-shadow">
                     <CardHeader className="pb-3">
                       <CardTitle className="text-body-sm flex items-center gap-2">
                         <ShieldCheck className={`h-4 w-4 ${score >= 95 ? "text-nexus-green" : score >= 80 ? "text-nexus-amber" : "text-nexus-red"}`} />

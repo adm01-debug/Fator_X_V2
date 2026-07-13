@@ -97,7 +97,7 @@ export function OracleAnalyticsPanel() {
   }, [history, metrics, serviceStats]);
 
   return (
-    <Card className="p-8 bg-card border-border rounded-3xl shadow-sm relative overflow-hidden group">
+    <Card className="p-8 bg-card border-border rounded-3xl shadow-nexus-sm relative overflow-hidden group">
       <div className="absolute top-0 right-0 w-64 h-64 bg-primary/[0.02] rounded-full -translate-y-1/2 translate-x-1/2" />
       
       <div className="flex items-center justify-between mb-8 relative">

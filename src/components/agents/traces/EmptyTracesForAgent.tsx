@@ -110,13 +110,13 @@ export function EmptyTracesForAgent({
       {/* Illustration: agent silhouette with empty inbox cue */}
       <div className="relative mb-5">
         <div
-          className="h-20 w-20 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/15 flex items-center justify-center shadow-sm"
+          className="h-20 w-20 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/15 flex items-center justify-center shadow-nexus-sm"
           aria-hidden
         >
           <span className="text-3xl">📭</span>
         </div>
         <div
-          className="absolute -bottom-1 -right-1 h-8 w-8 rounded-xl bg-card border border-border flex items-center justify-center shadow-sm"
+          className="absolute -bottom-1 -right-1 h-8 w-8 rounded-xl bg-card border border-border flex items-center justify-center shadow-nexus-sm"
           aria-hidden
         >
           <UserX className="h-4 w-4 text-muted-foreground" />

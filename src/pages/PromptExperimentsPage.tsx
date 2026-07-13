@@ -130,7 +130,7 @@ function ExperimentCard({
   const totalRuns = (stats?.variant_a.runs ?? 0) + (stats?.variant_b.runs ?? 0);
 
   return (
-    <Card className="hover:shadow-lg transition-all cursor-pointer" onClick={onOpen}>
+    <Card className="hover:shadow-nexus-lg transition-all cursor-pointer" onClick={onOpen}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between gap-3">
           <div className="space-y-1 min-w-0">

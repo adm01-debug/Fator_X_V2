@@ -73,7 +73,7 @@ export function DeepResearchPanel() {
   }, [query, depth, effectiveIterations, config]);
 
   return (
-    <Card className="p-8 bg-card border-border rounded-3xl shadow-sm relative overflow-hidden group">
+    <Card className="p-8 bg-card border-border rounded-3xl shadow-nexus-sm relative overflow-hidden group">
       <div className="absolute top-0 right-0 w-64 h-64 bg-primary/[0.02] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
       
       <div className="flex items-start justify-between gap-4 mb-6 relative">
@@ -100,7 +100,7 @@ export function DeepResearchPanel() {
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Ex: Análise completa do mercado de semicondutores e tendências para chips de IA em 2027..."
           rows={3}
-          className="w-full bg-secondary/40 border border-border/60 rounded-2xl p-4 text-title-sm text-foreground placeholder-muted-foreground/60 resize-none focus:ring-primary focus:border-primary transition-all shadow-inner"
+          className="w-full bg-secondary/40 border border-border/60 rounded-2xl p-4 text-title-sm text-foreground placeholder-muted-foreground/60 resize-none focus:ring-primary focus:border-primary transition-all shadow-nexus-inner"
         />
         <div className="absolute bottom-3 right-3 text-meta font-mono text-muted-foreground/50 uppercase tracking-widest">
           Protocolo Web-Browsing Ativo
@@ -117,7 +117,7 @@ export function DeepResearchPanel() {
                 onClick={() => setDepth(d)}
                 className={`px-4 py-1.5 text-meta font-bold rounded-lg uppercase tracking-tighter transition-all ${
                   depth === d 
-                    ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20' 
+                    ? 'bg-primary text-primary-foreground shadow-nexus-md shadow-primary/20' 
                     : 'bg-card text-muted-foreground hover:bg-secondary hover:text-foreground border border-border/60'
                 }`}
               >
@@ -127,7 +127,7 @@ export function DeepResearchPanel() {
           </div>
         </div>
 
-        <Button onClick={startResearch} disabled={isResearching || !query.trim()} className="nexus-gradient-bg h-10 px-8 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all font-bold group" size="sm">
+        <Button onClick={startResearch} disabled={isResearching || !query.trim()} className="nexus-gradient-bg h-10 px-8 rounded-xl shadow-nexus-lg shadow-primary/20 hover:scale-[1.02] transition-all font-bold group" size="sm">
           {isResearching ? (
             <><Loader2 className="w-4 h-4 mr-2 animate-spin" />ANALISANDO GAPS...</>
           ) : (

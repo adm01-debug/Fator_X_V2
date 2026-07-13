@@ -57,6 +57,25 @@ const TYPO_REGEX = new RegExp(
   'g',
 );
 
+// ---- Shadow (elevation) tokens ---------------------------------------------
+// Substitui utilitários Tailwind de sombra padrão pelos tokens `shadow-nexus-*`
+// que consomem `--nexus-shadow` (adaptado a light/dark automaticamente).
+const SHADOW_MAP = {
+  'shadow-sm': 'shadow-nexus-sm',
+  shadow: 'shadow-nexus-md',
+  'shadow-md': 'shadow-nexus-md',
+  'shadow-lg': 'shadow-nexus-lg',
+  'shadow-xl': 'shadow-nexus-xl',
+  'shadow-2xl': 'shadow-nexus-2xl',
+  'shadow-inner': 'shadow-nexus-inner',
+};
+const SHADOW_REGEX = new RegExp(
+  `(?<![\\w-])((?:[a-z-]+:)*)(shadow(?:-sm|-md|-lg|-xl|-2xl|-inner)?)(?![\\w-/])`,
+  'g',
+);
+// Não converter estas variantes (não fazem parte do sistema de elevação):
+// `shadow-none`, `shadow-<cor>` (ex. `shadow-nexus-emerald/40`, `shadow-primary`).
+
 /**
  * Reporta e corrige substrings dentro de um nó, preservando delimitadores.
  */
@@ -188,9 +207,54 @@ const noAdhocTypography = {
   },
 };
 
+/** @type {import('eslint').Rule.RuleModule} */
+const noAdhocShadows = {
+  meta: {
+    type: 'problem',
+    docs: {
+      description:
+        'Proíbe sombras Tailwind padrão — use tokens de elevação nexus (shadow-nexus-sm/md/lg/xl/2xl/inner).',
+    },
+    fixable: 'code',
+    schema: [],
+    messages: {
+      replace:
+        'Sombra Tailwind ad-hoc "{{from}}" — use o token de elevação "{{to}}".',
+    },
+  },
+  create(context) {
+    const check = (node, raw) => {
+      reportMatches(
+        context,
+        node,
+        raw,
+        SHADOW_REGEX,
+        (m) => {
+          const [, modifiers, cls] = m;
+          const token = SHADOW_MAP[cls];
+          return token ? `${modifiers}${token}` : m[0];
+        },
+        (m, replacement) => ({
+          messageId: 'replace',
+          data: { from: m[0], to: replacement },
+        }),
+      );
+    };
+    return {
+      Literal(node) {
+        if (typeof node.value === 'string') check(node, node.value);
+      },
+      TemplateElement(node) {
+        check(node, node.value.raw);
+      },
+    };
+  },
+};
+
 export default {
   rules: {
     'no-hardcoded-colors': noHardcodedColors,
     'no-adhoc-typography': noAdhocTypography,
+    'no-adhoc-shadows': noAdhocShadows,
   },
 };

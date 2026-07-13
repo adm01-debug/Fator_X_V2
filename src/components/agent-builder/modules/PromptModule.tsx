@@ -297,7 +297,7 @@ export function PromptModule() {
                 className={`cursor-pointer rounded-xl border p-4 transition-all duration-300 ${
                   isEnabled
                     ? 'border-primary bg-primary/5 ring-1 ring-primary/20'
-                    : 'border-border bg-card hover:border-muted-foreground/30 hover:shadow-lg hover:shadow-primary/5'
+                    : 'border-border bg-card hover:border-muted-foreground/30 hover:shadow-nexus-lg hover:shadow-primary/5'
                 }`}
               >
                 <div className="flex items-center justify-between mb-1">
@@ -356,7 +356,7 @@ export function PromptModule() {
               onClick={() => updateAgent({ output_format: fmt.value })}
               className={`cursor-pointer rounded-xl border p-4 text-center transition-all duration-300 ${
                 agent.output_format === fmt.value
-                  ? 'border-primary bg-primary/5 ring-1 ring-primary/20 shadow-lg shadow-primary/5'
+                  ? 'border-primary bg-primary/5 ring-1 ring-primary/20 shadow-nexus-lg shadow-primary/5'
                   : 'border-border bg-card hover:border-muted-foreground/30'
               }`}
             >

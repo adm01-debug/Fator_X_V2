@@ -21,7 +21,7 @@ interface Props {
 
 export function ClearFiltersToast({ toastId, cleared, storageKeys, onUndo, onClose }: Props) {
   return (
-    <div className="w-[360px] rounded-xl bg-card/95 backdrop-blur-xl border border-border/50 shadow-2xl p-4 space-y-3"
+    <div className="w-[360px] rounded-xl bg-card/95 backdrop-blur-xl border border-border/50 shadow-nexus-2xl p-4 space-y-3"
          role="status"
          aria-label="Filtros limpos">
       <div className="flex items-start gap-2">

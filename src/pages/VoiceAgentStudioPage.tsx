@@ -104,7 +104,7 @@ export default function VoiceAgentStudioPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <Card className="border-primary/20 bg-card/50 backdrop-blur-xl shadow-2xl overflow-hidden relative">
+          <Card className="border-primary/20 bg-card/50 backdrop-blur-xl shadow-nexus-2xl overflow-hidden relative">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-nexus-purple via-primary to-nexus-blue opacity-50" />
             
             <CardContent className="p-10">
@@ -169,7 +169,7 @@ export default function VoiceAgentStudioPage() {
                     size="lg" 
                     variant={connected ? "destructive" : "default"} 
                     onClick={toggleConnection}
-                    className="h-14 px-8 rounded-2xl font-bold shadow-xl shadow-primary/10 transition-all hover:scale-105"
+                    className="h-14 px-8 rounded-2xl font-bold shadow-nexus-xl shadow-primary/10 transition-all hover:scale-105"
                   >
                     {connected ? (
                       <><PhoneOff className="h-5 w-5 mr-3" /> Encerrar Chamada</>
@@ -210,7 +210,7 @@ export default function VoiceAgentStudioPage() {
                   )}
                   {turns.map((t, i) => (
                     <div key={i} className={`flex items-start gap-3 ${t.role === "user" ? "flex-row-reverse" : ""}`}>
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border shadow-sm ${
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border shadow-nexus-sm ${
                         t.role === "user" ? "bg-primary/10 border-primary/30" : "bg-nexus-purple/10 border-nexus-purple/30"
                       }`}>
                         {t.role === "user" ? <Mic className="h-4 w-4 text-primary" /> : <Brain className="h-4 w-4 text-nexus-purple" />}
@@ -220,7 +220,7 @@ export default function VoiceAgentStudioPage() {
                           {t.role === "user" ? "Você (Humano)" : "Agente Nexus"}
                           {t.ms > 0 && <Badge variant="outline" className="h-4 text-[8px] border-nexus-amber/20 text-nexus-amber">{t.ms}ms</Badge>}
                         </div>
-                        <div className={`p-4 rounded-2xl text-body-sm leading-relaxed shadow-sm border ${
+                        <div className={`p-4 rounded-2xl text-body-sm leading-relaxed shadow-nexus-sm border ${
                           t.role === "user" 
                             ? "bg-primary text-primary-foreground border-primary/20 rounded-tr-none" 
                             : "bg-muted/50 text-foreground border-border/20 rounded-tl-none"
@@ -237,7 +237,7 @@ export default function VoiceAgentStudioPage() {
         </div>
 
         <div className="space-y-6">
-          <Card className="border-border/40 shadow-lg">
+          <Card className="border-border/40 shadow-nexus-lg">
             <CardHeader className="pb-3">
               <CardTitle className="text-body-sm font-bold flex items-center gap-2">
                 <Settings2 className="h-4 w-4 text-primary" /> Parâmetros do Motor

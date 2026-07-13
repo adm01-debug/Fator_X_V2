@@ -80,7 +80,7 @@ export function RagVersionControl() {
             className={cn(
               "p-4 rounded-[1.5rem] border transition-all duration-300",
               v.status === 'active' 
-                ? "bg-primary/[0.03] border-primary/30 shadow-lg shadow-primary/5" 
+                ? "bg-primary/[0.03] border-primary/30 shadow-nexus-lg shadow-primary/5" 
                 : "bg-secondary/10 border-border/40 hover:border-primary/20"
             )}
           >

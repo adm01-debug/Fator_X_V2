@@ -9,13 +9,13 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/25 hover:-translate-y-[1px]",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:shadow-lg hover:shadow-destructive/25",
-        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground hover:border-primary/30 hover:shadow-sm",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:shadow-sm",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-nexus-lg hover:shadow-primary/25 hover:-translate-y-[1px]",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:shadow-nexus-lg hover:shadow-destructive/25",
+        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground hover:border-primary/30 hover:shadow-nexus-sm",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:shadow-nexus-sm",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        gradient: "nexus-gradient-bg text-primary-foreground hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-[1px] hover:brightness-110",
+        gradient: "nexus-gradient-bg text-primary-foreground hover:shadow-nexus-xl hover:shadow-primary/30 hover:-translate-y-[1px] hover:brightness-110",
       },
       size: {
         default: "h-10 px-4 py-2",

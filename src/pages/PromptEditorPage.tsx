@@ -203,7 +203,7 @@ export default function PromptEditorPage() {
                   value={content}
                   onChange={e => handleContentChange(e.target.value)}
                   placeholder="Você é um assistente especializado em..."
-                  className="bg-nexus-surface-1 border-border/40 font-mono text-[13px] leading-relaxed min-h-[500px] resize-none focus:ring-primary/20 p-6 rounded-2xl shadow-inner"
+                  className="bg-nexus-surface-1 border-border/40 font-mono text-[13px] leading-relaxed min-h-[500px] resize-none focus:ring-primary/20 p-6 rounded-2xl shadow-nexus-inner"
                 />
                 <div className="flex items-center justify-between mt-4">
                   <div className="flex items-center gap-4">

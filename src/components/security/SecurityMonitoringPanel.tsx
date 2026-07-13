@@ -103,7 +103,7 @@ export function SecurityMonitoringPanel() {
   };
 
   return (
-    <Card className="border-border/40 shadow-sm overflow-hidden bg-card/50 backdrop-blur-sm">
+    <Card className="border-border/40 shadow-nexus-sm overflow-hidden bg-card/50 backdrop-blur-sm">
       <CardHeader className="border-b border-border/40 bg-muted/20">
         <div className="flex items-center justify-between">
           <div className="space-y-1">

@@ -101,11 +101,11 @@ export default function AgentTemplatesPage() {
 
   return (
     <div className="p-6 sm:p-10 lg:p-12 space-y-8 max-w-[1400px] mx-auto animate-page-enter bg-secondary/5 min-h-screen">
-      <div className="bg-card border border-border p-8 rounded-3xl shadow-sm mb-8 relative overflow-hidden">
+      <div className="bg-card border border-border p-8 rounded-3xl shadow-nexus-sm mb-8 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/[0.03] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative">
           <div className="flex items-center gap-5">
-            <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/15 shadow-inner">
+            <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/15 shadow-nexus-inner">
               <LayoutTemplate className="h-9 w-9 text-primary" />
             </div>
             <div>
@@ -126,7 +126,7 @@ export default function AgentTemplatesPage() {
             placeholder="Buscar blueprints por nome, stack ou caso de uso…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 h-11 bg-card border-border/60 rounded-xl shadow-sm focus:ring-primary"
+            className="pl-9 h-11 bg-card border-border/60 rounded-xl shadow-nexus-sm focus:ring-primary"
           />
         </div>
         <div className="flex items-center gap-2">
@@ -147,7 +147,7 @@ export default function AgentTemplatesPage() {
               onClick={() => setCategory(cat)}
               className={`gap-1.5 shrink-0 h-9 px-4 rounded-full transition-all ${
                 cat === category 
-                  ? "shadow-lg shadow-primary/20" 
+                  ? "shadow-nexus-lg shadow-primary/20" 
                   : "bg-card hover:border-primary/40"
               }`}
             >
@@ -178,13 +178,13 @@ export default function AgentTemplatesPage() {
           {filtered.map((t, i) => (
             <Card
               key={t.id}
-              className="nexus-card p-6 flex flex-col group cursor-pointer hover:border-primary/40 transition-all border-border/50 bg-card/80 backdrop-blur-sm shadow-sm"
+              className="nexus-card p-6 flex flex-col group cursor-pointer hover:border-primary/40 transition-all border-border/50 bg-card/80 backdrop-blur-sm shadow-nexus-sm"
               onClick={() => setSelectedTemplateForDetail(t)}
               style={{ animationDelay: `${i * 40}ms` }}
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-4">
-                  <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center text-3xl shrink-0 ring-1 ring-border/40 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                  <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center text-3xl shrink-0 ring-1 ring-border/40 shadow-nexus-inner group-hover:scale-110 transition-transform duration-500">
                     {t.emoji}
                   </div>
                   <div className="min-w-0">
@@ -253,7 +253,7 @@ export default function AgentTemplatesPage() {
                   setSelectedTemplateForDetail(t);
                 }}
                 disabled={forkMutation.isPending}
-                className="w-full nexus-gradient-bg text-primary-foreground gap-2 h-11 rounded-xl shadow-lg shadow-primary/10 hover:scale-[1.02] transition-all font-bold"
+                className="w-full nexus-gradient-bg text-primary-foreground gap-2 h-11 rounded-xl shadow-nexus-lg shadow-primary/10 hover:scale-[1.02] transition-all font-bold"
                 size="sm"
               >
                 <Rocket className="h-4 w-4" />
@@ -270,7 +270,7 @@ export default function AgentTemplatesPage() {
             <>
               <DialogHeader className="space-y-4">
                 <div className="flex items-center gap-4">
-                  <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center text-4xl shadow-inner border border-primary/10">
+                  <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center text-4xl shadow-nexus-inner border border-primary/10">
                     {selectedTemplateForDetail.emoji}
                   </div>
                   <div className="text-left">
@@ -366,7 +366,7 @@ export default function AgentTemplatesPage() {
                     setSelectedTemplateForDetail(null);
                   }}
                   disabled={forkMutation.isPending}
-                  className="flex-[2] h-12 nexus-gradient-bg text-primary-foreground gap-2 rounded-xl shadow-xl shadow-primary/20 font-bold"
+                  className="flex-[2] h-12 nexus-gradient-bg text-primary-foreground gap-2 rounded-xl shadow-nexus-xl shadow-primary/20 font-bold"
                 >
                   {forkMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Rocket className="h-4 w-4" />}
                   Ativar e Criar Rascunho

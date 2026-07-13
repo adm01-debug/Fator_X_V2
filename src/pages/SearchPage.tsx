@@ -130,7 +130,7 @@ export default function SearchPage() {
 
         {!loading &&
           results.map((r) => (
-            <Card key={r.chunk_id} className="transition-shadow hover:shadow-md">
+            <Card key={r.chunk_id} className="transition-shadow hover:shadow-nexus-md">
               <CardHeader className="pb-2">
                 <div className="flex items-start justify-between gap-3">
                   <CardTitle className="flex items-center gap-2 text-title-sm">

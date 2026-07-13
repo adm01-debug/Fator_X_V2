@@ -10,7 +10,7 @@ export function ChartTooltip({ tooltip }: Props) {
 
   return (
     <div
-      className="absolute pointer-events-none z-50 rounded-lg border border-border/50 bg-card px-2.5 py-1.5 text-meta shadow-xl min-w-[160px] max-w-[260px]"
+      className="absolute pointer-events-none z-50 rounded-lg border border-border/50 bg-card px-2.5 py-1.5 text-meta shadow-nexus-xl min-w-[160px] max-w-[260px]"
       style={{
         left: tooltip.x,
         top: tooltip.y,

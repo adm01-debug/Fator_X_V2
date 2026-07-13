@@ -214,7 +214,7 @@ export function GuardrailsModule() {
           </div>
           {mlResult && (
             <div className="space-y-4">
-              <div className={`rounded-lg border p-4 animate-fade-in shadow-inner ${mlResult.allowed ? 'border-nexus-emerald/30 bg-nexus-emerald/5' : 'border-destructive/30 bg-destructive/5'}`}>
+              <div className={`rounded-lg border p-4 animate-fade-in shadow-nexus-inner ${mlResult.allowed ? 'border-nexus-emerald/30 bg-nexus-emerald/5' : 'border-destructive/30 bg-destructive/5'}`}>
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <div className={`h-8 w-8 rounded-full flex items-center justify-center ${mlResult.allowed ? 'bg-nexus-emerald/20' : 'bg-destructive/20'}`}>

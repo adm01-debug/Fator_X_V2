@@ -120,7 +120,7 @@ export function Bitrix24ApiTester() {
               <Button 
                 onClick={handleTest} 
                 disabled={testing} 
-                className="w-full h-12 rounded-2xl gap-2 nexus-gradient-bg text-primary-foreground font-black shadow-lg shadow-primary/20"
+                className="w-full h-12 rounded-2xl gap-2 nexus-gradient-bg text-primary-foreground font-black shadow-nexus-lg shadow-primary/20"
               >
                 {testing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
                 Disparar Requisição

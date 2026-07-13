@@ -74,7 +74,7 @@ export function OracleResultsPanel() {
           { v: `$${results.metrics.total_cost_usd.toFixed(4)}`, l: 'Investimento', c: 'text-foreground', icon: <DollarSign className="h-4 w-4" /> },
           { v: `${(results.metrics.total_latency_ms / 1000).toFixed(1)}s`, l: 'Tempo Global', c: 'text-foreground', icon: <Zap className="h-4 w-4" /> },
         ].map((m) => (
-          <Card key={m.l} className="p-4 flex flex-col items-center justify-center text-center bg-card/60 backdrop-blur-sm border-border/60 shadow-sm group hover:border-primary/30 transition-all">
+          <Card key={m.l} className="p-4 flex flex-col items-center justify-center text-center bg-card/60 backdrop-blur-sm border-border/60 shadow-nexus-sm group hover:border-primary/30 transition-all">
             <div className="p-2 rounded-lg bg-secondary/50 text-muted-foreground mb-2 group-hover:text-primary transition-colors">
               {m.icon}
             </div>
@@ -87,22 +87,22 @@ export function OracleResultsPanel() {
       {/* Tabs */}
       <Tabs defaultValue="response" className="w-full">
         <TabsList className="bg-muted/50 p-1 rounded-2xl h-12 w-full max-w-[600px] mx-auto mb-8 border border-border/40">
-          <TabsTrigger value="response" className="rounded-xl flex-1 gap-2 font-bold data-[state=active]:bg-card data-[state=active]:shadow-md">
+          <TabsTrigger value="response" className="rounded-xl flex-1 gap-2 font-bold data-[state=active]:bg-card data-[state=active]:shadow-nexus-md">
             <FileText className="h-4 w-4" /> Síntese
           </TabsTrigger>
-          <TabsTrigger value="individual" className="rounded-xl flex-1 gap-2 font-bold data-[state=active]:bg-card data-[state=active]:shadow-md">
+          <TabsTrigger value="individual" className="rounded-xl flex-1 gap-2 font-bold data-[state=active]:bg-card data-[state=active]:shadow-nexus-md">
             <Cpu className="h-4 w-4" /> Opiniões ({results.stage1_results.length})
           </TabsTrigger>
-          <TabsTrigger value="consensus" className="rounded-xl flex-1 gap-2 font-bold data-[state=active]:bg-card data-[state=active]:shadow-md">
+          <TabsTrigger value="consensus" className="rounded-xl flex-1 gap-2 font-bold data-[state=active]:bg-card data-[state=active]:shadow-nexus-md">
             <Activity className="h-4 w-4" /> Matriz
           </TabsTrigger>
-          <TabsTrigger value="metrics" className="rounded-xl flex-1 gap-2 font-bold data-[state=active]:bg-card data-[state=active]:shadow-md">
+          <TabsTrigger value="metrics" className="rounded-xl flex-1 gap-2 font-bold data-[state=active]:bg-card data-[state=active]:shadow-nexus-md">
             <Activity className="h-4 w-4" /> Auditoria
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="response" className="mt-0 focus-visible:outline-none">
-          <Card className="p-8 rounded-3xl border-border/60 bg-card/80 backdrop-blur-md shadow-xl relative overflow-hidden">
+          <Card className="p-8 rounded-3xl border-border/60 bg-card/80 backdrop-blur-md shadow-nexus-xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.03] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
             
             <div className="flex items-center justify-between mb-8 relative">

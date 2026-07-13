@@ -133,7 +133,7 @@ export function CronSchedulerPanel() {
                 <Plus className="h-4 w-4" /> Novo Agendamento
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px] rounded-[2rem] border-border/40 p-8 shadow-2xl">
+            <DialogContent className="sm:max-w-[500px] rounded-[2rem] border-border/40 p-8 shadow-nexus-2xl">
               <DialogHeader>
                 <DialogTitle className="text-2xl font-heading font-black">Configurar Cron-Job</DialogTitle>
               </DialogHeader>
@@ -180,7 +180,7 @@ export function CronSchedulerPanel() {
 
                 <DialogFooter className="pt-4">
                   <Button variant="outline" onClick={() => setCreateOpen(false)} className="h-12 rounded-xl px-6">Cancelar</Button>
-                  <Button onClick={handleCreate} disabled={saving} className="h-12 px-8 rounded-xl nexus-gradient-bg text-primary-foreground font-bold shadow-lg shadow-primary/20">
+                  <Button onClick={handleCreate} disabled={saving} className="h-12 px-8 rounded-xl nexus-gradient-bg text-primary-foreground font-bold shadow-nexus-lg shadow-primary/20">
                     {saving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Settings2 className="h-5 w-5" />}
                     <span className="ml-2">Ativar Job</span>
                   </Button>

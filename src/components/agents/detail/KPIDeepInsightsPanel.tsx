@@ -105,7 +105,7 @@ export function KPIDeepInsightsPanel({ daily, traces, agentName }: Props) {
 
   return (
     <div
-      className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden relative"
+      className="bg-card border border-border rounded-2xl shadow-nexus-sm overflow-hidden relative"
       role="region"
       aria-label="Insights detalhados por KPI"
     >
@@ -113,7 +113,7 @@ export function KPIDeepInsightsPanel({ daily, traces, agentName }: Props) {
 
       <div className="flex items-center justify-between gap-3 p-6 border-b border-border/50 relative flex-wrap bg-secondary/10">
         <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/15 shadow-inner">
+          <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/15 shadow-nexus-inner">
             <Lightbulb className="h-4 w-4 text-primary" aria-hidden />
           </div>
           <div>

@@ -79,7 +79,7 @@ export function SavedTestRunsPanel({ agentId, agentName }: Props) {
 
   return (
     <>
-      <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
+      <div className="bg-card border border-border rounded-2xl shadow-nexus-sm overflow-hidden">
         <div className="flex items-center justify-between p-6 border-b border-border/50 flex-wrap gap-2 bg-secondary/5">
           <h3 className="text-body-sm font-bold text-foreground flex items-center gap-2">
             <History className="h-4 w-4 text-primary" aria-hidden="true" />
@@ -104,7 +104,7 @@ export function SavedTestRunsPanel({ agentId, agentName }: Props) {
           </div>
         </div>
         <div className="p-6">
-        <div className="rounded-xl border border-border/50 overflow-hidden shadow-inner">
+        <div className="rounded-xl border border-border/50 overflow-hidden shadow-nexus-inner">
           <div className="max-h-[320px] overflow-y-auto">
             <table className="w-full text-meta">
               <thead className="bg-secondary/40 sticky top-0">

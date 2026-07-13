@@ -38,7 +38,7 @@ export function DeploymentWizard({ agentName, isOpen, onOpenChange, onDeploy }: 
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-xl rounded-[2.5rem] p-8 border-border/40 shadow-2xl">
+      <DialogContent className="sm:max-w-xl rounded-[2.5rem] p-8 border-border/40 shadow-nexus-2xl">
         <DialogHeader>
           <div className="flex items-center gap-3 mb-2">
             <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -58,7 +58,7 @@ export function DeploymentWizard({ agentName, isOpen, onOpenChange, onDeploy }: 
               <div key={i} className="flex items-center">
                 <div className={cn(
                   "h-8 w-8 rounded-full flex items-center justify-center text-meta font-bold transition-all duration-500",
-                  step >= i ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "bg-muted text-muted-foreground"
+                  step >= i ? "bg-primary text-primary-foreground shadow-nexus-lg shadow-primary/20" : "bg-muted text-muted-foreground"
                 )}>
                   {step > i ? <CheckCircle2 className="h-4 w-4" /> : i}
                 </div>
@@ -150,7 +150,7 @@ export function DeploymentWizard({ agentName, isOpen, onOpenChange, onDeploy }: 
             <Button 
               onClick={startDeploy} 
               disabled={isDeploying}
-              className="flex-1 bg-nexus-emerald text-white hover:bg-nexus-emerald/90 font-bold rounded-xl h-12 shadow-xl shadow-nexus-emerald/20"
+              className="flex-1 bg-nexus-emerald text-white hover:bg-nexus-emerald/90 font-bold rounded-xl h-12 shadow-nexus-xl shadow-nexus-emerald/20"
             >
               {isDeploying ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Implantando...</> : "Confirmar Implantação"}
             </Button>

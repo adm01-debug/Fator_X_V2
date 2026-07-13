@@ -51,7 +51,7 @@ export function AgentCard({
       <div className={cn("flex items-start justify-between mb-4", selectionMode ? "ml-8" : "")}>
         <div className="flex items-center gap-4">
           <div className="relative">
-            <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/5 flex items-center justify-center text-2xl shadow-sm border border-primary/10 group-hover:shadow-md group-hover:scale-105 transition-all duration-300">
+            <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/5 flex items-center justify-center text-2xl shadow-nexus-sm border border-primary/10 group-hover:shadow-nexus-md group-hover:scale-105 transition-all duration-300">
               {agent.avatar_emoji || '🤖'}
             </div>
             <span

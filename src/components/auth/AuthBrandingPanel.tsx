@@ -47,7 +47,7 @@ export function AuthBrandingPanel() {
       <MeshGradient />
       <div className="animate-fade-in">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/20">
+          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-nexus-lg shadow-primary/20">
             <FatorXLogo size={22} className="text-primary-foreground" />
           </div>
           <span className="text-xl font-heading font-bold text-foreground tracking-tight">Fator X</span>

@@ -546,7 +546,7 @@ function LiveDiffPreview({
                 <li
                   key={`${c.group}-${c.field}`}
                   className={`grid grid-cols-[auto_1fr] gap-2 items-start rounded-md border bg-background/40 px-2 py-1.5 border-l-4 ${meta.ringCls} ${
-                    isTop ? 'border-border/60 shadow-sm' : 'border-border/40'
+                    isTop ? 'border-border/60 shadow-nexus-sm' : 'border-border/40'
                   }`}
                 >
                   <div className="flex flex-col items-start gap-1 pt-0.5">

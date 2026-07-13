@@ -126,7 +126,7 @@ export function ResearchSettingsDialog({ trigger }: Props) {
                   onClick={() => set('defaultDepth', d)}
                   className={`px-3 py-2.5 text-meta font-bold rounded-lg uppercase tracking-widest border transition-all ${
                     draft.defaultDepth === d
-                      ? 'bg-primary text-primary-foreground border-primary shadow-sm'
+                      ? 'bg-primary text-primary-foreground border-primary shadow-nexus-sm'
                       : 'bg-secondary/40 text-muted-foreground border-border/50 hover:text-foreground'
                   }`}
                 >
@@ -183,7 +183,7 @@ export function ResearchSettingsDialog({ trigger }: Props) {
                     onClick={() => set('strategy', s)}
                     className={`p-3 text-left rounded-xl border transition-all ${
                       active
-                        ? 'bg-primary/10 border-primary/40 shadow-sm'
+                        ? 'bg-primary/10 border-primary/40 shadow-nexus-sm'
                         : 'bg-secondary/30 border-border/50 hover:border-border'
                     }`}
                   >

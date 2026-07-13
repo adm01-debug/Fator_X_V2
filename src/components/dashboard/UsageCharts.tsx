@@ -155,7 +155,7 @@ export function UsageCharts({ data }: UsageChartsProps) {
   return (
     <div className="grid gap-8 lg:grid-cols-2">
       {/* Requests & Errors Elevated */}
-      <div className="nexus-card bg-card/50 border-border/40 p-8 rounded-[2.5rem] shadow-lg shadow-primary/[0.02] hover:shadow-2xl hover:shadow-primary/[0.05] transition-all duration-500">
+      <div className="nexus-card bg-card/50 border-border/40 p-8 rounded-[2.5rem] shadow-nexus-lg shadow-primary/[0.02] hover:shadow-nexus-2xl hover:shadow-primary/[0.05] transition-all duration-500">
         <div className="flex items-center justify-between mb-8">
           <div className="space-y-1">
             <h3 className="text-title-sm font-black text-foreground uppercase tracking-tight">
@@ -191,7 +191,7 @@ export function UsageCharts({ data }: UsageChartsProps) {
       </div>
 
       {/* Cost Elevated */}
-      <div className="nexus-card bg-card/50 border-border/40 p-8 rounded-[2.5rem] shadow-lg shadow-primary/[0.02] hover:shadow-2xl hover:shadow-primary/[0.05] transition-all duration-500">
+      <div className="nexus-card bg-card/50 border-border/40 p-8 rounded-[2.5rem] shadow-nexus-lg shadow-primary/[0.02] hover:shadow-nexus-2xl hover:shadow-primary/[0.05] transition-all duration-500">
         <div className="flex items-center justify-between mb-8">
           <div className="space-y-1">
             <h3 className="text-title-sm font-black text-foreground uppercase tracking-tight">
@@ -227,7 +227,7 @@ export function UsageCharts({ data }: UsageChartsProps) {
       </div>
 
       {/* Latency Elevated */}
-      <div className="nexus-card bg-card/50 border-border/40 p-8 rounded-[2.5rem] shadow-lg shadow-primary/[0.02] hover:shadow-2xl hover:shadow-primary/[0.05] transition-all duration-500">
+      <div className="nexus-card bg-card/50 border-border/40 p-8 rounded-[2.5rem] shadow-nexus-lg shadow-primary/[0.02] hover:shadow-nexus-2xl hover:shadow-primary/[0.05] transition-all duration-500">
         <div className="space-y-1 mb-8">
           <h3 className="text-title-sm font-black text-foreground uppercase tracking-tight">
             Latência Média
@@ -250,7 +250,7 @@ export function UsageCharts({ data }: UsageChartsProps) {
       </div>
 
       {/* Tokens Elevated */}
-      <div className="nexus-card bg-card/50 border-border/40 p-8 rounded-[2.5rem] shadow-lg shadow-primary/[0.02] hover:shadow-2xl hover:shadow-primary/[0.05] transition-all duration-500">
+      <div className="nexus-card bg-card/50 border-border/40 p-8 rounded-[2.5rem] shadow-nexus-lg shadow-primary/[0.02] hover:shadow-nexus-2xl hover:shadow-primary/[0.05] transition-all duration-500">
         <div className="space-y-1 mb-8">
           <h3 className="text-title-sm font-black text-foreground uppercase tracking-tight">
             Vazão de Tokens

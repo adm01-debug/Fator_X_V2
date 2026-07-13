@@ -118,7 +118,7 @@ export function WhatsAppInboxPanel() {
   };
 
   return (
-    <div className="bg-card/50 backdrop-blur-xl border border-border/40 p-8 rounded-[3rem] shadow-xl shadow-primary/5">
+    <div className="bg-card/50 backdrop-blur-xl border border-border/40 p-8 rounded-[3rem] shadow-nexus-xl shadow-primary/5">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-xl bg-nexus-emerald/10 flex items-center justify-center">

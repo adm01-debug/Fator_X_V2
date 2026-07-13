@@ -72,7 +72,7 @@ export function WalGenerationCard() {
     );
 
   return (
-    <Card className="border-border/40 shadow-sm bg-card/50 backdrop-blur-sm">
+    <Card className="border-border/40 shadow-nexus-sm bg-card/50 backdrop-blur-sm">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="space-y-1">

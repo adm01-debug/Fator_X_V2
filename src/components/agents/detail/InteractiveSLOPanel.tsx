@@ -186,7 +186,7 @@ export function InteractiveSLOPanel({ agentId, agentName, slo, traces, daily, on
 
 
   return (
-    <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden" role="region" aria-label="Painel SLO interativo">
+    <div className="bg-card border border-border rounded-2xl shadow-nexus-sm overflow-hidden" role="region" aria-label="Painel SLO interativo">
       <div className="flex items-center justify-between gap-3 p-6 border-b border-border/50 flex-wrap bg-secondary/10">
         <div>
           <h3 className="text-body-sm font-bold text-foreground">Painel Operacional SLO</h3>
@@ -300,7 +300,7 @@ export function InteractiveSLOPanel({ agentId, agentName, slo, traces, daily, on
       </div>
 
       {/* Error budget burn */}
-      <div className={`rounded-xl border ${burnStyle.border} ${burnStyle.bg} p-4 shadow-sm relative overflow-hidden`}>
+      <div className={`rounded-xl border ${burnStyle.border} ${burnStyle.bg} p-4 shadow-nexus-sm relative overflow-hidden`}>
         <div className="absolute top-0 right-0 w-24 h-24 bg-current opacity-[0.03] rounded-full -translate-y-1/2 translate-x-1/2" />
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">

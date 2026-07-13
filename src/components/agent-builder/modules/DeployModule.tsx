@@ -452,7 +452,7 @@ export function DeployModule() {
                     className={cn(
                       "flex flex-col p-4 rounded-2xl border text-left transition-all duration-300",
                       agent.status === env.id 
-                        ? "bg-background border-primary shadow-xl shadow-primary/10 scale-[1.02]" 
+                        ? "bg-background border-primary shadow-nexus-xl shadow-primary/10 scale-[1.02]" 
                         : "bg-background/40 border-border/40 hover:border-primary/40"
                     )}
                   >
@@ -489,7 +489,7 @@ export function DeployModule() {
             </div>
 
             <div className="p-6 rounded-[2rem] border border-border/40 bg-background/20 backdrop-blur-sm flex flex-col justify-center items-center text-center space-y-4">
-              <div className="h-16 w-16 rounded-3xl bg-primary/10 flex items-center justify-center border border-primary/20 shadow-lg">
+              <div className="h-16 w-16 rounded-3xl bg-primary/10 flex items-center justify-center border border-primary/20 shadow-nexus-lg">
                 <Zap className="h-8 w-8 text-primary animate-pulse" />
               </div>
               <div>
@@ -497,7 +497,7 @@ export function DeployModule() {
                 <p className="text-meta text-muted-foreground max-w-[240px] mt-1">Gere um rastro imutável e promova as alterações para o cluster industrial.</p>
               </div>
               <Button 
-                className="w-full h-12 rounded-2xl nexus-gradient-bg text-primary-foreground font-bold shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
+                className="w-full h-12 rounded-2xl nexus-gradient-bg text-primary-foreground font-bold shadow-nexus-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
                 onClick={() => {
                   const target = agent.status === 'production' ? 'Produção' : 'Staging';
                   toast.promise(

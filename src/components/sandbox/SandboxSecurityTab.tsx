@@ -30,7 +30,7 @@ function ToggleField({ label, description, checked, onChange, icon: Icon }: {
         </div>
       </div>
       <div className={`w-10 h-5 rounded-full flex items-center transition-colors ${checked ? 'bg-primary' : 'bg-muted'}`}>
-        <div className={`w-4 h-4 rounded-full bg-white shadow transition-transform ${checked ? 'translate-x-5' : 'translate-x-0.5'}`} />
+        <div className={`w-4 h-4 rounded-full bg-white shadow-nexus-md transition-transform ${checked ? 'translate-x-5' : 'translate-x-0.5'}`} />
       </div>
     </div>
   );

@@ -78,12 +78,12 @@ export default function KnowledgePage() {
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-10 max-w-[1440px] mx-auto animate-page-enter">
       {/* Header Elevated 10/10 */}
-      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-2xl shadow-primary/5 mb-10 relative overflow-hidden group">
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-nexus-2xl shadow-primary/5 mb-10 relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/[0.06] transition-colors duration-500 pointer-events-none" />
         
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative">
           <div className="flex items-center gap-7">
-            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
+            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-nexus-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
               <Database className="h-11 w-11 text-primary animate-float" />
             </div>
             <div className="space-y-1">
@@ -119,16 +119,16 @@ export default function KnowledgePage() {
       <Tabs defaultValue="bases" className="space-y-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <TabsList className="bg-secondary/20 p-1 rounded-2xl h-14 w-full md:w-auto border border-border/40">
-            <TabsTrigger value="bases" className="rounded-xl px-6 font-bold h-full data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-lg gap-2">
+            <TabsTrigger value="bases" className="rounded-xl px-6 font-bold h-full data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-nexus-lg gap-2">
               <Database className="h-4 w-4" /> Bases de Conhecimento
             </TabsTrigger>
-            <TabsTrigger value="tuning" className="rounded-xl px-6 font-bold h-full data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-lg gap-2">
+            <TabsTrigger value="tuning" className="rounded-xl px-6 font-bold h-full data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-nexus-lg gap-2">
               <Settings2 className="h-4 w-4" /> Pipeline Tuning
             </TabsTrigger>
-            <TabsTrigger value="search" className="rounded-xl px-6 font-bold h-full data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-lg gap-2">
+            <TabsTrigger value="search" className="rounded-xl px-6 font-bold h-full data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-nexus-lg gap-2">
               <Search className="h-4 w-4" /> Neural Search
             </TabsTrigger>
-            <TabsTrigger value="versions" className="rounded-xl px-6 font-bold h-full data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-lg gap-2">
+            <TabsTrigger value="versions" className="rounded-xl px-6 font-bold h-full data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-nexus-lg gap-2">
               <History className="h-4 w-4" /> Versionamento
             </TabsTrigger>
           </TabsList>
@@ -167,11 +167,11 @@ export default function KnowledgePage() {
                       <div key={step.name} className="flex flex-col items-center group">
                         <div className={cn(
                           "h-14 w-14 rounded-2xl flex items-center justify-center relative z-10 transition-all duration-500",
-                          "bg-card border border-border/40 shadow-xl group-hover:scale-110 group-hover:border-primary/40",
+                          "bg-card border border-border/40 shadow-nexus-xl group-hover:scale-110 group-hover:border-primary/40",
                           step.bg
                         )}>
                           <step.icon className={cn("h-6 w-6 transition-transform group-hover:rotate-6", step.color)} />
-                          <div className="absolute -top-2 -right-2 h-5 w-5 rounded-lg bg-background border border-border/40 flex items-center justify-center text-meta font-black shadow-sm">
+                          <div className="absolute -top-2 -right-2 h-5 w-5 rounded-lg bg-background border border-border/40 flex items-center justify-center text-meta font-black shadow-nexus-sm">
                             {i + 1}
                           </div>
                         </div>
@@ -235,7 +235,7 @@ export default function KnowledgePage() {
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {filtered.map((kb) => (
                     <div key={kb.id}
-                      className="nexus-card group cursor-pointer hover:border-primary/40 transition-all hover:shadow-2xl hover:shadow-primary/5 p-0 overflow-hidden"
+                      className="nexus-card group cursor-pointer hover:border-primary/40 transition-all hover:shadow-nexus-2xl hover:shadow-primary/5 p-0 overflow-hidden"
                       onClick={() => setSelectedKb({ id: kb.id, name: kb.name })}
                     >
                       <div className="p-5 space-y-4">

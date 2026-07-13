@@ -64,7 +64,7 @@ export function Bitrix24Connect() {
     <div className="nexus-card">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-xl shadow-inner border border-primary/5">
+          <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-xl shadow-nexus-inner border border-primary/5">
             <Building2 className="w-6 h-6 text-primary" />
           </div>
           <div>
