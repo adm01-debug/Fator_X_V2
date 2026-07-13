@@ -196,10 +196,10 @@ export default function WorkflowsPage() {
                 <div className="h-full bg-primary animate-progress-indeterminate w-1/3" />
              </div>
              <span className="text-meta font-bold text-muted-foreground uppercase tracking-widest">
-               {currentEvent?.label || 'Iniciando...'}
+               {(currentEvent?.label as string) || 'Iniciando...'}
              </span>
           </div>
-          {currentEvent?.output && (
+          {currentEvent?.output ? (
             <div className="mt-4 p-4 rounded-xl bg-card border border-border/40 font-mono text-meta max-h-40 overflow-y-auto">
               <p className="text-muted-foreground mb-2 italic">// Último output:</p>
               {typeof currentEvent.output === 'string' ? currentEvent.output : JSON.stringify(currentEvent.output, null, 2)}
