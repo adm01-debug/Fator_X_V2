@@ -65,8 +65,8 @@ export async function getInstalledSkills(agentId: string): Promise<AgentSkillDef
     .select('skill_id, skill_registry(*)')
     .eq('agent_id', agentId);
   if (error) throw error;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (data ?? []).map((d: any) => d.skill_registry as AgentSkillDefinition);
+  type InstalledRow = { skill_id: string; skill_registry: AgentSkillDefinition };
+  return ((data ?? []) as unknown as InstalledRow[]).map((d) => d.skill_registry);
 }
 
 // Uninstall a skill

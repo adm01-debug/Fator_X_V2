@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/lib/logger';
+import type { DbRow } from '@/types/dbRow';
 
 /**
  * Supabase Extended Client
@@ -8,11 +9,49 @@ import { logger } from '@/lib/logger';
  */
 
 /**
- * Returns a typed Supabase client for a specific table.
- * Using 'any' for table name to avoid deep type instantiation issues in build.
+ * Permissive fluent-query shim para tabelas fora do schema tipado.
+ * `data` é resolvido como `DbRow` (ponte documentada) para preservar
+ * o acesso legado por propriedade em callbacks; os métodos fluentes
+ * são todos tipados e retornam a mesma interface.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const fromTable = (table: string): any => (supabase as unknown as { from: (t: string) => unknown }).from(table);
+export interface AnyQueryResult {
+  data: DbRow;
+  error: { message: string } | null;
+  count?: number | null;
+}
+
+export interface AnyQueryBuilder extends PromiseLike<AnyQueryResult> {
+  select: (...args: unknown[]) => AnyQueryBuilder;
+  insert: (...args: unknown[]) => AnyQueryBuilder;
+  update: (...args: unknown[]) => AnyQueryBuilder;
+  upsert: (...args: unknown[]) => AnyQueryBuilder;
+  delete: (...args: unknown[]) => AnyQueryBuilder;
+  eq: (...args: unknown[]) => AnyQueryBuilder;
+  neq: (...args: unknown[]) => AnyQueryBuilder;
+  in: (...args: unknown[]) => AnyQueryBuilder;
+  is: (...args: unknown[]) => AnyQueryBuilder;
+  gt: (...args: unknown[]) => AnyQueryBuilder;
+  gte: (...args: unknown[]) => AnyQueryBuilder;
+  lt: (...args: unknown[]) => AnyQueryBuilder;
+  lte: (...args: unknown[]) => AnyQueryBuilder;
+  like: (...args: unknown[]) => AnyQueryBuilder;
+  ilike: (...args: unknown[]) => AnyQueryBuilder;
+  contains: (...args: unknown[]) => AnyQueryBuilder;
+  containedBy: (...args: unknown[]) => AnyQueryBuilder;
+  or: (...args: unknown[]) => AnyQueryBuilder;
+  not: (...args: unknown[]) => AnyQueryBuilder;
+  filter: (...args: unknown[]) => AnyQueryBuilder;
+  match: (...args: unknown[]) => AnyQueryBuilder;
+  order: (...args: unknown[]) => AnyQueryBuilder;
+  limit: (...args: unknown[]) => AnyQueryBuilder;
+  range: (...args: unknown[]) => AnyQueryBuilder;
+  single: () => AnyQueryBuilder;
+  maybeSingle: () => AnyQueryBuilder;
+  [key: string]: unknown;
+}
+
+export const fromTable = (table: string): AnyQueryBuilder =>
+  (supabase as unknown as { from: (t: string) => AnyQueryBuilder }).from(table);
 
 /**
  * Checks if a user is locked out due to multiple failed login attempts.
