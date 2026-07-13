@@ -27,7 +27,7 @@ export async function exportToSupabase(trace: TraceData): Promise<void> {
         spans: trace.spans,
       },
     };
-    await (supabaseExternal.from('trace_events').insert as Function)(insertData);
+    await (supabaseExternal.from('trace_events').insert as (row: unknown) => Promise<unknown>)(insertData);
   } catch (err) {
     logger.error('Trace export to Supabase failed', {
       trace_id: trace.trace_id,
