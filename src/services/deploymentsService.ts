@@ -38,7 +38,7 @@ export async function createDeployment(agentId: string, channel: DeployChannel, 
     config,
     status: 'active',
   };
-  const { data, error } = await (supabaseExternal.from('deploy_connections').insert as Function)(insertData)
+  const { data, error } = await (supabaseExternal.from('deploy_connections').insert as unknown as (row: unknown) => { select: () => { single: () => Promise<{ data: unknown; error: unknown }> } })(insertData)
     .select()
     .single();
 
