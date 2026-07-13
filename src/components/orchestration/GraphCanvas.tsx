@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import ReactFlow, {
   Background, Controls, MiniMap, addEdge, useNodesState, useEdgesState,
-  type Connection, type Edge, type Node, MarkerType,
+  type Connection, type Edge, type Node, type OnNodesChange, type NodePositionChange, MarkerType,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import type { GraphNode, GraphEdge } from '@/services/agentGraphService';
