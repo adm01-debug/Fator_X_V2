@@ -86,6 +86,14 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      boxShadow: {
+        "nexus-sm": "0 1px 2px 0 hsl(var(--nexus-shadow) / 0.06)",
+        "nexus-md": "0 4px 12px -2px hsl(var(--nexus-shadow) / 0.10)",
+        "nexus-lg": "0 12px 32px -4px hsl(var(--nexus-shadow) / 0.14)",
+        "nexus-xl": "0 24px 56px -8px hsl(var(--nexus-shadow) / 0.18)",
+        "nexus-2xl": "0 40px 80px -12px hsl(var(--nexus-shadow) / 0.24)",
+        "nexus-inner": "inset 0 1px 2px 0 hsl(var(--nexus-shadow) / 0.08)",
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
