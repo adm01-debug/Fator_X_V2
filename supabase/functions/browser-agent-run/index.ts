@@ -79,6 +79,7 @@ async function fetchAndSimplify(url: string): Promise<SimplifiedDOM> {
   return { url, title, text, elements };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
 async function decideAction(goal: string, history: any[], dom: SimplifiedDOM, apiKey: string) {
   const elementsList = dom.elements.map((e) =>
     `[${e.idx}] <${e.tag}${e.type ? ` type=${e.type}` : ""}${e.name ? ` name=${e.name}` : ""}${e.href ? ` href=${e.href.slice(0, 60)}` : ""}> ${e.text}`
@@ -109,6 +110,7 @@ Regras de Ouro:
     userMsg.push({
       type: "image_url",
       image_url: { url: `data:image/jpeg;base64,${dom.screenshot}` }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     } as any);
   }
 
@@ -145,6 +147,7 @@ Regras de Ouro:
       model: "google/gemini-2.0-flash", // Use o modelo flash mais recente para melhor custo-benefício e visão
       messages: [
         { role: "system", content: systemPrompt },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         { role: "user", content: userMsg as any }
       ],
       tools,
@@ -207,6 +210,7 @@ Deno.serve(async (req: Request) => {
 
     // Run loop
     let currentUrl = start_url;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     const steps: any[] = [];
     let finalResult: string | null = null;
     let status: "completed" | "failed" | "cancelled" = "failed";

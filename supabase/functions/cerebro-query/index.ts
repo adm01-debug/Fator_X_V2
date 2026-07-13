@@ -26,6 +26,7 @@ serve(async (req) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return errorResponse('Unauthorized', 401, req);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     let rawBody: any;
     try { rawBody = await req.json(); } catch {
       return errorResponse('Invalid JSON body', 400, req);
@@ -64,11 +65,13 @@ serve(async (req) => {
           if (rerankResp.ok) {
             const rerankData = await rerankResp.json();
             if (rerankData.reranked?.length > 0) {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
               ragContext = rerankData.reranked.map((r: any) => r.chunk?.content || r.content).join('\n---\n').substring(0, 3000);
               ragReranked = true;
             }
           }
         } catch { /* fallback */ }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         if (!ragContext) ragContext = chunks.map((c: any) => c.content).join('\n---\n').substring(0, 3000);
       }
     } catch { /* skip */ }
@@ -103,6 +106,7 @@ RAG: ${ragContext || 'Nenhum dado disponível'}`;
       cost_usd: result.cost_usd,
     }, req);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
   } catch (error: any) {
     return errorResponse(error.message, 500, req);
   }

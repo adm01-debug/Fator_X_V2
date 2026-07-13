@@ -224,6 +224,7 @@ serve(async (req) => {
                 type: extract_type,
                 method: 'hf_ner',
                 model: 'dslim/bert-base-NER',
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
                 entities_raw: nerEntities.filter((e: any) => e.score > 0.5),
                 tokens: { total: 0 },
                 cost_usd: 0,

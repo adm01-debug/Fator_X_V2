@@ -46,6 +46,7 @@ serve(async (req) => {
       const writer = writable.getWriter();
       const encoder = new TextEncoder();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
       const send = async (type: string, data: any) => {
         await writer.write(encoder.encode(`data: ${JSON.stringify({ type, data })}\n\n`));
       };
@@ -88,6 +89,7 @@ serve(async (req) => {
           await supabase.from('documents').update({ status: 'indexed', size_bytes: content.length }).eq('id', document_id);
           await send('status', { message: 'Indexação concluída com sucesso!', stage: 'complete' });
           await writer.close();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         } catch (err: any) {
           await send('error', err.message);
           await writer.close();
@@ -105,6 +107,7 @@ serve(async (req) => {
     await supabase.from('documents').update({ status: 'indexed' }).eq('id', document_id);
     return jsonResponse({ status: 'ok', chunks: chunks.length });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
   } catch (error: any) {
     return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
   }

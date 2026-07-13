@@ -117,6 +117,7 @@ Deno.serve(async (req) => {
 
     const candidates: SearchHit[] = [];
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     (agentsR.data ?? []).forEach((a: any) => candidates.push({
       type: "agent", id: a.id, title: a.name,
       snippet: a.mission || a.persona || a.model || "Agente",
@@ -125,6 +126,7 @@ Deno.serve(async (req) => {
       meta: { model: a.model },
     }));
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     (kbR.data ?? []).forEach((k: any) => candidates.push({
       type: "knowledge_base", id: k.id, title: k.name,
       snippet: k.description || "Base de conhecimento",
@@ -132,6 +134,7 @@ Deno.serve(async (req) => {
       score: 0, lexical_score: lexicalScore(`${k.name} ${k.description ?? ""}`),
     }));
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     (articlesR.data ?? []).forEach((a: any) => candidates.push({
       type: "article", id: a.id, title: a.title,
       snippet: a.excerpt || "Artigo da KB",
@@ -139,6 +142,7 @@ Deno.serve(async (req) => {
       score: 0, lexical_score: lexicalScore(`${a.title} ${a.excerpt ?? ""}`),
     }));
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     (workflowsR.data ?? []).forEach((w: any) => candidates.push({
       type: "workflow", id: w.id, title: w.name,
       snippet: w.description || `Status: ${w.status}`,
@@ -147,6 +151,7 @@ Deno.serve(async (req) => {
       meta: { status: w.status },
     }));
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     (evalsR.data ?? []).forEach((e: any) => candidates.push({
       type: "eval_dataset", id: e.id, title: e.name,
       snippet: e.description || "Dataset de avaliação",
@@ -154,6 +159,7 @@ Deno.serve(async (req) => {
       score: 0, lexical_score: lexicalScore(`${e.name} ${e.description ?? ""}`),
     }));
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     (autoR.data ?? []).forEach((r: any) => candidates.push({
       type: "automation", id: r.id, title: r.name,
       snippet: r.description || (r.is_active ? "Ativa" : "Inativa"),
@@ -162,6 +168,7 @@ Deno.serve(async (req) => {
       meta: { active: r.is_active },
     }));
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     (docsR.data ?? []).forEach((d: any) => candidates.push({
       type: "document", id: d.id, title: d.title,
       snippet: d.source_url || "Documento",

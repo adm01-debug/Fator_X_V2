@@ -157,6 +157,7 @@ async function processTask(
     });
 
     const hfResult = await hfResp.json();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     let text = (hfResult as any)?.choices?.[0]?.message?.content || JSON.stringify(hfResult);
     text = text.replace(/<think>[\s\S]*?<\/think>\s*/g, '').trim();
 

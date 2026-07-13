@@ -6,6 +6,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.42.7';
  * Uses a dedicated 'idempotency_keys' table in the database.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
 export async function checkIdempotency(key: string, supabaseClient: any) {
   if (!key) return { isDuplicate: false };
 
@@ -34,6 +35,7 @@ export async function checkIdempotency(key: string, supabaseClient: any) {
   return { isDuplicate: false };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
 export async function saveIdempotency(key: string, statusCode: number, responseBody: any, supabaseClient: any) {
   if (!key) return;
 

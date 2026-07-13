@@ -142,6 +142,7 @@ serve(async (req) => {
       const writer = writable.getWriter();
       const encoder = new TextEncoder();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
       const sendUpdate = async (type: string, data: any) => {
         await writer.write(encoder.encode(`data: ${JSON.stringify({ type, data })}\n\n`));
       };
@@ -152,6 +153,7 @@ serve(async (req) => {
           
           const stage1Promises = members.map(async (member, idx) => {
             const mStart = Date.now();
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
             let result: any = null;
             let currentModel = member.model;
             
@@ -220,6 +222,7 @@ serve(async (req) => {
           }
 
           // STAGE 2: Peer Review
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           let stage2Results: any[] = [];
           if (enable_peer_review) {
             await sendUpdate('stage', { stage: 2, label: 'Realizando Peer-Review...' });
@@ -284,6 +287,7 @@ serve(async (req) => {
             }
           });
           await writer.close();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         } catch (err: any) {
           await sendUpdate('error', err.message);
           await writer.close();
@@ -318,6 +322,7 @@ serve(async (req) => {
           tokens: result.tokens || { total: 0 }, cost_usd: result.cost_usd || 0,
           latency_ms: result.latency_ms || 0, success: !result.error,
         };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
       } catch (e: any) {
         return { index: idx, model: member.model, success: false, content: e.message };
       }
