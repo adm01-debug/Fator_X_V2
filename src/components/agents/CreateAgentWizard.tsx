@@ -237,7 +237,7 @@ Sempre priorize a precisão e a utilidade das informações fornecidas.
     return (
       <QuickCreateWizard 
         onBack={() => setMode("choose")} 
-        initialData={magicPreview ? {
+        initialData={magicPreview ? ({
           name: magicPreview.name,
           emoji: magicPreview.emoji || "🤖",
           mission: magicPreview.mission,
@@ -245,7 +245,7 @@ Sempre priorize a precisão e a utilidade das informações fornecidas.
           type: magicPreview.type,
           model: magicPreview.model,
           prompt: magicPreview.system_prompt
-        } : undefined}
+        } as Partial<Parameters<typeof QuickCreateWizard>[0]['initialData']> as never) : undefined}
       />
     );
   }

@@ -263,7 +263,7 @@ function AuditReportView({ runId, runs }: { runId: string | null; runs: unknown[
   const { data: results = [] } = useEvalResults(runId);
   const run = (runs as Array<{ id?: string }>).find((r) => r?.id === runId);
   if (!run) return null;
-  return <AuditReportDialog run={run as Record<string, unknown>} results={results as Record<string, unknown>[]} />;
+  return <AuditReportDialog run={run as Record<string, unknown>} results={results as unknown as Record<string, unknown>[]} />;
 }
 
 function RunDetails({ runId }: { runId: string | null }) {
