@@ -54,7 +54,7 @@ export default function VoiceAgentsPage() {
       await speakText(reply);
       setState("listening");
     } catch (e) {
-      toast.error(e?.message || "Erro no turno");
+      toast.error((e instanceof Error ? e.message : "Erro no turno"));
       setState("listening");
     }
   }, [agentId]);
@@ -118,7 +118,7 @@ export default function VoiceAgentsPage() {
       setupVAD(mediaStream, sess);
       toast.success("Conversa iniciada — fale naturalmente");
     } catch (e) {
-      toast.error(e?.message || "Erro ao iniciar");
+      toast.error((e instanceof Error ? e.message : "Erro ao iniciar"));
     }
   };
 
@@ -136,7 +136,7 @@ export default function VoiceAgentsPage() {
       refreshHistory();
       toast.success("Sessão encerrada");
     } catch (e) {
-      toast.error(e?.message || "Erro ao encerrar");
+      toast.error((e instanceof Error ? e.message : "Erro ao encerrar"));
     }
   };
 
