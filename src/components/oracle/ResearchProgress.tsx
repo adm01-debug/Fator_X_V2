@@ -45,7 +45,7 @@ export function ResearchProgress({ depth, maxIterations, startedAt }: ResearchPr
   const StageIcon = STAGE_LABELS[stageIdx].icon;
 
   return (
-    <Card className="p-6 bg-card border border-border/60 rounded-2xl shadow-sm animate-in fade-in slide-in-from-top-2">
+    <Card className="p-6 bg-card border border-border/60 rounded-2xl shadow-nexus-sm animate-in fade-in slide-in-from-top-2">
       <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -80,7 +80,7 @@ export function ResearchProgress({ depth, maxIterations, startedAt }: ResearchPr
                     isCompleted
                       ? 'bg-nexus-emerald/10 text-nexus-emerald border border-nexus-emerald/20'
                       : isCurrent
-                        ? 'nexus-gradient-bg text-primary-foreground shadow-lg shadow-primary/20 scale-105'
+                        ? 'nexus-gradient-bg text-primary-foreground shadow-nexus-lg shadow-primary/20 scale-105'
                         : 'bg-secondary/50 text-muted-foreground border border-border/40'
                   }`}
                 >

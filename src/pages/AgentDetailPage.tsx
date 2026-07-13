@@ -126,7 +126,7 @@ export default function AgentDetailPage() {
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-card border border-border p-6 rounded-2xl">
         <div className="flex items-center gap-4">
-          <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary/15 to-accent/10 flex items-center justify-center text-3xl shadow-sm">
+          <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary/15 to-accent/10 flex items-center justify-center text-3xl shadow-nexus-sm">
             {agent.avatar_emoji || '🤖'}
           </div>
           <div>
@@ -161,7 +161,7 @@ export default function AgentDetailPage() {
       </div>
 
       <div className="grid md:grid-cols-2 gap-4">
-        <div className="bg-card border border-border p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-card border border-border p-5 rounded-xl shadow-nexus-sm hover:shadow-nexus-md transition-shadow">
           <div className="flex items-center gap-2 mb-4">
             <Wrench className="h-4 w-4 text-primary" />
             <h3 className="text-body-sm font-bold text-foreground">Configuração</h3>
@@ -173,7 +173,7 @@ export default function AgentDetailPage() {
             <div className="flex justify-between border-b border-border/50 pb-1.5"><span className="text-muted-foreground uppercase font-bold text-[9px]">Versão</span><span className="text-foreground font-mono">v{String(agent.version ?? '1')}</span></div>
           </div>
         </div>
-        <div className="bg-card border border-border p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-card border border-border p-5 rounded-xl shadow-nexus-sm hover:shadow-nexus-md transition-shadow">
           <div className="flex items-center gap-2 mb-4">
             <Bot className="h-4 w-4 text-nexus-purple" />
             <h3 className="text-body-sm font-bold text-foreground">Taxonomia & Tags</h3>

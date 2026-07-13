@@ -75,12 +75,12 @@ export default function DashboardPage() {
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-10 max-w-[1440px] mx-auto animate-page-enter">
       {/* Header Elevated 10/10 */}
-      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-2xl shadow-primary/5 relative overflow-hidden group">
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-nexus-2xl shadow-primary/5 relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/[0.04] rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:bg-primary/[0.06] transition-colors duration-700" />
         
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10 relative">
           <div className="flex items-center gap-8">
-            <div className="h-24 w-24 rounded-[2rem] bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
+            <div className="h-24 w-24 rounded-[2rem] bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-nexus-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
               <Cpu className="h-12 w-12 text-primary animate-float" />
             </div>
             <div className="space-y-2">
@@ -103,7 +103,7 @@ export default function DashboardPage() {
           <div className="flex flex-col sm:flex-row items-center gap-4">
             <DateRangePicker value={dateRange} onChange={setDateRange} />
             <AccessControl permission="agents.create">
-              <Button onClick={() => navigate('/agents/new')} className="nexus-gradient-bg text-primary-foreground gap-3 h-14 px-8 rounded-2xl shadow-xl shadow-primary/25 hover:scale-[1.03] active:scale-[0.98] transition-all duration-300 group overflow-hidden relative">
+              <Button onClick={() => navigate('/agents/new')} className="nexus-gradient-bg text-primary-foreground gap-3 h-14 px-8 rounded-2xl shadow-nexus-xl shadow-primary/25 hover:scale-[1.03] active:scale-[0.98] transition-all duration-300 group overflow-hidden relative">
                 <Plus className="h-6 w-6 group-hover:rotate-90 transition-transform duration-300" /> 
                 <span className="font-bold text-title-sm tracking-tight">Novo Agente</span>
               </Button>
@@ -135,7 +135,7 @@ export default function DashboardPage() {
         ].map((metric, i) => (
           <div 
             key={i} 
-            className="bg-card border border-border/40 p-8 rounded-[2.5rem] relative overflow-hidden group hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500"
+            className="bg-card border border-border/40 p-8 rounded-[2.5rem] relative overflow-hidden group hover:border-primary/40 hover:shadow-nexus-2xl hover:shadow-primary/5 transition-all duration-500"
           >
             <div className="absolute -right-4 -bottom-4 h-24 w-24 bg-primary/[0.02] rounded-full blur-2xl group-hover:bg-primary/[0.06] transition-colors" />
             <div className="flex items-center justify-between mb-6">
@@ -180,10 +180,10 @@ export default function DashboardPage() {
           <button
             key={i}
             onClick={() => navigate(action.path)}
-            className="flex flex-col items-center justify-center gap-4 p-7 rounded-[2.5rem] bg-card/50 border border-border/40 hover:border-primary/40 hover:bg-card hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 group relative overflow-hidden"
+            className="flex flex-col items-center justify-center gap-4 p-7 rounded-[2.5rem] bg-card/50 border border-border/40 hover:border-primary/40 hover:bg-card hover:shadow-nexus-2xl hover:shadow-primary/5 transition-all duration-500 group relative overflow-hidden"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className={cn("h-16 w-16 rounded-[1.5rem] flex items-center justify-center relative z-10 transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 shadow-lg", action.bg)}>
+            <div className={cn("h-16 w-16 rounded-[1.5rem] flex items-center justify-center relative z-10 transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 shadow-nexus-lg", action.bg)}>
               <action.icon className={cn("h-8 w-8", action.color)} />
             </div>
             <span className="text-body-sm font-black text-foreground group-hover:text-primary transition-colors relative z-10 uppercase tracking-tight">{action.label}</span>
@@ -193,7 +193,7 @@ export default function DashboardPage() {
 
           <div className="grid lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-8">
-              <div className="bg-card/30 border border-border/40 p-10 rounded-[3.5rem] shadow-xl shadow-primary/[0.02]">
+              <div className="bg-card/30 border border-border/40 p-10 rounded-[3.5rem] shadow-nexus-xl shadow-primary/[0.02]">
                 <div className="flex items-center justify-between mb-10">
                   <div className="flex items-center gap-4">
                     <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center">
@@ -210,7 +210,7 @@ export default function DashboardPage() {
 
               <div className="grid md:grid-cols-2 gap-8">
                 {/* Recent Agents Widget Elevated */}
-                <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem] flex flex-col shadow-xl shadow-primary/[0.02] hover:shadow-2xl hover:shadow-primary/[0.04] transition-all duration-500">
+                <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem] flex flex-col shadow-nexus-xl shadow-primary/[0.02] hover:shadow-nexus-2xl hover:shadow-primary/[0.04] transition-all duration-500">
                   <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-4">
                       <div className="h-12 w-12 rounded-2xl bg-nexus-blue/10 flex items-center justify-center">
@@ -222,9 +222,9 @@ export default function DashboardPage() {
                   </div>
                   <div className="space-y-4 flex-1">
                     {agents.slice(0, 4).map(agent => (
-                      <div key={agent.id} className="flex items-center justify-between p-5 rounded-[2rem] bg-card border border-border/40 hover:border-primary/40 hover:bg-background/80 hover:shadow-xl transition-all duration-300 cursor-pointer group" onClick={() => navigate(`/builder/${agent.id}`)}>
+                      <div key={agent.id} className="flex items-center justify-between p-5 rounded-[2rem] bg-card border border-border/40 hover:border-primary/40 hover:bg-background/80 hover:shadow-nexus-xl transition-all duration-300 cursor-pointer group" onClick={() => navigate(`/builder/${agent.id}`)}>
                         <div className="flex items-center gap-5">
-                          <div className="h-14 w-14 rounded-2xl bg-muted/30 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-sm">{agent.avatar_emoji || '🤖'}</div>
+                          <div className="h-14 w-14 rounded-2xl bg-muted/30 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-nexus-sm">{agent.avatar_emoji || '🤖'}</div>
                           <div>
                             <p className="text-title-sm font-black text-foreground group-hover:text-primary transition-colors line-clamp-1">{agent.name}</p>
                             <div className="flex items-center gap-2 mt-1">
@@ -243,7 +243,7 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Real-time Activity Widget Elevated */}
-                <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem] flex flex-col shadow-xl shadow-primary/[0.02] hover:shadow-2xl hover:shadow-primary/[0.04] transition-all duration-500">
+                <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem] flex flex-col shadow-nexus-xl shadow-primary/[0.02] hover:shadow-nexus-2xl hover:shadow-primary/[0.04] transition-all duration-500">
                   <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-4">
                       <div className="h-12 w-12 rounded-2xl bg-nexus-emerald/10 flex items-center justify-center">
@@ -255,7 +255,7 @@ export default function DashboardPage() {
                   </div>
                   <div className="space-y-4 flex-1">
                     {recentTraces.slice(0, 4).map((trace) => (
-                      <div key={trace.id} className="flex items-center justify-between p-5 rounded-[2rem] bg-card border border-border/40 hover:border-nexus-emerald/40 hover:bg-background/80 hover:shadow-xl transition-all duration-300 cursor-pointer group" onClick={() => navigate('/monitoring')}>
+                      <div key={trace.id} className="flex items-center justify-between p-5 rounded-[2rem] bg-card border border-border/40 hover:border-nexus-emerald/40 hover:bg-background/80 hover:shadow-nexus-xl transition-all duration-300 cursor-pointer group" onClick={() => navigate('/monitoring')}>
                         <div className="flex items-center gap-5 min-w-0">
                           <div className={cn(
                             "h-3 w-3 rounded-full shrink-0",
@@ -279,7 +279,7 @@ export default function DashboardPage() {
             </div>
 
             <div className="space-y-8">
-              <div className="bg-card/30 border border-border/40 p-10 rounded-[3rem] shadow-xl shadow-primary/[0.02]">
+              <div className="bg-card/30 border border-border/40 p-10 rounded-[3rem] shadow-nexus-xl shadow-primary/[0.02]">
                 <div className="flex items-center gap-4 mb-8">
                   <div className="h-12 w-12 rounded-2xl bg-nexus-purple/10 flex items-center justify-center">
                     <Activity className="h-6 w-6 text-nexus-purple" />
@@ -289,7 +289,7 @@ export default function DashboardPage() {
                 <ActivityFeed />
               </div>
               
-              <div className="bg-card/30 border border-border/40 p-10 rounded-[3rem] shadow-xl shadow-primary/[0.02]">
+              <div className="bg-card/30 border border-border/40 p-10 rounded-[3rem] shadow-nexus-xl shadow-primary/[0.02]">
                 <div className="flex items-center gap-4 mb-8">
                   <div className="h-12 w-12 rounded-2xl bg-nexus-cyan/10 flex items-center justify-center">
                     <Target className="h-6 w-6 text-nexus-cyan" />

@@ -152,7 +152,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         {/* Skip to content link — accessibility */}
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-lg focus:text-body-sm focus:font-medium focus:shadow-lg"
+          className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-lg focus:text-body-sm focus:font-medium focus:shadow-nexus-lg"
         >
           Pular para o conteúdo
         </a>
@@ -200,7 +200,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                 >
                   <Search className="h-4 w-4 group-hover:text-primary transition-colors" aria-hidden="true" />
                   <span className="font-medium group-hover:text-foreground transition-colors">Busca Global...</span>
-                  <kbd className="ml-6 inline-flex h-6 items-center gap-1 rounded-lg border border-border/40 bg-background/50 px-2 text-meta font-black font-mono text-muted-foreground/60 shadow-sm" aria-hidden="true">
+                  <kbd className="ml-6 inline-flex h-6 items-center gap-1 rounded-lg border border-border/40 bg-background/50 px-2 text-meta font-black font-mono text-muted-foreground/60 shadow-nexus-sm" aria-hidden="true">
                     <Command className="h-3 w-3" />K
                   </kbd>
                 </button>
@@ -220,7 +220,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button
-                      className="relative h-10 w-10 rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 overflow-hidden group hover:scale-105 transition-transform duration-300 shadow-lg shadow-primary/5"
+                      className="relative h-10 w-10 rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 overflow-hidden group hover:scale-105 transition-transform duration-300 shadow-nexus-lg shadow-primary/5"
                       aria-label="Menu do usuário"
                     >
                       {user?.user_metadata?.avatar_url ? (
@@ -234,7 +234,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                       <span className="absolute bottom-1 right-1 h-2.5 w-2.5 rounded-full bg-nexus-emerald border-2 border-background shadow-[0_0_8px_rgba(16,185,129,0.5)]" aria-label="Online" />
                     </button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-64 rounded-2xl border-border/40 shadow-2xl p-2">
+                  <DropdownMenuContent align="end" className="w-64 rounded-2xl border-border/40 shadow-nexus-2xl p-2">
                     <DropdownMenuLabel className="font-normal px-4 py-3">
                       <div className="flex flex-col space-y-1">
                         <p className="text-body-sm font-black text-foreground uppercase tracking-tight">Comando Central</p>

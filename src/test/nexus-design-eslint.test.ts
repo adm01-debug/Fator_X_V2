@@ -33,27 +33,27 @@ describe('nexus-design/no-hardcoded-colors', () => {
       ],
       invalid: [
         {
-          code: 'const x = "bg-red-500 text-blue-600";',
+          code: 'const x = "bg-nexus-red text-nexus-blue";',
           output: 'const x = "bg-nexus-red text-nexus-blue";',
           errors: 2,
         },
         {
-          code: 'const x = "hover:bg-green-500 dark:text-yellow-400";',
+          code: 'const x = "hover:bg-nexus-green dark:text-nexus-yellow";',
           output: 'const x = "hover:bg-nexus-green dark:text-nexus-yellow";',
           errors: 2,
         },
         {
-          code: 'const x = "border-purple-500/40";',
+          code: 'const x = "border-nexus-purple/40";',
           output: 'const x = "border-nexus-purple/40";',
           errors: 1,
         },
         {
-          code: 'const x = "md:group-hover:from-pink-500";',
+          code: 'const x = "md:group-hover:from-nexus-rose";',
           output: 'const x = "md:group-hover:from-nexus-rose";',
           errors: 1,
         },
         {
-          code: 'const x = "ring-cyan-300 fill-emerald-400 stroke-amber-500";',
+          code: 'const x = "ring-nexus-cyan fill-nexus-emerald stroke-nexus-amber";',
           output: 'const x = "ring-nexus-cyan fill-nexus-emerald stroke-nexus-amber";',
           errors: 3,
         },
@@ -67,7 +67,7 @@ describe('nexus-design/no-hardcoded-colors', () => {
       valid: [{ code: 'const x = `bg-nexus-blue`;' }],
       invalid: [
         {
-          code: 'const x = `bg-red-500 ${cond} text-blue-600`;',
+          code: 'const x = `bg-nexus-red ${cond} text-nexus-blue`;',
           output: 'const x = `bg-nexus-red ${cond} text-nexus-blue`;',
           errors: 2,
         },
@@ -97,17 +97,17 @@ describe('nexus-design/no-adhoc-typography', () => {
       ],
       invalid: [
         {
-          code: 'const x = "text-xs text-sm text-base text-lg";',
+          code: 'const x = "text-meta text-body-sm text-body text-title-sm";',
           output: 'const x = "text-meta text-body-sm text-body text-title-sm";',
           errors: 4,
         },
         {
-          code: 'const x = "text-[10px] text-[11px]";',
+          code: 'const x = "text-meta text-meta";',
           output: 'const x = "text-meta text-meta";',
           errors: 2,
         },
         {
-          code: 'const x = "md:text-sm hover:text-base";',
+          code: 'const x = "md:text-body-sm hover:text-body";',
           output: 'const x = "md:text-body-sm hover:text-body";',
           errors: 2,
         },
@@ -121,7 +121,7 @@ describe('nexus-design/no-adhoc-typography', () => {
       valid: [{ code: 'const x = `text-body`;' }],
       invalid: [
         {
-          code: 'const x = `text-xs ${v} text-lg`;',
+          code: 'const x = `text-meta ${v} text-title-sm`;',
           output: 'const x = `text-meta ${v} text-title-sm`;',
           errors: 2,
         },

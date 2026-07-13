@@ -32,7 +32,7 @@ function WorkflowNode({ data, selected }: { data: WorkflowNodeData; selected: bo
     <div
       className={`
         bg-card rounded-xl border-2 px-4 py-3 min-w-[200px] max-w-[280px]
-        transition-all duration-200 shadow-lg
+        transition-all duration-200 shadow-nexus-lg
         ${selected ? 'border-primary shadow-[0_0_20px_hsl(var(--primary)/0.3)]' : statusStyles[data.status || 'idle']}
       `}
     >
@@ -331,7 +331,7 @@ export function WorkflowCanvas() {
                   <span className="text-5xl" aria-hidden="true">
                     🔀
                   </span>
-                  <div className="absolute -bottom-2 -right-2 h-8 w-8 rounded-lg bg-card border border-border flex items-center justify-center shadow-md">
+                  <div className="absolute -bottom-2 -right-2 h-8 w-8 rounded-lg bg-card border border-border flex items-center justify-center shadow-nexus-md">
                     <span className="text-body-sm">➕</span>
                   </div>
                 </div>
@@ -349,7 +349,7 @@ export function WorkflowCanvas() {
             </div>
           )}
 
-          <div className="absolute bottom-4 right-4 flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-2 shadow-md">
+          <div className="absolute bottom-4 right-4 flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-2 shadow-nexus-md">
             <button
               onClick={() => setZoom((z) => Math.max(0.25, z - 0.1))}
               className="text-muted-foreground hover:text-foreground transition-colors"

@@ -452,7 +452,7 @@ export function StepQuickPrompt({ form, errors, onPromptManualEdit, onRestore, o
                   )
                 }
                 aria-label={`${pending.length} seção(ões) pendente(s). Ir para ${first.label}.`}
-                className="absolute bottom-2 right-2 z-10 flex items-center gap-1.5 rounded-full bg-nexus-amber/15 hover:bg-nexus-amber/25 border border-nexus-amber/40 px-2.5 py-1 text-meta font-medium text-nexus-amber shadow-sm backdrop-blur transition-colors animate-fade-in"
+                className="absolute bottom-2 right-2 z-10 flex items-center gap-1.5 rounded-full bg-nexus-amber/15 hover:bg-nexus-amber/25 border border-nexus-amber/40 px-2.5 py-1 text-meta font-medium text-nexus-amber shadow-nexus-sm backdrop-blur transition-colors animate-fade-in"
               >
                 <span className="relative flex h-2 w-2">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-nexus-amber opacity-60" />

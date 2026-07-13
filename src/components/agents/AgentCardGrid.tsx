@@ -48,7 +48,7 @@ export function AgentCardGrid({
             <div className={`flex items-start justify-between mb-3 ${selectionMode ? 'ml-7' : ''}`}>
               <div className="flex items-center gap-3">
                 <div className="relative">
-                  <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary/15 to-accent/10 flex items-center justify-center text-xl shadow-sm group-hover:shadow-md transition-shadow">
+                  <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary/15 to-accent/10 flex items-center justify-center text-xl shadow-nexus-sm group-hover:shadow-nexus-md transition-shadow">
                     {agent.avatar_emoji || "🤖"}
                   </div>
                   <span className={`absolute -top-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-card ${

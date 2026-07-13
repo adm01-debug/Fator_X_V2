@@ -62,7 +62,7 @@ export default function EnterpriseSSOPage() {
                   <button
                     key={p.key}
                     onClick={() => setProvider(p.key)}
-                    className={`p-3 rounded-lg border-2 text-left transition-all ${provider === p.key ? "border-primary bg-primary/8 shadow-md" : "border-border/50 hover:border-border"}`}
+                    className={`p-3 rounded-lg border-2 text-left transition-all ${provider === p.key ? "border-primary bg-primary/8 shadow-nexus-md" : "border-border/50 hover:border-border"}`}
                   >
                     <div className={`w-8 h-8 rounded-md ${p.color} mb-2`} />
                     <div className="text-body-sm font-medium">{p.name}</div>

@@ -30,7 +30,7 @@ export function QuickActionsBar({ actions }: QuickActionsBarProps) {
               if (action.onClick) action.onClick();
               else if (action.path) navigate(action.path);
             }}
-            className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl text-meta font-bold transition-all border shadow-sm group ${
+            className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl text-meta font-bold transition-all border shadow-nexus-sm group ${
               isPrimary
                 ? 'nexus-gradient-bg text-primary-foreground border-transparent hover:scale-[1.03] shadow-primary/20'
                 : 'bg-card text-foreground border-border/60 hover:border-primary/40 hover:bg-primary/5 hover:scale-[1.03]'

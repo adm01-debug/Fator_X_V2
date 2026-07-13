@@ -162,7 +162,7 @@ export function AgentPlayground() {
     <>
       <Button
         onClick={() => setOpen(true)}
-        className="fixed bottom-6 right-6 z-50 h-12 w-12 rounded-full nexus-gradient-bg text-primary-foreground shadow-lg hover:opacity-90"
+        className="fixed bottom-6 right-6 z-50 h-12 w-12 rounded-full nexus-gradient-bg text-primary-foreground shadow-nexus-lg hover:opacity-90"
         size="icon"
         title="Testar Agente"
       >

@@ -42,12 +42,12 @@ export default function PromptsPage() {
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-10 max-w-[1440px] mx-auto animate-page-enter">
       {/* Header Elevated 10/10 */}
-      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-2xl shadow-primary/5 mb-10 relative overflow-hidden group">
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-nexus-2xl shadow-primary/5 mb-10 relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/[0.06] transition-colors duration-500 pointer-events-none" />
         
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative">
           <div className="flex items-center gap-7">
-            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
+            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-nexus-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
               <History className="h-11 w-11 text-primary animate-float" />
             </div>
             <div className="space-y-1">
@@ -83,13 +83,13 @@ export default function PromptsPage() {
       <Tabs defaultValue="library" className="space-y-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <TabsList className="bg-secondary/20 p-1 rounded-2xl h-14 w-full md:w-auto border border-border/40">
-            <TabsTrigger value="library" className="rounded-xl px-6 font-bold h-full data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-lg gap-2">
+            <TabsTrigger value="library" className="rounded-xl px-6 font-bold h-full data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-nexus-lg gap-2">
               <FileText className="h-4 w-4" /> Prompt Library
             </TabsTrigger>
-            <TabsTrigger value="testing" className="rounded-xl px-6 font-bold h-full data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-lg gap-2">
+            <TabsTrigger value="testing" className="rounded-xl px-6 font-bold h-full data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-nexus-lg gap-2">
               <Target className="h-4 w-4" /> Unit Testing
             </TabsTrigger>
-            <TabsTrigger value="optimization" className="rounded-xl px-6 font-bold h-full data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-lg gap-2">
+            <TabsTrigger value="optimization" className="rounded-xl px-6 font-bold h-full data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-nexus-lg gap-2">
               <Sparkles className="h-4 w-4" /> Prompt Optimizer
             </TabsTrigger>
           </TabsList>
@@ -134,7 +134,7 @@ export default function PromptsPage() {
                   <div 
                     key={p.id} 
                     onClick={() => navigate(`/prompts/${p.agent_id}`)}
-                    className="nexus-card group cursor-pointer p-8 rounded-[2.5rem] flex flex-col justify-between min-h-[320px] bg-gradient-to-br from-card to-card/95 border-border/40 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 relative overflow-hidden"
+                    className="nexus-card group cursor-pointer p-8 rounded-[2.5rem] flex flex-col justify-between min-h-[320px] bg-gradient-to-br from-card to-card/95 border-border/40 hover:border-primary/40 hover:shadow-nexus-2xl hover:shadow-primary/5 transition-all duration-500 relative overflow-hidden"
                   >
                     <div className="absolute top-0 right-0 w-32 h-32 bg-primary/[0.02] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:bg-primary/[0.05] transition-colors" />
                     
@@ -181,7 +181,7 @@ export default function PromptsPage() {
                         </div>
                         <span className="text-meta font-bold text-muted-foreground uppercase tracking-tighter ml-1">+12 testes</span>
                       </div>
-                      <div className="h-12 w-12 rounded-2xl bg-secondary/50 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-110 group-hover:rotate-12 transition-all duration-500 shadow-lg">
+                      <div className="h-12 w-12 rounded-2xl bg-secondary/50 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-110 group-hover:rotate-12 transition-all duration-500 shadow-nexus-lg">
                         <ArrowRight className="h-6 w-6" />
                       </div>
                     </div>

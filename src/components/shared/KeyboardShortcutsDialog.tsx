@@ -55,7 +55,7 @@ export function KeyboardShortcutsDialog() {
         onClick={() => setOpen(false)}
       />
       <div
-        className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md rounded-xl border border-border bg-background shadow-2xl animate-fade-in-up"
+        className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md rounded-xl border border-border bg-background shadow-nexus-2xl animate-fade-in-up"
         role="dialog"
         aria-label="Atalhos de teclado"
       >

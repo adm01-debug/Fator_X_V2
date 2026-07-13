@@ -224,7 +224,7 @@ export function AppSidebar() {
     <Sidebar collapsible="icon" className="border-r border-border/40 bg-sidebar" aria-label="Navegação principal">
       <SidebarHeader className="p-5">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg shadow-primary/20 shrink-0">
+          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-nexus-lg shadow-primary/20 shrink-0">
             <img src={fatorxIcon} alt="" className="h-6 w-6 invert brightness-0" />
           </div>
           {!collapsed && (
@@ -278,7 +278,7 @@ export function AppSidebar() {
                             end={item.url === "/"}
                             className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-body-sm transition-all duration-300 group/navitem ${
                               isActive
-                                ? 'text-primary font-black bg-primary/10 shadow-sm shadow-primary/5'
+                                ? 'text-primary font-black bg-primary/10 shadow-nexus-sm shadow-primary/5'
                                 : 'text-sidebar-foreground/70 hover:bg-secondary/40 hover:text-foreground hover:translate-x-1'
                             }`}
                             activeClassName=""
@@ -310,7 +310,7 @@ export function AppSidebar() {
         {!collapsed && (
           <>
             <Separator className="bg-border/30" />
-            <div className="rounded-2xl bg-secondary/30 border border-border/40 p-4 shadow-sm">
+            <div className="rounded-2xl bg-secondary/30 border border-border/40 p-4 shadow-nexus-sm">
               <div className="flex items-center justify-between mb-3">
                 <p className="text-meta font-black uppercase tracking-widest text-muted-foreground/80">Vazão do Workspace</p>
                 <Badge variant="outline" className="bg-primary/5 text-primary border-none text-[9px] font-black">{planLabel}</Badge>
@@ -338,7 +338,7 @@ export function AppSidebar() {
                   {user.user_metadata?.avatar_url ? (
                     <img src={user.user_metadata.avatar_url} alt="" className="h-9 w-9 rounded-xl object-cover border border-white/10" referrerPolicy="no-referrer" />
                   ) : (
-                    <div className="h-9 w-9 rounded-xl nexus-gradient-bg flex items-center justify-center text-meta font-black text-primary-foreground shadow-sm">
+                    <div className="h-9 w-9 rounded-xl nexus-gradient-bg flex items-center justify-center text-meta font-black text-primary-foreground shadow-nexus-sm">
                       {(wsInfo?.userName?.[0] || user.email?.[0] || 'U').toUpperCase()}
                     </div>
                   )}

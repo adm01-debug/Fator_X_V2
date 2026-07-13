@@ -78,7 +78,7 @@ export default function MobileSDKPage() {
             <button
               key={s.platform}
               onClick={() => setSelected(s.platform)}
-              className={`p-4 rounded-lg border-2 text-left transition-all ${selected === s.platform ? "border-primary bg-primary/8 shadow-md" : "border-border/40 hover:border-border"}`}
+              className={`p-4 rounded-lg border-2 text-left transition-all ${selected === s.platform ? "border-primary bg-primary/8 shadow-nexus-md" : "border-border/40 hover:border-border"}`}
             >
               <Icon className="h-6 w-6 mb-2 text-primary" />
               <div className="text-body-sm font-semibold">{s.platform}</div>

@@ -180,7 +180,7 @@ export function OracleComparisonPanel() {
   };
 
   return (
-    <Card className="p-8 bg-card border-border rounded-3xl shadow-sm relative overflow-hidden group">
+    <Card className="p-8 bg-card border-border rounded-3xl shadow-nexus-sm relative overflow-hidden group">
       <div className="absolute top-0 left-0 w-64 h-64 bg-primary/[0.02] rounded-full -translate-y-1/2 -translate-x-1/2" />
       
       <div className="flex items-center justify-between mb-8 relative">
@@ -205,7 +205,7 @@ export function OracleComparisonPanel() {
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Qual cenário você deseja comparar?"
             rows={2}
-            className="bg-secondary/40 border-border/60 rounded-2xl p-4 text-title-sm focus:ring-primary shadow-inner italic"
+            className="bg-secondary/40 border-border/60 rounded-2xl p-4 text-title-sm focus:ring-primary shadow-nexus-inner italic"
           />
         </div>
 
@@ -219,7 +219,7 @@ export function OracleComparisonPanel() {
                 <label
                   key={cfg.mode}
                   className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-all ${
-                    checked ? 'bg-primary/5 border-primary/40 shadow-sm' : 'bg-card text-muted-foreground hover:bg-secondary/50 border-border/60'
+                    checked ? 'bg-primary/5 border-primary/40 shadow-nexus-sm' : 'bg-card text-muted-foreground hover:bg-secondary/50 border-border/60'
                   }`}
                 >
                   <Checkbox
@@ -245,7 +245,7 @@ export function OracleComparisonPanel() {
           <Button
             onClick={handleCompare}
             disabled={isRunning || !query.trim() || selectedModes.length < 2}
-            className="nexus-gradient-bg h-11 px-10 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all font-bold group"
+            className="nexus-gradient-bg h-11 px-10 rounded-xl shadow-nexus-lg shadow-primary/20 hover:scale-[1.02] transition-all font-bold group"
           >
             {isRunning ? <Loader2 className="h-5 w-5 animate-spin" /> : <Sparkles className="h-5 w-5 group-hover:rotate-12 transition-transform" />}
             {isRunning ? 'EXECUTANDO ARENA...' : 'INICIAR BENCHMARK'}
@@ -294,11 +294,11 @@ export function OracleComparisonPanel() {
                 <Card
                   key={run.mode}
                   className={`p-5 space-y-4 relative transition-all ${
-                    isWinner ? 'border-primary/50 shadow-md shadow-primary/5 ring-1 ring-primary/20' : 'border-border/60 bg-card/60'
+                    isWinner ? 'border-primary/50 shadow-nexus-md shadow-primary/5 ring-1 ring-primary/20' : 'border-border/60 bg-card/60'
                   }`}
                 >
                   {isWinner && (
-                    <div className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-background">
+                    <div className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-primary flex items-center justify-center shadow-nexus-lg border-2 border-background">
                       <Trophy className="h-3 w-3 text-primary-foreground" />
                     </div>
                   )}

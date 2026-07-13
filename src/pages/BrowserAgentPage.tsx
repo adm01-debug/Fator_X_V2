@@ -155,7 +155,7 @@ export default function BrowserAgentPage() {
                     <Badge variant="outline">Step {activeSession.steps_count + 1}</Badge>
                   </div>
                   {activeSession.steps.map((s, i) => (
-                    <div key={i} className="text-meta p-3 rounded-lg bg-card border shadow-sm space-y-2 animate-in slide-in-from-bottom-2">
+                    <div key={i} className="text-meta p-3 rounded-lg bg-card border shadow-nexus-sm space-y-2 animate-in slide-in-from-bottom-2">
                       <div className="flex items-center gap-2">
                         <Badge variant="secondary" className="uppercase text-[9px] font-black">{s.action}</Badge>
                         <span className="text-muted-foreground truncate flex-1">{s.url}</span>
@@ -190,7 +190,7 @@ export default function BrowserAgentPage() {
                   {activeSession.steps[activeSession.steps.length - 1]?.screenshot ? (
                     <img 
                       src={`data:image/jpeg;base64,${activeSession.steps[activeSession.steps.length - 1].screenshot}`} 
-                      className="max-h-full max-w-full rounded shadow-2xl border-4 border-background"
+                      className="max-h-full max-w-full rounded shadow-nexus-2xl border-4 border-background"
                       alt="Live View"
                     />
                   ) : (

@@ -46,7 +46,7 @@ export function OracleInputArea() {
   }, [store.isRunning, store.query]);
 
   return (
-    <Card className="p-8 bg-card border-border rounded-3xl shadow-sm relative overflow-hidden group">
+    <Card className="p-8 bg-card border-border rounded-3xl shadow-nexus-sm relative overflow-hidden group">
       <div className="absolute top-0 right-0 w-48 h-48 bg-primary/[0.02] rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700" />
       
       {/* Mode & Preset selector */}
@@ -54,7 +54,7 @@ export function OracleInputArea() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowPresets(!showPresets)}
-            className="flex items-center gap-3 px-4 py-2 rounded-xl bg-secondary/80 border border-border/60 hover:bg-secondary hover:border-primary/30 transition-all shadow-sm"
+            className="flex items-center gap-3 px-4 py-2 rounded-xl bg-secondary/80 border border-border/60 hover:bg-secondary hover:border-primary/30 transition-all shadow-nexus-sm"
           >
             <span className="text-xl">{currentPreset?.icon || '🏛️'}</span>
             <span className="text-body-sm font-bold text-foreground uppercase tracking-tight">
@@ -172,7 +172,7 @@ export function OracleInputArea() {
           placeholder="Qual decisão complexa o conselho deve analisar hoje?"
           value={store.query}
           onChange={(e) => store.setQuery(e.target.value)}
-          className="min-h-[140px] bg-secondary/40 border-border/60 rounded-2xl p-6 text-title-sm focus:ring-primary focus:border-primary transition-all shadow-inner placeholder:italic"
+          className="min-h-[140px] bg-secondary/40 border-border/60 rounded-2xl p-6 text-title-sm focus:ring-primary focus:border-primary transition-all shadow-nexus-inner placeholder:italic"
         />
         {store.query.length > 0 && (
           <div className="absolute bottom-4 right-4 text-meta font-mono text-muted-foreground bg-card px-2 py-0.5 rounded border border-border/40">
@@ -253,7 +253,7 @@ export function OracleInputArea() {
           <Button
             onClick={store.submitQuery}
             disabled={store.isRunning || !store.query.trim()}
-            className="nexus-gradient-bg text-primary-foreground gap-3 h-12 px-8 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all font-bold group"
+            className="nexus-gradient-bg text-primary-foreground gap-3 h-12 px-8 rounded-xl shadow-nexus-lg shadow-primary/20 hover:scale-[1.02] transition-all font-bold group"
           >
             {store.isRunning ? (
               <Loader2 className="h-5 w-5 animate-spin" />

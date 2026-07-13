@@ -223,7 +223,7 @@ export default function AgentArenaPage() {
 
 function CompetidorResult({ label, name, result, isWinner, loading }: { label: string; name: string; result: ArenaResult | null; isWinner: boolean; loading: boolean }) {
   return (
-    <Card className={`relative overflow-hidden transition-all duration-500 rounded-3xl ${isWinner ? 'ring-2 ring-nexus-emerald shadow-2xl shadow-nexus-emerald/10' : 'opacity-80 border-border/40'}`}>
+    <Card className={`relative overflow-hidden transition-all duration-500 rounded-3xl ${isWinner ? 'ring-2 ring-nexus-emerald shadow-nexus-2xl shadow-nexus-emerald/10' : 'opacity-80 border-border/40'}`}>
       {isWinner && (
         <div className="absolute top-0 right-0 p-3">
           <Badge className="bg-nexus-emerald text-white animate-bounce text-meta font-black">VENCEDOR</Badge>

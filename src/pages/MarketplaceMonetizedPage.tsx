@@ -182,7 +182,7 @@ function StatCard({ icon: Icon, label, value, accent }: { icon: React.ElementTyp
 
 function SkillCard({ skill, onOpen }: { skill: MarketplaceSkill; onOpen: () => void }) {
   return (
-    <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={onOpen}>
+    <Card className="hover:shadow-nexus-md transition-shadow cursor-pointer" onClick={onOpen}>
       <CardContent className="p-4 space-y-3">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">

@@ -222,7 +222,7 @@ function ModelPicker({
 
 function ResultCard({ label, cost, monthly, highlight }: { label: string; cost: ActualCost; monthly: number; highlight?: boolean }) {
   return (
-    <Card className={`p-6 space-y-4 ${highlight ? "border-nexus-emerald/40 shadow-lg shadow-nexus-emerald/10" : ""}`}>
+    <Card className={`p-6 space-y-4 ${highlight ? "border-nexus-emerald/40 shadow-nexus-lg shadow-nexus-emerald/10" : ""}`}>
       <div className="flex items-center justify-between">
         <div>
           <p className="text-meta font-bold text-muted-foreground uppercase tracking-widest">{label}</p>

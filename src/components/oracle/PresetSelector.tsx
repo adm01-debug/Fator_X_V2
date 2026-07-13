@@ -31,7 +31,7 @@ export function PresetSelector({ selectedPreset, onSelect }: PresetSelectorProps
                   onClick={() => onSelect(preset.id)}
                   className={`p-3 rounded-lg border text-left transition-all ${
                     selectedPreset === preset.id
-                      ? 'border-primary bg-primary/10 shadow-sm shadow-primary/20'
+                      ? 'border-primary bg-primary/10 shadow-nexus-sm shadow-primary/20'
                       : 'border-border/50 bg-secondary/30 hover:border-border hover:bg-secondary/50'
                   }`}
                 >

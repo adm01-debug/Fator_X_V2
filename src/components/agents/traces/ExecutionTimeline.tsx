@@ -600,7 +600,7 @@ const TraceItem = forwardRef<HTMLLIElement, TraceItemProps>(
           'border-l-2 pl-3 py-1.5 rounded-r-md transition-colors cursor-pointer relative',
           LEVEL_BORDER[trace.level],
           active
-            ? 'bg-primary/10 ring-1 ring-primary/30 shadow-sm'
+            ? 'bg-primary/10 ring-1 ring-primary/30 shadow-nexus-sm'
             : 'bg-card/40 hover:bg-muted/40',
           isMatch && !active && 'ring-1 ring-primary/40 bg-primary/5',
           isBookmarked && 'border-l-nexus-amber bg-nexus-amber/[0.04]',

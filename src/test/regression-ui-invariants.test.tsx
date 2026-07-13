@@ -190,7 +190,7 @@ describe("Utilitário cn(): comportamento determinístico", () => {
     { name: "objeto condicional false", input: [{ a: false }], expected: (o) => o === "" },
     { name: "array aninhado", input: [["a", "b"]], expected: (o) => o === "a b" },
     { name: "duplicatas removidas via tw-merge", input: ["p-2 p-4"], expected: (o) => o === "p-4" },
-    { name: "cores conflitantes mescladas", input: ["text-red-500 text-blue-500"], expected: (o) => o === "text-blue-500" },
+    { name: "cores conflitantes mescladas", input: ["text-nexus-red text-nexus-blue"], expected: (o) => o === "text-nexus-blue" },
     { name: "vazio produz string vazia", input: [], expected: (o) => o === "" },
     { name: "somente falsy produz vazio", input: [null, undefined, false], expected: (o) => o === "" },
   ];

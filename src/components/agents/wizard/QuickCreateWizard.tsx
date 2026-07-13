@@ -503,7 +503,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
     };
     const tone = mode === 'partial' ? 'success' : !check.canRestore ? 'warning' : 'success';
     toast.custom((t) => (
-      <div className="nexus-card bg-card border-border/60 shadow-lg w-[min(420px,calc(100vw-2rem))] p-3">
+      <div className="nexus-card bg-card border-border/60 shadow-nexus-lg w-[min(420px,calc(100vw-2rem))] p-3">
         <DraftRestoredNotification
           draftName={draftDisplayName}
           mode={mode}
@@ -1033,7 +1033,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
                 }
                 className={`text-meta font-medium px-3 py-1 rounded transition-colors ${
                   active
-                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    ? 'bg-primary text-primary-foreground shadow-nexus-sm'
                     : 'text-muted-foreground hover:text-foreground hover:bg-secondary/60'
                 }`}
               >

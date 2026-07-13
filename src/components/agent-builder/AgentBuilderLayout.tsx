@@ -62,7 +62,7 @@ export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
       >
         <div className="flex items-center gap-6 min-w-0">
           <div className="flex items-center gap-3 group cursor-pointer" onClick={() => navigate('/agents')}>
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-primary/10">
+            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 group-hover:scale-110 transition-transform duration-300 shadow-nexus-lg shadow-primary/10">
               <Bot className="h-6 w-6 text-primary" />
             </div>
             <div className="flex flex-col">
@@ -82,7 +82,7 @@ export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
                 <span className="text-meta font-bold text-foreground truncate">{agent.name}</span>
               </div>
             )}
-            <Badge variant={statusInfo.variant} className="text-meta font-black uppercase tracking-widest px-2.5 py-0.5 border-none shadow-sm">
+            <Badge variant={statusInfo.variant} className="text-meta font-black uppercase tracking-widest px-2.5 py-0.5 border-none shadow-nexus-sm">
               {statusInfo.label}
             </Badge>
             <ReadinessBadge />
@@ -113,7 +113,7 @@ export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
               disabled={!isDirty || isSaving}
               className={cn(
                 "h-9 px-4 rounded-xl font-bold text-meta gap-2 transition-all duration-300",
-                isDirty ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:scale-105" : "text-muted-foreground"
+                isDirty ? "bg-primary text-primary-foreground shadow-nexus-lg shadow-primary/20 hover:scale-105" : "text-muted-foreground"
               )}
             >
               <Save className="h-4 w-4" />
@@ -179,7 +179,7 @@ export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
       {/* ═══ ÁREA DE CONSTRUÇÃO ═══ */}
       <main className="flex-1 overflow-y-auto bg-gradient-to-b from-secondary/5 to-background">
         <div className="max-w-[1200px] mx-auto px-6 py-8 sm:px-8 sm:py-10">
-          <div className="bg-card/30 border border-border/40 p-8 rounded-[2.5rem] shadow-sm relative overflow-hidden group/content">
+          <div className="bg-card/30 border border-border/40 p-8 rounded-[2.5rem] shadow-nexus-sm relative overflow-hidden group/content">
              {/* Background glow for the content area */}
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
             {children}
@@ -227,7 +227,7 @@ export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
           size="lg"
           onClick={nextTab}
           disabled={isLast}
-          className="h-12 px-8 rounded-2xl nexus-gradient-bg text-primary-foreground font-bold shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+          className="h-12 px-8 rounded-2xl nexus-gradient-bg text-primary-foreground font-bold shadow-nexus-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
         >
           Próximo Passo
           <ChevronRight className="h-5 w-5 ml-2" />

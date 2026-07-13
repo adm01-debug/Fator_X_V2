@@ -107,7 +107,7 @@ export function ApprovalQueuePanel() {
       </CardContent>
 
       <Dialog open={!!selectedRun} onOpenChange={(open) => !open && setSelectedRun(null)}>
-        <DialogContent className="rounded-[2.5rem] border-border/40 p-8 shadow-2xl">
+        <DialogContent className="rounded-[2.5rem] border-border/40 p-8 shadow-nexus-2xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-heading font-black flex items-center gap-3">
               {selectedRun?.type === 'approve' ? (

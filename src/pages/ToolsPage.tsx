@@ -223,7 +223,7 @@ export default function ToolsPage() {
               </AccessControl>
               <Dialog open={newToolOpen} onOpenChange={setNewToolOpen}>
                 <DialogTrigger asChild>
-                  <Button className="nexus-gradient-bg text-primary-foreground gap-2 shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all">
+                  <Button className="nexus-gradient-bg text-primary-foreground gap-2 shadow-nexus-lg shadow-primary/20 hover:scale-[1.02] transition-all">
                     <Plus className="h-4 w-4" /> Nova Capacidade
                   </Button>
                 </DialogTrigger>
@@ -343,7 +343,7 @@ export default function ToolsPage() {
           ) : viewMode === 'grid' ? (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {filtered.map((tool) => (
-                <div key={tool.id} className="nexus-card group hover:border-primary/40 transition-all hover:shadow-2xl hover:shadow-primary/5 p-0 overflow-hidden flex flex-col">
+                <div key={tool.id} className="nexus-card group hover:border-primary/40 transition-all hover:shadow-nexus-2xl hover:shadow-primary/5 p-0 overflow-hidden flex flex-col">
                   <div className="p-5 flex-1">
                     <div className="flex items-center justify-between mb-4">
                       <div className={`h-11 w-11 rounded-2xl ${tool.bg} flex items-center justify-center border border-border/20 group-hover:scale-110 transition-transform`}>

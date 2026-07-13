@@ -65,7 +65,7 @@ export function RollbackRateCard() {
   const warning = rate >= 1 && rate < 5;
 
   return (
-    <Card className="border-border/40 shadow-sm bg-card/50 backdrop-blur-sm">
+    <Card className="border-border/40 shadow-nexus-sm bg-card/50 backdrop-blur-sm">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="space-y-1">

@@ -63,7 +63,7 @@ export function VectorSearchResults() {
       <ScrollArea className="h-[400px] pr-4">
         <div className="space-y-4">
           {mockResults.map((result) => (
-            <Card key={result.id} className="p-5 bg-card/30 border-border/40 group hover:border-primary/40 transition-all hover:shadow-xl hover:shadow-primary/5">
+            <Card key={result.id} className="p-5 bg-card/30 border-border/40 group hover:border-primary/40 transition-all hover:shadow-nexus-xl hover:shadow-primary/5">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <div className={cn(

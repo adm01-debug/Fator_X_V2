@@ -85,7 +85,7 @@ export function GuardrailsSimulator() {
         <Button 
           onClick={simulateAnalysis} 
           disabled={analyzing || !input.trim()} 
-          className="w-full h-12 rounded-xl nexus-gradient-bg text-primary-foreground font-bold gap-2 shadow-xl shadow-primary/10"
+          className="w-full h-12 rounded-xl nexus-gradient-bg text-primary-foreground font-bold gap-2 shadow-nexus-xl shadow-primary/10"
         >
           {analyzing ? <Loader2 className="w-5 h-5 animate-spin" /> : <Play className="w-4 h-4" />}
           {analyzing ? 'Analisando Camadas...' : 'Executar Análise de Segurança'}

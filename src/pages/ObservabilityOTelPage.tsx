@@ -36,12 +36,12 @@ export default function ObservabilityOTelPage() {
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-8 max-w-[1440px] mx-auto animate-page-enter">
       {/* OTel Industrial Header */}
-      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-xl shadow-primary/5 relative overflow-hidden group">
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-nexus-xl shadow-primary/5 relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
         
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative">
           <div className="flex items-center gap-7">
-            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
+            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-nexus-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
               <Activity className="h-11 w-11 text-primary animate-pulse" />
             </div>
             <div className="space-y-1">
@@ -132,7 +132,7 @@ export default function ObservabilityOTelPage() {
                 )}
               </div>
               <div className="p-6 border-t border-border/40 bg-muted/10">
-                 <Button variant="outline" className="w-full h-12 rounded-2xl font-bold uppercase text-meta tracking-widest border-border/40 shadow-sm" asChild>
+                 <Button variant="outline" className="w-full h-12 rounded-2xl font-bold uppercase text-meta tracking-widest border-border/40 shadow-nexus-sm" asChild>
                     <a href="https://jaeger.nexus.local" target="_blank" rel="noreferrer">
                        Full Jaeger UI Breakdown <ArrowUpRight className="ml-2 h-4 w-4" />
                     </a>
@@ -190,7 +190,7 @@ export default function ObservabilityOTelPage() {
 
 function MetricCard({ label, value, icon: Icon, trend, subLabel, color = "text-foreground" }: { label: string; value: string | number; icon: React.ComponentType<{ className?: string }>; trend?: string; subLabel?: string; color?: string }) {
   return (
-    <Card className="bg-card/50 border-border/40 rounded-[2rem] p-6 shadow-sm group hover:border-primary/20 transition-all">
+    <Card className="bg-card/50 border-border/40 rounded-[2rem] p-6 shadow-nexus-sm group hover:border-primary/20 transition-all">
       <div className="flex items-start justify-between mb-4">
         <div className="h-10 w-10 rounded-xl bg-secondary flex items-center justify-center border border-border/20 group-hover:scale-105 transition-transform">
           <Icon className="h-5 w-5 text-primary" />

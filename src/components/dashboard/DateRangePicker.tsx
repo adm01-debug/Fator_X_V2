@@ -28,7 +28,7 @@ export function DateRangePicker({ value, onChange }: DateRangePickerProps) {
           onClick={() => onChange(opt.value)}
           className={`h-7 px-2.5 text-meta font-medium rounded-md transition-all ${
             value === opt.value
-              ? 'bg-primary/10 text-primary shadow-sm'
+              ? 'bg-primary/10 text-primary shadow-nexus-sm'
               : 'text-muted-foreground hover:text-foreground'
           }`}
         >

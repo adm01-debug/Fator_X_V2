@@ -538,7 +538,7 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
                     key={b.traceId}
                     type="button"
                     onClick={() => { setStep(b.stepIndex); setPlaying(false); }}
-                    className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 w-2 h-3.5 rounded-sm bg-nexus-amber border border-nexus-amber/80 shadow-sm pointer-events-auto hover:scale-125 transition-transform"
+                    className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 w-2 h-3.5 rounded-sm bg-nexus-amber border border-nexus-amber/80 shadow-nexus-sm pointer-events-auto hover:scale-125 transition-transform"
                     style={{ left }}
                     aria-label={`Ir para marcador no passo ${b.stepIndex + 1}`}
                     title={b.note ? `#${b.stepIndex + 1}: ${b.note}` : `Marcador no passo ${b.stepIndex + 1}`}

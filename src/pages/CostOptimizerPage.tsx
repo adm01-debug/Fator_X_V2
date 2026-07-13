@@ -30,12 +30,12 @@ export default function CostOptimizerPage() {
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-8 max-w-[1440px] mx-auto animate-page-enter">
       {/* FinOps Industrial Header */}
-      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-xl shadow-nexus-emerald/5 relative overflow-hidden group">
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-nexus-xl shadow-nexus-emerald/5 relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-96 h-96 bg-nexus-emerald/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
         
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative">
           <div className="flex items-center gap-7">
-            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-nexus-emerald/20 to-nexus-emerald/5 flex items-center justify-center border border-nexus-emerald/20 shadow-2xl shadow-nexus-emerald/10 group-hover:scale-105 transition-transform duration-500">
+            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-nexus-emerald/20 to-nexus-emerald/5 flex items-center justify-center border border-nexus-emerald/20 shadow-nexus-2xl shadow-nexus-emerald/10 group-hover:scale-105 transition-transform duration-500">
               <TrendingDown className="h-11 w-11 text-nexus-emerald animate-float" />
             </div>
             <div className="space-y-1">
@@ -49,7 +49,7 @@ export default function CostOptimizerPage() {
             </div>
           </div>
           <div className="flex items-center gap-4">
-             <Button className="h-12 px-8 rounded-2xl font-bold nexus-gradient-bg text-primary-foreground shadow-xl shadow-primary/20" onClick={() => toast.success("Audit de Custos disparado")}>
+             <Button className="h-12 px-8 rounded-2xl font-bold nexus-gradient-bg text-primary-foreground shadow-nexus-xl shadow-primary/20" onClick={() => toast.success("Audit de Custos disparado")}>
                <Sparkles className="h-5 w-5 mr-2" />
                Deep Audit AI
              </Button>
@@ -65,7 +65,7 @@ export default function CostOptimizerPage() {
 
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
-          <Card className="border-border/40 rounded-[2rem] overflow-hidden bg-card/50 backdrop-blur-xl shadow-sm">
+          <Card className="border-border/40 rounded-[2rem] overflow-hidden bg-card/50 backdrop-blur-xl shadow-nexus-sm">
             <CardHeader className="p-8 border-b bg-muted/20 flex flex-row items-center justify-between">
               <div>
                 <CardTitle className="text-xl font-bold flex items-center gap-3">
@@ -179,7 +179,7 @@ interface MetricCardProps {
 
 function FinOpsMetricCard({ label, value, icon: Icon, trend, subLabel, color = "text-foreground" }: MetricCardProps) {
   return (
-    <Card className="bg-card/50 border-border/40 rounded-[2.5rem] p-8 shadow-sm group hover:border-primary/20 transition-all">
+    <Card className="bg-card/50 border-border/40 rounded-[2.5rem] p-8 shadow-nexus-sm group hover:border-primary/20 transition-all">
       <div className="flex items-start justify-between mb-5">
         <div className="h-12 w-12 rounded-2xl bg-secondary flex items-center justify-center border border-border/20 group-hover:scale-110 transition-transform duration-500">
           <Icon className="h-6 w-6 text-primary" />

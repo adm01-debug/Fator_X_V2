@@ -109,7 +109,7 @@ export function OnboardingTour() {
       onClick={dismiss}
     >
       <div
-        className="w-full max-w-md rounded-2xl border border-primary/20 bg-background/95 backdrop-blur-xl shadow-2xl shadow-primary/10 overflow-hidden animate-fade-in-up"
+        className="w-full max-w-md rounded-2xl border border-primary/20 bg-background/95 backdrop-blur-xl shadow-nexus-2xl shadow-primary/10 overflow-hidden animate-fade-in-up"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-label="Tour de boas-vindas"

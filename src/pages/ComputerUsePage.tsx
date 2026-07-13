@@ -110,7 +110,7 @@ export default function ComputerUsePage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_450px] gap-6">
         <div className="space-y-6">
-          <Card className="overflow-hidden border-border/40 shadow-2xl">
+          <Card className="overflow-hidden border-border/40 shadow-nexus-2xl">
             <CardHeader className="pb-3 border-b bg-muted/30">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-body-sm flex items-center gap-2">
@@ -185,7 +185,7 @@ export default function ComputerUsePage() {
               disabled={running || !task.trim()}
               className={cn(
                 "h-14 px-8 rounded-2xl font-bold gap-3 transition-all",
-                running ? "bg-destructive text-white" : "nexus-gradient-bg text-primary-foreground shadow-xl shadow-primary/20"
+                running ? "bg-destructive text-white" : "nexus-gradient-bg text-primary-foreground shadow-nexus-xl shadow-primary/20"
               )}
             >
               {running ? <><Square className="h-5 w-5" /> Parar</> : <><Play className="h-5 w-5" /> Executar Vision</>}

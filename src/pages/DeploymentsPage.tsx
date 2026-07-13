@@ -50,12 +50,12 @@ export default function DeploymentsPage() {
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-10 max-w-[1440px] mx-auto animate-page-enter">
       {/* Header Elevated 10/10 */}
-      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-xl shadow-primary/5 relative overflow-hidden group">
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-nexus-xl shadow-primary/5 relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/[0.06] transition-colors duration-500 pointer-events-none" />
         
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative">
           <div className="flex items-center gap-7">
-            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
+            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-nexus-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
               <Rocket className="h-11 w-11 text-primary animate-float" />
             </div>
             <div className="space-y-1">
@@ -107,7 +107,7 @@ export default function DeploymentsPage() {
                   <div key={dep.id} className="nexus-card nexus-card-interactive group p-6 rounded-[2.5rem] bg-card/50 backdrop-blur-sm border-border/40 hover:border-primary/30 transition-all duration-500">
                     <div className="flex items-start justify-between mb-5">
                       <div className="flex items-center gap-4">
-                        <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center text-2xl shadow-sm border border-primary/10 group-hover:scale-105 transition-transform duration-300">
+                        <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center text-2xl shadow-nexus-sm border border-primary/10 group-hover:scale-105 transition-transform duration-300">
                           {dep.emoji || '🤖'}
                         </div>
                         <div>
@@ -168,7 +168,7 @@ export default function DeploymentsPage() {
         </div>
 
         <div className="space-y-8">
-          <div className="bg-card/50 backdrop-blur-xl border border-border/40 p-8 rounded-[3rem] shadow-xl shadow-primary/5">
+          <div className="bg-card/50 backdrop-blur-xl border border-border/40 p-8 rounded-[3rem] shadow-nexus-xl shadow-primary/5">
             <div className="flex items-center gap-3 mb-6">
               <div className="h-10 w-10 rounded-xl bg-nexus-purple/10 flex items-center justify-center">
                 <Globe className="h-5 w-5 text-nexus-purple" />
@@ -181,7 +181,7 @@ export default function DeploymentsPage() {
             <A2APanel />
           </div>
 
-          <div className="bg-card/50 backdrop-blur-xl border border-border/40 p-8 rounded-[3rem] shadow-xl shadow-primary/5">
+          <div className="bg-card/50 backdrop-blur-xl border border-border/40 p-8 rounded-[3rem] shadow-nexus-xl shadow-primary/5">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-xl bg-nexus-cyan/10 flex items-center justify-center">
@@ -256,7 +256,7 @@ function EndpointGeneratorButton() {
           <span className="font-bold">API Access</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-2xl rounded-[2.5rem] border-border/40 p-8 shadow-2xl">
+      <DialogContent className="sm:max-w-2xl rounded-[2.5rem] border-border/40 p-8 shadow-nexus-2xl">
         <DialogHeader>
           <DialogTitle className="text-2xl font-heading font-black flex items-center gap-3">
             <Terminal className="h-6 w-6 text-primary" /> API Industrial Gateway

@@ -154,7 +154,7 @@ export default function WidgetBuilderPage() {
                     key={p.key}
                     type="button"
                     onClick={() => applyPreset(p)}
-                    className="rounded-xl h-14 border border-border hover:border-primary transition-all shadow-sm hover:shadow-md"
+                    className="rounded-xl h-14 border border-border hover:border-primary transition-all shadow-nexus-sm hover:shadow-nexus-md"
                     style={{ background: `linear-gradient(135deg, ${p.from}, ${p.to})` }}
                     aria-label={`Aplicar tema ${p.label}`}
                     title={p.label}
@@ -206,7 +206,7 @@ export default function WidgetBuilderPage() {
                   {/* Widget preview */}
                   <div className={`absolute ${positionStyles[position]} flex flex-col items-end gap-3`}>
                     <div
-                      className="w-[340px] rounded-2xl shadow-2xl overflow-hidden border border-border/60 bg-card animate-in fade-in slide-in-from-bottom-4"
+                      className="w-[340px] rounded-2xl shadow-nexus-2xl overflow-hidden border border-border/60 bg-card animate-in fade-in slide-in-from-bottom-4"
                       style={{ display: agentId ? 'block' : 'none' }}
                     >
                       <div
@@ -243,7 +243,7 @@ export default function WidgetBuilderPage() {
 
                     <button
                       type="button"
-                      className="h-14 w-14 rounded-full shadow-xl flex items-center justify-center text-2xl hover:scale-110 transition-transform"
+                      className="h-14 w-14 rounded-full shadow-nexus-xl flex items-center justify-center text-2xl hover:scale-110 transition-transform"
                       style={{ background: `linear-gradient(135deg, ${fromColor}, ${toColor})` }}
                       aria-label="Abrir chat"
                     >

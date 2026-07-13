@@ -310,7 +310,7 @@ Sempre priorize a precisão e a utilidade das informações fornecidas.
                 <div className="flex justify-between items-center pt-2">
                   <Button variant="ghost" size="sm" onClick={() => setMagicPreview(null)} className="text-muted-foreground hover:text-destructive">Descartar e refazer</Button>
                   <div className="flex gap-2">
-                    <Button size="sm" onClick={confirmMagicCreate} className="gap-1.5 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20"><Sparkles className="h-4 w-4" /> Refinar no Wizard</Button>
+                    <Button size="sm" onClick={confirmMagicCreate} className="gap-1.5 bg-primary hover:bg-primary/90 shadow-nexus-lg shadow-primary/20"><Sparkles className="h-4 w-4" /> Refinar no Wizard</Button>
                   </div>
                 </div>
               </div>
@@ -361,7 +361,7 @@ Sempre priorize a precisão e a utilidade das informações fornecidas.
         <DialogContent className="max-w-3xl overflow-hidden flex flex-col max-h-[90vh]">
           <DialogHeader className="px-6 pt-6 shrink-0">
             <div className="flex items-center gap-4">
-              <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center text-4xl shadow-inner border border-primary/20">
+              <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center text-4xl shadow-nexus-inner border border-primary/20">
                 {viewingTemplate?.emoji}
               </div>
               <div>

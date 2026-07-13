@@ -108,7 +108,7 @@ export default function AuthPage() {
         <div className="w-full max-w-[420px] space-y-8 animate-fade-in">
           <div className="lg:hidden text-center space-y-3">
             <div className="flex items-center justify-center gap-3">
-              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/20"><FatorXLogo size={22} className="text-primary-foreground" /></div>
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-nexus-lg shadow-primary/20"><FatorXLogo size={22} className="text-primary-foreground" /></div>
               <span className="text-xl font-heading font-bold text-foreground tracking-tight">Fator X</span>
             </div>
           </div>
@@ -118,11 +118,11 @@ export default function AuthPage() {
           </div>
           {!isForgotPassword && (
             <div className="space-y-4">
-              <Button type="button" variant="outline" disabled={loading} className="w-full gap-3 min-h-[48px] bg-card border-border hover:shadow-md transition-all group" onClick={handleGoogleLogin}><GoogleIcon /><span className="font-medium">Continuar com Google</span></Button>
+              <Button type="button" variant="outline" disabled={loading} className="w-full gap-3 min-h-[48px] bg-card border-border hover:shadow-nexus-md transition-all group" onClick={handleGoogleLogin}><GoogleIcon /><span className="font-medium">Continuar com Google</span></Button>
               <div className="relative"><div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border/40" /></div><div className="relative flex justify-center text-meta uppercase tracking-wider"><span className="bg-background px-3 text-muted-foreground/60">ou com e-mail</span></div></div>
             </div>
           )}
-          <form onSubmit={isForgotPassword ? handleForgotPassword : handleSubmit} className="space-y-5 rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm p-6 sm:p-8 shadow-2xl shadow-primary/[0.04]" noValidate>
+          <form onSubmit={isForgotPassword ? handleForgotPassword : handleSubmit} className="space-y-5 rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm p-6 sm:p-8 shadow-nexus-2xl shadow-primary/[0.04]" noValidate>
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <Label htmlFor="auth-email" className="text-body-sm font-medium text-foreground">E-mail</Label>
