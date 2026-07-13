@@ -294,7 +294,7 @@ serve(async (req) => {
 
   // Also create a trace_event entry so the new TracingPanel shows it
   try {
-    await (client.from("trace_events").insert as Function)({
+    await (client.from("trace_events").insert as unknown as (row: unknown) => Promise<unknown>)({
       event_type: "bitrix24_webhook",
       data: {
         trace_id: traceId,
