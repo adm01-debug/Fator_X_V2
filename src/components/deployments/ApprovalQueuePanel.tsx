@@ -36,7 +36,7 @@ export function ApprovalQueuePanel() {
       setSelectedRun(null);
       setFeedback("");
     } catch (err) {
-      toast.error("Erro: " + err.message);
+      toast.error("Erro: " + (err instanceof Error ? err.message : String(err)));
     } finally {
       setProcessing(false);
     }
