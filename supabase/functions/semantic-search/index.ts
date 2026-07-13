@@ -137,7 +137,7 @@ serve(async (req) => {
       const tokens = query.split(/\s+/).filter((t) => t.length > 2).slice(0, 5);
       const ilikePattern = `%${query.replace(/[%_]/g, "")}%`;
 
-      let q = supabase
+      const q = supabase
         .from("chunks")
         .select("id, document_id, content")
         .ilike("content", ilikePattern)
