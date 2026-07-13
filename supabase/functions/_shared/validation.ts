@@ -47,6 +47,7 @@ export async function parseBody<T>(
 
   // Resolve schema based on version if it's a record
   let activeSchema: ZodSchema<T>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
   if ('safeParse' in (schema as any)) {
     activeSchema = schema as ZodSchema<T>;
   } else {

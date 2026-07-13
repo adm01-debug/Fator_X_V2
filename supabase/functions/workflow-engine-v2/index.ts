@@ -8,6 +8,7 @@ interface GraphNode {
   id: string;
   type: string;
   label: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
   config: Record<string, any>;
 }
 
@@ -27,8 +28,10 @@ interface WorkflowState {
   _current_node: string;
   _history: string[];
   _iteration_count: Record<string, number>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
   _output: any;
   input: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
   [key: string]: any;
 }
 
@@ -80,6 +83,7 @@ serve(async (req) => {
     const { data: workflow, error: wfErr } = await supabase.from('workflows').select('*').eq('id', workflow_id).single();
     if (wfErr || !workflow) return jsonResponse({ error: 'Workflow not found' }, 404);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     const wfConfig = (workflow.config || {}) as Record<string, any>;
     const graph: WorkflowGraph = {
       nodes: (wfConfig.nodes as GraphNode[]) || [],
@@ -110,6 +114,7 @@ serve(async (req) => {
     if (resume_run_id) {
       const { data: existingRun } = await supabase.from('workflow_runs').select('*').eq('id', resume_run_id).single();
       if (!existingRun) return jsonResponse({ error: 'Run not found' }, 404);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
       const existingOutput = existingRun.output as Record<string, any> | null;
       state = (existingOutput?.state as WorkflowState) || { _current_node: graph.entry_node, _history: [], _iteration_count: {}, _output: '', input };
       runId = existingRun.id;
@@ -177,6 +182,7 @@ serve(async (req) => {
           const resp = await fetch(`${supabaseUrl}/functions/v1/${node.config.function_name}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': authHeader, 'apikey': supabaseKey },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
             body: JSON.stringify({ action: node.config.function_action, text: (state._output as string) || state.input || '', ...((node.config.extra_params as Record<string, any>) || {}) }),
             signal: AbortSignal.timeout(STEP_TIMEOUT_MS)
           });
@@ -238,6 +244,7 @@ serve(async (req) => {
       const encoder = new TextEncoder();
       const stream = new ReadableStream({
         async start(controller) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           const send = (data: any) => controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
           send({ event: 'run_start', run_id: runId });
 

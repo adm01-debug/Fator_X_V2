@@ -370,7 +370,7 @@ serve(async (req) => {
 
   // Emit trace_event for MonitoringPage
   try {
-    await (client.from('trace_events').insert as Function)({
+    await (client.from('trace_events').insert as unknown as (row: unknown) => Promise<unknown>)({
       event_type: 'whatsapp_webhook',
       data: {
         trace_id: traceId,

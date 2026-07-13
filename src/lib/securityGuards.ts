@@ -3,7 +3,7 @@
 const PII_PATTERNS: Array<{ name: string; regex: RegExp; replacement: string }> = [
   // Brazilian
   { name: 'cpf', regex: /\b\d{3}[.\s-]?\d{3}[.\s-]?\d{3}[.\s-]?\d{2}\b/g, replacement: '[CPF_REDACTED]' },
-  { name: 'cnpj', regex: /\b\d{2}[.\s]?\d{3}[.\s]?\d{3}[\/\s]?\d{4}[.\s-]?\d{2}\b/g, replacement: '[CNPJ_REDACTED]' },
+  { name: 'cnpj', regex: /\b\d{2}[.\s]?\d{3}[.\s]?\d{3}[/\s]?\d{4}[.\s-]?\d{2}\b/g, replacement: '[CNPJ_REDACTED]' },
   { name: 'rg', regex: /\b\d{2}[.\s]?\d{3}[.\s]?\d{3}[.\s-]?\d{1}\b/g, replacement: '[RG_REDACTED]' },
   { name: 'phone_br', regex: /\b(?:\+55\s?)?(?:\(?\d{2}\)?\s?)(?:9\s?\d{4}[-.\s]?\d{4}|\d{4}[-.\s]?\d{4})\b/g, replacement: '[PHONE_REDACTED]' },
   { name: 'cep', regex: /\b\d{5}[-.\s]?\d{3}\b/g, replacement: '[CEP_REDACTED]' },

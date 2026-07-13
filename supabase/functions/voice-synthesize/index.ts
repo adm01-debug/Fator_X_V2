@@ -29,6 +29,7 @@ Deno.serve(async (req) => {
 
 
     let agentPersona = "Você é um assistente conversacional natural e cordial, falando em português do Brasil.";
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     let history: any[] = [];
     if (agent_id) {
       const { data: agent } = await supabase.from("agents").select("persona, mission").eq("id", agent_id).maybeSingle();
@@ -37,6 +38,7 @@ Deno.serve(async (req) => {
     if (session_id) {
       const { data: session } = await supabase.from("voice_sessions").select("transcript").eq("id", session_id).maybeSingle();
       if (session) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         history = ((session.transcript as any[]) || []).slice(-10).map((t: any) => ({ role: t.role === "user" ? "user" : "assistant", content: t.text }));
       }
     }
@@ -73,6 +75,7 @@ Deno.serve(async (req) => {
     if (session_id) {
       const { data: session } = await supabase.from("voice_sessions").select("transcript, cost_cents, audio_out_seconds").eq("id", session_id).maybeSingle();
       if (session) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         const newTranscript = [...((session.transcript as any[]) || []), { role: "assistant", text: reply, ts: new Date().toISOString() }];
         const approxSpeechSec = Math.max(1, reply.split(/\s+/).length / 2.5); // ~150 wpm
         await supabase.from("voice_sessions").update({

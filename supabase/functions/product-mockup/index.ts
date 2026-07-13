@@ -77,7 +77,7 @@ serve(async (req) => {
 
       // Step 2: Generate new background with product description
       const bgPrompt = background_prompt || `Professional product photography of ${product_name || 'a promotional product'}, studio lighting, white gradient background, commercial quality, 4k`;
-      let finalImageBase64 = cleanProductBase64;
+      const finalImageBase64: string = cleanProductBase64;
 
       if (hfToken) {
         try {

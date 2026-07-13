@@ -66,7 +66,7 @@ async function calculateCost(supabase: SupabaseClient, model: string, promptToke
 // ═══ PII Detection (Brazilian + International) ═══
 const PII_PATTERNS = [
   { name: 'cpf', regex: /\b\d{3}[.\s-]?\d{3}[.\s-]?\d{3}[.\s-]?\d{2}\b/g, repl: '[CPF]' },
-  { name: 'cnpj', regex: /\b\d{2}[.\s]?\d{3}[.\s]?\d{3}[\/\s]?\d{4}[.\s-]?\d{2}\b/g, repl: '[CNPJ]' },
+  { name: 'cnpj', regex: /\b\d{2}[.\s]?\d{3}[.\s]?\d{3}[/\s]?\d{4}[.\s-]?\d{2}\b/g, repl: '[CNPJ]' },
   { name: 'phone_br', regex: /\b(?:\+55\s?)?(?:\(?\d{2}\)?\s?)(?:9\s?\d{4}[-.\s]?\d{4}|\d{4}[-.\s]?\d{4})\b/g, repl: '[PHONE]' },
   { name: 'email', regex: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, repl: '[EMAIL]' },
   { name: 'credit_card', regex: /\b(?:\d{4}[-\s]?){3}\d{4}\b/g, repl: '[CARD]' },
@@ -167,6 +167,7 @@ async function checkGuardrails(supabase: SupabaseClient, agentId: string | undef
 }
 
 // ═══ Budget Check (legacy `budgets` + new `workspace_budgets` enforcement) ═══
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
 async function checkBudget(supabase: any, workspaceId: string | undefined, agentId: string | undefined): Promise<{ allowed: boolean; reason?: string; warning?: boolean; pct?: number }> {
   if (!workspaceId) return { allowed: true };
   // 1) New workspace_budgets enforcement (Sprint 31)
@@ -193,6 +194,7 @@ async function checkBudget(supabase: any, workspaceId: string | undefined, agent
           }
           if (agentId) {
             const { data: agent } = await supabase.from('agents').select('config').eq('id', agentId).single();
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
             if ((agent?.config as any)?.budget_kill_switch) {
               return { allowed: false, reason: `Budget "${b.name}" exceeded: $${Number(b.current_usd).toFixed(4)} / $${b.limit_usd}` };
             }
@@ -205,10 +207,12 @@ async function checkBudget(supabase: any, workspaceId: string | undefined, agent
 }
 
 // ═══ Record Trace + Usage (non-blocking) ═══
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
 async function recordTrace(supabase: any, p: {
   workspaceId?: string; agentId?: string; sessionId?: string; userId?: string;
   userInput: string; assistantOutput: string; model: string; provider: string;
   promptTokens: number; completionTokens: number; totalTokens: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
   costUsd: number; latencyMs: number; guardrailsTriggered: any[];
   event: string; level: string; caller?: string;
 }) {
@@ -230,11 +234,14 @@ async function recordTrace(supabase: any, p: {
     if (p.sessionId && p.userId) {
       // Upsert session (create if new, update last activity)
       const agentId = p.agentId || '00000000-0000-0000-0000-000000000000';
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
       const { data: existingSession } = await (supabase as any).from('sessions').select('id').eq('id', p.sessionId).maybeSingle();
       if (!existingSession) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         await (supabase as any).from('sessions').insert({ id: p.sessionId, agent_id: agentId, user_id: p.userId, status: 'active' }).then(() => {}).catch(() => {});
       }
       // Insert session_trace
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
       const { data: strace } = await (supabase as any).from('session_traces').insert({
         session_id: p.sessionId, trace_type: p.event,
         input: { message: p.userInput }, output: { content: p.assistantOutput?.substring(0, 2000) },
@@ -243,6 +250,7 @@ async function recordTrace(supabase: any, p: {
       }).select('id').single().catch(() => null);
       // Insert trace_event
       if (strace?.data?.id) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         await (supabase as any).from('trace_events').insert({ 
           session_trace_id: strace.data.id, 
           event_type: p.event, 
@@ -252,6 +260,7 @@ async function recordTrace(supabase: any, p: {
       
       // FIX P2-05: Record audit for high-risk cost/usage
       if (p.costUsd > 0.5 || p.level === 'critical') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         await (supabase as any).from('audit_events').insert({
           workspace_id: p.workspaceId,
           user_id: p.userId,
@@ -471,6 +480,7 @@ serve(async (req) => {
           const toxResult = await toxResp.json();
           const labels = Array.isArray(toxResult?.[0]) ? toxResult[0] : toxResult;
           if (Array.isArray(labels)) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
             const toxic = labels.find((l: any) => l.label === 'toxic');
             toxicityScore = toxic?.score || 0;
             if (toxicityScore > 0.85) {
@@ -495,6 +505,7 @@ serve(async (req) => {
           const langResult = await langResp.json();
           const labels = Array.isArray(langResult?.[0]) ? langResult[0] : langResult;
           if (Array.isArray(labels) && labels.length > 0) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
             const sorted = [...labels].sort((a: any, b: any) => b.score - a.score);
             detectedLanguage = sorted[0]?.label || null;
           }

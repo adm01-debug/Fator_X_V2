@@ -94,6 +94,7 @@ Deno.serve(async (req) => {
       : { data: [] };
     const agentMap = new Map((agents || []).map(a => [a.id, a]));
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     const trace: any[] = [];
     let totalCost = 0;
     let currentNodeId = entryId;

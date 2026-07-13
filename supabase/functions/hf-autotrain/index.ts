@@ -61,8 +61,10 @@ serve(async (req) => {
         .order('created_at', { ascending: false }).limit(maxSamples);
       if (error) throw new Error(error.message);
       // deno-lint-ignore no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
       const dataset = (traces || []).filter((t: any) => t.input?.user_message && t.output?.content)
         // deno-lint-ignore no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         .map((t: any) => ({ instruction: String(t.input.user_message || ''), output: String(t.output.content || ''), input: '' }));
       return hfJsonResponse(req, { dataset_size: dataset.length, format: 'alpaca', sample: dataset.slice(0, 3), dataset, agent_id });
     }
@@ -78,16 +80,20 @@ serve(async (req) => {
           .eq('agent_id', agent_id).eq('event', 'llm_call').eq('level', 'info')
           .order('created_at', { ascending: false }).limit(maxSamples);
         // deno-lint-ignore no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         dataset = (traces || []).filter((t: any) => t.input?.user_message && t.output?.content)
           // deno-lint-ignore no-explicit-any
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           .map((t: any) => ({ text: `<s>[INST] ${t.input.user_message} [/INST] ${t.output.content}</s>` }));
       } else if (taskType === 'text-classification') {
         const { data: traces } = await supabase.from('agent_traces').select('input, metadata')
           .eq('agent_id', agent_id).not('metadata->auto_category', 'is', null)
           .order('created_at', { ascending: false }).limit(maxSamples);
         // deno-lint-ignore no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         dataset = (traces || []).filter((t: any) => t.input?.user_message && t.metadata?.auto_category)
           // deno-lint-ignore no-explicit-any
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           .map((t: any) => ({ text: t.input.user_message, label: t.metadata.auto_category }));
       }
       const issues: string[] = [];
@@ -111,6 +117,7 @@ serve(async (req) => {
       });
       if (wsId) {
         // deno-lint-ignore no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         await (supabase as any).from('agent_traces').insert({
           agent_id: agent_id || '00000000-0000-0000-0000-000000000000', user_id: user.id,
           event: 'finetune_started', level: 'info',
@@ -136,6 +143,7 @@ serve(async (req) => {
       return hfJsonResponse(req, {
         hf_username: hfUsername,
         // deno-lint-ignore no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         models: (models as any[] || []).map((m: Record<string, unknown>) => ({
           id: m.id, name: (m.id as string)?.split('/')?.pop(), private: m.private,
           downloads: m.downloads, updated: m.lastModified, tags: m.tags,

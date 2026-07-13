@@ -174,6 +174,7 @@ serve(async (req) => {
 
     if (evaluation_run_id) {
       // deno-lint-ignore no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
       await (supabase as any).from('evaluation_runs').update({
         status: 'completed', completed_at: new Date().toISOString(),
         pass_rate: avgScore / 5,

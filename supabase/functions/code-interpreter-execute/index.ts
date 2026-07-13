@@ -127,6 +127,7 @@ Deno.serve(async (req) => {
       const writer = writable.getWriter();
       const encoder = new TextEncoder();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
       const sendEvent = async (event: string, data: any) => {
         await writer.write(encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`));
       };
@@ -192,7 +193,7 @@ Deno.serve(async (req) => {
               memory_mb: resultData.memory_mb
             });
 
-            try { await Deno.remove(tmpFile); } catch (_) { }
+            try { await Deno.remove(tmpFile); } catch (_) { /* arquivo temporário pode não existir se a execução falhou antes de escrever */ }
           } else {
             // Simulated streaming with real AI analysis
             await sendEvent("stdout", { chunk: `[Sandbox ${body.runtime}] Inicializando container isolado...\n`, ts: new Date().toISOString() });

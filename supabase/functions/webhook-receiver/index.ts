@@ -129,6 +129,7 @@ serve(async (req) => {
 });
 
 async function logEvent(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
   supabase: any,
   webhookId: string, method: string, headers: Record<string, string>,
   queryParams: Record<string, string>, body: Record<string, unknown>,

@@ -4,6 +4,7 @@ import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse, check
 
 const encoder = new TextEncoder();
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
 function sseEvent(event: string, data: any) {
   return encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
 }
@@ -20,6 +21,7 @@ function getExternalClient(connectionId: string) {
 
 /* ── Entity mappings ─────────────────────────────────── */
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
 const ENTITY_MAPPINGS: Record<string, any> = {
   cliente: {
     primary: { connection: 'bancodadosclientes', table: 'companies', id_column: 'id', display_column: 'razao_social', filter: "is_customer = true AND status = 'ativo' AND razao_social IS NOT NULL AND razao_social != ''" },
@@ -76,6 +78,7 @@ const ENTITY_MAPPINGS: Record<string, any> = {
 /* ── Filter parser helper ────────────────────────────── */
 
 // deno-lint-ignore no-explicit-any -- Supabase query builder type is complex
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
 function applyStaticFilter(query: any, filterStr: string) {
   const parts = filterStr.split(' AND ').map((f: string) => f.trim());
   for (const f of parts) {
@@ -100,6 +103,7 @@ function applyStaticFilter(query: any, filterStr: string) {
 /* ── Dynamic filters from client ─────────────────────── */
 
 // deno-lint-ignore no-explicit-any -- Supabase query builder type is complex
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
 function applyDynamicFilters(query: any, filters: Array<Record<string, unknown>>) {
   for (const f of filters) {
     if (!f.column || !f.operator) continue;
@@ -303,6 +307,7 @@ serve(async (req) => {
           }
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         const enriched: Record<string, any> = {};
         if (mapping.secondary) {
           for (const sec of mapping.secondary) {
@@ -318,6 +323,7 @@ serve(async (req) => {
           }
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         const crossData: Record<string, any> = {};
         if (mapping.cross_db) {
           for (const cross of mapping.cross_db) {
@@ -877,11 +883,15 @@ serve(async (req) => {
     if (action === 'list_tables') {
       const tables: Record<string, string[]> = {};
       for (const [connId, mapping] of Object.entries(ENTITY_MAPPINGS)) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         const conn = (mapping as any).primary.connection;
         if (!tables[conn]) tables[conn] = [];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         const tbl = (mapping as any).primary.table;
         if (!tables[conn].includes(tbl)) tables[conn].push(tbl);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         if ((mapping as any).secondary) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           for (const sec of (mapping as any).secondary) {
             if (!tables[conn].includes(sec.table)) tables[conn].push(sec.table);
           }
@@ -896,11 +906,15 @@ serve(async (req) => {
       const tableSet = new Set<string>();
       for (const [, mapping] of Object.entries(ENTITY_MAPPINGS)) {
         try {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           const client = getExternalClient((mapping as any).primary.connection);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           let q = client.from((mapping as any).primary.table).select('id', { count: 'exact', head: true });
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           if ((mapping as any).primary.filter) q = applyStaticFilter(q, (mapping as any).primary.filter);
           const { count } = await q;
           totalRecords += count ?? 0;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           tableSet.add((mapping as any).primary.table);
         } catch { /* skip */ }
       }

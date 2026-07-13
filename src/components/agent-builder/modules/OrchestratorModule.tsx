@@ -76,7 +76,7 @@ export function OrchestratorModule() {
     setRunning(true);
     try {
       let parsed: unknown = testInput;
-      try { parsed = JSON.parse(testInput); } catch {}
+      try { parsed = JSON.parse(testInput); } catch { /* aceita entrada não-JSON como string bruta */ }
       const result = await runWorkflow(active.id, parsed);
       toast.success('Execução concluída');
       logger.info('Workflow execution result', { workflow_id: active.id, result });
