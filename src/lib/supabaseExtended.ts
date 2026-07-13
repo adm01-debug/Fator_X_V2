@@ -10,11 +10,17 @@ import type { DbRow } from '@/types/dbRow';
 
 /**
  * Permissive fluent-query shim para tabelas fora do schema tipado.
- * Toda operação retorna a mesma interface, e o objeto é `thenable`
- * (compatível com `await`) — reflete o contrato do PostgREST client
- * do Supabase sem exigir os tipos gerados.
+ * `data` é resolvido como `DbRow` (ponte documentada) para preservar
+ * o acesso legado por propriedade em callbacks; os métodos fluentes
+ * são todos tipados e retornam a mesma interface.
  */
-export interface AnyQueryBuilder extends PromiseLike<{ data: unknown; error: { message: string } | null }> {
+export interface AnyQueryResult {
+  data: DbRow;
+  error: { message: string } | null;
+  count?: number | null;
+}
+
+export interface AnyQueryBuilder extends PromiseLike<AnyQueryResult> {
   select: (...args: unknown[]) => AnyQueryBuilder;
   insert: (...args: unknown[]) => AnyQueryBuilder;
   update: (...args: unknown[]) => AnyQueryBuilder;
@@ -41,7 +47,6 @@ export interface AnyQueryBuilder extends PromiseLike<{ data: unknown; error: { m
   range: (...args: unknown[]) => AnyQueryBuilder;
   single: () => AnyQueryBuilder;
   maybeSingle: () => AnyQueryBuilder;
-  returns: <T>() => PromiseLike<{ data: T | null; error: { message: string } | null }>;
   [key: string]: unknown;
 }
 
