@@ -57,6 +57,25 @@ const TYPO_REGEX = new RegExp(
   'g',
 );
 
+// ---- Shadow (elevation) tokens ---------------------------------------------
+// Substitui utilitários Tailwind de sombra padrão pelos tokens `shadow-nexus-*`
+// que consomem `--nexus-shadow` (adaptado a light/dark automaticamente).
+const SHADOW_MAP = {
+  'shadow-sm': 'shadow-nexus-sm',
+  shadow: 'shadow-nexus-md',
+  'shadow-md': 'shadow-nexus-md',
+  'shadow-lg': 'shadow-nexus-lg',
+  'shadow-xl': 'shadow-nexus-xl',
+  'shadow-2xl': 'shadow-nexus-2xl',
+  'shadow-inner': 'shadow-nexus-inner',
+};
+const SHADOW_REGEX = new RegExp(
+  `(?<![\\w-])((?:[a-z-]+:)*)(shadow(?:-sm|-md|-lg|-xl|-2xl|-inner)?)(?![\\w-/])`,
+  'g',
+);
+// Não converter estas variantes (não fazem parte do sistema de elevação):
+// `shadow-none`, `shadow-<cor>` (ex. `shadow-nexus-emerald/40`, `shadow-primary`).
+
 /**
  * Reporta e corrige substrings dentro de um nó, preservando delimitadores.
  */
