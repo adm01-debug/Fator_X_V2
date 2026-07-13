@@ -207,9 +207,54 @@ const noAdhocTypography = {
   },
 };
 
+/** @type {import('eslint').Rule.RuleModule} */
+const noAdhocShadows = {
+  meta: {
+    type: 'problem',
+    docs: {
+      description:
+        'Proíbe sombras Tailwind padrão — use tokens de elevação nexus (shadow-nexus-sm/md/lg/xl/2xl/inner).',
+    },
+    fixable: 'code',
+    schema: [],
+    messages: {
+      replace:
+        'Sombra Tailwind ad-hoc "{{from}}" — use o token de elevação "{{to}}".',
+    },
+  },
+  create(context) {
+    const check = (node, raw) => {
+      reportMatches(
+        context,
+        node,
+        raw,
+        SHADOW_REGEX,
+        (m) => {
+          const [, modifiers, cls] = m;
+          const token = SHADOW_MAP[cls];
+          return token ? `${modifiers}${token}` : m[0];
+        },
+        (m, replacement) => ({
+          messageId: 'replace',
+          data: { from: m[0], to: replacement },
+        }),
+      );
+    };
+    return {
+      Literal(node) {
+        if (typeof node.value === 'string') check(node, node.value);
+      },
+      TemplateElement(node) {
+        check(node, node.value.raw);
+      },
+    };
+  },
+};
+
 export default {
   rules: {
     'no-hardcoded-colors': noHardcodedColors,
     'no-adhoc-typography': noAdhocTypography,
+    'no-adhoc-shadows': noAdhocShadows,
   },
 };
