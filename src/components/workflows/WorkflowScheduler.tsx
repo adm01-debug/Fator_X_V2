@@ -31,17 +31,17 @@ export function WorkflowScheduler({ workflows }: { workflows: Array<Record<strin
       queryClient.invalidateQueries({ queryKey: ['workflow-schedules'] });
       toast.success('Agendamento criado!');
       setSelWf('');
-    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : 'Erro ao criar agendamento'); }
+    } catch (e) { toast.error(e instanceof Error ? e.message : 'Erro ao criar agendamento'); }
   };
 
   const handleToggle = async (id: string, currentlyEnabled: boolean) => {
     try { await updateSchedule(id, { status: currentlyEnabled ? 'paused' : 'active' }); queryClient.invalidateQueries({ queryKey: ['workflow-schedules'] }); }
-    catch (e: unknown) { toast.error(e instanceof Error ? e.message : 'Erro ao atualizar agendamento'); }
+    catch (e) { toast.error(e instanceof Error ? e.message : 'Erro ao atualizar agendamento'); }
   };
 
   const handleRemove = async (id: string) => {
     try { await deleteSchedule(id); queryClient.invalidateQueries({ queryKey: ['workflow-schedules'] }); toast.success('Agendamento removido'); }
-    catch (e: unknown) { toast.error(e instanceof Error ? e.message : 'Erro ao remover agendamento'); }
+    catch (e) { toast.error(e instanceof Error ? e.message : 'Erro ao remover agendamento'); }
   };
 
   return (

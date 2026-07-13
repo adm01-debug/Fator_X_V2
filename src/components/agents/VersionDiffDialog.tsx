@@ -10,6 +10,7 @@ import { supabaseExternal } from "@/integrations/supabase/externalClient";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type { Json } from "@/integrations/supabase/types";
+import type { DbRow } from '@/types/dbRow';
 
 interface Version {
   id: string;
@@ -53,7 +54,7 @@ function getCfg(v: Version): Record<string, unknown> {
   } catch { return {}; }
 }
 
-function countEnabled(arr: unknown): number {
+function countEnabled(arr: DbRow): number {
   if (!Array.isArray(arr)) return 0;
   return arr.filter((x: { enabled?: boolean } | null | undefined) => x && (x.enabled ?? true)).length;
 }
@@ -122,7 +123,7 @@ export function VersionDiffDialog({ open, onOpenChange, versions, agentId }: Pro
       queryClient.invalidateQueries({ queryKey: ['agents'] });
       queryClient.invalidateQueries({ queryKey: ['agent-versions', agentId] });
       onOpenChange(false);
-    } catch (err: unknown) {
+    } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Erro ao restaurar');
     } finally {
       setRestoring(false);

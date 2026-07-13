@@ -4,6 +4,7 @@
  * thresholds, matched rules, and per-rule classification flags.
  */
 import type { ViolationDay } from './agentMetricsHelpers';
+import type { DbRow } from '@/types/dbRow';
 
 const RULE_LABEL: Record<string, string> = {
   p95: 'Latência p95',
@@ -11,7 +12,7 @@ const RULE_LABEL: Record<string, string> = {
   error: 'Erro',
 };
 
-function csvEscape(v: unknown): string {
+function csvEscape(v: DbRow): string {
   const s = v === null || v === undefined ? '' : String(v);
   if (/[",\n;]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
   return s;

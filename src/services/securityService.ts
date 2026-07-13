@@ -67,7 +67,7 @@ export async function getSecurityEvents(options?: { severity?: string; limit?: n
       .limit(options?.limit || 50);
 
     if (error) throw error;
-    return (data ?? []).map((entry: unknown) => ({
+    return (data ?? []).map((entry) => ({
       ...entry,
       severity: 'info',
       event_type: entry.action,

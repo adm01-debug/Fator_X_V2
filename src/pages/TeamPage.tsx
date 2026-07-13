@@ -38,7 +38,7 @@ export default function TeamPage() {
       toast.success('Convite aceito!');
       queryClient.invalidateQueries({ queryKey: ['workspace_members'] });
       queryClient.invalidateQueries({ queryKey: ['pending_invites'] });
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro ao aceitar convite');
     }
   };
@@ -46,11 +46,11 @@ export default function TeamPage() {
   const handleRemoveMember = async (memberId: string) => {
     try {
       const wsId = await getWorkspaceId();
-      const member = members.find((m: unknown) => m.id === memberId);
+      const member = members.find((m) => m.id === memberId);
       if (member?.user_id) await removeMember(wsId, member.user_id);
       toast.success('Membro removido');
       refetch();
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro inesperado');
     }
   };
@@ -66,7 +66,7 @@ export default function TeamPage() {
       {/* Pending invitations banner */}
       {pendingInvites.length > 0 && (
         <div className="space-y-2">
-          {pendingInvites.map((invite: unknown) => (
+          {pendingInvites.map((invite) => (
             <div key={invite.id}
               className="nexus-card border-primary/30 flex items-center justify-between"
             >
@@ -102,7 +102,7 @@ export default function TeamPage() {
               </tr>
             </thead>
             <tbody>
-              {members.map((m: unknown) => (
+              {members.map((m) => (
                 <tr key={m.id} className="border-b border-border/30 hover:bg-secondary/30 transition-colors">
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-3">

@@ -41,7 +41,7 @@ export function Bitrix24ApiTester() {
       setResult(data);
       setHistory(prev => [{ method, ts: new Date().toLocaleTimeString(), status: 'ok' as const }, ...prev].slice(0, 10));
       toast.success('Execução concluída com sucesso');
-    } catch (e: unknown) {
+    } catch (e) {
       setHistory(prev => [{ method, ts: new Date().toLocaleTimeString(), status: 'err' as const }, ...prev].slice(0, 10));
       toast.error(e instanceof Error ? e.message : 'Erro na requisição');
     } finally {

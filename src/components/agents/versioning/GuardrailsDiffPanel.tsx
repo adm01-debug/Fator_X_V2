@@ -9,6 +9,7 @@ import {
   type GuardrailLike,
 } from "@/lib/agentChangelog";
 import type { AgentVersion } from "@/services/agentsService";
+import type { DbRow } from '@/types/dbRow';
 
 interface Props {
   versionA: AgentVersion;
@@ -37,7 +38,7 @@ function severityBadge(sev?: string) {
   );
 }
 
-function formatValue(v: unknown): string {
+function formatValue(v: DbRow): string {
   if (v === undefined) return '—';
   if (v === null) return 'null';
   if (typeof v === 'boolean') return v ? 'true' : 'false';

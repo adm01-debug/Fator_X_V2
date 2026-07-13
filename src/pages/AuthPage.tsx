@@ -96,7 +96,7 @@ export default function AuthPage() {
       if (result.error) toast.error("Erro ao entrar com Google", { description: String(result.error) });
       else if (result.redirected) return;
       else { toast.success("Login com Google realizado!"); navigate("/"); }
-    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Erro inesperado"); }
+    } catch (e) { toast.error(e instanceof Error ? e.message : "Erro inesperado"); }
     finally { setLoading(false); }
   };
 

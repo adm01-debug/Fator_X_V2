@@ -7,6 +7,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/lib/logger';
+import type { DbRow } from '@/types/dbRow';
 
 export type ResearchDepth = 'quick' | 'standard' | 'deep';
 export type SearchStrategy = 'broad' | 'balanced' | 'focused';
@@ -50,7 +51,7 @@ export const DEFAULT_RESEARCH_CONFIG: ResearchConfig = {
 const STORAGE_KEY = 'oracle-research-config-v1';
 const CHANGE_EVENT = 'oracle-research-config-changed';
 
-function mergeWithDefaults(raw: unknown): ResearchConfig {
+function mergeWithDefaults(raw: DbRow): ResearchConfig {
   if (!raw || typeof raw !== 'object') return DEFAULT_RESEARCH_CONFIG;
   return { ...DEFAULT_RESEARCH_CONFIG, ...(raw as Partial<ResearchConfig>) };
 }

@@ -64,7 +64,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
       setNewCollOpen(false);
       setCollName(''); setCollDesc('');
       queryClient.invalidateQueries({ queryKey: ['collections', kbId] });
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro');
     } finally { setSaving(false); }
   };
@@ -131,7 +131,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
       setDocTitle(''); setDocContent(''); setDocSourceUrl('');
       queryClient.invalidateQueries({ queryKey: ['documents', selectedCollectionId] });
       queryClient.invalidateQueries({ queryKey: ['chunks'] });
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro na ingestão');
     } finally { setSaving(false); }
   };
@@ -143,7 +143,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
       if (selectedCollectionId === id) setSelectedCollectionId(null);
       toast.success('Collection removida');
       queryClient.invalidateQueries({ queryKey: ['collections', kbId] });
-    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : 'Erro'); }
+    } catch (e) { toast.error(e instanceof Error ? e.message : 'Erro'); }
   };
 
   const handleDeleteDocument = async (id: string) => {
@@ -152,7 +152,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
       toast.success('Documento removido');
       queryClient.invalidateQueries({ queryKey: ['documents', selectedCollectionId] });
       queryClient.invalidateQueries({ queryKey: ['chunks'] });
-    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : 'Erro'); }
+    } catch (e) { toast.error(e instanceof Error ? e.message : 'Erro'); }
   };
 
   const selectedCollection = collections.find((c: { id: string; name?: string }) => c.id === selectedCollectionId);

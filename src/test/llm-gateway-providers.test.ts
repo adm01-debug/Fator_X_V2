@@ -4,6 +4,7 @@
  * e tratamento de erros HF (503, 429, 500, 502, timeout, queue).
  */
 import { describe, it, expect } from 'vitest';
+import type { DbRow } from '@/types/dbRow';
 
 // ═══ Provider logic is in edge function, so we test the pure logic patterns ═══
 
@@ -43,7 +44,7 @@ const HF_FREE_MODELS = [
 ];
 
 // Simula validateRequest
-function validateRequest(body: unknown): { valid: true; data: Record<string, unknown> } | { valid: false; error: string } {
+function validateRequest(body: DbRow): { valid: true; data: Record<string, unknown> } | { valid: false; error: string } {
   if (!body || typeof body !== 'object') return { valid: false, error: 'Request body must be a JSON object' };
   const b = body as Record<string, unknown>;
   if (typeof b.model !== 'string' || b.model.length < 2 || b.model.length > 200) return { valid: false, error: 'model must be a string (2-200 chars)' };

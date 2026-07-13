@@ -1,3 +1,4 @@
+import type { DbRow } from '@/types/dbRow';
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -49,7 +50,7 @@ const MEMORY_OPTIONS = [
 
 type FormType = Record<string, string | string[]>;
 
-export function StepIdentity({ form, update }: { form: FormType; update: (k: string, v: unknown) => void }) {
+export function StepIdentity({ form, update }: { form: FormType; update: (k: string, v: DbRow) => void }) {
   return (
     <div className="nexus-card space-y-5">
       <h2 className="text-title-sm font-heading font-semibold text-foreground">Identidade do agente</h2>
@@ -62,7 +63,7 @@ export function StepIdentity({ form, update }: { form: FormType; update: (k: str
   );
 }
 
-export function StepType({ form, update }: { form: FormType; update: (k: string, v: unknown) => void }) {
+export function StepType({ form, update }: { form: FormType; update: (k: string, v: DbRow) => void }) {
   return (
     <div className="space-y-4">
       <h2 className="text-title-sm font-heading font-semibold text-foreground">Tipo do agente</h2>
@@ -86,7 +87,7 @@ export function StepType({ form, update }: { form: FormType; update: (k: string,
   );
 }
 
-export function StepModel({ form, update }: { form: FormType; update: (k: string, v: unknown) => void }) {
+export function StepModel({ form, update }: { form: FormType; update: (k: string, v: DbRow) => void }) {
   return (
     <div className="space-y-4">
       <h2 className="text-title-sm font-heading font-semibold text-foreground">Modelo base</h2>
@@ -113,7 +114,7 @@ export function StepModel({ form, update }: { form: FormType; update: (k: string
   );
 }
 
-export function StepPrompt({ form, update }: { form: FormType; update: (k: string, v: unknown) => void }) {
+export function StepPrompt({ form, update }: { form: FormType; update: (k: string, v: DbRow) => void }) {
   return (
     <div className="space-y-4">
       <h2 className="text-title-sm font-heading font-semibold text-foreground">System Prompt</h2>
@@ -197,7 +198,7 @@ export function StepKnowledge({ form, toggle }: { form: FormType; toggle: (id: s
   );
 }
 
-export function StepDeploy({ form, update }: { form: FormType; update: (k: string, v: unknown) => void }) {
+export function StepDeploy({ form, update }: { form: FormType; update: (k: string, v: DbRow) => void }) {
   const envs = [
     { id: "development", label: "Development", desc: "Testes internos" },
     { id: "staging", label: "Staging", desc: "Validação pré-produção" },

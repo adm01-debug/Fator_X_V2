@@ -74,7 +74,7 @@ export function AudioUploadDialog() {
       toast.success(
         `Transcrição concluída (${(data.audio_size_bytes / 1024).toFixed(1)} KB · ${data.model})`,
       );
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro inesperado");
     } finally {
       setLoading(false);

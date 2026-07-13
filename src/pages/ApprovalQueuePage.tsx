@@ -31,7 +31,7 @@ export default function ApprovalQueuePage() {
       setSelectedRun(null);
       setFeedback('');
       queryClient.invalidateQueries({ queryKey: ['hitl_pending'] });
-    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Erro inesperado"); }
+    } catch (e) { toast.error(e instanceof Error ? e.message : "Erro inesperado"); }
     finally { setProcessing(false); }
   };
 
@@ -43,7 +43,7 @@ export default function ApprovalQueuePage() {
       setSelectedRun(null);
       setFeedback('');
       queryClient.invalidateQueries({ queryKey: ['hitl_pending'] });
-    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Erro inesperado"); }
+    } catch (e) { toast.error(e instanceof Error ? e.message : "Erro inesperado"); }
     finally { setProcessing(false); }
   };
 

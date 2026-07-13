@@ -43,7 +43,7 @@ export function AutoExtractionTab() {
       setResult(data?.extracted || 'Nenhuma extração');
       setCostUsd(typeof data?.cost_usd === 'number' ? data.cost_usd : null);
       toast.success('Extração concluída');
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro na extração');
     } finally {
       setIsExtracting(false);

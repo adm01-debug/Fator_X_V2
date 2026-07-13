@@ -233,7 +233,7 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
           }
         }
       }
-    } catch (e: unknown) {
+    } catch (e) {
       if (e.name === 'AbortError') return;
       set({
         error: e instanceof Error ? e.message : 'Erro ao consultar o Oráculo',

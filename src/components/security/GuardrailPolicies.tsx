@@ -44,7 +44,7 @@ export function GuardrailPolicies() {
       setNewOpen(false);
       setGrName('');
       queryClient.invalidateQueries({ queryKey: ['guardrail_policies'] });
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro inesperado');
     } finally {
       setSaving(false);
@@ -52,12 +52,12 @@ export function GuardrailPolicies() {
   };
 
   const handleToggle = async (id: string, enabled: boolean) => {
-    try { await toggleGuardrailPolicy(id, enabled); } catch (e: unknown) { toast.error(e instanceof Error ? e.message : 'Erro'); }
+    try { await toggleGuardrailPolicy(id, enabled); } catch (e) { toast.error(e instanceof Error ? e.message : 'Erro'); }
     queryClient.invalidateQueries({ queryKey: ['guardrail_policies'] });
   };
 
   const handleDelete = async (id: string) => {
-    try { await deleteGuardrailPolicy(id); toast.success('Guardrail removido'); } catch (e: unknown) { toast.error(e instanceof Error ? e.message : 'Erro'); }
+    try { await deleteGuardrailPolicy(id); toast.success('Guardrail removido'); } catch (e) { toast.error(e instanceof Error ? e.message : 'Erro'); }
     queryClient.invalidateQueries({ queryKey: ['guardrail_policies'] });
   };
 
@@ -108,7 +108,7 @@ export function GuardrailPolicies() {
         </div>
       ) : (
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-          {guardrails.map((g: unknown) => (
+          {guardrails.map((g) => (
             <div key={g.id}
               className="p-3 rounded-lg bg-secondary/20 border border-border/30 flex items-center gap-3 group"
             >
@@ -154,7 +154,7 @@ function GuardrailTester() {
       const data = await testGuardrails(testInput.trim());
       setResult(data as Record<string, unknown>);
       toast.success('Verificação concluída!');
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro ao testar guardrails');
     } finally {
       setTesting(false);

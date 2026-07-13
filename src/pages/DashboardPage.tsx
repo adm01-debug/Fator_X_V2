@@ -254,7 +254,7 @@ export default function DashboardPage() {
                     <Button variant="ghost" size="sm" onClick={() => navigate('/monitoring')} className="text-meta font-black h-8 px-4 rounded-xl hover:bg-nexus-emerald/10 tracking-widest uppercase">Logs</Button>
                   </div>
                   <div className="space-y-4 flex-1">
-                    {recentTraces.slice(0, 4).map((trace: unknown) => (
+                    {recentTraces.slice(0, 4).map((trace) => (
                       <div key={trace.id} className="flex items-center justify-between p-5 rounded-[2rem] bg-card border border-border/40 hover:border-nexus-emerald/40 hover:bg-background/80 hover:shadow-xl transition-all duration-300 cursor-pointer group" onClick={() => navigate('/monitoring')}>
                         <div className="flex items-center gap-5 min-w-0">
                           <div className={cn(

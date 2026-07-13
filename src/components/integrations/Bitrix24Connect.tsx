@@ -40,7 +40,7 @@ export function Bitrix24Connect() {
       } else {
         throw new Error('Resposta inválida da API');
       }
-    } catch (err: unknown) {
+    } catch (err) {
       toast.error('Falha no teste: ' + err.message);
     } finally {
       setTesting(false);

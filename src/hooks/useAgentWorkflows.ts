@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import type { DbRow } from '@/types/dbRow';
 
 export interface WorkflowNode {
   id: string;
@@ -129,7 +130,7 @@ export function useWorkflowRuns(workflowId?: string) {
   });
 }
 
-export async function runWorkflow(workflowId: string, input: unknown) {
+export async function runWorkflow(workflowId: string, input: DbRow) {
   const { data, error } = await supabase.functions.invoke('agent-workflow-runner', {
     body: { workflow_id: workflowId, input },
   });

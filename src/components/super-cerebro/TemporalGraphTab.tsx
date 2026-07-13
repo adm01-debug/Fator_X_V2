@@ -1,3 +1,4 @@
+import type { DbRow } from '@/types/dbRow';
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { invokeCerebroBrain } from "@/services/cerebroService";
@@ -92,7 +93,7 @@ export function TemporalGraphTab() {
       try {
         const enhanced = await invokeCerebroBrain({ action: 'temporal_graph' });
         if (enhanced?.timeline?.length) {
-          return enhanced.timeline.map((e: unknown) => ({
+          return enhanced.timeline.map((e: DbRow) => ({
             id: e.id,
             content: `${e.type}: ${JSON.stringify(e.info)}`,
             memory_type: e.type,
@@ -210,7 +211,7 @@ export function TemporalGraphTab() {
           </p>
         ) : (
           <div className="space-y-1.5 max-h-[400px] overflow-y-auto">
-            {timeline.map((m: unknown) => {
+            {timeline.map((m: DbRow) => {
               const memory = m as Record<string, unknown>;
               const content = String(memory.content ?? '');
               const memType = String(memory.memory_type ?? 'semantic');

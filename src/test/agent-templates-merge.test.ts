@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import type { DbRow } from '@/types/dbRow';
 
 /**
  * Testes unitários para a lógica de merge/dedupe/parsing do CreateAgentWizard.
@@ -8,7 +9,7 @@ import { describe, it, expect } from "vitest";
 // ── Replicas das funções puras do CreateAgentWizard ──
 const norm = (s: string) => s.trim().toLowerCase().replace(/\s+/g, " ");
 
-function parseTools(rawTools: unknown): string[] {
+function parseTools(rawTools: DbRow): string[] {
   return Array.isArray(rawTools)
     ? rawTools
         .map((tool) =>

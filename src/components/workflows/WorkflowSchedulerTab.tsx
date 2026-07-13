@@ -60,7 +60,7 @@ export function WorkflowSchedulerTab({ workflows }: WorkflowSchedulerTabProps) {
       queryClient.invalidateQueries({ queryKey: ['workflow-schedules'] });
       toast.success('Agendamento criado!');
       setSelWf('');
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro ao criar agendamento');
     }
   };
@@ -69,7 +69,7 @@ export function WorkflowSchedulerTab({ workflows }: WorkflowSchedulerTabProps) {
     try {
       await updateSchedule(id, { status: currentlyEnabled ? 'paused' : 'active' });
       queryClient.invalidateQueries({ queryKey: ['workflow-schedules'] });
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro ao atualizar agendamento');
     }
   };
@@ -79,7 +79,7 @@ export function WorkflowSchedulerTab({ workflows }: WorkflowSchedulerTabProps) {
       await deleteSchedule(id);
       queryClient.invalidateQueries({ queryKey: ['workflow-schedules'] });
       toast.success('Agendamento removido');
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro ao remover agendamento');
     }
   };

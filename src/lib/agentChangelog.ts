@@ -1,3 +1,4 @@
+import type { DbRow } from '@/types/dbRow';
 /**
  * Nexus Agents Studio — Agent Changelog
  * Generates structured diff entries between two agent versions.
@@ -35,10 +36,10 @@ function getCfg(v: VersionLike): Record<string, unknown> {
   return cfg;
 }
 
-function enabledNames(arr: unknown): string[] {
+function enabledNames(arr: DbRow): string[] {
   if (!Array.isArray(arr)) return [];
   return arr
-    .filter((x: unknown) => x && typeof x === 'object' && ((x as ToolLike).enabled ?? true))
+    .filter((x) => x && typeof x === 'object' && ((x as ToolLike).enabled ?? true))
     .map((x) => String((x as ToolLike).name ?? (x as ToolLike).id ?? ''))
     .filter(Boolean);
 }

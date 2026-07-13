@@ -26,7 +26,7 @@ function useEdgeFunction() {
       if (error) throw error;
       setResult({ data, loading: false, error: null });
       return data;
-    } catch (err: unknown) {
+    } catch (err) {
       const msg = err instanceof Error ? err.message : 'Erro desconhecido';
       setResult({ data: null, loading: false, error: msg });
       toast.error('Erro', { description: msg });

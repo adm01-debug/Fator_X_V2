@@ -94,7 +94,7 @@ export function usePaginatedQuery<T = Record<string, unknown>>(
 
         setData((rows ?? []) as T[]);
         setPagination({ page, pageSize, total, totalPages: Math.ceil(total / pageSize) });
-      } catch (err: unknown) {
+      } catch (err) {
         setError(err instanceof Error ? err.message : 'Query failed');
       } finally {
         setLoading(false);

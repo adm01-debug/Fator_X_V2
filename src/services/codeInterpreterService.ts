@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { logger } from "@/lib/logger";
+import type { DbRow } from '@/types/dbRow';
 
 export type CodeRuntime = "python" | "node" | "deno";
 
@@ -33,7 +34,7 @@ export const codeInterpreterService = {
   async streamExecute(
     runtime: CodeRuntime, 
     code: string, 
-    onEvent: (event: string, data: unknown) => void,
+    onEvent: (event: string, data: DbRow) => void,
     workspace_id?: string
   ): Promise<void> {
     const { data: { session } } = await supabase.auth.getSession();

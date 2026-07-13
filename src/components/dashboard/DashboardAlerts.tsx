@@ -31,7 +31,7 @@ export function DashboardAlerts() {
         <button onClick={() => navigate('/monitoring')} className="text-meta font-semibold text-primary hover:text-primary/80 transition-colors bg-primary/10 px-2 py-0.5 rounded">Ver todos</button>
       </div>
       <div className="space-y-2 relative">
-        {alerts.map((raw: unknown) => {
+        {alerts.map((raw) => {
           const a = (raw ?? {}) as { id?: string; severity?: string; title?: string; created_at?: string };
           return (
             <div key={a.id} className="flex items-center gap-3 text-body-sm p-2 rounded-lg bg-background/50 border border-border/50 hover:border-destructive/30 transition-all cursor-pointer group/alert" onClick={() => navigate('/monitoring')}>

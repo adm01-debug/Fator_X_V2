@@ -39,7 +39,7 @@ export default function LGPDCompliancePage() {
       const a = document.createElement('a'); a.href = url; a.download = `meus-dados-${new Date().toISOString().split('T')[0]}.json`;
       a.click(); URL.revokeObjectURL(url);
       toast.success(`Dados exportados: ${data.traces} traces, ${data.sessions} sessões, ${data.memories} memórias`);
-    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Erro inesperado"); }
+    } catch (e) { toast.error(e instanceof Error ? e.message : "Erro inesperado"); }
     finally { setExporting(false); }
   };
 
@@ -50,7 +50,7 @@ export default function LGPDCompliancePage() {
       const data = await requestDeletion(scope);
       toast.success(`${data.items_deleted} itens deletados (escopo: ${scope})`);
       queryClient.invalidateQueries({ queryKey: ['lgpd_deletions'] });
-    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Erro inesperado"); }
+    } catch (e) { toast.error(e instanceof Error ? e.message : "Erro inesperado"); }
     finally { setDeleting(false); }
   };
 
@@ -59,7 +59,7 @@ export default function LGPDCompliancePage() {
       await manageConsent(purpose, grant);
       toast.success(grant ? 'Consentimento registrado' : 'Consentimento revogado');
       queryClient.invalidateQueries({ queryKey: ['lgpd_consents'] });
-    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Erro inesperado"); }
+    } catch (e) { toast.error(e instanceof Error ? e.message : "Erro inesperado"); }
   };
 
   const purposes = [

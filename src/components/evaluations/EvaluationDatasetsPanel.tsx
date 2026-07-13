@@ -50,7 +50,7 @@ export function EvaluationDatasetsPanel() {
       setNewDsOpen(false);
       setDsName(''); setDsDesc('');
       queryClient.invalidateQueries({ queryKey: ['evaluation_datasets'] });
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro inesperado');
     } finally {
       setSaving(false);
@@ -68,7 +68,7 @@ export function EvaluationDatasetsPanel() {
         tags: caseTags.trim() ? caseTags.split(',').map(t => t.trim()) : [],
       });
       await updateDatasetCaseCount(selectedDatasetId);
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro'); setSaving(false); return;
     }
 
@@ -85,7 +85,7 @@ export function EvaluationDatasetsPanel() {
       await deleteTestCase(id);
       toast.success('Test case removido');
       queryClient.invalidateQueries({ queryKey: ['test_cases', selectedDatasetId] });
-    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : 'Erro'); }
+    } catch (e) { toast.error(e instanceof Error ? e.message : 'Erro'); }
   };
 
   const handleDeleteDataset = async (id: string) => {
@@ -93,7 +93,7 @@ export function EvaluationDatasetsPanel() {
       const { supabaseExternal } = await import('@/integrations/supabase/externalClient');
       await supabaseExternal.from('test_cases').delete().eq('dataset_id', id);
       await supabaseExternal.from('evaluation_datasets').delete().eq('id', id);
-    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : 'Erro'); return; }
+    } catch (e) { toast.error(e instanceof Error ? e.message : 'Erro'); return; }
     if (selectedDatasetId === id) setSelectedDatasetId(null);
     toast.success('Dataset removido');
     queryClient.invalidateQueries({ queryKey: ['evaluation_datasets'] });

@@ -31,6 +31,7 @@ import {
 import type { AgentVersion, RestoreOptions } from "@/services/agentsService";
 import { getVersionTools, getVersionPrompt, getVersionScalar } from "@/lib/agentChangelog";
 import { computeRestoreDiff, type FieldChange, type RiskLevel } from "@/components/agents/detail/restoreDiffHelpers";
+import type { DbRow } from '@/types/dbRow';
 
 interface Props {
   open: boolean;
@@ -314,7 +315,7 @@ function RestoreOption({ id, checked, onChange, icon, label, meta, preview }: {
 /*  Live diff preview                                                  */
 /* ------------------------------------------------------------------ */
 
-function fmtValue(v: unknown, max = 60): string {
+function fmtValue(v: DbRow, max = 60): string {
   if (v === null || v === undefined || v === '') return '—';
   if (Array.isArray(v)) {
     return v.length === 0 ? '∅' : v.slice(0, 4).join(', ') + (v.length > 4 ? ` +${v.length - 4}` : '');
@@ -634,7 +635,7 @@ function LiveDiffPreview({
  * estruturados (parâmetros do modelo, listas de tools) tenham uma linha por
  * propriedade — o que torna o realce muito mais útil.
  */
-function toDiffText(v: unknown): string {
+function toDiffText(v: DbRow): string {
   if (v === null || v === undefined) return '';
   if (typeof v === 'string') return v;
   try {

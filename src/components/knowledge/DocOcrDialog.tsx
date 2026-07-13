@@ -94,7 +94,7 @@ export function DocOcrDialog() {
       });
       setResult(data.text || "(sem resposta)");
       toast.success(`OCR concluído (${data.model})`);
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro inesperado");
     } finally {
       setLoading(false);

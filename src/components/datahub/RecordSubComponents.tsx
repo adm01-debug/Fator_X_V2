@@ -10,13 +10,14 @@ import { ENTITY_MAPPINGS } from "@/config/datahub-entities";
 import { supabaseExternal } from "@/integrations/supabase/externalClient";
 import { logger } from "@/lib/logger";
 import { toast } from "sonner";
+import type { DbRow } from '@/types/dbRow';
 
 /* ── Helpers ─────────────────────────────────────────── */
 
 const SENSITIVE_MARKER = /^\*{3}$|REDACTED/;
 export const NON_EDITABLE = new Set(['id', 'created_at', 'updated_at', 'search_vector', 'is_customer', 'is_supplier', 'is_carrier']);
 
-export function isSensitive(value: unknown): boolean {
+export function isSensitive(value: DbRow): boolean {
   return typeof value === 'string' && SENSITIVE_MARKER.test(value);
 }
 
@@ -37,7 +38,7 @@ export function FieldValue({ label, value, sensitive, editable, onSave }: {
       await onSave?.(editValue);
       setEditing(false);
       toast.success(`Campo "${label}" atualizado`);
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(`Erro ao salvar: ${e instanceof Error ? e.message : String(e)}`);
     } finally { setSaving(false); }
   };

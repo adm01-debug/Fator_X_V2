@@ -51,7 +51,7 @@ export default function DataHubPage() {
     try {
       const now = new Date();
       // Start streaming connection tests
-      await streamInvoke('test_connections', {}, (event: string, data: unknown) => {
+      await streamInvoke('test_connections', {}, (event: string, data) => {
         if (event === 'connection') {
           setConnections((prev) => prev.map((c) => {
             if (c.id === data.id) {
@@ -72,7 +72,7 @@ export default function DataHubPage() {
         }
       });
 
-    } catch (e: unknown) { 
+    } catch (e) { 
       toast.error(`Erro ao testar conexões: ${e instanceof Error ? e.message : String(e)}`); 
     } finally { 
       setTestingConnections(false); 
@@ -86,13 +86,13 @@ export default function DataHubPage() {
     setIsStreaming(true);
 
     try { 
-      await streamInvoke('list_entities', {}, (event: string, data: unknown) => {
+      await streamInvoke('list_entities', {}, (event: string, data) => {
         if (event === 'entity_count') {
           setEntityCounts(prev => ({ ...prev, [data.id]: data.count }));
         }
       });
 
-    } catch (e: unknown) { 
+    } catch (e) { 
       toast.error(`Erro ao carregar contagens: ${e instanceof Error ? e.message : String(e)}`); 
     } finally { 
       setLoadingCounts(false); 

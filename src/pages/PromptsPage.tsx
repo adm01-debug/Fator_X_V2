@@ -24,7 +24,7 @@ export default function PromptsPage() {
     queryFn: listAllPromptVersions,
   });
 
-  const agentMap = new Map(agents.map((a: unknown) => [a.id, a]));
+  const agentMap = new Map(agents.map((a) => [a.id, a]));
   const grouped = new Map<string, typeof prompts[0]>();
   for (const p of prompts) {
     if (!grouped.has(p.agent_id) || p.version > (grouped.get(p.agent_id)!.version)) {

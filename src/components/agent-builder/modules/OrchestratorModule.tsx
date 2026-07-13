@@ -79,7 +79,7 @@ export function OrchestratorModule() {
       const result = await runWorkflow(active.id, parsed);
       toast.success('Execução concluída');
       logger.info('Workflow execution result', { workflow_id: active.id, result });
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error((e instanceof Error ? e.message : null) || 'Falha na execução');
     } finally {
       setRunning(false);

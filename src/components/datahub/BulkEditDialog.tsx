@@ -52,7 +52,7 @@ export function BulkEditDialog({
       toast.success(`${result?.updated_count ?? selectedRecords.length} registros atualizados`);
       handleClose();
       onSuccess();
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(`Erro: ${e instanceof Error ? e.message : String(e)}`);
     } finally {
       setSaving(false);

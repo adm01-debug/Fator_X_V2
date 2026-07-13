@@ -50,7 +50,7 @@ export function TestExecutionPanel({ testCases }: TestExecutionPanelProps) {
       setResults(mapped);
       const passRate = data?.pass_rate ?? Math.round((mapped.filter((r) => r.passed).length / mapped.length) * 100);
       toast.success(`Testes concluídos: ${passRate}% aprovados (${data?.passed ?? 0}/${data?.total ?? mapped.length}) • Latência média: ${data?.avg_latency_ms ?? 0}ms`);
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro inesperado');
     } finally {
       setRunning(false);

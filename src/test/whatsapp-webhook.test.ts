@@ -1,3 +1,4 @@
+import type { DbRow } from '@/types/dbRow';
 /**
  * WhatsApp webhook routing tests (next-frontier sprint #2)
  *
@@ -124,7 +125,7 @@ function parseFormBody(body: string): Record<string, string> {
 
 type Provider = 'twilio' | 'meta' | 'zapi' | 'evolution' | 'unknown';
 
-function detectProvider(headers: Record<string, string>, parsed: unknown): Provider {
+function detectProvider(headers: Record<string, string>, parsed: DbRow): Provider {
   if (headers['x-twilio-signature']) return 'twilio';
   if (headers['x-hub-signature-256']) return 'meta';
   if (parsed && typeof parsed === 'object') {

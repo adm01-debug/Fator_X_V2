@@ -4,6 +4,7 @@
  * lógica de `restoreAgentVersion` (copyPrompt / copyTools / copyModel).
  */
 import type { AgentVersion } from '@/services/agentsService';
+import type { DbRow } from '@/types/dbRow';
 
 export type RiskLevel = 'critical' | 'high' | 'medium' | 'low';
 
@@ -106,23 +107,23 @@ function cfg(v?: AgentVersion | null): Record<string, unknown> {
   return c as Record<string, unknown>;
 }
 
-function toolName(t: unknown): string {
+function toolName(t: DbRow): string {
   if (!t || typeof t !== 'object') return String(t);
   const obj = t as Record<string, unknown>;
   return String(obj.name ?? obj.id ?? obj.type ?? 'tool');
 }
 
-function toolKey(t: unknown): string {
+function toolKey(t: DbRow): string {
   return toolName(t).toLowerCase();
 }
 
-function isEnabled(t: unknown): boolean {
+function isEnabled(t: DbRow): boolean {
   if (!t || typeof t !== 'object') return true;
   const e = (t as Record<string, unknown>).enabled;
   return e === undefined ? true : !!e;
 }
 
-function eqLoose(a: unknown, b: unknown): boolean {
+function eqLoose(a: DbRow, b: DbRow): boolean {
   if (a === b) return true;
   if (a == null && b == null) return true;
   if (a == null || b == null) return false;

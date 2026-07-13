@@ -12,6 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import { logger } from '@/lib/logger';
 import { startTrace, type SpanKind } from '@/lib/tracing';
+import type { DbRow } from '@/types/dbRow';
 
 /**
  * Wraps a Supabase Edge Function invoke with a complete trace.
@@ -19,15 +20,15 @@ import { startTrace, type SpanKind } from '@/lib/tracing';
  */
 async function tracedInvoke<T = unknown>(
   functionName: string,
-  body: unknown,
+  body: DbRow,
   options: {
     spanKind?: SpanKind;
     agentId?: string;
     sessionId?: string;
     workflowId?: string;
-    extractCostUsd?: (data: unknown) => number | undefined;
-    extractTokens?: (data: unknown) => { input?: number; output?: number } | undefined;
-    extractModel?: (body: unknown) => string | undefined;
+    extractCostUsd?: (data: DbRow) => number | undefined;
+    extractTokens?: (data: DbRow) => { input?: number; output?: number } | undefined;
+    extractModel?: (body: DbRow) => string | undefined;
   } = {}
 ): Promise<T> {
   const ctx = startTrace({
@@ -173,7 +174,7 @@ export async function invokeTestRunner(body: Record<string, unknown>) {
  */
 export async function invokeTracedFunction<T = unknown>(
   functionName: string,
-  body: unknown,
+  body: DbRow,
   options?: Parameters<typeof tracedInvoke>[2]
 ): Promise<T> {
   return tracedInvoke<T>(functionName, body, options);

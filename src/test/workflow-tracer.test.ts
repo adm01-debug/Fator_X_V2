@@ -53,14 +53,14 @@ vi.mock('@/lib/tracing', async () => {
     withTrace: async <T>(
       name: string,
       fn: (
-        addSpan: (s: unknown) => void,
+        addSpan: (s: DbRow) => void,
         ctx: import('@/lib/tracing').TraceContext
       ) => Promise<T>,
       options: import('@/lib/tracing').TraceOptions = {}
     ) => {
       const ctx = actual.startTrace({ ...options, rootName: name });
       try {
-        const result = await fn(((s: unknown) => ctx.addLegacySpan(s as never)) as never, ctx);
+        const result = await fn(((s: DbRow) => ctx.addLegacySpan(s as never)) as never, ctx);
         const traceData = ctx.end('ok');
         capturedTraces.push({ name, ...traceData });
         return result;
@@ -74,6 +74,7 @@ vi.mock('@/lib/tracing', async () => {
 });
 
 import { executeWorkflow } from '@/services/workflowsService';
+import type { DbRow } from '@/types/dbRow';
 
 describe('executeWorkflow — tracer instrumentation', () => {
   beforeEach(() => {

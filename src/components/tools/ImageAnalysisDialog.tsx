@@ -90,7 +90,7 @@ export function ImageAnalysisDialog() {
         setClasses(data.scores);
         toast.success(`NSFW: ${data.is_nsfw ? "SIM" : "NÃO"}`);
       }
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro inesperado");
     } finally {
       setLoading(false);

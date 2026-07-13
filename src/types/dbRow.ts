@@ -16,4 +16,4 @@
  * código legado, não uma licença para tipagem frouxa.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type DbRow = { [key: string]: any };
+export type DbRow = any;

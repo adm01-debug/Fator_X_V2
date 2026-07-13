@@ -3,13 +3,14 @@
  */
 import { useMemo } from "react";
 import { Plus, Minus, Equal } from "lucide-react";
+import type { DbRow } from '@/types/dbRow';
 
 interface DiffLine {
   type: "add" | "remove" | "context";
   text: string;
 }
 
-function diff(before: unknown, after: unknown): DiffLine[] {
+function diff(before: DbRow, after: DbRow): DiffLine[] {
   const beforeStr = JSON.stringify(before, null, 2) || "";
   const afterStr = JSON.stringify(after, null, 2) || "";
   const beforeLines = beforeStr.split("\n");

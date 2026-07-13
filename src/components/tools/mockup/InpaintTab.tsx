@@ -25,7 +25,7 @@ export function InpaintTab() {
       setResultUrl(base64ToDataUrl(data.image_base64));
       toast.success(`Inpaint concluído (${data.model})`);
       if (data.note) toast.info(data.note);
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro inesperado");
     } finally {
       setLoading(false);

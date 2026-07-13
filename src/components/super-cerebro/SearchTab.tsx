@@ -70,7 +70,7 @@ export function SearchTab() {
 
   useEffect(() => {
     listKnowledgeBases()
-      .then((kbs) => setKnowledgeBases(kbs.map((kb: unknown) => ({ id: kb.id, name: kb.name }))))
+      .then((kbs) => setKnowledgeBases(kbs.map((kb) => ({ id: kb.id, name: kb.name }))))
       .catch(() => {
         /* KBs unavailable — search still works without filter */
       });
@@ -106,7 +106,7 @@ export function SearchTab() {
       const next = [trimmed, ...history.filter((h) => h !== trimmed)].slice(0, HISTORY_MAX);
       setHistory(next);
       saveHistory(next);
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro na consulta');
     } finally {
       setIsSearching(false);
@@ -145,7 +145,7 @@ export function SearchTab() {
       toast.success(
         `Re-ranking concluído! Método: ${result.method} • ${result.total_input} chunks → top ${result.top_k}`,
       );
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro no re-ranking');
     } finally {
       setIsReranking(false);
@@ -164,7 +164,7 @@ export function SearchTab() {
       });
       setTieredResults(result);
       toast.success(`Busca hierárquica concluída! Economia: ${result.tokensSaved} tokens`);
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error('Erro na busca tiered: ' + e.message);
     } finally {
       setIsTieredSearching(false);

@@ -78,7 +78,7 @@ export default function WorkflowsPage() {
       toast.success('Workflow salvo no banco!');
       setDialogOpen(false); setNewName(''); setNewSteps('');
       queryClient.invalidateQueries({ queryKey: ['workflows_list'] });
-    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : 'Erro inesperado'); }
+    } catch (e) { toast.error(e instanceof Error ? e.message : 'Erro inesperado'); }
   };
 
   const handleDelete = async (id: string) => {
@@ -112,7 +112,7 @@ export default function WorkflowsPage() {
           setExecuting(null);
         }
       });
-    } catch (e: unknown) { 
+    } catch (e) { 
       toast.error(e instanceof Error ? e.message : 'Erro inesperado'); 
       setExecuting(null);
     }

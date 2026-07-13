@@ -28,7 +28,7 @@ export function MCPServerPanel() {
       const args = testQuery.trim() ? JSON.parse(testQuery) : {};
       const data = await invokeDatahubMCPTool(testTool, args);
       setMcpResult(data);
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro ao executar MCP tool');
     } finally {
       setTesting(false);

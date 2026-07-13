@@ -57,7 +57,7 @@ export default function MCPServersPage() {
       setOpen(false);
       setName(""); setUrl(""); setTransport("streamable-http");
     },
-    onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "Erro ao registrar"),
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao registrar"),
   });
 
   const removeMut = useMutation({
@@ -66,7 +66,7 @@ export default function MCPServersPage() {
       toast.success("Servidor removido");
       qc.invalidateQueries({ queryKey: ["mcp_servers"] });
     },
-    onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "Erro ao remover"),
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao remover"),
   });
 
   const canSubmit = name.trim().length > 1 && /^https?:\/\/.+/i.test(url.trim());
