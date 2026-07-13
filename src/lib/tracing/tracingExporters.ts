@@ -87,7 +87,7 @@ export async function exportUsageRecord(trace: TraceData): Promise<void> {
     0
   );
   try {
-    await (supabaseExternal.from('usage_records').insert as Function)({
+    await (supabaseExternal.from('usage_records').insert as unknown as (row: unknown) => Promise<unknown>)({
       agent_id: trace.agent_id,
       record_type: 'llm_call',
       cost_usd: totalCost,
