@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import type { DbRow } from '@/types/dbRow';
 import {
   getAgentBasic,
   listPromptVersions,
@@ -46,7 +47,7 @@ export default function PromptEditorPage() {
     enabled: !!agentId,
   });
 
-  const activeVersion = versions.find((v: { is_active?: boolean }) => v.is_active) || versions[0];
+  const activeVersion = versions.find((v: DbRow) => v.is_active) || versions[0];
 
   const [content, setContent] = useState("");
   const [summary, setSummary] = useState("");
@@ -128,7 +129,7 @@ export default function PromptEditorPage() {
   const score = computeScore(content);
   const scoreItems = Object.entries(score);
   const scorePercent = Math.round((scoreItems.filter(([, v]) => v).length / scoreItems.length) * 100);
-  const diffVersion = versions.find((v: { id: string }) => v.id === diffVersionId);
+  const diffVersion = versions.find((v: DbRow) => v.id === diffVersionId);
 
   // Telemetry data simulation
   /* Telemetry data simulation */
@@ -292,7 +293,7 @@ export default function PromptEditorPage() {
               </div>
               <ScrollArea className="h-[600px]">
                 <div className="divide-y divide-border/10">
-                  {versions.map((v: { id: string; version: number | string; is_active?: boolean; created_at: string; created_by?: string | null }) => (
+                  {versions.map((v: DbRow) => (
                     <div key={v.id}
                       className={cn(
                         "p-5 cursor-pointer transition-all hover:bg-primary/[0.02]",
@@ -365,7 +366,7 @@ export default function PromptEditorPage() {
                   <div className="flex-1 p-6 rounded-3xl bg-secondary/20 border border-border/10 font-mono text-[13px] leading-relaxed overflow-auto max-h-[500px] scrollbar-thin">
                     {(() => {
                       const diffs = diffLines(activeVersion?.content || '', diffVersion.content);
-                      return diffs.map((d: { type: string; value: string }, idx: number) => (
+                      return diffs.map((d: DbRow, idx: number) => (
                         <div key={idx} className={cn(
                           "px-2 py-0.5 rounded",
                           d.added && "bg-nexus-emerald/10 text-nexus-emerald border-l-2 border-nexus-emerald",

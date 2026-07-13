@@ -25,6 +25,7 @@ import { Plus, Save, Play, Trash2, Loader2, BookOpen, Wand2, LayoutDashboard } f
 import { nodeTypes, NODE_PALETTE } from '../orchestrator/nodes/CustomNodes';
 import { toast } from 'sonner';
 import { SectionTitle } from '../ui';
+import type { DbRow } from '@/types/dbRow';
 
 export function OrchestratorModule() {
   const agent = useAgentBuilderStore((s) => s.agent);
@@ -149,7 +150,7 @@ export function OrchestratorModule() {
     const name = prompt('Nome do workflow?');
     if (!name) return;
     createWorkflow.mutate({ name, workspace_id: workspaceId }, {
-      onSuccess: (w: { id: string }) => setActiveId(w.id),
+      onSuccess: (w: DbRow) => setActiveId(w.id),
     });
   };
 

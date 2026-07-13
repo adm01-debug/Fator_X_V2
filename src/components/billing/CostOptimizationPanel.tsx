@@ -10,6 +10,7 @@ import { Lightbulb, TrendingDown, ArrowRight, Zap, DollarSign, AlertTriangle, Ch
 import { getAgentUsage, getModelPricing } from '@/services/billingService';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+import type { DbRow } from '@/types/dbRow';
 
 interface Recommendation {
   id: string;
@@ -71,8 +72,8 @@ export function CostOptimizationPanel() {
       if ((agent.status === 'production' || agent.status === 'staging') && agent.updated_at) {
         const lastUpdate = new Date(agent.updated_at);
         if (lastUpdate < sevenDaysAgo) {
-          const agentUsage = usage.filter((u: { agent_id: string }) => u.agent_id === agent.id);
-          const recentUsage = agentUsage.filter((u: { date: string }) => new Date(u.date) > sevenDaysAgo);
+          const agentUsage = usage.filter((u: DbRow) => u.agent_id === agent.id);
+          const recentUsage = agentUsage.filter((u: DbRow) => new Date(u.date) > sevenDaysAgo);
           if (recentUsage.length === 0) {
             recs.push({
               id: `idle-${agent.id}`,

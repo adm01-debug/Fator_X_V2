@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Sparkles, Loader2, Cpu, Zap, Brain } from 'lucide-react';
 import { toast } from 'sonner';
+import type { DbRow } from '@/types/dbRow';
 
 const MODELS = [
   { id: 'claude-opus-4.6', icon: '🟤', title: 'Claude Opus 4.6', description: 'Anthropic · 200K ctx · $15/$75 por 1M', badge: <NexusBadge color="orange">Premium</NexusBadge>, accentColor: 'hsl(var(--nexus-gold))' },
@@ -234,7 +235,7 @@ export function BrainModule() {
           </p>
           {skills.length > 0 && (
             <div className="flex flex-wrap gap-1 mt-2">
-              {skills.slice(0, 10).map((s: { id: string; name: string }) => (
+              {skills.slice(0, 10).map((s: DbRow) => (
                 <Badge key={s.id} variant="outline" className="text-meta">{s.name}</Badge>
               ))}
               {skills.length > 10 && <Badge variant="secondary" className="text-meta">+{skills.length - 10} mais</Badge>}

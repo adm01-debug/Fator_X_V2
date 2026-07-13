@@ -14,7 +14,7 @@ function makeQB() {
   const chain = ['select', 'eq', 'order', 'limit', 'delete', 'update', 'in', 'is', 'neq', 'gte', 'lte'];
   for (const m of chain) qb[m] = vi.fn(() => qb);
   qb.upsert = vi.fn().mockResolvedValue({ data: null, error: null });
-  qb.then = (resolve: (v: { data: DbRow[]; error: null }) => void) => resolve({ data: [], error: null });
+  qb.then = (resolve: (v: DbRow) => void) => resolve({ data: [], error: null });
   return qb;
 }
 

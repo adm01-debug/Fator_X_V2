@@ -3,6 +3,7 @@
  */
 
 import { fromTable } from '@/lib/supabaseExtended';
+import type { DbRow } from '@/types/dbRow';
 
 export type {
   BackoffStrategy, CircuitState, DeadLetterAction, RetryPolicy,
@@ -154,5 +155,5 @@ export async function getDeadLetterStats(): Promise<{ total: number; pending: nu
   const { data, error } = await fromTable('dead_letter_queue').select('status');
   if (error) throw error;
   const items = data ?? [];
-  return { total: items.length, pending: items.filter((i: { status: string }) => i.status === 'pending').length, resolved: items.filter((i: { status: string }) => i.status === 'resolved').length, retried: items.filter((i: { status: string }) => i.status === 'retried').length, discarded: items.filter((i: { status: string }) => i.status === 'discarded').length };
+  return { total: items.length, pending: items.filter((i: DbRow) => i.status === 'pending').length, resolved: items.filter((i: DbRow) => i.status === 'resolved').length, retried: items.filter((i: DbRow) => i.status === 'retried').length, discarded: items.filter((i: DbRow) => i.status === 'discarded').length };
 }

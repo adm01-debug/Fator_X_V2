@@ -87,7 +87,7 @@ export async function getCollectionStats(collectionId: string) {
     .select('id', { count: 'exact', head: false })
     .eq('collection_id', collectionId);
 
-  const docIds = (docsResult.data ?? []).map((d: { id: string }) => d.id);
+  const docIds = (docsResult.data ?? []).map((d: DbRow) => d.id);
 
   // Count chunks belonging to those documents (not to collectionId directly)
   let chunksCount = 0;
@@ -147,6 +147,7 @@ export async function getChunkEmbeddingStats() {
 
 export type { RerankResult, RerankResponse, DocOcrAction, DocOcrOptions, DocOcrResult } from './types/knowledgeTypes';
 import type { RerankResponse, DocOcrOptions, DocOcrResult } from './types/knowledgeTypes';
+import type { DbRow } from '@/types/dbRow';
 
 /**
  * Rerank chunks using the rag-rerank edge function.
@@ -198,7 +199,7 @@ export async function fetchChunksForRerank(kbId?: string, limit = 50) {
       .from('documents')
       .select('id, collection_id, collections!inner(knowledge_base_id)')
       .eq('collections.knowledge_base_id', kbId);
-    const docIds = (docs || []).map((d: { id: string }) => d.id);
+    const docIds = (docs || []).map((d: DbRow) => d.id);
     if (docIds.length === 0) return [];
     query = query.in('document_id', docIds);
   }

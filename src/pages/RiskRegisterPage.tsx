@@ -23,6 +23,7 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
+import type { DbRow } from '@/types/dbRow';
 
 type RiskCategory = 'strategic' | 'operational' | 'technical' | 'security' | 'compliance' | 'financial' | 'reputational';
 type RiskTreatment = 'accept' | 'mitigate' | 'transfer' | 'avoid';
@@ -104,15 +105,7 @@ export default function RiskRegisterPage() {
   }, [risks]);
 
   const createRisk = useMutation({
-    mutationFn: async (input: {
-      title: string;
-      description: string;
-      category: RiskCategory;
-      likelihood: number;
-      impact: number;
-      treatment: RiskTreatment;
-      mitigation_plan: string;
-    }) => {
+    mutationFn: async (input: DbRow) => {
       const { data: user } = await supabase.auth.getUser();
       if (!user.user) throw new Error('não autenticado');
       const { error } = await supabase.from('risk_register').insert({
@@ -312,15 +305,7 @@ function StatCard({ icon: Icon, label, value, tone }: StatCardProps) {
 }
 
 interface NewRiskDialogProps {
-  onSubmit: (v: {
-    title: string;
-    description: string;
-    category: RiskCategory;
-    likelihood: number;
-    impact: number;
-    treatment: RiskTreatment;
-    mitigation_plan: string;
-  }) => void;
+  onSubmit: (v: DbRow) => void;
   isPending: boolean;
 }
 
