@@ -92,7 +92,7 @@ export default function IncidentPlaybooksPage() {
     } catch (e) { toast.error('Falha ao criar', { description: String(e) }); }
   };
 
-  const useTemplate = async (idx: number) => {
+  const applyTemplate = async (idx: number) => {
     if (!workspaceId || !user) return;
     const t = PLAYBOOK_TEMPLATES[idx];
     try {
@@ -257,7 +257,7 @@ export default function IncidentPlaybooksPage() {
                   <Badge variant="outline">{TRIGGER_LABELS[t.trigger_type]}</Badge>
                   {t.actions.map((a, j) => <Badge key={j} variant="secondary" className="text-meta">{ACTION_LABELS[a.type]}</Badge>)}
                 </div>
-                <Button size="sm" className="w-full" onClick={() => useTemplate(i)}>Usar template</Button>
+                <Button size="sm" className="w-full" onClick={() => applyTemplate(i)}>Usar template</Button>
               </CardContent>
             </Card>
           ))}
