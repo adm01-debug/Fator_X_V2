@@ -5,11 +5,11 @@ import { callLovable, callOpenRouter, callAnthropic, callOpenAICompatible, callH
 import { 
   getCorsHeaders, 
   handleCorsPreflight, 
-  getRateLimitIdentifier, 
-  createRateLimitResponse, 
-  RATE_LIMITS,
+  _getRateLimitIdentifier, 
+  _createRateLimitResponse, 
+  _RATE_LIMITS,
   parseBody,
-  jsonResponse,
+  _jsonResponse,
   errorResponse
 } from "../_shared/mod.ts";
 import { LLMGatewayContracts } from "../_shared/contracts.ts";
@@ -581,7 +581,7 @@ serve(async (req) => {
     // ═══ BUDGET ═══
     const budget = await checkBudget(supabase, workspaceId ?? undefined, agent_id);
     if (!budget.allowed) return new Response(JSON.stringify({ error: 'Budget exceeded', reason: budget.reason }), { status: 402, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
-    const budgetWarningHeader: Record<string, string> = budget.warning ? { 'X-Budget-Warning': `${(budget.pct ?? 0).toFixed(0)}% used` } : {};
+    const _budgetWarningHeader: Record<string, string> = budget.warning ? { 'X-Budget-Warning': `${(budget.pct ?? 0).toFixed(0)}% used` } : {};
 
     // ═══ RESOLVE PROVIDER CHAIN ═══
     const chain = await resolveFallbackChain(supabase, workspaceId ?? undefined, model);

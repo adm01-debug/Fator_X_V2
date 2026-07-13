@@ -10,7 +10,7 @@ serve(async (req) => {
     return new Response(JSON.stringify({ error: 'SSE required' }), { status: 400, headers: getCorsHeaders(req) });
   }
 
-  const { goal, model = 'claude-3-5-sonnet-20241022' } = await req.json();
+  const { _goal, _model = 'claude-3-5-sonnet-20241022' } = await req.json();
 
   const { readable, writable } = new TransformStream();
   const writer = writable.getWriter();

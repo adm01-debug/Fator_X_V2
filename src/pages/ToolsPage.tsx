@@ -173,7 +173,7 @@ export default function ToolsPage() {
       await toggleToolIntegration(id, enabled);
       toast.success(enabled ? 'Ferramenta ativada' : 'Ferramenta desativada');
       queryClient.invalidateQueries({ queryKey: ['tool_integrations'] });
-    } catch (e) {
+    } catch (_e) {
       toast.error('Erro ao atualizar estado');
     }
   };
@@ -183,7 +183,7 @@ export default function ToolsPage() {
       await deleteToolIntegration(id);
       toast.success('Integração descontinuada');
       queryClient.invalidateQueries({ queryKey: ['tool_integrations'] });
-    } catch (e) {
+    } catch (_e) {
       toast.error('Erro ao remover integração');
     }
   };

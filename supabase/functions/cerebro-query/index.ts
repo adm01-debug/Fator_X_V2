@@ -1,7 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse, checkRateLimit, getRateLimitIdentifier, createRateLimitResponse, RATE_LIMITS } from "../_shared/mod.ts";
+import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse, _checkRateLimit, _getRateLimitIdentifier, _createRateLimitResponse, _RATE_LIMITS } from "../_shared/mod.ts";
 
 // CORS handled by _shared/cors.ts — dynamic origin whitelist
 
@@ -37,7 +37,7 @@ serve(async (req) => {
     const { query } = validation;
     const stream = rawBody.stream === true;
 
-    const { data: member } = await supabase.from('workspace_members').select('workspace_id').eq('user_id', user.id).limit(1).single();
+    const { data: _member } = await supabase.from('workspace_members').select('workspace_id').eq('user_id', user.id).limit(1).single();
 
     // ═══ Gather context from LOCAL Supabase tables ═══
     const facts: string[] = [];

@@ -1,7 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse, checkRateLimit, getRateLimitIdentifier, createRateLimitResponse, RATE_LIMITS } from "../_shared/mod.ts";
+import { getCorsHeaders, _handleCorsPreflight, _jsonResponse, _errorResponse, checkRateLimit, _getRateLimitIdentifier, _createRateLimitResponse, _RATE_LIMITS } from "../_shared/mod.ts";
 
 // CORS handled by _shared/cors.ts — dynamic origin whitelist
 
@@ -132,7 +132,7 @@ serve(async (req) => {
     };
 
     // ═══ STAGE 1: Parallel Polling (with Streaming) ═══
-    const stage1Start = Date.now();
+    const _stage1Start = Date.now();
     
     // Check if client wants streaming
     const isStream = req.headers.get('accept') === 'text/event-stream';
@@ -226,7 +226,7 @@ serve(async (req) => {
           let stage2Results: any[] = [];
           if (enable_peer_review) {
             await sendUpdate('stage', { stage: 2, label: 'Realizando Peer-Review...' });
-            const anonymized = successfulResponses.map((r, i) => `## Resposta ${String.fromCharCode(65 + i)}\n${r.content}`).join('\n\n---\n\n');
+            const _anonymized = successfulResponses.map((r, i) => `## Resposta ${String.fromCharCode(65 + i)}\n${r.content}`).join('\n\n---\n\n');
             const reviewPrompt = `Pergunta: "${query}"\n\nAvalie as respostas anônimas acima. Identifique pontos de consenso e divergências. Cite especificamente "Resposta A", "Resposta B", etc.\n\nResponda APENAS em JSON válido com este formato: {"consensus_degree": number, "consensus_points": [{"claim": string, "category": "fact"|"opinion", "consensusLevel": "strong"|"partial"|"disputed"}], "divergences": [string]}`;
             
             const reviewModel = chairman_model || successfulResponses[0].model;

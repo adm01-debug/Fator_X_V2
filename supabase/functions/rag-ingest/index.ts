@@ -39,7 +39,7 @@ serve(async (req) => {
     if (!user) throw new Error('Unauthorized');
 
     const body: IngestRequest = await req.json();
-    const { document_id, content, chunk_size = 1000, chunk_overlap = 200, contextual_chunking = false } = body;
+    const { document_id, content, chunk_size = 1000, chunk_overlap = 200, _contextual_chunking = false } = body;
 
     if (isStream) {
       const { readable, writable } = new TransformStream();

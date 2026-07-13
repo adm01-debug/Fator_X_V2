@@ -32,7 +32,7 @@ function generateTraceId(): string {
 }
 
 // ─── Form-urlencoded parser (Twilio) ───
-function parseFormBody(body: string): Record<string, string> {
+function _parseFormBody(body: string): Record<string, string> {
   const params = new URLSearchParams(body);
   const result: Record<string, string> = {};
   for (const [k, v] of params.entries()) result[k] = v;

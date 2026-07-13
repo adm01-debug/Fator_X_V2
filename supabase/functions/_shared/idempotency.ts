@@ -1,4 +1,4 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.42.7';
+import { _createClient } from 'https://esm.sh/@supabase/supabase-js@2.42.7';
 
 /**
  * Idempotency Helper
