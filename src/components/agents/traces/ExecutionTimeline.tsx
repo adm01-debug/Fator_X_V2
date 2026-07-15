@@ -595,7 +595,7 @@ const TraceItem = forwardRef<HTMLLIElement, TraceItemProps>(
     };
 
     return (
-      <li role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
+      <li onKeyDown={handleKeyboardClick}
         ref={ref}
         id={`trace-${trace.id}`}
         role="option"

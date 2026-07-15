@@ -110,7 +110,7 @@ export function OnboardingTour() {
       onClick={dismiss}
     >
       // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- overlay dismissível — teclado tratado no wrapper Dialog
-      <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
+      <div
         className="w-full max-w-md rounded-2xl border border-primary/20 bg-background/95 backdrop-blur-xl shadow-nexus-2xl shadow-primary/10 overflow-hidden animate-fade-in-up"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
