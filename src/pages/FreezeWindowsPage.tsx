@@ -92,6 +92,7 @@ export default function FreezeWindowsPage() {
     },
   });
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
   const now = new Date();
 
   const stats = useMemo(() => {

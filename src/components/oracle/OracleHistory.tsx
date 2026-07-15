@@ -28,6 +28,7 @@ export function OracleHistory({ onClose }: OracleHistoryProps) {
     setLoading(false);
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
   useEffect(() => { load(); }, [filters]);
 
   const handleDelete = async (id: string) => {

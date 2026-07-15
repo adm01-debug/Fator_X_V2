@@ -61,6 +61,7 @@ export default function PromptEditorPage() {
       setSummary("");
       setDirty(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
   }, [activeVersion?.id]);
 
   const handleContentChange = (val: string) => {

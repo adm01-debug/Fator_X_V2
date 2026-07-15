@@ -32,6 +32,7 @@ export function QueueMonitorPanel() {
 
   useEffect(() => {
     loadQueues();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
   }, []);
 
   const handleRunWorker = async (q: QueueDefinition) => {

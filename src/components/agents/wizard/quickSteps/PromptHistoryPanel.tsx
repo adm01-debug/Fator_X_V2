@@ -90,6 +90,7 @@ export function PromptHistoryPanel({ prompt, type, onRestore }: Props) {
   const lastSavedLabel = useMemo(() => {
     if (snapshots.length === 0) return null;
     return formatRelative(snapshots[0].savedAt);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
   }, [snapshots, justSavedAt]);
 
   const handleRestore = (snap: PromptSnapshot) => {

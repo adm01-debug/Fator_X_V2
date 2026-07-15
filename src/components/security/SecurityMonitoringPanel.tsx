@@ -53,6 +53,7 @@ export function SecurityMonitoringPanel() {
     return () => {
       (supabaseExternal as unknown as { removeChannel: (c: RealtimeChannelLike) => void }).removeChannel(channel);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
   }, []);
 
   async function loadAlerts() {
