@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getUnresolvedAlerts, subscribeToAlerts } from '@/services/dashboardService';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 export function DashboardAlerts() {
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ export function DashboardAlerts() {
         {alerts.map((raw) => {
           const a = (raw ?? {}) as { id?: string; severity?: string; title?: string; created_at?: string };
           return (
-            <div key={a.id} className="flex items-center gap-3 text-body-sm p-2 rounded-lg bg-background/50 border border-border/50 hover:border-destructive/30 transition-all cursor-pointer group/alert" onClick={() => navigate('/monitoring')}>
+            <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} key={a.id} className="flex items-center gap-3 text-body-sm p-2 rounded-lg bg-background/50 border border-border/50 hover:border-destructive/30 transition-all cursor-pointer group/alert" onClick={() => navigate('/monitoring')}>
               <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${a.severity === 'critical' ? 'bg-destructive shadow-[0_0_8px_rgba(239,68,68,0.5)]' : 'bg-nexus-amber'}`} />
               <span className="text-foreground font-medium truncate flex-1">{a.title}</span>
               <span className="text-muted-foreground shrink-0 text-meta font-mono opacity-60 text-numeric">{new Date(a.created_at || '').toLocaleDateString('pt-BR')}</span>

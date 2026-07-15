@@ -8,6 +8,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { listPendingApprovals, approveWorkflowRun, rejectWorkflowRun } from '@/services/approvalService';
 
 import { toast } from 'sonner';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 export default function ApprovalQueuePage() {
   const queryClient = useQueryClient();
@@ -69,7 +70,7 @@ export default function ApprovalQueuePage() {
             return (
               <div key={run.id}
                 className={`nexus-card ${isSelected ? 'border-primary/30' : ''}`}>
-                <div className="flex items-start justify-between cursor-pointer" onClick={() => setSelectedRun(isSelected ? null : run.id)}>
+                <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className="flex items-start justify-between cursor-pointer" onClick={() => setSelectedRun(isSelected ? null : run.id)}>
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       <Clock className="h-4 w-4 text-nexus-amber" />

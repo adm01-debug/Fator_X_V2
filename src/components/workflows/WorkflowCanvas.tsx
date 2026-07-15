@@ -17,6 +17,7 @@ import {
 } from './nodes';
 import { executeWorkflow } from '@/services/workflowsService';
 import { toast } from 'sonner';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 // ═══ Custom Node Component ═══
 function WorkflowNode({ data, selected }: { data: WorkflowNodeData; selected: boolean }) {
@@ -235,7 +236,7 @@ export function WorkflowCanvas() {
       <div className="flex flex-1 overflow-hidden">
         <NodePalette onAddNode={addNode} />
 
-        <div
+        <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
           ref={canvasRef}
           className="flex-1 relative overflow-auto bg-background"
           style={{

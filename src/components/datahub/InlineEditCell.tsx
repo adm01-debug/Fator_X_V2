@@ -5,6 +5,7 @@ import { supabaseExternal } from "@/integrations/supabase/externalClient";
 import { toast } from "sonner";
 import { formatCellValue } from "@/config/datahub-columns";
 import type { ColumnDef } from "@/config/datahub-columns";
+import { handleKeyboardClick } from "@/lib/a11y";
 
 const NON_EDITABLE = new Set(['id', 'created_at', 'updated_at', 'search_vector', 'is_customer', 'is_supplier', 'is_carrier']);
 
@@ -78,7 +79,7 @@ export function InlineEditCell({ row, col, entityId, onUpdate }: InlineEditCellP
   }
 
   return (
-    <span
+    <span role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
       className={`font-mono text-meta truncate block max-w-[300px] ${
         isSensitive ? 'text-destructive/60' : 'text-foreground'
       } ${canEdit ? 'cursor-pointer hover:bg-primary/5 hover:text-primary rounded px-0.5 -mx-0.5 transition-colors' : ''}`}

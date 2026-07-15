@@ -15,6 +15,7 @@ import { CreateExperimentDialog } from '@/components/prompts/CreateExperimentDia
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 const STATUS_VARIANT: Record<string, 'default' | 'secondary' | 'outline' | 'destructive'> = {
   draft: 'outline',
@@ -140,7 +141,7 @@ function ExperimentCard({
             </CardTitle>
             <div className="text-meta text-muted-foreground line-clamp-1">{experiment.description || 'Sem descrição'}</div>
           </div>
-          <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
+          <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
             <Badge variant={STATUS_VARIANT[experiment.status]}>{STATUS_LABEL[experiment.status]}</Badge>
             {experiment.status !== 'completed' && (
               <Button size="icon" variant="ghost" onClick={onToggle}>

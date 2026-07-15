@@ -97,30 +97,30 @@ export function CostCalculatorPanel() {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
         <div className="space-y-1">
-          <label className="text-meta font-medium text-muted-foreground uppercase">Provider</label>
+          <label htmlFor="costcalculatorpanel-provider-f51693" className="text-meta font-medium text-muted-foreground uppercase">Provider</label>
           <Select value={provider} onValueChange={v => { setProvider(v); setModel(''); }}>
-            <SelectTrigger className="h-8 text-meta"><SelectValue /></SelectTrigger>
+            <SelectTrigger id="costcalculatorpanel-provider-f51693" className="h-8 text-meta"><SelectValue /></SelectTrigger>
             <SelectContent>
               {providers.map(p => <SelectItem key={p} value={p}>{p.charAt(0).toUpperCase() + p.slice(1)}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
         <div className="space-y-1">
-          <label className="text-meta font-medium text-muted-foreground uppercase">Modelo</label>
+          <label htmlFor="costcalculatorpanel-modelo-f87495" className="text-meta font-medium text-muted-foreground uppercase">Modelo</label>
           <Select value={model || modelsForProvider[0]?.model || ''} onValueChange={setModel}>
-            <SelectTrigger className="h-8 text-meta"><SelectValue /></SelectTrigger>
+            <SelectTrigger id="costcalculatorpanel-modelo-f87495" className="h-8 text-meta"><SelectValue /></SelectTrigger>
             <SelectContent>
               {modelsForProvider.map(m => <SelectItem key={m.model} value={m.model}>{m.model}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
         <div className="space-y-1">
-          <label className="text-meta font-medium text-muted-foreground uppercase">Tokens Input</label>
-          <Input className="h-8 text-meta" type="number" value={inputTokens} onChange={e => setInputTokens(e.target.value)} />
+          <label htmlFor="costcalculatorpanel-tokens-input-06a254" className="text-meta font-medium text-muted-foreground uppercase">Tokens Input</label>
+          <Input id="costcalculatorpanel-tokens-input-06a254" className="h-8 text-meta" type="number" value={inputTokens} onChange={e => setInputTokens(e.target.value)} />
         </div>
         <div className="space-y-1">
-          <label className="text-meta font-medium text-muted-foreground uppercase">Tokens Output</label>
-          <Input className="h-8 text-meta" type="number" value={outputTokens} onChange={e => setOutputTokens(e.target.value)} />
+          <label htmlFor="costcalculatorpanel-tokens-output-0e76e0" className="text-meta font-medium text-muted-foreground uppercase">Tokens Output</label>
+          <Input id="costcalculatorpanel-tokens-output-0e76e0" className="h-8 text-meta" type="number" value={outputTokens} onChange={e => setOutputTokens(e.target.value)} />
         </div>
       </div>
 

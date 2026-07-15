@@ -109,10 +109,10 @@ export function ProgressiveSkillLoaderPanel() {
 
         <TabsContent value="simulate" className="space-y-4 mt-4">
           <div>
-            <label className="text-meta font-medium text-foreground mb-1 block">
+            <label htmlFor="progressiveskillloaderpanel-descri-o-da-tarefa-5fe1a5" className="text-meta font-medium text-foreground mb-1 block">
               Descrição da tarefa
             </label>
-            <Textarea
+            <Textarea id="progressiveskillloaderpanel-descri-o-da-tarefa-5fe1a5"
               value={task}
               onChange={(e) => setTask(e.target.value)}
               placeholder="Ex: preciso analisar um CSV de vendas, extrair insights e gerar um relatório em PDF..."
@@ -123,10 +123,10 @@ export function ProgressiveSkillLoaderPanel() {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-meta font-medium text-foreground mb-1 block">
+              <label htmlFor="progressiveskillloaderpanel-budget-de-tokens-6affb6" className="text-meta font-medium text-foreground mb-1 block">
                 Budget de tokens
               </label>
-              <Input
+              <Input id="progressiveskillloaderpanel-budget-de-tokens-6affb6"
                 type="number"
                 min={100}
                 step={100}
@@ -136,10 +136,10 @@ export function ProgressiveSkillLoaderPanel() {
               />
             </div>
             <div>
-              <label className="text-meta font-medium text-foreground mb-1 block">
+              <label htmlFor="progressiveskillloaderpanel-m-x-de-skills-02341f" className="text-meta font-medium text-foreground mb-1 block">
                 Máx. de skills
               </label>
-              <Input
+              <Input id="progressiveskillloaderpanel-m-x-de-skills-02341f"
                 type="number"
                 min={1}
                 max={50}

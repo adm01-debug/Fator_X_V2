@@ -20,6 +20,7 @@ import {
 import { listKnowledgeBases } from "@/services/knowledgeService";
 import { getCurrentUserWorkspace } from "@/services/workspaceContextService";
 import type { DbRow } from '@/types/dbRow';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 export default function KnowledgeManagementPage() {
   const navigate = useNavigate();
@@ -117,7 +118,7 @@ export default function KnowledgeManagementPage() {
           ) : (
             <div className="space-y-2">
               {articles.map((a: DbRow) => (
-                <div key={a.id} className="nexus-card flex items-center gap-4 cursor-pointer hover:border-primary/50" onClick={() => navigate(`/knowledge-management/article/${a.id}`)}>
+                <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} key={a.id} className="nexus-card flex items-center gap-4 cursor-pointer hover:border-primary/50" onClick={() => navigate(`/knowledge-management/article/${a.id}`)}>
                   <FileText className="h-5 w-5 text-primary shrink-0" />
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-foreground truncate">{a.title}</p>

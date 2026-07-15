@@ -14,6 +14,7 @@ import type { AgentTraceRow, ExecutionGroup, TraceLevel } from '@/services/agent
 import { listBookmarks, type TraceBookmark } from '@/lib/traceBookmarks';
 import { BookmarkButton } from './BookmarkButton';
 import type { DbRow } from '@/types/dbRow';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 const LEVEL_ICON: Record<TraceLevel, JSX.Element> = {
   info: <Info className="h-3 w-3 text-nexus-emerald" aria-hidden />,
@@ -146,7 +147,8 @@ export function ExecutionTimeline({ execution, selectedStep, onSelectStep }: Pro
   const [focused, setFocused] = useState(false);
 
   return (
-    <div
+    <div role="button"
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- container de lista com navegação por teclado (aria-activedescendant)
       tabIndex={0}
       onKeyDown={onKeyDown}
       onFocus={() => setFocused(true)}
@@ -186,6 +188,8 @@ export function ExecutionTimeline({ execution, selectedStep, onSelectStep }: Pro
           ? 'Atalhos de teclado ativos: setas para navegar, n para próximo match, b para próximo marcador.'
           : 'Clique na linha do tempo para ativar os atalhos de teclado.'}
       </span>
+
+// eslint-disable-next-line jsx-a11y/aria-activedescendant-has-tabindex -- tabIndex declarado no container pai (linha 150)
 
       <ol
         className="space-y-1.5 mt-3"
@@ -591,7 +595,7 @@ const TraceItem = forwardRef<HTMLLIElement, TraceItemProps>(
     };
 
     return (
-      <li
+      <li onKeyDown={handleKeyboardClick}
         ref={ref}
         id={`trace-${trace.id}`}
         role="option"
@@ -669,7 +673,7 @@ const TraceItem = forwardRef<HTMLLIElement, TraceItemProps>(
         )}
 
         {open && (
-          <div className="mt-2 ml-6 space-y-2" onClick={(e) => e.stopPropagation()}>
+          <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className="mt-2 ml-6 space-y-2" onClick={(e) => e.stopPropagation()}>
             {isBookmarked && bookmark.note && (
               <div className="rounded border border-nexus-amber/30 bg-nexus-amber/10 p-2 text-meta text-foreground flex items-start gap-1.5">
                 <BookmarkCheck className="h-3 w-3 text-nexus-amber mt-0.5 shrink-0" />

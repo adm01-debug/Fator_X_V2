@@ -5,6 +5,7 @@ import {
   Star, Copy, Wand2, Download, ArrowRight, Loader2, GitBranch,
 } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
+import { handleKeyboardClick } from "@/lib/a11y";
 
 type AgentRow = Tables<"agents">;
 
@@ -35,12 +36,12 @@ export function AgentCardGrid({
         const isFav = favorites.includes(agent.id);
         const isSelected = selectedIds.has(agent.id);
         return (
-          <div
+          <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
             key={agent.id}
             className={`nexus-card nexus-card-interactive cursor-pointer group relative overflow-hidden min-h-[180px] flex flex-col ${isSelected ? 'ring-2 ring-primary border-primary/40' : ''}`}
             onClick={() => selectionMode ? onToggleSelect({ stopPropagation: () => {} } as React.MouseEvent, agent.id) : onNavigate(`/builder/${agent.id}`)}
           >
-            <div className={`absolute top-3 left-3 z-10 transition-opacity ${selectionMode || 'opacity-0 group-hover:opacity-100'}`}
+            <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className={`absolute top-3 left-3 z-10 transition-opacity ${selectionMode || 'opacity-0 group-hover:opacity-100'}`}
               onClick={(e) => onToggleSelect(e, agent.id)}>
               <Checkbox checked={isSelected} className="h-4 w-4" />
             </div>

@@ -1,4 +1,5 @@
 import type { SandboxConfig, SandboxRuntime } from '@/components/workflows/SandboxExecutionPanel';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 const RUNTIME_OPTIONS: Array<{
   id: SandboxRuntime;
@@ -45,7 +46,7 @@ export function SandboxConfigTab({ config, onUpdate }: SandboxConfigTabProps) {
         <label className="text-meta text-muted-foreground font-medium">Runtime</label>
         <div className="grid grid-cols-2 gap-2">
           {RUNTIME_OPTIONS.map((rt) => (
-            <div
+            <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
               key={rt.id}
               className={`p-3 rounded-lg border cursor-pointer transition-all ${config.runtime === rt.id ? 'border-primary bg-primary/10' : 'border-border bg-background hover:border-border'}`}
               onClick={() => onUpdate({ runtime: rt.id })}

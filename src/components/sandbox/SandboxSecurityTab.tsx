@@ -2,6 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Shield, Terminal, HardDrive, Wifi, WifiOff, AlertTriangle } from 'lucide-react';
 import type { SandboxConfig, SandboxRuntime } from '@/components/workflows/SandboxExecutionPanel';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 const RUNTIME_OPTIONS: Array<{ id: SandboxRuntime; name: string; securityLevel: string }> = [
   { id: 'docker', name: 'Docker Container', securityLevel: 'high' },
@@ -21,7 +22,7 @@ function ToggleField({ label, description, checked, onChange, icon: Icon }: {
   label: string; description?: string; checked: boolean; onChange: (v: boolean) => void; icon?: typeof Shield;
 }) {
   return (
-    <div className="flex items-center justify-between p-3 rounded-lg bg-background border border-border cursor-pointer hover:border-primary/30 transition-colors" onClick={() => onChange(!checked)}>
+    <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className="flex items-center justify-between p-3 rounded-lg bg-background border border-border cursor-pointer hover:border-primary/30 transition-colors" onClick={() => onChange(!checked)}>
       <div className="flex items-center gap-3">
         {Icon && <Icon className="w-4 h-4 text-muted-foreground" />}
         <div>

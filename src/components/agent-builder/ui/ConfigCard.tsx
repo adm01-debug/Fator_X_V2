@@ -30,6 +30,7 @@ export function ConfigCard({
   return (
     <div
       role={isClickable ? 'button' : undefined}
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- div opera como button quando clickable — role/onKeyDown já aplicados condicionalmente
       tabIndex={isClickable ? 0 : undefined}
       onClick={isClickable ? onClick : undefined}
       onKeyDown={isClickable ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick?.(); } } : undefined}

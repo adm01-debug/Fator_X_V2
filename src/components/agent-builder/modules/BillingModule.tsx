@@ -199,10 +199,10 @@ export function BillingModule() {
       <div className="rounded-xl border border-border bg-card p-6 space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="md:col-span-2 space-y-1.5">
-            <label className="text-meta font-medium text-foreground flex items-center gap-1.5">
+            <label htmlFor="billingmodule-field-0e908b" className="text-meta font-medium text-foreground flex items-center gap-1.5">
               <Calculator className="h-3.5 w-3.5" /> Input de exemplo
             </label>
-            <Textarea
+            <Textarea id="billingmodule-field-0e908b"
               value={simInput}
               onChange={(e) => setSimInput(e.target.value)}
               rows={3}

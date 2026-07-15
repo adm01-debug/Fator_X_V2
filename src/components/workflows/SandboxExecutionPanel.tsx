@@ -19,6 +19,7 @@ import {
   DEFAULT_CONFIG, RUNTIME_OPTIONS, SECURITY_LEVEL_COLORS,
 } from './sandbox/sandboxTypes';
 import { SliderField, ToggleField } from './sandbox/SandboxFields';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 // Re-export types for consumers
 export type { SandboxRuntime, SandboxConfig, SandboxExecution } from './sandbox/sandboxTypes';
@@ -98,7 +99,7 @@ export function SandboxExecutionPanel({ agentId, onConfigChange, onExecute }: Sa
                 <label className="text-meta text-muted-foreground font-medium">Runtime</label>
                 <div className="grid grid-cols-2 gap-2">
                   {RUNTIME_OPTIONS.map((rt) => (
-                    <div key={rt.id}
+                    <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} key={rt.id}
                       className={`p-3 rounded-lg border cursor-pointer transition-all ${config.runtime === rt.id ? 'border-primary bg-primary/10' : 'border-border bg-background hover:border-border'}`}
                       onClick={() => updateConfig({ runtime: rt.id })}>
                       <div className="flex items-center justify-between mb-1">

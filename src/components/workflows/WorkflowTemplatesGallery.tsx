@@ -11,6 +11,7 @@ import {
   type WorkflowTemplate,
 } from "@/config/workflow-templates";
 import { TemplateCanvasPreview } from "@/components/workflows/TemplateCanvasPreview";
+import { handleKeyboardClick } from "@/lib/a11y";
 
 export function WorkflowTemplatesGallery() {
   const [open, setOpen] = useState(false);
@@ -73,7 +74,7 @@ export function WorkflowTemplatesGallery() {
               const isPreviewing = previewId === tpl.id;
               const catCfg = TEMPLATE_CATEGORIES.find((c) => c.value === tpl.category);
               return (
-                <div
+                <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
                   key={tpl.id}
                   className={`p-4 rounded-lg border bg-secondary/20 transition-all cursor-pointer ${
                     isPreviewing ? 'border-primary ring-1 ring-primary/40' : 'border-border/30 hover:border-primary/40'

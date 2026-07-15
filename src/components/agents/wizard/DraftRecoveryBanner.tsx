@@ -6,6 +6,7 @@ import { Check, FileClock, FolderOpen, Layers, Minus, Pencil, RotateCcw, SkipFor
 import { quickIdentitySchema } from '@/lib/validations/quickAgentSchema';
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
 import { cn } from '@/lib/utils';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 function discardCopy(name: string) {
   const label = name.trim() ? `"${name.trim()}"` : 'sem nome ainda';
@@ -100,7 +101,7 @@ function NameLabelOrEditor({ draft, isEditing, onStartEdit, onCancel, onConfirm 
 
   if (isEditing) {
     return (
-      <div className="flex flex-col gap-1 flex-1 min-w-0" onClick={(e) => e.stopPropagation()}>
+      <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className="flex flex-col gap-1 flex-1 min-w-0" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center gap-1.5">
           <Input
             ref={inputRef}
@@ -562,6 +563,7 @@ export function DraftRecoveryBanner({
           <Button
             size="sm"
             onClick={() => onRestore(only.id, restoreMode)}
+            // eslint-disable-next-line jsx-a11y/no-autofocus -- autoFocus em input de recovery — foco imediato é UX intencional
             autoFocus
             title={
               blocked
@@ -684,7 +686,7 @@ export function DraftRecoveryBanner({
                 </div>
               </div>
 
-              <span onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+              <span role="button" tabIndex={0} onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
                 <ConfirmDialog
                   trigger={
                     <button

@@ -13,6 +13,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Database, Plus, Loader2, Trash2, FileText, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
 import type { DbRow } from '@/types/dbRow';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 export function EvaluationDatasetsPanel() {
   const queryClient = useQueryClient();
@@ -134,7 +135,7 @@ export function EvaluationDatasetsPanel() {
               </div>
             ) : (
               datasets.map((ds: DbRow) => (
-                <div
+                <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
                   key={ds.id}
                   className={`nexus-card cursor-pointer p-3 group ${selectedDatasetId === ds.id ? 'border-primary/40 nexus-glow-sm' : ''}`}
                   onClick={() => setSelectedDatasetId(ds.id)}

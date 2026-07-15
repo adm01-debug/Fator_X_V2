@@ -20,6 +20,7 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { DbRow } from '@/types/dbRow';
+import { handleKeyboardClick } from "@/lib/a11y";
 import {
   getAgentBasic,
   listPromptVersions,
@@ -295,7 +296,7 @@ export default function PromptEditorPage() {
               <ScrollArea className="h-[600px]">
                 <div className="divide-y divide-border/10">
                   {versions.map((v: DbRow) => (
-                    <div key={v.id}
+                    <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} key={v.id}
                       className={cn(
                         "p-5 cursor-pointer transition-all hover:bg-primary/[0.02]",
                         diffVersionId === v.id && "bg-primary/5",

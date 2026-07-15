@@ -142,9 +142,9 @@ export function VersionDiffDialog({ open, onOpenChange, versions, agentId }: Pro
 
         <div className="grid grid-cols-2 gap-3 mt-2">
           <div className="space-y-1">
-            <label className="text-meta font-medium text-muted-foreground">Versão A (anterior)</label>
+            <label htmlFor="versiondiffdialog-vers-o-a-anterior-4c1510" className="text-meta font-medium text-muted-foreground">Versão A (anterior)</label>
             <Select value={vA} onValueChange={setVA}>
-              <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
+              <SelectTrigger id="versiondiffdialog-vers-o-a-anterior-4c1510"><SelectValue placeholder="Selecione..." /></SelectTrigger>
               <SelectContent>
                 {versions.map(v => (
                   <SelectItem key={v.id} value={v.id}>
@@ -155,9 +155,9 @@ export function VersionDiffDialog({ open, onOpenChange, versions, agentId }: Pro
             </Select>
           </div>
           <div className="space-y-1">
-            <label className="text-meta font-medium text-muted-foreground">Versão B (nova)</label>
+            <label htmlFor="versiondiffdialog-vers-o-b-nova-b20ff4" className="text-meta font-medium text-muted-foreground">Versão B (nova)</label>
             <Select value={vB} onValueChange={setVB}>
-              <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
+              <SelectTrigger id="versiondiffdialog-vers-o-b-nova-b20ff4"><SelectValue placeholder="Selecione..." /></SelectTrigger>
               <SelectContent>
                 {versions.map(v => (
                   <SelectItem key={v.id} value={v.id}>

@@ -10,6 +10,7 @@ import {
   Popover, PopoverContent, PopoverTrigger,
 } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 export function NotificationBell() {
   const { notifications, unreadCount, loading, markOneRead, markAllAsRead } = useNotifications();
@@ -57,7 +58,7 @@ export function NotificationBell() {
               {notifications.slice(0, 20).map((n) => {
                 const isUnread = n.status === 'sent' || n.status === 'delivered';
                 return (
-                  <div
+                  <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
                     key={n.id}
                     className={`px-4 py-3 hover:bg-muted/30 cursor-pointer transition-colors ${isUnread ? 'bg-primary/5' : ''}`}
                     onClick={() => isUnread && markOneRead(n.id)}

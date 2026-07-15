@@ -25,6 +25,7 @@ import {
 } from "@/services/agentRoutingService";
 import { listAgents } from "@/lib/agentService";
 import { RoutingEventsMonitor } from "@/components/routing/RoutingEventsMonitor";
+import { handleKeyboardClick } from "@/lib/a11y";
 
 const SOURCE_ICONS: Record<string, typeof Building2> = {
   bitrix24: Building2,
@@ -154,7 +155,7 @@ export function RoutingConfigPage() {
                   {s.unique_agents} {t("routing.unique_agents")}
                 </div>
               </div>
-              <div className="flex gap-1 mt-3 pt-3 border-t border-border/30" onClick={(e) => e.stopPropagation()}>
+              <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className="flex gap-1 mt-3 pt-3 border-t border-border/30" onClick={(e) => e.stopPropagation()}>
                 <Button
                   variant="ghost"
                   size="sm"

@@ -5,6 +5,7 @@ import { Star, Copy, Wand2, Download, Loader2, GitBranch, Zap, Activity, Message
 import type { Tables } from '@/integrations/supabase/types';
 import { AgentCardViewer } from './AgentCardViewer';
 import { cn } from '@/lib/utils';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 type AgentRow = Tables<'agents'>;
 
@@ -30,7 +31,7 @@ export function AgentCard({
   const metrics = ((config.metrics as { calls?: number | string; accuracy?: number | string; latency?: number | string }) ?? { calls: 0, accuracy: 0, latency: 0 });
 
   return (
-    <div
+    <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
       className={cn(
         "nexus-card nexus-card-interactive cursor-pointer group relative overflow-hidden flex flex-col transition-all duration-300",
         "bg-gradient-to-br from-card to-card/95 border-border/40 hover:border-primary/30",
@@ -41,7 +42,7 @@ export function AgentCard({
       {/* Background patterns */}
       <div className="absolute top-0 right-0 w-32 h-32 bg-primary/[0.03] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
       
-      <div className={cn(
+      <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className={cn(
         "absolute top-3 left-3 z-10 transition-all duration-300",
         selectionMode ? "opacity-100 scale-100" : "opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100"
       )} onClick={(e) => onToggleSelect(e, agent.id)}>
@@ -77,7 +78,7 @@ export function AgentCard({
         </div>
         
         <div className="flex items-center gap-1">
-          <div className="opacity-0 group-hover:opacity-100 transition-all" onClick={(e) => e.stopPropagation()}>
+          <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className="opacity-0 group-hover:opacity-100 transition-all" onClick={(e) => e.stopPropagation()}>
             <AgentCardViewer agentId={agent.id} agentName={agent.name} />
           </div>
           <button onClick={(e) => onExport(e, agent)} className="h-8 w-8 rounded-lg flex items-center justify-center text-muted-foreground/40 hover:text-nexus-cyan hover:bg-nexus-cyan/10 opacity-0 group-hover:opacity-100 transition-all" title="Exportar JSON">
