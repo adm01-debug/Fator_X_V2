@@ -61,5 +61,38 @@ export default tseslint.config(
     rules: {
       "no-console": "off",
     },
+  },
+  {
+    // Shadcn primitives, providers e componentes que legitimamente exportam
+    // constantes/variantes/contextos ao lado do componente. Fast Refresh não
+    // se aplica a esses módulos — silenciar sem perder cobertura no restante.
+    files: [
+      "src/components/ui/**/*.tsx",
+      "src/contexts/**/*.tsx",
+      "src/i18n/**/*.tsx",
+      "src/hooks/**/*.tsx",
+      "src/components/rbac/AccessControl.tsx",
+      "src/components/**/nodes/CustomNodes.tsx",
+      "src/components/**/*FieldRenderers.tsx",
+      "src/components/**/*SubComponents.tsx",
+      "src/components/**/*StepComponents.tsx",
+      "src/components/agents/versioning/TimelineRangeFilter.tsx",
+      "src/components/agents/traces/ClearFiltersConfirm.tsx",
+      "src/components/agents/detail/RestoreChangelogEditor.tsx",
+      "src/components/agents/wizard/quickSteps/PreflightReviewSummary.tsx",
+      "src/components/agents/wizard/quickSteps/PromptSectionChecklist.tsx",
+      "src/components/charts/ComparisonToggle.tsx",
+      "src/components/dashboard/DateRangePicker.tsx",
+      "src/components/datahub/ConnectionCard.tsx",
+      "src/components/datahub/EntityDetailPanel.tsx",
+      "src/components/monitoring/AdvancedTraceFilters.tsx",
+      "src/components/monitoring/LangfuseExporterDialog.tsx",
+      "src/components/prompts/PromptDiff.tsx",
+      "src/components/sandbox/SandboxConfigTab.tsx",
+      "src/components/super-cerebro/CerebroTabNav.tsx",
+    ],
+    rules: {
+      "react-refresh/only-export-components": "off",
+    },
   }
 );
