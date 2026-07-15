@@ -53,7 +53,7 @@ describe("AppSidebar", () => {
 
   it("renders the brand name", () => {
     renderSidebar();
-    expect(screen.getByText("FATOR")).toBeInTheDocument();
+    expect(screen.getByLabelText("Fator X")).toBeInTheDocument();
   });
 
   it("renders the collapse button with aria-label", () => {

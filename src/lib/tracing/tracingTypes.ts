@@ -8,6 +8,7 @@ export type SpanKind =
   | 'rag'
   | 'guardrail'
   | 'memory'
+  | 'agent'
   | 'workflow'
   | 'http'
   | 'db'
