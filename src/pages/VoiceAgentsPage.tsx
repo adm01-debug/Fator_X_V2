@@ -34,6 +34,7 @@ export default function VoiceAgentsPage() {
   useEffect(() => {
     listAgentSummaries(50).then(data => setAgents(((data as { agents?: { id: string; name: string }[] }).agents) || [])).catch(() => {});
     refreshHistory();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
   }, []);
 
   const refreshHistory = useCallback(() => {

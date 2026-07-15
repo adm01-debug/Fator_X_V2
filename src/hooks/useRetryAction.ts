@@ -103,6 +103,7 @@ export function useRetryAction<TArgs extends unknown[], TResult>(
         setLoading(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
     [action, options, toast],
   );
 

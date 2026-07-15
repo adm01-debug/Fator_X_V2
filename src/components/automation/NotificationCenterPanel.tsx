@@ -69,6 +69,7 @@ export function NotificationCenterPanel() {
 
   useEffect(() => {
     loadAll();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
   }, []);
 
   const handleSendTest = async () => {

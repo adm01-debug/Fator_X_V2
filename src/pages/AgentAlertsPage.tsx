@@ -36,6 +36,7 @@ export default function AgentAlertsPage() {
     staleTime: 30_000,
   });
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
   const traces = ((traceData as { traces?: AgentTraceRow[] }).traces) || [];
 
   const [rules, setRules] = useState<AlertRule[]>([]);

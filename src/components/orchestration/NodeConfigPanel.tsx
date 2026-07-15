@@ -27,6 +27,7 @@ export function NodeConfigPanel({ node, agents, isEntry, onChange, onDelete, onS
     setLabel(node?.label ?? '');
     setRole(node?.role ?? '');
     setAgentId(node?.agent_id ?? '');
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
   }, [node?.id]);
 
   if (!node) {

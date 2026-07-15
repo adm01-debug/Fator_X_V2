@@ -89,6 +89,7 @@ export function useRBAC() {
 
     loadPermissions();
     return () => { cancelled = true; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
   }, [user?.id]);
 
   /**

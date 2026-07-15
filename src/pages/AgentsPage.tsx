@@ -130,6 +130,7 @@ export default function AgentsPage() {
 
   const selectAll = useCallback(() => {
     setSelectedIds(new Set(filtered.map(a => a.id)));
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
   }, []);
 
   const clearSelection = useCallback(() => setSelectedIds(new Set()), []);

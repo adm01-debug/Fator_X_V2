@@ -117,6 +117,7 @@ export function DataBrowser({ entityId, onClose }: { entityId: string; onClose: 
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
   }, [page, selectedRecord, onClose]);
 
   const fetchRecord = async (recordId: string) => {

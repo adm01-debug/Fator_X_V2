@@ -60,6 +60,7 @@ export default function ComplianceReportsPage() {
     if (!workspaceId) return;
     refresh();
      
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
   }, [workspaceId]);
 
   async function refresh() {

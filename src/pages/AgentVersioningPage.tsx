@@ -160,6 +160,7 @@ export default function AgentVersioningPage() {
       range: serializeRange(range) ?? undefined,
       mode,
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
   }, [id, presetId, mode, searchParams]);
 
   // Inicialização da URL: roda APENAS na primeira chegada das versões (ou quando

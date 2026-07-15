@@ -127,6 +127,7 @@ export function CostOptimizationPanel() {
     }
 
     return recs;
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
   }, [agents, usage, pricing]);
 
   const totalSavings = recommendations.filter(r => r.severity === 'high').length;

@@ -117,6 +117,7 @@ export default function AgentWorkflowsPage() {
 
   useEffect(() => {
     void load();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
   }, [workspaceId]);
 
   const stats = useMemo(() => {
