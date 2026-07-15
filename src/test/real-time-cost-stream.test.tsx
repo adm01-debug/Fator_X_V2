@@ -10,8 +10,9 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 
-// @ts-expect-error used in mock callback and test assertions
-const capturedSubscribeCallback: ((status: string) => void) | null = null;
+// Captured subscribe callback (assigned inside mock; kept for potential future assertions)
+let capturedSubscribeCallback: ((status: string) => void) | null = null;
+void capturedSubscribeCallback;
 
 vi.mock('@/integrations/supabase/client', () => {
   const channel = {
