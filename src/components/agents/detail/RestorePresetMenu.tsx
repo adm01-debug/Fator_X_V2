@@ -144,6 +144,7 @@ export function RestorePresetMenu({ current, onApply, onPresetsLoaded, disabled 
             }}
           >
             <Input
+              // eslint-disable-next-line jsx-a11y/no-autofocus -- autoFocus em input de busca dentro de dropdown — comportamento esperado pelo usuário
               autoFocus
               value={newName}
               onChange={(e) => setNewName(e.target.value)}

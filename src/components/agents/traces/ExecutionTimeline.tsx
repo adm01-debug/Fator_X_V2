@@ -147,6 +147,7 @@ export function ExecutionTimeline({ execution, selectedStep, onSelectStep }: Pro
 
   return (
     <div
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- container de lista com navegação por teclado (aria-activedescendant)
       tabIndex={0}
       onKeyDown={onKeyDown}
       onFocus={() => setFocused(true)}
@@ -186,6 +187,8 @@ export function ExecutionTimeline({ execution, selectedStep, onSelectStep }: Pro
           ? 'Atalhos de teclado ativos: setas para navegar, n para próximo match, b para próximo marcador.'
           : 'Clique na linha do tempo para ativar os atalhos de teclado.'}
       </span>
+
+// eslint-disable-next-line jsx-a11y/aria-activedescendant-has-tabindex -- tabIndex declarado no container pai (linha 150)
 
       <ol
         className="space-y-1.5 mt-3"

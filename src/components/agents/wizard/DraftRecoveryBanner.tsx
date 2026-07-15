@@ -562,6 +562,7 @@ export function DraftRecoveryBanner({
           <Button
             size="sm"
             onClick={() => onRestore(only.id, restoreMode)}
+            // eslint-disable-next-line jsx-a11y/no-autofocus -- autoFocus em input de recovery — foco imediato é UX intencional
             autoFocus
             title={
               blocked
