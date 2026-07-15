@@ -261,7 +261,7 @@ export default function AgentOrchestrationPage() {
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent>
           <DialogHeader><DialogTitle>Novo grafo</DialogTitle></DialogHeader>
-          // eslint-disable-next-line jsx-a11y/no-autofocus -- autoFocus em input inline de edição de nó
+          {/* eslint-disable-next-line jsx-a11y/no-autofocus -- autoFocus em input principal de diálogo modal */}
           <Input placeholder="Nome do grafo" value={newName} onChange={(e) => setNewName(e.target.value)} autoFocus onKeyDown={(e) => e.key === 'Enter' && handleCreate()} />
           <DialogFooter>
             <Button variant="outline" onClick={() => setCreateOpen(false)}>Cancelar</Button>
