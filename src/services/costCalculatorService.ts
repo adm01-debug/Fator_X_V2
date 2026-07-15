@@ -24,7 +24,8 @@ export async function getModelPricing(provider: string, model: string): Promise<
   const fullModel = model.includes('/') ? model : `${provider}/${model}`;
   const { data: pricingList, error } = await supabase
     .from('model_pricing')
-    .select('*');
+    .select('*')
+    .order('model_pattern');
   
   const availablePricing = error || !pricingList || pricingList.length === 0
     ? getFallbackPricing().map((price) => ({

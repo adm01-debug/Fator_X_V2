@@ -61,9 +61,9 @@ describe("AppSidebar", () => {
     expect(screen.getByLabelText("Recolher sidebar")).toBeInTheDocument();
   });
 
-  it("renders workspace info", () => {
+  it("renders workspace info", async () => {
     renderSidebar();
-    expect(screen.getByText(/Workspace Free/)).toBeInTheDocument();
-    expect(screen.getByRole("progressbar")).toBeInTheDocument();
+    expect(await screen.findByText(/Workspace Free/)).toBeInTheDocument();
+    expect(await screen.findByRole("progressbar")).toBeInTheDocument();
   });
 });
