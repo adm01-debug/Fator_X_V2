@@ -121,6 +121,7 @@ export default function AgentArenaPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
+                {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
                 <label htmlFor="agentarenapage-competidor-a-fa06d2" className="text-meta font-bold uppercase tracking-wider text-muted-foreground">Competidor A</label>
                 <Select value={agentA} onValueChange={setAgentA}>
                   <SelectTrigger id="agentarenapage-competidor-a-fa06d2" className="bg-secondary/30 h-11">
@@ -137,6 +138,7 @@ export default function AgentArenaPage() {
               </div>
 
               <div className="space-y-2">
+                {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
                 <label htmlFor="agentarenapage-competidor-b-0e37a4" className="text-meta font-bold uppercase tracking-wider text-muted-foreground">Competidor B</label>
                 <Select value={agentB} onValueChange={setAgentB}>
                   <SelectTrigger id="agentarenapage-competidor-b-0e37a4" className="bg-secondary/30 h-11">
@@ -149,6 +151,7 @@ export default function AgentArenaPage() {
               </div>
 
               <div className="space-y-2 pt-4">
+                {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
                 <label htmlFor="agentarenapage-o-desafio-prompt-e001fb" className="text-meta font-bold uppercase tracking-wider text-muted-foreground">O Desafio (Prompt)</label>
                 <Textarea id="agentarenapage-o-desafio-prompt-e001fb" 
                   placeholder="Ex: Escreva um código Python que ordene uma lista usando bubble sort..." 
@@ -264,6 +267,7 @@ function CompetidorResult({ label, name, result, isWinner, loading }: { label: s
             </div>
 
             <div className="space-y-2">
+              {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
               <label className="text-meta font-bold uppercase tracking-widest text-muted-foreground">Resposta</label>
               <div className="bg-muted/30 rounded-2xl p-4 border border-border/20 max-h-[250px] overflow-y-auto text-meta font-medium leading-relaxed scrollbar-hide">
                 {result.response}

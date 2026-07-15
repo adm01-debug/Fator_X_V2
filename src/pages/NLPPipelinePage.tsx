@@ -77,11 +77,13 @@ export default function NLPPipelinePage() {
           <div className="space-y-2">
             <p className="text-meta text-muted-foreground font-semibold uppercase tracking-wide">Pipelines</p>
             <div className="flex gap-4">
+              {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
               <label htmlFor="nlppipelinepage-field-adbbf6" className="flex items-center gap-2 text-meta cursor-pointer">
                 <Checkbox checked={usesNer} onCheckedChange={(v) => setUsesNer(v === true)} />
                 <Tag className="h-3.5 w-3.5 text-nexus-blue" />
                 NER (entidades)
               </label>
+              {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
               <label className="flex items-center gap-2 text-meta cursor-pointer">
                 <Checkbox id="nlppipelinepage-field-adbbf6" checked={usesSentiment} onCheckedChange={(v) => setUsesSentiment(v === true)} />
                 <Heart className="h-3.5 w-3.5 text-nexus-pink" />

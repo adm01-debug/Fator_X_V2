@@ -54,6 +54,7 @@ export function SandboxSecurityTab({ config, onUpdate }: SandboxSecurityTabProps
 
         {config.networkEnabled && (
           <div className="space-y-1">
+            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
             <label className="text-meta text-muted-foreground">Domínios Permitidos</label>
             <textarea
               value={config.allowedDomains.join('\n')}

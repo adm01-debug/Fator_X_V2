@@ -77,6 +77,7 @@ export function ClearFiltersConfirm({ trigger, activeFilters, onConfirm }: Props
                   ))}
                 </ul>
               )}
+              {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
               <label className="flex items-center gap-2 text-meta cursor-pointer">
                 <Checkbox checked={skip} onCheckedChange={(v) => setSkip(v === true)} />
                 <span>Não perguntar novamente nesta sessão</span>
