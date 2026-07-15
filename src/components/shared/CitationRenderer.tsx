@@ -45,6 +45,7 @@ export function CitationRenderer({ text, citations }: CitationRendererProps) {
                 className="inline-flex items-center cursor-pointer"
                 onClick={() => setExpandedCitation(expandedCitation === idx ? null : idx)}
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpandedCitation(expandedCitation === idx ? null : idx); } }}
+                // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role -- sup usado como botão de expansão de citação
                 role="button"
                 tabIndex={0}
               >
