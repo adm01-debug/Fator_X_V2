@@ -122,8 +122,8 @@ export default function AgentArenaPage() {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <label htmlFor="agentarenapage-competidor-a-fa06d2" className="text-meta font-bold uppercase tracking-wider text-muted-foreground">Competidor A</label>
-                <Select id="agentarenapage-competidor-a-fa06d2" value={agentA} onValueChange={setAgentA}>
-                  <SelectTrigger className="bg-secondary/30 h-11">
+                <Select value={agentA} onValueChange={setAgentA}>
+                  <SelectTrigger id="agentarenapage-competidor-a-fa06d2" className="bg-secondary/30 h-11">
                     <SelectValue placeholder="Selecione Agente A" />
                   </SelectTrigger>
                   <SelectContent>
@@ -138,8 +138,8 @@ export default function AgentArenaPage() {
 
               <div className="space-y-2">
                 <label htmlFor="agentarenapage-competidor-b-0e37a4" className="text-meta font-bold uppercase tracking-wider text-muted-foreground">Competidor B</label>
-                <Select id="agentarenapage-competidor-b-0e37a4" value={agentB} onValueChange={setAgentB}>
-                  <SelectTrigger className="bg-secondary/30 h-11">
+                <Select value={agentB} onValueChange={setAgentB}>
+                  <SelectTrigger id="agentarenapage-competidor-b-0e37a4" className="bg-secondary/30 h-11">
                     <SelectValue placeholder="Selecione Agente B" />
                   </SelectTrigger>
                   <SelectContent>

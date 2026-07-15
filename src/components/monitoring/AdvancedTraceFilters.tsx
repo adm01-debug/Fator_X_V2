@@ -132,8 +132,8 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
           </div>
           <div className="space-y-1">
             <label htmlFor="advancedtracefilters-n-vel-f14ea7" className="text-meta font-medium text-muted-foreground">Nível</label>
-            <Select id="advancedtracefilters-n-vel-f14ea7" value={filters.level} onValueChange={v => onChange({ ...filters, level: v })}>
-              <SelectTrigger className="h-8 text-meta bg-background"><SelectValue /></SelectTrigger>
+            <Select value={filters.level} onValueChange={v => onChange({ ...filters, level: v })}>
+              <SelectTrigger id="advancedtracefilters-n-vel-f14ea7" className="h-8 text-meta bg-background"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos</SelectItem>
                 <SelectItem value="debug">Debug</SelectItem>

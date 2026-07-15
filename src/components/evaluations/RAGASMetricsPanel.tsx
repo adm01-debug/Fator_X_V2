@@ -104,8 +104,8 @@ export function RAGASMetricsPanel() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="space-y-2">
           <label htmlFor="ragasmetricspanel-agente-a9f55b" className="text-meta font-medium text-muted-foreground">Agente</label>
-          <Select id="ragasmetricspanel-agente-a9f55b" value={agentId} onValueChange={setAgentId}>
-            <SelectTrigger className="h-8 text-meta"><SelectValue placeholder="Selecionar agente" /></SelectTrigger>
+          <Select value={agentId} onValueChange={setAgentId}>
+            <SelectTrigger id="ragasmetricspanel-agente-a9f55b" className="h-8 text-meta"><SelectValue placeholder="Selecionar agente" /></SelectTrigger>
             <SelectContent>
               {agents.map(a => <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>)}
             </SelectContent>
