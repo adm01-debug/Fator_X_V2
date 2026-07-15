@@ -109,7 +109,7 @@ export function OnboardingTour() {
       className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-4"
       onClick={dismiss}
     >
-      // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- overlay dismissível — teclado tratado no wrapper Dialog
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- overlay dismissível — teclado tratado no wrapper Dialog jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions */}
       <div
         className="w-full max-w-md rounded-2xl border border-primary/20 bg-background/95 backdrop-blur-xl shadow-nexus-2xl shadow-primary/10 overflow-hidden animate-fade-in-up"
         onClick={(e) => e.stopPropagation()}

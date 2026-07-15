@@ -46,6 +46,7 @@ export function SLOViolationTimeline({ data, daily, onDayClick, onViolationClick
                 <div
                    
                   role="listitem"
+                  // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- keyboard-enabled visualization row
                   tabIndex={0}
                   onClick={() => handleClick(day.date)}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(day.date); } }}

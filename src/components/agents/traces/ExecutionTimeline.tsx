@@ -191,6 +191,7 @@ export function ExecutionTimeline({ execution, selectedStep, onSelectStep }: Pro
 
 // eslint-disable-next-line jsx-a11y/aria-activedescendant-has-tabindex -- tabIndex declarado no container pai (linha 150)
 
+      {/* eslint-disable-next-line jsx-a11y/aria-activedescendant-has-tabindex -- list container with keyboard nav */}
       <ol
         className="space-y-1.5 mt-3"
         role="listbox"
