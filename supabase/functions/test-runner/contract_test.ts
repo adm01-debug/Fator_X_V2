@@ -1,5 +1,4 @@
 import { assertEquals } from "https://deno.land/std@0.168.0/testing/asserts.ts";
-import { _z } from "https://esm.sh/zod@3.23.8";
 import { WebhookReceiverContracts, WhatsAppWebhookContracts, ErrorResponseContract } from "../_shared/contracts.ts";
 import { parseBody } from "../_shared/validation.ts";
 

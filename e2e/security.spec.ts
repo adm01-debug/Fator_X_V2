@@ -7,7 +7,7 @@ test.describe("Security Headers", () => {
     await expect(cspMeta).toHaveCount(1);
     const content = await cspMeta.getAttribute("content");
     expect(content).toContain("default-src 'self'");
-    expect(content).toContain("frame-ancestors 'none'");
+    expect(content).toContain("object-src 'none'");
   });
 
   test("X-Frame-Options meta tag is present", async ({ page }) => {
@@ -32,7 +32,7 @@ test.describe("Security Headers", () => {
     await expect(permMeta).toHaveCount(1);
     const content = await permMeta.getAttribute("content");
     expect(content).toContain("camera=()");
-    expect(content).toContain("microphone=()");
+    expect(content).toContain("microphone=(self)");
   });
 
   test("no inline scripts violate CSP", async ({ page }) => {

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import {
-  Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger,
+  Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Bell, AlertTriangle, XCircle, Info, CheckCircle2, FlaskConical } from "lucide-react";
@@ -259,6 +259,9 @@ export function NotificationsDrawer() {
               </Button>
             )}
           </SheetTitle>
+          <SheetDescription className="sr-only">
+            Alertas de agentes, avaliações e eventos operacionais em tempo real.
+          </SheetDescription>
         </SheetHeader>
 
         <div className="overflow-y-auto px-5 mt-3 space-y-2 max-h-[calc(100vh-80px)]">

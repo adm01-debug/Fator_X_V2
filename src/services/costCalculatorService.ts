@@ -3,6 +3,17 @@ export type { ModelPricing, CostEstimate, CostBreakdownItem, ActualCost, BudgetC
 import type { ModelPricing, CostEstimate, CostBreakdownItem, ActualCost, BudgetConfig, BudgetStatus } from './types/costCalculatorTypes';
 import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/lib/logger';
+import { listModelPrices } from '@/lib/llmPricing';
+
+function getFallbackPricing(): ModelPricing[] {
+  return listModelPrices().map((price) => ({
+    provider: price.provider,
+    model: price.model,
+    inputPricePerMToken: price.input_per_1k * 1000,
+    outputPricePerMToken: price.output_per_1k * 1000,
+    lastUpdated: new Date().toISOString(),
+  }));
+}
 
 // ──────── Pricing ────────
 
@@ -13,11 +24,18 @@ export async function getModelPricing(provider: string, model: string): Promise<
   const fullModel = model.includes('/') ? model : `${provider}/${model}`;
   const { data: pricingList, error } = await supabase
     .from('model_pricing')
-    .select('*');
+    .select('*')
+    .order('model_pattern');
   
-  if (error || !pricingList) return null;
+  const availablePricing = error || !pricingList || pricingList.length === 0
+    ? getFallbackPricing().map((price) => ({
+        model_pattern: price.model,
+        input_cost_per_1k: price.inputPricePerMToken / 1000,
+        output_cost_per_1k: price.outputPricePerMToken / 1000,
+      }))
+    : pricingList;
 
-  const sorted = [...pricingList].sort((a, b) => b.model_pattern.length - a.model_pattern.length);
+  const sorted = [...availablePricing].sort((a, b) => b.model_pattern.length - a.model_pattern.length);
   const match = sorted.find(p => fullModel.toLowerCase().includes(p.model_pattern.toLowerCase()));
   
   if (!match) return null;
@@ -40,7 +58,7 @@ export async function getAllPricing(): Promise<ModelPricing[]> {
     .select('*')
     .order('model_pattern');
     
-  if (error) return [];
+  if (error || !data || data.length === 0) return getFallbackPricing();
   
   return (data || []).map(p => ({
     provider: p.model_pattern.split('/')[0] || 'auto',
@@ -173,7 +191,7 @@ export async function estimateWorkflowCost(
       outputTokens: estimate.output,
       costUsd: cost.totalCostUsd,
       provider: nodeProvider,
-      model: nodeModel,
+      model: nodeModel.includes('/') ? nodeModel : `${nodeProvider}/${nodeModel}`,
     });
   }
 
