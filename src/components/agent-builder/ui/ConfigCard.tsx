@@ -28,7 +28,7 @@ export function ConfigCard({
   const isClickable = !!onClick && !disabled;
 
   return (
-    {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions -- collapsible card header with role */}
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions -- collapsible card header with role
     <div
       role={isClickable ? 'button' : undefined}
       // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- div opera como button quando clickable — role/onKeyDown já aplicados condicionalmente
