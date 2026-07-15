@@ -16,6 +16,7 @@ import { AlertRulesPanel } from "@/components/monitoring/AlertRulesPanel";
 import { WebVitalsPanel } from "@/components/monitoring/WebVitalsPanel";
 import { MiddlewarePipelinePanel } from "@/components/monitoring/MiddlewarePipelinePanel";
 import { RetryEnginePanel } from "@/components/monitoring/RetryEnginePanel";
+import { handleKeyboardClick } from "@/lib/a11y";
 
 const PIE_COLORS = ['hsl(var(--primary))', 'hsl(var(--nexus-emerald, 142 71% 45%))', 'hsl(var(--nexus-amber, 38 92% 50%))', 'hsl(var(--nexus-cyan, 190 90% 50%))', 'hsl(var(--destructive))'];
 
@@ -164,7 +165,7 @@ export default function MonitoringPage() {
                 <div className="space-y-2 max-h-[500px] overflow-y-auto">
                   <h3 className="text-meta font-heading font-semibold text-muted-foreground uppercase tracking-wider mb-2">Eventos recentes</h3>
                   {filteredTraces.map((trace) => (
-                    <div key={trace.id} className={`nexus-card cursor-pointer p-3 ${selected?.id === trace.id ? 'border-primary/40 nexus-glow-sm' : ''}`} onClick={() => setSelectedId(trace.id)}>
+                    <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} key={trace.id} className={`nexus-card cursor-pointer p-3 ${selected?.id === trace.id ? 'border-primary/40 nexus-glow-sm' : ''}`} onClick={() => setSelectedId(trace.id)}>
                       <div className="flex items-center justify-between mb-1.5"><p className="text-meta font-medium text-foreground truncate">{trace.event}</p><StatusBadge status={trace.level || 'info'} /></div>
                       <p className="text-meta text-muted-foreground">{trace.session_id || trace.id.slice(0, 8)}</p>
                       <div className="flex items-center gap-3 mt-2 text-meta text-muted-foreground">
@@ -203,7 +204,7 @@ export default function MonitoringPage() {
           : <div className="space-y-3">
               {sessions.map((session) => (
                 <div key={session.id} className="nexus-card">
-                  <div className="flex items-center justify-between cursor-pointer" onClick={() => setExpandedSessionId(expandedSessionId === session.id ? null : session.id)}>
+                  <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className="flex items-center justify-between cursor-pointer" onClick={() => setExpandedSessionId(expandedSessionId === session.id ? null : session.id)}>
                     <div>
                       <div className="flex items-center gap-2">
                         <p className="text-body-sm font-semibold text-foreground font-mono">{session.id.substring(0, 12)}...</p>
@@ -217,7 +218,7 @@ export default function MonitoringPage() {
                       {sessionTraces.length === 0 ? <p className="text-meta text-muted-foreground text-center py-4">Nenhum trace nesta sessão</p>
                       : sessionTraces.map((st) => (
                         <div key={st.id} className="rounded-lg bg-secondary/20 p-2.5">
-                          <div className="flex items-center gap-3 text-meta cursor-pointer" onClick={() => setExpandedTraceId(expandedTraceId === st.id ? null : st.id)}>
+                          <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className="flex items-center gap-3 text-meta cursor-pointer" onClick={() => setExpandedTraceId(expandedTraceId === st.id ? null : st.id)}>
                             <Badge variant="outline" className="text-meta shrink-0">{st.trace_type}</Badge>
                             <span className="text-foreground truncate flex-1">{st.latency_ms ? `${st.latency_ms}ms` : ''} {st.tokens_used ? `• ${st.tokens_used}t` : ''}</span>
                             <span className="text-muted-foreground shrink-0 font-mono">{new Date(st.created_at || '').toLocaleTimeString('pt-BR')}</span>

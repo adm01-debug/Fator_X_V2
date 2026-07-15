@@ -31,6 +31,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import type { DbRow } from '@/types/dbRow';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 const pipeline = [
   { name: 'Parsing', icon: FileText, color: 'text-nexus-blue', bg: 'bg-nexus-blue/10' },
@@ -234,7 +235,7 @@ export default function KnowledgePage() {
               ) : viewMode === 'grid' ? (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {filtered.map((kb) => (
-                    <div key={kb.id}
+                    <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} key={kb.id}
                       className="nexus-card group cursor-pointer hover:border-primary/40 transition-all hover:shadow-nexus-2xl hover:shadow-primary/5 p-0 overflow-hidden"
                       onClick={() => setSelectedKb({ id: kb.id, name: kb.name })}
                     >
@@ -269,7 +270,7 @@ export default function KnowledgePage() {
                         </div>
                       </div>
 
-                      <div className="bg-secondary/10 border-t border-border/30 p-3 flex items-center gap-2" onClick={e => e.stopPropagation()}>
+                      <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className="bg-secondary/10 border-t border-border/30 p-3 flex items-center gap-2" onClick={e => e.stopPropagation()}>
                         <Button variant="ghost" size="sm" className="flex-1 h-8 text-meta gap-1.5 hover:bg-primary/5" onClick={() => setEditKb(kb)}>
                           <Pencil className="h-3 w-3" /> Configurar
                         </Button>

@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { toast } from "sonner";
+import { handleKeyboardClick } from "@/lib/a11y";
 
 type Detection = { label: string; confidence: number; bbox: [number, number, number, number] };
 
@@ -58,7 +59,7 @@ export default function VisionAgentsPage() {
           </CardHeader>
           <CardContent>
             {!imageUrl ? (
-              <div
+              <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
                 onClick={() => fileRef.current?.click()}
                 className="aspect-video border-2 border-dashed border-border/50 rounded-md flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-colors"
               >

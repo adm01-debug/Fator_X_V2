@@ -23,6 +23,7 @@ import { ENTITY_LIST } from "@/config/datahub-entities";
 import { queryEntity, getEntityDetail } from "@/services/datahubService";
 import { toast } from "sonner";
 import type { DbRow } from '@/types/dbRow';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 interface Row {
   id?: string | number;
@@ -329,11 +330,11 @@ export function DataHubExplorerTab() {
 
       {/* Detail modal */}
       {detailRow && (
-        <div
+        <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
           className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4"
           onClick={() => setDetailRow(null)}
         >
-          <div
+          <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
             className="nexus-card max-w-2xl w-full max-h-[80vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >

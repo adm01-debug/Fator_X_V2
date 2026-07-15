@@ -1,4 +1,5 @@
 import { Shield } from 'lucide-react';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 export function SliderField({
   label, value, min, max, step, unit, onChange,
@@ -28,7 +29,7 @@ export function ToggleField({
   onChange: (v: boolean) => void; icon?: typeof Shield;
 }) {
   return (
-    <div
+    <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
       className="flex items-center justify-between p-3 rounded-lg bg-background border border-border cursor-pointer hover:border-primary/30 transition-colors"
       onClick={() => onChange(!checked)}
     >

@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import type { PromptTechnique, FewShotExample, OutputFormat } from '@/types/agentTypes';
 import { PromptDiff } from '@/components/prompts/PromptDiff';
 import { PromptABTestDialog } from './PromptABTestDialog';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 const PROMPT_TECHNIQUES: { id: string; name: string; impact: string; description: string; example: string }[] = [
   { id: 'role', name: 'Role Prompting', impact: 'Alto', description: 'Define quem o agente É', example: 'Você é um especialista em...' },
@@ -291,7 +292,7 @@ export function PromptModule() {
           {PROMPT_TECHNIQUES.map((pt) => {
             const isEnabled = techniques.find(t => t.id === pt.id)?.enabled ?? false;
             return (
-              <div
+              <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
                 key={pt.id}
                 onClick={() => updateTechnique(pt.id, { enabled: !isEnabled })}
                 className={`cursor-pointer rounded-xl border p-4 transition-all duration-300 ${
@@ -351,7 +352,7 @@ export function PromptModule() {
         <SectionTitle icon="📤" title="Formato de Saída" subtitle="Como o agente deve formatar suas respostas." />
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {OUTPUT_FORMATS.map((fmt) => (
-            <div
+            <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
               key={fmt.value}
               onClick={() => updateAgent({ output_format: fmt.value })}
               className={`cursor-pointer rounded-xl border p-4 text-center transition-all duration-300 ${

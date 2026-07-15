@@ -19,6 +19,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { ArrowLeft, FolderOpen, FileText, Hash, Plus, Loader2, Trash2, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
 import type { DbRow } from '@/types/dbRow';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 interface KnowledgeBaseDetailProps {
   kbId: string;
@@ -198,7 +199,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
             </div>
           ) : (
             collections.map((coll: DbRow) => (
-              <div
+              <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
                 key={coll.id}
                 className={`nexus-card cursor-pointer p-3 group ${selectedCollectionId === coll.id ? 'border-primary/40 nexus-glow-sm' : ''}`}
                 onClick={() => setSelectedCollectionId(coll.id)}

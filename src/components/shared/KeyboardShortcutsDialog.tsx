@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Keyboard, X } from "lucide-react";
+import { handleKeyboardClick } from "@/lib/a11y";
 
 interface ShortcutEntry {
   keys: string[];
@@ -50,7 +51,7 @@ export function KeyboardShortcutsDialog() {
 
   return (
     <>
-      <div
+      <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
         className="fixed inset-0 z-50 bg-black/50 animate-fade-in"
         onClick={() => setOpen(false)}
       />

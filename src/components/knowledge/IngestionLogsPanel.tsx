@@ -12,6 +12,7 @@ import {
   Activity
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 interface LogEntry {
   id: string;
@@ -90,7 +91,7 @@ export function IngestionLogsPanel() {
       <ScrollArea className="flex-1">
         <div className="divide-y divide-border/20">
           {mockLogs.map((log) => (
-            <div 
+            <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} 
               key={log.id}
               className={cn(
                 "p-4 cursor-pointer transition-colors hover:bg-primary/5",

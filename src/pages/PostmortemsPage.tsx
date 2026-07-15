@@ -26,6 +26,7 @@ import { FileText, Plus, CheckCircle2, Clock, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { handleKeyboardClick } from "@/lib/a11y";
 
 type Severity = "SEV1" | "SEV2" | "SEV3" | "SEV4";
 type PMStatus = "draft" | "review" | "published";
@@ -235,7 +236,7 @@ export default function PostmortemsPage() {
               const acts = actionsFor(pm.id);
               const openActs = acts.filter((a) => a.status === "open" || a.status === "in_progress").length;
               return (
-                <div
+                <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
                   key={pm.id}
                   className="rounded-lg border border-border/60 p-4 hover:bg-muted/30 transition cursor-pointer"
                   onClick={() => setSelected(pm)}

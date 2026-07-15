@@ -12,6 +12,7 @@ import { GraphCanvas } from '@/components/orchestration/GraphCanvas';
 import { NodeConfigPanel } from '@/components/orchestration/NodeConfigPanel';
 import { listAgentSummaries } from '@/services/agentsService';
 import { getWorkspaceId } from '@/lib/agentService';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 interface AgentLite { id: string; name: string }
 
@@ -148,7 +149,7 @@ export default function AgentOrchestrationPage() {
           <CardContent className="space-y-1 max-h-[600px] overflow-y-auto">
             {graphs.length === 0 && <p className="text-meta text-muted-foreground">Crie seu primeiro grafo.</p>}
             {graphs.map(g => (
-              <div key={g.id} className={`group flex items-center gap-2 rounded-md px-2 py-2 cursor-pointer ${activeGraph?.id === g.id ? 'bg-primary/10' : 'hover:bg-muted/40'}`} onClick={() => setActiveGraph(g)}>
+              <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} key={g.id} className={`group flex items-center gap-2 rounded-md px-2 py-2 cursor-pointer ${activeGraph?.id === g.id ? 'bg-primary/10' : 'hover:bg-muted/40'}`} onClick={() => setActiveGraph(g)}>
                 <Network className="h-3.5 w-3.5 shrink-0 text-primary" />
                 <div className="flex-1 min-w-0">
                   <p className="text-meta font-medium truncate">{g.name}</p>

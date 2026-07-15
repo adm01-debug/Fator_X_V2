@@ -52,6 +52,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { downloadMarkdown, openPrintablePdf } from '@/lib/workflows/exportTimeTravelReport';
 import { toast } from 'sonner';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 // ──────── Types ────────
 
@@ -568,7 +569,7 @@ export function WorkflowTimeTravelPanel({
                     </div>
 
                     {/* Content */}
-                    <div
+                    <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
                       className={`flex-1 pb-4 rounded-lg transition-colors cursor-pointer ${
                         isPickedA
                           ? 'bg-destructive/5 ring-1 ring-destructive/30 p-3'

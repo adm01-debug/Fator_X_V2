@@ -29,6 +29,7 @@ import {
 import { logger } from '@/lib/logger';
 import { formatDistanceToNow, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 const INCIDENT_TYPES: IRIncidentType[] = ['data_breach','ddos','ransomware','account_takeover','insider_threat','service_outage','supply_chain','other'];
 const SEVERITIES: IRSeverity[] = ['low','medium','high','critical'];
@@ -270,7 +271,7 @@ export default function IRPlaybooksPage() {
                           : 'Sem revisão registrada'}
                       </p>
                     </div>
-                    <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                    <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                       {pb.status === 'draft' && (
                         <Button size="sm" variant="outline" onClick={() => handleActivate(pb.id)}><Play className="h-3 w-3 mr-1" />Ativar</Button>
                       )}
