@@ -41,10 +41,12 @@ export function CitationRenderer({ text, citations }: CitationRendererProps) {
             const citation = citations.find(c => c.index === idx);
             if (!citation) return <sup key={i} className="text-muted-foreground text-meta">[{idx}]</sup>;
             return (
-              // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- citação com hover para preview — interação por hover apenas, sem teclado jsx-a11y/click-events-have-key-events */}
               <sup key={i}
                 className="inline-flex items-center cursor-pointer"
                 onClick={() => setExpandedCitation(expandedCitation === idx ? null : idx)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpandedCitation(expandedCitation === idx ? null : idx); } }}
+                role="button"
+                tabIndex={0}
               >
                 <Badge variant="outline" className="text-meta h-4 px-1 ml-0.5 hover:bg-primary/10 transition-colors">
                   {idx}
