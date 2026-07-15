@@ -155,7 +155,7 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
               Entre dois checkpoints (v{minVersion}–v{maxVersion})
             </p>
             <div className="grid grid-cols-2 gap-2">
-              {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+              { }
               <label htmlFor="timelinerangefilter-field-07a674" className="text-meta text-muted-foreground space-y-1">
                 <span>De (vMin)</span>
                 <Input
@@ -218,7 +218,7 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
               Janela absoluta
             </p>
             <div className="grid grid-cols-2 gap-2">
-              {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+              { }
               <label htmlFor="timelinerangefilter-field-e1729d" className="text-meta text-muted-foreground space-y-1">
                 <span>De</span>
                 <Input

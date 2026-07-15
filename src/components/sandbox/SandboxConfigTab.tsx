@@ -26,7 +26,7 @@ function SliderField({ label, value, min, max, step, unit, onChange }: {
   return (
     <div className="space-y-1">
       <div className="flex items-center justify-between">
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+        { }
         <label className="text-meta text-muted-foreground">{label}</label>
         <span className="text-meta font-medium text-foreground">{value} {unit}</span>
       </div>

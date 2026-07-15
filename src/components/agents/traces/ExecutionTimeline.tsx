@@ -148,7 +148,7 @@ export function ExecutionTimeline({ execution, selectedStep, onSelectStep }: Pro
 
   return (
     <div role="button"
-      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- container de lista com navegação por teclado (aria-activedescendant)
+       
       tabIndex={0}
       onKeyDown={onKeyDown}
       onFocus={() => setFocused(true)}
