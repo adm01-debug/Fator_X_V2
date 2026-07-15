@@ -71,8 +71,8 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
       {expanded && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-3 rounded-lg bg-secondary/30 border border-border/30 animate-fade-in">
           <div className="space-y-1">
-            <label className="text-meta font-medium text-muted-foreground">Data início</label>
-            <Input
+            <label htmlFor="advancedtracefilters-data-in-cio-387249" className="text-meta font-medium text-muted-foreground">Data início</label>
+            <Input id="advancedtracefilters-data-in-cio-387249"
               type="date"
               value={filters.dateFrom}
               onChange={e => onChange({ ...filters, dateFrom: e.target.value })}
@@ -80,8 +80,8 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
             />
           </div>
           <div className="space-y-1">
-            <label className="text-meta font-medium text-muted-foreground">Data fim</label>
-            <Input
+            <label htmlFor="advancedtracefilters-data-fim-d09f0a" className="text-meta font-medium text-muted-foreground">Data fim</label>
+            <Input id="advancedtracefilters-data-fim-d09f0a"
               type="date"
               value={filters.dateTo}
               onChange={e => onChange({ ...filters, dateTo: e.target.value })}
@@ -89,8 +89,8 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
             />
           </div>
           <div className="space-y-1">
-            <label className="text-meta font-medium text-muted-foreground">Latência mín (ms)</label>
-            <Input
+            <label htmlFor="advancedtracefilters-lat-ncia-m-n-ms-78121f" className="text-meta font-medium text-muted-foreground">Latência mín (ms)</label>
+            <Input id="advancedtracefilters-lat-ncia-m-n-ms-78121f"
               type="number"
               placeholder="0"
               value={filters.minLatency}
@@ -99,8 +99,8 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
             />
           </div>
           <div className="space-y-1">
-            <label className="text-meta font-medium text-muted-foreground">Latência máx (ms)</label>
-            <Input
+            <label htmlFor="advancedtracefilters-lat-ncia-m-x-ms-b01bb2" className="text-meta font-medium text-muted-foreground">Latência máx (ms)</label>
+            <Input id="advancedtracefilters-lat-ncia-m-x-ms-b01bb2"
               type="number"
               placeholder="∞"
               value={filters.maxLatency}
@@ -109,8 +109,8 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
             />
           </div>
           <div className="space-y-1">
-            <label className="text-meta font-medium text-muted-foreground">Custo mín ($)</label>
-            <Input
+            <label htmlFor="advancedtracefilters-custo-m-n-f13785" className="text-meta font-medium text-muted-foreground">Custo mín ($)</label>
+            <Input id="advancedtracefilters-custo-m-n-f13785"
               type="number"
               step="0.001"
               placeholder="0"
@@ -120,8 +120,8 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
             />
           </div>
           <div className="space-y-1">
-            <label className="text-meta font-medium text-muted-foreground">Custo máx ($)</label>
-            <Input
+            <label htmlFor="advancedtracefilters-custo-m-x-7bc554" className="text-meta font-medium text-muted-foreground">Custo máx ($)</label>
+            <Input id="advancedtracefilters-custo-m-x-7bc554"
               type="number"
               step="0.001"
               placeholder="∞"
@@ -131,8 +131,8 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
             />
           </div>
           <div className="space-y-1">
-            <label className="text-meta font-medium text-muted-foreground">Nível</label>
-            <Select value={filters.level} onValueChange={v => onChange({ ...filters, level: v })}>
+            <label htmlFor="advancedtracefilters-n-vel-f14ea7" className="text-meta font-medium text-muted-foreground">Nível</label>
+            <Select id="advancedtracefilters-n-vel-f14ea7" value={filters.level} onValueChange={v => onChange({ ...filters, level: v })}>
               <SelectTrigger className="h-8 text-meta bg-background"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos</SelectItem>
@@ -145,8 +145,8 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
             </Select>
           </div>
           <div className="space-y-1">
-            <label className="text-meta font-medium text-muted-foreground">Evento</label>
-            <Input
+            <label htmlFor="advancedtracefilters-evento-2d2e86" className="text-meta font-medium text-muted-foreground">Evento</label>
+            <Input id="advancedtracefilters-evento-2d2e86"
               placeholder="Buscar evento..."
               value={filters.event}
               onChange={e => onChange({ ...filters, event: e.target.value })}

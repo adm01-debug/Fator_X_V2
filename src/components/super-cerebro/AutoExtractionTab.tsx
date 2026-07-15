@@ -108,8 +108,8 @@ export function AutoExtractionTab() {
       <div className="nexus-card space-y-4">
         <div className="flex gap-3 items-end flex-wrap">
           <div className="flex-1 min-w-[220px] space-y-1.5">
-            <label className="text-meta text-muted-foreground font-medium">Tipo de extração</label>
-            <Select value={extractType} onValueChange={setExtractType}>
+            <label htmlFor="autoextractiontab-tipo-de-extra-o-5a5a28" className="text-meta text-muted-foreground font-medium">Tipo de extração</label>
+            <Select id="autoextractiontab-tipo-de-extra-o-5a5a28" value={extractType} onValueChange={setExtractType}>
               <SelectTrigger className="bg-secondary/50 text-meta">
                 <SelectValue />
               </SelectTrigger>

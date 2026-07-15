@@ -174,7 +174,7 @@ export function MergeWizardDialog({ cluster, open, onOpenChange, onCompleted }: 
                 .map((entry) => {
                   const checked = selectedDupIds.has(entry.id);
                   return (
-                    <label
+                    <label htmlFor="mergewizarddialog-field-8ebad0"
                       key={entry.id}
                       className={`flex gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
                         checked
@@ -219,7 +219,7 @@ export function MergeWizardDialog({ cluster, open, onOpenChange, onCompleted }: 
               <p className="text-meta font-semibold text-foreground mb-1.5 flex items-center gap-1.5">
                 <Crown className="h-3 w-3 text-nexus-emerald" /> Conteúdo canônico (editável)
               </p>
-              <Textarea
+              <Textarea id="mergewizarddialog-field-8ebad0"
                 value={canonicalContent}
                 onChange={(e) => setCanonicalContent(e.target.value)}
                 rows={8}

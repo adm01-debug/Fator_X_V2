@@ -319,12 +319,12 @@ function AbTestPanel({ agentId }: { agentId: string; currentVersion?: number }) 
       {/* Create form */}
       <div className="flex gap-2 items-end">
         <div className="flex-1">
-          <label className="text-meta text-muted-foreground">Nome do teste</label>
-          <Input value={testName} onChange={e => setTestName(e.target.value)} placeholder="Ex: Teste tom formal vs informal" className="bg-secondary/50 text-meta h-8" />
+          <label htmlFor="observabilitymodule-nome-do-teste-ffdac9" className="text-meta text-muted-foreground">Nome do teste</label>
+          <Input id="observabilitymodule-nome-do-teste-ffdac9" value={testName} onChange={e => setTestName(e.target.value)} placeholder="Ex: Teste tom formal vs informal" className="bg-secondary/50 text-meta h-8" />
         </div>
         <div className="w-20">
-          <label className="text-meta text-muted-foreground">Split A%</label>
-          <Input type="number" value={split} onChange={e => setSplit(e.target.value)} min="10" max="90" className="bg-secondary/50 text-meta h-8" />
+          <label htmlFor="observabilitymodule-split-a-b85404" className="text-meta text-muted-foreground">Split A%</label>
+          <Input id="observabilitymodule-split-a-b85404" type="number" value={split} onChange={e => setSplit(e.target.value)} min="10" max="90" className="bg-secondary/50 text-meta h-8" />
         </div>
         <Button size="sm" onClick={handleCreate} disabled={creating} className="h-8 text-meta gap-1">
           {creating ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plus className="h-3 w-3" />} Criar

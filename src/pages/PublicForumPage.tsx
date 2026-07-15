@@ -54,8 +54,8 @@ function ThreadList({ helpCenterId, hcSlug, primaryColor }: { helpCenterId: stri
           <DialogContent>
             <DialogHeader><DialogTitle>Criar tópico</DialogTitle></DialogHeader>
             <div className="space-y-3">
-              <div><label className="text-body-sm font-medium">Título</label><Input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} /></div>
-              <div><label className="text-body-sm font-medium">Mensagem</label><Textarea value={form.body} onChange={e => setForm({ ...form, body: e.target.value })} rows={6} /></div>
+              <div><label htmlFor="publicforumpage-t-tulo-cf08c2" className="text-body-sm font-medium">Título</label><Input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} /></div>
+              <div><label className="text-body-sm font-medium">Mensagem</label><Textarea id="publicforumpage-t-tulo-cf08c2" value={form.body} onChange={e => setForm({ ...form, body: e.target.value })} rows={6} /></div>
             </div>
             <DialogFooter>
               <Button onClick={async () => {

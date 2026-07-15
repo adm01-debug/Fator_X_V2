@@ -155,7 +155,7 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
               Entre dois checkpoints (v{minVersion}–v{maxVersion})
             </p>
             <div className="grid grid-cols-2 gap-2">
-              <label className="text-meta text-muted-foreground space-y-1">
+              <label htmlFor="timelinerangefilter-field-07a674" className="text-meta text-muted-foreground space-y-1">
                 <span>De (vMin)</span>
                 <Input
                   type="number"
@@ -169,7 +169,7 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
               </label>
               <label className="text-meta text-muted-foreground space-y-1">
                 <span>Até (vMax)</span>
-                <Input
+                <Input id="timelinerangefilter-field-07a674"
                   type="number"
                   inputMode="numeric"
                   min={minVersion}
@@ -216,7 +216,7 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
               Janela absoluta
             </p>
             <div className="grid grid-cols-2 gap-2">
-              <label className="text-meta text-muted-foreground space-y-1">
+              <label htmlFor="timelinerangefilter-field-e1729d" className="text-meta text-muted-foreground space-y-1">
                 <span>De</span>
                 <Input
                   type="datetime-local"
@@ -227,7 +227,7 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
               </label>
               <label className="text-meta text-muted-foreground space-y-1">
                 <span>Até</span>
-                <Input
+                <Input id="timelinerangefilter-field-e1729d"
                   type="datetime-local"
                   className="h-7 text-meta"
                   value={range.toIso ? toLocalInput(range.toIso) : ''}

@@ -103,8 +103,8 @@ export function BrainSandboxTab() {
 
         <div className="flex gap-3 items-end">
           <div className="flex-1 space-y-1.5">
-            <label className="text-meta text-muted-foreground font-medium">Modo de Contexto</label>
-            <Select value={contextMode} onValueChange={setContextMode}>
+            <label htmlFor="brainsandboxtab-modo-de-contexto-092328" className="text-meta text-muted-foreground font-medium">Modo de Contexto</label>
+            <Select id="brainsandboxtab-modo-de-contexto-092328" value={contextMode} onValueChange={setContextMode}>
               <SelectTrigger className="bg-secondary/50 text-meta"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="full">🧠 Completo (Fatos + RAG)</SelectItem>

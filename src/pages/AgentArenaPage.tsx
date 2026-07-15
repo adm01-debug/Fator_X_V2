@@ -121,8 +121,8 @@ export default function AgentArenaPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <label className="text-meta font-bold uppercase tracking-wider text-muted-foreground">Competidor A</label>
-                <Select value={agentA} onValueChange={setAgentA}>
+                <label htmlFor="agentarenapage-competidor-a-fa06d2" className="text-meta font-bold uppercase tracking-wider text-muted-foreground">Competidor A</label>
+                <Select id="agentarenapage-competidor-a-fa06d2" value={agentA} onValueChange={setAgentA}>
                   <SelectTrigger className="bg-secondary/30 h-11">
                     <SelectValue placeholder="Selecione Agente A" />
                   </SelectTrigger>
@@ -137,8 +137,8 @@ export default function AgentArenaPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-meta font-bold uppercase tracking-wider text-muted-foreground">Competidor B</label>
-                <Select value={agentB} onValueChange={setAgentB}>
+                <label htmlFor="agentarenapage-competidor-b-0e37a4" className="text-meta font-bold uppercase tracking-wider text-muted-foreground">Competidor B</label>
+                <Select id="agentarenapage-competidor-b-0e37a4" value={agentB} onValueChange={setAgentB}>
                   <SelectTrigger className="bg-secondary/30 h-11">
                     <SelectValue placeholder="Selecione Agente B" />
                   </SelectTrigger>
@@ -149,8 +149,8 @@ export default function AgentArenaPage() {
               </div>
 
               <div className="space-y-2 pt-4">
-                <label className="text-meta font-bold uppercase tracking-wider text-muted-foreground">O Desafio (Prompt)</label>
-                <Textarea 
+                <label htmlFor="agentarenapage-o-desafio-prompt-e001fb" className="text-meta font-bold uppercase tracking-wider text-muted-foreground">O Desafio (Prompt)</label>
+                <Textarea id="agentarenapage-o-desafio-prompt-e001fb" 
                   placeholder="Ex: Escreva um código Python que ordene uma lista usando bubble sort..." 
                   className="min-h-[120px] bg-secondary/20 text-body-sm"
                   value={prompt}
