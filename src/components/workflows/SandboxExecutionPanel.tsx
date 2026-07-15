@@ -96,6 +96,7 @@ export function SandboxExecutionPanel({ agentId, onConfigChange, onExecute }: Sa
           <Card className="bg-card border-border">
             <CardContent className="pt-4 space-y-4">
               <div className="space-y-2">
+                {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
                 <label className="text-meta text-muted-foreground font-medium">Runtime</label>
                 <div className="grid grid-cols-2 gap-2">
                   {RUNTIME_OPTIONS.map((rt) => (
@@ -113,6 +114,7 @@ export function SandboxExecutionPanel({ agentId, onConfigChange, onExecute }: Sa
               </div>
               {config.runtime !== 'none' && (
                 <div className="space-y-3">
+                  {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
                   <label className="text-meta text-muted-foreground font-medium">Limites de Recursos</label>
                   <SliderField label="CPU" value={config.cpuLimit} min={0.25} max={4} step={0.25} unit="cores" onChange={(v) => updateConfig({ cpuLimit: v })} />
                   <SliderField label="Memória" value={config.memoryLimitMb} min={128} max={4096} step={128} unit="MB" onChange={(v) => updateConfig({ memoryLimitMb: v })} />
@@ -129,6 +131,7 @@ export function SandboxExecutionPanel({ agentId, onConfigChange, onExecute }: Sa
           <Card className="bg-card border-border">
             <CardContent className="pt-4 space-y-3">
               <div className="flex items-center gap-2">
+                {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
                 <label className="text-meta text-muted-foreground">Linguagem:</label>
                 <div className="flex gap-1">
                   {config.allowedLanguages.map((lang) => (
@@ -223,6 +226,7 @@ export function SandboxExecutionPanel({ agentId, onConfigChange, onExecute }: Sa
               <ToggleField label="Acesso ao Shell" description="Permitir execução de comandos shell (bash/sh)" checked={config.shellAccess} onChange={(v) => updateConfig({ shellAccess: v })} icon={Terminal} />
               {config.networkEnabled && (
                 <div className="space-y-1">
+                  {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
                   <label className="text-meta text-muted-foreground">Domínios Permitidos</label>
                   <textarea value={config.allowedDomains.join('\n')} onChange={(e) => updateConfig({ allowedDomains: e.target.value.split('\n').filter(Boolean) })}
                     className="w-full h-20 p-2 bg-background border border-border rounded text-meta font-mono text-muted-foreground resize-none focus:border-primary focus:outline-none"

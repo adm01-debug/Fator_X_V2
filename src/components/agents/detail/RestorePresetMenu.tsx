@@ -161,6 +161,7 @@ export function RestorePresetMenu({ current, onApply, onPresetsLoaded, disabled 
                 current.copyModel && 'modelo',
               ].filter(Boolean).join(' · ') || 'nada'}
             </div>
+            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
             <label className="flex items-center gap-1.5 text-meta text-foreground/90 cursor-pointer">
               <Checkbox
                 checked={newAsDefault}

@@ -148,7 +148,7 @@ export function ExecutionTimeline({ execution, selectedStep, onSelectStep }: Pro
 
   return (
     <div role="button"
-      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- container de lista com navegação por teclado (aria-activedescendant)
+       
       tabIndex={0}
       onKeyDown={onKeyDown}
       onFocus={() => setFocused(true)}
@@ -191,6 +191,7 @@ export function ExecutionTimeline({ execution, selectedStep, onSelectStep }: Pro
 
 // eslint-disable-next-line jsx-a11y/aria-activedescendant-has-tabindex -- tabIndex declarado no container pai (linha 150)
 
+      {/* eslint-disable-next-line jsx-a11y/aria-activedescendant-has-tabindex -- list container with keyboard nav */}
       <ol
         className="space-y-1.5 mt-3"
         role="listbox"

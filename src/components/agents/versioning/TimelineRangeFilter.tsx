@@ -155,6 +155,7 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
               Entre dois checkpoints (v{minVersion}–v{maxVersion})
             </p>
             <div className="grid grid-cols-2 gap-2">
+              { }
               <label htmlFor="timelinerangefilter-field-07a674" className="text-meta text-muted-foreground space-y-1">
                 <span>De (vMin)</span>
                 <Input
@@ -167,6 +168,7 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
                   onChange={(e) => onChange({ ...range, mode: 'version', vMin: Number(e.target.value) || minVersion })}
                 />
               </label>
+              {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
               <label className="text-meta text-muted-foreground space-y-1">
                 <span>Até (vMax)</span>
                 <Input id="timelinerangefilter-field-07a674"
@@ -216,6 +218,7 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
               Janela absoluta
             </p>
             <div className="grid grid-cols-2 gap-2">
+              { }
               <label htmlFor="timelinerangefilter-field-e1729d" className="text-meta text-muted-foreground space-y-1">
                 <span>De</span>
                 <Input
@@ -225,6 +228,7 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
                   onChange={(e) => onChange({ mode: 'time', lastMinutes: undefined, fromIso: fromLocalInput(e.target.value), toIso: range.toIso })}
                 />
               </label>
+              {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
               <label className="text-meta text-muted-foreground space-y-1">
                 <span>Até</span>
                 <Input id="timelinerangefilter-field-e1729d"

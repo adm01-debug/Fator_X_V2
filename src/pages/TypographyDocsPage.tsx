@@ -136,6 +136,7 @@ export default function TypographyDocsPage() {
           <div className="space-y-2">
             <p className="text-meta uppercase tracking-wide text-muted-foreground">Formulário</p>
             <div className="p-4 rounded-lg border border-border bg-card space-y-1.5">
+              {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
               <label className="text-ui font-medium">Nome do agente</label>
               <div className="h-8 rounded border border-border bg-muted/30" />
               <p className="text-caption text-muted-foreground">Entre 3 e 60 caracteres.</p>

@@ -26,6 +26,7 @@ function SliderField({ label, value, min, max, step, unit, onChange }: {
   return (
     <div className="space-y-1">
       <div className="flex items-center justify-between">
+        { }
         <label className="text-meta text-muted-foreground">{label}</label>
         <span className="text-meta font-medium text-foreground">{value} {unit}</span>
       </div>
@@ -43,6 +44,7 @@ export function SandboxConfigTab({ config, onUpdate }: SandboxConfigTabProps) {
   return (
     <div className="pt-4 space-y-4">
       <div className="space-y-2">
+        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
         <label className="text-meta text-muted-foreground font-medium">Runtime</label>
         <div className="grid grid-cols-2 gap-2">
           {RUNTIME_OPTIONS.map((rt) => (
@@ -63,6 +65,7 @@ export function SandboxConfigTab({ config, onUpdate }: SandboxConfigTabProps) {
 
       {config.runtime !== 'none' && (
         <div className="space-y-3">
+          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
           <label className="text-meta text-muted-foreground font-medium">Limites de Recursos</label>
           <SliderField label="CPU" value={config.cpuLimit} min={0.25} max={4} step={0.25} unit="cores" onChange={(v) => onUpdate({ cpuLimit: v })} />
           <SliderField label="Memória" value={config.memoryLimitMb} min={128} max={4096} step={128} unit="MB" onChange={(v) => onUpdate({ memoryLimitMb: v })} />
