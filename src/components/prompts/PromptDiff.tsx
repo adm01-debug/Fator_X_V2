@@ -23,8 +23,8 @@ export function diffLines(a: string, b: string): { linesA: { text: string; type:
     }
   }
 
-  const _linesA: { text: string; type: 'same' | 'removed' }[] = [];
-  const _linesB: { text: string; type: 'same' | 'added' }[] = [];
+  const linesA: { text: string; type: 'same' | 'removed' }[] = [];
+  const linesB: { text: string; type: 'same' | 'added' }[] = [];
 
   let i = m, j = n;
   const opsA: typeof linesA = [];
