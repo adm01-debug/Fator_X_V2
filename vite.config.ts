@@ -55,7 +55,11 @@ export default defineConfig(({ mode }) => ({
           if (!id.includes("node_modules")) return undefined;
 
           if (id.includes("react-router")) return "vendor-router";
-          if (id.match(/node_modules\/(react|react-dom|scheduler)\//)) return "vendor-react";
+          if (
+            id.match(/node_modules\/(react|react-dom|scheduler|react-is)\//) ||
+            id.includes("use-sync-external-store")
+          )
+            return "vendor-react";
           if (id.includes("@tanstack/react-query")) return "vendor-query";
           if (id.includes("@supabase/") || id.includes("@lovable.dev/cloud-auth-js"))
             return "vendor-supabase";
