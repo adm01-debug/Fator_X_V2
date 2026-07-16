@@ -63,7 +63,7 @@ describe("AppSidebar", () => {
 
   it("renders workspace info", async () => {
     renderSidebar();
-    expect(await screen.findByText(/Workspace Free/)).toBeInTheDocument();
+    expect(await screen.findByText(/Vazão do Workspace/i)).toBeInTheDocument();
     expect(await screen.findByRole("progressbar")).toBeInTheDocument();
   });
 });
