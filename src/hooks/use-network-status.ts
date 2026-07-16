@@ -1,21 +1,36 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
+const OFFLINE_TITLE = 'Sem conexão com a internet';
+const OFFLINE_DESCRIPTION =
+  'Verifique sua conexão. O sistema entrará em modo de segurança.';
+
+function showOfflineToast() {
+  toast.error(OFFLINE_TITLE, {
+    id: 'network-offline',
+    description: OFFLINE_DESCRIPTION,
+    duration: Infinity,
+    action: {
+      label: 'Tentar Reconectar',
+      onClick: () => window.location.reload(),
+    },
+  });
+}
+
 export function useNetworkStatus() {
-  const [isOnline, setIsOnline] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true);
+  const [isOnline, setIsOnline] = useState(
+    typeof navigator !== 'undefined' ? navigator.onLine : true,
+  );
 
   useEffect(() => {
+    // Fire immediately when we mount already offline so the user sees feedback.
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      showOfflineToast();
+    }
+
     const handleOffline = () => {
       setIsOnline(false);
-      toast.error('Sistema Offline', {
-        id: 'network-offline',
-        description: 'Verifique sua conexão. O sistema entrará em modo de segurança.',
-        duration: Infinity,
-        action: {
-          label: 'Tentar Reconectar',
-          onClick: () => window.location.reload(),
-        },
-      });
+      showOfflineToast();
     };
 
     const handleOnline = () => {
