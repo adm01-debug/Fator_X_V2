@@ -74,8 +74,9 @@ describe('llmGatewayService', () => {
   });
 
   it('throws on invoke error', async () => {
-    mockInvoke.mockResolvedValueOnce({ data: null, error: { message: 'gateway error' } });
+    mockInvoke.mockResolvedValue({ data: null, error: { message: 'gateway error' } });
     const { invokeLLMGateway } = await import('@/services/llmGatewayService');
     await expect(invokeLLMGateway({ model: 'x', messages: [] })).rejects.toBeTruthy();
-  });
+    mockInvoke.mockResolvedValue({ data: { content: 'response', usage: { input_tokens: 10, output_tokens: 20 } }, error: null });
+  }, 20000);
 });
