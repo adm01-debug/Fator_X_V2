@@ -6,6 +6,11 @@
  * `consecutive_failures`. Pode também rodar 1 check on-demand via POST { check_id }.
  */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
+import { z } from "https://esm.sh/zod@3.23.8";
+
+const SyntheticBodySchema = z.object({
+  check_id: z.string().uuid().optional(),
+}).passthrough();
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -83,8 +88,13 @@ Deno.serve(async (req) => {
 
     // On-demand mode: { check_id }
     if (req.method === "POST") {
-      const body = await req.json().catch(() => ({}));
-      if (body?.check_id) {
+      const rawBody = await req.json().catch(() => ({}));
+      const parsedBody = SyntheticBodySchema.safeParse(rawBody);
+      if (!parsedBody.success) {
+        return new Response(JSON.stringify({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+      const body = parsedBody.data;
+      if (body.check_id) {
         const { data } = await admin
           .from("synthetic_checks")
           .select("*")

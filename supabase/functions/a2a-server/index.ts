@@ -17,6 +17,20 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
+import { z } from "https://esm.sh/zod@3.23.8";
+
+const A2ATaskSchema = z.object({
+  message: z.object({
+    role: z.enum(['user', 'agent']).optional(),
+    parts: z.array(z.object({
+      type: z.enum(['text', 'data']),
+      text: z.string().max(50_000).optional(),
+      data: z.record(z.unknown()).optional(),
+    })).min(1).max(50),
+  }),
+  id: z.string().max(200).optional(),
+  agentId: z.string().uuid().optional(),
+}).passthrough();
 import {
   handleCorsPreflight, jsonResponse, errorResponse, _getCorsHeaders,
   checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS,
@@ -201,12 +215,17 @@ serve(async (req) => {
 
     // ═══ Send Task ═══
     if (req.method === 'POST' && (path === '/tasks/send' || path === '/tasks' || path === '/')) {
-      const body = await req.json() as Record<string, unknown>;
+      const rawTask = await req.json().catch(() => null);
+      const parsedTask = A2ATaskSchema.safeParse(rawTask);
+      if (!parsedTask.success) {
+        return errorResponse(req, 'Payload inválido: ' + JSON.stringify(parsedTask.error.flatten().fieldErrors), 400);
+      }
+      const body = parsedTask.data as Record<string, unknown>;
       const message = body.message as Record<string, unknown>;
       const textPart = (message?.parts as Array<Record<string, string>>)?.find(p => p.type === 'text');
 
       if (!textPart?.text) {
-        return errorResponse(req, 'Message with text part required', 400);
+        return errorResponse(req, 'Mensagem com parte texto obrigatória', 400);
       }
 
       const authHeader = req.headers.get('Authorization') || `Bearer ${Deno.env.get('SUPABASE_ANON_KEY')}`;

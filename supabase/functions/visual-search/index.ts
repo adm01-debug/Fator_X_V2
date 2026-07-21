@@ -15,6 +15,14 @@
  * ═══════════════════════════════════════════════════════════════
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { z } from "https://esm.sh/zod@3.23.8";
+
+const VisualSearchBodySchema = z.object({
+  image: z.string().min(1).max(20_000_000),
+  hint: z.string().max(2000).optional(),
+  knowledge_base_id: z.string().uuid().nullable().optional(),
+  top_k: z.number().int().min(1).max(50).optional(),
+}).passthrough();
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -37,18 +45,16 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
 
   try {
-    const body = await req.json();
-    const imageRaw = String(body?.image ?? "").trim();
-    const hint = String(body?.hint ?? "").trim();
-    const knowledgeBaseId = body?.knowledge_base_id ?? null;
-    const topK = Math.min(Math.max(Number(body?.top_k ?? 10), 1), 50);
-
-    if (!imageRaw) {
-      return new Response(JSON.stringify({ error: "image is required" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    const rawBody = await req.json().catch(() => null);
+    const parsedBody = VisualSearchBodySchema.safeParse(rawBody);
+    if (!parsedBody.success) {
+      return new Response(JSON.stringify({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
+    const body = parsedBody.data;
+    const imageRaw = String(body.image ?? "").trim();
+    const hint = String(body.hint ?? "").trim();
+    const knowledgeBaseId = body.knowledge_base_id ?? null;
+    const topK = Math.min(Math.max(Number(body.top_k ?? 10), 1), 50);
 
     // Normalize image to data URL
     const imageDataUrl = imageRaw.startsWith("data:")

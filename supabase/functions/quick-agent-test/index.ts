@@ -1,4 +1,11 @@
 import { fetchWithTimeout } from "../_shared/retry.ts";
+import { z } from "https://esm.sh/zod@3.23.8";
+
+const BodySchema = z.object({
+  system_prompt: z.string().min(10).max(20_000),
+  user_message: z.string().min(1).max(4000),
+  model: z.string().min(2).max(120).default('gpt-4o'),
+});
 // Quick Agent Test — runs a single LLM call against Lovable AI Gateway
 // for the wizard's "test before save" feature.
 
@@ -40,20 +47,12 @@ Deno.serve(async (req) => {
       return jsonResponse({ error: 'LOVABLE_API_KEY não configurada' }, 500);
     }
 
-    const body = await req.json().catch(() => null);
-    // Inline Zod-style validation without extra dep to keep function light.
-    if (!body || typeof body !== 'object') {
-      return jsonResponse({ error: 'Body inválido' }, 400);
+    const raw = await req.json().catch(() => null);
+    const parsed = BodySchema.safeParse(raw);
+    if (!parsed.success) {
+      return jsonResponse({ error: 'Payload inválido', details: parsed.error.flatten().fieldErrors }, 400);
     }
-    const systemPrompt = String((body as Record<string, unknown>).system_prompt ?? '').trim();
-    const userMessage = String((body as Record<string, unknown>).user_message ?? '').trim();
-    const model = String((body as Record<string, unknown>).model ?? 'gpt-4o');
-
-    const errors: string[] = [];
-    if (systemPrompt.length < 10 || systemPrompt.length > 20_000) errors.push('system_prompt: 10..20000 chars');
-    if (userMessage.length === 0 || userMessage.length > 4000) errors.push('user_message: 1..4000 chars');
-    if (model.length < 2 || model.length > 120) errors.push('model: 2..120 chars');
-    if (errors.length) return jsonResponse({ error: 'Payload inválido', details: errors }, 400);
+    const { system_prompt: systemPrompt, user_message: userMessage, model } = parsed.data;
 
 
     const mapped = mapModel(model);

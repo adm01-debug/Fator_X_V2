@@ -18,6 +18,12 @@
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { z } from "https://esm.sh/zod@3.23.8";
+
+const ValidateAccessBodySchema = z.object({
+  workspace_id: z.string().uuid().nullable().optional(),
+  user_id: z.string().uuid().nullable().optional(),
+}).passthrough();
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -63,9 +69,13 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
 
   try {
-    const body = req.method === "POST" ? await req.json().catch(() => ({})) : {};
-    const workspaceId: string | null = body?.workspace_id ?? null;
-    const userId: string | null = body?.user_id ?? null;
+    const rawBody = req.method === "POST" ? await req.json().catch(() => ({})) : {};
+    const parsedBody = ValidateAccessBodySchema.safeParse(rawBody);
+    if (!parsedBody.success) {
+      return new Response(JSON.stringify({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+    const workspaceId: string | null = parsedBody.data.workspace_id ?? null;
+    const userId: string | null = parsedBody.data.user_id ?? null;
 
     const ip = extractIp(req);
     const country = extractCountry(req);

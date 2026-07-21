@@ -3,17 +3,12 @@ import { fetchWithTimeout } from "../_shared/retry.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse, _checkRateLimit, _getRateLimitIdentifier, _createRateLimitResponse, _RATE_LIMITS } from "../_shared/mod.ts";
+import { z } from "https://esm.sh/zod@3.23.8";
 
-// CORS handled by _shared/cors.ts — dynamic origin whitelist
-
-function validateBody(body: unknown): { valid: true; query: string } | { valid: false; error: string } {
-  if (!body || typeof body !== 'object') return { valid: false, error: 'Request body must be a JSON object' };
-  const b = body as Record<string, unknown>;
-  if (typeof b.query !== 'string' || b.query.trim().length < 2 || b.query.length > 10000) {
-    return { valid: false, error: 'query must be a string (2-10000 chars)' };
-  }
-  return { valid: true, query: b.query };
-}
+const CerebroBodySchema = z.object({
+  query: z.string().trim().min(2).max(10000),
+  stream: z.boolean().optional(),
+}).passthrough();
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
@@ -27,16 +22,13 @@ serve(async (req) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return errorResponse('Unauthorized', 401, req);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
-    let rawBody: any;
-    try { rawBody = await req.json(); } catch {
-      return errorResponse('Invalid JSON body', 400, req);
+    const rawBody = await req.json().catch(() => null);
+    const parsedBody = CerebroBodySchema.safeParse(rawBody);
+    if (!parsedBody.success) {
+      return errorResponse('Payload inválido: ' + JSON.stringify(parsedBody.error.flatten().fieldErrors), 400, req);
     }
-
-    const validation = validateBody(rawBody);
-    if (!validation.valid) return errorResponse(validation.error, 400, req);
-    const { query } = validation;
-    const stream = rawBody.stream === true;
+    const { query, stream: streamOpt } = parsedBody.data;
+    const stream = streamOpt === true;
 
     const { data: _member } = await supabase.from('workspace_members').select('workspace_id').eq('user_id', user.id).limit(1).single();
 

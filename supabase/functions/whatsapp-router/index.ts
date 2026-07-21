@@ -14,6 +14,9 @@ import { handleCorsPreflight, getCorsHeaders } from '../_shared/cors.ts';
 import { constantTimeEqual } from '../_shared/security.ts';
 import { repairAlternation, type ChatTurn } from '../_shared/alternation.ts';
 import { withRetry, fetchWithTimeout } from '../_shared/retry.ts';
+import { z } from 'https://esm.sh/zod@3.23.8';
+
+const BodySchema = z.object({ message_id: z.string().uuid() });
 
 const CONTEXT_TURNS = 10;
 const MAX_INBOUND_AGE_MS = 5 * 60_000;
@@ -36,12 +39,12 @@ Deno.serve(async (req) => {
     }
   }
 
-  let body: { message_id?: string };
-  try { body = await req.json(); } catch { return json(400, { error: 'invalid_json' }); }
-  const messageId = body?.message_id;
-  if (!messageId || typeof messageId !== 'string') {
-    return json(400, { error: 'missing_message_id' });
+  const raw = await req.json().catch(() => null);
+  const parsed = BodySchema.safeParse(raw);
+  if (!parsed.success) {
+    return json(400, { error: 'Payload inválido', details: parsed.error.flatten().fieldErrors });
   }
+  const messageId = parsed.data.message_id;
 
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,

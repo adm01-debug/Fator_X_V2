@@ -1,13 +1,15 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
+import { z } from "https://esm.sh/zod@3.23.8";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-interface OrchestrateRequest {
-  drill_id: string;
-}
+const OrchestrateRequestSchema = z.object({
+  drill_id: z.string().uuid(),
+});
+type OrchestrateRequest = z.infer<typeof OrchestrateRequestSchema>;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -39,13 +41,12 @@ Deno.serve(async (req) => {
       });
     }
 
-    const body: OrchestrateRequest = await req.json();
-    if (!body.drill_id) {
-      return new Response(JSON.stringify({ error: "drill_id required" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    const rawBody = await req.json().catch(() => null);
+    const parsedBody = OrchestrateRequestSchema.safeParse(rawBody);
+    if (!parsedBody.success) {
+      return new Response(JSON.stringify({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
+    const body: OrchestrateRequest = parsedBody.data;
 
     const admin = createClient(url, serviceKey);
 

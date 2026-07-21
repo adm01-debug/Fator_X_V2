@@ -1,4 +1,11 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { z } from "https://esm.sh/zod@3.23.8";
+
+const VoiceSessionBodySchema = z.object({
+  action: z.enum(['start', 'end', 'append', 'get']),
+  agent_id: z.string().uuid().nullable().optional(),
+  session_id: z.string().uuid().optional(),
+}).passthrough();
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -14,8 +21,12 @@ Deno.serve(async (req) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
-    const body = await req.json();
-    const { action, agent_id, session_id } = body || {};
+    const rawBody = await req.json().catch(() => null);
+    const parsedBody = VoiceSessionBodySchema.safeParse(rawBody);
+    if (!parsedBody.success) {
+      return new Response(JSON.stringify({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    const { action, agent_id, session_id } = parsedBody.data;
 
     if (action === "start") {
       const { data: ws } = await supabase.from("workspaces").select("id").eq("owner_id", user.id).limit(1).maybeSingle();

@@ -2,6 +2,11 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { _getCorsHeaders, handleCorsPreflight, jsonResponse, _errorResponse, _checkRateLimit, _getRateLimitIdentifier, _createRateLimitResponse, _RATE_LIMITS } from "../_shared/mod.ts";
 import { fetchWithTimeout } from "../_shared/retry.ts";
+import { z } from "https://esm.sh/zod@3.23.8";
+
+const MockupBodySchema = z.object({
+  action: z.string().min(1).max(80),
+}).passthrough();
 
 // CORS handled by _shared/cors.ts — dynamic origin whitelist
 
@@ -44,7 +49,12 @@ serve(async (req) => {
     if (!user) return jsonResponse({ error: 'Unauthorized' }, 401);
 
     const hfToken = Deno.env.get('HF_API_TOKEN');
-    const body = await req.json();
+    const rawBody = await req.json().catch(() => null);
+    const parsedBody = MockupBodySchema.safeParse(rawBody);
+    if (!parsedBody.success) {
+      return jsonResponse({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }, 400);
+    }
+    const body = parsedBody.data as Record<string, unknown> & { action: string };
     const { action } = body;
 
     // ═══ ACTION: generate_mockup — Full product mockup pipeline (#51) ═══

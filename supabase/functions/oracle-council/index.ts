@@ -3,6 +3,18 @@ import { fetchWithTimeout } from "../_shared/retry.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { getCorsHeaders, _handleCorsPreflight, _jsonResponse, _errorResponse, checkRateLimit, _getRateLimitIdentifier, _createRateLimitResponse, _RATE_LIMITS } from "../_shared/mod.ts";
+import { z } from "https://esm.sh/zod@3.23.8";
+
+const CouncilBodySchema = z.object({
+  query: z.string().trim().min(3).max(10_000),
+  mode: z.enum(['council', 'researcher', 'validator', 'executor', 'advisor']).default('council'),
+  members: z.array(z.object({ model: z.string().min(2), persona: z.string().optional() })).min(2).max(10),
+  chairman_model: z.string().optional(),
+  enable_peer_review: z.boolean().default(true),
+  enable_thinking: z.boolean().default(false),
+  preset_id: z.string().optional(),
+  custom_guardrails: z.string().max(20_000).optional(),
+});
 
 // CORS handled by _shared/cors.ts — dynamic origin whitelist
 
@@ -20,54 +32,7 @@ function checkRateLimit(userId: string): boolean {
   return true;
 }
 
-// ═══ Input Validation ═══
-const VALID_MODES = ['council', 'researcher', 'validator', 'executor', 'advisor'];
-
-function validateRequest(body: unknown): { valid: true; data: OracleRequest } | { valid: false; error: string } {
-  if (!body || typeof body !== 'object') return { valid: false, error: 'Request body must be a JSON object' };
-  const b = body as Record<string, unknown>;
-
-  if (typeof b.query !== 'string' || b.query.trim().length < 3 || b.query.length > 10000) {
-    return { valid: false, error: 'query must be a string (3-10000 chars)' };
-  }
-  
-  const mode = typeof b.mode === 'string' && VALID_MODES.includes(b.mode) ? b.mode : 'council';
-  
-  if (!Array.isArray(b.members) || b.members.length < 2 || b.members.length > 10) {
-    return { valid: false, error: 'members must be an array with 2-10 items' };
-  }
-  for (const m of b.members) {
-    if (!m || typeof m !== 'object') return { valid: false, error: 'Each member must be an object' };
-    const mem = m as Record<string, unknown>;
-    if (typeof mem.model !== 'string' || mem.model.length < 2) {
-      return { valid: false, error: 'Each member must have a valid model string' };
-    }
-  }
-
-  return {
-    valid: true,
-    data: {
-      query: b.query as string,
-      mode,
-      members: b.members as Array<{ model: string; persona?: string }>,
-      chairman_model: typeof b.chairman_model === 'string' ? b.chairman_model : undefined,
-      enable_peer_review: b.enable_peer_review !== false,
-      enable_thinking: b.enable_thinking === true,
-      preset_id: typeof b.preset_id === 'string' ? b.preset_id : undefined,
-    },
-  };
-}
-
-interface OracleRequest {
-  query: string;
-  mode: string;
-  members: Array<{ model: string; persona?: string }>;
-  chairman_model?: string;
-  enable_peer_review?: boolean;
-  enable_thinking?: boolean;
-  preset_id?: string;
-  custom_guardrails?: string;
-}
+// Input validation via CouncilBodySchema (Zod) declared no topo do arquivo.
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -96,18 +61,17 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Rate limit exceeded. Max 10 Oracle requests per minute.' }), { status: 429, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json', 'Retry-After': '60' } });
     }
 
-    // Validate input
+    // Validate input with Zod
     let rawBody: unknown;
     try { rawBody = await req.json(); } catch {
-      return new Response(JSON.stringify({ error: 'Invalid JSON body' }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ error: 'JSON inválido' }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    }
+    const parsed = CouncilBodySchema.safeParse(rawBody);
+    if (!parsed.success) {
+      return new Response(JSON.stringify({ error: 'Payload inválido', details: parsed.error.flatten().fieldErrors }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
-    const validation = validateRequest(rawBody);
-    if (!validation.valid) {
-      return new Response(JSON.stringify({ error: validation.error }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
-    }
-
-    const { query, mode, members, chairman_model, enable_peer_review = true, enable_thinking = false, custom_guardrails } = validation.data;
+    const { query, mode, members, chairman_model, enable_peer_review, enable_thinking, custom_guardrails } = parsed.data;
 
     const gatewayUrl = `${supabaseUrl}/functions/v1/llm-gateway`;
     const totalStartTime = Date.now();

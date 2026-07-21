@@ -1,6 +1,14 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { handleCorsPreflight, jsonResponse, errorResponse, getCorsHeaders, getRateLimitIdentifier, checkRateLimit, RATE_LIMITS, createRateLimitResponse } from "../_shared/mod.ts";
+import { z } from "https://esm.sh/zod@3.23.8";
+
+const OAuthActionSchema = z.enum(['authorize', 'callback']);
+const OAuthQuerySchema = z.object({
+  action: OAuthActionSchema.optional(),
+  code: z.string().min(1).max(2048).optional(),
+  state: z.string().max(2048).optional(),
+});
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
@@ -15,7 +23,13 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const url = new URL(req.url);
-    const action = url.searchParams.get('action') || 'authorize';
+    const queryParsed = OAuthQuerySchema.safeParse({
+      action: url.searchParams.get('action') ?? undefined,
+      code: url.searchParams.get('code') ?? undefined,
+      state: url.searchParams.get('state') ?? undefined,
+    });
+    if (!queryParsed.success) return errorResponse(req, 'Parâmetros inválidos', 400);
+    const action = queryParsed.data.action ?? 'authorize';
     const clientId = Deno.env.get('BITRIX24_CLIENT_ID');
     const clientSecret = Deno.env.get('BITRIX24_CLIENT_SECRET');
     const bitrixDomain = Deno.env.get('BITRIX24_DOMAIN');

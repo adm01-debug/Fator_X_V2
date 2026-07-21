@@ -2,6 +2,15 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { fetchWithTimeout } from "../_shared/retry.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { getCorsHeaders, handleCorsPreflight, _jsonResponse, _errorResponse, _checkRateLimit, _getRateLimitIdentifier, _createRateLimitResponse, _RATE_LIMITS } from "../_shared/mod.ts";
+import { z } from "https://esm.sh/zod@3.23.8";
+
+const DatahubBodySchema = z.object({
+  action: z.enum([
+    'test_connections','list_entities','query','list_columns','count',
+    'search','fetch','fetch_related','get_stats','custom_query','schema',
+  ]).or(z.string().min(1).max(80)),
+  streaming: z.boolean().optional(),
+}).passthrough();
 
 const encoder = new TextEncoder();
 
@@ -140,7 +149,12 @@ serve(async (req) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
 
-    const body = await req.json();
+    const rawBody = await req.json().catch(() => null);
+    const parsedBody = DatahubBodySchema.safeParse(rawBody);
+    if (!parsedBody.success) {
+      return new Response(JSON.stringify({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    }
+    const body = parsedBody.data as Record<string, unknown> & { action: string };
     const { action } = body;
 
     // ═══ ACTION: test_connections (Optimized with Streaming) ═══

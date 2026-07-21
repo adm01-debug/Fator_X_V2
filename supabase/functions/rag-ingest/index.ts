@@ -2,14 +2,16 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { getCorsHeaders, handleCorsPreflight, jsonResponse } from "../_shared/mod.ts";
+import { z } from "https://esm.sh/zod@3.23.8";
 
-interface IngestRequest {
-  document_id: string;
-  content: string;
-  chunk_size?: number;
-  chunk_overlap?: number;
-  contextual_chunking?: boolean;
-}
+const IngestBodySchema = z.object({
+  document_id: z.string().uuid(),
+  content: z.string().min(1).max(2_000_000),
+  chunk_size: z.number().int().min(100).max(8000).optional(),
+  chunk_overlap: z.number().int().min(0).max(2000).optional(),
+  contextual_chunking: z.boolean().optional(),
+});
+type IngestRequest = z.infer<typeof IngestBodySchema>;
 
 function chunkText(text: string, chunkSize = 1000, overlap = 200): string[] {
   if (overlap >= chunkSize) overlap = Math.floor(chunkSize * 0.2);
@@ -38,8 +40,13 @@ serve(async (req) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Unauthorized');
 
-    const body: IngestRequest = await req.json();
-    const { document_id, content, chunk_size = 1000, chunk_overlap = 200, _contextual_chunking = false } = body;
+    const rawBody = await req.json().catch(() => null);
+    const parsedBody = IngestBodySchema.safeParse(rawBody);
+    if (!parsedBody.success) {
+      return jsonResponse({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }, 400);
+    }
+    const body: IngestRequest = parsedBody.data;
+    const { document_id, content, chunk_size = 1000, chunk_overlap = 200 } = body;
 
     if (isStream) {
       const { readable, writable } = new TransformStream();

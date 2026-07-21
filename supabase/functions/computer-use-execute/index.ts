@@ -1,6 +1,12 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { getCorsHeaders, handleCorsPreflight } from "../_shared/mod.ts";
+import { z } from "https://esm.sh/zod@3.23.8";
+
+const ComputerUseBodySchema = z.object({
+  goal: z.string().max(4000).optional(),
+  model: z.string().max(120).optional(),
+}).passthrough();
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
@@ -10,7 +16,11 @@ serve(async (req) => {
     return new Response(JSON.stringify({ error: 'SSE required' }), { status: 400, headers: getCorsHeaders(req) });
   }
 
-  const { _goal, _model = 'claude-3-5-sonnet-20241022' } = await req.json();
+  const rawBody = await req.json().catch(() => null);
+  const parsedBody = ComputerUseBodySchema.safeParse(rawBody);
+  if (!parsedBody.success) {
+    return new Response(JSON.stringify({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }), { status: 400, headers: getCorsHeaders(req) });
+  }
 
   const { readable, writable } = new TransformStream();
   const writer = writable.getWriter();
