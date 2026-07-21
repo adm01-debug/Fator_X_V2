@@ -1,6 +1,7 @@
 // Eval Suite runner — executa dataset contra agente + LLM-as-judge
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.58.0';
 import { z } from "https://esm.sh/zod@3.23.8";
+import { checkIdempotency, saveIdempotency } from "../_shared/idempotency.ts";
 
 const EvalRunnerBodySchema = z.object({
   agent_id: z.string().uuid().optional(),
@@ -131,6 +132,14 @@ Deno.serve(async (req) => {
     const { dataset_id, agent_id } = body as { dataset_id: string; agent_id: string };
     if (!dataset_id || !agent_id) throw new Error('dataset_id e agent_id obrigatórios');
 
+    // Idempotência opcional (Idempotency-Key header)
+    const idemKeyHeader = req.headers.get('Idempotency-Key');
+    const idemKey = idemKeyHeader ? `agent-eval-runner:${userId}:${idemKeyHeader}` : '';
+    if (idemKey) {
+      const dup = await checkIdempotency(idemKey, admin);
+      if (dup.isDuplicate && dup.response) return dup.response;
+    }
+
     const { data: dataset, error: dsErr } = await admin
       .from('agent_eval_datasets')
       .select('*')
@@ -232,7 +241,9 @@ Deno.serve(async (req) => {
         .eq('id', run.id);
     });
 
-    return new Response(JSON.stringify({ run_id: run.id }), {
+    const responseBody = { run_id: run.id };
+    if (idemKey) await saveIdempotency(idemKey, 200, responseBody, admin);
+    return new Response(JSON.stringify(responseBody), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     });

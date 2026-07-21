@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { z } from "https://esm.sh/zod@3.23.8";
+import { checkIdempotency, saveIdempotency } from "../_shared/idempotency.ts";
 
 const CodeInterpBodySchema = z.object({
   runtime: z.enum(['python', 'node', 'deno']),
@@ -127,6 +128,14 @@ Deno.serve(async (req) => {
     const body = parsedBody.data as ExecuteBody;
     if (new TextEncoder().encode(body.code).length > MAX_CODE_BYTES) {
       return new Response(JSON.stringify({ error: `Code exceeds ${MAX_CODE_BYTES} bytes` }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    // Idempotência (opt-in via header). Não aplicável ao modo streaming.
+    const idemKeyHeader = req.headers.get('Idempotency-Key');
+    const idemKey = !body.stream && idemKeyHeader ? `code-interpreter:${user.id}:${idemKeyHeader}` : '';
+    if (idemKey) {
+      const dup = await checkIdempotency(idemKey, supabase);
+      if (dup.isDuplicate && dup.response) return dup.response;
     }
 
     if (body.stream) {
@@ -286,6 +295,7 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ error: insertError.message }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
+    if (idemKey) await saveIdempotency(idemKey, 200, inserted, supabase);
     return new Response(JSON.stringify(inserted), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });

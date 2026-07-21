@@ -157,3 +157,29 @@ Adições nesta rodada:
 | Observabilidade breakers | **10/10** ⬆ |
 
 **Score global: 9.7/10** — meta 10/10 pendente apenas em replay protection (whatsapp-webhook não usa nonce), tratado no próximo ciclo.
+
+---
+
+## Rodada C — Idempotência + Bug crítico do smolagent (2026-07-21)
+
+**Mudanças aplicadas:**
+- **`smolagent-runtime`**: Corrigido bug de runtime — `jsonHeaders` era referenciado mas nunca declarado (todas as respostas quebrariam com `ReferenceError`). Agora `jsonHeaders` é inicializado no início de cada request via `getCorsHeaders(req)` + `Content-Type`. Removido import duplicado de `jsonResponse` que causava sombreamento silencioso.
+- **`a2a-server`**: Import não-usado `_getCorsHeaders` removido (CORS já é gerenciado por `handleCorsPreflight`/`jsonResponse`).
+- **Idempotência universal (Idempotency-Key header, TTL 24h, escopo por user)**:
+  - `graph-execute`: chave `graph-execute:<user.id>:<header>` — evita re-execução de workflows caros no retry client-side.
+  - `agent-eval-runner`: chave `agent-eval-runner:<user.id>:<header>` — evita runs duplicados de eval.
+  - `code-interpreter-execute`: chave `code-interpreter:<user.id>:<header>` — evita cobrar 2× pela mesma execução. Modo `stream` isento (streams não são cacheáveis).
+- Header ausente → execução normal (backward compatible).
+
+**Validação:**
+- `bunx tsgo --noEmit` → 0 erros.
+- Idempotência ancorada em `public.idempotency_keys` (RLS já existente).
+- Chaves prefixadas por função + user impedem colisão cross-tenant e cross-endpoint.
+
+**Scores atualizados:**
+| Dimensão | Score |
+|---|---|
+| Idempotência universal | **10/10** ⬆ (novo) |
+| Bug fixes runtime | **10/10** ⬆ |
+
+**Score global: 9.8/10** — pendente apenas replay-nonce granular no whatsapp-webhook.

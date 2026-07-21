@@ -2,6 +2,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { z } from "https://esm.sh/zod@3.23.8";
 import { fetchWithTimeout, withRetry } from "../_shared/retry.ts";
+import { checkIdempotency, saveIdempotency } from "../_shared/idempotency.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -73,6 +74,14 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Payload inválido', details: parsed.error.flatten() }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
     const { graph_id, input } = parsed.data;
+
+    // Idempotency: se o cliente forneceu Idempotency-Key, retornamos cache em replays
+    const idemKeyHeader = req.headers.get('Idempotency-Key');
+    const idemKey = idemKeyHeader ? `graph-execute:${user.id}:${idemKeyHeader}` : '';
+    if (idemKey) {
+      const dup = await checkIdempotency(idemKey, supabase);
+      if (dup.isDuplicate && dup.response) return dup.response;
+    }
 
 
     const { data: graph, error: ge } = await supabase.from('agent_graphs').select('*').eq('id', graph_id).single();
@@ -147,7 +156,10 @@ Deno.serve(async (req) => {
       status: 'completed', final_output: finalOutput, ended_at: new Date().toISOString(), trace, total_cost_cents: totalCost,
     }).eq('id', exec.id);
 
-    return new Response(JSON.stringify({ execution_id: exec.id, final_output: finalOutput, steps: trace.length, total_cost_cents: totalCost }), {
+    const responseBody = { execution_id: exec.id, final_output: finalOutput, steps: trace.length, total_cost_cents: totalCost };
+    if (idemKey) await saveIdempotency(idemKey, 200, responseBody, supabase);
+
+    return new Response(JSON.stringify(responseBody), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e) {
