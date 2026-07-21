@@ -2,7 +2,7 @@
 // Popula embeddings vector(1536) em public.agent_memories_v2 para linhas com embedding IS NULL.
 // Executada via cron a cada 5 min. Idempotente. Limite: 200 linhas/execução.
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders, handleCorsPreflight } from "../_shared/cors.ts";
 
 const BATCH_SIZE = 20;
 const MAX_ROWS = 200;
