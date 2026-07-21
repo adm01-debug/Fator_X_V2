@@ -285,6 +285,9 @@ export default function AgentMetricsPage() {
         </>
       )}
 
+      {/* Autograph: saúde do knowledge graph */}
+      <KnowledgeGraphHealthCard workspaceId={workspaceId} />
+
       {/* Regras de alerta */}
       <Card>
         <CardHeader>
