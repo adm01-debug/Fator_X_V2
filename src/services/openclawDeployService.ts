@@ -17,6 +17,7 @@ export type OpenclawAction =
   | 'agent.create'
   | 'agent.update'
   | 'agent.delete'
+  | 'agent.publish'
   | 'skills'
   | 'skill.deploy';
 
