@@ -6,6 +6,7 @@ import {
   checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS,
   parseBody, z,
 } from "../_shared/mod.ts";
+import { withRetry } from "../_shared/retry.ts";
 
 const BitrixAPIInput = z.object({
   method: z.string().min(1).max(200),
