@@ -113,15 +113,18 @@ function buildSkillFiles(a: AgentConfig): OpenclawSkillFile[] {
       `# SKILL — ${name}`,
       '',
       `**Id:** \`${t.id}\``,
-      `**Tipo:** ${t.type ?? 'tool'}`,
+      `**Categoria:** ${t.category}`,
+      `**Permissão:** ${t.permission_level}`,
+      `**Aprovação humana:** ${t.requires_approval ? 'sim' : 'não'}`,
       '',
       '## Descrição',
       t.description ?? '(sem descrição)',
       '',
-      '## Config',
-      '```json',
-      JSON.stringify(t.config ?? {}, null, 2),
-      '```',
+      '## Limites',
+      `- Chamadas por sessão: ${t.max_calls_per_session}`,
+      `- Chamadas por dia: ${t.max_calls_per_day}`,
+      `- Custo por chamada: $${t.cost_per_call}`,
+      `- Validação de saída: ${t.output_validation}`,
     ].join('\n');
     return { name, filename, content };
   });
