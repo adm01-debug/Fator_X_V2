@@ -2,6 +2,13 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { handleCorsPreflight, getCorsHeaders, checkRateLimit } from "../_shared/mod.ts";
 import { fetchWithTimeout } from "../_shared/retry.ts";
+import { z } from "https://esm.sh/zod@3.23.8";
+
+const BodySchema = z.object({
+  queue_id: z.string().uuid().optional(),
+  worker_id: z.string().min(1).max(120).optional(),
+  batch_size: z.number().int().min(1).max(20).optional(),
+});
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
@@ -11,10 +18,17 @@ serve(async (req) => {
   if (rateLimitResult) return rateLimitResult;
 
   try {
-    const body = await req.json().catch(() => ({}));
-    const queueId = body.queue_id as string | undefined;
-    const workerId = body.worker_id as string ?? `worker-${crypto.randomUUID().slice(0, 8)}`;
-    const batchSize = Math.min(body.batch_size as number ?? 5, 20);
+    const rawBody = await req.json().catch(() => ({}));
+    const parsed = BodySchema.safeParse(rawBody);
+    if (!parsed.success) {
+      return new Response(JSON.stringify({ error: 'Payload inválido', details: parsed.error.flatten().fieldErrors }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const queueId = parsed.data.queue_id;
+    const workerId = parsed.data.worker_id ?? `worker-${crypto.randomUUID().slice(0, 8)}`;
+    const batchSize = parsed.data.batch_size ?? 5;
+
 
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
