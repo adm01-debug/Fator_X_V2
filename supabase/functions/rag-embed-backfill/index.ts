@@ -43,12 +43,14 @@ Deno.serve(async (req) => {
   const admin = createClient(supabaseUrl, serviceKey);
 
   try {
-    // 1. Busca linhas pendentes (content não vazio, embedding NULL)
+    // 1. Busca linhas pendentes (content não vazio, embedding NULL, attempts < 3)
     const { data: rows, error: fetchErr } = await admin
       .from("agent_memories_v2")
       .select("id, content")
       .is("embedding", null)
+      .lt("embed_attempts", 3)
       .not("content", "is", null)
+      .order("created_at", { ascending: true })
       .limit(MAX_ROWS);
 
     if (fetchErr) throw fetchErr;
@@ -65,6 +67,27 @@ Deno.serve(async (req) => {
     let failed = 0;
     const authHeader = `Bearer ${serviceKey}`;
 
+    async function markFailure(ids: string[], errMsg: string) {
+      const truncated = errMsg.slice(0, 500);
+      // increment atomicamente via RPC não existe; usamos update+fetch mínimo
+      for (const id of ids) {
+        const { data: current } = await admin
+          .from("agent_memories_v2")
+          .select("embed_attempts")
+          .eq("id", id)
+          .maybeSingle();
+        const attempts = ((current?.embed_attempts as number | undefined) ?? 0) + 1;
+        await admin
+          .from("agent_memories_v2")
+          .update({
+            embed_attempts: attempts,
+            embed_last_error: truncated,
+            embed_last_attempt_at: new Date().toISOString(),
+          })
+          .eq("id", id);
+      }
+    }
+
     // 2. Processa em lotes de 20 com backoff
     for (let i = 0; i < pending.length; i += BATCH_SIZE) {
       const batch = pending.slice(i, i + BATCH_SIZE) as MemoryRow[];
@@ -75,26 +98,35 @@ Deno.serve(async (req) => {
           projectRef,
         );
 
-        // Valida dimensão antes de gravar
         for (let j = 0; j < batch.length; j++) {
           if (vectors[j].length !== EMBED_DIM) {
             failed++;
+            await markFailure([batch[j].id], `invalid dim ${vectors[j].length}`);
             continue;
           }
           const { error: upErr } = await admin
             .from("agent_memories_v2")
-            .update({ embedding: vectors[j] as unknown as string })
+            .update({
+              embedding: vectors[j] as unknown as string,
+              embed_last_error: null,
+            })
             .eq("id", batch[j].id);
-          if (upErr) failed++;
-          else processed++;
+          if (upErr) {
+            failed++;
+            await markFailure([batch[j].id], upErr.message);
+          } else {
+            processed++;
+          }
         }
       } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
         failed += batch.length;
-        console.error("[rag-embed-backfill] batch error:", err instanceof Error ? err.message : err);
-        // backoff simples
+        console.error("[rag-embed-backfill] batch error:", msg);
+        await markFailure(batch.map((r) => r.id), msg);
         await new Promise((r) => setTimeout(r, 500));
       }
     }
+
 
     return new Response(
       JSON.stringify({

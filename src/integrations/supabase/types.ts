@@ -500,6 +500,9 @@ export type Database = {
           context_tier: string | null
           created_at: string | null
           decay_rate: number | null
+          embed_attempts: number
+          embed_last_attempt_at: string | null
+          embed_last_error: string | null
           embedding: string | null
           half_life_days: number
           id: string
@@ -518,6 +521,9 @@ export type Database = {
           context_tier?: string | null
           created_at?: string | null
           decay_rate?: number | null
+          embed_attempts?: number
+          embed_last_attempt_at?: string | null
+          embed_last_error?: string | null
           embedding?: string | null
           half_life_days?: number
           id?: string
@@ -536,6 +542,9 @@ export type Database = {
           context_tier?: string | null
           created_at?: string | null
           decay_rate?: number | null
+          embed_attempts?: number
+          embed_last_attempt_at?: string | null
+          embed_last_error?: string | null
           embedding?: string | null
           half_life_days?: number
           id?: string
@@ -8984,6 +8993,7 @@ export type Database = {
       get_embedding_coverage: {
         Args: { _workspace_id: string }
         Returns: {
+          dead_letter: number
           embedded: number
           pct: number
           total: number
@@ -9368,6 +9378,10 @@ export type Database = {
           p_workspace_id: string
         }
         Returns: string
+      }
+      reset_embedding_dead_letter: {
+        Args: { _workspace_id: string }
+        Returns: number
       }
       reset_workspace_budget: {
         Args: { p_workspace_id: string }
