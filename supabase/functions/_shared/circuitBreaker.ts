@@ -41,6 +41,7 @@ class CircuitBreaker {
     if (this.state === 'closed') return true;
     if (this.state === 'open') {
       if (this.openedAt !== null && Date.now() - this.openedAt >= this.opts.openMs) {
+        this._transitionedTo = 'half-open';
         this.state = 'half-open';
         this.halfOpenInFlight = 0;
       } else return false;
@@ -51,21 +52,32 @@ class CircuitBreaker {
     return true;
   }
 
+  /** Drena e retorna o último evento de transição (para observabilidade). */
+  _drainTransition(): 'closed' | 'open' | 'half-open' | null {
+    const t = this._transitionedTo;
+    this._transitionedTo = null;
+    return t;
+  }
+
   recordSuccess() {
+    const wasHalfOpen = this.state === 'half-open';
     this.failures = 0;
     this.openedAt = null;
     this.lastError = null;
     this.state = 'closed';
     this.halfOpenInFlight = 0;
+    if (wasHalfOpen) this._transitionedTo = 'closed';
   }
 
   recordFailure(err?: unknown) {
     this.failures++;
     this.lastError = err instanceof Error ? err.message : String(err ?? 'unknown');
     if (this.state === 'half-open' || this.failures >= this.opts.failureThreshold) {
+      const wasOpen = this.state === 'open';
       this.state = 'open';
       this.openedAt = Date.now();
       this.halfOpenInFlight = 0;
+      if (!wasOpen) this._transitionedTo = 'open';
     }
   }
 
