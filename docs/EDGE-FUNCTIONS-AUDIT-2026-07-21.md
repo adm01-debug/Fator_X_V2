@@ -99,3 +99,31 @@ Rollout desta rodada: `fetchWithTimeout` em 100% das funções com fetch externo
 ---
 
 *Gerado durante o Roadmap OpenClaw × Fator X — fase QA exaustiva.*
+
+---
+
+## 6. Atualização final — 2026-07-21 (Rodada A concluída)
+
+**Cobertura Zod: 63/69 = 91%** ✅ (meta 90%)
+
+Funções sem Zod (justificadas):
+- `health-check` — endpoint trivial sem body.
+- `llm-gateway` — proxy pass-through; validação delegada ao provedor upstream.
+- `openclaw-proxy` — proxy com validação de estado do circuit breaker (não valida payload semanticamente).
+- `openclaw-webhook`, `webhook-receiver`, `whatsapp-webhook` — HMAC + dedupe por `webhook_events(source, external_event_id)` já são a fronteira de confiança.
+
+**Scores finais:**
+| Dimensão | Score |
+|---|---|
+| CORS | 10/10 |
+| Timeout externo | 10/10 |
+| Circuit Breaker (crítico) | 8/10 |
+| Retry/backoff | 8/10 |
+| Dedupe webhooks | 9/10 (bitrix24 + generic) |
+| Replay protection | 7/10 |
+| Validação Zod | **9.1/10** (91%) |
+
+Adições nesta rodada:
+- Zod em: `product-mockup`, `a2a-server`, `bitrix24-webhook`, `cerebro-query`, `rag-ingest`, `agent-conversational-builder`, `agent-eval-runner`, `code-interpreter-execute`, `computer-use-execute`, `datahub-mcp-server`, `sbom-scanner`, `smolagent-runtime`, `synthetic-runner`, `visual-search`, `voice-session`, `replay-fork-execute`, `dr-orchestrator`, `validate-access`, `bitrix24-oauth`.
+- Dedupe adicional em `bitrix24-webhook` via `bitrix24_webhook_events(workspace_id, event_type, bitrix_event_id)`.
+- Mensagens de erro padronizadas em PT-BR nas funções tocadas.
