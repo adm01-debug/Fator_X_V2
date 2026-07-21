@@ -130,6 +130,14 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ error: `Code exceeds ${MAX_CODE_BYTES} bytes` }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
+    // Idempotência (opt-in via header). Não aplicável ao modo streaming.
+    const idemKeyHeader = req.headers.get('Idempotency-Key');
+    const idemKey = !body.stream && idemKeyHeader ? `code-interpreter:${user.id}:${idemKeyHeader}` : '';
+    if (idemKey) {
+      const dup = await checkIdempotency(idemKey, supabase);
+      if (dup.isDuplicate && dup.response) return dup.response;
+    }
+
     if (body.stream) {
       const { readable, writable } = new TransformStream();
       const writer = writable.getWriter();
