@@ -75,6 +75,14 @@ Deno.serve(async (req) => {
     }
     const { graph_id, input } = parsed.data;
 
+    // Idempotency: se o cliente forneceu Idempotency-Key, retornamos cache em replays
+    const idemKeyHeader = req.headers.get('Idempotency-Key');
+    const idemKey = idemKeyHeader ? `graph-execute:${user.id}:${idemKeyHeader}` : '';
+    if (idemKey) {
+      const dup = await checkIdempotency(idemKey, supabase);
+      if (dup.isDuplicate && dup.response) return dup.response;
+    }
+
 
     const { data: graph, error: ge } = await supabase.from('agent_graphs').select('*').eq('id', graph_id).single();
     if (ge || !graph) return new Response(JSON.stringify({ error: 'Graph not found' }), { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
