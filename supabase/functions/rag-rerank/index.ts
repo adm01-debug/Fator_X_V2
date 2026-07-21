@@ -58,7 +58,7 @@ serve(async (req) => {
         const cohereKeyValue = secrets?.[0]?.key_value;
 
         if (cohereKeyValue) {
-          const resp = await fetch('https://api.cohere.ai/v1/rerank', {
+          const resp = await withRetry(() => fetch('https://api.cohere.ai/v1/rerank', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${cohereKeyValue}` },
             body: JSON.stringify({
@@ -68,7 +68,7 @@ serve(async (req) => {
               top_n: topK,
               return_documents: false,
             }),
-          });
+          }), { attempts: 3, baseMs: 250, capMs: 3000 });
           if (resp.ok) {
             const data = await resp.json();
             reranked = (data.results || []).map((r: Record<string, unknown>) => ({
