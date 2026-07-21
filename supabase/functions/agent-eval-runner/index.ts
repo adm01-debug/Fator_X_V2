@@ -1,6 +1,7 @@
 // Eval Suite runner — executa dataset contra agente + LLM-as-judge
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.58.0';
 import { z } from "https://esm.sh/zod@3.23.8";
+import { checkIdempotency, saveIdempotency } from "../_shared/idempotency.ts";
 
 const EvalRunnerBodySchema = z.object({
   agent_id: z.string().uuid().optional(),
