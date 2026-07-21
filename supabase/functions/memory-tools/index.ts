@@ -1,3 +1,4 @@
+import { fetchWithTimeout, withRetry } from "../_shared/retry.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { z } from "https://esm.sh/zod@3.23.8";
@@ -115,7 +116,7 @@ serve(async (req) => {
         return jsonResponse(req, { success: false, message: 'Not enough memories to compact (need 5+)' });
       }
 
-      const summaryResp = await fetch(`${supabaseUrl}/functions/v1/llm-gateway`, {
+      const summaryResp = await fetchWithTimeout(`${supabaseUrl}/functions/v1/llm-gateway`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': authHeader, 'apikey': supabaseKey },
         body: JSON.stringify({

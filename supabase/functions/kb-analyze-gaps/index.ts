@@ -1,4 +1,5 @@
 // Knowledge Gap Analysis: detecta queries sem boas respostas e sugere artigos
+import { fetchWithTimeout, withRetry } from "../_shared/retry.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { z } from "https://esm.sh/zod@3.23.8";
 
@@ -61,7 +62,7 @@ Deno.serve(async (req) => {
     if (lovableKey && openGaps && openGaps.length > 0) {
       for (const gap of openGaps) {
         try {
-          const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          const r = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
             method: "POST",
             headers: { "Authorization": `Bearer ${lovableKey}`, "Content-Type": "application/json" },
             body: JSON.stringify({
