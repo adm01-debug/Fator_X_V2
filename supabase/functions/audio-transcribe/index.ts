@@ -5,6 +5,7 @@ import {
   checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS,
   parseBody, z,
 } from "../_shared/mod.ts";
+import { withRetry } from "../_shared/retry.ts";
 
 const WHISPER_MODEL = 'openai/whisper-large-v3-turbo';
 const WHISPER_TIMEOUT_MS = 30000;
