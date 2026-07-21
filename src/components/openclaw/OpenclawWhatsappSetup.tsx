@@ -8,9 +8,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { QrCode, Loader2, RefreshCw, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { QrCode, Loader2, RefreshCw, CheckCircle2, AlertTriangle, Bot, Save } from 'lucide-react';
 import { toast } from 'sonner';
 import { pairWhatsapp, getWhatsappStatus, type WhatsappPairResult } from '@/services/openclawDeployService';
+import { listAgentSummaries, type AgentSummary } from '@/services/agentsService';
+import { supabaseExternal } from '@/integrations/supabase/externalClient';
+import { logger } from '@/lib/logger';
 
 type UiStatus = 'idle' | 'pending' | 'connected' | 'expired' | 'error';
 
