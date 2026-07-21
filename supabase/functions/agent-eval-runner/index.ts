@@ -132,6 +132,14 @@ Deno.serve(async (req) => {
     const { dataset_id, agent_id } = body as { dataset_id: string; agent_id: string };
     if (!dataset_id || !agent_id) throw new Error('dataset_id e agent_id obrigatórios');
 
+    // Idempotência opcional (Idempotency-Key header)
+    const idemKeyHeader = req.headers.get('Idempotency-Key');
+    const idemKey = idemKeyHeader ? `agent-eval-runner:${userId}:${idemKeyHeader}` : '';
+    if (idemKey) {
+      const dup = await checkIdempotency(idemKey, admin);
+      if (dup.isDuplicate && dup.response) return dup.response;
+    }
+
     const { data: dataset, error: dsErr } = await admin
       .from('agent_eval_datasets')
       .select('*')
