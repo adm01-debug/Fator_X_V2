@@ -241,6 +241,65 @@ export function OpenclawWhatsappSetup() {
             {error}
           </div>
         )}
+
+        {/* Automação */}
+        <div className="pt-4 mt-2 border-t border-border/40 space-y-4">
+          <div className="flex items-center gap-2">
+            <Bot className="h-4 w-4 text-primary" />
+            <h4 className="text-body-sm font-bold text-foreground">Automação</h4>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3 items-end">
+            <div className="space-y-2">
+              <Label htmlFor="wa-agent">Agente responsável</Label>
+              <Select value={selectedAgentId} onValueChange={setSelectedAgentId}>
+                <SelectTrigger id="wa-agent" className="bg-background border-border">
+                  <SelectValue placeholder="Selecione um agente" />
+                </SelectTrigger>
+                <SelectContent>
+                  {agents.length === 0 ? (
+                    <SelectItem value="__none" disabled>
+                      Nenhum agente disponível
+                    </SelectItem>
+                  ) : (
+                    agents.map((a) => (
+                      <SelectItem key={a.id} value={a.id}>
+                        {a.name}
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center gap-3 pb-2">
+              <Switch
+                id="wa-auto"
+                checked={autoReply}
+                onCheckedChange={setAutoReply}
+                aria-label="Resposta automática"
+              />
+              <Label htmlFor="wa-auto" className="cursor-pointer text-body-sm">
+                Resposta automática
+              </Label>
+            </div>
+          </div>
+
+          <div className="flex justify-end">
+            <Button
+              onClick={saveAutomation}
+              disabled={savingAutomation || !instanceName.trim()}
+              variant="outline"
+              className="gap-2"
+            >
+              {savingAutomation ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4" />
+              )}
+              Salvar automação
+            </Button>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );
