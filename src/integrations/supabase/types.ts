@@ -8499,19 +8499,6 @@ export type Database = {
         }
         Relationships: []
       }
-      knowledge_graph_health_v: {
-        Row: {
-          broken_links_score: number | null
-          computed_at: string | null
-          coverage_score: number | null
-          dedup_score: number | null
-          freshness_score: number | null
-          orphans_score: number | null
-          total_score: number | null
-          workspace_id: string | null
-        }
-        Relationships: []
-      }
       llm_cost_by_caller: {
         Row: {
           caller: string | null
@@ -8938,6 +8925,19 @@ export type Database = {
         }[]
       }
       get_ir_summary: { Args: { p_workspace_id: string }; Returns: Json }
+      get_knowledge_graph_health: {
+        Args: { p_workspace_id: string }
+        Returns: {
+          broken_links_score: number
+          computed_at: string
+          coverage_score: number
+          dedup_score: number
+          freshness_score: number
+          orphans_score: number
+          total_score: number
+          workspace_id: string
+        }[]
+      }
       get_masked_secrets: {
         Args: { p_workspace_id: string }
         Returns: {
