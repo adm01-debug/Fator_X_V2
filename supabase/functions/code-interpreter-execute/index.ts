@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { z } from "https://esm.sh/zod@3.23.8";
+import { checkIdempotency, saveIdempotency } from "../_shared/idempotency.ts";
 
 const CodeInterpBodySchema = z.object({
   runtime: z.enum(['python', 'node', 'deno']),
