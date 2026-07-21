@@ -1,55 +1,25 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { handleCorsPreflight, getCorsHeaders, getRateLimitIdentifier, checkRateLimit, createRateLimitResponse, RATE_LIMITS } from "../_shared/mod.ts";
+import { getBreaker } from "../_shared/circuitBreaker.ts";
+import { withRetry, fetchWithTimeout } from "../_shared/retry.ts";
+import { checkIdempotency, saveIdempotency } from "../_shared/idempotency.ts";
 
-// ============================================================
-// Circuit Breaker (in-memory, isolate-scoped)
-// ============================================================
-type BreakerState = 'CLOSED' | 'OPEN' | 'HALF_OPEN';
-const BREAKER = {
-  state: 'CLOSED' as BreakerState,
-  failures: [] as number[],   // timestamps
-  openedAt: 0,
-  window: 30_000,
-  threshold: 5,
-  cooldown: 60_000,
-};
-
-function breakerAllow(): boolean {
-  const now = Date.now();
-  if (BREAKER.state === 'OPEN') {
-    if (now - BREAKER.openedAt >= BREAKER.cooldown) {
-      BREAKER.state = 'HALF_OPEN';
-      return true;
-    }
-    return false;
-  }
-  return true;
-}
-function breakerOnSuccess() {
-  BREAKER.failures = [];
-  BREAKER.state = 'CLOSED';
-}
-function breakerOnFailure(): boolean {
-  const now = Date.now();
-  BREAKER.failures = BREAKER.failures.filter(t => now - t < BREAKER.window);
-  BREAKER.failures.push(now);
-  if (BREAKER.state === 'HALF_OPEN' || BREAKER.failures.length >= BREAKER.threshold) {
-    BREAKER.state = 'OPEN';
-    BREAKER.openedAt = now;
-    return true; // opened
-  }
-  return false;
-}
+// Ações mutativas que exigem idempotência
+const MUTATING_ACTIONS = new Set(['whatsapp.send', 'agent.publish', 'agent.create', 'agent.update', 'agent.delete', 'skill.deploy', 'whatsapp.pair']);
 
 // Emissão de eventos (best-effort, service-role)
-async function emitEvent(kind: string, level: 'info'|'warn'|'error', payload: Record<string, unknown>) {
+function makeAdmin() {
+  const url = Deno.env.get('SUPABASE_URL');
+  const key = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  if (!url || !key) return null;
+  return createClient(url, key, { auth: { persistSession: false } });
+}
+async function emitEvent(kind: string, level: 'info'|'warn'|'error', payload: Record<string, unknown>, workspaceId?: string | null) {
   try {
-    const url = Deno.env.get('SUPABASE_URL');
-    const key = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-    if (!url || !key) return;
-    const supabase = createClient(url, key, { auth: { persistSession: false } });
-    await supabase.from('openclaw_events').insert({ kind, level, source: 'proxy', payload });
+    const supabase = makeAdmin();
+    if (!supabase) return;
+    await supabase.from('openclaw_events').insert({ workspace_id: workspaceId ?? null, kind, level, source: 'proxy', payload });
   } catch { /* ignore */ }
 }
 
@@ -73,26 +43,15 @@ serve(async (req) => {
           message: !rawUrl
             ? 'Secret OPENCLAW_URL não configurada.'
             : `OPENCLAW_URL inválida ("${rawUrl}"): deve começar com http:// ou https://.`,
-          hint: 'Atualize a secret OPENCLAW_URL em Backend → Secrets (ex.: https://openclaw.exemplo.com).',
+          hint: 'Atualize a secret OPENCLAW_URL em Backend → Secrets.',
         }),
         { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
     if (!openclawToken) {
       return new Response(
-        JSON.stringify({
-          error: 'missing_openclaw_token',
-          message: 'Secret OPENCLAW_API_TOKEN não configurada.',
-          hint: 'Defina OPENCLAW_API_TOKEN em Backend → Secrets.',
-        }),
+        JSON.stringify({ error: 'missing_openclaw_token', message: 'Secret OPENCLAW_API_TOKEN não configurada.' }),
         { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    if (!breakerAllow()) {
-      return new Response(
-        JSON.stringify({ error: 'circuit_open', message: 'OpenClaw upstream em cooldown (circuit breaker).' }),
-        { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -105,6 +64,33 @@ serve(async (req) => {
         JSON.stringify({ error: 'Missing action parameter' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
+    }
+
+    // Workspace scoping para circuit breaker (isolamento multi-tenant)
+    const workspaceId = (payload?.workspace_id as string) ?? req.headers.get('x-workspace-id') ?? 'global';
+    const breaker = getBreaker(`openclaw:${workspaceId}`, { failureThreshold: 5, openMs: 60_000, halfOpenMax: 2 });
+
+    if (!breaker.canRequest()) {
+      await emitEvent('breaker_reject', 'warn', { action, workspace_id: workspaceId }, workspaceId);
+      return new Response(
+        JSON.stringify({ error: 'circuit_open', message: 'OpenClaw upstream em cooldown (circuit breaker por workspace).', workspace_id: workspaceId }),
+        { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Idempotência para ações mutativas
+    const idempotencyKey = req.headers.get('idempotency-key') ?? req.headers.get('x-idempotency-key') ?? '';
+    const admin = makeAdmin();
+    if (MUTATING_ACTIONS.has(action) && idempotencyKey && admin) {
+      const scoped = `openclaw:${workspaceId}:${action}:${idempotencyKey}`;
+      const check = await checkIdempotency(scoped, admin);
+      if (check.isDuplicate && check.response) {
+        const cloned = check.response;
+        return new Response(await cloned.text(), {
+          status: cloned.status,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json', 'X-Idempotency-Cache': 'hit' },
+        });
+      }
     }
 
     const endpoints: Record<string, { method: string; path: string }> = {
@@ -130,54 +116,63 @@ serve(async (req) => {
       );
     }
 
-    const fetchOptions: RequestInit = {
-      method: endpoint.method,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${openclawToken}`,
-      },
-      signal: AbortSignal.timeout(30000),
+    const requestHeaders: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${openclawToken}`,
     };
-
-    if (['POST', 'PUT', 'PATCH'].includes(endpoint.method) && payload) {
-      fetchOptions.body = JSON.stringify(payload);
+    if (idempotencyKey && MUTATING_ACTIONS.has(action)) {
+      requestHeaders['Idempotency-Key'] = idempotencyKey;
     }
 
-    const response = await fetch(`${openclawUrl}${endpoint.path}`, fetchOptions);
-    const data = await response.json().catch(async () => ({ raw: await response.text() }));
+    // Retry apenas para GETs (safe) e ações não-mutativas; mutativas com idempotency-key também podem retry
+    const canRetry = endpoint.method === 'GET' || (MUTATING_ACTIONS.has(action) && !!idempotencyKey);
+    const attempts = canRetry ? 3 : 1;
+
+    const response = await withRetry(() => fetchWithTimeout(`${openclawUrl}${endpoint.path}`, {
+      method: endpoint.method,
+      headers: requestHeaders,
+      body: ['POST', 'PUT', 'PATCH'].includes(endpoint.method) && payload ? JSON.stringify(payload) : undefined,
+      timeoutMs: 30_000,
+    }), {
+      attempts, baseMs: 400, capMs: 4_000,
+      onRetry: (info) => emitEvent('upstream_retry', 'warn', { action, attempt: info.attempt, delay_ms: info.delayMs, status: info.res?.status }, workspaceId),
+    });
+
+    const data = await response.json().catch(async () => ({ raw: await response.text().catch(() => '') }));
 
     if (response.ok) {
-      breakerOnSuccess();
+      breaker.recordSuccess();
     } else if (response.status >= 500) {
-      const opened = breakerOnFailure();
-      if (opened) await emitEvent('breaker_open', 'error', { action, status: response.status });
-      else await emitEvent('upstream_error', 'warn', { action, status: response.status });
+      breaker.recordFailure(`upstream_${response.status}`);
+      const snap = breaker.snapshot();
+      if (snap.state === 'open') await emitEvent('breaker_open', 'error', { action, status: response.status, workspace_id: workspaceId }, workspaceId);
+      else await emitEvent('upstream_error', 'warn', { action, status: response.status, workspace_id: workspaceId }, workspaceId);
     }
 
-    return new Response(
-      JSON.stringify({
-        success: response.ok,
-        status: response.status,
-        action,
-        data,
-      }),
-      {
-        status: response.ok ? 200 : response.status,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
+    const responseBody = { success: response.ok, status: response.status, action, data };
+
+    // Salva idempotência (only 2xx para evitar cache de falhas transitórias)
+    if (MUTATING_ACTIONS.has(action) && idempotencyKey && admin && response.ok) {
+      const scoped = `openclaw:${workspaceId}:${action}:${idempotencyKey}`;
+      await saveIdempotency(scoped, response.status, responseBody, admin);
+    }
+
+    return new Response(JSON.stringify(responseBody), {
+      status: response.ok ? 200 : response.status,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
 
   } catch (error) {
     const isTimeout = error instanceof DOMException && error.name === 'AbortError';
-    const opened = breakerOnFailure();
-    if (opened) await emitEvent('breaker_open', 'error', { reason: isTimeout ? 'timeout' : 'exception' });
-    else await emitEvent(isTimeout ? 'upstream_timeout' : 'upstream_exception', 'error', {
-      message: error instanceof Error ? error.message : 'Proxy error',
-    });
+    const workspaceId = (req.headers.get('x-workspace-id')) ?? 'global';
+    const breaker = getBreaker(`openclaw:${workspaceId}`);
+    breaker.recordFailure(error);
+    const snap = breaker.snapshot();
+    if (snap.state === 'open') await emitEvent('breaker_open', 'error', { reason: isTimeout ? 'timeout' : 'exception', workspace_id: workspaceId }, workspaceId);
+    else await emitEvent(isTimeout ? 'upstream_timeout' : 'upstream_exception', 'error', { message: error instanceof Error ? error.message : 'Proxy error', workspace_id: workspaceId }, workspaceId);
     return new Response(
       JSON.stringify({
         error: isTimeout ? 'OpenClaw request timed out (30s)' : (error instanceof Error ? error.message : 'Proxy error'),
-        hint: 'Verify OpenClaw is running: ssh root@187.77.151.129 "cd /docker/openclaw-sbem && docker compose ps"',
       }),
       { status: isTimeout ? 504 : 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
