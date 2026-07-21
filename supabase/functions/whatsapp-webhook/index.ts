@@ -427,6 +427,20 @@ serve(async (req) => {
     return jsonResponse(req, { ok: true, deduped: true, trace_id: traceId }, 200);
   }
 
+  // Fallback nonce-hash: quando o provedor não entrega message_id.
+  let nonceHash: string | null = null;
+  if (!event.message_id) {
+    const { replay, hash } = await isNonceReplay(client, provider, event.from_phone, providerTsMs, rawBody);
+    if (replay) {
+      return jsonResponse(req, { ok: true, deduped: true, via: 'nonce', trace_id: traceId }, 200);
+    }
+    nonceHash = hash;
+    // fire-and-forget: registra o nonce para futuras janelas de 5 min
+    recordNonce(client, hash, provider);
+  }
+  void nonceHash;
+
+
 
 
 
