@@ -88,11 +88,7 @@ Deno.serve(async (req) => {
     return json(400, { error: 'invalid_event_id' });
   }
 
-  const supabase = createClient(
-    Deno.env.get('SUPABASE_URL')!,
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
-    { auth: { persistSession: false } },
-  );
+  const supabase = supabaseAudit;
 
   // Dedupe: procura evento pelo external_event_id
   const { data: existing } = await supabase
