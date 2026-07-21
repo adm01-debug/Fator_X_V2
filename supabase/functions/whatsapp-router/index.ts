@@ -13,6 +13,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { handleCorsPreflight, getCorsHeaders } from '../_shared/cors.ts';
 import { constantTimeEqual } from '../_shared/security.ts';
 import { repairAlternation, type ChatTurn } from '../_shared/alternation.ts';
+import { withRetry, fetchWithTimeout } from '../_shared/retry.ts';
 
 const CONTEXT_TURNS = 10;
 const MAX_INBOUND_AGE_MS = 5 * 60_000;
