@@ -100,17 +100,56 @@ serve(async (req) => {
     const totalCost = 0;
     let stoppedReason: 'completed' | 'no_gaps' | 'budget_tokens' | 'budget_time' | 'budget_sources' = 'completed';
 
-    // Optional internal RAG seeding (agent_memories) when include_internal=true
+    // Optional internal RAG seeding (agent_memories) when include_internal=true.
+    // Autograph v2: tenta busca híbrida vetorial (0.5*cosine + 0.3*text + 0.2*ebbinghaus)
+    // e cai para busca textual+ebbinghaus se o embedding falhar.
     if (include_internal) {
       try {
-        // Autograph: busca híbrida (texto + relevância Ebbinghaus) via RPC dedicada.
-        const { data: memories } = await supabase.rpc('hybrid_memory_search', {
-          p_agent_id: null,
-          p_query: query,
-          p_limit: 3,
-          p_tiers: ['core', 'active', 'warm'],
-        });
-        if (memories && memories.length > 0) {
+        // 1) Tenta gerar embedding da query em 1536 dimensões (compatível com agent_memories_v2.embedding).
+        let queryEmbedding: number[] | null = null;
+        try {
+          const embedResp = await fetchWithTimeout(`${supabaseUrl}/functions/v1/rag-embed-v2`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': authHeader, 'apikey': anonKey },
+            body: JSON.stringify({
+              texts: [query],
+              dimension: 1536,
+              task: 'retrieval.query',
+            }),
+            timeoutMs: 5_000,
+          });
+          if (embedResp.ok) {
+            const embedData = await embedResp.json() as { embeddings?: number[][] };
+            const first = embedData.embeddings?.[0];
+            if (Array.isArray(first) && first.length === 1536 && first.every((n) => Number.isFinite(n))) {
+              queryEmbedding = first;
+            }
+          }
+        } catch { /* embedding is best-effort */ }
+
+        // 2) Preferência: overload 5-arg com pgvector. Fallback: overload 4-arg textual.
+        let memories: unknown = null;
+        if (queryEmbedding) {
+          const { data, error } = await supabase.rpc('hybrid_memory_search', {
+            p_agent_id: null,
+            p_query: query,
+            p_query_embedding: queryEmbedding as unknown as string,
+            p_limit: 3,
+            p_tiers: ['core', 'active', 'warm'],
+          });
+          if (!error) memories = data;
+        }
+        if (!memories) {
+          const { data } = await supabase.rpc('hybrid_memory_search', {
+            p_agent_id: null,
+            p_query: query,
+            p_limit: 3,
+            p_tiers: ['core', 'active', 'warm'],
+          });
+          memories = data;
+        }
+
+        if (Array.isArray(memories) && memories.length > 0) {
           const rows = memories as Array<{ id: string; content: string; memory_tier: string; hybrid_score: number }>;
           allFindings += `\n\n--- Internal Knowledge ---\n${rows.map((m) => m.content).join('\n')}`;
           for (const m of rows) {
