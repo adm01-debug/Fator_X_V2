@@ -39,6 +39,23 @@ type BrowserSession = {
   ended_at: string | null;
   agent_id: string | null;
 };
+type WhatsappInstance = {
+  id: string;
+  instance_name: string;
+  phone_number: string | null;
+  status: string;
+};
+
+type WhatsappMessage = {
+  id: string;
+  instance_id: string | null;
+  remote_phone: string;
+  direction: string;
+  body: string | null;
+  status: string;
+  created_at: string;
+};
+
 
 const STATUS_VARIANT: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
   completed: "secondary",
