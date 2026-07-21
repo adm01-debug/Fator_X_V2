@@ -2,6 +2,7 @@
 
 import type { LLMCallParams, LLMResult } from "../types.ts";
 import { normalizeOpenAIResponse } from "../utils.ts";
+import { fetchWithTimeout, withRetry } from "../../_shared/retry.ts";
 
 function mapToLovableModel(model: string): string {
   const clean = model.replace(/^(huggingface|openai|anthropic|google)\//, '');
@@ -18,8 +19,9 @@ export async function callLovable(
   apiKey: string,
 ): Promise<LLMResult> {
   const lovableModel = mapToLovableModel(params.model);
-  const response = await fetch('https://api.lovable.dev/v1/chat/completions', {
+  const response = await withRetry(() => fetchWithTimeout('https://api.lovable.dev/v1/chat/completions', {
     method: 'POST',
+    timeoutMs: 60_000,
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${apiKey}`,
@@ -30,7 +32,7 @@ export async function callLovable(
       temperature: params.temperature,
       max_tokens: params.max_tokens,
     }),
-  });
+  }), { attempts: 3, baseMs: 300 });
   const result = await response.json();
   return normalizeOpenAIResponse(result);
 }
