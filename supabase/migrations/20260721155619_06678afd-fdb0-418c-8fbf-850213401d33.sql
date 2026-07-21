@@ -1,0 +1,1 @@
+REVOKE ALL ON FUNCTION public.trg_openclaw_whatsapp_autoreply() FROM PUBLIC, anon, authenticated;
