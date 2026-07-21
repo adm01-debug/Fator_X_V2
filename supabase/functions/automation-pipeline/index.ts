@@ -35,8 +35,11 @@ Deno.serve(async (req) => {
     const { data: userData } = await userClient.auth.getUser();
     if (!userData.user) return json({ error: 'unauthorized' }, 401);
 
-    const body = (await req.json()) as Body;
-    if (!body?.rule_id) return json({ error: 'rule_id required' }, 400);
+    const rawBody = await req.json().catch(() => null);
+    const parsed = BodySchema.safeParse(rawBody);
+    if (!parsed.success) return json({ error: 'Payload inválido', details: parsed.error.flatten().fieldErrors }, 400);
+    const body = parsed.data;
+
 
     const { data: rule, error: ruleErr } = await admin
       .from('automation_rules')
