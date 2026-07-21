@@ -48,11 +48,11 @@ serve(async (req) => {
     const domain = Deno.env.get('BITRIX24_DOMAIN');
     if (!domain) return errorResponse(req, 'BITRIX24_DOMAIN not configured', 503);
 
-    const resp = await fetch(`https://${domain}/rest/${method}`, {
+    const resp = await withRetry(() => fetch(`https://${domain}/rest/${method}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify(params),
-    });
+    }), { attempts: 3, baseMs: 300, capMs: 3000 });
 
     const result = await resp.json();
     return jsonResponse(req, result);
