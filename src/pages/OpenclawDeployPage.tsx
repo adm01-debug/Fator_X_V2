@@ -17,6 +17,7 @@ import {
   Loader2,
   RefreshCw,
   MessageSquare,
+  QrCode,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -27,6 +28,7 @@ import {
 } from "@/services/openclawDeployService";
 import { OpenclawStatusBadge } from "@/components/openclaw/OpenclawStatusBadge";
 import { OpenclawTestConsole } from "@/components/openclaw/OpenclawTestConsole";
+import { OpenclawWhatsappSetup } from "@/components/openclaw/OpenclawWhatsappSetup";
 
 export default function OpenclawDeployPage() {
   const queryClient = useQueryClient();
