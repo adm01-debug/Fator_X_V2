@@ -31,17 +31,77 @@ export function OpenclawWhatsappSetup() {
   const [error, setError] = useState<string | null>(null);
   const [starting, setStarting] = useState(false);
 
+  // Automação: agente + resposta automática
+  const [agents, setAgents] = useState<AgentSummary[]>([]);
+  const [selectedAgentId, setSelectedAgentId] = useState<string>('');
+  const [autoReply, setAutoReply] = useState(false);
+  const [savingAutomation, setSavingAutomation] = useState(false);
+
   const timerRef = useRef<number | null>(null);
   const startedAtRef = useRef<number | null>(null);
   const mountedRef = useRef(true);
 
   useEffect(() => {
     mountedRef.current = true;
+    (async () => {
+      try {
+        const { agents: list } = await listAgentSummaries(200);
+        if (mountedRef.current) setAgents(list);
+      } catch (err) {
+        logger.warn('Falha ao carregar agentes para automação WhatsApp', err);
+      }
+    })();
     return () => {
       mountedRef.current = false;
       if (timerRef.current !== null) window.clearTimeout(timerRef.current);
     };
   }, []);
+
+  // Ao trocar de instância, prefill automação
+  useEffect(() => {
+    if (!instanceName.trim()) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data } = await supabaseExternal
+          .from('openclaw_whatsapp_instances')
+          .select('agent_id, auto_reply')
+          .eq('instance_name', instanceName.trim())
+          .maybeSingle();
+        if (cancelled || !data) return;
+        const row = data as unknown as { agent_id: string | null; auto_reply: boolean | null };
+        setSelectedAgentId(row.agent_id ?? '');
+        setAutoReply(Boolean(row.auto_reply));
+      } catch {
+        /* instância pode ainda não existir */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [instanceName]);
+
+  const saveAutomation = useCallback(async () => {
+    if (!instanceName.trim()) return;
+    setSavingAutomation(true);
+    try {
+      const { error: updErr } = await supabaseExternal
+        .from('openclaw_whatsapp_instances')
+        .update({
+          agent_id: selectedAgentId || null,
+          auto_reply: autoReply,
+        })
+        .eq('instance_name', instanceName.trim());
+      if (updErr) throw updErr;
+      toast.success('Automação atualizada.');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Falha ao salvar automação';
+      logger.error('save-automation', err);
+      toast.error(msg);
+    } finally {
+      setSavingAutomation(false);
+    }
+  }, [autoReply, instanceName, selectedAgentId]);
 
   const applyResult = useCallback((res: WhatsappPairResult | undefined) => {
     if (!mountedRef.current || !res) return;
