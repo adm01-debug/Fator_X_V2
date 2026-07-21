@@ -71,13 +71,14 @@ serve(async (req) => {
           await send('status', { message: 'Chunks salvos no banco de dados', stage: 'db_insert' });
 
           if (secret?.key_value && insertedChunks) {
+            const { withRetry, fetchWithTimeout } = await import('../_shared/retry.ts');
             for (let i = 0; i < insertedChunks.length; i++) {
-              // Simulated parallel processing for speed in high-performance RAG
-              const resp = await fetch('https://api.openai.com/v1/embeddings', {
+              const resp = await withRetry(() => fetchWithTimeout('https://api.openai.com/v1/embeddings', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${secret.key_value}` },
                 body: JSON.stringify({ model: 'text-embedding-3-small', input: chunks[i] }),
-              });
+                timeoutMs: 20_000,
+              }), { attempts: 3, baseMs: 500, capMs: 5_000 });
               const res = await resp.json();
               if (res.data?.[0]?.embedding) {
                 await supabase.from('chunks').update({ embedding_status: 'done' }).eq('id', insertedChunks[i].id);
