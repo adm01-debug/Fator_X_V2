@@ -142,7 +142,8 @@ async function processTask(
     const hfToken = Deno.env.get('HF_API_TOKEN');
     if (!hfToken) throw new Error('HF_API_TOKEN not configured');
 
-    const hfResp = await fetch('https://router.huggingface.co/v1/chat/completions', {
+    const { withRetry, fetchWithTimeout } = await import('../_shared/retry.ts');
+    const hfResp = await withRetry(() => fetchWithTimeout('https://router.huggingface.co/v1/chat/completions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hfToken}` },
       body: JSON.stringify({
@@ -154,7 +155,8 @@ async function processTask(
         temperature: 0.7, max_tokens: 2048,
         chat_template_kwargs: { enable_thinking: false },
       }),
-    });
+      timeoutMs: 45_000,
+    }), { attempts: 3, baseMs: 600, capMs: 5_000 });
 
     const hfResult = await hfResp.json();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
