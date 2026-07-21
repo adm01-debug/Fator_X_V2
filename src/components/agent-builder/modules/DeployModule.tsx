@@ -125,9 +125,67 @@ const DEFAULT_KPIS: MonitoringKPI[] = [
 export function DeployModule() {
   const agent = useAgentBuilderStore((s) => s.agent);
   const updateAgent = useAgentBuilderStore((s) => s.updateAgent);
+  const [publishing, setPublishing] = useState(false);
 
   const channels = agent.deploy_channels.length > 0 ? agent.deploy_channels : DEFAULT_CHANNELS;
   const kpis = agent.monitoring_kpis.length > 0 ? agent.monitoring_kpis : DEFAULT_KPIS;
+
+  const handlePublishToOpenclaw = async () => {
+    if (!agent.id) {
+      toast.error('Salve o agente antes de publicar no OpenClaw.');
+      return;
+    }
+    setPublishing(true);
+    let deploymentId: string | undefined;
+    try {
+      const manifest = compileAgentForOpenclaw(agent);
+      const workspaceId = await getWorkspaceId();
+      const { data: userData } = await supabase.auth.getUser();
+
+      const { data: row, error: insertErr } = await fromTable('openclaw_deployments')
+        .insert({
+          agent_id: agent.id,
+          workspace_id: workspaceId,
+          version: manifest.version,
+          status: 'pending',
+          manifest: manifest as unknown as Record<string, unknown>,
+          deployed_by: userData.user?.id ?? null,
+        })
+        .select('id')
+        .single();
+      if (insertErr) throw insertErr;
+      deploymentId = (row as { id: string } | null)?.id;
+
+      const result = await publishAgentToOpenclaw({
+        agent_id: agent.id,
+        manifest: manifest as unknown as Record<string, unknown>,
+      });
+      const remoteId = result.data?.openclaw_agent_id;
+
+      if (deploymentId) {
+        await fromTable('openclaw_deployments')
+          .update({
+            status: 'deployed',
+            openclaw_agent_id: remoteId ?? null,
+            deployed_at: new Date().toISOString(),
+          })
+          .eq('id', deploymentId);
+      }
+      toast.success(`Agente publicado no OpenClaw${remoteId ? ` (id: ${remoteId})` : ''}.`);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Falha ao publicar no OpenClaw';
+      logger.error('openclaw publish failed', { agentId: agent.id, error: msg });
+      if (deploymentId) {
+        await fromTable('openclaw_deployments')
+          .update({ status: 'failed', error: msg })
+          .eq('id', deploymentId)
+          .then(() => undefined, () => undefined);
+      }
+      toast.error(msg);
+    } finally {
+      setPublishing(false);
+    }
+  };
 
   const updateChannel = (id: string, partial: Partial<DeployChannelConfig>) => {
     const updated = channels.map((c) => (c.id === id ? { ...c, ...partial } : c));
