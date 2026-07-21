@@ -122,6 +122,17 @@ export default function MemoryPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar memórias (semântica via memory-tools)..." className="pl-9 bg-secondary/50 text-meta" />
           </div>
+          <Select value={tierFilter} onValueChange={(v) => setTierFilter(v as MemoryTier | 'all')}>
+            <SelectTrigger className="w-[160px] bg-secondary/50 text-meta shrink-0" aria-label="Filtrar por tier">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{TIER_LABEL_PT.all}</SelectItem>
+              {MEMORY_TIERS.map((t) => (
+                <SelectItem key={t} value={t}>{TIER_LABEL_PT[t]}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Button size="sm" variant="outline" onClick={handleCompact} disabled={compacting} className="gap-1.5 text-meta shrink-0">
             {compacting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Archive className="h-3.5 w-3.5" />}
             Compactar
