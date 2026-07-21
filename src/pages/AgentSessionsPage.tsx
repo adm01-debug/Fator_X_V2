@@ -79,12 +79,17 @@ export default function AgentSessionsPage() {
   const { data: workspaceId } = useWorkspaceId();
   const [voice, setVoice] = useState<VoiceSession[]>([]);
   const [browser, setBrowser] = useState<BrowserSession[]>([]);
+  const [instances, setInstances] = useState<WhatsappInstance[]>([]);
+  const [messages, setMessages] = useState<WhatsappMessage[]>([]);
+  const [selectedInstance, setSelectedInstance] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState("");
+  const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
     if (!workspaceId) return;
     setLoading(true);
-    const [{ data: v, error: ve }, { data: b, error: be }] = await Promise.all([
+    const [{ data: v, error: ve }, { data: b, error: be }, { data: inst }, { data: msgs }] = await Promise.all([
       supabase
         .from("voice_sessions")
         .select("id,status,started_at,ended_at,duration_ms,audio_in_seconds,audio_out_seconds,cost_cents,agent_id")
@@ -97,10 +102,23 @@ export default function AgentSessionsPage() {
         .eq("workspace_id", workspaceId)
         .order("started_at", { ascending: false })
         .limit(200),
+      supabase
+        .from("openclaw_whatsapp_instances")
+        .select("id,instance_name,phone_number,status")
+        .eq("workspace_id", workspaceId)
+        .order("instance_name", { ascending: true }),
+      supabase
+        .from("openclaw_whatsapp_messages")
+        .select("id,instance_id,remote_phone,direction,body,status,created_at")
+        .eq("workspace_id", workspaceId)
+        .order("created_at", { ascending: false })
+        .limit(300),
     ]);
     if (ve || be) toast.error("Erro ao carregar sessões");
     setVoice((v ?? []) as VoiceSession[]);
     setBrowser((b ?? []) as BrowserSession[]);
+    setInstances((inst ?? []) as WhatsappInstance[]);
+    setMessages((msgs ?? []) as WhatsappMessage[]);
     setLoading(false);
   }, [workspaceId]);
 
