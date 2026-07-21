@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2026-07-21
+
+### Added
+- **Retrieval híbrido v2 (pgvector)**: novo overload `public.hybrid_memory_search(agent_id, query, query_embedding, limit, tiers)`
+  combinando `0.5*cosine + 0.3*text_rank + 0.2*ebbinghaus`. `SECURITY DEFINER` com `REVOKE PUBLIC` + `GRANT` explícito para
+  `authenticated` e `service_role`.
+- **OpenClaw Templates Gallery — seeds**: 5 novos templates seed (`ecommerce-promo-brindes`, `atendimento-multicanal`,
+  `ata-reuniao-automatica`, `opik-observability-bridge`, `curador-conteudo-diario`) cobrindo vendas, atendimento,
+  produtividade, observabilidade e conteúdo. Origem: `awesome-openclaw-usecases-zh`.
+- **RandomRecallMetricsCard**: nova visualização em `AgentMetricsPage` que consome `audit_events` filtrando
+  `event_type = 'random_recall'`. Exibe timeline diária, top-5 agentes e total do período (default 30d).
+
 ## [1.2.0] - 2026-07-21
 
 ### Added
