@@ -50,15 +50,18 @@ serve(async (req) => {
     }
 
     const endpoints: Record<string, { method: string; path: string }> = {
-      'health':        { method: 'GET',  path: '/api/health' },
-      'chat':          { method: 'POST', path: '/api/v1/chat' },
-      'agents':        { method: 'GET',  path: '/api/v1/agents' },
-      'agent.create':  { method: 'POST', path: '/api/v1/agents' },
-      'agent.update':  { method: 'PUT',  path: `/api/v1/agents/${payload?.agent_id ?? ''}` },
-      'agent.delete':  { method: 'DELETE', path: `/api/v1/agents/${payload?.agent_id ?? ''}` },
-      'agent.publish': { method: 'POST', path: '/api/v1/agents/publish' },
-      'skills':        { method: 'GET',  path: '/api/v1/skills' },
-      'skill.deploy':  { method: 'POST', path: '/api/v1/skills' },
+      'health':          { method: 'GET',  path: '/api/health' },
+      'chat':            { method: 'POST', path: '/api/v1/chat' },
+      'agents':          { method: 'GET',  path: '/api/v1/agents' },
+      'agent.create':    { method: 'POST', path: '/api/v1/agents' },
+      'agent.update':    { method: 'PUT',  path: `/api/v1/agents/${payload?.agent_id ?? ''}` },
+      'agent.delete':    { method: 'DELETE', path: `/api/v1/agents/${payload?.agent_id ?? ''}` },
+      'agent.publish':   { method: 'POST', path: '/api/v1/agents/publish' },
+      'skills':          { method: 'GET',  path: '/api/v1/skills' },
+      'skill.deploy':    { method: 'POST', path: '/api/v1/skills' },
+      'whatsapp.pair':   { method: 'POST', path: '/api/v1/whatsapp/pair' },
+      'whatsapp.status': { method: 'GET',  path: `/api/v1/whatsapp/status/${payload?.instance_name ?? ''}` },
+      'whatsapp.send':   { method: 'POST', path: '/api/v1/whatsapp/send' },
     };
 
     const endpoint = endpoints[action];
