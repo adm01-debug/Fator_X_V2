@@ -352,6 +352,7 @@ async function resolveFallbackChain(supabase: SupabaseClient, workspaceId: strin
 
 // ═══ Call with Fallback — tries each provider in chain (com Circuit Breaker) ═══
 import { getBreaker } from "../_shared/circuitBreaker.ts";
+import { drainBreakerTransition } from "../_shared/breakerEvents.ts";
 
 async function callWithFallback(
   chain: ProviderOption[], callParams: LLMCallParams, supabaseUrl: string
@@ -376,16 +377,18 @@ async function callWithFallback(
         : await callOpenAICompatible(params, opt.apiKey, opt.provider);
 
       breaker.recordSuccess();
+      drainBreakerTransition(breaker, { function: 'llm-gateway' });
       return { result, provider: opt.provider, model: opt.model, attempt: i + 1, errors };
     } catch (err) {
       breaker.recordFailure(err);
+      drainBreakerTransition(breaker, { function: 'llm-gateway' });
       const errMsg = `[${opt.provider}/${opt.model}] ${err instanceof Error ? err.message : 'Unknown error'}`;
       errors.push(errMsg);
       console.error(`Fallback attempt ${i + 1} failed:`, errMsg);
       // Continue to next provider
     }
   }
-  throw new Error(`All ${chain.length} providers failed: ${errors.join(' | ')}`);
+  throw new Error(`Todos os ${chain.length} provedores falharam: ${errors.join(' | ')}`);
 }
 
 // ═══ Main Handler ═══

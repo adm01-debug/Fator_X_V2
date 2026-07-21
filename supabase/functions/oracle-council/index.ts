@@ -179,11 +179,22 @@ serve(async (req) => {
             return mResult;
           });
 
-          const stage1 = await Promise.all(stage1Promises);
+          // Partial failure tolerance: allSettled evita que rejeição inesperada
+          // (ex: sendUpdate crashando) derrube todo o fan-out.
+          const settled = await Promise.allSettled(stage1Promises);
+          const stage1 = settled.map((s, i) =>
+            s.status === 'fulfilled'
+              ? s.value
+              : { index: i, model: members[i].model, success: false, content: `Falha inesperada: ${String((s as PromiseRejectedResult).reason).slice(0, 200)}` }
+          );
           const successfulResponses = stage1.filter(r => r.success);
+          const degraded = successfulResponses.length < members.length;
 
           if (successfulResponses.length < 2) {
             throw new Error('Membros insuficientes para quorum');
+          }
+          if (degraded) {
+            await sendUpdate('degraded', { successful: successfulResponses.length, total: members.length });
           }
 
           // STAGE 2: Peer Review
@@ -244,11 +255,13 @@ serve(async (req) => {
             confidence_score: Math.round((reviewData.consensus_degree || 85) * 0.9 + (successfulResponses.length / members.length) * 10),
             consensus_degree: reviewData.consensus_degree || 75,
             consensus_points: reviewData.consensus_points || [],
+            degraded,
             metrics: {
               total_latency_ms: Date.now() - totalStartTime,
               total_cost_usd: stage1.reduce((s, r) => s + (r.cost_usd || 0), 0) + (synthesisResult.cost_usd || 0),
               total_tokens: stage1.reduce((s, r) => s + (r.tokens?.total || 0), 0) + (synthesisResult.tokens?.total || 0),
               models_used: successfulResponses.length,
+              models_failed: members.length - successfulResponses.length,
             }
           });
           await writer.close();
@@ -293,8 +306,14 @@ serve(async (req) => {
       }
     });
 
-    const stage1 = await Promise.all(stage1Promises);
+    const settledLegacy = await Promise.allSettled(stage1Promises);
+    const stage1 = settledLegacy.map((s, i) =>
+      s.status === 'fulfilled'
+        ? s.value
+        : { index: i, model: members[i].model, success: false, content: `Falha inesperada: ${String((s as PromiseRejectedResult).reason).slice(0, 200)}` }
+    );
     const successfulResponses = stage1.filter(r => r.success);
+    const degraded = successfulResponses.length < members.length;
     const chairmanModel = chairman_model || successfulResponses[0]?.model || 'google/gemini-2.5-pro';
     const synthesisResponse = await fetchWithTimeout(gatewayUrl, {
       method: 'POST',
@@ -309,9 +328,12 @@ serve(async (req) => {
     return new Response(JSON.stringify({
       final_response: synthesisResult.content,
       stage1_results: stage1,
+      degraded,
       metrics: {
         total_latency_ms: Date.now() - totalStartTime,
         total_cost_usd: stage1.reduce((s, r) => s + (r.cost_usd || 0), 0) + (synthesisResult.cost_usd || 0),
+        models_used: successfulResponses.length,
+        models_failed: members.length - successfulResponses.length,
       }
     }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
 
