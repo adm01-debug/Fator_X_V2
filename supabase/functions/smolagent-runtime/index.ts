@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import { getCorsHeaders, handleCorsPreflight, jsonResponse, _errorResponse, _checkRateLimit, _getRateLimitIdentifier, _createRateLimitResponse, _RATE_LIMITS } from "../_shared/mod.ts";
+import { getCorsHeaders, handleCorsPreflight, _jsonResponse, _errorResponse, _checkRateLimit, _getRateLimitIdentifier, _createRateLimitResponse, _RATE_LIMITS } from "../_shared/mod.ts";
 import { z } from "https://esm.sh/zod@3.23.8";
 
 const SmolagentBodySchema = z.object({
@@ -8,7 +8,8 @@ const SmolagentBodySchema = z.object({
   stream: z.boolean().optional(),
 }).passthrough();
 
-// CORS handled by _shared/cors.ts — dynamic origin whitelist
+// jsonHeaders is set per-request inside the handler (dynamic CORS)
+let jsonHeaders: Record<string, string> = { "Content-Type": "application/json" };
 
 function jsonResponse(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), { status, headers: jsonHeaders });
