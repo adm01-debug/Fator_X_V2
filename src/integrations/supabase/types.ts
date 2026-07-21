@@ -5128,6 +5128,36 @@ export type Database = {
           },
         ]
       }
+      openclaw_events: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          level: string
+          payload: Json
+          source: string
+          workspace_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: string
+          level?: string
+          payload?: Json
+          source?: string
+          workspace_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          level?: string
+          payload?: Json
+          source?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
       openclaw_whatsapp_instances: {
         Row: {
           agent_id: string | null

@@ -1,5 +1,57 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { handleCorsPreflight, getCorsHeaders, getRateLimitIdentifier, checkRateLimit, createRateLimitResponse, RATE_LIMITS } from "../_shared/mod.ts";
+
+// ============================================================
+// Circuit Breaker (in-memory, isolate-scoped)
+// ============================================================
+type BreakerState = 'CLOSED' | 'OPEN' | 'HALF_OPEN';
+const BREAKER = {
+  state: 'CLOSED' as BreakerState,
+  failures: [] as number[],   // timestamps
+  openedAt: 0,
+  window: 30_000,
+  threshold: 5,
+  cooldown: 60_000,
+};
+
+function breakerAllow(): boolean {
+  const now = Date.now();
+  if (BREAKER.state === 'OPEN') {
+    if (now - BREAKER.openedAt >= BREAKER.cooldown) {
+      BREAKER.state = 'HALF_OPEN';
+      return true;
+    }
+    return false;
+  }
+  return true;
+}
+function breakerOnSuccess() {
+  BREAKER.failures = [];
+  BREAKER.state = 'CLOSED';
+}
+function breakerOnFailure(): boolean {
+  const now = Date.now();
+  BREAKER.failures = BREAKER.failures.filter(t => now - t < BREAKER.window);
+  BREAKER.failures.push(now);
+  if (BREAKER.state === 'HALF_OPEN' || BREAKER.failures.length >= BREAKER.threshold) {
+    BREAKER.state = 'OPEN';
+    BREAKER.openedAt = now;
+    return true; // opened
+  }
+  return false;
+}
+
+// Emissão de eventos (best-effort, service-role)
+async function emitEvent(kind: string, level: 'info'|'warn'|'error', payload: Record<string, unknown>) {
+  try {
+    const url = Deno.env.get('SUPABASE_URL');
+    const key = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    if (!url || !key) return;
+    const supabase = createClient(url, key, { auth: { persistSession: false } });
+    await supabase.from('openclaw_events').insert({ kind, level, source: 'proxy', payload });
+  } catch { /* ignore */ }
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
@@ -13,7 +65,6 @@ serve(async (req) => {
     const rawUrl = (Deno.env.get('OPENCLAW_URL') ?? '').trim();
     const openclawToken = (Deno.env.get('OPENCLAW_API_TOKEN') ?? '').trim();
 
-    // Validação estrita do OPENCLAW_URL — evita fallback silencioso para IP inseguro.
     const urlValid = /^https?:\/\/[^\s]+$/i.test(rawUrl);
     if (!rawUrl || !urlValid) {
       return new Response(
@@ -35,6 +86,13 @@ serve(async (req) => {
           hint: 'Defina OPENCLAW_API_TOKEN em Backend → Secrets.',
         }),
         { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!breakerAllow()) {
+      return new Response(
+        JSON.stringify({ error: 'circuit_open', message: 'OpenClaw upstream em cooldown (circuit breaker).' }),
+        { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -88,6 +146,14 @@ serve(async (req) => {
     const response = await fetch(`${openclawUrl}${endpoint.path}`, fetchOptions);
     const data = await response.json().catch(async () => ({ raw: await response.text() }));
 
+    if (response.ok) {
+      breakerOnSuccess();
+    } else if (response.status >= 500) {
+      const opened = breakerOnFailure();
+      if (opened) await emitEvent('breaker_open', 'error', { action, status: response.status });
+      else await emitEvent('upstream_error', 'warn', { action, status: response.status });
+    }
+
     return new Response(
       JSON.stringify({
         success: response.ok,
@@ -103,6 +169,11 @@ serve(async (req) => {
 
   } catch (error) {
     const isTimeout = error instanceof DOMException && error.name === 'AbortError';
+    const opened = breakerOnFailure();
+    if (opened) await emitEvent('breaker_open', 'error', { reason: isTimeout ? 'timeout' : 'exception' });
+    else await emitEvent(isTimeout ? 'upstream_timeout' : 'upstream_exception', 'error', {
+      message: error instanceof Error ? error.message : 'Proxy error',
+    });
     return new Response(
       JSON.stringify({
         error: isTimeout ? 'OpenClaw request timed out (30s)' : (error instanceof Error ? error.message : 'Proxy error'),

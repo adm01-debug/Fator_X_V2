@@ -14,6 +14,18 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { handleCorsPreflight, getCorsHeaders } from '../_shared/cors.ts';
 import { verifyHmacSignature, constantTimeEqual } from '../_shared/security.ts';
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier } from '../_shared/rate-limiter.ts';
+
+const WEBHOOK_LIMIT = { windowMs: 60_000, maxRequests: 300, name: 'openclaw-webhook' };
+
+async function emitEvent(supabase: ReturnType<typeof createClient>, kind: string, level: 'info'|'warn'|'error', payload: Record<string, unknown>, workspaceId?: string | null) {
+  try {
+    await supabase.from('openclaw_events').insert({
+      workspace_id: workspaceId ?? null,
+      kind, level, source: 'webhook', payload,
+    });
+  } catch { /* best-effort */ }
+}
 
 const MAX_BODY = 1024 * 1024; // 1MB
 
@@ -28,6 +40,10 @@ Deno.serve(async (req) => {
 
   if (req.method !== 'POST') return json(405, { error: 'method_not_allowed' });
 
+  // Rate limit por IP (defense-in-depth junto ao HMAC)
+  const rl = checkRateLimit(getRateLimitIdentifier(req), WEBHOOK_LIMIT);
+  if (!rl.allowed) return createRateLimitResponse(rl, corsHeaders);
+
   const secret = Deno.env.get('OPENCLAW_WEBHOOK_SECRET') ?? '';
   if (!secret) return json(500, { error: 'webhook_secret_not_configured' });
 
@@ -37,8 +53,17 @@ Deno.serve(async (req) => {
   const signature = req.headers.get('x-openclaw-signature') ?? '';
   if (!signature) return json(401, { error: 'missing_signature' });
 
+  const supabaseAudit = createClient(
+    Deno.env.get('SUPABASE_URL')!,
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+    { auth: { persistSession: false } },
+  );
+
   const valid = await verifyHmacSignature(rawBody, signature, secret);
-  if (!valid) return json(401, { error: 'invalid_signature' });
+  if (!valid) {
+    await emitEvent(supabaseAudit, 'hmac_invalid', 'warn', { ip: getRateLimitIdentifier(req) });
+    return json(401, { error: 'invalid_signature' });
+  }
 
   let payload: {
     event_id?: string;
@@ -63,11 +88,7 @@ Deno.serve(async (req) => {
     return json(400, { error: 'invalid_event_id' });
   }
 
-  const supabase = createClient(
-    Deno.env.get('SUPABASE_URL')!,
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
-    { auth: { persistSession: false } },
-  );
+  const supabase = supabaseAudit;
 
   // Dedupe: procura evento pelo external_event_id
   const { data: existing } = await supabase
@@ -126,5 +147,6 @@ Deno.serve(async (req) => {
       .eq('id', instance.id);
   }
 
+  await emitEvent(supabase, `received:${type}`, 'info', { event_id, instance_name }, workspace_id);
   return json(200, { ok: true, event_id });
 });

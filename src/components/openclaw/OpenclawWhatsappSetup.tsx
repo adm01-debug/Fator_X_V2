@@ -8,9 +8,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { QrCode, Loader2, RefreshCw, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { QrCode, Loader2, RefreshCw, CheckCircle2, AlertTriangle, Bot, Save } from 'lucide-react';
 import { toast } from 'sonner';
 import { pairWhatsapp, getWhatsappStatus, type WhatsappPairResult } from '@/services/openclawDeployService';
+import { listAgentSummaries, type AgentSummary } from '@/services/agentsService';
+import { supabaseExternal } from '@/integrations/supabase/externalClient';
+import { logger } from '@/lib/logger';
 
 type UiStatus = 'idle' | 'pending' | 'connected' | 'expired' | 'error';
 
@@ -26,17 +31,77 @@ export function OpenclawWhatsappSetup() {
   const [error, setError] = useState<string | null>(null);
   const [starting, setStarting] = useState(false);
 
+  // Automação: agente + resposta automática
+  const [agents, setAgents] = useState<AgentSummary[]>([]);
+  const [selectedAgentId, setSelectedAgentId] = useState<string>('');
+  const [autoReply, setAutoReply] = useState(false);
+  const [savingAutomation, setSavingAutomation] = useState(false);
+
   const timerRef = useRef<number | null>(null);
   const startedAtRef = useRef<number | null>(null);
   const mountedRef = useRef(true);
 
   useEffect(() => {
     mountedRef.current = true;
+    (async () => {
+      try {
+        const { agents: list } = await listAgentSummaries(200);
+        if (mountedRef.current) setAgents(list);
+      } catch (err) {
+        logger.warn('Falha ao carregar agentes para automação WhatsApp', err);
+      }
+    })();
     return () => {
       mountedRef.current = false;
       if (timerRef.current !== null) window.clearTimeout(timerRef.current);
     };
   }, []);
+
+  // Ao trocar de instância, prefill automação
+  useEffect(() => {
+    if (!instanceName.trim()) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data } = await supabaseExternal
+          .from('openclaw_whatsapp_instances')
+          .select('agent_id, auto_reply')
+          .eq('instance_name', instanceName.trim())
+          .maybeSingle();
+        if (cancelled || !data) return;
+        const row = data as unknown as { agent_id: string | null; auto_reply: boolean | null };
+        setSelectedAgentId(row.agent_id ?? '');
+        setAutoReply(Boolean(row.auto_reply));
+      } catch {
+        /* instância pode ainda não existir */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [instanceName]);
+
+  const saveAutomation = useCallback(async () => {
+    if (!instanceName.trim()) return;
+    setSavingAutomation(true);
+    try {
+      const { error: updErr } = await supabaseExternal
+        .from('openclaw_whatsapp_instances')
+        .update({
+          agent_id: selectedAgentId || null,
+          auto_reply: autoReply,
+        })
+        .eq('instance_name', instanceName.trim());
+      if (updErr) throw updErr;
+      toast.success('Automação atualizada.');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Falha ao salvar automação';
+      logger.error('save-automation', err);
+      toast.error(msg);
+    } finally {
+      setSavingAutomation(false);
+    }
+  }, [autoReply, instanceName, selectedAgentId]);
 
   const applyResult = useCallback((res: WhatsappPairResult | undefined) => {
     if (!mountedRef.current || !res) return;
@@ -176,6 +241,65 @@ export function OpenclawWhatsappSetup() {
             {error}
           </div>
         )}
+
+        {/* Automação */}
+        <div className="pt-4 mt-2 border-t border-border/40 space-y-4">
+          <div className="flex items-center gap-2">
+            <Bot className="h-4 w-4 text-primary" />
+            <h4 className="text-body-sm font-bold text-foreground">Automação</h4>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3 items-end">
+            <div className="space-y-2">
+              <Label htmlFor="wa-agent">Agente responsável</Label>
+              <Select value={selectedAgentId} onValueChange={setSelectedAgentId}>
+                <SelectTrigger id="wa-agent" className="bg-background border-border">
+                  <SelectValue placeholder="Selecione um agente" />
+                </SelectTrigger>
+                <SelectContent>
+                  {agents.length === 0 ? (
+                    <SelectItem value="__none" disabled>
+                      Nenhum agente disponível
+                    </SelectItem>
+                  ) : (
+                    agents.map((a) => (
+                      <SelectItem key={a.id} value={a.id}>
+                        {a.name}
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center gap-3 pb-2">
+              <Switch
+                id="wa-auto"
+                checked={autoReply}
+                onCheckedChange={setAutoReply}
+                aria-label="Resposta automática"
+              />
+              <Label htmlFor="wa-auto" className="cursor-pointer text-body-sm">
+                Resposta automática
+              </Label>
+            </div>
+          </div>
+
+          <div className="flex justify-end">
+            <Button
+              onClick={saveAutomation}
+              disabled={savingAutomation || !instanceName.trim()}
+              variant="outline"
+              className="gap-2"
+            >
+              {savingAutomation ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4" />
+              )}
+              Salvar automação
+            </Button>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );
