@@ -70,6 +70,12 @@ serve(async (req) => {
     const workspaceId = (payload?.workspace_id as string) ?? req.headers.get('x-workspace-id') ?? 'global';
     const breaker = getBreaker(`openclaw:${workspaceId}`, { failureThreshold: 5, openMs: 60_000, halfOpenMax: 2 });
 
+    // Drena transição pré-request (ex: open→half-open ao expirar cooldown)
+    {
+      const t = breaker._drainTransition();
+      if (t) await emitEvent(`breaker_${t.replace('-', '_')}`, t === 'open' ? 'error' : 'info', { action, workspace_id: workspaceId, transition: t }, workspaceId);
+    }
+
     if (!breaker.canRequest()) {
       await emitEvent('breaker_reject', 'warn', { action, workspace_id: workspaceId }, workspaceId);
       return new Response(
