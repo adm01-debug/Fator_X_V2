@@ -7744,6 +7744,7 @@ export type Database = {
           method: string
           query_params: Json | null
           response_code: number | null
+          source: string | null
           source_ip: string | null
           status: string | null
           webhook_id: string | null
@@ -7757,6 +7758,7 @@ export type Database = {
           method: string
           query_params?: Json | null
           response_code?: number | null
+          source?: string | null
           source_ip?: string | null
           status?: string | null
           webhook_id?: string | null
@@ -7770,6 +7772,7 @@ export type Database = {
           method?: string
           query_params?: Json | null
           response_code?: number | null
+          source?: string | null
           source_ip?: string | null
           status?: string | null
           webhook_id?: string | null

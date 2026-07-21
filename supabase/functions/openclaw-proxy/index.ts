@@ -70,6 +70,12 @@ serve(async (req) => {
     const workspaceId = (payload?.workspace_id as string) ?? req.headers.get('x-workspace-id') ?? 'global';
     const breaker = getBreaker(`openclaw:${workspaceId}`, { failureThreshold: 5, openMs: 60_000, halfOpenMax: 2 });
 
+    // Drena transição pré-request (ex: open→half-open ao expirar cooldown)
+    {
+      const t = breaker._drainTransition();
+      if (t) await emitEvent(`breaker_${t.replace('-', '_')}`, t === 'open' ? 'error' : 'info', { action, workspace_id: workspaceId, transition: t }, workspaceId);
+    }
+
     if (!breaker.canRequest()) {
       await emitEvent('breaker_reject', 'warn', { action, workspace_id: workspaceId }, workspaceId);
       return new Response(
@@ -142,10 +148,12 @@ serve(async (req) => {
 
     if (response.ok) {
       breaker.recordSuccess();
+      const t = breaker._drainTransition();
+      if (t === 'closed') await emitEvent('breaker_closed', 'info', { action, workspace_id: workspaceId }, workspaceId);
     } else if (response.status >= 500) {
       breaker.recordFailure(`upstream_${response.status}`);
-      const snap = breaker.snapshot();
-      if (snap.state === 'open') await emitEvent('breaker_open', 'error', { action, status: response.status, workspace_id: workspaceId }, workspaceId);
+      const t = breaker._drainTransition();
+      if (t === 'open') await emitEvent('breaker_open', 'error', { action, status: response.status, workspace_id: workspaceId }, workspaceId);
       else await emitEvent('upstream_error', 'warn', { action, status: response.status, workspace_id: workspaceId }, workspaceId);
     }
 
@@ -167,8 +175,8 @@ serve(async (req) => {
     const workspaceId = (req.headers.get('x-workspace-id')) ?? 'global';
     const breaker = getBreaker(`openclaw:${workspaceId}`);
     breaker.recordFailure(error);
-    const snap = breaker.snapshot();
-    if (snap.state === 'open') await emitEvent('breaker_open', 'error', { reason: isTimeout ? 'timeout' : 'exception', workspace_id: workspaceId }, workspaceId);
+    const t = breaker._drainTransition();
+    if (t === 'open') await emitEvent('breaker_open', 'error', { reason: isTimeout ? 'timeout' : 'exception', workspace_id: workspaceId }, workspaceId);
     else await emitEvent(isTimeout ? 'upstream_timeout' : 'upstream_exception', 'error', { message: error instanceof Error ? error.message : 'Proxy error', workspace_id: workspaceId }, workspaceId);
     return new Response(
       JSON.stringify({

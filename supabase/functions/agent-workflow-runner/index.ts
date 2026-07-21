@@ -1,6 +1,12 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.4';
 import { startEdgeTrace } from '../_shared/otel.ts';
 import { _maybeInjectFault, _applyFault } from '../_shared/chaos.ts';
+import { parseBody, z } from '../_shared/validation.ts';
+
+const WorkflowRunSchema = z.object({
+  workflow_id: z.string().uuid(),
+  input: z.union([z.record(z.unknown()), z.string(), z.number(), z.boolean(), z.null(), z.array(z.unknown())]).optional(),
+});
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -98,7 +104,9 @@ Deno.serve(async (req) => {
     const { data: { user } } = await userClient.auth.getUser();
     if (!user) throw new Error('Unauthorized');
 
-    const { workflow_id, input } = await req.json();
+    const parsed = await parseBody(req, WorkflowRunSchema);
+    if (parsed.error) return parsed.error;
+    const { workflow_id, input } = parsed.data;
     const { data: wf } = await supa.from('agent_workflows').select('*').eq('id', workflow_id).single();
     if (!wf) throw new Error('Workflow não encontrado');
 

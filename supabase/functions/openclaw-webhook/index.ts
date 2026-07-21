@@ -102,13 +102,35 @@ Deno.serve(async (req) => {
 
   const supabase = supabaseAudit;
 
-  // Dedupe: procura evento pelo external_event_id
-  const { data: existing } = await supabase
+  // Dedupe atômico: INSERT + ON CONFLICT (source, external_event_id).
+  // Elimina race condition do padrão check-then-insert.
+  const { data: inserted, error: insertErr } = await supabase
     .from('webhook_events')
+    .insert({
+      source: 'openclaw',
+      external_event_id: event_id,
+      method: 'POST',
+      headers: {},
+      body: payload as unknown as Record<string, unknown>,
+      status: 'received',
+      response_code: 200,
+    })
     .select('id')
-    .eq('external_event_id', event_id)
     .maybeSingle();
-  if (existing) return json(200, { ok: true, deduped: true });
+
+  if (insertErr) {
+    // Código 23505 = unique_violation → duplicata legítima
+    const code = (insertErr as { code?: string }).code;
+    if (code === '23505') {
+      await emitEvent(supabase, 'webhook_deduped', 'info', { event_id, source: 'openclaw' }, workspace_id);
+      return json(200, { ok: true, deduped: true });
+    }
+    await emitEvent(supabase, 'webhook_persist_error', 'error', { event_id, message: insertErr.message }, workspace_id);
+    return json(500, { error: 'persist_failed' });
+  }
+  if (!inserted) {
+    return json(200, { ok: true, deduped: true });
+  }
 
   // Localiza a instância WhatsApp
   const { data: instance } = await supabase
@@ -117,16 +139,6 @@ Deno.serve(async (req) => {
     .eq('workspace_id', workspace_id)
     .eq('instance_name', instance_name ?? '')
     .maybeSingle();
-
-  // Registra o evento (idempotência)
-  await supabase.from('webhook_events').insert({
-    external_event_id: event_id,
-    method: 'POST',
-    headers: {},
-    body: payload as unknown as Record<string, unknown>,
-    status: 'received',
-    response_code: 200,
-  });
 
   if (type === 'message.inbound' && instance) {
     const d = (data ?? {}) as Record<string, unknown>;
