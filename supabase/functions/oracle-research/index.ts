@@ -105,11 +105,17 @@ serve(async (req) => {
       try {
         const { data: memories } = await supabase
           .from('agent_memories_v2')
-          .select('content')
+          .select('id, content, memory_tier')
+          .in('memory_tier', ['core', 'active', 'warm'])
           .textSearch('content', query.split(' ').slice(0, 6).join(' '), { type: 'websearch' })
           .limit(3);
         if (memories && memories.length > 0) {
-          allFindings += `\n\n--- Internal Knowledge ---\n${memories.map((m) => (m as { content: string }).content).join('\n')}`;
+          const rows = memories as Array<{ id: string; content: string; memory_tier: string }>;
+          allFindings += `\n\n--- Internal Knowledge ---\n${rows.map((m) => m.content).join('\n')}`;
+          // Autograph: registra o acesso das memórias que entraram no contexto (fire-and-forget)
+          for (const m of rows) {
+            supabase.rpc('touch_memory', { p_id: m.id }).then(() => undefined, () => undefined);
+          }
         }
       } catch { /* internal search optional */ }
     }

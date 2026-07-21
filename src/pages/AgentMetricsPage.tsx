@@ -25,6 +25,8 @@ import {
   METRIC_LABELS,
   type MetricAlertRule, type MetricRuleMetric, type MetricRuleOperator, type MetricRuleSeverity,
 } from '@/lib/metricsAlertRules';
+import { KnowledgeGraphHealthCard } from '@/components/metrics/KnowledgeGraphHealthCard';
+import { useCurrentWorkspace } from '@/hooks/useCurrentWorkspace';
 
 type DayKey = string;
 
@@ -75,6 +77,7 @@ function buildSeriesByAgent(
 export default function AgentMetricsPage() {
   const [days, setDays] = useState<number>(30);
   const { data: rows = [], isLoading, isError, refetch } = useAgentDailyMetrics({ days });
+  const { workspaceId } = useCurrentWorkspace();
 
   const [rules, setRules] = useState<MetricAlertRule[]>(() => loadMetricRules());
   useEffect(() => { saveMetricRules(rules); }, [rules]);
@@ -281,6 +284,9 @@ export default function AgentMetricsPage() {
           </Card>
         </>
       )}
+
+      {/* Autograph: saúde do knowledge graph */}
+      <KnowledgeGraphHealthCard workspaceId={workspaceId} />
 
       {/* Regras de alerta */}
       <Card>
