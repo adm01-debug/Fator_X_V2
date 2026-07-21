@@ -126,6 +126,38 @@ export default function AgentSessionsPage() {
     void load();
   }, [load]);
 
+  // Realtime: inbox WhatsApp — INSERTs em openclaw_whatsapp_messages do workspace.
+  useEffect(() => {
+    if (!workspaceId) return;
+    const channel = supabase
+      .channel(`wa-inbox-${workspaceId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "openclaw_whatsapp_messages",
+          filter: `workspace_id=eq.${workspaceId}`,
+        },
+        (payload) => {
+          const msg = payload.new as WhatsappMessage;
+          setMessages((prev) => {
+            if (prev.some((m) => m.id === msg.id)) return prev;
+            return [msg, ...prev].slice(0, 300);
+          });
+          if (msg.direction === "inbound") {
+            toast.info(`Nova mensagem WhatsApp de ${msg.remote_phone}`, {
+              description: msg.body?.slice(0, 120) ?? "(sem texto)",
+            });
+          }
+        }
+      )
+      .subscribe();
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [workspaceId]);
+
   const voiceStats = {
     total: voice.length,
     active: voice.filter((s) => s.status === "active" || s.status === "running").length,
