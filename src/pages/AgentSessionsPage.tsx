@@ -242,6 +242,119 @@ export default function AgentSessionsPage() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        <TabsContent value="whatsapp" className="space-y-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between gap-3">
+              <CardTitle>Inbox WhatsApp</CardTitle>
+              <div className="flex items-center gap-2 text-meta text-muted-foreground">
+                {instances.length === 0 ? (
+                  <span>Nenhuma instância pareada.</span>
+                ) : (
+                  instances.map((i) => (
+                    <Badge key={i.id} variant={i.status === "connected" ? "secondary" : "outline"}>
+                      {i.instance_name}{i.phone_number ? ` · ${i.phone_number}` : ""}
+                    </Badge>
+                  ))
+                )}
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {loading ? (
+                <p className="text-body-sm text-muted-foreground">Carregando…</p>
+              ) : messages.length === 0 ? (
+                <p className="text-body-sm text-muted-foreground text-center py-8">
+                  Nenhuma mensagem ainda. Pareie uma instância em OpenClaw → WhatsApp.
+                </p>
+              ) : (
+                <div className="space-y-2 max-h-[520px] overflow-y-auto pr-1">
+                  {messages.map((m) => {
+                    const outbound = m.direction === "outbound";
+                    return (
+                      <div
+                        key={m.id}
+                        className={`rounded border p-3 ${
+                          outbound
+                            ? "border-primary/30 bg-primary/5 ml-8"
+                            : "border-border/60 bg-muted/20 mr-8"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <Badge variant={outbound ? "default" : "outline"}>
+                            {outbound ? "→ Enviada" : "← Recebida"}
+                          </Badge>
+                          <span className="text-meta text-muted-foreground font-mono">{m.remote_phone}</span>
+                          <span className="text-meta text-muted-foreground ml-auto">
+                            {format(new Date(m.created_at), "PPp", { locale: ptBR })}
+                          </span>
+                        </div>
+                        {m.body && <p className="text-body-sm mt-1 whitespace-pre-wrap">{m.body}</p>}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {instances.length > 0 && (
+                <div className="border-t border-border/60 pt-3 space-y-2">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {instances.map((i) => (
+                      <Button
+                        key={i.id}
+                        size="sm"
+                        variant={selectedInstance === i.instance_name ? "default" : "outline"}
+                        onClick={() => setSelectedInstance(i.instance_name)}
+                      >
+                        {i.instance_name}
+                      </Button>
+                    ))}
+                  </div>
+                  <form
+                    className="flex items-center gap-2"
+                    onSubmit={async (e) => {
+                      e.preventDefault();
+                      if (!selectedInstance) {
+                        toast.error("Selecione uma instância.");
+                        return;
+                      }
+                      const [phone, ...rest] = replyText.split("|");
+                      const body = rest.join("|").trim();
+                      if (!phone?.trim() || !body) {
+                        toast.error("Formato: numero|mensagem (ex: 5511999999999|Olá)");
+                        return;
+                      }
+                      setSending(true);
+                      try {
+                        await sendWhatsappMessage({
+                          instance_name: selectedInstance,
+                          to: phone.trim(),
+                          body,
+                        });
+                        toast.success("Mensagem enviada");
+                        setReplyText("");
+                        void load();
+                      } catch (err) {
+                        toast.error(err instanceof Error ? err.message : "Falha ao enviar");
+                      } finally {
+                        setSending(false);
+                      }
+                    }}
+                  >
+                    <Input
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                      placeholder="5511999999999|Sua mensagem"
+                      className="flex-1"
+                    />
+                    <Button type="submit" disabled={sending || !selectedInstance}>
+                      {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                    </Button>
+                  </form>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
     </div>
   );
