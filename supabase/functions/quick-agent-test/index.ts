@@ -1,3 +1,4 @@
+import { fetchWithTimeout } from "../_shared/retry.ts";
 // Quick Agent Test — runs a single LLM call against Lovable AI Gateway
 // for the wizard's "test before save" feature.
 
@@ -58,7 +59,7 @@ Deno.serve(async (req) => {
     const mapped = mapModel(model);
     const startedAt = Date.now();
 
-    const upstream = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const upstream = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${apiKey}`,

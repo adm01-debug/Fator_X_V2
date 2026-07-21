@@ -1,4 +1,5 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { fetchWithTimeout } from "../_shared/retry.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { getCorsHeaders, handleCorsPreflight, _jsonResponse, _errorResponse, _checkRateLimit, _getRateLimitIdentifier, _createRateLimitResponse, _RATE_LIMITS } from "../_shared/mod.ts";
@@ -186,7 +187,7 @@ serve(async (req) => {
       const hfToken = Deno.env.get('HF_API_TOKEN');
       if (extract_type === 'entities' && hfToken) {
         try {
-          const nerResp = await fetch('https://router.huggingface.co/hf-inference/models/dslim/bert-base-NER', {
+          const nerResp = await fetchWithTimeout('https://router.huggingface.co/hf-inference/models/dslim/bert-base-NER', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hfToken}` },
             body: JSON.stringify({ inputs: text.substring(0, 5000) }),
@@ -234,7 +235,7 @@ serve(async (req) => {
       const prompt = extractPrompts[extract_type] || extractPrompts.entities;
 
       const gatewayUrl = `${supabaseUrl}/functions/v1/llm-gateway`;
-      const resp = await fetch(gatewayUrl, {
+      const resp = await fetchWithTimeout(gatewayUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': authHeader, 'apikey': supabaseKey },
         body: JSON.stringify({
@@ -327,7 +328,7 @@ serve(async (req) => {
       const systemPrompt = `Você é o Super Cérebro (modo sandbox). Contexto disponível:\n${contextParts.join('\n\n')}\n\nResponda a pergunta do usuário.`;
 
       const gatewayUrl = `${supabaseUrl}/functions/v1/llm-gateway`;
-      const resp = await fetch(gatewayUrl, {
+      const resp = await fetchWithTimeout(gatewayUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': authHeader, 'apikey': supabaseKey },
         body: JSON.stringify({

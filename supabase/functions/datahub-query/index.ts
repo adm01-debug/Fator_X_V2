@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { fetchWithTimeout } from "../_shared/retry.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { getCorsHeaders, handleCorsPreflight, _jsonResponse, _errorResponse, _checkRateLimit, _getRateLimitIdentifier, _createRateLimitResponse, _RATE_LIMITS } from "../_shared/mod.ts";
 
@@ -358,7 +359,7 @@ serve(async (req) => {
               .filter((t: string) => t.length > 3)
               .join('. ');
             if (recentMessages.length > 10) {
-              const sentResp = await fetch('https://router.huggingface.co/hf-inference/models/cardiffnlp/twitter-roberta-base-sentiment-latest', {
+              const sentResp = await fetchWithTimeout('https://router.huggingface.co/hf-inference/models/cardiffnlp/twitter-roberta-base-sentiment-latest', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hfToken}` },
                 body: JSON.stringify({ inputs: recentMessages.substring(0, 512) }),
@@ -637,7 +638,7 @@ serve(async (req) => {
       const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
       const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
       const gatewayUrl = `${supabaseUrl}/functions/v1/llm-gateway`;
-      const sumResp = await fetch(gatewayUrl, {
+      const sumResp = await fetchWithTimeout(gatewayUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': authHeader, 'apikey': supabaseKey },
         body: JSON.stringify({
@@ -687,7 +688,7 @@ serve(async (req) => {
       const supabaseKey2 = Deno.env.get('SUPABASE_ANON_KEY')!;
       const authHeader2 = req.headers.get('Authorization')!;
 
-      const sqlResp = await fetch(`${supabaseUrl2}/functions/v1/llm-gateway`, {
+      const sqlResp = await fetchWithTimeout(`${supabaseUrl2}/functions/v1/llm-gateway`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': authHeader2, 'apikey': supabaseKey2 },
         body: JSON.stringify({
@@ -762,7 +763,7 @@ serve(async (req) => {
       const supabaseKey3 = Deno.env.get('SUPABASE_ANON_KEY')!;
       const authHeader3 = req.headers.get('Authorization')!;
 
-      const tqResp = await fetch(`${supabaseUrl3}/functions/v1/llm-gateway`, {
+      const tqResp = await fetchWithTimeout(`${supabaseUrl3}/functions/v1/llm-gateway`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': authHeader3, 'apikey': supabaseKey3 },
         body: JSON.stringify({

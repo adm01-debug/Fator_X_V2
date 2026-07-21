@@ -16,6 +16,7 @@
  * ═══════════════════════════════════════════════════════════════
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { fetchWithTimeout } from "../_shared/retry.ts";
 import {
   handleCorsPreflight, jsonResponse, errorResponse,
   authenticateRequest,
@@ -43,7 +44,7 @@ const HF_MODEL_MAP: Record<string, string> = {
 async function embedWithHF(texts: string[], model: string, hfKey: string): Promise<number[][] | null> {
   try {
     const url = `https://api-inference.huggingface.co/pipeline/feature-extraction/${model}`;
-    const resp = await fetch(url, {
+    const resp = await fetchWithTimeout(url, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${hfKey}`,
@@ -69,7 +70,7 @@ async function embedWithHF(texts: string[], model: string, hfKey: string): Promi
 // ═══ OpenAI Embedding ═══
 async function embedWithOpenAI(texts: string[], openaiKey: string, dimension: number): Promise<number[][] | null> {
   try {
-    const resp = await fetch('https://api.openai.com/v1/embeddings', {
+    const resp = await fetchWithTimeout('https://api.openai.com/v1/embeddings', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${openaiKey}`,

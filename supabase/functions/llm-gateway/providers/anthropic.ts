@@ -1,6 +1,7 @@
 // Anthropic Provider
 
 import type { LLMCallParams, LLMResult } from "../types.ts";
+import { fetchWithTimeout, withRetry } from "../../_shared/retry.ts";
 
 export async function callAnthropic(
   params: LLMCallParams,
@@ -8,8 +9,9 @@ export async function callAnthropic(
 ): Promise<LLMResult> {
   const systemMsg = params.messages.find((m) => m.role === 'system');
   const nonSystemMsgs = params.messages.filter((m) => m.role !== 'system');
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
+  const response = await withRetry(() => fetchWithTimeout('https://api.anthropic.com/v1/messages', {
     method: 'POST',
+    timeoutMs: 60_000,
     headers: {
       'Content-Type': 'application/json',
       'x-api-key': apiKey,
@@ -22,7 +24,7 @@ export async function callAnthropic(
       temperature: params.temperature,
       max_tokens: params.max_tokens,
     }),
-  });
+  }), { attempts: 3, baseMs: 300 });
   const anthropicResult = await response.json();
   return {
     content: anthropicResult.content?.[0]?.text || '',
