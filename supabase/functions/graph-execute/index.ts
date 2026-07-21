@@ -1,6 +1,7 @@
 // Multi-Agent Graph Executor (LangGraph-style BFS)
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { z } from "https://esm.sh/zod@3.23.8";
+import { fetchWithTimeout, withRetry } from "../_shared/retry.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -23,8 +24,9 @@ interface GraphEdge { from: string; to: string; condition?: string }
 
 async function callLLM(systemPrompt: string, userInput: string): Promise<{ text: string; latency: number; cost_cents: number }> {
   const start = Date.now();
-  const res = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+  const res = await withRetry(() => fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
     method: 'POST',
+    timeoutMs: 60_000,
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${LOVABLE_KEY}` },
     body: JSON.stringify({
       model: 'google/gemini-2.5-flash',
@@ -33,10 +35,10 @@ async function callLLM(systemPrompt: string, userInput: string): Promise<{ text:
         { role: 'user', content: userInput },
       ],
     }),
-  });
+  }), { attempts: 3, baseMs: 300 });
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`LLM error ${res.status}: ${text}`);
+    const errText = await res.text();
+    throw new Error(`LLM error ${res.status}: ${errText}`);
   }
   const data = await res.json();
   const text = data.choices?.[0]?.message?.content ?? '';

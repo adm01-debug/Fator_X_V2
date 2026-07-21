@@ -1,3 +1,4 @@
+import { fetchWithTimeout } from "../_shared/retry.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.4';
 import { startEdgeTrace } from '../_shared/otel.ts';
 import { _maybeInjectFault, _applyFault } from '../_shared/chaos.ts';
@@ -55,7 +56,7 @@ async function executeNode(node: WFNode, ctx: Record<string, any>, supa: any, lo
         { role: 'system', content: agent.config?.system_prompt || `Você é ${agent.name}.` },
         { role: 'user', content: typeof lastInput === 'string' ? lastInput : JSON.stringify(lastInput) },
       ];
-      const r = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      const r = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
         method: 'POST',
         headers: { Authorization: `Bearer ${lovableKey}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ model: agent.model || 'google/gemini-2.5-flash', messages }),

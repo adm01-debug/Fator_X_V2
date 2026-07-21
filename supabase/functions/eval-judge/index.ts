@@ -1,3 +1,4 @@
+import { fetchWithTimeout } from "../_shared/retry.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { z } from "https://esm.sh/zod@3.23.8";
@@ -95,7 +96,7 @@ serve(async (req) => {
 
     for (const tc of cases) {
       try {
-        const agentResp = await fetch(`${supabaseUrl}/functions/v1/llm-gateway`, {
+        const agentResp = await fetchWithTimeout(`${supabaseUrl}/functions/v1/llm-gateway`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': authHeader, 'apikey': supabaseKey },
           body: JSON.stringify({ model: agent?.model || 'gpt-4o', messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: tc.input }], temperature: 0.3, max_tokens: 2000, agent_id }),
@@ -106,7 +107,7 @@ serve(async (req) => {
         if (mode === 'reward' && tc.expected_output) {
           const hfRewardToken = Deno.env.get('HF_API_TOKEN') || apiKey;
           try {
-            const simResp = await fetch('https://router.huggingface.co/hf-inference/models/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2', {
+            const simResp = await fetchWithTimeout('https://router.huggingface.co/hf-inference/models/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hfRewardToken}` },
               body: JSON.stringify({ inputs: { source_sentence: tc.expected_output.substring(0, 500), sentences: [String(agentOutput).substring(0, 500)] } }),
@@ -146,7 +147,7 @@ serve(async (req) => {
           ? JSON.stringify({ model: judgeModelName, max_tokens: 500, system: mode === 'faithfulness' ? 'You are a faithfulness evaluator.' : JUDGE_RUBRIC, messages: [{ role: 'user', content: judgePrompt }] })
           : JSON.stringify({ model: provider === 'huggingface' ? hfModel : judgeModelName, max_tokens: 500, messages: [{ role: 'system', content: mode === 'faithfulness' ? 'You are a faithfulness evaluator.' : JUDGE_RUBRIC }, { role: 'user', content: judgePrompt }] });
 
-        const judgeResp = await fetch(judgeUrl, { method: 'POST', headers: judgeHeaders, body: judgeBody });
+        const judgeResp = await fetchWithTimeout(judgeUrl, { method: 'POST', headers: judgeHeaders, body: judgeBody });
         const judgeData = await judgeResp.json() as Record<string, unknown>;
         const judgeText = provider === 'anthropic'
           ? ((judgeData.content as Array<Record<string, string>>)?.[0]?.text || '{}')
