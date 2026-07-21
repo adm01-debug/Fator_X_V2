@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.whatsapp-router]
 verify_jwt = false
+
+[functions.rag-embed-backfill]
+verify_jwt = false
