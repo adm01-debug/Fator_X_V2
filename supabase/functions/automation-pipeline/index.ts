@@ -4,13 +4,18 @@
  */
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.0';
 import { fetchWithTimeout } from "../_shared/retry.ts";
+import { z } from "https://esm.sh/zod@3.23.8";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-interface Body { rule_id: string; payload?: Record<string, unknown> }
+const BodySchema = z.object({
+  rule_id: z.string().uuid(),
+  payload: z.record(z.unknown()).optional(),
+});
+
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
