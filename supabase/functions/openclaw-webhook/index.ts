@@ -40,6 +40,10 @@ Deno.serve(async (req) => {
 
   if (req.method !== 'POST') return json(405, { error: 'method_not_allowed' });
 
+  // Rate limit por IP (defense-in-depth junto ao HMAC)
+  const rl = checkRateLimit(getRateLimitIdentifier(req), WEBHOOK_LIMIT);
+  if (!rl.allowed) return createRateLimitResponse(rl, corsHeaders);
+
   const secret = Deno.env.get('OPENCLAW_WEBHOOK_SECRET') ?? '';
   if (!secret) return json(500, { error: 'webhook_secret_not_configured' });
 
@@ -49,8 +53,17 @@ Deno.serve(async (req) => {
   const signature = req.headers.get('x-openclaw-signature') ?? '';
   if (!signature) return json(401, { error: 'missing_signature' });
 
+  const supabaseAudit = createClient(
+    Deno.env.get('SUPABASE_URL')!,
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+    { auth: { persistSession: false } },
+  );
+
   const valid = await verifyHmacSignature(rawBody, signature, secret);
-  if (!valid) return json(401, { error: 'invalid_signature' });
+  if (!valid) {
+    await emitEvent(supabaseAudit, 'hmac_invalid', 'warn', { ip: getRateLimitIdentifier(req) });
+    return json(401, { error: 'invalid_signature' });
+  }
 
   let payload: {
     event_id?: string;
