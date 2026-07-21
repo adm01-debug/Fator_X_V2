@@ -9089,23 +9089,43 @@ export type Database = {
           workspace_id: string
         }[]
       }
-      hybrid_memory_search: {
-        Args: {
-          p_agent_id: string
-          p_limit?: number
-          p_query: string
-          p_tiers?: string[]
-        }
-        Returns: {
-          content: string
-          hybrid_score: number
-          id: string
-          memory_tier: string
-          memory_type: string
-          relevance: number
-          text_rank: number
-        }[]
-      }
+      hybrid_memory_search:
+        | {
+            Args: {
+              p_agent_id: string
+              p_limit?: number
+              p_query: string
+              p_tiers?: string[]
+            }
+            Returns: {
+              content: string
+              hybrid_score: number
+              id: string
+              memory_tier: string
+              memory_type: string
+              relevance: number
+              text_rank: number
+            }[]
+          }
+        | {
+            Args: {
+              p_agent_id: string
+              p_limit?: number
+              p_query: string
+              p_query_embedding: string
+              p_tiers?: string[]
+            }
+            Returns: {
+              content: string
+              cosine_similarity: number
+              hybrid_score: number
+              id: string
+              memory_tier: string
+              memory_type: string
+              relevance: number
+              text_rank: number
+            }[]
+          }
       increment_skill_installs: {
         Args: { p_skill_id: string }
         Returns: undefined
