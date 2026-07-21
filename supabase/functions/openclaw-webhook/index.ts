@@ -147,5 +147,6 @@ Deno.serve(async (req) => {
       .eq('id', instance.id);
   }
 
+  await emitEvent(supabase, `received:${type}`, 'info', { event_id, instance_name }, workspace_id);
   return json(200, { ok: true, event_id });
 });
