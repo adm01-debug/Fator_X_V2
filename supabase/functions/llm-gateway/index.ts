@@ -352,6 +352,7 @@ async function resolveFallbackChain(supabase: SupabaseClient, workspaceId: strin
 
 // ═══ Call with Fallback — tries each provider in chain (com Circuit Breaker) ═══
 import { getBreaker } from "../_shared/circuitBreaker.ts";
+import { drainBreakerTransition } from "../_shared/breakerEvents.ts";
 
 async function callWithFallback(
   chain: ProviderOption[], callParams: LLMCallParams, supabaseUrl: string
