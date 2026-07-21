@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { handleCorsPreflight, getCorsHeaders, checkRateLimit } from "../_shared/mod.ts";
+import { fetchWithTimeout } from "../_shared/retry.ts";
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
@@ -85,7 +86,7 @@ serve(async (req) => {
 
           if (targetFn) {
             const fnUrl = `${Deno.env.get('SUPABASE_URL')}/functions/v1/${targetFn}`;
-            const resp = await fetch(fnUrl, {
+            const resp = await fetchWithTimeout(fnUrl, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',

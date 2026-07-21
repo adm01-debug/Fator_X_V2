@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { z } from "https://esm.sh/zod@3.23.8";
+import { fetchWithTimeout } from "../_shared/retry.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -23,7 +24,7 @@ interface SimplifiedDOM {
 }
 
 async function fetchAndSimplify(url: string): Promise<SimplifiedDOM> {
-  const resp = await fetch(url, {
+  const resp = await fetchWithTimeout(url, {
     headers: { "User-Agent": "Mozilla/5.0 (compatible; LovableBrowserAgent/1.0)" },
     redirect: "follow",
   });
@@ -140,7 +141,7 @@ Regras de Ouro:
     },
   }];
 
-  const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+  const resp = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({

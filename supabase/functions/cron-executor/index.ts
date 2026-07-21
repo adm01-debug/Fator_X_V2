@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { handleCorsPreflight, getCorsHeaders, getRateLimitIdentifier, checkRateLimit, RATE_LIMITS, createRateLimitResponse } from "../_shared/mod.ts";
+import { fetchWithTimeout } from "../_shared/retry.ts";
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
@@ -42,7 +43,7 @@ serve(async (req) => {
           case 'edge_function': {
             const targetConfig = schedule.target_config as Record<string, unknown>;
             const fnUrl = `${Deno.env.get('SUPABASE_URL')}/functions/v1/${schedule.target_id}`;
-            const resp = await fetch(fnUrl, {
+            const resp = await fetchWithTimeout(fnUrl, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -59,7 +60,7 @@ serve(async (req) => {
 
           case 'webhook': {
             const webhookUrl = schedule.target_id;
-            const resp = await fetch(webhookUrl, {
+            const resp = await fetchWithTimeout(webhookUrl, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({

@@ -3,6 +3,7 @@
  * Suporta: disc_analysis, eq_analysis, bias_analysis, full_pipeline, notify, webhook
  */
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.0';
+import { fetchWithTimeout } from "../_shared/retry.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -71,7 +72,7 @@ Deno.serve(async (req) => {
       case 'webhook': {
         const url = (rule.action_config as { url?: string })?.url;
         if (!url) throw new Error('webhook url missing in action_config');
-        const res = await fetch(url, {
+        const res = await fetchWithTimeout(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ rule_id: rule.id, payload: body.payload ?? {} }),

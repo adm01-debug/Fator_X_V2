@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { getCorsHeaders, handleCorsPreflight, errorResponse } from "../_shared/mod.ts";
+import { fetchWithTimeout } from "../_shared/retry.ts";
 
 function hfJsonResponse(req: Request, data: unknown, status = 200) {
   const cors = getCorsHeaders(req);
@@ -108,10 +109,10 @@ serve(async (req) => {
       const epochs = training_config?.epochs || 3;
       const lr = training_config?.learning_rate || 0.00002;
       const repoName = training_config?.repo_name || `fatorx-finetune-${Date.now()}`;
-      const whoResp = await fetch('https://huggingface.co/api/whoami-v2', { headers: { 'Authorization': `Bearer ${hfToken}` } });
+      const whoResp = await fetchWithTimeout('https://huggingface.co/api/whoami-v2', { headers: { 'Authorization': `Bearer ${hfToken}` } });
       const whoami = await whoResp.json();
       const hfUsername = (whoami as Record<string, string>).name;
-      await fetch('https://huggingface.co/api/repos/create', {
+      await fetchWithTimeout('https://huggingface.co/api/repos/create', {
         method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hfToken}` },
         body: JSON.stringify({ name: repoName, type: 'model', private: true }),
       });
@@ -135,10 +136,10 @@ serve(async (req) => {
     }
 
     if (action === 'list_models') {
-      const whoResp = await fetch('https://huggingface.co/api/whoami-v2', { headers: { 'Authorization': `Bearer ${hfToken}` } });
+      const whoResp = await fetchWithTimeout('https://huggingface.co/api/whoami-v2', { headers: { 'Authorization': `Bearer ${hfToken}` } });
       const whoami = await whoResp.json();
       const hfUsername = (whoami as Record<string, string>).name;
-      const modelsResp = await fetch(`https://huggingface.co/api/models?author=${hfUsername}&sort=lastModified&direction=-1&limit=20`, { headers: { 'Authorization': `Bearer ${hfToken}` } });
+      const modelsResp = await fetchWithTimeout(`https://huggingface.co/api/models?author=${hfUsername}&sort=lastModified&direction=-1&limit=20`, { headers: { 'Authorization': `Bearer ${hfToken}` } });
       const models = await modelsResp.json();
       return hfJsonResponse(req, {
         hf_username: hfUsername,
@@ -154,10 +155,10 @@ serve(async (req) => {
 
     if (action === 'check_status') {
       if (!job_id) return hfJsonResponse(req, { error: 'job_id (repo_id) required' }, 400);
-      const repoResp = await fetch(`https://huggingface.co/api/models/${job_id}`, { headers: { 'Authorization': `Bearer ${hfToken}` } });
+      const repoResp = await fetchWithTimeout(`https://huggingface.co/api/models/${job_id}`, { headers: { 'Authorization': `Bearer ${hfToken}` } });
       if (!repoResp.ok) return hfJsonResponse(req, { error: 'Model not found', job_id }, 404);
       const repoData = await repoResp.json() as Record<string, unknown>;
-      const filesResp = await fetch(`https://huggingface.co/api/models/${job_id}/tree/main`, { headers: { 'Authorization': `Bearer ${hfToken}` } });
+      const filesResp = await fetchWithTimeout(`https://huggingface.co/api/models/${job_id}/tree/main`, { headers: { 'Authorization': `Bearer ${hfToken}` } });
       const files = filesResp.ok ? await filesResp.json() as Array<Record<string, unknown>> : [];
       const hasModelFiles = files.some((f) => {
         const fname = String(f.path || '');
