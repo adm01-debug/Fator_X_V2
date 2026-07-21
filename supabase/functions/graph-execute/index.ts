@@ -156,7 +156,10 @@ Deno.serve(async (req) => {
       status: 'completed', final_output: finalOutput, ended_at: new Date().toISOString(), trace, total_cost_cents: totalCost,
     }).eq('id', exec.id);
 
-    return new Response(JSON.stringify({ execution_id: exec.id, final_output: finalOutput, steps: trace.length, total_cost_cents: totalCost }), {
+    const responseBody = { execution_id: exec.id, final_output: finalOutput, steps: trace.length, total_cost_cents: totalCost };
+    if (idemKey) await saveIdempotency(idemKey, 200, responseBody, supabase);
+
+    return new Response(JSON.stringify(responseBody), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e) {
