@@ -36,8 +36,9 @@ async function callLLM(systemPrompt: string, userInput: string): Promise<{ text:
       ],
     }),
   }), { attempts: 3, baseMs: 300 });
-    const text = await res.text();
-    throw new Error(`LLM error ${res.status}: ${text}`);
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`LLM error ${res.status}: ${errText}`);
   }
   const data = await res.json();
   const text = data.choices?.[0]?.message?.content ?? '';
