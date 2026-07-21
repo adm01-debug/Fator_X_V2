@@ -1,7 +1,7 @@
 import { fromTable } from '@/lib/supabaseExtended';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import { SectionTitle, NexusBadge, ToggleField } from '../ui';
-import { Globe, MessageSquare, Mail, Hash, Send, Radio, Sparkles, Activity, Map as MapIcon, BarChart3, Rocket, CheckCircle, ShieldCheck, AlertTriangle, Zap } from 'lucide-react';
+import { Globe, MessageSquare, Mail, Hash, Send, Radio, Sparkles, Activity, Map as MapIcon, BarChart3, Rocket, CheckCircle, ShieldCheck, AlertTriangle, Zap, Cloud } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +9,10 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 import { getWorkspaceId } from '@/lib/agentService';
+import { compileAgentForOpenclaw } from '@/lib/openclawCompiler';
+import { publishAgentToOpenclaw } from '@/services/openclawDeployService';
+import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
 import type { DeployChannelConfig, MonitoringKPI, DeployChannel } from '@/types/agentTypes';
 
 const ENVIRONMENT_OPTIONS = [
