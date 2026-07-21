@@ -25,6 +25,8 @@ import {
   METRIC_LABELS,
   type MetricAlertRule, type MetricRuleMetric, type MetricRuleOperator, type MetricRuleSeverity,
 } from '@/lib/metricsAlertRules';
+import { KnowledgeGraphHealthCard } from '@/components/metrics/KnowledgeGraphHealthCard';
+import { useCurrentWorkspace } from '@/hooks/useCurrentWorkspace';
 
 type DayKey = string;
 
