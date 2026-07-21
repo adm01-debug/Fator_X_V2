@@ -14,6 +14,18 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { handleCorsPreflight, getCorsHeaders } from '../_shared/cors.ts';
 import { verifyHmacSignature, constantTimeEqual } from '../_shared/security.ts';
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier } from '../_shared/rate-limiter.ts';
+
+const WEBHOOK_LIMIT = { windowMs: 60_000, maxRequests: 300, name: 'openclaw-webhook' };
+
+async function emitEvent(supabase: ReturnType<typeof createClient>, kind: string, level: 'info'|'warn'|'error', payload: Record<string, unknown>, workspaceId?: string | null) {
+  try {
+    await supabase.from('openclaw_events').insert({
+      workspace_id: workspaceId ?? null,
+      kind, level, source: 'webhook', payload,
+    });
+  } catch { /* best-effort */ }
+}
 
 const MAX_BODY = 1024 * 1024; // 1MB
 
