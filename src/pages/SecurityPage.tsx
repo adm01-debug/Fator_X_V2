@@ -22,6 +22,7 @@ import { TwoFactorSetup } from '@/components/security/TwoFactorSetup';
 import { AccessControlPanel } from '@/components/security/AccessControlPanel';
 import { GuardrailsLibrary } from '@/components/security/GuardrailsLibrary';
 import { GuardrailsSimulator } from '@/components/security/GuardrailsSimulator';
+import { OpenclawEventsPanel } from '@/components/security/OpenclawEventsPanel';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 
