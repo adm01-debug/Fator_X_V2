@@ -273,6 +273,12 @@ export default function OpenclawDeployPage() {
           <OpenclawTestConsole agents={agents} disabled={!healthOk} />
         </TabsContent>
 
+        <TabsContent value="whatsapp" className="mt-6">
+          <OpenclawWhatsappSetup />
+        </TabsContent>
+
+
+
         <TabsContent value="deploy" className="mt-6">
           <Card className="bg-card border-border">
             <CardHeader>
