@@ -11,6 +11,7 @@
  * verify_jwt: false (providers cannot send JWT)
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { 
   handleCorsPreflight, 
   getCorsHeaders, 
@@ -21,6 +22,48 @@ import {
 } from "../_shared/mod.ts";
 import { WhatsAppWebhookContracts } from "../_shared/contracts.ts";
 import { verifyHmac } from "../_shared/webhookSignature.ts";
+
+// Replay protection window: reject signed events with a provider timestamp
+// older than 5 minutes (mitigates captured-body replay attacks).
+const REPLAY_WINDOW_MS = 5 * 60 * 1000;
+
+/** Extracts a unix-ms timestamp from provider-specific hints, if available. */
+function extractProviderTimestampMs(provider: Provider, headers: Headers, parsed: Record<string, unknown>): number | null {
+  // Generic override header (used by internal replays / tests)
+  const generic = headers.get('x-webhook-timestamp');
+  if (generic) {
+    const n = Number(generic);
+    if (Number.isFinite(n)) return n > 1e12 ? n : n * 1000;
+  }
+  if (provider === 'meta') {
+    const entry = (parsed.entry as Array<Record<string, unknown>> | undefined)?.[0];
+    const t = entry?.time;
+    if (typeof t === 'number' && Number.isFinite(t)) return t > 1e12 ? t : t * 1000;
+  }
+  if (provider === 'zapi') {
+    const t = parsed.momment ?? parsed.timestamp;
+    if (typeof t === 'number' && Number.isFinite(t)) return t > 1e12 ? t : t * 1000;
+  }
+  if (provider === 'evolution') {
+    const data = parsed.data as Record<string, unknown> | undefined;
+    const t = data?.messageTimestamp;
+    if (typeof t === 'number' && Number.isFinite(t)) return t > 1e12 ? t : t * 1000;
+  }
+  return null;
+}
+
+/** Check whether we already persisted this (provider, message_id) pair. */
+async function isReplay(client: SupabaseClient, provider: Provider, messageId: string | null): Promise<boolean> {
+  if (!messageId) return false;
+  const { data } = await client
+    .from('whatsapp_webhook_events')
+    .select('id')
+    .eq('provider', provider)
+    .eq('message_id', messageId)
+    .limit(1)
+    .maybeSingle();
+  return !!data;
+}
 
 
 // ─── Trace ID generator ───
