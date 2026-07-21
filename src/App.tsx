@@ -58,6 +58,7 @@ const GovernancePage = lazy(() => import("./pages/GovernancePage"));
 const BudgetsPage = lazy(() => import("./pages/BudgetsPage"));
 const DeploymentsPage = lazy(() => import("./pages/DeploymentsPage"));
 const OpenclawDeployPage = lazy(() => import("./pages/OpenclawDeployPage"));
+const OpenclawTemplatesPage = lazy(() => import("./pages/OpenclawTemplatesPage"));
 const MonitoringPage = lazy(() => import("./pages/MonitoringPage"));
 const DataStoragePage = lazy(() => import("./pages/DataStoragePage"));
 const DataHubPage = lazy(() => import("./pages/DataHubPage"));
