@@ -54,4 +54,20 @@ describe("OpenclawDeployPage (Runtime OpenClaw)", () => {
     renderPage();
     expect(await screen.findByRole("tab", { name: /Console/i })).toBeInTheDocument();
   });
+
+  it("mostra alerta visual quando OPENCLAW_URL está mal configurada", async () => {
+    vi.mocked(openclawService.getOpenclawHealth).mockResolvedValueOnce({
+      status: "misconfigured",
+      configError: {
+        code: "invalid_openclaw_url",
+        message: 'OPENCLAW_URL inválida ("openclaw.local"): deve começar com http:// ou https://.',
+        hint: "Atualize a secret OPENCLAW_URL em Backend → Secrets.",
+      },
+    });
+    renderPage();
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent(/Configuração inválida do OpenClaw/i);
+    expect(alert).toHaveTextContent(/deve começar com http/i);
+  });
 });
+
