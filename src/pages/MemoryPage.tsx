@@ -33,6 +33,7 @@ export default function MemoryPage() {
   const [search, setSearch] = useState('');
   const [saving, setSaving] = useState(false);
   const [compacting, setCompacting] = useState(false);
+  const [tierFilter, setTierFilter] = useState<MemoryTier | 'all'>('all');
   const queryClient = useQueryClient();
 
   const { data: memoryData = { memories: [], total: 0 }, isLoading } = useQuery({
@@ -47,8 +48,13 @@ export default function MemoryPage() {
       return listMemories(activeType, 100);
     },
   });
-  
-  const memories = memoryData.memories;
+
+  const memories = memoryData.memories.filter((entry) => {
+    if (tierFilter === 'all') return true;
+    const raw = entry as { memory_tier?: MemoryTier; pinned?: boolean; relevance_score?: number | null };
+    const tier = raw.memory_tier ?? computeTier(Number(raw.relevance_score ?? 0), Boolean(raw.pinned));
+    return tier === tierFilter;
+  });
 
   const handleAdd = async () => {
     const result = memorySchema.safeParse({ content: newContent, memory_type: activeType, source: newSource || undefined });
