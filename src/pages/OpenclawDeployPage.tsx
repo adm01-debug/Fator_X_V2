@@ -155,6 +155,9 @@ export default function OpenclawDeployPage() {
           <TabsTrigger value="console" className="gap-1.5">
             <MessageSquare className="h-3.5 w-3.5" /> Console
           </TabsTrigger>
+          <TabsTrigger value="whatsapp" className="gap-1.5">
+            <QrCode className="h-3.5 w-3.5" /> WhatsApp
+          </TabsTrigger>
           <TabsTrigger value="deploy" className="gap-1.5">
             <Upload className="h-3.5 w-3.5" /> Deploy
           </TabsTrigger>
