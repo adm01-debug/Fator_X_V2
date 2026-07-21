@@ -375,6 +375,22 @@ serve(async (req) => {
     return jsonResponse(req, { error: 'Invalid signature', trace_id: traceId }, 401);
   }
 
+  // Replay protection: reject events with stale provider timestamps.
+  const providerTsMs = extractProviderTimestampMs(provider, req.headers, parsed);
+  if (providerTsMs !== null && Math.abs(Date.now() - providerTsMs) > REPLAY_WINDOW_MS) {
+    audit.routing_status = 'stale_event';
+    audit.routing_error = `Timestamp outside replay window (${REPLAY_WINDOW_MS}ms)`;
+    await writeAudit(client, audit);
+    return jsonResponse(req, { error: 'Stale event', trace_id: traceId }, 401);
+  }
+
+  // Dedupe: silently ack duplicates so providers stop retrying.
+  if (await isReplay(client, provider, event.message_id)) {
+    return jsonResponse(req, { ok: true, deduped: true, trace_id: traceId }, 200);
+  }
+
+
+
 
   if (!workspaceId) {
     audit.routing_status = 'no_route';
