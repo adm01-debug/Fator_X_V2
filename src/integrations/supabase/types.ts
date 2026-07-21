@@ -494,43 +494,58 @@ export type Database = {
       }
       agent_memories_v2: {
         Row: {
+          access_count: number
           agent_id: string | null
           content: string
           context_tier: string | null
           created_at: string | null
           decay_rate: number | null
           embedding: string | null
+          half_life_days: number
           id: string
           importance_score: number | null
           last_accessed_at: string | null
+          memory_tier: string
           memory_type: string
           metadata: Json | null
+          pinned: boolean
+          strength: number | null
         }
         Insert: {
+          access_count?: number
           agent_id?: string | null
           content: string
           context_tier?: string | null
           created_at?: string | null
           decay_rate?: number | null
           embedding?: string | null
+          half_life_days?: number
           id?: string
           importance_score?: number | null
           last_accessed_at?: string | null
+          memory_tier?: string
           memory_type: string
           metadata?: Json | null
+          pinned?: boolean
+          strength?: number | null
         }
         Update: {
+          access_count?: number
           agent_id?: string | null
           content?: string
           context_tier?: string | null
           created_at?: string | null
           decay_rate?: number | null
           embedding?: string | null
+          half_life_days?: number
           id?: string
           importance_score?: number | null
           last_accessed_at?: string | null
+          memory_tier?: string
           memory_type?: string
           metadata?: Json | null
+          pinned?: boolean
+          strength?: number | null
         }
         Relationships: []
       }
@@ -8471,6 +8486,32 @@ export type Database = {
           },
         ]
       }
+      knowledge_graph_health: {
+        Row: {
+          broken_links_score: number | null
+          computed_at: string | null
+          coverage_score: number | null
+          dedup_score: number | null
+          freshness_score: number | null
+          orphans_score: number | null
+          total_score: number | null
+          workspace_id: string | null
+        }
+        Relationships: []
+      }
+      knowledge_graph_health_v: {
+        Row: {
+          broken_links_score: number | null
+          computed_at: string | null
+          coverage_score: number | null
+          dedup_score: number | null
+          freshness_score: number | null
+          orphans_score: number | null
+          total_score: number | null
+          workspace_id: string | null
+        }
+        Relationships: []
+      }
       llm_cost_by_caller: {
         Row: {
           caller: string | null
@@ -9033,6 +9074,7 @@ export type Database = {
         Returns: undefined
       }
       mask_email: { Args: { p_email: string }; Returns: string }
+      memory_relevance: { Args: { p_id: string }; Returns: number }
       offboard_vendor: {
         Args: { p_notes?: string; p_vendor_id: string }
         Returns: undefined
@@ -9068,6 +9110,7 @@ export type Database = {
       }
       publish_postmortem: { Args: { p_postmortem_id: string }; Returns: Json }
       purchase_skill: { Args: { p_skill_id: string }; Returns: Json }
+      recompute_memory_tier: { Args: never; Returns: number }
       record_bcp_test: {
         Args: {
           p_action_items?: string
@@ -9134,6 +9177,7 @@ export type Database = {
         Returns: string
       }
       refresh_agent_daily_metrics: { Args: never; Returns: undefined }
+      refresh_knowledge_graph_health: { Args: never; Returns: undefined }
       refresh_secrets_status: { Args: never; Returns: Json }
       register_asset: {
         Args: {
@@ -9274,6 +9318,7 @@ export type Database = {
         }
         Returns: string
       }
+      touch_memory: { Args: { p_id: string }; Returns: undefined }
       update_incident_run: {
         Args: {
           p_action_results: Json
