@@ -26,6 +26,7 @@ import {
   type MetricAlertRule, type MetricRuleMetric, type MetricRuleOperator, type MetricRuleSeverity,
 } from '@/lib/metricsAlertRules';
 import { KnowledgeGraphHealthCard } from '@/components/metrics/KnowledgeGraphHealthCard';
+import { RandomRecallMetricsCard } from '@/components/metrics/RandomRecallMetricsCard';
 import { RandomRecallToggleCard } from '@/components/memory/RandomRecallToggleCard';
 import { useCurrentWorkspace } from '@/hooks/useCurrentWorkspace';
 
