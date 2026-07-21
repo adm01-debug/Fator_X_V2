@@ -63,7 +63,6 @@ export function KnowledgeGraphHealthCard({ workspaceId }: KnowledgeGraphHealthCa
       setLoading(true);
       setError(null);
       try {
-        // @ts-expect-error — RPC nova, gerada no próximo types.ts sync
         const { data: rows, error: rpcErr } = await supabaseExternal.rpc(
           "get_knowledge_graph_health",
           { p_workspace_id: workspaceId },
