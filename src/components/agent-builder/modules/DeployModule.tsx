@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import { fromTable } from '@/lib/supabaseExtended';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import { SectionTitle, NexusBadge, ToggleField } from '../ui';
-import { Globe, MessageSquare, Mail, Hash, Send, Radio, Sparkles, Activity, Map as MapIcon, BarChart3, Rocket, CheckCircle, ShieldCheck, AlertTriangle, Zap } from 'lucide-react';
+import { Globe, MessageSquare, Mail, Hash, Send, Radio, Sparkles, Activity, Map as MapIcon, BarChart3, Rocket, CheckCircle, ShieldCheck, AlertTriangle, Zap, Cloud } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +10,10 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 import { getWorkspaceId } from '@/lib/agentService';
+import { compileAgentForOpenclaw } from '@/lib/openclawCompiler';
+import { publishAgentToOpenclaw } from '@/services/openclawDeployService';
+import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
 import type { DeployChannelConfig, MonitoringKPI, DeployChannel } from '@/types/agentTypes';
 
 const ENVIRONMENT_OPTIONS = [
@@ -121,9 +126,67 @@ const DEFAULT_KPIS: MonitoringKPI[] = [
 export function DeployModule() {
   const agent = useAgentBuilderStore((s) => s.agent);
   const updateAgent = useAgentBuilderStore((s) => s.updateAgent);
+  const [publishing, setPublishing] = useState(false);
 
   const channels = agent.deploy_channels.length > 0 ? agent.deploy_channels : DEFAULT_CHANNELS;
   const kpis = agent.monitoring_kpis.length > 0 ? agent.monitoring_kpis : DEFAULT_KPIS;
+
+  const handlePublishToOpenclaw = async () => {
+    if (!agent.id) {
+      toast.error('Salve o agente antes de publicar no OpenClaw.');
+      return;
+    }
+    setPublishing(true);
+    let deploymentId: string | undefined;
+    try {
+      const manifest = compileAgentForOpenclaw(agent);
+      const workspaceId = await getWorkspaceId();
+      const { data: userData } = await supabase.auth.getUser();
+
+      const { data: row, error: insertErr } = await fromTable('openclaw_deployments')
+        .insert({
+          agent_id: agent.id,
+          workspace_id: workspaceId,
+          version: manifest.version,
+          status: 'pending',
+          manifest: manifest as unknown as Record<string, unknown>,
+          deployed_by: userData.user?.id ?? null,
+        })
+        .select('id')
+        .single();
+      if (insertErr) throw insertErr;
+      deploymentId = (row as { id: string } | null)?.id;
+
+      const result = await publishAgentToOpenclaw({
+        agent_id: agent.id,
+        manifest: manifest as unknown as Record<string, unknown>,
+      });
+      const remoteId = result.data?.openclaw_agent_id;
+
+      if (deploymentId) {
+        await fromTable('openclaw_deployments')
+          .update({
+            status: 'deployed',
+            openclaw_agent_id: remoteId ?? null,
+            deployed_at: new Date().toISOString(),
+          })
+          .eq('id', deploymentId);
+      }
+      toast.success(`Agente publicado no OpenClaw${remoteId ? ` (id: ${remoteId})` : ''}.`);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Falha ao publicar no OpenClaw';
+      logger.error('openclaw publish failed', { agentId: agent.id, error: msg });
+      if (deploymentId) {
+        await fromTable('openclaw_deployments')
+          .update({ status: 'failed', error: msg })
+          .eq('id', deploymentId)
+          .then(() => undefined, () => undefined);
+      }
+      toast.error(msg);
+    } finally {
+      setPublishing(false);
+    }
+  };
 
   const updateChannel = (id: string, partial: Partial<DeployChannelConfig>) => {
     const updated = channels.map((c) => (c.id === id ? { ...c, ...partial } : c));
@@ -511,6 +574,15 @@ export function DeployModule() {
                 }}
               >
                 Promover para {agent.status === 'production' ? 'Produção' : 'Staging'}
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full h-11 rounded-2xl border-primary/40 gap-2"
+                onClick={handlePublishToOpenclaw}
+                disabled={publishing || !agent.id}
+              >
+                <Cloud className="h-4 w-4" />
+                {publishing ? 'Publicando no OpenClaw…' : 'Publicar no OpenClaw'}
               </Button>
               <div className="flex items-center gap-1.5 text-[9px] font-bold text-muted-foreground uppercase tracking-tighter">
                 <Activity className="h-3 w-3" /> Transição segura com rollback automático

@@ -17,6 +17,7 @@ export type OpenclawAction =
   | 'agent.create'
   | 'agent.update'
   | 'agent.delete'
+  | 'agent.publish'
   | 'skills'
   | 'skill.deploy';
 
@@ -180,5 +181,19 @@ export async function chatWithOpenclawAgent(
   return invokeOpenclaw<{ reply: string }>({
     action: 'chat',
     payload: { agent_id: agentId, message, context },
+  });
+}
+
+/**
+ * Publica um agente compilado (SOUL/AGENTS/SKILLS + openclaw.json) no runtime.
+ * Retorna o `openclaw_agent_id` remoto quando bem-sucedido.
+ */
+export async function publishAgentToOpenclaw(input: {
+  agent_id: string;
+  manifest: Record<string, unknown>;
+}): Promise<OpenclawInvokeResult<{ openclaw_agent_id?: string }>> {
+  return invokeOpenclaw<{ openclaw_agent_id?: string }>({
+    action: 'agent.publish',
+    payload: input,
   });
 }

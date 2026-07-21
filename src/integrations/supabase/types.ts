@@ -5075,6 +5075,59 @@ export type Database = {
           },
         ]
       }
+      openclaw_deployments: {
+        Row: {
+          agent_id: string
+          created_at: string
+          deployed_at: string | null
+          deployed_by: string | null
+          error: string | null
+          id: string
+          manifest: Json
+          openclaw_agent_id: string | null
+          status: string
+          updated_at: string
+          version: number
+          workspace_id: string
+        }
+        Insert: {
+          agent_id: string
+          created_at?: string
+          deployed_at?: string | null
+          deployed_by?: string | null
+          error?: string | null
+          id?: string
+          manifest?: Json
+          openclaw_agent_id?: string | null
+          status?: string
+          updated_at?: string
+          version?: number
+          workspace_id: string
+        }
+        Update: {
+          agent_id?: string
+          created_at?: string
+          deployed_at?: string | null
+          deployed_by?: string | null
+          error?: string | null
+          id?: string
+          manifest?: Json
+          openclaw_agent_id?: string | null
+          status?: string
+          updated_at?: string
+          version?: number
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "openclaw_deployments_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       oracle_history: {
         Row: {
           chairman_model: string | null
