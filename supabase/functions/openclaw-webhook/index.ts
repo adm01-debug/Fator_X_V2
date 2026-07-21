@@ -53,13 +53,25 @@ Deno.serve(async (req) => {
   const signature = req.headers.get('x-openclaw-signature') ?? '';
   if (!signature) return json(401, { error: 'missing_signature' });
 
+  // Replay protection: header x-openclaw-timestamp (unix ms), janela ±5min
+  const tsHeader = req.headers.get('x-openclaw-timestamp') ?? '';
+  const REPLAY_WINDOW_MS = 5 * 60 * 1000;
+  if (tsHeader) {
+    const ts = Number(tsHeader);
+    if (!Number.isFinite(ts) || Math.abs(Date.now() - ts) > REPLAY_WINDOW_MS) {
+      return json(401, { error: 'stale_or_invalid_timestamp' });
+    }
+  }
+
   const supabaseAudit = createClient(
     Deno.env.get('SUPABASE_URL')!,
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
     { auth: { persistSession: false } },
   );
 
-  const valid = await verifyHmacSignature(rawBody, signature, secret);
+  // Assinatura cobre timestamp+body para prevenir replay com body reutilizado
+  const signedPayload = tsHeader ? `${tsHeader}.${rawBody}` : rawBody;
+  const valid = await verifyHmacSignature(signedPayload, signature, secret);
   if (!valid) {
     await emitEvent(supabaseAudit, 'hmac_invalid', 'warn', { ip: getRateLimitIdentifier(req) });
     return json(401, { error: 'invalid_signature' });
