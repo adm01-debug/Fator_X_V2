@@ -17,6 +17,7 @@ import {
   Loader2,
   RefreshCw,
   MessageSquare,
+  QrCode,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -27,6 +28,7 @@ import {
 } from "@/services/openclawDeployService";
 import { OpenclawStatusBadge } from "@/components/openclaw/OpenclawStatusBadge";
 import { OpenclawTestConsole } from "@/components/openclaw/OpenclawTestConsole";
+import { OpenclawWhatsappSetup } from "@/components/openclaw/OpenclawWhatsappSetup";
 
 export default function OpenclawDeployPage() {
   const queryClient = useQueryClient();
@@ -153,6 +155,9 @@ export default function OpenclawDeployPage() {
           <TabsTrigger value="console" className="gap-1.5">
             <MessageSquare className="h-3.5 w-3.5" /> Console
           </TabsTrigger>
+          <TabsTrigger value="whatsapp" className="gap-1.5">
+            <QrCode className="h-3.5 w-3.5" /> WhatsApp
+          </TabsTrigger>
           <TabsTrigger value="deploy" className="gap-1.5">
             <Upload className="h-3.5 w-3.5" /> Deploy
           </TabsTrigger>
@@ -267,6 +272,12 @@ export default function OpenclawDeployPage() {
         <TabsContent value="console" className="mt-6">
           <OpenclawTestConsole agents={agents} disabled={!healthOk} />
         </TabsContent>
+
+        <TabsContent value="whatsapp" className="mt-6">
+          <OpenclawWhatsappSetup />
+        </TabsContent>
+
+
 
         <TabsContent value="deploy" className="mt-6">
           <Card className="bg-card border-border">

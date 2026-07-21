@@ -19,7 +19,10 @@ export type OpenclawAction =
   | 'agent.delete'
   | 'agent.publish'
   | 'skills'
-  | 'skill.deploy';
+  | 'skill.deploy'
+  | 'whatsapp.pair'
+  | 'whatsapp.status'
+  | 'whatsapp.send';
 
 export interface OpenclawInvokeInput {
   action: OpenclawAction;
@@ -194,6 +197,41 @@ export async function publishAgentToOpenclaw(input: {
 }): Promise<OpenclawInvokeResult<{ openclaw_agent_id?: string }>> {
   return invokeOpenclaw<{ openclaw_agent_id?: string }>({
     action: 'agent.publish',
+    payload: input,
+  });
+}
+
+export interface WhatsappPairResult {
+  instance_name: string;
+  qr_code?: string;
+  status?: 'pending' | 'connected' | 'expired' | 'disconnected' | 'error';
+  phone_number?: string;
+}
+
+/** Inicia (ou reinicia) o pareamento WhatsApp para a instância informada. */
+export async function pairWhatsapp(instanceName: string) {
+  return invokeOpenclaw<WhatsappPairResult>({
+    action: 'whatsapp.pair',
+    payload: { instance_name: instanceName },
+  });
+}
+
+/** Consulta o status atual da instância WhatsApp. */
+export async function getWhatsappStatus(instanceName: string) {
+  return invokeOpenclaw<WhatsappPairResult>({
+    action: 'whatsapp.status',
+    payload: { instance_name: instanceName },
+  });
+}
+
+/** Envia uma mensagem outbound pelo WhatsApp gerenciado. */
+export async function sendWhatsappMessage(input: {
+  instance_name: string;
+  to: string;
+  body: string;
+}) {
+  return invokeOpenclaw<{ message_id?: string }>({
+    action: 'whatsapp.send',
     payload: input,
   });
 }

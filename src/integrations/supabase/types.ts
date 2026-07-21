@@ -5128,6 +5128,108 @@ export type Database = {
           },
         ]
       }
+      openclaw_whatsapp_instances: {
+        Row: {
+          created_at: string
+          error: string | null
+          id: string
+          instance_name: string
+          last_seen_at: string | null
+          phone_number: string | null
+          qr_code: string | null
+          status: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          instance_name: string
+          last_seen_at?: string | null
+          phone_number?: string | null
+          qr_code?: string | null
+          status?: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          instance_name?: string
+          last_seen_at?: string | null
+          phone_number?: string | null
+          qr_code?: string | null
+          status?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: []
+      }
+      openclaw_whatsapp_messages: {
+        Row: {
+          agent_id: string | null
+          body: string | null
+          created_at: string
+          direction: string
+          external_message_id: string | null
+          handled_by: string | null
+          id: string
+          instance_id: string | null
+          media_url: string | null
+          metadata: Json
+          remote_phone: string
+          status: string
+          workspace_id: string
+        }
+        Insert: {
+          agent_id?: string | null
+          body?: string | null
+          created_at?: string
+          direction: string
+          external_message_id?: string | null
+          handled_by?: string | null
+          id?: string
+          instance_id?: string | null
+          media_url?: string | null
+          metadata?: Json
+          remote_phone: string
+          status?: string
+          workspace_id: string
+        }
+        Update: {
+          agent_id?: string | null
+          body?: string | null
+          created_at?: string
+          direction?: string
+          external_message_id?: string | null
+          handled_by?: string | null
+          id?: string
+          instance_id?: string | null
+          media_url?: string | null
+          metadata?: Json
+          remote_phone?: string
+          status?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "openclaw_whatsapp_messages_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "openclaw_whatsapp_messages_instance_id_fkey"
+            columns: ["instance_id"]
+            isOneToOne: false
+            referencedRelation: "openclaw_whatsapp_instances"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       oracle_history: {
         Row: {
           chairman_model: string | null
@@ -7592,6 +7694,7 @@ export type Database = {
         Row: {
           body: Json | null
           created_at: string | null
+          external_event_id: string | null
           headers: Json | null
           id: string
           method: string
@@ -7604,6 +7707,7 @@ export type Database = {
         Insert: {
           body?: Json | null
           created_at?: string | null
+          external_event_id?: string | null
           headers?: Json | null
           id?: string
           method: string
@@ -7616,6 +7720,7 @@ export type Database = {
         Update: {
           body?: Json | null
           created_at?: string | null
+          external_event_id?: string | null
           headers?: Json | null
           id?: string
           method?: string
