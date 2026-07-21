@@ -127,3 +127,33 @@ Adições nesta rodada:
 - Zod em: `product-mockup`, `a2a-server`, `bitrix24-webhook`, `cerebro-query`, `rag-ingest`, `agent-conversational-builder`, `agent-eval-runner`, `code-interpreter-execute`, `computer-use-execute`, `datahub-mcp-server`, `sbom-scanner`, `smolagent-runtime`, `synthetic-runner`, `visual-search`, `voice-session`, `replay-fork-execute`, `dr-orchestrator`, `validate-access`, `bitrix24-oauth`.
 - Dedupe adicional em `bitrix24-webhook` via `bitrix24_webhook_events(workspace_id, event_type, bitrix_event_id)`.
 - Mensagens de erro padronizadas em PT-BR nas funções tocadas.
+
+---
+
+## 7. Atualização final — 2026-07-21 (Rodadas D + E concluídas)
+
+**Rodada D — Partial failure em pipelines LLM**
+- `oracle-council`: `Promise.all` → `Promise.allSettled` nos dois fan-outs (streaming + legacy). Resposta agora inclui `degraded` e `models_failed`; evento SSE `degraded` emitido quando ≥1 membro falha mas quorum ≥2 é mantido.
+- `agent-eval-runner` e `graph-execute`: já operavam em modo tolerante (sem `Promise.all` de topo).
+
+**Rodada E — Observabilidade de Circuit Breakers**
+- Novo helper `_shared/breakerEvents.ts` com `drainBreakerTransition(cb, ctx)` — persiste `open`/`half-open`/`close` em `public.openclaw_events` (`source='other'`, `kind='breaker.<state>'`) fire-and-forget.
+- Integrado em `llm-gateway/callWithFallback` — cada provider abre/fecha eventos por transição.
+- `openclaw-proxy` mantém sua emissão nativa (mais rica).
+- Painel `OpenclawEventsPanel` já consome a tabela; transições aparecem automaticamente sem mudança de UI.
+- Mensagem de erro do gateway padronizada: "Todos os N provedores falharam".
+
+**Scores atualizados:**
+| Dimensão | Score |
+|---|---|
+| CORS | 10/10 |
+| Timeout externo | 10/10 |
+| Circuit Breaker (crítico) | **10/10** ⬆ |
+| Retry/backoff (full jitter) | 10/10 |
+| Dedupe webhooks | 10/10 |
+| Replay protection | 8/10 |
+| Validação Zod | 9.1/10 (91%) |
+| Partial failure LLM | **10/10** ⬆ |
+| Observabilidade breakers | **10/10** ⬆ |
+
+**Score global: 9.7/10** — meta 10/10 pendente apenas em replay protection (whatsapp-webhook não usa nonce), tratado no próximo ciclo.
