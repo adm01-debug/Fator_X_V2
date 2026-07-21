@@ -19,7 +19,10 @@ export type OpenclawAction =
   | 'agent.delete'
   | 'agent.publish'
   | 'skills'
-  | 'skill.deploy';
+  | 'skill.deploy'
+  | 'whatsapp.pair'
+  | 'whatsapp.status'
+  | 'whatsapp.send';
 
 export interface OpenclawInvokeInput {
   action: OpenclawAction;
