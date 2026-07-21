@@ -179,11 +179,22 @@ serve(async (req) => {
             return mResult;
           });
 
-          const stage1 = await Promise.all(stage1Promises);
+          // Partial failure tolerance: allSettled evita que rejeição inesperada
+          // (ex: sendUpdate crashando) derrube todo o fan-out.
+          const settled = await Promise.allSettled(stage1Promises);
+          const stage1 = settled.map((s, i) =>
+            s.status === 'fulfilled'
+              ? s.value
+              : { index: i, model: members[i].model, success: false, content: `Falha inesperada: ${String((s as PromiseRejectedResult).reason).slice(0, 200)}` }
+          );
           const successfulResponses = stage1.filter(r => r.success);
+          const degraded = successfulResponses.length < members.length;
 
           if (successfulResponses.length < 2) {
             throw new Error('Membros insuficientes para quorum');
+          }
+          if (degraded) {
+            await sendUpdate('degraded', { successful: successfulResponses.length, total: members.length });
           }
 
           // STAGE 2: Peer Review
