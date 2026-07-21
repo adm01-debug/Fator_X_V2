@@ -6,7 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Mic, Globe, Clock, DollarSign, RefreshCw } from "lucide-react";
+import { Mic, Globe, Clock, DollarSign, RefreshCw, MessageCircle, Send, Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { sendWhatsappMessage } from "@/services/openclawDeployService";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -37,6 +39,23 @@ type BrowserSession = {
   ended_at: string | null;
   agent_id: string | null;
 };
+type WhatsappInstance = {
+  id: string;
+  instance_name: string;
+  phone_number: string | null;
+  status: string;
+};
+
+type WhatsappMessage = {
+  id: string;
+  instance_id: string | null;
+  remote_phone: string;
+  direction: string;
+  body: string | null;
+  status: string;
+  created_at: string;
+};
+
 
 const STATUS_VARIANT: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
   completed: "secondary",
@@ -60,12 +79,17 @@ export default function AgentSessionsPage() {
   const { data: workspaceId } = useWorkspaceId();
   const [voice, setVoice] = useState<VoiceSession[]>([]);
   const [browser, setBrowser] = useState<BrowserSession[]>([]);
+  const [instances, setInstances] = useState<WhatsappInstance[]>([]);
+  const [messages, setMessages] = useState<WhatsappMessage[]>([]);
+  const [selectedInstance, setSelectedInstance] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState("");
+  const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
     if (!workspaceId) return;
     setLoading(true);
-    const [{ data: v, error: ve }, { data: b, error: be }] = await Promise.all([
+    const [{ data: v, error: ve }, { data: b, error: be }, { data: inst }, { data: msgs }] = await Promise.all([
       supabase
         .from("voice_sessions")
         .select("id,status,started_at,ended_at,duration_ms,audio_in_seconds,audio_out_seconds,cost_cents,agent_id")
@@ -78,10 +102,23 @@ export default function AgentSessionsPage() {
         .eq("workspace_id", workspaceId)
         .order("started_at", { ascending: false })
         .limit(200),
+      supabase
+        .from("openclaw_whatsapp_instances")
+        .select("id,instance_name,phone_number,status")
+        .eq("workspace_id", workspaceId)
+        .order("instance_name", { ascending: true }),
+      supabase
+        .from("openclaw_whatsapp_messages")
+        .select("id,instance_id,remote_phone,direction,body,status,created_at")
+        .eq("workspace_id", workspaceId)
+        .order("created_at", { ascending: false })
+        .limit(300),
     ]);
     if (ve || be) toast.error("Erro ao carregar sessões");
     setVoice((v ?? []) as VoiceSession[]);
     setBrowser((b ?? []) as BrowserSession[]);
+    setInstances((inst ?? []) as WhatsappInstance[]);
+    setMessages((msgs ?? []) as WhatsappMessage[]);
     setLoading(false);
   }, [workspaceId]);
 
@@ -120,6 +157,7 @@ export default function AgentSessionsPage() {
         <TabsList>
           <TabsTrigger value="voice"><Mic className="h-4 w-4 mr-2" /> Voz ({voice.length})</TabsTrigger>
           <TabsTrigger value="browser"><Globe className="h-4 w-4 mr-2" /> Browser ({browser.length})</TabsTrigger>
+          <TabsTrigger value="whatsapp"><MessageCircle className="h-4 w-4 mr-2" /> WhatsApp ({messages.length})</TabsTrigger>
         </TabsList>
 
         <TabsContent value="voice" className="space-y-4">
@@ -200,6 +238,119 @@ export default function AgentSessionsPage() {
                     )}
                   </div>
                 ))
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="whatsapp" className="space-y-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between gap-3">
+              <CardTitle>Inbox WhatsApp</CardTitle>
+              <div className="flex items-center gap-2 text-meta text-muted-foreground">
+                {instances.length === 0 ? (
+                  <span>Nenhuma instância pareada.</span>
+                ) : (
+                  instances.map((i) => (
+                    <Badge key={i.id} variant={i.status === "connected" ? "secondary" : "outline"}>
+                      {i.instance_name}{i.phone_number ? ` · ${i.phone_number}` : ""}
+                    </Badge>
+                  ))
+                )}
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {loading ? (
+                <p className="text-body-sm text-muted-foreground">Carregando…</p>
+              ) : messages.length === 0 ? (
+                <p className="text-body-sm text-muted-foreground text-center py-8">
+                  Nenhuma mensagem ainda. Pareie uma instância em OpenClaw → WhatsApp.
+                </p>
+              ) : (
+                <div className="space-y-2 max-h-[520px] overflow-y-auto pr-1">
+                  {messages.map((m) => {
+                    const outbound = m.direction === "outbound";
+                    return (
+                      <div
+                        key={m.id}
+                        className={`rounded border p-3 ${
+                          outbound
+                            ? "border-primary/30 bg-primary/5 ml-8"
+                            : "border-border/60 bg-muted/20 mr-8"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <Badge variant={outbound ? "default" : "outline"}>
+                            {outbound ? "→ Enviada" : "← Recebida"}
+                          </Badge>
+                          <span className="text-meta text-muted-foreground font-mono">{m.remote_phone}</span>
+                          <span className="text-meta text-muted-foreground ml-auto">
+                            {format(new Date(m.created_at), "PPp", { locale: ptBR })}
+                          </span>
+                        </div>
+                        {m.body && <p className="text-body-sm mt-1 whitespace-pre-wrap">{m.body}</p>}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {instances.length > 0 && (
+                <div className="border-t border-border/60 pt-3 space-y-2">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {instances.map((i) => (
+                      <Button
+                        key={i.id}
+                        size="sm"
+                        variant={selectedInstance === i.instance_name ? "default" : "outline"}
+                        onClick={() => setSelectedInstance(i.instance_name)}
+                      >
+                        {i.instance_name}
+                      </Button>
+                    ))}
+                  </div>
+                  <form
+                    className="flex items-center gap-2"
+                    onSubmit={async (e) => {
+                      e.preventDefault();
+                      if (!selectedInstance) {
+                        toast.error("Selecione uma instância.");
+                        return;
+                      }
+                      const [phone, ...rest] = replyText.split("|");
+                      const body = rest.join("|").trim();
+                      if (!phone?.trim() || !body) {
+                        toast.error("Formato: numero|mensagem (ex: 5511999999999|Olá)");
+                        return;
+                      }
+                      setSending(true);
+                      try {
+                        await sendWhatsappMessage({
+                          instance_name: selectedInstance,
+                          to: phone.trim(),
+                          body,
+                        });
+                        toast.success("Mensagem enviada");
+                        setReplyText("");
+                        void load();
+                      } catch (err) {
+                        toast.error(err instanceof Error ? err.message : "Falha ao enviar");
+                      } finally {
+                        setSending(false);
+                      }
+                    }}
+                  >
+                    <Input
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                      placeholder="5511999999999|Sua mensagem"
+                      className="flex-1"
+                    />
+                    <Button type="submit" disabled={sending || !selectedInstance}>
+                      {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                    </Button>
+                  </form>
+                </div>
               )}
             </CardContent>
           </Card>
