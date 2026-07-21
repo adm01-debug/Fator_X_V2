@@ -5,6 +5,7 @@ import {
   checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS,
   parseBody, z,
 } from "../_shared/mod.ts";
+import { withRetry } from "../_shared/retry.ts";
 
 const TTS_MODELS: Record<string, string> = {
   pt: 'facebook/mms-tts-por',
