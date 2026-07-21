@@ -295,6 +295,7 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ error: insertError.message }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
+    if (idemKey) await saveIdempotency(idemKey, 200, inserted, supabase);
     return new Response(JSON.stringify(inserted), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
