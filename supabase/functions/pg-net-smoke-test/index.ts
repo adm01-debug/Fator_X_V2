@@ -13,6 +13,24 @@ const BodySchema = z.object({
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
+  // Guard: somente admins podem executar smoke tests (função de diagnóstico).
+  try {
+    const authHeader = req.headers.get("Authorization") ?? "";
+    if (!authHeader.startsWith("Bearer ")) return json({ error: "unauthorized" }, 401);
+    const userClient = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+      { global: { headers: { Authorization: authHeader } }, auth: { persistSession: false } },
+    );
+    const { data: userData } = await userClient.auth.getUser();
+    if (!userData?.user) return json({ error: "unauthorized" }, 401);
+    const { data: isAdmin } = await userClient.rpc("has_role", { _user_id: userData.user.id, _role: "admin" });
+    if (!isAdmin) return json({ error: "forbidden", message: "acesso restrito a administradores" }, 403);
+  } catch (e) {
+    return json({ error: "auth_check_failed", details: e instanceof Error ? e.message : String(e) }, 500);
+  }
+
+
   try {
     const raw = req.method === "POST" ? await req.json().catch(() => ({})) : {};
     const parsed = BodySchema.safeParse(raw);

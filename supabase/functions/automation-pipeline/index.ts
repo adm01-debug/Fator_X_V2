@@ -3,13 +3,19 @@
  * Suporta: disc_analysis, eq_analysis, bias_analysis, full_pipeline, notify, webhook
  */
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.0';
+import { fetchWithTimeout } from "../_shared/retry.ts";
+import { z } from "https://esm.sh/zod@3.23.8";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-interface Body { rule_id: string; payload?: Record<string, unknown> }
+const BodySchema = z.object({
+  rule_id: z.string().uuid(),
+  payload: z.record(z.unknown()).optional(),
+});
+
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
@@ -29,8 +35,11 @@ Deno.serve(async (req) => {
     const { data: userData } = await userClient.auth.getUser();
     if (!userData.user) return json({ error: 'unauthorized' }, 401);
 
-    const body = (await req.json()) as Body;
-    if (!body?.rule_id) return json({ error: 'rule_id required' }, 400);
+    const rawBody = await req.json().catch(() => null);
+    const parsed = BodySchema.safeParse(rawBody);
+    if (!parsed.success) return json({ error: 'Payload inválido', details: parsed.error.flatten().fieldErrors }, 400);
+    const body = parsed.data;
+
 
     const { data: rule, error: ruleErr } = await admin
       .from('automation_rules')
@@ -71,7 +80,7 @@ Deno.serve(async (req) => {
       case 'webhook': {
         const url = (rule.action_config as { url?: string })?.url;
         if (!url) throw new Error('webhook url missing in action_config');
-        const res = await fetch(url, {
+        const res = await fetchWithTimeout(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ rule_id: rule.id, payload: body.payload ?? {} }),

@@ -107,9 +107,30 @@ serve(async (req) => {
       }
     }
 
+    // Dedupe: se o provedor enviou um event id conhecido, ignora duplicatas.
+    const externalEventId =
+      headers['x-github-delivery'] ||
+      headers['x-event-id'] ||
+      headers['x-request-id'] ||
+      headers['x-idempotency-key'] ||
+      (typeof body === 'object' && body !== null ? (body as Record<string, unknown>).id as string | undefined : undefined) ||
+      null;
+
+    if (externalEventId) {
+      const { data: existing } = await supabase
+        .from('webhook_events')
+        .select('id')
+        .eq('webhook_id', webhook.id)
+        .eq('external_event_id', externalEventId)
+        .maybeSingle();
+      if (existing) {
+        return jsonResponse(req, { success: true, deduped: true, webhook_id: webhook.id });
+      }
+    }
+
     // Log event
     const startTime = Date.now();
-    await logEvent(supabase, webhook.id, req.method, headers, queryParams, body, sourceIp, 'processed', 200);
+    await logEvent(supabase, webhook.id, req.method, headers, queryParams, body, sourceIp, 'processed', 200, externalEventId);
 
     // Update counter
     await supabase.rpc('increment_webhook_counter', { webhook_uuid: webhook.id });
@@ -123,6 +144,7 @@ serve(async (req) => {
       target: { type: webhook.target_type, id: webhook.target_id },
     });
 
+
   } catch (error) {
     return errorResponse(req, error instanceof Error ? error.message : 'Internal error', 500);
   }
@@ -134,9 +156,12 @@ async function logEvent(
   webhookId: string, method: string, headers: Record<string, string>,
   queryParams: Record<string, string>, body: Record<string, unknown>,
   sourceIp: string, status: string, responseCode: number,
+  externalEventId: string | null = null,
 ) {
   await supabase.from('webhook_events').insert({
     webhook_id: webhookId, method, headers, query_params: queryParams,
     body, source_ip: sourceIp, status, response_code: responseCode,
+    external_event_id: externalEventId,
   });
 }
+
