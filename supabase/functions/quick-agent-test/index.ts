@@ -1,3 +1,4 @@
+import { fetchWithTimeout } from "../_shared/retry.ts";
 // Quick Agent Test — runs a single LLM call against Lovable AI Gateway
 // for the wizard's "test before save" feature.
 
