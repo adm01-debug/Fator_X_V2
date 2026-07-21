@@ -4,15 +4,11 @@ import { startEdgeTrace } from '../_shared/otel.ts';
 import { _maybeInjectFault, _applyFault } from '../_shared/chaos.ts';
 import { parseBody, z } from '../_shared/validation.ts';
 
+import { getCorsHeaders } from "../_shared/cors.ts";
 const WorkflowRunSchema = z.object({
   workflow_id: z.string().uuid(),
   input: z.union([z.record(z.unknown()), z.string(), z.number(), z.boolean(), z.null(), z.array(z.unknown())]).optional(),
 });
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, traceparent',
-};
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
 interface WFNode { id: string; type: string; data: Record<string, any> }
@@ -87,6 +83,7 @@ async function executeNode(node: WFNode, ctx: Record<string, any>, supa: any, lo
 }
 
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   const isStream = req.headers.get('accept') === 'text/event-stream';

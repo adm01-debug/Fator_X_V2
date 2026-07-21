@@ -17,18 +17,13 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { z } from "https://esm.sh/zod@3.23.8";
 
+import { getCorsHeaders } from "../_shared/cors.ts";
 const VisualSearchBodySchema = z.object({
   image: z.string().min(1).max(20_000_000),
   hint: z.string().max(2000).optional(),
   knowledge_base_id: z.string().uuid().nullable().optional(),
   top_k: z.number().int().min(1).max(50).optional(),
 }).passthrough();
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-};
 
 const VISION_PROMPT = `Você é um sistema de busca visual. Analise a imagem e produza uma descrição
 densa e rica em palavras-chave (em português) que sirva como query de busca semântica
@@ -41,6 +36,7 @@ em uma base de conhecimento. Foque em:
 Retorne APENAS a descrição (1-3 frases), sem prefixos.`;
 
 serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS")
     return new Response(null, { headers: corsHeaders });
 

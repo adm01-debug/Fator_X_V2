@@ -65,6 +65,44 @@ async function isReplay(client: SupabaseClient, provider: Provider, messageId: s
   return !!data;
 }
 
+/**
+ * Fallback replay-nonce: quando o provedor entrega message_id=null, geramos
+ * um hash estável (provider|from|ts|body[:256]) e verificamos janela de 5 min
+ * em openclaw_events (kind='wh.nonce'). Retorna true se já visto.
+ */
+async function isNonceReplay(
+  client: SupabaseClient,
+  provider: Provider,
+  fromPhone: string | null,
+  providerTsMs: number | null,
+  rawBody: string,
+): Promise<{ replay: boolean; hash: string }> {
+  const seed = `${provider}|${fromPhone ?? ''}|${providerTsMs ?? ''}|${rawBody.slice(0, 256)}`;
+  const buf = new TextEncoder().encode(seed);
+  const digest = await crypto.subtle.digest('SHA-256', buf);
+  const hash = Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+  const fiveMinAgo = new Date(Date.now() - 5 * 60_000).toISOString();
+  const { data } = await client
+    .from('openclaw_events')
+    .select('id')
+    .eq('kind', 'wh.nonce')
+    .contains('payload', { hash })
+    .gte('created_at', fiveMinAgo)
+    .limit(1)
+    .maybeSingle();
+  return { replay: !!data, hash };
+}
+
+async function recordNonce(client: SupabaseClient, hash: string, provider: Provider): Promise<void> {
+  await client.from('openclaw_events').insert({
+    kind: 'wh.nonce',
+    level: 'info',
+    source: 'webhook',
+    payload: { hash, provider },
+  }).then(() => undefined, () => undefined);
+}
+
+
 
 // ─── Trace ID generator ───
 function generateTraceId(): string {
@@ -388,6 +426,20 @@ serve(async (req) => {
   if (await isReplay(client, provider, event.message_id)) {
     return jsonResponse(req, { ok: true, deduped: true, trace_id: traceId }, 200);
   }
+
+  // Fallback nonce-hash: quando o provedor não entrega message_id.
+  let nonceHash: string | null = null;
+  if (!event.message_id) {
+    const { replay, hash } = await isNonceReplay(client, provider, event.from_phone, providerTsMs, rawBody);
+    if (replay) {
+      return jsonResponse(req, { ok: true, deduped: true, via: 'nonce', trace_id: traceId }, 200);
+    }
+    nonceHash = hash;
+    // fire-and-forget: registra o nonce para futuras janelas de 5 min
+    recordNonce(client, hash, provider);
+  }
+  void nonceHash;
+
 
 
 

@@ -2,17 +2,13 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { z } from "https://esm.sh/zod@3.23.8";
 import { checkIdempotency, saveIdempotency } from "../_shared/idempotency.ts";
 
+import { getCorsHeaders } from "../_shared/cors.ts";
 const CodeInterpBodySchema = z.object({
   runtime: z.enum(['python', 'node', 'deno']),
   code: z.string().min(1).max(200_000),
   timeout_ms: z.number().int().min(100).max(300_000).optional(),
   session_id: z.string().max(200).optional(),
 }).passthrough();
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
 
 interface ExecuteBody {
   runtime: "python" | "node" | "deno";
@@ -101,6 +97,7 @@ Se houver erro de sintaxe óbvio, simule a mensagem de erro real do interpretado
 }
 
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {

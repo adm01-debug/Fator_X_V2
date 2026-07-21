@@ -37,6 +37,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { verifyHmac } from "../_shared/webhookSignature.ts";
 import { z } from "https://esm.sh/zod@3.23.8";
 
+import { getCorsHeaders } from "../_shared/cors.ts";
 const Bitrix24PayloadSchema = z.object({
   event: z.string().max(120).optional(),
   auth: z.record(z.unknown()).optional(),
@@ -45,12 +46,6 @@ const Bitrix24PayloadSchema = z.object({
 }).passthrough();
 
 // ─── CORS ───
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "content-type, authorization",
-};
-
 // ─── Supabase client (service role to bypass RLS) ───
 function getServiceClient() {
   const url = Deno.env.get("SUPABASE_URL");
@@ -166,6 +161,7 @@ async function writeAudit(
 
 // ─── Main handler ───
 serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }

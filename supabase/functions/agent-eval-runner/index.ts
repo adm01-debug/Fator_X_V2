@@ -3,17 +3,13 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.58.0';
 import { z } from "https://esm.sh/zod@3.23.8";
 import { checkIdempotency, saveIdempotency } from "../_shared/idempotency.ts";
 
+import { getCorsHeaders } from "../_shared/cors.ts";
 const EvalRunnerBodySchema = z.object({
   agent_id: z.string().uuid().optional(),
   workspace_id: z.string().uuid().optional(),
   eval_set_id: z.string().uuid().optional(),
   test_cases: z.array(z.record(z.unknown())).max(200).optional(),
 }).passthrough();
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
 
 interface EvalItem {
   input: string;
@@ -103,6 +99,7 @@ function estimateCost(model: string, tokensIn: number, tokensOut: number): numbe
 }
 
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
