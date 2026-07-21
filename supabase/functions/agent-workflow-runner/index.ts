@@ -1,6 +1,12 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.4';
 import { startEdgeTrace } from '../_shared/otel.ts';
 import { _maybeInjectFault, _applyFault } from '../_shared/chaos.ts';
+import { parseBody, z } from '../_shared/validation.ts';
+
+const WorkflowRunSchema = z.object({
+  workflow_id: z.string().uuid(),
+  input: z.union([z.record(z.unknown()), z.string(), z.number(), z.boolean(), z.null(), z.array(z.unknown())]).optional(),
+});
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
