@@ -11,6 +11,9 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { addMemory, searchMemory, forgetMemory, listMemories, compactMemories, promoteMemoryToFact } from "@/services/memoryService";
 import { AccessControl, DangerousActionDialog } from "@/components/rbac";
 import { memorySchema } from "@/lib/validations/agentSchema";
+import { MemoryTierBadge, type MemoryTier } from "@/components/memory/MemoryTierBadge";
+import { computeTier, MEMORY_TIERS, TIER_LABEL_PT } from "@/lib/memory/tiers";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const memoryTypes = [
   { key: 'short_term', icon: Clock, title: 'Short-term', desc: 'Memória da conversa atual', retention: 'Sessão', color: 'text-nexus-cyan' },
