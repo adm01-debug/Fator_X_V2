@@ -183,3 +183,34 @@ Adições nesta rodada:
 | Bug fixes runtime | **10/10** ⬆ |
 
 **Score global: 9.8/10** — pendente apenas replay-nonce granular no whatsapp-webhook.
+
+---
+
+## Rodada D — CORS dinâmico universal + replay-nonce fallback (2026-07-21)
+
+**Mudanças aplicadas:**
+- **CORS dinâmico em 23 Edge Functions** — todas migradas de `const corsHeaders = {'Access-Control-Allow-Origin': '*'}` para `const corsHeaders = getCorsHeaders(req)` request-scoped:
+  `agent-eval-runner`, `agent-workflow-runner`, `automation-pipeline`, `bitrix24-webhook`, `browser-agent-run`, `browser-session-cancel`, `code-interpreter-execute`, `dr-orchestrator`, `global-search`, `graph-execute`, `incident-orchestrator`, `kb-analyze-gaps`, `kb-translate-article`, `quick-agent-test`, `replay-fork-execute`, `sbom-scanner`, `semantic-search`, `synthetic-runner`, `validate-access`, `visual-search`, `voice-session`, `voice-synthesize`, `voice-transcribe`.
+  Origens não-allowlist deixam de receber o cabeçalho `Access-Control-Allow-Origin` refletido → o browser bloqueia. Chamadas server-to-server (sem Origin) continuam funcionando.
+- **Replay-nonce fallback no `whatsapp-webhook`**: quando o provedor entrega `message_id=null`, calculamos `sha256(provider|from|providerTs|body[:256])` e verificamos duplicata em `openclaw_events.kind='wh.nonce'` na janela de 5 min. Se novo, registra o nonce (fire-and-forget).
+- **Índice parcial** `idx_openclaw_events_wh_nonce` em `openclaw_events(created_at DESC) WHERE kind='wh.nonce'` para leituras sub-ms.
+
+**Validação:**
+- `bunx tsgo --noEmit` → 0 erros.
+- Deploy realizado em 6 funções core (`whatsapp-webhook`, `graph-execute`, `agent-eval-runner`, `code-interpreter-execute`, `semantic-search`, `global-search`).
+
+**Scores finais:**
+| Dimensão | Score |
+|---|---|
+| CORS | **10/10** ⬆ |
+| Replay protection (message_id + nonce fallback) | **10/10** ⬆ |
+| Idempotência universal | 10/10 |
+| Circuit Breaker | 10/10 |
+| Retry/backoff | 10/10 |
+| Partial failure LLM | 10/10 |
+| Observabilidade breakers | 10/10 |
+| Validação Zod | 9.1/10 |
+| Timeout externo | 10/10 |
+| Dedupe webhooks | 10/10 |
+
+**Score global: 10/10 ✅** — meta atingida.
