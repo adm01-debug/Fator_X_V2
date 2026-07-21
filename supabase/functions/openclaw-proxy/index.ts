@@ -10,8 +10,35 @@ serve(async (req) => {
   if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, corsHeaders);
 
   try {
-    const openclawUrl = Deno.env.get('OPENCLAW_URL') ?? 'http://187.77.151.129:3000';
-    const openclawToken = Deno.env.get('OPENCLAW_API_TOKEN') ?? '';
+    const rawUrl = (Deno.env.get('OPENCLAW_URL') ?? '').trim();
+    const openclawToken = (Deno.env.get('OPENCLAW_API_TOKEN') ?? '').trim();
+
+    // Validação estrita do OPENCLAW_URL — evita fallback silencioso para IP inseguro.
+    const urlValid = /^https?:\/\/[^\s]+$/i.test(rawUrl);
+    if (!rawUrl || !urlValid) {
+      return new Response(
+        JSON.stringify({
+          error: 'invalid_openclaw_url',
+          message: !rawUrl
+            ? 'Secret OPENCLAW_URL não configurada.'
+            : `OPENCLAW_URL inválida ("${rawUrl}"): deve começar com http:// ou https://.`,
+          hint: 'Atualize a secret OPENCLAW_URL em Backend → Secrets (ex.: https://openclaw.exemplo.com).',
+        }),
+        { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    if (!openclawToken) {
+      return new Response(
+        JSON.stringify({
+          error: 'missing_openclaw_token',
+          message: 'Secret OPENCLAW_API_TOKEN não configurada.',
+          hint: 'Defina OPENCLAW_API_TOKEN em Backend → Secrets.',
+        }),
+        { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const openclawUrl = rawUrl.replace(/\/+$/, '');
     const body = await req.json().catch(() => ({}));
     const { action, payload } = body as { action?: string; payload?: Record<string, unknown> };
 
