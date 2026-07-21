@@ -19,7 +19,7 @@
  * Used by: src/services/evalEngineService.ts
  * ═══════════════════════════════════════════════════════════════
  */
-import { fetchWithTimeout, withRetry } from "../_shared/retry.ts";
+import { fetchWithTimeout } from "../_shared/retry.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import {
   handleCorsPreflight, jsonResponse, errorResponse,

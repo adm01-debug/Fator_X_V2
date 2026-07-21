@@ -1,5 +1,5 @@
 // Knowledge Gap Analysis: detecta queries sem boas respostas e sugere artigos
-import { fetchWithTimeout, withRetry } from "../_shared/retry.ts";
+import { fetchWithTimeout } from "../_shared/retry.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { z } from "https://esm.sh/zod@3.23.8";
 

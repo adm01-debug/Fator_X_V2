@@ -1,4 +1,4 @@
-import { fetchWithTimeout, withRetry } from "../_shared/retry.ts";
+import { fetchWithTimeout } from "../_shared/retry.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.4';
 import { startEdgeTrace } from '../_shared/otel.ts';
 import { _maybeInjectFault, _applyFault } from '../_shared/chaos.ts';
