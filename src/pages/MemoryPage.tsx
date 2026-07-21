@@ -162,9 +162,15 @@ export default function MemoryPage() {
         </div>
       ) : (
         <div className="space-y-2">
-          {memories.map((entry) => (
+          {memories.map((entry) => {
+            const raw = entry as { memory_tier?: MemoryTier; pinned?: boolean; relevance_score?: number | null };
+            const tier: MemoryTier = raw.memory_tier ?? computeTier(Number(raw.relevance_score ?? 0), Boolean(raw.pinned));
+            return (
             <div key={entry.id} className="nexus-card flex items-start gap-3">
               <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <MemoryTierBadge tier={tier} pinned={Boolean(raw.pinned)} />
+                </div>
                 <p className="text-meta text-foreground leading-relaxed">{entry.content}</p>
                 <div className="flex items-center gap-2 mt-1.5 text-meta text-muted-foreground">
                   <span>{entry.source}</span>
