@@ -1,18 +1,15 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { z } from "https://esm.sh/zod@3.23.8";
 
+import { getCorsHeaders } from "../_shared/cors.ts";
 const VoiceSessionBodySchema = z.object({
   action: z.enum(['start', 'end', 'append', 'get']),
   agent_id: z.string().uuid().nullable().optional(),
   session_id: z.string().uuid().optional(),
 }).passthrough();
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
-
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   try {
     const auth = req.headers.get("Authorization");

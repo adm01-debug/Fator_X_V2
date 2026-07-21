@@ -4,11 +4,7 @@ import { z } from "https://esm.sh/zod@3.23.8";
 import { fetchWithTimeout, withRetry } from "../_shared/retry.ts";
 import { checkIdempotency, saveIdempotency } from "../_shared/idempotency.ts";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
+import { getCorsHeaders } from "../_shared/cors.ts";
 const InputSchema = z.object({
   graph_id: z.string().uuid(),
   input: z.string().min(1).max(20000),
@@ -57,6 +53,7 @@ async function chooseNextNode(currentOutput: string, candidates: { node: GraphNo
 }
 
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
   try {
     const auth = req.headers.get('Authorization');

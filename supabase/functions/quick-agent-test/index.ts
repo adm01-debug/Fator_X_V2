@@ -1,6 +1,7 @@
 import { fetchWithTimeout } from "../_shared/retry.ts";
 import { z } from "https://esm.sh/zod@3.23.8";
 
+import { getCorsHeaders } from "../_shared/cors.ts";
 const BodySchema = z.object({
   system_prompt: z.string().min(10).max(20_000),
   user_message: z.string().min(1).max(4000),
@@ -8,12 +9,6 @@ const BodySchema = z.object({
 });
 // Quick Agent Test — runs a single LLM call against Lovable AI Gateway
 // for the wizard's "test before save" feature.
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers':
-    'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
-};
 
 function jsonResponse(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -35,6 +30,7 @@ function mapModel(model: string): string {
 }
 
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
