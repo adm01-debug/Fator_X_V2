@@ -214,6 +214,7 @@ export default function SecurityPage() {
           <TabsTrigger value="compliance" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-nexus-sm gap-2 font-bold">Compliance & Auditoria</TabsTrigger>
           <TabsTrigger value="threats" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-nexus-sm gap-2 font-bold"><Activity className="h-4 w-4" /> Red Teaming</TabsTrigger>
           <TabsTrigger value="audit" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-nexus-sm gap-2 font-bold">Audit Trail</TabsTrigger>
+          <TabsTrigger value="openclaw" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-nexus-sm gap-2 font-bold"><Activity className="h-4 w-4" /> OpenClaw</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-8 animate-in fade-in duration-500">
