@@ -100,23 +100,11 @@ export default function OpenclawDeployPage() {
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
       <PageHeader
-        title="OpenClaw Deploy"
-        description="Runtime SKILL.md — deploy e monitoramento"
+        title="Runtime OpenClaw"
+        description="Plano de execução remoto — SKILL.md, agentes e canais"
         actions={
           <div className="flex items-center gap-2">
-            <Badge
-              variant="outline"
-              className={`gap-1.5 ${healthOk ? "border-nexus-emerald/50 text-nexus-emerald" : "border-destructive/50 text-destructive"}`}
-            >
-              {healthLoading ? (
-                <Loader2 className="h-3 w-3 animate-spin" />
-              ) : healthOk ? (
-                <CheckCircle2 className="h-3 w-3" />
-              ) : (
-                <XCircle className="h-3 w-3" />
-              )}
-              {healthLoading ? "Checando" : healthOk ? "Online" : "Offline"}
-            </Badge>
+            <OpenclawStatusBadge />
             <Button
               variant="outline"
               size="sm"
@@ -144,6 +132,9 @@ export default function OpenclawDeployPage() {
           </TabsTrigger>
           <TabsTrigger value="skills" className="gap-1.5">
             <Package className="h-3.5 w-3.5" /> Skills ({skills.length})
+          </TabsTrigger>
+          <TabsTrigger value="console" className="gap-1.5">
+            <MessageSquare className="h-3.5 w-3.5" /> Console
           </TabsTrigger>
           <TabsTrigger value="deploy" className="gap-1.5">
             <Upload className="h-3.5 w-3.5" /> Deploy
