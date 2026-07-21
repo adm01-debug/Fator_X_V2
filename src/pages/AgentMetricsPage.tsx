@@ -28,6 +28,7 @@ import {
 import { KnowledgeGraphHealthCard } from '@/components/metrics/KnowledgeGraphHealthCard';
 import { RandomRecallMetricsCard } from '@/components/metrics/RandomRecallMetricsCard';
 import { RandomRecallToggleCard } from '@/components/memory/RandomRecallToggleCard';
+import { EmbeddingCoverageCard } from '@/components/metrics/EmbeddingCoverageCard';
 import { useCurrentWorkspace } from '@/hooks/useCurrentWorkspace';
 
 type DayKey = string;
@@ -287,12 +288,16 @@ export default function AgentMetricsPage() {
         </>
       )}
 
-      {/* Autograph: saúde do knowledge graph + recall aleatório */}
+      {/* Autograph: saúde do knowledge graph + recall aleatório + cobertura de embeddings */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <KnowledgeGraphHealthCard workspaceId={workspaceId} />
         <RandomRecallToggleCard workspaceId={workspaceId} />
       </div>
-      <RandomRecallMetricsCard workspaceId={workspaceId} days={30} />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <EmbeddingCoverageCard workspaceId={workspaceId} />
+        <RandomRecallMetricsCard workspaceId={workspaceId} days={30} />
+      </div>
+
 
       {/* Regras de alerta */}
       <Card>
