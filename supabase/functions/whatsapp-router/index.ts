@@ -159,11 +159,14 @@ Deno.serve(async (req) => {
 
   // Envia via proxy
   try {
-    const r = await fetch(proxyUrl, {
+    const r = await withRetry(() => fetchWithTimeout(proxyUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+        // Idempotency-Key permite ao proxy deduplicar retries — quando o
+        // upstream OpenClaw suportar, evita envios duplicados.
+        'Idempotency-Key': `wa-send-${outbound?.id ?? msg.id}`,
       },
       body: JSON.stringify({
         action: 'whatsapp.send',
@@ -171,9 +174,14 @@ Deno.serve(async (req) => {
           instance_name: instance.instance_name,
           to: msg.remote_phone,
           body: replyText,
+          idempotency_key: `wa-send-${outbound?.id ?? msg.id}`,
         },
       }),
-      signal: AbortSignal.timeout(30_000),
+      timeoutMs: 30_000,
+    }), {
+      // Mutation: 2 tentativas (a segunda protegida por idempotency-key).
+      attempts: 2, baseMs: 500, capMs: 3_000,
+      onRetry: (info) => emit('router_send_retry', 'warn', { attempt: info.attempt, delay_ms: info.delayMs, status: info.res?.status }, msg.workspace_id as string),
     });
     const j = await r.json().catch(() => ({}));
     if (!r.ok) {
