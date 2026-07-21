@@ -1,11 +1,13 @@
 /**
- * EmbeddingCoverageCard — mostra a cobertura de embeddings semânticos
- * em `agent_memories_v2` para o workspace atual.
+ * EmbeddingCoverageCard — cobertura de embeddings semânticos + Dead-Letter Queue.
  *
- * Consome a RPC `get_embedding_coverage(_workspace_id)`.
+ * Consome:
+ *  - RPC `get_embedding_coverage(_workspace_id)` → total, embedded, dead_letter, pct
+ *  - RPC `reset_embedding_dead_letter(_workspace_id)` → reprocessamento manual
  */
 import { useEffect, useState } from 'react';
-import { Sparkles, RefreshCcw } from 'lucide-react';
+import { Sparkles, RefreshCcw, AlertTriangle, RotateCcw } from 'lucide-react';
+import { toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -17,6 +19,7 @@ import { logger } from '@/lib/logger';
 interface Coverage {
   total: number;
   embedded: number;
+  dead_letter: number;
   pct: number;
 }
 
@@ -33,6 +36,7 @@ function toneFor(pct: number): { label: string; variant: 'default' | 'secondary'
 export function EmbeddingCoverageCard({ workspaceId }: Props) {
   const [data, setData] = useState<Coverage | null>(null);
   const [loading, setLoading] = useState(false);
+  const [resetting, setResetting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function load() {
@@ -46,21 +50,37 @@ export function EmbeddingCoverageCard({ workspaceId }: Props) {
       });
       if (rpcErr) throw rpcErr;
       const row = Array.isArray(rows) ? rows[0] : rows;
-      if (row) {
-        setData({
-          total: Number(row.total ?? 0),
-          embedded: Number(row.embedded ?? 0),
-          pct: Number(row.pct ?? 0),
-        });
-      } else {
-        setData({ total: 0, embedded: 0, pct: 0 });
-      }
+      setData({
+        total: Number(row?.total ?? 0),
+        embedded: Number(row?.embedded ?? 0),
+        dead_letter: Number(row?.dead_letter ?? 0),
+        pct: Number(row?.pct ?? 0),
+      });
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Erro desconhecido';
       logger.warn('[EmbeddingCoverageCard] load failed', { error: msg });
       setError(msg);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function resetDeadLetter() {
+    if (!workspaceId) return;
+    setResetting(true);
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: count, error: rpcErr } = await (supabase.rpc as any)('reset_embedding_dead_letter', {
+        _workspace_id: workspaceId,
+      });
+      if (rpcErr) throw rpcErr;
+      toast.success(`${count ?? 0} memórias reenfileiradas para reprocessamento`);
+      await load();
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Erro desconhecido';
+      toast.error(msg === 'unauthorized' ? 'Apenas administradores podem reprocessar' : `Falha: ${msg}`);
+    } finally {
+      setResetting(false);
     }
   }
 
@@ -105,8 +125,27 @@ export function EmbeddingCoverageCard({ workspaceId }: Props) {
               {tone && <Badge variant={tone.variant}>{tone.label}</Badge>}
             </div>
             <Progress value={data.pct} className="h-2" />
+
+            {data.dead_letter > 0 && (
+              <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 flex items-center justify-between gap-3">
+                <div className="flex items-start gap-2 text-body-sm">
+                  <AlertTriangle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-medium text-foreground">
+                      {data.dead_letter.toLocaleString('pt-BR')} memória(s) em Dead-Letter
+                    </p>
+                    <p className="text-meta text-muted-foreground">Falharam 3× consecutivas — reprocessar zera o contador.</p>
+                  </div>
+                </div>
+                <Button size="sm" variant="outline" onClick={() => void resetDeadLetter()} disabled={resetting}>
+                  <RotateCcw className={`h-3.5 w-3.5 mr-1 ${resetting ? 'animate-spin' : ''}`} />
+                  Reprocessar
+                </Button>
+              </div>
+            )}
+
             <p className="text-meta text-muted-foreground">
-              Backfill roda a cada 5 min · até 200 memórias por ciclo.
+              Backfill roda a cada 5 min · até 200 memórias por ciclo · máx. 3 tentativas.
             </p>
           </>
         )}
