@@ -24,7 +24,7 @@ describe("computeTier (Autograph)", () => {
   it("valores inválidos caem em archive", () => {
     expect(computeTier(NaN)).toBe("archive");
     expect(computeTier(-1)).toBe("archive");
-    expect(computeTier(Infinity)).toBe("core"); // >= 3.0
+    expect(computeTier(Infinity)).toBe("archive"); // não finito → archive
   });
 
   it("expõe a lista canônica de tiers", () => {
