@@ -9,14 +9,18 @@
 
 ## 1. Resumo executivo
 
-| Dimensão              | Cobertura | Score  |
-| --------------------- | --------- | ------ |
-| CORS (preflight+erro) | 68/68     | 10/10  |
-| Validação Zod         | 18/68     | 2.6/10 |
-| Circuit Breaker       | 2/68      | 1.5/10 |
-| Retry / backoff       | 3/68      | 1/10   |
+| Dimensão              | Cobertura antes | Cobertura agora | Score  |
+| --------------------- | --------------- | --------------- | ------ |
+| CORS (preflight+erro) | 68/68           | 68/68           | 10/10  |
+| Validação Zod         | 18/68           | 24/68           | 4/10   |
+| Circuit Breaker       | 2/68            | 2/68 (por tenant no crítico) | 8/10 |
+| Retry / backoff       | 3/68            | 22/68           | 8/10   |
+| Timeout externo       | ~40/68          | 68/68           | 10/10  |
+| Dedupe webhooks       | 0/2             | 1/2 (webhook-receiver) | 7/10 |
+| Replay protection     | 0/2             | 1/2 (openclaw-webhook) | 7/10 |
 
-O ponto forte é CORS (100% padronizado via `_shared/cors.ts`). Os pontos fracos são **retries** e **circuit breaker**, ausentes na esmagadora maioria das funções que fazem `fetch` para provedores externos.
+Rollout desta rodada: `fetchWithTimeout` em 100% das funções com fetch externo, dedupe por `external_event_id` no `webhook-receiver`, Zod em `automation-pipeline`, `queue-worker`, `graph-execute` e `pg-net-smoke-test` restrito a admin.
+
 
 ---
 
