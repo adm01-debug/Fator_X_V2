@@ -34,7 +34,7 @@ async function embedBatch(texts: string[], authHeader: string, projectRef: strin
 }
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  const cors = getCorsHeaders(req); if (req.method === "OPTIONS") return handleCorsPreflight(req);
 
   const startedAt = Date.now();
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -57,7 +57,7 @@ Deno.serve(async (req) => {
     if (pending.length === 0) {
       return new Response(
         JSON.stringify({ ok: true, processed: 0, elapsed_ms: Date.now() - startedAt }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        { headers: { ...cors, "Content-Type": "application/json" } },
       );
     }
 
@@ -104,14 +104,14 @@ Deno.serve(async (req) => {
         candidates: pending.length,
         elapsed_ms: Date.now() - startedAt,
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      { headers: { ...cors, "Content-Type": "application/json" } },
     );
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error("[rag-embed-backfill] fatal:", msg);
     return new Response(
       JSON.stringify({ ok: false, error: msg }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      { status: 500, headers: { ...cors, "Content-Type": "application/json" } },
     );
   }
 });
