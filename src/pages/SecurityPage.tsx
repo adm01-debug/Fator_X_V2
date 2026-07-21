@@ -262,6 +262,10 @@ export default function SecurityPage() {
         <TabsContent value="audit" className="animate-in fade-in duration-500">
           <AuditLogSection />
         </TabsContent>
+
+        <TabsContent value="openclaw" className="animate-in fade-in duration-500">
+          <OpenclawEventsPanel />
+        </TabsContent>
       </Tabs>
     </div>
   );
