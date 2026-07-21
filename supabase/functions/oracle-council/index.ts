@@ -306,8 +306,14 @@ serve(async (req) => {
       }
     });
 
-    const stage1 = await Promise.all(stage1Promises);
+    const settledLegacy = await Promise.allSettled(stage1Promises);
+    const stage1 = settledLegacy.map((s, i) =>
+      s.status === 'fulfilled'
+        ? s.value
+        : { index: i, model: members[i].model, success: false, content: `Falha inesperada: ${String((s as PromiseRejectedResult).reason).slice(0, 200)}` }
+    );
     const successfulResponses = stage1.filter(r => r.success);
+    const degraded = successfulResponses.length < members.length;
     const chairmanModel = chairman_model || successfulResponses[0]?.model || 'google/gemini-2.5-pro';
     const synthesisResponse = await fetchWithTimeout(gatewayUrl, {
       method: 'POST',
@@ -322,9 +328,12 @@ serve(async (req) => {
     return new Response(JSON.stringify({
       final_response: synthesisResult.content,
       stage1_results: stage1,
+      degraded,
       metrics: {
         total_latency_ms: Date.now() - totalStartTime,
         total_cost_usd: stage1.reduce((s, r) => s + (r.cost_usd || 0), 0) + (synthesisResult.cost_usd || 0),
+        models_used: successfulResponses.length,
+        models_failed: members.length - successfulResponses.length,
       }
     }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
 
