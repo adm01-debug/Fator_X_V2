@@ -5130,6 +5130,8 @@ export type Database = {
       }
       openclaw_whatsapp_instances: {
         Row: {
+          agent_id: string | null
+          auto_reply: boolean
           created_at: string
           error: string | null
           id: string
@@ -5142,6 +5144,8 @@ export type Database = {
           workspace_id: string
         }
         Insert: {
+          agent_id?: string | null
+          auto_reply?: boolean
           created_at?: string
           error?: string | null
           id?: string
@@ -5154,6 +5158,8 @@ export type Database = {
           workspace_id: string
         }
         Update: {
+          agent_id?: string | null
+          auto_reply?: boolean
           created_at?: string
           error?: string | null
           id?: string
@@ -5165,7 +5171,15 @@ export type Database = {
           updated_at?: string
           workspace_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "openclaw_whatsapp_instances_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       openclaw_whatsapp_messages: {
         Row: {
