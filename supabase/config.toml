@@ -2,3 +2,6 @@ project_id = "fqdohnmgmtaycfwsioik"
 
 [functions.openclaw-webhook]
 verify_jwt = false
+
+[functions.whatsapp-router]
+verify_jwt = false
