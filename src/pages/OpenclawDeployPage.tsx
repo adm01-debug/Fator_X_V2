@@ -15,9 +15,8 @@ import {
   Package,
   Upload,
   Loader2,
-  CheckCircle2,
-  XCircle,
   RefreshCw,
+  MessageSquare,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -26,6 +25,8 @@ import {
   listOpenclawSkills,
   deploySkillToOpenclaw,
 } from "@/services/openclawDeployService";
+import { OpenclawStatusBadge } from "@/components/openclaw/OpenclawStatusBadge";
+import { OpenclawTestConsole } from "@/components/openclaw/OpenclawTestConsole";
 
 export default function OpenclawDeployPage() {
   const queryClient = useQueryClient();
