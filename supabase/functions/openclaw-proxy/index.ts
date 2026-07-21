@@ -148,10 +148,12 @@ serve(async (req) => {
 
     if (response.ok) {
       breaker.recordSuccess();
+      const t = breaker._drainTransition();
+      if (t === 'closed') await emitEvent('breaker_closed', 'info', { action, workspace_id: workspaceId }, workspaceId);
     } else if (response.status >= 500) {
       breaker.recordFailure(`upstream_${response.status}`);
-      const snap = breaker.snapshot();
-      if (snap.state === 'open') await emitEvent('breaker_open', 'error', { action, status: response.status, workspace_id: workspaceId }, workspaceId);
+      const t = breaker._drainTransition();
+      if (t === 'open') await emitEvent('breaker_open', 'error', { action, status: response.status, workspace_id: workspaceId }, workspaceId);
       else await emitEvent('upstream_error', 'warn', { action, status: response.status, workspace_id: workspaceId }, workspaceId);
     }
 
