@@ -2,6 +2,7 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { getCorsHeaders, handleCorsPreflight, _jsonResponse, _errorResponse, _checkRateLimit, _getRateLimitIdentifier, _createRateLimitResponse, _RATE_LIMITS } from "../_shared/mod.ts";
+import { parseBody, z } from "../_shared/validation.ts";
 
 // CORS handled by _shared/cors.ts — dynamic origin whitelist
 
@@ -10,6 +11,25 @@ type CerebroAction = typeof VALID_ACTIONS[number];
 
 const VALID_EXTRACT_TYPES = ['entities', 'facts', 'rules', 'contacts'] as const;
 const VALID_CONTEXT_MODES = ['facts_only', 'rag_only', 'full', 'no_context'] as const;
+
+// Discriminated union por action: garante shape correto de cada payload.
+const AutoExtractSchema = z.object({
+  action: z.literal('auto_extract'),
+  text: z.string().min(3).max(50000),
+  extract_type: z.enum(VALID_EXTRACT_TYPES).optional(),
+}).passthrough();
+
+const BrainSandboxSchema = z.object({
+  action: z.literal('brain_sandbox'),
+  query: z.string().min(2).max(10000),
+  context_mode: z.enum(VALID_CONTEXT_MODES).optional(),
+}).passthrough();
+
+const GenericActionSchema = z.object({
+  action: z.enum(VALID_ACTIONS.filter(a => a !== 'auto_extract' && a !== 'brain_sandbox') as unknown as [CerebroAction, ...CerebroAction[]]),
+}).passthrough();
+
+const CerebroBodySchema = z.union([AutoExtractSchema, BrainSandboxSchema, GenericActionSchema]);
 
 interface KnowledgeGraphNode {
   id: string;
@@ -34,32 +54,7 @@ interface HealthItem {
   [key: string]: unknown;
 }
 
-function validateBody(body: unknown): { valid: true; action: CerebroAction; data: Record<string, unknown> } | { valid: false; error: string } {
-  if (!body || typeof body !== 'object') return { valid: false, error: 'Request body must be a JSON object' };
-  const b = body as Record<string, unknown>;
-  if (typeof b.action !== 'string' || !VALID_ACTIONS.includes(b.action as CerebroAction)) {
-    return { valid: false, error: `Invalid action. Valid: ${VALID_ACTIONS.join(', ')}` };
-  }
-  const action = b.action as CerebroAction;
 
-  if (action === 'auto_extract') {
-    if (typeof b.text !== 'string' || b.text.trim().length < 3) return { valid: false, error: 'text must be a string (min 3 chars)' };
-    if (b.text.length > 50000) return { valid: false, error: 'text must be <= 50000 chars' };
-    if (b.extract_type && !VALID_EXTRACT_TYPES.includes(b.extract_type as typeof VALID_EXTRACT_TYPES[number])) {
-      return { valid: false, error: `Invalid extract_type. Valid: ${VALID_EXTRACT_TYPES.join(', ')}` };
-    }
-  }
-
-  if (action === 'brain_sandbox') {
-    if (typeof b.query !== 'string' || b.query.trim().length < 2) return { valid: false, error: 'query must be a string (min 2 chars)' };
-    if (b.query.length > 10000) return { valid: false, error: 'query must be <= 10000 chars' };
-    if (b.context_mode && !VALID_CONTEXT_MODES.includes(b.context_mode as typeof VALID_CONTEXT_MODES[number])) {
-      return { valid: false, error: `Invalid context_mode. Valid: ${VALID_CONTEXT_MODES.join(', ')}` };
-    }
-  }
-
-  return { valid: true, action, data: b };
-}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
