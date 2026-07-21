@@ -104,6 +104,7 @@ const navSections = [
       { title: "Janelas de Congelamento", url: "/governance/freeze-windows", icon: Snowflake },
       { title: "Orçamentos", url: "/budgets", icon: Wallet },
       { title: "Implantações", url: "/deployments", icon: Rocket },
+      { title: "Runtime OpenClaw", url: "/openclaw", icon: ServerCog },
       { title: "Widget Builder", url: "/widget-builder", icon: MessageSquare },
       { title: "Monitoramento", url: "/monitoring", icon: Activity },
       { title: "Métricas Diárias", url: "/monitoring/metrics", icon: Activity },
