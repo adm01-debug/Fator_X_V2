@@ -5,7 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-07-21
+
+### Added
+- **Autograph Memory Layer**: Portabilidade seletiva do motor de memória `autograph/agent-second-brain`.
+  - 5 tiers automáticos (`core → active → warm → cold → archive`) com decaimento Ebbinghaus baseado em `access_count` e recência.
+  - `computeTier()` client + Edge (`src/lib/memory/tiers.ts`, `supabase/functions/_shared/memory-tiers.ts`).
+  - Random Recall (serendipidade) opcional em `oracle-research` via flag `random_recall_enabled` no config do agente.
+  - View materializada `knowledge_graph_health` + RPC `get_knowledge_graph_health` (`SECURITY DEFINER`, escopo workspace).
+  - Jobs `pg_cron` diários: `recompute_memory_tier` + refresh da MV.
+  - UI: `KnowledgeGraphHealthCard` em `AgentMetricsPage`, `MemoryTierBadge` + filtro por tier em `MemoryPage`.
+- **Simulação Autograph**: `docs/AUTOGRAPH-SIMULATION-2026-07-21.md` cobrindo 210 cenários em 6 eixos com mitigações.
+- **Guia técnico**: `docs/AUTOGRAPH-MEMORY-LAYER.md` documentando tiers, fórmula de decay e random recall.
+
+### Tests
+- `src/test/memory-tiers.test.ts`: cobertura dos 5 tiers, pinned e valores inválidos.
+
 ## [1.1.0] - 2026-05-22
+
 
 ### Added
 - **Security Monitoring Dashboard**: Implementado painel centralizado para alertas de segurança (RLS, RBAC, Auth) com monitoramento em tempo real.
