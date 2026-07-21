@@ -575,6 +575,15 @@ export function DeployModule() {
               >
                 Promover para {agent.status === 'production' ? 'Produção' : 'Staging'}
               </Button>
+              <Button
+                variant="outline"
+                className="w-full h-11 rounded-2xl border-primary/40 gap-2"
+                onClick={handlePublishToOpenclaw}
+                disabled={publishing || !agent.id}
+              >
+                <Cloud className="h-4 w-4" />
+                {publishing ? 'Publicando no OpenClaw…' : 'Publicar no OpenClaw'}
+              </Button>
               <div className="flex items-center gap-1.5 text-[9px] font-bold text-muted-foreground uppercase tracking-tighter">
                 <Activity className="h-3 w-3" /> Transição segura com rollback automático
               </div>
