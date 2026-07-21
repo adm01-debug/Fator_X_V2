@@ -1,5 +1,13 @@
 // Eval Suite runner — executa dataset contra agente + LLM-as-judge
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.58.0';
+import { z } from "https://esm.sh/zod@3.23.8";
+
+const EvalRunnerBodySchema = z.object({
+  agent_id: z.string().uuid().optional(),
+  workspace_id: z.string().uuid().optional(),
+  eval_set_id: z.string().uuid().optional(),
+  test_cases: z.array(z.record(z.unknown())).max(200).optional(),
+}).passthrough();
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -114,7 +122,12 @@ Deno.serve(async (req) => {
     const userId = userData.user.id;
 
     const admin = createClient(supabaseUrl, serviceKey);
-    const body = await req.json();
+    const rawBody = await req.json().catch(() => null);
+    const parsedBody = EvalRunnerBodySchema.safeParse(rawBody);
+    if (!parsedBody.success) {
+      return new Response(JSON.stringify({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+    }
+    const body = parsedBody.data;
     const { dataset_id, agent_id } = body as { dataset_id: string; agent_id: string };
     if (!dataset_id || !agent_id) throw new Error('dataset_id e agent_id obrigatórios');
 

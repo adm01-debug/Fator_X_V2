@@ -1,6 +1,7 @@
 // Replay Fork Executor — replays an execution from a chosen step,
 // optionally with overridden input and a deterministic seed.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
+import { z } from "https://esm.sh/zod@3.23.8";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -8,9 +9,10 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
-interface ForkRequest {
-  fork_id: string;
-}
+const ForkRequestSchema = z.object({
+  fork_id: z.string().uuid(),
+});
+type ForkRequest = z.infer<typeof ForkRequestSchema>;
 
 interface Snapshot {
   step_index: number;
@@ -90,7 +92,12 @@ Deno.serve(async (req) => {
       });
     }
 
-    const body: ForkRequest = await req.json();
+    const rawBody = await req.json().catch(() => null);
+    const parsedBody = ForkRequestSchema.safeParse(rawBody);
+    if (!parsedBody.success) {
+      return new Response(JSON.stringify({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+    const body: ForkRequest = parsedBody.data;
     if (!body.fork_id) {
       return new Response(JSON.stringify({ error: "fork_id required" }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },

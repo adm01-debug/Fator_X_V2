@@ -1,4 +1,12 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { z } from "https://esm.sh/zod@3.23.8";
+
+const CodeInterpBodySchema = z.object({
+  runtime: z.enum(['python', 'node', 'deno']),
+  code: z.string().min(1).max(200_000),
+  timeout_ms: z.number().int().min(100).max(300_000).optional(),
+  session_id: z.string().max(200).optional(),
+}).passthrough();
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -111,13 +119,12 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    const body = await req.json() as ExecuteBody;
-    if (!body.runtime || !["python", "node", "deno"].includes(body.runtime)) {
-      return new Response(JSON.stringify({ error: "Invalid runtime" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    const rawBody = await req.json().catch(() => null);
+    const parsedBody = CodeInterpBodySchema.safeParse(rawBody);
+    if (!parsedBody.success) {
+      return new Response(JSON.stringify({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
-    if (typeof body.code !== "string" || body.code.length === 0) {
-      return new Response(JSON.stringify({ error: "Code is required" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-    }
+    const body = parsedBody.data as ExecuteBody;
     if (new TextEncoder().encode(body.code).length > MAX_CODE_BYTES) {
       return new Response(JSON.stringify({ error: `Code exceeds ${MAX_CODE_BYTES} bytes` }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }

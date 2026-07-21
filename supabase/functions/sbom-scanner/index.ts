@@ -1,14 +1,16 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
+import { z } from "https://esm.sh/zod@3.23.8";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-interface ScanRequest {
-  workspace_id: string;
-  snapshot_id: string;
-}
+const ScanRequestSchema = z.object({
+  workspace_id: z.string().uuid(),
+  snapshot_id: z.string().uuid(),
+});
+type ScanRequest = z.infer<typeof ScanRequestSchema>;
 
 interface OSVVuln {
   id: string;
@@ -97,7 +99,12 @@ Deno.serve(async (req) => {
       });
     }
 
-    const body: ScanRequest = await req.json();
+    const rawBody = await req.json().catch(() => null);
+    const parsedBody = ScanRequestSchema.safeParse(rawBody);
+    if (!parsedBody.success) {
+      return new Response(JSON.stringify({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+    const body: ScanRequest = parsedBody.data;
     if (!body.workspace_id || !body.snapshot_id) {
       return new Response(JSON.stringify({ error: "workspace_id and snapshot_id required" }), {
         status: 400,

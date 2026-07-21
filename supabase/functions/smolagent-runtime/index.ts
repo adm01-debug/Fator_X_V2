@@ -1,6 +1,12 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { getCorsHeaders, handleCorsPreflight, jsonResponse, _errorResponse, _checkRateLimit, _getRateLimitIdentifier, _createRateLimitResponse, _RATE_LIMITS } from "../_shared/mod.ts";
+import { z } from "https://esm.sh/zod@3.23.8";
+
+const SmolagentBodySchema = z.object({
+  action: z.string().min(1).max(120),
+  stream: z.boolean().optional(),
+}).passthrough();
 
 // CORS handled by _shared/cors.ts — dynamic origin whitelist
 
@@ -538,7 +544,12 @@ serve(async (req) => {
     const hfToken = Deno.env.get('HF_API_TOKEN');
     if (!hfToken) return jsonResponse({ error: 'HF_API_TOKEN not configured' }, 400);
 
-    const body = await req.json();
+    const rawBody = await req.json().catch(() => null);
+    const parsedBody = SmolagentBodySchema.safeParse(rawBody);
+    if (!parsedBody.success) {
+      return jsonResponse({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }, 400);
+    }
+    const body = parsedBody.data as Record<string, unknown> & { action: string; stream?: boolean };
     const { action, stream } = body;
 
     const ctx: AgentContext = { supabaseUrl, supabaseKey, authHeader, hfToken };

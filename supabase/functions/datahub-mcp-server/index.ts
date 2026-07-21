@@ -16,6 +16,14 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
+import { z } from "https://esm.sh/zod@3.23.8";
+
+const JSONRPCRequestSchema = z.object({
+  jsonrpc: z.literal('2.0'),
+  id: z.union([z.string(), z.number(), z.null()]).optional(),
+  method: z.string().min(1).max(200),
+  params: z.record(z.unknown()).optional(),
+});
 import {
   handleCorsPreflight, getCorsHeaders,
   checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS,
@@ -284,7 +292,12 @@ serve(async (req) => {
   if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, cors);
 
   try {
-    const body = await req.json() as JSONRPCRequest;
+    const rawBody = await req.json().catch(() => null);
+    const parsedBody = JSONRPCRequestSchema.safeParse(rawBody);
+    if (!parsedBody.success) {
+      return new Response(JSON.stringify({ jsonrpc: '2.0', error: { code: -32600, message: 'Payload inválido', data: parsedBody.error.flatten().fieldErrors } }), { status: 400, headers: { ...cors, 'Content-Type': 'application/json' } });
+    }
+    const body = parsedBody.data as JSONRPCRequest;
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 

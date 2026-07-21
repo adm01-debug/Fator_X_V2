@@ -35,6 +35,14 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { verifyHmac } from "../_shared/webhookSignature.ts";
+import { z } from "https://esm.sh/zod@3.23.8";
+
+const Bitrix24PayloadSchema = z.object({
+  event: z.string().max(120).optional(),
+  auth: z.record(z.unknown()).optional(),
+  data: z.record(z.unknown()).optional(),
+  ts: z.union([z.string(), z.number()]).optional(),
+}).passthrough();
 
 // ─── CORS ───
 const corsHeaders = {
@@ -193,11 +201,19 @@ serve(async (req) => {
     }
   } catch (err) {
     console.error("Body parse failed", err);
-    return new Response(JSON.stringify({ error: "Invalid request body" }), {
+    return new Response(JSON.stringify({ error: "Corpo da requisição inválido" }), {
       status: 400,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
+
+  const parsedZ = Bitrix24PayloadSchema.safeParse(parsed);
+  if (!parsedZ.success) {
+    return new Response(JSON.stringify({ error: 'Payload inválido', details: parsedZ.error.flatten().fieldErrors }), {
+      status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+  parsed = parsedZ.data as Record<string, unknown>;
 
   const eventType = String(parsed.event ?? "UNKNOWN");
   const auth = (parsed.auth ?? {}) as Record<string, unknown>;
@@ -225,6 +241,22 @@ serve(async (req) => {
     trace_id: traceId,
     processed_at: new Date().toISOString(),
   };
+
+  // ─── Dedupe: se já processamos este bitrix_event_id, retorna OK sem re-executar ───
+  if (bitrixEventId && workspaceId) {
+    const { data: existing } = await client
+      .from("bitrix24_webhook_events")
+      .select("id")
+      .eq("workspace_id", workspaceId)
+      .eq("event_type", eventType)
+      .eq("bitrix_event_id", bitrixEventId)
+      .maybeSingle();
+    if (existing) {
+      return new Response(JSON.stringify({ ok: true, deduped: true, trace_id: traceId }), {
+        status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+  }
 
   // ─── 1. Reject if signature invalid ───
   if (!signatureValid) {
