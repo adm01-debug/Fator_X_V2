@@ -157,6 +157,7 @@ export default function AgentSessionsPage() {
         <TabsList>
           <TabsTrigger value="voice"><Mic className="h-4 w-4 mr-2" /> Voz ({voice.length})</TabsTrigger>
           <TabsTrigger value="browser"><Globe className="h-4 w-4 mr-2" /> Browser ({browser.length})</TabsTrigger>
+          <TabsTrigger value="whatsapp"><MessageCircle className="h-4 w-4 mr-2" /> WhatsApp ({messages.length})</TabsTrigger>
         </TabsList>
 
         <TabsContent value="voice" className="space-y-4">
