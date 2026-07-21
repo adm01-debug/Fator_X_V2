@@ -24,8 +24,9 @@ interface GraphEdge { from: string; to: string; condition?: string }
 
 async function callLLM(systemPrompt: string, userInput: string): Promise<{ text: string; latency: number; cost_cents: number }> {
   const start = Date.now();
-  const res = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+  const res = await withRetry(() => fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
     method: 'POST',
+    timeoutMs: 60_000,
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${LOVABLE_KEY}` },
     body: JSON.stringify({
       model: 'google/gemini-2.5-flash',
@@ -34,8 +35,7 @@ async function callLLM(systemPrompt: string, userInput: string): Promise<{ text:
         { role: 'user', content: userInput },
       ],
     }),
-  });
-  if (!res.ok) {
+  }), { attempts: 3, baseMs: 300 });
     const text = await res.text();
     throw new Error(`LLM error ${res.status}: ${text}`);
   }
