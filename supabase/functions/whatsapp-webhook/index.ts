@@ -86,7 +86,7 @@ async function isNonceReplay(
     .from('openclaw_events')
     .select('id')
     .eq('kind', 'wh.nonce')
-    .eq('trace_id', hash)
+    .contains('payload', { hash })
     .gte('created_at', fiveMinAgo)
     .limit(1)
     .maybeSingle();
@@ -96,9 +96,9 @@ async function isNonceReplay(
 async function recordNonce(client: SupabaseClient, hash: string, provider: Provider): Promise<void> {
   await client.from('openclaw_events').insert({
     kind: 'wh.nonce',
-    trace_id: hash,
-    source: 'other',
-    payload: { provider },
+    level: 'info',
+    source: 'webhook',
+    payload: { hash, provider },
   }).then(() => undefined, () => undefined);
 }
 
