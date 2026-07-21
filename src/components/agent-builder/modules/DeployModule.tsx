@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { fromTable } from '@/lib/supabaseExtended';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import { SectionTitle, NexusBadge, ToggleField } from '../ui';
