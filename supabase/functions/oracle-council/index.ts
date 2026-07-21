@@ -1,4 +1,5 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { fetchWithTimeout } from "../_shared/retry.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { getCorsHeaders, _handleCorsPreflight, _jsonResponse, _errorResponse, checkRateLimit, _getRateLimitIdentifier, _createRateLimitResponse, _RATE_LIMITS } from "../_shared/mod.ts";
@@ -161,7 +162,7 @@ serve(async (req) => {
             const failoverModels = ['openai/gpt-4o', 'anthropic/claude-3-5-sonnet', 'google/gemini-1.5-pro', 'meta-llama/llama-3.1-405b'];
 
             const callGateway = async (model: string) => {
-              const response = await fetch(gatewayUrl, {
+              const response = await fetchWithTimeout(gatewayUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': authHeader!, 'apikey': supabaseKey },
                 body: JSON.stringify({
@@ -230,7 +231,7 @@ serve(async (req) => {
             const reviewPrompt = `Pergunta: "${query}"\n\nAvalie as respostas anônimas acima. Identifique pontos de consenso e divergências. Cite especificamente "Resposta A", "Resposta B", etc.\n\nResponda APENAS em JSON válido com este formato: {"consensus_degree": number, "consensus_points": [{"claim": string, "category": "fact"|"opinion", "consensusLevel": "strong"|"partial"|"disputed"}], "divergences": [string]}`;
             
             const reviewModel = chairman_model || successfulResponses[0].model;
-            const reviewResponse = await fetch(gatewayUrl, {
+            const reviewResponse = await fetchWithTimeout(gatewayUrl, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', 'Authorization': authHeader!, 'apikey': supabaseKey },
               body: JSON.stringify({
@@ -259,7 +260,7 @@ serve(async (req) => {
           const reviewData = stage2Results[0] || {};
           const synthesisPrompt = `Pergunta: "${query}"\n\nRespostas do Conselho:\n${successfulResponses.map((r, i) => `[Membro ${i+1} (${r.model})]: ${r.content}`).join('\n\n---\n\n')}\n\nAnálise de Consenso:\n${JSON.stringify(reviewData)}\n\nSintetize a resposta final. Use citações inline como [Membro 1] para atribuir ideias. Garanta que divergências sejam apresentadas de forma neutra. Use Markdown estruturado.`;
           
-          const synthesisResponse = await fetch(gatewayUrl, {
+          const synthesisResponse = await fetchWithTimeout(gatewayUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': authHeader!, 'apikey': supabaseKey },
             body: JSON.stringify({
@@ -302,7 +303,7 @@ serve(async (req) => {
     // --- Legacy Sync Flow ---
     const stage1Promises = members.map(async (member, idx) => {
       try {
-        const response = await fetch(gatewayUrl, {
+        const response = await fetchWithTimeout(gatewayUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': authHeader!, 'apikey': supabaseKey },
           body: JSON.stringify({
@@ -331,7 +332,7 @@ serve(async (req) => {
     const stage1 = await Promise.all(stage1Promises);
     const successfulResponses = stage1.filter(r => r.success);
     const chairmanModel = chairman_model || successfulResponses[0]?.model || 'google/gemini-2.5-pro';
-    const synthesisResponse = await fetch(gatewayUrl, {
+    const synthesisResponse = await fetchWithTimeout(gatewayUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': authHeader!, 'apikey': supabaseKey },
       body: JSON.stringify({

@@ -1,4 +1,5 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { fetchWithTimeout } from "../_shared/retry.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse, _checkRateLimit, _getRateLimitIdentifier, _createRateLimitResponse, _RATE_LIMITS } from "../_shared/mod.ts";
@@ -57,7 +58,7 @@ serve(async (req) => {
       if (chunks?.length) {
         try {
           const rerankUrl = `${supabaseUrl}/functions/v1/rag-rerank`;
-          const rerankResp = await fetch(rerankUrl, {
+          const rerankResp = await fetchWithTimeout(rerankUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': authHeader, 'apikey': supabaseKey },
             body: JSON.stringify({ query, chunks, top_k: 5 }),
@@ -82,7 +83,7 @@ Fatos: ${facts.join('; ')}
 RAG: ${ragContext || 'Nenhum dado disponível'}`;
 
     const gatewayUrl = `${supabaseUrl}/functions/v1/llm-gateway`;
-    const resp = await fetch(gatewayUrl, {
+    const resp = await fetchWithTimeout(gatewayUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': authHeader, 'apikey': supabaseKey },
       body: JSON.stringify({

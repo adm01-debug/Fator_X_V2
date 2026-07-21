@@ -58,7 +58,7 @@ Deno.serve(async (req) => {
     const mapped = mapModel(model);
     const startedAt = Date.now();
 
-    const upstream = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const upstream = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${apiKey}`,

@@ -8,6 +8,7 @@
  */
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { fetchWithTimeout } from "../_shared/retry.ts";
 import {
   handleCorsPreflight, jsonResponse, errorResponse,
   authenticateRequest,
@@ -124,7 +125,7 @@ serve(async (req) => {
       if (allSources.length > maxSources) { stoppedReason = 'budget_sources'; break; }
 
       // Step 1: Plan search queries with strategy-aware prompt
-      const planResp = await fetch(`${supabaseUrl}/functions/v1/llm-gateway`, {
+      const planResp = await fetchWithTimeout(`${supabaseUrl}/functions/v1/llm-gateway`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': authHeader, 'apikey': anonKey },
         body: JSON.stringify({
@@ -153,7 +154,7 @@ serve(async (req) => {
       for (const sq of searchQueries) {
         if (allSources.length >= maxSources) break;
         try {
-          const searchResp = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(sq)}&format=json&no_html=1`);
+          const searchResp = await fetchWithTimeout(`https://api.duckduckgo.com/?q=${encodeURIComponent(sq)}&format=json&no_html=1`);
           const searchData = await searchResp.json();
           const abstract = String((searchData as Record<string, string>).Abstract || '');
           const relatedTopics = ((searchData as Record<string, Array<Record<string, string>>>).RelatedTopics || [])
@@ -169,7 +170,7 @@ serve(async (req) => {
       }
 
       // Step 3: Analyze + identify gaps
-      const analyzeResp = await fetch(`${supabaseUrl}/functions/v1/llm-gateway`, {
+      const analyzeResp = await fetchWithTimeout(`${supabaseUrl}/functions/v1/llm-gateway`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': authHeader, 'apikey': anonKey },
         body: JSON.stringify({
@@ -213,7 +214,7 @@ serve(async (req) => {
     }
 
     // ═══ Final Synthesis ═══
-    const synthesisResp = await fetch(`${supabaseUrl}/functions/v1/llm-gateway`, {
+    const synthesisResp = await fetchWithTimeout(`${supabaseUrl}/functions/v1/llm-gateway`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': authHeader, 'apikey': anonKey },
       body: JSON.stringify({
