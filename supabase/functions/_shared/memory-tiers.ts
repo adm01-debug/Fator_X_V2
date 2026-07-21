@@ -49,6 +49,7 @@ export async function pickRandomRecall(
   client: SupabaseClient,
   agentId: string,
   probability = 0.05,
+  auditContext?: { workspaceId?: string | null; userId?: string | null; source?: string },
 ): Promise<RandomRecallItem | null> {
   if (Math.random() >= probability) return null;
   const { data, error } = await client
@@ -65,6 +66,27 @@ export async function pickRandomRecall(
   };
   // Registra o toque para que memórias resgatadas subam de tier gradualmente.
   await touchMemory(client, pick.id);
+
+  // Auditoria fire-and-forget: registra o disparo da serendipidade para observabilidade.
+  try {
+    await client.from("audit_events").insert({
+      event_type: "memory.random_recall",
+      severity: "info",
+      workspace_id: auditContext?.workspaceId ?? null,
+      user_id: auditContext?.userId ?? null,
+      resource_type: "agent_memory",
+      resource_id: pick.id,
+      metadata: {
+        agent_id: agentId,
+        memory_type: pick.memory_type,
+        probability,
+        source: auditContext?.source ?? "pickRandomRecall",
+      },
+    });
+  } catch (e) {
+    console.warn("random_recall audit failed", (e as Error).message);
+  }
+
   return {
     id: pick.id,
     content: `[recall aleatório] ${pick.content}`,
