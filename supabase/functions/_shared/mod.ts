@@ -68,3 +68,13 @@ export {
   getClientIp,
   KNOWN_WEBHOOK_CIDRS,
 } from "./security.ts";
+
+// Retry / backoff / jitter (P0 audit fix)
+export {
+  withRetry,
+  withRetryJson,
+  fetchWithTimeout,
+  computeDelay,
+  RetryError,
+  type RetryOptions,
+} from "./retry.ts";

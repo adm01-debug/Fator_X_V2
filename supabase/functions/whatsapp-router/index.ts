@@ -13,6 +13,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { handleCorsPreflight, getCorsHeaders } from '../_shared/cors.ts';
 import { constantTimeEqual } from '../_shared/security.ts';
 import { repairAlternation, type ChatTurn } from '../_shared/alternation.ts';
+import { withRetry, fetchWithTimeout } from '../_shared/retry.ts';
 
 const CONTEXT_TURNS = 10;
 const MAX_INBOUND_AGE_MS = 5 * 60_000;
@@ -112,7 +113,7 @@ Deno.serve(async (req) => {
   const proxyUrl = `${Deno.env.get('SUPABASE_URL')}/functions/v1/openclaw-proxy`;
   let replyText = '';
   try {
-    const r = await fetch(proxyUrl, {
+    const r = await withRetry(() => fetchWithTimeout(proxyUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -126,7 +127,10 @@ Deno.serve(async (req) => {
           context: { history: context, remote_phone: msg.remote_phone },
         },
       }),
-      signal: AbortSignal.timeout(45_000),
+      timeoutMs: 45_000,
+    }), {
+      attempts: 3, baseMs: 400, capMs: 4_000,
+      onRetry: (info) => emit('router_chat_retry', 'warn', { attempt: info.attempt, delay_ms: info.delayMs, status: info.res?.status }, msg.workspace_id as string),
     });
     const j = await r.json().catch(() => ({}));
     replyText = String(j?.data?.reply ?? j?.reply ?? '').trim();
@@ -155,11 +159,14 @@ Deno.serve(async (req) => {
 
   // Envia via proxy
   try {
-    const r = await fetch(proxyUrl, {
+    const r = await withRetry(() => fetchWithTimeout(proxyUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+        // Idempotency-Key permite ao proxy deduplicar retries — quando o
+        // upstream OpenClaw suportar, evita envios duplicados.
+        'Idempotency-Key': `wa-send-${outbound?.id ?? msg.id}`,
       },
       body: JSON.stringify({
         action: 'whatsapp.send',
@@ -167,9 +174,14 @@ Deno.serve(async (req) => {
           instance_name: instance.instance_name,
           to: msg.remote_phone,
           body: replyText,
+          idempotency_key: `wa-send-${outbound?.id ?? msg.id}`,
         },
       }),
-      signal: AbortSignal.timeout(30_000),
+      timeoutMs: 30_000,
+    }), {
+      // Mutation: 2 tentativas (a segunda protegida por idempotency-key).
+      attempts: 2, baseMs: 500, capMs: 3_000,
+      onRetry: (info) => emit('router_send_retry', 'warn', { attempt: info.attempt, delay_ms: info.delayMs, status: info.res?.status }, msg.workspace_id as string),
     });
     const j = await r.json().catch(() => ({}));
     if (!r.ok) {

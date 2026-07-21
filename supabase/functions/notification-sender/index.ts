@@ -153,11 +153,13 @@ async function sendWhatsApp(message: string, to: string): Promise<{ success: boo
   }
 
   try {
-    const resp = await fetch(`${apiUrl}/message/sendText/${instance}`, {
+    const { withRetry, fetchWithTimeout } = await import('../_shared/retry.ts');
+    const resp = await withRetry(() => fetchWithTimeout(`${apiUrl}/message/sendText/${instance}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', apikey: apiKey },
       body: JSON.stringify({ number: to, text: message }),
-    });
+      timeoutMs: 15_000,
+    }), { attempts: 2, baseMs: 400, capMs: 3_000 });
     if (!resp.ok) return { success: false, error: `WhatsApp API returned ${resp.status}` };
     return { success: true };
   } catch (e) {
@@ -170,11 +172,13 @@ async function sendSlack(message: string, channel: string): Promise<{ success: b
   if (!token) return { success: false, error: 'Slack token not configured' };
 
   try {
-    const resp = await fetch('https://slack.com/api/chat.postMessage', {
+    const { withRetry, fetchWithTimeout } = await import('../_shared/retry.ts');
+    const resp = await withRetry(() => fetchWithTimeout('https://slack.com/api/chat.postMessage', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ channel, text: message }),
-    });
+      timeoutMs: 10_000,
+    }), { attempts: 3, baseMs: 300, capMs: 3_000 });
     const data = await resp.json();
     if (!data.ok) return { success: false, error: data.error ?? 'Slack send failed' };
     return { success: true };
@@ -185,11 +189,13 @@ async function sendSlack(message: string, channel: string): Promise<{ success: b
 
 async function sendWebhook(message: string, url: string, metadata?: Record<string, unknown>): Promise<{ success: boolean; error?: string }> {
   try {
-    const resp = await fetch(url, {
+    const { withRetry, fetchWithTimeout } = await import('../_shared/retry.ts');
+    const resp = await withRetry(() => fetchWithTimeout(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message, ...metadata }),
-    });
+      timeoutMs: 15_000,
+    }), { attempts: 3, baseMs: 300, capMs: 4_000 });
     if (!resp.ok) return { success: false, error: `Webhook returned ${resp.status}` };
     return { success: true };
   } catch (e) {
