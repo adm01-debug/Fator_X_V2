@@ -103,16 +103,16 @@ serve(async (req) => {
     // Optional internal RAG seeding (agent_memories) when include_internal=true
     if (include_internal) {
       try {
-        const { data: memories } = await supabase
-          .from('agent_memories_v2')
-          .select('id, content, memory_tier')
-          .in('memory_tier', ['core', 'active', 'warm'])
-          .textSearch('content', query.split(' ').slice(0, 6).join(' '), { type: 'websearch' })
-          .limit(3);
+        // Autograph: busca híbrida (texto + relevância Ebbinghaus) via RPC dedicada.
+        const { data: memories } = await supabase.rpc('hybrid_memory_search', {
+          p_agent_id: null,
+          p_query: query,
+          p_limit: 3,
+          p_tiers: ['core', 'active', 'warm'],
+        });
         if (memories && memories.length > 0) {
-          const rows = memories as Array<{ id: string; content: string; memory_tier: string }>;
+          const rows = memories as Array<{ id: string; content: string; memory_tier: string; hybrid_score: number }>;
           allFindings += `\n\n--- Internal Knowledge ---\n${rows.map((m) => m.content).join('\n')}`;
-          // Autograph: registra o acesso das memórias que entraram no contexto (fire-and-forget)
           for (const m of rows) {
             supabase.rpc('touch_memory', { p_id: m.id }).then(() => undefined, () => undefined);
           }
