@@ -175,8 +175,8 @@ serve(async (req) => {
     const workspaceId = (req.headers.get('x-workspace-id')) ?? 'global';
     const breaker = getBreaker(`openclaw:${workspaceId}`);
     breaker.recordFailure(error);
-    const snap = breaker.snapshot();
-    if (snap.state === 'open') await emitEvent('breaker_open', 'error', { reason: isTimeout ? 'timeout' : 'exception', workspace_id: workspaceId }, workspaceId);
+    const t = breaker._drainTransition();
+    if (t === 'open') await emitEvent('breaker_open', 'error', { reason: isTimeout ? 'timeout' : 'exception', workspace_id: workspaceId }, workspaceId);
     else await emitEvent(isTimeout ? 'upstream_timeout' : 'upstream_exception', 'error', { message: error instanceof Error ? error.message : 'Proxy error', workspace_id: workspaceId }, workspaceId);
     return new Response(
       JSON.stringify({
