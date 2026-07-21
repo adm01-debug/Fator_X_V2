@@ -234,7 +234,7 @@ async function validateSignature(
 
 // ─── Workspace resolution by destination phone or default ───
 async function resolveWorkspace(
-  client: ReturnType<typeof createClient>,
+  client: SupabaseClient,
   toPhone: string | null,
 ): Promise<string | null> {
   if (!toPhone) return null;
@@ -249,7 +249,7 @@ async function resolveWorkspace(
 
 // ─── Routing lookup ───
 async function findAgentRoute(
-  client: ReturnType<typeof createClient>,
+  client: SupabaseClient,
   workspaceId: string,
   eventType: string,
 ): Promise<string | null> {
@@ -283,7 +283,7 @@ interface AuditRow {
 }
 
 async function writeAudit(
-  client: ReturnType<typeof createClient>,
+  client: SupabaseClient,
   row: AuditRow,
 ): Promise<void> {
   const { error } = await client.from('whatsapp_webhook_events').insert(row);
@@ -381,7 +381,7 @@ serve(async (req) => {
     audit.routing_error = `Phone "${event.to_phone ?? 'unknown'}" not registered in workspace_secrets`;
     await writeAudit(client, audit);
     return new Response(JSON.stringify({ ok: true, message: 'Logged but no workspace matched', trace_id: traceId }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -394,7 +394,7 @@ serve(async (req) => {
     await writeAudit(client, audit);
     return new Response(JSON.stringify({ error: 'Routing lookup failed', trace_id: traceId }), {
       status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -403,7 +403,7 @@ serve(async (req) => {
     audit.routing_error = `No agent_routing_config for event ${event.event_type}`;
     await writeAudit(client, audit);
     return new Response(JSON.stringify({ ok: true, message: `No agent for ${event.event_type}`, trace_id: traceId }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -451,6 +451,6 @@ serve(async (req) => {
   }
 
   return new Response(JSON.stringify({ ok: true, routed_to: agentId, provider, trace_id: traceId }), {
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
   });
 });
