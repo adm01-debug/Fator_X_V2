@@ -531,6 +531,7 @@ async function runAgent(
 // ═══ MAIN HANDLER ═══
 
 serve(async (req) => {
+  jsonHeaders = { ...getCorsHeaders(req), "Content-Type": "application/json" };
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
 
   try {
