@@ -68,17 +68,11 @@ serve(async (req) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
 
-    let rawBody: unknown;
-    try { rawBody = await req.json(); } catch {
-      return new Response(JSON.stringify({ error: 'Invalid JSON body' }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
-    }
+    const parsed = await parseBody(req, CerebroBodySchema);
+    if (parsed.error) return parsed.error;
+    const body = parsed.data as Record<string, unknown>;
+    const action = body.action as CerebroAction;
 
-    const validation = validateBody(rawBody);
-    if (!validation.valid) {
-      return new Response(JSON.stringify({ error: validation.error }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
-    }
-
-    const { action, data: body } = validation;
 
     const { data: member } = await supabase.from('workspace_members').select('workspace_id').eq('user_id', user.id).limit(1).single();
     const _workspaceId = member?.workspace_id;
