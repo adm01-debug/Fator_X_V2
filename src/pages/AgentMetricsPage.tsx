@@ -77,6 +77,7 @@ function buildSeriesByAgent(
 export default function AgentMetricsPage() {
   const [days, setDays] = useState<number>(30);
   const { data: rows = [], isLoading, isError, refetch } = useAgentDailyMetrics({ days });
+  const { workspaceId } = useCurrentWorkspace();
 
   const [rules, setRules] = useState<MetricAlertRule[]>(() => loadMetricRules());
   useEffect(() => { saveMetricRules(rules); }, [rules]);
