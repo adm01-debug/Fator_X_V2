@@ -113,7 +113,7 @@ Deno.serve(async (req) => {
   const proxyUrl = `${Deno.env.get('SUPABASE_URL')}/functions/v1/openclaw-proxy`;
   let replyText = '';
   try {
-    const r = await fetch(proxyUrl, {
+    const r = await withRetry(() => fetchWithTimeout(proxyUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -127,7 +127,10 @@ Deno.serve(async (req) => {
           context: { history: context, remote_phone: msg.remote_phone },
         },
       }),
-      signal: AbortSignal.timeout(45_000),
+      timeoutMs: 45_000,
+    }), {
+      attempts: 3, baseMs: 400, capMs: 4_000,
+      onRetry: (info) => emit('router_chat_retry', 'warn', { attempt: info.attempt, delay_ms: info.delayMs, status: info.res?.status }, msg.workspace_id as string),
     });
     const j = await r.json().catch(() => ({}));
     replyText = String(j?.data?.reply ?? j?.reply ?? '').trim();
