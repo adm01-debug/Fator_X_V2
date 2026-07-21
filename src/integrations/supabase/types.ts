@@ -8981,6 +8981,14 @@ export type Database = {
           rollbacks: number
         }[]
       }
+      get_embedding_coverage: {
+        Args: { _workspace_id: string }
+        Returns: {
+          embedded: number
+          pct: number
+          total: number
+        }[]
+      }
       get_ir_summary: { Args: { p_workspace_id: string }; Returns: Json }
       get_knowledge_graph_health: {
         Args: { p_workspace_id: string }
