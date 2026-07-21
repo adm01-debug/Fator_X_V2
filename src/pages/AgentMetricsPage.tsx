@@ -26,6 +26,7 @@ import {
   type MetricAlertRule, type MetricRuleMetric, type MetricRuleOperator, type MetricRuleSeverity,
 } from '@/lib/metricsAlertRules';
 import { KnowledgeGraphHealthCard } from '@/components/metrics/KnowledgeGraphHealthCard';
+import { RandomRecallToggleCard } from '@/components/memory/RandomRecallToggleCard';
 import { useCurrentWorkspace } from '@/hooks/useCurrentWorkspace';
 
 type DayKey = string;
@@ -285,8 +286,11 @@ export default function AgentMetricsPage() {
         </>
       )}
 
-      {/* Autograph: saúde do knowledge graph */}
-      <KnowledgeGraphHealthCard workspaceId={workspaceId} />
+      {/* Autograph: saúde do knowledge graph + recall aleatório */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <KnowledgeGraphHealthCard workspaceId={workspaceId} />
+        <RandomRecallToggleCard workspaceId={workspaceId} />
+      </div>
 
       {/* Regras de alerta */}
       <Card>
