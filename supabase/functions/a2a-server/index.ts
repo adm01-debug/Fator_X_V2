@@ -32,7 +32,7 @@ const A2ATaskSchema = z.object({
   agentId: z.string().uuid().optional(),
 }).passthrough();
 import {
-  handleCorsPreflight, jsonResponse, errorResponse, _getCorsHeaders,
+  handleCorsPreflight, jsonResponse, errorResponse,
   checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS,
 } from "../_shared/mod.ts";
 
