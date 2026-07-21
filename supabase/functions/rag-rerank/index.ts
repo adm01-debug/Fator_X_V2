@@ -5,6 +5,7 @@ import {
   checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS,
   parseBody, z,
 } from "../_shared/mod.ts";
+import { withRetry } from "../_shared/retry.ts";
 
 // ═══ Input Schema (Zod) ═══
 const RerankInput = z.object({
