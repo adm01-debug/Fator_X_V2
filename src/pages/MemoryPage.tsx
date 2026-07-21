@@ -220,7 +220,8 @@ export default function MemoryPage() {
                 />
               </AccessControl>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
