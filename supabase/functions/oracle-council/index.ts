@@ -255,11 +255,13 @@ serve(async (req) => {
             confidence_score: Math.round((reviewData.consensus_degree || 85) * 0.9 + (successfulResponses.length / members.length) * 10),
             consensus_degree: reviewData.consensus_degree || 75,
             consensus_points: reviewData.consensus_points || [],
+            degraded,
             metrics: {
               total_latency_ms: Date.now() - totalStartTime,
               total_cost_usd: stage1.reduce((s, r) => s + (r.cost_usd || 0), 0) + (synthesisResult.cost_usd || 0),
               total_tokens: stage1.reduce((s, r) => s + (r.tokens?.total || 0), 0) + (synthesisResult.tokens?.total || 0),
               models_used: successfulResponses.length,
+              models_failed: members.length - successfulResponses.length,
             }
           });
           await writer.close();
