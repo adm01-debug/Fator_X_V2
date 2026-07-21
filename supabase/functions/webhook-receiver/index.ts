@@ -156,9 +156,12 @@ async function logEvent(
   webhookId: string, method: string, headers: Record<string, string>,
   queryParams: Record<string, string>, body: Record<string, unknown>,
   sourceIp: string, status: string, responseCode: number,
+  externalEventId: string | null = null,
 ) {
   await supabase.from('webhook_events').insert({
     webhook_id: webhookId, method, headers, query_params: queryParams,
     body, source_ip: sourceIp, status, response_code: responseCode,
+    external_event_id: externalEventId,
   });
 }
+
