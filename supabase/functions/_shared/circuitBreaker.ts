@@ -34,6 +34,7 @@ class CircuitBreaker {
   private openedAt: number | null = null;
   private halfOpenInFlight = 0;
   private lastError: string | null = null;
+  private _transitionedTo: 'closed' | 'open' | 'half-open' | null = null;
 
   constructor(public readonly key: string, private readonly opts: BreakerOptions) {}
 
