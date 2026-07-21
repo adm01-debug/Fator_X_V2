@@ -12,6 +12,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { handleCorsPreflight, getCorsHeaders } from '../_shared/cors.ts';
 import { constantTimeEqual } from '../_shared/security.ts';
+import { repairAlternation, type ChatTurn } from '../_shared/alternation.ts';
 
 const CONTEXT_TURNS = 10;
 const MAX_INBOUND_AGE_MS = 5 * 60_000;
@@ -79,18 +80,25 @@ Deno.serve(async (req) => {
     return json(200, { ok: true, skipped: 'auto_reply_off' });
   }
 
-  // Contexto: últimos N turnos do mesmo remote_phone (asc)
+  // Contexto: últimos N turnos da mesma conversa (workspace + instance + phone).
+  // Filtrar por instance_id evita cruzar conversas quando o mesmo número
+  // fala com múltiplas instâncias do workspace.
   const { data: history } = await supabase
     .from('openclaw_whatsapp_messages')
     .select('direction, body, created_at')
     .eq('workspace_id', msg.workspace_id)
+    .eq('instance_id', msg.instance_id)
     .eq('remote_phone', msg.remote_phone)
     .order('created_at', { ascending: false })
     .limit(CONTEXT_TURNS);
-  const context = (history ?? []).reverse().map((h) => ({
+  const rawContext: ChatTurn[] = (history ?? []).reverse().map((h) => ({
     role: h.direction === 'inbound' ? 'user' : 'assistant',
     content: h.body ?? '',
   }));
+  // repairAlternation elimina o bug clássico do WhatsApp em que várias
+  // mensagens `user` chegam em sequência antes do assistant responder —
+  // Anthropic/OpenAI/Gemini rejeitam sequências de roles repetidos.
+  const context = repairAlternation(rawContext, { endWithUser: true });
 
   // Marca em processamento (evita corrida se dois routers dispararem)
   const { error: lockErr } = await supabase
