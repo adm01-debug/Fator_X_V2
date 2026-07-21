@@ -247,6 +247,10 @@ export default function OpenclawDeployPage() {
           )}
         </TabsContent>
 
+        <TabsContent value="console" className="mt-6">
+          <OpenclawTestConsole agents={agents} disabled={!healthOk} />
+        </TabsContent>
+
         <TabsContent value="deploy" className="mt-6">
           <Card className="bg-card border-border">
             <CardHeader>
