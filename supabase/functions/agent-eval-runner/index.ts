@@ -241,7 +241,9 @@ Deno.serve(async (req) => {
         .eq('id', run.id);
     });
 
-    return new Response(JSON.stringify({ run_id: run.id }), {
+    const responseBody = { run_id: run.id };
+    if (idemKey) await saveIdempotency(idemKey, 200, responseBody, admin);
+    return new Response(JSON.stringify(responseBody), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     });
