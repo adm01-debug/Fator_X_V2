@@ -2,6 +2,7 @@
 
 import type { LLMCallParams, LLMResult } from "../types.ts";
 import { normalizeOpenAIResponse } from "../utils.ts";
+import { fetchWithTimeout, withRetry } from "../../_shared/retry.ts";
 
 export async function callOpenAICompatible(
   params: LLMCallParams,
@@ -12,8 +13,9 @@ export async function callOpenAICompatible(
     provider === 'google'
       ? 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions'
       : 'https://api.openai.com/v1/chat/completions';
-  const response = await fetch(url, {
+  const response = await withRetry(() => fetchWithTimeout(url, {
     method: 'POST',
+    timeoutMs: 60_000,
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${apiKey}`,
@@ -24,7 +26,7 @@ export async function callOpenAICompatible(
       temperature: params.temperature,
       max_tokens: params.max_tokens,
     }),
-  });
+  }), { attempts: 3, baseMs: 300 });
   const result = await response.json();
   return normalizeOpenAIResponse(result);
 }
