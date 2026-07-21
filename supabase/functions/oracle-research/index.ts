@@ -116,7 +116,8 @@ serve(async (req) => {
               dimension: 1536,
               task: 'retrieval.query',
             }),
-          }, 5_000);
+            timeoutMs: 5_000,
+          });
           if (embedResp.ok) {
             const embedData = await embedResp.json() as { embeddings?: number[][] };
             const first = embedData.embeddings?.[0];
