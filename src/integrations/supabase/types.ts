@@ -5090,6 +5090,63 @@ export type Database = {
           },
         ]
       }
+      openclaw_agent_templates: {
+        Row: {
+          agents_md: string | null
+          category: string
+          created_at: string
+          cron_schedule: string | null
+          description_pt: string
+          difficulty: number
+          id: string
+          is_available: boolean
+          name_pt: string
+          origin: string
+          required_channels: Json
+          skills: Json
+          slug: string
+          soul_md: string | null
+          source_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          agents_md?: string | null
+          category: string
+          created_at?: string
+          cron_schedule?: string | null
+          description_pt: string
+          difficulty: number
+          id?: string
+          is_available?: boolean
+          name_pt: string
+          origin?: string
+          required_channels?: Json
+          skills?: Json
+          slug: string
+          soul_md?: string | null
+          source_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          agents_md?: string | null
+          category?: string
+          created_at?: string
+          cron_schedule?: string | null
+          description_pt?: string
+          difficulty?: number
+          id?: string
+          is_available?: boolean
+          name_pt?: string
+          origin?: string
+          required_channels?: Json
+          skills?: Json
+          slug?: string
+          soul_md?: string | null
+          source_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       openclaw_deployments: {
         Row: {
           agent_id: string
@@ -9069,10 +9126,12 @@ export type Database = {
       }
       is_mfa_valid_for_role: { Args: never; Returns: boolean }
       is_user_locked_out: { Args: { target_email: string }; Returns: boolean }
-      is_workspace_admin: {
-        Args: { _user_id: string; _workspace_id: string }
-        Returns: boolean
-      }
+      is_workspace_admin:
+        | { Args: { _user_id: string }; Returns: boolean }
+        | {
+            Args: { _user_id: string; _workspace_id: string }
+            Returns: boolean
+          }
       log_audit_entry: {
         Args: {
           p_action: string
