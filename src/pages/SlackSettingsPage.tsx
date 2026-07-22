@@ -29,7 +29,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { PageHeader } from "@/components/PageHeader";
+import { PageHeader } from "@/components/shared/PageHeader";
 import { Slack, Plus, Trash2, Send, CheckCircle2, AlertTriangle } from "lucide-react";
 import {
   useSlackConfig,
