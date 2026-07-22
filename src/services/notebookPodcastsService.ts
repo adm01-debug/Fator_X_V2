@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { supabaseExternal } from "@/integrations/supabase/externalClient";
 import { logger } from "@/lib/logger";
-import { getSignedUrl } from "@/lib/signedUrlCache";
+import { getCachedSignedUrl } from "@/lib/signedUrlCache";
 
 export interface NotebookPodcast {
   id: string;
@@ -103,5 +103,5 @@ export function useDeletePodcast(notebookId: string | null) {
 /** Resolve signed URL cacheado para reprodução. */
 export async function resolvePodcastAudioUrl(podcast: NotebookPodcast): Promise<string | null> {
   if (!podcast.audio_path) return null;
-  return getSignedUrl("knowledge-uploads", podcast.audio_path);
+  return getCachedSignedUrl("knowledge-uploads", podcast.audio_path);
 }
