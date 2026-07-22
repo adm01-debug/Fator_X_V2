@@ -3543,7 +3543,9 @@ export type Database = {
       document_ingestions: {
         Row: {
           collection_id: string | null
+          content_hash: string | null
           created_at: string
+          deduped_from: string | null
           document_id: string | null
           error_message: string | null
           extraction_method: string | null
@@ -3560,7 +3562,9 @@ export type Database = {
         }
         Insert: {
           collection_id?: string | null
+          content_hash?: string | null
           created_at?: string
+          deduped_from?: string | null
           document_id?: string | null
           error_message?: string | null
           extraction_method?: string | null
@@ -3577,7 +3581,9 @@ export type Database = {
         }
         Update: {
           collection_id?: string | null
+          content_hash?: string | null
           created_at?: string
+          deduped_from?: string | null
           document_id?: string | null
           error_message?: string | null
           extraction_method?: string | null
@@ -3601,6 +3607,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "document_ingestions_deduped_from_fkey"
+            columns: ["deduped_from"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "document_ingestions_document_id_fkey"
             columns: ["document_id"]
             isOneToOne: false
@@ -3616,6 +3629,7 @@ export type Database = {
           chunk_strategy: string
           chunk_version: number
           collection_id: string | null
+          content_hash: string | null
           created_at: string | null
           id: string
           metadata: Json | null
@@ -3634,6 +3648,7 @@ export type Database = {
           chunk_strategy?: string
           chunk_version?: number
           collection_id?: string | null
+          content_hash?: string | null
           created_at?: string | null
           id?: string
           metadata?: Json | null
@@ -3652,6 +3667,7 @@ export type Database = {
           chunk_strategy?: string
           chunk_version?: number
           collection_id?: string | null
+          content_hash?: string | null
           created_at?: string | null
           id?: string
           metadata?: Json | null

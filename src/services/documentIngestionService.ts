@@ -105,6 +105,18 @@ export interface UploadOptions {
  * Se o server detectar PDF escaneado (422 ocr_pages_required), rasteriza
  * páginas no browser e reenvia automaticamente.
  */
+/**
+ * Computa SHA-256 hex (Idempotency-Key) para o conteúdo do arquivo.
+ * Usado para deduplicação: mesmo arquivo no mesmo notebook reutiliza chunks/embeddings.
+ */
+async function computeFileSha256(file: File): Promise<string> {
+  const buf = await file.arrayBuffer();
+  const digest = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
 export async function uploadDocument(file: File, opts: UploadOptions): Promise<DocumentIngestion> {
   const { data: userRes, error: userErr } = await supabase.auth.getUser();
   if (userErr || !userRes.user) throw new Error('Não autenticado');
@@ -118,6 +130,10 @@ export async function uploadDocument(file: File, opts: UploadOptions): Promise<D
     throw new Error('Tipo não suportado. Envie PDF ou DOCX.');
   }
 
+  // 0. Hash SHA-256 do conteúdo — Idempotency-Key para dedup
+  opts.onStage?.('hashing');
+  const contentHash = await computeFileSha256(file);
+
   // 1. Cria row de rastreio
   opts.onStage?.('preparing');
   const { data: ingestion, error: iErr } = await supabase
@@ -130,6 +146,7 @@ export async function uploadDocument(file: File, opts: UploadOptions): Promise<D
       size_bytes: file.size,
       status: 'uploading',
       progress_pct: 5,
+      content_hash: contentHash,
     })
     .select()
     .single();
@@ -154,19 +171,22 @@ export async function uploadDocument(file: File, opts: UploadOptions): Promise<D
     .update({ storage_path: storagePath, status: 'parsing', progress_pct: 10 })
     .eq('id', ingestion.id);
 
-  // 3. Dispara doc-parse
+  // 3. Dispara doc-parse (com Idempotency-Key para dedup por conteúdo)
   opts.onStage?.('parsing');
   const callParse = (extra: Record<string, unknown> = {}) =>
     supabase.functions.invoke('doc-parse', {
+      headers: { 'Idempotency-Key': contentHash },
       body: {
         ingestion_id: ingestion.id,
         collection_id: opts.collectionId,
         filename: file.name,
         mime,
         storage_path: storagePath,
+        content_hash: contentHash,
         ...extra,
       },
     });
+
 
   let res = await callParse();
 

@@ -48,7 +48,9 @@ const Input = z.object({
   chunk_size: z.number().int().min(200).max(4000).optional(),
   chunk_overlap: z.number().int().min(0).max(3999).optional(),
   chunk_strategy: z.enum(['fixed', 'paragraph', 'sentence']).optional(),
+  content_hash: z.string().regex(/^[a-f0-9]{64}$/i, 'must be sha-256 hex').optional(),
 });
+
 
 
 type IngestionStatus =
@@ -217,6 +219,71 @@ serve(async (req) => {
         .eq('id', body.ingestion_id);
     };
 
+    // Resolve content_hash: prefer body, fallback to Idempotency-Key header
+    const idempotencyHeader = req.headers.get('Idempotency-Key') ?? req.headers.get('idempotency-key');
+    const providedHash = (body.content_hash ?? idempotencyHeader ?? '').toLowerCase();
+    const isValidHash = /^[a-f0-9]{64}$/.test(providedHash);
+
+    // ═══ Deduplication short-circuit ═══
+    // Same file (same SHA-256) in the same notebook → reuse existing document + chunks.
+    if (isValidHash) {
+      const { data: existing } = await supabase
+        .from('documents')
+        .select('id, status, chunk_version')
+        .eq('collection_id', body.collection_id)
+        .eq('content_hash', providedHash)
+        .eq('status', 'indexed')
+        .maybeSingle();
+
+      if (existing?.id) {
+        const { count: activeChunks } = await supabase
+          .from('chunks')
+          .select('id', { count: 'exact', head: true })
+          .eq('document_id', existing.id)
+          .eq('is_active', true);
+
+        // Only reuse when we actually have chunks — otherwise fall through and reprocess.
+        if ((activeChunks ?? 0) > 0) {
+          await supabase
+            .from('document_ingestions')
+            .update({
+              status: 'ready',
+              progress_pct: 100,
+              document_id: existing.id,
+              content_hash: providedHash,
+              deduped_from: existing.id,
+              extraction_method: 'text',
+              error_message: null,
+            })
+            .eq('id', body.ingestion_id);
+
+          await supabase.from('audit_events').insert({
+            user_id: user.id,
+            event_type: 'document.dedup_hit',
+            resource_type: 'document',
+            resource_id: existing.id,
+            action: 'reuse',
+            metadata: {
+              collection_id: body.collection_id,
+              filename: body.filename,
+              content_hash: providedHash,
+              reused_chunks: activeChunks ?? 0,
+              chunk_version: existing.chunk_version,
+              source: idempotencyHeader ? 'header' : 'body',
+            },
+          }).then(() => {}, () => {});
+
+          return jsonResponse({
+            status: 'ok',
+            deduped: true,
+            document_id: existing.id,
+            reused_chunks: activeChunks ?? 0,
+            chunk_version: existing.chunk_version,
+          });
+        }
+      }
+    }
+
     await updateStatus('parsing', 10);
 
     // Download from storage
@@ -230,6 +297,75 @@ serve(async (req) => {
       await updateStatus('error', 0, { error_message: 'Arquivo excede 20MB' });
       return errorResponse(req, 'Arquivo excede 20MB', 413);
     }
+
+    // Compute hash server-side if the client didn't provide one
+    let effectiveHash = isValidHash ? providedHash : '';
+    if (!effectiveHash) {
+      const digest = await crypto.subtle.digest('SHA-256', bytes);
+      effectiveHash = Array.from(new Uint8Array(digest))
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('');
+    }
+
+    // Persist hash on the ingestion row for observability
+    await supabase
+      .from('document_ingestions')
+      .update({ content_hash: effectiveHash })
+      .eq('id', body.ingestion_id);
+
+    // Late dedup: if the client didn't send a hash, re-check now that we have one.
+    if (!isValidHash) {
+      const { data: existing } = await supabase
+        .from('documents')
+        .select('id, status, chunk_version')
+        .eq('collection_id', body.collection_id)
+        .eq('content_hash', effectiveHash)
+        .eq('status', 'indexed')
+        .maybeSingle();
+      if (existing?.id) {
+        const { count: activeChunks } = await supabase
+          .from('chunks')
+          .select('id', { count: 'exact', head: true })
+          .eq('document_id', existing.id)
+          .eq('is_active', true);
+        if ((activeChunks ?? 0) > 0) {
+          await supabase
+            .from('document_ingestions')
+            .update({
+              status: 'ready',
+              progress_pct: 100,
+              document_id: existing.id,
+              deduped_from: existing.id,
+              extraction_method: 'text',
+              error_message: null,
+            })
+            .eq('id', body.ingestion_id);
+          await supabase.from('audit_events').insert({
+            user_id: user.id,
+            event_type: 'document.dedup_hit',
+            resource_type: 'document',
+            resource_id: existing.id,
+            action: 'reuse',
+            metadata: {
+              collection_id: body.collection_id,
+              filename: body.filename,
+              content_hash: effectiveHash,
+              reused_chunks: activeChunks ?? 0,
+              source: 'server_computed',
+            },
+          }).then(() => {}, () => {});
+          return jsonResponse({
+            status: 'ok',
+            deduped: true,
+            document_id: existing.id,
+            reused_chunks: activeChunks ?? 0,
+            chunk_version: existing.chunk_version,
+          });
+        }
+      }
+    }
+
+
 
     let fullText = '';
     let extractionMethod: 'text' | 'ocr' | 'hybrid' | 'docx' = 'text';
@@ -360,11 +496,13 @@ serve(async (req) => {
         mime_type: body.mime,
         size_bytes: bytes.byteLength,
         status: 'processing',
+        content_hash: effectiveHash || null,
         chunk_size: chunkOpts.size,
         chunk_overlap: chunkOpts.overlap,
         chunk_strategy: chunkOpts.strategy,
         chunk_version: 1,
         parsed_text: fullText,
+
         metadata: {
           filename: body.filename,
           extraction_method: extractionMethod,
