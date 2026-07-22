@@ -248,6 +248,10 @@ export async function retryIngestion(id: string): Promise<void> {
     },
   });
   if (fErr) throw fErr;
+  if (ing.document_id) {
+    const { invalidateSignedUrlForDocument } = await import('@/lib/signedUrlCache');
+    await invalidateSignedUrlForDocument(ing.document_id);
+  }
 }
 
 export async function deleteIngestion(ing: DocumentIngestion): Promise<void> {
