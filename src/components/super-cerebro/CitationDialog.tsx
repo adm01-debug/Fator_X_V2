@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { FileText, ExternalLink } from 'lucide-react';
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
+import { getCachedSignedUrl } from '@/lib/signedUrlCache';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import type { CerebroCitation } from '@/types/cerebroCitations';
@@ -38,12 +39,9 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
       const bucket = md.bucket ?? 'knowledge-uploads';
 
       if (storagePath) {
-        const { data: signed, error: signErr } = await supabaseExternal.storage
-          .from(bucket)
-          .createSignedUrl(storagePath, 60);
-        if (signErr) throw signErr;
-        if (signed?.signedUrl) {
-          window.open(signed.signedUrl, '_blank', 'noopener,noreferrer');
+        const signedUrl = await getCachedSignedUrl(bucket, storagePath);
+        if (signedUrl) {
+          window.open(signedUrl, '_blank', 'noopener,noreferrer');
           return;
         }
       }
