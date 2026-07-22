@@ -30,7 +30,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { PageHeader } from "@/components/shared/PageHeader";
-import { Plus, Trash2, Send, CheckCircle2, AlertTriangle } from "lucide-react";
+import { Plus, Trash2, Send, CheckCircle2, AlertTriangle, RefreshCw } from "lucide-react";
 import {
   useSlackConfig,
   type SlackCategory,
@@ -38,6 +38,10 @@ import {
   type SlackSeverity,
   type UpsertRouteInput,
 } from "@/hooks/useSlackConfig";
+import { SlackAgentNotificationsPanel } from "@/components/slack/SlackAgentNotificationsPanel";
+import { SlackRagSourcesPanel } from "@/components/slack/SlackRagSourcesPanel";
+import { SlackBotBindingPanel } from "@/components/slack/SlackBotBindingPanel";
+
 
 const CATEGORY_LABELS: Record<SlackCategory, string> = {
   security_alert: "Alertas de segurança",
