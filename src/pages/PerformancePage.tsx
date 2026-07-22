@@ -88,6 +88,9 @@ export default function PerformancePage() {
 
       <DbHealthTimeseriesCard />
 
+      <DetectorSloCard />
+
+
       <Card>
         <CardHeader className="flex flex-row items-start justify-between">
           <div>
