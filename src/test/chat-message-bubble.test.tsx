@@ -16,8 +16,12 @@ describe('MessageBubble — sanitization', () => {
     );
     // Script não deve ser executado
     expect((window as unknown as { __pwn?: number }).__pwn).toBeUndefined();
-    // Texto legível permanece
-    expect(screen.getByText(/Olá/)).toBeInTheDocument();
+    // Texto legível permanece (skipHtml escapa a tag como texto)
+    const { container } = screen.getByRole('article').parentElement
+      ? { container: screen.getByRole('article') }
+      : { container: document.body };
+    expect(container.textContent ?? '').toContain('Olá');
+    expect(container.querySelector('script')).toBeNull();
   });
 
   it('bloqueia <iframe>', () => {
