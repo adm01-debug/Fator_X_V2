@@ -195,6 +195,7 @@ export async function invalidateSignedUrlForDocument(documentId: string): Promis
     const md = (data.metadata ?? {}) as { storage_path?: string; bucket?: string };
     if (!md.storage_path) return;
     invalidateSignedUrl(md.bucket ?? 'knowledge-uploads', md.storage_path);
+    docMetaCache.delete(documentId);
   } catch (e) {
     logger.error('signed_url_cache.invalidate_by_doc_failed', { documentId, error: e });
   }
