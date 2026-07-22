@@ -162,7 +162,12 @@ serve(async (req) => {
       }
     } catch { /* skip */ }
 
+    const scopeNotice = activeNotebookName
+      ? `Você está operando escopado ao notebook "${activeNotebookName}". Ignore qualquer conhecimento de outros notebooks.`
+      : 'Você está operando em modo global (todos os notebooks visíveis).';
+
     const systemPrompt = `Você é o Super Cérebro da Promo Brindes — a inteligência central da empresa.
+${scopeNotice}
 Responda em português, com base no bloco RAG fornecido. Se não houver base suficiente, seja honesto e diga.
 
 REGRA DE CITAÇÃO (obrigatória):
