@@ -76,6 +76,9 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
 
         <div className="space-y-3">
           <div className="flex flex-wrap gap-2">
+            {citation?.notebook_name && (
+              <Badge variant="secondary">Notebook: {citation.notebook_name}</Badge>
+            )}
             {citation?.page != null && (
               <Badge variant="outline">Página {citation.page}</Badge>
             )}
