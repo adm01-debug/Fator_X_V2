@@ -8,7 +8,7 @@ import {
   Sparkles, PanelLeftClose, PanelLeft, LogOut, ServerCog, ChevronDown, Palette, Dna, Workflow, Package,
   ShieldCheck, CircleCheckBig, Crown, Route as RouteIcon, Languages,
 
-  Mic, GitBranch as GitBranchIcon, KeyRound, Globe2, Monitor, Eye, Smartphone, TestTube2,
+  Mic, GitBranch as GitBranchIcon, KeyRound, Globe2, Monitor, Eye, Smartphone, TestTube2, MessageCircle,
   Store, Cpu, Wand2, GitMerge, Terminal, Mail, Bug, FileCheck2,
   PhoneCall, Network, FlaskRound, TrendingDown, Calculator,
   Share2, Building2, Radar, ShieldAlert, Wallet, Swords, Phone, Archive, AlertOctagon, LifeBuoy, GitPullRequest, Boxes, MessageSquare, Fingerprint, Snowflake,
@@ -34,6 +34,7 @@ const navSections = [
     items: [
       { title: "Dashboard", url: "/", icon: LayoutDashboard },
       { title: "Agentes", url: "/agents", icon: Bot },
+      { title: "Conversar", url: "/chat", icon: MessageCircle },
       { title: "Super Cérebro", url: "/brain", icon: Brain },
       { title: "Oráculo", url: "/oracle", icon: Sparkles },
       { title: "AI Studio", url: "/ai-studio", icon: Palette },
