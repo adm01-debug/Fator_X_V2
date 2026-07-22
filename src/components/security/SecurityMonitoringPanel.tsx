@@ -145,7 +145,10 @@ export function SecurityMonitoringPanel() {
         ) : (
           <div className="divide-y divide-border/30">
             {alerts.map((alert) => (
-              <div key={alert.id} className="p-5 flex items-start gap-4 hover:bg-muted/30 transition-colors group">
+              <div key={alert.id} className={cn(
+                "p-5 flex items-start gap-4 hover:bg-muted/30 transition-colors group",
+                alert.category === 'partition_automation_failure' && "bg-destructive/5 border-l-4 border-l-destructive"
+              )}>
                 <div className={cn("p-2 rounded-xl border", getSeverityColor(alert.severity))}>
                   <ShieldAlert className="h-5 w-5" />
                 </div>
