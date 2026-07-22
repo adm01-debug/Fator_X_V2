@@ -114,9 +114,9 @@ export default function SlackSettingsPage() {
     <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
       <PageHeader
         title="Integração Slack"
-        subtitle="Envie alertas, notificações de agentes e habilite o bot Nexus dentro do seu workspace Slack."
-        icon={<Slack className="h-6 w-6" />}
+        description="Envie alertas, notificações de agentes e habilite o bot Nexus dentro do seu workspace Slack."
       />
+
 
       {!isConfigured && (
         <Alert>
