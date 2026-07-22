@@ -6,6 +6,7 @@ import { CitationDialog } from './CitationDialog';
 import type { CerebroCitation } from '@/types/cerebroCitations';
 import { logger } from '@/lib/logger';
 import { validateCitations } from '@/lib/citationValidation';
+import { prefetchSignedUrlForDocument } from '@/lib/signedUrlCache';
 
 interface CitedMarkdownProps {
   text: string;
