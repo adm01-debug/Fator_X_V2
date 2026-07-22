@@ -254,6 +254,27 @@ function IngestionRow({ ing, onRemoved }: RowProps) {
         )}
       </div>
       <div className="flex items-center gap-1 shrink-0">
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => setHistoryOpen(true)}
+          disabled={busy}
+          title="Ver histórico granular de status"
+        >
+          <History className="h-4 w-4" />
+        </Button>
+        {isRunning && (
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={doCancel}
+            disabled={busy}
+            title="Cancelar processamento"
+            className="text-destructive hover:text-destructive"
+          >
+            <StopCircle className="h-4 w-4" />
+          </Button>
+        )}
         {ing.status === 'ready' && ing.document_id && (
           <Button
             size="sm"
@@ -265,12 +286,12 @@ function IngestionRow({ ing, onRemoved }: RowProps) {
             <SlidersHorizontal className="h-4 w-4" />
           </Button>
         )}
-        {ing.status === 'error' && (
-          <Button size="sm" variant="ghost" onClick={doRetry} disabled={busy}>
+        {(ing.status === 'error' || ing.status === 'cancelled') && ing.storage_path && (
+          <Button size="sm" variant="ghost" onClick={doRetry} disabled={busy} title="Reprocessar">
             <RefreshCw className="h-4 w-4" />
           </Button>
         )}
-        <Button size="sm" variant="ghost" onClick={doDelete} disabled={busy}>
+        <Button size="sm" variant="ghost" onClick={doDelete} disabled={busy} title="Remover">
           <Trash2 className="h-4 w-4" />
         </Button>
       </div>
@@ -282,9 +303,16 @@ function IngestionRow({ ing, onRemoved }: RowProps) {
           documentTitle={ing.filename}
         />
       )}
+      <IngestionHistoryDialog
+        open={historyOpen}
+        onOpenChange={setHistoryOpen}
+        ingestionId={ing.id}
+        filename={ing.filename}
+      />
     </div>
   );
 }
+
 
 
 export default DocumentUploadTab;
