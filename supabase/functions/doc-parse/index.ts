@@ -48,7 +48,9 @@ const Input = z.object({
   chunk_size: z.number().int().min(200).max(4000).optional(),
   chunk_overlap: z.number().int().min(0).max(3999).optional(),
   chunk_strategy: z.enum(['fixed', 'paragraph', 'sentence']).optional(),
+  content_hash: z.string().regex(/^[a-f0-9]{64}$/i, 'must be sha-256 hex').optional(),
 });
+
 
 
 type IngestionStatus =
