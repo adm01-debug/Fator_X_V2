@@ -68,6 +68,7 @@ const SecurityPage = lazy(() => import("./pages/SecurityPage"));
 const TeamPage = lazy(() => import("./pages/TeamPage"));
 const BillingPage = lazy(() => import("./pages/BillingPage"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage"));
+const SlackSettingsPage = lazy(() => import("./pages/SlackSettingsPage"));
 const LGPDCompliancePage = lazy(() => import("./pages/LGPDCompliancePage"));
 const ApprovalQueuePage = lazy(() => import("./pages/ApprovalQueuePage"));
 const AIStudioPage = lazy(() => import("./pages/AIStudioPage"));
@@ -276,6 +277,7 @@ const App = () => {
                       <Route path="/billing" element={<SafePage><ProtectedRoute permission="settings.billing"><BillingPage /></ProtectedRoute></SafePage>} />
                       <Route path="/settings" element={<SafePage><ProtectedRoute permission="settings.read"><SettingsPage /></ProtectedRoute></SafePage>} />
                       <Route path="/settings/budget" element={<SafePage><ProtectedRoute permission="settings.billing"><BudgetSettingsPage /></ProtectedRoute></SafePage>} />
+                      <Route path="/settings/slack" element={<SafePage><ProtectedRoute permission="settings.read"><SlackSettingsPage /></ProtectedRoute></SafePage>} />
                       <Route path="/lgpd" element={<SafePage><ProtectedRoute permission="settings.api_keys"><LGPDCompliancePage /></ProtectedRoute></SafePage>} />
                       <Route path="/approvals" element={<SafePage><ProtectedRoute permission="agents.deploy"><ApprovalQueuePage /></ProtectedRoute></SafePage>} />
                       <Route path="/ai-studio" element={<SafePage><AIStudioPage /></SafePage>} />

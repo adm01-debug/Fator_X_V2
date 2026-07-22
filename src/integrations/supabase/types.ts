@@ -6990,6 +6990,172 @@ export type Database = {
         }
         Relationships: []
       }
+      slack_channel_routes: {
+        Row: {
+          category: string
+          category_label: string | null
+          channel_id: string
+          channel_name: string | null
+          created_at: string
+          created_by: string | null
+          enabled: boolean
+          id: string
+          mention_users: string[]
+          min_severity: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          category: string
+          category_label?: string | null
+          channel_id: string
+          channel_name?: string | null
+          created_at?: string
+          created_by?: string | null
+          enabled?: boolean
+          id?: string
+          mention_users?: string[]
+          min_severity?: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          category?: string
+          category_label?: string | null
+          channel_id?: string
+          channel_name?: string | null
+          created_at?: string
+          created_by?: string | null
+          enabled?: boolean
+          id?: string
+          mention_users?: string[]
+          min_severity?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "slack_channel_routes_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      slack_event_dedupe: {
+        Row: {
+          event_id: string
+          event_type: string
+          expires_at: string
+          received_at: string
+          team_id: string
+        }
+        Insert: {
+          event_id: string
+          event_type: string
+          expires_at?: string
+          received_at?: string
+          team_id: string
+        }
+        Update: {
+          event_id?: string
+          event_type?: string
+          expires_at?: string
+          received_at?: string
+          team_id?: string
+        }
+        Relationships: []
+      }
+      slack_user_cache: {
+        Row: {
+          cached_at: string
+          display_name: string | null
+          email: string | null
+          expires_at: string
+          is_bot: boolean
+          real_name: string | null
+          slack_user_id: string
+          team_id: string
+        }
+        Insert: {
+          cached_at?: string
+          display_name?: string | null
+          email?: string | null
+          expires_at?: string
+          is_bot?: boolean
+          real_name?: string | null
+          slack_user_id: string
+          team_id: string
+        }
+        Update: {
+          cached_at?: string
+          display_name?: string | null
+          email?: string | null
+          expires_at?: string
+          is_bot?: boolean
+          real_name?: string | null
+          slack_user_id?: string
+          team_id?: string
+        }
+        Relationships: []
+      }
+      slack_workspace_config: {
+        Row: {
+          bot_display_name: string | null
+          bot_user_id: string
+          created_at: string
+          id: string
+          installed_at: string
+          installed_by: string | null
+          is_active: boolean
+          last_verified_at: string | null
+          metadata: Json
+          slack_team_id: string
+          slack_team_name: string | null
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          bot_display_name?: string | null
+          bot_user_id: string
+          created_at?: string
+          id?: string
+          installed_at?: string
+          installed_by?: string | null
+          is_active?: boolean
+          last_verified_at?: string | null
+          metadata?: Json
+          slack_team_id: string
+          slack_team_name?: string | null
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          bot_display_name?: string | null
+          bot_user_id?: string
+          created_at?: string
+          id?: string
+          installed_at?: string
+          installed_by?: string | null
+          is_active?: boolean
+          last_verified_at?: string | null
+          metadata?: Json
+          slack_team_id?: string
+          slack_team_name?: string | null
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "slack_workspace_config_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: true
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       synthetic_checks: {
         Row: {
           consecutive_failures: number
