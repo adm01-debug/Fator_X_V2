@@ -124,19 +124,29 @@ export function CitedMarkdown({ text, citations }: CitedMarkdownProps) {
   };
 
   /** Percorre recursivamente os children e substitui strings por chips. */
-  const processChildren = (children: ReactNode, keyPrefix = 'k'): ReactNode => {
+  const processChildren = (children: ReactNode, keyPrefix = 'k'): ReactNode[] => {
     const arr = Children.toArray(children);
-    return arr.flatMap((child, i) => {
-      if (typeof child === 'string') return renderWithChips(child, `${keyPrefix}-${i}`);
-      if (typeof child === 'number') return [String(child)];
+    const out: ReactNode[] = [];
+    arr.forEach((child, i) => {
+      if (typeof child === 'string') {
+        renderWithChips(child, `${keyPrefix}-${i}`).forEach((p) => out.push(p));
+        return;
+      }
+      if (typeof child === 'number') {
+        out.push(String(child));
+        return;
+      }
       if (isValidElement(child)) {
         const el = child as JSX.Element;
         const nested = processChildren(el.props?.children, `${keyPrefix}-${i}`);
-        return [cloneElement(el, { key: el.key ?? `${keyPrefix}-${i}` }, nested)];
+        out.push(cloneElement(el, { key: el.key ?? `${keyPrefix}-${i}` }, nested));
+        return;
       }
-      return [child];
+      out.push(child);
     });
+    return out;
   };
+
 
   const wrap = (Tag: keyof JSX.IntrinsicElements) =>
     ({ children }: { children?: ReactNode }) => <Tag>{processChildren(children)}</Tag>;
