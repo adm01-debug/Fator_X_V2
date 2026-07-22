@@ -18,6 +18,7 @@ import { BudgetEventsMounter } from "@/components/shared/BudgetEventsMounter";
 import { IncidentRunsMounter } from "@/components/shared/IncidentRunsMounter";
 import { ChaosBanner } from "@/components/shared/ChaosBanner";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
+import { SignedUrlCacheDebugPanel } from "@/components/debug/SignedUrlCacheDebugPanel";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { I18nProvider } from "@/i18n/I18nProvider";
 import { AuthGuard } from "@/components/layout/AuthGuard";
