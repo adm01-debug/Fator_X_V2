@@ -9657,6 +9657,7 @@ export type Database = {
         Returns: undefined
       }
       detect_cost_anomalies: { Args: never; Returns: Json }
+      detect_slow_queries_and_alert: { Args: never; Returns: number }
       disable_all_chaos: { Args: { p_workspace_id: string }; Returns: number }
       enforce_budget: { Args: never; Returns: Json }
       execute_change: {
