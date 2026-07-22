@@ -9728,6 +9728,19 @@ export type Database = {
         Returns: number
       }
       get_db_health_snapshot: { Args: never; Returns: Json }
+      get_db_health_timeseries: {
+        Args: { _hours?: number }
+        Returns: {
+          captured_at: string
+          connections_max: number
+          connections_pct: number
+          connections_used: number
+          long_running_count: number
+          top_slow_mean_ms: number
+          top_slow_preview: string
+          wal_bytes: number
+        }[]
+      }
       get_db_rollback_rate: {
         Args: never
         Returns: {

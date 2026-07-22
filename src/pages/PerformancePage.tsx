@@ -4,7 +4,7 @@
  * + Auto-EXPLAIN de SELECT com sugestão de índice.
  * Admin-only via RPCs SECURITY DEFINER.
  */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/shared/PageHeader";
@@ -15,6 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Activity, AlertTriangle, Play, Loader2, Sparkles } from "lucide-react";
 import { DbHealthCard } from "@/components/admin/DbHealthCard";
+import { DbHealthTimeseriesCard } from "@/components/admin/DbHealthTimeseriesCard";
 import { toast } from "sonner";
 
 interface SlowAlert {
@@ -38,6 +39,17 @@ export default function PerformancePage() {
     "SELECT id, created_at FROM public.agent_traces ORDER BY created_at DESC LIMIT 100"
   );
   const [explain, setExplain] = useState<ExplainResult | null>(null);
+
+  useEffect(() => {
+    try {
+      const pending = sessionStorage.getItem("perf:explain-query");
+      if (pending && pending.trim().length > 0) {
+        setQuery(pending);
+        sessionStorage.removeItem("perf:explain-query");
+        toast.info("Consulta carregada. Clique em Gerar EXPLAIN.");
+      }
+    } catch { /* storage indisponível */ }
+  }, []);
 
   const { data: alerts = [], isLoading, refetch, isFetching } = useQuery({
     queryKey: ["slow-query-alerts-history"],
@@ -72,6 +84,8 @@ export default function PerformancePage() {
       />
 
       <DbHealthCard />
+
+      <DbHealthTimeseriesCard />
 
       <Card>
         <CardHeader className="flex flex-row items-start justify-between">
