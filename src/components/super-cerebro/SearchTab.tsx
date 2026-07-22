@@ -48,6 +48,7 @@ export function SearchTab() {
   const [query, setQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<string | null>(null);
+  const [citations, setCitations] = useState<CerebroCitation[]>([]);
   const [history, setHistory] = useState<string[]>(() => loadHistory());
 
   // Rerank state
