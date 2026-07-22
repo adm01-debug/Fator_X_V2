@@ -21,9 +21,10 @@ import { DecayDetectionTab } from "@/components/super-cerebro/DecayDetectionTab"
 import { ContextTiersTab } from "@/components/super-cerebro/ContextTiersTab";
 import { NotebooksTab } from "@/components/super-cerebro/NotebooksTab";
 import { NotebookSelector } from "@/components/super-cerebro/NotebookSelector";
+import { NotebookWorkspace } from "@/components/super-cerebro/notebook/NotebookWorkspace";
 
 export default function SuperCerebroPage() {
-  const [activeTab, setActiveTab] = useState('notebooks');
+  const [activeTab, setActiveTab] = useState('workspace');
 
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
