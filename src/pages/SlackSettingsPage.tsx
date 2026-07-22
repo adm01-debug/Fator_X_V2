@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+
 import {
   Dialog,
   DialogContent,
@@ -30,7 +30,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { PageHeader } from "@/components/shared/PageHeader";
-import { Plus, Trash2, Send, CheckCircle2, AlertTriangle, RefreshCw } from "lucide-react";
+import { Plus, Trash2, Send, CheckCircle2, RefreshCw } from "lucide-react";
 import {
   useSlackConfig,
   type SlackCategory,
