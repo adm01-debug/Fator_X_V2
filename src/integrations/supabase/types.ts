@@ -9664,6 +9664,7 @@ export type Database = {
         Args: { p_change_id: string; p_success: boolean }
         Returns: undefined
       }
+      explain_query_plan: { Args: { _query: string }; Returns: Json }
       generate_compliance_report: {
         Args: {
           _framework_code: string
@@ -9818,6 +9819,17 @@ export type Database = {
         Returns: Json
       }
       get_slo_summary: { Args: { p_window_hours?: number }; Returns: Json }
+      get_slow_query_alerts_history: {
+        Args: { _days?: number }
+        Returns: {
+          created_at: string
+          id: string
+          message: string
+          metadata: Json
+          resolved_at: string
+          severity: string
+        }[]
+      }
       get_synthetic_summary: {
         Args: { p_check_id: string; p_window_hours?: number }
         Returns: Json
