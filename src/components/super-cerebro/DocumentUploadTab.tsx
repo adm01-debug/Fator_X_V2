@@ -7,10 +7,10 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from 'sonner';
-import { FileText, FileType2, Trash2, RefreshCw, UploadCloud, Info, SlidersHorizontal } from 'lucide-react';
+import { FileText, FileType2, Trash2, RefreshCw, UploadCloud, Info, SlidersHorizontal, History, StopCircle } from 'lucide-react';
 import {
   uploadDocument, listIngestions, subscribeIngestions,
-  retryIngestion, deleteIngestion,
+  retryIngestion, deleteIngestion, cancelIngestion,
   statusLabel, methodLabel,
   ACCEPTED_MIMES, MAX_UPLOAD_BYTES,
   type DocumentIngestion,
@@ -18,6 +18,8 @@ import {
 import { NotebookSelector } from './NotebookSelector';
 import { useCerebroStore } from '@/stores/cerebroStore';
 import { DocumentChunkingDialog } from './DocumentChunkingDialog';
+import { IngestionHistoryDialog } from './IngestionHistoryDialog';
+
 
 
 function humanBytes(n: number): string {
