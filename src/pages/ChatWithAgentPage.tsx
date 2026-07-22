@@ -112,7 +112,10 @@ export default function ChatWithAgentPage() {
   const [previews, setPreviews] = useState<Record<string, ConversationPreview>>({});
   const [confirmClear, setConfirmClear] = useState(false);
   const [showTyping, setShowTyping] = useState(false);
+  const [atBottom, setAtBottom] = useState(true);
+  const [unreadCount, setUnreadCount] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
   const activeIdRef = useRef<string | null>(activeId);
   activeIdRef.current = activeId;
 
@@ -157,11 +160,40 @@ export default function ChatWithAgentPage() {
     setPreviews(map);
   }, [agents]);
 
-  // Auto scroll
+  // Auto scroll (só se usuário já está no fim)
   useEffect(() => {
     const el = scrollRef.current;
+    if (!el) return;
+    if (atBottom) {
+      el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+      setUnreadCount(0);
+    } else {
+      setUnreadCount((c) => c + 1);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages.length]);
+
+  // Detecta se o usuário está próximo do fim para exibir FAB
+  useEffect(() => {
+    const el = scrollAreaRef.current?.querySelector('[data-radix-scroll-area-viewport]') as HTMLElement | null;
+    if (!el) return;
+    function onScroll() {
+      if (!el) return;
+      const dist = el.scrollHeight - el.scrollTop - el.clientHeight;
+      const near = dist < 80;
+      setAtBottom(near);
+      if (near) setUnreadCount(0);
+    }
+    el.addEventListener('scroll', onScroll);
+    onScroll();
+    return () => el.removeEventListener('scroll', onScroll);
+  }, [activeId]);
+
+  const scrollToBottom = useCallback(() => {
+    const el = scrollRef.current;
     if (el) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
-  }, [messages, streamText, isStreaming]);
+    setUnreadCount(0);
+  }, []);
 
   // Delay do "digitando…" para evitar flicker
   useEffect(() => {
@@ -190,7 +222,7 @@ export default function ChatWithAgentPage() {
       max_tokens: 1024,
     };
 
-    await stream('/functions/v1/llm-gateway', payload, {
+    await stream(buildEdgeUrl('llm-gateway'), payload, {
       onComplete: (fullText) => {
         // Descarta se o usuário trocou de agente durante o stream
         if (activeIdRef.current !== agent.id) return;
