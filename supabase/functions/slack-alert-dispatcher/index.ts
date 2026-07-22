@@ -107,10 +107,16 @@ Deno.serve(async (req) => {
         error: resp.ok ? undefined : resp.error,
       });
     } catch (err) {
-      results.push({
-        channel: route.channel_id,
-        ok: false,
-        error: err instanceof Error ? err.message : String(err),
+      const errMsg = err instanceof Error ? err.message : String(err);
+      results.push({ channel: route.channel_id, ok: false, error: errMsg });
+      // Enfileirar na DLQ para reprocesso automático
+      await supabase.from("slack_dispatch_dlq").insert({
+        workspace_id: alert.workspace_id,
+        alert_id: alert.id ?? null,
+        payload,
+        error: errMsg,
+      }).then(({ error }) => {
+        if (error) console.warn("[slack-alert-dispatcher] dlq insert failed", error.message);
       });
     }
   }
@@ -118,7 +124,7 @@ Deno.serve(async (req) => {
   // Audit
   await supabase.from("audit_events").insert({
     workspace_id: alert.workspace_id,
-    category: "slack_integration",
+    event_type: "slack_integration",
     action: "alert_dispatched",
     resource_type: "security_alert",
     resource_id: alert.id ?? null,

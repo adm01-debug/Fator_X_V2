@@ -158,7 +158,7 @@ Deno.serve(async (req) => {
 
   await supabase.from("audit_events").insert({
     workspace_id: wsCfg.workspace_id,
-    category: "slack_integration",
+    event_type: "slack_integration",
     action: "bot_replied",
     resource_type: "slack_message",
     resource_id: ev.ts ?? null,

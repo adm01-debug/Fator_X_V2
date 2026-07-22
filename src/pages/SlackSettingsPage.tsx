@@ -41,6 +41,7 @@ import {
 import { SlackAgentNotificationsPanel } from "@/components/slack/SlackAgentNotificationsPanel";
 import { SlackRagSourcesPanel } from "@/components/slack/SlackRagSourcesPanel";
 import { SlackBotBindingPanel } from "@/components/slack/SlackBotBindingPanel";
+import { SlackHealthCard } from "@/components/slack/SlackHealthCard";
 
 
 const CATEGORY_LABELS: Record<SlackCategory, string> = {
@@ -165,6 +166,8 @@ export default function SlackSettingsPage() {
           </CardContent>
         </Card>
       )}
+
+      {isConfigured && <SlackHealthCard />}
 
       <Tabs defaultValue="alerts" className="w-full">
         <TabsList>

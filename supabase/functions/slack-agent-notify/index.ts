@@ -104,7 +104,7 @@ Deno.serve(async (req) => {
       title: `Agente ${vars.agent_name} — ${payload.status.toUpperCase()}`,
       description,
       severity,
-      category: "agent_execution",
+      event_type: "agent_execution",
       actionUrl: vars.trace_url || undefined,
       actionLabel: "Ver trace",
     });
@@ -127,7 +127,7 @@ Deno.serve(async (req) => {
 
   await supabase.from("audit_events").insert({
     workspace_id: payload.workspace_id,
-    category: "slack_integration",
+    event_type: "slack_integration",
     action: "agent_notified",
     resource_type: "agent",
     resource_id: payload.agent_id,
