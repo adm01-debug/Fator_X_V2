@@ -61,7 +61,7 @@ serve(async (req) => {
     if (!parsedBody.success) {
       return errorResponse('Payload inválido: ' + JSON.stringify(parsedBody.error.flatten().fieldErrors), 400, req);
     }
-    const { query, stream: streamOpt, notebook_id: notebookId } = parsedBody.data;
+    const { query, stream: streamOpt, notebook_id: notebookId, source_ids: sourceIds } = parsedBody.data;
     const stream = streamOpt === true;
 
     await supabase.from('workspace_members').select('workspace_id').eq('user_id', user.id).limit(1).single();
