@@ -9403,6 +9403,17 @@ export type Database = {
           },
         ]
       }
+      slack_dlq_stats: {
+        Row: {
+          dead: number | null
+          max_attempts: number | null
+          oldest_pending_at: string | null
+          pending: number | null
+          resolved: number | null
+          workspace_id: string | null
+        }
+        Relationships: []
+      }
       usage_records_cost_safe: {
         Row: {
           agent_id: string | null
