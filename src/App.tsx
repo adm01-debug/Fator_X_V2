@@ -68,6 +68,7 @@ const SecurityPage = lazy(() => import("./pages/SecurityPage"));
 const TeamPage = lazy(() => import("./pages/TeamPage"));
 const BillingPage = lazy(() => import("./pages/BillingPage"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage"));
+const SlackSettingsPage = lazy(() => import("./pages/SlackSettingsPage"));
 const LGPDCompliancePage = lazy(() => import("./pages/LGPDCompliancePage"));
 const ApprovalQueuePage = lazy(() => import("./pages/ApprovalQueuePage"));
 const AIStudioPage = lazy(() => import("./pages/AIStudioPage"));
