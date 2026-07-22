@@ -55,7 +55,8 @@ const Input = z.object({
 
 type IngestionStatus =
   | 'pending' | 'uploading' | 'parsing' | 'ocr'
-  | 'chunking' | 'embedding' | 'ready' | 'error';
+  | 'chunking' | 'embedding' | 'ready' | 'error' | 'cancelled';
+
 
 async function extractDocxText(bytes: Uint8Array): Promise<string> {
   const { unzip } = await import("https://esm.sh/unzipit@1.4.3");
