@@ -219,6 +219,29 @@ serve(async (req) => {
         .eq('id', body.ingestion_id);
     };
 
+    // Cooperative cancellation — checked between pipeline stages.
+    const CANCELLED = Symbol('ingestion_cancelled');
+    const checkCancelled = async (): Promise<boolean> => {
+      const { data } = await supabase
+        .from('document_ingestions')
+        .select('cancel_requested,status')
+        .eq('id', body.ingestion_id)
+        .maybeSingle();
+      if (data?.cancel_requested || data?.status === 'cancelled') {
+        await supabase
+          .from('document_ingestions')
+          .update({
+            status: 'cancelled',
+            error_message: 'Cancelado pelo usuário',
+            progress_pct: (data?.status === 'cancelled') ? undefined : 0,
+          })
+          .eq('id', body.ingestion_id);
+        return true;
+      }
+      return false;
+    };
+
+
     // Resolve content_hash: prefer body, fallback to Idempotency-Key header
     const idempotencyHeader = req.headers.get('Idempotency-Key') ?? req.headers.get('idempotency-key');
     const providedHash = (body.content_hash ?? idempotencyHeader ?? '').toLowerCase();
