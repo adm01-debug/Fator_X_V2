@@ -320,9 +320,7 @@ export function SearchTab() {
               <Sparkles className="h-4 w-4 text-primary" />
               <p className="text-meta font-bold uppercase tracking-widest text-foreground">Resposta do Super Cérebro</p>
             </div>
-            <div className="text-body-sm text-foreground whitespace-pre-wrap leading-relaxed">
-              {searchResults}
-            </div>
+            <CitedMarkdown text={searchResults} citations={citations} />
           </div>
         )}
       </div>
