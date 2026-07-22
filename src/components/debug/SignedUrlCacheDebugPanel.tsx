@@ -79,6 +79,7 @@ export function SignedUrlCacheDebugPanel() {
           <Row label="hits" value={stats.hits} accent="text-emerald-500" />
           <Row label="misses" value={stats.misses} accent="text-amber-500" />
           <Row label="in-flight coalesced" value={stats.inflightCoalesced} />
+          <Row label="retries" value={stats.retries} accent={stats.retries ? 'text-amber-500' : ''} />
           <Row label="errors" value={stats.errors} accent={stats.errors ? 'text-destructive' : ''} />
           <Row label="hit rate" value={`${hitRatePct}%`} />
           <Row label="fetches" value={stats.fetches} />
