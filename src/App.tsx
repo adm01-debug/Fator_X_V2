@@ -65,6 +65,7 @@ const DataStoragePage = lazy(() => import("./pages/DataStoragePage"));
 const DataHubPage = lazy(() => import("./pages/DataHubPage"));
 const AdminPage = lazy(() => import("./pages/AdminPage"));
 const SecurityPage = lazy(() => import("./pages/SecurityPage"));
+const PerformancePage = lazy(() => import("./pages/PerformancePage"));
 const TeamPage = lazy(() => import("./pages/TeamPage"));
 const BillingPage = lazy(() => import("./pages/BillingPage"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage"));
