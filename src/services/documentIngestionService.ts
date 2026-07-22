@@ -219,7 +219,14 @@ export async function uploadDocument(file: File, opts: UploadOptions): Promise<D
   // 5. Fetch estado final
   const { data: final } = await supabase
     .from('document_ingestions').select('*').eq('id', ingestion.id).maybeSingle();
-  return (final ?? ingestion) as DocumentIngestion;
+  const finalRow = (final ?? ingestion) as DocumentIngestion;
+  // Reupload/upsert pode ter substituído o binário no mesmo storage_path — invalida cache
+  // para que futuras citações gerem uma signed URL fresca contra a nova versão do arquivo.
+  if (finalRow.document_id) {
+    const { invalidateSignedUrlForDocument } = await import('@/lib/signedUrlCache');
+    await invalidateSignedUrlForDocument(finalRow.document_id);
+  }
+  return finalRow;
 }
 
 export async function retryIngestion(id: string): Promise<void> {
