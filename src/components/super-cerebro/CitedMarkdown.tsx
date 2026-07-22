@@ -6,6 +6,7 @@ import { CitationDialog } from './CitationDialog';
 import type { CerebroCitation } from '@/types/cerebroCitations';
 import { logger } from '@/lib/logger';
 import { validateCitations } from '@/lib/citationValidation';
+import { prefetchSignedUrlForDocument } from '@/lib/signedUrlCache';
 
 interface CitedMarkdownProps {
   text: string;
@@ -71,6 +72,9 @@ export function CitedMarkdown({ text, citations }: CitedMarkdownProps) {
       logger.warn('cerebro.citation.unknown', { n });
       return `[${n}]`;
     }
+    const warm = () => {
+      if (citation.document_id) void prefetchSignedUrlForDocument(citation.document_id);
+    };
     return (
       <TooltipProvider key={key} delayDuration={200}>
         <Tooltip>
@@ -78,6 +82,9 @@ export function CitedMarkdown({ text, citations }: CitedMarkdownProps) {
             <button
               type="button"
               onClick={() => setOpen(citation)}
+              onMouseEnter={warm}
+              onFocus={warm}
+              onTouchStart={warm}
               className="mx-0.5 inline-flex align-baseline"
               aria-label={`Ver fonte ${n}: ${citation.document_title}`}
             >
@@ -99,6 +106,7 @@ export function CitedMarkdown({ text, citations }: CitedMarkdownProps) {
       </TooltipProvider>
     );
   };
+
 
   const renderWithChips = (input: string, keyPrefix: string): (string | JSX.Element)[] => {
     if (!input) return [input];
@@ -205,6 +213,8 @@ export function CitedMarkdown({ text, citations }: CitedMarkdownProps) {
               key={c.chunk_id}
               type="button"
               onClick={() => setOpen(c)}
+              onMouseEnter={() => c.document_id && void prefetchSignedUrlForDocument(c.document_id)}
+              onFocus={() => c.document_id && void prefetchSignedUrlForDocument(c.document_id)}
               className="text-[11px] px-2 py-1 rounded-md bg-secondary/40 hover:bg-secondary transition-colors border border-border/40 max-w-[240px] truncate text-left"
               title={c.document_title}
             >

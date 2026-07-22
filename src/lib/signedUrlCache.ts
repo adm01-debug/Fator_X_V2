@@ -195,10 +195,81 @@ export async function invalidateSignedUrlForDocument(documentId: string): Promis
     const md = (data.metadata ?? {}) as { storage_path?: string; bucket?: string };
     if (!md.storage_path) return;
     invalidateSignedUrl(md.bucket ?? 'knowledge-uploads', md.storage_path);
+    docMetaCache.delete(documentId);
   } catch (e) {
     logger.error('signed_url_cache.invalidate_by_doc_failed', { documentId, error: e });
   }
 }
+
+// ---------- Prefetch por documento ----------
+// Cache curto (5 min) do mapeamento documentId -> (bucket, storage_path)
+// para evitar SELECTs repetidos ao passar o mouse sobre a mesma citação.
+interface DocMetaEntry { bucket: string; storagePath: string; expiresAt: number; }
+const DOC_META_TTL_MS = 300_000;
+const docMetaCache = new Map<string, DocMetaEntry>();
+const docMetaInflight = new Map<string, Promise<DocMetaEntry | null>>();
+const prefetchInflight = new Map<string, Promise<void>>();
+
+async function resolveDocMeta(documentId: string): Promise<DocMetaEntry | null> {
+  const now = Date.now();
+  const hit = docMetaCache.get(documentId);
+  if (hit && hit.expiresAt > now) return hit;
+  const pending = docMetaInflight.get(documentId);
+  if (pending) return pending;
+  const p = (async () => {
+    try {
+      const { data, error } = await supabaseExternal
+        .from('documents')
+        .select('metadata')
+        .eq('id', documentId)
+        .maybeSingle();
+      if (error || !data) return null;
+      const md = (data.metadata ?? {}) as { storage_path?: string; bucket?: string };
+      if (!md.storage_path) return null;
+      const entry: DocMetaEntry = {
+        bucket: md.bucket ?? 'knowledge-uploads',
+        storagePath: md.storage_path,
+        expiresAt: Date.now() + DOC_META_TTL_MS,
+      };
+      docMetaCache.set(documentId, entry);
+      return entry;
+    } catch (e) {
+      logger.error('signed_url_cache.doc_meta_failed', { documentId, error: e });
+      return null;
+    } finally {
+      docMetaInflight.delete(documentId);
+    }
+  })();
+  docMetaInflight.set(documentId, p);
+  return p;
+}
+
+/**
+ * Aquece o cache de signed URL para um documento (hover/focus em citação).
+ * Idempotente e deduplicado — chamadas repetidas para o mesmo documentId
+ * enquanto uma anterior está em voo compartilham a mesma Promise.
+ * Retorna sem erros mesmo se o documento não puder ser resolvido.
+ */
+export function prefetchSignedUrlForDocument(documentId: string): Promise<void> {
+  if (!documentId) return Promise.resolve();
+  const existing = prefetchInflight.get(documentId);
+  if (existing) return existing;
+  const p = (async () => {
+    try {
+      const meta = await resolveDocMeta(documentId);
+      if (!meta) return;
+      const key = `${meta.bucket}::${meta.storagePath}`;
+      const cached = cache.get(key);
+      if (cached && cached.expiresAt > Date.now()) return; // já quente
+      await getCachedSignedUrl(meta.bucket, meta.storagePath);
+    } finally {
+      prefetchInflight.delete(documentId);
+    }
+  })();
+  prefetchInflight.set(documentId, p);
+  return p;
+}
+
 
 export function clearSignedUrlCache(): void {
   cache.clear();
