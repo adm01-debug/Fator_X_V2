@@ -23,6 +23,7 @@ import { ChatComposer } from '@/components/chat/ChatComposer';
 import { EmptyChatState } from '@/components/chat/EmptyChatState';
 import { DaySeparator } from '@/components/chat/DaySeparator';
 import { ClearChatDialog } from '@/components/chat/ClearChatDialog';
+import { ScrollToBottomButton } from '@/components/chat/ScrollToBottomButton';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   DropdownMenu,
@@ -32,6 +33,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
 import { logger } from '@/lib/logger';
+import { buildEdgeUrl } from '@/lib/edgeUrl';
 
 const STORAGE_PREFIX = 'nexus:chat:v1:';
 const MAX_STORED = 50;
