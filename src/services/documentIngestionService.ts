@@ -281,3 +281,75 @@ export function methodLabel(m: ExtractionMethod | null): string {
   };
   return map[m];
 }
+
+// ═══════════════════════════════════════════════════════════════
+// Cancelamento + histórico granular de ingestão
+// ═══════════════════════════════════════════════════════════════
+
+export interface IngestionEvent {
+  id: string;
+  ingestion_id: string;
+  user_id: string;
+  status: IngestionStatus;
+  progress_pct: number;
+  message: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
+/** Solicita cancelamento cooperativo — a Edge Function encerra na próxima checagem. */
+export async function cancelIngestion(id: string): Promise<void> {
+  const { data: ing, error: fErr } = await supabase
+    .from('document_ingestions')
+    .select('status')
+    .eq('id', id)
+    .maybeSingle();
+  if (fErr) throw fErr;
+  if (!ing) throw new Error('Ingestion não encontrada');
+  if (ing.status === 'ready' || ing.status === 'cancelled' || ing.status === 'error') {
+    throw new Error('Ingestion já finalizada — nada a cancelar.');
+  }
+  const { error } = await supabase
+    .from('document_ingestions')
+    .update({
+      cancel_requested: true,
+      status: 'cancelled',
+      error_message: 'Cancelado pelo usuário',
+    })
+    .eq('id', id);
+  if (error) throw error;
+}
+
+export async function listIngestionEvents(ingestionId: string): Promise<IngestionEvent[]> {
+  const { data, error } = await supabase
+    .from('document_ingestion_events')
+    .select('*')
+    .eq('ingestion_id', ingestionId)
+    .order('created_at', { ascending: true })
+    .limit(200);
+  if (error) throw error;
+  return (data ?? []) as IngestionEvent[];
+}
+
+export function subscribeIngestionEvents(
+  ingestionId: string,
+  onEvent: (ev: IngestionEvent) => void,
+) {
+  const channel = supabase
+    .channel(`ingestion-events:${ingestionId}`)
+    .on(
+      'postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'document_ingestion_events',
+        filter: `ingestion_id=eq.${ingestionId}`,
+      },
+      (payload) => {
+        const row = payload.new as IngestionEvent | undefined;
+        if (row) onEvent(row);
+      },
+    )
+    .subscribe();
+  return () => { supabase.removeChannel(channel); };
+}
