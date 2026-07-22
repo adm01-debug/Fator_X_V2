@@ -30,7 +30,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { PageHeader } from "@/components/shared/PageHeader";
-import { Plus, Trash2, Send, CheckCircle2, AlertTriangle } from "lucide-react";
+import { Plus, Trash2, Send, CheckCircle2, AlertTriangle, RefreshCw } from "lucide-react";
 import {
   useSlackConfig,
   type SlackCategory,
@@ -38,6 +38,10 @@ import {
   type SlackSeverity,
   type UpsertRouteInput,
 } from "@/hooks/useSlackConfig";
+import { SlackAgentNotificationsPanel } from "@/components/slack/SlackAgentNotificationsPanel";
+import { SlackRagSourcesPanel } from "@/components/slack/SlackRagSourcesPanel";
+import { SlackBotBindingPanel } from "@/components/slack/SlackBotBindingPanel";
+
 
 const CATEGORY_LABELS: Record<SlackCategory, string> = {
   security_alert: "Alertas de segurança",
@@ -76,7 +80,7 @@ function emptyForm(): UpsertRouteInput {
 }
 
 export default function SlackSettingsPage() {
-  const { isConfigured, config, routes, loading, upsertRoute, deleteRoute, testRoute } =
+  const { isConfigured, config, routes, loading, upsertRoute, deleteRoute, testRoute, verifyConnection } =
     useSlackConfig();
 
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -117,27 +121,47 @@ export default function SlackSettingsPage() {
         description="Envie alertas, notificações de agentes e habilite o bot Nexus dentro do seu workspace Slack."
       />
 
-
       {!isConfigured && (
         <Alert>
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>Slack ainda não configurado</AlertTitle>
-          <AlertDescription>
-            Para começar, execute o wizard de instalação do app Slack customizado. As rotas abaixo
-            só entrarão em vigor após a configuração dos secrets do bot.
+          <AlertDescription className="flex flex-col sm:flex-row sm:items-center gap-3 mt-2">
+            <span>
+              Configure os secrets <code>SLACK_BOT_TOKEN</code> e <code>SLACK_SIGNING_SECRET</code>, então clique em verificar.
+            </span>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => verifyConnection.mutate()}
+              disabled={verifyConnection.isPending}
+            >
+              <RefreshCw className="h-3.5 w-3.5 mr-1" />
+              Verificar conexão
+            </Button>
           </AlertDescription>
         </Alert>
       )}
 
       {isConfigured && config && (
         <Card>
-          <CardContent className="pt-6 flex items-center gap-3">
-            <CheckCircle2 className="h-5 w-5 text-emerald-500" />
-            <div className="text-sm">
-              Conectado ao workspace{" "}
-              <span className="font-medium">{config.slack_team_name ?? config.slack_team_id}</span>{" "}
-              como <span className="font-medium">{config.bot_display_name ?? config.bot_user_id}</span>.
+          <CardContent className="pt-6 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+              <div className="text-sm">
+                Conectado ao workspace{" "}
+                <span className="font-medium">{config.slack_team_name ?? config.slack_team_id}</span>{" "}
+                como <span className="font-medium">{config.bot_display_name ?? config.bot_user_id}</span>.
+              </div>
             </div>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => verifyConnection.mutate()}
+              disabled={verifyConnection.isPending}
+            >
+              <RefreshCw className="h-3.5 w-3.5 mr-1" />
+              Reverificar
+            </Button>
           </CardContent>
         </Card>
       )}
@@ -145,16 +169,11 @@ export default function SlackSettingsPage() {
       <Tabs defaultValue="alerts" className="w-full">
         <TabsList>
           <TabsTrigger value="alerts">Alertas</TabsTrigger>
-          <TabsTrigger value="notifications" disabled>
-            Notificações de Agentes
-          </TabsTrigger>
-          <TabsTrigger value="bot" disabled>
-            Bot @Nexus
-          </TabsTrigger>
-          <TabsTrigger value="rag" disabled>
-            Fontes RAG
-          </TabsTrigger>
+          <TabsTrigger value="notifications">Notificações de Agentes</TabsTrigger>
+          <TabsTrigger value="bot">Bot @Nexus</TabsTrigger>
+          <TabsTrigger value="rag">Fontes RAG</TabsTrigger>
         </TabsList>
+
 
         <TabsContent value="alerts" className="space-y-4 mt-6">
           <Card>
@@ -229,7 +248,20 @@ export default function SlackSettingsPage() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        <TabsContent value="notifications" className="space-y-4 mt-6">
+          <SlackAgentNotificationsPanel />
+        </TabsContent>
+
+        <TabsContent value="bot" className="space-y-4 mt-6">
+          <SlackBotBindingPanel />
+        </TabsContent>
+
+        <TabsContent value="rag" className="space-y-4 mt-6">
+          <SlackRagSourcesPanel />
+        </TabsContent>
       </Tabs>
+
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-lg">
