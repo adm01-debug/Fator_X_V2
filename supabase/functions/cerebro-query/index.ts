@@ -101,6 +101,11 @@ serve(async (req) => {
         // Isolation: only chunks whose metadata pins this notebook
         chunkQuery = chunkQuery.filter('metadata->>collection_id', 'eq', notebookId);
       }
+      if (sourceIds && sourceIds.length > 0) {
+        // NotebookLM-style: user restringiu o chat a fontes específicas
+        chunkQuery = chunkQuery.in('document_id', sourceIds);
+        facts.push(`Chat restrito a ${sourceIds.length} fontes selecionadas`);
+      }
       const { data: chunks } = await chunkQuery;
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
