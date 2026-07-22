@@ -4,10 +4,11 @@ import { InfoHint } from "@/components/shared/InfoHint";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Brain, Search, Network, BookOpen,
-  Activity, Users, FlaskConical, Zap, Clock, GitMerge, TrendingDown, Layers
+  Activity, Users, FlaskConical, Zap, Clock, GitMerge, TrendingDown, Layers, Upload
 } from "lucide-react";
 import { OverviewTab } from "@/components/super-cerebro/OverviewTab";
 import { SearchTab } from "@/components/super-cerebro/SearchTab";
+import { DocumentUploadTab } from "@/components/super-cerebro/DocumentUploadTab";
 import { KnowledgeAreasTab } from "@/components/super-cerebro/KnowledgeAreasTab";
 import { KnowledgeGraphTab } from "@/components/super-cerebro/KnowledgeGraphTab";
 import { KnowledgeHealthTab } from "@/components/super-cerebro/KnowledgeHealthTab";
