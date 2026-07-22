@@ -1,15 +1,17 @@
-import { useState, useMemo, Children, isValidElement, cloneElement, type ReactNode } from 'react';
+import { useState, useMemo, useEffect, Children, isValidElement, cloneElement, type ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { CitationDialog } from './CitationDialog';
 import type { CerebroCitation } from '@/types/cerebroCitations';
 import { logger } from '@/lib/logger';
+import { validateCitations } from '@/lib/citationValidation';
 
 interface CitedMarkdownProps {
   text: string;
   citations: CerebroCitation[];
 }
+
 
 /**
  * Matches:
