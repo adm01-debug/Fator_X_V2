@@ -23,6 +23,7 @@ import { ChatComposer } from '@/components/chat/ChatComposer';
 import { EmptyChatState } from '@/components/chat/EmptyChatState';
 import { DaySeparator } from '@/components/chat/DaySeparator';
 import { ClearChatDialog } from '@/components/chat/ClearChatDialog';
+import { ScrollToBottomButton } from '@/components/chat/ScrollToBottomButton';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   DropdownMenu,
@@ -32,6 +33,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
 import { logger } from '@/lib/logger';
+import { buildEdgeUrl } from '@/lib/edgeUrl';
 
 const STORAGE_PREFIX = 'nexus:chat:v1:';
 const MAX_STORED = 50;
@@ -110,7 +112,10 @@ export default function ChatWithAgentPage() {
   const [previews, setPreviews] = useState<Record<string, ConversationPreview>>({});
   const [confirmClear, setConfirmClear] = useState(false);
   const [showTyping, setShowTyping] = useState(false);
+  const [atBottom, setAtBottom] = useState(true);
+  const [unreadCount, setUnreadCount] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
   const activeIdRef = useRef<string | null>(activeId);
   activeIdRef.current = activeId;
 
@@ -155,11 +160,40 @@ export default function ChatWithAgentPage() {
     setPreviews(map);
   }, [agents]);
 
-  // Auto scroll
+  // Auto scroll (só se usuário já está no fim)
   useEffect(() => {
     const el = scrollRef.current;
+    if (!el) return;
+    if (atBottom) {
+      el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+      setUnreadCount(0);
+    } else {
+      setUnreadCount((c) => c + 1);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages.length]);
+
+  // Detecta se o usuário está próximo do fim para exibir FAB
+  useEffect(() => {
+    const el = scrollAreaRef.current?.querySelector('[data-radix-scroll-area-viewport]') as HTMLElement | null;
+    if (!el) return;
+    function onScroll() {
+      if (!el) return;
+      const dist = el.scrollHeight - el.scrollTop - el.clientHeight;
+      const near = dist < 80;
+      setAtBottom(near);
+      if (near) setUnreadCount(0);
+    }
+    el.addEventListener('scroll', onScroll);
+    onScroll();
+    return () => el.removeEventListener('scroll', onScroll);
+  }, [activeId]);
+
+  const scrollToBottom = useCallback(() => {
+    const el = scrollRef.current;
     if (el) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
-  }, [messages, streamText, isStreaming]);
+    setUnreadCount(0);
+  }, []);
 
   // Delay do "digitando…" para evitar flicker
   useEffect(() => {
@@ -188,7 +222,7 @@ export default function ChatWithAgentPage() {
       max_tokens: 1024,
     };
 
-    await stream('/functions/v1/llm-gateway', payload, {
+    await stream(buildEdgeUrl('llm-gateway'), payload, {
       onComplete: (fullText) => {
         // Descarta se o usuário trocou de agente durante o stream
         if (activeIdRef.current !== agent.id) return;
@@ -332,7 +366,8 @@ export default function ChatWithAgentPage() {
                 onBack={() => { setActiveId(null); navigate('/chat'); }}
                 onClear={() => setConfirmClear(true)}
                 onOpenDetails={() => navigate(`/agents/${activeAgent.id}`)}
-                onExport={() => exportAs('txt')}
+                onExport={(fmt) => exportAs(fmt ?? 'txt')}
+                typing={isStreaming && !streamText && showTyping}
               />
 
               {/* Menu extra de exportação */}
@@ -349,7 +384,7 @@ export default function ChatWithAgentPage() {
 
               <div className="flex-1 relative overflow-hidden">
                 <ChatBackground />
-                <ScrollArea className="h-full">
+                <ScrollArea className="h-full" ref={scrollAreaRef}>
                   <div
                     ref={scrollRef}
                     role="log"
@@ -381,6 +416,7 @@ export default function ChatWithAgentPage() {
                     )}
                   </div>
                 </ScrollArea>
+                <ScrollToBottomButton visible={!atBottom} onClick={scrollToBottom} unread={unreadCount} />
               </div>
 
               <ChatComposer
