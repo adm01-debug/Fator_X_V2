@@ -443,11 +443,13 @@ serve(async (req) => {
         mime_type: body.mime,
         size_bytes: bytes.byteLength,
         status: 'processing',
+        content_hash: effectiveHash || null,
         chunk_size: chunkOpts.size,
         chunk_overlap: chunkOpts.overlap,
         chunk_strategy: chunkOpts.strategy,
         chunk_version: 1,
         parsed_text: fullText,
+
         metadata: {
           filename: body.filename,
           extraction_method: extractionMethod,
