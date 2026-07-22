@@ -1,13 +1,14 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { FileText, ExternalLink } from 'lucide-react';
+import { FileText, ExternalLink, Highlighter } from 'lucide-react';
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import { getCachedSignedUrl } from '@/lib/signedUrlCache';
 import { toast } from 'sonner';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CerebroCitation } from '@/types/cerebroCitations';
 import { logger } from '@/lib/logger';
+import { extractKeyPhrase, buildDeepLink, splitForHighlight } from '@/lib/citationHighlight';
 import {
   logCitationOpen,
   logCitationClose,
