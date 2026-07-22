@@ -54,6 +54,7 @@ export default function SuperCerebroPage() {
 
         <TabsContent value="overview" className="animate-in fade-in-50 duration-500"><OverviewTab /></TabsContent>
         <TabsContent value="search" className="animate-in fade-in-50 duration-500"><SearchTab /></TabsContent>
+        <TabsContent value="upload" className="animate-in fade-in-50 duration-500"><DocumentUploadTab /></TabsContent>
         <TabsContent value="tiers" className="animate-in fade-in-50 duration-500"><ContextTiersTab /></TabsContent>
         <TabsContent value="knowledge" className="animate-in fade-in-50 duration-500"><KnowledgeAreasTab /></TabsContent>
         <TabsContent value="graph" className="animate-in fade-in-50 duration-500"><KnowledgeGraphTab /></TabsContent>
