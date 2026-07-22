@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { FileText, ExternalLink } from 'lucide-react';
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
+import { getCachedSignedUrl } from '@/lib/signedUrlCache';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import type { CerebroCitation } from '@/types/cerebroCitations';
