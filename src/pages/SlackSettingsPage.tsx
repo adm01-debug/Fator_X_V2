@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+
 import {
   Dialog,
   DialogContent,
@@ -30,7 +30,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { PageHeader } from "@/components/shared/PageHeader";
-import { Plus, Trash2, Send, CheckCircle2, AlertTriangle, RefreshCw } from "lucide-react";
+import { Plus, Trash2, Send, CheckCircle2, RefreshCw } from "lucide-react";
 import {
   useSlackConfig,
   type SlackCategory,
@@ -42,6 +42,9 @@ import { SlackAgentNotificationsPanel } from "@/components/slack/SlackAgentNotif
 import { SlackRagSourcesPanel } from "@/components/slack/SlackRagSourcesPanel";
 import { SlackBotBindingPanel } from "@/components/slack/SlackBotBindingPanel";
 import { SlackHealthCard } from "@/components/slack/SlackHealthCard";
+import { SlackOnboardingWizard } from "@/components/slack/SlackOnboardingWizard";
+import { SlackDlqPanel } from "@/components/slack/SlackDlqPanel";
+import { SlackTestBroadcastButton } from "@/components/slack/SlackTestBroadcastButton";
 
 
 const CATEGORY_LABELS: Record<SlackCategory, string> = {
@@ -122,26 +125,7 @@ export default function SlackSettingsPage() {
         description="Envie alertas, notificações de agentes e habilite o bot Nexus dentro do seu workspace Slack."
       />
 
-      {!isConfigured && (
-        <Alert>
-          <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>Slack ainda não configurado</AlertTitle>
-          <AlertDescription className="flex flex-col sm:flex-row sm:items-center gap-3 mt-2">
-            <span>
-              Configure os secrets <code>SLACK_BOT_TOKEN</code> e <code>SLACK_SIGNING_SECRET</code>, então clique em verificar.
-            </span>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => verifyConnection.mutate()}
-              disabled={verifyConnection.isPending}
-            >
-              <RefreshCw className="h-3.5 w-3.5 mr-1" />
-              Verificar conexão
-            </Button>
-          </AlertDescription>
-        </Alert>
-      )}
+      {!isConfigured && <SlackOnboardingWizard />}
 
       {isConfigured && config && (
         <Card>
@@ -154,20 +138,28 @@ export default function SlackSettingsPage() {
                 como <span className="font-medium">{config.bot_display_name ?? config.bot_user_id}</span>.
               </div>
             </div>
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => verifyConnection.mutate()}
-              disabled={verifyConnection.isPending}
-            >
-              <RefreshCw className="h-3.5 w-3.5 mr-1" />
-              Reverificar
-            </Button>
+            <div className="flex items-center gap-2">
+              <SlackTestBroadcastButton />
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => verifyConnection.mutate()}
+                disabled={verifyConnection.isPending}
+              >
+                <RefreshCw className="h-3.5 w-3.5 mr-1" />
+                Reverificar
+              </Button>
+            </div>
           </CardContent>
         </Card>
       )}
 
-      {isConfigured && <SlackHealthCard />}
+      {isConfigured && (
+        <div className="grid gap-4 lg:grid-cols-2">
+          <SlackHealthCard />
+          <SlackDlqPanel />
+        </div>
+      )}
 
       <Tabs defaultValue="alerts" className="w-full">
         <TabsList>

@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-07-22
+
+### Added
+- **Slack Onboarding Wizard** (3 passos) substituindo o Alert estático em `/settings/slack`.
+- **Slack DLQ Panel** com view `slack_dlq_stats`, botão de reprocessar e descarte admin-only.
+- **Edge function `slack-dlq-discard`** com verificação de admin via `is_workspace_admin`.
+- **`SlackTestBroadcastButton`** para popular métricas de saúde.
+- Documentação: `SIMULACAO-CENARIOS-FASE6.md` (200 cenários) e `FASE6-HARDENING-FINAL.md`.
+
+### Security
+- Revogado `EXECUTE` de `authenticated`/`anon` em 14 funções internas SECURITY DEFINER (jobs, triggers, smoke tests).
+- `COMMENT ON FUNCTION` documentando as 8 SECURITY DEFINER expostas auditadas.
+
 ## [1.2.1] - 2026-07-21
 
 ### Added
