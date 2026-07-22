@@ -6990,6 +6990,75 @@ export type Database = {
         }
         Relationships: []
       }
+      slack_agent_notifications: {
+        Row: {
+          agent_id: string
+          channel_id: string
+          channel_name: string | null
+          created_at: string
+          enabled: boolean
+          id: string
+          notify_on: string
+          template: string | null
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          agent_id: string
+          channel_id: string
+          channel_name?: string | null
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          notify_on?: string
+          template?: string | null
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          agent_id?: string
+          channel_id?: string
+          channel_name?: string | null
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          notify_on?: string
+          template?: string | null
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: []
+      }
+      slack_bot_bindings: {
+        Row: {
+          channel_overrides: Json
+          created_at: string
+          default_agent_id: string | null
+          enabled: boolean
+          id: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          channel_overrides?: Json
+          created_at?: string
+          default_agent_id?: string | null
+          enabled?: boolean
+          id?: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          channel_overrides?: Json
+          created_at?: string
+          default_agent_id?: string | null
+          enabled?: boolean
+          id?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: []
+      }
       slack_channel_routes: {
         Row: {
           category: string
@@ -7064,6 +7133,51 @@ export type Database = {
           expires_at?: string
           received_at?: string
           team_id?: string
+        }
+        Relationships: []
+      }
+      slack_rag_sources: {
+        Row: {
+          channel_id: string
+          channel_name: string | null
+          created_at: string
+          enabled: boolean
+          id: string
+          last_sync_error: string | null
+          last_sync_status: string | null
+          last_synced_at: string | null
+          message_count: number
+          oldest_ts: string | null
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          channel_id: string
+          channel_name?: string | null
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          last_sync_error?: string | null
+          last_sync_status?: string | null
+          last_synced_at?: string | null
+          message_count?: number
+          oldest_ts?: string | null
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          channel_id?: string
+          channel_name?: string | null
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          last_sync_error?: string | null
+          last_sync_status?: string | null
+          last_synced_at?: string | null
+          message_count?: number
+          oldest_ts?: string | null
+          updated_at?: string
+          workspace_id?: string
         }
         Relationships: []
       }
