@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from 'sonner';
-import { FileText, FileType2, Trash2, RefreshCw, UploadCloud, Info } from 'lucide-react';
+import { FileText, FileType2, Trash2, RefreshCw, UploadCloud, Info, SlidersHorizontal } from 'lucide-react';
 import {
   uploadDocument, listIngestions, subscribeIngestions,
   retryIngestion, deleteIngestion,
@@ -17,6 +17,8 @@ import {
 } from '@/services/documentIngestionService';
 import { NotebookSelector } from './NotebookSelector';
 import { useCerebroStore } from '@/stores/cerebroStore';
+import { DocumentChunkingDialog } from './DocumentChunkingDialog';
+
 
 function humanBytes(n: number): string {
   if (n < 1024) return `${n} B`;
