@@ -286,6 +286,13 @@ serve(async (req) => {
       start = end - overlap;
     }
 
+    // Fetch notebook name for chunk metadata (best-effort)
+    let notebookName: string | null = null;
+    try {
+      const { data: col } = await supabase.from('collections').select('name').eq('id', body.collection_id).maybeSingle();
+      notebookName = (col?.name as string | undefined) ?? null;
+    } catch { /* skip */ }
+
     const chunkRows = chunks.map((content, i) => ({
       document_id: doc.id,
       content,
@@ -295,6 +302,8 @@ serve(async (req) => {
       metadata: {
         filename: body.filename,
         extraction_method: extractionMethod,
+        collection_id: body.collection_id,
+        notebook_name: notebookName,
       },
     }));
     const { error: cErr } = await supabase.from('chunks').insert(chunkRows);
