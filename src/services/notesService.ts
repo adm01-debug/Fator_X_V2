@@ -243,6 +243,34 @@ export async function listBacklinks(targetType: "note" | "document", targetId: s
   return rows.map((r) => ({ ...r, source_title: titles.get(r.source_id) ?? "(sem título)" }));
 }
 
+// ─── Outgoing links (para grafo local) ─────────────────────────────────
+export interface OutgoingLink {
+  id: string;
+  target_type: KnowledgeLink["target_type"];
+  target_id: string | null;
+  target_label: string | null;
+  link_kind: KnowledgeLink["link_kind"];
+}
+
+export async function listOutgoingLinks(sourceId: string): Promise<OutgoingLink[]> {
+  const { data, error } = await supabaseExternal
+    .from("knowledge_links")
+    .select("id, target_type, target_id, target_label, link_kind")
+    .eq("source_type", "note")
+    .eq("source_id", sourceId);
+  if (error) throw error;
+  return (data ?? []) as OutgoingLink[];
+}
+
+export function useOutgoingLinks(noteId: string | null) {
+  return useQuery({
+    queryKey: ["outgoing-links", noteId],
+    queryFn: () => (noteId ? listOutgoingLinks(noteId) : Promise.resolve([])),
+    enabled: !!noteId,
+    staleTime: 15_000,
+  });
+}
+
 // ─── Auditoria ─────────────────────────────────────────────────────────
 async function logAudit(action: string, resourceId: string, meta: Record<string, unknown>): Promise<void> {
   try {
