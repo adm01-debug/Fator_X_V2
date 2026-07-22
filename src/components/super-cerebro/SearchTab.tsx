@@ -24,6 +24,10 @@ import {
 import type { ContextTier } from '@/services/contextTiersService';
 import { CitedMarkdown } from './CitedMarkdown';
 import { splitCitationsSentinel, type CerebroCitation } from '@/types/cerebroCitations';
+import { useCerebroStore } from '@/stores/cerebroStore';
+import { useNotebooks } from '@/services/notebooksService';
+import { useCurrentWorkspace } from '@/hooks/useCurrentWorkspace';
+import { NotebookPen } from 'lucide-react';
 
 const HISTORY_KEY = 'nexus-cerebro-search-history';
 const HISTORY_MAX = 10;
@@ -79,13 +83,18 @@ export function SearchTab() {
       });
   }, []);
 
+  const activeNotebookId = useCerebroStore((s) => s.activeNotebookId);
+  const { workspaceId } = useCurrentWorkspace();
+  const { data: notebooks = [] } = useNotebooks(workspaceId);
+  const activeNotebook = notebooks.find((n) => n.id === activeNotebookId) ?? null;
+
   const handleSearch = async () => {
     if (!query.trim()) return;
     setIsSearching(true);
     setSearchResults("");
     setCitations([]);
     try {
-      const body = await invokeCerebroQuery({ query, mode: 'chat', stream: true });
+      const body = await invokeCerebroQuery({ query, mode: 'chat', stream: true, notebook_id: activeNotebookId ?? undefined });
 
       if (body instanceof ReadableStream) {
         const reader = body.getReader();
@@ -194,6 +203,15 @@ export function SearchTab() {
 
   return (
     <div className="space-y-6">
+      <div className="flex items-center gap-2 flex-wrap">
+        <Badge variant="outline" className="gap-1.5 text-meta">
+          <NotebookPen className="h-3.5 w-3.5 text-primary" />
+          Buscando em:{" "}
+          <span className="font-semibold">
+            {activeNotebook ? activeNotebook.name : "Todos os notebooks"}
+          </span>
+        </Badge>
+      </div>
       {/* ── Context Tiers (Hierarchical Search) ── */}
       <div className="nexus-card space-y-4 border-primary/20 bg-primary/5 shadow-nexus-lg">
         <div className="flex items-center justify-between">

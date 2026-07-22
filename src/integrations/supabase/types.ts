@@ -2972,31 +2972,43 @@ export type Database = {
       }
       collections: {
         Row: {
+          color: string
           created_at: string | null
           description: string | null
+          icon: string
           id: string
+          is_archived: boolean
           knowledge_base_id: string | null
           metadata: Json | null
           name: string
           updated_at: string | null
+          workspace_id: string | null
         }
         Insert: {
+          color?: string
           created_at?: string | null
           description?: string | null
+          icon?: string
           id?: string
+          is_archived?: boolean
           knowledge_base_id?: string | null
           metadata?: Json | null
           name: string
           updated_at?: string | null
+          workspace_id?: string | null
         }
         Update: {
+          color?: string
           created_at?: string | null
           description?: string | null
+          icon?: string
           id?: string
+          is_archived?: boolean
           knowledge_base_id?: string | null
           metadata?: Json | null
           name?: string
           updated_at?: string | null
+          workspace_id?: string | null
         }
         Relationships: [
           {
@@ -3004,6 +3016,13 @@ export type Database = {
             columns: ["knowledge_base_id"]
             isOneToOne: false
             referencedRelation: "knowledge_bases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "collections_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
             referencedColumns: ["id"]
           },
         ]
@@ -9996,6 +10015,16 @@ export type Database = {
               text_rank: number
             }[]
           }
+      hybrid_memory_search_notebook: {
+        Args: { p_limit?: number; p_notebook_id: string; p_query: string }
+        Returns: {
+          content: string
+          document_id: string
+          id: string
+          metadata: Json
+          score: number
+        }[]
+      }
       increment_skill_installs: {
         Args: { p_skill_id: string }
         Returns: undefined

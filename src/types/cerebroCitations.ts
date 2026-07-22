@@ -9,6 +9,8 @@ export interface CerebroCitation {
   page: number | null;
   section: string | null;
   snippet: string;
+  notebook_id?: string | null;
+  notebook_name?: string | null;
 }
 
 export const CITATIONS_SENTINEL = "\n\u241E";

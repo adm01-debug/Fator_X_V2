@@ -8,10 +8,11 @@ import { z } from "https://esm.sh/zod@3.23.8";
 const CerebroBodySchema = z.object({
   query: z.string().trim().min(2).max(10000),
   stream: z.boolean().optional(),
+  notebook_id: z.string().uuid().nullable().optional(),
 }).passthrough();
 
 const MAX_CITATIONS = 8;
-const CITATIONS_SENTINEL = "\n\u241E"; // Record Separator marker before JSON payload
+const CITATIONS_SENTINEL = "\n\u241E";
 
 interface Citation {
   n: number;
@@ -21,6 +22,8 @@ interface Citation {
   page: number | null;
   section: string | null;
   snippet: string;
+  notebook_id: string | null;
+  notebook_name: string | null;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -57,7 +60,7 @@ serve(async (req) => {
     if (!parsedBody.success) {
       return errorResponse('Payload inválido: ' + JSON.stringify(parsedBody.error.flatten().fieldErrors), 400, req);
     }
-    const { query, stream: streamOpt } = parsedBody.data;
+    const { query, stream: streamOpt, notebook_id: notebookId } = parsedBody.data;
     const stream = streamOpt === true;
 
     await supabase.from('workspace_members').select('workspace_id').eq('user_id', user.id).limit(1).single();
@@ -72,17 +75,30 @@ serve(async (req) => {
     const { count: traceCount } = await supabase.from('agent_traces').select('id', { count: 'exact', head: true }).gte('created_at', yesterday);
     if (traceCount) facts.push(`${traceCount} interações nas últimas 24h`);
 
-    // ═══ RAG with numbered citations ═══
+    // Fetch active notebook name (if scoped)
+    let activeNotebookName: string | null = null;
+    if (notebookId) {
+      const { data: nb } = await supabase.from('collections').select('name').eq('id', notebookId).maybeSingle();
+      activeNotebookName = (nb?.name as string | undefined) ?? null;
+      if (activeNotebookName) facts.push(`Busca escopada ao notebook "${activeNotebookName}"`);
+    }
+
+    // ═══ RAG with numbered citations (scoped by notebook when provided) ═══
     let ragBlock = '';
     let citations: Citation[] = [];
     let ragReranked = false;
 
     try {
-      const { data: chunks } = await supabase
+      let chunkQuery = supabase
         .from('chunks')
-        .select('id, content, metadata, document_id, documents(id, title)')
+        .select('id, content, metadata, document_id, documents(id, title, collection_id, collections(id, name))')
         .eq('embedding_status', 'done')
         .limit(15);
+      if (notebookId) {
+        // Isolation: only chunks whose metadata pins this notebook
+        chunkQuery = chunkQuery.filter('metadata->>collection_id', 'eq', notebookId);
+      }
+      const { data: chunks } = await chunkQuery;
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let selected: any[] = chunks ?? [];
@@ -112,6 +128,13 @@ serve(async (req) => {
         citations = selected.map((c: any, i: number): Citation => {
           const { page, section } = extractMeta(c);
           const doc = Array.isArray(c.documents) ? c.documents[0] : c.documents;
+          const col = doc?.collections
+            ? (Array.isArray(doc.collections) ? doc.collections[0] : doc.collections)
+            : null;
+          const metaCollectionId = (c.metadata && typeof c.metadata === 'object')
+            ? (c.metadata.collection_id ?? null) : null;
+          const metaNotebookName = (c.metadata && typeof c.metadata === 'object')
+            ? (c.metadata.notebook_name ?? null) : null;
           return {
             n: i + 1,
             chunk_id: c.id,
@@ -120,6 +143,8 @@ serve(async (req) => {
             page,
             section,
             snippet: snippet(c.content ?? ''),
+            notebook_id: col?.id ?? metaCollectionId ?? doc?.collection_id ?? null,
+            notebook_name: col?.name ?? metaNotebookName ?? null,
           };
         });
 
@@ -137,7 +162,12 @@ serve(async (req) => {
       }
     } catch { /* skip */ }
 
+    const scopeNotice = activeNotebookName
+      ? `Você está operando escopado ao notebook "${activeNotebookName}". Ignore qualquer conhecimento de outros notebooks.`
+      : 'Você está operando em modo global (todos os notebooks visíveis).';
+
     const systemPrompt = `Você é o Super Cérebro da Promo Brindes — a inteligência central da empresa.
+${scopeNotice}
 Responda em português, com base no bloco RAG fornecido. Se não houver base suficiente, seja honesto e diga.
 
 REGRA DE CITAÇÃO (obrigatória):
