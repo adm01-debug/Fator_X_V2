@@ -61,6 +61,7 @@ export default function SuperCerebroPage() {
           <TabsTrigger value="sandbox" className="text-meta gap-1.5"><FlaskConical className="h-3.5 w-3.5" /> Sandbox</TabsTrigger>
         </TabsList>
 
+        <TabsContent value="workspace" className="animate-in fade-in-50 duration-500"><NotebookWorkspace /></TabsContent>
         <TabsContent value="notebooks" className="animate-in fade-in-50 duration-500"><NotebooksTab /></TabsContent>
         <TabsContent value="overview" className="animate-in fade-in-50 duration-500"><OverviewTab /></TabsContent>
         <TabsContent value="search" className="animate-in fade-in-50 duration-500"><SearchTab /></TabsContent>
