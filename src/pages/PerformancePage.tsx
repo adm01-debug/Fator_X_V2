@@ -69,7 +69,6 @@ export default function PerformancePage() {
       <PageHeader
         title="Performance do banco"
         description="Histórico de queries lentas, saúde ao vivo e auto-EXPLAIN com sugestão de índice."
-        icon={Activity}
       />
 
       <DbHealthCard />
