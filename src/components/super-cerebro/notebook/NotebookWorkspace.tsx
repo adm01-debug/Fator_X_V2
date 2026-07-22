@@ -2,7 +2,7 @@
  * NotebookWorkspace — shell de 3 colunas (Sources | Nota | Studio),
  * inspirado no NotebookLM com backlinks estilo Obsidian.
  */
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
 import { useCerebroStore } from "@/stores/cerebroStore";
@@ -13,7 +13,10 @@ import { NoteEditor } from "./NoteEditor";
 import { StudioPanel } from "./StudioPanel";
 import { NoteQuickOpen } from "./NoteQuickOpen";
 import { NotebookSelector } from "../NotebookSelector";
-import { NotebookPen } from "lucide-react";
+import { NotebookPen, FolderTree, FileText, Sparkles } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { readSourcesFromUrl, writeSourcesToUrl } from "@/lib/sourceIdsSync";
 
 export function NotebookWorkspace() {
   const { workspaceId } = useCurrentWorkspace();
