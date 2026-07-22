@@ -124,7 +124,7 @@ export function DocumentUploadTab() {
               rounded-lg border-2 border-dashed p-10 text-center cursor-pointer
               transition-colors duration-200
               ${isDragActive ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-secondary/30'}
-              ${(loading || !selectedCollection) ? 'opacity-50 cursor-not-allowed' : ''}
+              ${(loading || !activeNotebookId) ? 'opacity-50 cursor-not-allowed' : ''}
             `}
           >
             <input {...getInputProps()} />
