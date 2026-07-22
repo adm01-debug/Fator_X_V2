@@ -7,7 +7,8 @@ import { logger } from '@/lib/logger';
 
 export type IngestionStatus =
   | 'pending' | 'uploading' | 'parsing' | 'ocr'
-  | 'chunking' | 'embedding' | 'ready' | 'error';
+  | 'chunking' | 'embedding' | 'ready' | 'error' | 'cancelled';
+
 
 export type ExtractionMethod = 'text' | 'ocr' | 'hybrid' | 'docx';
 
