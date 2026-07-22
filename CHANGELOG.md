@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-07-22
+
+### Added
+- **Super Cérebro — Deep-link de fontes**: query string `?sources=uuid1,uuid2` hidrata a seleção de fontes do workspace no mount e sincroniza toda alteração via `replaceState` (sem empilhar histórico). Novo helper `src/lib/sourceIdsSync.ts` com sanitização de UUIDs, dedup e cap de 50.
+- **Super Cérebro — Layout mobile**: `NotebookWorkspace` agora usa `Tabs` empilhados (Fontes / Nota / Studio) em telas <768px via `useIsMobile`, mantendo o layout de 3 colunas em desktop.
+- **Podcast do Notebook**: nova aba "Podcast" no `StudioPanel` com:
+  - Tabela `public.notebook_podcasts` com RLS por membership de workspace, unique index em `(notebook_id, content_hash)` para cache determinístico.
+  - Edge function `notebook-podcast-generate` (JWT-guarded, Zod-validated, CORS dinâmico) que gera roteiro PT-BR via Gemini 2.5 Flash e áudio via Lovable AI Gateway (`openai/tts-1`), armazenando em `knowledge-uploads/podcasts/`.
+  - Fluxo com estados granulares (`queued`/`generating`/`ready`/`failed`/`canceled`), cancelamento cooperativo entre chunks e reaproveitamento cacheado por SHA-256 de conteúdo+voz.
+  - UI `PodcastPanel` com player HTML5, regenerar, cancelar, excluir e signed URLs cacheadas (9min TTL) via `getCachedSignedUrl`.
+- **Simulação 300 cenários**: `docs/SIMULACAO-SUPER-CEREBRO-2026-07-22.md` cobrindo Grafo (80), Deep-link (60), Quick-open (40), Studio IA (50), Podcast (40) e regressão RAG (30). Baseline 9.9/10 aprovado.
+- **Testes unitários**:
+  - `src/test/deep-link-sources.test.ts` — parse/serialize/round-trip de `?sources=`, cap, dedup, case-insensitive.
+  - `src/test/local-graph-view.test.tsx` — empty state, in/out, clique navega, cap visual, truncamento de labels.
+
+### Security
+- `notebook_podcasts`: policies scoped por `workspace_members` em SELECT/INSERT, e por `created_by = auth.uid()` ou `is_workspace_admin` em UPDATE/DELETE. GRANT explícito para `authenticated` e `service_role`.
+
 ## [1.3.0] - 2026-07-22
 
 ### Added
