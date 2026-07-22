@@ -22,6 +22,12 @@ interface BloatedTable {
   live_tuples: number;
   dead_ratio: number;
 }
+interface SlowQuery {
+  mean_ms: number;
+  calls: number;
+  total_sec: number;
+  query_preview: string;
+}
 interface HealthSnapshot {
   captured_at: string;
   wal_bytes: number;
@@ -30,6 +36,7 @@ interface HealthSnapshot {
   connections_pct: number;
   long_running_queries: LongQuery[];
   bloated_tables: BloatedTable[];
+  slow_queries?: SlowQuery[];
 }
 
 function formatBytes(bytes: number): string {
@@ -133,6 +140,34 @@ export function DbHealthCard() {
                     <li key={t.table} className="flex justify-between rounded border p-2">
                       <span className="font-mono">{t.table}</span>
                       <Badge variant="outline">{t.dead_ratio}%</Badge>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+
+            <section>
+              <h4 className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1">
+                <Clock className="h-3 w-3" />
+                Top 10 consultas mais lentas (média)
+              </h4>
+              {!data.slow_queries || data.slow_queries.length === 0 ? (
+                <p className="text-xs text-muted-foreground">Sem dados de pg_stat_statements ainda.</p>
+              ) : (
+                <ul className="space-y-1 text-xs">
+                  {data.slow_queries.slice(0, 10).map((q, idx) => (
+                    <li key={idx} className="rounded border p-2">
+                      <div className="flex justify-between">
+                        <Badge variant={q.mean_ms > 500 ? "destructive" : "outline"}>
+                          {q.mean_ms} ms / chamada
+                        </Badge>
+                        <span className="text-muted-foreground">
+                          {q.calls} calls · {q.total_sec}s total
+                        </span>
+                      </div>
+                      <code className="text-[10px] text-muted-foreground line-clamp-2">
+                        {q.query_preview}
+                      </code>
                     </li>
                   ))}
                 </ul>
