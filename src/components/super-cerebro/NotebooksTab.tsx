@@ -105,7 +105,7 @@ export function NotebooksTab() {
               </div>
               <div className="flex flex-wrap gap-2">
                 {NOTEBOOK_SUGGESTIONS.map((s) => {
-                  const Ic = (Icons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[s.icon ?? "BookOpen"] ?? Icons.BookOpen;
+                  const Ic = (Icons as unknown as Record<string, React.ComponentType<{ className?: string; style?: React.CSSProperties }>>)[s.icon ?? "BookOpen"] ?? Icons.BookOpen;
                   return (
                     <Button key={s.name} variant="outline" size="sm" onClick={() => seedSuggestion(s)} className="gap-2"
                       disabled={create.isPending}>
