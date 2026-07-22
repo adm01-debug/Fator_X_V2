@@ -513,7 +513,9 @@ serve(async (req) => {
       strategy: body.chunk_strategy,
     });
 
+    if (await checkCancelled()) return jsonResponse({ status: 'cancelled' });
     await updateStatus('chunking', 75, { pages: pageCount, extraction_method: extractionMethod });
+
     const { data: doc, error: docErr } = await supabase
       .from('documents')
       .insert({
