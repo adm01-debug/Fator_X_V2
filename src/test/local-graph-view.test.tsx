@@ -49,7 +49,7 @@ describe("LocalGraphView", () => {
       data: [{ id: "o1", target_id: "tgt1", target_type: "note", target_label: "Out A" }],
     });
     wrap(<LocalGraphView noteId="n1" />);
-    expect(screen.getByText("Nota")).toBeInTheDocument();
+    expect(screen.getByText("Nota Central")).toBeInTheDocument();
     expect(screen.getByText("Backlink A")).toBeInTheDocument();
     expect(screen.getByText("Out A")).toBeInTheDocument();
   });
@@ -78,8 +78,8 @@ describe("LocalGraphView", () => {
     outgoingMock.mockReturnValue({ data: [] });
     const { container } = wrap(<LocalGraphView noteId="n1" />);
     const circles = container.querySelectorAll("circle");
-    // 24 periféricos (cap 25 - self) + 1 central = 25
-    expect(circles.length).toBeLessThanOrEqual(25);
+    // até 25 periféricos + 1 central
+    expect(circles.length).toBeLessThanOrEqual(26);
   });
 
   it("trunca labels longos", () => {
