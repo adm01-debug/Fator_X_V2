@@ -248,7 +248,20 @@ export default function SlackSettingsPage() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        <TabsContent value="notifications" className="space-y-4 mt-6">
+          <SlackAgentNotificationsPanel />
+        </TabsContent>
+
+        <TabsContent value="bot" className="space-y-4 mt-6">
+          <SlackBotBindingPanel />
+        </TabsContent>
+
+        <TabsContent value="rag" className="space-y-4 mt-6">
+          <SlackRagSourcesPanel />
+        </TabsContent>
       </Tabs>
+
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-lg">
