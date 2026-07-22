@@ -3,6 +3,7 @@
  * inspirado no NotebookLM com backlinks estilo Obsidian.
  */
 import { useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
 import { useCerebroStore } from "@/stores/cerebroStore";
 import { useNotebooks } from "@/services/notebooksService";
