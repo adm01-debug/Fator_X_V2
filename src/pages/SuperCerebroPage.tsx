@@ -39,6 +39,7 @@ export default function SuperCerebroPage() {
         <TabsList className="bg-secondary/50 border border-border/50 flex-wrap h-auto gap-1 p-1">
           <TabsTrigger value="overview" className="text-meta gap-1.5"><Brain className="h-3.5 w-3.5" /> Visão Geral</TabsTrigger>
           <TabsTrigger value="search" className="text-meta gap-1.5"><Search className="h-3.5 w-3.5" /> Busca</TabsTrigger>
+          <TabsTrigger value="upload" className="text-meta gap-1.5"><Upload className="h-3.5 w-3.5" /> Upload</TabsTrigger>
           <TabsTrigger value="tiers" className="text-meta gap-1.5"><Layers className="h-3.5 w-3.5" /> Context Tiers</TabsTrigger>
           <TabsTrigger value="knowledge" className="text-meta gap-1.5"><BookOpen className="h-3.5 w-3.5" /> Áreas</TabsTrigger>
           <TabsTrigger value="graph" className="text-meta gap-1.5"><Network className="h-3.5 w-3.5" /> Knowledge Graph</TabsTrigger>
