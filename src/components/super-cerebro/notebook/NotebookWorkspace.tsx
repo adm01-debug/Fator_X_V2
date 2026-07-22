@@ -17,6 +17,7 @@ import { NotebookPen } from "lucide-react";
 
 export function NotebookWorkspace() {
   const { workspaceId } = useCurrentWorkspace();
+  const params = useParams<{ notebookId?: string; noteId?: string }>();
   const activeNotebookId = useCerebroStore((s) => s.activeNotebookId);
   const activeNoteId = useCerebroStore((s) => s.activeNoteId);
   const setActiveNote = useCerebroStore((s) => s.setActiveNote);
@@ -24,6 +25,16 @@ export function NotebookWorkspace() {
 
   const { data: notebooks = [] } = useNotebooks(workspaceId);
   const { data: notes = [] } = useNotes(activeNotebookId);
+
+  // Deep-link: /super-cerebro/n/:notebookId/note/:noteId
+  useEffect(() => {
+    if (params.notebookId && params.notebookId !== activeNotebookId) {
+      setActiveNotebook(params.notebookId);
+    }
+    if (params.noteId && params.noteId !== activeNoteId) {
+      setActiveNote(params.noteId);
+    }
+  }, [params.notebookId, params.noteId, activeNotebookId, activeNoteId, setActiveNotebook, setActiveNote]);
 
   // Auto-select primeiro notebook se nenhum ativo
   useEffect(() => {
