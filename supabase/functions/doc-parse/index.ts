@@ -343,6 +343,12 @@ serve(async (req) => {
     }
 
     // Cria row em documents
+    const chunkOpts = normalizeChunkOptions({
+      size: body.chunk_size,
+      overlap: body.chunk_overlap,
+      strategy: body.chunk_strategy,
+    });
+
     await updateStatus('chunking', 75, { pages: pageCount, extraction_method: extractionMethod });
     const { data: doc, error: docErr } = await supabase
       .from('documents')
@@ -354,6 +360,11 @@ serve(async (req) => {
         mime_type: body.mime,
         size_bytes: bytes.byteLength,
         status: 'processing',
+        chunk_size: chunkOpts.size,
+        chunk_overlap: chunkOpts.overlap,
+        chunk_strategy: chunkOpts.strategy,
+        chunk_version: 1,
+        parsed_text: fullText,
         metadata: {
           filename: body.filename,
           extraction_method: extractionMethod,
@@ -370,16 +381,8 @@ serve(async (req) => {
 
     await supabase.from('document_ingestions').update({ document_id: doc.id }).eq('id', body.ingestion_id);
 
-    // Chunking direto (evita chamada aninhada; segue mesma lógica do rag-ingest)
     await updateStatus('embedding', 85);
-    const chunkSize = 1000, overlap = 200;
-    const chunks: string[] = [];
-    for (let start = 0; start < fullText.length; ) {
-      const end = Math.min(start + chunkSize, fullText.length);
-      chunks.push(fullText.slice(start, end));
-      if (end === fullText.length) break;
-      start = end - overlap;
-    }
+    const chunks = chunkText(fullText, chunkOpts);
 
     // Fetch notebook name for chunk metadata (best-effort)
     let notebookName: string | null = null;
@@ -394,11 +397,16 @@ serve(async (req) => {
       chunk_index: i,
       embedding_status: 'pending',
       token_count: Math.ceil(content.length / 4),
+      chunk_version: 1,
+      is_active: true,
       metadata: {
         filename: body.filename,
         extraction_method: extractionMethod,
         collection_id: body.collection_id,
         notebook_name: notebookName,
+        chunk_strategy: chunkOpts.strategy,
+        chunk_size: chunkOpts.size,
+        chunk_overlap: chunkOpts.overlap,
       },
     }));
     const { error: cErr } = await supabase.from('chunks').insert(chunkRows);
@@ -406,6 +414,7 @@ serve(async (req) => {
       await updateStatus('error', 0, { error_message: `chunks insert: ${cErr.message}` });
       return errorResponse(req, 'Falha ao gravar chunks', 500);
     }
+
 
     await supabase.from('documents').update({ status: 'indexed' }).eq('id', doc.id);
     await updateStatus('ready', 100);
