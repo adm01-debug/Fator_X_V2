@@ -9725,6 +9725,7 @@ export type Database = {
         Args: { p_period?: string; p_workspace_id: string }
         Returns: number
       }
+      get_db_health_snapshot: { Args: never; Returns: Json }
       get_db_rollback_rate: {
         Args: never
         Returns: {
