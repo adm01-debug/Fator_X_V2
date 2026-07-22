@@ -55,7 +55,8 @@ const Input = z.object({
 
 type IngestionStatus =
   | 'pending' | 'uploading' | 'parsing' | 'ocr'
-  | 'chunking' | 'embedding' | 'ready' | 'error';
+  | 'chunking' | 'embedding' | 'ready' | 'error' | 'cancelled';
+
 
 async function extractDocxText(bytes: Uint8Array): Promise<string> {
   const { unzip } = await import("https://esm.sh/unzipit@1.4.3");
@@ -219,6 +220,29 @@ serve(async (req) => {
         .eq('id', body.ingestion_id);
     };
 
+    // Cooperative cancellation — checked between pipeline stages.
+    const CANCELLED = Symbol('ingestion_cancelled');
+    const checkCancelled = async (): Promise<boolean> => {
+      const { data } = await supabase
+        .from('document_ingestions')
+        .select('cancel_requested,status')
+        .eq('id', body.ingestion_id)
+        .maybeSingle();
+      if (data?.cancel_requested || data?.status === 'cancelled') {
+        await supabase
+          .from('document_ingestions')
+          .update({
+            status: 'cancelled',
+            error_message: 'Cancelado pelo usuário',
+            progress_pct: (data?.status === 'cancelled') ? undefined : 0,
+          })
+          .eq('id', body.ingestion_id);
+        return true;
+      }
+      return false;
+    };
+
+
     // Resolve content_hash: prefer body, fallback to Idempotency-Key header
     const idempotencyHeader = req.headers.get('Idempotency-Key') ?? req.headers.get('idempotency-key');
     const providedHash = (body.content_hash ?? idempotencyHeader ?? '').toLowerCase();
@@ -284,7 +308,9 @@ serve(async (req) => {
       }
     }
 
+    if (await checkCancelled()) return jsonResponse({ status: 'cancelled' });
     await updateStatus('parsing', 10);
+
 
     // Download from storage
     const dl = await supabase.storage.from('knowledge-uploads').download(body.storage_path);
@@ -402,16 +428,26 @@ serve(async (req) => {
             total_pages: pages.length,
           }, 422);
         }
+        if (await checkCancelled()) return jsonResponse({ status: 'cancelled' });
         await updateStatus('ocr', 30);
-        const ocrMap = await runOcrPages(
-          hfToken,
-          body.ocr_pages,
-          async (done, total) => {
-            const pct = 30 + Math.floor((done / total) * 40);
-            await updateStatus('ocr', pct);
-          },
-          (ev) => pageEvents.push(ev),
-        );
+        let ocrMap: Map<number, string>;
+        try {
+          ocrMap = await runOcrPages(
+            hfToken,
+            body.ocr_pages,
+            async (done, total) => {
+              const pct = 30 + Math.floor((done / total) * 40);
+              await updateStatus('ocr', pct);
+              if (await checkCancelled()) throw CANCELLED;
+            },
+            (ev) => pageEvents.push(ev),
+          );
+        } catch (e) {
+          if (e === CANCELLED) return jsonResponse({ status: 'cancelled' });
+          throw e;
+        }
+
+
         const combined = pages.map((t, i) => {
           const p = i + 1;
           const ocr = ocrMap.get(p);
@@ -485,7 +521,9 @@ serve(async (req) => {
       strategy: body.chunk_strategy,
     });
 
+    if (await checkCancelled()) return jsonResponse({ status: 'cancelled' });
     await updateStatus('chunking', 75, { pages: pageCount, extraction_method: extractionMethod });
+
     const { data: doc, error: docErr } = await supabase
       .from('documents')
       .insert({
@@ -519,7 +557,9 @@ serve(async (req) => {
 
     await supabase.from('document_ingestions').update({ document_id: doc.id }).eq('id', body.ingestion_id);
 
+    if (await checkCancelled()) return jsonResponse({ status: 'cancelled' });
     await updateStatus('embedding', 85);
+
     const chunks = chunkText(fullText, chunkOpts);
 
     // Fetch notebook name for chunk metadata (best-effort)

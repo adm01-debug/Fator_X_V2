@@ -7,10 +7,10 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from 'sonner';
-import { FileText, FileType2, Trash2, RefreshCw, UploadCloud, Info, SlidersHorizontal } from 'lucide-react';
+import { FileText, FileType2, Trash2, RefreshCw, UploadCloud, Info, SlidersHorizontal, History, StopCircle } from 'lucide-react';
 import {
   uploadDocument, listIngestions, subscribeIngestions,
-  retryIngestion, deleteIngestion,
+  retryIngestion, deleteIngestion, cancelIngestion,
   statusLabel, methodLabel,
   ACCEPTED_MIMES, MAX_UPLOAD_BYTES,
   type DocumentIngestion,
@@ -18,6 +18,8 @@ import {
 import { NotebookSelector } from './NotebookSelector';
 import { useCerebroStore } from '@/stores/cerebroStore';
 import { DocumentChunkingDialog } from './DocumentChunkingDialog';
+import { IngestionHistoryDialog } from './IngestionHistoryDialog';
+
 
 
 function humanBytes(n: number): string {
@@ -183,9 +185,11 @@ interface RowProps {
 function IngestionRow({ ing, onRemoved }: RowProps) {
   const [busy, setBusy] = useState(false);
   const [chunkOpen, setChunkOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
   const isPdf = ing.mime === 'application/pdf';
   const Icon = isPdf ? FileText : FileType2;
-  const isRunning = ing.status !== 'ready' && ing.status !== 'error';
+  const isFinal = ing.status === 'ready' || ing.status === 'error' || ing.status === 'cancelled';
+  const isRunning = !isFinal;
 
   const doRetry = async () => {
     setBusy(true);
@@ -194,6 +198,19 @@ function IngestionRow({ ing, onRemoved }: RowProps) {
       toast.success('Reprocessamento iniciado');
     } catch (e) {
       toast.error('Falha ao reprocessar', { description: e instanceof Error ? e.message : String(e) });
+    } finally { setBusy(false); }
+  };
+
+  const doCancel = async () => {
+    if (!confirm(`Cancelar o processamento de "${ing.filename}"?`)) return;
+    setBusy(true);
+    try {
+      await cancelIngestion(ing.id);
+      toast.success('Cancelamento solicitado', {
+        description: 'O job será interrompido na próxima etapa.',
+      });
+    } catch (e) {
+      toast.error('Falha ao cancelar', { description: e instanceof Error ? e.message : String(e) });
     } finally { setBusy(false); }
   };
 
@@ -208,6 +225,7 @@ function IngestionRow({ ing, onRemoved }: RowProps) {
       toast.error('Falha ao remover', { description: e instanceof Error ? e.message : String(e) });
     } finally { setBusy(false); }
   };
+
 
   return (
     <div className="flex items-center gap-3 p-3 rounded-lg border border-border/50 hover:bg-secondary/30 transition-colors">
@@ -236,6 +254,27 @@ function IngestionRow({ ing, onRemoved }: RowProps) {
         )}
       </div>
       <div className="flex items-center gap-1 shrink-0">
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => setHistoryOpen(true)}
+          disabled={busy}
+          title="Ver histórico granular de status"
+        >
+          <History className="h-4 w-4" />
+        </Button>
+        {isRunning && (
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={doCancel}
+            disabled={busy}
+            title="Cancelar processamento"
+            className="text-destructive hover:text-destructive"
+          >
+            <StopCircle className="h-4 w-4" />
+          </Button>
+        )}
         {ing.status === 'ready' && ing.document_id && (
           <Button
             size="sm"
@@ -247,12 +286,12 @@ function IngestionRow({ ing, onRemoved }: RowProps) {
             <SlidersHorizontal className="h-4 w-4" />
           </Button>
         )}
-        {ing.status === 'error' && (
-          <Button size="sm" variant="ghost" onClick={doRetry} disabled={busy}>
+        {(ing.status === 'error' || ing.status === 'cancelled') && ing.storage_path && (
+          <Button size="sm" variant="ghost" onClick={doRetry} disabled={busy} title="Reprocessar">
             <RefreshCw className="h-4 w-4" />
           </Button>
         )}
-        <Button size="sm" variant="ghost" onClick={doDelete} disabled={busy}>
+        <Button size="sm" variant="ghost" onClick={doDelete} disabled={busy} title="Remover">
           <Trash2 className="h-4 w-4" />
         </Button>
       </div>
@@ -264,9 +303,16 @@ function IngestionRow({ ing, onRemoved }: RowProps) {
           documentTitle={ing.filename}
         />
       )}
+      <IngestionHistoryDialog
+        open={historyOpen}
+        onOpenChange={setHistoryOpen}
+        ingestionId={ing.id}
+        filename={ing.filename}
+      />
     </div>
   );
 }
+
 
 
 export default DocumentUploadTab;

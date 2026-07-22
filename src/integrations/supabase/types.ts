@@ -3540,8 +3540,50 @@ export type Database = {
           },
         ]
       }
+      document_ingestion_events: {
+        Row: {
+          created_at: string
+          id: string
+          ingestion_id: string
+          message: string | null
+          metadata: Json
+          progress_pct: number
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ingestion_id: string
+          message?: string | null
+          metadata?: Json
+          progress_pct?: number
+          status: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ingestion_id?: string
+          message?: string | null
+          metadata?: Json
+          progress_pct?: number
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_ingestion_events_ingestion_id_fkey"
+            columns: ["ingestion_id"]
+            isOneToOne: false
+            referencedRelation: "document_ingestions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       document_ingestions: {
         Row: {
+          cancel_requested: boolean
           collection_id: string | null
           content_hash: string | null
           created_at: string
@@ -3561,6 +3603,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          cancel_requested?: boolean
           collection_id?: string | null
           content_hash?: string | null
           created_at?: string
@@ -3580,6 +3623,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          cancel_requested?: boolean
           collection_id?: string | null
           content_hash?: string | null
           created_at?: string
