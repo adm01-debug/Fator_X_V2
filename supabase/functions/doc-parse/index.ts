@@ -307,7 +307,9 @@ serve(async (req) => {
       }
     }
 
+    if (await checkCancelled()) return jsonResponse({ status: 'cancelled' });
     await updateStatus('parsing', 10);
+
 
     // Download from storage
     const dl = await supabase.storage.from('knowledge-uploads').download(body.storage_path);
