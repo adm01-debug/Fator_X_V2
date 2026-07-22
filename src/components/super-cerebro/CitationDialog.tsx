@@ -1,7 +1,8 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { FileText, ExternalLink, Highlighter } from 'lucide-react';
+import { FileText, ExternalLink, Highlighter, Eye } from 'lucide-react';
+import { DocumentViewerDialog, type DocumentViewerSource } from './DocumentViewerDialog';
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import { getCachedSignedUrl } from '@/lib/signedUrlCache';
 import { toast } from 'sonner';
