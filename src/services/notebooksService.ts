@@ -143,7 +143,7 @@ async function logAudit(action: string, resourceId: string, meta: Record<string,
       p_action: action,
       p_resource_type: "notebook",
       p_resource_id: resourceId,
-      p_metadata: meta,
+      p_metadata: JSON.parse(JSON.stringify(meta)),
     });
   } catch (e) {
     logger.warn("audit.notebook.failed", { action, error: e instanceof Error ? e.message : String(e) });
