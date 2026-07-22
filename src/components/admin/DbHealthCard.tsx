@@ -22,6 +22,12 @@ interface BloatedTable {
   live_tuples: number;
   dead_ratio: number;
 }
+interface SlowQuery {
+  mean_ms: number;
+  calls: number;
+  total_sec: number;
+  query_preview: string;
+}
 interface HealthSnapshot {
   captured_at: string;
   wal_bytes: number;
@@ -30,6 +36,7 @@ interface HealthSnapshot {
   connections_pct: number;
   long_running_queries: LongQuery[];
   bloated_tables: BloatedTable[];
+  slow_queries?: SlowQuery[];
 }
 
 function formatBytes(bytes: number): string {
