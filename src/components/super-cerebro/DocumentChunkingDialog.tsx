@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from 'sonner';
 import { Info, Loader2, RefreshCw } from 'lucide-react';
+import { invalidateSignedUrlForDocument } from '@/lib/signedUrlCache';
 
 export type ChunkStrategy = 'fixed' | 'paragraph' | 'sentence';
 
