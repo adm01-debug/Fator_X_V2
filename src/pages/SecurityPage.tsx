@@ -230,6 +230,7 @@ export default function SecurityPage() {
             <div className="lg:col-span-1 space-y-8">
               <RollbackRateCard />
               <WalGenerationCard />
+              <DbHealthCard />
               <SecurityMonitoringPanel />
             </div>
           </div>
