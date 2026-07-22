@@ -59,6 +59,7 @@ const BudgetsPage = lazy(() => import("./pages/BudgetsPage"));
 const DeploymentsPage = lazy(() => import("./pages/DeploymentsPage"));
 const OpenclawDeployPage = lazy(() => import("./pages/OpenclawDeployPage"));
 const OpenclawTemplatesPage = lazy(() => import("./pages/OpenclawTemplatesPage"));
+const ChatWithAgentPage = lazy(() => import("./pages/ChatWithAgentPage"));
 const MonitoringPage = lazy(() => import("./pages/MonitoringPage"));
 const DataStoragePage = lazy(() => import("./pages/DataStoragePage"));
 const DataHubPage = lazy(() => import("./pages/DataHubPage"));
@@ -231,6 +232,8 @@ const App = () => {
                       <Route path="/agents/:id/versions/v/:versionId" element={<SafePage><AgentVersioningPage /></SafePage>} />
                       <Route path="/agents/:id/traces" element={<SafePage><AgentTracesPage /></SafePage>} />
                       <Route path="/agents/:id/alerts" element={<SafePage><AgentAlertsPage /></SafePage>} />
+                      <Route path="/chat" element={<SafePage><ChatWithAgentPage /></SafePage>} />
+                      <Route path="/chat/:agentId" element={<SafePage><ChatWithAgentPage /></SafePage>} />
                       <Route path="/builder" element={<SafePage><AgentBuilder /></SafePage>} />
                       <Route path="/builder/:id" element={<SafePage><AgentBuilder /></SafePage>} />
                       <Route path="/brain" element={<SafePage><SuperCerebroPage /></SafePage>} />
