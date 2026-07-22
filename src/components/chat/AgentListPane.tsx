@@ -1,6 +1,5 @@
 /**
- * AgentListPane — lista de agentes estilo WhatsApp: avatar, nome, prévia,
- * timestamp, badge de não-lidas, busca e destaque do ativo.
+ * AgentListPane — lista estilo WhatsApp com busca debounced case-insensitive.
  */
 import { useMemo, useRef, useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
@@ -10,6 +9,7 @@ import { Search, Bot, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { useDebounce } from '@/hooks/use-debounce';
 
 export interface ChatAgentSummary {
   id: string;
@@ -36,23 +36,31 @@ interface AgentListPaneProps {
 }
 
 function initials(name: string): string {
-  return name
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join('')
-    .toUpperCase();
+  return name.split(' ').filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase();
+}
+
+function highlight(text: string, term: string): React.ReactNode {
+  if (!term) return text;
+  const idx = text.toLowerCase().indexOf(term);
+  if (idx === -1) return text;
+  return (
+    <>
+      {text.slice(0, idx)}
+      <mark className="bg-primary/25 text-foreground rounded px-0.5">{text.slice(idx, idx + term.length)}</mark>
+      {text.slice(idx + term.length)}
+    </>
+  );
 }
 
 export function AgentListPane({ agents, loading, activeId, onSelect, previews }: AgentListPaneProps) {
   const [q, setQ] = useState('');
+  const debouncedQ = useDebounce(q, 200);
   const searchRef = useRef<HTMLInputElement>(null);
 
-  // Atalho "/" foca a busca
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+      const tag = document.activeElement?.tagName;
+      if (e.key === '/' && tag !== 'INPUT' && tag !== 'TEXTAREA') {
         e.preventDefault();
         searchRef.current?.focus();
       }
@@ -61,16 +69,18 @@ export function AgentListPane({ agents, loading, activeId, onSelect, previews }:
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
+  const term = debouncedQ.trim().toLowerCase();
+
   const filtered = useMemo(() => {
-    const norm = q.trim().toLowerCase();
-    const list = norm ? agents.filter((a) => a.name.toLowerCase().includes(norm) || (a.mission ?? '').toLowerCase().includes(norm)) : agents;
-    // Ordena: com prévia primeiro (mais recente), depois updated_at
+    const list = term
+      ? agents.filter((a) => a.name.toLowerCase().includes(term) || (a.mission ?? '').toLowerCase().includes(term))
+      : agents;
     return [...list].sort((a, b) => {
       const pa = previews[a.id]?.lastAt ?? new Date(a.updated_at ?? 0).getTime();
       const pb = previews[b.id]?.lastAt ?? new Date(b.updated_at ?? 0).getTime();
       return pb - pa;
     });
-  }, [agents, q, previews]);
+  }, [agents, term, previews]);
 
   function relTime(ts?: number | null): string {
     if (!ts) return '';
@@ -123,10 +133,8 @@ export function AgentListPane({ agents, loading, activeId, onSelect, previews }:
                     onClick={() => onSelect(a.id)}
                     className={cn(
                       'w-full flex items-start gap-3 px-3 py-2.5 text-left',
-                      'transition-colors border-l-2',
-                      active
-                        ? 'bg-primary/10 border-l-primary'
-                        : 'border-l-transparent hover:bg-muted/50',
+                      'transition-colors border-l-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40',
+                      active ? 'bg-primary/10 border-l-primary' : 'border-l-transparent hover:bg-muted/50',
                     )}
                   >
                     <div className="relative shrink-0">
@@ -134,16 +142,15 @@ export function AgentListPane({ agents, loading, activeId, onSelect, previews }:
                         {a.avatar_emoji ? <span className="text-lg">{a.avatar_emoji}</span> : initials(a.name)}
                       </div>
                       {online && (
-                        <span
-                          className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-nexus-green border-2 border-card"
-                          aria-label="Online"
-                        />
+                        <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-nexus-green border-2 border-card" aria-label="Online" />
                       )}
                     </div>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <span className={cn('font-medium text-body-sm truncate', active && 'text-primary')}>{a.name}</span>
+                        <span className={cn('font-medium text-body-sm truncate', active && 'text-primary')}>
+                          {highlight(a.name, term)}
+                        </span>
                         <span className="text-[10px] text-muted-foreground shrink-0 tabular-nums">
                           {relTime(preview?.lastAt ?? (a.updated_at ? new Date(a.updated_at).getTime() : null))}
                         </span>
