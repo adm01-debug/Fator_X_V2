@@ -4,7 +4,7 @@
  * + Auto-EXPLAIN de SELECT com sugestão de índice.
  * Admin-only via RPCs SECURITY DEFINER.
  */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/shared/PageHeader";
@@ -15,6 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Activity, AlertTriangle, Play, Loader2, Sparkles } from "lucide-react";
 import { DbHealthCard } from "@/components/admin/DbHealthCard";
+import { DbHealthTimeseriesCard } from "@/components/admin/DbHealthTimeseriesCard";
 import { toast } from "sonner";
 
 interface SlowAlert {
