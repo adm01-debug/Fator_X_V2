@@ -25,6 +25,8 @@ import {
   parseBody, z,
 } from "../_shared/mod.ts";
 
+import { chunkText, normalizeChunkOptions } from "../_shared/chunker.ts";
+
 const MAX_BYTES = 20 * 1024 * 1024;
 const OCR_MIN_TEXT_PER_PAGE = 40;
 const OCR_CONCURRENCY = 3;
@@ -43,7 +45,11 @@ const Input = z.object({
     png_base64: z.string().min(50),
   })).optional(),
   force_ocr: z.boolean().optional(),
+  chunk_size: z.number().int().min(200).max(4000).optional(),
+  chunk_overlap: z.number().int().min(0).max(3999).optional(),
+  chunk_strategy: z.enum(['fixed', 'paragraph', 'sentence']).optional(),
 });
+
 
 type IngestionStatus =
   | 'pending' | 'uploading' | 'parsing' | 'ocr'
