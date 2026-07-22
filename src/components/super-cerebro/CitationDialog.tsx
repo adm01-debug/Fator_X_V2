@@ -1,10 +1,10 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { FileText, ExternalLink, Highlighter, Eye } from 'lucide-react';
+import { FileText, ExternalLink, Highlighter, Eye, AlertTriangle, RotateCw } from 'lucide-react';
 import { DocumentViewerDialog, type DocumentViewerSource } from './DocumentViewerDialog';
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
-import { getCachedSignedUrl } from '@/lib/signedUrlCache';
+import { getCachedSignedUrl, refetchSignedUrl } from '@/lib/signedUrlCache';
 import { toast } from 'sonner';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CerebroCitation } from '@/types/cerebroCitations';
@@ -31,6 +31,7 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
   const [openedDocument, setOpenedDocument] = useState(false);
   const [highlightMode, setHighlightMode] = useState(true);
   const [viewerSource, setViewerSource] = useState<DocumentViewerSource | null>(null);
+  const [lastError, setLastError] = useState<null | { message: string; mode: 'inline' | 'external' }>(null);
   const telemetryRef = useRef<CitationTelemetryHandle | null>(null);
   const { workspaceId } = useCurrentWorkspace();
   const activeNotebookId = useCerebroStore((s) => s.activeNotebookId);
@@ -69,12 +70,16 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [citation?.chunk_id, citation?.n]);
 
-  const handleOpenDocument = async (mode: 'inline' | 'external' = 'inline') => {
+  const handleOpenDocument = async (
+    mode: 'inline' | 'external' = 'inline',
+    opts: { bypassCache?: boolean } = {},
+  ) => {
     if (!citation?.document_id || !UUID_RE.test(citation.document_id)) {
       toast.error('Documento inválido');
       return;
     }
     setLoading(true);
+    setLastError(null);
     try {
       const { data: doc, error } = await supabaseExternal
         .from('documents')
@@ -94,6 +99,7 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
 
       const openWith = (rawUrl: string) => {
         setOpenedDocument(true);
+        setLastError(null);
         void markCitationDocumentOpened(telemetryRef.current);
         if (mode === 'inline') {
           setViewerSource({
@@ -113,25 +119,49 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
       };
 
       if (storagePath) {
-        const signedUrl = await getCachedSignedUrl(bucket, storagePath);
+        const signedUrl = opts.bypassCache
+          ? await refetchSignedUrl(bucket, storagePath)
+          : await getCachedSignedUrl(bucket, storagePath);
         if (signedUrl) {
           openWith(signedUrl);
           return;
         }
+        // Falha após 3 tentativas com backoff dentro do cache. Se houver source_url, cai no fallback silencioso.
+        if (doc?.source_url) {
+          logger.warn('cerebro.citation.signed_url_failed_fallback_source', {
+            document_id: citation.document_id,
+          });
+          openWith(doc.source_url);
+          toast.warning('Link temporário indisponível — usando URL original do documento.');
+          return;
+        }
+        const msg = 'Não foi possível gerar o link seguro para este documento.';
+        setLastError({ message: msg, mode });
+        toast.error(msg, {
+          action: { label: 'Tentar novamente', onClick: () => void handleOpenDocument(mode, { bypassCache: true }) },
+        });
+        return;
       }
 
       if (doc?.source_url) {
         openWith(doc.source_url);
         return;
       }
-      toast.info('Documento sem URL de origem disponível');
+      const msg = 'Documento sem URL de origem disponível.';
+      setLastError({ message: msg, mode });
+      toast.info(msg);
     } catch (e) {
       logger.error('cerebro.citation.open_failed', { error: e });
-      toast.error('Não foi possível abrir o documento');
+      const msg = 'Não foi possível abrir o documento. Verifique sua conexão e tente novamente.';
+      setLastError({ message: msg, mode });
+      toast.error(msg, {
+        action: { label: 'Tentar novamente', onClick: () => void handleOpenDocument(mode, { bypassCache: true }) },
+      });
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -197,6 +227,32 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
               "
             </p>
           </div>
+
+          {lastError && (
+            <div
+              role="alert"
+              className="flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 p-2.5 text-xs text-destructive"
+            >
+              <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" />
+              <div className="flex-1">
+                <p className="font-semibold leading-snug">{lastError.message}</p>
+                <p className="text-[10px] opacity-80 mt-0.5">
+                  Tentamos 3 vezes com backoff. Você pode tentar novamente sem recarregar a página.
+                </p>
+              </div>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="h-7 gap-1 border-destructive/40 text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                onClick={() => void handleOpenDocument(lastError.mode, { bypassCache: true })}
+                disabled={loading}
+              >
+                <RotateCw className={`h-3 w-3 ${loading ? 'animate-spin' : ''}`} />
+                Tentar novamente
+              </Button>
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-2">
             <Button

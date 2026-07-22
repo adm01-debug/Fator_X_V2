@@ -31,6 +31,7 @@ export interface SignedUrlCacheStats {
   misses: number;
   inflightCoalesced: number;
   errors: number;
+  retries: number;
   fetches: number;
   totalFetchMs: number;
   lastFetchMs: number | null;
@@ -44,6 +45,7 @@ const stats = {
   misses: 0,
   inflightCoalesced: 0,
   errors: 0,
+  retries: 0,
   fetches: 0,
   totalFetchMs: 0,
   lastFetchMs: null as number | null,
@@ -73,6 +75,7 @@ export function resetSignedUrlCacheStats(): void {
   stats.misses = 0;
   stats.inflightCoalesced = 0;
   stats.errors = 0;
+  stats.retries = 0;
   stats.fetches = 0;
   stats.totalFetchMs = 0;
   stats.lastFetchMs = null;
@@ -144,20 +147,38 @@ export async function getCachedSignedUrl(
   const startedAt = performance.now();
 
   const promise = (async () => {
+    let lastError: unknown = null;
+    let attempts = 0;
     try {
-      const { data, error } = await supabaseExternal.storage
-        .from(bucket)
-        .createSignedUrl(path, STORAGE_TTL_SECONDS);
-      if (error) throw error;
-      const url = data?.signedUrl ?? null;
-      if (url) {
-        cache.set(key, { url, expiresAt: Date.now() + CACHE_TTL_MS });
-        pruneIfNeeded();
+      // Retry com backoff exponencial + jitter: 250ms, 750ms (max 3 tentativas).
+      const delays = [0, 250, 750];
+      for (let i = 0; i < delays.length; i++) {
+        attempts = i + 1;
+        if (delays[i] > 0) {
+          const jitter = Math.floor(Math.random() * 150);
+          await new Promise((r) => setTimeout(r, delays[i] + jitter));
+          stats.retries += 1;
+          debugLog('retry', { key, attempt: attempts });
+          notify();
+        }
+        try {
+          const { data, error } = await supabaseExternal.storage
+            .from(bucket)
+            .createSignedUrl(path, STORAGE_TTL_SECONDS);
+          if (error) throw error;
+          const url = data?.signedUrl ?? null;
+          if (url) {
+            cache.set(key, { url, expiresAt: Date.now() + CACHE_TTL_MS });
+            pruneIfNeeded();
+            return url;
+          }
+          lastError = new Error('empty_signed_url');
+        } catch (e) {
+          lastError = e;
+        }
       }
-      return url;
-    } catch (e) {
       stats.errors += 1;
-      logger.error('signed_url_cache.fetch_failed', { bucket, path, error: e });
+      logger.error('signed_url_cache.fetch_failed', { bucket, path, attempts, error: lastError });
       return null;
     } finally {
       const elapsed = performance.now() - startedAt;
@@ -165,7 +186,7 @@ export async function getCachedSignedUrl(
       stats.totalFetchMs += elapsed;
       stats.lastFetchMs = elapsed;
       inflight.delete(key);
-      debugLog('miss-fetched', { key, elapsedMs: Math.round(elapsed) });
+      debugLog('miss-fetched', { key, elapsedMs: Math.round(elapsed), attempts });
       notify();
     }
   })();
@@ -173,6 +194,15 @@ export async function getCachedSignedUrl(
   inflight.set(key, promise);
   return promise;
 }
+
+/**
+ * Igual a getCachedSignedUrl, mas força bypass do cache (usar em "Tentar novamente").
+ */
+export async function refetchSignedUrl(bucket: string, path: string): Promise<string | null> {
+  invalidateSignedUrl(bucket, path);
+  return getCachedSignedUrl(bucket, path);
+}
+
 
 
 export function invalidateSignedUrl(bucket: string, path: string): void {
