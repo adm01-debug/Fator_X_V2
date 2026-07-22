@@ -430,16 +430,23 @@ serve(async (req) => {
         }
         if (await checkCancelled()) return jsonResponse({ status: 'cancelled' });
         await updateStatus('ocr', 30);
-        const ocrMap = await runOcrPages(
-          hfToken,
-          body.ocr_pages,
-          async (done, total) => {
-            const pct = 30 + Math.floor((done / total) * 40);
-            await updateStatus('ocr', pct);
-            if (await checkCancelled()) throw CANCELLED;
-          },
-          (ev) => pageEvents.push(ev),
-        );
+        let ocrMap: Map<number, string>;
+        try {
+          ocrMap = await runOcrPages(
+            hfToken,
+            body.ocr_pages,
+            async (done, total) => {
+              const pct = 30 + Math.floor((done / total) * 40);
+              await updateStatus('ocr', pct);
+              if (await checkCancelled()) throw CANCELLED;
+            },
+            (ev) => pageEvents.push(ev),
+          );
+        } catch (e) {
+          if (e === CANCELLED) return jsonResponse({ status: 'cancelled' });
+          throw e;
+        }
+
 
         const combined = pages.map((t, i) => {
           const p = i + 1;
