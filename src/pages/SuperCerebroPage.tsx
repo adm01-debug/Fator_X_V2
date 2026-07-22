@@ -4,7 +4,7 @@ import { InfoHint } from "@/components/shared/InfoHint";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Brain, Search, Network, BookOpen,
-  Activity, Users, FlaskConical, Zap, Clock, GitMerge, TrendingDown, Layers, Upload
+  Activity, Users, FlaskConical, Zap, Clock, GitMerge, TrendingDown, Layers, Upload, NotebookPen
 } from "lucide-react";
 import { OverviewTab } from "@/components/super-cerebro/OverviewTab";
 import { SearchTab } from "@/components/super-cerebro/SearchTab";
@@ -19,24 +19,31 @@ import { TemporalGraphTab } from "@/components/super-cerebro/TemporalGraphTab";
 import { EntityResolutionTab } from "@/components/super-cerebro/EntityResolutionTab";
 import { DecayDetectionTab } from "@/components/super-cerebro/DecayDetectionTab";
 import { ContextTiersTab } from "@/components/super-cerebro/ContextTiersTab";
+import { NotebooksTab } from "@/components/super-cerebro/NotebooksTab";
+import { NotebookSelector } from "@/components/super-cerebro/NotebookSelector";
 
 export default function SuperCerebroPage() {
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState('notebooks');
 
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
-      <PageHeader 
-        title="🧠 Super Cérebro" 
-        description="Enterprise Memory Layer — Camada de Inteligência e Memória Institucional" 
-        gradient={false} 
+      <PageHeader
+        title="🧠 Super Cérebro"
+        description="Enterprise Memory Layer — Camada de Inteligência e Memória Institucional"
+        gradient={false}
       />
 
       <InfoHint title="O que é o Super Cérebro?">
-        O Super Cérebro é a malha de memória neural da organização. Ele centraliza conhecimentos episódicos (o que aconteceu), semânticos (o que sabemos) e procedurais (como fazemos), permitindo que agentes tomem decisões baseadas em todo o histórico institucional.
+        O Super Cérebro é a malha de memória neural da organização. Organize o conhecimento em <strong>notebooks temáticos</strong> (Comercial, Jurídico, RH…) para que buscas e agentes fiquem restritos ao contexto correto.
       </InfoHint>
+
+      <div className="flex items-center justify-end">
+        <NotebookSelector allowAll />
+      </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="bg-secondary/50 border border-border/50 flex-wrap h-auto gap-1 p-1">
+          <TabsTrigger value="notebooks" className="text-meta gap-1.5"><NotebookPen className="h-3.5 w-3.5" /> Notebooks</TabsTrigger>
           <TabsTrigger value="overview" className="text-meta gap-1.5"><Brain className="h-3.5 w-3.5" /> Visão Geral</TabsTrigger>
           <TabsTrigger value="search" className="text-meta gap-1.5"><Search className="h-3.5 w-3.5" /> Busca</TabsTrigger>
           <TabsTrigger value="upload" className="text-meta gap-1.5"><Upload className="h-3.5 w-3.5" /> Upload</TabsTrigger>
@@ -52,6 +59,7 @@ export default function SuperCerebroPage() {
           <TabsTrigger value="sandbox" className="text-meta gap-1.5"><FlaskConical className="h-3.5 w-3.5" /> Sandbox</TabsTrigger>
         </TabsList>
 
+        <TabsContent value="notebooks" className="animate-in fade-in-50 duration-500"><NotebooksTab /></TabsContent>
         <TabsContent value="overview" className="animate-in fade-in-50 duration-500"><OverviewTab /></TabsContent>
         <TabsContent value="search" className="animate-in fade-in-50 duration-500"><SearchTab /></TabsContent>
         <TabsContent value="upload" className="animate-in fade-in-50 duration-500"><DocumentUploadTab /></TabsContent>
