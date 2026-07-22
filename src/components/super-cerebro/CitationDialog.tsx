@@ -198,16 +198,28 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
             </p>
           </div>
 
-          <Button
-            onClick={handleOpenDocument}
-            disabled={loading || !citation?.document_id}
-            className="w-full gap-2"
-          >
-            <ExternalLink className="h-4 w-4" />
-            {loading ? 'Gerando link…' : 'Abrir documento'}
-          </Button>
+          <div className="grid grid-cols-2 gap-2">
+            <Button
+              onClick={() => handleOpenDocument('inline')}
+              disabled={loading || !citation?.document_id}
+              className="gap-2"
+            >
+              <Eye className="h-4 w-4" />
+              {loading ? 'Carregando…' : 'Visualizar aqui'}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => handleOpenDocument('external')}
+              disabled={loading || !citation?.document_id}
+              className="gap-2"
+            >
+              <ExternalLink className="h-4 w-4" />
+              Nova aba
+            </Button>
+          </div>
         </div>
       </DialogContent>
+      <DocumentViewerDialog source={viewerSource} onOpenChange={(o) => !o && setViewerSource(null)} />
     </Dialog>
   );
 }
