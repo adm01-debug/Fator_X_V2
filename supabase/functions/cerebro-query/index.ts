@@ -9,6 +9,7 @@ const CerebroBodySchema = z.object({
   query: z.string().trim().min(2).max(10000),
   stream: z.boolean().optional(),
   notebook_id: z.string().uuid().nullable().optional(),
+  source_ids: z.array(z.string().uuid()).max(50).optional(),
 }).passthrough();
 
 const MAX_CITATIONS = 8;
