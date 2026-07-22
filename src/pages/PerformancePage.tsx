@@ -40,6 +40,17 @@ export default function PerformancePage() {
   );
   const [explain, setExplain] = useState<ExplainResult | null>(null);
 
+  useEffect(() => {
+    try {
+      const pending = sessionStorage.getItem("perf:explain-query");
+      if (pending && pending.trim().length > 0) {
+        setQuery(pending);
+        sessionStorage.removeItem("perf:explain-query");
+        toast.info("Consulta carregada. Clique em Gerar EXPLAIN.");
+      }
+    } catch { /* storage indisponível */ }
+  }, []);
+
   const { data: alerts = [], isLoading, refetch, isFetching } = useQuery({
     queryKey: ["slow-query-alerts-history"],
     refetchInterval: 60_000,
