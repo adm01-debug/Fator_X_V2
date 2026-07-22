@@ -5621,6 +5621,78 @@ export type Database = {
           },
         ]
       }
+      notebook_podcasts: {
+        Row: {
+          audio_path: string | null
+          audio_url: string | null
+          cancel_requested: boolean
+          content_hash: string | null
+          created_at: string
+          created_by: string
+          duration_seconds: number | null
+          error: string | null
+          id: string
+          notebook_id: string
+          script_md: string | null
+          status: string
+          title: string
+          updated_at: string
+          voice: string
+          workspace_id: string
+        }
+        Insert: {
+          audio_path?: string | null
+          audio_url?: string | null
+          cancel_requested?: boolean
+          content_hash?: string | null
+          created_at?: string
+          created_by: string
+          duration_seconds?: number | null
+          error?: string | null
+          id?: string
+          notebook_id: string
+          script_md?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          voice?: string
+          workspace_id: string
+        }
+        Update: {
+          audio_path?: string | null
+          audio_url?: string | null
+          cancel_requested?: boolean
+          content_hash?: string | null
+          created_at?: string
+          created_by?: string
+          duration_seconds?: number | null
+          error?: string | null
+          id?: string
+          notebook_id?: string
+          script_md?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          voice?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notebook_podcasts_notebook_id_fkey"
+            columns: ["notebook_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notebook_podcasts_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       oncall_schedule: {
         Row: {
           created_at: string
