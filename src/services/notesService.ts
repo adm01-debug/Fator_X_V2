@@ -101,7 +101,7 @@ export async function deleteNote(id: string): Promise<void> {
 
 /** Resolve label→id conforme tipo dentro do escopo do workspace/notebook. */
 async function resolveTarget(
-  workspaceId: string,
+  _workspaceId: string,
   collectionId: string,
   link: ParsedWikilink,
 ): Promise<{ id: string | null; label: string }> {
