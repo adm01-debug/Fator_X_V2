@@ -71,6 +71,16 @@ async function extractPdfPages(bytes: Uint8Array): Promise<string[]> {
   return Array.isArray(text) ? text : [String(text ?? '')];
 }
 
+export type OcrPageEvent = {
+  page: number;
+  method: 'text' | 'ocr' | 'hybrid';
+  status: 'success' | 'error';
+  duration_ms: number;
+  image_bytes: number;
+  text_chars: number;
+  error?: string;
+};
+
 async function ocrPagePng(
   hfToken: string,
   pngBase64: string,
@@ -103,10 +113,18 @@ async function ocrPagePng(
     : (json?.generated_text ?? json?.[0]?.generated_text ?? '');
 }
 
+/** Approx decoded byte length of a base64 payload without allocating. */
+function base64ByteLength(b64: string): number {
+  const clean = b64.includes(',') ? b64.slice(b64.indexOf(',') + 1) : b64;
+  const padding = clean.endsWith('==') ? 2 : clean.endsWith('=') ? 1 : 0;
+  return Math.max(0, Math.floor((clean.length * 3) / 4) - padding);
+}
+
 async function runOcrPages(
   hfToken: string,
   pages: Array<{ page: number; png_base64: string }>,
   onProgress: (done: number, total: number) => Promise<void>,
+  onPageEvent: (ev: OcrPageEvent) => void,
 ): Promise<Map<number, string>> {
   const out = new Map<number, string>();
   const total = pages.length;
@@ -114,7 +132,33 @@ async function runOcrPages(
   for (let i = 0; i < pages.length; i += OCR_CONCURRENCY) {
     const batch = pages.slice(i, i + OCR_CONCURRENCY);
     const results = await Promise.allSettled(
-      batch.map(p => ocrPagePng(hfToken, p.png_base64).then(t => ({ page: p.page, text: t }))),
+      batch.map(async (p) => {
+        const start = performance.now();
+        const image_bytes = base64ByteLength(p.png_base64);
+        try {
+          const text = await ocrPagePng(hfToken, p.png_base64);
+          onPageEvent({
+            page: p.page,
+            method: 'ocr',
+            status: 'success',
+            duration_ms: Math.round(performance.now() - start),
+            image_bytes,
+            text_chars: text.length,
+          });
+          return { page: p.page, text };
+        } catch (err) {
+          onPageEvent({
+            page: p.page,
+            method: 'ocr',
+            status: 'error',
+            duration_ms: Math.round(performance.now() - start),
+            image_bytes,
+            text_chars: 0,
+            error: err instanceof Error ? err.message : String(err),
+          });
+          throw err;
+        }
+      }),
     );
     for (const r of results) {
       done += 1;
@@ -124,6 +168,7 @@ async function runOcrPages(
   }
   return out;
 }
+
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
