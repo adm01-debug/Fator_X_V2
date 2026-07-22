@@ -182,6 +182,7 @@ interface RowProps {
 
 function IngestionRow({ ing, onRemoved }: RowProps) {
   const [busy, setBusy] = useState(false);
+  const [chunkOpen, setChunkOpen] = useState(false);
   const isPdf = ing.mime === 'application/pdf';
   const Icon = isPdf ? FileText : FileType2;
   const isRunning = ing.status !== 'ready' && ing.status !== 'error';
@@ -235,6 +236,17 @@ function IngestionRow({ ing, onRemoved }: RowProps) {
         )}
       </div>
       <div className="flex items-center gap-1 shrink-0">
+        {ing.status === 'ready' && ing.document_id && (
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => setChunkOpen(true)}
+            disabled={busy}
+            title="Ajustar chunking e re-embedar"
+          >
+            <SlidersHorizontal className="h-4 w-4" />
+          </Button>
+        )}
         {ing.status === 'error' && (
           <Button size="sm" variant="ghost" onClick={doRetry} disabled={busy}>
             <RefreshCw className="h-4 w-4" />
@@ -244,8 +256,17 @@ function IngestionRow({ ing, onRemoved }: RowProps) {
           <Trash2 className="h-4 w-4" />
         </Button>
       </div>
+      {ing.document_id && (
+        <DocumentChunkingDialog
+          open={chunkOpen}
+          onOpenChange={setChunkOpen}
+          documentId={ing.document_id}
+          documentTitle={ing.filename}
+        />
+      )}
     </div>
   );
 }
+
 
 export default DocumentUploadTab;
