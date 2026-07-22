@@ -22,13 +22,14 @@ interface ChatHeaderProps {
   onClear: () => void;
   onOpenDetails: () => void;
   onExport: (fmt?: 'txt' | 'md' | 'json') => void;
+  typing?: boolean;
 }
 
 function initials(name: string): string {
   return name.split(' ').filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase();
 }
 
-export function ChatHeader({ agent, onBack, onClear, onOpenDetails, onExport }: ChatHeaderProps) {
+export function ChatHeader({ agent, onBack, onClear, onOpenDetails, onExport, typing }: ChatHeaderProps) {
   const online = (agent.status ?? '').toLowerCase() === 'active' || (agent.status ?? '').toLowerCase() === 'published';
 
   return (
@@ -53,8 +54,14 @@ export function ChatHeader({ agent, onBack, onClear, onOpenDetails, onExport }: 
 
       <div className="flex-1 min-w-0">
         <h2 className="text-body-sm font-semibold truncate">{agent.name}</h2>
-        <p className="text-meta text-muted-foreground truncate">
-          {online ? <span className="text-nexus-green">● online</span> : <span>offline</span>}
+        <p className="text-meta text-muted-foreground truncate" aria-live="polite">
+          {typing ? (
+            <span className="text-nexus-cyan italic">digitando…</span>
+          ) : online ? (
+            <span className="text-nexus-green">● online</span>
+          ) : (
+            <span>offline</span>
+          )}
           {agent.model ? <span className="ml-2 opacity-70">· {agent.model}</span> : null}
         </p>
       </div>
