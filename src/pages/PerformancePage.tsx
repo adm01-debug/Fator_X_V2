@@ -16,6 +16,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Activity, AlertTriangle, Play, Loader2, Sparkles } from "lucide-react";
 import { DbHealthCard } from "@/components/admin/DbHealthCard";
 import { DbHealthTimeseriesCard } from "@/components/admin/DbHealthTimeseriesCard";
+import { DetectorSloCard } from "@/components/admin/DetectorSloCard";
 import { toast } from "sonner";
 
 interface SlowAlert {
