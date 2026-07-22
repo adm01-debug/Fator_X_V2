@@ -7,9 +7,12 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { MoreVertical, Trash2, ExternalLink, Download, ArrowLeft } from 'lucide-react';
+import { MoreVertical, Trash2, ExternalLink, Download, ArrowLeft, FileText, FileJson, FileCode } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { ChatAgentSummary } from './AgentListPane';
 
@@ -18,7 +21,7 @@ interface ChatHeaderProps {
   onBack?: () => void;
   onClear: () => void;
   onOpenDetails: () => void;
-  onExport: () => void;
+  onExport: (fmt?: 'txt' | 'md' | 'json') => void;
 }
 
 function initials(name: string): string {
@@ -66,9 +69,22 @@ export function ChatHeader({ agent, onBack, onClear, onOpenDetails, onExport }: 
           <DropdownMenuItem onSelect={onOpenDetails}>
             <ExternalLink className="h-3.5 w-3.5 mr-2" /> Ver detalhes do agente
           </DropdownMenuItem>
-          <DropdownMenuItem onSelect={onExport}>
-            <Download className="h-3.5 w-3.5 mr-2" /> Exportar transcrição
-          </DropdownMenuItem>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>
+              <Download className="h-3.5 w-3.5 mr-2" /> Exportar transcrição
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuItem onSelect={() => onExport('txt')}>
+                <FileText className="h-3.5 w-3.5 mr-2" /> Texto (.txt)
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => onExport('md')}>
+                <FileCode className="h-3.5 w-3.5 mr-2" /> Markdown (.md)
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => onExport('json')}>
+                <FileJson className="h-3.5 w-3.5 mr-2" /> JSON (.json)
+              </DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
           <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={onClear} className="text-destructive focus:text-destructive">
             <Trash2 className="h-3.5 w-3.5 mr-2" /> Limpar conversa
