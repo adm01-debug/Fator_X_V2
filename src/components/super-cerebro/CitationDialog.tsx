@@ -69,7 +69,7 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [citation?.chunk_id, citation?.n]);
 
-  const handleOpenDocument = async () => {
+  const handleOpenDocument = async (mode: 'inline' | 'external' = 'inline') => {
     if (!citation?.document_id || !UUID_RE.test(citation.document_id)) {
       toast.error('Documento inválido');
       return;
@@ -78,23 +78,38 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
     try {
       const { data: doc, error } = await supabaseExternal
         .from('documents')
-        .select('metadata, source_url')
+        .select('metadata, source_url, title')
         .eq('id', citation.document_id)
         .maybeSingle();
       if (error) throw error;
 
-      const md = (doc?.metadata ?? {}) as { storage_path?: string; bucket?: string };
+      const md = (doc?.metadata ?? {}) as {
+        storage_path?: string;
+        bucket?: string;
+        filename?: string;
+      };
       const storagePath = md.storage_path;
       const bucket = md.bucket ?? 'knowledge-uploads';
+      const filename = md.filename ?? storagePath ?? null;
 
       const openWith = (rawUrl: string) => {
-        const finalUrl = buildDeepLink(rawUrl, {
-          page: citation?.page ?? null,
-          phrase: keyPhrase || null,
-        });
         setOpenedDocument(true);
         void markCitationDocumentOpened(telemetryRef.current);
-        window.open(finalUrl, '_blank', 'noopener,noreferrer');
+        if (mode === 'inline') {
+          setViewerSource({
+            url: rawUrl,
+            filename,
+            page: citation?.page ?? null,
+            snippet: citation?.snippet ?? null,
+            documentTitle: (doc?.title as string | undefined) ?? citation?.document_title ?? null,
+          });
+        } else {
+          const finalUrl = buildDeepLink(rawUrl, {
+            page: citation?.page ?? null,
+            phrase: keyPhrase || null,
+          });
+          window.open(finalUrl, '_blank', 'noopener,noreferrer');
+        }
       };
 
       if (storagePath) {
