@@ -8,10 +8,11 @@ import { z } from "https://esm.sh/zod@3.23.8";
 const CerebroBodySchema = z.object({
   query: z.string().trim().min(2).max(10000),
   stream: z.boolean().optional(),
+  notebook_id: z.string().uuid().nullable().optional(),
 }).passthrough();
 
 const MAX_CITATIONS = 8;
-const CITATIONS_SENTINEL = "\n\u241E"; // Record Separator marker before JSON payload
+const CITATIONS_SENTINEL = "\n\u241E";
 
 interface Citation {
   n: number;
@@ -21,6 +22,8 @@ interface Citation {
   page: number | null;
   section: string | null;
   snippet: string;
+  notebook_id: string | null;
+  notebook_name: string | null;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
