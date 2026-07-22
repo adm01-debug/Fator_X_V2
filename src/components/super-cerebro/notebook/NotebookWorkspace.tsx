@@ -10,6 +10,7 @@ import { useNotes } from "@/services/notesService";
 import { SourcesPanel } from "./SourcesPanel";
 import { NoteEditor } from "./NoteEditor";
 import { StudioPanel } from "./StudioPanel";
+import { NoteQuickOpen } from "./NoteQuickOpen";
 import { NotebookSelector } from "../NotebookSelector";
 import { NotebookPen } from "lucide-react";
 
