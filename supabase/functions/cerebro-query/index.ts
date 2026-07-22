@@ -9,6 +9,7 @@ const CerebroBodySchema = z.object({
   query: z.string().trim().min(2).max(10000),
   stream: z.boolean().optional(),
   notebook_id: z.string().uuid().nullable().optional(),
+  source_ids: z.array(z.string().uuid()).max(50).optional(),
 }).passthrough();
 
 const MAX_CITATIONS = 8;
@@ -60,7 +61,7 @@ serve(async (req) => {
     if (!parsedBody.success) {
       return errorResponse('Payload inválido: ' + JSON.stringify(parsedBody.error.flatten().fieldErrors), 400, req);
     }
-    const { query, stream: streamOpt, notebook_id: notebookId } = parsedBody.data;
+    const { query, stream: streamOpt, notebook_id: notebookId, source_ids: sourceIds } = parsedBody.data;
     const stream = streamOpt === true;
 
     await supabase.from('workspace_members').select('workspace_id').eq('user_id', user.id).limit(1).single();
@@ -99,6 +100,11 @@ serve(async (req) => {
       if (notebookId) {
         // Isolation: only chunks whose metadata pins this notebook
         chunkQuery = chunkQuery.filter('metadata->>collection_id', 'eq', notebookId);
+      }
+      if (sourceIds && sourceIds.length > 0) {
+        // NotebookLM-style: user restringiu o chat a fontes específicas
+        chunkQuery = chunkQuery.in('document_id', sourceIds);
+        facts.push(`Chat restrito a ${sourceIds.length} fontes selecionadas`);
       }
       const { data: chunks } = await chunkQuery;
 

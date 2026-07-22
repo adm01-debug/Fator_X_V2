@@ -5335,6 +5335,56 @@ export type Database = {
         }
         Relationships: []
       }
+      knowledge_links: {
+        Row: {
+          context: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          link_kind: string
+          source_id: string
+          source_type: string
+          target_id: string | null
+          target_label: string | null
+          target_type: string
+          workspace_id: string
+        }
+        Insert: {
+          context?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          link_kind?: string
+          source_id: string
+          source_type: string
+          target_id?: string | null
+          target_label?: string | null
+          target_type: string
+          workspace_id: string
+        }
+        Update: {
+          context?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          link_kind?: string
+          source_id?: string
+          source_type?: string
+          target_id?: string | null
+          target_label?: string | null
+          target_type?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "knowledge_links_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       knowledge_relations: {
         Row: {
           created_at: string | null
@@ -5516,6 +5566,60 @@ export type Database = {
           output_cost_per_1k?: number
         }
         Relationships: []
+      }
+      notebook_notes: {
+        Row: {
+          body_md: string
+          collection_id: string
+          created_at: string
+          created_by: string | null
+          id: string
+          is_archived: boolean
+          tags: string[]
+          title: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          body_md?: string
+          collection_id: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_archived?: boolean
+          tags?: string[]
+          title: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          body_md?: string
+          collection_id?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_archived?: boolean
+          tags?: string[]
+          title?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notebook_notes_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notebook_notes_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       oncall_schedule: {
         Row: {
@@ -10433,6 +10537,8 @@ export type Database = {
           token_count: number
         }[]
       }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
       start_dr_drill: { Args: { p_drill_id: string }; Returns: Json }
       start_game_day: {
         Args: { p_game_day_id: string; p_inject_chaos?: boolean }

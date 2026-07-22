@@ -19,6 +19,11 @@ interface CerebroState {
   selectedCollectionId: string | null;
   activeNotebookId: string | null;
 
+  // NotebookLM-style workspace
+  activeNoteId: string | null;
+  selectedSourceIds: string[];
+  studioTab: string;
+
   // Health
   healthScore: number;
   decayAlerts: number;
@@ -31,6 +36,10 @@ interface CerebroState {
   setCollections: (collections: Record<string, unknown>[]) => void;
   selectCollection: (id: string | null) => void;
   setActiveNotebook: (id: string | null) => void;
+  setActiveNote: (id: string | null) => void;
+  toggleSource: (id: string) => void;
+  clearSources: () => void;
+  setStudioTab: (tab: string) => void;
   setHealthScore: (score: number) => void;
   setAlerts: (decay: number, duplicates: number) => void;
   reset: () => void;
@@ -46,6 +55,9 @@ export const useCerebroStore = create<CerebroState>()(
       collections: [],
       selectedCollectionId: null,
       activeNotebookId: null,
+      activeNoteId: null,
+      selectedSourceIds: [],
+      studioTab: 'backlinks',
       healthScore: 0,
       decayAlerts: 0,
       duplicateAlerts: 0,
@@ -56,7 +68,16 @@ export const useCerebroStore = create<CerebroState>()(
       setIsSearching: (searching) => set({ isSearching: searching }),
       setCollections: (collections) => set({ collections }),
       selectCollection: (id) => set({ selectedCollectionId: id }),
-      setActiveNotebook: (id) => set({ activeNotebookId: id }),
+      setActiveNotebook: (id) => set({ activeNotebookId: id, activeNoteId: null, selectedSourceIds: [] }),
+      setActiveNote: (id) => set({ activeNoteId: id }),
+      toggleSource: (id) =>
+        set((s) => ({
+          selectedSourceIds: s.selectedSourceIds.includes(id)
+            ? s.selectedSourceIds.filter((x) => x !== id)
+            : [...s.selectedSourceIds, id],
+        })),
+      clearSources: () => set({ selectedSourceIds: [] }),
+      setStudioTab: (tab) => set({ studioTab: tab }),
       setHealthScore: (score) => set({ healthScore: score }),
       setAlerts: (decay, duplicates) => set({ decayAlerts: decay, duplicateAlerts: duplicates }),
       reset: () =>
@@ -68,6 +89,9 @@ export const useCerebroStore = create<CerebroState>()(
           collections: [],
           selectedCollectionId: null,
           activeNotebookId: null,
+          activeNoteId: null,
+          selectedSourceIds: [],
+          studioTab: 'backlinks',
           healthScore: 0,
           decayAlerts: 0,
           duplicateAlerts: 0,
@@ -75,7 +99,8 @@ export const useCerebroStore = create<CerebroState>()(
     }),
     {
       name: 'nexus-cerebro-store',
-      partialize: (s) => ({ activeNotebookId: s.activeNotebookId }),
+      partialize: (s) => ({ activeNotebookId: s.activeNotebookId, activeNoteId: s.activeNoteId }),
     },
   ),
 );
+

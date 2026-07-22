@@ -21,9 +21,10 @@ import { DecayDetectionTab } from "@/components/super-cerebro/DecayDetectionTab"
 import { ContextTiersTab } from "@/components/super-cerebro/ContextTiersTab";
 import { NotebooksTab } from "@/components/super-cerebro/NotebooksTab";
 import { NotebookSelector } from "@/components/super-cerebro/NotebookSelector";
+import { NotebookWorkspace } from "@/components/super-cerebro/notebook/NotebookWorkspace";
 
 export default function SuperCerebroPage() {
-  const [activeTab, setActiveTab] = useState('notebooks');
+  const [activeTab, setActiveTab] = useState('workspace');
 
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
@@ -43,6 +44,7 @@ export default function SuperCerebroPage() {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="bg-secondary/50 border border-border/50 flex-wrap h-auto gap-1 p-1">
+          <TabsTrigger value="workspace" className="text-meta gap-1.5"><NotebookPen className="h-3.5 w-3.5" /> Workspace</TabsTrigger>
           <TabsTrigger value="notebooks" className="text-meta gap-1.5"><NotebookPen className="h-3.5 w-3.5" /> Notebooks</TabsTrigger>
           <TabsTrigger value="overview" className="text-meta gap-1.5"><Brain className="h-3.5 w-3.5" /> Visão Geral</TabsTrigger>
           <TabsTrigger value="search" className="text-meta gap-1.5"><Search className="h-3.5 w-3.5" /> Busca</TabsTrigger>
@@ -59,6 +61,7 @@ export default function SuperCerebroPage() {
           <TabsTrigger value="sandbox" className="text-meta gap-1.5"><FlaskConical className="h-3.5 w-3.5" /> Sandbox</TabsTrigger>
         </TabsList>
 
+        <TabsContent value="workspace" className="animate-in fade-in-50 duration-500"><NotebookWorkspace /></TabsContent>
         <TabsContent value="notebooks" className="animate-in fade-in-50 duration-500"><NotebooksTab /></TabsContent>
         <TabsContent value="overview" className="animate-in fade-in-50 duration-500"><OverviewTab /></TabsContent>
         <TabsContent value="search" className="animate-in fade-in-50 duration-500"><SearchTab /></TabsContent>
