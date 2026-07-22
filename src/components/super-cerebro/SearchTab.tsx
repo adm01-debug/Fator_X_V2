@@ -83,13 +83,18 @@ export function SearchTab() {
       });
   }, []);
 
+  const activeNotebookId = useCerebroStore((s) => s.activeNotebookId);
+  const { workspaceId } = useCurrentWorkspace();
+  const { data: notebooks = [] } = useNotebooks(workspaceId);
+  const activeNotebook = notebooks.find((n) => n.id === activeNotebookId) ?? null;
+
   const handleSearch = async () => {
     if (!query.trim()) return;
     setIsSearching(true);
     setSearchResults("");
     setCitations([]);
     try {
-      const body = await invokeCerebroQuery({ query, mode: 'chat', stream: true });
+      const body = await invokeCerebroQuery({ query, mode: 'chat', stream: true, notebook_id: activeNotebookId ?? undefined });
 
       if (body instanceof ReadableStream) {
         const reader = body.getReader();
