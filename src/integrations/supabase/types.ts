@@ -9537,7 +9537,6 @@ export type Database = {
       }
     }
     Functions: {
-      _fase8_snapshot_as: { Args: { _uid: string }; Returns: Json }
       accept_workspace_invitation: {
         Args: { p_member_id: string }
         Returns: undefined
