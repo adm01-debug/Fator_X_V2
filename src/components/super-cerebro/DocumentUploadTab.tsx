@@ -1,12 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { supabase } from '@/integrations/supabase/client';
-import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from 'sonner';
 import { FileText, FileType2, Trash2, RefreshCw, UploadCloud, Info } from 'lucide-react';
@@ -17,9 +15,8 @@ import {
   ACCEPTED_MIMES, MAX_UPLOAD_BYTES,
   type DocumentIngestion,
 } from '@/services/documentIngestionService';
-import { logger } from '@/lib/logger';
-
-interface Collection { id: string; name: string; }
+import { NotebookSelector } from './NotebookSelector';
+import { useCerebroStore } from '@/stores/cerebroStore';
 
 function humanBytes(n: number): string {
   if (n < 1024) return `${n} B`;
@@ -40,8 +37,7 @@ function statusColor(s: DocumentIngestion['status']): string {
 }
 
 export function DocumentUploadTab() {
-  const [collections, setCollections] = useState<Collection[]>([]);
-  const [selectedCollection, setSelectedCollection] = useState<string>('');
+  const activeNotebookId = useCerebroStore((s) => s.activeNotebookId);
   const [ingestions, setIngestions] = useState<DocumentIngestion[]>([]);
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
@@ -50,18 +46,10 @@ export function DocumentUploadTab() {
     (async () => {
       const { data } = await supabase.auth.getUser();
       setUserId(data.user?.id ?? null);
-
-      const { data: cols, error } = await supabaseExternal
-        .from('collections').select('id,name').order('name');
-      if (error) logger.warn('collections fetch', { err: error.message });
-      const list = (cols ?? []) as Collection[];
-      setCollections(list);
-      if (list[0]) setSelectedCollection(list[0].id);
-
-      const rows = await listIngestions().catch(() => []);
+      const rows = await listIngestions(activeNotebookId ?? undefined).catch(() => []);
       setIngestions(rows);
     })();
-  }, []);
+  }, [activeNotebookId]);
 
   useEffect(() => {
     if (!userId) return;
@@ -78,8 +66,8 @@ export function DocumentUploadTab() {
   }, [userId]);
 
   const handleFiles = useCallback(async (files: File[]) => {
-    if (!selectedCollection) {
-      toast.error('Selecione uma base de conhecimento antes.');
+    if (!activeNotebookId) {
+      toast.error('Selecione um notebook antes de enviar arquivos.');
       return;
     }
     setLoading(true);
@@ -87,7 +75,7 @@ export function DocumentUploadTab() {
       const tId = toast.loading(`Enviando ${file.name}…`);
       try {
         const ing = await uploadDocument(file, {
-          collectionId: selectedCollection,
+          collectionId: activeNotebookId,
           onStage: (s) => toast.loading(`${file.name}: ${statusLabel(s as DocumentIngestion['status'])}`, { id: tId }),
         });
         toast.success(`${file.name} pronto!`, {
@@ -100,14 +88,14 @@ export function DocumentUploadTab() {
       }
     }
     setLoading(false);
-  }, [selectedCollection]);
+  }, [activeNotebookId]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: ACCEPTED_MIMES,
     maxSize: MAX_UPLOAD_BYTES,
     multiple: true,
     onDrop: handleFiles,
-    disabled: loading || !selectedCollection,
+    disabled: loading || !activeNotebookId,
   });
 
   const empty = useMemo(() => ingestions.length === 0, [ingestions]);
@@ -123,23 +111,12 @@ export function DocumentUploadTab() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-3 flex-wrap">
-            <span className="text-meta text-muted-foreground">Base de conhecimento:</span>
-            <Select value={selectedCollection} onValueChange={setSelectedCollection}>
-              <SelectTrigger className="w-[280px]">
-                <SelectValue placeholder="Escolha uma coleção…" />
-              </SelectTrigger>
-              <SelectContent>
-                {collections.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-                ))}
-                {collections.length === 0 && (
-                  <div className="p-2 text-meta text-muted-foreground">
-                    Nenhuma coleção. Crie uma primeiro em Áreas.
-                  </div>
-                )}
-              </SelectContent>
-            </Select>
+            <NotebookSelector allowAll={false} />
+            {!activeNotebookId && (
+              <Badge variant="outline" className="text-meta">Selecione um notebook para habilitar o upload</Badge>
+            )}
           </div>
+
 
           <div
             {...getRootProps()}
