@@ -1,7 +1,7 @@
 /**
  * slack-dlq-retry
  * Cron-invoked. Reprocessa itens pendentes de slack_dispatch_dlq com backoff.
- * Move para resolved_at ao suceder ou incrementa attempts (máx 5) ao falhar.
+ * Fase 7: erros permanentes são curto-circuitados (attempts=MAX_ATTEMPTS) para drenar rápido.
  */
 import { createClient } from "npm:@supabase/supabase-js@2.50.0";
 import { handleCorsPreflight, jsonResponse, errorResponse } from "../_shared/cors.ts";
@@ -9,6 +9,35 @@ import { slackApiCall } from "../_shared/slack.ts";
 
 const MAX_ATTEMPTS = 5;
 const BATCH_SIZE = 20;
+
+/**
+ * Erros permanentes do Slack — não faz sentido retentar.
+ * Fonte: https://api.slack.com/methods/chat.postMessage#errors
+ */
+const PERMANENT_ERRORS = new Set([
+  "channel_not_found",
+  "not_in_channel",
+  "is_archived",
+  "invalid_auth",
+  "token_revoked",
+  "token_expired",
+  "account_inactive",
+  "no_permission",
+  "restricted_action",
+  "msg_too_long",
+  "no_text",
+  "invalid_blocks",
+  "invalid_blocks_format",
+  "team_access_not_granted",
+  "not_authed",
+]);
+
+function isPermanent(errMsg: string): boolean {
+  for (const code of PERMANENT_ERRORS) {
+    if (errMsg.includes(code)) return true;
+  }
+  return false;
+}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return handleCorsPreflight(req);
@@ -34,6 +63,7 @@ Deno.serve(async (req) => {
 
   let resolved = 0;
   let stillFailing = 0;
+  let deadPermanent = 0;
 
   for (const item of pending) {
     try {
@@ -51,19 +81,29 @@ Deno.serve(async (req) => {
         throw new Error(resp.error ?? "unknown");
       }
     } catch (err) {
-      const attempts = (item.attempts ?? 1) + 1;
+      const errMsg = err instanceof Error ? err.message : String(err);
+      const permanent = isPermanent(errMsg);
+      const attempts = permanent ? MAX_ATTEMPTS : (item.attempts ?? 1) + 1;
       const backoffMin = Math.min(60, 5 * Math.pow(2, attempts - 1));
       await supabase
         .from("slack_dispatch_dlq")
         .update({
           attempts,
-          error: err instanceof Error ? err.message : String(err),
-          next_retry_at: new Date(Date.now() + backoffMin * 60_000).toISOString(),
+          error: permanent ? `permanent:${errMsg}` : errMsg,
+          next_retry_at: permanent
+            ? new Date().toISOString()
+            : new Date(Date.now() + backoffMin * 60_000).toISOString(),
         })
         .eq("id", item.id);
-      stillFailing++;
+      if (permanent) deadPermanent++;
+      else stillFailing++;
     }
   }
 
-  return jsonResponse(req, { processed: pending.length, resolved, still_failing: stillFailing });
+  return jsonResponse(req, {
+    processed: pending.length,
+    resolved,
+    still_failing: stillFailing,
+    dead_permanent: deadPermanent,
+  });
 });

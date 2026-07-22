@@ -3,6 +3,7 @@ import { SecurityPosture } from "@/components/security/SecurityPosture";
 import { SecurityMonitoringPanel } from "@/components/security/SecurityMonitoringPanel";
 import { RollbackRateCard } from "@/components/security/RollbackRateCard";
 import { WalGenerationCard } from "@/components/security/WalGenerationCard";
+import { DbHealthCard } from "@/components/admin/DbHealthCard";
 import { ComplianceFrameworks } from "@/components/security/ComplianceFrameworks";
 import { GuardrailPolicies } from "@/components/security/GuardrailPolicies";
 import { SessionManagement } from "@/components/security/SessionManagement";
@@ -229,6 +230,7 @@ export default function SecurityPage() {
             <div className="lg:col-span-1 space-y-8">
               <RollbackRateCard />
               <WalGenerationCard />
+              <DbHealthCard />
               <SecurityMonitoringPanel />
             </div>
           </div>
