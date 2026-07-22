@@ -2872,11 +2872,13 @@ export type Database = {
       chunks: {
         Row: {
           chunk_index: number
+          chunk_version: number
           content: string
           created_at: string | null
           document_id: string | null
           embedding_status: string | null
           id: string
+          is_active: boolean
           l0_abstract: string | null
           l1_overview: string | null
           metadata: Json | null
@@ -2884,11 +2886,13 @@ export type Database = {
         }
         Insert: {
           chunk_index?: number
+          chunk_version?: number
           content: string
           created_at?: string | null
           document_id?: string | null
           embedding_status?: string | null
           id?: string
+          is_active?: boolean
           l0_abstract?: string | null
           l1_overview?: string | null
           metadata?: Json | null
@@ -2896,11 +2900,13 @@ export type Database = {
         }
         Update: {
           chunk_index?: number
+          chunk_version?: number
           content?: string
           created_at?: string | null
           document_id?: string | null
           embedding_status?: string | null
           id?: string
+          is_active?: boolean
           l0_abstract?: string | null
           l1_overview?: string | null
           metadata?: Json | null
@@ -3605,11 +3611,16 @@ export type Database = {
       }
       documents: {
         Row: {
+          chunk_overlap: number
+          chunk_size: number
+          chunk_strategy: string
+          chunk_version: number
           collection_id: string | null
           created_at: string | null
           id: string
           metadata: Json | null
           mime_type: string | null
+          parsed_text: string | null
           size_bytes: number | null
           source_type: string | null
           source_url: string | null
@@ -3618,11 +3629,16 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          chunk_overlap?: number
+          chunk_size?: number
+          chunk_strategy?: string
+          chunk_version?: number
           collection_id?: string | null
           created_at?: string | null
           id?: string
           metadata?: Json | null
           mime_type?: string | null
+          parsed_text?: string | null
           size_bytes?: number | null
           source_type?: string | null
           source_url?: string | null
@@ -3631,11 +3647,16 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          chunk_overlap?: number
+          chunk_size?: number
+          chunk_strategy?: string
+          chunk_version?: number
           collection_id?: string | null
           created_at?: string | null
           id?: string
           metadata?: Json | null
           mime_type?: string | null
+          parsed_text?: string | null
           size_bytes?: number | null
           source_type?: string | null
           source_url?: string | null
