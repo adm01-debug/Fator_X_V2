@@ -143,11 +143,41 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
           </div>
 
           <div className="rounded-lg border border-border/60 bg-secondary/20 p-3">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1.5">
-              Trecho usado
-            </p>
+            <div className="flex items-center justify-between mb-1.5">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                Trecho usado
+              </p>
+              {keyPhrase && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 px-2 gap-1 text-[10px]"
+                  onClick={() => setHighlightMode((v) => !v)}
+                  aria-pressed={highlightMode}
+                >
+                  <Highlighter className="h-3 w-3" />
+                  {highlightMode ? 'Destaque on' : 'Destaque off'}
+                </Button>
+              )}
+            </div>
             <p className="text-sm text-foreground leading-relaxed italic">
-              "{citation?.snippet}"
+              "
+              {highlightMode && keyPhrase
+                ? highlightParts.map((part, i) =>
+                    part.hit ? (
+                      <mark
+                        key={i}
+                        className="rounded bg-primary/25 text-foreground px-0.5 not-italic font-medium"
+                      >
+                        {part.text}
+                      </mark>
+                    ) : (
+                      <span key={i}>{part.text}</span>
+                    ),
+                  )
+                : citation?.snippet}
+              "
             </p>
           </div>
 
