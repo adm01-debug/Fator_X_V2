@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from 'sonner';
 import { Info, Loader2, RefreshCw } from 'lucide-react';
+import { invalidateSignedUrlForDocument } from '@/lib/signedUrlCache';
 
 export type ChunkStrategy = 'fixed' | 'paragraph' | 'sentence';
 
@@ -112,6 +113,9 @@ export function DocumentChunkingDialog({ open, onOpenChange, documentId, documen
       if (result.status === 'noop') {
         toast.info('Configurações idênticas — nada mudou.');
       } else {
+        // Invalidate signed URL cache: nova versão ativa pode servir do mesmo storage_path,
+        // mas garantimos que qualquer link stale seja descartado.
+        await invalidateSignedUrlForDocument(documentId);
         toast.success('Reprocessamento iniciado', {
           description: `${result.chunks_created} blocos • versão v${result.chunk_version}. Citações antigas preservadas.`,
         });
