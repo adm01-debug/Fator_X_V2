@@ -228,6 +228,8 @@ serve(async (req) => {
     let fullText = '';
     let extractionMethod: 'text' | 'ocr' | 'hybrid' | 'docx' = 'text';
     let pageCount: number | null = null;
+    const pageEvents: OcrPageEvent[] = [];
+    const parseStart = performance.now();
 
     if (body.mime === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
       fullText = await extractDocxText(bytes);
@@ -259,10 +261,15 @@ serve(async (req) => {
           }, 422);
         }
         await updateStatus('ocr', 30);
-        const ocrMap = await runOcrPages(hfToken, body.ocr_pages, async (done, total) => {
-          const pct = 30 + Math.floor((done / total) * 40);
-          await updateStatus('ocr', pct);
-        });
+        const ocrMap = await runOcrPages(
+          hfToken,
+          body.ocr_pages,
+          async (done, total) => {
+            const pct = 30 + Math.floor((done / total) * 40);
+            await updateStatus('ocr', pct);
+          },
+          (ev) => pageEvents.push(ev),
+        );
         const combined = pages.map((t, i) => {
           const p = i + 1;
           const ocr = ocrMap.get(p);
@@ -270,21 +277,58 @@ serve(async (req) => {
         });
         fullText = combined.map((t, i) => `\n\n--- Página ${i + 1} ---\n${t}`).join('');
         extractionMethod = scannedPages.length === pages.length ? 'ocr' : 'hybrid';
-
-        // Audit each OCR page for cost sim
-        const audit = body.ocr_pages.map(p => ({
-          user_id: user.id,
-          category: 'ocr.page',
-          entity_type: 'document_ingestion',
-          entity_id: body.ingestion_id,
-          metadata: { page: p.page, filename: body.filename },
-        }));
-        await supabase.from('audit_events').insert(audit).select().maybeSingle().then(() => {}).catch(() => {});
       } else {
+        // Pure text extraction — emit one event per page for parity with OCR path
+        const textStart = performance.now();
+        const perPage = pages.length > 0
+          ? Math.round((performance.now() - textStart) / pages.length)
+          : 0;
+        pages.forEach((t, i) => {
+          pageEvents.push({
+            page: i + 1,
+            method: 'text',
+            status: (t ?? '').trim().length > 0 ? 'success' : 'error',
+            duration_ms: perPage,
+            image_bytes: 0,
+            text_chars: (t ?? '').length,
+            ...((t ?? '').trim().length === 0 ? { error: 'empty_page' } : {}),
+          });
+        });
         fullText = pages.map((t, i) => `\n\n--- Página ${i + 1} ---\n${t ?? ''}`).join('');
         extractionMethod = 'text';
       }
     }
+
+    // Emit detailed per-page OCR/extraction audit events (best-effort, non-blocking failure)
+    if (pageEvents.length > 0) {
+      const totalDuration = Math.round(performance.now() - parseStart);
+      const auditRows = pageEvents.map((ev) => ({
+        user_id: user.id,
+        event_type: 'ocr.page',
+        resource_type: 'document_ingestion',
+        resource_id: body.ingestion_id,
+        action: ev.status === 'success' ? 'extract' : 'extract_failed',
+        metadata: {
+          page: ev.page,
+          method: ev.method,
+          status: ev.status,
+          duration_ms: ev.duration_ms,
+          image_bytes: ev.image_bytes,
+          text_chars: ev.text_chars,
+          filename: body.filename,
+          mime: body.mime,
+          collection_id: body.collection_id,
+          extraction_method: extractionMethod,
+          total_parse_ms: totalDuration,
+          ...(ev.error ? { error: ev.error.slice(0, 500) } : {}),
+        },
+      }));
+      const { error: auditErr } = await supabase.from('audit_events').insert(auditRows);
+      if (auditErr) {
+        console.error('[doc-parse] audit_events insert failed:', auditErr.message);
+      }
+    }
+
 
     fullText = fullText.trim();
     if (!fullText || fullText.length < 20) {
