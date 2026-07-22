@@ -213,6 +213,8 @@ export function CitedMarkdown({ text, citations }: CitedMarkdownProps) {
               key={c.chunk_id}
               type="button"
               onClick={() => setOpen(c)}
+              onMouseEnter={() => c.document_id && void prefetchSignedUrlForDocument(c.document_id)}
+              onFocus={() => c.document_id && void prefetchSignedUrlForDocument(c.document_id)}
               className="text-[11px] px-2 py-1 rounded-md bg-secondary/40 hover:bg-secondary transition-colors border border-border/40 max-w-[240px] truncate text-left"
               title={c.document_title}
             >
