@@ -30,6 +30,7 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
   const [loading, setLoading] = useState(false);
   const [openedDocument, setOpenedDocument] = useState(false);
   const [highlightMode, setHighlightMode] = useState(true);
+  const [viewerSource, setViewerSource] = useState<DocumentViewerSource | null>(null);
   const telemetryRef = useRef<CitationTelemetryHandle | null>(null);
   const { workspaceId } = useCurrentWorkspace();
   const activeNotebookId = useCerebroStore((s) => s.activeNotebookId);
