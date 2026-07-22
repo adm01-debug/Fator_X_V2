@@ -203,4 +203,16 @@ export async function invalidateSignedUrlForDocument(documentId: string): Promis
 export function clearSignedUrlCache(): void {
   cache.clear();
   inflight.clear();
+  notify();
 }
+
+// Expose helpers no console para debug rápido: window.__signedUrlCache.stats()
+if (typeof window !== 'undefined') {
+  (window as unknown as { __signedUrlCache?: unknown }).__signedUrlCache = {
+    stats: getSignedUrlCacheStats,
+    reset: resetSignedUrlCacheStats,
+    clear: clearSignedUrlCache,
+    subscribe: subscribeSignedUrlCacheStats,
+  };
+}
+
