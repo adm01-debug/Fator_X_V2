@@ -3461,6 +3461,75 @@ export type Database = {
           },
         ]
       }
+      document_ingestions: {
+        Row: {
+          collection_id: string | null
+          created_at: string
+          document_id: string | null
+          error_message: string | null
+          extraction_method: string | null
+          filename: string
+          id: string
+          mime: string
+          pages: number | null
+          progress_pct: number
+          size_bytes: number
+          status: string
+          storage_path: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          collection_id?: string | null
+          created_at?: string
+          document_id?: string | null
+          error_message?: string | null
+          extraction_method?: string | null
+          filename: string
+          id?: string
+          mime: string
+          pages?: number | null
+          progress_pct?: number
+          size_bytes?: number
+          status?: string
+          storage_path?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          collection_id?: string | null
+          created_at?: string
+          document_id?: string | null
+          error_message?: string | null
+          extraction_method?: string | null
+          filename?: string
+          id?: string
+          mime?: string
+          pages?: number | null
+          progress_pct?: number
+          size_bytes?: number
+          status?: string
+          storage_path?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_ingestions_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_ingestions_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       documents: {
         Row: {
           collection_id: string | null
