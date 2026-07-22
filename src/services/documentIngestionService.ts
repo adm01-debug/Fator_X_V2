@@ -265,6 +265,8 @@ export function statusLabel(s: IngestionStatus): string {
     embedding: 'Gerando embeddings…',
     ready: 'Pronto',
     error: 'Erro',
+    cancelled: 'Cancelado',
+
   };
   return map[s];
 }
