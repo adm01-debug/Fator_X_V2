@@ -167,6 +167,8 @@ export default function SlackSettingsPage() {
         </Card>
       )}
 
+      {isConfigured && <SlackHealthCard />}
+
       <Tabs defaultValue="alerts" className="w-full">
         <TabsList>
           <TabsTrigger value="alerts">Alertas</TabsTrigger>
