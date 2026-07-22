@@ -1,15 +1,17 @@
-import { useState, useMemo, Children, isValidElement, cloneElement, type ReactNode } from 'react';
+import { useState, useMemo, useEffect, Children, isValidElement, cloneElement, type ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { CitationDialog } from './CitationDialog';
 import type { CerebroCitation } from '@/types/cerebroCitations';
 import { logger } from '@/lib/logger';
+import { validateCitations } from '@/lib/citationValidation';
 
 interface CitedMarkdownProps {
   text: string;
   citations: CerebroCitation[];
 }
+
 
 /**
  * Matches:
@@ -48,6 +50,20 @@ export function CitedMarkdown({ text, citations }: CitedMarkdownProps) {
     for (const c of citations) map.set(c.n, c);
     return map;
   }, [citations]);
+
+  // Auditoria: valida consistência entre [n] do texto e o array de citations.
+  useEffect(() => {
+    if (!text || citations.length === 0) return;
+    const result = validateCitations(text, citations);
+    if (!result.valid) {
+      logger.warn('cerebro.citation.validation_failed', {
+        missing: result.missing,
+        unused: result.unused,
+        issues: result.issues.map((i) => ({ code: i.code, n: i.n, chunkId: i.chunkId })),
+      });
+    }
+  }, [text, citations]);
+
 
   const renderChip = (n: number, key: string): JSX.Element | string => {
     const citation = byNumber.get(n);
