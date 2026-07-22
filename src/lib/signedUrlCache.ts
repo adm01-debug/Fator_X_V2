@@ -31,6 +31,7 @@ export interface SignedUrlCacheStats {
   misses: number;
   inflightCoalesced: number;
   errors: number;
+  retries: number;
   fetches: number;
   totalFetchMs: number;
   lastFetchMs: number | null;
@@ -44,6 +45,7 @@ const stats = {
   misses: 0,
   inflightCoalesced: 0,
   errors: 0,
+  retries: 0,
   fetches: 0,
   totalFetchMs: 0,
   lastFetchMs: null as number | null,
