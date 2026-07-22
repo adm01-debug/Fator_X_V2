@@ -227,8 +227,8 @@ export async function deleteIngestion(ing: DocumentIngestion): Promise<void> {
     await supabase.storage.from('knowledge-uploads').remove([ing.storage_path]).catch(() => {});
   }
   if (ing.document_id) {
-    await supabase.from('chunks').delete().eq('document_id', ing.document_id).catch(() => {});
-    await supabase.from('documents').delete().eq('id', ing.document_id).catch(() => {});
+    await supabase.from('chunks').delete().eq('document_id', ing.document_id).then(() => {}, () => {});
+    await supabase.from('documents').delete().eq('id', ing.document_id).then(() => {}, () => {});
   }
   const { error } = await supabase.from('document_ingestions').delete().eq('id', ing.id);
   if (error) throw error;
