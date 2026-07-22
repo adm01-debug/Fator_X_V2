@@ -3,6 +3,7 @@
  * inspirado no NotebookLM com backlinks estilo Obsidian.
  */
 import { useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
 import { useCerebroStore } from "@/stores/cerebroStore";
 import { useNotebooks } from "@/services/notebooksService";
@@ -10,11 +11,13 @@ import { useNotes } from "@/services/notesService";
 import { SourcesPanel } from "./SourcesPanel";
 import { NoteEditor } from "./NoteEditor";
 import { StudioPanel } from "./StudioPanel";
+import { NoteQuickOpen } from "./NoteQuickOpen";
 import { NotebookSelector } from "../NotebookSelector";
 import { NotebookPen } from "lucide-react";
 
 export function NotebookWorkspace() {
   const { workspaceId } = useCurrentWorkspace();
+  const params = useParams<{ notebookId?: string; noteId?: string }>();
   const activeNotebookId = useCerebroStore((s) => s.activeNotebookId);
   const activeNoteId = useCerebroStore((s) => s.activeNoteId);
   const setActiveNote = useCerebroStore((s) => s.setActiveNote);
@@ -22,6 +25,16 @@ export function NotebookWorkspace() {
 
   const { data: notebooks = [] } = useNotebooks(workspaceId);
   const { data: notes = [] } = useNotes(activeNotebookId);
+
+  // Deep-link: /super-cerebro/n/:notebookId/note/:noteId
+  useEffect(() => {
+    if (params.notebookId && params.notebookId !== activeNotebookId) {
+      setActiveNotebook(params.notebookId);
+    }
+    if (params.noteId && params.noteId !== activeNoteId) {
+      setActiveNote(params.noteId);
+    }
+  }, [params.notebookId, params.noteId, activeNotebookId, activeNoteId, setActiveNotebook, setActiveNote]);
 
   // Auto-select primeiro notebook se nenhum ativo
   useEffect(() => {
@@ -79,8 +92,9 @@ export function NotebookWorkspace() {
           )}
         </div>
 
-        <StudioPanel noteId={activeNoteId} />
+        <StudioPanel noteId={activeNoteId} notebookId={activeNotebookId} />
       </div>
+      <NoteQuickOpen />
     </div>
   );
 }
