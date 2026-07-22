@@ -427,6 +427,7 @@ serve(async (req) => {
             total_pages: pages.length,
           }, 422);
         }
+        if (await checkCancelled()) return jsonResponse({ status: 'cancelled' });
         await updateStatus('ocr', 30);
         const ocrMap = await runOcrPages(
           hfToken,
@@ -434,9 +435,11 @@ serve(async (req) => {
           async (done, total) => {
             const pct = 30 + Math.floor((done / total) * 40);
             await updateStatus('ocr', pct);
+            if (await checkCancelled()) throw CANCELLED;
           },
           (ev) => pageEvents.push(ev),
         );
+
         const combined = pages.map((t, i) => {
           const p = i + 1;
           const ocr = ocrMap.get(p);
