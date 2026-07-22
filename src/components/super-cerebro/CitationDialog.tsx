@@ -70,12 +70,16 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [citation?.chunk_id, citation?.n]);
 
-  const handleOpenDocument = async (mode: 'inline' | 'external' = 'inline') => {
+  const handleOpenDocument = async (
+    mode: 'inline' | 'external' = 'inline',
+    opts: { bypassCache?: boolean } = {},
+  ) => {
     if (!citation?.document_id || !UUID_RE.test(citation.document_id)) {
       toast.error('Documento inválido');
       return;
     }
     setLoading(true);
+    setLastError(null);
     try {
       const { data: doc, error } = await supabaseExternal
         .from('documents')
@@ -95,6 +99,7 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
 
       const openWith = (rawUrl: string) => {
         setOpenedDocument(true);
+        setLastError(null);
         void markCitationDocumentOpened(telemetryRef.current);
         if (mode === 'inline') {
           setViewerSource({
@@ -114,25 +119,49 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
       };
 
       if (storagePath) {
-        const signedUrl = await getCachedSignedUrl(bucket, storagePath);
+        const signedUrl = opts.bypassCache
+          ? await refetchSignedUrl(bucket, storagePath)
+          : await getCachedSignedUrl(bucket, storagePath);
         if (signedUrl) {
           openWith(signedUrl);
           return;
         }
+        // Falha após 3 tentativas com backoff dentro do cache. Se houver source_url, cai no fallback silencioso.
+        if (doc?.source_url) {
+          logger.warn('cerebro.citation.signed_url_failed_fallback_source', {
+            document_id: citation.document_id,
+          });
+          openWith(doc.source_url);
+          toast.warning('Link temporário indisponível — usando URL original do documento.');
+          return;
+        }
+        const msg = 'Não foi possível gerar o link seguro para este documento.';
+        setLastError({ message: msg, mode });
+        toast.error(msg, {
+          action: { label: 'Tentar novamente', onClick: () => void handleOpenDocument(mode, { bypassCache: true }) },
+        });
+        return;
       }
 
       if (doc?.source_url) {
         openWith(doc.source_url);
         return;
       }
-      toast.info('Documento sem URL de origem disponível');
+      const msg = 'Documento sem URL de origem disponível.';
+      setLastError({ message: msg, mode });
+      toast.info(msg);
     } catch (e) {
       logger.error('cerebro.citation.open_failed', { error: e });
-      toast.error('Não foi possível abrir o documento');
+      const msg = 'Não foi possível abrir o documento. Verifique sua conexão e tente novamente.';
+      setLastError({ message: msg, mode });
+      toast.error(msg, {
+        action: { label: 'Tentar novamente', onClick: () => void handleOpenDocument(mode, { bypassCache: true }) },
+      });
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
