@@ -549,7 +549,9 @@ serve(async (req) => {
 
     await supabase.from('document_ingestions').update({ document_id: doc.id }).eq('id', body.ingestion_id);
 
+    if (await checkCancelled()) return jsonResponse({ status: 'cancelled' });
     await updateStatus('embedding', 85);
+
     const chunks = chunkText(fullText, chunkOpts);
 
     // Fetch notebook name for chunk metadata (best-effort)
