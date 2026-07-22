@@ -2145,6 +2145,150 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_log_v2_2026_11: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          reason: string | null
+          resource_id: string | null
+          resource_name: string | null
+          resource_type: string
+          status: string | null
+          user_agent: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type?: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      audit_log_v2_2026_12: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          reason: string | null
+          resource_id: string | null
+          resource_name: string | null
+          resource_type: string
+          status: string | null
+          user_agent: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type?: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      audit_log_v2_2027_01: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          reason: string | null
+          resource_id: string | null
+          resource_name: string | null
+          resource_type: string
+          status: string | null
+          user_agent: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type?: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
       auth_attempts: {
         Row: {
           created_at: string | null
@@ -7355,6 +7499,114 @@ export type Database = {
         Relationships: []
       }
       trace_events_v2_2026_10: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          data: Json | null
+          duration_ms: number | null
+          event_type: string
+          id: string
+          status: string | null
+          trace_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type: string
+          id?: string
+          status?: string | null
+          trace_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type?: string
+          id?: string
+          status?: string | null
+          trace_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      trace_events_v2_2026_11: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          data: Json | null
+          duration_ms: number | null
+          event_type: string
+          id: string
+          status: string | null
+          trace_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type: string
+          id?: string
+          status?: string | null
+          trace_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type?: string
+          id?: string
+          status?: string | null
+          trace_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      trace_events_v2_2026_12: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          data: Json | null
+          duration_ms: number | null
+          event_type: string
+          id: string
+          status: string | null
+          trace_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type: string
+          id?: string
+          status?: string | null
+          trace_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type?: string
+          id?: string
+          status?: string | null
+          trace_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      trace_events_v2_2027_01: {
         Row: {
           agent_id: string | null
           created_at: string
