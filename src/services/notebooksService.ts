@@ -141,8 +141,8 @@ async function logAudit(action: string, resourceId: string, meta: Record<string,
   try {
     await supabase.rpc("log_audit_entry", {
       p_action: action,
-      p_resource_type: "notebook",
-      p_resource_id: resourceId,
+      p_entity_type: "notebook",
+      p_entity_id: resourceId,
       p_metadata: JSON.parse(JSON.stringify(meta)),
     });
   } catch (e) {
