@@ -50,6 +50,7 @@ function formatBytes(bytes: number): string {
 }
 
 export function DbHealthCard() {
+  const navigate = useNavigate();
   const { data, isLoading, error, refetch, isFetching } = useQuery({
     queryKey: ["db-health-snapshot"],
     refetchInterval: 60_000,
