@@ -366,7 +366,8 @@ export default function ChatWithAgentPage() {
                 onBack={() => { setActiveId(null); navigate('/chat'); }}
                 onClear={() => setConfirmClear(true)}
                 onOpenDetails={() => navigate(`/agents/${activeAgent.id}`)}
-                onExport={() => exportAs('txt')}
+                onExport={(fmt) => exportAs(fmt ?? 'txt')}
+                typing={isStreaming && !streamText && showTyping}
               />
 
               {/* Menu extra de exportação */}
@@ -383,7 +384,7 @@ export default function ChatWithAgentPage() {
 
               <div className="flex-1 relative overflow-hidden">
                 <ChatBackground />
-                <ScrollArea className="h-full">
+                <ScrollArea className="h-full" ref={scrollAreaRef}>
                   <div
                     ref={scrollRef}
                     role="log"
@@ -415,6 +416,7 @@ export default function ChatWithAgentPage() {
                     )}
                   </div>
                 </ScrollArea>
+                <ScrollToBottomButton visible={!atBottom} onClick={scrollToBottom} unread={unreadCount} />
               </div>
 
               <ChatComposer
