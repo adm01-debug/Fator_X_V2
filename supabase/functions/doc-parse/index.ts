@@ -313,6 +313,59 @@ serve(async (req) => {
       .update({ content_hash: effectiveHash })
       .eq('id', body.ingestion_id);
 
+    // Late dedup: if the client didn't send a hash, re-check now that we have one.
+    if (!isValidHash) {
+      const { data: existing } = await supabase
+        .from('documents')
+        .select('id, status, chunk_version')
+        .eq('collection_id', body.collection_id)
+        .eq('content_hash', effectiveHash)
+        .eq('status', 'indexed')
+        .maybeSingle();
+      if (existing?.id) {
+        const { count: activeChunks } = await supabase
+          .from('chunks')
+          .select('id', { count: 'exact', head: true })
+          .eq('document_id', existing.id)
+          .eq('is_active', true);
+        if ((activeChunks ?? 0) > 0) {
+          await supabase
+            .from('document_ingestions')
+            .update({
+              status: 'ready',
+              progress_pct: 100,
+              document_id: existing.id,
+              deduped_from: existing.id,
+              extraction_method: 'text',
+              error_message: null,
+            })
+            .eq('id', body.ingestion_id);
+          await supabase.from('audit_events').insert({
+            user_id: user.id,
+            event_type: 'document.dedup_hit',
+            resource_type: 'document',
+            resource_id: existing.id,
+            action: 'reuse',
+            metadata: {
+              collection_id: body.collection_id,
+              filename: body.filename,
+              content_hash: effectiveHash,
+              reused_chunks: activeChunks ?? 0,
+              source: 'server_computed',
+            },
+          }).then(() => {}, () => {});
+          return jsonResponse({
+            status: 'ok',
+            deduped: true,
+            document_id: existing.id,
+            reused_chunks: activeChunks ?? 0,
+            chunk_version: existing.chunk_version,
+          });
+        }
+      }
+    }
+
+
 
     let fullText = '';
     let extractionMethod: 'text' | 'ocr' | 'hybrid' | 'docx' = 'text';
