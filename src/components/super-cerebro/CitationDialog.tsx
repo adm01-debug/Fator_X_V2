@@ -85,20 +85,26 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
       const storagePath = md.storage_path;
       const bucket = md.bucket ?? 'knowledge-uploads';
 
+      const openWith = (rawUrl: string) => {
+        const finalUrl = buildDeepLink(rawUrl, {
+          page: citation?.page ?? null,
+          phrase: keyPhrase || null,
+        });
+        setOpenedDocument(true);
+        void markCitationDocumentOpened(telemetryRef.current);
+        window.open(finalUrl, '_blank', 'noopener,noreferrer');
+      };
+
       if (storagePath) {
         const signedUrl = await getCachedSignedUrl(bucket, storagePath);
         if (signedUrl) {
-          setOpenedDocument(true);
-          void markCitationDocumentOpened(telemetryRef.current);
-          window.open(signedUrl, '_blank', 'noopener,noreferrer');
+          openWith(signedUrl);
           return;
         }
       }
 
       if (doc?.source_url) {
-        setOpenedDocument(true);
-        void markCitationDocumentOpened(telemetryRef.current);
-        window.open(doc.source_url, '_blank', 'noopener,noreferrer');
+        openWith(doc.source_url);
         return;
       }
       toast.info('Documento sem URL de origem disponível');
