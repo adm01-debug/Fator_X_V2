@@ -228,6 +228,32 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
             </p>
           </div>
 
+          {lastError && (
+            <div
+              role="alert"
+              className="flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 p-2.5 text-xs text-destructive"
+            >
+              <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" />
+              <div className="flex-1">
+                <p className="font-semibold leading-snug">{lastError.message}</p>
+                <p className="text-[10px] opacity-80 mt-0.5">
+                  Tentamos 3 vezes com backoff. Você pode tentar novamente sem recarregar a página.
+                </p>
+              </div>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="h-7 gap-1 border-destructive/40 text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                onClick={() => void handleOpenDocument(lastError.mode, { bypassCache: true })}
+                disabled={loading}
+              >
+                <RotateCw className={`h-3 w-3 ${loading ? 'animate-spin' : ''}`} />
+                Tentar novamente
+              </Button>
+            </div>
+          )}
+
           <div className="grid grid-cols-2 gap-2">
             <Button
               onClick={() => handleOpenDocument('inline')}
