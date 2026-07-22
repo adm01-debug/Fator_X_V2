@@ -22,6 +22,8 @@ import {
   type RerankResult,
 } from '@/services/knowledgeService';
 import type { ContextTier } from '@/services/contextTiersService';
+import { CitedMarkdown } from './CitedMarkdown';
+import { splitCitationsSentinel, type CerebroCitation } from '@/types/cerebroCitations';
 
 const HISTORY_KEY = 'nexus-cerebro-search-history';
 const HISTORY_MAX = 10;
