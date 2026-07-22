@@ -9750,6 +9750,18 @@ export type Database = {
           rollbacks: number
         }[]
       }
+      get_detector_slo_status: {
+        Args: never
+        Returns: {
+          active: boolean
+          job_name: string
+          last_run_at: string
+          last_status: string
+          schedule: string
+          seconds_since_last_run: number
+          slo_ok: boolean
+        }[]
+      }
       get_embedding_coverage: {
         Args: { _workspace_id: string }
         Returns: {
