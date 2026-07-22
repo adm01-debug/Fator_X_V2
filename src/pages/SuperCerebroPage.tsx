@@ -44,6 +44,7 @@ export default function SuperCerebroPage() {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="bg-secondary/50 border border-border/50 flex-wrap h-auto gap-1 p-1">
+          <TabsTrigger value="workspace" className="text-meta gap-1.5"><NotebookPen className="h-3.5 w-3.5" /> Workspace</TabsTrigger>
           <TabsTrigger value="notebooks" className="text-meta gap-1.5"><NotebookPen className="h-3.5 w-3.5" /> Notebooks</TabsTrigger>
           <TabsTrigger value="overview" className="text-meta gap-1.5"><Brain className="h-3.5 w-3.5" /> Visão Geral</TabsTrigger>
           <TabsTrigger value="search" className="text-meta gap-1.5"><Search className="h-3.5 w-3.5" /> Busca</TabsTrigger>
