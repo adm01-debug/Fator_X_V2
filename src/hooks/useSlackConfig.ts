@@ -165,6 +165,25 @@ export function useSlackConfig() {
     },
   });
 
+  const verifyConnection = useMutation({
+    mutationFn: async () => {
+      if (!workspaceId) throw new Error("Workspace não identificado");
+      const { data, error } = await supabase.functions.invoke("slack-verify-connection", {
+        body: { workspace_id: workspaceId },
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: CONFIG_KEY(workspaceId) });
+      toast.success("Conexão Slack verificada");
+    },
+    onError: (err: unknown) => {
+      const msg = err instanceof Error ? err.message : "Falha na verificação";
+      toast.error(msg);
+    },
+  });
+
   return {
     workspaceId,
     config: configQuery.data ?? null,
@@ -174,5 +193,212 @@ export function useSlackConfig() {
     upsertRoute,
     deleteRoute,
     testRoute,
+    verifyConnection,
   };
 }
+
+// ============================================================
+// Módulo 2 — Agent notifications
+// ============================================================
+
+export interface SlackAgentNotification {
+  id: string;
+  workspace_id: string;
+  agent_id: string;
+  channel_id: string;
+  channel_name: string | null;
+  notify_on: "success" | "failure" | "both";
+  template: string | null;
+  enabled: boolean;
+}
+
+const AGENT_NOTIF_KEY = (ws: string | null) => ["slack", "agent_notifications", ws] as const;
+
+export function useSlackAgentNotifications() {
+  const { workspaceId } = useCurrentWorkspace();
+  const qc = useQueryClient();
+
+  const list = useQuery({
+    queryKey: AGENT_NOTIF_KEY(workspaceId),
+    enabled: !!workspaceId,
+    queryFn: async (): Promise<SlackAgentNotification[]> => {
+      const { data, error } = await supabase
+        .from("slack_agent_notifications")
+        .select("*")
+        .eq("workspace_id", workspaceId!)
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      return (data as SlackAgentNotification[]) ?? [];
+    },
+  });
+
+  const upsert = useMutation({
+    mutationFn: async (input: Partial<SlackAgentNotification> & { agent_id: string; channel_id: string; notify_on: "success" | "failure" | "both" }) => {
+      if (!workspaceId) throw new Error("Workspace não identificado");
+      const { data, error } = await supabase
+        .from("slack_agent_notifications")
+        .upsert({ ...input, workspace_id: workspaceId })
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: AGENT_NOTIF_KEY(workspaceId) });
+      toast.success("Notificação salva");
+    },
+    onError: (err) => toast.error(err instanceof Error ? err.message : "Falha ao salvar"),
+  });
+
+  const remove = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("slack_agent_notifications").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: AGENT_NOTIF_KEY(workspaceId) });
+      toast.success("Notificação removida");
+    },
+  });
+
+  return { items: list.data ?? [], loading: list.isLoading, upsert, remove };
+}
+
+// ============================================================
+// Módulo 4 — RAG sources
+// ============================================================
+
+export interface SlackRagSource {
+  id: string;
+  workspace_id: string;
+  channel_id: string;
+  channel_name: string | null;
+  oldest_ts: string | null;
+  last_synced_at: string | null;
+  last_sync_status: string | null;
+  last_sync_error: string | null;
+  message_count: number;
+  enabled: boolean;
+}
+
+const RAG_KEY = (ws: string | null) => ["slack", "rag_sources", ws] as const;
+
+export function useSlackRagSources() {
+  const { workspaceId } = useCurrentWorkspace();
+  const qc = useQueryClient();
+
+  const list = useQuery({
+    queryKey: RAG_KEY(workspaceId),
+    enabled: !!workspaceId,
+    queryFn: async (): Promise<SlackRagSource[]> => {
+      const { data, error } = await supabase
+        .from("slack_rag_sources")
+        .select("*")
+        .eq("workspace_id", workspaceId!)
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      return (data as SlackRagSource[]) ?? [];
+    },
+  });
+
+  const upsert = useMutation({
+    mutationFn: async (input: { id?: string; channel_id: string; channel_name?: string; enabled: boolean }) => {
+      if (!workspaceId) throw new Error("Workspace não identificado");
+      const { data, error } = await supabase
+        .from("slack_rag_sources")
+        .upsert({ ...input, workspace_id: workspaceId })
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: RAG_KEY(workspaceId) });
+      toast.success("Fonte RAG salva");
+    },
+    onError: (err) => toast.error(err instanceof Error ? err.message : "Falha ao salvar"),
+  });
+
+  const remove = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("slack_rag_sources").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: RAG_KEY(workspaceId) });
+      toast.success("Fonte removida");
+    },
+  });
+
+  const sync = useMutation({
+    mutationFn: async (source_id?: string) => {
+      if (!workspaceId) throw new Error("Workspace não identificado");
+      const { data, error } = await supabase.functions.invoke("slack-rag-sync", {
+        body: source_id ? { source_id } : { workspace_id: workspaceId },
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: RAG_KEY(workspaceId) });
+      toast.success("Sincronização iniciada");
+    },
+    onError: (err) => toast.error(err instanceof Error ? err.message : "Falha na sincronização"),
+  });
+
+  return { items: list.data ?? [], loading: list.isLoading, upsert, remove, sync };
+}
+
+// ============================================================
+// Módulo 3 — Bot bindings
+// ============================================================
+
+export interface SlackBotBinding {
+  id: string;
+  workspace_id: string;
+  default_agent_id: string | null;
+  channel_overrides: Record<string, string>;
+  enabled: boolean;
+}
+
+const BOT_KEY = (ws: string | null) => ["slack", "bot_binding", ws] as const;
+
+export function useSlackBotBinding() {
+  const { workspaceId } = useCurrentWorkspace();
+  const qc = useQueryClient();
+
+  const query = useQuery({
+    queryKey: BOT_KEY(workspaceId),
+    enabled: !!workspaceId,
+    queryFn: async (): Promise<SlackBotBinding | null> => {
+      const { data, error } = await supabase
+        .from("slack_bot_bindings")
+        .select("*")
+        .eq("workspace_id", workspaceId!)
+        .maybeSingle();
+      if (error) throw error;
+      return (data as SlackBotBinding) ?? null;
+    },
+  });
+
+  const upsert = useMutation({
+    mutationFn: async (input: { default_agent_id: string | null; channel_overrides?: Record<string, string>; enabled: boolean }) => {
+      if (!workspaceId) throw new Error("Workspace não identificado");
+      const { data, error } = await supabase
+        .from("slack_bot_bindings")
+        .upsert({ ...input, workspace_id: workspaceId }, { onConflict: "workspace_id" })
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: BOT_KEY(workspaceId) });
+      toast.success("Bot configurado");
+    },
+    onError: (err) => toast.error(err instanceof Error ? err.message : "Falha ao salvar"),
+  });
+
+  return { binding: query.data ?? null, loading: query.isLoading, upsert };
+}
+
