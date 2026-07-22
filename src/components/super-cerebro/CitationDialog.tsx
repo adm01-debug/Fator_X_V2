@@ -28,10 +28,17 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) {
   const [loading, setLoading] = useState(false);
   const [openedDocument, setOpenedDocument] = useState(false);
+  const [highlightMode, setHighlightMode] = useState(true);
   const telemetryRef = useRef<CitationTelemetryHandle | null>(null);
   const { workspaceId } = useCurrentWorkspace();
   const activeNotebookId = useCerebroStore((s) => s.activeNotebookId);
   const open = citation !== null;
+
+  const keyPhrase = useMemo(() => extractKeyPhrase(citation?.snippet), [citation?.snippet]);
+  const highlightParts = useMemo(
+    () => splitForHighlight(citation?.snippet ?? '', keyPhrase),
+    [citation?.snippet, keyPhrase],
+  );
 
   // Instrumentação: registra abertura ao montar/receber uma citação; fechamento no unmount ou troca.
   useEffect(() => {
