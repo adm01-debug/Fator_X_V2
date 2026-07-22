@@ -1,0 +1,6 @@
+
+DROP FUNCTION IF EXISTS public._fase8_snapshot_as(uuid);
+DELETE FROM public.user_roles
+ WHERE user_id='00000000-0000-0000-0000-00000000f801'
+   AND workspace_id='00000000-0000-0000-0000-0000f8000000';
+DELETE FROM public.workspaces WHERE id='00000000-0000-0000-0000-0000f8000000';
