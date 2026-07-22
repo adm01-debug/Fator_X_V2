@@ -159,13 +159,30 @@ export function DbHealthCard() {
                 <ul className="space-y-1 text-xs">
                   {data.slow_queries.slice(0, 10).map((q, idx) => (
                     <li key={idx} className="rounded border p-2">
-                      <div className="flex justify-between">
+                      <div className="flex justify-between items-center gap-2">
                         <Badge variant={q.mean_ms > 500 ? "destructive" : "outline"}>
                           {q.mean_ms} ms / chamada
                         </Badge>
-                        <span className="text-muted-foreground">
-                          {q.calls} calls · {q.total_sec}s total
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-muted-foreground">
+                            {q.calls} calls · {q.total_sec}s total
+                          </span>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-6 px-2 text-[10px]"
+                            title="Abrir no auto-EXPLAIN"
+                            onClick={() => {
+                              try {
+                                sessionStorage.setItem("perf:explain-query", q.query_preview);
+                              } catch { /* storage indisponível */ }
+                              navigate("/security/performance");
+                            }}
+                          >
+                            <Sparkles className="h-3 w-3 mr-1" />
+                            EXPLAIN
+                          </Button>
+                        </div>
                       </div>
                       <code className="text-[10px] text-muted-foreground line-clamp-2">
                         {q.query_preview}
