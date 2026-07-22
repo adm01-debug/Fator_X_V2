@@ -22,6 +22,8 @@ import {
   type RerankResult,
 } from '@/services/knowledgeService';
 import type { ContextTier } from '@/services/contextTiersService';
+import { CitedMarkdown } from './CitedMarkdown';
+import { splitCitationsSentinel, type CerebroCitation } from '@/types/cerebroCitations';
 
 const HISTORY_KEY = 'nexus-cerebro-search-history';
 const HISTORY_MAX = 10;
@@ -46,6 +48,7 @@ export function SearchTab() {
   const [query, setQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<string | null>(null);
+  const [citations, setCitations] = useState<CerebroCitation[]>([]);
   const [history, setHistory] = useState<string[]>(() => loadHistory());
 
   // Rerank state
@@ -80,9 +83,10 @@ export function SearchTab() {
     if (!query.trim()) return;
     setIsSearching(true);
     setSearchResults("");
+    setCitations([]);
     try {
       const body = await invokeCerebroQuery({ query, mode: 'chat', stream: true });
-      
+
       if (body instanceof ReadableStream) {
         const reader = body.getReader();
         const decoder = new TextDecoder();
@@ -92,13 +96,18 @@ export function SearchTab() {
         while (!done) {
           const { value, done: doneReading } = await reader.read();
           done = doneReading;
-          const chunkValue = decoder.decode(value);
+          const chunkValue = decoder.decode(value, { stream: !done });
           fullText += chunkValue;
-          setSearchResults(fullText);
+          const { text } = splitCitationsSentinel(fullText);
+          setSearchResults(text);
         }
+        const { text, citations: cits } = splitCitationsSentinel(fullText);
+        setSearchResults(text);
+        setCitations(cits);
       } else {
-        const data = body;
+        const data = body as { response?: string; citations?: CerebroCitation[] };
         setSearchResults(data?.response || 'Sem resposta');
+        setCitations(Array.isArray(data?.citations) ? data.citations : []);
       }
 
       // Persist to history
@@ -311,9 +320,7 @@ export function SearchTab() {
               <Sparkles className="h-4 w-4 text-primary" />
               <p className="text-meta font-bold uppercase tracking-widest text-foreground">Resposta do Super Cérebro</p>
             </div>
-            <div className="text-body-sm text-foreground whitespace-pre-wrap leading-relaxed">
-              {searchResults}
-            </div>
+            <CitedMarkdown text={searchResults} citations={citations} />
           </div>
         )}
       </div>
