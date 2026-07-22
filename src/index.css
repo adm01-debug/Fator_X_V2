@@ -835,3 +835,54 @@ code, pre, .font-mono, [class*="font-mono"] {
 .dark {
   --muted-foreground: 215 15% 75%;
 }
+
+/* ═══ Super Cérebro: visualizador de documentos ═══ */
+.cerebro-docx-page {
+  background: #ffffff;
+  color: #111827;
+  width: min(820px, 100%);
+  padding: 3rem 4rem;
+  border-radius: 6px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.cerebro-docx-page.is-dark {
+  background: #17171a;
+  color: #e5e7eb;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+}
+.cerebro-docx-page h1,
+.cerebro-docx-page h2,
+.cerebro-docx-page h3 {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-weight: 700;
+  margin: 1.4em 0 0.6em;
+  letter-spacing: -0.01em;
+}
+.cerebro-docx-page h1 { font-size: 1.75em; }
+.cerebro-docx-page h2 { font-size: 1.35em; }
+.cerebro-docx-page h3 { font-size: 1.15em; }
+.cerebro-docx-page p { margin: 0 0 0.9em; }
+.cerebro-docx-page a { color: hsl(var(--primary)); text-decoration: underline; }
+.cerebro-docx-page ul,
+.cerebro-docx-page ol { padding-left: 1.5em; margin: 0 0 0.9em; }
+.cerebro-docx-page table {
+  border-collapse: collapse;
+  margin: 1em 0;
+  width: 100%;
+}
+.cerebro-docx-page td,
+.cerebro-docx-page th {
+  border: 1px solid rgba(120, 120, 130, 0.4);
+  padding: 6px 10px;
+}
+.cerebro-docx-page img { max-width: 100%; height: auto; }
+mark.cerebro-viewer-hit {
+  background: hsl(var(--primary) / 0.35);
+  color: inherit;
+  padding: 0 2px;
+  border-radius: 3px;
+  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.4);
+}
