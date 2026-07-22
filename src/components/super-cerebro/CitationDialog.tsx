@@ -1,13 +1,14 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { FileText, ExternalLink } from 'lucide-react';
+import { FileText, ExternalLink, Highlighter } from 'lucide-react';
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import { getCachedSignedUrl } from '@/lib/signedUrlCache';
 import { toast } from 'sonner';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CerebroCitation } from '@/types/cerebroCitations';
 import { logger } from '@/lib/logger';
+import { extractKeyPhrase, buildDeepLink, splitForHighlight } from '@/lib/citationHighlight';
 import {
   logCitationOpen,
   logCitationClose,
@@ -27,10 +28,17 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) {
   const [loading, setLoading] = useState(false);
   const [openedDocument, setOpenedDocument] = useState(false);
+  const [highlightMode, setHighlightMode] = useState(true);
   const telemetryRef = useRef<CitationTelemetryHandle | null>(null);
   const { workspaceId } = useCurrentWorkspace();
   const activeNotebookId = useCerebroStore((s) => s.activeNotebookId);
   const open = citation !== null;
+
+  const keyPhrase = useMemo(() => extractKeyPhrase(citation?.snippet), [citation?.snippet]);
+  const highlightParts = useMemo(
+    () => splitForHighlight(citation?.snippet ?? '', keyPhrase),
+    [citation?.snippet, keyPhrase],
+  );
 
   // Instrumentação: registra abertura ao montar/receber uma citação; fechamento no unmount ou troca.
   useEffect(() => {
@@ -77,20 +85,26 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
       const storagePath = md.storage_path;
       const bucket = md.bucket ?? 'knowledge-uploads';
 
+      const openWith = (rawUrl: string) => {
+        const finalUrl = buildDeepLink(rawUrl, {
+          page: citation?.page ?? null,
+          phrase: keyPhrase || null,
+        });
+        setOpenedDocument(true);
+        void markCitationDocumentOpened(telemetryRef.current);
+        window.open(finalUrl, '_blank', 'noopener,noreferrer');
+      };
+
       if (storagePath) {
         const signedUrl = await getCachedSignedUrl(bucket, storagePath);
         if (signedUrl) {
-          setOpenedDocument(true);
-          void markCitationDocumentOpened(telemetryRef.current);
-          window.open(signedUrl, '_blank', 'noopener,noreferrer');
+          openWith(signedUrl);
           return;
         }
       }
 
       if (doc?.source_url) {
-        setOpenedDocument(true);
-        void markCitationDocumentOpened(telemetryRef.current);
-        window.open(doc.source_url, '_blank', 'noopener,noreferrer');
+        openWith(doc.source_url);
         return;
       }
       toast.info('Documento sem URL de origem disponível');
@@ -129,11 +143,41 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
           </div>
 
           <div className="rounded-lg border border-border/60 bg-secondary/20 p-3">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1.5">
-              Trecho usado
-            </p>
+            <div className="flex items-center justify-between mb-1.5">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                Trecho usado
+              </p>
+              {keyPhrase && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 px-2 gap-1 text-[10px]"
+                  onClick={() => setHighlightMode((v) => !v)}
+                  aria-pressed={highlightMode}
+                >
+                  <Highlighter className="h-3 w-3" />
+                  {highlightMode ? 'Destaque on' : 'Destaque off'}
+                </Button>
+              )}
+            </div>
             <p className="text-sm text-foreground leading-relaxed italic">
-              "{citation?.snippet}"
+              "
+              {highlightMode && keyPhrase
+                ? highlightParts.map((part, i) =>
+                    part.hit ? (
+                      <mark
+                        key={i}
+                        className="rounded bg-primary/25 text-foreground px-0.5 not-italic font-medium"
+                      >
+                        {part.text}
+                      </mark>
+                    ) : (
+                      <span key={i}>{part.text}</span>
+                    ),
+                  )
+                : citation?.snippet}
+              "
             </p>
           </div>
 
