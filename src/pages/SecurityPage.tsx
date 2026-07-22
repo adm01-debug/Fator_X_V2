@@ -3,6 +3,7 @@ import { SecurityPosture } from "@/components/security/SecurityPosture";
 import { SecurityMonitoringPanel } from "@/components/security/SecurityMonitoringPanel";
 import { RollbackRateCard } from "@/components/security/RollbackRateCard";
 import { WalGenerationCard } from "@/components/security/WalGenerationCard";
+import { DbHealthCard } from "@/components/admin/DbHealthCard";
 import { ComplianceFrameworks } from "@/components/security/ComplianceFrameworks";
 import { GuardrailPolicies } from "@/components/security/GuardrailPolicies";
 import { SessionManagement } from "@/components/security/SessionManagement";
