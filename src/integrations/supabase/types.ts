@@ -7112,6 +7112,45 @@ export type Database = {
           },
         ]
       }
+      slack_dispatch_dlq: {
+        Row: {
+          alert_id: string | null
+          attempts: number
+          created_at: string
+          error: string
+          id: string
+          next_retry_at: string
+          payload: Json
+          resolved_at: string | null
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          alert_id?: string | null
+          attempts?: number
+          created_at?: string
+          error: string
+          id?: string
+          next_retry_at?: string
+          payload: Json
+          resolved_at?: string | null
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          alert_id?: string | null
+          attempts?: number
+          created_at?: string
+          error?: string
+          id?: string
+          next_retry_at?: string
+          payload?: Json
+          resolved_at?: string | null
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: []
+      }
       slack_event_dedupe: {
         Row: {
           event_id: string
@@ -9345,6 +9384,24 @@ export type Database = {
           version?: string | null
         }
         Relationships: []
+      }
+      slack_dispatch_health: {
+        Row: {
+          failures: number | null
+          last_dispatch_at: string | null
+          successes: number | null
+          total_dispatches: number | null
+          workspace_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_events_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       usage_records_cost_safe: {
         Row: {
