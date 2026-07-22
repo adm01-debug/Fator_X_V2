@@ -51,6 +51,20 @@ export function CitedMarkdown({ text, citations }: CitedMarkdownProps) {
     return map;
   }, [citations]);
 
+  // Auditoria: valida consistência entre [n] do texto e o array de citations.
+  useEffect(() => {
+    if (!text || citations.length === 0) return;
+    const result = validateCitations(text, citations);
+    if (!result.valid) {
+      logger.warn('cerebro.citation.validation_failed', {
+        missing: result.missing,
+        unused: result.unused,
+        issues: result.issues.map((i) => ({ code: i.code, n: i.n, chunkId: i.chunkId })),
+      });
+    }
+  }, [text, citations]);
+
+
   const renderChip = (n: number, key: string): JSX.Element | string => {
     const citation = byNumber.get(n);
     if (!citation) {
