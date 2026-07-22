@@ -273,7 +273,8 @@ const App = () => {
                       <Route path="/data-storage" element={<SafePage><DataStoragePage /></SafePage>} />
                       <Route path="/datahub" element={<SafePage><DataHubPage /></SafePage>} />
                       <Route path="/admin" element={<SafePage><ProtectedRoute permission="team.roles"><AdminPage /></ProtectedRoute></SafePage>} />
-                      <Route path="/security" element={<SafePage><ProtectedRoute permission="settings.api_keys"><SecurityPage /></ProtectedRoute></SafePage>} />
+                     <Route path="/security" element={<SafePage><ProtectedRoute permission="settings.api_keys"><SecurityPage /></ProtectedRoute></SafePage>} />
+                     <Route path="/security/performance" element={<SafePage><ProtectedRoute permission="settings.api_keys"><PerformancePage /></ProtectedRoute></SafePage>} />
                       <Route path="/team" element={<SafePage><ProtectedRoute permission="team.read"><TeamPage /></ProtectedRoute></SafePage>} />
                       <Route path="/billing" element={<SafePage><ProtectedRoute permission="settings.billing"><BillingPage /></ProtectedRoute></SafePage>} />
                       <Route path="/settings" element={<SafePage><ProtectedRoute permission="settings.read"><SettingsPage /></ProtectedRoute></SafePage>} />
