@@ -75,6 +75,7 @@ export function resetSignedUrlCacheStats(): void {
   stats.misses = 0;
   stats.inflightCoalesced = 0;
   stats.errors = 0;
+  stats.retries = 0;
   stats.fetches = 0;
   stats.totalFetchMs = 0;
   stats.lastFetchMs = null;
