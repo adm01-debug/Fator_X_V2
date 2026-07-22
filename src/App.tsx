@@ -210,6 +210,7 @@ const App = () => {
           <TooltipProvider>
           <Toaster />
           <Sonner />
+          <SignedUrlCacheDebugPanel />
           <BrowserRouter>
             <Routes>
               <Route path="/auth" element={<SafePage><AuthPage /></SafePage>} />
