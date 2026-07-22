@@ -84,10 +84,14 @@ export async function slackApiCall<T = Record<string, unknown>>(
     throw new Error("SLACK_BOT_TOKEN is not configured");
   }
 
-  const breaker = getCircuitBreaker(`slack:${method}`, {
+  const breaker = getBreaker(`slack:${method}`, {
     failureThreshold: 5,
-    resetTimeoutMs: 30_000,
+    openMs: 30_000,
   });
+
+  if (!breaker.canRequest()) {
+    throw new Error(`slack_circuit_open:${method}`);
+  }
 
   const isForm = payload instanceof URLSearchParams;
   const headers: Record<string, string> = {
@@ -118,7 +122,6 @@ export async function slackApiCall<T = Record<string, unknown>>(
         );
       }
       if (!json.ok) {
-        // Some Slack errors are non-retriable; throw to trigger breaker only for transient ones
         const transient = new Set(["ratelimited", "service_unavailable", "internal_error"]);
         if (transient.has(json.error ?? "")) {
           throw new Error(`Slack ${method} transient: ${json.error}`);
@@ -130,9 +133,14 @@ export async function slackApiCall<T = Record<string, unknown>>(
     }
   };
 
-  return await breaker.execute(() =>
-    withRetry(doCall, { retries: 3, baseDelayMs: 400, maxDelayMs: 3000 })
-  );
+  try {
+    const result = await withRetry(doCall, { attempts: 3, baseMs: 400, capMs: 3000 });
+    breaker.recordSuccess();
+    return result;
+  } catch (err) {
+    breaker.recordFailure(err instanceof Error ? err.message : String(err));
+    throw err;
+  }
 }
 
 // ---------- Alert payload builder (Blocks Kit) ----------
