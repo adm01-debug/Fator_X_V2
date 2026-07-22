@@ -2916,6 +2916,60 @@ export type Database = {
           },
         ]
       }
+      citation_telemetry: {
+        Row: {
+          chunk_id: string | null
+          citation_n: number
+          closed_at: string | null
+          created_at: string
+          document_id: string | null
+          document_title: string | null
+          dwell_ms: number | null
+          id: string
+          notebook_id: string | null
+          opened_at: string
+          opened_document: boolean
+          page: number | null
+          section: string | null
+          user_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          chunk_id?: string | null
+          citation_n: number
+          closed_at?: string | null
+          created_at?: string
+          document_id?: string | null
+          document_title?: string | null
+          dwell_ms?: number | null
+          id?: string
+          notebook_id?: string | null
+          opened_at?: string
+          opened_document?: boolean
+          page?: number | null
+          section?: string | null
+          user_id?: string
+          workspace_id?: string | null
+        }
+        Update: {
+          chunk_id?: string | null
+          citation_n?: number
+          closed_at?: string | null
+          created_at?: string
+          document_id?: string | null
+          document_title?: string | null
+          dwell_ms?: number | null
+          id?: string
+          notebook_id?: string | null
+          opened_at?: string
+          opened_document?: boolean
+          page?: number | null
+          section?: string | null
+          user_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
       code_executions: {
         Row: {
           code: string
