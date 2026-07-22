@@ -128,6 +128,13 @@ serve(async (req) => {
         citations = selected.map((c: any, i: number): Citation => {
           const { page, section } = extractMeta(c);
           const doc = Array.isArray(c.documents) ? c.documents[0] : c.documents;
+          const col = doc?.collections
+            ? (Array.isArray(doc.collections) ? doc.collections[0] : doc.collections)
+            : null;
+          const metaCollectionId = (c.metadata && typeof c.metadata === 'object')
+            ? (c.metadata.collection_id ?? null) : null;
+          const metaNotebookName = (c.metadata && typeof c.metadata === 'object')
+            ? (c.metadata.notebook_name ?? null) : null;
           return {
             n: i + 1,
             chunk_id: c.id,
@@ -136,6 +143,8 @@ serve(async (req) => {
             page,
             section,
             snippet: snippet(c.content ?? ''),
+            notebook_id: col?.id ?? metaCollectionId ?? doc?.collection_id ?? null,
+            notebook_name: col?.name ?? metaNotebookName ?? null,
           };
         });
 
