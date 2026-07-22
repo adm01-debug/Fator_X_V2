@@ -1,10 +1,10 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { FileText, ExternalLink, Highlighter, Eye } from 'lucide-react';
+import { FileText, ExternalLink, Highlighter, Eye, AlertTriangle, RotateCw } from 'lucide-react';
 import { DocumentViewerDialog, type DocumentViewerSource } from './DocumentViewerDialog';
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
-import { getCachedSignedUrl } from '@/lib/signedUrlCache';
+import { getCachedSignedUrl, refetchSignedUrl } from '@/lib/signedUrlCache';
 import { toast } from 'sonner';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CerebroCitation } from '@/types/cerebroCitations';
