@@ -8,7 +8,7 @@
 import { hmacSha256Hex } from "./webhookSignature.ts";
 import { constantTimeEqual } from "./security.ts";
 import { withRetry } from "./retry.ts";
-import { getCircuitBreaker } from "./circuitBreaker.ts";
+import { getBreaker } from "./circuitBreaker.ts";
 
 export const SLACK_API_BASE = "https://slack.com/api";
 const SIGNATURE_VERSION = "v0";
