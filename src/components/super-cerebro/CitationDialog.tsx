@@ -1,7 +1,8 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { FileText, ExternalLink, Highlighter } from 'lucide-react';
+import { FileText, ExternalLink, Highlighter, Eye } from 'lucide-react';
+import { DocumentViewerDialog, type DocumentViewerSource } from './DocumentViewerDialog';
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import { getCachedSignedUrl } from '@/lib/signedUrlCache';
 import { toast } from 'sonner';
@@ -29,6 +30,7 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
   const [loading, setLoading] = useState(false);
   const [openedDocument, setOpenedDocument] = useState(false);
   const [highlightMode, setHighlightMode] = useState(true);
+  const [viewerSource, setViewerSource] = useState<DocumentViewerSource | null>(null);
   const telemetryRef = useRef<CitationTelemetryHandle | null>(null);
   const { workspaceId } = useCurrentWorkspace();
   const activeNotebookId = useCerebroStore((s) => s.activeNotebookId);
@@ -67,7 +69,7 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [citation?.chunk_id, citation?.n]);
 
-  const handleOpenDocument = async () => {
+  const handleOpenDocument = async (mode: 'inline' | 'external' = 'inline') => {
     if (!citation?.document_id || !UUID_RE.test(citation.document_id)) {
       toast.error('Documento inválido');
       return;
@@ -76,23 +78,38 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
     try {
       const { data: doc, error } = await supabaseExternal
         .from('documents')
-        .select('metadata, source_url')
+        .select('metadata, source_url, title')
         .eq('id', citation.document_id)
         .maybeSingle();
       if (error) throw error;
 
-      const md = (doc?.metadata ?? {}) as { storage_path?: string; bucket?: string };
+      const md = (doc?.metadata ?? {}) as {
+        storage_path?: string;
+        bucket?: string;
+        filename?: string;
+      };
       const storagePath = md.storage_path;
       const bucket = md.bucket ?? 'knowledge-uploads';
+      const filename = md.filename ?? storagePath ?? null;
 
       const openWith = (rawUrl: string) => {
-        const finalUrl = buildDeepLink(rawUrl, {
-          page: citation?.page ?? null,
-          phrase: keyPhrase || null,
-        });
         setOpenedDocument(true);
         void markCitationDocumentOpened(telemetryRef.current);
-        window.open(finalUrl, '_blank', 'noopener,noreferrer');
+        if (mode === 'inline') {
+          setViewerSource({
+            url: rawUrl,
+            filename,
+            page: citation?.page ?? null,
+            snippet: citation?.snippet ?? null,
+            documentTitle: (doc?.title as string | undefined) ?? citation?.document_title ?? null,
+          });
+        } else {
+          const finalUrl = buildDeepLink(rawUrl, {
+            page: citation?.page ?? null,
+            phrase: keyPhrase || null,
+          });
+          window.open(finalUrl, '_blank', 'noopener,noreferrer');
+        }
       };
 
       if (storagePath) {
@@ -181,16 +198,28 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
             </p>
           </div>
 
-          <Button
-            onClick={handleOpenDocument}
-            disabled={loading || !citation?.document_id}
-            className="w-full gap-2"
-          >
-            <ExternalLink className="h-4 w-4" />
-            {loading ? 'Gerando link…' : 'Abrir documento'}
-          </Button>
+          <div className="grid grid-cols-2 gap-2">
+            <Button
+              onClick={() => handleOpenDocument('inline')}
+              disabled={loading || !citation?.document_id}
+              className="gap-2"
+            >
+              <Eye className="h-4 w-4" />
+              {loading ? 'Carregando…' : 'Visualizar aqui'}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => handleOpenDocument('external')}
+              disabled={loading || !citation?.document_id}
+              className="gap-2"
+            >
+              <ExternalLink className="h-4 w-4" />
+              Nova aba
+            </Button>
+          </div>
         </div>
       </DialogContent>
+      <DocumentViewerDialog source={viewerSource} onOpenChange={(o) => !o && setViewerSource(null)} />
     </Dialog>
   );
 }
