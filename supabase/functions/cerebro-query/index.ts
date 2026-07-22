@@ -93,7 +93,9 @@ serve(async (req) => {
         .from('chunks')
         .select('id, content, metadata, document_id, documents(id, title, collection_id, collections(id, name))')
         .eq('embedding_status', 'done')
+        .eq('is_active', true)
         .limit(15);
+
       if (notebookId) {
         // Isolation: only chunks whose metadata pins this notebook
         chunkQuery = chunkQuery.filter('metadata->>collection_id', 'eq', notebookId);
