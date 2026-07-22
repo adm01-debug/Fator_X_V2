@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, Children, isValidElement, cloneElement, type ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -11,11 +11,34 @@ interface CitedMarkdownProps {
   citations: CerebroCitation[];
 }
 
-const CITATION_RE = /\[(\d{1,2})\]/g;
+/**
+ * Matches:
+ *  - [1], [12]
+ *  - [1,2], [1, 2, 3]
+ *  - [1][2] (contíguos)
+ *  - (1), (1,2)  — fallback quando o modelo usa parênteses
+ *  - superscritos ¹ ² ³
+ */
+const CITATION_RE = /(\[(\d{1,2}(?:\s*,\s*\d{1,2})*)\])|(\((\d{1,2}(?:\s*,\s*\d{1,2})*)\))|([¹²³⁴⁵⁶⁷⁸⁹⁰]+)/g;
+
+const SUPERSCRIPT_MAP: Record<string, string> = {
+  '⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4',
+  '⁵': '5', '⁶': '6', '⁷': '7', '⁸': '8', '⁹': '9',
+};
+
+function parseNumbers(raw: string, kind: 'bracket' | 'paren' | 'sup'): number[] {
+  if (kind === 'sup') {
+    const digits = raw.split('').map((c) => SUPERSCRIPT_MAP[c] ?? '').join('');
+    if (!digits) return [];
+    return [Number(digits)];
+  }
+  return raw.split(',').map((s) => Number(s.trim())).filter((n) => Number.isFinite(n));
+}
 
 /**
  * Renders markdown text with clickable [n] citation chips that open a source dialog.
- * Unknown citation numbers fall back to plain text and are logged.
+ * Fallback tolerante — reconhece [n], [1,2], (1,2) e superscritos ¹²³, e processa
+ * texto dentro de qualquer elemento inline (p, li, strong, em, a, code, headings, td…).
  */
 export function CitedMarkdown({ text, citations }: CitedMarkdownProps) {
   const [open, setOpen] = useState<CerebroCitation | null>(null);
@@ -26,71 +49,131 @@ export function CitedMarkdown({ text, citations }: CitedMarkdownProps) {
     return map;
   }, [citations]);
 
-  const renderWithChips = (input: string) => {
-    if (!input) return input;
+  const renderChip = (n: number, key: string): JSX.Element | string => {
+    const citation = byNumber.get(n);
+    if (!citation) {
+      logger.warn('cerebro.citation.unknown', { n });
+      return `[${n}]`;
+    }
+    return (
+      <TooltipProvider key={key} delayDuration={200}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              onClick={() => setOpen(citation)}
+              className="mx-0.5 inline-flex align-baseline"
+              aria-label={`Ver fonte ${n}: ${citation.document_title}`}
+            >
+              <Badge
+                variant="secondary"
+                className="cursor-pointer h-5 px-1.5 text-[10px] font-bold hover:bg-primary hover:text-primary-foreground transition-colors"
+              >
+                {n}
+              </Badge>
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="max-w-xs">
+            <p className="text-xs font-semibold">{citation.document_title}</p>
+            {citation.page != null && (
+              <p className="text-[10px] text-muted-foreground">Página {citation.page}</p>
+            )}
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  };
+
+  const renderWithChips = (input: string, keyPrefix: string): (string | JSX.Element)[] => {
+    if (!input) return [input];
     const parts: (string | JSX.Element)[] = [];
     let lastIdx = 0;
     let match: RegExpExecArray | null;
     CITATION_RE.lastIndex = 0;
-    let chipKey = 0;
+    let idx = 0;
     while ((match = CITATION_RE.exec(input)) !== null) {
-      const n = Number(match[1]);
-      const citation = byNumber.get(n);
+      const raw = match[0];
+      const bracketNums = match[2];
+      const parenNums = match[4];
+      const supRaw = match[5];
+      const nums = bracketNums
+        ? parseNumbers(bracketNums, 'bracket')
+        : parenNums
+          ? parseNumbers(parenNums, 'paren')
+          : supRaw
+            ? parseNumbers(supRaw, 'sup')
+            : [];
+      // Só substituímos parênteses/superscritos quando corresponderem a citações reais,
+      // para não capturar "(2024)" ou "H²O".
+      const allKnown = nums.length > 0 && nums.every((n) => byNumber.has(n));
+      if (!bracketNums && !allKnown) continue;
+
       if (match.index > lastIdx) parts.push(input.slice(lastIdx, match.index));
-      if (!citation) {
-        logger.warn('cerebro.citation.unknown', { n });
-        parts.push(match[0]);
+
+      if (nums.length === 0) {
+        parts.push(raw);
       } else {
-        parts.push(
-          <TooltipProvider key={`chip-${chipKey++}`} delayDuration={200}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  type="button"
-                  onClick={() => setOpen(citation)}
-                  className="mx-0.5 inline-flex align-baseline"
-                  aria-label={`Ver fonte ${n}: ${citation.document_title}`}
-                >
-                  <Badge
-                    variant="secondary"
-                    className="cursor-pointer h-5 px-1.5 text-[10px] font-bold hover:bg-primary hover:text-primary-foreground transition-colors"
-                  >
-                    {n}
-                  </Badge>
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="top" className="max-w-xs">
-                <p className="text-xs font-semibold">{citation.document_title}</p>
-                {citation.page != null && (
-                  <p className="text-[10px] text-muted-foreground">Página {citation.page}</p>
-                )}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>,
-        );
+        nums.forEach((n) => {
+          parts.push(renderChip(n, `${keyPrefix}-${idx++}`));
+        });
       }
-      lastIdx = match.index + match[0].length;
+      lastIdx = match.index + raw.length;
     }
     if (lastIdx < input.length) parts.push(input.slice(lastIdx));
     return parts;
   };
 
+  /** Percorre recursivamente os children e substitui strings por chips. */
+  const processChildren = (children: ReactNode, keyPrefix = 'k'): ReactNode[] => {
+    const arr = Children.toArray(children);
+    const out: ReactNode[] = [];
+    arr.forEach((child, i) => {
+      if (typeof child === 'string') {
+        renderWithChips(child, `${keyPrefix}-${i}`).forEach((p) => out.push(p));
+        return;
+      }
+      if (typeof child === 'number') {
+        out.push(String(child));
+        return;
+      }
+      if (isValidElement(child)) {
+        const el = child as JSX.Element;
+        const nested = processChildren(el.props?.children, `${keyPrefix}-${i}`);
+        out.push(cloneElement(el, { key: el.key ?? `${keyPrefix}-${i}` }, nested));
+        return;
+      }
+      out.push(child);
+    });
+    return out;
+  };
+
+
+  const wrap = (Tag: keyof JSX.IntrinsicElements) =>
+    ({ children }: { children?: ReactNode }) => <Tag>{processChildren(children)}</Tag>;
+
   return (
     <div className="text-body-sm text-foreground leading-relaxed prose prose-sm dark:prose-invert max-w-none [&_p]:my-2">
       <ReactMarkdown
         components={{
-          p: ({ children }) => {
-            const processed = (Array.isArray(children) ? children : [children]).flatMap((child) =>
-              typeof child === 'string' ? renderWithChips(child) : [child],
-            );
-            return <p>{processed}</p>;
-          },
-          li: ({ children }) => {
-            const processed = (Array.isArray(children) ? children : [children]).flatMap((child) =>
-              typeof child === 'string' ? renderWithChips(child) : [child],
-            );
-            return <li>{processed}</li>;
-          },
+          p: wrap('p'),
+          li: wrap('li'),
+          strong: wrap('strong'),
+          em: wrap('em'),
+          h1: wrap('h1'),
+          h2: wrap('h2'),
+          h3: wrap('h3'),
+          h4: wrap('h4'),
+          h5: wrap('h5'),
+          h6: wrap('h6'),
+          blockquote: wrap('blockquote'),
+          td: wrap('td'),
+          th: wrap('th'),
+          span: wrap('span'),
+          a: ({ children, href }) => (
+            <a href={href} target="_blank" rel="noopener noreferrer">
+              {processChildren(children)}
+            </a>
+          ),
         }}
       >
         {text}
