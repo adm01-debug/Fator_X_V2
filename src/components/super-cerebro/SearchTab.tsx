@@ -24,6 +24,10 @@ import {
 import type { ContextTier } from '@/services/contextTiersService';
 import { CitedMarkdown } from './CitedMarkdown';
 import { splitCitationsSentinel, type CerebroCitation } from '@/types/cerebroCitations';
+import { useCerebroStore } from '@/stores/cerebroStore';
+import { useNotebooks } from '@/services/notebooksService';
+import { useCurrentWorkspace } from '@/hooks/useCurrentWorkspace';
+import { NotebookPen } from 'lucide-react';
 
 const HISTORY_KEY = 'nexus-cerebro-search-history';
 const HISTORY_MAX = 10;
