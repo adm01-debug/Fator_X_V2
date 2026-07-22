@@ -5,9 +5,17 @@ import { FileText, ExternalLink } from 'lucide-react';
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import { getCachedSignedUrl } from '@/lib/signedUrlCache';
 import { toast } from 'sonner';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { CerebroCitation } from '@/types/cerebroCitations';
 import { logger } from '@/lib/logger';
+import {
+  logCitationOpen,
+  logCitationClose,
+  markCitationDocumentOpened,
+  type CitationTelemetryHandle,
+} from '@/services/citationTelemetryService';
+import { useCurrentWorkspace } from '@/hooks/useCurrentWorkspace';
+import { useCerebroStore } from '@/stores/cerebroStore';
 
 interface CitationDialogProps {
   citation: CerebroCitation | null;
@@ -18,7 +26,38 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 
 export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) {
   const [loading, setLoading] = useState(false);
+  const [openedDocument, setOpenedDocument] = useState(false);
+  const telemetryRef = useRef<CitationTelemetryHandle | null>(null);
+  const { workspaceId } = useCurrentWorkspace();
+  const activeNotebookId = useCerebroStore((s) => s.activeNotebookId);
   const open = citation !== null;
+
+  // Instrumentação: registra abertura ao montar/receber uma citação; fechamento no unmount ou troca.
+  useEffect(() => {
+    if (!citation) return;
+    let cancelled = false;
+    setOpenedDocument(false);
+    (async () => {
+      const handle = await logCitationOpen(citation, {
+        workspaceId,
+        notebookId: citation.notebook_id ?? activeNotebookId ?? null,
+      });
+      if (cancelled) {
+        // Diálogo já foi fechado antes do insert retornar — feche o registro imediatamente.
+        void logCitationClose(handle, { openedDocument: false });
+        return;
+      }
+      telemetryRef.current = handle;
+    })();
+    return () => {
+      cancelled = true;
+      const handle = telemetryRef.current;
+      telemetryRef.current = null;
+      void logCitationClose(handle, { openedDocument });
+    };
+    // Reinicia telemetria a cada nova citação (chunk_id + n identificam).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [citation?.chunk_id, citation?.n]);
 
   const handleOpenDocument = async () => {
     if (!citation?.document_id || !UUID_RE.test(citation.document_id)) {
@@ -41,12 +80,16 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
       if (storagePath) {
         const signedUrl = await getCachedSignedUrl(bucket, storagePath);
         if (signedUrl) {
+          setOpenedDocument(true);
+          void markCitationDocumentOpened(telemetryRef.current);
           window.open(signedUrl, '_blank', 'noopener,noreferrer');
           return;
         }
       }
 
       if (doc?.source_url) {
+        setOpenedDocument(true);
+        void markCitationDocumentOpened(telemetryRef.current);
         window.open(doc.source_url, '_blank', 'noopener,noreferrer');
         return;
       }
