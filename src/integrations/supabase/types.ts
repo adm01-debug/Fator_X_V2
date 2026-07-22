@@ -1034,6 +1034,150 @@ export type Database = {
         }
         Relationships: []
       }
+      agent_traces_v2_2026_11: {
+        Row: {
+          agent_id: string | null
+          cost_usd: number | null
+          created_at: string
+          event: string | null
+          id: string
+          input: Json | null
+          latency_ms: number | null
+          level: Database["public"]["Enums"]["trace_level"] | null
+          metadata: Json | null
+          output: Json | null
+          session_id: string | null
+          tokens_used: number | null
+          user_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      agent_traces_v2_2026_12: {
+        Row: {
+          agent_id: string | null
+          cost_usd: number | null
+          created_at: string
+          event: string | null
+          id: string
+          input: Json | null
+          latency_ms: number | null
+          level: Database["public"]["Enums"]["trace_level"] | null
+          metadata: Json | null
+          output: Json | null
+          session_id: string | null
+          tokens_used: number | null
+          user_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      agent_traces_v2_2027_01: {
+        Row: {
+          agent_id: string | null
+          cost_usd: number | null
+          created_at: string
+          event: string | null
+          id: string
+          input: Json | null
+          latency_ms: number | null
+          level: Database["public"]["Enums"]["trace_level"] | null
+          metadata: Json | null
+          output: Json | null
+          session_id: string | null
+          tokens_used: number | null
+          user_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       agent_usage: {
         Row: {
           agent_id: string
