@@ -185,9 +185,11 @@ interface RowProps {
 function IngestionRow({ ing, onRemoved }: RowProps) {
   const [busy, setBusy] = useState(false);
   const [chunkOpen, setChunkOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
   const isPdf = ing.mime === 'application/pdf';
   const Icon = isPdf ? FileText : FileType2;
-  const isRunning = ing.status !== 'ready' && ing.status !== 'error';
+  const isFinal = ing.status === 'ready' || ing.status === 'error' || ing.status === 'cancelled';
+  const isRunning = !isFinal;
 
   const doRetry = async () => {
     setBusy(true);
@@ -196,6 +198,19 @@ function IngestionRow({ ing, onRemoved }: RowProps) {
       toast.success('Reprocessamento iniciado');
     } catch (e) {
       toast.error('Falha ao reprocessar', { description: e instanceof Error ? e.message : String(e) });
+    } finally { setBusy(false); }
+  };
+
+  const doCancel = async () => {
+    if (!confirm(`Cancelar o processamento de "${ing.filename}"?`)) return;
+    setBusy(true);
+    try {
+      await cancelIngestion(ing.id);
+      toast.success('Cancelamento solicitado', {
+        description: 'O job será interrompido na próxima etapa.',
+      });
+    } catch (e) {
+      toast.error('Falha ao cancelar', { description: e instanceof Error ? e.message : String(e) });
     } finally { setBusy(false); }
   };
 
@@ -210,6 +225,7 @@ function IngestionRow({ ing, onRemoved }: RowProps) {
       toast.error('Falha ao remover', { description: e instanceof Error ? e.message : String(e) });
     } finally { setBusy(false); }
   };
+
 
   return (
     <div className="flex items-center gap-3 p-3 rounded-lg border border-border/50 hover:bg-secondary/30 transition-colors">
