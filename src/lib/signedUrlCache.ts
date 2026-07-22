@@ -85,6 +85,27 @@ export function invalidateSignedUrl(bucket: string, path: string): void {
   cache.delete(makeKey(bucket, path));
 }
 
+/**
+ * Invalida entradas do cache associadas a um documento específico.
+ * Consulta `documents.metadata` para descobrir bucket/storage_path e remove a chave correspondente.
+ * Usar após rechunk, troca de versão ativa ou reupload — evita servir links stale.
+ */
+export async function invalidateSignedUrlForDocument(documentId: string): Promise<void> {
+  try {
+    const { data, error } = await supabaseExternal
+      .from('documents')
+      .select('metadata')
+      .eq('id', documentId)
+      .maybeSingle();
+    if (error || !data) return;
+    const md = (data.metadata ?? {}) as { storage_path?: string; bucket?: string };
+    if (!md.storage_path) return;
+    invalidateSignedUrl(md.bucket ?? 'knowledge-uploads', md.storage_path);
+  } catch (e) {
+    logger.error('signed_url_cache.invalidate_by_doc_failed', { documentId, error: e });
+  }
+}
+
 export function clearSignedUrlCache(): void {
   cache.clear();
   inflight.clear();
