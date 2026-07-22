@@ -4,12 +4,13 @@
  */
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Link2, Tag, Sparkles, Network } from "lucide-react";
+import { Link2, Tag, Sparkles, Network, Mic } from "lucide-react";
 import { useNote } from "@/services/notesService";
 import { useCerebroStore } from "@/stores/cerebroStore";
 import { BacklinksList } from "./BacklinksList";
 import { LocalGraphView } from "./LocalGraphView";
 import { AiStudio } from "./AiStudio";
+import { PodcastPanel } from "./PodcastPanel";
 
 interface Props { noteId: string | null; notebookId?: string | null }
 
@@ -20,8 +21,20 @@ export function StudioPanel({ noteId, notebookId }: Props) {
 
   if (!noteId || !note) {
     return (
-      <div className="p-4 text-xs text-muted-foreground border-l border-border/50 h-full">
-        Selecione uma nota para ver backlinks, tags, grafo e resumos.
+      <div className="border-l border-border/50 h-full flex flex-col bg-secondary/10">
+        <div className="p-3 border-b border-border/50">
+          <p className="text-xs text-muted-foreground">
+            Selecione uma nota para ver backlinks, tags, grafo e resumos — ou gere um podcast do notebook abaixo.
+          </p>
+        </div>
+        {notebookId && (
+          <div className="flex-1 overflow-auto">
+            <div className="px-3 py-2 border-b border-border/50 flex items-center gap-1 text-xs font-semibold">
+              <Mic className="h-3 w-3 text-nexus-primary" /> Podcast do notebook
+            </div>
+            <PodcastPanel notebookId={notebookId} />
+          </div>
+        )}
       </div>
     );
   }
@@ -33,6 +46,7 @@ export function StudioPanel({ noteId, notebookId }: Props) {
           <TabsTrigger value="backlinks" className="text-xs gap-1"><Link2 className="h-3 w-3" /> Backlinks</TabsTrigger>
           <TabsTrigger value="graph" className="text-xs gap-1"><Network className="h-3 w-3" /> Grafo</TabsTrigger>
           <TabsTrigger value="studio" className="text-xs gap-1"><Sparkles className="h-3 w-3" /> Studio IA</TabsTrigger>
+          <TabsTrigger value="podcast" className="text-xs gap-1"><Mic className="h-3 w-3" /> Podcast</TabsTrigger>
           <TabsTrigger value="tags" className="text-xs gap-1"><Tag className="h-3 w-3" /> Tags</TabsTrigger>
         </TabsList>
 
@@ -50,6 +64,10 @@ export function StudioPanel({ noteId, notebookId }: Props) {
           ) : (
             <p className="p-3 text-xs text-muted-foreground">Notebook não identificado.</p>
           )}
+        </TabsContent>
+
+        <TabsContent value="podcast" className="flex-1 overflow-auto m-0">
+          <PodcastPanel notebookId={notebookId ?? null} />
         </TabsContent>
 
         <TabsContent value="tags" className="m-0 p-3">
