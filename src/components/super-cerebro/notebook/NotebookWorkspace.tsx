@@ -79,8 +79,9 @@ export function NotebookWorkspace() {
           )}
         </div>
 
-        <StudioPanel noteId={activeNoteId} />
+        <StudioPanel noteId={activeNoteId} notebookId={activeNotebookId} />
       </div>
+      <NoteQuickOpen />
     </div>
   );
 }
