@@ -118,7 +118,7 @@ Deno.serve(async (req) => {
   // Audit
   await supabase.from("audit_events").insert({
     workspace_id: alert.workspace_id,
-    category: "slack_integration",
+    event_type: "slack_integration",
     action: "alert_dispatched",
     resource_type: "security_alert",
     resource_id: alert.id ?? null,

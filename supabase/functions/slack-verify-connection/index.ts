@@ -97,7 +97,7 @@ Deno.serve(async (req) => {
 
   await svc.from("audit_events").insert({
     workspace_id: body.workspace_id,
-    category: "slack_integration",
+    event_type: "slack_integration",
     action: "workspace_verified",
     resource_type: "slack_workspace_config",
     resource_id: teamId,
