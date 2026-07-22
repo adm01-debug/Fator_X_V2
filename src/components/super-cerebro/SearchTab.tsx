@@ -83,9 +83,10 @@ export function SearchTab() {
     if (!query.trim()) return;
     setIsSearching(true);
     setSearchResults("");
+    setCitations([]);
     try {
       const body = await invokeCerebroQuery({ query, mode: 'chat', stream: true });
-      
+
       if (body instanceof ReadableStream) {
         const reader = body.getReader();
         const decoder = new TextDecoder();
@@ -95,13 +96,18 @@ export function SearchTab() {
         while (!done) {
           const { value, done: doneReading } = await reader.read();
           done = doneReading;
-          const chunkValue = decoder.decode(value);
+          const chunkValue = decoder.decode(value, { stream: !done });
           fullText += chunkValue;
-          setSearchResults(fullText);
+          const { text } = splitCitationsSentinel(fullText);
+          setSearchResults(text);
         }
+        const { text, citations: cits } = splitCitationsSentinel(fullText);
+        setSearchResults(text);
+        setCitations(cits);
       } else {
-        const data = body;
+        const data = body as { response?: string; citations?: CerebroCitation[] };
         setSearchResults(data?.response || 'Sem resposta');
+        setCitations(Array.isArray(data?.citations) ? data.citations : []);
       }
 
       // Persist to history
