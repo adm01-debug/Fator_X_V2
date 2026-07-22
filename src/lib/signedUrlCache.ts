@@ -25,13 +25,88 @@ interface CacheEntry {
 const cache = new Map<string, CacheEntry>();
 const inflight = new Map<string, Promise<string | null>>();
 
+// ---------- Telemetria ----------
+export interface SignedUrlCacheStats {
+  hits: number;
+  misses: number;
+  inflightCoalesced: number;
+  errors: number;
+  fetches: number;
+  totalFetchMs: number;
+  lastFetchMs: number | null;
+  avgFetchMs: number;
+  size: number;
+  hitRate: number;
+}
+
+const stats = {
+  hits: 0,
+  misses: 0,
+  inflightCoalesced: 0,
+  errors: 0,
+  fetches: 0,
+  totalFetchMs: 0,
+  lastFetchMs: null as number | null,
+};
+
+type StatsListener = (s: SignedUrlCacheStats) => void;
+const listeners = new Set<StatsListener>();
+
+export function getSignedUrlCacheStats(): SignedUrlCacheStats {
+  const total = stats.hits + stats.misses;
+  return {
+    ...stats,
+    avgFetchMs: stats.fetches ? stats.totalFetchMs / stats.fetches : 0,
+    size: cache.size,
+    hitRate: total ? stats.hits / total : 0,
+  };
+}
+
+export function subscribeSignedUrlCacheStats(cb: StatsListener): () => void {
+  listeners.add(cb);
+  cb(getSignedUrlCacheStats());
+  return () => { listeners.delete(cb); };
+}
+
+export function resetSignedUrlCacheStats(): void {
+  stats.hits = 0;
+  stats.misses = 0;
+  stats.inflightCoalesced = 0;
+  stats.errors = 0;
+  stats.fetches = 0;
+  stats.totalFetchMs = 0;
+  stats.lastFetchMs = null;
+  notify();
+}
+
+function notify(): void {
+  const snap = getSignedUrlCacheStats();
+  for (const l of listeners) l(snap);
+}
+
+const DEBUG =
+  typeof window !== 'undefined' &&
+  (import.meta.env?.DEV ||
+    /(?:^|[?&])debugSignedUrls=1(?:&|$)/.test(window.location.search) ||
+    window.localStorage?.getItem('debug:signedUrls') === '1');
+
+function debugLog(event: string, payload: Record<string, unknown>): void {
+  if (!DEBUG) return;
+  // eslint-disable-next-line no-console
+  console.debug(
+    `%c[signedUrlCache]%c ${event}`,
+    'color:#8b5cf6;font-weight:600',
+    'color:inherit',
+    { ...payload, stats: getSignedUrlCacheStats() },
+  );
+}
+
 function makeKey(bucket: string, path: string): string {
   return `${bucket}::${path}`;
 }
 
 function pruneIfNeeded(): void {
   if (cache.size <= MAX_ENTRIES) return;
-  // remove os mais antigos até voltar ao limite
   const toRemove = cache.size - MAX_ENTRIES;
   let removed = 0;
   for (const key of cache.keys()) {
@@ -50,12 +125,23 @@ export async function getCachedSignedUrl(
 
   const hit = cache.get(key);
   if (hit && hit.expiresAt > now) {
+    stats.hits += 1;
+    debugLog('hit', { key, ttlLeftMs: hit.expiresAt - now });
+    notify();
     return hit.url;
   }
   if (hit) cache.delete(key);
 
   const pending = inflight.get(key);
-  if (pending) return pending;
+  if (pending) {
+    stats.inflightCoalesced += 1;
+    debugLog('inflight-coalesced', { key });
+    notify();
+    return pending;
+  }
+
+  stats.misses += 1;
+  const startedAt = performance.now();
 
   const promise = (async () => {
     try {
@@ -70,16 +156,24 @@ export async function getCachedSignedUrl(
       }
       return url;
     } catch (e) {
+      stats.errors += 1;
       logger.error('signed_url_cache.fetch_failed', { bucket, path, error: e });
       return null;
     } finally {
+      const elapsed = performance.now() - startedAt;
+      stats.fetches += 1;
+      stats.totalFetchMs += elapsed;
+      stats.lastFetchMs = elapsed;
       inflight.delete(key);
+      debugLog('miss-fetched', { key, elapsedMs: Math.round(elapsed) });
+      notify();
     }
   })();
 
   inflight.set(key, promise);
   return promise;
 }
+
 
 export function invalidateSignedUrl(bucket: string, path: string): void {
   cache.delete(makeKey(bucket, path));
