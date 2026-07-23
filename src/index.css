@@ -1,5 +1,7 @@
 /* Fontes carregadas via <link> não-bloqueante em index.html (rel=preload + swap) — evita bloqueio de parse CSS. */
 
+@import "./styles/obsidian-mode.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

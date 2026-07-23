@@ -1,4 +1,6 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { useObsidianMode } from "@/hooks/useObsidianMode";
+import { ObsidianModeToggle } from "@/components/super-cerebro/ObsidianModeToggle";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { InfoHint } from "@/components/shared/InfoHint";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -40,12 +42,22 @@ import { openOrCreateDailyNote } from "@/services/noteTemplatesService";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+const ACCENT_KEY = "nexus.obsidianAccentPurple";
+
 export default function SuperCerebroPage() {
   const [activeTab, setActiveTab] = useState('workspace');
   const activeNotebookId = useCerebroStore((s) => s.activeNotebookId);
   const setActiveNote = useCerebroStore((s) => s.setActiveNote);
   const setStudioTab = useCerebroStore((s) => s.setStudioTab);
   const { workspaceId } = useCurrentWorkspace();
+  const { enabled: obsidianMode, toggle: toggleObsidian } = useObsidianMode();
+  const [accentPurple, setAccentPurple] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    try { return window.localStorage.getItem(ACCENT_KEY) === "on"; } catch { return false; }
+  });
+  useEffect(() => {
+    try { window.localStorage.setItem(ACCENT_KEY, accentPurple ? "on" : "off"); } catch { /* noop */ }
+  }, [accentPurple]);
 
   const commands = useMemo<CommandItem[]>(() => {
     const go = (tab: string): CommandItem["run"] => () => setActiveTab(tab);
@@ -126,7 +138,12 @@ export default function SuperCerebroPage() {
   }, [workspaceId, activeNotebookId, setActiveNote, setStudioTab]);
 
   return (
-    <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
+    <div
+      data-scope="super-cerebro"
+      className={`p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter${
+        obsidianMode ? ` obsidian-mode${accentPurple ? " obsidian-accent-purple" : ""}` : ""
+      }`}
+    >
       <PageHeader
         title="🧠 Super Cérebro"
         description="Enterprise Memory Layer — Camada de Inteligência e Memória Institucional"
@@ -137,9 +154,16 @@ export default function SuperCerebroPage() {
         O Super Cérebro é a malha de memória neural da organização. Organize o conhecimento em <strong>notebooks temáticos</strong> (Comercial, Jurídico, RH…) para que buscas e agentes fiquem restritos ao contexto correto.
       </InfoHint>
 
-      <div className="flex items-center justify-end">
+      <div className="flex items-center justify-end gap-3 flex-wrap">
+        <ObsidianModeToggle
+          enabled={obsidianMode}
+          onToggle={toggleObsidian}
+          accentPurple={accentPurple}
+          onToggleAccent={() => setAccentPurple((v) => !v)}
+        />
         <NotebookSelector allowAll />
       </div>
+
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="bg-secondary/50 border border-border/50 flex-wrap h-auto gap-1 p-1">
