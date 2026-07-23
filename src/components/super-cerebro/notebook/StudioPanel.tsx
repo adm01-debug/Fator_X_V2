@@ -4,7 +4,7 @@
  */
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Link2, Tag, Sparkles, Network, Mic, List, Settings2, Link2Off, Hash, History, FileStack } from "lucide-react";
+import { Link2, Tag, Sparkles, Network, Mic, List, Settings2, Link2Off, Hash, History, FileStack, Zap } from "lucide-react";
 import { useNote } from "@/services/notesService";
 import { useCerebroStore } from "@/stores/cerebroStore";
 import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
@@ -18,6 +18,7 @@ import { UnlinkedMentions } from "./UnlinkedMentions";
 import { TagsGlobalPanel } from "./TagsGlobalPanel";
 import { VersionHistoryPanel } from "./VersionHistoryPanel";
 import { TemplatesPanel } from "./TemplatesPanel";
+import { RelatedNotesPanel } from "./RelatedNotesPanel";
 import { emitJumpToLine } from "./NoteEditor";
 
 interface Props { noteId: string | null; notebookId?: string | null }
@@ -66,6 +67,7 @@ export function StudioPanel({ noteId, notebookId }: Props) {
           <TabsTrigger value="podcast" className="text-xs gap-1"><Mic className="h-3 w-3" /> Podcast</TabsTrigger>
           <TabsTrigger value="versions" className="text-xs gap-1"><History className="h-3 w-3" /> Versões</TabsTrigger>
           <TabsTrigger value="templates" className="text-xs gap-1"><FileStack className="h-3 w-3" /> Templates</TabsTrigger>
+          <TabsTrigger value="related" className="text-xs gap-1"><Zap className="h-3 w-3" /> Similares</TabsTrigger>
           <TabsTrigger value="tags" className="text-xs gap-1"><Tag className="h-3 w-3" /> #Nota</TabsTrigger>
         </TabsList>
 
@@ -128,6 +130,14 @@ export function StudioPanel({ noteId, notebookId }: Props) {
               collectionId={notebookId}
               activeNoteId={note.id}
             />
+          ) : (
+            <p className="p-3 text-xs text-muted-foreground">Notebook não identificado.</p>
+          )}
+        </TabsContent>
+
+        <TabsContent value="related" className="flex-1 overflow-auto m-0">
+          {notebookId ? (
+            <RelatedNotesPanel noteId={note.id} collectionId={notebookId} />
           ) : (
             <p className="p-3 text-xs text-muted-foreground">Notebook não identificado.</p>
           )}
