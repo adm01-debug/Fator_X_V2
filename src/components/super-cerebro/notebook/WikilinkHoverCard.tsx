@@ -40,7 +40,7 @@ export function WikilinkHoverCard({ label, targetType, children }: Props) {
           .limit(1)
           .maybeSingle();
         if (data) {
-          const body = ((data as { body_md?: string }).body_md ?? "").replace(/[#*`>\[\]]/g, "").trim();
+          const body = ((data as { body_md?: string }).body_md ?? "").replace(/[#*`>[\]]/g, "").trim();
           setPreview({
             id: (data as { id: string }).id,
             title: (data as { title: string }).title,
