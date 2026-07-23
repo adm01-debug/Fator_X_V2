@@ -52,6 +52,14 @@ export function NoteEditor({ noteId, collectionId }: Props) {
   const editRef = useRef<HTMLTextAreaElement | null>(null);
   const splitRef = useRef<HTMLTextAreaElement | null>(null);
   const [activeTa, setActiveTa] = useState<HTMLTextAreaElement | null>(null);
+  const [bookmarked, setBookmarked] = useState(false);
+
+  useEffect(() => {
+    setBookmarked(isBookmarked(collectionId, noteId));
+    const handler = () => setBookmarked(isBookmarked(collectionId, noteId));
+    window.addEventListener(BOOKMARKS_EVENT, handler);
+    return () => window.removeEventListener(BOOKMARKS_EVENT, handler);
+  }, [collectionId, noteId]);
 
   useEffect(() => {
     if (!note) return;
