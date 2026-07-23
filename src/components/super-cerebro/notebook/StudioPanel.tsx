@@ -4,7 +4,7 @@
  */
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Link2, Tag, Sparkles, Network, Mic, List, Settings2, Link2Off, Hash, History, FileStack, Zap } from "lucide-react";
+import { Link2, Tag, Sparkles, Network, Mic, List, Settings2, Link2Off, Hash, History, FileStack, Zap, Pencil } from "lucide-react";
 import { useNote } from "@/services/notesService";
 import { useCerebroStore } from "@/stores/cerebroStore";
 import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
