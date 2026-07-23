@@ -907,7 +907,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
       default: return null;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step, form, errors, highlightField, restoreFeedback, promptCustomLocked, selectedVariant]);
+  }, [step, form, errors, highlightField, restoreFeedback, promptCustomLocked, selectedVariant, selectedSkillIds]);
 
   const bannerEntries: DraftBannerEntry[] = useMemo(
     () => pendingDrafts.map((d) => {
