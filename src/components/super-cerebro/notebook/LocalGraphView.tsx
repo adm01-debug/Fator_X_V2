@@ -247,6 +247,7 @@ export function LocalGraphView({ noteId }: { noteId: string }) {
         <span className="flex items-center gap-1"><Users className="h-3 w-3" /> Entidade</span>
         <span className="flex items-center gap-1"><Hash className="h-3 w-3" /> Tag</span>
       </div>
+      </div>
     </div>
   );
 }
