@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, CheckCircle2, XCircle, Clock, Activity, Info } from "lucide-react";
+import { PartitionHealthCard } from "@/components/system/PartitionHealthCard";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
