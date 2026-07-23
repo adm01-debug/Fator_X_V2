@@ -104,7 +104,19 @@ export function LocalGraphView({ noteId }: { noteId: string }) {
                 cy={y}
                 r={9}
                 fill={KIND_COLOR[n.kind]}
-                className="cursor-pointer hover:opacity-80 transition-opacity"
+                tabIndex={0}
+                role="button"
+                aria-label={`Abrir ${n.label}`}
+                className="cursor-pointer hover:opacity-80 transition-opacity outline-none focus-visible:ring-2 focus-visible:ring-nexus-primary focus-visible:ring-offset-2"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    if (n.kind === "note") {
+                      const src = backlinks.find((b) => `in-${b.id}` === n.id);
+                      if (src) setActiveNote(src.source_id);
+                    }
+                  }
+                }}
                 onClick={() => {
                   if (n.kind === "note") {
                     const src = backlinks.find((b) => `in-${b.id}` === n.id);
