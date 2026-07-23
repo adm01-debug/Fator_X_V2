@@ -57,6 +57,7 @@ const navSections = [
       { title: "Fine-tuning", url: "/fine-tuning", icon: Dna },
       { title: "Smolagent", url: "/smolagent", icon: Workflow },
       { title: "Skills Marketplace", url: "/skills", icon: Package },
+      { title: "Skillbook · Auditoria", url: "/skills/audit", icon: BookOpen },
       { title: "Skills dos Agentes", url: "/agents/installed-skills", icon: Puzzle },
       { title: "Workflows de Agentes", url: "/agents/workflows", icon: GitBranch },
       { title: "Engenharia de Caos", url: "/security/chaos-experiments", icon: Zap },
