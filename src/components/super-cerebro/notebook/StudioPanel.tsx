@@ -64,6 +64,8 @@ export function StudioPanel({ noteId, notebookId }: Props) {
           <TabsTrigger value="tagsGlobal" className="text-xs gap-1"><Hash className="h-3 w-3" /> Tags</TabsTrigger>
           <TabsTrigger value="studio" className="text-xs gap-1"><Sparkles className="h-3 w-3" /> IA</TabsTrigger>
           <TabsTrigger value="podcast" className="text-xs gap-1"><Mic className="h-3 w-3" /> Podcast</TabsTrigger>
+          <TabsTrigger value="versions" className="text-xs gap-1"><History className="h-3 w-3" /> Versões</TabsTrigger>
+          <TabsTrigger value="templates" className="text-xs gap-1"><FileStack className="h-3 w-3" /> Templates</TabsTrigger>
           <TabsTrigger value="tags" className="text-xs gap-1"><Tag className="h-3 w-3" /> #Nota</TabsTrigger>
         </TabsList>
 
