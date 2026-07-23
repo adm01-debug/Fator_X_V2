@@ -6,8 +6,9 @@ import {
   Brain, Search, Network, BookOpen,
   Activity, Users, FlaskConical, Zap, Clock, GitMerge, TrendingDown, Layers, Upload, NotebookPen,
   Plus, FileText, Sparkles, Mic, Settings2, Link2Off, Hash, LayoutDashboard,
-  CalendarDays, FileStack, History, LayoutList, SearchCode, FileArchive, Table as TableIcon, Bookmark
+  CalendarDays, FileStack, History, LayoutList, SearchCode, FileArchive, Table as TableIcon, Bookmark, ShieldCheck
 } from "lucide-react";
+import { E2EESyncPanel } from "@/components/super-cerebro/notebook/E2EESyncPanel";
 import { AdvancedSearchPanel } from "@/components/super-cerebro/notebook/AdvancedSearchPanel";
 import { VaultSyncPanel } from "@/components/super-cerebro/notebook/VaultSyncPanel";
 import { KanbanBoard } from "@/components/super-cerebro/notebook/KanbanBoard";
