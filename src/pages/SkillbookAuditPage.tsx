@@ -69,22 +69,119 @@ const confidenceColor = (c: number): string => {
 
 
 export default function SkillbookAuditPage() {
-  const learnedQuery = useQuery({ queryKey: ['skillbook-learned'], queryFn: () => fetchLearnedSkills(200) });
-  const installedQuery = useQuery({ queryKey: ['skillbook-installed'], queryFn: () => fetchInstalledSkills(200) });
+  const [period, setPeriod] = useState<SkillbookPeriod>('30d');
+
+  const learnedQuery = useQuery({ queryKey: ['skillbook-learned'], queryFn: () => fetchLearnedSkills(500) });
+  const installedQuery = useQuery({ queryKey: ['skillbook-installed'], queryFn: () => fetchInstalledSkills(500) });
   const impactQuery = useQuery({ queryKey: ['skillbook-impact'], queryFn: fetchSkillbookImpact });
-  const timelineQuery = useQuery({ queryKey: ['skillbook-timeline'], queryFn: () => fetchSkillbookTimeline(100) });
+  const timelineQuery = useQuery({ queryKey: ['skillbook-timeline'], queryFn: () => fetchSkillbookTimeline(200) });
+
+  const learnedAll = learnedQuery.data ?? [];
+  const installedAll = installedQuery.data ?? [];
+  const timelineAll = timelineQuery.data ?? [];
+
+  const learned = useMemo(() => filterByPeriod(learnedAll, period, 'created_at'), [learnedAll, period]);
+  const installed = useMemo(() => filterByPeriod(installedAll, period, 'installed_at'), [installedAll, period]);
+  const timeline = useMemo(
+    () =>
+      timelineAll.filter((ev) => {
+        const iso = ev.kind === 'learned' ? ev.created_at : ev.installed_at;
+        const start =
+          period === 'all'
+            ? null
+            : new Date(Date.now() - (period === '7d' ? 7 : period === '30d' ? 30 : 90) * 86400_000).toISOString();
+        return !start || iso >= start;
+      }),
+    [timelineAll, period],
+  );
+
+  const confidenceSeries = useMemo(() => buildConfidenceSeries(learnedAll, period), [learnedAll, period]);
 
   const stats = useMemo(() => {
-    const learned = learnedQuery.data ?? [];
-    const installed = installedQuery.data ?? [];
     const impact = impactQuery.data ?? [];
     const avgConfidence = learned.length ? learned.reduce((s, x) => s + x.confidence, 0) / learned.length : 0;
     const totalUses = learned.reduce((s, x) => s + x.totalUses, 0);
     const totalCost = impact.reduce((s, x) => s + x.totalCostUsd, 0);
     return { learned: learned.length, installed: installed.length, avgConfidence, totalUses, totalCost };
-  }, [learnedQuery.data, installedQuery.data, impactQuery.data]);
+  }, [learned, installed, impactQuery.data]);
 
   const isLoading = learnedQuery.isLoading || installedQuery.isLoading || impactQuery.isLoading;
+
+  const handleExportLearned = () => {
+    if (learned.length === 0) {
+      toast.info('Nada para exportar no período selecionado');
+      return;
+    }
+    const csv = toCsv(
+      learned.map((s) => ({
+        skill: s.skill_name,
+        agente: s.agent_name ?? '',
+        confianca_pct: Math.round(s.confidence * 100),
+        sucessos: s.success_count,
+        falhas: s.failure_count,
+        taxa_sucesso_pct: Math.round(s.successRate * 100),
+        versao: s.version,
+        aprendida_em: s.created_at,
+      })),
+      ['skill', 'agente', 'confianca_pct', 'sucessos', 'falhas', 'taxa_sucesso_pct', 'versao', 'aprendida_em'],
+    );
+    downloadCsv(`skillbook-aprendidas-${period}-${new Date().toISOString().slice(0, 10)}.csv`, csv);
+    toast.success(`Exportadas ${learned.length} skills aprendidas`);
+  };
+
+  const handleExportInstalled = () => {
+    if (installed.length === 0) {
+      toast.info('Nada para exportar no período selecionado');
+      return;
+    }
+    const csv = toCsv(
+      installed.map((s) => ({
+        skill: s.skill_name,
+        agente: s.agent_name ?? '',
+        categoria: s.skill_category ?? '',
+        versao: s.skill_version ?? '',
+        verificada: s.is_verified ? 'sim' : 'não',
+        instalada_em: s.installed_at,
+      })),
+      ['skill', 'agente', 'categoria', 'versao', 'verificada', 'instalada_em'],
+    );
+    downloadCsv(`skillbook-instaladas-${period}-${new Date().toISOString().slice(0, 10)}.csv`, csv);
+    toast.success(`Exportadas ${installed.length} skills instaladas`);
+  };
+
+  const handleExportImpact = () => {
+    const impact = impactQuery.data ?? [];
+    if (impact.length === 0) {
+      toast.info('Sem dados de impacto para exportar');
+      return;
+    }
+    const csv = toCsv(
+      impact.map((row) => ({
+        agente: row.agent_name ?? row.agent_id,
+        aprendidas: row.learnedCount,
+        instaladas: row.installedCount,
+        confianca_media_pct: Math.round(row.avgConfidence * 100),
+        execucoes: row.totalExecutions,
+        latencia_media_ms: row.avgLatencyMs,
+        taxa_erro_pct: Math.round(row.errorRate * 100),
+        custo_usd: row.totalCostUsd.toFixed(4),
+        ultima_atividade: row.lastActivity ?? '',
+      })),
+      [
+        'agente',
+        'aprendidas',
+        'instaladas',
+        'confianca_media_pct',
+        'execucoes',
+        'latencia_media_ms',
+        'taxa_erro_pct',
+        'custo_usd',
+        'ultima_atividade',
+      ],
+    );
+    downloadCsv(`skillbook-impacto-${new Date().toISOString().slice(0, 10)}.csv`, csv);
+    toast.success(`Exportado impacto de ${impact.length} agentes`);
+  };
 
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
@@ -92,6 +189,24 @@ export default function SkillbookAuditPage() {
         title="Auditoria do Skillbook"
         description="Trilha completa: quando cada skill foi aprendida ou instalada, a confiança adquirida e o impacto nas execuções"
       />
+
+      {/* Filtros de período */}
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-2">
+          <span className="text-meta text-muted-foreground">Período:</span>
+          <ToggleGroup
+            type="single"
+            size="sm"
+            value={period}
+            onValueChange={(v) => v && setPeriod(v as SkillbookPeriod)}
+          >
+            <ToggleGroupItem value="7d">7 dias</ToggleGroupItem>
+            <ToggleGroupItem value="30d">30 dias</ToggleGroupItem>
+            <ToggleGroupItem value="90d">90 dias</ToggleGroupItem>
+            <ToggleGroupItem value="all">Tudo</ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+      </div>
 
       {/* KPIs */}
       <div className="grid gap-4 grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
@@ -115,6 +230,85 @@ export default function SkillbookAuditPage() {
         />
       </div>
 
+      {/* Evolução da confiança */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-title-sm flex items-center gap-2">
+            <LineChartIcon className="h-4 w-4 text-nexus-purple" /> Evolução da confiança
+            <Badge variant="outline" className="text-meta ml-auto">
+              {confidenceSeries.length} pontos
+            </Badge>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <Skeleton className="h-64 w-full" />
+          ) : confidenceSeries.length === 0 ? (
+            <EmptyState
+              icon={LineChartIcon}
+              title="Sem dados no período"
+              description="Nenhuma skill aprendida no período selecionado. Amplie a janela para visualizar a evolução."
+            />
+          ) : (
+            <ResponsiveContainer width="100%" height={280}>
+              <ComposedChart data={confidenceSeries}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="date" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+                <YAxis
+                  yAxisId="left"
+                  domain={[0, 1]}
+                  tick={{ fontSize: 11 }}
+                  stroke="hsl(var(--muted-foreground))"
+                  tickFormatter={(v) => `${Math.round(v * 100)}%`}
+                />
+                <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'hsl(var(--card))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: 8,
+                    fontSize: 12,
+                  }}
+                  formatter={(value: number, name) => {
+                    if (name === 'Confiança média') return [`${Math.round(value * 100)}%`, name];
+                    return [value, name];
+                  }}
+                />
+                <Legend wrapperStyle={{ fontSize: 12 }} />
+                <Area
+                  yAxisId="right"
+                  type="monotone"
+                  dataKey="cumulativeLearned"
+                  name="Total acumulado"
+                  fill="hsl(var(--nexus-cyan) / 0.15)"
+                  stroke="hsl(var(--nexus-cyan))"
+                  strokeWidth={1.5}
+                />
+                <Line
+                  yAxisId="left"
+                  type="monotone"
+                  dataKey="avgConfidence"
+                  name="Confiança média"
+                  stroke="hsl(var(--nexus-purple))"
+                  strokeWidth={2.5}
+                  dot={{ r: 3 }}
+                />
+                <Line
+                  yAxisId="right"
+                  type="monotone"
+                  dataKey="learnedCount"
+                  name="Novas skills/dia"
+                  stroke="hsl(var(--nexus-emerald))"
+                  strokeWidth={1.5}
+                  strokeDasharray="4 4"
+                  dot={{ r: 2 }}
+                />
+              </ComposedChart>
+            </ResponsiveContainer>
+          )}
+        </CardContent>
+      </Card>
+
       <Tabs defaultValue="timeline" className="space-y-4">
         <TabsList>
           <TabsTrigger value="timeline" className="gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Linha do tempo</TabsTrigger>
@@ -122,6 +316,7 @@ export default function SkillbookAuditPage() {
           <TabsTrigger value="installed" className="gap-1.5"><Package className="h-3.5 w-3.5" /> Instaladas</TabsTrigger>
           <TabsTrigger value="impact" className="gap-1.5"><TrendingUp className="h-3.5 w-3.5" /> Impacto por agente</TabsTrigger>
         </TabsList>
+
 
         {/* TIMELINE */}
         <TabsContent value="timeline" className="space-y-4">
