@@ -6,8 +6,9 @@ import {
   Brain, Search, Network, BookOpen,
   Activity, Users, FlaskConical, Zap, Clock, GitMerge, TrendingDown, Layers, Upload, NotebookPen,
   Plus, FileText, Sparkles, Mic, Settings2, Link2Off, Hash, LayoutDashboard,
-  CalendarDays, FileStack, History
+  CalendarDays, FileStack, History, LayoutList
 } from "lucide-react";
+import { KanbanBoard } from "@/components/super-cerebro/notebook/KanbanBoard";
 import { OverviewTab } from "@/components/super-cerebro/OverviewTab";
 import { SearchTab } from "@/components/super-cerebro/SearchTab";
 import { DocumentUploadTab } from "@/components/super-cerebro/DocumentUploadTab";
@@ -107,6 +108,7 @@ export default function SuperCerebroPage() {
           }
         },
       },
+      { id: "goto.kanban", label: "Ir para Kanban (board de notas)", group: "Navegação", icon: LayoutList, run: go("kanban") },
     ];
     return list;
   }, [workspaceId, activeNotebookId, setActiveNote, setStudioTab]);
@@ -131,6 +133,7 @@ export default function SuperCerebroPage() {
         <TabsList className="bg-secondary/50 border border-border/50 flex-wrap h-auto gap-1 p-1">
           <TabsTrigger value="workspace" className="text-meta gap-1.5"><NotebookPen className="h-3.5 w-3.5" /> Workspace</TabsTrigger>
           <TabsTrigger value="canvas" className="text-meta gap-1.5"><LayoutDashboard className="h-3.5 w-3.5" /> Canvas</TabsTrigger>
+          <TabsTrigger value="kanban" className="text-meta gap-1.5"><LayoutList className="h-3.5 w-3.5" /> Kanban</TabsTrigger>
           <TabsTrigger value="notebooks" className="text-meta gap-1.5"><NotebookPen className="h-3.5 w-3.5" /> Notebooks</TabsTrigger>
           <TabsTrigger value="overview" className="text-meta gap-1.5"><Brain className="h-3.5 w-3.5" /> Visão Geral</TabsTrigger>
           <TabsTrigger value="search" className="text-meta gap-1.5"><Search className="h-3.5 w-3.5" /> Busca</TabsTrigger>
@@ -155,6 +158,18 @@ export default function SuperCerebroPage() {
             </div>
           ) : (
             <p className="text-sm text-muted-foreground p-6">Selecione um notebook para abrir o Canvas.</p>
+          )}
+        </TabsContent>
+        <TabsContent value="kanban" className="animate-in fade-in-50 duration-500">
+          {activeNotebookId ? (
+            <div className="h-[calc(100dvh-18rem)] border rounded-lg overflow-hidden bg-background">
+              <KanbanBoard
+                collectionId={activeNotebookId}
+                onOpenNote={() => setActiveTab("workspace")}
+              />
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground p-6">Selecione um notebook para abrir o Kanban.</p>
           )}
         </TabsContent>
         <TabsContent value="notebooks" className="animate-in fade-in-50 duration-500"><NotebooksTab /></TabsContent>
