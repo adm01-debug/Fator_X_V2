@@ -77,6 +77,36 @@ export default function SuperCerebroPage() {
       { id: "studio.tagsGlobal", label: "Studio: Tags do notebook", group: "IA", icon: Hash, run: () => setStudioTab("tagsGlobal") },
       { id: "studio.ai", label: "Studio: IA (resumo, Q&A)", group: "IA", icon: Sparkles, run: () => setStudioTab("studio") },
       { id: "studio.podcast", label: "Studio: Podcast", group: "IA", icon: Mic, run: () => setStudioTab("podcast") },
+      { id: "studio.versions", label: "Studio: Histórico de versões", group: "IA", icon: History, run: () => setStudioTab("versions") },
+      { id: "studio.templates", label: "Studio: Templates de nota", group: "IA", icon: FileStack, run: () => setStudioTab("templates") },
+      {
+        id: "note.daily",
+        label: "Abrir Daily Note (hoje)",
+        group: "Notas",
+        icon: CalendarDays,
+        keywords: "diario hoje daily",
+        run: async () => {
+          if (!workspaceId || !activeNotebookId) {
+            toast.error("Selecione um notebook primeiro.");
+            setActiveTab("workspace");
+            return;
+          }
+          try {
+            const { data: sess } = await supabase.auth.getSession();
+            const email = sess.session?.user.email ?? "";
+            const note = await openOrCreateDailyNote({
+              workspaceId,
+              collectionId: activeNotebookId,
+              userEmail: email,
+            });
+            setActiveTab("workspace");
+            setActiveNote(note.id);
+            toast.success("Daily Note aberta");
+          } catch (e) {
+            toast.error(e instanceof Error ? e.message : "Falha ao abrir Daily Note");
+          }
+        },
+      },
     ];
     return list;
   }, [workspaceId, activeNotebookId, setActiveNote, setStudioTab]);
