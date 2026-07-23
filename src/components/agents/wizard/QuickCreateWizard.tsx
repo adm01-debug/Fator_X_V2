@@ -178,6 +178,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
     ...QUICK_AGENT_DEFAULTS,
     ...initialData
   }));
+  const [selectedSkillIds, setSelectedSkillIds] = useState<string[]>([]);
   const [draftsStore, setDraftsStore] = useState<DraftsStoreV2>({ version: 2, activeId: null, drafts: [] });
   const [pendingDrafts, setPendingDrafts] = useState<DraftEntry[]>([]);
   const [draftDecided, setDraftDecided] = useState(false);
