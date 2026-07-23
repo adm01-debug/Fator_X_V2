@@ -58,6 +58,17 @@ export async function installSkill(agentId: string, skillId: string): Promise<vo
   await supabaseExternal.rpc('increment_skill_installs', { p_skill_id: skillId });
 }
 
+// Bulk install skills for an agent (usado no wizard de criação)
+export async function bulkInstallSkills(agentId: string, skillIds: string[]): Promise<void> {
+  if (skillIds.length === 0) return;
+  const rows = skillIds.map((skill_id) => ({ agent_id: agentId, skill_id }));
+  const { error } = await supabaseExternal.from('agent_installed_skills').insert(rows);
+  if (error) throw error;
+  await Promise.all(
+    skillIds.map((id) => supabaseExternal.rpc('increment_skill_installs', { p_skill_id: id })),
+  );
+}
+
 // Get installed skills for an agent
 export async function getInstalledSkills(agentId: string): Promise<AgentSkillDefinition[]> {
   const { data, error } = await supabaseExternal

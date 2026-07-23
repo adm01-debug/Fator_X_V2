@@ -29,6 +29,9 @@ import { StepQuickIdentity } from './quickSteps/StepQuickIdentity';
 import { StepQuickType } from './quickSteps/StepQuickType';
 import { StepQuickModel } from './quickSteps/StepQuickModel';
 import { StepQuickPrompt } from './quickSteps/StepQuickPrompt';
+import { StepQuickSkills } from './quickSteps/StepQuickSkills';
+import { bulkInstallSkills } from '@/services/skillsRegistryService';
+import { z } from 'zod';
 import { PreflightReviewSummary } from './quickSteps/PreflightReviewSummary';
 import { DraftRecoveryBanner, type DraftBannerEntry } from './DraftRecoveryBanner';
 import { RestoreFeedbackBanner } from './RestoreFeedbackBanner';
@@ -72,11 +75,13 @@ const FIELD_LABEL: Partial<Record<keyof QuickAgentForm, string>> = {
   model: 'Modelo',
   prompt: 'Prompt',
 };
+const skillsStepSchema = z.object({});
 const STEPS = [
   { key: 'identity', label: 'Identidade', schema: quickIdentitySchema, fields: ['name', 'emoji', 'mission', 'description'] },
   { key: 'type', label: 'Tipo', schema: quickTypeSchema, fields: ['type'] },
   { key: 'model', label: 'Modelo', schema: quickModelSchema, fields: ['model'] },
   { key: 'prompt', label: 'Prompt', schema: quickPromptSchema, fields: ['prompt'] },
+  { key: 'skills', label: 'Skills', schema: skillsStepSchema, fields: [] as Array<keyof QuickAgentForm> },
 ] as const;
 
 const TYPE_LABEL: Record<QuickAgentType, string> = {
@@ -173,6 +178,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
     ...QUICK_AGENT_DEFAULTS,
     ...initialData
   }));
+  const [selectedSkillIds, setSelectedSkillIds] = useState<string[]>([]);
   const [draftsStore, setDraftsStore] = useState<DraftsStoreV2>({ version: 2, activeId: null, drafts: [] });
   const [pendingDrafts, setPendingDrafts] = useState<DraftEntry[]>([]);
   const [draftDecided, setDraftDecided] = useState(false);
@@ -827,10 +833,19 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
       toast.error('Erro ao salvar agente', { description: error.message });
       return;
     }
+    const insertedId = (inserted as { id?: string } | null)?.id;
+    // Instala skills selecionadas em bulk (não bloqueia navegação em caso de erro)
+    if (insertedId && selectedSkillIds.length > 0) {
+      try {
+        await bulkInstallSkills(insertedId, selectedSkillIds);
+      } catch (skillErr) {
+        const msg = skillErr instanceof Error ? skillErr.message : 'Falha ao instalar skills';
+        toast.warning('Agente criado, mas falhou ao instalar skills', { description: msg });
+      }
+    }
     // If the user opted to bypass contradiction warnings, log a high-signal
     // audit entry so admins can review the rationale later.
     if (override) {
-      const insertedId = (inserted as { id?: string } | null)?.id;
       void logAudit({
         action: 'create',
         resource_type: 'agent',
@@ -897,10 +912,11 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
         const activeVariant = promptCustomLocked ? null : (selectedVariant ?? detected);
         return <StepQuickPrompt form={form} errors={errors} onPromptManualEdit={updatePromptManual} onRestore={restorePromptFromType} onSafeReset={safeResetPromptAndPreview} onApplyVariant={applyPromptVariant} customLocked={promptCustomLocked} onUnlockCustom={() => { if (promptCustomLocked) pushLockEvent('unlocked-manual', 'botão "Destravar" no editor'); setPromptCustomLocked(false); setSelectedVariant(null); }} activeVariant={activeVariant} lockEvents={lockEvents} highlightField={hfFor(['prompt'])} checklistAutoUnlock={checklistAutoUnlock} onToggleChecklistAutoUnlock={setChecklistAutoUnlock} />;
       }
+      case 4: return <StepQuickSkills mission={form.mission} role={form.type} selectedIds={selectedSkillIds} onChange={setSelectedSkillIds} />;
       default: return null;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step, form, errors, highlightField, restoreFeedback, promptCustomLocked, selectedVariant]);
+  }, [step, form, errors, highlightField, restoreFeedback, promptCustomLocked, selectedVariant, selectedSkillIds]);
 
   const bannerEntries: DraftBannerEntry[] = useMemo(
     () => pendingDrafts.map((d) => {
