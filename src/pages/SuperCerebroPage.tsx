@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Brain, Search, Network, BookOpen,
   Activity, Users, FlaskConical, Zap, Clock, GitMerge, TrendingDown, Layers, Upload, NotebookPen,
-  Plus, FileText, Sparkles, Mic
+  Plus, FileText, Sparkles, Mic, Settings2, Link2Off, Hash
 } from "lucide-react";
 import { OverviewTab } from "@/components/super-cerebro/OverviewTab";
 import { SearchTab } from "@/components/super-cerebro/SearchTab";
@@ -64,9 +64,12 @@ export default function SuperCerebroPage() {
           toast.error(e instanceof Error ? e.message : "Falha ao criar nota");
         }
       } },
+      { id: "studio.properties", label: "Studio: Properties (frontmatter)", group: "IA", icon: Settings2, run: () => setStudioTab("properties") },
       { id: "studio.backlinks", label: "Studio: Backlinks", group: "IA", icon: FileText, run: () => setStudioTab("backlinks") },
+      { id: "studio.unlinked", label: "Studio: Menções não linkadas", group: "IA", icon: Link2Off, run: () => setStudioTab("unlinked") },
       { id: "studio.outline", label: "Studio: Outline (sumário)", group: "IA", icon: FileText, run: () => setStudioTab("outline") },
       { id: "studio.graph", label: "Studio: Grafo local", group: "IA", icon: Network, run: () => setStudioTab("graph") },
+      { id: "studio.tagsGlobal", label: "Studio: Tags do notebook", group: "IA", icon: Hash, run: () => setStudioTab("tagsGlobal") },
       { id: "studio.ai", label: "Studio: IA (resumo, Q&A)", group: "IA", icon: Sparkles, run: () => setStudioTab("studio") },
       { id: "studio.podcast", label: "Studio: Podcast", group: "IA", icon: Mic, run: () => setStudioTab("podcast") },
     ];
