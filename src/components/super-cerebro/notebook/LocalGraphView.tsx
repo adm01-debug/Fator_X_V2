@@ -171,7 +171,9 @@ export function LocalGraphView({ noteId }: { noteId: string }) {
   const angleStep = (2 * Math.PI) / peripherals.length;
 
   return (
-    <div className="p-3">
+    <div>
+      {Filters}
+      <div className="p-3">
       <svg viewBox={`0 0 ${size} ${size}`} className="w-full h-auto">
         <defs>
           <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4" markerHeight="4" orient="auto">
