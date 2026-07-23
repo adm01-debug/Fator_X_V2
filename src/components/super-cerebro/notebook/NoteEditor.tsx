@@ -176,6 +176,17 @@ export function NoteEditor({ noteId, collectionId }: Props) {
             {saving ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <Save className="h-3 w-3 mr-1" />}
             Salvar & indexar links
           </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            className={cn("h-8", bookmarked ? "text-amber-500" : "text-muted-foreground")}
+            onClick={() => setBookmarked(toggleBookmark(collectionId, noteId))}
+            aria-label={bookmarked ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+            aria-pressed={bookmarked}
+            title={bookmarked ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+          >
+            <Bookmark className={cn("h-3.5 w-3.5", bookmarked && "fill-current")} />
+          </Button>
           <Button size="sm" variant="ghost" className="h-8 text-destructive" onClick={handleDelete}>
             <Trash2 className="h-3 w-3" />
           </Button>
