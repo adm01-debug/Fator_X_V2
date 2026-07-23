@@ -43,6 +43,7 @@ export function MessageBubble({ message, streaming, onRetry }: MessageBubbleProp
   }
 
   return (
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
     <div
       className={cn('flex w-full animate-fade-in group', isUser ? 'justify-end' : 'justify-start')}
       onMouseEnter={() => setHover(true)}

@@ -115,6 +115,7 @@ export function KanbanBoard({ collectionId, onOpenNote }: Props) {
       <div className="flex-1 overflow-x-auto overflow-y-hidden">
         <div className="flex gap-3 p-3 h-full min-w-max">
           {columns.map((col) => (
+            // eslint-disable-next-line jsx-a11y/no-static-element-interactions
             <div
               key={col.key}
               onDragOver={(e) => {

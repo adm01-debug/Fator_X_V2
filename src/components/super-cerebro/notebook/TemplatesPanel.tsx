@@ -95,10 +95,11 @@ export function TemplatesPanel({ workspaceId, collectionId, activeNoteId, userEm
   return (
     <div className="p-3 space-y-3">
       <div className="space-y-1.5">
-        <label className="text-meta font-semibold text-muted-foreground">
+        <label htmlFor="tpl-next-title" className="text-meta font-semibold text-muted-foreground">
           Título para a próxima nota (opcional)
         </label>
         <Input
+          id="tpl-next-title"
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
           placeholder="Ex.: Kickoff Projeto X"

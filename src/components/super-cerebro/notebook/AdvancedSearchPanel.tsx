@@ -104,6 +104,7 @@ export function AdvancedSearchPanel({ onOpenNote }: { onOpenNote?: (id: string) 
           <div className="flex gap-2">
             <div className="relative flex-1">
               <Input
+                // eslint-disable-next-line jsx-a11y/no-autofocus
                 autoFocus
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}

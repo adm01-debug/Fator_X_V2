@@ -106,10 +106,13 @@ export function SourcesPanel({ workspaceId, collectionId }: Props) {
               return (
                 <div
                   key={n.id}
+                  role="button"
+                  tabIndex={0}
                   className={`group flex items-center gap-2 rounded px-2 py-1.5 cursor-pointer hover:bg-secondary/60 ${
                     isActive ? "bg-secondary/80" : ""
                   }`}
                   onClick={() => setActiveNote(n.id)}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setActiveNote(n.id); } }}
                 >
                   <Checkbox
                     checked={isSel}

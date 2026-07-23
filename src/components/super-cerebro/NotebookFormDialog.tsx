@@ -46,6 +46,7 @@ export function NotebookFormDialog({ open, onOpenChange, initial, onSubmit, subm
         <div className="space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="nb-name">Nome</Label>
+            {/* eslint-disable-next-line jsx-a11y/no-autofocus */}
             <Input id="nb-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Ex: Comercial" autoFocus />
           </div>
 

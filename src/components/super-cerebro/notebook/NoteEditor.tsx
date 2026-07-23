@@ -35,6 +35,7 @@ interface Props {
 
 /** Handler global para jump-to-line no editor (usado pelo OutlinePanel). */
 const JUMP_EVENT = "cerebro:jump-to-line";
+// eslint-disable-next-line react-refresh/only-export-components
 export function emitJumpToLine(noteId: string, line: number) {
   window.dispatchEvent(new CustomEvent(JUMP_EVENT, { detail: { noteId, line } }));
 }

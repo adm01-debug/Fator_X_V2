@@ -35,6 +35,7 @@ export function ObsidianModeToggle({
       >
         <Tooltip>
           <TooltipTrigger asChild>
+            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
             <label className="flex items-center gap-2 cursor-pointer text-meta">
               <SquareStack className="h-3.5 w-3.5 text-muted-foreground" aria-hidden />
               <span className="select-none">Obsidian Mode</span>

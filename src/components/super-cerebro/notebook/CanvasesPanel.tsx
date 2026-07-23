@@ -69,10 +69,13 @@ export function CanvasesPanel({ notebookId, workspaceId, activeCanvasId, onSelec
             {canvases.map((c) => (
               <li key={c.id}>
                 <div
+                  role="button"
+                  tabIndex={0}
                   className={`group flex items-center gap-2 rounded px-2 py-1.5 text-meta cursor-pointer ${
                     activeCanvasId === c.id ? "bg-secondary" : "hover:bg-secondary/60"
                   }`}
                   onClick={() => onSelect(c.id)}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(c.id); } }}
                 >
                   <LayoutDashboard className="h-3 w-3 text-muted-foreground" />
                   <span className="truncate flex-1">{c.name}</span>

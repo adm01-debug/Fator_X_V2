@@ -78,7 +78,7 @@ export function WikilinkHoverCard({ label, targetType, children }: Props) {
     <HoverCard openDelay={220} closeDelay={80}>
       <HoverCardTrigger asChild onMouseEnter={load} onFocus={load}>
         <span
-          role={preview?.id ? "link" : undefined}
+          role={preview?.id ? "link" : "button"}
           tabIndex={0}
           onClick={openNote}
           onKeyDown={(e) => {
