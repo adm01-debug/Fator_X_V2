@@ -144,6 +144,7 @@ export default function SuperCerebroPage() {
           <TabsTrigger value="canvas" className="text-meta gap-1.5"><LayoutDashboard className="h-3.5 w-3.5" /> Canvas</TabsTrigger>
           <TabsTrigger value="kanban" className="text-meta gap-1.5"><LayoutList className="h-3.5 w-3.5" /> Kanban</TabsTrigger>
           <TabsTrigger value="bases" className="text-meta gap-1.5"><TableIcon className="h-3.5 w-3.5" /> Bases</TabsTrigger>
+          <TabsTrigger value="bookmarks" className="text-meta gap-1.5"><Bookmark className="h-3.5 w-3.5" /> Favoritos</TabsTrigger>
           <TabsTrigger value="advSearch" className="text-meta gap-1.5"><SearchCode className="h-3.5 w-3.5" /> Busca Avançada</TabsTrigger>
           <TabsTrigger value="vault" className="text-meta gap-1.5"><FileArchive className="h-3.5 w-3.5" /> Vault Sync</TabsTrigger>
           <TabsTrigger value="notebooks" className="text-meta gap-1.5"><NotebookPen className="h-3.5 w-3.5" /> Notebooks</TabsTrigger>
