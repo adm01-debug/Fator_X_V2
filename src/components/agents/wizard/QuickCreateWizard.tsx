@@ -29,6 +29,9 @@ import { StepQuickIdentity } from './quickSteps/StepQuickIdentity';
 import { StepQuickType } from './quickSteps/StepQuickType';
 import { StepQuickModel } from './quickSteps/StepQuickModel';
 import { StepQuickPrompt } from './quickSteps/StepQuickPrompt';
+import { StepQuickSkills } from './quickSteps/StepQuickSkills';
+import { bulkInstallSkills } from '@/services/skillsRegistryService';
+import { z } from 'zod';
 import { PreflightReviewSummary } from './quickSteps/PreflightReviewSummary';
 import { DraftRecoveryBanner, type DraftBannerEntry } from './DraftRecoveryBanner';
 import { RestoreFeedbackBanner } from './RestoreFeedbackBanner';
@@ -72,11 +75,13 @@ const FIELD_LABEL: Partial<Record<keyof QuickAgentForm, string>> = {
   model: 'Modelo',
   prompt: 'Prompt',
 };
+const skillsStepSchema = z.object({});
 const STEPS = [
   { key: 'identity', label: 'Identidade', schema: quickIdentitySchema, fields: ['name', 'emoji', 'mission', 'description'] },
   { key: 'type', label: 'Tipo', schema: quickTypeSchema, fields: ['type'] },
   { key: 'model', label: 'Modelo', schema: quickModelSchema, fields: ['model'] },
   { key: 'prompt', label: 'Prompt', schema: quickPromptSchema, fields: ['prompt'] },
+  { key: 'skills', label: 'Skills', schema: skillsStepSchema, fields: [] as Array<keyof QuickAgentForm> },
 ] as const;
 
 const TYPE_LABEL: Record<QuickAgentType, string> = {
