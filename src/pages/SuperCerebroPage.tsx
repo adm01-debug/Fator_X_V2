@@ -195,6 +195,7 @@ export default function SuperCerebroPage() {
         <TabsContent value="bookmarks" className="animate-in fade-in-50 duration-500">
           <BookmarksPanel onOpenNote={() => setActiveTab("workspace")} />
         </TabsContent>
+        <TabsContent value="e2ee" className="animate-in fade-in-50 duration-500"><E2EESyncPanel /></TabsContent>
         <TabsContent value="advSearch" className="animate-in fade-in-50 duration-500">
           <AdvancedSearchPanel onOpenNote={() => setActiveTab("workspace")} />
         </TabsContent>
