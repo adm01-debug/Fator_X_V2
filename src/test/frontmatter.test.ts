@@ -31,7 +31,7 @@ describe("frontmatter", () => {
     const s = stringifyFrontmatter({ z: 1, a: "with: colon", b: [1, 2] });
     expect(s.split("\n")[1]).toMatch(/^a:/);
     expect(s).toContain(`"with: colon"`);
-    expect(s).toContain("b: [1, 2]");
+    expect(s).toMatch(/b:\n\s+- 1\n\s+- 2/);
   });
 
   it("upsert preserves body and adds/updates keys", () => {
