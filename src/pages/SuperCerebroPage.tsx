@@ -138,7 +138,12 @@ export default function SuperCerebroPage() {
   }, [workspaceId, activeNotebookId, setActiveNote, setStudioTab]);
 
   return (
-    <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
+    <div
+      data-scope="super-cerebro"
+      className={`p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter${
+        obsidianMode ? ` obsidian-mode${accentPurple ? " obsidian-accent-purple" : ""}` : ""
+      }`}
+    >
       <PageHeader
         title="🧠 Super Cérebro"
         description="Enterprise Memory Layer — Camada de Inteligência e Memória Institucional"
@@ -149,9 +154,16 @@ export default function SuperCerebroPage() {
         O Super Cérebro é a malha de memória neural da organização. Organize o conhecimento em <strong>notebooks temáticos</strong> (Comercial, Jurídico, RH…) para que buscas e agentes fiquem restritos ao contexto correto.
       </InfoHint>
 
-      <div className="flex items-center justify-end">
+      <div className="flex items-center justify-end gap-3 flex-wrap">
+        <ObsidianModeToggle
+          enabled={obsidianMode}
+          onToggle={toggleObsidian}
+          accentPurple={accentPurple}
+          onToggleAccent={() => setAccentPurple((v) => !v)}
+        />
         <NotebookSelector allowAll />
       </div>
+
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="bg-secondary/50 border border-border/50 flex-wrap h-auto gap-1 p-1">
