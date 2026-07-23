@@ -26,6 +26,7 @@ export function StudioPanel({ noteId, notebookId }: Props) {
   const { data: note } = useNote(noteId);
   const studioTab = useCerebroStore((s) => s.studioTab);
   const setStudioTab = useCerebroStore((s) => s.setStudioTab);
+  const { workspaceId } = useCurrentWorkspace();
 
   if (!noteId || !note) {
     return (
