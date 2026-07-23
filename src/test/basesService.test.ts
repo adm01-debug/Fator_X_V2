@@ -42,10 +42,11 @@ describe("basesService", () => {
     expect(rows.filter((row) => evalRule(row, r)).map((r) => r.id)).toEqual(["3"]);
   });
 
-  it("filtra por in em tags", () => {
+  it("filtra por in em tags (frontmatter substitui inline tags)", () => {
     const r: FilterRule = { column: "tags", op: "in", value: "ideia,foo" };
     const ids = rows.filter((row) => evalRule(row, r)).map((r) => r.id);
-    expect(ids).toEqual(expect.arrayContaining(["1", "3"]));
+    // n1 declara `tags: [pt, work]` no frontmatter → sobrepõe #ideia inline; só n3 casa.
+    expect(ids).toEqual(["3"]);
   });
 
   it("gt em valores numéricos", () => {
