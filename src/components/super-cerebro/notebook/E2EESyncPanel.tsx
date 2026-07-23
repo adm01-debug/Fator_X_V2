@@ -113,7 +113,7 @@ export function E2EESyncPanel() {
       const rec = planReconciliation(payload, localSlim);
       setIncoming(payload);
       setPlan(rec);
-      setOverwrite(new Set());
+      setResolutions(new Map());
       toast.success(`Bundle decifrado: ${payload.notes.length} notas recebidas.`);
     } catch (e) {
       logger.error("e2ee.import.failed", { error: e instanceof Error ? e.message : String(e) });
@@ -127,12 +127,27 @@ export function E2EESyncPanel() {
     if (!incoming || !plan) return;
     setBusy(true);
     try {
-      const res = await applyReconciliation(incoming, plan, workspaceId, { overwriteConflictIds: overwrite });
+      // Aplica resoluções de conflito: "incoming" e "merge" viram overwrite.
+      // Para "merge", substituímos o body_md da nota incoming pelo body mesclado.
+      const overwriteIds = new Set<string>();
+      const patched: BundlePayload = {
+        ...incoming,
+        notes: incoming.notes.map((n) => {
+          const r = resolutions.get(n.id);
+          if (!r || r.resolution === "local") return n;
+          overwriteIds.add(n.id);
+          if (r.resolution === "merge" && r.mergedBody !== undefined) {
+            return { ...n, body_md: r.mergedBody, updated_at: new Date().toISOString() };
+          }
+          return n;
+        }),
+      };
+      const res = await applyReconciliation(patched, plan, workspaceId, { overwriteConflictIds: overwriteIds });
       toast.success(`Sync aplicado: +${res.inserted} novas, ~${res.updated} atualizadas, ${res.skipped} mantidas.`);
       await qc.invalidateQueries({ queryKey: ["notes", notebookId] });
       setIncoming(null);
       setPlan(null);
-      setOverwrite(new Set());
+      setResolutions(new Map());
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Falha ao aplicar reconciliação.");
     } finally {
@@ -140,13 +155,6 @@ export function E2EESyncPanel() {
     }
   };
 
-  const toggleOverwrite = (id: string) => {
-    setOverwrite((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id); else next.add(id);
-      return next;
-    });
-  };
 
   return (
     <div className="space-y-4 max-w-4xl">
