@@ -36,6 +36,8 @@ export function LocalGraphView({ noteId }: { noteId: string }) {
       { id: "self", label: note?.title ?? "(nota)", kind: "self", direction: "self" },
     ];
     for (const b of backlinks) {
+      // Filtra self-links: uma nota que aparece linkando pra si mesma não vira nó peripheral.
+      if (b.source_type === "note" && b.source_id === noteId) continue;
       list.push({
         id: `in-${b.id}`,
         label: b.source_title,
@@ -44,6 +46,8 @@ export function LocalGraphView({ noteId }: { noteId: string }) {
       });
     }
     for (const o of outgoing) {
+      // Filtra self-links de saída (target apontando pra própria nota).
+      if (o.target_type === "note" && o.target_id === noteId) continue;
       list.push({
         id: `out-${o.id}`,
         label: o.target_label ?? "(sem título)",
@@ -52,7 +56,7 @@ export function LocalGraphView({ noteId }: { noteId: string }) {
       });
     }
     return list.slice(0, 25); // cap visual
-  }, [note, backlinks, outgoing]);
+  }, [note, backlinks, outgoing, noteId]);
 
   const size = 320;
   const cx = size / 2;
@@ -100,7 +104,19 @@ export function LocalGraphView({ noteId }: { noteId: string }) {
                 cy={y}
                 r={9}
                 fill={KIND_COLOR[n.kind]}
-                className="cursor-pointer hover:opacity-80 transition-opacity"
+                tabIndex={0}
+                role="button"
+                aria-label={`Abrir ${n.label}`}
+                className="cursor-pointer hover:opacity-80 transition-opacity outline-none focus-visible:ring-2 focus-visible:ring-nexus-primary focus-visible:ring-offset-2"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    if (n.kind === "note") {
+                      const src = backlinks.find((b) => `in-${b.id}` === n.id);
+                      if (src) setActiveNote(src.source_id);
+                    }
+                  }
+                }}
                 onClick={() => {
                   if (n.kind === "note") {
                     const src = backlinks.find((b) => `in-${b.id}` === n.id);

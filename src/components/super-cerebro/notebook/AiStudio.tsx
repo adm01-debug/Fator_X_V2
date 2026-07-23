@@ -44,6 +44,11 @@ export function AiStudio({ noteId, notebookId }: { noteId: string; notebookId: s
 
   const run = async (kind: "summary" | "questions") => {
     if (!note) return;
+    // Guard: exige conteúdo mínimo para evitar chamadas caras em notas vazias.
+    if (!note.body_md || note.body_md.trim().length < 20) {
+      toast.error("A nota precisa ter ao menos 20 caracteres para gerar resumo/perguntas.");
+      return;
+    }
     setLoading(kind);
     try {
       const query =

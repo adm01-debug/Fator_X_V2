@@ -18,6 +18,8 @@ import { NotebookPen, FolderTree, FileText, Sparkles } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { readSourcesFromUrl, writeSourcesToUrl } from "@/lib/sourceIdsSync";
+import { supabaseExternal } from "@/integrations/supabase/externalClient";
+import { logger } from "@/lib/logger";
 
 export function NotebookWorkspace() {
   const { workspaceId } = useCurrentWorkspace();
@@ -44,12 +46,45 @@ export function NotebookWorkspace() {
     }
   }, [params.notebookId, params.noteId, activeNotebookId, activeNoteId, setActiveNotebook, setActiveNote]);
 
-  // Deep-link: ?sources=uuid1,uuid2 — hidrata store no mount
+  // Deep-link: ?sources=uuid1,uuid2 — hidrata store no mount validando contra o notebook.
+  // Segurança: IDs de outros notebooks/workspaces são descartados e logados em audit_events.
   useEffect(() => {
     const initial = readSourcesFromUrl();
-    if (initial.length === 0) return;
-    const missing = initial.filter((id) => !selectedSourceIds.includes(id));
-    for (const id of missing) toggleSource(id);
+    if (initial.length === 0 || !activeNotebookId) return;
+
+    (async () => {
+      // Busca IDs válidos (documentos deste notebook) — RLS já garante escopo por workspace.
+      const { data: docs } = await supabaseExternal
+        .from("document_ingestions")
+        .select("id")
+        .eq("collection_id", activeNotebookId);
+      const validIds = new Set((docs ?? []).map((d) => d.id));
+
+      const accepted: string[] = [];
+      const rejected: string[] = [];
+      for (const id of initial) {
+        if (validIds.has(id)) accepted.push(id);
+        else rejected.push(id);
+      }
+
+      if (rejected.length > 0) {
+        logger.warn("cerebro.deep_link.foreign_source_rejected", {
+          notebook_id: activeNotebookId,
+          rejected_count: rejected.length,
+        });
+        // Best-effort audit — falha silenciosa se tabela indisponível.
+        await supabaseExternal.from("audit_events").insert({
+          event_type: "cerebro.deep_link.foreign_source_rejected",
+          action: "reject",
+          resource_type: "notebook",
+          resource_id: activeNotebookId,
+          metadata: { rejected, accepted_count: accepted.length },
+        }).then(() => undefined, () => undefined);
+      }
+
+      const missing = accepted.filter((id) => !selectedSourceIds.includes(id));
+      for (const id of missing) toggleSource(id);
+    })();
     // Executa uma vez por notebook — trocar de notebook zera sources
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeNotebookId]);

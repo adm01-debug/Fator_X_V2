@@ -1,7 +1,24 @@
 /**
- * Funções de normalização para cross-database matching.
+ * Funções de normalização para cross-database matching e busca textual.
  * Baseado na auditoria de 4 bancos com 15 falhas identificadas.
  */
+
+/**
+ * Remove diacríticos (acentos) via decomposição Unicode NFD.
+ * Ex.: "Ação" → "Acao", "Reunião" → "Reuniao".
+ */
+export function stripDiacritics(input: string | null | undefined): string {
+  if (!input) return "";
+  return input.normalize("NFD").replace(/\p{Diacritic}/gu, "");
+}
+
+/**
+ * Normaliza string para busca textual: lowercase + strip diacritics + trim.
+ * Uso: fold("Ação") === fold("acao") === "acao".
+ */
+export function foldForSearch(input: string | null | undefined): string {
+  return stripDiacritics(input).toLowerCase().trim();
+}
 
 /**
  * Remove toda formatação de CNPJ, retornando apenas dígitos.
