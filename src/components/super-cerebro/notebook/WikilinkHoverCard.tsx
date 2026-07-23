@@ -77,6 +77,7 @@ export function WikilinkHoverCard({ label, targetType, children }: Props) {
   return (
     <HoverCard openDelay={220} closeDelay={80}>
       <HoverCardTrigger asChild onMouseEnter={load} onFocus={load}>
+        {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/no-noninteractive-tabindex */}
         <span
           role={preview?.id ? "link" : "button"}
           tabIndex={0}
