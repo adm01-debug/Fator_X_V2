@@ -136,6 +136,7 @@ export default function SkillComposerPage() {
         tags: result.data.tags.map((t) => stripHtml(t)),
         skill_config: configObj,
         is_public: true,
+        is_verified: false,
       });
       toast.success('Skill publicada! Aguardando revisão para verificação.');
       navigate('/skills');
