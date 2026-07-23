@@ -17,6 +17,7 @@ import { useQuery } from '@tanstack/react-query';
 import { listSkills, type AgentSkillDefinition } from '@/services/skillsRegistryService';
 import { toast } from 'sonner';
 import { ProgressiveSkillLoaderPanel } from '@/components/skills/ProgressiveSkillLoaderPanel';
+import { SkillAutoRecommendationsPanel } from '@/components/skills/SkillAutoRecommendationsPanel';
 
 const CATEGORIES = [
   { value: 'all', label: 'Todas' },
@@ -68,7 +69,12 @@ export default function SkillsMarketplacePage() {
         Skills são pacotes de capacidades que podem ser instalados em agentes — ferramentas, prompts, bases de conhecimento, workflows e integrações prontos para uso.
       </InfoHint>
 
+      <SkillAutoRecommendationsPanel />
+
       <div className="flex flex-col sm:flex-row gap-3">
+      </div>
+      <div className="flex flex-col sm:flex-row gap-3">
+
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
