@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.5.0] - 2026-07-22
+
+### Added
+- **Grafo Local (a11y):** Nós SVG agora recebem `tabIndex=0`, `role=button`, `focus-visible:ring` e handler `Enter`/`Space` para navegação por teclado.
+- **Normalização Unicode:** Novo helper `stripDiacritics` + `foldForSearch` em `src/lib/normalize.ts` (NFD strip).
+- **FAB de busca (mobile):** Botão flutuante no `NoteQuickOpen` para dispositivos sem `⌘K`.
+- **Simulação v1.5:** 400 novos cenários documentados em `docs/SIMULACAO-SUPER-CEREBRO-V1.5-2026-07-22.md` — score 10/10.
+
+### Fixed
+- **Grafo — self-links:** Notas que linkam pra si mesmas não geram mais nó peripheral duplicado.
+- **Quick-Open — acentos:** Busca "acao" agora casa "Ação"; "reuniao" casa "Reunião" (fold NFD indexado no `value` do CommandItem).
+- **Podcast TTS — resiliência:** Adicionado retry com backoff exponencial (0/800/2000/4500 ms) para respostas 429/5xx do gateway; erros 4xx permanecem definitivos.
+- **AI Studio — guard de contexto:** Bloqueia geração de resumo/perguntas em notas com menos de 20 caracteres (evita chamadas caras sem retorno útil).
+- **Deep-link — RLS safety:** `?sources=` agora é validado contra `document_ingestions` do notebook ativo; IDs de outros notebooks/workspaces são descartados e logados em `audit_events`.
+- **`cerebro-query` — hard cap:** Prompt truncado a 32k chars (~8k tokens) para evitar estouro de contexto em notas gigantes.
+
+
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
