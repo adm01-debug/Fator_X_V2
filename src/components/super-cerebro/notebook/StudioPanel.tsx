@@ -4,13 +4,15 @@
  */
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Link2, Tag, Sparkles, Network, Mic } from "lucide-react";
+import { Link2, Tag, Sparkles, Network, Mic, List } from "lucide-react";
 import { useNote } from "@/services/notesService";
 import { useCerebroStore } from "@/stores/cerebroStore";
 import { BacklinksList } from "./BacklinksList";
 import { LocalGraphView } from "./LocalGraphView";
 import { AiStudio } from "./AiStudio";
 import { PodcastPanel } from "./PodcastPanel";
+import { OutlinePanel } from "./OutlinePanel";
+import { emitJumpToLine } from "./NoteEditor";
 
 interface Props { noteId: string | null; notebookId?: string | null }
 
@@ -44,6 +46,7 @@ export function StudioPanel({ noteId, notebookId }: Props) {
       <Tabs value={studioTab} onValueChange={setStudioTab} className="flex-1 flex flex-col">
         <TabsList className="mx-2 mt-2 self-start flex-wrap h-auto">
           <TabsTrigger value="backlinks" className="text-xs gap-1"><Link2 className="h-3 w-3" /> Backlinks</TabsTrigger>
+          <TabsTrigger value="outline" className="text-xs gap-1"><List className="h-3 w-3" /> Outline</TabsTrigger>
           <TabsTrigger value="graph" className="text-xs gap-1"><Network className="h-3 w-3" /> Grafo</TabsTrigger>
           <TabsTrigger value="studio" className="text-xs gap-1"><Sparkles className="h-3 w-3" /> Studio IA</TabsTrigger>
           <TabsTrigger value="podcast" className="text-xs gap-1"><Mic className="h-3 w-3" /> Podcast</TabsTrigger>
@@ -52,6 +55,10 @@ export function StudioPanel({ noteId, notebookId }: Props) {
 
         <TabsContent value="backlinks" className="flex-1 overflow-auto m-0">
           <BacklinksList targetType="note" targetId={note.id} />
+        </TabsContent>
+
+        <TabsContent value="outline" className="flex-1 overflow-auto m-0">
+          <OutlinePanel noteId={note.id} onJump={(line) => emitJumpToLine(note.id, line)} />
         </TabsContent>
 
         <TabsContent value="graph" className="flex-1 overflow-auto m-0">

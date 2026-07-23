@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { InfoHint } from "@/components/shared/InfoHint";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Brain, Search, Network, BookOpen,
-  Activity, Users, FlaskConical, Zap, Clock, GitMerge, TrendingDown, Layers, Upload, NotebookPen
+  Activity, Users, FlaskConical, Zap, Clock, GitMerge, TrendingDown, Layers, Upload, NotebookPen,
+  Plus, FileText, Sparkles, Mic
 } from "lucide-react";
 import { OverviewTab } from "@/components/super-cerebro/OverviewTab";
 import { SearchTab } from "@/components/super-cerebro/SearchTab";
@@ -22,9 +23,55 @@ import { ContextTiersTab } from "@/components/super-cerebro/ContextTiersTab";
 import { NotebooksTab } from "@/components/super-cerebro/NotebooksTab";
 import { NotebookSelector } from "@/components/super-cerebro/NotebookSelector";
 import { NotebookWorkspace } from "@/components/super-cerebro/notebook/NotebookWorkspace";
+import { CommandPalette } from "@/components/super-cerebro/CommandPalette";
+import type { CommandItem } from "@/lib/commands";
+import { useCerebroStore } from "@/stores/cerebroStore";
+import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
+import { createNote } from "@/services/notesService";
+import { toast } from "sonner";
 
 export default function SuperCerebroPage() {
   const [activeTab, setActiveTab] = useState('workspace');
+  const activeNotebookId = useCerebroStore((s) => s.activeNotebookId);
+  const setActiveNote = useCerebroStore((s) => s.setActiveNote);
+  const setStudioTab = useCerebroStore((s) => s.setStudioTab);
+  const { workspaceId } = useCurrentWorkspace();
+
+  const commands = useMemo<CommandItem[]>(() => {
+    const go = (tab: string): CommandItem["run"] => () => setActiveTab(tab);
+    const list: CommandItem[] = [
+      { id: "goto.workspace", label: "Ir para Workspace", group: "Navegação", icon: NotebookPen, run: go("workspace"), shortcut: "1" },
+      { id: "goto.notebooks", label: "Ir para Notebooks", group: "Navegação", icon: NotebookPen, run: go("notebooks") },
+      { id: "goto.search", label: "Ir para Busca", group: "Navegação", icon: Search, run: go("search") },
+      { id: "goto.upload", label: "Ir para Upload de documentos", group: "Navegação", icon: Upload, run: go("upload") },
+      { id: "goto.graph", label: "Abrir Knowledge Graph", group: "Navegação", icon: Network, run: go("graph") },
+      { id: "goto.temporal", label: "Grafo Temporal", group: "Navegação", icon: Clock, run: go("temporal") },
+      { id: "goto.decay", label: "Detecção de Decay", group: "Navegação", icon: TrendingDown, run: go("decay") },
+      { id: "goto.health", label: "Saúde do conhecimento", group: "Navegação", icon: Activity, run: go("health") },
+      { id: "goto.tiers", label: "Context Tiers", group: "Navegação", icon: Layers, run: go("tiers") },
+      { id: "note.new", label: "Nova nota no notebook ativo", group: "Notas", icon: Plus, keywords: "criar nota nova", run: async () => {
+        if (!workspaceId || !activeNotebookId) {
+          toast.error("Selecione um notebook primeiro.");
+          setActiveTab("workspace");
+          return;
+        }
+        try {
+          const n = await createNote({ workspaceId, collectionId: activeNotebookId, title: "Nova nota" });
+          setActiveTab("workspace");
+          setActiveNote(n.id);
+          toast.success("Nota criada");
+        } catch (e) {
+          toast.error(e instanceof Error ? e.message : "Falha ao criar nota");
+        }
+      } },
+      { id: "studio.backlinks", label: "Studio: Backlinks", group: "IA", icon: FileText, run: () => setStudioTab("backlinks") },
+      { id: "studio.outline", label: "Studio: Outline (sumário)", group: "IA", icon: FileText, run: () => setStudioTab("outline") },
+      { id: "studio.graph", label: "Studio: Grafo local", group: "IA", icon: Network, run: () => setStudioTab("graph") },
+      { id: "studio.ai", label: "Studio: IA (resumo, Q&A)", group: "IA", icon: Sparkles, run: () => setStudioTab("studio") },
+      { id: "studio.podcast", label: "Studio: Podcast", group: "IA", icon: Mic, run: () => setStudioTab("podcast") },
+    ];
+    return list;
+  }, [workspaceId, activeNotebookId, setActiveNote, setStudioTab]);
 
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
@@ -77,6 +124,7 @@ export default function SuperCerebroPage() {
         <TabsContent value="experts" className="animate-in fade-in-50 duration-500"><ExpertDiscoveryTab /></TabsContent>
         <TabsContent value="sandbox" className="animate-in fade-in-50 duration-500"><BrainSandboxTab /></TabsContent>
       </Tabs>
+      <CommandPalette commands={commands} />
     </div>
   );
 }
