@@ -237,7 +237,6 @@ export function DocumentViewerDialog({ source, onOpenChange }: Props) {
                   <div
                     id="cerebro-docx-render"
                     className={`cerebro-docx-page ${dark ? 'is-dark' : ''}`}
-                    // eslint-disable-next-line react/no-danger
                     dangerouslySetInnerHTML={{ __html: docxHtml }}
                   />
                 </div>
