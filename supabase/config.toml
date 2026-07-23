@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.slack-events-webhook]
 verify_jwt = false
+
+[functions.migrate-helper]
+verify_jwt = false
