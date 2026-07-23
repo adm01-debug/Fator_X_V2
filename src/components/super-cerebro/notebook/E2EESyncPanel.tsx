@@ -241,32 +241,23 @@ export function E2EESyncPanel() {
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm font-semibold">
                     <AlertTriangle className="h-4 w-4 text-nexus-amber" />
-                    Conflitos — marque para sobrescrever com a versão recebida
+                    Conflitos — revise diffs e escolha como resolver cada nota
                   </div>
-                  <div className="space-y-1 max-h-72 overflow-auto pr-1">
-                    {plan.conflicts.map((c) => (
-                      <label key={c.id} className="flex items-start gap-2 rounded border border-border/50 p-2 text-xs hover:bg-secondary/30 cursor-pointer">
-                        <Checkbox checked={overwrite.has(c.id)} onCheckedChange={() => toggleOverwrite(c.id)} className="mt-0.5" />
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium truncate">{c.title_local}</div>
-                          <div className="text-muted-foreground">
-                            local: {new Date(c.updated_local).toLocaleString()} · recebida: {new Date(c.updated_incoming).toLocaleString()}
-                          </div>
-                          {c.title_incoming !== c.title_local && (
-                            <div className="text-muted-foreground truncate">título recebido: <em>{c.title_incoming}</em></div>
-                          )}
-                        </div>
-                      </label>
-                    ))}
-                  </div>
+                  <ConflictResolver
+                    conflicts={plan.conflicts}
+                    localNotes={localNotes.map((n) => ({ id: n.id, title: n.title, body_md: n.body_md, updated_at: n.updated_at }))}
+                    incoming={incoming}
+                    onChange={setResolutions}
+                  />
                 </div>
               </>
             )}
 
             <div className="flex gap-2">
               <Button size="sm" onClick={apply} disabled={busy}>Aplicar reconciliação</Button>
-              <Button size="sm" variant="outline" onClick={() => { setPlan(null); setIncoming(null); setOverwrite(new Set()); }} disabled={busy}>Cancelar</Button>
+              <Button size="sm" variant="outline" onClick={() => { setPlan(null); setIncoming(null); setResolutions(new Map()); }} disabled={busy}>Cancelar</Button>
             </div>
+
           </CardContent>
         </Card>
       )}
