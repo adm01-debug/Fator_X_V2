@@ -117,6 +117,22 @@ export function StudioPanel({ noteId, notebookId }: Props) {
           <PodcastPanel notebookId={notebookId ?? null} />
         </TabsContent>
 
+        <TabsContent value="versions" className="flex-1 overflow-auto m-0">
+          <VersionHistoryPanel noteId={note.id} />
+        </TabsContent>
+
+        <TabsContent value="templates" className="flex-1 overflow-auto m-0">
+          {workspaceId && notebookId ? (
+            <TemplatesPanel
+              workspaceId={workspaceId}
+              collectionId={notebookId}
+              activeNoteId={note.id}
+            />
+          ) : (
+            <p className="p-3 text-xs text-muted-foreground">Notebook não identificado.</p>
+          )}
+        </TabsContent>
+
         <TabsContent value="tags" className="m-0 p-3">
           {note.tags?.length === 0 ? (
             <p className="text-xs text-muted-foreground">
