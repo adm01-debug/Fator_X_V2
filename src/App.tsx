@@ -215,6 +215,7 @@ const App = () => {
             <Routes>
               <Route path="/auth" element={<SafePage><AuthPage /></SafePage>} />
               <Route path="/reset-password" element={<SafePage><ResetPasswordPage /></SafePage>} />
+              <Route path="/share/n" element={<SafePage><PublicNoteView /></SafePage>} />
               <Route path="/help/:slug" element={<SafePage><PublicHelpCenterPage /></SafePage>} />
               <Route path="/help/:slug/forum" element={<SafePage><PublicForumPage /></SafePage>} />
               <Route path="/help/:slug/forum/:threadId" element={<SafePage><PublicForumPage /></SafePage>} />
