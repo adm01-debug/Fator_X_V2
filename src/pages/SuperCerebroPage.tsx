@@ -42,6 +42,7 @@ export default function SuperCerebroPage() {
     const go = (tab: string): CommandItem["run"] => () => setActiveTab(tab);
     const list: CommandItem[] = [
       { id: "goto.workspace", label: "Ir para Workspace", group: "Navegação", icon: NotebookPen, run: go("workspace"), shortcut: "1" },
+      { id: "goto.canvas", label: "Ir para Canvas (whiteboard)", group: "Navegação", icon: LayoutDashboard, run: go("canvas") },
       { id: "goto.notebooks", label: "Ir para Notebooks", group: "Navegação", icon: NotebookPen, run: go("notebooks") },
       { id: "goto.search", label: "Ir para Busca", group: "Navegação", icon: Search, run: go("search") },
       { id: "goto.upload", label: "Ir para Upload de documentos", group: "Navegação", icon: Upload, run: go("upload") },
