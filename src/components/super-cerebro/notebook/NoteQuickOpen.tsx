@@ -40,18 +40,7 @@ export function NoteQuickOpen() {
 
   return (
     <>
-      <CommandDialog
-        open={open}
-        onOpenChange={setOpen}
-        // cmdk filter — usa fold (NFD + lowercase) em ambos os lados para
-        // que "acao" case com "Ação" e "reuniao" com "Reunião".
-        filter={(value, search) => {
-          const v = foldForSearch(value);
-          const s = foldForSearch(search);
-          if (!s) return 1;
-          return v.includes(s) ? 1 : 0;
-        }}
-      >
+      <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder="Buscar nota por título…" />
         <CommandList>
           <CommandEmpty>Nenhuma nota encontrada.</CommandEmpty>
