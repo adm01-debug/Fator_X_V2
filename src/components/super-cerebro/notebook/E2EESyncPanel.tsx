@@ -53,8 +53,19 @@ export function E2EESyncPanel() {
   const [incoming, setIncoming] = useState<BundlePayload | null>(null);
   const [plan, setPlan] = useState<ReconciliationPlan | null>(null);
   const [resolutions, setResolutions] = useState<Map<string, ResolvedConflict>>(new Map());
+  const [autoSyncOn, setAutoSyncOn] = useState<boolean>(() => {
+    try { return localStorage.getItem("nexus.e2ee.autosync:" + (notebookId ?? "")) === "1"; } catch { return false; }
+  });
+  const [intervalSec, setIntervalSec] = useState<number>(60);
 
   const unlocked = notebookId ? !!getSessionPassphrase(notebookId) : false;
+  const { status: autoStatus, runNow } = useAutoE2EESync(notebookId, autoSyncOn && unlocked, intervalSec * 1000);
+
+  const toggleAutoSync = (on: boolean) => {
+    setAutoSyncOn(on);
+    try { localStorage.setItem("nexus.e2ee.autosync:" + (notebookId ?? ""), on ? "1" : "0"); } catch { /* ignore */ }
+    if (on && !unlocked) toast.warning("Defina a passphrase para o auto-sync começar a rodar.");
+  };
 
   if (!notebookId || !workspaceId) {
     return (
