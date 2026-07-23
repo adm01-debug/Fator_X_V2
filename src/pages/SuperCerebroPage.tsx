@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Brain, Search, Network, BookOpen,
   Activity, Users, FlaskConical, Zap, Clock, GitMerge, TrendingDown, Layers, Upload, NotebookPen,
-  Plus, FileText, Sparkles, Mic, Settings2, Link2Off, Hash
+  Plus, FileText, Sparkles, Mic, Settings2, Link2Off, Hash, LayoutDashboard
 } from "lucide-react";
 import { OverviewTab } from "@/components/super-cerebro/OverviewTab";
 import { SearchTab } from "@/components/super-cerebro/SearchTab";
@@ -23,6 +23,7 @@ import { ContextTiersTab } from "@/components/super-cerebro/ContextTiersTab";
 import { NotebooksTab } from "@/components/super-cerebro/NotebooksTab";
 import { NotebookSelector } from "@/components/super-cerebro/NotebookSelector";
 import { NotebookWorkspace } from "@/components/super-cerebro/notebook/NotebookWorkspace";
+import { CanvasWorkspace } from "@/components/super-cerebro/notebook/CanvasWorkspace";
 import { CommandPalette } from "@/components/super-cerebro/CommandPalette";
 import type { CommandItem } from "@/lib/commands";
 import { useCerebroStore } from "@/stores/cerebroStore";
@@ -41,6 +42,7 @@ export default function SuperCerebroPage() {
     const go = (tab: string): CommandItem["run"] => () => setActiveTab(tab);
     const list: CommandItem[] = [
       { id: "goto.workspace", label: "Ir para Workspace", group: "Navegação", icon: NotebookPen, run: go("workspace"), shortcut: "1" },
+      { id: "goto.canvas", label: "Ir para Canvas (whiteboard)", group: "Navegação", icon: LayoutDashboard, run: go("canvas") },
       { id: "goto.notebooks", label: "Ir para Notebooks", group: "Navegação", icon: NotebookPen, run: go("notebooks") },
       { id: "goto.search", label: "Ir para Busca", group: "Navegação", icon: Search, run: go("search") },
       { id: "goto.upload", label: "Ir para Upload de documentos", group: "Navegação", icon: Upload, run: go("upload") },
@@ -95,6 +97,7 @@ export default function SuperCerebroPage() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="bg-secondary/50 border border-border/50 flex-wrap h-auto gap-1 p-1">
           <TabsTrigger value="workspace" className="text-meta gap-1.5"><NotebookPen className="h-3.5 w-3.5" /> Workspace</TabsTrigger>
+          <TabsTrigger value="canvas" className="text-meta gap-1.5"><LayoutDashboard className="h-3.5 w-3.5" /> Canvas</TabsTrigger>
           <TabsTrigger value="notebooks" className="text-meta gap-1.5"><NotebookPen className="h-3.5 w-3.5" /> Notebooks</TabsTrigger>
           <TabsTrigger value="overview" className="text-meta gap-1.5"><Brain className="h-3.5 w-3.5" /> Visão Geral</TabsTrigger>
           <TabsTrigger value="search" className="text-meta gap-1.5"><Search className="h-3.5 w-3.5" /> Busca</TabsTrigger>
@@ -112,6 +115,15 @@ export default function SuperCerebroPage() {
         </TabsList>
 
         <TabsContent value="workspace" className="animate-in fade-in-50 duration-500"><NotebookWorkspace /></TabsContent>
+        <TabsContent value="canvas" className="animate-in fade-in-50 duration-500">
+          {workspaceId && activeNotebookId ? (
+            <div className="h-[calc(100dvh-18rem)] border rounded-lg overflow-hidden">
+              <CanvasWorkspace notebookId={activeNotebookId} workspaceId={workspaceId} />
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground p-6">Selecione um notebook para abrir o Canvas.</p>
+          )}
+        </TabsContent>
         <TabsContent value="notebooks" className="animate-in fade-in-50 duration-500"><NotebooksTab /></TabsContent>
         <TabsContent value="overview" className="animate-in fade-in-50 duration-500"><OverviewTab /></TabsContent>
         <TabsContent value="search" className="animate-in fade-in-50 duration-500"><SearchTab /></TabsContent>

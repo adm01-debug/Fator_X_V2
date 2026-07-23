@@ -5567,6 +5567,66 @@ export type Database = {
         }
         Relationships: []
       }
+      notebook_canvases: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          edges: Json
+          id: string
+          is_archived: boolean
+          name: string
+          nodes: Json
+          notebook_id: string
+          updated_at: string
+          viewport: Json
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          edges?: Json
+          id?: string
+          is_archived?: boolean
+          name?: string
+          nodes?: Json
+          notebook_id: string
+          updated_at?: string
+          viewport?: Json
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          edges?: Json
+          id?: string
+          is_archived?: boolean
+          name?: string
+          nodes?: Json
+          notebook_id?: string
+          updated_at?: string
+          viewport?: Json
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notebook_canvases_notebook_id_fkey"
+            columns: ["notebook_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notebook_canvases_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notebook_notes: {
         Row: {
           body_md: string
