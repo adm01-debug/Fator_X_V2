@@ -6,8 +6,9 @@ import {
   Brain, Search, Network, BookOpen,
   Activity, Users, FlaskConical, Zap, Clock, GitMerge, TrendingDown, Layers, Upload, NotebookPen,
   Plus, FileText, Sparkles, Mic, Settings2, Link2Off, Hash, LayoutDashboard,
-  CalendarDays, FileStack, History, LayoutList
+  CalendarDays, FileStack, History, LayoutList, SearchCode
 } from "lucide-react";
+import { AdvancedSearchPanel } from "@/components/super-cerebro/notebook/AdvancedSearchPanel";
 import { KanbanBoard } from "@/components/super-cerebro/notebook/KanbanBoard";
 import { OverviewTab } from "@/components/super-cerebro/OverviewTab";
 import { SearchTab } from "@/components/super-cerebro/SearchTab";
