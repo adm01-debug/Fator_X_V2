@@ -51,10 +51,17 @@ export default function SkillsMarketplacePage() {
 
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
-      <PageHeader
-        title="Skills Marketplace"
-        description="Descubra e instale habilidades para potencializar seus agentes"
-      />
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <PageHeader
+          title="Skills Marketplace"
+          description="Descubra e instale habilidades para potencializar seus agentes"
+        />
+        <Button asChild variant="default" className="gap-2">
+          <Link to="/skills/composer">
+            <Plus className="h-4 w-4" /> Criar skill
+          </Link>
+        </Button>
+      </div>
 
       <InfoHint title="O que são Skills?">
         Skills são pacotes de capacidades que podem ser instalados em agentes — ferramentas, prompts, bases de conhecimento, workflows e integrações prontos para uso.
