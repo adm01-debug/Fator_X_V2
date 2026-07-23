@@ -82,6 +82,7 @@ export default function SuperCerebroPage() {
       { id: "studio.podcast", label: "Studio: Podcast", group: "IA", icon: Mic, run: () => setStudioTab("podcast") },
       { id: "studio.versions", label: "Studio: Histórico de versões", group: "IA", icon: History, run: () => setStudioTab("versions") },
       { id: "studio.templates", label: "Studio: Templates de nota", group: "IA", icon: FileStack, run: () => setStudioTab("templates") },
+      { id: "studio.related", label: "Studio: Notas similares", group: "IA", icon: Zap, run: () => setStudioTab("related") },
       {
         id: "note.daily",
         label: "Abrir Daily Note (hoje)",
