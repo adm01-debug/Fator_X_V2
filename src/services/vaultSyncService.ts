@@ -106,7 +106,15 @@ export async function importVaultZip(
 ): Promise<ImportResult> {
   const zip = await JSZip.loadAsync(file);
   const result: ImportResult = { imported: 0, skipped: 0, errors: [] };
-  const rows: Array<Partial<NotebookNote>> = [];
+  const rows: Array<{
+    workspace_id: string;
+    collection_id: string;
+    title: string;
+    body_md: string;
+    tags: string[];
+    created_by: string | null;
+    is_archived: boolean;
+  }> = [];
 
   const entries = Object.values(zip.files).filter(
     (e) => !e.dir && e.name.toLowerCase().endsWith(".md"),
