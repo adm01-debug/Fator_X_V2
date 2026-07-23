@@ -24,6 +24,8 @@ import { extractLinks, renderWikilinksToMarkdown } from "@/lib/wikilink";
 import { useCerebroStore } from "@/stores/cerebroStore";
 import { EditorAutocomplete } from "./EditorAutocomplete";
 import { WikilinkHoverCard } from "./WikilinkHoverCard";
+import { isBookmarked, toggleBookmark, BOOKMARKS_EVENT } from "@/services/bookmarksService";
+import { cn } from "@/lib/utils";
 
 interface Props {
   noteId: string;
