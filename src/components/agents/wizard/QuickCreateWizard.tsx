@@ -846,7 +846,6 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
     // If the user opted to bypass contradiction warnings, log a high-signal
     // audit entry so admins can review the rationale later.
     if (override) {
-      const insertedId = (inserted as { id?: string } | null)?.id;
       void logAudit({
         action: 'create',
         resource_type: 'agent',
