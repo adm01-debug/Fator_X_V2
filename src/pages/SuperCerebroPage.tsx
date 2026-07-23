@@ -6,9 +6,10 @@ import {
   Brain, Search, Network, BookOpen,
   Activity, Users, FlaskConical, Zap, Clock, GitMerge, TrendingDown, Layers, Upload, NotebookPen,
   Plus, FileText, Sparkles, Mic, Settings2, Link2Off, Hash, LayoutDashboard,
-  CalendarDays, FileStack, History, LayoutList, SearchCode
+  CalendarDays, FileStack, History, LayoutList, SearchCode, FileArchive
 } from "lucide-react";
 import { AdvancedSearchPanel } from "@/components/super-cerebro/notebook/AdvancedSearchPanel";
+import { VaultSyncPanel } from "@/components/super-cerebro/notebook/VaultSyncPanel";
 import { KanbanBoard } from "@/components/super-cerebro/notebook/KanbanBoard";
 import { OverviewTab } from "@/components/super-cerebro/OverviewTab";
 import { SearchTab } from "@/components/super-cerebro/SearchTab";
@@ -111,6 +112,7 @@ export default function SuperCerebroPage() {
       },
       { id: "goto.kanban", label: "Ir para Kanban (board de notas)", group: "Navegação", icon: LayoutList, run: go("kanban") },
       { id: "goto.advSearch", label: "Busca avançada (DSL)", group: "Navegação", icon: SearchCode, keywords: "query dsl obsidian filtro tag", run: go("advSearch") },
+      { id: "goto.vault", label: "Sincronizar com Obsidian Vault", group: "Navegação", icon: FileArchive, keywords: "export import zip markdown", run: go("vault") },
     ];
     return list;
   }, [workspaceId, activeNotebookId, setActiveNote, setStudioTab]);
@@ -137,6 +139,7 @@ export default function SuperCerebroPage() {
           <TabsTrigger value="canvas" className="text-meta gap-1.5"><LayoutDashboard className="h-3.5 w-3.5" /> Canvas</TabsTrigger>
           <TabsTrigger value="kanban" className="text-meta gap-1.5"><LayoutList className="h-3.5 w-3.5" /> Kanban</TabsTrigger>
           <TabsTrigger value="advSearch" className="text-meta gap-1.5"><SearchCode className="h-3.5 w-3.5" /> Busca Avançada</TabsTrigger>
+          <TabsTrigger value="vault" className="text-meta gap-1.5"><FileArchive className="h-3.5 w-3.5" /> Vault Sync</TabsTrigger>
           <TabsTrigger value="notebooks" className="text-meta gap-1.5"><NotebookPen className="h-3.5 w-3.5" /> Notebooks</TabsTrigger>
           <TabsTrigger value="overview" className="text-meta gap-1.5"><Brain className="h-3.5 w-3.5" /> Visão Geral</TabsTrigger>
           <TabsTrigger value="search" className="text-meta gap-1.5"><Search className="h-3.5 w-3.5" /> Busca</TabsTrigger>
@@ -178,7 +181,7 @@ export default function SuperCerebroPage() {
         <TabsContent value="advSearch" className="animate-in fade-in-50 duration-500">
           <AdvancedSearchPanel onOpenNote={() => setActiveTab("workspace")} />
         </TabsContent>
-        <TabsContent value="notebooks" className="animate-in fade-in-50 duration-500"><NotebooksTab /></TabsContent>
+        <TabsContent value="vault" className="animate-in fade-in-50 duration-500"><VaultSyncPanel /></TabsContent>
         <TabsContent value="overview" className="animate-in fade-in-50 duration-500"><OverviewTab /></TabsContent>
         <TabsContent value="search" className="animate-in fade-in-50 duration-500"><SearchTab /></TabsContent>
         <TabsContent value="upload" className="animate-in fade-in-50 duration-500"><DocumentUploadTab /></TabsContent>
