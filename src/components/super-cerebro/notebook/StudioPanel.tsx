@@ -4,9 +4,10 @@
  */
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Link2, Tag, Sparkles, Network, Mic, List, Settings2, Link2Off, Hash } from "lucide-react";
+import { Link2, Tag, Sparkles, Network, Mic, List, Settings2, Link2Off, Hash, History, FileStack } from "lucide-react";
 import { useNote } from "@/services/notesService";
 import { useCerebroStore } from "@/stores/cerebroStore";
+import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
 import { BacklinksList } from "./BacklinksList";
 import { LocalGraphView } from "./LocalGraphView";
 import { AiStudio } from "./AiStudio";
@@ -15,6 +16,8 @@ import { OutlinePanel } from "./OutlinePanel";
 import { PropertiesPanel } from "./PropertiesPanel";
 import { UnlinkedMentions } from "./UnlinkedMentions";
 import { TagsGlobalPanel } from "./TagsGlobalPanel";
+import { VersionHistoryPanel } from "./VersionHistoryPanel";
+import { TemplatesPanel } from "./TemplatesPanel";
 import { emitJumpToLine } from "./NoteEditor";
 
 interface Props { noteId: string | null; notebookId?: string | null }
