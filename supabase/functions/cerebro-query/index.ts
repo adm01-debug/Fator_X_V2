@@ -174,7 +174,7 @@ serve(async (req) => {
       ? `Você está operando escopado ao notebook "${activeNotebookName}". Ignore qualquer conhecimento de outros notebooks.`
       : 'Você está operando em modo global (todos os notebooks visíveis).';
 
-    const systemPrompt = `Você é o Super Cérebro da Promo Brindes — a inteligência central da empresa.
+    const systemPromptRaw = `Você é o Super Cérebro da Promo Brindes — a inteligência central da empresa.
 ${scopeNotice}
 Responda em português, com base no bloco RAG fornecido. Se não houver base suficiente, seja honesto e diga.
 
@@ -188,6 +188,12 @@ Fatos internos: ${facts.join('; ') || 'nenhum'}
 
 Bloco RAG:
 ${ragBlock || '(vazio — nenhuma fonte disponível)'}`;
+
+    // Hard cap ~8k tokens (~32k chars) para evitar contexto explodir em notas grandes.
+    const MAX_PROMPT_CHARS = 32000;
+    const systemPrompt = systemPromptRaw.length > MAX_PROMPT_CHARS
+      ? systemPromptRaw.slice(0, MAX_PROMPT_CHARS) + "\n\n[...prompt truncado por segurança]"
+      : systemPromptRaw;
 
     const gatewayUrl = `${supabaseUrl}/functions/v1/llm-gateway`;
     const resp = await fetchWithTimeout(gatewayUrl, {
