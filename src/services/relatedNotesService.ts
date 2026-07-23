@@ -53,7 +53,7 @@ export function findRelatedNotes(
   const activeTokens = tokenize(`${active.title} ${active.body_md}`);
   const activeTags = new Set(active.tags ?? []);
   const activeLinks = new Set(
-    extractLinks(active.body_md ?? "").map((l) => l.target.toLowerCase()),
+    extractLinks(active.body_md ?? "").wikilinks.map((l) => l.target.toLowerCase()),
   );
 
   const scored: RelatedNote[] = [];
@@ -63,8 +63,8 @@ export function findRelatedNotes(
     const base = jaccard(activeTokens, tokens);
 
     const sharedTags = (n.tags ?? []).filter((t) => activeTags.has(t));
-    const nLinks = extractLinks(n.body_md ?? "").map((l) => l.target.toLowerCase());
-    const sharedLinks = nLinks.filter((l) => activeLinks.has(l));
+    const nLinks = extractLinks(n.body_md ?? "").wikilinks.map((l) => l.target.toLowerCase());
+    const sharedLinks = nLinks.filter((l: string) => activeLinks.has(l));
 
     // Boosts: cada tag/wikilink compartilhado adiciona sinal.
     const boost = sharedTags.length * 0.08 + sharedLinks.length * 0.05;
