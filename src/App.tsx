@@ -86,6 +86,7 @@ const PermissionsPage = lazy(() => import("./pages/PermissionsPage"));
 const RolePermissionsPage = lazy(() => import("./pages/RolePermissionsPage"));
 const SearchPage = lazy(() => import("./pages/SearchPage"));
 const TypographyDocsPage = lazy(() => import("./pages/TypographyDocsPage"));
+const PartitioningDocsPage = lazy(() => import("./pages/PartitioningDocsPage"));
 const NLPPipelinePage = lazy(() => import("./pages/NLPPipelinePage"));
 const TracesTimelinePage = lazy(() => import("./pages/TracesTimelinePage"));
 const VoiceAgentStudioPage = lazy(() => import("./pages/VoiceAgentStudioPage"));
@@ -298,6 +299,8 @@ const App = () => {
                       <Route path="/rbac/permissions" element={<SafePage><ProtectedRoute permission="team.roles"><PermissionsPage /></ProtectedRoute></SafePage>} />
                       <Route path="/search" element={<SafePage><SearchPage /></SafePage>} />
                       <Route path="/docs/typography" element={<SafePage><TypographyDocsPage /></SafePage>} />
+                      <Route path="/docs/partitioning" element={<SafePage><PartitioningDocsPage /></SafePage>} />
+
                       <Route path="/nlp" element={<SafePage><NLPPipelinePage /></SafePage>} />
                       <Route path="/traces" element={<SafePage><TracesTimelinePage /></SafePage>} />
                       <Route path="/voice" element={<SafePage><VoiceAgentStudioPage /></SafePage>} />
