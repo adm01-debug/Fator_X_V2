@@ -42,12 +42,22 @@ import { openOrCreateDailyNote } from "@/services/noteTemplatesService";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+const ACCENT_KEY = "nexus.obsidianAccentPurple";
+
 export default function SuperCerebroPage() {
   const [activeTab, setActiveTab] = useState('workspace');
   const activeNotebookId = useCerebroStore((s) => s.activeNotebookId);
   const setActiveNote = useCerebroStore((s) => s.setActiveNote);
   const setStudioTab = useCerebroStore((s) => s.setStudioTab);
   const { workspaceId } = useCurrentWorkspace();
+  const { enabled: obsidianMode, toggle: toggleObsidian } = useObsidianMode();
+  const [accentPurple, setAccentPurple] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    try { return window.localStorage.getItem(ACCENT_KEY) === "on"; } catch { return false; }
+  });
+  useEffect(() => {
+    try { window.localStorage.setItem(ACCENT_KEY, accentPurple ? "on" : "off"); } catch { /* noop */ }
+  }, [accentPurple]);
 
   const commands = useMemo<CommandItem[]>(() => {
     const go = (tab: string): CommandItem["run"] => () => setActiveTab(tab);
