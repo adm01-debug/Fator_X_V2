@@ -182,6 +182,7 @@ export default function SuperCerebroPage() {
           <AdvancedSearchPanel onOpenNote={() => setActiveTab("workspace")} />
         </TabsContent>
         <TabsContent value="vault" className="animate-in fade-in-50 duration-500"><VaultSyncPanel /></TabsContent>
+        <TabsContent value="notebooks" className="animate-in fade-in-50 duration-500"><NotebooksTab /></TabsContent>
         <TabsContent value="overview" className="animate-in fade-in-50 duration-500"><OverviewTab /></TabsContent>
         <TabsContent value="search" className="animate-in fade-in-50 duration-500"><SearchTab /></TabsContent>
         <TabsContent value="upload" className="animate-in fade-in-50 duration-500"><DocumentUploadTab /></TabsContent>
