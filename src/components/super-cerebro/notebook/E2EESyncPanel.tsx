@@ -49,7 +49,7 @@ export function E2EESyncPanel() {
   const [busy, setBusy] = useState(false);
   const [incoming, setIncoming] = useState<BundlePayload | null>(null);
   const [plan, setPlan] = useState<ReconciliationPlan | null>(null);
-  const [overwrite, setOverwrite] = useState<Set<string>>(new Set());
+  const [resolutions, setResolutions] = useState<Map<string, ResolvedConflict>>(new Map());
 
   const unlocked = notebookId ? !!getSessionPassphrase(notebookId) : false;
 
