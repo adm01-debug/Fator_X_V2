@@ -114,6 +114,15 @@ export default function SuperCerebroPage() {
         </TabsList>
 
         <TabsContent value="workspace" className="animate-in fade-in-50 duration-500"><NotebookWorkspace /></TabsContent>
+        <TabsContent value="canvas" className="animate-in fade-in-50 duration-500">
+          {workspaceId && activeNotebookId ? (
+            <div className="h-[calc(100dvh-18rem)] border rounded-lg overflow-hidden">
+              <CanvasWorkspace notebookId={activeNotebookId} workspaceId={workspaceId} />
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground p-6">Selecione um notebook para abrir o Canvas.</p>
+          )}
+        </TabsContent>
         <TabsContent value="notebooks" className="animate-in fade-in-50 duration-500"><NotebooksTab /></TabsContent>
         <TabsContent value="overview" className="animate-in fade-in-50 duration-500"><OverviewTab /></TabsContent>
         <TabsContent value="search" className="animate-in fade-in-50 duration-500"><SearchTab /></TabsContent>
