@@ -110,16 +110,19 @@ Deno.serve(async (req) => {
           throw new Error(resp.error || "conversations.history failed");
         }
 
-        const messages = (resp as any).messages ?? [];
+        type SlackMsg = { subtype?: string; bot_id?: string; text?: string; ts: string; user?: string };
+        type HistoryResp = { messages?: SlackMsg[]; response_metadata?: { next_cursor?: string }; has_more?: boolean };
+        const r = resp as unknown as HistoryResp;
+        const messages: SlackMsg[] = r.messages ?? [];
         if (messages.length === 0) break;
 
         const rows = messages
-          .filter((m: any) => !m.subtype && !m.bot_id && m.text && m.text.length > 0)
-          .map((m: any) => {
+          .filter((m) => !m.subtype && !m.bot_id && m.text && m.text.length > 0)
+          .map((m) => {
             if (m.ts > newestSeen) newestSeen = m.ts;
             return {
               workspace_id: src.workspace_id,
-              content: sanitize(m.text),
+              content: sanitize(m.text!),
               source_type: "slack",
               source_ref: { channel_id: src.channel_id, ts: m.ts, user: m.user ?? null },
               importance: 0.5,
@@ -138,8 +141,8 @@ Deno.serve(async (req) => {
           ingested += rows.length;
         }
 
-        cursor = (resp as any).response_metadata?.next_cursor;
-        if (!cursor || !(resp as any).has_more) break pageLoop;
+        cursor = r.response_metadata?.next_cursor;
+        if (!cursor || !r.has_more) break pageLoop;
       }
 
       await supabase
