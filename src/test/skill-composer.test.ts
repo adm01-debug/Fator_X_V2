@@ -1,68 +1,91 @@
 import { describe, it, expect } from 'vitest';
-import { skillComposerSchema, slugify } from '@/pages/SkillComposerPage';
+import {
+  skillDraftSchema,
+  draftToSkillConfig,
+  DEFAULT_DRAFT,
+  type SkillDraft,
+} from '@/lib/skillComposer/skillDraft';
 
-describe('SkillComposer - slugify', () => {
-  it('converte para lowercase com hífen', () => {
-    expect(slugify('Buscador CRM Pro')).toBe('buscador-crm-pro');
-  });
-  it('remove acentos', () => {
-    expect(slugify('Automação Fácil')).toBe('automacao-facil');
-  });
-  it('remove caracteres especiais', () => {
-    expect(slugify('Skill @#$ Test!')).toBe('skill-test');
-  });
-  it('trunca em 80 caracteres', () => {
-    const long = 'a'.repeat(200);
-    expect(slugify(long).length).toBeLessThanOrEqual(80);
-  });
-});
+const validDraft: SkillDraft = {
+  ...DEFAULT_DRAFT,
+  name: 'Skill Teste',
+  slug: 'skill-teste',
+  description: 'Uma descrição válida com mais de vinte caracteres para passar no schema.',
+  category: 'tools',
+  version: '1.0.0',
+  tags: ['teste', 'demo'],
+};
 
-describe('SkillComposer - schema', () => {
-  const valid = {
-    name: 'Skill Teste',
-    slug: 'skill-teste',
-    description: 'Uma descrição válida com mais de vinte caracteres para passar no schema.',
-    category: 'tools' as const,
-    version: '1.0.0',
-    tags: ['teste', 'demo'],
-    configJson: '{"foo": "bar"}',
-  };
-
-  it('aceita entrada válida', () => {
-    const r = skillComposerSchema.safeParse(valid);
+describe('SkillComposer visual - schema', () => {
+  it('aceita rascunho mínimo válido', () => {
+    const r = skillDraftSchema.safeParse(validDraft);
     expect(r.success).toBe(true);
   });
 
   it('rejeita nome curto', () => {
-    const r = skillComposerSchema.safeParse({ ...valid, name: 'ab' });
+    const r = skillDraftSchema.safeParse({ ...validDraft, name: 'ab' });
     expect(r.success).toBe(false);
   });
 
   it('rejeita slug com maiúsculas', () => {
-    const r = skillComposerSchema.safeParse({ ...valid, slug: 'Skill-Teste' });
+    const r = skillDraftSchema.safeParse({ ...validDraft, slug: 'Skill-Teste' });
     expect(r.success).toBe(false);
   });
 
   it('rejeita versão em formato inválido', () => {
-    const r = skillComposerSchema.safeParse({ ...valid, version: '1.0' });
-    expect(r.success).toBe(false);
-  });
-
-  it('rejeita JSON de configuração inválido', () => {
-    const r = skillComposerSchema.safeParse({ ...valid, configJson: '{invalid}' });
+    const r = skillDraftSchema.safeParse({ ...validDraft, version: '1.0' });
     expect(r.success).toBe(false);
   });
 
   it('rejeita mais de 8 tags', () => {
-    const r = skillComposerSchema.safeParse({
-      ...valid,
+    const r = skillDraftSchema.safeParse({
+      ...validDraft,
       tags: Array.from({ length: 9 }, (_, i) => `tag${i}`),
     });
     expect(r.success).toBe(false);
   });
 
   it('rejeita descrição muito curta', () => {
-    const r = skillComposerSchema.safeParse({ ...valid, description: 'curto' });
+    const r = skillDraftSchema.safeParse({ ...validDraft, description: 'curto' });
     expect(r.success).toBe(false);
+  });
+});
+
+describe('SkillComposer visual - draftToSkillConfig', () => {
+  it('inclui somente o ramo de execução ativo', () => {
+    const cfg = draftToSkillConfig({
+      ...validDraft,
+      execution: { ...validDraft.execution, kind: 'http' },
+    });
+    const execution = cfg.execution as Record<string, unknown>;
+    expect(execution.kind).toBe('http');
+    expect(execution.http).toBeDefined();
+    expect(execution.llm).toBeUndefined();
+    expect(execution.workflow).toBeUndefined();
+  });
+
+  it('serializa inputs com validações', () => {
+    const cfg = draftToSkillConfig({
+      ...validDraft,
+      inputs: [
+        {
+          id: '1',
+          name: 'email',
+          type: 'string',
+          required: true,
+          description: 'Email do contato',
+          defaultValue: '',
+          validation: {
+            pattern: '^.+@.+$',
+            enumValues: [],
+          },
+        },
+      ],
+    });
+    const inputs = cfg.inputs as Array<Record<string, unknown>>;
+    expect(inputs).toHaveLength(1);
+    expect(inputs[0].name).toBe('email');
+    const validation = inputs[0].validation as Record<string, unknown>;
+    expect(validation.pattern).toBe('^.+@.+$');
   });
 });
