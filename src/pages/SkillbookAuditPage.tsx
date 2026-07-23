@@ -3,7 +3,7 @@
  * Trilha completa de auditoria: quando cada skill foi aprendida ou instalada,
  * a confiança adquirida e o impacto nas execuções do agente.
  */
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
   BookOpen,
@@ -16,16 +16,32 @@ import {
   ShieldCheck,
   Sparkles,
   AlertCircle,
+  Download,
+  LineChart as LineChartIcon,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  Area,
+  ComposedChart,
+} from 'recharts';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { EmptyState } from '@/components/shared/EmptyState';
 import {
   fetchLearnedSkills,
@@ -33,8 +49,14 @@ import {
   fetchSkillbookImpact,
   fetchSkillbookTimeline,
   confidenceLabel,
+  filterByPeriod,
+  buildConfidenceSeries,
+  toCsv,
+  downloadCsv,
   type SkillbookTimelineEvent,
+  type SkillbookPeriod,
 } from '@/services/skillbookAuditService';
+import { toast } from 'sonner';
 
 const relTime = (iso: string) => formatDistanceToNow(new Date(iso), { addSuffix: true, locale: ptBR });
 
@@ -44,6 +66,7 @@ const confidenceColor = (c: number): string => {
   if (c < 0.9) return 'text-nexus-cyan';
   return 'text-nexus-emerald';
 };
+
 
 export default function SkillbookAuditPage() {
   const learnedQuery = useQuery({ queryKey: ['skillbook-learned'], queryFn: () => fetchLearnedSkills(200) });
