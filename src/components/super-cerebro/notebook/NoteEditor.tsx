@@ -1,6 +1,7 @@
 /**
  * NoteEditor — editor markdown com autosave (debounce 800ms), preview
- * lado-a-lado, tags e sincronização de wikilinks/backlinks ao salvar.
+ * lado-a-lado, tags, sincronização de wikilinks/backlinks, autocomplete
+ * de `[[…` e `#…`, e hover preview de wikilinks no preview.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
@@ -15,19 +16,29 @@ import { toast } from "sonner";
 import {
   useNote,
   useUpdateNote,
+  useNotes,
   deleteNote,
   type NotebookNote,
 } from "@/services/notesService";
 import { extractLinks, renderWikilinksToMarkdown } from "@/lib/wikilink";
 import { useCerebroStore } from "@/stores/cerebroStore";
+import { EditorAutocomplete } from "./EditorAutocomplete";
+import { WikilinkHoverCard } from "./WikilinkHoverCard";
 
 interface Props {
   noteId: string;
   collectionId: string;
 }
 
+/** Handler global para jump-to-line no editor (usado pelo OutlinePanel). */
+const JUMP_EVENT = "cerebro:jump-to-line";
+export function emitJumpToLine(noteId: string, line: number) {
+  window.dispatchEvent(new CustomEvent(JUMP_EVENT, { detail: { noteId, line } }));
+}
+
 export function NoteEditor({ noteId, collectionId }: Props) {
   const { data: note, isLoading } = useNote(noteId);
+  const { data: notes = [] } = useNotes(collectionId);
   const update = useUpdateNote(collectionId);
   const setActiveNote = useCerebroStore((s) => s.setActiveNote);
 
@@ -36,6 +47,9 @@ export function NoteEditor({ noteId, collectionId }: Props) {
   const [dirty, setDirty] = useState(false);
   const [saving, setSaving] = useState(false);
   const timer = useRef<number | null>(null);
+  const editRef = useRef<HTMLTextAreaElement | null>(null);
+  const splitRef = useRef<HTMLTextAreaElement | null>(null);
+  const [activeTa, setActiveTa] = useState<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
     if (!note) return;
@@ -43,6 +57,24 @@ export function NoteEditor({ noteId, collectionId }: Props) {
     setBody(note.body_md);
     setDirty(false);
   }, [note?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Scroll do editor para uma linha específica (Outline)
+  useEffect(() => {
+    const onJump = (e: Event) => {
+      const detail = (e as CustomEvent<{ noteId: string; line: number }>).detail;
+      if (!detail || detail.noteId !== noteId) return;
+      const ta = editRef.current ?? splitRef.current;
+      if (!ta) return;
+      const lines = body.split("\n");
+      const pos = lines.slice(0, detail.line).reduce((acc, l) => acc + l.length + 1, 0);
+      ta.focus();
+      ta.setSelectionRange(pos, pos + (lines[detail.line]?.length ?? 0));
+      const lineHeight = parseFloat(getComputedStyle(ta).lineHeight) || 18;
+      ta.scrollTop = Math.max(0, detail.line * lineHeight - ta.clientHeight / 2);
+    };
+    window.addEventListener(JUMP_EVENT, onJump);
+    return () => window.removeEventListener(JUMP_EVENT, onJump);
+  }, [noteId, body]);
 
   const doSave = async (n: NotebookNote, syncLinks: boolean) => {
     setSaving(true);
@@ -60,7 +92,6 @@ export function NoteEditor({ noteId, collectionId }: Props) {
     }
   };
 
-  // autosave debounced
   useEffect(() => {
     if (!note || !dirty) return;
     if (timer.current) window.clearTimeout(timer.current);
@@ -76,7 +107,6 @@ export function NoteEditor({ noteId, collectionId }: Props) {
   const previewMd = useMemo(
     () =>
       renderWikilinksToMarkdown(body, (label, type) => {
-        // Placeholder resolver — clicar dispara evento tratado no host
         return `#wl:${type}:${encodeURIComponent(label)}`;
       }),
     [body],
@@ -92,6 +122,20 @@ export function NoteEditor({ noteId, collectionId }: Props) {
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Falha ao excluir");
     }
+  };
+
+  const insertAutocomplete = (text: string, start: number, end: number) => {
+    const ta = activeTa;
+    const next = body.slice(0, start) + text + body.slice(end);
+    setBody(next);
+    setDirty(true);
+    // Recoloca o caret após o texto inserido
+    requestAnimationFrame(() => {
+      if (!ta) return;
+      const newPos = start + text.length;
+      ta.focus();
+      ta.setSelectionRange(newPos, newPos);
+    });
   };
 
   if (isLoading || !note) {
@@ -145,8 +189,10 @@ export function NoteEditor({ noteId, collectionId }: Props) {
 
         <TabsContent value="edit" className="flex-1 min-h-0 m-0 p-3">
           <Textarea
+            ref={editRef}
             value={body}
             onChange={(e) => { setBody(e.target.value); setDirty(true); }}
+            onFocus={(e) => setActiveTa(e.currentTarget)}
             placeholder="Escreva em markdown. Use [[Título]] para linkar outra nota, [[doc:Nome]] para documento, [[@Entidade]] para entidade, #tag para categorizar."
             className="h-full min-h-[300px] font-mono text-sm resize-none"
           />
@@ -154,25 +200,72 @@ export function NoteEditor({ noteId, collectionId }: Props) {
 
         <TabsContent value="preview" className="flex-1 min-h-0 m-0 p-3 overflow-auto">
           <article className="prose prose-sm dark:prose-invert max-w-none">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{previewMd || "*(nota vazia)*"}</ReactMarkdown>
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={{
+                a: ({ href, children }) => {
+                  const wl = /^#wl:(note|document|entity|tag):(.+)$/.exec(href ?? "");
+                  if (wl) {
+                    const type = wl[1] as "note" | "document" | "entity" | "tag";
+                    const label = decodeURIComponent(wl[2]);
+                    return (
+                      <WikilinkHoverCard label={label} targetType={type}>
+                        {children}
+                      </WikilinkHoverCard>
+                    );
+                  }
+                  return <a href={href} target="_blank" rel="noreferrer noopener">{children}</a>;
+                },
+              }}
+            >
+              {previewMd || "*(nota vazia)*"}
+            </ReactMarkdown>
           </article>
         </TabsContent>
 
         <TabsContent value="split" className="flex-1 min-h-0 m-0 p-3">
           <div className="grid grid-cols-2 gap-3 h-full">
             <Textarea
+              ref={splitRef}
               value={body}
               onChange={(e) => { setBody(e.target.value); setDirty(true); }}
+              onFocus={(e) => setActiveTa(e.currentTarget)}
               className="h-full min-h-[300px] font-mono text-sm resize-none"
             />
             <div className="overflow-auto border rounded p-3 bg-secondary/20">
               <article className="prose prose-sm dark:prose-invert max-w-none">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{previewMd || "*(vazio)*"}</ReactMarkdown>
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    a: ({ href, children }) => {
+                      const wl = /^#wl:(note|document|entity|tag):(.+)$/.exec(href ?? "");
+                      if (wl) {
+                        const type = wl[1] as "note" | "document" | "entity" | "tag";
+                        const label = decodeURIComponent(wl[2]);
+                        return (
+                          <WikilinkHoverCard label={label} targetType={type}>
+                            {children}
+                          </WikilinkHoverCard>
+                        );
+                      }
+                      return <a href={href} target="_blank" rel="noreferrer noopener">{children}</a>;
+                    },
+                  }}
+                >
+                  {previewMd || "*(vazio)*"}
+                </ReactMarkdown>
               </article>
             </div>
           </div>
         </TabsContent>
       </Tabs>
+
+      <EditorAutocomplete
+        textarea={activeTa}
+        value={body}
+        notes={notes}
+        onInsert={insertAutocomplete}
+      />
     </div>
   );
 }
