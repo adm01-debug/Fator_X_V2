@@ -6,8 +6,9 @@ import {
   Brain, Search, Network, BookOpen,
   Activity, Users, FlaskConical, Zap, Clock, GitMerge, TrendingDown, Layers, Upload, NotebookPen,
   Plus, FileText, Sparkles, Mic, Settings2, Link2Off, Hash, LayoutDashboard,
-  CalendarDays, FileStack, History, LayoutList
+  CalendarDays, FileStack, History, LayoutList, SearchCode
 } from "lucide-react";
+import { AdvancedSearchPanel } from "@/components/super-cerebro/notebook/AdvancedSearchPanel";
 import { KanbanBoard } from "@/components/super-cerebro/notebook/KanbanBoard";
 import { OverviewTab } from "@/components/super-cerebro/OverviewTab";
 import { SearchTab } from "@/components/super-cerebro/SearchTab";
@@ -109,6 +110,7 @@ export default function SuperCerebroPage() {
         },
       },
       { id: "goto.kanban", label: "Ir para Kanban (board de notas)", group: "Navegação", icon: LayoutList, run: go("kanban") },
+      { id: "goto.advSearch", label: "Busca avançada (DSL)", group: "Navegação", icon: SearchCode, keywords: "query dsl obsidian filtro tag", run: go("advSearch") },
     ];
     return list;
   }, [workspaceId, activeNotebookId, setActiveNote, setStudioTab]);
@@ -134,6 +136,7 @@ export default function SuperCerebroPage() {
           <TabsTrigger value="workspace" className="text-meta gap-1.5"><NotebookPen className="h-3.5 w-3.5" /> Workspace</TabsTrigger>
           <TabsTrigger value="canvas" className="text-meta gap-1.5"><LayoutDashboard className="h-3.5 w-3.5" /> Canvas</TabsTrigger>
           <TabsTrigger value="kanban" className="text-meta gap-1.5"><LayoutList className="h-3.5 w-3.5" /> Kanban</TabsTrigger>
+          <TabsTrigger value="advSearch" className="text-meta gap-1.5"><SearchCode className="h-3.5 w-3.5" /> Busca Avançada</TabsTrigger>
           <TabsTrigger value="notebooks" className="text-meta gap-1.5"><NotebookPen className="h-3.5 w-3.5" /> Notebooks</TabsTrigger>
           <TabsTrigger value="overview" className="text-meta gap-1.5"><Brain className="h-3.5 w-3.5" /> Visão Geral</TabsTrigger>
           <TabsTrigger value="search" className="text-meta gap-1.5"><Search className="h-3.5 w-3.5" /> Busca</TabsTrigger>
@@ -171,6 +174,9 @@ export default function SuperCerebroPage() {
           ) : (
             <p className="text-sm text-muted-foreground p-6">Selecione um notebook para abrir o Kanban.</p>
           )}
+        </TabsContent>
+        <TabsContent value="advSearch" className="animate-in fade-in-50 duration-500">
+          <AdvancedSearchPanel onOpenNote={() => setActiveTab("workspace")} />
         </TabsContent>
         <TabsContent value="notebooks" className="animate-in fade-in-50 duration-500"><NotebooksTab /></TabsContent>
         <TabsContent value="overview" className="animate-in fade-in-50 duration-500"><OverviewTab /></TabsContent>
