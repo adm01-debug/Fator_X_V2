@@ -85,6 +85,7 @@ export default function SuperCerebroPage() {
       { id: "studio.versions", label: "Studio: Histórico de versões", group: "IA", icon: History, run: () => setStudioTab("versions") },
       { id: "studio.templates", label: "Studio: Templates de nota", group: "IA", icon: FileStack, run: () => setStudioTab("templates") },
       { id: "studio.related", label: "Studio: Notas similares", group: "IA", icon: Zap, run: () => setStudioTab("related") },
+      { id: "studio.sketch", label: "Studio: Sketch (desenho livre)", group: "IA", icon: FileText, keywords: "excalidraw draw canvas rabisco", run: () => setStudioTab("sketch") },
       {
         id: "note.daily",
         label: "Abrir Daily Note (hoje)",
