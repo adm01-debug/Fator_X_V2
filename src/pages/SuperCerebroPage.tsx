@@ -117,6 +117,7 @@ export default function SuperCerebroPage() {
       { id: "goto.bases", label: "Ir para Bases (tabela dinâmica)", group: "Navegação", icon: TableIcon, keywords: "database view frontmatter tabela obsidian", run: go("bases") },
       { id: "goto.advSearch", label: "Busca avançada (DSL)", group: "Navegação", icon: SearchCode, keywords: "query dsl obsidian filtro tag", run: go("advSearch") },
       { id: "goto.vault", label: "Sincronizar com Obsidian Vault", group: "Navegação", icon: FileArchive, keywords: "export import zip markdown", run: go("vault") },
+      { id: "goto.bookmarks", label: "Ir para Favoritos", group: "Navegação", icon: Bookmark, keywords: "bookmarks favoritos pinned obsidian", run: go("bookmarks") },
     ];
     return list;
   }, [workspaceId, activeNotebookId, setActiveNote, setStudioTab]);
