@@ -23,6 +23,7 @@ import { ContextTiersTab } from "@/components/super-cerebro/ContextTiersTab";
 import { NotebooksTab } from "@/components/super-cerebro/NotebooksTab";
 import { NotebookSelector } from "@/components/super-cerebro/NotebookSelector";
 import { NotebookWorkspace } from "@/components/super-cerebro/notebook/NotebookWorkspace";
+import { CanvasWorkspace } from "@/components/super-cerebro/notebook/CanvasWorkspace";
 import { CommandPalette } from "@/components/super-cerebro/CommandPalette";
 import type { CommandItem } from "@/lib/commands";
 import { useCerebroStore } from "@/stores/cerebroStore";
