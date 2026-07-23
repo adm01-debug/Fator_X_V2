@@ -16,7 +16,7 @@ import {
   ShieldCheck,
   Sparkles,
   AlertCircle,
-  Download,
+  Download as DownloadIcon,
   LineChart as LineChartIcon,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
