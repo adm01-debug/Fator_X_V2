@@ -4,6 +4,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "./styles/obsidian-mode.css";
+
 @layer base {
   :root {
     --font-heading: 'Space Grotesk', system-ui, sans-serif;
