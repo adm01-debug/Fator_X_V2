@@ -78,8 +78,7 @@ serve(async (req) => {
     if (docErr || !doc) return errorResponse(req, 'Documento não encontrado', 404);
 
     // Verify user has access to the workspace
-    // deno-lint-ignore no-explicit-any
-    const wsId = (doc as any).collections?.knowledge_bases?.workspace_id as string | undefined;
+    const wsId = (doc as { collections?: { knowledge_bases?: { workspace_id?: string } } }).collections?.knowledge_bases?.workspace_id;
     if (!wsId) return errorResponse(req, 'Documento sem workspace', 403);
 
     const { data: membership } = await supabase
@@ -135,10 +134,8 @@ serve(async (req) => {
     }
 
     const notebookName =
-      // deno-lint-ignore no-explicit-any
-      ((doc as any).collections?.name as string | undefined) ?? null;
-    // deno-lint-ignore no-explicit-any
-    const meta = (doc.metadata ?? {}) as any;
+      ((doc as { collections?: { name?: string } }).collections?.name ?? null);
+    const meta = (doc.metadata ?? {}) as Record<string, unknown>;
 
     const rows = newChunks.map((content, i) => ({
       document_id: doc.id,
