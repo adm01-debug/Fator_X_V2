@@ -75,6 +75,7 @@ export function NotebookWorkspace() {
         // Best-effort audit — falha silenciosa se tabela indisponível.
         await supabaseExternal.from("audit_events").insert({
           event_type: "cerebro.deep_link.foreign_source_rejected",
+          action: "reject",
           resource_type: "notebook",
           resource_id: activeNotebookId,
           metadata: { rejected, accepted_count: accepted.length },
