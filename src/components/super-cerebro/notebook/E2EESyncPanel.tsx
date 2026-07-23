@@ -210,6 +210,45 @@ export function E2EESyncPanel() {
         </CardContent>
       </Card>
 
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <RefreshCw className="h-4 w-4" /> Auto-sync em segundo plano
+            <E2EESyncStatusBadge status={autoStatus} />
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Switch id="autosync" checked={autoSyncOn} onCheckedChange={toggleAutoSync} disabled={!unlocked} />
+              <Label htmlFor="autosync" className="cursor-pointer">Ativar auto-sync</Label>
+            </div>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="autosync-interval" className="text-xs text-muted-foreground">Intervalo (s)</Label>
+              <Input
+                id="autosync-interval"
+                type="number"
+                min={10}
+                max={3600}
+                className="w-24 h-8"
+                value={intervalSec}
+                onChange={(e) => setIntervalSec(Math.max(10, Number(e.target.value) || 60))}
+                disabled={autoSyncOn}
+              />
+            </div>
+            <Button size="sm" variant="outline" onClick={runNow} disabled={!unlocked || !autoSyncOn}>
+              <RefreshCw className="h-3.5 w-3.5 mr-1.5" /> Rodar agora
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Cifra o notebook e registra um checkpoint local a cada intervalo. Em falha, aplica retry exponencial
+            (base 5s, teto 5min) até a próxima execução bem-sucedida.
+          </p>
+        </CardContent>
+      </Card>
+
+
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card>
           <CardHeader>
