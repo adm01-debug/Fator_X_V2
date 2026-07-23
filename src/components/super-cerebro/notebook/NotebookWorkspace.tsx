@@ -18,6 +18,8 @@ import { NotebookPen, FolderTree, FileText, Sparkles } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { readSourcesFromUrl, writeSourcesToUrl } from "@/lib/sourceIdsSync";
+import { supabaseExternal } from "@/integrations/supabase/externalClient";
+import { logger } from "@/lib/logger";
 
 export function NotebookWorkspace() {
   const { workspaceId } = useCurrentWorkspace();
