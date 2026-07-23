@@ -2,12 +2,13 @@
  * LocalGraphView — grafo local (radial) da nota ativa mostrando
  * backlinks (setas entrando) e wikilinks de saída (setas saindo).
  * Implementação SVG pura para evitar novas dependências.
+ * Suporta filtros por tipo (nota/doc/entidade/tag) e por direção.
  */
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useCerebroStore } from "@/stores/cerebroStore";
 import { useBacklinks, useOutgoingLinks } from "@/services/notesService";
 import { useNote } from "@/services/notesService";
-import { FileText, Hash, Network as NetworkIcon, Users, Layers } from "lucide-react";
+import { FileText, Hash, Network as NetworkIcon, Users, Layers, ArrowDownRight, ArrowUpRight } from "lucide-react";
 
 interface Node {
   id: string;
@@ -25,18 +26,33 @@ const KIND_COLOR: Record<Node["kind"], string> = {
   chunk: "hsl(var(--nexus-info))",
 };
 
+const KIND_LABEL: Record<Exclude<Node["kind"], "self">, string> = {
+  note: "Nota",
+  document: "Documento",
+  entity: "Entidade",
+  tag: "Tag",
+  chunk: "Chunk",
+};
+
+type KindFilter = Exclude<Node["kind"], "self">;
+type DirFilter = "in" | "out";
+
 export function LocalGraphView({ noteId }: { noteId: string }) {
   const { data: note } = useNote(noteId);
   const { data: backlinks = [] } = useBacklinks("note", noteId);
   const { data: outgoing = [] } = useOutgoingLinks(noteId);
   const setActiveNote = useCerebroStore((s) => s.setActiveNote);
 
-  const nodes: Node[] = useMemo(() => {
+  const [kindFilters, setKindFilters] = useState<Set<KindFilter>>(
+    () => new Set(["note", "document", "entity", "tag", "chunk"]),
+  );
+  const [dirFilters, setDirFilters] = useState<Set<DirFilter>>(() => new Set(["in", "out"]));
+
+  const allNodes: Node[] = useMemo(() => {
     const list: Node[] = [
       { id: "self", label: note?.title ?? "(nota)", kind: "self", direction: "self" },
     ];
     for (const b of backlinks) {
-      // Filtra self-links: uma nota que aparece linkando pra si mesma não vira nó peripheral.
       if (b.source_type === "note" && b.source_id === noteId) continue;
       list.push({
         id: `in-${b.id}`,
@@ -46,7 +62,6 @@ export function LocalGraphView({ noteId }: { noteId: string }) {
       });
     }
     for (const o of outgoing) {
-      // Filtra self-links de saída (target apontando pra própria nota).
       if (o.target_type === "note" && o.target_id === noteId) continue;
       list.push({
         id: `out-${o.id}`,
@@ -55,19 +70,99 @@ export function LocalGraphView({ noteId }: { noteId: string }) {
         direction: "out",
       });
     }
-    return list.slice(0, 25); // cap visual
+    return list;
   }, [note, backlinks, outgoing, noteId]);
+
+  const nodes: Node[] = useMemo(() => {
+    const filtered = allNodes.filter((n) => {
+      if (n.kind === "self") return true;
+      if (!kindFilters.has(n.kind)) return false;
+      if (n.direction !== "self" && !dirFilters.has(n.direction as DirFilter)) return false;
+      return true;
+    });
+    return filtered.slice(0, 25);
+  }, [allNodes, kindFilters, dirFilters]);
 
   const size = 320;
   const cx = size / 2;
   const cy = size / 2;
   const radius = 120;
 
-  if (nodes.length <= 1) {
+  const toggleKind = (k: KindFilter) => {
+    setKindFilters((prev) => {
+      const next = new Set(prev);
+      if (next.has(k)) next.delete(k); else next.add(k);
+      return next;
+    });
+  };
+  const toggleDir = (d: DirFilter) => {
+    setDirFilters((prev) => {
+      const next = new Set(prev);
+      if (next.has(d)) next.delete(d); else next.add(d);
+      return next;
+    });
+  };
+
+  const Filters = (
+    <div className="flex flex-wrap items-center gap-1.5 px-3 pt-3">
+      <span className="text-[9px] uppercase tracking-wide text-muted-foreground mr-1">Filtrar:</span>
+      {(Object.keys(KIND_LABEL) as KindFilter[]).map((k) => {
+        const active = kindFilters.has(k);
+        return (
+          <button
+            key={k}
+            type="button"
+            onClick={() => toggleKind(k)}
+            aria-pressed={active}
+            className={`rounded-full px-2 py-0.5 text-[10px] border transition-colors ${
+              active ? "border-transparent" : "border-border/60 opacity-50 hover:opacity-80"
+            }`}
+            style={active ? { backgroundColor: KIND_COLOR[k], color: "hsl(var(--primary-foreground))" } : undefined}
+          >
+            {KIND_LABEL[k]}
+          </button>
+        );
+      })}
+      <span className="w-px h-3 bg-border/60 mx-1" />
+      <button
+        type="button"
+        onClick={() => toggleDir("in")}
+        aria-pressed={dirFilters.has("in")}
+        className={`rounded-full px-2 py-0.5 text-[10px] border transition-colors flex items-center gap-1 ${
+          dirFilters.has("in") ? "bg-secondary" : "opacity-50 hover:opacity-80"
+        }`}
+      >
+        <ArrowDownRight className="h-2.5 w-2.5" /> Entrando
+      </button>
+      <button
+        type="button"
+        onClick={() => toggleDir("out")}
+        aria-pressed={dirFilters.has("out")}
+        className={`rounded-full px-2 py-0.5 text-[10px] border transition-colors flex items-center gap-1 ${
+          dirFilters.has("out") ? "bg-secondary" : "opacity-50 hover:opacity-80"
+        }`}
+      >
+        <ArrowUpRight className="h-2.5 w-2.5" /> Saindo
+      </button>
+    </div>
+  );
+
+  if (allNodes.length <= 1) {
     return (
       <div className="p-4 text-xs text-muted-foreground text-center">
         <NetworkIcon className="h-6 w-6 mx-auto mb-2 opacity-40" />
         Sem links ainda. Use <code>[[Título]]</code> na nota para conectar.
+      </div>
+    );
+  }
+
+  if (nodes.length <= 1) {
+    return (
+      <div>
+        {Filters}
+        <div className="p-4 text-xs text-muted-foreground text-center">
+          Nenhum nó com os filtros atuais.
+        </div>
       </div>
     );
   }
