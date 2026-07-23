@@ -269,10 +269,12 @@ export default function SkillbookAuditPage() {
                     borderRadius: 8,
                     fontSize: 12,
                   }}
-                  formatter={(value: number, name) => {
-                    if (name === 'Confiança média') return [`${Math.round(value * 100)}%`, name];
-                    return [value, name];
+                  formatter={(value, name) => {
+                    const num = typeof value === 'number' ? value : Number(value);
+                    if (name === 'Confiança média') return [`${Math.round(num * 100)}%`, name];
+                    return [num, name];
                   }}
+
                 />
                 <Legend wrapperStyle={{ fontSize: 12 }} />
                 <Area
