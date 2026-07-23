@@ -11177,6 +11177,20 @@ export type Database = {
           workspace_id: string
         }[]
       }
+      get_partition_health_snapshot: {
+        Args: never
+        Returns: {
+          future_runway_months: number
+          largest_partition: string
+          largest_partition_bytes: number
+          latest_partition: string
+          latest_partition_end: string
+          parent_table: string
+          total_partitions: number
+          total_size_bytes: number
+          total_size_pretty: string
+        }[]
+      }
       get_pending_invites_for_email: {
         Args: { _email: string }
         Returns: {
