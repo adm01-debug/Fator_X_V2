@@ -16,11 +16,19 @@ export interface RecommendationInput {
   tools?: string[];
 }
 
+export interface ScoreBreakdown {
+  keyword: number; // 0..1 (Jaccard)
+  category: number; // 0..1 (heurística)
+  weightedKeyword: number; // 0.6 × keyword
+  weightedCategory: number; // 0.4 × category
+}
+
 export interface Recommendation {
   skill: AgentSkillDefinition;
   score: number;
   reason: string;
   matchedKeywords: string[];
+  breakdown: ScoreBreakdown;
 }
 
 const STOP_WORDS = new Set([
@@ -80,18 +88,26 @@ export function recommendSkills(
     );
     const keywordScore = jaccard(missionTokens, skillTokens);
     const catScore = categoryFit(missionTokens, skill.category);
-    const score = 0.6 * keywordScore + 0.4 * catScore;
+    const weightedKeyword = 0.6 * keywordScore;
+    const weightedCategory = 0.4 * catScore;
+    const score = weightedKeyword + weightedCategory;
 
     const matched: string[] = [];
     for (const t of missionTokens) if (skillTokens.has(t)) matched.push(t);
 
     const reason = matched.length > 0
-      ? `Combina com: ${matched.slice(0, 3).join(', ')}`
+      ? `Alinhada com "${matched.slice(0, 3).join('", "')}" da missão`
       : catScore > 0
-        ? `Categoria "${skill.category}" alinha com a missão`
-        : 'Skill popular na categoria';
+        ? `Categoria "${skill.category}" combina com o contexto do agente`
+        : 'Skill popular no marketplace';
 
-    return { skill, score, reason, matchedKeywords: matched };
+    return {
+      skill,
+      score,
+      reason,
+      matchedKeywords: matched,
+      breakdown: { keyword: keywordScore, category: catScore, weightedKeyword, weightedCategory },
+    };
   });
 
   return scored
