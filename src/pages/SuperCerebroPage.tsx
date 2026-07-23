@@ -5,7 +5,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Brain, Search, Network, BookOpen,
   Activity, Users, FlaskConical, Zap, Clock, GitMerge, TrendingDown, Layers, Upload, NotebookPen,
-  Plus, FileText, Sparkles, Mic, Settings2, Link2Off, Hash, LayoutDashboard
+  Plus, FileText, Sparkles, Mic, Settings2, Link2Off, Hash, LayoutDashboard,
+  CalendarDays, FileStack, History
 } from "lucide-react";
 import { OverviewTab } from "@/components/super-cerebro/OverviewTab";
 import { SearchTab } from "@/components/super-cerebro/SearchTab";
@@ -29,6 +30,8 @@ import type { CommandItem } from "@/lib/commands";
 import { useCerebroStore } from "@/stores/cerebroStore";
 import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
 import { createNote } from "@/services/notesService";
+import { openOrCreateDailyNote } from "@/services/noteTemplatesService";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export default function SuperCerebroPage() {
@@ -74,6 +77,36 @@ export default function SuperCerebroPage() {
       { id: "studio.tagsGlobal", label: "Studio: Tags do notebook", group: "IA", icon: Hash, run: () => setStudioTab("tagsGlobal") },
       { id: "studio.ai", label: "Studio: IA (resumo, Q&A)", group: "IA", icon: Sparkles, run: () => setStudioTab("studio") },
       { id: "studio.podcast", label: "Studio: Podcast", group: "IA", icon: Mic, run: () => setStudioTab("podcast") },
+      { id: "studio.versions", label: "Studio: Histórico de versões", group: "IA", icon: History, run: () => setStudioTab("versions") },
+      { id: "studio.templates", label: "Studio: Templates de nota", group: "IA", icon: FileStack, run: () => setStudioTab("templates") },
+      {
+        id: "note.daily",
+        label: "Abrir Daily Note (hoje)",
+        group: "Notas",
+        icon: CalendarDays,
+        keywords: "diario hoje daily",
+        run: async () => {
+          if (!workspaceId || !activeNotebookId) {
+            toast.error("Selecione um notebook primeiro.");
+            setActiveTab("workspace");
+            return;
+          }
+          try {
+            const { data: sess } = await supabase.auth.getSession();
+            const email = sess.session?.user.email ?? "";
+            const note = await openOrCreateDailyNote({
+              workspaceId,
+              collectionId: activeNotebookId,
+              userEmail: email,
+            });
+            setActiveTab("workspace");
+            setActiveNote(note.id);
+            toast.success("Daily Note aberta");
+          } catch (e) {
+            toast.error(e instanceof Error ? e.message : "Falha ao abrir Daily Note");
+          }
+        },
+      },
     ];
     return list;
   }, [workspaceId, activeNotebookId, setActiveNote, setStudioTab]);

@@ -5627,6 +5627,109 @@ export type Database = {
           },
         ]
       }
+      notebook_note_templates: {
+        Row: {
+          body_md: string
+          collection_id: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          is_builtin: boolean
+          name: string
+          scope: string
+          tags: string[]
+          title_pattern: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          body_md?: string
+          collection_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_builtin?: boolean
+          name: string
+          scope?: string
+          tags?: string[]
+          title_pattern?: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          body_md?: string
+          collection_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_builtin?: boolean
+          name?: string
+          scope?: string
+          tags?: string[]
+          title_pattern?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notebook_note_templates_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notebook_note_versions: {
+        Row: {
+          body_md: string
+          created_at: string
+          created_by: string | null
+          id: string
+          note_id: string
+          reason: string | null
+          tags: string[]
+          title: string
+          version_number: number
+          workspace_id: string
+        }
+        Insert: {
+          body_md: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note_id: string
+          reason?: string | null
+          tags?: string[]
+          title: string
+          version_number: number
+          workspace_id: string
+        }
+        Update: {
+          body_md?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note_id?: string
+          reason?: string | null
+          tags?: string[]
+          title?: string
+          version_number?: number
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notebook_note_versions_note_id_fkey"
+            columns: ["note_id"]
+            isOneToOne: false
+            referencedRelation: "notebook_notes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notebook_notes: {
         Row: {
           body_md: string
@@ -5635,6 +5738,8 @@ export type Database = {
           created_by: string | null
           id: string
           is_archived: boolean
+          is_daily: boolean
+          note_date: string | null
           tags: string[]
           title: string
           updated_at: string
@@ -5647,6 +5752,8 @@ export type Database = {
           created_by?: string | null
           id?: string
           is_archived?: boolean
+          is_daily?: boolean
+          note_date?: string | null
           tags?: string[]
           title: string
           updated_at?: string
@@ -5659,6 +5766,8 @@ export type Database = {
           created_by?: string | null
           id?: string
           is_archived?: boolean
+          is_daily?: boolean
+          note_date?: string | null
           tags?: string[]
           title?: string
           updated_at?: string

@@ -4,9 +4,10 @@
  */
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Link2, Tag, Sparkles, Network, Mic, List, Settings2, Link2Off, Hash } from "lucide-react";
+import { Link2, Tag, Sparkles, Network, Mic, List, Settings2, Link2Off, Hash, History, FileStack } from "lucide-react";
 import { useNote } from "@/services/notesService";
 import { useCerebroStore } from "@/stores/cerebroStore";
+import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
 import { BacklinksList } from "./BacklinksList";
 import { LocalGraphView } from "./LocalGraphView";
 import { AiStudio } from "./AiStudio";
@@ -15,6 +16,8 @@ import { OutlinePanel } from "./OutlinePanel";
 import { PropertiesPanel } from "./PropertiesPanel";
 import { UnlinkedMentions } from "./UnlinkedMentions";
 import { TagsGlobalPanel } from "./TagsGlobalPanel";
+import { VersionHistoryPanel } from "./VersionHistoryPanel";
+import { TemplatesPanel } from "./TemplatesPanel";
 import { emitJumpToLine } from "./NoteEditor";
 
 interface Props { noteId: string | null; notebookId?: string | null }
@@ -23,6 +26,7 @@ export function StudioPanel({ noteId, notebookId }: Props) {
   const { data: note } = useNote(noteId);
   const studioTab = useCerebroStore((s) => s.studioTab);
   const setStudioTab = useCerebroStore((s) => s.setStudioTab);
+  const { workspaceId } = useCurrentWorkspace();
 
   if (!noteId || !note) {
     return (
@@ -60,6 +64,8 @@ export function StudioPanel({ noteId, notebookId }: Props) {
           <TabsTrigger value="tagsGlobal" className="text-xs gap-1"><Hash className="h-3 w-3" /> Tags</TabsTrigger>
           <TabsTrigger value="studio" className="text-xs gap-1"><Sparkles className="h-3 w-3" /> IA</TabsTrigger>
           <TabsTrigger value="podcast" className="text-xs gap-1"><Mic className="h-3 w-3" /> Podcast</TabsTrigger>
+          <TabsTrigger value="versions" className="text-xs gap-1"><History className="h-3 w-3" /> Versões</TabsTrigger>
+          <TabsTrigger value="templates" className="text-xs gap-1"><FileStack className="h-3 w-3" /> Templates</TabsTrigger>
           <TabsTrigger value="tags" className="text-xs gap-1"><Tag className="h-3 w-3" /> #Nota</TabsTrigger>
         </TabsList>
 
@@ -109,6 +115,22 @@ export function StudioPanel({ noteId, notebookId }: Props) {
 
         <TabsContent value="podcast" className="flex-1 overflow-auto m-0">
           <PodcastPanel notebookId={notebookId ?? null} />
+        </TabsContent>
+
+        <TabsContent value="versions" className="flex-1 overflow-auto m-0">
+          <VersionHistoryPanel noteId={note.id} />
+        </TabsContent>
+
+        <TabsContent value="templates" className="flex-1 overflow-auto m-0">
+          {workspaceId && notebookId ? (
+            <TemplatesPanel
+              workspaceId={workspaceId}
+              collectionId={notebookId}
+              activeNoteId={note.id}
+            />
+          ) : (
+            <p className="p-3 text-xs text-muted-foreground">Notebook não identificado.</p>
+          )}
         </TabsContent>
 
         <TabsContent value="tags" className="m-0 p-3">
