@@ -39,6 +39,7 @@ const AuthPage = lazy(() => import("./pages/AuthPage"));
 const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage"));
 const SuperCerebroPage = lazy(() => import("./pages/SuperCerebroPage"));
 const PublicNoteView = lazy(() => import("./pages/PublicNoteView"));
+const E2EESimulationPage = lazy(() => import("./pages/E2EESimulationPage"));
 const OraclePage = lazy(() => import("./pages/OraclePage"));
 const KnowledgePage = lazy(() => import("./pages/KnowledgePage"));
 const MemoryPage = lazy(() => import("./pages/MemoryPage"));
@@ -245,6 +246,7 @@ const App = () => {
                       <Route path="/brain" element={<SafePage><SuperCerebroPage /></SafePage>} />
                       <Route path="/super-cerebro" element={<SafePage><SuperCerebroPage /></SafePage>} />
                       <Route path="/super-cerebro/n/:notebookId/note/:noteId" element={<SafePage><SuperCerebroPage /></SafePage>} />
+                      <Route path="/super-cerebro/e2ee-simulacao" element={<SafePage><E2EESimulationPage /></SafePage>} />
                       <Route path="/oracle" element={<SafePage><OraclePage /></SafePage>} />
                       <Route path="/knowledge" element={<SafePage><KnowledgePage /></SafePage>} />
                       <Route path="/knowledge-management" element={<SafePage><KnowledgeManagementPage /></SafePage>} />
