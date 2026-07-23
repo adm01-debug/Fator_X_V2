@@ -211,3 +211,87 @@ export function confidenceLabel(confidence: number): 'baixa' | 'média' | 'alta'
   if (confidence < 0.9) return 'alta';
   return 'muito alta';
 }
+
+// ─── Filtros de período ─────────────────────────────────────────────────
+export type SkillbookPeriod = '7d' | '30d' | '90d' | 'all';
+
+export function periodStartISO(period: SkillbookPeriod): string | null {
+  if (period === 'all') return null;
+  const days = period === '7d' ? 7 : period === '30d' ? 30 : 90;
+  return new Date(Date.now() - days * 24 * 3600_000).toISOString();
+}
+
+export function filterByPeriod<T extends { created_at?: string; installed_at?: string }>(
+  rows: T[],
+  period: SkillbookPeriod,
+  field: 'created_at' | 'installed_at',
+): T[] {
+  const start = periodStartISO(period);
+  if (!start) return rows;
+  return rows.filter((r) => {
+    const v = r[field];
+    return typeof v === 'string' && v >= start;
+  });
+}
+
+// ─── Série de evolução da confiança ─────────────────────────────────────
+export interface ConfidencePoint {
+  date: string; // yyyy-mm-dd
+  avgConfidence: number;
+  learnedCount: number;
+  cumulativeLearned: number;
+}
+
+export function buildConfidenceSeries(
+  learned: LearnedSkillEntry[],
+  period: SkillbookPeriod,
+): ConfidencePoint[] {
+  const filtered = filterByPeriod(learned, period, 'created_at');
+  const byDay = new Map<string, { sum: number; count: number }>();
+  for (const s of filtered) {
+    const day = s.created_at.slice(0, 10);
+    const acc = byDay.get(day) ?? { sum: 0, count: 0 };
+    acc.sum += s.confidence;
+    acc.count += 1;
+    byDay.set(day, acc);
+  }
+  const days = Array.from(byDay.keys()).sort();
+  let cumulative = 0;
+  return days.map((day) => {
+    const acc = byDay.get(day)!;
+    cumulative += acc.count;
+    return {
+      date: day,
+      avgConfidence: acc.sum / acc.count,
+      learnedCount: acc.count,
+      cumulativeLearned: cumulative,
+    };
+  });
+}
+
+// ─── CSV export helpers ─────────────────────────────────────────────────
+function escapeCsvCell(value: unknown): string {
+  if (value === null || value === undefined) return '';
+  const s = String(value);
+  if (/[",\n;]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+  return s;
+}
+
+export function toCsv<T extends Record<string, unknown>>(rows: T[], headers: (keyof T)[]): string {
+  const head = headers.map((h) => escapeCsvCell(String(h))).join(',');
+  const body = rows.map((row) => headers.map((h) => escapeCsvCell(row[h])).join(',')).join('\n');
+  return `${head}\n${body}`;
+}
+
+export function downloadCsv(filename: string, csv: string): void {
+  const blob = new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
