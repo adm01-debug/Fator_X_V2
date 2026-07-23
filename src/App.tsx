@@ -299,6 +299,8 @@ const App = () => {
                       <Route path="/rbac/permissions" element={<SafePage><ProtectedRoute permission="team.roles"><PermissionsPage /></ProtectedRoute></SafePage>} />
                       <Route path="/search" element={<SafePage><SearchPage /></SafePage>} />
                       <Route path="/docs/typography" element={<SafePage><TypographyDocsPage /></SafePage>} />
+                      <Route path="/docs/partitioning" element={<SafePage><PartitioningDocsPage /></SafePage>} />
+
                       <Route path="/nlp" element={<SafePage><NLPPipelinePage /></SafePage>} />
                       <Route path="/traces" element={<SafePage><TracesTimelinePage /></SafePage>} />
                       <Route path="/voice" element={<SafePage><VoiceAgentStudioPage /></SafePage>} />
