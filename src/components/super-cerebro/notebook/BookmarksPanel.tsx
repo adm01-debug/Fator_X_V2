@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Bookmark, BookmarkX, FileText, Inbox } from "lucide-react";
 import { useNotes } from "@/services/notesService";
 import { useCerebroStore } from "@/stores/cerebroStore";
-import { listBookmarks, pruneBookmarks, removeBookmark, BOOKMARKS_EVENT } from "@/services/bookmarksService";
+import { pruneBookmarks, removeBookmark, BOOKMARKS_EVENT } from "@/services/bookmarksService";
 
 interface Props {
   onOpenNote?: () => void;
