@@ -36,6 +36,8 @@ export function LocalGraphView({ noteId }: { noteId: string }) {
       { id: "self", label: note?.title ?? "(nota)", kind: "self", direction: "self" },
     ];
     for (const b of backlinks) {
+      // Filtra self-links: uma nota que aparece linkando pra si mesma não vira nó peripheral.
+      if (b.source_type === "note" && b.source_id === noteId) continue;
       list.push({
         id: `in-${b.id}`,
         label: b.source_title,
@@ -44,6 +46,8 @@ export function LocalGraphView({ noteId }: { noteId: string }) {
       });
     }
     for (const o of outgoing) {
+      // Filtra self-links de saída (target apontando pra própria nota).
+      if (o.target_type === "note" && o.target_id === noteId) continue;
       list.push({
         id: `out-${o.id}`,
         label: o.target_label ?? "(sem título)",
@@ -52,7 +56,7 @@ export function LocalGraphView({ noteId }: { noteId: string }) {
       });
     }
     return list.slice(0, 25); // cap visual
-  }, [note, backlinks, outgoing]);
+  }, [note, backlinks, outgoing, noteId]);
 
   const size = 320;
   const cx = size / 2;
