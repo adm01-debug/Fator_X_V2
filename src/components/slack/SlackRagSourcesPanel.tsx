@@ -73,9 +73,9 @@ export function SlackRagSourcesPanel() {
       </CardHeader>
       <CardContent>
         {loading ? (
-          <div className="text-sm text-muted-foreground">Carregando…</div>
+          <div className="text-body-sm text-muted-foreground">Carregando…</div>
         ) : items.length === 0 ? (
-          <div className="text-sm text-muted-foreground py-8 text-center">
+          <div className="text-body-sm text-muted-foreground py-8 text-center">
             Nenhum canal indexado.
           </div>
         ) : (
@@ -84,7 +84,7 @@ export function SlackRagSourcesPanel() {
               <div key={s.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-lg border bg-card/50">
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge variant={s.enabled ? "default" : "secondary"}>{s.enabled ? "Ativo" : "Pausado"}</Badge>
-                  <span className="font-mono text-sm">{s.channel_name ? `#${s.channel_name}` : s.channel_id}</span>
+                  <span className="font-mono text-body-sm">{s.channel_name ? `#${s.channel_name}` : s.channel_id}</span>
                   <Badge variant="outline">{s.message_count} mensagens</Badge>
                   {s.last_sync_status && (
                     <Badge variant={s.last_sync_status === "ok" ? "secondary" : "destructive"}>
@@ -92,7 +92,7 @@ export function SlackRagSourcesPanel() {
                     </Badge>
                   )}
                   {s.last_synced_at && (
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-meta text-muted-foreground">
                       {formatDistanceToNow(new Date(s.last_synced_at), { addSuffix: true, locale: ptBR })}
                     </span>
                   )}

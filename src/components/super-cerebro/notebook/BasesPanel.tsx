@@ -155,10 +155,10 @@ export function BasesPanel({ onOpenNote }: Props) {
   }
 
   if (!activeNotebookId) {
-    return <p className="text-sm text-muted-foreground p-6">Selecione um notebook para usar Bases.</p>;
+    return <p className="text-body-sm text-muted-foreground p-6">Selecione um notebook para usar Bases.</p>;
   }
   if (isLoading || !current) {
-    return <p className="text-sm text-muted-foreground p-6">Carregando…</p>;
+    return <p className="text-body-sm text-muted-foreground p-6">Carregando…</p>;
   }
 
   return (
@@ -199,7 +199,7 @@ export function BasesPanel({ onOpenNote }: Props) {
       {/* Colunas + ordenação */}
       <div className="rounded-md border border-border/60 p-3 space-y-3">
         <div>
-          <Label className="text-xs text-muted-foreground mb-1.5 block">Colunas visíveis</Label>
+          <Label className="text-meta text-muted-foreground mb-1.5 block">Colunas visíveis</Label>
           <div className="flex flex-wrap gap-1.5">
             {allColumns.map((col) => {
               const active = current.columns.includes(col);
@@ -208,7 +208,7 @@ export function BasesPanel({ onOpenNote }: Props) {
                   key={col}
                   size="sm"
                   variant={active ? "default" : "outline"}
-                  className="h-7 text-xs"
+                  className="h-7 text-meta"
                   onClick={() => toggleColumn(col)}
                 >
                   {col}
@@ -219,7 +219,7 @@ export function BasesPanel({ onOpenNote }: Props) {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground" />
-          <Label className="text-xs text-muted-foreground">Ordenar por</Label>
+          <Label className="text-meta text-muted-foreground">Ordenar por</Label>
           <Select
             value={current.sortBy ?? "__none__"}
             onValueChange={(v) => updateCurrent({ sortBy: v === "__none__" ? null : v })}
@@ -246,13 +246,13 @@ export function BasesPanel({ onOpenNote }: Props) {
       <div className="rounded-md border border-border/60 p-3 space-y-2">
         <div className="flex items-center gap-2">
           <Filter className="h-3.5 w-3.5 text-muted-foreground" />
-          <Label className="text-xs text-muted-foreground">Filtros (AND)</Label>
+          <Label className="text-meta text-muted-foreground">Filtros (AND)</Label>
           <Button size="sm" variant="outline" className="h-7 ml-auto" onClick={addFilter}>
             <Plus className="h-3.5 w-3.5 mr-1" /> Adicionar filtro
           </Button>
         </div>
         {current.filters.length === 0 && (
-          <p className="text-xs text-muted-foreground">Sem filtros — todas as notas do notebook.</p>
+          <p className="text-meta text-muted-foreground">Sem filtros — todas as notas do notebook.</p>
         )}
         {current.filters.map((rule, i) => {
           const opMeta = OPERATORS.find((o) => o.value === rule.op);
@@ -296,7 +296,7 @@ export function BasesPanel({ onOpenNote }: Props) {
           <TableHeader>
             <TableRow>
               {current.columns.map((c) => (
-                <TableHead key={c} className="text-xs whitespace-nowrap">{c}</TableHead>
+                <TableHead key={c} className="text-meta whitespace-nowrap">{c}</TableHead>
               ))}
             </TableRow>
           </TableHeader>
@@ -308,7 +308,7 @@ export function BasesPanel({ onOpenNote }: Props) {
                 onClick={() => handleOpen(row.id)}
               >
                 {current.columns.map((c) => (
-                  <TableCell key={c} className="text-xs align-top max-w-[280px] truncate">
+                  <TableCell key={c} className="text-meta align-top max-w-[280px] truncate">
                     {formatCell(getCell(row, c))}
                   </TableCell>
                 ))}
@@ -316,7 +316,7 @@ export function BasesPanel({ onOpenNote }: Props) {
             ))}
             {filteredRows.length === 0 && (
               <TableRow>
-                <TableCell colSpan={current.columns.length} className="text-center text-xs text-muted-foreground py-6">
+                <TableCell colSpan={current.columns.length} className="text-center text-meta text-muted-foreground py-6">
                   Nenhuma linha corresponde aos filtros.
                 </TableCell>
               </TableRow>

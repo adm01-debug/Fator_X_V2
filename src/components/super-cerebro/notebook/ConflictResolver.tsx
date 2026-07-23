@@ -84,7 +84,7 @@ export function ConflictResolver({ conflicts, localNotes, incoming, onChange }: 
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-wrap gap-2 text-xs">
+        <div className="flex flex-wrap gap-2 text-meta">
           <Badge variant="outline" className="gap-1"><HardDrive className="h-3 w-3" /> Manter: {summary.local}</Badge>
           <Badge variant="default" className="gap-1"><DownloadCloud className="h-3 w-3" /> Sobrescrever: {summary.incoming}</Badge>
           <Badge variant="secondary" className="gap-1"><GitMerge className="h-3 w-3" /> Mesclar: {summary.merge}</Badge>
@@ -104,7 +104,7 @@ export function ConflictResolver({ conflicts, localNotes, incoming, onChange }: 
           return (
             <Card key={c.id} className="border-nexus-amber/40">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm flex items-center gap-2 min-w-0">
+                <CardTitle className="text-body-sm flex items-center gap-2 min-w-0">
                   <span className="truncate">{c.title_local}</span>
                   {c.title_incoming !== c.title_local && (
                     <>
@@ -113,24 +113,24 @@ export function ConflictResolver({ conflicts, localNotes, incoming, onChange }: 
                     </>
                   )}
                 </CardTitle>
-                <div className="text-[11px] text-muted-foreground">
+                <div className="text-meta text-muted-foreground">
                   local: {formatTs(c.updated_local)} · recebida: {formatTs(c.updated_incoming)}
                 </div>
               </CardHeader>
               <CardContent className="space-y-3 pt-0">
                 <Tabs defaultValue="diff">
                   <TabsList className="h-8">
-                    <TabsTrigger value="diff" className="text-xs h-6">Diff</TabsTrigger>
-                    <TabsTrigger value="side" className="text-xs h-6">Lado a lado</TabsTrigger>
+                    <TabsTrigger value="diff" className="text-meta h-6">Diff</TabsTrigger>
+                    <TabsTrigger value="side" className="text-meta h-6">Lado a lado</TabsTrigger>
                     {currentRes === "merge" && loc && inc && (
-                      <TabsTrigger value="preview" className="text-xs h-6">Prévia do merge</TabsTrigger>
+                      <TabsTrigger value="preview" className="text-meta h-6">Prévia do merge</TabsTrigger>
                     )}
                   </TabsList>
                   <TabsContent value="diff" className="mt-2">
                     <DiffView a={loc?.body_md ?? ""} b={inc?.body_md ?? ""} />
                   </TabsContent>
                   <TabsContent value="side" className="mt-2">
-                    <div className="grid grid-cols-2 gap-2 text-[11px]">
+                    <div className="grid grid-cols-2 gap-2 text-meta">
                       <BodyBlock label="Local" body={loc?.body_md ?? ""} />
                       <BodyBlock label="Recebida" body={inc?.body_md ?? ""} tone="incoming" />
                     </div>
@@ -164,7 +164,7 @@ function ResOption({ id, value, icon, label }: { id: string; value: Resolution; 
   return (
     <Label
       htmlFor={id}
-      className="flex items-center gap-2 rounded border border-border/60 px-2 py-1.5 text-xs cursor-pointer hover:bg-secondary/40 [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/5"
+      className="flex items-center gap-2 rounded border border-border/60 px-2 py-1.5 text-meta cursor-pointer hover:bg-secondary/40 [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/5"
     >
       <RadioGroupItem id={id} value={value} />
       {icon}
@@ -178,16 +178,16 @@ function DiffView({ a, b }: { a: string; b: string }) {
   const stats = diffStats(diff);
   return (
     <div className="rounded border border-border/50 bg-background/60">
-      <div className="flex items-center gap-3 border-b border-border/50 px-2 py-1 text-[11px] text-muted-foreground">
-        <span className="text-emerald-500">+{stats.added}</span>
-        <span className="text-rose-500">−{stats.removed}</span>
+      <div className="flex items-center gap-3 border-b border-border/50 px-2 py-1 text-meta text-muted-foreground">
+        <span className="text-nexus-emerald">+{stats.added}</span>
+        <span className="text-nexus-rose">−{stats.removed}</span>
         <span>={stats.same}</span>
       </div>
-      <pre className="max-h-56 overflow-auto p-2 text-[11px] leading-relaxed font-mono">
+      <pre className="max-h-56 overflow-auto p-2 text-meta leading-relaxed font-mono">
         {diff.map((line, i) => {
           const bg =
-            line.kind === "added" ? "bg-emerald-500/10 text-emerald-200"
-            : line.kind === "removed" ? "bg-rose-500/10 text-rose-200"
+            line.kind === "added" ? "bg-nexus-emerald/10 text-nexus-emerald"
+            : line.kind === "removed" ? "bg-nexus-rose/10 text-nexus-rose"
             : "text-muted-foreground";
           const marker = line.kind === "added" ? "+" : line.kind === "removed" ? "−" : " ";
           return (
@@ -209,8 +209,8 @@ function BodyBlock({ label, body, tone }: { label: string; body: string; tone?: 
     : "border-border/50";
   return (
     <div className={`rounded border ${border} bg-background/60`}>
-      <div className="border-b border-border/50 px-2 py-1 text-[10px] uppercase tracking-wide text-muted-foreground">{label}</div>
-      <pre className="max-h-56 overflow-auto p-2 text-[11px] font-mono whitespace-pre-wrap">{body || "(vazio)"}</pre>
+      <div className="border-b border-border/50 px-2 py-1 text-meta uppercase tracking-wide text-muted-foreground">{label}</div>
+      <pre className="max-h-56 overflow-auto p-2 text-meta font-mono whitespace-pre-wrap">{body || "(vazio)"}</pre>
     </div>
   );
 }

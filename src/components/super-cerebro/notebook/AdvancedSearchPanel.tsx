@@ -95,7 +95,7 @@ export function AdvancedSearchPanel({ onOpenNote }: { onOpenNote?: (id: string) 
     <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_280px] gap-4">
       <Card className="border-border/50">
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-base">
+          <CardTitle className="flex items-center gap-2 text-body">
             <Search className="h-4 w-4" /> Busca avançada
             <Badge variant="outline" className="ml-2 font-normal">DSL estilo Obsidian</Badge>
           </CardTitle>
@@ -126,7 +126,7 @@ export function AdvancedSearchPanel({ onOpenNote }: { onOpenNote?: (id: string) 
             </Button>
           </div>
 
-          <div className="flex flex-wrap gap-1.5 text-xs">
+          <div className="flex flex-wrap gap-1.5 text-meta">
             {EXAMPLES.map((ex) => (
               <button
                 key={ex.label}
@@ -139,7 +139,7 @@ export function AdvancedSearchPanel({ onOpenNote }: { onOpenNote?: (id: string) 
             ))}
           </div>
 
-          <div className="flex items-center justify-between text-xs text-muted-foreground pt-1">
+          <div className="flex items-center justify-between text-meta text-muted-foreground pt-1">
             <span>
               {isLoading ? "Indexando…" : `${results.length} resultado(s) em ${notes.length} nota(s)`}
             </span>
@@ -164,25 +164,25 @@ export function AdvancedSearchPanel({ onOpenNote }: { onOpenNote?: (id: string) 
                       <span className="font-medium truncate">{n.title || "(sem título)"}</span>
                       <ChevronRight className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover:opacity-100" />
                     </div>
-                    <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
+                    <p className="text-meta text-muted-foreground mt-0.5 line-clamp-2">
                       {highlight(n.body_md ?? "")}
                     </p>
                     <div className="flex flex-wrap gap-1 mt-1.5">
-                      {n.is_archived && <Badge variant="secondary" className="text-[10px]">arquivada</Badge>}
+                      {n.is_archived && <Badge variant="secondary" className="text-meta">arquivada</Badge>}
                       {n.tags?.slice(0, 6).map((t) => (
-                        <Badge key={t} variant="outline" className="text-[10px]">#{t}</Badge>
+                        <Badge key={t} variant="outline" className="text-meta">#{t}</Badge>
                       ))}
                     </div>
                   </button>
                 </li>
               ))}
               {!isLoading && query.trim() && results.length === 0 && (
-                <li className="text-sm text-muted-foreground text-center py-8">
+                <li className="text-body-sm text-muted-foreground text-center py-8">
                   Nenhuma nota bate com esta consulta.
                 </li>
               )}
               {!query.trim() && (
-                <li className="text-sm text-muted-foreground text-center py-8">
+                <li className="text-body-sm text-muted-foreground text-center py-8">
                   Digite uma consulta ou clique em um exemplo acima.
                 </li>
               )}
@@ -193,9 +193,9 @@ export function AdvancedSearchPanel({ onOpenNote }: { onOpenNote?: (id: string) 
 
       <Card className="border-border/50">
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm">Sintaxe suportada</CardTitle>
+          <CardTitle className="text-body-sm">Sintaxe suportada</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-2 text-xs text-muted-foreground">
+        <CardContent className="space-y-2 text-meta text-muted-foreground">
           <p><code className="text-foreground">tag:foo</code> — nota com tag</p>
           <p><code className="text-foreground">-tag:draft</code> — nega o filtro</p>
           <p><code className="text-foreground">title:"reunião"</code> — no título</p>

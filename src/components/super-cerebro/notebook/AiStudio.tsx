@@ -70,37 +70,37 @@ export function AiStudio({ noteId, notebookId }: { noteId: string; notebookId: s
     <div className="p-3 space-y-4">
       <section className="space-y-2">
         <div className="flex items-center justify-between">
-          <h4 className="text-xs font-semibold flex items-center gap-1.5">
+          <h4 className="text-meta font-semibold flex items-center gap-1.5">
             <Sparkles className="h-3.5 w-3.5 text-nexus-primary" /> Resumo IA
           </h4>
-          <Button size="sm" variant="ghost" className="h-6 text-[10px]" disabled={loading === "summary"} onClick={() => run("summary")}>
+          <Button size="sm" variant="ghost" className="h-6 text-meta" disabled={loading === "summary"} onClick={() => run("summary")}>
             {loading === "summary" ? <Loader2 className="h-3 w-3 animate-spin" /> : summary ? "Regenerar" : "Gerar"}
           </Button>
         </div>
         {summary ? (
-          <div className="text-xs bg-secondary/30 p-2 rounded border border-border/40">
+          <div className="text-meta bg-secondary/30 p-2 rounded border border-border/40">
             <CitedMarkdown text={summary.answer} citations={summary.citations} />
           </div>
         ) : (
-          <p className="text-[11px] text-muted-foreground">Gere um resumo executivo com citações da própria nota.</p>
+          <p className="text-meta text-muted-foreground">Gere um resumo executivo com citações da própria nota.</p>
         )}
       </section>
 
       <section className="space-y-2">
         <div className="flex items-center justify-between">
-          <h4 className="text-xs font-semibold flex items-center gap-1.5">
+          <h4 className="text-meta font-semibold flex items-center gap-1.5">
             <HelpCircle className="h-3.5 w-3.5 text-nexus-secondary" /> Perguntas sugeridas
           </h4>
-          <Button size="sm" variant="ghost" className="h-6 text-[10px]" disabled={loading === "questions"} onClick={() => run("questions")}>
+          <Button size="sm" variant="ghost" className="h-6 text-meta" disabled={loading === "questions"} onClick={() => run("questions")}>
             {loading === "questions" ? <Loader2 className="h-3 w-3 animate-spin" /> : questions ? "Regenerar" : "Gerar"}
           </Button>
         </div>
         {questions ? (
-          <div className="text-xs bg-secondary/30 p-2 rounded border border-border/40">
+          <div className="text-meta bg-secondary/30 p-2 rounded border border-border/40">
             <CitedMarkdown text={questions.answer} citations={questions.citations} />
           </div>
         ) : (
-          <p className="text-[11px] text-muted-foreground">Descubra gaps e próximas perguntas de pesquisa.</p>
+          <p className="text-meta text-muted-foreground">Descubra gaps e próximas perguntas de pesquisa.</p>
         )}
       </section>
     </div>

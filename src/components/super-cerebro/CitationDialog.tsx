@@ -171,7 +171,7 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
             <FileText className="h-5 w-5 text-primary" />
             Fonte [{citation?.n}]
           </DialogTitle>
-          <DialogDescription className="text-foreground font-semibold text-base">
+          <DialogDescription className="text-foreground font-semibold text-body">
             {citation?.document_title}
           </DialogDescription>
         </DialogHeader>
@@ -191,7 +191,7 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
 
           <div className="rounded-lg border border-border/60 bg-secondary/20 p-3">
             <div className="flex items-center justify-between mb-1.5">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              <p className="text-meta font-bold uppercase tracking-widest text-muted-foreground">
                 Trecho usado
               </p>
               {keyPhrase && (
@@ -199,7 +199,7 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="h-6 px-2 gap-1 text-[10px]"
+                  className="h-6 px-2 gap-1 text-meta"
                   onClick={() => setHighlightMode((v) => !v)}
                   aria-pressed={highlightMode}
                 >
@@ -208,7 +208,7 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
                 </Button>
               )}
             </div>
-            <p className="text-sm text-foreground leading-relaxed italic">
+            <p className="text-body-sm text-foreground leading-relaxed italic">
               "
               {highlightMode && keyPhrase
                 ? highlightParts.map((part, i) =>
@@ -231,12 +231,12 @@ export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) 
           {lastError && (
             <div
               role="alert"
-              className="flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 p-2.5 text-xs text-destructive"
+              className="flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 p-2.5 text-meta text-destructive"
             >
               <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" />
               <div className="flex-1">
                 <p className="font-semibold leading-snug">{lastError.message}</p>
-                <p className="text-[10px] opacity-80 mt-0.5">
+                <p className="text-meta opacity-80 mt-0.5">
                   Tentamos 3 vezes com backoff. Você pode tentar novamente sem recarregar a página.
                 </p>
               </div>

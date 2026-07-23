@@ -47,7 +47,7 @@ export function PropertiesPanel({ noteId, collectionId }: Props) {
 
   if (isLoading || !note) {
     return (
-      <div className="p-3 text-xs text-muted-foreground flex items-center gap-2">
+      <div className="p-3 text-meta text-muted-foreground flex items-center gap-2">
         <Loader2 className="h-3 w-3 animate-spin" /> Carregando…
       </div>
     );
@@ -101,7 +101,7 @@ export function PropertiesPanel({ noteId, collectionId }: Props) {
   return (
     <div className="p-3 space-y-3">
       <div className="flex items-center justify-between">
-        <p className="text-[11px] font-semibold uppercase text-muted-foreground tracking-wide">
+        <p className="text-meta font-semibold uppercase text-muted-foreground tracking-wide">
           Properties
         </p>
         <Badge variant="outline" className="text-[9px]">
@@ -110,7 +110,7 @@ export function PropertiesPanel({ noteId, collectionId }: Props) {
       </div>
 
       {entries.length === 0 && (
-        <p className="text-xs text-muted-foreground">
+        <p className="text-meta text-muted-foreground">
           Nenhuma propriedade. Adicione campos como <code>status</code>, <code>due</code>, <code>tags</code>.
         </p>
       )}
@@ -118,7 +118,7 @@ export function PropertiesPanel({ noteId, collectionId }: Props) {
       <div className="space-y-2">
         {entries.map(([key, value]) => (
           <div key={key} className="flex items-center gap-2">
-            <span className="text-xs font-medium text-nexus-primary w-28 truncate" title={key}>
+            <span className="text-meta font-medium text-nexus-primary w-28 truncate" title={key}>
               {key}
             </span>
             <Input
@@ -128,7 +128,7 @@ export function PropertiesPanel({ noteId, collectionId }: Props) {
                 if (JSON.stringify(next) === JSON.stringify(value)) return;
                 void savePatch({ [key]: next }, `edit:${key}`);
               }}
-              className="h-7 text-xs"
+              className="h-7 text-meta"
               placeholder="valor"
             />
             <Button
@@ -151,7 +151,7 @@ export function PropertiesPanel({ noteId, collectionId }: Props) {
           onChange={(e) => setNewKey(e.target.value)}
           onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void handleAdd(); } }}
           placeholder="nova_propriedade"
-          className="h-7 text-xs"
+          className="h-7 text-meta"
         />
         <Button
           size="sm"
@@ -165,7 +165,7 @@ export function PropertiesPanel({ noteId, collectionId }: Props) {
         </Button>
       </div>
 
-      <p className="text-[10px] text-muted-foreground">
+      <p className="text-meta text-muted-foreground">
         Dica: use listas separando por vírgula. Booleans (<code>true</code>/<code>false</code>) e números são detectados automaticamente.
       </p>
     </div>

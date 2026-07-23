@@ -62,9 +62,9 @@ export function PodcastPanel({ notebookId }: Props) {
         )}
       </Button>
 
-      {isLoading && <p className="text-xs text-muted-foreground">Carregando…</p>}
+      {isLoading && <p className="text-meta text-muted-foreground">Carregando…</p>}
       {!isLoading && podcasts.length === 0 && (
-        <p className="text-xs text-muted-foreground">
+        <p className="text-meta text-muted-foreground">
           Nenhum podcast ainda. Gere um resumo em áudio das notas e documentos.
         </p>
       )}
@@ -114,10 +114,10 @@ function PodcastRow({
   return (
     <li className="rounded-md border border-border/50 p-2 space-y-2 bg-card/40">
       <div className="flex items-center gap-2">
-        <span className={`text-[11px] font-medium ${statusColor[podcast.status]}`}>
+        <span className={`text-meta font-medium ${statusColor[podcast.status]}`}>
           {podcast.status}
         </span>
-        <span className="text-[11px] text-muted-foreground">
+        <span className="text-meta text-muted-foreground">
           {formatDistanceToNow(new Date(podcast.created_at), { locale: ptBR, addSuffix: true })}
         </span>
         <div className="ml-auto flex items-center gap-1">
@@ -143,12 +143,12 @@ function PodcastRow({
         </audio>
       )}
       {podcast.status === "ready" && !audioUrl && (
-        <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
+        <div className="flex items-center gap-1 text-meta text-muted-foreground">
           <Play className="h-3 w-3" /> preparando áudio…
         </div>
       )}
       {podcast.status === "failed" && podcast.error && (
-        <p className="text-[11px] text-destructive truncate" title={podcast.error}>
+        <p className="text-meta text-destructive truncate" title={podcast.error}>
           {podcast.error}
         </p>
       )}

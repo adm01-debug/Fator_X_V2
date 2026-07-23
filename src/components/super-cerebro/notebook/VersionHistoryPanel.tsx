@@ -60,7 +60,7 @@ export function VersionHistoryPanel({ noteId }: Props) {
 
   if (isLoading) {
     return (
-      <div className="p-3 text-xs text-muted-foreground flex items-center gap-2">
+      <div className="p-3 text-meta text-muted-foreground flex items-center gap-2">
         <Loader2 className="h-3 w-3 animate-spin" /> Carregando histórico…
       </div>
     );
@@ -68,7 +68,7 @@ export function VersionHistoryPanel({ noteId }: Props) {
 
   if (versions.length === 0) {
     return (
-      <div className="p-3 text-xs text-muted-foreground">
+      <div className="p-3 text-meta text-muted-foreground">
         <History className="h-3 w-3 inline mr-1" />
         Nenhuma versão histórica ainda. Snapshots são criados automaticamente a cada edição.
       </div>
@@ -79,22 +79,22 @@ export function VersionHistoryPanel({ noteId }: Props) {
     return (
       <div className="p-3 space-y-2">
         <div className="flex items-center justify-between gap-2">
-          <span className="text-xs font-semibold">
+          <span className="text-meta font-semibold">
             Diff: {selectedTitle} → atual
           </span>
-          <Button size="sm" variant="ghost" onClick={() => setDiff(null)} className="h-6 text-xs">
+          <Button size="sm" variant="ghost" onClick={() => setDiff(null)} className="h-6 text-meta">
             Voltar
           </Button>
         </div>
-        <pre className="text-[11px] font-mono bg-secondary/30 rounded p-2 max-h-[420px] overflow-auto whitespace-pre-wrap">
+        <pre className="text-meta font-mono bg-secondary/30 rounded p-2 max-h-[420px] overflow-auto whitespace-pre-wrap">
           {diff.map((l, i) => (
             <div
               key={i}
               className={
                 l.kind === "added"
-                  ? "text-emerald-500"
+                  ? "text-nexus-emerald"
                   : l.kind === "removed"
-                    ? "text-red-500"
+                    ? "text-nexus-red"
                     : "text-muted-foreground"
               }
             >
@@ -112,17 +112,17 @@ export function VersionHistoryPanel({ noteId }: Props) {
       {versions.map((v) => (
         <li key={v.id} className="p-3 flex items-start justify-between gap-2 hover:bg-secondary/20">
           <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-1.5 text-xs">
-              <Badge variant="outline" className="text-[10px]">v{v.version_number}</Badge>
+            <div className="flex items-center gap-1.5 text-meta">
+              <Badge variant="outline" className="text-meta">v{v.version_number}</Badge>
               <span className="font-medium truncate">{v.title}</span>
             </div>
-            <p className="text-[11px] text-muted-foreground mt-0.5">{formatDate(v.created_at)}</p>
+            <p className="text-meta text-muted-foreground mt-0.5">{formatDate(v.created_at)}</p>
           </div>
           <div className="flex items-center gap-1 shrink-0">
             <Button
               size="sm"
               variant="ghost"
-              className="h-7 px-2 text-xs gap-1"
+              className="h-7 px-2 text-meta gap-1"
               onClick={() => handleDiff(v.id, `v${v.version_number}`)}
               disabled={diffing === v.id}
             >
@@ -132,7 +132,7 @@ export function VersionHistoryPanel({ noteId }: Props) {
             <Button
               size="sm"
               variant="ghost"
-              className="h-7 px-2 text-xs gap-1"
+              className="h-7 px-2 text-meta gap-1"
               onClick={() => handleRestore(v.id)}
               disabled={restore.isPending}
             >

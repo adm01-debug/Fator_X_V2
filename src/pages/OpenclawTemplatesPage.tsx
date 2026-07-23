@@ -69,7 +69,7 @@ export default function OpenclawTemplatesPage() {
 
       {error && (
         <Card>
-          <CardContent className="p-6 text-sm text-destructive">
+          <CardContent className="p-6 text-body-sm text-destructive">
             Falha ao carregar templates: {error instanceof Error ? error.message : String(error)}
           </CardContent>
         </Card>
@@ -94,13 +94,13 @@ export default function OpenclawTemplatesPage() {
             <Card
               key={t.id}
               className={cn(
-                'cursor-pointer transition-all hover:shadow-lg hover:border-primary/50',
+                'cursor-pointer transition-all hover:shadow-nexus-lg hover:border-primary/50',
               )}
               onClick={() => setSelected(t)}
             >
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-2">
-                  <CardTitle className="text-base">{t.name_pt}</CardTitle>
+                  <CardTitle className="text-body">{t.name_pt}</CardTitle>
                   <Badge variant="outline" className="shrink-0">
                     {difficultyLabel(t.difficulty)}
                   </Badge>
@@ -161,8 +161,8 @@ export default function OpenclawTemplatesPage() {
 
               {selected.soul_md && (
                 <section>
-                  <h3 className="text-sm font-semibold mb-2">SOUL.md</h3>
-                  <pre className="text-xs bg-muted rounded-md p-3 overflow-x-auto whitespace-pre-wrap">
+                  <h3 className="text-body-sm font-semibold mb-2">SOUL.md</h3>
+                  <pre className="text-meta bg-muted rounded-md p-3 overflow-x-auto whitespace-pre-wrap">
                     {selected.soul_md}
                   </pre>
                 </section>
@@ -170,8 +170,8 @@ export default function OpenclawTemplatesPage() {
 
               {selected.agents_md && (
                 <section>
-                  <h3 className="text-sm font-semibold mb-2">AGENTS.md</h3>
-                  <pre className="text-xs bg-muted rounded-md p-3 overflow-x-auto whitespace-pre-wrap">
+                  <h3 className="text-body-sm font-semibold mb-2">AGENTS.md</h3>
+                  <pre className="text-meta bg-muted rounded-md p-3 overflow-x-auto whitespace-pre-wrap">
                     {selected.agents_md}
                   </pre>
                 </section>
@@ -179,8 +179,8 @@ export default function OpenclawTemplatesPage() {
 
               {selected.skills.length > 0 && (
                 <section>
-                  <h3 className="text-sm font-semibold mb-2">Skills necessárias</h3>
-                  <ul className="text-sm space-y-1">
+                  <h3 className="text-body-sm font-semibold mb-2">Skills necessárias</h3>
+                  <ul className="text-body-sm space-y-1">
                     {selected.skills.map((s) => (
                       <li key={s.name} className="flex items-center gap-2">
                         <Badge variant={s.required ? 'default' : 'outline'}>
@@ -199,7 +199,7 @@ export default function OpenclawTemplatesPage() {
                     href={selected.source_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
+                    className="text-meta text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
                   >
                     <ExternalLink className="h-3 w-3" />
                     Fonte original

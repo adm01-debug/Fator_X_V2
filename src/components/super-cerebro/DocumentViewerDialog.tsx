@@ -128,14 +128,14 @@ export function DocumentViewerDialog({ source, onOpenChange }: Props) {
       <DialogContent className="max-w-6xl w-[95vw] h-[90vh] p-0 gap-0 overflow-hidden flex flex-col">
         <DialogHeader className="px-4 py-3 border-b border-border/60 flex-row items-center justify-between gap-3 space-y-0">
           <div className="flex items-center gap-2 min-w-0 flex-1">
-            <DialogTitle className="truncate text-sm font-semibold">
+            <DialogTitle className="truncate text-body-sm font-semibold">
               {source?.documentTitle ?? source?.filename ?? 'Documento'}
             </DialogTitle>
             {source?.page != null && (
-              <Badge variant="outline" className="text-[10px]">Página {source.page}</Badge>
+              <Badge variant="outline" className="text-meta">Página {source.page}</Badge>
             )}
             {keyPhrase && (
-              <Badge variant="secondary" className="text-[10px] max-w-[220px] truncate">
+              <Badge variant="secondary" className="text-meta max-w-[220px] truncate">
                 “{keyPhrase}”
               </Badge>
             )}
@@ -151,7 +151,7 @@ export function DocumentViewerDialog({ source, onOpenChange }: Props) {
             >
               <ZoomOut className="h-4 w-4" />
             </Button>
-            <span className="text-xs tabular-nums w-10 text-center text-muted-foreground">
+            <span className="text-meta tabular-nums w-10 text-center text-muted-foreground">
               {Math.round(zoom * 100)}%
             </span>
             <Button
@@ -218,13 +218,13 @@ export function DocumentViewerDialog({ source, onOpenChange }: Props) {
           {kind === 'docx' && (
             <div className="w-full h-full flex justify-center py-6 px-4">
               {loading && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2 text-body-sm text-muted-foreground">
                   <Loader2 className="h-4 w-4 animate-spin" />
                   Convertendo documento…
                 </div>
               )}
               {loadError && (
-                <div className="flex flex-col items-center gap-2 text-sm text-muted-foreground">
+                <div className="flex flex-col items-center gap-2 text-body-sm text-muted-foreground">
                   <FileWarning className="h-6 w-6" />
                   {loadError}
                 </div>
@@ -246,7 +246,7 @@ export function DocumentViewerDialog({ source, onOpenChange }: Props) {
           )}
 
           {kind === 'other' && source && (
-            <div className="w-full h-full flex flex-col items-center justify-center gap-3 text-sm text-muted-foreground p-6 text-center">
+            <div className="w-full h-full flex flex-col items-center justify-center gap-3 text-body-sm text-muted-foreground p-6 text-center">
               <FileWarning className="h-8 w-8" />
               <p>Este formato não tem prévia embutida.</p>
               <Button size="sm" variant="secondary" onClick={() => window.open(source.url, '_blank', 'noopener,noreferrer')}>

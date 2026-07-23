@@ -70,8 +70,8 @@ export function E2EESyncPanel() {
   if (!notebookId || !workspaceId) {
     return (
       <Card>
-        <CardHeader><CardTitle className="text-base">Sync E2EE</CardTitle></CardHeader>
-        <CardContent><p className="text-sm text-muted-foreground">Selecione um notebook para gerenciar o sync criptografado.</p></CardContent>
+        <CardHeader><CardTitle className="text-body">Sync E2EE</CardTitle></CardHeader>
+        <CardContent><p className="text-body-sm text-muted-foreground">Selecione um notebook para gerenciar o sync criptografado.</p></CardContent>
       </Card>
     );
   }
@@ -183,7 +183,7 @@ export function E2EESyncPanel() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
+          <CardTitle className="text-body flex items-center gap-2">
             <KeyRound className="h-4 w-4" /> Passphrase da sessão
             {unlocked ? (
               <Badge variant="default" className="ml-2 gap-1"><Unlock className="h-3 w-3" /> Ativa</Badge>
@@ -195,11 +195,11 @@ export function E2EESyncPanel() {
         <CardContent className="space-y-3">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label htmlFor="e2ee-pass" className="text-xs">Passphrase</Label>
+              <Label htmlFor="e2ee-pass" className="text-meta">Passphrase</Label>
               <Input id="e2ee-pass" type="password" autoComplete="off" value={pass} onChange={(e) => setPass(e.target.value)} placeholder="mínimo 8 caracteres" />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="e2ee-confirm" className="text-xs">Confirmar</Label>
+              <Label htmlFor="e2ee-confirm" className="text-meta">Confirmar</Label>
               <Input id="e2ee-confirm" type="password" autoComplete="off" value={confirmPass} onChange={(e) => setConfirmPass(e.target.value)} placeholder="repita" />
             </div>
           </div>
@@ -212,7 +212,7 @@ export function E2EESyncPanel() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
+          <CardTitle className="text-body flex items-center gap-2">
             <RefreshCw className="h-4 w-4" /> Auto-sync em segundo plano
             <E2EESyncStatusBadge status={autoStatus} />
           </CardTitle>
@@ -224,7 +224,7 @@ export function E2EESyncPanel() {
               <Label htmlFor="autosync" className="cursor-pointer">Ativar auto-sync</Label>
             </div>
             <div className="flex items-center gap-2">
-              <Label htmlFor="autosync-interval" className="text-xs text-muted-foreground">Intervalo (s)</Label>
+              <Label htmlFor="autosync-interval" className="text-meta text-muted-foreground">Intervalo (s)</Label>
               <Input
                 id="autosync-interval"
                 type="number"
@@ -240,7 +240,7 @@ export function E2EESyncPanel() {
               <RefreshCw className="h-3.5 w-3.5 mr-1.5" /> Rodar agora
             </Button>
           </div>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-meta text-muted-foreground">
             Cifra o notebook e registra um checkpoint local a cada intervalo. Em falha, aplica retry exponencial
             (base 5s, teto 5min) até a próxima execução bem-sucedida.
           </p>
@@ -252,10 +252,10 @@ export function E2EESyncPanel() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2"><Download className="h-4 w-4" /> Exportar bundle cifrado</CardTitle>
+            <CardTitle className="text-body flex items-center gap-2"><Download className="h-4 w-4" /> Exportar bundle cifrado</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <p className="text-xs text-muted-foreground">
+            <p className="text-meta text-muted-foreground">
               Empacota <strong>{localNotes.length}</strong> nota{localNotes.length === 1 ? "" : "s"} deste notebook em um arquivo JSON cifrado.
             </p>
             <Button size="sm" onClick={doExport} disabled={!unlocked || busy}>Exportar agora</Button>
@@ -264,11 +264,11 @@ export function E2EESyncPanel() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2"><Upload className="h-4 w-4" /> Importar bundle</CardTitle>
+            <CardTitle className="text-body flex items-center gap-2"><Upload className="h-4 w-4" /> Importar bundle</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <Input type="file" accept="application/json,.json" onChange={(e) => onFile(e.target.files?.[0])} disabled={!unlocked || busy} />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-meta text-muted-foreground">
               O arquivo é decifrado localmente. Você revisa o plano antes de aplicar.
             </p>
           </CardContent>
@@ -278,10 +278,10 @@ export function E2EESyncPanel() {
       {plan && incoming && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Plano de reconciliação</CardTitle>
+            <CardTitle className="text-body">Plano de reconciliação</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex flex-wrap gap-2 text-xs">
+            <div className="flex flex-wrap gap-2 text-meta">
               <Badge variant="default">Inserir: {plan.toInsert.length}</Badge>
               <Badge variant="secondary">Atualizar: {plan.toUpdate.length}</Badge>
               <Badge variant="outline">Manter local: {plan.toKeep.length}</Badge>
@@ -292,7 +292,7 @@ export function E2EESyncPanel() {
               <>
                 <Separator />
                 <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-sm font-semibold">
+                  <div className="flex items-center gap-2 text-body-sm font-semibold">
                     <AlertTriangle className="h-4 w-4 text-nexus-amber" />
                     Conflitos — revise diffs e escolha como resolver cada nota
                   </div>

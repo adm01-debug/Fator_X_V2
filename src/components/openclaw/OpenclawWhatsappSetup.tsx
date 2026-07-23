@@ -177,7 +177,7 @@ export function OpenclawWhatsappSetup() {
       case 'pending':
         return <Badge variant="outline" className="gap-1"><Loader2 className="h-3 w-3 animate-spin" />Aguardando QR</Badge>;
       case 'expired':
-        return <Badge variant="outline" className="gap-1 border-amber-500/40 text-amber-500"><AlertTriangle className="h-3 w-3" />QR expirado</Badge>;
+        return <Badge variant="outline" className="gap-1 border-nexus-amber/40 text-nexus-amber"><AlertTriangle className="h-3 w-3" />QR expirado</Badge>;
       case 'error':
         return <Badge variant="destructive" className="gap-1"><AlertTriangle className="h-3 w-3" />Erro</Badge>;
       default:

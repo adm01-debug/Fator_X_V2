@@ -22,7 +22,7 @@ interface OpenclawEvent {
 
 const LEVEL_STYLES: Record<OpenclawEvent['level'], string> = {
   info: 'bg-nexus-cyan/10 text-nexus-cyan border-nexus-cyan/30',
-  warn: 'bg-amber-500/10 text-amber-500 border-amber-500/30',
+  warn: 'bg-nexus-amber/10 text-nexus-amber border-nexus-amber/30',
   error: 'bg-destructive/10 text-destructive border-destructive/30',
 };
 
@@ -75,7 +75,7 @@ export function OpenclawEventsPanel() {
               </Badge>
             )}
             {counters.warns > 0 && (
-              <Badge className="bg-amber-500/10 text-amber-500 border-amber-500/30">
+              <Badge className="bg-nexus-amber/10 text-nexus-amber border-nexus-amber/30">
                 {counters.warns} alertas
               </Badge>
             )}

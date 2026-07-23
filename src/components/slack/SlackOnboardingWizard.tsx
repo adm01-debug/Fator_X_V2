@@ -63,17 +63,17 @@ export function SlackOnboardingWizard() {
                 key={s.id}
                 aria-current={active ? "step" : undefined}
                 className={cn(
-                  "rounded-md border p-3 text-center text-xs sm:text-sm transition-colors",
+                  "rounded-md border p-3 text-center text-meta sm:text-body-sm transition-colors",
                   active && "border-nexus-primary bg-nexus-primary/10",
-                  done && "border-emerald-500/60 bg-emerald-500/5",
+                  done && "border-nexus-emerald/60 bg-nexus-emerald/5",
                   !active && !done && "border-border"
                 )}
               >
                 <div className="flex items-center justify-center gap-1.5">
                   {done ? (
-                    <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                    <CheckCircle2 className="h-4 w-4 text-nexus-emerald" />
                   ) : (
-                    <Badge variant={active ? "default" : "outline"} className="h-5 w-5 rounded-full p-0 justify-center text-[10px]">
+                    <Badge variant={active ? "default" : "outline"} className="h-5 w-5 rounded-full p-0 justify-center text-meta">
                       {s.id}
                     </Badge>
                   )}
@@ -87,12 +87,12 @@ export function SlackOnboardingWizard() {
         {/* Corpo do passo */}
         {step === 1 && (
           <div className="space-y-3">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-body-sm text-muted-foreground">
               Acesse o painel do Slack e crie um novo app a partir do manifest fornecido pela documentação.
             </p>
             <Alert>
               <AlertTitle>Escopos mínimos</AlertTitle>
-              <AlertDescription className="text-xs">
+              <AlertDescription className="text-meta">
                 <code>chat:write</code>, <code>channels:read</code>, <code>channels:history</code>, <code>users:read</code>, <code>app_mentions:read</code>, <code>im:history</code>
               </AlertDescription>
             </Alert>
@@ -107,15 +107,15 @@ export function SlackOnboardingWizard() {
 
         {step === 2 && (
           <div className="space-y-3">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-body-sm text-muted-foreground">
               Copie o <b>Bot User OAuth Token</b> (começa com <code>xoxb-</code>) e o <b>Signing Secret</b> do painel do Slack e salve-os nos secrets do backend:
             </p>
-            <ul className="text-sm space-y-1 list-disc pl-5">
+            <ul className="text-body-sm space-y-1 list-disc pl-5">
               <li><code>SLACK_BOT_TOKEN</code></li>
               <li><code>SLACK_SIGNING_SECRET</code></li>
             </ul>
             <Alert>
-              <AlertDescription className="text-xs">
+              <AlertDescription className="text-meta">
                 Se ainda não configurou, peça ao agente para abrir o formulário de secrets ou vá em <b>Backend → Edge Function Secrets</b>.
               </AlertDescription>
             </Alert>
@@ -124,7 +124,7 @@ export function SlackOnboardingWizard() {
 
         {step === 3 && (
           <div className="space-y-3">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-body-sm text-muted-foreground">
               Clique em verificar. O Nexus chama <code>auth.test</code> no Slack e valida o token.
             </p>
             <Button
@@ -149,7 +149,7 @@ export function SlackOnboardingWizard() {
             <ChevronLeft className="h-4 w-4 mr-1" />
             Voltar
           </Button>
-          <div className="text-xs text-muted-foreground">Passo {step} de 3</div>
+          <div className="text-meta text-muted-foreground">Passo {step} de 3</div>
           <Button
             variant="ghost"
             size="sm"

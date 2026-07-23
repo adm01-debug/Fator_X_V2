@@ -221,18 +221,18 @@ function InnerCanvas({ canvasId, notebookId }: Props) {
         <Input
           value={name}
           onChange={(e) => { setName(e.target.value); markDirty(); }}
-          className="h-8 text-xs max-w-[280px]"
+          className="h-8 text-meta max-w-[280px]"
           placeholder="Nome do canvas"
         />
         <div className="flex items-center gap-1 ml-2">
-          <Button size="sm" variant="outline" onClick={() => addNode("text", { body: "" })} className="h-7 gap-1 text-xs">
+          <Button size="sm" variant="outline" onClick={() => addNode("text", { body: "" })} className="h-7 gap-1 text-meta">
             <Type className="h-3 w-3" /> Texto
           </Button>
-          <Button size="sm" variant="outline" onClick={() => addNode("image", { imageUrl: "" })} className="h-7 gap-1 text-xs">
+          <Button size="sm" variant="outline" onClick={() => addNode("image", { imageUrl: "" })} className="h-7 gap-1 text-meta">
             <ImageIcon className="h-3 w-3" /> Imagem
           </Button>
           <select
-            className="h-7 text-xs rounded-md border border-input bg-background px-2"
+            className="h-7 text-meta rounded-md border border-input bg-background px-2"
             onChange={(e) => {
               const noteId = e.target.value;
               if (!noteId) return;
@@ -249,7 +249,7 @@ function InnerCanvas({ canvasId, notebookId }: Props) {
             ))}
           </select>
         </div>
-        <div className="ml-auto flex items-center gap-2 text-[11px] text-muted-foreground">
+        <div className="ml-auto flex items-center gap-2 text-meta text-muted-foreground">
           {savingRef.current ? (
             <span className="flex items-center gap-1"><Loader2 className="h-3 w-3 animate-spin" /> Salvando…</span>
           ) : dirtyRef.current ? (
@@ -257,7 +257,7 @@ function InnerCanvas({ canvasId, notebookId }: Props) {
           ) : (
             <span>Salvo</span>
           )}
-          <Button size="sm" variant="ghost" onClick={() => void persist()} className="h-7 gap-1 text-xs">
+          <Button size="sm" variant="ghost" onClick={() => void persist()} className="h-7 gap-1 text-meta">
             <Save className="h-3 w-3" /> Salvar
           </Button>
         </div>
@@ -297,7 +297,7 @@ function InnerCanvas({ canvasId, notebookId }: Props) {
         <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
           <div className="text-center max-w-sm p-6 rounded-lg bg-card/60 backdrop-blur border border-border/50 pointer-events-auto">
             <Plus className="h-6 w-6 mx-auto mb-2 text-nexus-primary" />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-meta text-muted-foreground">
               Canvas vazio. Use os botões acima para adicionar <StickyNote className="inline h-3 w-3" /> notas,{" "}
               <Type className="inline h-3 w-3" /> textos ou <ImageIcon className="inline h-3 w-3" /> imagens.
               Arraste para conectar; duplo-clique numa nota linkada abre-a no editor.
@@ -324,7 +324,7 @@ export function CanvasEmpty() {
     <div className="h-full flex items-center justify-center text-center p-6">
       <div className="max-w-sm space-y-2">
         <FileText className="h-8 w-8 mx-auto text-muted-foreground" />
-        <p className="text-sm text-muted-foreground">
+        <p className="text-body-sm text-muted-foreground">
           Selecione um canvas ao lado ou crie um novo. <Trash2 className="inline h-3 w-3" /> deleta a seleção,{" "}
           <code>Ctrl/⌘ + D</code> duplica.
         </p>

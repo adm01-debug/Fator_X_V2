@@ -81,13 +81,13 @@ export function SlackBotBindingPanel() {
       </CardHeader>
       <CardContent className="space-y-6">
         {loading ? (
-          <div className="text-sm text-muted-foreground">Carregando…</div>
+          <div className="text-body-sm text-muted-foreground">Carregando…</div>
         ) : (
           <>
             <div className="flex items-center justify-between rounded-lg border p-3">
               <div>
                 <div className="font-medium">Bot ativo</div>
-                <div className="text-sm text-muted-foreground">
+                <div className="text-body-sm text-muted-foreground">
                   Quando desativado, o bot ignora todas as menções e DMs.
                 </div>
               </div>
@@ -122,7 +122,7 @@ export function SlackBotBindingPanel() {
                 </Button>
               </div>
               {overrides.length === 0 ? (
-                <div className="text-sm text-muted-foreground">
+                <div className="text-body-sm text-muted-foreground">
                   Nenhum override. Todos os canais usam o agente padrão.
                 </div>
               ) : (
@@ -137,7 +137,7 @@ export function SlackBotBindingPanel() {
                           next[i] = { ...o, channel: e.target.value.trim() };
                           setOverrides(next);
                         }}
-                        className="w-48 font-mono text-sm"
+                        className="w-48 font-mono text-body-sm"
                       />
                       <Select
                         value={o.agent}

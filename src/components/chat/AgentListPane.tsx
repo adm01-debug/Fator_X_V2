@@ -138,8 +138,8 @@ export function AgentListPane({ agents, loading, activeId, onSelect, previews }:
                     )}
                   >
                     <div className="relative shrink-0">
-                      <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-nexus-purple flex items-center justify-center text-primary-foreground text-body-sm font-semibold shadow-sm">
-                        {a.avatar_emoji ? <span className="text-lg">{a.avatar_emoji}</span> : initials(a.name)}
+                      <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-nexus-purple flex items-center justify-center text-primary-foreground text-body-sm font-semibold shadow-nexus-sm">
+                        {a.avatar_emoji ? <span className="text-title-sm">{a.avatar_emoji}</span> : initials(a.name)}
                       </div>
                       {online && (
                         <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-nexus-green border-2 border-card" aria-label="Online" />
@@ -151,7 +151,7 @@ export function AgentListPane({ agents, loading, activeId, onSelect, previews }:
                         <span className={cn('font-medium text-body-sm truncate', active && 'text-primary')}>
                           {highlight(a.name, term)}
                         </span>
-                        <span className="text-[10px] text-muted-foreground shrink-0 tabular-nums">
+                        <span className="text-meta text-muted-foreground shrink-0 tabular-nums">
                           {relTime(preview?.lastAt ?? (a.updated_at ? new Date(a.updated_at).getTime() : null))}
                         </span>
                       </div>
@@ -160,7 +160,7 @@ export function AgentListPane({ agents, loading, activeId, onSelect, previews }:
                           {preview?.lastMessage ?? a.mission ?? 'Toque para conversar'}
                         </p>
                         {preview?.unread ? (
-                          <Badge className="h-4 min-w-4 rounded-full bg-nexus-green text-[10px] px-1.5 text-background">{preview.unread}</Badge>
+                          <Badge className="h-4 min-w-4 rounded-full bg-nexus-green text-meta px-1.5 text-background">{preview.unread}</Badge>
                         ) : null}
                       </div>
                     </div>

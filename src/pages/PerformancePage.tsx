@@ -94,7 +94,7 @@ export default function PerformancePage() {
       <Card>
         <CardHeader className="flex flex-row items-start justify-between">
           <div>
-            <CardTitle className="flex items-center gap-2 text-base">
+            <CardTitle className="flex items-center gap-2 text-body">
               <AlertTriangle className="h-4 w-4 text-nexus-primary" />
               Alertas de queries lentas (últimos 7 dias)
             </CardTitle>
@@ -107,16 +107,16 @@ export default function PerformancePage() {
           </Button>
         </CardHeader>
         <CardContent className="space-y-2">
-          {isLoading && <p className="text-sm text-muted-foreground">Carregando…</p>}
+          {isLoading && <p className="text-body-sm text-muted-foreground">Carregando…</p>}
           {!isLoading && alerts.length === 0 && (
-            <p className="text-sm text-emerald-500">Nenhum alerta nos últimos 7 dias. 🎉</p>
+            <p className="text-body-sm text-nexus-emerald">Nenhum alerta nos últimos 7 dias. 🎉</p>
           )}
           {alerts.map((a) => {
             const meta = a.metadata ?? {};
             const meanMs = typeof meta.mean_ms === "number" ? meta.mean_ms : null;
             const preview = typeof meta.query_preview === "string" ? meta.query_preview : a.message;
             return (
-              <div key={a.id} className="rounded border p-3 text-xs space-y-1">
+              <div key={a.id} className="rounded border p-3 text-meta space-y-1">
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <Badge variant={a.severity === "critical" ? "destructive" : "outline"}>
@@ -133,7 +133,7 @@ export default function PerformancePage() {
                     {new Date(a.created_at).toLocaleString("pt-BR")}
                   </span>
                 </div>
-                <code className="block text-[10px] text-muted-foreground line-clamp-3">
+                <code className="block text-meta text-muted-foreground line-clamp-3">
                   {preview}
                 </code>
               </div>
@@ -144,7 +144,7 @@ export default function PerformancePage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
+          <CardTitle className="flex items-center gap-2 text-body">
             <Sparkles className="h-4 w-4 text-nexus-primary" />
             Auto-EXPLAIN — sugestão de índice
           </CardTitle>
@@ -158,7 +158,7 @@ export default function PerformancePage() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             rows={6}
-            className="font-mono text-xs"
+            className="font-mono text-meta"
             placeholder="SELECT ... FROM ... WHERE ..."
           />
           <div className="flex justify-end">
@@ -183,7 +183,7 @@ export default function PerformancePage() {
                   <Sparkles className="h-4 w-4" />
                   <AlertTitle>Sugestões automáticas</AlertTitle>
                   <AlertDescription>
-                    <ul className="list-disc pl-5 space-y-1 text-xs">
+                    <ul className="list-disc pl-5 space-y-1 text-meta">
                       {explain.suggestions.map((s, i) => <li key={i}>{s}</li>)}
                     </ul>
                   </AlertDescription>
@@ -191,14 +191,14 @@ export default function PerformancePage() {
               ) : (
                 <Alert>
                   <AlertTitle>Plano saudável</AlertTitle>
-                  <AlertDescription className="text-xs">
+                  <AlertDescription className="text-meta">
                     Nenhum Seq Scan detectado. Nada a sugerir.
                   </AlertDescription>
                 </Alert>
               )}
               <div>
-                <h4 className="text-xs font-semibold text-muted-foreground mb-2">Plano (JSON)</h4>
-                <pre className="text-[10px] bg-muted/40 rounded p-3 overflow-auto max-h-[400px]">
+                <h4 className="text-meta font-semibold text-muted-foreground mb-2">Plano (JSON)</h4>
+                <pre className="text-meta bg-muted/40 rounded p-3 overflow-auto max-h-[400px]">
 {JSON.stringify(explain.plan, null, 2)}
                 </pre>
               </div>

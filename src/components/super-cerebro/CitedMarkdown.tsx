@@ -90,16 +90,16 @@ export function CitedMarkdown({ text, citations }: CitedMarkdownProps) {
             >
               <Badge
                 variant="secondary"
-                className="cursor-pointer h-5 px-1.5 text-[10px] font-bold hover:bg-primary hover:text-primary-foreground transition-colors"
+                className="cursor-pointer h-5 px-1.5 text-meta font-bold hover:bg-primary hover:text-primary-foreground transition-colors"
               >
                 {n}
               </Badge>
             </button>
           </TooltipTrigger>
           <TooltipContent side="top" className="max-w-xs">
-            <p className="text-xs font-semibold">{citation.document_title}</p>
+            <p className="text-meta font-semibold">{citation.document_title}</p>
             {citation.page != null && (
-              <p className="text-[10px] text-muted-foreground">Página {citation.page}</p>
+              <p className="text-meta text-muted-foreground">Página {citation.page}</p>
             )}
           </TooltipContent>
         </Tooltip>
@@ -205,7 +205,7 @@ export function CitedMarkdown({ text, citations }: CitedMarkdownProps) {
 
       {citations.length > 0 && (
         <div className="mt-4 pt-3 border-t border-border/40 flex flex-wrap gap-2">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground self-center">
+          <span className="text-meta font-bold uppercase tracking-widest text-muted-foreground self-center">
             Fontes:
           </span>
           {citations.map((c) => (
@@ -215,7 +215,7 @@ export function CitedMarkdown({ text, citations }: CitedMarkdownProps) {
               onClick={() => setOpen(c)}
               onMouseEnter={() => c.document_id && void prefetchSignedUrlForDocument(c.document_id)}
               onFocus={() => c.document_id && void prefetchSignedUrlForDocument(c.document_id)}
-              className="text-[11px] px-2 py-1 rounded-md bg-secondary/40 hover:bg-secondary transition-colors border border-border/40 max-w-[240px] truncate text-left"
+              className="text-meta px-2 py-1 rounded-md bg-secondary/40 hover:bg-secondary transition-colors border border-border/40 max-w-[240px] truncate text-left"
               title={c.document_title}
             >
               <span className="font-bold text-primary mr-1">[{c.n}]</span>

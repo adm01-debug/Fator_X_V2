@@ -149,7 +149,7 @@ export function EditorAutocomplete({ textarea, value, notes, onInsert }: Props) 
       ref={listRef}
       role="listbox"
       aria-label={trigger.mode === "wikilink" ? "Notas sugeridas" : "Tags sugeridas"}
-      className="fixed z-50 w-64 max-h-60 overflow-auto rounded-md border border-border/60 bg-popover shadow-lg text-xs"
+      className="fixed z-50 w-64 max-h-60 overflow-auto rounded-md border border-border/60 bg-popover shadow-nexus-lg text-meta"
       style={{ top: pos.top, left: pos.left }}
     >
       {suggestions.map((s, i) => (
@@ -170,7 +170,7 @@ export function EditorAutocomplete({ textarea, value, notes, onInsert }: Props) 
             {trigger.mode === "wikilink" ? "📄 " : "🏷️ "}
             {s.label}
           </span>
-          {s.sub && <span className="text-[10px] opacity-60">{s.sub}</span>}
+          {s.sub && <span className="text-meta opacity-60">{s.sub}</span>}
         </li>
       ))}
     </ul>

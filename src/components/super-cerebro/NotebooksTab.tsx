@@ -76,7 +76,7 @@ export function NotebooksTab() {
       <Card className="border-border/50">
         <CardHeader className="flex flex-row items-center justify-between gap-2 flex-wrap">
           <div>
-            <CardTitle className="text-lg">Notebooks Temáticos</CardTitle>
+            <CardTitle className="text-title-sm">Notebooks Temáticos</CardTitle>
             <p className="text-meta text-muted-foreground mt-1">
               Isole conhecimento por contexto: cada notebook tem seus próprios documentos e buscas.
             </p>
@@ -143,7 +143,7 @@ export function NotebooksTab() {
                           </p>
                         </div>
                       </div>
-                      {isActive && <Badge className="text-[10px] shrink-0">Ativo</Badge>}
+                      {isActive && <Badge className="text-meta shrink-0">Ativo</Badge>}
                     </div>
 
                     <div className="flex items-center gap-3 mt-3 flex-wrap">

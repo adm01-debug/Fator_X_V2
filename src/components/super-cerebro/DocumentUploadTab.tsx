@@ -35,7 +35,7 @@ function methodVariant(m: string | null): 'default' | 'secondary' | 'outline' {
 }
 
 function statusColor(s: DocumentIngestion['status']): string {
-  if (s === 'ready') return 'text-emerald-500';
+  if (s === 'ready') return 'text-nexus-emerald';
   if (s === 'error') return 'text-destructive';
   return 'text-primary';
 }
@@ -108,7 +108,7 @@ export function DocumentUploadTab() {
     <div className="space-y-6">
       <Card className="border-border/50">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
+          <CardTitle className="flex items-center gap-2 text-title-sm">
             <UploadCloud className="h-5 w-5 text-primary" />
             Upload de Documentos
           </CardTitle>
@@ -154,7 +154,7 @@ export function DocumentUploadTab() {
 
       <Card className="border-border/50">
         <CardHeader>
-          <CardTitle className="text-lg">Histórico de ingestões</CardTitle>
+          <CardTitle className="text-title-sm">Histórico de ingestões</CardTitle>
         </CardHeader>
         <CardContent>
           {empty ? (

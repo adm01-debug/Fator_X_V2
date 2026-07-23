@@ -31,7 +31,7 @@ export function RelatedNotesPanel({ noteId, collectionId }: Props) {
 
   if (!related || related.length === 0) {
     return (
-      <div className="p-4 text-xs text-muted-foreground">
+      <div className="p-4 text-meta text-muted-foreground">
         <Sparkles className="h-4 w-4 mb-2 text-nexus-primary" />
         Nenhuma nota similar encontrada. Escreva mais conteúdo, adicione tags
         ou wikilinks <code>[[como este]]</code> para gerar conexões.
@@ -49,8 +49,8 @@ export function RelatedNotesPanel({ noteId, collectionId }: Props) {
         >
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-semibold truncate">{r.title || "Sem título"}</p>
-              <p className="text-[10px] text-muted-foreground line-clamp-2 mt-0.5">
+              <p className="text-meta font-semibold truncate">{r.title || "Sem título"}</p>
+              <p className="text-meta text-muted-foreground line-clamp-2 mt-0.5">
                 {(r.body_md || "").slice(0, 140)}
               </p>
             </div>

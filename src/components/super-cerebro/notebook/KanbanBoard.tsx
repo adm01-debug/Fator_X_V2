@@ -59,19 +59,19 @@ export function KanbanBoard({ collectionId, onOpenNote }: Props) {
 
   if (!collectionId) {
     return (
-      <div className="p-8 text-center text-sm text-muted-foreground">
+      <div className="p-8 text-center text-body-sm text-muted-foreground">
         Selecione um notebook para visualizar o Kanban.
       </div>
     );
   }
 
   if (isLoading) {
-    return <div className="p-8 text-center text-sm text-muted-foreground">Carregando…</div>;
+    return <div className="p-8 text-center text-body-sm text-muted-foreground">Carregando…</div>;
   }
 
   if (error) {
     return (
-      <div className="p-8 text-center text-sm text-destructive">
+      <div className="p-8 text-center text-body-sm text-destructive">
         Erro ao carregar notas: {(error as Error).message}
       </div>
     );
@@ -81,7 +81,7 @@ export function KanbanBoard({ collectionId, onOpenNote }: Props) {
     <div className="flex flex-col h-full">
       <div className="flex items-center gap-3 p-3 border-b border-border/50 bg-secondary/20">
         <LayoutList className="h-4 w-4 text-nexus-primary" />
-        <span className="text-xs font-semibold">Agrupar por propriedade</span>
+        <span className="text-meta font-semibold">Agrupar por propriedade</span>
         <div className="flex items-center gap-2">
           <Label htmlFor="kanban-prop" className="sr-only">
             Propriedade
@@ -93,19 +93,19 @@ export function KanbanBoard({ collectionId, onOpenNote }: Props) {
             onKeyDown={(e) => {
               if (e.key === "Enter") setProperty(draftProperty.trim() || "status");
             }}
-            className="h-7 w-32 text-xs"
+            className="h-7 w-32 text-meta"
             placeholder="status"
           />
           <Button
             size="sm"
             variant="secondary"
-            className="h-7 text-xs"
+            className="h-7 text-meta"
             onClick={() => setProperty(draftProperty.trim() || "status")}
           >
             Aplicar
           </Button>
         </div>
-        <span className="ml-auto text-[10px] text-muted-foreground">
+        <span className="ml-auto text-meta text-muted-foreground">
           Arraste os cards entre as colunas — a propriedade{" "}
           <code className="rounded bg-muted px-1">{property}</code> é atualizada no
           frontmatter.
@@ -137,15 +137,15 @@ export function KanbanBoard({ collectionId, onOpenNote }: Props) {
                     )}
                     aria-hidden
                   />
-                  <span className="text-xs font-semibold">{col.label}</span>
-                  <Badge variant="secondary" className="h-5 text-[10px]">
+                  <span className="text-meta font-semibold">{col.label}</span>
+                  <Badge variant="secondary" className="h-5 text-meta">
                     {col.notes.length}
                   </Badge>
                 </div>
               </div>
               <div className="flex-1 overflow-y-auto p-2 space-y-2 min-h-[6rem]">
                 {col.notes.length === 0 ? (
-                  <p className="text-[10px] text-muted-foreground text-center py-4">
+                  <p className="text-meta text-muted-foreground text-center py-4">
                     Solte um card aqui
                   </p>
                 ) : (
@@ -178,7 +178,7 @@ export function KanbanBoard({ collectionId, onOpenNote }: Props) {
                       <div className="flex items-start gap-1.5">
                         <GripVertical className="h-3 w-3 text-muted-foreground mt-0.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs font-medium truncate">
+                          <p className="text-meta font-medium truncate">
                             {note.title || "Sem título"}
                           </p>
                           {note.tags?.length ? (
@@ -206,7 +206,7 @@ export function KanbanBoard({ collectionId, onOpenNote }: Props) {
               </div>
             </div>
           ))}
-          <div className="w-72 shrink-0 flex items-start justify-center pt-4 text-[10px] text-muted-foreground">
+          <div className="w-72 shrink-0 flex items-start justify-center pt-4 text-meta text-muted-foreground">
             <Plus className="h-3 w-3 mr-1" />
             Novas colunas surgem automaticamente ao usar novos valores da propriedade.
           </div>

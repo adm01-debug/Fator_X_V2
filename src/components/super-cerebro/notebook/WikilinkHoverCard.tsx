@@ -89,7 +89,7 @@ export function WikilinkHoverCard({ label, targetType, children }: Props) {
           {children}
         </span>
       </HoverCardTrigger>
-      <HoverCardContent side="top" align="start" className="w-80 text-xs">
+      <HoverCardContent side="top" align="start" className="w-80 text-meta">
         <div className="flex items-center gap-2 mb-1">
           <FileText className="h-3.5 w-3.5 text-nexus-primary" />
           <span className="font-semibold truncate">{preview?.title ?? label}</span>

@@ -24,7 +24,7 @@ interface Props {
 }
 
 function statusIcon(s: IngestionStatus) {
-  if (s === 'ready') return <CheckCircle2 className="h-4 w-4 text-emerald-500" />;
+  if (s === 'ready') return <CheckCircle2 className="h-4 w-4 text-nexus-emerald" />;
   if (s === 'error') return <AlertCircle className="h-4 w-4 text-destructive" />;
   if (s === 'cancelled') return <XCircle className="h-4 w-4 text-muted-foreground" />;
   if (s === 'pending') return <Clock className="h-4 w-4 text-muted-foreground" />;

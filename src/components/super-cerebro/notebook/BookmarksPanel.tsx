@@ -42,7 +42,7 @@ export function BookmarksPanel({ onOpenNote }: Props) {
 
   if (!activeNotebookId) {
     return (
-      <Card className="p-6 text-sm text-muted-foreground">
+      <Card className="p-6 text-body-sm text-muted-foreground">
         Selecione um notebook para ver seus favoritos.
       </Card>
     );
@@ -52,8 +52,8 @@ export function BookmarksPanel({ onOpenNote }: Props) {
     return (
       <Card className="p-8 flex flex-col items-center justify-center gap-3 text-center">
         <Inbox className="h-8 w-8 text-muted-foreground" aria-hidden />
-        <div className="text-sm font-medium">Nenhum favorito ainda</div>
-        <p className="text-xs text-muted-foreground max-w-sm">
+        <div className="text-body-sm font-medium">Nenhum favorito ainda</div>
+        <p className="text-meta text-muted-foreground max-w-sm">
           Abra uma nota e clique no ícone <Bookmark className="inline h-3 w-3" /> para adicioná-la aos favoritos.
         </p>
       </Card>
@@ -67,7 +67,7 @@ export function BookmarksPanel({ onOpenNote }: Props) {
           <FileText className="h-4 w-4 text-muted-foreground shrink-0" aria-hidden />
           <button
             type="button"
-            className="flex-1 text-left text-sm font-medium truncate hover:underline focus-visible:underline outline-none"
+            className="flex-1 text-left text-body-sm font-medium truncate hover:underline focus-visible:underline outline-none"
             onClick={() => {
               setActiveNote(n.id);
               onOpenNote?.();

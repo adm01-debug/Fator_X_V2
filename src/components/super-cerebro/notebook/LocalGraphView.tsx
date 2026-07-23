@@ -114,7 +114,7 @@ export function LocalGraphView({ noteId }: { noteId: string }) {
             type="button"
             onClick={() => toggleKind(k)}
             aria-pressed={active}
-            className={`rounded-full px-2 py-0.5 text-[10px] border transition-colors ${
+            className={`rounded-full px-2 py-0.5 text-meta border transition-colors ${
               active ? "border-transparent" : "border-border/60 opacity-50 hover:opacity-80"
             }`}
             style={active ? { backgroundColor: KIND_COLOR[k], color: "hsl(var(--primary-foreground))" } : undefined}
@@ -128,7 +128,7 @@ export function LocalGraphView({ noteId }: { noteId: string }) {
         type="button"
         onClick={() => toggleDir("in")}
         aria-pressed={dirFilters.has("in")}
-        className={`rounded-full px-2 py-0.5 text-[10px] border transition-colors flex items-center gap-1 ${
+        className={`rounded-full px-2 py-0.5 text-meta border transition-colors flex items-center gap-1 ${
           dirFilters.has("in") ? "bg-secondary" : "opacity-50 hover:opacity-80"
         }`}
       >
@@ -138,7 +138,7 @@ export function LocalGraphView({ noteId }: { noteId: string }) {
         type="button"
         onClick={() => toggleDir("out")}
         aria-pressed={dirFilters.has("out")}
-        className={`rounded-full px-2 py-0.5 text-[10px] border transition-colors flex items-center gap-1 ${
+        className={`rounded-full px-2 py-0.5 text-meta border transition-colors flex items-center gap-1 ${
           dirFilters.has("out") ? "bg-secondary" : "opacity-50 hover:opacity-80"
         }`}
       >
@@ -149,7 +149,7 @@ export function LocalGraphView({ noteId }: { noteId: string }) {
 
   if (allNodes.length <= 1) {
     return (
-      <div className="p-4 text-xs text-muted-foreground text-center">
+      <div className="p-4 text-meta text-muted-foreground text-center">
         <NetworkIcon className="h-6 w-6 mx-auto mb-2 opacity-40" />
         Sem links ainda. Use <code>[[Título]]</code> na nota para conectar.
       </div>
@@ -160,7 +160,7 @@ export function LocalGraphView({ noteId }: { noteId: string }) {
     return (
       <div>
         {Filters}
-        <div className="p-4 text-xs text-muted-foreground text-center">
+        <div className="p-4 text-meta text-muted-foreground text-center">
           Nenhum nó com os filtros atuais.
         </div>
       </div>
@@ -241,7 +241,7 @@ export function LocalGraphView({ noteId }: { noteId: string }) {
         </text>
       </svg>
 
-      <div className="mt-3 flex flex-wrap gap-2 text-[10px] text-muted-foreground justify-center">
+      <div className="mt-3 flex flex-wrap gap-2 text-meta text-muted-foreground justify-center">
         <span className="flex items-center gap-1"><FileText className="h-3 w-3" /> Documento</span>
         <span className="flex items-center gap-1"><Layers className="h-3 w-3" /> Nota</span>
         <span className="flex items-center gap-1"><Users className="h-3 w-3" /> Entidade</span>

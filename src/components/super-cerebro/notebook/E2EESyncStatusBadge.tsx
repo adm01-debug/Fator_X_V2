@@ -42,7 +42,7 @@ export function E2EESyncStatusBadge({ status }: { status: AutoSyncStatus | null 
         </Badge>
       </TooltipTrigger>
       <TooltipContent side="bottom" className="max-w-xs">
-        <div className="space-y-1 text-xs">
+        <div className="space-y-1 text-meta">
           <div>Última execução: <span className="font-mono">{fmt(lastRunAt)}</span></div>
           <div>Próxima: <span className="font-mono">{fmt(nextRunAt)}</span></div>
           {lastPlanSummary && (
