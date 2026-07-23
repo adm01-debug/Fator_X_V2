@@ -38,6 +38,7 @@ const AgentBuilder = lazy(() => import("./pages/AgentBuilder"));
 const AuthPage = lazy(() => import("./pages/AuthPage"));
 const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage"));
 const SuperCerebroPage = lazy(() => import("./pages/SuperCerebroPage"));
+const PublicNoteView = lazy(() => import("./pages/PublicNoteView"));
 const OraclePage = lazy(() => import("./pages/OraclePage"));
 const KnowledgePage = lazy(() => import("./pages/KnowledgePage"));
 const MemoryPage = lazy(() => import("./pages/MemoryPage"));
@@ -215,6 +216,7 @@ const App = () => {
             <Routes>
               <Route path="/auth" element={<SafePage><AuthPage /></SafePage>} />
               <Route path="/reset-password" element={<SafePage><ResetPasswordPage /></SafePage>} />
+              <Route path="/share/n" element={<SafePage><PublicNoteView /></SafePage>} />
               <Route path="/help/:slug" element={<SafePage><PublicHelpCenterPage /></SafePage>} />
               <Route path="/help/:slug/forum" element={<SafePage><PublicForumPage /></SafePage>} />
               <Route path="/help/:slug/forum/:threadId" element={<SafePage><PublicForumPage /></SafePage>} />

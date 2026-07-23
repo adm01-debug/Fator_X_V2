@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Loader2, Save, Trash2, Eye, PencilLine, Bookmark } from "lucide-react";
+import { Loader2, Save, Trash2, Eye, PencilLine, Bookmark, Share2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { toast } from "sonner";
@@ -25,6 +25,7 @@ import { useCerebroStore } from "@/stores/cerebroStore";
 import { EditorAutocomplete } from "./EditorAutocomplete";
 import { WikilinkHoverCard } from "./WikilinkHoverCard";
 import { isBookmarked, toggleBookmark, BOOKMARKS_EVENT } from "@/services/bookmarksService";
+import { buildShareUrl } from "@/services/shareService";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -186,6 +187,39 @@ export function NoteEditor({ noteId, collectionId }: Props) {
             title={bookmarked ? "Remover dos favoritos" : "Adicionar aos favoritos"}
           >
             <Bookmark className={cn("h-3.5 w-3.5", bookmarked && "fill-current")} />
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-8 text-muted-foreground"
+            onClick={async () => {
+              if (!note) return;
+              if (!body.trim()) { toast.error("Nada para compartilhar — a nota está vazia."); return; }
+              try {
+                const url = await buildShareUrl({
+                  v: 1,
+                  title: title || note.title,
+                  body_md: body,
+                  tags: note.tags ?? [],
+                  publishedAt: new Date().toISOString(),
+                });
+                if (url.length > 12000) {
+                  toast.warning("Link gerado é muito longo — alguns navegadores podem truncar.");
+                }
+                try {
+                  await navigator.clipboard.writeText(url);
+                  toast.success("Link público copiado para a área de transferência");
+                } catch {
+                  window.prompt("Copie o link público:", url);
+                }
+              } catch {
+                toast.error("Falha ao gerar link de compartilhamento");
+              }
+            }}
+            aria-label="Compartilhar snapshot público"
+            title="Compartilhar snapshot público (read-only)"
+          >
+            <Share2 className="h-3.5 w-3.5" />
           </Button>
           <Button size="sm" variant="ghost" className="h-8 text-destructive" onClick={handleDelete}>
             <Trash2 className="h-3 w-3" />
