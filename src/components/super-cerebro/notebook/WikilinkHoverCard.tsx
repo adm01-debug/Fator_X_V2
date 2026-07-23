@@ -77,19 +77,14 @@ export function WikilinkHoverCard({ label, targetType, children }: Props) {
   return (
     <HoverCard openDelay={220} closeDelay={80}>
       <HoverCardTrigger asChild onMouseEnter={load} onFocus={load}>
-        {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
-        <span
-          role={preview?.id ? "link" : "button"}
-          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-          tabIndex={0}
+        <button
+          type="button"
           onClick={openNote}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") openNote();
-          }}
-          className="cursor-pointer text-nexus-primary underline decoration-dotted underline-offset-2 hover:decoration-solid"
+          className="cursor-pointer text-nexus-primary underline decoration-dotted underline-offset-2 hover:decoration-solid bg-transparent border-0 p-0"
+          aria-label={preview?.title ? `Abrir nota ${preview.title}` : "Abrir nota"}
         >
           {children}
-        </span>
+        </button>
       </HoverCardTrigger>
       <HoverCardContent side="top" align="start" className="w-80 text-meta">
         <div className="flex items-center gap-2 mb-1">
