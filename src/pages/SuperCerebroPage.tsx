@@ -6,12 +6,13 @@ import {
   Brain, Search, Network, BookOpen,
   Activity, Users, FlaskConical, Zap, Clock, GitMerge, TrendingDown, Layers, Upload, NotebookPen,
   Plus, FileText, Sparkles, Mic, Settings2, Link2Off, Hash, LayoutDashboard,
-  CalendarDays, FileStack, History, LayoutList, SearchCode, FileArchive, Table as TableIcon
+  CalendarDays, FileStack, History, LayoutList, SearchCode, FileArchive, Table as TableIcon, Bookmark
 } from "lucide-react";
 import { AdvancedSearchPanel } from "@/components/super-cerebro/notebook/AdvancedSearchPanel";
 import { VaultSyncPanel } from "@/components/super-cerebro/notebook/VaultSyncPanel";
 import { KanbanBoard } from "@/components/super-cerebro/notebook/KanbanBoard";
 import { BasesPanel } from "@/components/super-cerebro/notebook/BasesPanel";
+import { BookmarksPanel } from "@/components/super-cerebro/notebook/BookmarksPanel";
 import { OverviewTab } from "@/components/super-cerebro/OverviewTab";
 import { SearchTab } from "@/components/super-cerebro/SearchTab";
 import { DocumentUploadTab } from "@/components/super-cerebro/DocumentUploadTab";
@@ -116,6 +117,7 @@ export default function SuperCerebroPage() {
       { id: "goto.bases", label: "Ir para Bases (tabela dinâmica)", group: "Navegação", icon: TableIcon, keywords: "database view frontmatter tabela obsidian", run: go("bases") },
       { id: "goto.advSearch", label: "Busca avançada (DSL)", group: "Navegação", icon: SearchCode, keywords: "query dsl obsidian filtro tag", run: go("advSearch") },
       { id: "goto.vault", label: "Sincronizar com Obsidian Vault", group: "Navegação", icon: FileArchive, keywords: "export import zip markdown", run: go("vault") },
+      { id: "goto.bookmarks", label: "Ir para Favoritos", group: "Navegação", icon: Bookmark, keywords: "bookmarks favoritos pinned obsidian", run: go("bookmarks") },
     ];
     return list;
   }, [workspaceId, activeNotebookId, setActiveNote, setStudioTab]);
@@ -142,6 +144,7 @@ export default function SuperCerebroPage() {
           <TabsTrigger value="canvas" className="text-meta gap-1.5"><LayoutDashboard className="h-3.5 w-3.5" /> Canvas</TabsTrigger>
           <TabsTrigger value="kanban" className="text-meta gap-1.5"><LayoutList className="h-3.5 w-3.5" /> Kanban</TabsTrigger>
           <TabsTrigger value="bases" className="text-meta gap-1.5"><TableIcon className="h-3.5 w-3.5" /> Bases</TabsTrigger>
+          <TabsTrigger value="bookmarks" className="text-meta gap-1.5"><Bookmark className="h-3.5 w-3.5" /> Favoritos</TabsTrigger>
           <TabsTrigger value="advSearch" className="text-meta gap-1.5"><SearchCode className="h-3.5 w-3.5" /> Busca Avançada</TabsTrigger>
           <TabsTrigger value="vault" className="text-meta gap-1.5"><FileArchive className="h-3.5 w-3.5" /> Vault Sync</TabsTrigger>
           <TabsTrigger value="notebooks" className="text-meta gap-1.5"><NotebookPen className="h-3.5 w-3.5" /> Notebooks</TabsTrigger>
@@ -184,6 +187,9 @@ export default function SuperCerebroPage() {
         </TabsContent>
         <TabsContent value="bases" className="animate-in fade-in-50 duration-500">
           <BasesPanel onOpenNote={() => setActiveTab("workspace")} />
+        </TabsContent>
+        <TabsContent value="bookmarks" className="animate-in fade-in-50 duration-500">
+          <BookmarksPanel onOpenNote={() => setActiveTab("workspace")} />
         </TabsContent>
         <TabsContent value="advSearch" className="animate-in fade-in-50 duration-500">
           <AdvancedSearchPanel onOpenNote={() => setActiveTab("workspace")} />
