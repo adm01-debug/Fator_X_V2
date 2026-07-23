@@ -38,6 +38,7 @@ const AgentBuilder = lazy(() => import("./pages/AgentBuilder"));
 const AuthPage = lazy(() => import("./pages/AuthPage"));
 const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage"));
 const SuperCerebroPage = lazy(() => import("./pages/SuperCerebroPage"));
+const PublicNoteView = lazy(() => import("./pages/PublicNoteView"));
 const OraclePage = lazy(() => import("./pages/OraclePage"));
 const KnowledgePage = lazy(() => import("./pages/KnowledgePage"));
 const MemoryPage = lazy(() => import("./pages/MemoryPage"));
