@@ -23,7 +23,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
   ResponsiveContainer,
-  LineChart as LineChartIcon2,
+  
   Line,
   XAxis,
   YAxis,
