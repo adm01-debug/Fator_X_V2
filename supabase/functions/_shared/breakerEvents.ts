@@ -17,8 +17,7 @@ import type { BreakerSnapshot } from "./circuitBreaker.ts";
 
 interface Breaker {
   snapshot(): BreakerSnapshot;
-  // deno-lint-ignore no-explicit-any
-  _drainTransition(): any;
+  _drainTransition(): unknown;
 }
 
 let _client: ReturnType<typeof createClient> | null = null;

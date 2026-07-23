@@ -56,14 +56,14 @@ export function EmojiPicker({ onPick, disabled }: EmojiPickerProps) {
           <div className="space-y-3 pr-2">
             {Object.entries(filtered).map(([cat, list]) => (
               <div key={cat}>
-                <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1 px-0.5">{cat}</p>
+                <p className="text-meta uppercase tracking-wide text-muted-foreground mb-1 px-0.5">{cat}</p>
                 <div className="grid grid-cols-8 gap-0.5">
                   {list.map((e) => (
                     <button
                       key={e}
                       type="button"
                       onClick={() => { onPick(e); setOpen(false); }}
-                      className="h-7 w-7 flex items-center justify-center rounded hover:bg-muted text-lg leading-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/50"
+                      className="h-7 w-7 flex items-center justify-center rounded hover:bg-muted text-title-sm leading-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/50"
                       aria-label={`Inserir ${e}`}
                     >
                       {e}

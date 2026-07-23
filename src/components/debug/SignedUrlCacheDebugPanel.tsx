@@ -41,7 +41,7 @@ export function SignedUrlCacheDebugPanel() {
 
   return (
     <div
-      className="fixed bottom-3 right-3 z-[9999] rounded-md border border-border/60 bg-background/95 shadow-lg backdrop-blur text-[11px] font-mono"
+      className="fixed bottom-3 right-3 z-[9999] rounded-md border border-border/60 bg-background/95 shadow-nexus-lg backdrop-blur text-meta font-mono"
       style={{ minWidth: minimized ? 'auto' : 240 }}
     >
       <div className="flex items-center justify-between gap-2 px-2 py-1 border-b border-border/40">
@@ -76,10 +76,10 @@ export function SignedUrlCacheDebugPanel() {
       </div>
       {!minimized && (
         <div className="px-2 py-1.5 space-y-0.5">
-          <Row label="hits" value={stats.hits} accent="text-emerald-500" />
-          <Row label="misses" value={stats.misses} accent="text-amber-500" />
+          <Row label="hits" value={stats.hits} accent="text-nexus-emerald" />
+          <Row label="misses" value={stats.misses} accent="text-nexus-amber" />
           <Row label="in-flight coalesced" value={stats.inflightCoalesced} />
-          <Row label="retries" value={stats.retries} accent={stats.retries ? 'text-amber-500' : ''} />
+          <Row label="retries" value={stats.retries} accent={stats.retries ? 'text-nexus-amber' : ''} />
           <Row label="errors" value={stats.errors} accent={stats.errors ? 'text-destructive' : ''} />
           <Row label="hit rate" value={`${hitRatePct}%`} />
           <Row label="fetches" value={stats.fetches} />

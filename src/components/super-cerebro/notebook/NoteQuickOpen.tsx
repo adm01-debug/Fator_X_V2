@@ -69,7 +69,7 @@ export function NoteQuickOpen() {
         type="button"
         aria-label="Abrir busca de notas"
         onClick={() => setOpen(true)}
-        className="md:hidden fixed bottom-20 right-4 h-12 w-12 rounded-full shadow-lg z-40 p-0"
+        className="md:hidden fixed bottom-20 right-4 h-12 w-12 rounded-full shadow-nexus-lg z-40 p-0"
       >
         <Search className="h-5 w-5" />
       </Button>

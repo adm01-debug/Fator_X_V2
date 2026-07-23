@@ -347,7 +347,7 @@ export default function ChatWithAgentPage() {
         description="Envie mensagens diretas aos seus agentes com respostas em tempo real."
       />
 
-      <div className="h-[calc(100vh-14rem)] min-h-[520px] rounded-2xl overflow-hidden border border-border/60 bg-card/30 backdrop-blur-sm shadow-lg flex">
+      <div className="h-[calc(100vh-14rem)] min-h-[520px] rounded-2xl overflow-hidden border border-border/60 bg-card/30 backdrop-blur-sm shadow-nexus-lg flex">
         <div className={activeAgent ? 'hidden md:flex' : 'flex flex-1 md:flex-none'}>
           <AgentListPane
             agents={agents}

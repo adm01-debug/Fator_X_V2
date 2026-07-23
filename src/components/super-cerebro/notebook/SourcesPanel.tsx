@@ -83,11 +83,11 @@ export function SourcesPanel({ workspaceId, collectionId }: Props) {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Filtrar…"
-            className="h-7 pl-7 text-xs"
+            className="h-7 pl-7 text-meta"
           />
         </div>
         {selected.length > 0 && (
-          <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+          <div className="flex items-center justify-between text-meta text-muted-foreground">
             <span>{selected.length} fontes selecionadas</span>
             <button className="underline" onClick={clearSources}>Limpar</button>
           </div>
@@ -97,7 +97,7 @@ export function SourcesPanel({ workspaceId, collectionId }: Props) {
       <ScrollArea className="flex-1">
         <div className="p-2 space-y-4">
           <section>
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground px-2 mb-1">
+            <div className="text-meta uppercase tracking-wider text-muted-foreground px-2 mb-1">
               Notas ({filteredNotes.length})
             </div>
             {filteredNotes.map((n) => {
@@ -106,10 +106,13 @@ export function SourcesPanel({ workspaceId, collectionId }: Props) {
               return (
                 <div
                   key={n.id}
+                  role="button"
+                  tabIndex={0}
                   className={`group flex items-center gap-2 rounded px-2 py-1.5 cursor-pointer hover:bg-secondary/60 ${
                     isActive ? "bg-secondary/80" : ""
                   }`}
                   onClick={() => setActiveNote(n.id)}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setActiveNote(n.id); } }}
                 >
                   <Checkbox
                     checked={isSel}
@@ -117,7 +120,7 @@ export function SourcesPanel({ workspaceId, collectionId }: Props) {
                     onClick={(e) => e.stopPropagation()}
                   />
                   <StickyNote className="h-3.5 w-3.5 text-nexus-primary shrink-0" />
-                  <span className="text-xs truncate flex-1">{n.title}</span>
+                  <span className="text-meta truncate flex-1">{n.title}</span>
                   {n.tags?.length > 0 && (
                     <Badge variant="outline" className="text-[9px] h-4 px-1">
                       #{n.tags[0]}{n.tags.length > 1 ? ` +${n.tags.length - 1}` : ""}
@@ -127,12 +130,12 @@ export function SourcesPanel({ workspaceId, collectionId }: Props) {
               );
             })}
             {filteredNotes.length === 0 && (
-              <div className="text-[11px] text-muted-foreground px-2 py-1">Nenhuma nota.</div>
+              <div className="text-meta text-muted-foreground px-2 py-1">Nenhuma nota.</div>
             )}
           </section>
 
           <section>
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground px-2 mb-1">
+            <div className="text-meta uppercase tracking-wider text-muted-foreground px-2 mb-1">
               Documentos ({filteredDocs.length})
             </div>
             {filteredDocs.map((d) => {
@@ -144,12 +147,12 @@ export function SourcesPanel({ workspaceId, collectionId }: Props) {
                 >
                   <Checkbox checked={isSel} onCheckedChange={() => toggleSource(d.id)} />
                   <FileText className="h-3.5 w-3.5 text-nexus-cyan shrink-0" />
-                  <span className="text-xs truncate flex-1">{d.title}</span>
+                  <span className="text-meta truncate flex-1">{d.title}</span>
                 </div>
               );
             })}
             {filteredDocs.length === 0 && (
-              <div className="text-[11px] text-muted-foreground px-2 py-1">Sem documentos.</div>
+              <div className="text-meta text-muted-foreground px-2 py-1">Sem documentos.</div>
             )}
           </section>
         </div>

@@ -117,8 +117,7 @@ export function fetchWithTimeout(
   const { timeoutMs = 30_000, signal, ...rest } = init;
   const timeoutSignal = AbortSignal.timeout(timeoutMs);
   const merged = signal
-    ? // deno-lint-ignore no-explicit-any
-      (AbortSignal as any).any?.([signal, timeoutSignal]) ?? timeoutSignal
+    ? (AbortSignal as unknown as { any?: (signals: AbortSignal[]) => AbortSignal }).any?.([signal, timeoutSignal]) ?? timeoutSignal
     : timeoutSignal;
   return fetch(input, { ...rest, signal: merged });
 }

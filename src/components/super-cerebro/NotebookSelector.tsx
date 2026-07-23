@@ -70,7 +70,7 @@ export function NotebookSelector({ allowAll = true }: Props) {
                 <span className="flex items-center gap-2 w-full">
                   <I className="h-3.5 w-3.5" style={{ color: `hsl(var(--${n.color}))` }} />
                   <span className="truncate flex-1">{n.name}</span>
-                  <Badge variant="outline" className="text-[10px] ml-2">{n.document_count ?? 0}</Badge>
+                  <Badge variant="outline" className="text-meta ml-2">{n.document_count ?? 0}</Badge>
                 </span>
               </SelectItem>
             );

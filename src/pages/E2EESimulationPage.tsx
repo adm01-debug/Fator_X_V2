@@ -100,7 +100,7 @@ export default function E2EESimulationPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Configuração</CardTitle>
+          <CardTitle className="text-body">Configuração</CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
@@ -155,7 +155,7 @@ export default function E2EESimulationPage() {
           </div>
 
           <div className="md:col-span-3 flex items-center justify-between pt-2">
-            <p className="text-xs text-muted-foreground">
+            <p className="text-meta text-muted-foreground">
               Distribuição normalizada automaticamente. Soma atual: {totalPct}%.
             </p>
             <div className="flex gap-2">
@@ -177,7 +177,7 @@ export default function E2EESimulationPage() {
         <>
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Resultado</CardTitle>
+              <CardTitle className="text-body">Resultado</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -195,8 +195,8 @@ export default function E2EESimulationPage() {
                   const pct = bucket.total === 0 ? 100 : Math.round((bucket.passed / bucket.total) * 100);
                   return (
                     <div key={o} className="rounded-lg border p-3">
-                      <div className="text-xs uppercase text-muted-foreground">{o}</div>
-                      <div className="text-lg font-semibold">
+                      <div className="text-meta uppercase text-muted-foreground">{o}</div>
+                      <div className="text-title-sm font-semibold">
                         {bucket.passed}/{bucket.total}
                       </div>
                       <Badge variant={pct === 100 ? "default" : "destructive"} className="mt-1">
@@ -226,10 +226,10 @@ export default function E2EESimulationPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
+              <CardTitle className="text-body flex items-center gap-2">
                 {summary.failed === 0 ? (
                   <>
-                    <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                    <CheckCircle2 className="h-4 w-4 text-nexus-emerald" />
                     Nenhuma falha detectada
                   </>
                 ) : (
@@ -242,12 +242,12 @@ export default function E2EESimulationPage() {
             </CardHeader>
             <CardContent>
               {summary.failed === 0 ? (
-                <p className="text-sm text-muted-foreground">
+                <p className="text-body-sm text-muted-foreground">
                   Todos os cenários foram classificados como esperado.
                 </p>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
+                  <table className="w-full text-body-sm">
                     <thead className="text-left text-muted-foreground">
                       <tr>
                         <th className="py-2 pr-4">Cenário</th>
@@ -259,7 +259,7 @@ export default function E2EESimulationPage() {
                     <tbody>
                       {failures.map((r) => (
                         <tr key={r.id} className="border-t border-border/50">
-                          <td className="py-2 pr-4 font-mono text-xs">{r.name}</td>
+                          <td className="py-2 pr-4 font-mono text-meta">{r.name}</td>
                           <td className="py-2 pr-4">
                             <Badge variant="outline">{r.expected}</Badge>
                           </td>
@@ -291,10 +291,10 @@ function StatCard({
   tone?: "ok" | "err";
 }) {
   const color =
-    tone === "ok" ? "text-emerald-500" : tone === "err" ? "text-destructive" : "text-foreground";
+    tone === "ok" ? "text-nexus-emerald" : tone === "err" ? "text-destructive" : "text-foreground";
   return (
     <div className="rounded-lg border p-3">
-      <div className="text-xs uppercase text-muted-foreground">{label}</div>
+      <div className="text-meta uppercase text-muted-foreground">{label}</div>
       <div className={`text-2xl font-semibold ${color}`}>{value}</div>
     </div>
   );

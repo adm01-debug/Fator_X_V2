@@ -127,14 +127,14 @@ export default function OpenclawDeployPage() {
       {health?.configError && (
         <div
           role="alert"
-          className="flex items-start gap-3 rounded-lg border border-nexus-amber/40 bg-nexus-amber/10 p-4 text-sm text-nexus-amber"
+          className="flex items-start gap-3 rounded-lg border border-nexus-amber/40 bg-nexus-amber/10 p-4 text-body-sm text-nexus-amber"
         >
           <Activity className="h-4 w-4 mt-0.5 shrink-0" aria-hidden />
           <div className="space-y-1">
             <p className="font-medium">Configuração inválida do OpenClaw</p>
             <p className="text-nexus-amber/90">{health.configError.message}</p>
             {health.configError.hint && (
-              <p className="text-xs text-nexus-amber/70">{health.configError.hint}</p>
+              <p className="text-meta text-nexus-amber/70">{health.configError.hint}</p>
             )}
           </div>
         </div>

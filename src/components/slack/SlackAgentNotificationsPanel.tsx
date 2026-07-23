@@ -122,9 +122,9 @@ export function SlackAgentNotificationsPanel() {
       </CardHeader>
       <CardContent>
         {loading ? (
-          <div className="text-sm text-muted-foreground">Carregando…</div>
+          <div className="text-body-sm text-muted-foreground">Carregando…</div>
         ) : items.length === 0 ? (
-          <div className="text-sm text-muted-foreground py-8 text-center">
+          <div className="text-body-sm text-muted-foreground py-8 text-center">
             Nenhuma notificação. Clique em <strong>Nova</strong>.
           </div>
         ) : (
@@ -142,7 +142,7 @@ export function SlackAgentNotificationsPanel() {
                     </Badge>
                     <span className="font-medium">{agent?.name ?? n.agent_id.slice(0, 8)}</span>
                     <span className="text-muted-foreground">→</span>
-                    <span className="font-mono text-sm">
+                    <span className="font-mono text-body-sm">
                       {n.channel_name ? `#${n.channel_name}` : n.channel_id}
                     </span>
                     <Badge variant="outline">{n.notify_on}</Badge>

@@ -118,14 +118,14 @@ export function UnlinkedMentions({ noteId, collectionId }: Props) {
   if (!note) return null;
   if (isLoading) {
     return (
-      <div className="flex items-center gap-2 p-3 text-xs text-muted-foreground">
+      <div className="flex items-center gap-2 p-3 text-meta text-muted-foreground">
         <Loader2 className="h-3 w-3 animate-spin" /> Varrendo notas…
       </div>
     );
   }
   if (hits.length === 0) {
     return (
-      <div className="p-3 text-xs text-muted-foreground text-center flex flex-col items-center gap-2">
+      <div className="p-3 text-meta text-muted-foreground text-center flex flex-col items-center gap-2">
         <Link2Off className="h-5 w-5 opacity-50" />
         Nenhuma menção não linkada. Todas as ocorrências do título já estão em <code>[[wikilinks]]</code>.
       </div>
@@ -134,7 +134,7 @@ export function UnlinkedMentions({ noteId, collectionId }: Props) {
 
   return (
     <div className="p-2 space-y-1">
-      <p className="px-2 pb-1 text-[10px] uppercase tracking-wide text-muted-foreground">
+      <p className="px-2 pb-1 text-meta uppercase tracking-wide text-muted-foreground">
         {hits.length} menção{hits.length === 1 ? "" : "es"} não linkada{hits.length === 1 ? "" : "s"}
       </p>
       {hits.map((h, i) => {
@@ -146,16 +146,16 @@ export function UnlinkedMentions({ noteId, collectionId }: Props) {
               className="w-full text-left"
               onClick={() => setActiveNote(h.sourceId)}
             >
-              <div className="flex items-center gap-2 text-xs font-medium">
+              <div className="flex items-center gap-2 text-meta font-medium">
                 <FileText className="h-3 w-3 text-nexus-primary" />
                 <span className="truncate">{h.sourceTitle}</span>
               </div>
-              <p className="text-[11px] text-muted-foreground mt-1 line-clamp-2">{h.snippet}</p>
+              <p className="text-meta text-muted-foreground mt-1 line-clamp-2">{h.snippet}</p>
             </button>
             <Button
               size="sm"
               variant="outline"
-              className="h-6 text-[10px] mt-1 opacity-70 group-hover:opacity-100"
+              className="h-6 text-meta mt-1 opacity-70 group-hover:opacity-100"
               disabled={converting === `${h.sourceId}:${h.matchStart}`}
               onClick={() => void convert(h)}
             >

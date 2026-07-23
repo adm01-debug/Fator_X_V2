@@ -71,7 +71,7 @@ export function DbHealthCard() {
     <Card>
       <CardHeader className="flex flex-row items-start justify-between">
         <div>
-          <CardTitle className="flex items-center gap-2 text-base">
+          <CardTitle className="flex items-center gap-2 text-body">
             <Database className="h-4 w-4 text-nexus-primary" />
             Saúde do banco de dados
           </CardTitle>
@@ -84,9 +84,9 @@ export function DbHealthCard() {
         </Button>
       </CardHeader>
       <CardContent className="space-y-4">
-        {isLoading && <p className="text-sm text-muted-foreground">Carregando…</p>}
+        {isLoading && <p className="text-body-sm text-muted-foreground">Carregando…</p>}
         {error && (
-          <p className="text-sm text-destructive">
+          <p className="text-body-sm text-destructive">
             Sem permissão ou falha na leitura. Requer admin do workspace.
           </p>
         )}
@@ -106,21 +106,21 @@ export function DbHealthCard() {
             </div>
 
             <section>
-              <h4 className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1">
+              <h4 className="text-meta font-semibold text-muted-foreground mb-2 flex items-center gap-1">
                 <Clock className="h-3 w-3" />
                 Consultas longas (&gt; 5 min)
               </h4>
               {data.long_running_queries.length === 0 ? (
-                <p className="text-xs text-emerald-500">Nenhuma consulta longa detectada.</p>
+                <p className="text-meta text-nexus-emerald">Nenhuma consulta longa detectada.</p>
               ) : (
-                <ul className="space-y-1 text-xs">
+                <ul className="space-y-1 text-meta">
                   {data.long_running_queries.map((q) => (
                     <li key={q.pid} className="rounded border p-2">
                       <div className="flex justify-between">
                         <span className="font-mono">PID {q.pid}</span>
                         <Badge variant="destructive">{q.duration_sec}s</Badge>
                       </div>
-                      <code className="text-[10px] text-muted-foreground line-clamp-2">
+                      <code className="text-meta text-muted-foreground line-clamp-2">
                         {q.query_preview}
                       </code>
                     </li>
@@ -130,14 +130,14 @@ export function DbHealthCard() {
             </section>
 
             <section>
-              <h4 className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1">
+              <h4 className="text-meta font-semibold text-muted-foreground mb-2 flex items-center gap-1">
                 <AlertTriangle className="h-3 w-3" />
                 Tabelas com bloat (&gt; 20% dead tuples)
               </h4>
               {data.bloated_tables.length === 0 ? (
-                <p className="text-xs text-emerald-500">Nenhuma tabela com bloat crítico.</p>
+                <p className="text-meta text-nexus-emerald">Nenhuma tabela com bloat crítico.</p>
               ) : (
-                <ul className="space-y-1 text-xs">
+                <ul className="space-y-1 text-meta">
                   {data.bloated_tables.map((t) => (
                     <li key={t.table} className="flex justify-between rounded border p-2">
                       <span className="font-mono">{t.table}</span>
@@ -149,14 +149,14 @@ export function DbHealthCard() {
             </section>
 
             <section>
-              <h4 className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1">
+              <h4 className="text-meta font-semibold text-muted-foreground mb-2 flex items-center gap-1">
                 <Clock className="h-3 w-3" />
                 Top 10 consultas mais lentas (média)
               </h4>
               {!data.slow_queries || data.slow_queries.length === 0 ? (
-                <p className="text-xs text-muted-foreground">Sem dados de pg_stat_statements ainda.</p>
+                <p className="text-meta text-muted-foreground">Sem dados de pg_stat_statements ainda.</p>
               ) : (
-                <ul className="space-y-1 text-xs">
+                <ul className="space-y-1 text-meta">
                   {data.slow_queries.slice(0, 10).map((q, idx) => (
                     <li key={idx} className="rounded border p-2">
                       <div className="flex justify-between items-center gap-2">
@@ -170,7 +170,7 @@ export function DbHealthCard() {
                           <Button
                             size="sm"
                             variant="ghost"
-                            className="h-6 px-2 text-[10px]"
+                            className="h-6 px-2 text-meta"
                             title="Abrir no auto-EXPLAIN"
                             onClick={() => {
                               try {
@@ -184,7 +184,7 @@ export function DbHealthCard() {
                           </Button>
                         </div>
                       </div>
-                      <code className="text-[10px] text-muted-foreground line-clamp-2">
+                      <code className="text-meta text-muted-foreground line-clamp-2">
                         {q.query_preview}
                       </code>
                     </li>
@@ -193,7 +193,7 @@ export function DbHealthCard() {
               )}
             </section>
 
-            <p className="text-[10px] text-muted-foreground">
+            <p className="text-meta text-muted-foreground">
               Capturado em {new Date(data.captured_at).toLocaleString("pt-BR")}
             </p>
           </>
@@ -206,12 +206,12 @@ export function DbHealthCard() {
 function Metric({ label, value, tone }: { label: string; value: string; tone: "muted" | "warning" | "danger" | "success" }) {
   const cls =
     tone === "danger" ? "text-destructive" :
-    tone === "warning" ? "text-amber-500" :
-    tone === "success" ? "text-emerald-500" : "text-foreground";
+    tone === "warning" ? "text-nexus-amber" :
+    tone === "success" ? "text-nexus-emerald" : "text-foreground";
   return (
     <div className="rounded-md border p-3">
-      <div className="text-xs text-muted-foreground">{label}</div>
-      <div className={`text-lg font-semibold ${cls}`}>{value}</div>
+      <div className="text-meta text-muted-foreground">{label}</div>
+      <div className={`text-title-sm font-semibold ${cls}`}>{value}</div>
     </div>
   );
 }

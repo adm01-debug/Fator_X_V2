@@ -95,16 +95,17 @@ export function TemplatesPanel({ workspaceId, collectionId, activeNoteId, userEm
   return (
     <div className="p-3 space-y-3">
       <div className="space-y-1.5">
-        <label className="text-[11px] font-semibold text-muted-foreground">
+        <label htmlFor="tpl-next-title" className="text-meta font-semibold text-muted-foreground">
           Título para a próxima nota (opcional)
         </label>
         <Input
+          id="tpl-next-title"
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
           placeholder="Ex.: Kickoff Projeto X"
-          className="h-8 text-xs"
+          className="h-8 text-meta"
         />
-        <p className="text-[10px] text-muted-foreground">
+        <p className="text-meta text-muted-foreground">
           Placeholders <code>{"{{title}}"}</code>, <code>{"{{date}}"}</code>, <code>{"{{user}}"}</code> e{" "}
           <code>{"{{weekday}}"}</code> serão substituídos automaticamente.
         </p>
@@ -113,7 +114,7 @@ export function TemplatesPanel({ workspaceId, collectionId, activeNoteId, userEm
       <Button
         size="sm"
         variant="outline"
-        className="w-full h-8 text-xs gap-1"
+        className="w-full h-8 text-meta gap-1"
         onClick={handleCreateFromNote}
         disabled={creatingFromNote || !activeNote}
       >
@@ -122,11 +123,11 @@ export function TemplatesPanel({ workspaceId, collectionId, activeNoteId, userEm
       </Button>
 
       {isLoading ? (
-        <div className="text-xs text-muted-foreground flex items-center gap-2">
+        <div className="text-meta text-muted-foreground flex items-center gap-2">
           <Loader2 className="h-3 w-3 animate-spin" /> Carregando templates…
         </div>
       ) : templates.length === 0 ? (
-        <p className="text-xs text-muted-foreground">
+        <p className="text-meta text-muted-foreground">
           Nenhum template ainda. Crie um a partir da nota ativa ou use os built-in do workspace.
         </p>
       ) : (
@@ -139,14 +140,14 @@ export function TemplatesPanel({ workspaceId, collectionId, activeNoteId, userEm
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-xs font-medium truncate">{tpl.name}</span>
+                    <span className="text-meta font-medium truncate">{tpl.name}</span>
                     {tpl.is_builtin && (
-                      <Badge variant="secondary" className="text-[10px]">built-in</Badge>
+                      <Badge variant="secondary" className="text-meta">built-in</Badge>
                     )}
-                    <Badge variant="outline" className="text-[10px]">{tpl.scope}</Badge>
+                    <Badge variant="outline" className="text-meta">{tpl.scope}</Badge>
                   </div>
                   {tpl.description && (
-                    <p className="text-[10px] text-muted-foreground truncate">{tpl.description}</p>
+                    <p className="text-meta text-muted-foreground truncate">{tpl.description}</p>
                   )}
                   {tpl.tags?.length > 0 && (
                     <div className="flex flex-wrap gap-1 mt-1">
@@ -160,7 +161,7 @@ export function TemplatesPanel({ workspaceId, collectionId, activeNoteId, userEm
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="h-6 px-1.5 text-[11px] gap-1"
+                    className="h-6 px-1.5 text-meta gap-1"
                     onClick={() => handleUse(tpl)}
                   >
                     <Sparkles className="h-3 w-3" /> Usar
@@ -169,7 +170,7 @@ export function TemplatesPanel({ workspaceId, collectionId, activeNoteId, userEm
                     <Button
                       size="sm"
                       variant="ghost"
-                      className="h-6 px-1.5 text-[11px]"
+                      className="h-6 px-1.5 text-meta"
                       onClick={() => handleDelete(tpl)}
                       aria-label="Excluir template"
                     >
@@ -184,7 +185,7 @@ export function TemplatesPanel({ workspaceId, collectionId, activeNoteId, userEm
       )}
 
       <div className="pt-2 border-t border-border/50">
-        <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+        <p className="text-meta text-muted-foreground flex items-center gap-1">
           <Plus className="h-3 w-3" />
           Dica: use o Command Palette (⌘P) → "Nova Daily Note" para criar a nota do dia.
         </p>

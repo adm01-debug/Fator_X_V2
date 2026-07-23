@@ -111,7 +111,7 @@ export function ChatComposer({ disabled, streaming, offline, onSend, onCancel, p
             <span
               aria-live="polite"
               className={cn(
-                'absolute -top-5 right-1 text-[10px] tabular-nums',
+                'absolute -top-5 right-1 text-meta tabular-nums',
                 overLimit ? 'text-destructive' : 'text-muted-foreground',
               )}
             >

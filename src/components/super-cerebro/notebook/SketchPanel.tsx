@@ -182,7 +182,7 @@ export function SketchPanel({ noteId }: Props) {
 
   if (!noteId) {
     return (
-      <Card className="p-6 text-sm text-muted-foreground">
+      <Card className="p-6 text-body-sm text-muted-foreground">
         Selecione uma nota para começar a desenhar.
       </Card>
     );
@@ -217,7 +217,7 @@ export function SketchPanel({ noteId }: Props) {
           ))}
         </div>
         <div className="flex items-center gap-2 pl-2 border-l border-border/50 min-w-[140px]">
-          <span className="text-[10px] text-muted-foreground">Espessura</span>
+          <span className="text-meta text-muted-foreground">Espessura</span>
           <Slider
             value={[width]}
             onValueChange={(v) => setWidth(v[0] ?? 2)}
@@ -226,7 +226,7 @@ export function SketchPanel({ noteId }: Props) {
             step={0.5}
             className="w-24"
           />
-          <span className="text-[10px] tabular-nums w-6">{width.toFixed(1)}</span>
+          <span className="text-meta tabular-nums w-6">{width.toFixed(1)}</span>
         </div>
       </div>
       <div
@@ -243,7 +243,7 @@ export function SketchPanel({ noteId }: Props) {
           onPointerCancel={finishStroke}
         />
       </div>
-      <p className="text-[10px] text-muted-foreground">
+      <p className="text-meta text-muted-foreground">
         Salvamento automático local · {strokes.length} traço{strokes.length === 1 ? "" : "s"}
       </p>
     </div>

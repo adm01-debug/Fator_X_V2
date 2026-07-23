@@ -40,7 +40,7 @@ export function WikilinkHoverCard({ label, targetType, children }: Props) {
           .limit(1)
           .maybeSingle();
         if (data) {
-          const body = ((data as { body_md?: string }).body_md ?? "").replace(/[#*`>\[\]]/g, "").trim();
+          const body = ((data as { body_md?: string }).body_md ?? "").replace(/[#*`>[\]]/g, "").trim();
           setPreview({
             id: (data as { id: string }).id,
             title: (data as { title: string }).title,
@@ -77,19 +77,16 @@ export function WikilinkHoverCard({ label, targetType, children }: Props) {
   return (
     <HoverCard openDelay={220} closeDelay={80}>
       <HoverCardTrigger asChild onMouseEnter={load} onFocus={load}>
-        <span
-          role={preview?.id ? "link" : undefined}
-          tabIndex={0}
+        <button
+          type="button"
           onClick={openNote}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") openNote();
-          }}
-          className="cursor-pointer text-nexus-primary underline decoration-dotted underline-offset-2 hover:decoration-solid"
+          className="cursor-pointer text-nexus-primary underline decoration-dotted underline-offset-2 hover:decoration-solid bg-transparent border-0 p-0"
+          aria-label={preview?.title ? `Abrir nota ${preview.title}` : "Abrir nota"}
         >
           {children}
-        </span>
+        </button>
       </HoverCardTrigger>
-      <HoverCardContent side="top" align="start" className="w-80 text-xs">
+      <HoverCardContent side="top" align="start" className="w-80 text-meta">
         <div className="flex items-center gap-2 mb-1">
           <FileText className="h-3.5 w-3.5 text-nexus-primary" />
           <span className="font-semibold truncate">{preview?.title ?? label}</span>

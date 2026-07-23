@@ -42,7 +42,7 @@ export function DetectorSloCard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="flex items-center gap-2 text-body">
           <Gauge className="h-4 w-4 text-nexus-primary" />
           SLO dos detectores
         </CardTitle>
@@ -51,9 +51,9 @@ export function DetectorSloCard() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {isLoading && <p className="text-sm text-muted-foreground">Carregando…</p>}
+        {isLoading && <p className="text-body-sm text-muted-foreground">Carregando…</p>}
         {error && (
-          <p className="text-sm text-destructive">
+          <p className="text-body-sm text-destructive">
             Sem permissão ou falha na leitura. Requer admin do workspace.
           </p>
         )}
@@ -66,15 +66,15 @@ export function DetectorSloCard() {
               >
                 <div className="flex items-center gap-3 min-w-0">
                   {row.slo_ok ? (
-                    <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                    <CheckCircle2 className="h-4 w-4 text-nexus-emerald shrink-0" />
                   ) : (
                     <XCircle className="h-4 w-4 text-destructive shrink-0" />
                   )}
                   <div className="min-w-0">
-                    <p className="text-sm font-medium truncate">
+                    <p className="text-body-sm font-medium truncate">
                       {LABELS[row.job_name] ?? row.job_name}
                     </p>
-                    <p className="text-[10px] text-muted-foreground font-mono">
+                    <p className="text-meta text-muted-foreground font-mono">
                       {row.schedule} · {row.active ? "ativo" : "inativo"}
                     </p>
                   </div>
@@ -83,7 +83,7 @@ export function DetectorSloCard() {
                   <Badge variant={row.last_status === "succeeded" ? "outline" : "destructive"}>
                     {row.last_status}
                   </Badge>
-                  <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                  <span className="text-meta text-muted-foreground flex items-center gap-1">
                     <Clock className="h-3 w-3" />
                     {row.last_run_at
                       ? formatDistanceToNow(new Date(row.last_run_at), { addSuffix: true, locale: ptBR })

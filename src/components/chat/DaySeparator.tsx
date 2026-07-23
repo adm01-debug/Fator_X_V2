@@ -18,7 +18,7 @@ export function DaySeparator({ timestamp }: DaySeparatorProps) {
 
   return (
     <div className="flex justify-center my-3">
-      <span className="rounded-full bg-muted/70 backdrop-blur-sm border border-border/40 px-3 py-1 text-[10px] uppercase tracking-wider text-muted-foreground">
+      <span className="rounded-full bg-muted/70 backdrop-blur-sm border border-border/40 px-3 py-1 text-meta uppercase tracking-wider text-muted-foreground">
         {label}
       </span>
     </div>

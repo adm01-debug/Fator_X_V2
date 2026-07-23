@@ -54,7 +54,7 @@ export function DbHealthTimeseriesCard() {
     <Card>
       <CardHeader className="flex flex-row items-start justify-between gap-4">
         <div>
-          <CardTitle className="flex items-center gap-2 text-base">
+          <CardTitle className="flex items-center gap-2 text-body">
             <TrendingUp className="h-4 w-4 text-nexus-primary" />
             Série temporal de saúde
           </CardTitle>
@@ -69,7 +69,7 @@ export function DbHealthTimeseriesCard() {
               size="sm"
               variant={r.hours === hours ? "default" : "outline"}
               onClick={() => setHours(r.hours)}
-              className="h-7 px-2 text-xs"
+              className="h-7 px-2 text-meta"
             >
               {r.label}
             </Button>
@@ -77,14 +77,14 @@ export function DbHealthTimeseriesCard() {
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
-        {isLoading && <p className="text-sm text-muted-foreground">Carregando série…</p>}
+        {isLoading && <p className="text-body-sm text-muted-foreground">Carregando série…</p>}
         {error && (
-          <p className="text-sm text-destructive">
+          <p className="text-body-sm text-destructive">
             Sem permissão ou falha na leitura. Requer admin do workspace.
           </p>
         )}
         {!isLoading && !error && chartData.length === 0 && (
-          <p className="text-sm text-muted-foreground flex items-center gap-2">
+          <p className="text-body-sm text-muted-foreground flex items-center gap-2">
             <LineChart className="h-4 w-4" />
             Ainda sem amostras. Aguarde a próxima coleta (5 min).
           </p>
@@ -111,7 +111,7 @@ function ChartBlock({
 }) {
   return (
     <div>
-      <h4 className="text-xs font-semibold text-muted-foreground mb-2">{title}</h4>
+      <h4 className="text-meta font-semibold text-muted-foreground mb-2">{title}</h4>
       <ResponsiveContainer width="100%" height={140}>
         <RLineChart data={data} margin={{ top: 4, right: 8, bottom: 0, left: -12 }}>
           <CartesianGrid strokeDasharray="3 3" opacity={0.2} />

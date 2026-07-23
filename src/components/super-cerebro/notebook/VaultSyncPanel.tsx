@@ -74,13 +74,13 @@ export function VaultSyncPanel() {
   return (
     <Card className="border-border/50">
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="flex items-center gap-2 text-body">
           <FileArchive className="h-4 w-4" /> Sincronização com Obsidian Vault
           <Badge variant="outline" className="ml-2 font-normal">.md + frontmatter</Badge>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-body-sm text-muted-foreground">
           Exporta o notebook ativo como um <code>.zip</code> de arquivos <code>.md</code>
           {" "}compatíveis com Obsidian (wikilinks, tags e frontmatter preservados). Ou
           importa um vault existente para dentro deste notebook.
@@ -112,7 +112,7 @@ export function VaultSyncPanel() {
           />
         </div>
 
-        <ul className="text-xs text-muted-foreground space-y-1 pt-2 border-t border-border/40">
+        <ul className="text-meta text-muted-foreground space-y-1 pt-2 border-t border-border/40">
           <li>• Nomes de arquivo sanitizados; colisões recebem sufixo <code>(2)</code>, <code>(3)</code>…</li>
           <li>• Frontmatter YAML preserva tags, datas e propriedades customizadas</li>
           <li>• Import ignora arquivos fora de <code>.md</code> ou maiores que 2 MB</li>

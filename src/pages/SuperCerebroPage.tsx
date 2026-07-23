@@ -198,7 +198,7 @@ export default function SuperCerebroPage() {
               <CanvasWorkspace notebookId={activeNotebookId} workspaceId={workspaceId} />
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground p-6">Selecione um notebook para abrir o Canvas.</p>
+            <p className="text-body-sm text-muted-foreground p-6">Selecione um notebook para abrir o Canvas.</p>
           )}
         </TabsContent>
         <TabsContent value="kanban" className="animate-in fade-in-50 duration-500">
@@ -210,7 +210,7 @@ export default function SuperCerebroPage() {
               />
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground p-6">Selecione um notebook para abrir o Kanban.</p>
+            <p className="text-body-sm text-muted-foreground p-6">Selecione um notebook para abrir o Kanban.</p>
           )}
         </TabsContent>
         <TabsContent value="bases" className="animate-in fade-in-50 duration-500">

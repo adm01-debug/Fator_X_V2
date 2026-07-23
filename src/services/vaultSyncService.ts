@@ -17,6 +17,7 @@ import { supabaseExternal } from "@/integrations/supabase/externalClient";
 import type { NotebookNote } from "@/services/notesService";
 import { parseFrontmatter } from "@/lib/frontmatter";
 
+// eslint-disable-next-line no-control-regex
 const INVALID_FS_CHARS = /[\\/:*?"<>|\x00-\x1f]/g;
 const MAX_FILE_BYTES = 2 * 1024 * 1024; // 2 MB por nota
 

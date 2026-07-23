@@ -43,7 +43,7 @@ export function CanvasesPanel({ notebookId, workspaceId, activeCanvasId, onSelec
     <div className="border-r border-border/50 h-full flex flex-col bg-secondary/10">
       <div className="p-2 border-b border-border/50 flex items-center gap-2">
         <LayoutDashboard className="h-3.5 w-3.5 text-nexus-primary" />
-        <span className="text-xs font-semibold">Canvases</span>
+        <span className="text-meta font-semibold">Canvases</span>
         <Button
           size="icon"
           variant="ghost"
@@ -57,11 +57,11 @@ export function CanvasesPanel({ notebookId, workspaceId, activeCanvasId, onSelec
       </div>
       <div className="flex-1 overflow-auto p-1">
         {isLoading ? (
-          <div className="flex items-center gap-2 p-3 text-xs text-muted-foreground">
+          <div className="flex items-center gap-2 p-3 text-meta text-muted-foreground">
             <Loader2 className="h-3 w-3 animate-spin" /> Carregando…
           </div>
         ) : canvases.length === 0 ? (
-          <p className="p-3 text-xs text-muted-foreground">
+          <p className="p-3 text-meta text-muted-foreground">
             Nenhum canvas ainda. Crie o primeiro com o botão <Plus className="inline h-3 w-3" />.
           </p>
         ) : (
@@ -69,10 +69,13 @@ export function CanvasesPanel({ notebookId, workspaceId, activeCanvasId, onSelec
             {canvases.map((c) => (
               <li key={c.id}>
                 <div
-                  className={`group flex items-center gap-2 rounded px-2 py-1.5 text-xs cursor-pointer ${
+                  role="button"
+                  tabIndex={0}
+                  className={`group flex items-center gap-2 rounded px-2 py-1.5 text-meta cursor-pointer ${
                     activeCanvasId === c.id ? "bg-secondary" : "hover:bg-secondary/60"
                   }`}
                   onClick={() => onSelect(c.id)}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(c.id); } }}
                 >
                   <LayoutDashboard className="h-3 w-3 text-muted-foreground" />
                   <span className="truncate flex-1">{c.name}</span>

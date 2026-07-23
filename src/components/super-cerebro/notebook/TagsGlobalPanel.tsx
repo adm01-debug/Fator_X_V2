@@ -48,7 +48,7 @@ export function TagsGlobalPanel({ collectionId }: Props) {
 
   if (isLoading) {
     return (
-      <div className="flex items-center gap-2 p-3 text-xs text-muted-foreground">
+      <div className="flex items-center gap-2 p-3 text-meta text-muted-foreground">
         <Loader2 className="h-3 w-3 animate-spin" /> Carregando tags…
       </div>
     );
@@ -56,7 +56,7 @@ export function TagsGlobalPanel({ collectionId }: Props) {
 
   if (tagCounts.size === 0) {
     return (
-      <div className="p-3 text-xs text-muted-foreground text-center flex flex-col items-center gap-2">
+      <div className="p-3 text-meta text-muted-foreground text-center flex flex-col items-center gap-2">
         <Hash className="h-5 w-5 opacity-50" />
         Nenhuma tag ainda. Adicione <code>#minha-tag</code> em qualquer nota.
       </div>
@@ -73,7 +73,7 @@ export function TagsGlobalPanel({ collectionId }: Props) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Filtrar tags…"
-          className="h-7 pl-7 text-xs"
+          className="h-7 pl-7 text-meta"
         />
       </div>
 
@@ -85,7 +85,7 @@ export function TagsGlobalPanel({ collectionId }: Props) {
               key={tag}
               type="button"
               onClick={() => setSelected(active ? null : tag)}
-              className={`rounded-full px-2 py-0.5 text-[10px] border transition-colors ${
+              className={`rounded-full px-2 py-0.5 text-meta border transition-colors ${
                 active
                   ? "bg-nexus-primary text-primary-foreground border-nexus-primary"
                   : "border-border/60 hover:bg-secondary/60"
@@ -101,8 +101,8 @@ export function TagsGlobalPanel({ collectionId }: Props) {
       {selected && (
         <div className="border-t border-border/50 pt-2 space-y-1">
           <div className="flex items-center gap-2 px-1">
-            <Badge variant="secondary" className="text-[10px]">#{selected}</Badge>
-            <span className="text-[10px] text-muted-foreground">
+            <Badge variant="secondary" className="text-meta">#{selected}</Badge>
+            <span className="text-meta text-muted-foreground">
               {selectedNotes.length} nota{selectedNotes.length === 1 ? "" : "s"}
             </span>
           </div>
@@ -114,7 +114,7 @@ export function TagsGlobalPanel({ collectionId }: Props) {
               className="w-full text-left rounded hover:bg-secondary/60 p-2 flex items-center gap-2"
             >
               <FileText className="h-3 w-3 text-nexus-primary" />
-              <span className="text-xs truncate">{n.title}</span>
+              <span className="text-meta truncate">{n.title}</span>
             </button>
           ))}
         </div>

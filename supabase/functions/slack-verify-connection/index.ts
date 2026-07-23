@@ -73,10 +73,11 @@ Deno.serve(async (req) => {
     return errorResponse(req, `Slack rejeitou o token: ${authTest.error}`, 400);
   }
 
-  const teamId = (authTest as any).team_id as string;
-  const teamName = (authTest as any).team as string | null;
-  const botUserId = (authTest as any).user_id as string;
-  const botName = (authTest as any).user as string | null;
+  const at = authTest as unknown as { team_id: string; team: string | null; user_id: string; user: string | null };
+  const teamId = at.team_id;
+  const teamName = at.team;
+  const botUserId = at.user_id;
+  const botName = at.user;
 
   const { error: upErr } = await svc
     .from("slack_workspace_config")

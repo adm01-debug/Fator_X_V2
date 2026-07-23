@@ -40,7 +40,7 @@ export function SlackHealthCard() {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="flex items-center gap-2 text-body">
           <Activity className="h-4 w-4" />
           Saúde do Despacho Slack — 24h
         </CardTitle>
@@ -50,9 +50,9 @@ export function SlackHealthCard() {
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <div className="text-sm text-muted-foreground">Carregando…</div>
+          <div className="text-body-sm text-muted-foreground">Carregando…</div>
         ) : total === 0 ? (
-          <div className="text-sm text-muted-foreground">
+          <div className="text-body-sm text-muted-foreground">
             Nenhum despacho registrado nas últimas 24h.
           </div>
         ) : (
@@ -60,7 +60,7 @@ export function SlackHealthCard() {
             <MetricBlock
               label="Sucessos"
               value={successes}
-              icon={<CheckCircle2 className="h-4 w-4 text-emerald-500" />}
+              icon={<CheckCircle2 className="h-4 w-4 text-nexus-emerald" />}
             />
             <MetricBlock
               label="Falhas"
@@ -73,7 +73,7 @@ export function SlackHealthCard() {
               highlight={isDegraded ? "destructive" : undefined}
             />
             {data?.last_dispatch_at && (
-              <div className="col-span-3 text-xs text-muted-foreground">
+              <div className="col-span-3 text-meta text-muted-foreground">
                 Último despacho{" "}
                 {formatDistanceToNow(new Date(data.last_dispatch_at), {
                   addSuffix: true,
@@ -102,7 +102,7 @@ function MetricBlock({
 }) {
   return (
     <div className="rounded-lg border p-3">
-      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+      <div className="flex items-center gap-1.5 text-meta text-muted-foreground">
         {icon}
         {label}
       </div>

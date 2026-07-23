@@ -44,8 +44,8 @@ export function ChatHeader({ agent, onBack, onClear, onOpenDetails, onExport, ty
       )}
 
       <div className="relative shrink-0">
-        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-nexus-purple flex items-center justify-center text-primary-foreground font-semibold shadow-sm">
-          {agent.avatar_emoji ? <span className="text-lg">{agent.avatar_emoji}</span> : initials(agent.name)}
+        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-nexus-purple flex items-center justify-center text-primary-foreground font-semibold shadow-nexus-sm">
+          {agent.avatar_emoji ? <span className="text-title-sm">{agent.avatar_emoji}</span> : initials(agent.name)}
         </div>
         {online && (
           <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-nexus-green border-2 border-card" aria-hidden />

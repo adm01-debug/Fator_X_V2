@@ -43,6 +43,7 @@ export function MessageBubble({ message, streaming, onRetry }: MessageBubbleProp
   }
 
   return (
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
     <div
       className={cn('flex w-full animate-fade-in group', isUser ? 'justify-end' : 'justify-start')}
       onMouseEnter={() => setHover(true)}
@@ -52,7 +53,7 @@ export function MessageBubble({ message, streaming, onRetry }: MessageBubbleProp
     >
       <div
         className={cn(
-          'relative max-w-[78%] md:max-w-[65%] rounded-2xl px-3.5 py-2.5 shadow-sm',
+          'relative max-w-[78%] md:max-w-[65%] rounded-2xl px-3.5 py-2.5 shadow-nexus-sm',
           'text-body-sm leading-relaxed break-words',
           isUser
             ? 'bg-gradient-to-br from-primary to-nexus-purple text-primary-foreground rounded-br-sm'
@@ -78,7 +79,7 @@ export function MessageBubble({ message, streaming, onRetry }: MessageBubbleProp
         </div>
 
         <div className={cn('mt-1 flex items-center gap-1 justify-end', isUser ? 'text-primary-foreground/70' : 'text-muted-foreground')}>
-          <span className="text-[10px] tabular-nums">{formatTime(message.timestamp)}</span>
+          <span className="text-meta tabular-nums">{formatTime(message.timestamp)}</span>
           {isUser && !message.failed && (
             message.read ? (
               <CheckCheck className="h-3 w-3 text-nexus-cyan" aria-label="Lida" />
@@ -106,7 +107,7 @@ export function MessageBubble({ message, streaming, onRetry }: MessageBubbleProp
               type="button"
               onClick={copy}
               aria-label="Copiar mensagem"
-              className="h-6 w-6 flex items-center justify-center rounded-full bg-card border border-border/60 shadow hover:bg-muted"
+              className="h-6 w-6 flex items-center justify-center rounded-full bg-card border border-border/60 shadow-nexus-md hover:bg-muted"
             >
               <Copy className="h-3 w-3" />
             </button>
@@ -115,7 +116,7 @@ export function MessageBubble({ message, streaming, onRetry }: MessageBubbleProp
                 type="button"
                 onClick={() => onRetry(message.id)}
                 aria-label="Reenviar mensagem"
-                className="h-6 w-6 flex items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow hover:opacity-90"
+                className="h-6 w-6 flex items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow-nexus-md hover:opacity-90"
               >
                 <RotateCw className="h-3 w-3" />
               </button>

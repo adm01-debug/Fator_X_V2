@@ -63,7 +63,7 @@ export interface SlackCallOptions {
   timeoutMs?: number;
 }
 
-export interface SlackApiResponse<T = Record<string, unknown>> {
+export interface SlackApiResponse<_T = Record<string, unknown>> {
   ok: boolean;
   error?: string;
   response_metadata?: { next_cursor?: string; warnings?: string[] };

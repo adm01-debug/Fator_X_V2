@@ -131,8 +131,8 @@ export default function SlackSettingsPage() {
         <Card>
           <CardContent className="pt-6 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <CheckCircle2 className="h-5 w-5 text-emerald-500" />
-              <div className="text-sm">
+              <CheckCircle2 className="h-5 w-5 text-nexus-emerald" />
+              <div className="text-body-sm">
                 Conectado ao workspace{" "}
                 <span className="font-medium">{config.slack_team_name ?? config.slack_team_id}</span>{" "}
                 como <span className="font-medium">{config.bot_display_name ?? config.bot_user_id}</span>.
@@ -187,9 +187,9 @@ export default function SlackSettingsPage() {
             </CardHeader>
             <CardContent>
               {loading ? (
-                <div className="text-sm text-muted-foreground">Carregando…</div>
+                <div className="text-body-sm text-muted-foreground">Carregando…</div>
               ) : routes.length === 0 ? (
-                <div className="text-sm text-muted-foreground py-8 text-center">
+                <div className="text-body-sm text-muted-foreground py-8 text-center">
                   Nenhuma rota configurada. Clique em <strong>Nova rota</strong> para começar.
                 </div>
               ) : (
@@ -207,7 +207,7 @@ export default function SlackSettingsPage() {
                           {CATEGORY_LABELS[route.category] ?? route.category}
                         </span>
                         <span className="text-muted-foreground">→</span>
-                        <span className="font-mono text-sm">
+                        <span className="font-mono text-body-sm">
                           {route.channel_name ? `#${route.channel_name}` : route.channel_id}
                         </span>
                         <Badge variant={SEVERITY_VARIANT[route.min_severity]}>
@@ -351,7 +351,7 @@ export default function SlackSettingsPage() {
             <div className="flex items-center justify-between rounded-lg border p-3">
               <div>
                 <div className="font-medium">Rota ativa</div>
-                <div className="text-sm text-muted-foreground">
+                <div className="text-body-sm text-muted-foreground">
                   Desative para pausar temporariamente sem apagar a configuração.
                 </div>
               </div>

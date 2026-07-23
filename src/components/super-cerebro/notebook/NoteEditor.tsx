@@ -35,6 +35,7 @@ interface Props {
 
 /** Handler global para jump-to-line no editor (usado pelo OutlinePanel). */
 const JUMP_EVENT = "cerebro:jump-to-line";
+// eslint-disable-next-line react-refresh/only-export-components
 export function emitJumpToLine(noteId: string, line: number) {
   window.dispatchEvent(new CustomEvent(JUMP_EVENT, { detail: { noteId, line } }));
 }
@@ -151,7 +152,7 @@ export function NoteEditor({ noteId, collectionId }: Props) {
 
   if (isLoading || !note) {
     return (
-      <div className="flex h-full items-center justify-center text-muted-foreground text-sm">
+      <div className="flex h-full items-center justify-center text-muted-foreground text-body-sm">
         <Loader2 className="h-4 w-4 animate-spin mr-2" /> Carregando nota…
       </div>
     );
@@ -164,7 +165,7 @@ export function NoteEditor({ noteId, collectionId }: Props) {
           <Input
             value={title}
             onChange={(e) => { setTitle(e.target.value); setDirty(true); }}
-            className="text-lg font-semibold border-0 shadow-none focus-visible:ring-0 px-0"
+            className="text-title-sm font-semibold border-0 shadow-none focus-visible:ring-0 px-0"
             placeholder="Título da nota…"
           />
           <Button
@@ -180,7 +181,7 @@ export function NoteEditor({ noteId, collectionId }: Props) {
           <Button
             size="sm"
             variant="ghost"
-            className={cn("h-8", bookmarked ? "text-amber-500" : "text-muted-foreground")}
+            className={cn("h-8", bookmarked ? "text-nexus-amber" : "text-muted-foreground")}
             onClick={() => setBookmarked(toggleBookmark(collectionId, noteId))}
             aria-label={bookmarked ? "Remover dos favoritos" : "Adicionar aos favoritos"}
             aria-pressed={bookmarked}
@@ -227,9 +228,9 @@ export function NoteEditor({ noteId, collectionId }: Props) {
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           {tags.map((t) => (
-            <Badge key={t} variant="outline" className="text-[10px]">#{t}</Badge>
+            <Badge key={t} variant="outline" className="text-meta">#{t}</Badge>
           ))}
-          <span className="text-[10px] text-muted-foreground ml-auto">
+          <span className="text-meta text-muted-foreground ml-auto">
             {dirty ? "Alterações não salvas…" : saving ? "Salvando…" : "Sincronizado"}
           </span>
         </div>
@@ -237,9 +238,9 @@ export function NoteEditor({ noteId, collectionId }: Props) {
 
       <Tabs defaultValue="edit" className="flex-1 flex flex-col min-h-0">
         <TabsList className="mx-3 mt-2 self-start">
-          <TabsTrigger value="edit" className="text-xs gap-1"><PencilLine className="h-3 w-3" /> Editor</TabsTrigger>
-          <TabsTrigger value="preview" className="text-xs gap-1"><Eye className="h-3 w-3" /> Preview</TabsTrigger>
-          <TabsTrigger value="split" className="text-xs">Split</TabsTrigger>
+          <TabsTrigger value="edit" className="text-meta gap-1"><PencilLine className="h-3 w-3" /> Editor</TabsTrigger>
+          <TabsTrigger value="preview" className="text-meta gap-1"><Eye className="h-3 w-3" /> Preview</TabsTrigger>
+          <TabsTrigger value="split" className="text-meta">Split</TabsTrigger>
         </TabsList>
 
         <TabsContent value="edit" className="flex-1 min-h-0 m-0 p-3">
@@ -249,7 +250,7 @@ export function NoteEditor({ noteId, collectionId }: Props) {
             onChange={(e) => { setBody(e.target.value); setDirty(true); }}
             onFocus={(e) => setActiveTa(e.currentTarget)}
             placeholder="Escreva em markdown. Use [[Título]] para linkar outra nota, [[doc:Nome]] para documento, [[@Entidade]] para entidade, #tag para categorizar."
-            className="h-full min-h-[300px] font-mono text-sm resize-none"
+            className="h-full min-h-[300px] font-mono text-body-sm resize-none"
           />
         </TabsContent>
 
@@ -285,7 +286,7 @@ export function NoteEditor({ noteId, collectionId }: Props) {
               value={body}
               onChange={(e) => { setBody(e.target.value); setDirty(true); }}
               onFocus={(e) => setActiveTa(e.currentTarget)}
-              className="h-full min-h-[300px] font-mono text-sm resize-none"
+              className="h-full min-h-[300px] font-mono text-body-sm resize-none"
             />
             <div className="overflow-auto border rounded p-3 bg-secondary/20">
               <article className="prose prose-sm dark:prose-invert max-w-none">

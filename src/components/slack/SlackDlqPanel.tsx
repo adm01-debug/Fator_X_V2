@@ -78,7 +78,7 @@ export function SlackDlqPanel() {
   return (
     <Card className={hasDead ? "border-destructive/50" : undefined}>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="flex items-center gap-2 text-body">
           <AlertTriangle className={hasDead ? "h-4 w-4 text-destructive" : "h-4 w-4 text-muted-foreground"} />
           Fila de retentativas Slack (DLQ)
         </CardTitle>
@@ -91,7 +91,7 @@ export function SlackDlqPanel() {
           <Stat label="Resolvidos" value={s?.resolved ?? 0} tone="success" />
         </div>
         {s?.oldest_pending_at && (
-          <div className="text-xs text-muted-foreground">
+          <div className="text-meta text-muted-foreground">
             Mais antigo pendente: {new Date(s.oldest_pending_at).toLocaleString("pt-BR")}
           </div>
         )}
@@ -133,11 +133,11 @@ export function SlackDlqPanel() {
 function Stat({ label, value, tone }: { label: string; value: number; tone: "muted" | "warning" | "danger" | "success" }) {
   const cls =
     tone === "danger" ? "text-destructive" :
-    tone === "warning" ? "text-amber-500" :
-    tone === "success" ? "text-emerald-500" : "text-muted-foreground";
+    tone === "warning" ? "text-nexus-amber" :
+    tone === "success" ? "text-nexus-emerald" : "text-muted-foreground";
   return (
     <div className="rounded-md border p-3">
-      <div className="text-xs text-muted-foreground">{label}</div>
+      <div className="text-meta text-muted-foreground">{label}</div>
       <div className={`text-2xl font-semibold ${cls}`}>{value}</div>
     </div>
   );
