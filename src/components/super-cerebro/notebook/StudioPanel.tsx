@@ -19,6 +19,7 @@ import { TagsGlobalPanel } from "./TagsGlobalPanel";
 import { VersionHistoryPanel } from "./VersionHistoryPanel";
 import { TemplatesPanel } from "./TemplatesPanel";
 import { RelatedNotesPanel } from "./RelatedNotesPanel";
+import { SketchPanel } from "./SketchPanel";
 import { emitJumpToLine } from "./NoteEditor";
 
 interface Props { noteId: string | null; notebookId?: string | null }
@@ -68,6 +69,7 @@ export function StudioPanel({ noteId, notebookId }: Props) {
           <TabsTrigger value="versions" className="text-xs gap-1"><History className="h-3 w-3" /> Versões</TabsTrigger>
           <TabsTrigger value="templates" className="text-xs gap-1"><FileStack className="h-3 w-3" /> Templates</TabsTrigger>
           <TabsTrigger value="related" className="text-xs gap-1"><Zap className="h-3 w-3" /> Similares</TabsTrigger>
+          <TabsTrigger value="sketch" className="text-xs gap-1"><Pencil className="h-3 w-3" /> Sketch</TabsTrigger>
           <TabsTrigger value="tags" className="text-xs gap-1"><Tag className="h-3 w-3" /> #Nota</TabsTrigger>
         </TabsList>
 
@@ -141,6 +143,10 @@ export function StudioPanel({ noteId, notebookId }: Props) {
           ) : (
             <p className="p-3 text-xs text-muted-foreground">Notebook não identificado.</p>
           )}
+        </TabsContent>
+
+        <TabsContent value="sketch" className="flex-1 overflow-auto m-0">
+          <SketchPanel noteId={note.id} />
         </TabsContent>
 
         <TabsContent value="tags" className="m-0 p-3">
