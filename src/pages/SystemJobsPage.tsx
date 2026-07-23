@@ -223,6 +223,9 @@ export default function SystemJobsPage() {
         </AlertDescription>
       </Alert>
 
+      <PartitionHealthCard />
+
+
 
 
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
