@@ -237,24 +237,38 @@ Deno.serve(async (req) => {
       });
     }
 
-    // 3. TTS via Lovable AI Gateway (OpenAI-compatible /audio/speech)
-    const ttsRes = await fetch(`${LOVABLE_AI_URL}/audio/speech`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "openai/tts-1",
-        voice,
-        input: scriptMd.slice(0, 4000), // limite OpenAI TTS
-        format: "mp3",
-      }),
-    });
-    if (!ttsRes.ok) {
-      const err = await ttsRes.text();
-      throw new Error(`TTS falhou [${ttsRes.status}]: ${err.slice(0, 300)}`);
+    // 3. TTS via Lovable AI Gateway (OpenAI-compatible /audio/speech) com retry+backoff
+    async function callTts(): Promise<Response> {
+      const backoffs = [0, 800, 2000, 4500]; // ms
+      let lastErr = "";
+      for (let attempt = 0; attempt < backoffs.length; attempt++) {
+        if (backoffs[attempt] > 0) {
+          await new Promise((r) => setTimeout(r, backoffs[attempt]));
+        }
+        const res = await fetch(`${LOVABLE_AI_URL}/audio/speech`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "openai/tts-1",
+            voice,
+            input: scriptMd.slice(0, 4000),
+            format: "mp3",
+          }),
+        });
+        if (res.ok) return res;
+        // Retry apenas em 429/5xx; erros 4xx são definitivos.
+        if (res.status !== 429 && res.status < 500) {
+          const err = await res.text();
+          throw new Error(`TTS falhou [${res.status}]: ${err.slice(0, 300)}`);
+        }
+        lastErr = `${res.status} ${await res.text().then((t) => t.slice(0, 200)).catch(() => "")}`;
+      }
+      throw new Error(`TTS falhou após retries: ${lastErr}`);
     }
+    const ttsRes = await callTts();
     const audioBuf = new Uint8Array(await ttsRes.arrayBuffer());
 
     // 4. Upload em Storage
