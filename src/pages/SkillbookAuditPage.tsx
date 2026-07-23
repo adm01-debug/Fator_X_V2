@@ -321,20 +321,21 @@ export default function SkillbookAuditPage() {
         {/* TIMELINE */}
         <TabsContent value="timeline" className="space-y-4">
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between gap-2">
               <CardTitle className="text-title-sm flex items-center gap-2">
                 <BookOpen className="h-4 w-4 text-primary" /> Eventos de aquisição
+                <Badge variant="outline" className="text-meta ml-2">{timeline.length}</Badge>
               </CardTitle>
             </CardHeader>
             <CardContent>
               {timelineQuery.isLoading ? (
                 <TimelineSkeleton />
-              ) : (timelineQuery.data ?? []).length === 0 ? (
-                <EmptyState icon={BookOpen} title="Nenhum evento ainda" description="Assim que agentes aprenderem ou instalarem skills, os eventos aparecem aqui." />
+              ) : timeline.length === 0 ? (
+                <EmptyState icon={BookOpen} title="Nenhum evento no período" description="Assim que agentes aprenderem ou instalarem skills, os eventos aparecem aqui." />
               ) : (
                 <ScrollArea className="h-[560px] pr-4">
                   <ol className="relative border-l border-border ml-2 space-y-4">
-                    {(timelineQuery.data ?? []).map((ev) => (
+                    {timeline.map((ev) => (
                       <TimelineItem key={`${ev.kind}-${ev.id}`} event={ev} />
                     ))}
                   </ol>
@@ -347,19 +348,23 @@ export default function SkillbookAuditPage() {
         {/* LEARNED */}
         <TabsContent value="learned" className="space-y-4">
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between gap-2">
               <CardTitle className="text-title-sm flex items-center gap-2">
                 <Brain className="h-4 w-4 text-nexus-purple" /> Skills aprendidas (self-evolution)
+                <Badge variant="outline" className="text-meta ml-2">{learned.length}</Badge>
               </CardTitle>
+              <Button size="sm" variant="outline" onClick={handleExportLearned} disabled={learned.length === 0}>
+                <DownloadIcon className="h-3.5 w-3.5 mr-1.5" /> Exportar CSV
+              </Button>
             </CardHeader>
             <CardContent>
               {learnedQuery.isLoading ? (
                 <TimelineSkeleton />
-              ) : (learnedQuery.data ?? []).length === 0 ? (
-                <EmptyState icon={Brain} title="Sem skills aprendidas" description="Os agentes ainda não geraram padrões próprios." />
+              ) : learned.length === 0 ? (
+                <EmptyState icon={Brain} title="Sem skills aprendidas no período" description="Amplie o filtro ou aguarde os agentes gerarem padrões." />
               ) : (
                 <div className="space-y-3">
-                  {(learnedQuery.data ?? []).map((s) => (
+                  {learned.map((s) => (
                     <div key={s.id} className="nexus-card">
                       <div className="flex items-start justify-between gap-4 flex-wrap">
                         <div className="min-w-0 flex-1">
@@ -400,19 +405,23 @@ export default function SkillbookAuditPage() {
         {/* INSTALLED */}
         <TabsContent value="installed" className="space-y-4">
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between gap-2">
               <CardTitle className="text-title-sm flex items-center gap-2">
                 <Package className="h-4 w-4 text-nexus-cyan" /> Skills instaladas do registry
+                <Badge variant="outline" className="text-meta ml-2">{installed.length}</Badge>
               </CardTitle>
+              <Button size="sm" variant="outline" onClick={handleExportInstalled} disabled={installed.length === 0}>
+                <DownloadIcon className="h-3.5 w-3.5 mr-1.5" /> Exportar CSV
+              </Button>
             </CardHeader>
             <CardContent>
               {installedQuery.isLoading ? (
                 <TimelineSkeleton />
-              ) : (installedQuery.data ?? []).length === 0 ? (
-                <EmptyState icon={Package} title="Sem instalações" description="Nenhum agente instalou skills do marketplace ainda." />
+              ) : installed.length === 0 ? (
+                <EmptyState icon={Package} title="Sem instalações no período" description="Nenhum agente instalou skills do marketplace na janela selecionada." />
               ) : (
                 <div className="space-y-2">
-                  {(installedQuery.data ?? []).map((s) => (
+                  {installed.map((s) => (
                     <div key={s.id} className="nexus-card flex items-center justify-between gap-4 flex-wrap">
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 flex-wrap">
@@ -440,10 +449,14 @@ export default function SkillbookAuditPage() {
         {/* IMPACT */}
         <TabsContent value="impact" className="space-y-4">
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between gap-2">
               <CardTitle className="text-title-sm flex items-center gap-2">
                 <TrendingUp className="h-4 w-4 text-nexus-emerald" /> Impacto por agente
+                <Badge variant="outline" className="text-meta ml-2">{(impactQuery.data ?? []).length}</Badge>
               </CardTitle>
+              <Button size="sm" variant="outline" onClick={handleExportImpact} disabled={(impactQuery.data ?? []).length === 0}>
+                <DownloadIcon className="h-3.5 w-3.5 mr-1.5" /> Exportar CSV
+              </Button>
             </CardHeader>
             <CardContent>
               {impactQuery.isLoading ? (
@@ -484,6 +497,7 @@ export default function SkillbookAuditPage() {
     </div>
   );
 }
+
 
 interface KpiCardProps {
   icon: React.ElementType;
