@@ -13,10 +13,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { Lock, Unlock, Download, Upload, ShieldCheck, KeyRound, AlertTriangle } from "lucide-react";
+import { Lock, Unlock, Download, Upload, ShieldCheck, KeyRound, AlertTriangle, RefreshCw } from "lucide-react";
+import { E2EESyncStatusBadge } from "@/components/super-cerebro/notebook/E2EESyncStatusBadge";
+import { useAutoE2EESync } from "@/hooks/useAutoE2EESync";
 import { ConflictResolver, type ResolvedConflict } from "@/components/super-cerebro/notebook/ConflictResolver";
 import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
 import { useCerebroStore } from "@/stores/cerebroStore";
@@ -50,8 +53,19 @@ export function E2EESyncPanel() {
   const [incoming, setIncoming] = useState<BundlePayload | null>(null);
   const [plan, setPlan] = useState<ReconciliationPlan | null>(null);
   const [resolutions, setResolutions] = useState<Map<string, ResolvedConflict>>(new Map());
+  const [autoSyncOn, setAutoSyncOn] = useState<boolean>(() => {
+    try { return localStorage.getItem("nexus.e2ee.autosync:" + (notebookId ?? "")) === "1"; } catch { return false; }
+  });
+  const [intervalSec, setIntervalSec] = useState<number>(60);
 
   const unlocked = notebookId ? !!getSessionPassphrase(notebookId) : false;
+  const { status: autoStatus, runNow } = useAutoE2EESync(notebookId, autoSyncOn && unlocked, intervalSec * 1000);
+
+  const toggleAutoSync = (on: boolean) => {
+    setAutoSyncOn(on);
+    try { localStorage.setItem("nexus.e2ee.autosync:" + (notebookId ?? ""), on ? "1" : "0"); } catch { /* ignore */ }
+    if (on && !unlocked) toast.warning("Defina a passphrase para o auto-sync começar a rodar.");
+  };
 
   if (!notebookId || !workspaceId) {
     return (
@@ -195,6 +209,45 @@ export function E2EESyncPanel() {
           </div>
         </CardContent>
       </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <RefreshCw className="h-4 w-4" /> Auto-sync em segundo plano
+            <E2EESyncStatusBadge status={autoStatus} />
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Switch id="autosync" checked={autoSyncOn} onCheckedChange={toggleAutoSync} disabled={!unlocked} />
+              <Label htmlFor="autosync" className="cursor-pointer">Ativar auto-sync</Label>
+            </div>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="autosync-interval" className="text-xs text-muted-foreground">Intervalo (s)</Label>
+              <Input
+                id="autosync-interval"
+                type="number"
+                min={10}
+                max={3600}
+                className="w-24 h-8"
+                value={intervalSec}
+                onChange={(e) => setIntervalSec(Math.max(10, Number(e.target.value) || 60))}
+                disabled={autoSyncOn}
+              />
+            </div>
+            <Button size="sm" variant="outline" onClick={runNow} disabled={!unlocked || !autoSyncOn}>
+              <RefreshCw className="h-3.5 w-3.5 mr-1.5" /> Rodar agora
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Cifra o notebook e registra um checkpoint local a cada intervalo. Em falha, aplica retry exponencial
+            (base 5s, teto 5min) até a próxima execução bem-sucedida.
+          </p>
+        </CardContent>
+      </Card>
+
+
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card>
