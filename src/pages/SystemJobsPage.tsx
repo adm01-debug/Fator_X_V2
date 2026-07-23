@@ -210,6 +210,20 @@ export default function SystemJobsPage() {
         }
       />
 
+      <Alert>
+        <Info className="h-4 w-4" />
+        <AlertTitle>Playbook de particionamento</AlertTitle>
+        <AlertDescription>
+          Consulte o{" "}
+          <a href="/docs/partitioning" className="underline text-primary font-medium">
+            playbook completo
+          </a>{" "}
+          com gatilhos, steps SQL e validações para conversão segura preservando FKs e ON DELETE CASCADE.
+        </AlertDescription>
+      </Alert>
+
+
+
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         {kpi(
           "pg_cron jobs",
