@@ -14,10 +14,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { Lock, Unlock, Download, Upload, ShieldCheck, KeyRound, AlertTriangle } from "lucide-react";
+import { ConflictResolver, type ResolvedConflict } from "@/components/super-cerebro/notebook/ConflictResolver";
 import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
 import { useCerebroStore } from "@/stores/cerebroStore";
 import { useNotes } from "@/services/notesService";
@@ -49,7 +49,7 @@ export function E2EESyncPanel() {
   const [busy, setBusy] = useState(false);
   const [incoming, setIncoming] = useState<BundlePayload | null>(null);
   const [plan, setPlan] = useState<ReconciliationPlan | null>(null);
-  const [overwrite, setOverwrite] = useState<Set<string>>(new Set());
+  const [resolutions, setResolutions] = useState<Map<string, ResolvedConflict>>(new Map());
 
   const unlocked = notebookId ? !!getSessionPassphrase(notebookId) : false;
 
@@ -113,7 +113,7 @@ export function E2EESyncPanel() {
       const rec = planReconciliation(payload, localSlim);
       setIncoming(payload);
       setPlan(rec);
-      setOverwrite(new Set());
+      setResolutions(new Map());
       toast.success(`Bundle decifrado: ${payload.notes.length} notas recebidas.`);
     } catch (e) {
       logger.error("e2ee.import.failed", { error: e instanceof Error ? e.message : String(e) });
@@ -127,12 +127,27 @@ export function E2EESyncPanel() {
     if (!incoming || !plan) return;
     setBusy(true);
     try {
-      const res = await applyReconciliation(incoming, plan, workspaceId, { overwriteConflictIds: overwrite });
+      // Aplica resoluções de conflito: "incoming" e "merge" viram overwrite.
+      // Para "merge", substituímos o body_md da nota incoming pelo body mesclado.
+      const overwriteIds = new Set<string>();
+      const patched: BundlePayload = {
+        ...incoming,
+        notes: incoming.notes.map((n) => {
+          const r = resolutions.get(n.id);
+          if (!r || r.resolution === "local") return n;
+          overwriteIds.add(n.id);
+          if (r.resolution === "merge" && r.mergedBody !== undefined) {
+            return { ...n, body_md: r.mergedBody, updated_at: new Date().toISOString() };
+          }
+          return n;
+        }),
+      };
+      const res = await applyReconciliation(patched, plan, workspaceId, { overwriteConflictIds: overwriteIds });
       toast.success(`Sync aplicado: +${res.inserted} novas, ~${res.updated} atualizadas, ${res.skipped} mantidas.`);
       await qc.invalidateQueries({ queryKey: ["notes", notebookId] });
       setIncoming(null);
       setPlan(null);
-      setOverwrite(new Set());
+      setResolutions(new Map());
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Falha ao aplicar reconciliação.");
     } finally {
@@ -140,13 +155,6 @@ export function E2EESyncPanel() {
     }
   };
 
-  const toggleOverwrite = (id: string) => {
-    setOverwrite((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id); else next.add(id);
-      return next;
-    });
-  };
 
   return (
     <div className="space-y-4 max-w-4xl">
@@ -233,32 +241,23 @@ export function E2EESyncPanel() {
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm font-semibold">
                     <AlertTriangle className="h-4 w-4 text-nexus-amber" />
-                    Conflitos — marque para sobrescrever com a versão recebida
+                    Conflitos — revise diffs e escolha como resolver cada nota
                   </div>
-                  <div className="space-y-1 max-h-72 overflow-auto pr-1">
-                    {plan.conflicts.map((c) => (
-                      <label key={c.id} className="flex items-start gap-2 rounded border border-border/50 p-2 text-xs hover:bg-secondary/30 cursor-pointer">
-                        <Checkbox checked={overwrite.has(c.id)} onCheckedChange={() => toggleOverwrite(c.id)} className="mt-0.5" />
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium truncate">{c.title_local}</div>
-                          <div className="text-muted-foreground">
-                            local: {new Date(c.updated_local).toLocaleString()} · recebida: {new Date(c.updated_incoming).toLocaleString()}
-                          </div>
-                          {c.title_incoming !== c.title_local && (
-                            <div className="text-muted-foreground truncate">título recebido: <em>{c.title_incoming}</em></div>
-                          )}
-                        </div>
-                      </label>
-                    ))}
-                  </div>
+                  <ConflictResolver
+                    conflicts={plan.conflicts}
+                    localNotes={localNotes.map((n) => ({ id: n.id, title: n.title, body_md: n.body_md, updated_at: n.updated_at }))}
+                    incoming={incoming}
+                    onChange={setResolutions}
+                  />
                 </div>
               </>
             )}
 
             <div className="flex gap-2">
               <Button size="sm" onClick={apply} disabled={busy}>Aplicar reconciliação</Button>
-              <Button size="sm" variant="outline" onClick={() => { setPlan(null); setIncoming(null); setOverwrite(new Set()); }} disabled={busy}>Cancelar</Button>
+              <Button size="sm" variant="outline" onClick={() => { setPlan(null); setIncoming(null); setResolutions(new Map()); }} disabled={busy}>Cancelar</Button>
             </div>
+
           </CardContent>
         </Card>
       )}
