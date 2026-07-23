@@ -1178,6 +1178,294 @@ export type Database = {
         }
         Relationships: []
       }
+      agent_traces_v2_2027_02: {
+        Row: {
+          agent_id: string | null
+          cost_usd: number | null
+          created_at: string
+          event: string | null
+          id: string
+          input: Json | null
+          latency_ms: number | null
+          level: Database["public"]["Enums"]["trace_level"] | null
+          metadata: Json | null
+          output: Json | null
+          session_id: string | null
+          tokens_used: number | null
+          user_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      agent_traces_v2_2027_03: {
+        Row: {
+          agent_id: string | null
+          cost_usd: number | null
+          created_at: string
+          event: string | null
+          id: string
+          input: Json | null
+          latency_ms: number | null
+          level: Database["public"]["Enums"]["trace_level"] | null
+          metadata: Json | null
+          output: Json | null
+          session_id: string | null
+          tokens_used: number | null
+          user_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      agent_traces_v2_2027_04: {
+        Row: {
+          agent_id: string | null
+          cost_usd: number | null
+          created_at: string
+          event: string | null
+          id: string
+          input: Json | null
+          latency_ms: number | null
+          level: Database["public"]["Enums"]["trace_level"] | null
+          metadata: Json | null
+          output: Json | null
+          session_id: string | null
+          tokens_used: number | null
+          user_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      agent_traces_v2_2027_05: {
+        Row: {
+          agent_id: string | null
+          cost_usd: number | null
+          created_at: string
+          event: string | null
+          id: string
+          input: Json | null
+          latency_ms: number | null
+          level: Database["public"]["Enums"]["trace_level"] | null
+          metadata: Json | null
+          output: Json | null
+          session_id: string | null
+          tokens_used: number | null
+          user_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      agent_traces_v2_2027_06: {
+        Row: {
+          agent_id: string | null
+          cost_usd: number | null
+          created_at: string
+          event: string | null
+          id: string
+          input: Json | null
+          latency_ms: number | null
+          level: Database["public"]["Enums"]["trace_level"] | null
+          metadata: Json | null
+          output: Json | null
+          session_id: string | null
+          tokens_used: number | null
+          user_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      agent_traces_v2_2027_07: {
+        Row: {
+          agent_id: string | null
+          cost_usd: number | null
+          created_at: string
+          event: string | null
+          id: string
+          input: Json | null
+          latency_ms: number | null
+          level: Database["public"]["Enums"]["trace_level"] | null
+          metadata: Json | null
+          output: Json | null
+          session_id: string | null
+          tokens_used: number | null
+          user_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       agent_usage: {
         Row: {
           agent_id: string
@@ -2242,6 +2530,294 @@ export type Database = {
         Relationships: []
       }
       audit_log_v2_2027_01: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          reason: string | null
+          resource_id: string | null
+          resource_name: string | null
+          resource_type: string
+          status: string | null
+          user_agent: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type?: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      audit_log_v2_2027_02: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          reason: string | null
+          resource_id: string | null
+          resource_name: string | null
+          resource_type: string
+          status: string | null
+          user_agent: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type?: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      audit_log_v2_2027_03: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          reason: string | null
+          resource_id: string | null
+          resource_name: string | null
+          resource_type: string
+          status: string | null
+          user_agent: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type?: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      audit_log_v2_2027_04: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          reason: string | null
+          resource_id: string | null
+          resource_name: string | null
+          resource_type: string
+          status: string | null
+          user_agent: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type?: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      audit_log_v2_2027_05: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          reason: string | null
+          resource_id: string | null
+          resource_name: string | null
+          resource_type: string
+          status: string | null
+          user_agent: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type?: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      audit_log_v2_2027_06: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          reason: string | null
+          resource_id: string | null
+          resource_name: string | null
+          resource_type: string
+          status: string | null
+          user_agent: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type?: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      audit_log_v2_2027_07: {
         Row: {
           action: string
           created_at: string
@@ -8494,6 +9070,222 @@ export type Database = {
         Relationships: []
       }
       trace_events_v2_2027_01: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          data: Json | null
+          duration_ms: number | null
+          event_type: string
+          id: string
+          status: string | null
+          trace_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type: string
+          id?: string
+          status?: string | null
+          trace_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type?: string
+          id?: string
+          status?: string | null
+          trace_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      trace_events_v2_2027_02: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          data: Json | null
+          duration_ms: number | null
+          event_type: string
+          id: string
+          status: string | null
+          trace_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type: string
+          id?: string
+          status?: string | null
+          trace_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type?: string
+          id?: string
+          status?: string | null
+          trace_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      trace_events_v2_2027_03: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          data: Json | null
+          duration_ms: number | null
+          event_type: string
+          id: string
+          status: string | null
+          trace_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type: string
+          id?: string
+          status?: string | null
+          trace_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type?: string
+          id?: string
+          status?: string | null
+          trace_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      trace_events_v2_2027_04: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          data: Json | null
+          duration_ms: number | null
+          event_type: string
+          id: string
+          status: string | null
+          trace_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type: string
+          id?: string
+          status?: string | null
+          trace_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type?: string
+          id?: string
+          status?: string | null
+          trace_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      trace_events_v2_2027_05: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          data: Json | null
+          duration_ms: number | null
+          event_type: string
+          id: string
+          status: string | null
+          trace_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type: string
+          id?: string
+          status?: string | null
+          trace_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type?: string
+          id?: string
+          status?: string | null
+          trace_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      trace_events_v2_2027_06: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          data: Json | null
+          duration_ms: number | null
+          event_type: string
+          id: string
+          status: string | null
+          trace_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type: string
+          id?: string
+          status?: string | null
+          trace_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type?: string
+          id?: string
+          status?: string | null
+          trace_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      trace_events_v2_2027_07: {
         Row: {
           agent_id: string | null
           created_at: string
