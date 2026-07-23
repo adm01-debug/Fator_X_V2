@@ -30,6 +30,8 @@ import type { CommandItem } from "@/lib/commands";
 import { useCerebroStore } from "@/stores/cerebroStore";
 import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
 import { createNote } from "@/services/notesService";
+import { openOrCreateDailyNote } from "@/services/noteTemplatesService";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export default function SuperCerebroPage() {
