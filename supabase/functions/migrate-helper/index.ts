@@ -1,35 +1,32 @@
-// Edge function temporária para migração de banco.
-// Cole em: Cloud > Edge Functions > migrate-helper > View code
-// Após a migração, remova esta função.
+import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 
-const ACCESS_KEY = "0dfe531fcdb9c7b0ea83a4a8e4e2800cef2157c1a57a16d2";
-const cors = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-access-key",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+const jsonHeaders = {
+  ...corsHeaders,
+  "Content-Type": "application/json",
 };
 
-Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: cors });
-  const key = req.headers.get("x-access-key");
-  if (key !== ACCESS_KEY) return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers: { ...cors, "Content-Type": "application/json" } });
-
-  const url = new URL(req.url);
-  const action = url.searchParams.get("action") || "ping";
-
-  try {
-    if (action === "ping") {
-      return new Response(JSON.stringify({ ok: true, project_ref: Deno.env.get("SUPABASE_URL") }), { headers: { ...cors, "Content-Type": "application/json" } });
-    }
-    if (action === "credentials") {
-      return new Response(JSON.stringify({
-        url: Deno.env.get("SUPABASE_URL"),
-        service_role: Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"),
-        db_url: Deno.env.get("SUPABASE_DB_URL"),
-      }), { headers: { ...cors, "Content-Type": "application/json" } });
-    }
-    return new Response(JSON.stringify({ error: "unknown_action" }), { status: 400, headers: { ...cors, "Content-Type": "application/json" } });
-  } catch (e) {
-    return new Response(JSON.stringify({ error: String(e) }), { status: 500, headers: { ...cors, "Content-Type": "application/json" } });
+Deno.serve((req: Request): Response => {
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
   }
+
+  if (req.method !== "GET") {
+    return new Response(
+      JSON.stringify({ error: "method_not_allowed" }),
+      { status: 405, headers: jsonHeaders },
+    );
+  }
+
+  const action = new URL(req.url).searchParams.get("action") ?? "ping";
+  if (action !== "ping") {
+    return new Response(
+      JSON.stringify({ error: "unknown_action" }),
+      { status: 400, headers: jsonHeaders },
+    );
+  }
+
+  return new Response(
+    JSON.stringify({ ok: true, function: "migrate-helper" }),
+    { status: 200, headers: jsonHeaders },
+  );
 });
