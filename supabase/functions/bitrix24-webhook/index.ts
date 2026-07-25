@@ -35,9 +35,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { verifyHmac } from "../_shared/webhookSignature.ts";
-import { z } from "https://esm.sh/zod@3.23.8";
-
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
+import { z } from "https://esm.sh/zod@3.23.8";
 const Bitrix24PayloadSchema = z.object({
   event: z.string().max(120).optional(),
   auth: z.record(z.unknown()).optional(),
@@ -48,9 +48,8 @@ const Bitrix24PayloadSchema = z.object({
 // ─── CORS ───
 // ─── Supabase client (service role to bypass RLS) ───
 function getServiceClient() {
-  const url = Deno.env.get("SUPABASE_URL");
-  const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  if (!url || !key) throw new Error("Missing Supabase env vars");
+  const url = requireEnv("SUPABASE_URL");
+  const key = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
   return createClient(url, key);
 }
 
@@ -79,11 +78,7 @@ function parseFormBody(body: string): Record<string, unknown> {
 
 // ─── HMAC validation (Bitrix24 sends application_token in payload) ───
 async function validateSignature(parsed: Record<string, unknown>, _rawBody: string): Promise<boolean> {
-  const expectedToken = Deno.env.get("BITRIX24_APP_TOKEN");
-  if (!expectedToken) {
-    console.error("BITRIX24_APP_TOKEN not configured");
-    return false;
-  }
+  const expectedToken = requireEnv("BITRIX24_APP_TOKEN");
   
   const auth = parsed.auth as Record<string, unknown> | undefined;
   const received = auth?.application_token;
@@ -171,6 +166,10 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
+
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.light);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
 
   const traceId = generateTraceId();
   const startTime = Date.now();
