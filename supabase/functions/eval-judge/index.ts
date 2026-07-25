@@ -2,7 +2,7 @@ import { fetchWithTimeout } from "../_shared/retry.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { z } from "https://esm.sh/zod@3.23.8";
-import { _getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse } from "../_shared/mod.ts";
+import { _getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse, checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 
 const JUDGE_RUBRIC = `You are an expert AI evaluator. Score the following AI response on these criteria (0-5 each):
 
@@ -35,10 +35,13 @@ const bodySchema = z.object({
 serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
 
+  const rateCheck = checkRateLimit(getRateLimitIdentifier(req), RATE_LIMITS.heavy);
+  if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, _getCorsHeaders(req));
+
   try {
     const authHeader = req.headers.get('Authorization')!;
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabaseUrl = requireEnv("SUPABASE_URL");
+    const supabaseKey = requireEnv("SUPABASE_ANON_KEY");
     const supabase = createClient(supabaseUrl, supabaseKey, { global: { headers: { Authorization: authHeader } } });
 
     const { data: { user } } = await supabase.auth.getUser();
@@ -67,7 +70,7 @@ serve(async (req) => {
 
     const resolveKey = async (): Promise<{ key: string; provider: string }> => {
       if (judge_model?.startsWith('huggingface/')) {
-        const hfToken = Deno.env.get('HF_API_TOKEN');
+        const hfToken = requireEnv("HF_API_TOKEN");
         if (hfToken) return { key: hfToken, provider: 'huggingface' };
         if (wsId) {
           const { data: hf } = await supabase.from('workspace_secrets').select('key_value').eq('workspace_id', wsId).eq('key_name', 'huggingface_api_key').single();
@@ -82,7 +85,7 @@ serve(async (req) => {
         const { data: oa } = await supabase.from('workspace_secrets').select('key_value').eq('workspace_id', wsId).eq('key_name', 'openai_api_key').single();
         if (oa?.key_value) return { key: oa.key_value, provider: 'openai' };
       }
-      const hfEnv = Deno.env.get('HF_API_TOKEN');
+      const hfEnv = requireEnv("HF_API_TOKEN");
       if (hfEnv) return { key: hfEnv, provider: 'huggingface' };
       return { key: '', provider: '' };
     };
@@ -105,7 +108,7 @@ serve(async (req) => {
         const agentOutput = (agentData as Record<string, unknown>).content || '[no response]';
 
         if (mode === 'reward' && tc.expected_output) {
-          const hfRewardToken = Deno.env.get('HF_API_TOKEN') || apiKey;
+          const hfRewardToken = requireEnv("HF_API_TOKEN") || apiKey;
           try {
             const simResp = await fetchWithTimeout('https://router.huggingface.co/hf-inference/models/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2', {
               method: 'POST',
