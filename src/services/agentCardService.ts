@@ -245,7 +245,12 @@ export async function getAgentCard(agentId: string): Promise<AgentCard | null> {
     .eq('id' as never, agentId)
     .single();
 
-  if (error) return null;
+  if (error) {
+    // Supabase .single() returns error also for "not found" (PGRST116).
+    // Only return null for "not found"; surface all other errors.
+    if (error.code === 'PGRST116') return null;
+    throw new Error(`Failed to fetch agent card: ${error.message}`);
+  }
   const metadata = data?.metadata as Record<string, unknown> | null;
   return (metadata?.agent_card as AgentCard) ?? null;
 }

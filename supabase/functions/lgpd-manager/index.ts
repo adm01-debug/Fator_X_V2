@@ -7,7 +7,7 @@ import {
 } from "../_shared/mod.ts";
 
 const LGPDInput = z.object({
-  action: z.enum(['export_data', 'delete_data', 'list_consents', 'revoke_consent', 'anonymize']),
+  action: z.enum(['export_data', 'delete_data', 'list_consents', 'list_deletion_requests', 'revoke_consent', 'anonymize']),
   target_user_id: z.string().uuid().optional(),
   scope: z.enum(['all', 'memories', 'sessions', 'traces', 'evaluations']).default('all'),
   consent_id: z.string().uuid().optional(),
@@ -84,6 +84,14 @@ serve(async (req) => {
           .eq('user_id', targetId)
           .order('created_at', { ascending: false });
         return jsonResponse(req, { consents: data || [] });
+      }
+
+      case 'list_deletion_requests': {
+        const { data } = await supabaseAdmin.from('data_deletion_requests')
+          .select('*')
+          .eq('user_id', targetId)
+          .order('requested_at', { ascending: false });
+        return jsonResponse(req, { requests: data || [] });
       }
 
       case 'revoke_consent': {

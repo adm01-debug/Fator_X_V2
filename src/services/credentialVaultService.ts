@@ -4,6 +4,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { fromTable } from '@/lib/supabaseExtended';
+import { logger } from '@/lib/logger';
 
 export type {
   CredentialType, CredentialStatus, CredentialEntry, CredentialData,
@@ -50,7 +51,9 @@ export async function decryptData(encrypted: string): Promise<CredentialData> {
 /* ── Audit Logging ── */
 
 async function logAudit(credentialId: string, action: CredentialAuditLog['action'], actorId: string | null, actorType: CredentialAuditLog['actor_type'], details: Record<string, unknown>): Promise<void> {
-  await fromTable('credential_audit_logs').insert({ credential_id: credentialId, action, actor_id: actorId, actor_type: actorType, details });
+  await fromTable('credential_audit_logs').insert({ credential_id: credentialId, action, actor_id: actorId, actor_type: actorType, details }).catch((e: unknown) =>
+    logger.error('[credentialVault] Audit log failed:', e instanceof Error ? e.message : String(e))
+  );
 }
 
 /* ── CRUD Operations ── */

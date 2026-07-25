@@ -142,9 +142,13 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
 
   try {
-    const authHeader = req.headers.get('Authorization')!;
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const authHeader = req.headers.get('Authorization') ?? '';
+    if (!authHeader) return new Response(JSON.stringify({ error: 'Missing Authorization header' }), { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+    if (!supabaseUrl || !supabaseKey) return new Response(JSON.stringify({ error: 'Missing SUPABASE_URL or SUPABASE_ANON_KEY env vars' }), { status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+
     const supabase = createClient(supabaseUrl, supabaseKey, { global: { headers: { Authorization: authHeader } } });
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
@@ -649,8 +653,6 @@ serve(async (req) => {
         .join('\n');
 
       // Summarize using HF LLM via Gateway
-      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-      const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
       const gatewayUrl = `${supabaseUrl}/functions/v1/llm-gateway`;
       const sumResp = await fetchWithTimeout(gatewayUrl, {
         method: 'POST',
@@ -698,13 +700,9 @@ serve(async (req) => {
         : `Conexão: ${connId} (PostgreSQL)`;
 
       // Generate SQL via LLM
-      const supabaseUrl2 = Deno.env.get('SUPABASE_URL')!;
-      const supabaseKey2 = Deno.env.get('SUPABASE_ANON_KEY')!;
-      const authHeader2 = req.headers.get('Authorization')!;
-
-      const sqlResp = await fetchWithTimeout(`${supabaseUrl2}/functions/v1/llm-gateway`, {
+      const sqlResp = await fetchWithTimeout(`${supabaseUrl}/functions/v1/llm-gateway`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': authHeader2, 'apikey': supabaseKey2 },
+        headers: { 'Content-Type': 'application/json', 'Authorization': authHeader, 'apikey': supabaseKey },
         body: JSON.stringify({
           model: 'huggingface/Qwen/Qwen3-30B-A3B',
           messages: [
@@ -773,13 +771,9 @@ serve(async (req) => {
       ].join('\n');
 
       // Ask LLM to answer based on table
-      const supabaseUrl3 = Deno.env.get('SUPABASE_URL')!;
-      const supabaseKey3 = Deno.env.get('SUPABASE_ANON_KEY')!;
-      const authHeader3 = req.headers.get('Authorization')!;
-
-      const tqResp = await fetchWithTimeout(`${supabaseUrl3}/functions/v1/llm-gateway`, {
+      const tqResp = await fetchWithTimeout(`${supabaseUrl}/functions/v1/llm-gateway`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': authHeader3, 'apikey': supabaseKey3 },
+        headers: { 'Content-Type': 'application/json', 'Authorization': authHeader, 'apikey': supabaseKey },
         body: JSON.stringify({
           model: 'huggingface/Qwen/Qwen3-30B-A3B',
           messages: [

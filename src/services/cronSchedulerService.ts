@@ -32,20 +32,138 @@ function parseCronField(field: string, min: number, max: number): number[] {
   return [...new Set(values)].sort((a, b) => a - b);
 }
 
+/**
+ * Parse a cron expression into its component parts.
+ * @param expr - Standard 5-field cron expression (minute hour day month dow)
+ */
 export function parseCronExpression(expr: string): CronParts {
   const parts = expr.trim().split(/\s+/);
   if (parts.length !== 5) throw new Error(`Invalid cron expression: expected 5 fields, got ${parts.length}`);
-  return { minute: parseCronField(parts[0], 0, 59), hour: parseCronField(parts[1], 0, 23), dayOfMonth: parseCronField(parts[2], 1, 31), month: parseCronField(parts[3], 1, 12), dayOfWeek: parseCronField(parts[4], 0, 6) };
+  return {
+    minute: parseCronField(parts[0], 0, 59),
+    hour: parseCronField(parts[1], 0, 23),
+    dayOfMonth: parseCronField(parts[2], 1, 31),
+    month: parseCronField(parts[3], 1, 12),
+    dayOfWeek: parseCronField(parts[4], 0, 6),
+  };
 }
 
-export function getNextCronRun(expr: string, after: Date = new Date()): Date {
+/**
+ * Calculate the next cron run time.
+ * Handles timezone conversion: all calculations are done in the given timezone
+ * (or UTC if none specified), returning a UTC Date.
+ *
+ * @param expr - Cron expression
+ * @param after - Reference time (defaults to now)
+ * @param timezone - IANA timezone for calculations (e.g. 'America/Sao_Paulo'). If omitted, uses UTC.
+ */
+export function getNextCronRun(
+  expr: string,
+  after: Date = new Date(),
+  timezone?: string,
+): Date {
   const cron = parseCronExpression(expr);
-  const next = new Date(after.getTime()); next.setSeconds(0, 0); next.setMinutes(next.getMinutes() + 1);
-  for (let i = 0; i < 366 * 24 * 60; i++) {
-    if (cron.month.includes(next.getMonth() + 1) && cron.dayOfMonth.includes(next.getDate()) && cron.dayOfWeek.includes(next.getDay()) && cron.hour.includes(next.getHours()) && cron.minute.includes(next.getMinutes())) return next;
-    next.setMinutes(next.getMinutes() + 1);
+
+  // Compute offset: how many ms to add to a UTC instant to get local time.
+  // offset > 0 means local is behind UTC (e.g. BRT = UTC-3 → offset = +3h)
+  const offsetMs = timezone ? computeTzOffset(timezone, after) : 0;
+
+  // Start from the next whole minute after `after`, in UTC.
+  const startMs = after.getTime() + 60_000;
+  const current = new Date(startMs);
+  current.setUTCSeconds(0, 0);
+
+  const maxIterations = 366 * 24 * 60;
+  for (let i = 0; i < maxIterations; i++) {
+    // Construct local datetime from the UTC instant for field comparison.
+    // offsetMs = +3h for BRT → subtract to go "back" to BRT from UTC.
+    // (UTC 10:30 − 3h = BRT 07:30)
+    const local = new Date(current.getTime() - offsetMs);
+
+    if (
+      cron.month.includes(local.getUTCMonth() + 1) &&
+      cron.dayOfMonth.includes(local.getUTCDate()) &&
+      cron.dayOfWeek.includes(local.getUTCDay()) &&
+      cron.hour.includes(local.getUTCHours()) &&
+      cron.minute.includes(local.getUTCMinutes())
+    ) {
+      // current IS already the correct UTC instant — return as-is.
+      return new Date(current.getTime());
+    }
+    current.setUTCMinutes(current.getUTCMinutes() + 1);
   }
   throw new Error('Could not find next cron run within 1 year');
+}
+
+/** Day-of-week (0=Sun) in the given timezone for a UTC instant. */
+function _getLocalDayOfWeek(utcMs: number, tz: string): number {
+  if (tz === 'America/Sao_Paulo') {
+    const offset = getSaoPauloOffset(new Date(utcMs));
+    return new Date(utcMs + offset).getUTCDay();
+  }
+  try {
+    const fmt = new Intl.DateTimeFormat('en-US', {
+      timeZone: tz, weekday: 'short',
+      year: 'numeric', month: '2-digit', day: '2-digit',
+    });
+    const parts = Object.fromEntries(fmt.formatToParts(new Date(utcMs)).map(p => [p.type, p.value]));
+    const dowMap: Record<string, number> = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+    return dowMap[parts.weekday] ?? 0;
+  } catch {
+    return new Date(utcMs).getUTCDay();
+  }
+}
+
+/** Returns the offset in ms to add to a UTC instant to get local time in the given timezone. */
+function computeTzOffset(tz: string, instant: Date): number {
+  if (tz === 'America/Sao_Paulo') {
+    // BRT (standard): UTC-3 → offset = +3h; BRST (DST): UTC-2 → offset = +2h
+    return getSaoPauloOffset(instant);
+  }
+  // Generic via Intl (works in browsers and Node — uses OS/ICU timezone database)
+  try {
+    const fmt = new Intl.DateTimeFormat('en-CA', {
+      timeZone: tz,
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
+    });
+    const parts = Object.fromEntries(fmt.formatToParts(instant).map(p => [p.type, p.value]));
+    // new Date('YYYY-MM-DDTHH:MM:SS') interprets the argument as UTC — force UTC explicitly
+    const localAsUtc = Date.UTC(
+      parseInt(parts.year), parseInt(parts.month) - 1,
+      parseInt(parts.day), parseInt(parts.hour),
+      parseInt(parts.minute), parseInt(parts.second)
+    );
+    return instant.getTime() - localAsUtc;
+  } catch {
+    return 0;
+  }
+}
+
+/** Brazil: BRT = UTC-3 (Apr–Oct), BRST = UTC-2 (Oct–Mar). */
+function getSaoPauloOffset(date: Date): number {
+  const month = date.getUTCMonth(); // 0-indexed
+  const day = date.getUTCDate();
+
+  if (month >= 10 || month <= 1) return 2 * 3600 * 1000; // BRST: UTC-2
+
+  if (month === 2) {
+    // DST ends on first Sunday of February → UTC-3 from that day onward
+    const feb1 = Date.UTC(date.getUTCFullYear(), 1, 1);
+    const dow = new Date(feb1).getUTCDay();
+    const firstSun = feb1 + (7 - dow) % 7 * 86_400_000;
+    return day >= new Date(firstSun).getUTCDate() ? 3 * 3600 * 1000 : 2 * 3600 * 1000;
+  }
+
+  if (month === 9) {
+    // DST starts on second Sunday of October
+    const oct1 = Date.UTC(date.getUTCFullYear(), 9, 1);
+    const dow = new Date(oct1).getUTCDay();
+    const secondSun = oct1 + ((7 - dow) % 7 + 7) * 86_400_000;
+    return day >= new Date(secondSun).getUTCDate() ? 2 * 3600 * 1000 : 3 * 3600 * 1000;
+  }
+
+  return 3 * 3600 * 1000; // BRT: UTC-3 (Mar–Sep, excluding Oct boundary)
 }
 
 export function describeCronExpression(expr: string): string {

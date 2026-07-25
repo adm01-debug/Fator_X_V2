@@ -131,9 +131,9 @@ async function processTask(
   supabaseUrl: string,
   supabaseKey: string,
   authHeader: string,
+  anonKey: string,
 ): Promise<A2ATask> {
   const taskId = crypto.randomUUID();
-  const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
 
   try {
     if (task.agentId) {
@@ -197,8 +197,11 @@ serve(async (req) => {
 
   const url = new URL(req.url);
   const path = url.pathname.replace(/^\/a2a-server\/?/, '/').replace(/\/+$/, '') || '/';
-  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  const supabaseUrl = Deno.env.get('SUPABASE_URL');
+  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  if (!supabaseUrl || !supabaseKey) {
+    return errorResponse(req, 'Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY', 500);
+  }
 
   // Rate limiting
   const identifier = getRateLimitIdentifier(req);
@@ -229,6 +232,7 @@ serve(async (req) => {
       }
 
       const authHeader = req.headers.get('Authorization') || `Bearer ${Deno.env.get('SUPABASE_ANON_KEY')}`;
+      const anonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? supabaseKey;
       const result = await processTask(
         {
           message: textPart.text,
@@ -238,6 +242,7 @@ serve(async (req) => {
         supabaseUrl,
         supabaseKey,
         authHeader,
+        anonKey,
       );
 
       return jsonResponse(req, { id: result.id, result });

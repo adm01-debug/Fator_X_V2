@@ -18,8 +18,11 @@ serve(async (req) => {
   if (!rateCheck.allowed) return createRateLimitResponse(rateCheck);
 
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    if (!supabaseUrl || !supabaseServiceKey) {
+      return errorResponse(req, 'Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY', 500);
+    }
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const url = new URL(req.url);
@@ -44,6 +47,9 @@ serve(async (req) => {
     }
 
     if (action === 'callback') {
+      if (!bitrixDomain || !clientId || !clientSecret) {
+        return errorResponse(req, 'Bitrix24 não configurado', 500);
+      }
       const code = url.searchParams.get('code');
       if (!code) return errorResponse(req, 'Missing authorization code', 400);
 
@@ -53,8 +59,8 @@ serve(async (req) => {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({
           grant_type: 'authorization_code',
-          client_id: clientId!,
-          client_secret: clientSecret!,
+          client_id: clientId,
+          client_secret: clientSecret,
           code,
           redirect_uri: redirectUri,
         }),

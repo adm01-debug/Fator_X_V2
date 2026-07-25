@@ -16,16 +16,19 @@ serve(async (req) => {
   // Check database connectivity
   try {
     const dbStart = Date.now();
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    );
-    const { error } = await supabase.from('workspaces').select('id').limit(1);
-    checks.database = {
-      status: error ? 'degraded' : 'healthy',
-      latency_ms: Date.now() - dbStart,
-      ...(error && { error: error.message }),
-    };
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    if (!supabaseUrl || !serviceKey) {
+      checks.database = { status: 'down', error: 'Missing env vars' };
+    } else {
+      const supabase = createClient(supabaseUrl, serviceKey);
+      const { error } = await supabase.from('workspaces').select('id').limit(1);
+      checks.database = {
+        status: error ? 'degraded' : 'healthy',
+        latency_ms: Date.now() - dbStart,
+        ...(error && { error: error.message }),
+      };
+    }
   } catch (e) {
     checks.database = { status: 'down', error: e instanceof Error ? e.message : String(e) };
   }
