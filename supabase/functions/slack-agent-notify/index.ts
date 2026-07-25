@@ -20,6 +20,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.50.0";
 import { z } from "npm:zod@3.23.8";
 import { handleCorsPreflight, jsonResponse, errorResponse } from "../_shared/cors.ts";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 import { slackApiCall, buildAlertPayload } from "../_shared/slack.ts";
 
 const PayloadSchema = z.object({
@@ -44,6 +45,9 @@ function renderTemplate(tpl: string, vars: Record<string, string>): string {
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return handleCorsPreflight(req);
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.medium);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, getCorsHeaders(req));
   if (req.method !== "POST") return errorResponse(req, "Method not allowed", 405);
 
   let payload: z.infer<typeof PayloadSchema>;
@@ -55,13 +59,13 @@ Deno.serve(async (req) => {
     });
   }
 
-  if (!Deno.env.get("SLACK_BOT_TOKEN")) {
+  if (!requireEnv("SLACK_BOT_TOKEN")) {
     return errorResponse(req, "SLACK_BOT_TOKEN não configurado", 503);
   }
 
   const supabase = createClient(
-    Deno.env.get("SUPABASE_URL")!,
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    requireEnv("SUPABASE_URL"),
+    requireEnv("SUPABASE_SERVICE_ROLE_KEY"),
     { auth: { persistSession: false, autoRefreshToken: false } }
   );
 

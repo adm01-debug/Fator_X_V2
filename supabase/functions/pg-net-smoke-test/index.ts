@@ -4,6 +4,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { z } from "npm:zod@3.23.8";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 
 const BodySchema = z.object({
   url: z.string().url().optional(),
@@ -13,13 +14,17 @@ const BodySchema = z.object({
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.light);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
+
   // Guard: somente admins podem executar smoke tests (função de diagnóstico).
   try {
     const authHeader = req.headers.get("Authorization") ?? "";
     if (!authHeader.startsWith("Bearer ")) return json({ error: "unauthorized" }, 401);
     const userClient = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
+      requireEnv("SUPABASE_URL"),
+      requireEnv("SUPABASE_ANON_KEY"),
       { global: { headers: { Authorization: authHeader } }, auth: { persistSession: false } },
     );
     const { data: userData } = await userClient.auth.getUser();
@@ -41,8 +46,8 @@ Deno.serve(async (req) => {
     const timeoutMs = parsed.data.timeout_ms ?? 8000;
 
     const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      requireEnv("SUPABASE_URL"),
+      requireEnv("SUPABASE_SERVICE_ROLE_KEY"),
       { auth: { persistSession: false } },
     );
 

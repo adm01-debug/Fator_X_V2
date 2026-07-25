@@ -2,8 +2,7 @@
 import { fetchWithTimeout } from "../_shared/retry.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { z } from "https://esm.sh/zod@3.23.8";
-
-import { getCorsHeaders } from "../_shared/cors.ts";
+import { checkRateLimit, createRateLimitResponse, getCorsHeaders, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 const InputSchema = z.object({
   article_id: z.string().uuid(),
   target_language: z.string().min(2).max(10),
@@ -18,6 +17,10 @@ Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
+
   try {
     const auth = req.headers.get("Authorization");
     if (!auth) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
@@ -28,9 +31,8 @@ Deno.serve(async (req) => {
     const { article_id, target_language } = parsed.data;
 
 
-    const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-    const lovableKey = Deno.env.get("LOVABLE_API_KEY");
-    if (!lovableKey) throw new Error("LOVABLE_API_KEY missing");
+    const supabase = createClient(requireEnv("SUPABASE_URL"), requireEnv("SUPABASE_SERVICE_ROLE_KEY"));
+    const lovableKey = requireEnv("LOVABLE_API_KEY");
 
     const { data: article } = await supabase.from("kb_articles").select("*").eq("id", article_id).maybeSingle();
     if (!article) return new Response(JSON.stringify({ error: "Article not found" }), { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } });

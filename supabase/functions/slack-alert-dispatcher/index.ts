@@ -16,6 +16,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.50.0";
 import { z } from "npm:zod@3.23.8";
 import { handleCorsPreflight, jsonResponse, errorResponse } from "../_shared/cors.ts";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 import { slackApiCall, buildAlertPayload } from "../_shared/slack.ts";
 
 const SEVERITY_RANK = { info: 0, warning: 1, error: 2, critical: 3 } as const;
@@ -40,6 +41,9 @@ const BodySchema = z.object({
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return handleCorsPreflight(req);
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.medium);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, getCorsHeaders(req));
   if (req.method !== "POST") return errorResponse(req, "Method not allowed", 405);
 
   let parsed;
@@ -52,8 +56,8 @@ Deno.serve(async (req) => {
   }
 
   const alert = (parsed.record ?? parsed.alert)!;
-  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const supabaseUrl = requireEnv("SUPABASE_URL");
+  const serviceKey = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
   const supabase = createClient(supabaseUrl, serviceKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });

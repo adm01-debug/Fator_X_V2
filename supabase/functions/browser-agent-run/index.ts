@@ -1,8 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { z } from "https://esm.sh/zod@3.23.8";
 import { fetchWithTimeout } from "../_shared/retry.ts";
-
-import { getCorsHeaders } from "../_shared/cors.ts";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv, getCorsHeaders } from "../_shared/mod.ts";
 const BodySchema = z.object({
   goal: z.string().min(3).max(2000),
   start_url: z.string().url(),
@@ -168,6 +167,10 @@ Deno.serve(async (req: Request) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+  const identifier = getRateLimitIdentifier(req);
+  const rateResult = checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rateResult.allowed) return createRateLimitResponse(rateResult, req);
+
   try {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
@@ -175,8 +178,8 @@ Deno.serve(async (req: Request) => {
     }
 
     const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
+      requireEnv("SUPABASE_URL"),
+      requireEnv("SUPABASE_ANON_KEY"),
       { global: { headers: { Authorization: authHeader } } },
     );
     const { data: claimsData, error: claimsErr } = await supabase.auth.getClaims(authHeader.replace("Bearer ", ""));
@@ -191,8 +194,7 @@ Deno.serve(async (req: Request) => {
     }
     const { goal, start_url, agent_id, workspace_id, max_steps } = parsed.data;
 
-    const apiKey = Deno.env.get("LOVABLE_API_KEY");
-    if (!apiKey) throw new Error("LOVABLE_API_KEY not set");
+    const apiKey = requireEnv("LOVABLE_API_KEY");
 
     // Create session
     const { data: session, error: sessErr } = await supabase.from("browser_sessions").insert({

@@ -5,6 +5,7 @@
  */
 import { createClient } from "npm:@supabase/supabase-js@2.50.0";
 import { handleCorsPreflight, jsonResponse, errorResponse } from "../_shared/cors.ts";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 import { slackApiCall } from "../_shared/slack.ts";
 
 const MAX_ATTEMPTS = 5;
@@ -41,11 +42,14 @@ function isPermanent(errMsg: string): boolean {
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return handleCorsPreflight(req);
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.medium);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, getCorsHeaders(req));
   if (req.method !== "POST") return errorResponse(req, "Method not allowed", 405);
 
   const supabase = createClient(
-    Deno.env.get("SUPABASE_URL")!,
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    requireEnv("SUPABASE_URL"),
+    requireEnv("SUPABASE_SERVICE_ROLE_KEY"),
     { auth: { persistSession: false, autoRefreshToken: false } }
   );
 

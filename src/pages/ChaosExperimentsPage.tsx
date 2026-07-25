@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { useWorkspaceId } from "@/hooks/use-data";
+import {
+  listChaosExperiments,
+  createChaosExperiment,
+  disableChaosExperiment,
+} from "@/services/chaosService";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -66,16 +70,8 @@ export default function ChaosExperimentsPage() {
   const load = async () => {
     if (!workspaceId) return;
     setLoading(true);
-    const { data, error } = await supabase
-      .from("chaos_experiments")
-      .select("*")
-      .eq("workspace_id", workspaceId)
-      .order("created_at", { ascending: false });
-    if (error) {
-      toast.error("Erro: " + error.message);
-    } else {
-      setExperiments((data ?? []) as ChaosExp[]);
-    }
+    const data = await listChaosExperiments(workspaceId);
+    setExperiments(data);
     setLoading(false);
   };
 
@@ -101,22 +97,18 @@ export default function ChaosExperimentsPage() {
       toast.error("Duração deve estar entre 1 e 60 minutos");
       return;
     }
-    const { data: userData } = await supabase.auth.getUser();
-    if (!userData.user) return;
-    const expiresAt = new Date(Date.now() + form.duration_min * 60_000).toISOString();
-    const { error } = await supabase.from("chaos_experiments").insert({
-      workspace_id: workspaceId,
-      name: form.name.trim(),
-      target: form.target,
-      fault_type: form.fault_type,
-      probability: form.probability,
-      latency_ms: form.fault_type === "latency" ? form.latency_ms : null,
-      enabled: true,
-      created_by: userData.user.id,
-      expires_at: expiresAt,
-    });
-    if (error) {
-      toast.error("Erro: " + error.message);
+    try {
+      await createChaosExperiment({
+        workspace_id: workspaceId,
+        name: form.name.trim(),
+        target: form.target as import("@/services/chaosService").ChaosTarget,
+        fault_type: form.fault_type as import("@/services/chaosService").ChaosFaultType,
+        probability: form.probability,
+        latency_ms: form.fault_type === "latency" ? form.latency_ms : undefined,
+        duration_seconds: form.duration_min * 60,
+      });
+    } catch (err: unknown) {
+      toast.error("Erro: " + (err instanceof Error ? err.message : String(err)));
       return;
     }
     toast.success("Experimento criado — auto-expira em " + form.duration_min + "min");
@@ -126,13 +118,16 @@ export default function ChaosExperimentsPage() {
   };
 
   const toggle = async (exp: ChaosExp) => {
-    const { error } = await supabase
-      .from("chaos_experiments")
-      .update({ enabled: !exp.enabled })
-      .eq("id", exp.id);
-    if (error) {
-      toast.error(error.message);
-      return;
+    if (exp.enabled) {
+      await disableChaosExperiment(exp.id);
+    } else {
+      const { error } = await import("@/integrations/supabase/client").then(
+        (m) => m.supabase.from("chaos_experiments").update({ enabled: true }).eq("id", exp.id),
+      );
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
     }
     void load();
   };

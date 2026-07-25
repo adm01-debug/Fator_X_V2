@@ -3,6 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.4';
 import { startEdgeTrace } from '../_shared/otel.ts';
 import { _maybeInjectFault, _applyFault } from '../_shared/chaos.ts';
 import { parseBody, z } from '../_shared/validation.ts';
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
 const WorkflowRunSchema = z.object({
@@ -86,6 +87,10 @@ Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, getCorsHeaders(req));
+
   const isStream = req.headers.get('accept') === 'text/event-stream';
   const trace = startEdgeTrace(req, { rootName: 'agent-workflow-runner.handle' });
   const _rootSpan = trace.startSpan('agent-workflow-runner.handle', 'server');
@@ -94,8 +99,8 @@ Deno.serve(async (req) => {
     const auth = req.headers.get('Authorization');
     if (!auth) throw new Error('Unauthorized');
 
-    const supa = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
-    const userClient = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_ANON_KEY')!, {
+    const supa = createClient(requireEnv('SUPABASE_URL'), requireEnv('SUPABASE_SERVICE_ROLE_KEY'));
+    const userClient = createClient(requireEnv('SUPABASE_URL'), requireEnv('SUPABASE_ANON_KEY'), {
       global: { headers: { Authorization: auth } },
     });
     
@@ -124,7 +129,7 @@ Deno.serve(async (req) => {
 
       (async () => {
         try {
-          const lovableKey = Deno.env.get('LOVABLE_API_KEY')!;
+          const lovableKey = requireEnv('LOVABLE_API_KEY');
           const ordered = topoSort(wf.nodes || [], wf.edges || []);
           // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           const ctx: Record<string, any> = { __input: input };

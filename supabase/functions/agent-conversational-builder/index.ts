@@ -1,6 +1,7 @@
 // Agent Conversational Builder — chat-to-agent via Lovable AI
 import { corsHeaders } from "https://esm.sh/@supabase/supabase-js@2.95.0/cors";
 import { z } from "https://esm.sh/zod@3.23.8";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS } from "../_shared/mod.ts";
 
 const BuilderBodySchema = z.object({
   messages: z.array(z.object({
@@ -33,6 +34,10 @@ REGRAS:
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+
+  const identifier = getRateLimitIdentifier(req);
+  const rateResult = checkRateLimit(identifier, RATE_LIMITS.medium);
+  if (!rateResult.allowed) return createRateLimitResponse(rateResult, req);
 
   try {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");

@@ -4,7 +4,7 @@ import { z } from "https://esm.sh/zod@3.23.8";
 import { fetchWithTimeout, withRetry } from "../_shared/retry.ts";
 import { checkIdempotency, saveIdempotency } from "../_shared/idempotency.ts";
 
-import { getCorsHeaders } from "../_shared/cors.ts";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv, getCorsHeaders } from "../_shared/mod.ts";
 const InputSchema = z.object({
   graph_id: z.string().uuid(),
   input: z.string().min(1).max(20000),
@@ -12,9 +12,9 @@ const InputSchema = z.object({
 
 
 const MAX_NODES = 15;
-const LOVABLE_KEY = Deno.env.get('LOVABLE_API_KEY')!;
-const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
-const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+const LOVABLE_KEY = requireEnv("LOVABLE_API_KEY");
+const SUPABASE_URL = requireEnv("SUPABASE_URL");
+const SERVICE_KEY = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
 
 interface GraphNode { id: string; agent_id?: string | null; role?: string; label?: string; position?: { x: number; y: number } }
 interface GraphEdge { from: string; to: string; condition?: string }
@@ -55,12 +55,17 @@ async function chooseNextNode(currentOutput: string, candidates: { node: GraphNo
 Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, getCorsHeaders(req));
+
   try {
     const auth = req.headers.get('Authorization');
     if (!auth) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
     const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
-    const userClient = createClient(SUPABASE_URL, Deno.env.get('SUPABASE_ANON_KEY')!, { global: { headers: { Authorization: auth } } });
+    const userClient = createClient(SUPABASE_URL, requireEnv("SUPABASE_ANON_KEY"), { global: { headers: { Authorization: auth } } });
     const { data: userData } = await userClient.auth.getUser();
     const user = userData?.user;
     if (!user) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });

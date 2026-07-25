@@ -1,7 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 import { z } from "https://esm.sh/zod@3.23.8";
 
-import { getCorsHeaders } from "../_shared/cors.ts";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv, getCorsHeaders } from "../_shared/mod.ts";
 const ScanRequestSchema = z.object({
   workspace_id: z.string().uuid(),
   snapshot_id: z.string().uuid(),
@@ -68,6 +68,10 @@ Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, getCorsHeaders(req));
+
   try {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
@@ -78,14 +82,14 @@ Deno.serve(async (req) => {
     }
 
     const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      requireEnv("SUPABASE_URL"),
+      requireEnv("SUPABASE_SERVICE_ROLE_KEY"),
       { global: { headers: { Authorization: authHeader } } },
     );
 
     const userClient = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
+      requireEnv("SUPABASE_URL"),
+      requireEnv("SUPABASE_ANON_KEY"),
       { global: { headers: { Authorization: authHeader } } },
     );
     const { data: userData, error: userErr } = await userClient.auth.getUser();

@@ -11,7 +11,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { z } from "https://esm.sh/zod@3.23.8";
 
-import { getCorsHeaders } from "../_shared/cors.ts";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv, getCorsHeaders } from "../_shared/mod.ts";
 const InputSchema = z.object({
   query: z.string().max(500).default(""),
   limit: z.number().int().min(1).max(20).default(8),
@@ -34,6 +34,10 @@ interface SearchHit {
 Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, getCorsHeaders(req));
 
   try {
     const raw = await req.json().catch(() => null);
@@ -63,8 +67,8 @@ Deno.serve(async (req) => {
       });
     }
 
-    const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-    const ANON = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const SUPABASE_URL = requireEnv("SUPABASE_URL");
+    const ANON = requireEnv("SUPABASE_ANON_KEY");
     const supabase = createClient(SUPABASE_URL, ANON, {
       global: { headers: { Authorization: authHeader } },
     });
@@ -76,6 +80,8 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    const rateCheck = checkRateLimit(getRateLimitIdentifier(req, user.id), RATE_LIMITS.standard);
+    if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, corsHeaders);
 
     const cleanQuery = query.replace(/[%_]/g, "");
     const pattern = `%${cleanQuery}%`;
@@ -184,7 +190,7 @@ Deno.serve(async (req) => {
     const topCandidates = candidates.slice(0, Math.min(20, candidates.length));
 
     // STAGE 2 — Semantic re-rank via Lovable AI
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    const LOVABLE_API_KEY = requireEnv("LOVABLE_API_KEY");
     let mode: string = "lexical";
 
     if (semanticEnabled && LOVABLE_API_KEY && topCandidates.length > 1) {

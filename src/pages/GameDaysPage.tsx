@@ -1,6 +1,11 @@
 import { useEffect, useState, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { useWorkspaceId } from "@/hooks/use-data";
+import {
+  listGameDays,
+  createGameDay,
+  startGameDay,
+  completeGameDay,
+} from "@/services/gameDayService";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -70,13 +75,8 @@ export default function GameDaysPage() {
   const load = useCallback(async () => {
     if (!workspaceId) return;
     setLoading(true);
-    const { data, error } = await supabase
-      .from("game_days")
-      .select("id,title,description,scenario,status,scheduled_at,started_at,ended_at,runbook_section")
-      .eq("workspace_id", workspaceId)
-      .order("scheduled_at", { ascending: false });
-    if (error) toast.error("Erro ao carregar Game Days");
-    else setGameDays((data ?? []) as GameDay[]);
+    const data = await listGameDays(workspaceId);
+    setGameDays(data);
     setLoading(false);
   }, [workspaceId]);
 
@@ -90,22 +90,17 @@ export default function GameDaysPage() {
       toast.error("Título é obrigatório");
       return;
     }
-    const { data: userData } = await supabase.auth.getUser();
-    if (!userData.user) {
-      toast.error("Sessão inválida");
-      return;
-    }
-    const { error } = await supabase.from("game_days").insert({
-      workspace_id: workspaceId,
-      title: form.title.trim(),
-      description: form.description.trim() || null,
-      scenario: form.scenario,
-      scheduled_at: new Date(form.scheduled_at).toISOString(),
-      facilitator_id: userData.user.id,
-      runbook_section: form.runbook_section.trim() || null,
-    });
-    if (error) {
-      toast.error(`Falha ao criar: ${error.message}`);
+    try {
+      await createGameDay({
+        workspace_id: workspaceId,
+        title: form.title.trim(),
+        description: form.description.trim() || undefined,
+        scenario: form.scenario as import("@/services/gameDayService").GameDayScenario,
+        scheduled_at: new Date(form.scheduled_at).toISOString(),
+        runbook_section: form.runbook_section.trim() || undefined,
+      });
+    } catch (err: unknown) {
+      toast.error(`Falha ao criar: ${err instanceof Error ? err.message : String(err)}`);
       return;
     }
     toast.success("Game Day agendado");
@@ -121,15 +116,30 @@ export default function GameDaysPage() {
   };
 
   const transition = async (id: string, next: "running" | "completed" | "aborted") => {
-    const patch: Record<string, string> = { status: next };
-    if (next === "running") patch.started_at = new Date().toISOString();
-    if (next === "completed" || next === "aborted") patch.ended_at = new Date().toISOString();
-    const { error } = await supabase.from("game_days").update(patch).eq("id", id);
-    if (error) toast.error(`Falha: ${error.message}`);
-    else {
-      toast.success("Status atualizado");
-      void load();
+    try {
+      if (next === "running") {
+        await startGameDay(id, false);
+      } else if (next === "completed") {
+        await completeGameDay({
+          game_day_id: id,
+          runbook_followed: false,
+          gaps_found: [],
+          score: 0,
+          retrospective: "",
+        });
+      } else {
+        // aborted — no dedicated service method, use direct patch
+        const { error } = await import("@/integrations/supabase/client").then(
+          (m) => m.supabase.from("game_days").update({ status: "aborted", ended_at: new Date().toISOString() }).eq("id", id),
+        );
+        if (error) throw new Error(error.message);
+      }
+    } catch (err: unknown) {
+      toast.error(`Falha: ${err instanceof Error ? err.message : String(err)}`);
+      return;
     }
+    toast.success("Status atualizado");
+    void load();
   };
 
   const stats = {

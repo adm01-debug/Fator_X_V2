@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
-import { getCorsHeaders, handleCorsPreflight, errorResponse } from "../_shared/mod.ts";
+import { getCorsHeaders, handleCorsPreflight, errorResponse, checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 import { fetchWithTimeout } from "../_shared/retry.ts";
 
 function hfJsonResponse(req: Request, data: unknown, status = 200) {
@@ -34,19 +34,21 @@ serve(async (req) => {
 
   try {
     const authHeader = req.headers.get('Authorization')!;
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabaseUrl = requireEnv("SUPABASE_URL");
+    const supabaseKey = requireEnv("SUPABASE_ANON_KEY");
     const supabase = createClient(supabaseUrl, supabaseKey, { global: { headers: { Authorization: authHeader } } });
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return hfJsonResponse(req, { error: 'Unauthorized' }, 401);
+    const rateCheck = checkRateLimit(getRateLimitIdentifier(req, user.id), RATE_LIMITS.heavy);
+    if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, getCorsHeaders(req));
 
     const rawBody = await req.json();
     const parsed = ActionSchema.safeParse(rawBody);
     if (!parsed.success) return hfJsonResponse(req, { error: 'Validation failed', details: parsed.error.flatten().fieldErrors }, 400);
 
     const { action, agent_id, dataset_config, training_config, job_id } = parsed.data;
-    const hfToken = Deno.env.get('HF_API_TOKEN');
+    const hfToken = requireEnv("HF_API_TOKEN");
     if (!hfToken) return hfJsonResponse(req, { error: 'HF_API_TOKEN not configured' }, 400);
 
     const { data: member } = await supabase.from('workspace_members').select('workspace_id').eq('user_id', user.id).limit(1).single();

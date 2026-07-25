@@ -12,13 +12,18 @@
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { 
-  handleCorsPreflight, 
-  getCorsHeaders, 
+import {
+  handleCorsPreflight,
+  getCorsHeaders,
   createAdminClient,
   jsonResponse,
   errorResponse,
-  parseBody
+  parseBody,
+  checkRateLimit,
+  createRateLimitResponse,
+  getRateLimitIdentifier,
+  RATE_LIMITS,
+  requireEnv,
 } from "../_shared/mod.ts";
 import { WhatsAppWebhookContracts } from "../_shared/contracts.ts";
 import { verifyHmac } from "../_shared/webhookSignature.ts";
@@ -238,7 +243,7 @@ async function validateSignature(
 ): Promise<boolean> {
   switch (provider) {
     case 'twilio': {
-      const token = Deno.env.get('WHATSAPP_TWILIO_AUTH_TOKEN');
+      const token = requireEnv('WHATSAPP_TWILIO_AUTH_TOKEN');
       if (!token) return false; // Enforce secret presence for 10/10 security
       
       const provided = headers.get('x-twilio-signature');
@@ -249,7 +254,7 @@ async function validateSignature(
       return provided.length > 0;
     }
     case 'meta': {
-      const secret = Deno.env.get('WHATSAPP_META_APP_SECRET');
+      const secret = requireEnv('WHATSAPP_META_APP_SECRET');
       if (!secret) return false; // Enforce secret presence
       const provided = headers.get('x-hub-signature-256');
       if (!provided) return false;
@@ -258,9 +263,9 @@ async function validateSignature(
     case 'zapi':
     case 'evolution': {
       const tokens = [
-        Deno.env.get('WHATSAPP_ZAPI_TOKEN'),
-        Deno.env.get('WHATSAPP_EVOLUTION_TOKEN'),
-      ].filter(Boolean) as string[];
+        requireEnv('WHATSAPP_ZAPI_TOKEN'),
+        requireEnv('WHATSAPP_EVOLUTION_TOKEN'),
+      ];
       if (tokens.length === 0) return false; // Enforce secret
       const auth = headers.get('authorization') ?? '';
       return tokens.some((t) => auth.includes(t));
@@ -341,13 +346,17 @@ serve(async (req) => {
     return handleCorsPreflight(req);
   }
 
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.light);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, getCorsHeaders(req));
+
   // Meta verification GET handshake
   if (req.method === 'GET') {
     const url = new URL(req.url);
     const mode = url.searchParams.get('hub.mode');
     const token = url.searchParams.get('hub.verify_token');
     const challenge = url.searchParams.get('hub.challenge');
-    const expected = Deno.env.get('WHATSAPP_META_VERIFY_TOKEN');
+    const expected = requireEnv('WHATSAPP_META_VERIFY_TOKEN');
     if (mode === 'subscribe' && expected && token === expected && challenge) {
       return new Response(challenge, { status: 200, headers: { ...getCorsHeaders(req), 'Content-Type': 'text/plain' } });
     }

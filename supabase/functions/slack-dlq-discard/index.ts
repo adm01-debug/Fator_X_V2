@@ -5,6 +5,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.50.0";
 import { z } from "npm:zod@3.23.8";
 import { handleCorsPreflight, jsonResponse, errorResponse } from "../_shared/cors.ts";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 
 const MAX_ATTEMPTS = 5;
 
@@ -14,15 +15,18 @@ const BodySchema = z.object({
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return handleCorsPreflight(req);
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.light);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, getCorsHeaders(req));
   if (req.method !== "POST") return errorResponse(req, "Method not allowed", 405);
 
   const authHeader = req.headers.get("Authorization") ?? "";
   const token = authHeader.replace(/^Bearer\s+/i, "");
   if (!token) return errorResponse(req, "Missing bearer token", 401);
 
-  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-  const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
-  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const supabaseUrl = requireEnv("SUPABASE_URL");
+  const anonKey = requireEnv("SUPABASE_ANON_KEY");
+  const serviceKey = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
 
   // Autentica user
   const userClient = createClient(supabaseUrl, anonKey, {

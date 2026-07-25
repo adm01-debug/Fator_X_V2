@@ -2,6 +2,19 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useWorkspaceId } from "@/hooks/use-data";
+import {
+  listIpWhitelist,
+  toggleIpWhitelist,
+  listAllowedCountries,
+  addAllowedCountry,
+  deleteAllowedCountry,
+  listAccessBlockedLog,
+} from "@/services/accessControlService";
+import {
+  listFreezeWindows,
+  createFreezeWindow,
+  deleteFreezeWindow,
+} from "@/services/freezeWindowService";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -90,59 +103,26 @@ export default function GovernancePage() {
   const freezeQuery = useQuery({
     queryKey: ["governance", "freeze", workspaceId],
     enabled: !!workspaceId,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("freeze_windows")
-        .select("*")
-        .eq("workspace_id", workspaceId!)
-        .order("starts_at", { ascending: false });
-      if (error) throw error;
-      return (data ?? []) as FreezeWindow[];
-    },
+    queryFn: async () => listFreezeWindows(workspaceId!),
   });
 
   const geoQuery = useQuery({
     queryKey: ["governance", "geo", workspaceId],
     enabled: !!workspaceId,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("geo_allowed_countries")
-        .select("*")
-        .eq("workspace_id", workspaceId!)
-        .order("country_code");
-      if (error) throw error;
-      return (data ?? []) as GeoCountry[];
-    },
+    queryFn: async () => listAllowedCountries(workspaceId!),
   });
 
   const ipQuery = useQuery({
     queryKey: ["governance", "ip_whitelist", workspaceId],
     enabled: !!workspaceId,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("ip_whitelist")
-        .select("id, ip_address, label, is_active, created_at")
-        .eq("workspace_id", workspaceId!)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return (data ?? []) as IPEntry[];
-    },
+    queryFn: async () => listIpWhitelist(workspaceId!),
   });
 
   const blockedQuery = useQuery({
     queryKey: ["governance", "access_blocked", workspaceId],
     enabled: !!workspaceId,
     refetchInterval: 30_000,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("access_blocked_log")
-        .select("id, ip_address, country_code, reason, created_at")
-        .eq("workspace_id", workspaceId!)
-        .order("created_at", { ascending: false })
-        .limit(10);
-      if (error) throw error;
-      return (data ?? []) as BlockedEntry[];
-    },
+    queryFn: async () => listAccessBlockedLog(workspaceId!),
   });
 
 
@@ -160,19 +140,13 @@ export default function GovernancePage() {
       if (!fName.trim() || !fStart || !fEnd) {
         throw new Error("Nome, início e fim são obrigatórios");
       }
-      const { data: userData } = await supabase.auth.getUser();
-      const uid = userData.user?.id;
-      if (!uid) throw new Error("Usuário não autenticado");
-      const { error } = await supabase.from("freeze_windows").insert({
-        workspace_id: workspaceId,
+      await createFreezeWindow(workspaceId, {
         name: fName.trim(),
         reason: fReason.trim() || null,
         starts_at: new Date(fStart).toISOString(),
         ends_at: new Date(fEnd).toISOString(),
         allow_emergency: fEmergency,
-        created_by: uid,
       });
-      if (error) throw error;
     },
     onSuccess: () => {
       toast.success("Janela de congelamento criada");
@@ -188,10 +162,7 @@ export default function GovernancePage() {
   });
 
   const deleteFreeze = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from("freeze_windows").delete().eq("id", id);
-      if (error) throw error;
-    },
+    mutationFn: async (id: string) => deleteFreezeWindow(id),
     onSuccess: () => {
       toast.success("Janela removida");
       qc.invalidateQueries({ queryKey: ["governance", "freeze"] });
@@ -203,19 +174,15 @@ export default function GovernancePage() {
     mutationFn: async (opts: DbRow) => {
       if (!workspaceId) throw new Error("Workspace ausente");
       if (opts.enabled) {
-        const { error } = await supabase.from("geo_allowed_countries").insert({
-          workspace_id: workspaceId,
-          country_code: opts.code,
-          country_name: opts.name,
-        });
-        if (error) throw error;
+        await addAllowedCountry(workspaceId, opts.code as string, opts.name as string | undefined);
       } else {
-        const { error } = await supabase
+        const { data: existing } = await supabase
           .from("geo_allowed_countries")
-          .delete()
+          .select("id")
           .eq("workspace_id", workspaceId)
-          .eq("country_code", opts.code);
-        if (error) throw error;
+          .eq("country_code", opts.code as string)
+          .maybeSingle();
+        if (existing) await deleteAllowedCountry(existing.id);
       }
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["governance", "geo"] }),
@@ -231,12 +198,7 @@ export default function GovernancePage() {
         throw new Error("Código ISO 3166-1 alpha-2 (2 letras)");
       }
       if (!workspaceId) throw new Error("Workspace ausente");
-      const { error } = await supabase.from("geo_allowed_countries").insert({
-        workspace_id: workspaceId,
-        country_code: code,
-        country_name: customName.trim() || code,
-      });
-      if (error) throw error;
+      await addAllowedCountry(workspaceId, code, customName.trim() || undefined);
     },
     onSuccess: () => {
       toast.success("País adicionado");

@@ -1,4 +1,5 @@
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS } from "../_shared/mod.ts";
 
 const jsonHeaders = {
   ...corsHeaders,
@@ -9,6 +10,10 @@ Deno.serve((req: Request): Response => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
+
+  const identifier = getRateLimitIdentifier(req);
+  const rate = checkRateLimit(identifier, RATE_LIMITS.light);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
 
   if (req.method !== "GET") {
     return new Response(

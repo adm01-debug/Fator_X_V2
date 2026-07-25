@@ -10,6 +10,7 @@ import { Plus, ShieldCheck, ListChecks, Loader2, Trash2, FileText } from "lucide
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
+import { complianceService } from "@/services/complianceService";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -59,14 +60,7 @@ export default function ComplianceFrameworksPage() {
 
   const { data: frameworks, isLoading } = useQuery({
     queryKey: ["compliance_frameworks"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("compliance_frameworks")
-        .select("*")
-        .order("code");
-      if (error) throw error;
-      return (data ?? []) as Framework[];
-    },
+    queryFn: async () => complianceService.listFrameworks(),
   });
 
   const selected = useMemo(
@@ -77,15 +71,7 @@ export default function ComplianceFrameworksPage() {
   const { data: controls } = useQuery({
     queryKey: ["compliance_controls", selected?.id],
     enabled: !!selected?.id,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("compliance_controls")
-        .select("*")
-        .eq("framework_id", selected!.id)
-        .order("code");
-      if (error) throw error;
-      return (data ?? []) as Control[];
-    },
+    queryFn: async () => complianceService.listControls(selected!.id),
   });
 
   const createFramework = useMutation({

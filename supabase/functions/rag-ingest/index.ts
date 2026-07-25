@@ -1,7 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import { getCorsHeaders, handleCorsPreflight, jsonResponse } from "../_shared/mod.ts";
+import { getCorsHeaders, handleCorsPreflight, jsonResponse, checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 import { z } from "https://esm.sh/zod@3.23.8";
 
 const IngestBodySchema = z.object({
@@ -33,12 +33,14 @@ serve(async (req) => {
 
   try {
     const authHeader = req.headers.get('Authorization')!;
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabaseUrl = requireEnv("SUPABASE_URL");
+    const supabaseKey = requireEnv("SUPABASE_ANON_KEY");
     const supabase = createClient(supabaseUrl, supabaseKey, { global: { headers: { Authorization: authHeader } } });
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Unauthorized');
+    const rateCheck = checkRateLimit(getRateLimitIdentifier(req, user.id), RATE_LIMITS.heavy);
+    if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, getCorsHeaders(req));
 
     const rawBody = await req.json().catch(() => null);
     const parsedBody = IngestBodySchema.safeParse(rawBody);

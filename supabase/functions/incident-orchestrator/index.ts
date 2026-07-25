@@ -1,6 +1,7 @@
 // Sprint 33: Incident Orchestrator — executes playbook actions sequentially
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 import { z } from "https://esm.sh/zod@3.23.8";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
 type Action = {
@@ -18,7 +19,10 @@ Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
-  try {
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
+
     const raw = await req.json().catch(() => null);
     const parsed = InputSchema.safeParse(raw);
     if (!parsed.success) {
@@ -28,8 +32,8 @@ Deno.serve(async (req) => {
 
 
     const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+      requireEnv('SUPABASE_URL'),
+      requireEnv('SUPABASE_SERVICE_ROLE_KEY'),
     );
 
     // Create run (returns null if cooldown)

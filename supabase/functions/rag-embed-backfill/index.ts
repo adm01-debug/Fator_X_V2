@@ -2,7 +2,7 @@
 // Popula embeddings vector(1536) em public.agent_memories_v2 para linhas com embedding IS NULL.
 // Executada via cron a cada 5 min. Idempotente. Limite: 200 linhas/execução.
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { getCorsHeaders, handleCorsPreflight } from "../_shared/cors.ts";
+import { getCorsHeaders, handleCorsPreflight, checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 
 const BATCH_SIZE = 20;
 const MAX_ROWS = 200;
@@ -36,9 +36,13 @@ async function embedBatch(texts: string[], authHeader: string, projectRef: strin
 Deno.serve(async (req) => {
   const cors = getCorsHeaders(req); if (req.method === "OPTIONS") return handleCorsPreflight(req);
 
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, cors);
+
   const startedAt = Date.now();
-  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const supabaseUrl = requireEnv("SUPABASE_URL");
+  const serviceKey = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
   const projectRef = new URL(supabaseUrl).hostname.split(".")[0];
   const admin = createClient(supabaseUrl, serviceKey);
 

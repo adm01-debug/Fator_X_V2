@@ -18,7 +18,7 @@ import { fetchWithTimeout } from "../_shared/retry.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { z } from "https://esm.sh/zod@3.23.8";
 
-import { getCorsHeaders } from "../_shared/cors.ts";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv, getCorsHeaders } from "../_shared/mod.ts";
 const InputSchema = z.object({
   query: z.string().min(2).max(2000),
   knowledge_base_id: z.string().uuid().nullish(),
@@ -49,6 +49,25 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
 
   try {
+    // Auth — required
+    const auth = req.headers.get("Authorization");
+    if (!auth) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const supabase = createClient(requireEnv("SUPABASE_URL"), requireEnv("SUPABASE_SERVICE_ROLE_KEY"), {
+      global: { headers: { Authorization: auth } },
+    });
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const rateCheck = checkRateLimit(getRateLimitIdentifier(req, user.id), RATE_LIMITS.heavy);
+    if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, corsHeaders);
+
     const raw = await req.json().catch(() => null);
     const parsed = InputSchema.safeParse(raw);
     if (!parsed.success) {
@@ -71,9 +90,8 @@ serve(async (req) => {
       );
     }
 
-    const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-    const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
+    const SUPABASE_URL = requireEnv("SUPABASE_URL");
+    const SERVICE_KEY = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
 
     let results: SearchResult[] = [];
 

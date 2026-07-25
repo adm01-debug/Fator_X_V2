@@ -1,8 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { z } from "https://esm.sh/zod@3.23.8";
 import { checkIdempotency, saveIdempotency } from "../_shared/idempotency.ts";
-
-import { getCorsHeaders } from "../_shared/cors.ts";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, getCorsHeaders } from "../_shared/mod.ts";
 const CodeInterpBodySchema = z.object({
   runtime: z.enum(['python', 'node', 'deno']),
   code: z.string().min(1).max(200_000),
@@ -99,6 +98,10 @@ Se houver erro de sintaxe óbvio, simule a mensagem de erro real do interpretado
 Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+  const identifier = getRateLimitIdentifier(req);
+  const rateResult = checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rateResult.allowed) return createRateLimitResponse(rateResult, req);
 
   try {
     const authHeader = req.headers.get("Authorization");

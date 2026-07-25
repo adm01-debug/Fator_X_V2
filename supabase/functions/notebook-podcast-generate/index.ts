@@ -25,6 +25,7 @@ import "https://deno.land/std@0.224.0/dotenv/load.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { z } from "https://esm.sh/zod@3.23.8";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 
 const BodySchema = z.object({
   notebook_id: z.string().uuid(),
@@ -33,9 +34,9 @@ const BodySchema = z.object({
 });
 
 const LOVABLE_AI_URL = "https://ai.gateway.lovable.dev/v1";
-const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const SUPABASE_URL = requireEnv("SUPABASE_URL");
+const SERVICE_KEY = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
+const LOVABLE_API_KEY = requireEnv("LOVABLE_API_KEY");
 
 async function sha256(text: string): Promise<string> {
   const buf = new TextEncoder().encode(text);
@@ -46,6 +47,10 @@ async function sha256(text: string): Promise<string> {
 }
 
 Deno.serve(async (req) => {
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
+
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (req.method !== "POST") {
     return new Response(JSON.stringify({ error: "Method not allowed" }), {
