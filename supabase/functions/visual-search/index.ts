@@ -18,6 +18,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { z } from "https://esm.sh/zod@3.23.8";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 const VisualSearchBodySchema = z.object({
   image: z.string().min(1).max(20_000_000),
   hint: z.string().max(2000).optional(),
@@ -40,6 +41,10 @@ serve(async (req) => {
   if (req.method === "OPTIONS")
     return new Response(null, { headers: corsHeaders });
 
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
+
   try {
     const rawBody = await req.json().catch(() => null);
     const parsedBody = VisualSearchBodySchema.safeParse(rawBody);
@@ -57,13 +62,7 @@ serve(async (req) => {
       ? imageRaw
       : `data:image/jpeg;base64,${imageRaw}`;
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) {
-      return new Response(
-        JSON.stringify({ error: "LOVABLE_API_KEY not configured" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
-    }
+    const LOVABLE_API_KEY = requireEnv("LOVABLE_API_KEY");
 
     // ── 1. Vision extraction ─────────────────────────────────────
     const visionResp = await fetch(
@@ -130,8 +129,8 @@ serve(async (req) => {
     }
 
     // ── 2. Forward to semantic-search ────────────────────────────
-    const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-    const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const SUPABASE_URL = requireEnv("SUPABASE_URL");
+    const SERVICE_KEY = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
 
     const searchResp = await fetch(
       `${SUPABASE_URL}/functions/v1/semantic-search`,
