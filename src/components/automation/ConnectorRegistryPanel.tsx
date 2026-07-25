@@ -16,8 +16,7 @@ export function ConnectorRegistryPanel() {
       .then(([c, i]) => { setConnectors(c); setInstances(i); })
       .catch(() => toast({ title: 'Erro', variant: 'destructive' }))
       .finally(() => setLoading(false));
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
-  }, []);
+  }, [toast]);
 
   const displayConnectors = connectors.length > 0 ? connectors : BUILTIN_CONNECTORS as unknown as ConnectorDefinition[];
   const connectedIds = new Set(instances.filter(i => i.status === 'connected').map(i => i.connector_id));

@@ -14,6 +14,7 @@ import {
   deleteWorkflow as deleteWorkflowService,
   toggleWorkflowStatus,
   executeWorkflowStream,
+  type WorkflowStreamEvent,
 } from '@/services/workflowsService';
 import { AccessControl } from '@/components/rbac/AccessControl';
 import { WorkflowCanvasTab } from '@/components/workflows/WorkflowCanvasTab';
@@ -62,7 +63,7 @@ export default function WorkflowsPage() {
   const [newName, setNewName] = useState('');
   const [newSteps, setNewSteps] = useState('');
   const [executing, setExecuting] = useState<string | null>(null);
-  const [currentEvent, setCurrentEvent] = useState<Record<string, unknown> | null>(null);
+  const [currentEvent, setCurrentEvent] = useState<WorkflowStreamEvent | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleCreate = async () => {

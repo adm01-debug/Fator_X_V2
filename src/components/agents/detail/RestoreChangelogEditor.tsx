@@ -24,6 +24,7 @@ interface Props {
   disabled?: boolean;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- usado por AgentDetailPage para comparar o resumo automático com o editado
 export function buildAutoSummary(
   sourceVersion: number,
   options: { copyPrompt: boolean; copyTools: boolean; copyModel: boolean },

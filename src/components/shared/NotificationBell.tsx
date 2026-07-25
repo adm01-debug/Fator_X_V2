@@ -60,8 +60,16 @@ export function NotificationBell() {
                 return (
                   <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
                     key={n.id}
+                    role="button"
+                    tabIndex={0}
                     className={`px-4 py-3 hover:bg-muted/30 cursor-pointer transition-colors ${isUnread ? 'bg-primary/5' : ''}`}
                     onClick={() => isUnread && markOneRead(n.id)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        if (isUnread) markOneRead(n.id);
+                      }
+                    }}
                   >
                     <div className="flex items-start gap-2">
                       {isUnread && <span className="h-2 w-2 rounded-full bg-primary mt-1.5 shrink-0" />}

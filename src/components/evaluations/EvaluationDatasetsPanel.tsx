@@ -15,6 +15,19 @@ import { toast } from 'sonner';
 import type { DbRow } from '@/types/dbRow';
 import { handleKeyboardClick } from "@/lib/a11y";
 
+interface EvaluationDataset {
+  id: string;
+  name: string;
+  case_count?: number;
+}
+
+interface TestCase {
+  id: string;
+  input: string;
+  expected_output?: string;
+  tags?: string[];
+}
+
 export function EvaluationDatasetsPanel() {
   const queryClient = useQueryClient();
   const [selectedDatasetId, setSelectedDatasetId] = useState<string | null>(null);
@@ -134,11 +147,19 @@ export function EvaluationDatasetsPanel() {
                 <p className="text-meta text-muted-foreground">Nenhum dataset criado</p>
               </div>
             ) : (
-              datasets.map((ds: DbRow) => (
-                <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
+              (datasets as EvaluationDataset[]).map((ds) => (
+                <div
                   key={ds.id}
+                  role="button"
+                  tabIndex={0}
                   className={`nexus-card cursor-pointer p-3 group ${selectedDatasetId === ds.id ? 'border-primary/40 nexus-glow-sm' : ''}`}
                   onClick={() => setSelectedDatasetId(ds.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setSelectedDatasetId(ds.id);
+                    }
+                  }}
                 >
                   <div className="flex items-center justify-between">
                     <div className="min-w-0">
@@ -202,11 +223,11 @@ export function EvaluationDatasetsPanel() {
               </div>
             ) : (
               <div className="space-y-2 max-h-[500px] overflow-y-auto">
-                {testCases.map((tc: DbRow) => (
+                {(testCases as TestCase[]).map((tc) => (
                   <div key={tc.id} className="nexus-card p-3 group">
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex flex-wrap gap-1">
-                        {(tc.tags ?? []).map((tag: string) => <Badge key={tag} variant="secondary" className="text-meta">{tag}</Badge>)}
+                        {(tc.tags ?? []).map((tag: string) => <Badge key={tag} variant="secondary" className="text-[11px]">{tag}</Badge>)}
                       </div>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>

@@ -98,7 +98,7 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
     await new Promise(r => setTimeout(r, 1000));
     set({ currentStage: 1, stageLabel: 'Replay: Coletando opiniões...' });
     
-    const results: Record<string, unknown> = { stage1_results: [], metrics: entry.metrics };
+    const results: Partial<OracleResult> & { stage1_results: OracleResult['stage1_results'] } = { stage1_results: [], metrics: entry.metrics };
     for (const res of entry.stage1_results) {
       await new Promise(r => setTimeout(r, 800));
       (results.stage1_results as unknown[]).push(res);
@@ -181,13 +181,13 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
       const decoder = new TextDecoder();
       
       const tempResults: {
-        stage1_results: DbRow[];
-        stage2_results?: DbRow[];
-        consensus_points?: DbRow[];
-        metrics: { total_latency_ms: number; total_cost_usd: number; total_tokens: number; models_used: number };
+        stage1_results: OracleResult['stage1_results'];
+        stage2_results?: OracleResult['stage2_results'];
+        consensus_points?: OracleResult['consensus_points'];
+        metrics: Partial<OracleResult['metrics']>;
       } = {
         stage1_results: [],
-        metrics: { total_latency_ms: 0, total_cost_usd: 0, total_tokens: 0, models_used: 0 },
+        metrics: { total_latency_ms: 0, total_cost_usd: 0, total_tokens: 0, models_used: 0 }
       };
 
       while (true) {
@@ -235,7 +235,7 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
         }
       }
     } catch (e) {
-      const err = e instanceof Error ? e : new Error(String(e));
+      const err = e as { name?: string; message?: string };
       if (err.name === 'AbortError') return;
       set({
         error: err.message || 'Erro ao consultar o Oráculo',
@@ -244,9 +244,9 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
         stageLabel: '',
         abortController: null,
       });
-      
+
       // Auto-retry once for network errors or transient 500s
-      if (err.message.includes('fetch') || err.message.includes('network') || err.message.includes('502') || err.message.includes('503')) {
+      if (err.message?.includes('fetch') || err.message?.includes('network') || err.message?.includes('502') || err.message?.includes('503')) {
         toast.info('Erro de conexão ou timeout. Tentando novamente em 3 segundos...');
         setTimeout(() => get().submitQuery(), 3000);
       }

@@ -22,7 +22,19 @@ function ToggleField({ label, description, checked, onChange, icon: Icon }: {
   label: string; description?: string; checked: boolean; onChange: (v: boolean) => void; icon?: typeof Shield;
 }) {
   return (
-    <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className="flex items-center justify-between p-3 rounded-lg bg-background border border-border cursor-pointer hover:border-primary/30 transition-colors" onClick={() => onChange(!checked)}>
+    <div
+      role="button"
+      tabIndex={0}
+      aria-pressed={checked}
+      className="flex items-center justify-between p-3 rounded-lg bg-background border border-border cursor-pointer hover:border-primary/30 transition-colors"
+      onClick={() => onChange(!checked)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onChange(!checked);
+        }
+      }}
+    >
       <div className="flex items-center gap-3">
         {Icon && <Icon className="w-4 h-4 text-muted-foreground" />}
         <div>
@@ -54,9 +66,9 @@ export function SandboxSecurityTab({ config, onUpdate }: SandboxSecurityTabProps
 
         {config.networkEnabled && (
           <div className="space-y-1">
-            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
-            <label className="text-meta text-muted-foreground">Domínios Permitidos</label>
+            <label htmlFor="sandbox-allowed-domains" className="text-xs text-muted-foreground">Domínios Permitidos</label>
             <textarea
+              id="sandbox-allowed-domains"
               value={config.allowedDomains.join('\n')}
               onChange={(e) => onUpdate({ allowedDomains: e.target.value.split('\n').filter(Boolean) })}
               className="w-full h-20 p-2 bg-background border border-border rounded text-meta font-mono text-muted-foreground resize-none focus:border-primary focus:outline-none"

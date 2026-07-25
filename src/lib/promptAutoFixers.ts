@@ -7,7 +7,9 @@
  */
 import { PROMPT_LIMITS } from '@/lib/validations/promptSanitizer';
 
-// eslint-disable-next-line no-control-regex -- intencional: detectar e remover caracteres de controle maliciosos do prompt.
+// Matches ASCII control characters (excluding \t \n \r) and DEL. Matching control
+// characters is the explicit purpose of this fixer, so no-control-regex is disabled here.
+// eslint-disable-next-line no-control-regex
 const CONTROL_CHARS_RE = /[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g;
 const ZERO_WIDTH_RE = /[\u200B-\u200D\uFEFF\u2060]/g;
 const DANGEROUS_TAGS_RE = /<\/?\s*(script|iframe|object|embed|style|link|meta)\b[^>]*>/gi;

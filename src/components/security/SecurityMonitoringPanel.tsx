@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ShieldAlert, ShieldCheck, CheckCircle, Loader2, Bell, Clock, Filter } from "lucide-react";
 import { supabaseExternal } from "@/integrations/supabase/externalClient";
 import { Badge } from "@/components/ui/badge";
@@ -9,14 +9,14 @@ import { toast } from "sonner";
 import { logger } from "@/lib/logger";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import type { DbRow } from '@/types/dbRow';
+import { logger } from "@/lib/logger";
 
 interface SecurityAlert {
   id: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
   category: string;
   message: string;
-  metadata: Record<string, unknown> | null;
+  metadata: Record<string, unknown>;
   is_resolved: boolean;
   created_at: string;
 }
@@ -37,33 +37,14 @@ export function SecurityMonitoringPanel() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'unresolved'>('unresolved');
 
-  useEffect(() => {
-    loadAlerts();
-
-    // Subscribe to new alerts
-    const client = supabaseExternal as unknown as { channel: (name: string) => RealtimeChannelLike };
-    const channel = client
-      .channel('security_alerts_changes')
-      .on('postgres_changes', { event: 'INSERT', table: 'security_alerts' }, (payload) => {
-        setAlerts(prev => [payload.new, ...prev]);
-        toast.error(`Alerta de Segurança: ${payload.new.message}`);
-      })
-      .subscribe();
-
-    return () => {
-      (supabaseExternal as unknown as { removeChannel: (c: RealtimeChannelLike) => void }).removeChannel(channel);
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
-  }, []);
-
-  async function loadAlerts() {
+  const loadAlerts = useCallback(async () => {
     setLoading(true);
     try {
       let query = supabaseExternal
         .from('security_alerts')
         .select('*')
         .order('created_at', { ascending: false });
-      
+
       if (filter === 'unresolved') {
         query = query.eq('is_resolved', false);
       }
@@ -76,7 +57,32 @@ export function SecurityMonitoringPanel() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [filter]);
+
+  useEffect(() => {
+    loadAlerts();
+
+    // Subscribe to new alerts
+    const channel = (supabaseExternal as unknown as {
+      channel: (name: string) => {
+        on: (
+          event: string,
+          filter: { event: string; table: string },
+          cb: (payload: { new: SecurityAlert }) => void,
+        ) => { subscribe: () => unknown };
+      };
+    })
+      .channel('security_alerts_changes')
+      .on('postgres_changes', { event: 'INSERT', table: 'security_alerts' }, (payload) => {
+        setAlerts(prev => [payload.new, ...prev]);
+        toast.error(`Alerta de Segurança: ${payload.new.message}`);
+      })
+      .subscribe();
+
+    return () => {
+      supabaseExternal.removeChannel(channel as Parameters<typeof supabaseExternal.removeChannel>[0]);
+    };
+  }, [loadAlerts]);
 
   async function resolveAlert(id: string) {
     try {
@@ -88,8 +94,7 @@ export function SecurityMonitoringPanel() {
       if (error) throw error;
       setAlerts(prev => prev.filter(a => a.id !== id));
       toast.success('Alerta resolvido');
-    } catch (err) {
-      logger.error("Failed to resolve security alert", { alert_id: id, error: err instanceof Error ? err.message : String(err) });
+    } catch {
       toast.error('Falha ao resolver alerta');
     }
   }
@@ -192,6 +197,6 @@ export function SecurityMonitoringPanel() {
   );
 }
 
-function cn(...inputs: DbRow[]) {
+function cn(...inputs: unknown[]) {
   return inputs.filter(Boolean).join(' ');
 }

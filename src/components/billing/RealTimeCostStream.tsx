@@ -53,9 +53,9 @@ export function RealTimeCostStream() {
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "usage_records" },
-        (payload: { new?: Record<string, unknown> } | unknown) => {
+        (payload: { new: Record<string, unknown> }) => {
           if (pausedRef.current) return;
-          const row = ((payload as { new?: Record<string, unknown> } | null)?.new ?? {}) as Record<string, unknown>;
+          const row = payload.new;
           const evt: StreamEvent = {
             id: String(row.id ?? `${Date.now()}-${Math.random()}`),
             record_type: String(row.record_type ?? "llm"),

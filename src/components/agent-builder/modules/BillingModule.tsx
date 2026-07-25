@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { listModelPrices, USD_TO_BRL, estimateTokens, getModelPrice, type ModelPrice } from '@/lib/llmPricing';
+import type { LLMModel } from '@/types/agentTypes';
 import { Calculator, TrendingDown, Zap, Check } from 'lucide-react';
 
 // Real data from Supabase via useBillingData hook — no more mocks!
@@ -140,7 +141,7 @@ export function BillingModule() {
       {/* Category Breakdown */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {COST_CATEGORIES.map((cat) => {
-          const total = billing.dailyUsage.reduce((s: number, d) => s + (Number((d as unknown as Record<string, number>)[cat.key]) || 0), 0);
+          const total = billing.dailyUsage.reduce((s, d) => s + (d[cat.key as keyof typeof d] as number), 0);
           const pct = (total / totalWeek) * 100;
           return (
             <div key={cat.key} className="rounded-xl border border-border bg-card p-4 space-y-2">
@@ -199,10 +200,11 @@ export function BillingModule() {
       <div className="rounded-xl border border-border bg-card p-6 space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="md:col-span-2 space-y-1.5">
-            <label htmlFor="billingmodule-field-0e908b" className="text-meta font-medium text-foreground flex items-center gap-1.5">
+            <label htmlFor="billing-sim-input" className="text-xs font-medium text-foreground flex items-center gap-1.5">
               <Calculator className="h-3.5 w-3.5" /> Input de exemplo
             </label>
-            <Textarea id="billingmodule-field-0e908b"
+            <Textarea
+              id="billing-sim-input"
               value={simInput}
               onChange={(e) => setSimInput(e.target.value)}
               rows={3}
@@ -314,7 +316,7 @@ export function BillingModule() {
                 mantendo a latência abaixo de 2s.
               </p>
             </div>
-            <Button onClick={() => updateAgent({ model: idealModel.model as import('@/types/agentTypes').LLMModel })} className="gap-2 shrink-0">
+            <Button onClick={() => updateAgent({ model: idealModel.model as LLMModel })} className="gap-2 shrink-0">
               <Check className="h-4 w-4" /> Aplicar Modelo
             </Button>
           </div>

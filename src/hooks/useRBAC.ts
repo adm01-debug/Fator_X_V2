@@ -89,7 +89,7 @@ export function useRBAC() {
 
     loadPermissions();
     return () => { cancelled = true; };
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only re-run on user id change; full user object ref churn (session refresh) would cause redundant reloads
   }, [user?.id]);
 
   /**

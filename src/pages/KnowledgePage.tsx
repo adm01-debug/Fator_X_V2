@@ -235,9 +235,17 @@ export default function KnowledgePage() {
               ) : viewMode === 'grid' ? (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {filtered.map((kb) => (
-                    <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} key={kb.id}
-                      className="nexus-card group cursor-pointer hover:border-primary/40 transition-all hover:shadow-nexus-2xl hover:shadow-primary/5 p-0 overflow-hidden"
+                    <div key={kb.id}
+                      role="button"
+                      tabIndex={0}
+                      className="nexus-card group cursor-pointer hover:border-primary/40 transition-all hover:shadow-2xl hover:shadow-primary/5 p-0 overflow-hidden"
                       onClick={() => setSelectedKb({ id: kb.id, name: kb.name })}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          setSelectedKb({ id: kb.id, name: kb.name });
+                        }
+                      }}
                     >
                       <div className="p-5 space-y-4">
                         <div className="flex items-start justify-between">
@@ -270,8 +278,8 @@ export default function KnowledgePage() {
                         </div>
                       </div>
 
-                      <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className="bg-secondary/10 border-t border-border/30 p-3 flex items-center gap-2" onClick={e => e.stopPropagation()}>
-                        <Button variant="ghost" size="sm" className="flex-1 h-8 text-meta gap-1.5 hover:bg-primary/5" onClick={() => setEditKb(kb)}>
+                      <div role="presentation" className="bg-secondary/10 border-t border-border/30 p-3 flex items-center gap-2" onClick={e => e.stopPropagation()} onKeyDown={e => e.stopPropagation()}>
+                        <Button variant="ghost" size="sm" className="flex-1 h-8 text-[11px] gap-1.5 hover:bg-primary/5" onClick={() => setEditKb(kb)}>
                           <Pencil className="h-3 w-3" /> Configurar
                         </Button>
                         <AccessControl permission="knowledge.delete">
@@ -468,11 +476,11 @@ function VectorIndexesStatus() {
 
       {indexes.length > 0 && (
         <div className="space-y-2 pt-2 border-t border-border/20">
-          <p className="text-meta font-bold text-muted-foreground uppercase tracking-tight mb-2">Índices Vetoriais</p>
-          {indexes.map((idx: DbRow) => (
+          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-tight mb-2">Índices Vetoriais</p>
+          {indexes.map((idx) => (
             <div key={idx.id} className="group p-2.5 rounded-lg bg-secondary/30 border border-border/10 hover:border-primary/30 transition-colors">
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-meta font-bold truncate max-w-[120px]">{(idx.knowledge_bases as { name?: string } | null)?.name || 'Índice Ativo'}</span>
+                <span className="text-[11px] font-bold truncate max-w-[120px]">{(idx.knowledge_bases as { name?: string } | null)?.name || 'Índice Ativo'}</span>
                 <Badge variant="outline" className="text-[8px] h-4 py-0 border-nexus-emerald/30 text-nexus-emerald">Nominal</Badge>
               </div>
               <div className="flex items-center gap-2 text-[9px] text-muted-foreground font-mono">

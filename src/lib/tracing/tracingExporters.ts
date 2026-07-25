@@ -27,8 +27,8 @@ export async function exportToSupabase(trace: TraceData): Promise<void> {
         spans: trace.spans,
       },
     };
-    await (supabaseExternal.from('trace_events').insert as unknown as (row: unknown) => Promise<unknown>)(insertData);
-  } catch (err) {
+    await (supabaseExternal.from('trace_events').insert as (...args: unknown[]) => unknown)(insertData);
+  } catch (err: unknown) {
     logger.error('Trace export to Supabase failed', {
       trace_id: trace.trace_id,
       error: err instanceof Error ? err.message : String(err),
@@ -87,7 +87,7 @@ export async function exportUsageRecord(trace: TraceData): Promise<void> {
     0
   );
   try {
-    await (supabaseExternal.from('usage_records').insert as unknown as (row: unknown) => Promise<unknown>)({
+    await (supabaseExternal.from('usage_records').insert as (...args: unknown[]) => unknown)({
       agent_id: trace.agent_id,
       record_type: 'llm_call',
       cost_usd: totalCost,

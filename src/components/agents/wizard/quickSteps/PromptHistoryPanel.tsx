@@ -65,7 +65,7 @@ export function PromptHistoryPanel({ prompt, type, onRestore }: Props) {
   const [open, setOpen] = useState(false);
   const [confirmId, setConfirmId] = useState<string | null>(null);
   const [confirmClearAll, setConfirmClearAll] = useState(false);
-  const [justSavedAt, setJustSavedAt] = useState<string | null>(null);
+  const [, setJustSavedAt] = useState<string | null>(null);
 
   // Debounced autosave
   useEffect(() => {
@@ -90,8 +90,7 @@ export function PromptHistoryPanel({ prompt, type, onRestore }: Props) {
   const lastSavedLabel = useMemo(() => {
     if (snapshots.length === 0) return null;
     return formatRelative(snapshots[0].savedAt);
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
-  }, [snapshots, justSavedAt]);
+  }, [snapshots]);
 
   const handleRestore = (snap: PromptSnapshot) => {
     onRestore(snap.prompt);

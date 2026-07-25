@@ -50,7 +50,7 @@ export default function ComplianceReportsPage() {
       try {
         const fw = await complianceService.listFrameworks();
         setFrameworks(fw);
-      } catch (_e) {
+      } catch {
         toast.error("Erro ao carregar frameworks");
       }
     })();
@@ -59,8 +59,7 @@ export default function ComplianceReportsPage() {
   useEffect(() => {
     if (!workspaceId) return;
     refresh();
-     
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run only when workspaceId changes; refresh is stable for this purpose
   }, [workspaceId]);
 
   async function refresh() {
@@ -69,7 +68,7 @@ export default function ComplianceReportsPage() {
     try {
       const r = await complianceService.listReports(workspaceId);
       setReports(r);
-    } catch (_e) {
+    } catch {
       toast.error("Erro ao carregar relatórios");
     } finally {
       setLoading(false);
@@ -128,7 +127,7 @@ export default function ComplianceReportsPage() {
       ]);
       setEvidence(ev);
       setControls(ctrls);
-    } catch (_e) {
+    } catch {
       toast.error("Erro ao carregar detalhes");
     }
   }

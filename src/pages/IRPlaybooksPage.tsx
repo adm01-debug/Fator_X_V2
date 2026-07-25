@@ -271,7 +271,7 @@ export default function IRPlaybooksPage() {
                           : 'Sem revisão registrada'}
                       </p>
                     </div>
-                    <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                    <div role="toolbar" tabIndex={-1} aria-label="Ações do playbook" className="flex items-center gap-2" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
                       {pb.status === 'draft' && (
                         <Button size="sm" variant="outline" onClick={() => handleActivate(pb.id)}><Play className="h-3 w-3 mr-1" />Ativar</Button>
                       )}

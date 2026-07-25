@@ -50,7 +50,7 @@ export function DirectionalTransition({ children }: { children: React.ReactNode 
     if (main) main.focus({ preventScroll: true });
 
     return () => cancelAnimationFrame(frame);
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- animate once per route change; adding 'direction' would re-trigger the transition mid-navigation
   }, [location.pathname]);
 
   return (

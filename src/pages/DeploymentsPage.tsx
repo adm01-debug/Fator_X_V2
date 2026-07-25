@@ -42,7 +42,7 @@ export default function DeploymentsPage() {
     refetchInterval: 30000,
   });
 
-  const handleDeployClick = (agent: DbRow) => {
+  const handleDeployClick = (agent: { id: string; name: string }) => {
     setSelectedAgent({ id: agent.id, name: agent.name });
     setWizardOpen(true);
   };

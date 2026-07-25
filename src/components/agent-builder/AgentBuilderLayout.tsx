@@ -62,8 +62,19 @@ export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
         }}
       >
         <div className="flex items-center gap-6 min-w-0">
-          <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className="flex items-center gap-3 group cursor-pointer" onClick={() => navigate('/agents')}>
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 group-hover:scale-110 transition-transform duration-300 shadow-nexus-lg shadow-primary/10">
+          <div
+            className="flex items-center gap-3 group cursor-pointer"
+            role="button"
+            tabIndex={0}
+            onClick={() => navigate('/agents')}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                navigate('/agents');
+              }
+            }}
+          >
+            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-primary/10">
               <Bot className="h-6 w-6 text-primary" />
             </div>
             <div className="flex flex-col">
@@ -240,7 +251,7 @@ export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
       <VersionDiffDialog
         open={historyOpen}
         onOpenChange={setHistoryOpen}
-        versions={versions}
+        versions={versions as unknown as React.ComponentProps<typeof VersionDiffDialog>['versions']}
         agentId={agent.id as string | undefined}
       />
       <ConversationalBuilder open={convOpen} onOpenChange={setConvOpen} />

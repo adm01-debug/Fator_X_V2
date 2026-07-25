@@ -22,9 +22,20 @@ import { saveDraftVersion } from "@/services/agentDraftVersionsService";
 import { AGENT_TEMPLATES as STATIC_TEMPLATES, type AgentTemplate } from "@/data/agentTemplates";
 import { QuickCreateWizard } from "./wizard/QuickCreateWizard";
 import { computeReadinessScore, READINESS_COLORS } from "@/lib/agentReadiness";
-import type { DbRow } from '@/types/dbRow';
+import type { AgentConfig } from "@/types/agentTypes";
 
 type WizardMode = "choose" | "template" | "scratch" | "quick";
+
+interface MagicPreview {
+  name: string;
+  emoji?: string;
+  mission: string;
+  type: string;
+  model: string;
+  system_prompt: string;
+  tools?: { name: string; enabled: boolean }[];
+  guardrails?: { name: string; enabled: boolean }[];
+}
 
 const TYPE_LABEL: Record<string, string> = {
   chatbot: 'Chatbot',
@@ -120,15 +131,15 @@ export function CreateAgentWizard() {
       agent: {
         name: t.name,
         mission: t.description,
-        persona: t.type as unknown as never,
-        model: mappedModel as unknown as never,
+        persona: t.type,
+        model: mappedModel,
         system_prompt: t.prompt,
         avatar_emoji: t.emoji,
         version: 1,
         status: 'draft',
         tags: t.tags || [],
-        tools: t.tools.map(tn => ({ name: tn, enabled: true })) as unknown as never,
-      } as unknown as never,
+        tools: t.tools.map(tn => ({ name: tn, enabled: true }))
+      } as unknown as AgentConfig,
       label: `Blueprint: ${t.name}`,
       note: 'Auto-salvamento após seleção de blueprint.'
     });
@@ -164,7 +175,7 @@ export function CreateAgentWizard() {
       type === 'researcher' ? '🔍' : 
       type === 'orchestrator' ? '🎼' : '🤖';
 
-    const tools = [];
+    const tools: { name: string; enabled: boolean }[] = [];
     if (idea.includes('busca') || idea.includes('internet') || idea.includes('web') || type === 'researcher') {
       tools.push({ name: "search", enabled: true });
     }
@@ -217,16 +228,16 @@ Sempre priorize a precisão e a utilidade das informações fornecidas.
         agent: {
           name: magicPreview.name,
           mission: magicPreview.mission,
-          persona: magicPreview.type as unknown as never,
-          model: magicPreview.model as unknown as never,
+          persona: magicPreview.type,
+          model: magicPreview.model,
           system_prompt: magicPreview.system_prompt,
           avatar_emoji: magicPreview.emoji || '🤖',
           version: 1,
           status: 'draft',
           tags: ['magic-generation'],
-          tools: (magicPreview.tools || []).map((tn: DbRow) => ({ name: tn.name, enabled: true })) as unknown as never,
-          guardrails: (magicPreview.guardrails || []).map((g: DbRow) => ({ name: g.name, enabled: true })) as unknown as never,
-        } as unknown as never,
+          tools: (magicPreview.tools || []).map((tn) => ({ name: tn.name, enabled: true })),
+          guardrails: (magicPreview.guardrails || []).map((g) => ({ name: g.name, enabled: true }))
+        } as unknown as AgentConfig,
         label: `Geração Mágica: ${magicPreview.name}`,
         note: `Configuração inicial automatizada a partir da ideia: ${magicIdea}`
       });

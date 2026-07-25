@@ -34,14 +34,14 @@ export function Bitrix24Connect() {
   async function handleTest() {
     setTesting(true);
     try {
-      const data = await invokeBitrix24Api({ method: 'user.current', params: {} }) as Record<string, unknown>;
+      const data = await invokeBitrix24Api({ method: 'user.current', params: {} }) as { result?: { NAME?: string; LAST_NAME?: string } };
       if (data.result) {
         const result = data.result as { NAME?: string; LAST_NAME?: string };
         toast.success(`Conexão OK: ${result.NAME} ${result.LAST_NAME}`);
       } else {
         throw new Error('Resposta inválida da API');
       }
-    } catch (err) {
+    } catch (err: unknown) {
       toast.error('Falha no teste: ' + (err instanceof Error ? err.message : String(err)));
     } finally {
       setTesting(false);

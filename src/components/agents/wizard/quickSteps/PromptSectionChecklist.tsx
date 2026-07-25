@@ -65,7 +65,7 @@ interface Props {
  * template per section (which is guaranteed to clear the depth check).
  * New code should use `SECTION_TEMPLATES` from './sectionTemplates' instead.
  */
-export const SECTION_SNIPPETS: Record<PromptSectionKey, string> = {
+const SECTION_SNIPPETS: Record<PromptSectionKey, string> = {
   persona: getDefaultTemplate('persona').body,
   scope: getDefaultTemplate('scope').body,
   format: getDefaultTemplate('format').body,

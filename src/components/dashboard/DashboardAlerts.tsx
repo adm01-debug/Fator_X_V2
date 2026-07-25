@@ -4,6 +4,14 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getUnresolvedAlerts, subscribeToAlerts } from '@/services/dashboardService';
 import { handleKeyboardClick } from "@/lib/a11y";
 
+interface Alert {
+  id: string;
+  title: string;
+  severity: string;
+  created_at?: string | null;
+  is_resolved?: boolean | null;
+}
+
 export function DashboardAlerts() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -32,16 +40,25 @@ export function DashboardAlerts() {
         <button onClick={() => navigate('/monitoring')} className="text-meta font-semibold text-primary hover:text-primary/80 transition-colors bg-primary/10 px-2 py-0.5 rounded">Ver todos</button>
       </div>
       <div className="space-y-2 relative">
-        {alerts.map((raw) => {
-          const a = (raw ?? {}) as { id?: string; severity?: string; title?: string; created_at?: string };
-          return (
-            <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} key={a.id} className="flex items-center gap-3 text-body-sm p-2 rounded-lg bg-background/50 border border-border/50 hover:border-destructive/30 transition-all cursor-pointer group/alert" onClick={() => navigate('/monitoring')}>
-              <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${a.severity === 'critical' ? 'bg-destructive shadow-[0_0_8px_rgba(239,68,68,0.5)]' : 'bg-nexus-amber'}`} />
-              <span className="text-foreground font-medium truncate flex-1">{a.title}</span>
-              <span className="text-muted-foreground shrink-0 text-meta font-mono opacity-60 text-numeric">{new Date(a.created_at || '').toLocaleDateString('pt-BR')}</span>
-            </div>
-          );
-        })}
+        {alerts.map((a: Alert) => (
+          <div
+            key={a.id}
+            role="button"
+            tabIndex={0}
+            className="flex items-center gap-3 text-xs p-2 rounded-lg bg-background/50 border border-border/50 hover:border-destructive/30 transition-all cursor-pointer group/alert"
+            onClick={() => navigate('/monitoring')}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                navigate('/monitoring');
+              }
+            }}
+          >
+            <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${a.severity === 'critical' ? 'bg-destructive shadow-[0_0_8px_rgba(239,68,68,0.5)]' : 'bg-nexus-amber'}`} />
+            <span className="text-foreground font-medium truncate flex-1">{a.title}</span>
+            <span className="text-muted-foreground shrink-0 text-[10px] font-mono opacity-60">{new Date(a.created_at || '').toLocaleDateString('pt-BR')}</span>
+          </div>
+        ))}
       </div>
     </div>
   );

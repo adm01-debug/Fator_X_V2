@@ -34,7 +34,7 @@ export const codeInterpreterService = {
   async streamExecute(
     runtime: CodeRuntime, 
     code: string, 
-    onEvent: (event: string, data: DbRow) => void,
+    onEvent: (event: string, data: unknown) => void,
     workspace_id?: string
   ): Promise<void> {
     const { data: { session } } = await supabase.auth.getSession();

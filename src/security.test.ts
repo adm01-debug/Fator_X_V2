@@ -16,7 +16,7 @@ describe('Security Service', () => {
 
   it('fetches security alerts correctly', async () => {
     const mockData = [{ id: '1', message: 'Test Alert' }];
-    (supabaseExternal.from as unknown as { mockReturnValue: (v: DbRow) => void }).mockReturnValue({
+    (supabaseExternal.from as ReturnType<typeof vi.fn>).mockReturnValue({
       select: vi.fn().mockReturnValue({
         order: vi.fn().mockReturnValue({
           limit: vi.fn().mockResolvedValue({ data: mockData, error: null })
@@ -30,7 +30,7 @@ describe('Security Service', () => {
   });
 
   it('resolves security alerts correctly', async () => {
-    (supabaseExternal.from as unknown as { mockReturnValue: (v: DbRow) => void }).mockReturnValue({
+    (supabaseExternal.from as ReturnType<typeof vi.fn>).mockReturnValue({
       update: vi.fn().mockReturnValue({
         eq: vi.fn().mockResolvedValue({ error: null })
       })

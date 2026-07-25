@@ -42,8 +42,7 @@ function readTools(v: AgentVersion, key: 'tools' | 'guardrails'): ToolEntry[] {
 export function NewVersionDialog({ open, onOpenChange, agentId, baseVersion }: Props) {
   const queryClient = useQueryClient();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
-  const baseCfg = (baseVersion.config ?? {}) as Record<string, unknown>;
+  const baseCfg = useMemo(() => (baseVersion.config ?? {}) as Record<string, unknown>, [baseVersion]);
   const [prompt, setPrompt] = useState<string>(getVersionPrompt(baseVersion));
   const [model, setModel] = useState<string>(baseVersion.model ?? '');
   const [temperature, setTemperature] = useState<string>(String(baseCfg.temperature ?? 0.7));
@@ -75,13 +74,12 @@ export function NewVersionDialog({ open, onOpenChange, agentId, baseVersion }: P
     guardrails: guardrails.map(g => ({ name: g.name, enabled: g.enabled })),
   }), [baseCfg, prompt, temperature, maxTokens, tools, guardrails]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
-  const nextVersion: VersionLike = {
+  const nextVersion = useMemo<VersionLike>(() => ({
     model,
     persona: baseVersion.persona,
     mission: baseVersion.mission,
     config: nextConfig,
-  };
+  }), [model, baseVersion, nextConfig]);
 
   const changelog = useMemo(() => generateChangelog(baseVersion, nextVersion), [baseVersion, nextVersion]);
   const autoSummary = summarizeChangelog(changelog);

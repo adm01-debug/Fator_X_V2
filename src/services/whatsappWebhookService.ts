@@ -86,7 +86,7 @@ export async function upsertWhatsAppRoute(
       event_type: eventType,
       agent_id: agentId,
       is_enabled: isEnabled,
-    } as unknown as never, {
+    } as Record<string, unknown>, {
       onConflict: 'workspace_id,source,event_type',
     });
   if (error) {
@@ -107,7 +107,7 @@ export async function deleteWhatsAppRoute(id: string): Promise<void> {
 
 export async function toggleWhatsAppRoute(id: string, isEnabled: boolean): Promise<void> {
   const { error } = await fromTable('agent_routing_config')
-    .update({ is_enabled: isEnabled } as unknown as never)
+    .update({ is_enabled: isEnabled } as Record<string, unknown>)
     .eq('id', id);
   if (error) {
     logger.error('toggleWhatsAppRoute failed', { error: error.message });

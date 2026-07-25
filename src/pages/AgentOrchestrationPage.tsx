@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,6 +28,15 @@ export default function AgentOrchestrationPage() {
   const [running, setRunning] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const [newName, setNewName] = useState('');
+  const newNameRef = useRef<HTMLInputElement>(null);
+
+  // Foca o campo ao abrir o diálogo (substitui autoFocus por questões de a11y).
+  useEffect(() => {
+    if (createOpen) {
+      const t = setTimeout(() => newNameRef.current?.focus(), 0);
+      return () => clearTimeout(t);
+    }
+  }, [createOpen]);
 
   useEffect(() => { (async () => {
     const wsId = await getWorkspaceId();
@@ -44,7 +53,8 @@ export default function AgentOrchestrationPage() {
 
   useEffect(() => {
     if (activeGraph) agentGraphService.listExecutions(activeGraph.id).then(setExecutions);
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
+    // Recarrega execuções apenas quando muda o id do grafo ativo (não a cada novo objeto).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeGraph?.id]);
 
   const selectedNode = useMemo(
@@ -149,7 +159,7 @@ export default function AgentOrchestrationPage() {
           <CardContent className="space-y-1 max-h-[600px] overflow-y-auto">
             {graphs.length === 0 && <p className="text-meta text-muted-foreground">Crie seu primeiro grafo.</p>}
             {graphs.map(g => (
-              <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} key={g.id} className={`group flex items-center gap-2 rounded-md px-2 py-2 cursor-pointer ${activeGraph?.id === g.id ? 'bg-primary/10' : 'hover:bg-muted/40'}`} onClick={() => setActiveGraph(g)}>
+              <div key={g.id} role="button" tabIndex={0} className={`group flex items-center gap-2 rounded-md px-2 py-2 cursor-pointer ${activeGraph?.id === g.id ? 'bg-primary/10' : 'hover:bg-muted/40'}`} onClick={() => setActiveGraph(g)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveGraph(g); } }}>
                 <Network className="h-3.5 w-3.5 shrink-0 text-primary" />
                 <div className="flex-1 min-w-0">
                   <p className="text-meta font-medium truncate">{g.name}</p>
@@ -261,8 +271,7 @@ export default function AgentOrchestrationPage() {
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent>
           <DialogHeader><DialogTitle>Novo grafo</DialogTitle></DialogHeader>
-          {/* eslint-disable-next-line jsx-a11y/no-autofocus -- autoFocus em input principal de diálogo modal */}
-          <Input placeholder="Nome do grafo" value={newName} onChange={(e) => setNewName(e.target.value)} autoFocus onKeyDown={(e) => e.key === 'Enter' && handleCreate()} />
+          <Input ref={newNameRef} placeholder="Nome do grafo" value={newName} onChange={(e) => setNewName(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleCreate()} />
           <DialogFooter>
             <Button variant="outline" onClick={() => setCreateOpen(false)}>Cancelar</Button>
             <Button onClick={handleCreate}>Criar</Button>

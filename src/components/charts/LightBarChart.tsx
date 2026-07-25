@@ -13,7 +13,7 @@ interface BarSeries {
 }
 
 interface Props {
-  data: readonly object[];
+  data: Record<string, unknown>[];
   xKey: string;
   series: BarSeries[];
   height?: number;

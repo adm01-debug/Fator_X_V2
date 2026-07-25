@@ -76,7 +76,7 @@ export default function GameDayLivePage() {
 
   useEffect(() => {
     loadAll();
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run only when id changes; loadAll is recreated each render and would loop if added
   }, [id]);
 
   // Live timer

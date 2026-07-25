@@ -147,10 +147,7 @@ export function ExecutionTimeline({ execution, selectedStep, onSelectStep }: Pro
   const [focused, setFocused] = useState(false);
 
   return (
-    <div role="button"
-       
-      tabIndex={0}
-      onKeyDown={onKeyDown}
+    <div
       onFocus={() => setFocused(true)}
       onBlur={(e) => {
         // Only blur when focus leaves the entire container — moving into a
@@ -164,8 +161,6 @@ export function ExecutionTimeline({ execution, selectedStep, onSelectStep }: Pro
           ? 'ring-2 ring-primary/60 shadow-[0_0_0_4px_hsl(var(--primary)/0.08)]'
           : 'ring-1 ring-transparent',
       )}
-      aria-label="Linha do tempo navegável"
-      aria-describedby="timeline-shortcuts-hint"
     >
       <ExecutionSummary
         execution={execution}
@@ -193,9 +188,12 @@ export function ExecutionTimeline({ execution, selectedStep, onSelectStep }: Pro
 
       {/* eslint-disable-next-line jsx-a11y/aria-activedescendant-has-tabindex -- list container with keyboard nav */}
       <ol
-        className="space-y-1.5 mt-3"
+        className="space-y-1.5 mt-3 outline-none"
         role="listbox"
-        aria-label="Eventos da execução"
+        tabIndex={0}
+        onKeyDown={onKeyDown}
+        aria-label="Linha do tempo navegável — eventos da execução"
+        aria-describedby="timeline-shortcuts-hint"
         aria-activedescendant={execution.traces[step] ? `trace-${execution.traces[step].id}` : undefined}
       >
         {execution.traces.map((t, i) => {
@@ -612,6 +610,9 @@ const TraceItem = forwardRef<HTMLLIElement, TraceItemProps>(
           dim && 'opacity-40 hover:opacity-90',
         )}
         onClick={handleClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(); }
+        }}
       >
         {/* Marker rail: a thin amber notch to make bookmarks scannable. */}
         {isBookmarked && (
@@ -674,7 +675,12 @@ const TraceItem = forwardRef<HTMLLIElement, TraceItemProps>(
         )}
 
         {open && (
-          <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className="mt-2 ml-6 space-y-2" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="mt-2 ml-6 space-y-2"
+            role="presentation"
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+          >
             {isBookmarked && bookmark.note && (
               <div className="rounded border border-nexus-amber/30 bg-nexus-amber/10 p-2 text-meta text-foreground flex items-start gap-1.5">
                 <BookmarkCheck className="h-3 w-3 text-nexus-amber mt-0.5 shrink-0" />

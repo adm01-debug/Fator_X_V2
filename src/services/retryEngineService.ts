@@ -55,9 +55,9 @@ export function calculateDelay(attempt: number, policy: RetryPolicy): number {
 /* ── Retry Engine ── */
 
 function isRetryable(error: string, policy: RetryPolicy): boolean {
-  if (policy.non_retryable_errors.some((e: string) => error.includes(e))) return false;
+  if (policy.non_retryable_errors.some((e) => error.includes(e))) return false;
   if (policy.retryable_errors.length === 0) return true;
-  return policy.retryable_errors.some((e: string) => error.includes(e));
+  return policy.retryable_errors.some((e) => error.includes(e));
 }
 
 function sleep(ms: number): Promise<void> { return new Promise((resolve) => setTimeout(resolve, ms)); }
@@ -154,6 +154,6 @@ export async function resolveDeadLetter(id: string, status: 'retried' | 'resolve
 export async function getDeadLetterStats(): Promise<{ total: number; pending: number; resolved: number; retried: number; discarded: number }> {
   const { data, error } = await fromTable('dead_letter_queue').select('status');
   if (error) throw error;
-  const items = data ?? [];
-  return { total: items.length, pending: items.filter((i: DbRow) => i.status === 'pending').length, resolved: items.filter((i: DbRow) => i.status === 'resolved').length, retried: items.filter((i: DbRow) => i.status === 'retried').length, discarded: items.filter((i: DbRow) => i.status === 'discarded').length };
+  const items = (data ?? []) as Array<{ status: string }>;
+  return { total: items.length, pending: items.filter((i) => i.status === 'pending').length, resolved: items.filter((i) => i.status === 'resolved').length, retried: items.filter((i) => i.status === 'retried').length, discarded: items.filter((i) => i.status === 'discarded').length };
 }

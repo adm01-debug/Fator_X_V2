@@ -10,11 +10,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 import { getWorkspaceId } from '@/lib/agentService';
-import { compileAgentForOpenclaw } from '@/lib/openclawCompiler';
-import { publishAgentToOpenclaw } from '@/services/openclawDeployService';
-import { supabase } from '@/integrations/supabase/client';
-import { logger } from '@/lib/logger';
-import type { DeployChannelConfig, MonitoringKPI, DeployChannel } from '@/types/agentTypes';
+import type { DeployChannelConfig, MonitoringKPI, DeployChannel, AgentLifecycleStage } from '@/types/agentTypes';
 
 const ENVIRONMENT_OPTIONS = [
   {
@@ -505,13 +501,13 @@ export function DeployModule() {
           <div className="grid lg:grid-cols-2 gap-8">
             <div className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {[
+                {([
                   { id: 'staging', label: 'Staging', desc: 'Ambiente de pré-produção controlado.', icon: <Activity className="h-4 w-4" /> },
                   { id: 'production', label: 'Produção', desc: 'Deploy global em alta escala.', icon: <Globe className="h-4 w-4" /> },
-                ].map((env) => (
+                ] as { id: AgentLifecycleStage; label: string; desc: string; icon: React.ReactNode }[]).map((env) => (
                   <button
                     key={env.id}
-                    onClick={() => updateAgent({ status: env.id as 'staging' | 'production' })}
+                    onClick={() => updateAgent({ status: env.id })}
                     className={cn(
                       "flex flex-col p-4 rounded-2xl border text-left transition-all duration-300",
                       agent.status === env.id 

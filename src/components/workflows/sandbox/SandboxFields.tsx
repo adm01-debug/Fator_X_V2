@@ -29,9 +29,18 @@ export function ToggleField({
   onChange: (v: boolean) => void; icon?: typeof Shield;
 }) {
   return (
-    <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
+    <div
+      role="switch"
+      aria-checked={checked}
+      tabIndex={0}
       className="flex items-center justify-between p-3 rounded-lg bg-background border border-border cursor-pointer hover:border-primary/30 transition-colors"
       onClick={() => onChange(!checked)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onChange(!checked);
+        }
+      }}
     >
       <div className="flex items-center gap-3">
         {Icon && <Icon className="w-4 h-4 text-muted-foreground" />}

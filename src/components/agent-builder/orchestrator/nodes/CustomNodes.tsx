@@ -30,6 +30,7 @@ export const ConditionNode = makeNode('🔀', 'Condition', 'border-nexus-yellow/
 export const TransformNode = makeNode('✨', 'Transform', 'border-nexus-rose/50 bg-nexus-rose/10', true, true);
 export const OutputNode = makeNode('🎯', 'Output', 'border-nexus-red/50 bg-nexus-red/10', true, false);
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const nodeTypes = {
   trigger: TriggerNode,
   agent: AgentNode,
@@ -39,6 +40,7 @@ export const nodeTypes = {
   output: OutputNode,
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const NODE_PALETTE = [
   { type: 'trigger', icon: '▶️', label: 'Trigger', desc: 'Entrada do fluxo' },
   { type: 'agent', icon: '🤖', label: 'Agente', desc: 'Chamada a um agente' },

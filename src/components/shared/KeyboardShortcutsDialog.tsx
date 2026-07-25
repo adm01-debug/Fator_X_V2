@@ -51,9 +51,18 @@ export function KeyboardShortcutsDialog() {
 
   return (
     <>
-      <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
+      <div
+        role="button"
+        tabIndex={0}
+        aria-label="Fechar atalhos de teclado"
         className="fixed inset-0 z-50 bg-black/50 animate-fade-in"
         onClick={() => setOpen(false)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setOpen(false);
+          }
+        }}
       />
       <div
         className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md rounded-xl border border-border bg-background shadow-nexus-2xl animate-fade-in-up"

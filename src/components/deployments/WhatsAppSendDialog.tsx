@@ -53,8 +53,9 @@ export function WhatsAppSendDialog() {
 
         <div className="space-y-4">
           <div className="space-y-1.5">
-            <label htmlFor="whatsappsenddialog-n-mero-e-164-75d276" className="text-meta font-medium text-muted-foreground">Número (E.164)</label>
-            <Input id="whatsappsenddialog-n-mero-e-164-75d276"
+            <label htmlFor="whatsapp-phone" className="text-xs font-medium text-muted-foreground">Número (E.164)</label>
+            <Input
+              id="whatsapp-phone"
               placeholder="+5511999887766"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
@@ -63,8 +64,9 @@ export function WhatsAppSendDialog() {
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="whatsappsenddialog-mensagem-002a79" className="text-meta font-medium text-muted-foreground">Mensagem</label>
-            <Textarea id="whatsappsenddialog-mensagem-002a79"
+            <label htmlFor="whatsapp-message" className="text-xs font-medium text-muted-foreground">Mensagem</label>
+            <Textarea
+              id="whatsapp-message"
               placeholder="Digite sua mensagem..."
               value={text}
               onChange={(e) => setText(e.target.value)}

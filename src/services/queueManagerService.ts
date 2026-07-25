@@ -145,12 +145,12 @@ export async function getQueueMetrics(queueId: string): Promise<QueueMetrics> {
   if (!queue) throw new Error(`Queue ${queueId} not found`);
   const { data: items, error } = await fromTable('queue_items').select('status, created_at, started_at, completed_at').eq('queue_id', queueId);
   if (error) throw error;
-  interface QueueItemRow {
-    status: QueueItemStatus;
+  type QueueItemRow = {
+    status: string;
     created_at: string;
     started_at: string | null;
     completed_at: string | null;
-  }
+  };
   const all = (items ?? []) as QueueItemRow[];
   const now = Date.now();
   const pending = all.filter((i) => i.status === 'pending');
@@ -159,11 +159,9 @@ export async function getQueueMetrics(queueId: string): Promise<QueueMetrics> {
   const failed = all.filter((i) => i.status === 'failed');
   const deadLetter = all.filter((i) => i.status === 'dead_letter');
   const oneMinuteAgo = new Date(now - 60000).toISOString();
-  const recentCompleted = completed.filter((i) => i.completed_at !== null && i.completed_at >= oneMinuteAgo);
-  const waitTimes = processing.filter((i) => i.created_at && i.started_at)
-    .map((i) => new Date(i.started_at!).getTime() - new Date(i.created_at).getTime());
-  const processingTimes = completed.filter((i) => i.started_at && i.completed_at)
-    .map((i) => new Date(i.completed_at!).getTime() - new Date(i.started_at!).getTime());
+  const recentCompleted = completed.filter((i) => i.completed_at && i.completed_at >= oneMinuteAgo);
+  const waitTimes = processing.filter((i) => i.created_at && i.started_at).map((i) => new Date(i.started_at!).getTime() - new Date(i.created_at).getTime());
+  const processingTimes = completed.filter((i) => i.started_at && i.completed_at).map((i) => new Date(i.completed_at!).getTime() - new Date(i.started_at!).getTime());
   const oldestPending = pending.length > 0 ? now - new Date(pending[pending.length - 1].created_at).getTime() : 0;
   return {
     queue_id: queueId, name: queue.name, pending: pending.length, processing: processing.length,

@@ -330,11 +330,21 @@ export function DataHubExplorerTab() {
 
       {/* Detail modal */}
       {detailRow && (
-        <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
+        <div
+          role="button"
+          tabIndex={0}
+          aria-label="Fechar detalhes do registro"
           className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4"
           onClick={() => setDetailRow(null)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              setDetailRow(null);
+            }
+          }}
         >
-          <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
+          <div
+            role="presentation"
             className="nexus-card max-w-2xl w-full max-h-[80vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >

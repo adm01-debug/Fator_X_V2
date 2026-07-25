@@ -88,8 +88,7 @@ export default function AgentBuilder() {
     } else {
       resetAgent();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
-  }, [id]);
+  }, [id, loadAgentFromDB, resetAgent]);
 
   // Suporte a deep-link via ?tab=prompt|tools|brain etc. — usado por atalhos
   // como "Editar prompt" / "Gerenciar tools" / "Ajustar modelo" no preview do

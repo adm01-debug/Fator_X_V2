@@ -4,9 +4,28 @@ import { Download, FileJson, CheckCircle2, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import type { DbRow } from '@/types/dbRow';
 
+interface AuditRun {
+  id: string;
+  passed?: number;
+  total_items?: number;
+  avg_score?: number;
+  avg_latency_ms?: number;
+  total_cost_usd?: number;
+}
+
+interface AuditResult {
+  input?: string;
+  expected?: unknown;
+  actual?: unknown;
+  score?: number;
+  passed?: boolean;
+  latency_ms?: number;
+  judge_reasoning?: string;
+}
+
 interface AuditReportProps {
-  run: DbRow;
-  results: DbRow[];
+  run: AuditRun;
+  results: AuditResult[];
 }
 
 export function AuditReportDialog({ run, results }: AuditReportProps) {

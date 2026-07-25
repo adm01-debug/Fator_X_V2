@@ -5,20 +5,16 @@ import { ExternalLink } from 'lucide-react';
 import { NexusRadarChart } from '../ui/NexusRadarChart';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import { LIFECYCLE_STAGES } from '@/data/agentBuilderData';
-import type { ReadinessScore, ReadinessItem, AgentConfig } from '@/types/agentTypes';
+import type { AgentConfig, ReadinessScore, ReadinessItem } from '@/types/agentTypes';
+
+type ReadinessCategory = { score: number; max: number; items: ReadinessItem[] };
 
 interface DetailedReadinessScore extends Omit<ReadinessScore, 'recommendations'> {
   recommendations: { label: string; tabId: string }[];
 }
 
-interface CategoryScore {
-  score: number;
-  max: number;
-  items: ReadinessItem[];
-}
-
 function computeReadiness(agent: AgentConfig): DetailedReadinessScore {
-  const categories: Record<string, CategoryScore> = {};
+  const categories: Record<string, ReadinessCategory> = {};
   const blockers: string[] = [];
   const recommendations: { label: string; tabId: string }[] = [];
 
@@ -113,11 +109,9 @@ function computeReadiness(agent: AgentConfig): DetailedReadinessScore {
   categories.observability = { score: obsItems.filter(i => i.passed).reduce((s, i) => s + i.weight, 0), max: 6, items: obsItems };
   if (!agent.logging_enabled) blockers.push('⛔ Logging não está habilitado');
 
-  const total = Object.values(categories).reduce((s: number, c: CategoryScore) => s + c.score, 0);
-  const maxTotal = Object.values(categories).reduce((s: number, c: CategoryScore) => s + c.max, 0);
-  const totalNum = Number(total);
-  const maxTotalNum = Number(maxTotal);
-  const pct = Math.round((totalNum / maxTotalNum) * 100);
+  const total = Object.values(categories).reduce((s, c) => s + c.score, 0);
+  const maxTotal = Object.values(categories).reduce((s, c) => s + c.max, 0);
+  const pct = Math.round((total / maxTotal) * 100);
 
   let maturity_level: DetailedReadinessScore['maturity_level'] = 'prototype';
   if (pct >= 80) maturity_level = 'production_ready';
@@ -145,7 +139,7 @@ export function ReadinessModule() {
   const { agent, setActiveTab } = useAgentBuilderStore();
   const readiness = useMemo(() => computeReadiness(agent), [agent]);
 
-  const radarData = Object.entries(readiness.categories).map(([key, cat]: [string, CategoryScore]) => ({
+  const radarData = Object.entries(readiness.categories).map(([key, cat]) => ({
     subject: key.charAt(0).toUpperCase() + key.slice(1),
     value: cat.score,
     max: cat.max,
@@ -183,7 +177,7 @@ export function ReadinessModule() {
       {/* Category Breakdown */}
       <SectionTitle icon="📊" title="Score por Categoria" subtitle="Detalhamento do score em cada área" />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {Object.entries(readiness.categories).map(([key, cat]: [string, CategoryScore]) => (
+        {Object.entries(readiness.categories).map(([key, cat]) => (
           <div key={key} className="rounded-xl border border-border bg-card p-4 space-y-3">
             <div className="flex justify-between items-center">
               <h4 className="text-body-sm font-semibold capitalize">{key}</h4>
@@ -191,8 +185,8 @@ export function ReadinessModule() {
             </div>
             <ProgressBar value={cat.score} max={cat.max} />
             <div className="space-y-1">
-              {cat.items.map((item: ReadinessItem) => (
-                <div key={item.label} className="flex items-center gap-2 text-meta">
+              {cat.items.map((item) => (
+                <div key={item.label} className="flex items-center gap-2 text-xs">
                   <span>{item.passed ? '✅' : '❌'}</span>
                   <span className={item.passed ? 'text-muted-foreground' : 'text-foreground'}>{item.label}</span>
                   {item.is_blocker && !item.passed && (

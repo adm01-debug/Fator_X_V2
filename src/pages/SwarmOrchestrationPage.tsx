@@ -18,7 +18,7 @@ interface A2ALog {
   direction: 'inbound' | 'outbound';
   type: 'handshake' | 'task' | 'response' | 'error';
   agent: string;
-  payload: Record<string, unknown>;
+  payload: unknown;
 }
 
 export default function SwarmOrchestrationPage() {

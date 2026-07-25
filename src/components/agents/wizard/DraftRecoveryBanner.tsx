@@ -101,7 +101,11 @@ function NameLabelOrEditor({ draft, isEditing, onStartEdit, onCancel, onConfirm 
 
   if (isEditing) {
     return (
-      <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className="flex flex-col gap-1 flex-1 min-w-0" onClick={(e) => e.stopPropagation()}>
+      <div
+        role="presentation"
+        className="flex flex-col gap-1 flex-1 min-w-0"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex items-center gap-1.5">
           <Input
             ref={inputRef}
@@ -472,6 +476,16 @@ export function DraftRecoveryBanner({
     setSearchParams(next, { replace: true });
   };
   const itemsRef = useRef<Record<string, HTMLDivElement | null>>({});
+  // Callback ref to focus the primary restore action on mount (replaces
+  // autoFocus for a11y), guarding so it only fires the first time the
+  // single-draft restore button renders.
+  const restoreBtnFocused = useRef(false);
+  const focusRestoreBtn = (el: HTMLButtonElement | null) => {
+    if (el && !restoreBtnFocused.current) {
+      restoreBtnFocused.current = true;
+      el.focus();
+    }
+  };
 
   const handleConfirmRename = (id: string, newName: string) => {
     onRename(id, newName);
@@ -561,10 +575,9 @@ export function DraftRecoveryBanner({
             onConfirm={() => onDiscardOne(only.id)}
           />
           <Button
+            ref={focusRestoreBtn}
             size="sm"
             onClick={() => onRestore(only.id, restoreMode)}
-            // eslint-disable-next-line jsx-a11y/no-autofocus -- autoFocus em input de recovery — foco imediato é UX intencional
-            autoFocus
             title={
               blocked
                 ? (only.restoreBlockedReason ?? 'Rascunho incompleto — vamos pular direto ao primeiro campo pendente')
@@ -686,7 +699,7 @@ export function DraftRecoveryBanner({
                 </div>
               </div>
 
-              <span role="button" tabIndex={0} onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+              <span role="presentation" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
                 <ConfirmDialog
                   trigger={
                     <button

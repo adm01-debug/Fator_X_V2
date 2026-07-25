@@ -14,7 +14,7 @@ interface AreaSeries {
 }
 
 interface Props {
-  data: readonly object[];
+  data: Record<string, string | number>[];
   xKey: string;
   series: AreaSeries[];
   height?: number;

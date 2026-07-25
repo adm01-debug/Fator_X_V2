@@ -10,9 +10,9 @@ export function ComplianceFrameworks() {
   useEffect(() => {
     (async () => {
       let postureScore = 0, hasGuardrails = false, hasLogs = false;
-      try { const p = await getSecurityPosture(); postureScore = p.length > 0 ? Math.round((p.filter(c => c.status === 'pass').length / p.length) * 100) : 0; } catch { /* best-effort — mantém score zerado se a checagem falhar */ }
-      try { const g = await listGuardrailPolicies(); hasGuardrails = g.some((x) => x.is_enabled === true); } catch { /* idem */ }
-      try { const l = await getAuditLog({ limit: 1 }); hasLogs = l.length > 0; } catch { /* idem */ }
+      try { const p = await getSecurityPosture(); postureScore = p.length > 0 ? Math.round((p.filter(c => c.status === 'pass').length / p.length) * 100) : 0; } catch { /* posture unavailable — keep default 0 */ }
+      try { const g = await listGuardrailPolicies(); hasGuardrails = g.some((x: { is_enabled?: boolean }) => x.is_enabled === true); } catch { /* guardrails unavailable — keep default false */ }
+      try { const l = await getAuditLog({ limit: 1 }); hasLogs = l.length > 0; } catch { /* audit log unavailable — keep default false */ }
       const lgpd = Math.min(100, postureScore + (hasGuardrails ? 10 : 0));
       const gdpr = Math.min(100, postureScore + (hasGuardrails ? 5 : 0));
       const soc2 = Math.min(100, Math.round(postureScore * 0.8) + (hasLogs ? 15 : 0));

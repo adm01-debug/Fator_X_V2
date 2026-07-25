@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -55,7 +55,7 @@ export function NotificationCenterPanel() {
   const [testMessage, setTestMessage] = useState('Este é um envio de teste a partir do Centro de Automação do Nexus.');
   const { toast } = useToast();
 
-  const loadAll = async () => {
+  const loadAll = useCallback(async () => {
     try {
       const [n, s] = await Promise.all([listNotifications({}, 50), getNotificationStats()]);
       setNotifications(n);
@@ -65,12 +65,11 @@ export function NotificationCenterPanel() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
 
   useEffect(() => {
     loadAll();
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
-  }, []);
+  }, [loadAll]);
 
   const handleSendTest = async () => {
     if (!testRecipient.trim() || !testMessage.trim()) {

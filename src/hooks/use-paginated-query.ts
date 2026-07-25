@@ -11,7 +11,7 @@ interface QueryBuilder {
   eq: (column: string, value: string) => QueryBuilder;
   order: (column: string, options: { ascending: boolean }) => QueryBuilder;
   range: (from: number, to: number) => QueryBuilder;
-  then: (onfulfilled?: (value: { data: DbRow[] | null; count: number | null; error: Error | null }) => unknown) => Promise<unknown>;
+  then: (onfulfilled?: (value: { data: unknown[] | null; count: number | null; error: Error | null }) => unknown) => Promise<unknown>;
 }
 
 export interface PaginationState {

@@ -9,7 +9,7 @@
  * Persistência via `restorePresetsService` (Supabase, RLS por usuário).
  */
 import { Bookmark, BookmarkCheck, Check, Loader2, Plus, Star, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Popover,
@@ -43,6 +43,12 @@ export function RestorePresetMenu({ current, onApply, onPresetsLoaded, disabled 
   const [creating, setCreating] = useState(false);
   const [newName, setNewName] = useState('');
   const [newAsDefault, setNewAsDefault] = useState(false);
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  const asDefaultId = useId();
+
+  useEffect(() => {
+    if (creating) nameInputRef.current?.focus();
+  }, [creating]);
 
   const { data: presets = [], isLoading } = useQuery({
     queryKey: ['restore-field-presets'],
@@ -144,8 +150,7 @@ export function RestorePresetMenu({ current, onApply, onPresetsLoaded, disabled 
             }}
           >
             <Input
-              // eslint-disable-next-line jsx-a11y/no-autofocus -- autoFocus em input de busca dentro de dropdown — comportamento esperado pelo usuário
-              autoFocus
+              ref={nameInputRef}
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               placeholder="Nome do preset (ex.: Só prompt)"
@@ -161,9 +166,9 @@ export function RestorePresetMenu({ current, onApply, onPresetsLoaded, disabled 
                 current.copyModel && 'modelo',
               ].filter(Boolean).join(' · ') || 'nada'}
             </div>
-            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
-            <label className="flex items-center gap-1.5 text-meta text-foreground/90 cursor-pointer">
+            <label htmlFor={asDefaultId} className="flex items-center gap-1.5 text-[11px] text-foreground/90 cursor-pointer">
               <Checkbox
+                id={asDefaultId}
                 checked={newAsDefault}
                 onCheckedChange={(v) => setNewAsDefault(!!v)}
                 disabled={createMut.isPending}

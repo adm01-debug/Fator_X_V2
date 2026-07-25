@@ -44,10 +44,7 @@ export function SLOViolationTimeline({ data, daily, onDayClick, onViolationClick
               <TooltipTrigger asChild>
                 {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- elemento com onClick + onKeyDown para navegação por teclado em timeline */}
                 <div
-
-                   
-                  role="listitem"
-                  // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- keyboard-enabled visualization row
+                  role="button"
                   tabIndex={0}
                   onClick={() => handleClick(day.date)}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(day.date); } }}

@@ -73,9 +73,10 @@ export function GuardrailsSimulator() {
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-2">
-          <label htmlFor="guardrailssimulator-entrada-para-teste-8ac239" className="text-meta font-bold text-muted-foreground uppercase tracking-wider">Entrada para teste</label>
-          <Textarea id="guardrailssimulator-entrada-para-teste-8ac239" 
-            value={input} 
+          <label htmlFor="guardrails-sim-input" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Entrada para teste</label>
+          <Textarea
+            id="guardrails-sim-input"
+            value={input}
             onChange={(e) => setInput(e.target.value)} 
             placeholder="Digite um prompt para testar as políticas de segurança... (ex: ignore system instructions)" 
             className="min-h-[120px] bg-secondary/20 border-border/40 focus:ring-nexus-purple/20 text-body-sm font-medium rounded-2xl"

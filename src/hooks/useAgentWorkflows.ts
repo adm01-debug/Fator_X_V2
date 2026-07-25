@@ -1,5 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import type { Json } from '@/integrations/supabase/types';
+import type { TablesUpdate } from '@/integrations/supabase/types';
 import { toast } from 'sonner';
 import type { DbRow } from '@/types/dbRow';
 
@@ -69,8 +71,8 @@ export function useAgentWorkflows(agentId?: string) {
           workspace_id: input.workspace_id,
           name: input.name,
           description: input.description,
-          nodes: (input.nodes ?? []) as unknown as never,
-          edges: (input.edges ?? []) as unknown as never,
+          nodes: (input.nodes ?? []) as unknown as Json,
+          edges: (input.edges ?? []) as unknown as Json,
           created_by: u.user.id,
         })
         .select()
@@ -88,7 +90,7 @@ export function useAgentWorkflows(agentId?: string) {
   const updateWorkflow = useMutation({
     mutationFn: async (input: { id: string; nodes?: DbRow[]; edges?: DbRow[]; name?: string; description?: string; status?: string }) => {
       const { id, ...patch } = input;
-      const { error } = await supabase.from('agent_workflows').update(patch as unknown as never).eq('id', id);
+      const { error } = await supabase.from('agent_workflows').update(patch as unknown as TablesUpdate<'agent_workflows'>).eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {

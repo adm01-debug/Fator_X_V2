@@ -41,18 +41,21 @@ export function CitationRenderer({ text, citations }: CitationRendererProps) {
             const citation = citations.find(c => c.index === idx);
             if (!citation) return <sup key={i} className="text-muted-foreground text-meta">[{idx}]</sup>;
             return (
-              <sup key={i}
-                className="inline-flex items-center cursor-pointer"
+              <button key={i}
+                type="button"
+                className="inline-flex items-center align-super cursor-pointer bg-transparent border-0 p-0"
                 onClick={() => setExpandedCitation(expandedCitation === idx ? null : idx)}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpandedCitation(expandedCitation === idx ? null : idx); } }}
-                // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role -- sup usado como botão de expansão de citação
-                role="button"
-                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setExpandedCitation(expandedCitation === idx ? null : idx);
+                  }
+                }}
               >
                 <Badge variant="outline" className="text-meta h-4 px-1 ml-0.5 hover:bg-primary/10 transition-colors">
                   {idx}
                 </Badge>
-              </sup>
+              </button>
             );
           }
           return <span key={i}>{part}</span>;

@@ -45,47 +45,6 @@ export function WebhookManagerPanel() {
       .finally(() => setLoading(false));
   }, [toast]);
 
-  const openHistory = async (w: WebhookEndpoint) => {
-    setHistoryWebhook(w);
-    setHistoryOpen(true);
-    setHistoryLoading(true);
-    try {
-      const events = await getWebhookEvents(w.id, 50);
-      setHistoryEvents(events);
-    } catch {
-      toast({ title: 'Erro ao carregar histórico', variant: 'destructive' });
-      setHistoryEvents([]);
-    } finally {
-      setHistoryLoading(false);
-    }
-  };
-
-  const handleReplay = async (event: WebhookEvent) => {
-    if (!historyWebhook) return;
-    setReplayingId(event.id);
-    try {
-      const result = await triggerWebhookViaEF({
-        path: historyWebhook.path,
-        payload: (event.body ?? {}) as Record<string, unknown>,
-      });
-      toast({
-        title: 'Replay disparado',
-        description: `${historyWebhook.name} — status ${result.status}`,
-      });
-      // Recarrega histórico após replay
-      const events = await getWebhookEvents(historyWebhook.id, 50);
-      setHistoryEvents(events);
-    } catch (e) {
-      toast({
-        title: 'Falha no replay',
-        description: e instanceof Error ? e.message : 'Erro desconhecido',
-        variant: 'destructive',
-      });
-    } finally {
-      setReplayingId(null);
-    }
-  };
-
   const handleTest = async () => {
     if (!selectedWebhook) return;
     setTestingId(selectedWebhook.id);
@@ -93,7 +52,7 @@ export function WebhookManagerPanel() {
       let payloadObj = { test: true };
       try {
         payloadObj = JSON.parse(testPayload);
-      } catch (_e) {
+      } catch {
         toast({ title: 'JSON inválido', variant: 'destructive' });
         setTestingId(null);
         return;

@@ -132,7 +132,7 @@ export async function invokeLLMGateway(body: {
       if (attempt <= retryLimit) {
         const backoff = Math.pow(2, attempt) * 500; // Faster backoff for self-healing
         logger.warn(`llm-gateway attempt ${attempt} failed, retrying with self-healing...`, { 
-          error: err instanceof Error ? err.message : String(err),
+          error: (err as Error).message,
           next_model: fallbacks[attempt - 1] || body.model
         });
         await new Promise(r => setTimeout(r, backoff));

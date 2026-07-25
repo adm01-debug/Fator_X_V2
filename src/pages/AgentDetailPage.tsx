@@ -267,8 +267,10 @@ function VersionHistory({ agentId }: { agentId: string }) {
   const previous: AgentVersion | undefined = versions[1];
   const nextVersionNumber = (current?.version ?? 0) + 1;
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
-  const restoreOptions = { copyPrompt, copyTools, copyModel };
+  const restoreOptions = useMemo(
+    () => ({ copyPrompt, copyTools, copyModel }),
+    [copyPrompt, copyTools, copyModel],
+  );
   const hasAnyOptionSelected = copyPrompt || copyTools || copyModel;
 
   // Diff calculado uma vez para alimentar tanto o preview quanto o changelog.
@@ -276,8 +278,7 @@ function VersionHistory({ agentId }: { agentId: string }) {
   const restoreDiff = useMemo(() => {
     if (!previous || !current || !hasAnyOptionSelected) return null;
     return computeRestoreDiff(current, previous, restoreOptions);
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
-  }, [current, previous, restoreOptions]);
+  }, [current, previous, restoreOptions, hasAnyOptionSelected]);
 
   // Validação pré-restore — sempre revalida quando muda a origem, os campos
   // selecionados ou quando uma correção rápida (fixOverrides) é aplicada.

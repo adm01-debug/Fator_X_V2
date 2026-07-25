@@ -38,7 +38,7 @@ export function useWorkflowPersistence() {
       return;
     }
 
-    const ids = (data ?? []).map((w: DbRow) => w.id);
+    const ids = (data ?? []).map((w: { id: string }) => w.id);
     const stepCounts: Record<string, number> = {};
 
     if (ids.length > 0) {
@@ -54,7 +54,7 @@ export function useWorkflowPersistence() {
       }
     }
 
-    setWorkflows((data ?? []).map((w: DbRow) => ({
+    setWorkflows((data ?? []).map((w: WorkflowRecord) => ({
       ...(w as unknown as WorkflowRecord),
       step_count: stepCounts[w.id] || 0,
     })));
@@ -176,7 +176,7 @@ export function useWorkflowPersistence() {
     const wf = workflows.find(w => w.id === workflowId);
 
     if (steps && steps.length > 0) {
-      const nodes: CanvasNode[] = steps.map((step: Record<string, unknown>) => {
+      const nodes: CanvasNode[] = steps.map((step: Record<string, unknown> & { step_order: number; role?: string; config?: Record<string, unknown> }) => {
         const cfg = (step.config || {}) as Record<string, unknown>;
         return {
           id: String(cfg.node_id || `step_${step.step_order}`),

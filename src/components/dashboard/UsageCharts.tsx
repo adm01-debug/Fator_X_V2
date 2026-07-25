@@ -50,6 +50,17 @@ function buildDailyMap(data: UsageRow[]) {
   return map;
 }
 
+interface ChartPoint {
+  date: string;
+  label: string;
+  requests: number;
+  tokensIn: number;
+  tokensOut: number;
+  cost: number;
+  latency: number;
+  errors: number;
+}
+
 export function UsageCharts({ data }: UsageChartsProps) {
   const navigate = useNavigate();
   const [compareRequests, setCompareRequests] = useState(false);
@@ -129,17 +140,15 @@ export function UsageCharts({ data }: UsageChartsProps) {
     );
   }
 
-  const handleDrilldown = (raw: DbRow) => {
-    const d = (raw ?? {}) as { date?: string };
-    const from = new Date(d.date ?? '');
+  const handleDrilldown = (d: ChartPoint) => {
+    const from = new Date(d.date);
     from.setHours(0, 0, 0, 0);
     const to = new Date(d.date ?? '');
     to.setHours(23, 59, 59, 999);
     navigate(`/traces?from=${from.toISOString()}&to=${to.toISOString()}`);
   };
 
-  const drilldownExtras = (raw: DbRow) => {
-    const d = (raw ?? {}) as { requests?: number; errors?: number; cost?: number };
+  const drilldownExtras = (d: ChartPoint) => {
     const sections: TooltipExtraSection[] = [];
     if ((d.requests ?? 0) > 0 || (d.errors ?? 0) > 0 || (d.cost ?? 0) > 0) {
       sections.push({

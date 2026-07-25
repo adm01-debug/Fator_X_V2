@@ -254,8 +254,8 @@ export async function getScheduleStats(): Promise<ScheduleStats> {
   const paused = allSchedules.filter((s) => s.status === 'paused');
   const { data: executions, error } = await fromTable('cron_schedule_executions').select('status, duration_ms').order('started_at', { ascending: false }).limit(1000);
   if (error) throw error;
-  interface ExecRow { status: string; duration_ms: number | null }
-  const execs = (executions ?? []) as ExecRow[];
+  interface ExecutionStatsRow { status: string; duration_ms: number | null }
+  const execs = (executions ?? []) as ExecutionStatsRow[];
   const successCount = execs.filter((e) => e.status === 'success').length;
   const durations = execs.map((e) => e.duration_ms).filter((d): d is number => d !== null);
   const upcoming = active.filter((s) => s.next_run_at !== null).sort((a, b) => new Date(a.next_run_at!).getTime() - new Date(b.next_run_at!).getTime()).slice(0, 5);

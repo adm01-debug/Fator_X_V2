@@ -569,7 +569,9 @@ export function WorkflowTimeTravelPanel({
                     </div>
 
                     {/* Content */}
-                    <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
+                    <div
+                      role="button"
+                      tabIndex={0}
                       className={`flex-1 pb-4 rounded-lg transition-colors cursor-pointer ${
                         isPickedA
                           ? 'bg-destructive/5 ring-1 ring-destructive/30 p-3'
@@ -580,6 +582,12 @@ export function WorkflowTimeTravelPanel({
                           : 'hover:bg-background p-3'
                       }`}
                       onClick={() => handleInspect(entry.id)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          handleInspect(entry.id);
+                        }
+                      }}
                     >
                       <div className="flex items-start justify-between">
                         <div>

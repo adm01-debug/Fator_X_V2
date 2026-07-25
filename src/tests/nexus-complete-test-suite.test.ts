@@ -22,6 +22,7 @@ import {
   recordCircuitFailure, resetCircuitBreaker,
   DEFAULT_RETRY_POLICY, RETRY_PRESETS,
 } from '@/services/retryEngineService';
+import type { CircuitBreakerConfig } from '@/services/types/retryEngineTypes';
 
 import { encryptData, decryptData, CREDENTIAL_TEMPLATES } from '@/services/credentialVaultService';
 import { renderTemplate, NOTIFICATION_PRESETS } from '@/services/notificationEngineService';
@@ -239,7 +240,7 @@ describe('C. Funções Puras — Retry', () => {
   });
   it('circuit breaker abre', () => {
     const svc = 'cb-' + Date.now();
-    getCircuitBreaker(svc, { ...DEFAULT_RETRY_POLICY, failure_threshold: 2, success_threshold: 1, timeout_ms: 1000, half_open_max_calls: 1, monitor_window_ms: 5000 } as unknown as Parameters<typeof getCircuitBreaker>[1]);
+    getCircuitBreaker(svc, { ...DEFAULT_RETRY_POLICY, failure_threshold: 2, success_threshold: 1, timeout_ms: 1000, half_open_max_calls: 1, monitor_window_ms: 5000 } as unknown as CircuitBreakerConfig);
     recordCircuitFailure(svc);
     recordCircuitFailure(svc);
     expect(canExecute(svc)).toBe(false);
@@ -287,8 +288,9 @@ describe('C. Funções Puras — Cost Calculator', () => {
     setBudget({ maxCostPerDayUsd: 50 });
     expect(getBudget().maxCostPerDayUsd).toBe(50);
   });
-  it('tokens negativos rejeitados', () => {
-    return expect(calculateCost('anthropic', 'claude-sonnet-4-6', -1, 0)).rejects.toThrow();
+  it('tokens negativos rejeitados', async () => {
+    // calculateCost is async, so negative tokens surface as a rejected promise.
+    await expect(calculateCost('anthropic', 'claude-sonnet-4-6', -1, 0)).rejects.toThrow();
   });
 });
 

@@ -239,20 +239,20 @@ export function ToolsModule() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
-                  <label className="text-meta font-medium text-foreground">Nome</label>
+                  <label htmlFor={`mcp-name-${server.id}`} className="text-xs font-medium text-foreground">Nome</label>
                   <input
-                    className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-body-sm text-foreground"
+                    id={`mcp-name-${server.id}`}
+                    className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-sm text-foreground"
                     value={server.name}
                     onChange={(e) => updateMCP(server.id, { name: e.target.value })}
                     placeholder="Ex: Notion MCP"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
-                  <label className="text-meta font-medium text-foreground">URL</label>
+                  <label htmlFor={`mcp-url-${server.id}`} className="text-xs font-medium text-foreground">URL</label>
                   <input
-                    className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-body-sm text-foreground"
+                    id={`mcp-url-${server.id}`}
+                    className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-sm text-foreground"
                     value={server.url}
                     onChange={(e) => updateMCP(server.id, { url: e.target.value })}
                     placeholder="https://mcp-server.example.com"
@@ -286,10 +286,10 @@ export function ToolsModule() {
               <div className="space-y-3">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
-                    <label className="text-meta font-medium text-foreground">Nome</label>
+                    <label htmlFor={`api-name-${api.id}`} className="text-xs font-medium text-foreground">Nome</label>
                     <input
-                      className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-body-sm text-foreground"
+                      id={`api-name-${api.id}`}
+                      className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-sm text-foreground"
                       value={api.name}
                       onChange={(e) => updateAPI(api.id, { name: e.target.value })}
                       placeholder="Nome da API"
@@ -308,10 +308,10 @@ export function ToolsModule() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
-                  <label className="text-meta font-medium text-foreground">URL</label>
+                  <label htmlFor={`api-url-${api.id}`} className="text-xs font-medium text-foreground">URL</label>
                   <input
-                    className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-body-sm text-foreground"
+                    id={`api-url-${api.id}`}
+                    className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-sm text-foreground"
                     value={api.url}
                     onChange={(e) => updateAPI(api.id, { url: e.target.value })}
                     placeholder="https://api.example.com/endpoint"
@@ -331,10 +331,10 @@ export function ToolsModule() {
                     ]}
                   />
                   <div className="space-y-1.5">
-                    {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
-                    <label className="text-meta font-medium text-foreground">Descrição</label>
+                    <label htmlFor={`api-desc-${api.id}`} className="text-xs font-medium text-foreground">Descrição</label>
                     <input
-                      className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-body-sm text-foreground"
+                      id={`api-desc-${api.id}`}
+                      className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-sm text-foreground"
                       value={api.description}
                       onChange={(e) => updateAPI(api.id, { description: e.target.value })}
                       placeholder="O que este endpoint faz"

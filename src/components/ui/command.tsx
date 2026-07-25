@@ -21,8 +21,7 @@ const Command = React.forwardRef<
 ));
 Command.displayName = CommandPrimitive.displayName;
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type -- alias tipado para preservar contrato de shadcn CommandDialog.
-interface CommandDialogProps extends DialogProps {}
+type CommandDialogProps = DialogProps;
 
 const CommandDialog = ({ children, ...props }: CommandDialogProps) => {
   return (

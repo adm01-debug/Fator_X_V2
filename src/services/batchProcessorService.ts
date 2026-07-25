@@ -187,20 +187,20 @@ export async function getBatchProgress(id: string): Promise<BatchProgress | null
 export async function getBatchStats(): Promise<{ total_jobs: number; completed: number; failed: number; running: number; total_items_processed: number; success_rate: number; avg_duration_ms: number; avg_items_per_second: number }> {
   const { data, error } = await fromTable('batch_jobs').select('status, processed_items, successful_items, failed_items, duration_ms, avg_item_ms');
   if (error) throw error;
-  interface StatRow {
-    status: BatchStatus | string;
+  interface BatchStatsRow {
+    status: string;
     processed_items: number | null;
     successful_items: number | null;
     failed_items: number | null;
     duration_ms: number | null;
     avg_item_ms: number | null;
   }
-  const jobs = (data ?? []) as StatRow[];
+  const jobs: BatchStatsRow[] = data ?? [];
   const completed = jobs.filter((j) => j.status === 'completed' || j.status === 'partial');
   const failed = jobs.filter((j) => j.status === 'failed');
   const running = jobs.filter((j) => j.status === 'running');
-  const totalProcessed = jobs.reduce((s, j) => s + (j.processed_items ?? 0), 0);
-  const totalSuccessful = jobs.reduce((s, j) => s + (j.successful_items ?? 0), 0);
+  const totalProcessed = jobs.reduce((s: number, j) => s + (j.processed_items ?? 0), 0);
+  const totalSuccessful = jobs.reduce((s: number, j) => s + (j.successful_items ?? 0), 0);
   const durations = jobs.map((j) => j.duration_ms).filter((d): d is number => d !== null);
   const speeds = jobs.map((j) => j.avg_item_ms).filter((s): s is number => s !== null && s > 0);
   return {

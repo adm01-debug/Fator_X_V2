@@ -87,7 +87,7 @@ export default function ChangeManagementPage() {
     }
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- run only when workspaceId changes; refresh is recreated each render and would loop if added
   useEffect(() => { if (workspaceId) refresh(); }, [workspaceId]);
 
   const refreshApprovals = async (c: ChangeRequest) => {

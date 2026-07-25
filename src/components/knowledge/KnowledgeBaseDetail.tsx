@@ -27,6 +27,27 @@ interface KnowledgeBaseDetailProps {
   onBack: () => void;
 }
 
+interface Collection {
+  id: string;
+  name: string;
+}
+
+interface KnowledgeDocument {
+  id: string;
+  title: string;
+  source_type?: string;
+  status?: string;
+  source_url?: string;
+}
+
+interface Chunk {
+  id: string;
+  chunk_index?: number;
+  token_count?: number;
+  embedding_status?: string;
+  content?: string;
+}
+
 export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetailProps) {
   const queryClient = useQueryClient();
   const [selectedCollectionId, setSelectedCollectionId] = useState<string | null>(null);
@@ -50,7 +71,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
     enabled: !!selectedCollectionId,
   });
 
-  const selectedDocIds = documents.map((d: DbRow) => d.id);
+  const selectedDocIds = (documents as KnowledgeDocument[]).map((d) => d.id);
   const { data: chunks = [], isLoading: loadingChunks } = useQuery({
     queryKey: ['chunks', selectedDocIds],
     queryFn: () => listChunksForDocuments(selectedDocIds),
@@ -133,8 +154,8 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
       setDocTitle(''); setDocContent(''); setDocSourceUrl('');
       queryClient.invalidateQueries({ queryKey: ['documents', selectedCollectionId] });
       queryClient.invalidateQueries({ queryKey: ['chunks'] });
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Erro na ingestão');
+    } catch (e: unknown) {
+      toast.error((e instanceof Error ? e.message : '') || 'Erro na ingestão');
     } finally { setSaving(false); }
   };
 
@@ -157,7 +178,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
     } catch (e) { toast.error(e instanceof Error ? e.message : 'Erro'); }
   };
 
-  const selectedCollection = collections.find((c: DbRow) => c.id === selectedCollectionId);
+  const selectedCollection = (collections as Collection[]).find((c) => c.id === selectedCollectionId);
 
   return (
     <div className="space-y-4">
@@ -198,11 +219,19 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
               <p className="text-meta text-muted-foreground">Nenhuma collection. Crie uma para organizar documentos.</p>
             </div>
           ) : (
-            collections.map((coll: DbRow) => (
-              <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
+            (collections as Collection[]).map((coll) => (
+              <div
                 key={coll.id}
+                role="button"
+                tabIndex={0}
                 className={`nexus-card cursor-pointer p-3 group ${selectedCollectionId === coll.id ? 'border-primary/40 nexus-glow-sm' : ''}`}
                 onClick={() => setSelectedCollectionId(coll.id)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedCollectionId(coll.id);
+                  }
+                }}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 min-w-0">
@@ -266,7 +295,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
               <p className="text-meta text-muted-foreground">Nenhum documento nesta collection.</p>
             </div>
           ) : (
-            documents.map((doc: DbRow) => (
+            (documents as KnowledgeDocument[]).map((doc) => (
               <div key={doc.id} className="nexus-card p-3 group">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 min-w-0">
@@ -311,7 +340,7 @@ export function KnowledgeBaseDetail({ kbId, kbName, onBack }: KnowledgeBaseDetai
             </div>
           ) : (
             <div className="space-y-2 max-h-[600px] overflow-y-auto">
-              {chunks.map((chunk: DbRow) => (
+              {(chunks as Chunk[]).map((chunk) => (
                 <div key={chunk.id} className="nexus-card p-3">
                   <div className="flex items-center justify-between mb-1.5">
                     <Badge variant="outline" className="text-meta">#{chunk.chunk_index}</Badge>

@@ -56,7 +56,11 @@ function getCfg(v: Version): Record<string, unknown> {
 
 function countEnabled(arr: DbRow): number {
   if (!Array.isArray(arr)) return 0;
-  return arr.filter((x: { enabled?: boolean } | null | undefined) => x && (x.enabled ?? true)).length;
+  return arr.filter((x) => {
+    if (!x || typeof x !== 'object') return false;
+    const enabled = (x as Record<string, unknown>).enabled;
+    return enabled ?? true;
+  }).length;
 }
 
 interface Delta { label: string; from: string | number; to: string | number; }
@@ -74,15 +78,16 @@ function computeDeltas(a: Version, b: Version): Delta[] {
   const cb = getCfg(b) as CfgShape;
   const out: Delta[] = [];
   if (a.model !== b.model) out.push({ label: 'Modelo', from: a.model || '—', to: b.model || '—' });
+  const num = (v: unknown): string | number => (typeof v === 'number' ? v : '—');
   const ta = ca.temperature, tb = cb.temperature;
-  if (ta !== tb && (ta !== undefined || tb !== undefined)) out.push({ label: 'Temperature', from: ta ?? '—', to: tb ?? '—' });
+  if (ta !== tb && (ta !== undefined || tb !== undefined)) out.push({ label: 'Temperature', from: num(ta), to: num(tb) });
   const ma = ca.max_tokens, mb = cb.max_tokens;
-  if (ma !== mb && (ma !== undefined || mb !== undefined)) out.push({ label: 'Max Tokens', from: ma ?? '—', to: mb ?? '—' });
+  if (ma !== mb && (ma !== undefined || mb !== undefined)) out.push({ label: 'Max Tokens', from: num(ma), to: num(mb) });
   const toolsA = countEnabled(ca.tools), toolsB = countEnabled(cb.tools);
   if (toolsA !== toolsB) out.push({ label: 'Ferramentas ativas', from: toolsA, to: toolsB });
   const grA = countEnabled(ca.guardrails), grB = countEnabled(cb.guardrails);
   if (grA !== grB) out.push({ label: 'Guardrails ativos', from: grA, to: grB });
-  const spA = (ca.system_prompt || '').length, spB = (cb.system_prompt || '').length;
+  const spA = (typeof ca.system_prompt === 'string' ? ca.system_prompt : '').length, spB = (typeof cb.system_prompt === 'string' ? cb.system_prompt : '').length;
   if (spA !== spB) out.push({ label: 'System prompt (chars)', from: spA, to: spB });
   if (a.persona !== b.persona) out.push({ label: 'Persona', from: 'alterada', to: '—' });
   if (a.mission !== b.mission) out.push({ label: 'Missão', from: 'alterada', to: '—' });
@@ -142,9 +147,9 @@ export function VersionDiffDialog({ open, onOpenChange, versions, agentId }: Pro
 
         <div className="grid grid-cols-2 gap-3 mt-2">
           <div className="space-y-1">
-            <label htmlFor="versiondiffdialog-vers-o-a-anterior-4c1510" className="text-meta font-medium text-muted-foreground">Versão A (anterior)</label>
+            <label htmlFor="version-diff-select-a" className="text-xs font-medium text-muted-foreground">Versão A (anterior)</label>
             <Select value={vA} onValueChange={setVA}>
-              <SelectTrigger id="versiondiffdialog-vers-o-a-anterior-4c1510"><SelectValue placeholder="Selecione..." /></SelectTrigger>
+              <SelectTrigger id="version-diff-select-a"><SelectValue placeholder="Selecione..." /></SelectTrigger>
               <SelectContent>
                 {versions.map(v => (
                   <SelectItem key={v.id} value={v.id}>
@@ -155,9 +160,9 @@ export function VersionDiffDialog({ open, onOpenChange, versions, agentId }: Pro
             </Select>
           </div>
           <div className="space-y-1">
-            <label htmlFor="versiondiffdialog-vers-o-b-nova-b20ff4" className="text-meta font-medium text-muted-foreground">Versão B (nova)</label>
+            <label htmlFor="version-diff-select-b" className="text-xs font-medium text-muted-foreground">Versão B (nova)</label>
             <Select value={vB} onValueChange={setVB}>
-              <SelectTrigger id="versiondiffdialog-vers-o-b-nova-b20ff4"><SelectValue placeholder="Selecione..." /></SelectTrigger>
+              <SelectTrigger id="version-diff-select-b"><SelectValue placeholder="Selecione..." /></SelectTrigger>
               <SelectContent>
                 {versions.map(v => (
                   <SelectItem key={v.id} value={v.id}>

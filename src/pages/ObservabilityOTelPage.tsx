@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Activity, TrendingUp, AlertCircle, Clock, Search, Layers, Box, Terminal, Database, ShieldAlert, Cpu } from "lucide-react";
+import { Activity, TrendingUp, AlertCircle, Clock, Search, Layers, Box, Terminal, Database, ShieldAlert, Cpu, type LucideIcon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getRecentTraceEvents } from "@/services/monitoringService";
 import { getSystemHealth } from "@/services/healthService";
@@ -115,12 +115,12 @@ export default function ObservabilityOTelPage() {
                       
                       <div className="flex items-center gap-8 shrink-0">
                          <div className="text-right">
-                           <p className="text-meta font-black uppercase text-muted-foreground tracking-tighter">Latência</p>
-                           <p className="text-body-sm font-bold font-mono text-nexus-amber">{(trace.data as { latency_ms?: number } | null)?.latency_ms || Math.floor(Math.random() * 800)}ms</p>
+                           <p className="text-[10px] font-black uppercase text-muted-foreground tracking-tighter">Latência</p>
+                           <p className="text-sm font-bold font-mono text-nexus-amber">{(trace.data?.latency_ms as number | undefined) || Math.floor(Math.random() * 800)}ms</p>
                          </div>
                          <div className="text-right w-24 hidden md:block">
-                           <p className="text-meta font-black uppercase text-muted-foreground tracking-tighter">Consumo</p>
-                           <p className="text-body-sm font-bold font-mono text-primary">{(trace.data as { tokens?: number } | null)?.tokens || Math.floor(Math.random() * 2000)} tks</p>
+                           <p className="text-[10px] font-black uppercase text-muted-foreground tracking-tighter">Consumo</p>
+                           <p className="text-sm font-bold font-mono text-primary">{(trace.data?.tokens as number | undefined) || Math.floor(Math.random() * 2000)} tks</p>
                          </div>
                          <div className="text-right">
                            <p className="text-meta font-black uppercase text-muted-foreground tracking-tighter">Time</p>
@@ -188,7 +188,14 @@ export default function ObservabilityOTelPage() {
   );
 }
 
-function MetricCard({ label, value, icon: Icon, trend, subLabel, color = "text-foreground" }: { label: string; value: string | number; icon: React.ComponentType<{ className?: string }>; trend?: string; subLabel?: string; color?: string }) {
+function MetricCard({ label, value, icon: Icon, trend, subLabel, color = "text-foreground" }: {
+  label: string;
+  value: string;
+  icon: LucideIcon;
+  trend?: string;
+  subLabel?: string;
+  color?: string;
+}) {
   return (
     <Card className="bg-card/50 border-border/40 rounded-[2rem] p-6 shadow-nexus-sm group hover:border-primary/20 transition-all">
       <div className="flex items-start justify-between mb-4">

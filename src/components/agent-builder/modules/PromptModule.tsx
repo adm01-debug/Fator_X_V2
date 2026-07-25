@@ -86,7 +86,7 @@ export function PromptModule() {
         setVersionSummary(`IA: ${changes.join(', ')} e melhorou a clareza da persona.`);
       }
       toast.success('Resumo gerado com IA!');
-    } catch (_error) {
+    } catch {
       toast.error('Erro ao gerar resumo');
     } finally {
       setIsGeneratingSummary(false);
@@ -294,7 +294,15 @@ export function PromptModule() {
             return (
               <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
                 key={pt.id}
+                role="button"
+                tabIndex={0}
                 onClick={() => updateTechnique(pt.id, { enabled: !isEnabled })}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    updateTechnique(pt.id, { enabled: !isEnabled });
+                  }
+                }}
                 className={`cursor-pointer rounded-xl border p-4 transition-all duration-300 ${
                   isEnabled
                     ? 'border-primary bg-primary/5 ring-1 ring-primary/20'
@@ -354,7 +362,15 @@ export function PromptModule() {
           {OUTPUT_FORMATS.map((fmt) => (
             <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
               key={fmt.value}
+              role="button"
+              tabIndex={0}
               onClick={() => updateAgent({ output_format: fmt.value })}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  updateAgent({ output_format: fmt.value });
+                }
+              }}
               className={`cursor-pointer rounded-xl border p-4 text-center transition-all duration-300 ${
                 agent.output_format === fmt.value
                   ? 'border-primary bg-primary/5 ring-1 ring-primary/20 shadow-nexus-lg shadow-primary/5'

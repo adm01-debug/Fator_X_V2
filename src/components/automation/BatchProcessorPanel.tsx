@@ -27,8 +27,7 @@ export function BatchProcessorPanel() {
       .then(([j, s]) => { setJobs(j); setStats(s); })
       .catch(() => toast({ title: 'Erro', variant: 'destructive' }))
       .finally(() => setLoading(false));
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
-  }, []);
+  }, [toast]);
 
   return (
     <div className="space-y-6">

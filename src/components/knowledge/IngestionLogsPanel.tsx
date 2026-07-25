@@ -91,13 +91,21 @@ export function IngestionLogsPanel() {
       <ScrollArea className="flex-1">
         <div className="divide-y divide-border/20">
           {mockLogs.map((log) => (
-            <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} 
+            <div
               key={log.id}
+              role="button"
+              tabIndex={0}
               className={cn(
                 "p-4 cursor-pointer transition-colors hover:bg-primary/5",
                 selectedLog === log.id && "bg-primary/5"
               )}
               onClick={() => setSelectedLog(selectedLog === log.id ? null : log.id)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setSelectedLog(selectedLog === log.id ? null : log.id);
+                }
+              }}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-2">

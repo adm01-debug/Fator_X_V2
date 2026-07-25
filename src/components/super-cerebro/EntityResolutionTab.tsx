@@ -30,7 +30,7 @@ export function EntityResolutionTab() {
         await invokeCerebroBrain({ action: 'entity_resolution' });
         // Fallback or merge with legacy
         return resolveMemoryEntities(scanLimit, threshold);
-      } catch (_e) {
+      } catch {
         return resolveMemoryEntities(scanLimit, threshold);
       }
     },

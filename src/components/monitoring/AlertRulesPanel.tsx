@@ -51,23 +51,18 @@ export function AlertRulesPanel() {
       <p className="text-meta text-muted-foreground mb-4">Crie regras que disparam alertas quando métricas ultrapassam limites.</p>
 
       <div className="grid grid-cols-2 md:grid-cols-6 gap-2 mb-4 items-end">
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
-        <div><label className="text-meta text-muted-foreground">Nome</label><input value={ruleName} onChange={e => setRuleName(e.target.value)} placeholder="Ex: Custo alto" className="w-full rounded-lg border border-border bg-secondary/50 px-2 py-1.5 text-meta" /></div>
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
-        <div><label className="text-meta text-muted-foreground">Métrica</label>
-          <select value={ruleMetric} onChange={e => setRuleMetric(e.target.value)} className="w-full rounded-lg border border-border bg-secondary/50 px-2 py-1.5 text-meta">
+        <div><label htmlFor="alert-rule-name" className="text-[11px] text-muted-foreground">Nome</label><input id="alert-rule-name" value={ruleName} onChange={e => setRuleName(e.target.value)} placeholder="Ex: Custo alto" className="w-full rounded-lg border border-border bg-secondary/50 px-2 py-1.5 text-xs" /></div>
+        <div><label htmlFor="alert-rule-metric" className="text-[11px] text-muted-foreground">Métrica</label>
+          <select id="alert-rule-metric" value={ruleMetric} onChange={e => setRuleMetric(e.target.value)} className="w-full rounded-lg border border-border bg-secondary/50 px-2 py-1.5 text-xs">
             <option value="cost_usd">Custo (USD)</option><option value="latency_ms">Latência (ms)</option><option value="tokens_used">Tokens</option><option value="error_count">Erros</option>
           </select></div>
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
-        <div><label className="text-meta text-muted-foreground">Operador</label>
-          <select value={ruleOp} onChange={e => setRuleOp(e.target.value)} className="w-full rounded-lg border border-border bg-secondary/50 px-2 py-1.5 text-meta">
+        <div><label htmlFor="alert-rule-op" className="text-[11px] text-muted-foreground">Operador</label>
+          <select id="alert-rule-op" value={ruleOp} onChange={e => setRuleOp(e.target.value)} className="w-full rounded-lg border border-border bg-secondary/50 px-2 py-1.5 text-xs">
             <option value=">">&gt;</option><option value=">=">&gt;=</option><option value="<">&lt;</option><option value="<=">&lt;=</option><option value="==">=</option>
           </select></div>
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
-        <div><label className="text-meta text-muted-foreground">Threshold</label><input type="number" value={ruleThreshold} onChange={e => setRuleThreshold(e.target.value)} className="w-full rounded-lg border border-border bg-secondary/50 px-2 py-1.5 text-meta" /></div>
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
-        <div><label className="text-meta text-muted-foreground">Severidade</label>
-          <select value={ruleSeverity} onChange={e => setRuleSeverity(e.target.value)} className="w-full rounded-lg border border-border bg-secondary/50 px-2 py-1.5 text-meta">
+        <div><label htmlFor="alert-rule-threshold" className="text-[11px] text-muted-foreground">Threshold</label><input id="alert-rule-threshold" type="number" value={ruleThreshold} onChange={e => setRuleThreshold(e.target.value)} className="w-full rounded-lg border border-border bg-secondary/50 px-2 py-1.5 text-xs" /></div>
+        <div><label htmlFor="alert-rule-severity" className="text-[11px] text-muted-foreground">Severidade</label>
+          <select id="alert-rule-severity" value={ruleSeverity} onChange={e => setRuleSeverity(e.target.value)} className="w-full rounded-lg border border-border bg-secondary/50 px-2 py-1.5 text-xs">
             <option value="info">Info</option><option value="warning">Warning</option><option value="critical">Critical</option>
           </select></div>
         <Button size="sm" onClick={handleCreateRule} disabled={creating} className="nexus-gradient-bg text-primary-foreground text-meta">

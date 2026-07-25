@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -21,15 +21,14 @@ export function OracleHistory({ onClose }: OracleHistoryProps) {
   const [showFilters, setShowFilters] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     const data = await fetchOracleHistory(filters);
     setEntries(data);
     setLoading(false);
-  };
+  }, [filters]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
-  useEffect(() => { load(); }, [filters]);
+  useEffect(() => { load(); }, [load]);
 
   const handleDelete = async (id: string) => {
     if (await deleteOracleHistory(id)) {

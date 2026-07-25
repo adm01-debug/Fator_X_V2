@@ -28,24 +28,48 @@ export function AgentCard({
   onNavigate, onToggleFav, onClone, onAutoTag, onExport, onToggleSelect,
 }: AgentCardProps) {
   const config = (agent.config as Record<string, unknown>) ?? {};
-  const metrics = ((config.metrics as { calls?: number | string; accuracy?: number | string; latency?: number | string }) ?? { calls: 0, accuracy: 0, latency: 0 });
+  const metrics = (config.metrics as { calls?: number; accuracy?: number; latency?: number }) || { calls: 0, accuracy: 0, latency: 0 };
+
+  const handleCardActivate = () =>
+    selectionMode
+      ? onToggleSelect({ stopPropagation: () => {} } as React.MouseEvent, agent.id)
+      : onNavigate(agent.id);
 
   return (
-    <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
+    <div
+      role="button"
+      tabIndex={0}
       className={cn(
         "nexus-card nexus-card-interactive cursor-pointer group relative overflow-hidden flex flex-col transition-all duration-300",
         "bg-gradient-to-br from-card to-card/95 border-border/40 hover:border-primary/30",
         isSelected && "ring-2 ring-primary border-primary/40 bg-primary/[0.02]"
       )}
-      onClick={() => selectionMode ? onToggleSelect({ stopPropagation: () => {} } as React.MouseEvent, agent.id) : onNavigate(agent.id)}
+      onClick={handleCardActivate}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleCardActivate();
+        }
+      }}
     >
       {/* Background patterns */}
       <div className="absolute top-0 right-0 w-32 h-32 bg-primary/[0.03] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-      
-      <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className={cn(
-        "absolute top-3 left-3 z-10 transition-all duration-300",
-        selectionMode ? "opacity-100 scale-100" : "opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100"
-      )} onClick={(e) => onToggleSelect(e, agent.id)}>
+
+      <div
+        role="button"
+        tabIndex={0}
+        className={cn(
+          "absolute top-3 left-3 z-10 transition-all duration-300",
+          selectionMode ? "opacity-100 scale-100" : "opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100"
+        )}
+        onClick={(e) => onToggleSelect(e, agent.id)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onToggleSelect(e as unknown as React.MouseEvent, agent.id);
+          }
+        }}
+      >
         <Checkbox checked={isSelected} className="h-4.5 w-4.5 rounded-md border-primary/30 data-[state=checked]:bg-primary" />
       </div>
 
@@ -78,7 +102,12 @@ export function AgentCard({
         </div>
         
         <div className="flex items-center gap-1">
-          <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className="opacity-0 group-hover:opacity-100 transition-all" onClick={(e) => e.stopPropagation()}>
+          <div
+            role="presentation"
+            className="opacity-0 group-hover:opacity-100 transition-all"
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+          >
             <AgentCardViewer agentId={agent.id} agentName={agent.name} />
           </div>
           <button onClick={(e) => onExport(e, agent)} className="h-8 w-8 rounded-lg flex items-center justify-center text-muted-foreground/40 hover:text-nexus-cyan hover:bg-nexus-cyan/10 opacity-0 group-hover:opacity-100 transition-all" title="Exportar JSON">

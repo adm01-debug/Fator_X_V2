@@ -67,12 +67,18 @@ export async function getUsageSummary(period: 'day' | 'week' | 'month' = 'week')
 
   if (error) throw error;
 
-  const records = data || [];
-  const totalCost = records.reduce((s: number, r: DbRow) => s + Number(r.cost_usd || 0), 0);
-  const totalTokens = records.reduce((s: number, r: DbRow) => s + Number(r.tokens || 0), 0);
+  interface UsageSummaryRow {
+    cost_usd: number | null;
+    record_type: string | null;
+    tokens: number | null;
+    created_at: string | null;
+  }
+  const records = (data ?? []) as UsageSummaryRow[];
+  const totalCost = records.reduce((s: number, r) => s + Number(r.cost_usd || 0), 0);
+  const totalTokens = records.reduce((s: number, r) => s + Number(r.tokens || 0), 0);
 
   const byType: Record<string, number> = {};
-  records.forEach((r: DbRow) => {
+  records.forEach((r) => {
     const type = String(r.record_type || 'llm');
     byType[type] = (byType[type] || 0) + Number(r.cost_usd || 0);
   });
@@ -89,7 +95,7 @@ export async function getAgentUsage(days = 30): Promise<AgentUsageRow[]> {
     .gte('date', since.toISOString().split('T')[0])
     .order('date', { ascending: true });
   if (error) throw error;
-  return (data ?? []) as unknown as AgentUsageRow[];
+  return (data as unknown as AgentUsageRow[]) ?? [];
 }
 
 export async function getUsageRecords(limit = 50): Promise<UsageRecordRow[]> {
@@ -99,7 +105,7 @@ export async function getUsageRecords(limit = 50): Promise<UsageRecordRow[]> {
     .order('created_at', { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return (data ?? []) as unknown as UsageRecordRow[];
+  return (data as unknown as UsageRecordRow[]) ?? [];
 }
 
 // ═══ Budgets ═══
@@ -110,7 +116,7 @@ export async function listBudgets(): Promise<BudgetRow[]> {
     .select('*')
     .order('created_at', { ascending: false });
   if (error) throw error;
-  return (data ?? []) as unknown as BudgetRow[];
+  return (data as unknown as BudgetRow[]) ?? [];
 }
 
 export async function getBudget(workspaceId: string) {
@@ -171,5 +177,5 @@ export async function getModelPricing(): Promise<ModelPricingRow[]> {
     .select('*')
     .order('model_pattern');
   if (error) throw error;
-  return (data ?? []) as unknown as ModelPricingRow[];
+  return (data as unknown as ModelPricingRow[]) ?? [];
 }
