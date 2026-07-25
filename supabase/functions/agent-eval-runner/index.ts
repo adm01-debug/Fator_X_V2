@@ -3,7 +3,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.58.0';
 import { z } from "https://esm.sh/zod@3.23.8";
 import { checkIdempotency, saveIdempotency } from "../_shared/idempotency.ts";
 
-import { getCorsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders, requireEnv, validateRequiredEnv } from "../_shared/mod.ts";
+validateRequiredEnv(['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'SUPABASE_ANON_KEY', 'LOVABLE_API_KEY']);
 const EvalRunnerBodySchema = z.object({
   agent_id: z.string().uuid().optional(),
   workspace_id: z.string().uuid().optional(),

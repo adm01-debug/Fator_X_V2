@@ -78,3 +78,19 @@ export {
   RetryError,
   type RetryOptions,
 } from "./retry.ts";
+
+// Environment validation (P0 audit — Etapa 13)
+export {
+  requireEnv,
+  requireEnvDefault,
+  requireEnvNumber,
+  requireEnvBool,
+  requireEnvJson,
+  requireEnvUrl,
+  requireEnvGroup,
+  optionalEnv,
+  validateRequiredEnv,
+  requireEnvCached,
+  clearEnvCache,
+  MISSING_ENV_PREFIX,
+} from "./requireEnv.ts";
