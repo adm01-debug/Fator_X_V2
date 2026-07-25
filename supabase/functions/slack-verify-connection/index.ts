@@ -7,7 +7,11 @@
  */
 import { createClient } from "npm:@supabase/supabase-js@2.50.0";
 import { z } from "npm:zod@3.23.8";
-import { handleCorsPreflight, jsonResponse, errorResponse } from "../_shared/cors.ts";
+import {
+  handleCorsPreflight, jsonResponse, errorResponse,
+  checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS,
+  requireEnv,
+} from "../_shared/mod.ts";
 import { slackApiCall } from "../_shared/slack.ts";
 
 const BodySchema = z.object({ workspace_id: z.string().uuid() });
@@ -15,6 +19,11 @@ const BodySchema = z.object({ workspace_id: z.string().uuid() });
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return handleCorsPreflight(req);
   if (req.method !== "POST") return errorResponse(req, "Method not allowed", 405);
+
+  // Rate limiting — Etapa 14
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.medium);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, handleCorsPreflight(req));
 
   const auth = req.headers.get("Authorization");
   if (!auth) return errorResponse(req, "Unauthorized", 401);
@@ -28,24 +37,24 @@ Deno.serve(async (req) => {
     });
   }
 
-  if (!Deno.env.get("SLACK_BOT_TOKEN")) {
-    return errorResponse(req, "SLACK_BOT_TOKEN não configurado", 503);
-  }
-  if (!Deno.env.get("SLACK_SIGNING_SECRET")) {
-    return errorResponse(req, "SLACK_SIGNING_SECRET não configurado", 503);
-  }
+  // requireEnv — fail-fast se não configurado (Etapa 13)
+  requireEnv("SLACK_BOT_TOKEN");
+  requireEnv("SLACK_SIGNING_SECRET");
+  const supabaseUrl = requireEnv("SUPABASE_URL");
+  const supabaseAnonKey = requireEnv("SUPABASE_ANON_KEY");
+  const supabaseServiceKey = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
 
   const userClient = createClient(
-    Deno.env.get("SUPABASE_URL")!,
-    Deno.env.get("SUPABASE_ANON_KEY")!,
+    supabaseUrl,
+    supabaseAnonKey,
     { global: { headers: { Authorization: auth } } }
   );
   const { data: userData, error: userErr } = await userClient.auth.getUser();
   if (userErr || !userData.user) return errorResponse(req, "Unauthorized", 401);
 
   const svc = createClient(
-    Deno.env.get("SUPABASE_URL")!,
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    supabaseUrl,
+    supabaseServiceKey,
     { auth: { persistSession: false, autoRefreshToken: false } }
   );
 

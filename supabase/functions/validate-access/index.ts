@@ -21,6 +21,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { z } from "https://esm.sh/zod@3.23.8";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 const ValidateAccessBodySchema = z.object({
   workspace_id: z.string().uuid().nullable().optional(),
   user_id: z.string().uuid().nullable().optional(),
@@ -61,6 +62,9 @@ function ipMatches(ip: string, rule: string): boolean {
 
 serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.medium);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
   if (req.method === "OPTIONS")
     return new Response(null, { headers: corsHeaders });
 
@@ -77,8 +81,8 @@ serve(async (req) => {
     const country = extractCountry(req);
 
     const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      requireEnv("SUPABASE_URL"),
+      requireEnv("SUPABASE_SERVICE_ROLE_KEY"),
     );
 
     // If no workspace context, only signal what we detected.

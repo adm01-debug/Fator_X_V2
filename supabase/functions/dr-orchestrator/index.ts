@@ -2,6 +2,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 import { z } from "https://esm.sh/zod@3.23.8";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 const OrchestrateRequestSchema = z.object({
   drill_id: z.string().uuid(),
 });
@@ -9,6 +10,9 @@ type OrchestrateRequest = z.infer<typeof OrchestrateRequestSchema>;
 
 Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -22,9 +26,9 @@ Deno.serve(async (req) => {
       });
     }
 
-    const url = Deno.env.get("SUPABASE_URL")!;
-    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const url = requireEnv("SUPABASE_URL");
+    const serviceKey = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
+    const anonKey = requireEnv("SUPABASE_ANON_KEY");
 
     // Validate user
     const userClient = createClient(url, anonKey, {

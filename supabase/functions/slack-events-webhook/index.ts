@@ -5,7 +5,8 @@
  * roteia app_mention / message.im para o agente configurado e responde na thread.
  */
 import { createClient } from "npm:@supabase/supabase-js@2.50.0";
-import { handleCorsPreflight, jsonResponse, errorResponse } from "../_shared/cors.ts";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
+import { handleCorsPreflight, jsonResponse, errorResponse } from "../_shared/mod.ts";
 import { verifySlackSignature, slackApiCall, isDuplicateEvent } from "../_shared/slack.ts";
 
 interface SlackEventEnvelope {
@@ -27,12 +28,12 @@ interface SlackEventEnvelope {
 
 async function callLlmGateway(text: string, agentId: string | null): Promise<string> {
   try {
-    const url = `${Deno.env.get("SUPABASE_URL")}/functions/v1/llm-gateway`;
+    const url = `${requireEnv("SUPABASE_URL")}/functions/v1/llm-gateway`;
     const res = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+        Authorization: `Bearer ${requireEnv("SUPABASE_SERVICE_ROLE_KEY")}`,
       },
       body: JSON.stringify({
         messages: [{ role: "user", content: text }],
@@ -50,9 +51,12 @@ async function callLlmGateway(text: string, agentId: string | null): Promise<str
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return handleCorsPreflight(req);
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.light);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, getCorsHeaders(req));
   if (req.method !== "POST") return errorResponse(req, "Method not allowed", 405);
 
-  const signingSecret = Deno.env.get("SLACK_SIGNING_SECRET");
+  const signingSecret = requireEnv("SLACK_SIGNING_SECRET");
   const verification = await verifySlackSignature(req, signingSecret);
   if (!verification.isValid) {
     return errorResponse(req, verification.reason ?? "Invalid signature", 401);
@@ -76,8 +80,8 @@ Deno.serve(async (req) => {
     return jsonResponse(req, { ok: true, ignored: "unknown_type" });
   }
 
-  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const supabaseUrl = requireEnv("SUPABASE_URL");
+  const serviceKey = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
   const supabase = createClient(supabaseUrl, serviceKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
