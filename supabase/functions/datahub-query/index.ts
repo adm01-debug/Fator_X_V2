@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { fetchWithTimeout } from "../_shared/retry.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import { getCorsHeaders, handleCorsPreflight, _jsonResponse, _errorResponse, _checkRateLimit, _getRateLimitIdentifier, _createRateLimitResponse, _RATE_LIMITS } from "../_shared/mod.ts";
+import { getCorsHeaders, handleCorsPreflight, requireEnv, checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS } from "../_shared/mod.ts";
 import { z } from "https://esm.sh/zod@3.23.8";
 
 const DatahubBodySchema = z.object({
@@ -145,13 +145,16 @@ serve(async (req) => {
     const authHeader = req.headers.get('Authorization') ?? '';
     if (!authHeader) return new Response(JSON.stringify({ error: 'Missing Authorization header' }), { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+    const supabaseUrl = requireEnv('SUPABASE_URL');
+    const supabaseKey = requireEnv('SUPABASE_ANON_KEY');
     if (!supabaseUrl || !supabaseKey) return new Response(JSON.stringify({ error: 'Missing SUPABASE_URL or SUPABASE_ANON_KEY env vars' }), { status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
 
     const supabase = createClient(supabaseUrl, supabaseKey, { global: { headers: { Authorization: authHeader } } });
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    const rateCheck = await checkRateLimit(getRateLimitIdentifier(req, user.id), RATE_LIMITS.heavy);
+    if (!rateCheck.success) return createRateLimitResponse(rateCheck.remaining, rateCheck.reset, getCorsHeaders(req));
+    if (!rateCheck.allowed) return _createRateLimitResponse(rateCheck, getCorsHeaders(req));
 
     const rawBody = await req.json().catch(() => null);
     const parsedBody = DatahubBodySchema.safeParse(rawBody);
