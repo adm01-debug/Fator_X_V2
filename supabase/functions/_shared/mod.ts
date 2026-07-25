@@ -110,3 +110,15 @@ export type {
   WebhookDeliveryResult,
   WebhookSenderOptions,
 } from "./webhookSender.ts";
+
+// Observability (ETAPAS 46-48)
+export {
+  runWithObservability,
+  tracedFetch,
+  estimateLlmCost,
+  logLlmMetrics,
+} from "./otel-edge.ts";
+export type {
+  TraceContext,
+  ObservabilityOptions,
+} from "./otel-edge.ts";
