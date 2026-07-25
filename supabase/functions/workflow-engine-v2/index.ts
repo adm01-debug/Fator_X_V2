@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
-import { getCorsHeaders, handleCorsPreflight, jsonResponse, _errorResponse, _checkRateLimit, _getRateLimitIdentifier, _createRateLimitResponse, _RATE_LIMITS } from "../_shared/mod.ts";
+import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse, checkRateLimit, getRateLimitIdentifier, RATE_LIMITS, deliverWebhook, createRateLimitResponse } from "../_shared/mod.ts";
 
 // ═══ Types ═══
 interface GraphNode {
@@ -65,6 +65,11 @@ const WorkflowInput = z.object({
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
+
+  // Rate limiting (Etapa 14)
+  const identifier = await getRateLimitIdentifier(req);
+  const { success: rateOk, remaining, reset } = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rateOk) return createRateLimitResponse(remaining, reset, getCorsHeaders(req));
 
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -169,14 +174,23 @@ serve(async (req) => {
           state._output = JSON.stringify(result, null, 2);
           state[`${node.id}_output`] = state._output;
         } else if (toolType === 'webhook' && node.config.webhook_url) {
-          const resp = await fetch(node.config.webhook_url as string, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ input: state._output || state.input, node_id: node.id, run_id: runId }),
-            signal: AbortSignal.timeout(STEP_TIMEOUT_MS)
+          const webhookResult = await deliverWebhook({
+            url: node.config.webhook_url as string,
+            secret: node.config.webhook_secret as string | undefined,
+            event: 'workflow.webhook',
+            payload: {
+              event: 'workflow.webhook',
+              timestamp: new Date().toISOString(),
+              data: { input: state._output || state.input, node_id: node.id, run_id: runId },
+            },
+            timeoutMs: STEP_TIMEOUT_MS,
+            retries: 2,
           });
-          const result = await resp.json();
-          state._output = typeof result === 'string' ? result : JSON.stringify(result);
+          if (!webhookResult.success) {
+            throw new Error(`Webhook delivery failed: ${webhookResult.error}`);
+          }
+          // Output do webhook está no payload (resposta em data.output se o receiver retornar)
+          state._output = JSON.stringify({ delivered: true, attempts: webhookResult.attempts });
           state[`${node.id}_output`] = state._output;
         } else if (toolType === 'edge_function' && node.config.function_name) {
           const resp = await fetch(`${supabaseUrl}/functions/v1/${node.config.function_name}`, {

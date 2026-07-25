@@ -43,6 +43,7 @@ export {
   checkRateLimit,
   createRateLimitResponse,
   getRateLimitIdentifier,
+  withRateLimit,
   RATE_LIMITS,
   type RateLimitConfig,
   type RateLimitResult,
@@ -57,6 +58,9 @@ export {
   MAX_BODY_SIZE,
   type ParseResult,
 } from "./validation.ts";
+
+// Safe JSON (LLM output parsing)
+export { safeJsonParse, parseJsonStrict } from "./json.ts";
 
 // Security (NEW)
 export {
@@ -94,3 +98,15 @@ export {
   clearEnvCache,
   MISSING_ENV_PREFIX,
 } from "./requireEnv.ts";
+
+// Webhook Sender with HMAC + retry (P0 audit — Etapa 16)
+export {
+  deliverWebhook,
+  deliverWebhookWithLogging,
+  hmacSha256Hex,
+} from "./webhookSender.ts";
+export type {
+  WebhookPayload,
+  WebhookDeliveryResult,
+  WebhookSenderOptions,
+} from "./webhookSender.ts";
