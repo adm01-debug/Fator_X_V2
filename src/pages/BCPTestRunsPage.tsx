@@ -1,6 +1,10 @@
 import { useEffect, useState, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { useWorkspaceId } from "@/hooks/use-data";
+import {
+  listBusinessSystems,
+  listSystemTests,
+  recordBcpTest,
+} from "@/services/bcpService";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -74,17 +78,13 @@ export default function BCPTestRunsPage() {
   const load = useCallback(async () => {
     if (!workspaceId) return;
     setLoading(true);
-    const [{ data: sys }, { data: r }] = await Promise.all([
-      supabase.from("business_systems").select("id,name,rto_minutes,rpo_minutes").eq("workspace_id", workspaceId),
-      supabase
-        .from("bcp_test_runs")
-        .select("id,system_id,test_type,executed_at,scenario,actual_rto_minutes,actual_rpo_minutes,success,gaps,action_items,notes")
-        .order("executed_at", { ascending: false })
-        .limit(200),
+    const [sys, r] = await Promise.all([
+      listBusinessSystems(workspaceId),
+      listSystemTests(workspaceId),
     ]);
-    setSystems((sys ?? []) as System[]);
-    const sysIds = new Set((sys ?? []).map((s) => s.id));
-    setRuns(((r ?? []) as BCPRun[]).filter((run) => sysIds.has(run.system_id)));
+    setSystems(sys.map((s) => ({ id: s.id, name: s.name, rto_minutes: s.rto_minutes, rpo_minutes: s.rpo_minutes })));
+    const sysIds = new Set(sys.map((s) => s.id));
+    setRuns(r.filter((run) => sysIds.has(run.system_id)));
     setLoading(false);
   }, [workspaceId]);
 
@@ -101,29 +101,24 @@ export default function BCPTestRunsPage() {
       toast.error("Descreva o cenário");
       return;
     }
-    const { data: userData } = await supabase.auth.getUser();
-    if (!userData.user) {
-      toast.error("Sessão inválida");
-      return;
-    }
     const gaps = form.gaps
       .split("\n")
       .map((g) => g.trim())
       .filter(Boolean);
-    const { error } = await supabase.from("bcp_test_runs").insert({
-      system_id: form.system_id,
-      test_type: form.test_type,
-      executed_by: userData.user.id,
-      scenario: form.scenario.trim(),
-      actual_rto_minutes: form.actual_rto_minutes ? Number(form.actual_rto_minutes) : null,
-      actual_rpo_minutes: form.actual_rpo_minutes ? Number(form.actual_rpo_minutes) : null,
-      success: form.success,
-      gaps,
-      action_items: form.action_items.trim() || null,
-      notes: form.notes.trim() || null,
-    });
-    if (error) {
-      toast.error(`Falha ao registrar: ${error.message}`);
+    try {
+      await recordBcpTest({
+        system_id: form.system_id,
+        test_type: form.test_type,
+        scenario: form.scenario.trim(),
+        actual_rto_minutes: form.actual_rto_minutes ? Number(form.actual_rto_minutes) : null,
+        actual_rpo_minutes: form.actual_rpo_minutes ? Number(form.actual_rpo_minutes) : null,
+        success: form.success,
+        gaps,
+        action_items: form.action_items.trim() || null,
+        notes: form.notes.trim() || null,
+      });
+    } catch (err: unknown) {
+      toast.error(`Falha ao registrar: ${err instanceof Error ? err.message : String(err)}`);
       return;
     }
     toast.success("Teste BCP registrado");

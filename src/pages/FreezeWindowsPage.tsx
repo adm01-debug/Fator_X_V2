@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
+import { listFreezeWindows, createFreezeWindow, updateFreezeWindow, deleteFreezeWindow } from "@/services/freezeWindowService";
 import { useWorkspaceId } from "@/hooks/use-data";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -81,15 +82,7 @@ export default function FreezeWindowsPage() {
   const { data: windows, isLoading } = useQuery({
     queryKey: ["freeze_windows", workspaceId],
     enabled: !!workspaceId,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("freeze_windows")
-        .select("*")
-        .eq("workspace_id", workspaceId!)
-        .order("starts_at", { ascending: false });
-      if (error) throw error;
-      return (data ?? []) as FreezeWindow[];
-    },
+    queryFn: async () => listFreezeWindows(workspaceId!),
   });
 
   // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
@@ -121,19 +114,13 @@ export default function FreezeWindowsPage() {
       if (new Date(endIso) <= new Date(startIso)) {
         throw new Error("O fim precisa ser posterior ao início");
       }
-      const { data: userData } = await supabase.auth.getUser();
-      const userId = userData.user?.id;
-      if (!userId) throw new Error("Sessão inválida");
-      const { error } = await supabase.from("freeze_windows").insert({
-        workspace_id: workspaceId,
+      await createFreezeWindow(workspaceId, {
         name: name.trim(),
         reason: reason.trim() || null,
         starts_at: startIso,
         ends_at: endIso,
         allow_emergency: allowEmergency,
-        created_by: userId,
       });
-      if (error) throw error;
     },
     onSuccess: () => {
       toast.success("Janela de congelamento criada");
@@ -146,21 +133,14 @@ export default function FreezeWindowsPage() {
 
   const toggleEmergency = useMutation({
     mutationFn: async ({ id, allow }: { id: string; allow: boolean }) => {
-      const { error } = await supabase
-        .from("freeze_windows")
-        .update({ allow_emergency: allow })
-        .eq("id", id);
-      if (error) throw error;
+      await updateFreezeWindow(id, { allow_emergency: allow });
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["freeze_windows"] }),
     onError: (e: Error) => toast.error(e.message),
   });
 
   const remove = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from("freeze_windows").delete().eq("id", id);
-      if (error) throw error;
-    },
+    mutationFn: async (id: string) => deleteFreezeWindow(id),
     onSuccess: () => {
       toast.success("Janela removida");
       qc.invalidateQueries({ queryKey: ["freeze_windows"] });
