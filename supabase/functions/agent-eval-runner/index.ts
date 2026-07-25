@@ -3,7 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.58.0';
 import { z } from "https://esm.sh/zod@3.23.8";
 import { checkIdempotency, saveIdempotency } from "../_shared/idempotency.ts";
 
-import { getCorsHeaders, requireEnv, validateRequiredEnv } from "../_shared/mod.ts";
+import { getCorsHeaders, requireEnv, validateRequiredEnv, checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS } from "../_shared/mod.ts";
 validateRequiredEnv(['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'SUPABASE_ANON_KEY', 'LOVABLE_API_KEY']);
 const EvalRunnerBodySchema = z.object({
   agent_id: z.string().uuid().optional(),
@@ -103,17 +103,20 @@ Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
-  try {
-    const apiKey = Deno.env.get('LOVABLE_API_KEY');
-    if (!apiKey) throw new Error('LOVABLE_API_KEY não configurada');
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  try {
+    const apiKey = requireEnv('LOVABLE_API_KEY');
+    const supabaseUrl = requireEnv('SUPABASE_URL');
+    const serviceKey = requireEnv('SUPABASE_SERVICE_ROLE_KEY');
+    const anonKey = requireEnv('SUPABASE_ANON_KEY');
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) throw new Error('Sem autenticação');
 
     // user-scoped client to validate auth
-    const userClient = createClient(supabaseUrl, Deno.env.get('SUPABASE_ANON_KEY')!, {
+    const userClient = createClient(supabaseUrl, anonKey, {
       global: { headers: { Authorization: authHeader } },
     });
     const { data: userData, error: userErr } = await userClient.auth.getUser();
