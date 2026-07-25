@@ -2,8 +2,7 @@
 import { fetchWithTimeout } from "../_shared/retry.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { z } from "https://esm.sh/zod@3.23.8";
-
-import { getCorsHeaders } from "../_shared/cors.ts";
+import { checkRateLimit, createRateLimitResponse, getCorsHeaders, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 const InputSchema = z.object({
   knowledge_base_id: z.string().uuid(),
 });
@@ -11,6 +10,10 @@ const InputSchema = z.object({
 Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
 
   try {
     const auth = req.headers.get("Authorization");
@@ -22,8 +25,8 @@ Deno.serve(async (req) => {
     const { knowledge_base_id } = parsed.data;
 
 
-    const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-    const lovableKey = Deno.env.get("LOVABLE_API_KEY");
+    const supabase = createClient(requireEnv("SUPABASE_URL"), requireEnv("SUPABASE_SERVICE_ROLE_KEY"));
+    const lovableKey = requireEnv("LOVABLE_API_KEY");
 
     // Pegar últimas 100 queries do oracle_history (proxy para queries dos usuários)
     const { data: history } = await supabase
