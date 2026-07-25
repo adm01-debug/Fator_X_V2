@@ -187,14 +187,7 @@ export async function getBatchProgress(id: string): Promise<BatchProgress | null
 export async function getBatchStats(): Promise<{ total_jobs: number; completed: number; failed: number; running: number; total_items_processed: number; success_rate: number; avg_duration_ms: number; avg_items_per_second: number }> {
   const { data, error } = await fromTable('batch_jobs').select('status, processed_items, successful_items, failed_items, duration_ms, avg_item_ms');
   if (error) throw error;
-  interface StatRow {
-    status: BatchStatus | string;
-    processed_items: number | null;
-    successful_items: number | null;
-    failed_items: number | null;
-    duration_ms: number | null;
-    avg_item_ms: number | null;
-  }
+  type StatRow = { status: string; processed_items: number | null; successful_items: number | null; failed_items: number | null; duration_ms: number | null; avg_item_ms: number | null };
   const jobs = (data ?? []) as StatRow[];
   const completed = jobs.filter((j) => j.status === 'completed' || j.status === 'partial');
   const failed = jobs.filter((j) => j.status === 'failed');

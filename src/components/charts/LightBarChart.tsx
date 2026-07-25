@@ -13,7 +13,7 @@ interface BarSeries {
 }
 
 interface Props {
-  data: readonly object[];
+  data: Record<string, unknown>[];
   xKey: string;
   series: BarSeries[];
   height?: number;
@@ -71,6 +71,7 @@ export function LightBarChart({
       const ym = niceMax(maxVal * 1.1);
       return { yMax: ym, ticks: [0, ym * 0.25, ym * 0.5, ym * 0.75, ym], isStacked: false };
     }
+   
   }, [data, series]);
 
   if (!width || inner.width <= 0 || inner.height <= 0) {
@@ -206,7 +207,7 @@ export function LightBarChart({
                 className="fill-muted-foreground"
                 style={{ fontSize: 10 }}
               >
-                {String(d[xKey] ?? '')}
+                {d[xKey] as React.ReactNode}
               </text>
             );
           })}

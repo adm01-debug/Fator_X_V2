@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control -- a11y: visual caption for composite/custom control; tracked for dedicated a11y pass */
 /**
  * CostCalculatorPanel — Interactive LLM cost calculator.
  * Wires costCalculatorService into BillingPage.

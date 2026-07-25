@@ -18,7 +18,7 @@ interface A2ALog {
   direction: 'inbound' | 'outbound';
   type: 'handshake' | 'task' | 'response' | 'error';
   agent: string;
-  payload: Record<string, unknown>;
+  payload: unknown;
 }
 
 export default function SwarmOrchestrationPage() {
@@ -73,7 +73,7 @@ export default function SwarmOrchestrationPage() {
       });
       
       toast.success("Comunicação A2A concluída");
-    } catch (err) {
+    } catch (err: unknown) {
       addLog({
         direction: 'inbound',
         type: 'error',

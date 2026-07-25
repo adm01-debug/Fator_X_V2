@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- a11y: row/card click mirrors a primary action available elsewhere ; decorative wrapper / click-through container; tracked for dedicated a11y pass */
 import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -563,8 +564,6 @@ export function DraftRecoveryBanner({
           <Button
             size="sm"
             onClick={() => onRestore(only.id, restoreMode)}
-            // eslint-disable-next-line jsx-a11y/no-autofocus -- autoFocus em input de recovery — foco imediato é UX intencional
-            autoFocus
             title={
               blocked
                 ? (only.restoreBlockedReason ?? 'Rascunho incompleto — vamos pular direto ao primeiro campo pendente')

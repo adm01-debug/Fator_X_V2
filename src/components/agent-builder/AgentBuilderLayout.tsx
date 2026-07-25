@@ -1,3 +1,4 @@
+import { onActivateKey } from '@/lib/a11y';
 import { useNavigate } from 'react-router-dom';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import { TABS } from '@/data/agentBuilderData';
@@ -8,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ChevronLeft, ChevronRight, Save, Plus, Loader2, History, Sparkles, FileClock, Bot } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { VersionDiffDialog } from '@/components/agents/VersionDiffDialog';
+import { VersionDiffDialog, type Version as VersionType } from '@/components/agents/VersionDiffDialog';
 import { useAgentVersions } from '@/hooks/useAgentVersions';
 import { ConversationalBuilder } from './ConversationalBuilder';
 import { DraftVersionsDialog } from './DraftVersionsDialog';
@@ -62,8 +63,8 @@ export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
         }}
       >
         <div className="flex items-center gap-6 min-w-0">
-          <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className="flex items-center gap-3 group cursor-pointer" onClick={() => navigate('/agents')}>
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 group-hover:scale-110 transition-transform duration-300 shadow-nexus-lg shadow-primary/10">
+          <div className="flex items-center gap-3 group cursor-pointer" role="button" tabIndex={0} onClick={() => navigate('/agents')} onKeyDown={onActivateKey(() => navigate('/agents'))}>
+            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-primary/10">
               <Bot className="h-6 w-6 text-primary" />
             </div>
             <div className="flex flex-col">
@@ -240,7 +241,7 @@ export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
       <VersionDiffDialog
         open={historyOpen}
         onOpenChange={setHistoryOpen}
-        versions={versions}
+        versions={versions as unknown as VersionType[]}
         agentId={agent.id as string | undefined}
       />
       <ConversationalBuilder open={convOpen} onOpenChange={setConvOpen} />

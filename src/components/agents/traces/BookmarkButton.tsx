@@ -101,8 +101,6 @@ export function BookmarkButton({
           rows={3}
           className="text-meta resize-none"
           maxLength={280}
-          // eslint-disable-next-line jsx-a11y/no-autofocus -- autoFocus em input de nomeação dentro de popover
-          autoFocus
           onKeyDown={(e) => {
             if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); handleSave(); }
           }}

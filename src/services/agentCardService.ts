@@ -11,6 +11,7 @@
 
 // supabaseExternal import removed — this service uses fromTable for untyped tables
 
+ 
 import { fromTable } from '@/lib/supabaseExtended';
 import type { DbRow } from '@/types/dbRow';
 
@@ -289,7 +290,7 @@ export async function listAgentCards(): Promise<AgentCard[]> {
   if (error) throw new Error(`Failed to list agents: ${error.message}`);
 
   return (data ?? [])
-    .map((agent: DbRow) => {
+    .map((agent: { metadata?: Record<string, unknown> | null }) => {
       const metadata = agent.metadata as Record<string, unknown> | null;
       const cached = metadata?.agent_card as AgentCard | undefined;
       if (cached) return cached;

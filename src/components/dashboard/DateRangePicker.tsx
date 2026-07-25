@@ -39,6 +39,7 @@ export function DateRangePicker({ value, onChange }: DateRangePickerProps) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
 export function getDateRangeDays(range: DateRange): number {
   switch (range) {
     case '24h': return 1;

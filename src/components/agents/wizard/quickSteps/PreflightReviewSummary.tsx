@@ -32,6 +32,7 @@ export interface ReviewData {
   hasContradictions: boolean;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
 export function useReviewData(form: QuickAgentForm): ReviewData {
   return useMemo(() => {
     const sections = detectPromptSections(form.prompt);

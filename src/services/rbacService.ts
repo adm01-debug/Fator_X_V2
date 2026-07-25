@@ -83,8 +83,8 @@ export async function listPermissions(): Promise<Permission[]> {
 }
 
 export async function getPermissionsForRole(roleKey: string): Promise<Permission[]> {
-  const roleResult = await fromTable('roles').select('id').eq('key', roleKey).maybeSingle();
-  const roleId = (roleResult.data as { id?: string } | null)?.id ?? '';
+  const roleResult = await fromTable('roles').select('id').eq('key', roleKey).single();
+  const roleId = (roleResult.data as { id: string } | null)?.id ?? '';
 
   const { data, error } = await fromTable('role_permissions')
     .select('permission_id')
@@ -93,7 +93,7 @@ export async function getPermissionsForRole(roleKey: string): Promise<Permission
   if (error) throw error;
 
   // Fetch permissions by IDs
-  const permIds = (data ?? []).map((rp: DbRow) => String(rp.permission_id));
+  const permIds = (data ?? []).map((rp: { permission_id: string }) => String(rp.permission_id));
   if (permIds.length === 0) return [];
 
   const { data: perms } = await fromTable('permissions').select('*').in('id', permIds);
@@ -117,8 +117,8 @@ export async function getUserPermissions(userId: string, workspaceId: string): P
   const userRole = await getUserRole(userId, workspaceId);
   if (!userRole) return new Set();
 
-  const roleResult = await fromTable('roles').select('id').eq('key', userRole.role_key).maybeSingle();
-  const roleId = (roleResult.data as { id?: string } | null)?.id ?? '';
+  const roleResult = await fromTable('roles').select('id').eq('key', userRole.role_key).single();
+  const roleId = (roleResult.data as { id: string } | null)?.id ?? '';
 
   const { data, error } = await fromTable('role_permissions')
     .select('permission_id')
@@ -126,12 +126,12 @@ export async function getUserPermissions(userId: string, workspaceId: string): P
 
   if (error) throw error;
 
-  const permIds = (data ?? []).map((rp: DbRow) => String(rp.permission_id));
+  const permIds = (data ?? []).map((rp: { permission_id: string }) => String(rp.permission_id));
   if (permIds.length === 0) return new Set();
 
   const { data: perms } = await fromTable('permissions').select('key').in('id', permIds);
   const permissions = new Set<PermissionKey>();
-  (perms ?? []).forEach((p: DbRow) => {
+  ((perms ?? []) as Array<{ key: string | null }>).forEach(p => {
     if (p.key) permissions.add(String(p.key) as PermissionKey);
   });
 

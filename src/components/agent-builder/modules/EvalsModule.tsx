@@ -13,6 +13,7 @@ import { AuditReportDialog } from '@/components/evaluations/AuditReportDialog';
 import {
   useEvalDatasets,
   useEvalRuns,
+  type EvalRun,
   useEvalResults,
   useCreateEvalDataset,
   useDeleteEvalDataset,
@@ -260,7 +261,7 @@ export function EvalsModule() {
   );
 }
 
-function AuditReportView({ runId, runs }: { runId: string | null; runs: DbRow[] }) {
+function AuditReportView({ runId, runs }: { runId: string | null; runs: EvalRun[] }) {
   const { data: results = [] } = useEvalResults(runId);
   const run = (runs as Array<{ id?: string }>).find((r) => r?.id === runId);
   if (!run) return null;

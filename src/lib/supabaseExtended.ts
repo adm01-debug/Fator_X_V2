@@ -1,6 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/lib/logger';
-import type { DbRow } from '@/types/dbRow';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 /**
  * Supabase Extended Client
@@ -8,50 +8,17 @@ import type { DbRow } from '@/types/dbRow';
  * Added: isUserLockedOut RPC call.
  */
 
+// Loosely-typed view of the client. The generated Database types make some
+// query chains hit "Type instantiation is excessively deep"; this relaxed
+// client lets us address tables/RPCs not present in the generated schema
+// without resorting to `any`.
+const looseClient = supabase as unknown as SupabaseClient;
+
 /**
- * Permissive fluent-query shim para tabelas fora do schema tipado.
- * `data` é resolvido como `DbRow` (ponte documentada) para preservar
- * o acesso legado por propriedade em callbacks; os métodos fluentes
- * são todos tipados e retornam a mesma interface.
+ * Returns a Supabase query builder for a table that may not exist in the
+ * generated schema types.
  */
-export interface AnyQueryResult {
-  data: DbRow;
-  error: { message: string } | null;
-  count?: number | null;
-}
-
-export interface AnyQueryBuilder extends PromiseLike<AnyQueryResult> {
-  select: (...args: unknown[]) => AnyQueryBuilder;
-  insert: (...args: unknown[]) => AnyQueryBuilder;
-  update: (...args: unknown[]) => AnyQueryBuilder;
-  upsert: (...args: unknown[]) => AnyQueryBuilder;
-  delete: (...args: unknown[]) => AnyQueryBuilder;
-  eq: (...args: unknown[]) => AnyQueryBuilder;
-  neq: (...args: unknown[]) => AnyQueryBuilder;
-  in: (...args: unknown[]) => AnyQueryBuilder;
-  is: (...args: unknown[]) => AnyQueryBuilder;
-  gt: (...args: unknown[]) => AnyQueryBuilder;
-  gte: (...args: unknown[]) => AnyQueryBuilder;
-  lt: (...args: unknown[]) => AnyQueryBuilder;
-  lte: (...args: unknown[]) => AnyQueryBuilder;
-  like: (...args: unknown[]) => AnyQueryBuilder;
-  ilike: (...args: unknown[]) => AnyQueryBuilder;
-  contains: (...args: unknown[]) => AnyQueryBuilder;
-  containedBy: (...args: unknown[]) => AnyQueryBuilder;
-  or: (...args: unknown[]) => AnyQueryBuilder;
-  not: (...args: unknown[]) => AnyQueryBuilder;
-  filter: (...args: unknown[]) => AnyQueryBuilder;
-  match: (...args: unknown[]) => AnyQueryBuilder;
-  order: (...args: unknown[]) => AnyQueryBuilder;
-  limit: (...args: unknown[]) => AnyQueryBuilder;
-  range: (...args: unknown[]) => AnyQueryBuilder;
-  single: () => AnyQueryBuilder;
-  maybeSingle: () => AnyQueryBuilder;
-  [key: string]: unknown;
-}
-
-export const fromTable = (table: string): AnyQueryBuilder =>
-  (supabase as unknown as { from: (t: string) => AnyQueryBuilder }).from(table);
+export const fromTable = (table: string) => looseClient.from(table);
 
 /**
  * Checks if a user is locked out due to multiple failed login attempts.
@@ -79,16 +46,6 @@ export const syncExternalAuth = (token: string | null) => {
 /**
  * Executes a Supabase RPC call.
  */
-export const rpcCall = async (fnName: string, params: Record<string, unknown>): Promise<{ data: unknown; error: { message: string } | null }> => {
-  return await (supabase as unknown as { rpc: (fn: string, p: Record<string, unknown>) => Promise<{ data: unknown; error: { message: string } | null }> }).rpc(fnName, params);
+export const rpcCall = async (fnName: string, params?: Record<string, unknown>) => {
+  return await looseClient.rpc(fnName, params);
 };
-
-/**
- * Helper to wrap any Supabase call and fix the deep type issue
- */
-export const wrap = <T>(fn: T): T => fn;
-
-/**
- * Mock result type to satisfy high-level UI component mapping
- */
-export type ResultOne = Record<string, unknown>;

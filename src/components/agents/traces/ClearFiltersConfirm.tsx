@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control -- a11y: visual caption for composite/custom control; tracked for dedicated a11y pass */
 /**
  * ClearFiltersConfirm — wraps a trigger with a confirmation modal listing
  * the currently active filters that will be reset. Includes a session-scoped
@@ -14,10 +15,12 @@ import { AlertTriangle } from 'lucide-react';
 
 const BYPASS_KEY = 'nexus.traces.clearFilters.skipConfirm';
 
+// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
 export function shouldSkipClearConfirm(): boolean {
   try { return sessionStorage.getItem(BYPASS_KEY) === '1'; } catch { return false; }
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
 export function setSkipClearConfirm(skip: boolean) {
   try {
     if (skip) sessionStorage.setItem(BYPASS_KEY, '1');

@@ -52,7 +52,7 @@ export default function ChaosLabPage() {
       setWorkspaceId(wsId);
       const list = await listChaosExperiments(wsId);
       setExperiments(list);
-    } catch (_e) {
+    } catch {
       toast.error('Falha ao carregar experimentos');
     } finally {
       // Refresh done
@@ -84,7 +84,7 @@ export default function ChaosLabPage() {
       toast.success('Experimento criado');
       setName('');
       refresh();
-    } catch (_e) {
+    } catch {
       toast.error('Falha ao criar experimento');
     } finally {
       setSubmitting(false);
@@ -96,7 +96,7 @@ export default function ChaosLabPage() {
       await disableChaosExperiment(id);
       toast.success('Experimento desativado');
       refresh();
-    } catch (_e) {
+    } catch {
       toast.error('Falha ao desativar');
     }
   };
@@ -108,7 +108,7 @@ export default function ChaosLabPage() {
       await disableAllChaos(workspaceId);
       toast.success('Kill switch ativado: todos os experimentos parados');
       refresh();
-    } catch (_e) {
+    } catch {
       toast.error('Falha no kill switch');
     }
   };

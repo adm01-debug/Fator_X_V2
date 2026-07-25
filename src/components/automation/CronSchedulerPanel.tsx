@@ -42,14 +42,14 @@ export function CronSchedulerPanel() {
       ]);
       setSchedules(schedulesData);
       setStats(statsData);
-    } catch (_e) {
+    } catch {
       toast({ title: 'Erro ao carregar agendamentos', variant: 'destructive' });
     } finally {
       setLoading(false);
     }
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   useEffect(() => { loadData(); }, []);
 
   const handleRunPending = async () => {
@@ -87,7 +87,7 @@ export function CronSchedulerPanel() {
         name: newName.trim(),
         frequency: 'cron',
         cron_expression: newCron,
-        target_type: targetType,
+        target_type: targetType as 'workflow' | 'agent' | 'edge_function' | 'webhook',
         target_id: targetId.trim(),
       });
       toast({ title: 'Agendamento criado!' });
@@ -95,7 +95,7 @@ export function CronSchedulerPanel() {
       setNewName('');
       setTargetId('');
       await loadData();
-    } catch (e) {
+    } catch (e: unknown) {
       toast({ title: 'Erro ao criar', description: e instanceof Error ? e.message : String(e), variant: 'destructive' });
     } finally {
       setSaving(false);

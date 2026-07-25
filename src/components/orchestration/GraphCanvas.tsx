@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import ReactFlow, {
   Background, Controls, MiniMap, addEdge, useNodesState, useEdgesState,
-  type Connection, type Edge, type Node, type OnNodesChange, type NodePositionChange, MarkerType,
+  type Connection, type Edge, type Node, type NodeChange, MarkerType,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import type { GraphNode, GraphEdge } from '@/services/agentGraphService';
@@ -59,13 +59,13 @@ export function GraphCanvas({ nodes, edges, entryNodeId, activeNodeId, onChange,
     setReactEdges(eds => addEdge(c, eds));
   }, [edges, nodes, onChange, setReactEdges]);
 
-  const handleNodesChange: OnNodesChange = useCallback((changes) => {
+  const handleNodesChange = useCallback((changes: NodeChange[]) => {
     onNodesChange(changes);
-    const positionChanges = changes.filter((c): c is NodePositionChange => c.type === 'position' && !!(c as NodePositionChange).position);
+    const positionChanges = changes.filter((c): c is Extract<NodeChange, { type: 'position' }> => c.type === 'position' && !!c.position);
     if (positionChanges.length > 0) {
       const updatedNodes = nodes.map(n => {
         const pc = positionChanges.find((c) => c.id === n.id);
-        return pc && pc.position ? { ...n, position: pc.position } : n;
+        return pc ? { ...n, position: pc.position } : n;
       });
       onChange(updatedNodes as GraphNode[], edges);
     }

@@ -5,7 +5,7 @@
  */
 import { logger } from '@/lib/logger';
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
-import type { DbRow } from '@/types/dbRow';
+import type { Json } from '@/integrations/supabase/types';
 
 export interface AgentDetail {
   id: string;
@@ -228,7 +228,7 @@ export async function createAgentVersion(input: CreateAgentVersionInput): Promis
       persona: input.persona,
       mission: input.mission,
       name: input.name ?? null,
-      config: input.config as unknown as never,
+      config: input.config as Json,
       change_summary: input.change_summary,
     })
     .select('*')
@@ -244,9 +244,9 @@ export async function createAgentVersion(input: CreateAgentVersionInput): Promis
     .update({
       version: nextVersion,
       model: input.model,
-      persona: input.persona as unknown as never,
+      persona: input.persona,
       mission: input.mission,
-      config: input.config as unknown as never,
+      config: input.config as Json,
     })
     .eq('id', input.agentId);
   if (syncErr) {

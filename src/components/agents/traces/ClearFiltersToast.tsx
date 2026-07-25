@@ -81,6 +81,7 @@ export function ClearFiltersToast({ toastId, cleared, storageKeys, onUndo, onClo
           Dispensar
         </button>
       </div>
+      { }
       {toastId && null}
     </div>
   );

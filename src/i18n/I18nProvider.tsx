@@ -80,6 +80,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
  * Hook to access the I18n context. Throws if used outside <I18nProvider>.
  * Falls back gracefully if context is missing (logs warning, uses defaults).
  */
+// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
 export function useI18nContext(): I18nContextValue {
   const ctx = useContext(I18nContext);
   if (!ctx) {

@@ -599,8 +599,8 @@ export default function SLODashboard() {
       }
     } finally {
       // Only the latest request controls the spinner — stale ones don't
-      // get to flip it off prematurely. Guard with mount + token; avoid
-      // `return` here so we never swallow exceptions from the try/catch.
+      // get to flip it off prematurely, and a request that resolved after
+      // unmount must not touch state.
       if (isMountedRef.current && myToken === requestTokenRef.current) {
         setLoading(false);
         setRefreshing(false);

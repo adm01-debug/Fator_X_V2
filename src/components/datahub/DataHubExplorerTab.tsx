@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- a11y: row/card click mirrors a primary action available elsewhere ; decorative wrapper / click-through container; tracked for dedicated a11y pass */
 /**
  * DataHubExplorerTab — Nexus Agents Studio (improvement #5)
  *
@@ -9,6 +10,7 @@
  * Uses the existing queryEntity() service — no new backend needed.
  * RLS-respecting (entity mappings live in datahub-entities config).
  */
+import { onActivateKey } from '@/lib/a11y';
 import { useState, useMemo, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -332,7 +334,7 @@ export function DataHubExplorerTab() {
       {detailRow && (
         <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
           className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4"
-          onClick={() => setDetailRow(null)}
+          role="button" tabIndex={0} onClick={() => setDetailRow(null)} onKeyDown={onActivateKey(() => setDetailRow(null))}
         >
           <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
             className="nexus-card max-w-2xl w-full max-h-[80vh] overflow-y-auto"

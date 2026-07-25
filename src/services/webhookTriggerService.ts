@@ -193,6 +193,7 @@ export async function logWebhookEvent(
     .single();
   if (error) throw error;
 
+   
   await rpcCall('increment_webhook_counter', { webhook_uuid: webhookId });
 
   return data as WebhookEvent;

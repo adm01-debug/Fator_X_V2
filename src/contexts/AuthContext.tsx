@@ -128,6 +128,7 @@ const FALLBACK_AUTH: AuthContextType = {
   updatePassword: async () => ({ error: new Error("AuthProvider not mounted") }),
 };
 
+// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
 export function useAuth() {
   const ctx = useContext(AuthContext);
   // Return a safe fallback instead of throwing — prevents blank screens

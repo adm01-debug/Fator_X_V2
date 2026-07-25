@@ -79,19 +79,30 @@ export async function initiateHandoff(request: HandoffRequest): Promise<HandoffR
     priority: request.priority ?? 3,
   };
 
-  const { data, error } = await handoffs().insert(record).select().single();
+  // Store in workflow_handoffs table
+  const { data, error } = await fromTable('workflow_handoffs')
+    .insert(record)
+    .select()
+    .single();
+
   if (error) throw new Error(`Failed to initiate handoff: ${error.message}`);
-  return toRecord(data);
+  return data as HandoffRecord;
 }
 
 /**
  * Accept a pending handoff
  */
 export async function acceptHandoff(handoffId: string): Promise<HandoffRecord> {
-  const patch: Partial<WorkflowHandoffRow> = { status: 'accepted' };
-  const { data, error } = await handoffs().update(patch).eq('id', handoffId).select().single();
+  const { data, error } = await fromTable('workflow_handoffs')
+    .update({
+      status: 'accepted' as const,
+    })
+    .eq('id' as never, handoffId)
+    .select()
+    .single();
+
   if (error) throw new Error(`Failed to accept handoff: ${error.message}`);
-  return toRecord(data);
+  return data as HandoffRecord;
 }
 
 /**
@@ -101,30 +112,57 @@ export async function completeHandoff(
   handoffId: string,
   response: Record<string, unknown>,
 ): Promise<HandoffRecord> {
-  const patch: Partial<WorkflowHandoffRow> = { status: 'completed', context: response };
-  const { data, error } = await handoffs().update(patch).eq('id', handoffId).select().single();
+  const { data, error } = await fromTable('workflow_handoffs')
+    .update({
+      status: 'completed' as const,
+      context: response,
+    })
+    .eq('id' as never, handoffId)
+    .select()
+    .single();
+
   if (error) throw new Error(`Failed to complete handoff: ${error.message}`);
-  return toRecord(data);
+  return data as HandoffRecord;
 }
 
 /**
  * Reject a handoff (target agent cannot handle it)
  */
-export async function rejectHandoff(handoffId: string, reason: string): Promise<HandoffRecord> {
-  const patch: Partial<WorkflowHandoffRow> = { status: 'rejected', reason };
-  const { data, error } = await handoffs().update(patch).eq('id', handoffId).select().single();
+export async function rejectHandoff(
+  handoffId: string,
+  reason: string
+): Promise<HandoffRecord> {
+  const { data, error } = await fromTable('workflow_handoffs')
+    .update({
+      status: 'rejected' as const,
+      reason: reason,
+    })
+    .eq('id' as never, handoffId)
+    .select()
+    .single();
+
   if (error) throw new Error(`Failed to reject handoff: ${error.message}`);
-  return toRecord(data);
+  return data as HandoffRecord;
 }
 
 /**
  * Fail a handoff due to error
  */
-export async function failHandoff(handoffId: string, errorMsg: string): Promise<HandoffRecord> {
-  const patch: Partial<WorkflowHandoffRow> = { status: 'failed', reason: errorMsg };
-  const { data, error } = await handoffs().update(patch).eq('id', handoffId).select().single();
+export async function failHandoff(
+  handoffId: string,
+  errorMsg: string
+): Promise<HandoffRecord> {
+  const { data, error } = await fromTable('workflow_handoffs')
+    .update({
+      status: 'failed' as const,
+      reason: errorMsg,
+    })
+    .eq('id' as never, handoffId)
+    .select()
+    .single();
+
   if (error) throw new Error(`Failed to fail handoff: ${error.message}`);
-  return toRecord(data);
+  return data as HandoffRecord;
 }
 
 // ──────── Handoff Queries ────────
@@ -139,7 +177,7 @@ export async function getPendingHandoffs(targetAgentId: string): Promise<Handoff
     .eq('status', 'pending')
     .order('created_at', { ascending: false });
   if (error) throw new Error(`Failed to get pending handoffs: ${error.message}`);
-  return toRecords(data);
+  return (data ?? []) as HandoffRecord[];
 }
 
 /**
@@ -152,7 +190,7 @@ export async function getHandoffHistory(agentId: string, limit = 50): Promise<Ha
     .order('created_at', { ascending: false })
     .limit(limit);
   if (error) throw new Error(`Failed to get handoff history: ${error.message}`);
-  return toRecords(data);
+  return (data ?? []) as HandoffRecord[];
 }
 
 /**
@@ -164,7 +202,7 @@ export async function getExecutionHandoffs(executionId: string): Promise<Handoff
     .eq('execution_id', executionId)
     .order('created_at', { ascending: true });
   if (error) throw new Error(`Failed to get execution handoffs: ${error.message}`);
-  return toRecords(data);
+  return (data ?? []) as HandoffRecord[];
 }
 
 // ──────── Handoff Rules Engine ────────

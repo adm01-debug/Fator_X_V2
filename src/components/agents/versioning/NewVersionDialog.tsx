@@ -42,7 +42,7 @@ function readTools(v: AgentVersion, key: 'tools' | 'guardrails'): ToolEntry[] {
 export function NewVersionDialog({ open, onOpenChange, agentId, baseVersion }: Props) {
   const queryClient = useQueryClient();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   const baseCfg = (baseVersion.config ?? {}) as Record<string, unknown>;
   const [prompt, setPrompt] = useState<string>(getVersionPrompt(baseVersion));
   const [model, setModel] = useState<string>(baseVersion.model ?? '');
@@ -75,7 +75,7 @@ export function NewVersionDialog({ open, onOpenChange, agentId, baseVersion }: P
     guardrails: guardrails.map(g => ({ name: g.name, enabled: g.enabled })),
   }), [baseCfg, prompt, temperature, maxTokens, tools, guardrails]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   const nextVersion: VersionLike = {
     model,
     persona: baseVersion.persona,

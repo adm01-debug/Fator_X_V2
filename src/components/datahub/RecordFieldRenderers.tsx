@@ -6,6 +6,7 @@ import {
   ExternalLink, Lock, GitBranch, Loader2, Pencil, Check, X as XIcon,
 } from "lucide-react";
 import { formatCNPJ, formatPhone, formatDate } from "@/config/datahub-columns";
+import { ENTITY_MAPPINGS } from "@/config/datahub-entities";
 import { toast } from "sonner";
 import type { DbRow } from '@/types/dbRow';
 
@@ -209,8 +210,6 @@ export function GroupMembers({ entityId, grupoId, excludeId }: { entityId: strin
   if (loading) return <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />;
   if (!members.length) return null;
 
-  // eslint-disable-next-line @typescript-eslint/no-require-imports -- import dinâmico para evitar ciclo de importação com datahub-entities
-  const { ENTITY_MAPPINGS } = require("@/config/datahub-entities");
   const mapping = ENTITY_MAPPINGS[entityId];
   const displayCol = mapping?.primary.display_column ?? 'id';
 
@@ -232,6 +231,7 @@ export function GroupMembers({ entityId, grupoId, excludeId }: { entityId: strin
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
 export const SECONDARY_RENDERERS: Record<string, (data: Array<Record<string, unknown>>) => React.ReactNode> = {
   company_phones: (data) => <PhoneList phones={data} />,
   company_emails: (data) => <EmailList emails={data} />,
@@ -241,6 +241,7 @@ export const SECONDARY_RENDERERS: Record<string, (data: Array<Record<string, unk
   messages: (data) => <MessagesTimeline messages={data} />,
 };
 
+// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
 export const SECONDARY_LABELS: Record<string, { label: string; icon: React.ReactNode }> = {
   company_phones: { label: 'Telefones', icon: <Phone className="h-3.5 w-3.5 text-primary" /> },
   company_emails: { label: 'Emails', icon: <Mail className="h-3.5 w-3.5 text-primary" /> },

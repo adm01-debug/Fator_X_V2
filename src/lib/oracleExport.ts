@@ -2,6 +2,11 @@ import type { OracleResult } from '@/stores/oracleStore';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 
+type AutoTableDoc = jsPDF & {
+  autoTable: (options: Record<string, unknown>) => void;
+  lastAutoTable: { finalY: number };
+};
+
 // ═══ MARKDOWN EXPORT ═══
 
 export function exportToMarkdown(
@@ -109,11 +114,7 @@ export function exportToPdf(
   mode: string,
   chairmanModel: string,
 ) {
-  interface JsPdfWithAutoTable extends jsPDF {
-    autoTable: (opts: Record<string, unknown>) => void;
-    lastAutoTable: { finalY: number };
-  }
-  const doc = new jsPDF() as JsPdfWithAutoTable;
+  const doc = new jsPDF() as AutoTableDoc;
   const date = new Date().toLocaleString('pt-BR');
 
   // Header

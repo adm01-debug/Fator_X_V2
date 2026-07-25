@@ -22,6 +22,14 @@ export interface CodeExecution {
   created_at: string;
 }
 
+/** Payload of a streamed code-interpreter event (stdout/stderr/result/error). */
+export interface CodeStreamEvent {
+  chunk?: string;
+  message?: string;
+  simulated?: boolean;
+  [key: string]: unknown;
+}
+
 export const codeInterpreterService = {
   async execute(runtime: CodeRuntime, code: string, workspace_id?: string): Promise<CodeExecution> {
     const { data, error } = await supabase.functions.invoke("code-interpreter-execute", {
@@ -34,7 +42,7 @@ export const codeInterpreterService = {
   async streamExecute(
     runtime: CodeRuntime, 
     code: string, 
-    onEvent: (event: string, data: DbRow) => void,
+    onEvent: (event: string, data: CodeStreamEvent) => void,
     workspace_id?: string
   ): Promise<void> {
     const { data: { session } } = await supabase.auth.getSession();

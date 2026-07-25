@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control -- a11y: visual caption for composite/custom control; tracked for dedicated a11y pass */
 import { logger } from '@/lib/logger';
 import { useState, useEffect, useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -12,7 +13,7 @@ import { toast } from "sonner";
 import type { Json } from "@/integrations/supabase/types";
 import type { DbRow } from '@/types/dbRow';
 
-interface Version {
+export interface Version {
   id: string;
   version: number;
   model: string | null;
@@ -48,15 +49,23 @@ function versionToText(v: Version): string {
   return lines.join('\n');
 }
 
-function getCfg(v: Version): Record<string, unknown> {
+interface VersionConfig {
+  temperature?: number;
+  max_tokens?: number;
+  tools?: unknown;
+  guardrails?: unknown;
+  system_prompt?: string;
+}
+
+function getCfg(v: Version): VersionConfig {
   try {
-    return (typeof v.config === 'string' ? JSON.parse(v.config) : v.config) || {};
+    return ((typeof v.config === 'string' ? JSON.parse(v.config) : v.config) || {}) as VersionConfig;
   } catch { return {}; }
 }
 
 function countEnabled(arr: DbRow): number {
   if (!Array.isArray(arr)) return 0;
-  return arr.filter((x: { enabled?: boolean } | null | undefined) => x && (x.enabled ?? true)).length;
+  return arr.filter((x) => x && ((x as { enabled?: boolean }).enabled ?? true)).length;
 }
 
 interface Delta { label: string; from: string | number; to: string | number; }

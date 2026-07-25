@@ -168,7 +168,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
   const { user } = useAuth();
   // Hidratação síncrona dos params rf_* — calculada UMA VEZ antes do
   // primeiro render para evitar flicker entre "vazio → destacado".
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   const initialDeeplink = useMemo(() => parseDeeplinkParams(searchParams), []);
   const [step, setStep] = useState(initialDeeplink.valid ? initialDeeplink.stepIdx : 0);
   const [saving, setSaving] = useState(false);
@@ -269,6 +269,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
   // Deeplink rf_*: a hidratação do estado já foi feita SÍNCRONA via lazy
   // initializers acima (sem flicker). Aqui só limpamos params inválidos da
   // URL para não confundir o usuário em recargas futuras.
+   
   useEffect(() => {
     const rfField = searchParams.get('rf_field');
     if (rfField && !RF_VALID_FIELDS.includes(rfField as keyof QuickAgentForm)) {
@@ -276,7 +277,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
       ['rf_field', 'rf_step', 'rf_type', 'rf_msg', 'rf_focus'].forEach((k) => next.delete(k));
       setSearchParams(next, { replace: true });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   }, []);
 
   // Gera URL atual + params rf_* e copia para o clipboard. Botão "Copiar link"
@@ -344,6 +345,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
   // Usa o mesmo caminho do "Corrigir agora" (rAF duplo + scroll + foco) para
   // garantir que o input já esteja montado quando .focus() for chamado.
   // Roda apenas uma vez — `initialDeeplink` é estável (useMemo sem deps).
+   
   useEffect(() => {
     if (!initialDeeplink.valid || !initialDeeplink.autoFocus || !initialDeeplink.field) return;
     const inputId = FIELD_INPUT_ID[initialDeeplink.field];
@@ -366,7 +368,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
     const next = new URLSearchParams(searchParams);
     next.delete('rf_focus');
     setSearchParams(next, { replace: true });
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   }, []);
 
   // On mount: load store, filter recoverable drafts.
@@ -394,6 +396,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
     } else {
       setPendingDrafts(recoverable);
     }
+     
   }, []);
 
   // Auto-save current form into the active draft (after user resolved any pending recovery).

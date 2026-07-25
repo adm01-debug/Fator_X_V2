@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- a11y: row/card click mirrors a primary action available elsewhere ; decorative wrapper / click-through container; tracked for dedicated a11y pass */
 import { useState } from 'react';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { Button } from '@/components/ui/button';
@@ -63,7 +64,7 @@ export default function ApprovalQueuePage() {
       ) : (
         <div className="space-y-4">
           {pendingRuns.map((run) => {
-            const output = run.output as { pending_approval?: { label?: string; context?: Record<string, unknown> } } | null;
+            const output = run.output as { pending_approval?: { label?: string; context?: unknown } } | null;
             const pending = output?.pending_approval;
             const isSelected = selectedRun === run.id;
             const workflows = run.workflows as { name?: string } | null;

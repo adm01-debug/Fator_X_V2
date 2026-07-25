@@ -60,14 +60,13 @@ export async function revokeApiKey(id: string) {
 
 export async function getSecurityEvents(options?: { severity?: string; limit?: number }) {
   try {
-    const { data, error } = await supabaseExternal
-      .from('audit_log_safe')
+    const { data, error } = await fromTable('audit_log_safe')
       .select('*')
       .order('created_at', { ascending: false })
       .limit(options?.limit || 50);
 
     if (error) throw error;
-    return (data ?? []).map((entry) => ({
+    return (data ?? []).map((entry: { action: string; [key: string]: unknown }) => ({
       ...entry,
       severity: 'info',
       event_type: entry.action,
@@ -109,19 +108,7 @@ export async function resolveSecurityAlert(id: string) {
 
 export async function getAuditLog(options?: { userId?: string; limit?: number }) {
   try {
-    type AuditRow = { id: string; user_id: string | null; action: string; created_at: string; details?: Record<string, unknown> };
-    type Filterable = { eq: (k: string, v: string) => Filterable } & PromiseLike<{ data: AuditRow[] | null; error: { message: string } | null }>;
-    const client = supabaseExternal as unknown as {
-      from: (t: string) => {
-        select: (c: string) => {
-          order: (c: string, o: { ascending: boolean }) => {
-            limit: (n: number) => Filterable;
-          };
-        };
-      };
-    };
-    let query: Filterable = client
-      .from('audit_log_safe')
+    let query = fromTable('audit_log_safe')
       .select('*')
       .order('created_at', { ascending: false })
       .limit(options?.limit || 100);
@@ -133,7 +120,7 @@ export async function getAuditLog(options?: { userId?: string; limit?: number })
       logger.warn('Audit log query failed in securityService', { error: error.message });
       return [];
     }
-    return (data ?? []) as AuditRow[];
+    return (data ?? []) as Array<Record<string, unknown>>;
   } catch {
     return [];
   }

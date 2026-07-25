@@ -1,3 +1,4 @@
+import { onActivateKey } from '@/lib/a11y';
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { SystemHealthBanner } from "@/components/shared/SystemHealthBanner";
 import { Badge } from "@/components/ui/badge";
@@ -35,21 +36,13 @@ export default function MonitoringPage() {
   const { data: traceEvents = [] } = useQuery({ queryKey: ['trace_events', expandedTraceId], enabled: !!expandedTraceId, queryFn: () => expandedTraceId ? getTraceEvents(expandedTraceId) : Promise.resolve([]) });
   const { data: alerts = [], isLoading: loadingAlerts } = useQuery({ queryKey: ['alerts'], queryFn: () => getAlerts({}) });
 
-  interface TraceRow {
-    id: string;
-    event?: string | null;
-    session_id?: string | null;
-    level?: string | null;
-    latency_ms?: number | null;
-    tokens_used?: number | null;
-    cost_usd?: number | string | null;
-    created_at: string;
-    agent_id?: string | null;
-    input?: unknown;
-    output?: unknown;
-    metadata?: Record<string, unknown> | null;
-    [key: string]: unknown;
-  }
+  const selected = filteredTraces.find((t) => t.id === selectedId) || filteredTraces[0];
+  const stats = { total: filteredTraces.length, errors: filteredTraces.filter((t) => t.level === 'error' || t.level === 'critical').length, avgLatency: filteredTraces.length ? Math.round(filteredTraces.reduce((s, t) => s + (t.latency_ms || 0), 0) / filteredTraces.length) : 0, totalCost: filteredTraces.reduce((s, t) => s + Number(t.cost_usd || 0), 0) };
+  const levelCounts = filteredTraces.reduce((acc: Record<string, number>, t) => { const level = t.level || 'info'; acc[level] = (acc[level] || 0) + 1; return acc; }, {} as Record<string, number>);
+  const pieData = Object.entries(levelCounts).map(([name, value]) => ({ name, value: value as number }));
+  const latencyData = filteredTraces.slice(0, 20).reverse().map((t) => ({ time: new Date(t.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }), latency: t.latency_ms || 0 }));
+  const unresolvedCount = alerts.filter((a) => !a.is_resolved).length;
+  const agentName = (id: string | null) => { if (!id) return '—'; const a = agentsList.find((ag) => ag.id === id); return a ? a.name : id.substring(0, 8); };
 
   interface AlertRow { id: string; is_resolved: boolean; [key: string]: unknown; }
   interface AgentListItem { id: string; name: string; }
@@ -158,17 +151,17 @@ export default function MonitoringPage() {
                 </div>
               </div>
               <div className="grid lg:grid-cols-2 gap-4">
-                <div className="nexus-card"><h3 className="text-body-sm font-heading font-semibold text-foreground mb-3">Latência por evento</h3><LightBarChart data={latencyData} xKey="time" height={180} yFormatter={(v) => `${v}ms`} tooltipFormatter={(v) => `${v}ms`} series={[{ dataKey: 'latency', name: 'Latência', color: 'hsl(var(--primary))', radius: 3 }]} /></div>
-                <div className="nexus-card"><h3 className="text-body-sm font-heading font-semibold text-foreground mb-3">Distribuição por nível</h3><LightPieChart data={pieData.map((p, i: number) => ({ ...p, color: PIE_COLORS[i % PIE_COLORS.length] }))} height={180} innerRadius={40} outerRadius={70} /></div>
+                <div className="nexus-card"><h3 className="text-sm font-heading font-semibold text-foreground mb-3">Latência por evento</h3><LightBarChart data={latencyData} xKey="time" height={180} yFormatter={(v) => `${v}ms`} tooltipFormatter={(v) => `${v}ms`} series={[{ dataKey: 'latency', name: 'Latência', color: 'hsl(var(--primary))', radius: 3 }]} /></div>
+                <div className="nexus-card"><h3 className="text-sm font-heading font-semibold text-foreground mb-3">Distribuição por nível</h3><LightPieChart data={pieData.map((p, i: number) => ({ ...p, color: PIE_COLORS[i % PIE_COLORS.length] }))} height={180} innerRadius={40} outerRadius={70} /></div>
               </div>
               <div className="grid lg:grid-cols-3 gap-4">
                 <div className="space-y-2 max-h-[500px] overflow-y-auto">
-                  <h3 className="text-meta font-heading font-semibold text-muted-foreground uppercase tracking-wider mb-2">Eventos recentes</h3>
+                  <h3 className="text-xs font-heading font-semibold text-muted-foreground uppercase tracking-wider mb-2">Eventos recentes</h3>
                   {filteredTraces.map((trace) => (
-                    <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} key={trace.id} className={`nexus-card cursor-pointer p-3 ${selected?.id === trace.id ? 'border-primary/40 nexus-glow-sm' : ''}`} onClick={() => setSelectedId(trace.id)}>
-                      <div className="flex items-center justify-between mb-1.5"><p className="text-meta font-medium text-foreground truncate">{trace.event}</p><StatusBadge status={trace.level || 'info'} /></div>
-                      <p className="text-meta text-muted-foreground">{trace.session_id || trace.id.slice(0, 8)}</p>
-                      <div className="flex items-center gap-3 mt-2 text-meta text-muted-foreground">
+                    <div key={trace.id} className={`nexus-card cursor-pointer p-3 ${selected?.id === trace.id ? 'border-primary/40 nexus-glow-sm' : ''}`} role="button" tabIndex={0} onClick={() => setSelectedId(trace.id)} onKeyDown={onActivateKey(() => setSelectedId(trace.id))}>
+                      <div className="flex items-center justify-between mb-1.5"><p className="text-xs font-medium text-foreground truncate">{trace.event}</p><StatusBadge status={trace.level || 'info'} /></div>
+                      <p className="text-[11px] text-muted-foreground">{trace.session_id || trace.id.slice(0, 8)}</p>
+                      <div className="flex items-center gap-3 mt-2 text-[11px] text-muted-foreground">
                         {trace.latency_ms && <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {(trace.latency_ms / 1000).toFixed(1)}s</span>}
                         {trace.cost_usd != null && <span className="flex items-center gap-1"><DollarSign className="h-3 w-3" /> ${Number(trace.cost_usd).toFixed(3)}</span>}
                         {trace.tokens_used && <span className="flex items-center gap-1"><Wrench className="h-3 w-3" /> {String(trace.tokens_used)}</span>}
@@ -204,7 +197,7 @@ export default function MonitoringPage() {
           : <div className="space-y-3">
               {sessions.map((session) => (
                 <div key={session.id} className="nexus-card">
-                  <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className="flex items-center justify-between cursor-pointer" onClick={() => setExpandedSessionId(expandedSessionId === session.id ? null : session.id)}>
+                  <div className="flex items-center justify-between cursor-pointer" role="button" tabIndex={0} onClick={() => setExpandedSessionId(expandedSessionId === session.id ? null : session.id)} onKeyDown={onActivateKey(() => setExpandedSessionId(expandedSessionId === session.id ? null : session.id))}>
                     <div>
                       <div className="flex items-center gap-2">
                         <p className="text-body-sm font-semibold text-foreground font-mono">{session.id.substring(0, 12)}...</p>
@@ -218,8 +211,8 @@ export default function MonitoringPage() {
                       {sessionTraces.length === 0 ? <p className="text-meta text-muted-foreground text-center py-4">Nenhum trace nesta sessão</p>
                       : sessionTraces.map((st) => (
                         <div key={st.id} className="rounded-lg bg-secondary/20 p-2.5">
-                          <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className="flex items-center gap-3 text-meta cursor-pointer" onClick={() => setExpandedTraceId(expandedTraceId === st.id ? null : st.id)}>
-                            <Badge variant="outline" className="text-meta shrink-0">{st.trace_type}</Badge>
+                          <div className="flex items-center gap-3 text-xs cursor-pointer" role="button" tabIndex={0} onClick={() => setExpandedTraceId(expandedTraceId === st.id ? null : st.id)} onKeyDown={onActivateKey(() => setExpandedTraceId(expandedTraceId === st.id ? null : st.id))}>
+                            <Badge variant="outline" className="text-[11px] shrink-0">{st.trace_type}</Badge>
                             <span className="text-foreground truncate flex-1">{st.latency_ms ? `${st.latency_ms}ms` : ''} {st.tokens_used ? `• ${st.tokens_used}t` : ''}</span>
                             <span className="text-muted-foreground shrink-0 font-mono">{new Date(st.created_at || '').toLocaleTimeString('pt-BR')}</span>
                           </div>

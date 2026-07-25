@@ -5,7 +5,7 @@ export interface PendingApproval {
   id: string;
   workflow_id: string;
   status: string;
-  output: Record<string, unknown>; 
+  output: unknown;
   started_at: string | null;
   current_step: number | null;
   total_steps: number | null;
@@ -20,7 +20,7 @@ export async function listPendingApprovals(): Promise<PendingApproval[]> {
     .eq('status', 'awaiting_approval')
     .order('started_at', { ascending: false })
     .limit(20);
-  return (data ?? []) as unknown as PendingApproval[];
+  return (data as unknown as PendingApproval[]) ?? [];
 }
 
 export async function approveWorkflowRun(runId: string, workflowId: string, feedback: string) {

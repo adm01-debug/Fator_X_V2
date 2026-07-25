@@ -72,8 +72,8 @@ export function CostOptimizationPanel() {
       if ((agent.status === 'production' || agent.status === 'staging') && agent.updated_at) {
         const lastUpdate = new Date(agent.updated_at);
         if (lastUpdate < sevenDaysAgo) {
-          const agentUsage = usage.filter((u: DbRow) => u.agent_id === agent.id);
-          const recentUsage = agentUsage.filter((u: DbRow) => new Date(u.date) > sevenDaysAgo);
+          const agentUsage = usage.filter((u) => u.agent_id === agent.id);
+          const recentUsage = agentUsage.filter((u) => new Date(u.date) > sevenDaysAgo);
           if (recentUsage.length === 0) {
             recs.push({
               id: `idle-${agent.id}`,
@@ -91,7 +91,7 @@ export function CostOptimizationPanel() {
 
     // 3. High error rate = wasted cost
     const agentUsageMap = new Map<string, { cost: number; errors: number; requests: number }>();
-    (usage as unknown as Array<{ agent_id: string; total_cost_usd?: number; error_count?: number; requests?: number }>).forEach((u) => {
+    usage.forEach((u) => {
       const existing = agentUsageMap.get(u.agent_id) || { cost: 0, errors: 0, requests: 0 };
       existing.cost += Number(u.total_cost_usd || 0);
       existing.errors += Number(u.error_count || 0);
@@ -127,7 +127,7 @@ export function CostOptimizationPanel() {
     }
 
     return recs;
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   }, [agents, usage, pricing]);
 
   const totalSavings = recommendations.filter(r => r.severity === 'high').length;

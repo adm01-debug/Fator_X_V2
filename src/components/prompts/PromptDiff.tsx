@@ -8,6 +8,7 @@ interface Props {
   labelB: string;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
 export function diffLines(a: string, b: string): { linesA: { text: string; type: 'same' | 'removed' }[]; linesB: { text: string; type: 'same' | 'added' }[] } {
   const aLines = a.split('\n');
   const bLines = b.split('\n');
@@ -23,9 +24,12 @@ export function diffLines(a: string, b: string): { linesA: { text: string; type:
     }
   }
 
+  type DiffLineA = { text: string; type: 'same' | 'removed' };
+  type DiffLineB = { text: string; type: 'same' | 'added' };
+
   let i = m, j = n;
-  const opsA: { text: string; type: 'same' | 'removed' }[] = [];
-  const opsB: { text: string; type: 'same' | 'added' }[] = [];
+  const opsA: DiffLineA[] = [];
+  const opsB: DiffLineB[] = [];
 
   while (i > 0 || j > 0) {
     if (i > 0 && j > 0 && aLines[i - 1] === bLines[j - 1]) {

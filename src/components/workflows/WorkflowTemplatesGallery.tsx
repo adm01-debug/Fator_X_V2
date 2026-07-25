@@ -1,3 +1,4 @@
+import { onActivateKey } from '@/lib/a11y';
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -79,7 +80,7 @@ export function WorkflowTemplatesGallery() {
                   className={`p-4 rounded-lg border bg-secondary/20 transition-all cursor-pointer ${
                     isPreviewing ? 'border-primary ring-1 ring-primary/40' : 'border-border/30 hover:border-primary/40'
                   }`}
-                  onClick={() => setPreviewId(isPreviewing ? null : tpl.id)}
+                  role="button" tabIndex={0} onClick={() => setPreviewId(isPreviewing ? null : tpl.id)} onKeyDown={onActivateKey(() => setPreviewId(isPreviewing ? null : tpl.id))}
                 >
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className="flex items-center gap-2 min-w-0 flex-1">

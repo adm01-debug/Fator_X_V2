@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { fromTable } from '@/lib/supabaseExtended';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
+import type { AgentConfig } from '@/types/agentTypes';
 import { SectionTitle, NexusBadge, ToggleField } from '../ui';
 import { Globe, MessageSquare, Mail, Hash, Send, Radio, Sparkles, Activity, Map as MapIcon, BarChart3, Rocket, CheckCircle, ShieldCheck, AlertTriangle, Zap, Cloud } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
@@ -511,7 +512,7 @@ export function DeployModule() {
                 ].map((env) => (
                   <button
                     key={env.id}
-                    onClick={() => updateAgent({ status: env.id as 'staging' | 'production' })}
+                    onClick={() => updateAgent({ status: env.id as AgentConfig['status'] })}
                     className={cn(
                       "flex flex-col p-4 rounded-2xl border text-left transition-all duration-300",
                       agent.status === env.id 

@@ -1,3 +1,4 @@
+import { onActivateKey } from '@/lib/a11y';
 import { useState, useRef } from "react";
 import { Eye, Upload, Image as ImageIcon, Sparkles, FileSearch, Crop, Tag } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -59,8 +60,11 @@ export default function VisionAgentsPage() {
           </CardHeader>
           <CardContent>
             {!imageUrl ? (
-              <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={() => fileRef.current?.click()}
+                onKeyDown={onActivateKey(() => fileRef.current?.click())}
                 className="aspect-video border-2 border-dashed border-border/50 rounded-md flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-colors"
               >
                 <Upload className="h-10 w-10 text-muted-foreground/40 mb-2" />

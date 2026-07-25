@@ -1,3 +1,4 @@
+import { onActivateKey } from '@/lib/a11y';
 import { useNavigate } from "react-router-dom";
 import { FileText, Search, Filter, History, Zap, Target, ArrowRight, CheckCircle, Beaker, Sparkles, Activity, Plus } from "lucide-react";
 import { StatusBadge } from "@/components/shared/StatusBadge";
@@ -35,7 +36,7 @@ export default function PromptsPage() {
   
   const filteredPrompts = Array.from(grouped.values()).filter(p => {
     const agent = agentMap.get(p.agent_id);
-    const agentName = (agent as { name?: string } | null)?.name?.toLowerCase() || "";
+    const agentName = agent?.name?.toLowerCase() || "";
     const summary = (p.change_summary || "").toLowerCase();
     return agentName.includes(searchTerm.toLowerCase()) || summary.includes(searchTerm.toLowerCase());
   });
@@ -134,8 +135,8 @@ export default function PromptsPage() {
                 return (
                   <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} 
                     key={p.id} 
-                    onClick={() => navigate(`/prompts/${p.agent_id}`)}
-                    className="nexus-card group cursor-pointer p-8 rounded-[2.5rem] flex flex-col justify-between min-h-[320px] bg-gradient-to-br from-card to-card/95 border-border/40 hover:border-primary/40 hover:shadow-nexus-2xl hover:shadow-primary/5 transition-all duration-500 relative overflow-hidden"
+                    role="button" tabIndex={0} onClick={() => navigate(`/prompts/${p.agent_id}`)} onKeyDown={onActivateKey(() => navigate(`/prompts/${p.agent_id}`))}
+                    className="nexus-card group cursor-pointer p-8 rounded-[2.5rem] flex flex-col justify-between min-h-[320px] bg-gradient-to-br from-card to-card/95 border-border/40 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 relative overflow-hidden"
                   >
                     <div className="absolute top-0 right-0 w-32 h-32 bg-primary/[0.02] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:bg-primary/[0.05] transition-colors" />
                     
@@ -147,7 +148,7 @@ export default function PromptsPage() {
                           </div>
                           <div>
                             <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1">
-                              {(agent as { name?: string } | null)?.name || 'Agente Sem Nome'}
+                              {agent?.name || 'Agente Sem Nome'}
                             </h3>
                             <div className="flex items-center gap-2 mt-1">
                               <Badge variant="outline" className="text-meta h-5 px-1.5 bg-primary/5 border-primary/20 text-primary font-mono">v{p.version}</Badge>

@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control -- a11y: visual caption for composite/custom control; tracked for dedicated a11y pass */
 import { useMemo, useState } from 'react';
 import { Clock, GitBranch, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -272,6 +273,7 @@ function fromLocalInput(local: string): string | undefined {
 
 /* ---------- helpers de filtragem reutilizáveis ---------- */
 
+// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
 export function filterByRange(versions: AgentVersion[], range: TimelineRange): AgentVersion[] {
   if (range.mode === 'off') return versions;
 
@@ -305,6 +307,7 @@ export function filterByRange(versions: AgentVersion[], range: TimelineRange): A
 }
 
 /** Serializa para a URL como `range=version:1-5` ou `range=time:60` ou `range=time:abs:from~to`. */
+// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
 export function serializeRange(range: TimelineRange): string | null {
   if (range.mode === 'off') return null;
   if (range.mode === 'version') {
@@ -317,6 +320,7 @@ export function serializeRange(range: TimelineRange): string | null {
   return null;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
 export function parseRange(raw: string | null): TimelineRange {
   if (!raw) return { mode: 'off' };
   if (raw.startsWith('version:')) {

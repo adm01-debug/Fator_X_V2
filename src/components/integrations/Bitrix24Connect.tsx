@@ -41,7 +41,7 @@ export function Bitrix24Connect() {
       } else {
         throw new Error('Resposta inválida da API');
       }
-    } catch (err) {
+    } catch (err: unknown) {
       toast.error('Falha no teste: ' + (err instanceof Error ? err.message : String(err)));
     } finally {
       setTesting(false);

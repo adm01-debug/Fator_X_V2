@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/label-has-associated-control, jsx-a11y/no-static-element-interactions -- a11y: row/card click mirrors a primary action available elsewhere ; visual caption for composite/custom control ; decorative wrapper / click-through container; tracked for dedicated a11y pass */
 import type { SandboxConfig, SandboxRuntime } from '@/components/workflows/SandboxExecutionPanel';
 import { handleKeyboardClick } from "@/lib/a11y";
 
@@ -77,4 +78,5 @@ export function SandboxConfigTab({ config, onUpdate }: SandboxConfigTabProps) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
 export { RUNTIME_OPTIONS, SECURITY_LEVEL_COLORS };

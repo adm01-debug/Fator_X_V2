@@ -1,3 +1,4 @@
+import { onActivateKey } from '@/lib/a11y';
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
@@ -117,8 +118,8 @@ export default function KnowledgeManagementPage() {
             <div className="text-center text-body-sm text-muted-foreground py-12">Nenhum artigo. Crie o primeiro.</div>
           ) : (
             <div className="space-y-2">
-              {articles.map((a: DbRow) => (
-                <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} key={a.id} className="nexus-card flex items-center gap-4 cursor-pointer hover:border-primary/50" onClick={() => navigate(`/knowledge-management/article/${a.id}`)}>
+              {articles.map((a: { id: string; title: string; status: string; language: string; current_version: number; view_count: number; helpful_count: number; updated_at: string }) => (
+                <div key={a.id} className="nexus-card flex items-center gap-4 cursor-pointer hover:border-primary/50" role="button" tabIndex={0} onClick={() => navigate(`/knowledge-management/article/${a.id}`)} onKeyDown={onActivateKey(() => navigate(`/knowledge-management/article/${a.id}`))}>
                   <FileText className="h-5 w-5 text-primary shrink-0" />
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-foreground truncate">{a.title}</p>

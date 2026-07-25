@@ -68,10 +68,7 @@ export default function AgentVersioningPage() {
   const setMode = (m: 'detail' | 'compare') =>
     updateParams((p) => { if (m === 'compare') p.set('mode', 'compare'); else p.delete('mode'); });
   const setPreset = (pid: string) =>
-    updateParams((p) => {
-      if (pid && pid !== 'all') p.set('preset', pid);
-      else p.delete('preset');
-    });
+    updateParams((p) => { if (pid && pid !== 'all') p.set('preset', pid); else p.delete('preset'); });
 
   // Filtro multi-tag por tipo de evento — persiste na URL como `types=a,b,c`
   // e aplica AND com o preset ativo (preset filtra "modo de uso", types
@@ -87,11 +84,9 @@ export default function AgentVersioningPage() {
   }, [typesParam]);
   const toggleType = (tag: TimelineTag) => {
     const next = new Set(activeTypes);
-    if (next.has(tag)) next.delete(tag);
-    else next.add(tag);
+    if (next.has(tag)) next.delete(tag); else next.add(tag);
     updateParams((p) => {
-      if (next.size > 0) p.set('types', Array.from(next).join(','));
-      else p.delete('types');
+      if (next.size > 0) p.set('types', Array.from(next).join(',')); else p.delete('types');
     });
   };
   const clearTypes = () =>
@@ -103,8 +98,7 @@ export default function AgentVersioningPage() {
   const setRange = (r: TimelineRange) =>
     updateParams((p) => {
       const s = serializeRange(r);
-      if (s) p.set('range', s);
-      else p.delete('range');
+      if (s) p.set('range', s); else p.delete('range');
     });
   // Execução (sessão) escolhida — persistida como ?run=<session_id> além do
   // range absoluto. Isso torna o link autoexplicativo ("estou olhando a run X")
@@ -113,10 +107,8 @@ export default function AgentVersioningPage() {
   const setRunAndRange = (r: TimelineRange, rid: string | null) =>
     updateParams((p) => {
       const s = serializeRange(r);
-      if (s) p.set('range', s);
-      else p.delete('range');
-      if (rid) p.set('run', rid);
-      else p.delete('run');
+      if (s) p.set('range', s); else p.delete('range');
+      if (rid) p.set('run', rid); else p.delete('run');
     });
 
   const { data: agent } = useQuery({
@@ -160,7 +152,7 @@ export default function AgentVersioningPage() {
       range: serializeRange(range) ?? undefined,
       mode,
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   }, [id, presetId, mode, searchParams]);
 
   // Inicialização da URL: roda APENAS na primeira chegada das versões (ou quando

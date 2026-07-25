@@ -35,7 +35,7 @@ export function ApprovalQueuePanel() {
       queryClient.invalidateQueries({ queryKey: ['pending-approvals'] });
       setSelectedRun(null);
       setFeedback("");
-    } catch (err) {
+    } catch (err: unknown) {
       toast.error("Erro: " + (err instanceof Error ? err.message : String(err)));
     } finally {
       setProcessing(false);

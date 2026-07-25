@@ -71,8 +71,9 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
       {expanded && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-3 rounded-lg bg-secondary/30 border border-border/30 animate-fade-in">
           <div className="space-y-1">
-            <label htmlFor="advancedtracefilters-data-in-cio-387249" className="text-meta font-medium text-muted-foreground">Data início</label>
-            <Input id="advancedtracefilters-data-in-cio-387249"
+            <label htmlFor="tf-date-from" className="text-[11px] font-medium text-muted-foreground">Data início</label>
+            <Input
+              id="tf-date-from"
               type="date"
               value={filters.dateFrom}
               onChange={e => onChange({ ...filters, dateFrom: e.target.value })}
@@ -80,8 +81,9 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
             />
           </div>
           <div className="space-y-1">
-            <label htmlFor="advancedtracefilters-data-fim-d09f0a" className="text-meta font-medium text-muted-foreground">Data fim</label>
-            <Input id="advancedtracefilters-data-fim-d09f0a"
+            <label htmlFor="tf-date-to" className="text-[11px] font-medium text-muted-foreground">Data fim</label>
+            <Input
+              id="tf-date-to"
               type="date"
               value={filters.dateTo}
               onChange={e => onChange({ ...filters, dateTo: e.target.value })}
@@ -89,8 +91,9 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
             />
           </div>
           <div className="space-y-1">
-            <label htmlFor="advancedtracefilters-lat-ncia-m-n-ms-78121f" className="text-meta font-medium text-muted-foreground">Latência mín (ms)</label>
-            <Input id="advancedtracefilters-lat-ncia-m-n-ms-78121f"
+            <label htmlFor="tf-min-latency" className="text-[11px] font-medium text-muted-foreground">Latência mín (ms)</label>
+            <Input
+              id="tf-min-latency"
               type="number"
               placeholder="0"
               value={filters.minLatency}
@@ -99,8 +102,9 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
             />
           </div>
           <div className="space-y-1">
-            <label htmlFor="advancedtracefilters-lat-ncia-m-x-ms-b01bb2" className="text-meta font-medium text-muted-foreground">Latência máx (ms)</label>
-            <Input id="advancedtracefilters-lat-ncia-m-x-ms-b01bb2"
+            <label htmlFor="tf-max-latency" className="text-[11px] font-medium text-muted-foreground">Latência máx (ms)</label>
+            <Input
+              id="tf-max-latency"
               type="number"
               placeholder="∞"
               value={filters.maxLatency}
@@ -109,8 +113,9 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
             />
           </div>
           <div className="space-y-1">
-            <label htmlFor="advancedtracefilters-custo-m-n-f13785" className="text-meta font-medium text-muted-foreground">Custo mín ($)</label>
-            <Input id="advancedtracefilters-custo-m-n-f13785"
+            <label htmlFor="tf-min-cost" className="text-[11px] font-medium text-muted-foreground">Custo mín ($)</label>
+            <Input
+              id="tf-min-cost"
               type="number"
               step="0.001"
               placeholder="0"
@@ -120,8 +125,9 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
             />
           </div>
           <div className="space-y-1">
-            <label htmlFor="advancedtracefilters-custo-m-x-7bc554" className="text-meta font-medium text-muted-foreground">Custo máx ($)</label>
-            <Input id="advancedtracefilters-custo-m-x-7bc554"
+            <label htmlFor="tf-max-cost" className="text-[11px] font-medium text-muted-foreground">Custo máx ($)</label>
+            <Input
+              id="tf-max-cost"
               type="number"
               step="0.001"
               placeholder="∞"
@@ -131,9 +137,9 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
             />
           </div>
           <div className="space-y-1">
-            <label htmlFor="advancedtracefilters-n-vel-f14ea7" className="text-meta font-medium text-muted-foreground">Nível</label>
+            <label htmlFor="tf-level" className="text-[11px] font-medium text-muted-foreground">Nível</label>
             <Select value={filters.level} onValueChange={v => onChange({ ...filters, level: v })}>
-              <SelectTrigger id="advancedtracefilters-n-vel-f14ea7" className="h-8 text-meta bg-background"><SelectValue /></SelectTrigger>
+              <SelectTrigger id="tf-level" className="h-8 text-xs bg-background"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos</SelectItem>
                 <SelectItem value="debug">Debug</SelectItem>
@@ -145,8 +151,9 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
             </Select>
           </div>
           <div className="space-y-1">
-            <label htmlFor="advancedtracefilters-evento-2d2e86" className="text-meta font-medium text-muted-foreground">Evento</label>
-            <Input id="advancedtracefilters-evento-2d2e86"
+            <label htmlFor="tf-event" className="text-[11px] font-medium text-muted-foreground">Evento</label>
+            <Input
+              id="tf-event"
               placeholder="Buscar evento..."
               value={filters.event}
               onChange={e => onChange({ ...filters, event: e.target.value })}
@@ -159,7 +166,16 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
   );
 }
 
-export function applyTraceFilters(traces: DbRow[], filters: TraceFilters): DbRow[] {
+export interface FilterableTrace {
+  created_at: string;
+  latency_ms?: number | null;
+  cost_usd?: number | string | null;
+  level?: string | null;
+  event?: string | null;
+}
+
+// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
+export function applyTraceFilters<T extends FilterableTrace>(traces: T[], filters: TraceFilters): T[] {
   return traces.filter(t => {
     if (filters.dateFrom) {
       const traceDate = new Date(t.created_at).toISOString().split('T')[0];
@@ -179,4 +195,5 @@ export function applyTraceFilters(traces: DbRow[], filters: TraceFilters): DbRow
   });
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
 export { EMPTY_FILTERS };

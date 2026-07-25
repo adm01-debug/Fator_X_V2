@@ -48,7 +48,7 @@ export function OrchestratorModule() {
       setNodes((active.nodes as unknown as Node[]) || []);
       setEdges((active.edges as unknown as Edge[]) || []);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   }, [activeId]);
 
   const onConnect = useCallback((c: Connection) => setEdges((eds) => addEdge(c, eds)), [setEdges]);
@@ -69,7 +69,7 @@ export function OrchestratorModule() {
 
   const handleSave = () => {
     if (!active) return;
-    updateWorkflow.mutate({ id: active.id, nodes: nodes as unknown[], edges: edges as unknown[] });
+    updateWorkflow.mutate({ id: active.id, nodes, edges });
   };
 
   const handleRun = async () => {
@@ -77,12 +77,12 @@ export function OrchestratorModule() {
     setRunning(true);
     try {
       let parsed: unknown = testInput;
-      try { parsed = JSON.parse(testInput); } catch { /* aceita entrada não-JSON como string bruta */ }
+      try { parsed = JSON.parse(testInput); } catch { /* not JSON: keep raw text */ }
       const result = await runWorkflow(active.id, parsed);
       toast.success('Execução concluída');
       logger.info('Workflow execution result', { workflow_id: active.id, result });
-    } catch (e) {
-      toast.error((e instanceof Error ? e.message : null) || 'Falha na execução');
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : 'Falha na execução');
     } finally {
       setRunning(false);
     }
@@ -110,7 +110,7 @@ export function OrchestratorModule() {
 
       setAutoDoc(doc);
       toast.success('Documentação semântica gerada!');
-    } catch (_e) {
+    } catch {
       toast.error('Erro ao gerar documentação');
     } finally {
       setIsGeneratingDoc(false);
@@ -151,7 +151,7 @@ export function OrchestratorModule() {
     const name = prompt('Nome do workflow?');
     if (!name) return;
     createWorkflow.mutate({ name, workspace_id: workspaceId }, {
-      onSuccess: (w: DbRow) => setActiveId(w.id),
+      onSuccess: (w: { id: string }) => setActiveId(w.id),
     });
   };
 

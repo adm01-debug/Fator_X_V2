@@ -30,6 +30,7 @@ export function ComparisonToggle({ enabled, onToggle, label = 'Comparar período
 }
 
 /** Generate comparison data by shifting data array back by `offset` positions */
+// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
 export function generateComparisonData(
   data: Record<string, unknown>[],
   dataKeys: string[],

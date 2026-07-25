@@ -145,6 +145,7 @@ export async function installTemplate(
     .single();
   if (error) throw error;
 
+   
   await rpcCall('increment_template_installs', { template_uuid: templateId });
 
   return data as InstalledTemplate;

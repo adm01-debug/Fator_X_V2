@@ -107,6 +107,6 @@ export function CronVisualEditor({ value, onChange }: CronVisualEditorProps) {
 }
 
 // Internal Button component since it's not exported from @/components/ui/button in this context
-function Button({ className, variant: _variant, size: _size, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: string; size?: string }) {
+function Button({ className, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return <button className={`inline-flex items-center justify-center rounded-md px-3 py-1 transition-colors hover:bg-accent ${className}`} {...props} />;
 }

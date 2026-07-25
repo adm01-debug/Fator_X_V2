@@ -44,7 +44,7 @@ const HF_FREE_MODELS = [
 ];
 
 // Simula validateRequest
-function validateRequest(body: DbRow): { valid: true; data: Record<string, unknown> } | { valid: false; error: string } {
+function validateRequest(body: unknown): { valid: true; data: Record<string, unknown> } | { valid: false; error: string } {
   if (!body || typeof body !== 'object') return { valid: false, error: 'Request body must be a JSON object' };
   const b = body as Record<string, unknown>;
   if (typeof b.model !== 'string' || b.model.length < 2 || b.model.length > 200) return { valid: false, error: 'model must be a string (2-200 chars)' };
@@ -664,7 +664,7 @@ describe('Cenários Cruzados — Edge Cases', () => {
   });
 
   it('provider chain vazio gera erro 400', () => {
-    const chain: DbRow[] = [];
+    const chain: unknown[] = [];
     expect(chain.length).toBe(0);
   });
 
