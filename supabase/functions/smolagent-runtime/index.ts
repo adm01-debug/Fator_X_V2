@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import { getCorsHeaders, handleCorsPreflight, _jsonResponse, _errorResponse, _checkRateLimit, _getRateLimitIdentifier, _createRateLimitResponse, _RATE_LIMITS } from "../_shared/mod.ts";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv, getCorsHeaders, handleCorsPreflight, _jsonResponse, _errorResponse } from "../_shared/mod.ts";
 import { z } from "https://esm.sh/zod@3.23.8";
 
 const SmolagentBodySchema = z.object({
@@ -536,15 +536,14 @@ serve(async (req) => {
 
   try {
     const authHeader = req.headers.get('Authorization')!;
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabaseUrl = requireEnv('SUPABASE_URL');
+    const supabaseKey = requireEnv('SUPABASE_ANON_KEY');
     const supabase = createClient(supabaseUrl, supabaseKey, { global: { headers: { Authorization: authHeader } } });
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return jsonResponse({ error: 'Unauthorized' }, 401);
 
-    const hfToken = Deno.env.get('HF_API_TOKEN');
-    if (!hfToken) return jsonResponse({ error: 'HF_API_TOKEN not configured' }, 400);
+    const hfToken = requireEnv('HF_API_TOKEN');
 
     const rawBody = await req.json().catch(() => null);
     const parsedBody = SmolagentBodySchema.safeParse(rawBody);

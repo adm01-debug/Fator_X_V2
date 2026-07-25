@@ -1,5 +1,6 @@
 import { fetchWithTimeout } from "../_shared/retry.ts";
 import { z } from "https://esm.sh/zod@3.23.8";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
 const BodySchema = z.object({
@@ -33,15 +34,16 @@ Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
+
   try {
     if (req.method !== 'POST') {
       return jsonResponse({ error: 'Method not allowed' }, 405);
     }
 
-    const apiKey = Deno.env.get('LOVABLE_API_KEY');
-    if (!apiKey) {
-      return jsonResponse({ error: 'LOVABLE_API_KEY não configurada' }, 500);
-    }
+    const apiKey = requireEnv('LOVABLE_API_KEY');
 
     const raw = await req.json().catch(() => null);
     const parsed = BodySchema.safeParse(raw);

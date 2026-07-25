@@ -41,6 +41,7 @@ export {
 // Rate Limiting
 export {
   checkRateLimit,
+  checkRateLimitFromRequest,
   createRateLimitResponse,
   getRateLimitIdentifier,
   withRateLimit,

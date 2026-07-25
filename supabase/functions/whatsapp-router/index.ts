@@ -14,6 +14,7 @@ import { handleCorsPreflight, getCorsHeaders } from '../_shared/cors.ts';
 import { constantTimeEqual } from '../_shared/security.ts';
 import { repairAlternation, type ChatTurn } from '../_shared/alternation.ts';
 import { withRetry, fetchWithTimeout } from '../_shared/retry.ts';
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from '../_shared/mod.ts';
 import { z } from 'https://esm.sh/zod@3.23.8';
 
 const BodySchema = z.object({ message_id: z.string().uuid() });
@@ -23,6 +24,9 @@ const MAX_INBOUND_AGE_MS = 5 * 60_000;
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, getCorsHeaders(req));
   const corsHeaders = getCorsHeaders(req);
   const json = (status: number, body: unknown) =>
     new Response(JSON.stringify(body), {
@@ -31,7 +35,7 @@ Deno.serve(async (req) => {
     });
   if (req.method !== 'POST') return json(405, { error: 'method_not_allowed' });
 
-  const expectedToken = (Deno.env.get('WHATSAPP_ROUTER_TOKEN') ?? '').trim();
+  const expectedToken = requireEnv('WHATSAPP_ROUTER_TOKEN').trim();
   if (expectedToken) {
     const got = req.headers.get('x-router-token') ?? '';
     if (!got || !constantTimeEqual(got, expectedToken)) {
@@ -47,8 +51,8 @@ Deno.serve(async (req) => {
   const messageId = parsed.data.message_id;
 
   const supabase = createClient(
-    Deno.env.get('SUPABASE_URL')!,
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+    requireEnv('SUPABASE_URL'),
+    requireEnv('SUPABASE_SERVICE_ROLE_KEY'),
     { auth: { persistSession: false } },
   );
 
@@ -113,14 +117,14 @@ Deno.serve(async (req) => {
   if (lockErr) await emit('router_lock_failed', 'warn', { message_id: msg.id, err: lockErr.message }, msg.workspace_id as string);
 
   // Invoca o proxy internamente (chat)
-  const proxyUrl = `${Deno.env.get('SUPABASE_URL')}/functions/v1/openclaw-proxy`;
+  const proxyUrl = `${requireEnv('SUPABASE_URL')}/functions/v1/openclaw-proxy`;
   let replyText = '';
   try {
     const r = await withRetry(() => fetchWithTimeout(proxyUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+        'Authorization': `Bearer ${requireEnv('SUPABASE_SERVICE_ROLE_KEY')}`,
       },
       body: JSON.stringify({
         action: 'chat',
@@ -166,7 +170,7 @@ Deno.serve(async (req) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+        'Authorization': `Bearer ${requireEnv('SUPABASE_SERVICE_ROLE_KEY')}`,
         // Idempotency-Key permite ao proxy deduplicar retries — quando o
         // upstream OpenClaw suportar, evita envios duplicados.
         'Idempotency-Key': `wa-send-${outbound?.id ?? msg.id}`,
