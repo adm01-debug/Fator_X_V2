@@ -124,7 +124,7 @@ export function CreateRecordDialog({ open, onOpenChange, entityId, entityName, o
       toast.success(`${entityName} criado com sucesso!`);
       handleClose();
       onSuccess();
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(`Erro ao criar: ${e instanceof Error ? e.message : String(e)}`);
     } finally {
       setSaving(false);
@@ -156,7 +156,7 @@ export function CreateRecordDialog({ open, onOpenChange, entityId, entityName, o
         <div className="space-y-4 py-2">
           {fields.map(field => (
             <div key={field.key} className="space-y-1.5">
-              <Label className="text-sm font-medium text-foreground">
+              <Label className="text-body-sm font-medium text-foreground">
                 {field.label}
                 {field.required && <span className="text-destructive ml-1">*</span>}
               </Label>

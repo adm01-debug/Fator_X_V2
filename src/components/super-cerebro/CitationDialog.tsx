@@ -1,0 +1,281 @@
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { FileText, ExternalLink, Highlighter, Eye, AlertTriangle, RotateCw } from 'lucide-react';
+import { DocumentViewerDialog, type DocumentViewerSource } from './DocumentViewerDialog';
+import { supabaseExternal } from '@/integrations/supabase/externalClient';
+import { getCachedSignedUrl, refetchSignedUrl } from '@/lib/signedUrlCache';
+import { toast } from 'sonner';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import type { CerebroCitation } from '@/types/cerebroCitations';
+import { logger } from '@/lib/logger';
+import { extractKeyPhrase, buildDeepLink, splitForHighlight } from '@/lib/citationHighlight';
+import {
+  logCitationOpen,
+  logCitationClose,
+  markCitationDocumentOpened,
+  type CitationTelemetryHandle,
+} from '@/services/citationTelemetryService';
+import { useCurrentWorkspace } from '@/hooks/useCurrentWorkspace';
+import { useCerebroStore } from '@/stores/cerebroStore';
+
+interface CitationDialogProps {
+  citation: CerebroCitation | null;
+  onOpenChange: (open: boolean) => void;
+}
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export function CitationDialog({ citation, onOpenChange }: CitationDialogProps) {
+  const [loading, setLoading] = useState(false);
+  const [openedDocument, setOpenedDocument] = useState(false);
+  const [highlightMode, setHighlightMode] = useState(true);
+  const [viewerSource, setViewerSource] = useState<DocumentViewerSource | null>(null);
+  const [lastError, setLastError] = useState<null | { message: string; mode: 'inline' | 'external' }>(null);
+  const telemetryRef = useRef<CitationTelemetryHandle | null>(null);
+  const { workspaceId } = useCurrentWorkspace();
+  const activeNotebookId = useCerebroStore((s) => s.activeNotebookId);
+  const open = citation !== null;
+
+  const keyPhrase = useMemo(() => extractKeyPhrase(citation?.snippet), [citation?.snippet]);
+  const highlightParts = useMemo(
+    () => splitForHighlight(citation?.snippet ?? '', keyPhrase),
+    [citation?.snippet, keyPhrase],
+  );
+
+  // Instrumentação: registra abertura ao montar/receber uma citação; fechamento no unmount ou troca.
+  useEffect(() => {
+    if (!citation) return;
+    let cancelled = false;
+    setOpenedDocument(false);
+    (async () => {
+      const handle = await logCitationOpen(citation, {
+        workspaceId,
+        notebookId: citation.notebook_id ?? activeNotebookId ?? null,
+      });
+      if (cancelled) {
+        // Diálogo já foi fechado antes do insert retornar — feche o registro imediatamente.
+        void logCitationClose(handle, { openedDocument: false });
+        return;
+      }
+      telemetryRef.current = handle;
+    })();
+    return () => {
+      cancelled = true;
+      const handle = telemetryRef.current;
+      telemetryRef.current = null;
+      void logCitationClose(handle, { openedDocument });
+    };
+    // Reinicia telemetria a cada nova citação (chunk_id + n identificam).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [citation?.chunk_id, citation?.n]);
+
+  const handleOpenDocument = async (
+    mode: 'inline' | 'external' = 'inline',
+    opts: { bypassCache?: boolean } = {},
+  ) => {
+    if (!citation?.document_id || !UUID_RE.test(citation.document_id)) {
+      toast.error('Documento inválido');
+      return;
+    }
+    setLoading(true);
+    setLastError(null);
+    try {
+      const { data: doc, error } = await supabaseExternal
+        .from('documents')
+        .select('metadata, source_url, title')
+        .eq('id', citation.document_id)
+        .maybeSingle();
+      if (error) throw error;
+
+      const md = (doc?.metadata ?? {}) as {
+        storage_path?: string;
+        bucket?: string;
+        filename?: string;
+      };
+      const storagePath = md.storage_path;
+      const bucket = md.bucket ?? 'knowledge-uploads';
+      const filename = md.filename ?? storagePath ?? null;
+
+      const openWith = (rawUrl: string) => {
+        setOpenedDocument(true);
+        setLastError(null);
+        void markCitationDocumentOpened(telemetryRef.current);
+        if (mode === 'inline') {
+          setViewerSource({
+            url: rawUrl,
+            filename,
+            page: citation?.page ?? null,
+            snippet: citation?.snippet ?? null,
+            documentTitle: (doc?.title as string | undefined) ?? citation?.document_title ?? null,
+          });
+        } else {
+          const finalUrl = buildDeepLink(rawUrl, {
+            page: citation?.page ?? null,
+            phrase: keyPhrase || null,
+          });
+          window.open(finalUrl, '_blank', 'noopener,noreferrer');
+        }
+      };
+
+      if (storagePath) {
+        const signedUrl = opts.bypassCache
+          ? await refetchSignedUrl(bucket, storagePath)
+          : await getCachedSignedUrl(bucket, storagePath);
+        if (signedUrl) {
+          openWith(signedUrl);
+          return;
+        }
+        // Falha após 3 tentativas com backoff dentro do cache. Se houver source_url, cai no fallback silencioso.
+        if (doc?.source_url) {
+          logger.warn('cerebro.citation.signed_url_failed_fallback_source', {
+            document_id: citation.document_id,
+          });
+          openWith(doc.source_url);
+          toast.warning('Link temporário indisponível — usando URL original do documento.');
+          return;
+        }
+        const msg = 'Não foi possível gerar o link seguro para este documento.';
+        setLastError({ message: msg, mode });
+        toast.error(msg, {
+          action: { label: 'Tentar novamente', onClick: () => void handleOpenDocument(mode, { bypassCache: true }) },
+        });
+        return;
+      }
+
+      if (doc?.source_url) {
+        openWith(doc.source_url);
+        return;
+      }
+      const msg = 'Documento sem URL de origem disponível.';
+      setLastError({ message: msg, mode });
+      toast.info(msg);
+    } catch (e) {
+      logger.error('cerebro.citation.open_failed', { error: e });
+      const msg = 'Não foi possível abrir o documento. Verifique sua conexão e tente novamente.';
+      setLastError({ message: msg, mode });
+      toast.error(msg, {
+        action: { label: 'Tentar novamente', onClick: () => void handleOpenDocument(mode, { bypassCache: true }) },
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <FileText className="h-5 w-5 text-primary" />
+            Fonte [{citation?.n}]
+          </DialogTitle>
+          <DialogDescription className="text-foreground font-semibold text-body">
+            {citation?.document_title}
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-3">
+          <div className="flex flex-wrap gap-2">
+            {citation?.notebook_name && (
+              <Badge variant="secondary">Notebook: {citation.notebook_name}</Badge>
+            )}
+            {citation?.page != null && (
+              <Badge variant="outline">Página {citation.page}</Badge>
+            )}
+            {citation?.section && (
+              <Badge variant="outline">Seção: {citation.section}</Badge>
+            )}
+          </div>
+
+          <div className="rounded-lg border border-border/60 bg-secondary/20 p-3">
+            <div className="flex items-center justify-between mb-1.5">
+              <p className="text-meta font-bold uppercase tracking-widest text-muted-foreground">
+                Trecho usado
+              </p>
+              {keyPhrase && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 px-2 gap-1 text-meta"
+                  onClick={() => setHighlightMode((v) => !v)}
+                  aria-pressed={highlightMode}
+                >
+                  <Highlighter className="h-3 w-3" />
+                  {highlightMode ? 'Destaque on' : 'Destaque off'}
+                </Button>
+              )}
+            </div>
+            <p className="text-body-sm text-foreground leading-relaxed italic">
+              "
+              {highlightMode && keyPhrase
+                ? highlightParts.map((part, i) =>
+                    part.hit ? (
+                      <mark
+                        key={i}
+                        className="rounded bg-primary/25 text-foreground px-0.5 not-italic font-medium"
+                      >
+                        {part.text}
+                      </mark>
+                    ) : (
+                      <span key={i}>{part.text}</span>
+                    ),
+                  )
+                : citation?.snippet}
+              "
+            </p>
+          </div>
+
+          {lastError && (
+            <div
+              role="alert"
+              className="flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 p-2.5 text-meta text-destructive"
+            >
+              <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" />
+              <div className="flex-1">
+                <p className="font-semibold leading-snug">{lastError.message}</p>
+                <p className="text-meta opacity-80 mt-0.5">
+                  Tentamos 3 vezes com backoff. Você pode tentar novamente sem recarregar a página.
+                </p>
+              </div>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="h-7 gap-1 border-destructive/40 text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                onClick={() => void handleOpenDocument(lastError.mode, { bypassCache: true })}
+                disabled={loading}
+              >
+                <RotateCw className={`h-3 w-3 ${loading ? 'animate-spin' : ''}`} />
+                Tentar novamente
+              </Button>
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-2">
+            <Button
+              onClick={() => handleOpenDocument('inline')}
+              disabled={loading || !citation?.document_id}
+              className="gap-2"
+            >
+              <Eye className="h-4 w-4" />
+              {loading ? 'Carregando…' : 'Visualizar aqui'}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => handleOpenDocument('external')}
+              disabled={loading || !citation?.document_id}
+              className="gap-2"
+            >
+              <ExternalLink className="h-4 w-4" />
+              Nova aba
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+      <DocumentViewerDialog source={viewerSource} onOpenChange={(o) => !o && setViewerSource(null)} />
+    </Dialog>
+  );
+}

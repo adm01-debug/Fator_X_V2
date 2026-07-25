@@ -1,9 +1,13 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+import { z } from "https://esm.sh/zod@3.23.8";
+import { checkIdempotency, saveIdempotency } from "../_shared/idempotency.ts";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, getCorsHeaders } from "../_shared/mod.ts";
+const CodeInterpBodySchema = z.object({
+  runtime: z.enum(['python', 'node', 'deno']),
+  code: z.string().min(1).max(200_000),
+  timeout_ms: z.number().int().min(100).max(300_000).optional(),
+  session_id: z.string().max(200).optional(),
+}).passthrough();
 
 interface ExecuteBody {
   runtime: "python" | "node" | "deno";
@@ -92,7 +96,12 @@ Se houver erro de sintaxe óbvio, simule a mensagem de erro real do interpretado
 }
 
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+  const identifier = getRateLimitIdentifier(req);
+  const rateResult = checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rateResult.allowed) return createRateLimitResponse(rateResult, req);
 
   try {
     const authHeader = req.headers.get("Authorization");
@@ -111,15 +120,22 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    const body = await req.json() as ExecuteBody;
-    if (!body.runtime || !["python", "node", "deno"].includes(body.runtime)) {
-      return new Response(JSON.stringify({ error: "Invalid runtime" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    const rawBody = await req.json().catch(() => null);
+    const parsedBody = CodeInterpBodySchema.safeParse(rawBody);
+    if (!parsedBody.success) {
+      return new Response(JSON.stringify({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
-    if (typeof body.code !== "string" || body.code.length === 0) {
-      return new Response(JSON.stringify({ error: "Code is required" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-    }
+    const body = parsedBody.data as ExecuteBody;
     if (new TextEncoder().encode(body.code).length > MAX_CODE_BYTES) {
       return new Response(JSON.stringify({ error: `Code exceeds ${MAX_CODE_BYTES} bytes` }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    // Idempotência (opt-in via header). Não aplicável ao modo streaming.
+    const idemKeyHeader = req.headers.get('Idempotency-Key');
+    const idemKey = !body.stream && idemKeyHeader ? `code-interpreter:${user.id}:${idemKeyHeader}` : '';
+    if (idemKey) {
+      const dup = await checkIdempotency(idemKey, supabase);
+      if (dup.isDuplicate && dup.response) return dup.response;
     }
 
     if (body.stream) {
@@ -127,6 +143,7 @@ Deno.serve(async (req) => {
       const writer = writable.getWriter();
       const encoder = new TextEncoder();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
       const sendEvent = async (event: string, data: any) => {
         await writer.write(encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`));
       };
@@ -192,7 +209,7 @@ Deno.serve(async (req) => {
               memory_mb: resultData.memory_mb
             });
 
-            try { await Deno.remove(tmpFile); } catch (_) { }
+            try { await Deno.remove(tmpFile); } catch (_) { /* arquivo temporário pode não existir se a execução falhou antes de escrever */ }
           } else {
             // Simulated streaming with real AI analysis
             await sendEvent("stdout", { chunk: `[Sandbox ${body.runtime}] Inicializando container isolado...\n`, ts: new Date().toISOString() });
@@ -278,6 +295,7 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ error: insertError.message }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
+    if (idemKey) await saveIdempotency(idemKey, 200, inserted, supabase);
     return new Response(JSON.stringify(inserted), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });

@@ -36,20 +36,20 @@ export default function ObservabilityOTelPage() {
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-8 max-w-[1440px] mx-auto animate-page-enter">
       {/* OTel Industrial Header */}
-      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-xl shadow-primary/5 relative overflow-hidden group">
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-nexus-xl shadow-primary/5 relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
         
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative">
           <div className="flex items-center gap-7">
-            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
+            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-nexus-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
               <Activity className="h-11 w-11 text-primary animate-pulse" />
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-3">
                 <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">OpenTelemetry</h1>
-                <Badge className="bg-primary/10 text-primary border-none font-black px-3 py-1 rounded-full text-[10px] tracking-widest uppercase">GenAI Semantic Conventions</Badge>
+                <Badge className="bg-primary/10 text-primary border-none font-black px-3 py-1 rounded-full text-meta tracking-widest uppercase">GenAI Semantic Conventions</Badge>
               </div>
-              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+              <p className="text-title-sm text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Observabilidade total do ciclo de vida das requisições IA. Rastreamento granular de spans, tokens e latência P95.
               </p>
             </div>
@@ -78,7 +78,7 @@ export default function ObservabilityOTelPage() {
                 <CardTitle className="text-xl font-bold flex items-center gap-3">
                   <Terminal className="h-5 w-5 text-primary" /> Trace Stream (Live)
                 </CardTitle>
-                <CardDescription className="text-xs uppercase tracking-widest font-black mt-1">Spans compatíveis com OTel GenAI v1.2</CardDescription>
+                <CardDescription className="text-meta uppercase tracking-widest font-black mt-1">Spans compatíveis com OTel GenAI v1.2</CardDescription>
               </div>
               <div className="flex gap-2">
                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-lg"><Search className="h-4 w-4" /></Button>
@@ -90,12 +90,12 @@ export default function ObservabilityOTelPage() {
                 {tracesLoading ? (
                   <div className="p-10 text-center text-muted-foreground">
                      <Activity className="h-10 w-10 mx-auto mb-4 animate-pulse opacity-20" />
-                     <p className="text-xs uppercase font-black tracking-widest">Interceptando Fluxo...</p>
+                     <p className="text-meta uppercase font-black tracking-widest">Interceptando Fluxo...</p>
                   </div>
                 ) : traces.length === 0 ? (
                   <div className="p-20 text-center opacity-30">
                     <Database className="h-12 w-12 mx-auto mb-4" />
-                    <p className="text-xs font-black uppercase tracking-widest">Nenhum rastro capturado</p>
+                    <p className="text-meta font-black uppercase tracking-widest">Nenhum rastro capturado</p>
                   </div>
                 ) : (
                   traces.map((trace) => (
@@ -105,10 +105,10 @@ export default function ObservabilityOTelPage() {
                            {trace.event_type.includes('error') ? <AlertCircle className="h-6 w-6 text-destructive" /> : <Cpu className="h-6 w-6 text-primary/60" />}
                         </div>
                         <div className="min-w-0">
-                          <p className="font-mono text-sm font-bold text-foreground truncate">{trace.event_type}</p>
+                          <p className="font-mono text-body-sm font-bold text-foreground truncate">{trace.event_type}</p>
                           <div className="flex items-center gap-3 mt-1.5">
                              <Badge variant="outline" className="text-[9px] font-black h-4 px-1.5 border-border/60 bg-background/50">OTEL_SPAN</Badge>
-                             <span className="text-[10px] text-muted-foreground font-mono truncate max-w-[200px]">{trace.id}</span>
+                             <span className="text-meta text-muted-foreground font-mono truncate max-w-[200px]">{trace.id}</span>
                           </div>
                         </div>
                       </div>
@@ -123,8 +123,8 @@ export default function ObservabilityOTelPage() {
                            <p className="text-sm font-bold font-mono text-primary">{(trace.data as { tokens?: number } | null)?.tokens || Math.floor(Math.random() * 2000)} tks</p>
                          </div>
                          <div className="text-right">
-                           <p className="text-[10px] font-black uppercase text-muted-foreground tracking-tighter">Time</p>
-                           <p className="text-[11px] font-medium text-foreground opacity-60">{new Date(trace.created_at).toLocaleTimeString('pt-BR')}</p>
+                           <p className="text-meta font-black uppercase text-muted-foreground tracking-tighter">Time</p>
+                           <p className="text-meta font-medium text-foreground opacity-60">{new Date(trace.created_at).toLocaleTimeString('pt-BR')}</p>
                          </div>
                       </div>
                     </div>
@@ -132,7 +132,7 @@ export default function ObservabilityOTelPage() {
                 )}
               </div>
               <div className="p-6 border-t border-border/40 bg-muted/10">
-                 <Button variant="outline" className="w-full h-12 rounded-2xl font-bold uppercase text-[10px] tracking-widest border-border/40 shadow-sm" asChild>
+                 <Button variant="outline" className="w-full h-12 rounded-2xl font-bold uppercase text-meta tracking-widest border-border/40 shadow-nexus-sm" asChild>
                     <a href="https://jaeger.nexus.local" target="_blank" rel="noreferrer">
                        Full Jaeger UI Breakdown <ArrowUpRight className="ml-2 h-4 w-4" />
                     </a>
@@ -145,7 +145,7 @@ export default function ObservabilityOTelPage() {
         <div className="space-y-8">
            <Card className="border-border/40 rounded-[2.5rem] bg-card/50 backdrop-blur-xl">
              <CardHeader className="p-8 border-b">
-               <CardTitle className="text-lg font-bold flex items-center gap-2">
+               <CardTitle className="text-title-sm font-bold flex items-center gap-2">
                  <Box className="h-5 w-5 text-primary" /> Active Exporters
                </CardTitle>
              </CardHeader>
@@ -160,11 +160,11 @@ export default function ObservabilityOTelPage() {
                    <div className="flex items-center gap-3">
                      <div className={cn("h-2 w-2 rounded-full", exp.color, exp.status === 'Active' && "animate-pulse")} />
                      <div>
-                       <p className="text-xs font-bold text-foreground">{exp.name}</p>
-                       <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">{exp.status}</p>
+                       <p className="text-meta font-bold text-foreground">{exp.name}</p>
+                       <p className="text-meta text-muted-foreground uppercase font-black tracking-widest">{exp.status}</p>
                      </div>
                    </div>
-                   <span className="text-[10px] font-mono font-bold text-primary">{exp.latency}</span>
+                   <span className="text-meta font-mono font-bold text-primary">{exp.latency}</span>
                  </div>
                ))}
              </CardContent>
@@ -175,11 +175,11 @@ export default function ObservabilityOTelPage() {
                <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
                   <Database className="h-6 w-6 text-primary" />
                </div>
-               <h3 className="text-lg font-bold">Cold Storage (L2)</h3>
-               <p className="text-xs text-muted-foreground leading-relaxed">
+               <h3 className="text-title-sm font-bold">Cold Storage (L2)</h3>
+               <p className="text-meta text-muted-foreground leading-relaxed">
                  Traces com mais de 30 dias são comprimidos e movidos para armazenamento frio, mantendo apenas metadados para busca histórica.
                </p>
-               <Button variant="link" className="p-0 h-auto text-primary font-bold text-xs uppercase tracking-widest">Explorar Arquivos →</Button>
+               <Button variant="link" className="p-0 h-auto text-primary font-bold text-meta uppercase tracking-widest">Explorar Arquivos →</Button>
              </CardContent>
            </Card>
         </div>
@@ -191,7 +191,7 @@ export default function ObservabilityOTelPage() {
 interface MetricCardProps { label: string; value: React.ReactNode; icon: LucideIcon; trend?: string; subLabel?: string; color?: string; }
 function MetricCard({ label, value, icon: Icon, trend, subLabel, color = "text-foreground" }: MetricCardProps) {
   return (
-    <Card className="bg-card/50 border-border/40 rounded-[2rem] p-6 shadow-sm group hover:border-primary/20 transition-all">
+    <Card className="bg-card/50 border-border/40 rounded-[2rem] p-6 shadow-nexus-sm group hover:border-primary/20 transition-all">
       <div className="flex items-start justify-between mb-4">
         <div className="h-10 w-10 rounded-xl bg-secondary flex items-center justify-center border border-border/20 group-hover:scale-105 transition-transform">
           <Icon className="h-5 w-5 text-primary" />
@@ -206,9 +206,9 @@ function MetricCard({ label, value, icon: Icon, trend, subLabel, color = "text-f
          <span className={color}>{value}</span>
       </p>
       <div className="flex items-center gap-2">
-         <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{label}</p>
+         <p className="text-meta font-black uppercase tracking-widest text-muted-foreground">{label}</p>
          <span className="h-1 w-1 rounded-full bg-border" />
-         <p className="text-[10px] font-medium text-muted-foreground opacity-60">{subLabel}</p>
+         <p className="text-meta font-medium text-muted-foreground opacity-60">{subLabel}</p>
       </div>
     </Card>
   );

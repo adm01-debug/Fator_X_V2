@@ -1,10 +1,12 @@
 // Tradução com cache (translation memory) via Lovable AI
+import { fetchWithTimeout } from "../_shared/retry.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+import { z } from "https://esm.sh/zod@3.23.8";
+import { checkRateLimit, createRateLimitResponse, getCorsHeaders, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
+const InputSchema = z.object({
+  article_id: z.string().uuid(),
+  target_language: z.string().min(2).max(10),
+});
 
 async function sha256(s: string): Promise<string> {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
@@ -12,18 +14,25 @@ async function sha256(s: string): Promise<string> {
 }
 
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
 
   try {
     const auth = req.headers.get("Authorization");
     if (!auth) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
-    const { article_id, target_language } = await req.json();
-    if (!article_id || !target_language) return new Response(JSON.stringify({ error: "article_id and target_language required" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    const raw = await req.json().catch(() => null);
+    const parsed = InputSchema.safeParse(raw);
+    if (!parsed.success) return new Response(JSON.stringify({ error: "Payload inválido", details: parsed.error.flatten() }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    const { article_id, target_language } = parsed.data;
 
-    const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-    const lovableKey = Deno.env.get("LOVABLE_API_KEY");
-    if (!lovableKey) throw new Error("LOVABLE_API_KEY missing");
+
+    const supabase = createClient(requireEnv("SUPABASE_URL"), requireEnv("SUPABASE_SERVICE_ROLE_KEY"));
+    const lovableKey = requireEnv("LOVABLE_API_KEY");
 
     const { data: article } = await supabase.from("kb_articles").select("*").eq("id", article_id).maybeSingle();
     if (!article) return new Response(JSON.stringify({ error: "Article not found" }), { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } });
@@ -42,7 +51,7 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ cached: true, translation: cached }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const r = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: { "Authorization": `Bearer ${lovableKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -55,17 +64,17 @@ Deno.serve(async (req) => {
     });
     if (!r.ok) throw new Error(`AI gateway error: ${r.status}`);
     const j = await r.json();
-    const raw = j.choices?.[0]?.message?.content ?? "{}";
-    const cleaned = raw.replace(/```json\n?/g, "").replace(/```/g, "").trim();
-    const parsed = JSON.parse(cleaned);
+    const aiRaw = j.choices?.[0]?.message?.content ?? "{}";
+    const cleaned = aiRaw.replace(/```json\n?/g, "").replace(/```/g, "").trim();
+    const aiParsed = JSON.parse(cleaned);
 
     const { data: inserted, error } = await supabase.from("kb_translations").insert({
       article_id,
       source_language: article.language,
       target_language,
       source_hash: hash,
-      translated_title: parsed.title ?? article.title,
-      translated_content_json: parsed.content ?? {},
+      translated_title: aiParsed.title ?? article.title,
+      translated_content_json: aiParsed.content ?? {},
       translation_method: "ai",
     }).select().single();
     if (error) throw error;

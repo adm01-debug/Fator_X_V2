@@ -41,8 +41,10 @@ export {
 // Rate Limiting
 export {
   checkRateLimit,
+  checkRateLimitFromRequest,
   createRateLimitResponse,
   getRateLimitIdentifier,
+  withRateLimit,
   RATE_LIMITS,
   type RateLimitConfig,
   type RateLimitResult,
@@ -58,6 +60,9 @@ export {
   type ParseResult,
 } from "./validation.ts";
 
+// Safe JSON (LLM output parsing)
+export { safeJsonParse, parseJsonStrict } from "./json.ts";
+
 // Security (NEW)
 export {
   constantTimeEqual,
@@ -68,3 +73,53 @@ export {
   getClientIp,
   KNOWN_WEBHOOK_CIDRS,
 } from "./security.ts";
+
+// Retry / backoff / jitter (P0 audit fix)
+export {
+  withRetry,
+  withRetryJson,
+  fetchWithTimeout,
+  computeDelay,
+  RetryError,
+  type RetryOptions,
+} from "./retry.ts";
+
+// Environment validation (P0 audit — Etapa 13)
+export {
+  requireEnv,
+  requireEnvDefault,
+  requireEnvNumber,
+  requireEnvBool,
+  requireEnvJson,
+  requireEnvUrl,
+  requireEnvGroup,
+  optionalEnv,
+  validateRequiredEnv,
+  requireEnvCached,
+  clearEnvCache,
+  MISSING_ENV_PREFIX,
+} from "./requireEnv.ts";
+
+// Webhook Sender with HMAC + retry (P0 audit — Etapa 16)
+export {
+  deliverWebhook,
+  deliverWebhookWithLogging,
+  hmacSha256Hex,
+} from "./webhookSender.ts";
+export type {
+  WebhookPayload,
+  WebhookDeliveryResult,
+  WebhookSenderOptions,
+} from "./webhookSender.ts";
+
+// Observability (ETAPAS 46-48)
+export {
+  runWithObservability,
+  tracedFetch,
+  estimateLlmCost,
+  logLlmMetrics,
+} from "./otel-edge.ts";
+export type {
+  TraceContext,
+  ObservabilityOptions,
+} from "./otel-edge.ts";

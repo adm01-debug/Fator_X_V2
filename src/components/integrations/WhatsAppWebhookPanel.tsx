@@ -113,26 +113,26 @@ export function WhatsAppWebhookPanel() {
       {/* Header */}
       <div className="flex items-center gap-2">
         <MessageCircle className="h-4 w-4 text-primary" />
-        <h3 className="text-sm font-heading font-semibold text-foreground">Webhooks WhatsApp</h3>
-        <Badge variant="outline" className="text-[10px]">
+        <h3 className="text-body-sm font-heading font-semibold text-foreground">Webhooks WhatsApp</h3>
+        <Badge variant="outline" className="text-meta">
           {routes.length} rota{routes.length === 1 ? "" : "s"}
         </Badge>
       </div>
 
       {/* Webhook URL */}
       <div className="nexus-card">
-        <h4 className="text-[11px] uppercase tracking-wider text-muted-foreground mb-2">
+        <h4 className="text-meta uppercase tracking-wider text-muted-foreground mb-2">
           URL do webhook (cole no provedor)
         </h4>
         <div className="flex items-center gap-2">
-          <code className="flex-1 text-[11px] font-mono bg-secondary/40 px-3 py-2 rounded truncate" title={webhookUrl}>
+          <code className="flex-1 text-meta font-mono bg-secondary/40 px-3 py-2 rounded truncate" title={webhookUrl}>
             {webhookUrl}
           </code>
-          <Button variant="outline" size="sm" onClick={handleCopyUrl} className="h-8 gap-1.5 text-xs shrink-0">
+          <Button variant="outline" size="sm" onClick={handleCopyUrl} className="h-8 gap-1.5 text-meta shrink-0">
             <Copy className="h-3 w-3" /> Copiar
           </Button>
         </div>
-        <p className="text-[10px] text-muted-foreground mt-2">
+        <p className="text-meta text-muted-foreground mt-2">
           Cole esta URL no painel do seu provedor WhatsApp. Suportamos auto-detecção de:{" "}
           {WHATSAPP_PROVIDERS.map((p) => p.label).join(', ')}. Configure o token correspondente como
           variável de ambiente no Supabase (ex: <code className="bg-secondary/40 px-1">WHATSAPP_META_APP_SECRET</code>),
@@ -143,20 +143,20 @@ export function WhatsAppWebhookPanel() {
       {/* Add new route */}
       {availableEvents.length > 0 && (
         <div className="nexus-card">
-          <h4 className="text-[11px] uppercase tracking-wider text-muted-foreground mb-3">
+          <h4 className="text-meta uppercase tracking-wider text-muted-foreground mb-3">
             Adicionar rota
           </h4>
           <div className="flex flex-col sm:flex-row gap-2">
             <Select value={selectedEvent} onValueChange={(v) => setSelectedEvent(v as WhatsAppEventType)}>
-              <SelectTrigger className="h-9 text-xs flex-1">
+              <SelectTrigger className="h-9 text-meta flex-1">
                 <SelectValue placeholder="Tipo de evento" />
               </SelectTrigger>
               <SelectContent>
                 {availableEvents.map((e) => (
-                  <SelectItem key={e.id} value={e.id} className="text-xs">
+                  <SelectItem key={e.id} value={e.id} className="text-meta">
                     <div className="flex flex-col">
                       <span>{e.label}</span>
-                      <span className="text-[10px] text-muted-foreground">{e.description}</span>
+                      <span className="text-meta text-muted-foreground">{e.description}</span>
                     </div>
                   </SelectItem>
                 ))}
@@ -164,21 +164,21 @@ export function WhatsAppWebhookPanel() {
             </Select>
 
             <Select value={selectedAgent} onValueChange={setSelectedAgent}>
-              <SelectTrigger className="h-9 text-xs flex-1">
+              <SelectTrigger className="h-9 text-meta flex-1">
                 <SelectValue placeholder="Agente" />
               </SelectTrigger>
               <SelectContent>
                 {agents.length === 0 ? (
-                  <SelectItem value="__none__" disabled className="text-xs">Nenhum agente disponível</SelectItem>
+                  <SelectItem value="__none__" disabled className="text-meta">Nenhum agente disponível</SelectItem>
                 ) : (
                   agents.map((a) => (
-                    <SelectItem key={a.id} value={a.id} className="text-xs">{a.name}</SelectItem>
+                    <SelectItem key={a.id} value={a.id} className="text-meta">{a.name}</SelectItem>
                   ))
                 )}
               </SelectContent>
             </Select>
 
-            <Button onClick={handleAddRoute} disabled={adding || !selectedEvent || !selectedAgent} className="gap-1.5 h-9 text-xs">
+            <Button onClick={handleAddRoute} disabled={adding || !selectedEvent || !selectedAgent} className="gap-1.5 h-9 text-meta">
               {adding ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plus className="h-3 w-3" />}
               Adicionar
             </Button>
@@ -189,21 +189,21 @@ export function WhatsAppWebhookPanel() {
       {/* Active routes */}
       <div className="nexus-card overflow-hidden p-0">
         <div className="px-4 py-2 border-b border-border/40 bg-secondary/30">
-          <h4 className="text-[11px] uppercase tracking-wider text-muted-foreground">Rotas ativas</h4>
+          <h4 className="text-meta uppercase tracking-wider text-muted-foreground">Rotas ativas</h4>
         </div>
         {loadingRoutes ? (
           <div className="flex justify-center py-8"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>
         ) : routes.length === 0 ? (
-          <div className="py-8 text-center text-[11px] text-muted-foreground">
+          <div className="py-8 text-center text-meta text-muted-foreground">
             Nenhuma rota configurada — adicione uma acima para começar a receber mensagens.
           </div>
         ) : (
-          <table className="w-full text-xs">
+          <table className="w-full text-meta">
             <thead className="border-b border-border/30">
               <tr>
-                <th className="text-left px-3 py-2 font-medium text-[10px] uppercase tracking-wider text-muted-foreground">Evento</th>
-                <th className="text-left px-3 py-2 font-medium text-[10px] uppercase tracking-wider text-muted-foreground">Agente</th>
-                <th className="text-center px-3 py-2 font-medium text-[10px] uppercase tracking-wider text-muted-foreground">Ativo</th>
+                <th className="text-left px-3 py-2 font-medium text-meta uppercase tracking-wider text-muted-foreground">Evento</th>
+                <th className="text-left px-3 py-2 font-medium text-meta uppercase tracking-wider text-muted-foreground">Agente</th>
+                <th className="text-center px-3 py-2 font-medium text-meta uppercase tracking-wider text-muted-foreground">Ativo</th>
                 <th className="px-3 py-2 w-10" />
               </tr>
             </thead>
@@ -215,8 +215,8 @@ export function WhatsAppWebhookPanel() {
                   <tr key={r.id} className="border-b border-border/20 hover:bg-secondary/20">
                     <td className="px-3 py-2">
                       <div className="flex flex-col">
-                        <code className="text-[11px] font-mono text-foreground">{r.event_type}</code>
-                        <span className="text-[10px] text-muted-foreground">{eventCfg?.label ?? '—'}</span>
+                        <code className="text-meta font-mono text-foreground">{r.event_type}</code>
+                        <span className="text-meta text-muted-foreground">{eventCfg?.label ?? '—'}</span>
                       </div>
                     </td>
                     <td className="px-3 py-2 text-foreground">{agent?.name ?? <span className="text-muted-foreground italic">deletado</span>}</td>
@@ -239,26 +239,26 @@ export function WhatsAppWebhookPanel() {
       {/* Recent events */}
       <div className="nexus-card overflow-hidden p-0">
         <div className="px-4 py-2 border-b border-border/40 bg-secondary/30">
-          <h4 className="text-[11px] uppercase tracking-wider text-muted-foreground">
+          <h4 className="text-meta uppercase tracking-wider text-muted-foreground">
             Mensagens recebidas ({events.length})
           </h4>
         </div>
         {loadingEvents ? (
           <div className="flex justify-center py-8"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>
         ) : events.length === 0 ? (
-          <div className="py-8 text-center text-[11px] text-muted-foreground">
+          <div className="py-8 text-center text-meta text-muted-foreground">
             Nenhuma mensagem recebida ainda. Configure o webhook no provedor e envie uma mensagem teste.
           </div>
         ) : (
           <div className="max-h-[400px] overflow-y-auto">
-            <table className="w-full text-xs">
+            <table className="w-full text-meta">
               <thead className="border-b border-border/30 sticky top-0 bg-card">
                 <tr>
-                  <th className="text-left px-3 py-2 font-medium text-[10px] uppercase tracking-wider text-muted-foreground">Quando</th>
-                  <th className="text-left px-3 py-2 font-medium text-[10px] uppercase tracking-wider text-muted-foreground">De</th>
-                  <th className="text-left px-3 py-2 font-medium text-[10px] uppercase tracking-wider text-muted-foreground">Tipo</th>
-                  <th className="text-left px-3 py-2 font-medium text-[10px] uppercase tracking-wider text-muted-foreground">Preview</th>
-                  <th className="text-left px-3 py-2 font-medium text-[10px] uppercase tracking-wider text-muted-foreground">Status</th>
+                  <th className="text-left px-3 py-2 font-medium text-meta uppercase tracking-wider text-muted-foreground">Quando</th>
+                  <th className="text-left px-3 py-2 font-medium text-meta uppercase tracking-wider text-muted-foreground">De</th>
+                  <th className="text-left px-3 py-2 font-medium text-meta uppercase tracking-wider text-muted-foreground">Tipo</th>
+                  <th className="text-left px-3 py-2 font-medium text-meta uppercase tracking-wider text-muted-foreground">Preview</th>
+                  <th className="text-left px-3 py-2 font-medium text-meta uppercase tracking-wider text-muted-foreground">Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -267,17 +267,17 @@ export function WhatsAppWebhookPanel() {
                   const Icon = cfg.icon;
                   return (
                     <tr key={e.id} className="border-b border-border/20 hover:bg-secondary/20">
-                      <td className="px-3 py-2 text-[10px] text-muted-foreground whitespace-nowrap">
+                      <td className="px-3 py-2 text-meta text-muted-foreground whitespace-nowrap">
                         {new Date(e.received_at).toLocaleString('pt-BR')}
                       </td>
-                      <td className="px-3 py-2 text-[10px] font-mono text-foreground whitespace-nowrap">
+                      <td className="px-3 py-2 text-meta font-mono text-foreground whitespace-nowrap">
                         {e.from_phone ?? '—'}
                       </td>
                       <td className="px-3 py-2">
-                        <code className="text-[10px] font-mono text-foreground">{e.event_type}</code>
+                        <code className="text-meta font-mono text-foreground">{e.event_type}</code>
                         <div className="text-[9px] text-muted-foreground">{e.provider}</div>
                       </td>
-                      <td className="px-3 py-2 text-[10px] text-foreground max-w-[200px] truncate" title={e.body_preview ?? ''}>
+                      <td className="px-3 py-2 text-meta text-foreground max-w-[200px] truncate" title={e.body_preview ?? ''}>
                         {e.body_preview ?? <span className="italic text-muted-foreground">—</span>}
                       </td>
                       <td className="px-3 py-2">

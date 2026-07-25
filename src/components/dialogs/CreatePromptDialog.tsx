@@ -53,7 +53,7 @@ export function CreatePromptDialog({ agents, onCreated }: CreatePromptDialogProp
       setOpen(false);
       setContent(''); setSummary(''); setAgentId('');
       onCreated?.();
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro ao criar prompt');
     } finally {
       setLoading(false);
@@ -73,23 +73,23 @@ export function CreatePromptDialog({ agents, onCreated }: CreatePromptDialogProp
         </DialogHeader>
         <div className="space-y-4 mt-2">
           <div className="space-y-1.5">
-            <Label className="text-xs">Agente *</Label>
+            <Label className="text-meta">Agente *</Label>
             <Select value={agentId} onValueChange={setAgentId}>
               <SelectTrigger className={`bg-secondary/50 ${errors.agentId ? 'border-destructive' : ''}`}><SelectValue placeholder="Selecione um agente" /></SelectTrigger>
               <SelectContent>
                 {agents.map(a => <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>)}
               </SelectContent>
             </Select>
-            {errors.agentId && <p className="text-xs text-destructive">{errors.agentId}</p>}
+            {errors.agentId && <p className="text-meta text-destructive">{errors.agentId}</p>}
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Descrição da versão</Label>
+            <Label className="text-meta">Descrição da versão</Label>
             <Input value={summary} onChange={e => setSummary(e.target.value)} placeholder="Ex: Ajuste de tom e persona" className="bg-secondary/50" />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Conteúdo do prompt *</Label>
-            <Textarea value={content} onChange={e => setContent(e.target.value)} placeholder="Você é um assistente..." className={`bg-secondary/50 font-mono text-xs ${errors.content ? 'border-destructive' : ''}`} rows={8} />
-            {errors.content && <p className="text-xs text-destructive">{errors.content}</p>}
+            <Label className="text-meta">Conteúdo do prompt *</Label>
+            <Textarea value={content} onChange={e => setContent(e.target.value)} placeholder="Você é um assistente..." className={`bg-secondary/50 font-mono text-meta ${errors.content ? 'border-destructive' : ''}`} rows={8} />
+            {errors.content && <p className="text-meta text-destructive">{errors.content}</p>}
           </div>
           <Button onClick={handleCreate} disabled={loading} className="w-full nexus-gradient-bg text-primary-foreground">
             {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}

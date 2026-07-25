@@ -1,7 +1,8 @@
+import { fetchWithTimeout } from "../_shared/retry.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { z } from "https://esm.sh/zod@3.23.8";
-import { handleCorsPreflight, jsonResponse, errorResponse } from "../_shared/mod.ts";
+import { handleCorsPreflight, jsonResponse, errorResponse, checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 
 // ═══ Zod Schemas ═══
 const toolEnum = z.enum(['memory_save', 'memory_search', 'memory_update', 'memory_forget', 'memory_compact']);
@@ -26,10 +27,14 @@ const bodySchema = z.object({
 serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
 
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, { 'Content-Type': 'application/json' });
+
   try {
     const authHeader = req.headers.get('Authorization')!;
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabaseUrl = requireEnv('SUPABASE_URL');
+    const supabaseKey = requireEnv('SUPABASE_ANON_KEY');
     const supabase = createClient(supabaseUrl, supabaseKey, { global: { headers: { Authorization: authHeader } } });
 
     const { data: { user } } = await supabase.auth.getUser();
@@ -115,7 +120,7 @@ serve(async (req) => {
         return jsonResponse(req, { success: false, message: 'Not enough memories to compact (need 5+)' });
       }
 
-      const summaryResp = await fetch(`${supabaseUrl}/functions/v1/llm-gateway`, {
+      const summaryResp = await fetchWithTimeout(`${supabaseUrl}/functions/v1/llm-gateway`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': authHeader, 'apikey': supabaseKey },
         body: JSON.stringify({

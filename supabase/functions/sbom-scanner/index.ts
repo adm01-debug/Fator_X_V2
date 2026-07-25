@@ -1,14 +1,12 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
+import { z } from "https://esm.sh/zod@3.23.8";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
-
-interface ScanRequest {
-  workspace_id: string;
-  snapshot_id: string;
-}
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv, getCorsHeaders } from "../_shared/mod.ts";
+const ScanRequestSchema = z.object({
+  workspace_id: z.string().uuid(),
+  snapshot_id: z.string().uuid(),
+});
+type ScanRequest = z.infer<typeof ScanRequestSchema>;
 
 interface OSVVuln {
   id: string;
@@ -67,7 +65,12 @@ function getFixedVersion(vuln: OSVVuln, pkgName: string): string | null {
 }
 
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, getCorsHeaders(req));
 
   try {
     const authHeader = req.headers.get("Authorization");
@@ -79,14 +82,14 @@ Deno.serve(async (req) => {
     }
 
     const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      requireEnv("SUPABASE_URL"),
+      requireEnv("SUPABASE_SERVICE_ROLE_KEY"),
       { global: { headers: { Authorization: authHeader } } },
     );
 
     const userClient = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
+      requireEnv("SUPABASE_URL"),
+      requireEnv("SUPABASE_ANON_KEY"),
       { global: { headers: { Authorization: authHeader } } },
     );
     const { data: userData, error: userErr } = await userClient.auth.getUser();
@@ -97,7 +100,12 @@ Deno.serve(async (req) => {
       });
     }
 
-    const body: ScanRequest = await req.json();
+    const rawBody = await req.json().catch(() => null);
+    const parsedBody = ScanRequestSchema.safeParse(rawBody);
+    if (!parsedBody.success) {
+      return new Response(JSON.stringify({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+    const body: ScanRequest = parsedBody.data;
     if (!body.workspace_id || !body.snapshot_id) {
       return new Response(JSON.stringify({ error: "workspace_id and snapshot_id required" }), {
         status: 400,

@@ -84,7 +84,9 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 export function useI18nContext(): I18nContextValue {
   const ctx = useContext(I18nContext);
   if (!ctx) {
-    logger.warn('useI18nContext called outside I18nProvider — using fallback');
+    if (import.meta.env.DEV && !import.meta.env.VITEST) {
+      logger.warn('useI18nContext called outside I18nProvider — using fallback');
+    }
     return {
       locale: DEFAULT_LOCALE,
       setLocale: () => {},

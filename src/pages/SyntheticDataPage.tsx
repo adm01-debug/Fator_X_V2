@@ -45,10 +45,10 @@ export default function SyntheticDataPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-4">
         <Card>
-          <CardHeader className="pb-3"><CardTitle className="text-sm flex items-center gap-2"><Wand2 className="h-4 w-4" />Configuração</CardTitle></CardHeader>
+          <CardHeader className="pb-3"><CardTitle className="text-body-sm flex items-center gap-2"><Wand2 className="h-4 w-4" />Configuração</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label className="text-xs">Tipo de dataset</Label>
+              <Label className="text-meta">Tipo de dataset</Label>
               <Select defaultValue="qa">
                 <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -62,12 +62,12 @@ export default function SyntheticDataPage() {
             </div>
 
             <div>
-              <Label className="text-xs">Domínio / contexto</Label>
+              <Label className="text-meta">Domínio / contexto</Label>
               <Textarea placeholder="Ex: Atendimento ao cliente de e-commerce brasileiro, foco em logística, devoluções e pagamentos." className="mt-1 min-h-[100px]" />
             </div>
 
             <div>
-              <Label className="text-xs">Modelo gerador</Label>
+              <Label className="text-meta">Modelo gerador</Label>
               <Select defaultValue="mixtral">
                 <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -80,11 +80,11 @@ export default function SyntheticDataPage() {
             </div>
 
             <div>
-              <div className="flex justify-between text-xs mb-1.5"><Label>Quantidade de exemplos</Label><span className="font-mono">{count[0]}</span></div>
+              <div className="flex justify-between text-meta mb-1.5"><Label>Quantidade de exemplos</Label><span className="font-mono">{count[0]}</span></div>
               <Slider value={count} onValueChange={setCount} min={50} max={5000} step={50} />
             </div>
 
-            <div className="grid grid-cols-2 gap-3 text-xs">
+            <div className="grid grid-cols-2 gap-3 text-meta">
               <div className="p-2.5 bg-muted/30 rounded">
                 <div className="text-muted-foreground">Custo</div>
                 <div className="font-bold">${(count[0] * 0.002).toFixed(2)}</div>
@@ -104,7 +104,7 @@ export default function SyntheticDataPage() {
 
         <Card>
           <CardHeader className="pb-3 flex-row items-center justify-between">
-            <CardTitle className="text-sm flex items-center gap-2"><FileJson className="h-4 w-4" />Preview</CardTitle>
+            <CardTitle className="text-body-sm flex items-center gap-2"><FileJson className="h-4 w-4" />Preview</CardTitle>
             {generated.length > 0 && (
               <div className="flex gap-2">
                 <Button size="sm" variant="outline"><Shuffle className="h-3.5 w-3.5 mr-1" />Embaralhar</Button>
@@ -114,19 +114,19 @@ export default function SyntheticDataPage() {
           </CardHeader>
           <CardContent>
             {generated.length === 0 ? (
-              <div className="text-center text-sm text-muted-foreground py-16">
+              <div className="text-center text-body-sm text-muted-foreground py-16">
                 <Database className="h-10 w-10 mx-auto mb-2 opacity-30" />
                 Configure e gere seu dataset
               </div>
             ) : (
               <div className="space-y-2">
                 {generated.map((s, i) => (
-                  <div key={i} className="p-3 bg-muted/30 rounded text-xs space-y-1.5 font-mono">
-                    <div><Badge variant="outline" className="text-[10px] mr-2">prompt</Badge>{s.prompt}</div>
-                    <div><Badge variant="outline" className="text-[10px] mr-2 bg-primary/10">completion</Badge>{s.completion}</div>
+                  <div key={i} className="p-3 bg-muted/30 rounded text-meta space-y-1.5 font-mono">
+                    <div><Badge variant="outline" className="text-meta mr-2">prompt</Badge>{s.prompt}</div>
+                    <div><Badge variant="outline" className="text-meta mr-2 bg-primary/10">completion</Badge>{s.completion}</div>
                   </div>
                 ))}
-                {generated.length > 0 && <div className="text-center text-xs text-muted-foreground pt-2">+ {count[0] - generated.length} exemplos serão gerados</div>}
+                {generated.length > 0 && <div className="text-center text-meta text-muted-foreground pt-2">+ {count[0] - generated.length} exemplos serão gerados</div>}
               </div>
             )}
           </CardContent>

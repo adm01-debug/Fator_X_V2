@@ -100,7 +100,7 @@ export function SimulationResultDialog({
           <DialogTitle className="flex items-center gap-2">
             {readOnlyTitle ?? 'Simular execução do agente'}
             {!readOnlyTitle && summary && !running && (
-              <span className="ml-2 text-xs font-normal text-muted-foreground">
+              <span className="ml-2 text-meta font-normal text-muted-foreground">
                 {summary.total} execuções · {agentName}
               </span>
             )}
@@ -116,7 +116,7 @@ export function SimulationResultDialog({
         <>
         {/* Editor de prompt — sempre visível para permitir editar e re-rodar */}
         <div className="space-y-1.5">
-          <label htmlFor="sim-prompt" className="flex items-center gap-1.5 text-xs font-medium text-foreground">
+          <label htmlFor="sim-prompt" className="flex items-center gap-1.5 text-meta font-medium text-foreground">
             <Pencil className="h-3 w-3 text-primary" aria-hidden="true" />
             Prompt de entrada
             <span className="text-muted-foreground font-normal">(opcional)</span>
@@ -129,10 +129,10 @@ export function SimulationResultDialog({
             disabled={running}
             rows={3}
             maxLength={MAX_PROMPT_LEN + 50}
-            className="text-xs font-mono resize-none"
+            className="text-meta font-mono resize-none"
             aria-describedby="sim-prompt-help"
           />
-          <div id="sim-prompt-help" className="flex items-center justify-between text-[10px] text-muted-foreground">
+          <div id="sim-prompt-help" className="flex items-center justify-between text-meta text-muted-foreground">
             <span>
               {usingCustom
                 ? `✓ Todas as ${count} execuções vão usar este prompt customizado`
@@ -146,7 +146,7 @@ export function SimulationResultDialog({
 
         {/* Seletor de contagem de execuções */}
         <div className="space-y-1.5">
-          <span className="flex items-center gap-1.5 text-xs font-medium text-foreground">
+          <span className="flex items-center gap-1.5 text-meta font-medium text-foreground">
             <RefreshCw className="h-3 w-3 text-primary" aria-hidden="true" />
             Número de execuções
           </span>
@@ -165,7 +165,7 @@ export function SimulationResultDialog({
                   aria-checked={selected}
                   onClick={() => setCount(c)}
                   disabled={running}
-                  className={`px-3 py-1 rounded-md text-[11px] font-mono font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                  className={`px-3 py-1 rounded-md text-meta font-mono font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                     selected
                       ? 'bg-primary text-primary-foreground'
                       : 'text-muted-foreground hover:text-foreground hover:bg-secondary/60 disabled:opacity-50'
@@ -175,7 +175,7 @@ export function SimulationResultDialog({
                 </button>
               );
             })}
-            <span className="text-[10px] text-muted-foreground/70 ml-1.5 pr-1">
+            <span className="text-meta text-muted-foreground/70 ml-1.5 pr-1">
               Mais runs = estatísticas mais estáveis
             </span>
           </div>
@@ -186,7 +186,7 @@ export function SimulationResultDialog({
         {running && (
           <div className="flex flex-col items-center justify-center py-12 gap-3">
             <Loader2 className="h-8 w-8 animate-spin text-primary" aria-hidden="true" />
-            <p className="text-sm text-muted-foreground">Executando {count} simulações…</p>
+            <p className="text-body-sm text-muted-foreground">Executando {count} simulações…</p>
           </div>
         )}
 
@@ -194,7 +194,7 @@ export function SimulationResultDialog({
           <div className="space-y-4">
             {/* Status header */}
             <div className={`flex items-center justify-between rounded-xl border px-4 py-3 ${successBg(summary.successRate)}`}>
-              <div className="flex items-center gap-3 text-sm">
+              <div className="flex items-center gap-3 text-body-sm">
                 <span className="inline-flex items-center gap-1.5 text-nexus-emerald font-semibold">
                   <CheckCircle2 className="h-4 w-4" aria-hidden="true" /> {summary.passed} OK
                 </span>
@@ -204,7 +204,7 @@ export function SimulationResultDialog({
                 </span>
               </div>
               <div className="text-right">
-                <p className="text-[11px] uppercase tracking-wider text-muted-foreground">Taxa de sucesso</p>
+                <p className="text-meta uppercase tracking-wider text-muted-foreground">Taxa de sucesso</p>
                 <p className={`text-2xl font-heading font-extrabold tabular-nums ${successColor(summary.successRate)}`}>
                   {summary.successRate.toFixed(0)}%
                 </p>
@@ -222,7 +222,7 @@ export function SimulationResultDialog({
             {/* Runs table */}
             <div className="rounded-lg border border-border/50 overflow-hidden">
               <div className="max-h-[280px] overflow-y-auto">
-                <table className="w-full text-xs">
+                <table className="w-full text-meta">
                   <thead className="bg-secondary/40 sticky top-0">
                     <tr className="text-left text-muted-foreground border-b border-border/50">
                       <th scope="col" className="py-2 px-2 font-medium w-8">#</th>
@@ -271,7 +271,7 @@ export function SimulationResultDialog({
         {/* Salvar como Test Run — só com summary, agentId e fora do modo somente leitura */}
         {canSave && !hideRunControls && (
           <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 space-y-2">
-            <label htmlFor="sim-save-name" className="flex items-center gap-1.5 text-xs font-medium text-foreground">
+            <label htmlFor="sim-save-name" className="flex items-center gap-1.5 text-meta font-medium text-foreground">
               <Save className="h-3 w-3 text-primary" aria-hidden="true" />
               Salvar este Test Run
               <span className="text-muted-foreground font-normal">(opcional, fica no histórico do agente)</span>
@@ -284,7 +284,7 @@ export function SimulationResultDialog({
                 placeholder={`Ex.: Baseline antes da v${new Date().getDate()} — deixe vazio para nome automático`}
                 disabled={!!justSavedId}
                 maxLength={80}
-                className="h-8 text-xs"
+                className="h-8 text-meta"
               />
               <Button
                 size="sm"
@@ -298,7 +298,7 @@ export function SimulationResultDialog({
               </Button>
             </div>
             {justSavedId && (
-              <p className="text-[10px] text-nexus-emerald">
+              <p className="text-meta text-nexus-emerald">
                 Disponível em “Test Runs salvos” na página do agente.
               </p>
             )}
@@ -336,11 +336,11 @@ export function SimulationResultDialog({
 function MiniStat({ icon: Icon, label, value }: { icon: typeof Zap; label: string; value: string }) {
   return (
     <div className="rounded-lg border border-border/50 bg-card/50 p-2.5">
-      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
+      <div className="flex items-center gap-1.5 text-meta uppercase tracking-wider text-muted-foreground mb-1">
         <Icon className="h-3 w-3" aria-hidden="true" />
         {label}
       </div>
-      <p className="text-sm font-mono font-semibold text-foreground tabular-nums">{value}</p>
+      <p className="text-body-sm font-mono font-semibold text-foreground tabular-nums">{value}</p>
     </div>
   );
 }

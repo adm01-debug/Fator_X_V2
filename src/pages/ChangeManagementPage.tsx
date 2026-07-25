@@ -209,7 +209,7 @@ export default function ChangeManagementPage() {
           <h1 className="text-3xl font-heading font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
             Mudanças (CAB)
           </h1>
-          <p className="text-muted-foreground mt-1 text-sm">
+          <p className="text-muted-foreground mt-1 text-body-sm">
             Change Advisory Board — ITIL 4 / SOC2 CC8.1 / ISO 27001 A.12.1.2
           </p>
         </div>
@@ -345,7 +345,7 @@ export default function ChangeManagementPage() {
                           <TableCell><Badge variant="outline">{typeLabel(c.change_type)}</Badge></TableCell>
                           <TableCell><Badge variant="outline" className={riskVariant(c.risk_level)}>{c.risk_level}</Badge></TableCell>
                           <TableCell><Badge variant="outline" className={sv.className}>{sv.label}</Badge></TableCell>
-                          <TableCell className="text-sm">
+                          <TableCell className="text-body-sm">
                             {c.scheduled_for ? (
                               <span className={inFreeze ? "text-destructive font-semibold animate-pulse" : "text-muted-foreground"}>
                                 {new Date(c.scheduled_for).toLocaleString("pt-BR")}
@@ -387,8 +387,8 @@ export default function ChangeManagementPage() {
                       const isUpcoming = new Date(f.starts_at).getTime() > Date.now();
                       return (
                         <TableRow key={f.id}>
-                          <TableCell className="font-medium">{f.name}{f.reason && <p className="text-xs text-muted-foreground mt-0.5">{f.reason}</p>}</TableCell>
-                          <TableCell className="text-sm">
+                          <TableCell className="font-medium">{f.name}{f.reason && <p className="text-meta text-muted-foreground mt-0.5">{f.reason}</p>}</TableCell>
+                          <TableCell className="text-body-sm">
                             {new Date(f.starts_at).toLocaleString("pt-BR")} → {new Date(f.ends_at).toLocaleString("pt-BR")}
                           </TableCell>
                           <TableCell>{f.allow_emergency ? <Badge variant="outline" className="bg-nexus-amber/15 text-nexus-amber border-nexus-amber/30">Permitidas</Badge> : <Badge variant="outline" className="bg-destructive/15 text-destructive border-destructive/30">Bloqueadas</Badge>}</TableCell>
@@ -432,14 +432,14 @@ export default function ChangeManagementPage() {
                 <TabsContent value="details" className="space-y-4 pt-4">
                   {selected.description && (<Field label="Descrição" value={selected.description} />)}
                   {selected.affected_systems.length > 0 && (
-                    <div><p className="text-xs font-semibold text-muted-foreground uppercase mb-1">Sistemas afetados</p>
+                    <div><p className="text-meta font-semibold text-muted-foreground uppercase mb-1">Sistemas afetados</p>
                       <div className="flex gap-1.5 flex-wrap">{selected.affected_systems.map((s) => (<Badge key={s} variant="outline">{s}</Badge>))}</div>
                     </div>
                   )}
                   {selected.scheduled_for && (<Field label="Agendado para" value={new Date(selected.scheduled_for).toLocaleString("pt-BR")} />)}
                   {selected.rollback_plan && (<Field label="Plano de rollback" value={selected.rollback_plan} mono />)}
                   {selected.validation_steps && (<Field label="Validação" value={selected.validation_steps} mono />)}
-                  {selected.post_mortem_url && (<div><p className="text-xs font-semibold text-muted-foreground uppercase mb-1">Post-mortem</p><a href={selected.post_mortem_url} target="_blank" rel="noreferrer" className="text-primary text-sm underline">{selected.post_mortem_url}</a></div>)}
+                  {selected.post_mortem_url && (<div><p className="text-meta font-semibold text-muted-foreground uppercase mb-1">Post-mortem</p><a href={selected.post_mortem_url} target="_blank" rel="noreferrer" className="text-primary text-body-sm underline">{selected.post_mortem_url}</a></div>)}
                 </TabsContent>
 
                 <TabsContent value="approvals" className="space-y-4 pt-4">
@@ -456,15 +456,15 @@ export default function ChangeManagementPage() {
                     </Card>
                   )}
                   {approvals.length === 0 ? (
-                    <p className="text-center text-sm text-muted-foreground py-8">Nenhuma decisão ainda</p>
+                    <p className="text-center text-body-sm text-muted-foreground py-8">Nenhuma decisão ainda</p>
                   ) : (
                     <div className="space-y-2">
                       {approvals.map((a) => (
                         <Card key={a.id}>
                           <CardContent className="p-3 flex items-start justify-between gap-3">
                             <div className="min-w-0">
-                              <div className="flex items-center gap-2"><Badge variant="outline" className={a.decision === "approve" ? "bg-nexus-emerald/15 text-nexus-emerald border-nexus-emerald/30" : a.decision === "reject" ? "bg-destructive/15 text-destructive border-destructive/30" : "bg-nexus-amber/15 text-nexus-amber border-nexus-amber/30"}>{a.decision}</Badge><span className="text-xs text-muted-foreground">{new Date(a.decided_at).toLocaleString("pt-BR")}</span></div>
-                              {a.comment && <p className="text-sm mt-1">{a.comment}</p>}
+                              <div className="flex items-center gap-2"><Badge variant="outline" className={a.decision === "approve" ? "bg-nexus-emerald/15 text-nexus-emerald border-nexus-emerald/30" : a.decision === "reject" ? "bg-destructive/15 text-destructive border-destructive/30" : "bg-nexus-amber/15 text-nexus-amber border-nexus-amber/30"}>{a.decision}</Badge><span className="text-meta text-muted-foreground">{new Date(a.decided_at).toLocaleString("pt-BR")}</span></div>
+                              {a.comment && <p className="text-body-sm mt-1">{a.comment}</p>}
                             </div>
                           </CardContent>
                         </Card>
@@ -485,7 +485,7 @@ export default function ChangeManagementPage() {
                   )}
                   {(selected.status === "completed" || selected.status === "failed" || selected.status === "in_progress") && (
                     <Card>
-                      <CardHeader><CardTitle className="text-base flex items-center gap-2"><ShieldAlert className="h-4 w-4" /> Rollback</CardTitle></CardHeader>
+                      <CardHeader><CardTitle className="text-title-sm flex items-center gap-2"><ShieldAlert className="h-4 w-4" /> Rollback</CardTitle></CardHeader>
                       <CardContent className="space-y-2">
                         <Input value={rollbackUrl} onChange={(e) => setRollbackUrl(e.target.value)} placeholder="URL do post-mortem (obrigatório)" />
                         <Button onClick={handleRollback} variant="outline" className="w-full">Registrar rollback</Button>
@@ -508,7 +508,7 @@ function StatCard({ icon, label, value, loading, pulse }: { icon: React.ReactNod
   return (
     <Card className={pulse ? "border-destructive/40" : undefined}>
       <CardContent className="p-4">
-        <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-wide">{icon} {label}</div>
+        <div className="flex items-center gap-2 text-meta font-medium text-muted-foreground uppercase tracking-wide">{icon} {label}</div>
         <div className={`text-3xl font-bold mt-2 ${pulse ? "text-destructive animate-pulse" : ""}`}>
           {loading ? <Skeleton className="h-8 w-16" /> : value}
         </div>
@@ -520,8 +520,8 @@ function StatCard({ icon, label, value, loading, pulse }: { icon: React.ReactNod
 function Field({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
   return (
     <div>
-      <p className="text-xs font-semibold text-muted-foreground uppercase mb-1">{label}</p>
-      <p className={`text-sm whitespace-pre-wrap ${mono ? "font-mono bg-muted/40 p-2 rounded" : ""}`}>{value}</p>
+      <p className="text-meta font-semibold text-muted-foreground uppercase mb-1">{label}</p>
+      <p className={`text-body-sm whitespace-pre-wrap ${mono ? "font-mono bg-muted/40 p-2 rounded" : ""}`}>{value}</p>
     </div>
   );
 }

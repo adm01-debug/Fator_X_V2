@@ -53,7 +53,7 @@ describe("AppSidebar", () => {
 
   it("renders the brand name", () => {
     renderSidebar();
-    expect(screen.getByText("FATOR")).toBeInTheDocument();
+    expect(screen.getByLabelText("Fator X")).toBeInTheDocument();
   });
 
   it("renders the collapse button with aria-label", () => {
@@ -61,9 +61,9 @@ describe("AppSidebar", () => {
     expect(screen.getByLabelText("Recolher sidebar")).toBeInTheDocument();
   });
 
-  it("renders workspace info", () => {
+  it("renders workspace info", async () => {
     renderSidebar();
-    expect(screen.getByText(/Workspace Free/)).toBeInTheDocument();
-    expect(screen.getByRole("progressbar")).toBeInTheDocument();
+    expect(await screen.findByText(/Vazão do Workspace/i)).toBeInTheDocument();
+    expect(await screen.findByRole("progressbar")).toBeInTheDocument();
   });
 });

@@ -157,7 +157,7 @@ export default function GameDayLivePage() {
             <div className="flex items-center gap-3">
               <Timer className="h-8 w-8 text-primary animate-pulse" />
               <div>
-                <p className="text-xs uppercase tracking-wider text-muted-foreground">Tempo decorrido</p>
+                <p className="text-meta uppercase tracking-wider text-muted-foreground">Tempo decorrido</p>
                 <p className="text-3xl font-bold tabular-nums font-mono">{formatDuration(elapsedSeconds)}</p>
               </div>
             </div>
@@ -172,38 +172,38 @@ export default function GameDayLivePage() {
         <Card className="p-6 border-primary/30 bg-gradient-to-br from-primary/5 to-transparent">
           <div className="flex items-center gap-3 mb-4">
             <Trophy className="h-6 w-6 text-primary" />
-            <h2 className="text-lg font-semibold">Scorecard</h2>
+            <h2 className="text-title-sm font-semibold">Scorecard</h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
-              <p className="text-xs text-muted-foreground uppercase">MTTR</p>
+              <p className="text-meta text-muted-foreground uppercase">MTTR</p>
               <p className="text-2xl font-bold tabular-nums">{formatDuration(scorecard.mttr_seconds)}</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground uppercase">MTTD</p>
+              <p className="text-meta text-muted-foreground uppercase">MTTD</p>
               <p className="text-2xl font-bold tabular-nums">{formatDuration(scorecard.mttd_seconds)}</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground uppercase">Score</p>
+              <p className="text-meta text-muted-foreground uppercase">Score</p>
               <p className="text-2xl font-bold">{scorecard.score ?? '—'}/10</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground uppercase">Runbook</p>
+              <p className="text-meta text-muted-foreground uppercase">Runbook</p>
               <p className="text-2xl font-bold">{scorecard.runbook_followed ? '✓' : '✗'}</p>
             </div>
           </div>
           {scorecard.gaps_found.length > 0 && (
             <div className="mt-4">
-              <p className="text-xs text-muted-foreground uppercase mb-2">Gaps identificados</p>
-              <ul className="text-sm space-y-1">
+              <p className="text-meta text-muted-foreground uppercase mb-2">Gaps identificados</p>
+              <ul className="text-body-sm space-y-1">
                 {scorecard.gaps_found.map((g, i) => <li key={i}>• {g}</li>)}
               </ul>
             </div>
           )}
           {scorecard.retrospective_notes && (
             <div className="mt-4">
-              <p className="text-xs text-muted-foreground uppercase mb-2">Retrospectiva</p>
-              <p className="text-sm">{scorecard.retrospective_notes}</p>
+              <p className="text-meta text-muted-foreground uppercase mb-2">Retrospectiva</p>
+              <p className="text-body-sm">{scorecard.retrospective_notes}</p>
             </div>
           )}
         </Card>
@@ -236,7 +236,7 @@ export default function GameDayLivePage() {
       <Card className="p-5">
         <h3 className="font-semibold mb-4">Timeline ({events.length})</h3>
         {events.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Nenhum evento ainda.</p>
+          <p className="text-body-sm text-muted-foreground">Nenhum evento ainda.</p>
         ) : (
           <div className="space-y-3">
             {events.map((ev) => {
@@ -247,12 +247,12 @@ export default function GameDayLivePage() {
                   <Icon className={`h-5 w-5 mt-0.5 shrink-0 ${meta.color}`} />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-sm">{meta.label}</span>
-                      <span className="text-xs text-muted-foreground tabular-nums">
+                      <span className="font-semibold text-body-sm">{meta.label}</span>
+                      <span className="text-meta text-muted-foreground tabular-nums">
                         {new Date(ev.occurred_at).toLocaleTimeString('pt-BR')}
                       </span>
                     </div>
-                    <p className="text-sm text-foreground/80 mt-0.5">{ev.description}</p>
+                    <p className="text-body-sm text-foreground/80 mt-0.5">{ev.description}</p>
                   </div>
                 </div>
               );

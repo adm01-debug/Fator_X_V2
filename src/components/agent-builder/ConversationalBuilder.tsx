@@ -173,11 +173,11 @@ export function ConversationalBuilder({ open, onOpenChange }: ConversationalBuil
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full sm:max-w-md p-0 flex flex-col">
         <SheetHeader className="px-5 py-4 border-b shrink-0">
-          <SheetTitle className="flex items-center gap-2 text-base">
+          <SheetTitle className="flex items-center gap-2 text-title-sm">
             <Sparkles className="h-4 w-4 text-primary" />
             Builder Conversacional
           </SheetTitle>
-          <SheetDescription className="text-xs">
+          <SheetDescription className="text-meta">
             Converse e seu agente é montado em tempo real.
           </SheetDescription>
         </SheetHeader>
@@ -190,7 +190,7 @@ export function ConversationalBuilder({ open, onOpenChange }: ConversationalBuil
                 className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm whitespace-pre-wrap ${
+                  className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-body-sm whitespace-pre-wrap ${
                     m.role === 'user'
                       ? 'bg-primary text-primary-foreground'
                       : 'bg-muted text-foreground'
@@ -221,14 +221,14 @@ export function ConversationalBuilder({ open, onOpenChange }: ConversationalBuil
               onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())}
               placeholder="Sua resposta…"
               disabled={loading}
-              className="text-sm"
+              className="text-body-sm"
             />
             <Button size="icon" onClick={handleSend} disabled={loading || !input.trim()}>
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             </Button>
           </div>
           {messages.length > 1 && (
-            <Button variant="ghost" size="sm" onClick={handleReset} className="w-full text-xs h-7">
+            <Button variant="ghost" size="sm" onClick={handleReset} className="w-full text-meta h-7">
               Recomeçar conversa
             </Button>
           )}

@@ -43,7 +43,7 @@ export function BehaviorImpactPanel({ agentId, diff, options }: Props) {
 
   if (isLoading) {
     return (
-      <div className="rounded-lg border border-border/50 bg-card/30 p-4 flex items-center gap-2 text-xs text-muted-foreground">
+      <div className="rounded-lg border border-border/50 bg-card/30 p-4 flex items-center gap-2 text-meta text-muted-foreground">
         <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
         Calculando impacto operacional dos últimos 7 dias…
       </div>
@@ -52,7 +52,7 @@ export function BehaviorImpactPanel({ agentId, diff, options }: Props) {
 
   if (isError || !data) {
     return (
-      <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 flex items-center gap-2 text-xs text-destructive">
+      <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 flex items-center gap-2 text-meta text-destructive">
         <AlertTriangle className="h-3.5 w-3.5" aria-hidden />
         Não foi possível calcular o impacto comportamental — diff de configuração ainda é confiável.
       </div>
@@ -66,15 +66,15 @@ export function BehaviorImpactPanel({ agentId, diff, options }: Props) {
       <header className="flex items-center justify-between gap-2 px-3 py-2 bg-primary/[0.05] border-b border-primary/15">
         <div className="flex items-center gap-1.5">
           <Sparkles className="h-3.5 w-3.5 text-primary" aria-hidden />
-          <h4 className="text-xs font-semibold text-foreground">Impacto comportamental estimado</h4>
+          <h4 className="text-meta font-semibold text-foreground">Impacto comportamental estimado</h4>
         </div>
-        <span className="text-[10px] font-mono text-muted-foreground">
+        <span className="text-meta font-mono text-muted-foreground">
           baseado em {data.prompt.totalTraces} trace{data.prompt.totalTraces === 1 ? '' : 's'} dos últimos {data.windowDays}d
         </span>
       </header>
 
       {noTrafficAtAll ? (
-        <div className="p-4 text-xs text-muted-foreground text-center">
+        <div className="p-4 text-meta text-muted-foreground text-center">
           Nenhum trace registrado nos últimos {data.windowDays} dias — não temos dados de uso para estimar o impacto.
           O diff de configuração acima continua sendo a fonte de verdade.
         </div>
@@ -101,17 +101,17 @@ function PromptImpactCard({ data, diff }: { data: AgentBehaviorImpact; diff: Res
     <section className="rounded-md border border-border/50 bg-background/50 p-2.5 space-y-2">
       <header className="flex items-center gap-1.5">
         <MessageSquare className="h-3 w-3 text-primary" aria-hidden />
-        <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground">Prompt</span>
+        <span className="text-meta font-semibold uppercase tracking-wider text-foreground">Prompt</span>
         {willChange ? (
-          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-primary/15 text-primary">
+          <span className="text-meta font-mono px-1.5 py-0.5 rounded bg-primary/15 text-primary">
             {promptChanges.length} campo{promptChanges.length === 1 ? '' : 's'} mudará
           </span>
         ) : (
-          <span className="text-[10px] text-muted-foreground">sem alterações</span>
+          <span className="text-meta text-muted-foreground">sem alterações</span>
         )}
       </header>
 
-      <ul className="text-[11px] text-foreground/90 space-y-1">
+      <ul className="text-meta text-foreground/90 space-y-1">
         <li className="flex items-center gap-1.5">
           <Activity className="h-2.5 w-2.5 text-muted-foreground" aria-hidden />
           <span>
@@ -123,7 +123,7 @@ function PromptImpactCard({ data, diff }: { data: AgentBehaviorImpact; diff: Res
           <Activity className="h-2.5 w-2.5 text-muted-foreground" aria-hidden />
           <span>
             <strong className="font-mono text-primary">{data.prompt.reasoningEvents}</strong>{' '}
-            eventos de raciocínio (<code className="text-[10px]">agent.start</code>, <code className="text-[10px]">llm.*</code>, <code className="text-[10px]">reasoning</code>) consultam-no diretamente
+            eventos de raciocínio (<code className="text-meta">agent.start</code>, <code className="text-meta">llm.*</code>, <code className="text-meta">reasoning</code>) consultam-no diretamente
           </span>
         </li>
         <li className="flex items-center gap-1.5">
@@ -136,7 +136,7 @@ function PromptImpactCard({ data, diff }: { data: AgentBehaviorImpact; diff: Res
       </ul>
 
       {willChange && diff.promptDeltaChars !== 0 && (
-        <p className="text-[10px] text-muted-foreground italic border-t border-border/40 pt-1.5">
+        <p className="text-meta text-muted-foreground italic border-t border-border/40 pt-1.5">
           Δ{diff.promptDeltaChars > 0 ? '+' : ''}{diff.promptDeltaChars} chars no prompt → toda nova sessão (estimadas{' '}
           <strong className="font-mono">{Math.round(data.prompt.sessions / data.windowDays)}/dia</strong>) usará a versão restaurada.
         </p>
@@ -172,18 +172,18 @@ function ToolsImpactCard({ data, diff }: { data: AgentBehaviorImpact; diff: Rest
     <section className="rounded-md border border-border/50 bg-background/50 p-2.5 space-y-2">
       <header className="flex items-center gap-1.5 flex-wrap">
         <Wrench className="h-3 w-3 text-nexus-amber" aria-hidden />
-        <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground">Ferramentas</span>
+        <span className="text-meta font-semibold uppercase tracking-wider text-foreground">Ferramentas</span>
         {noToolChanges ? (
-          <span className="text-[10px] text-muted-foreground">sem alterações</span>
+          <span className="text-meta text-muted-foreground">sem alterações</span>
         ) : (
           <>
             {removed.length > 0 && (
-              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-destructive/15 text-destructive">
+              <span className="text-meta font-mono px-1.5 py-0.5 rounded bg-destructive/15 text-destructive">
                 −{removed.length} perdida{removed.length === 1 ? '' : 's'}
               </span>
             )}
             {added.length > 0 && (
-              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-nexus-emerald/15 text-nexus-emerald">
+              <span className="text-meta font-mono px-1.5 py-0.5 rounded bg-nexus-emerald/15 text-nexus-emerald">
                 +{added.length} ganha{added.length === 1 ? '' : 's'}
               </span>
             )}
@@ -194,7 +194,7 @@ function ToolsImpactCard({ data, diff }: { data: AgentBehaviorImpact; diff: Rest
       {/* Tools removidas — mais críticas: vamos perder capability em uso */}
       {removed.length > 0 && (
         <div className="space-y-1.5">
-          <p className="text-[10px] font-semibold text-destructive uppercase tracking-wider">
+          <p className="text-meta font-semibold text-destructive uppercase tracking-wider">
             Será removido ({removed.length})
           </p>
           {removed.map((name) => {
@@ -207,7 +207,7 @@ function ToolsImpactCard({ data, diff }: { data: AgentBehaviorImpact; diff: Rest
       {/* Tools adicionadas — capability nova; sem histórico de uso ainda */}
       {added.length > 0 && (
         <div className="space-y-1.5">
-          <p className="text-[10px] font-semibold text-nexus-emerald uppercase tracking-wider">
+          <p className="text-meta font-semibold text-nexus-emerald uppercase tracking-wider">
             Será adicionado ({added.length})
           </p>
           {added.map((name) => (
@@ -219,10 +219,10 @@ function ToolsImpactCard({ data, diff }: { data: AgentBehaviorImpact; diff: Rest
       {/* Top 3 preservadas — contexto de "o que continua funcionando igual" */}
       {preserved.length > 0 && (
         <div className="space-y-1 border-t border-border/40 pt-1.5">
-          <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+          <p className="text-meta font-semibold text-muted-foreground uppercase tracking-wider">
             Preservadas (top {preserved.length} por uso)
           </p>
-          <ul className="text-[10px] text-muted-foreground space-y-0.5">
+          <ul className="text-meta text-muted-foreground space-y-0.5">
             {preserved.map((u) => (
               <li key={u.key} className="flex items-center justify-between gap-2">
                 <span className="font-mono truncate">{u.displayName}</span>
@@ -236,7 +236,7 @@ function ToolsImpactCard({ data, diff }: { data: AgentBehaviorImpact; diff: Rest
       )}
 
       {noToolChanges && data.toolUsage.length === 0 && (
-        <p className="text-[10px] text-muted-foreground italic">
+        <p className="text-meta text-muted-foreground italic">
           Nenhuma tool foi chamada nos últimos {data.windowDays} dias — sem dados operacionais a comparar.
         </p>
       )}
@@ -259,11 +259,11 @@ function ToolImpactRow({
       : 'border-nexus-emerald/30 bg-nexus-emerald/5';
 
   return (
-    <div className={`rounded border ${tone} p-2 text-[11px]`}>
+    <div className={`rounded border ${tone} p-2 text-meta`}>
       <div className="flex items-center justify-between gap-2 mb-1">
         <span className="font-mono font-semibold text-foreground truncate">{name}</span>
         {usage && usage.calls > 0 && (
-          <span className="text-[10px] font-mono shrink-0 text-muted-foreground">
+          <span className="text-meta font-mono shrink-0 text-muted-foreground">
             {usage.calls} chamada{usage.calls === 1 ? '' : 's'} / {usage.sessions} sessõe{usage.sessions === 1 ? '' : 's'}
           </span>
         )}
@@ -272,7 +272,7 @@ function ToolImpactRow({
         <>
           {/* Etapas onde a tool aparece — responde "qual passo do agente vai parar de funcionar". */}
           {usage.events.length > 0 && (
-            <div className="flex items-start gap-1 text-[10px] text-muted-foreground mb-0.5">
+            <div className="flex items-start gap-1 text-meta text-muted-foreground mb-0.5">
               <span className="shrink-0">Etapas:</span>
               <div className="flex flex-wrap gap-1">
                 {usage.events.map((ev) => (
@@ -283,7 +283,7 @@ function ToolImpactRow({
               </div>
             </div>
           )}
-          <div className="flex items-center gap-2 text-[10px] text-destructive">
+          <div className="flex items-center gap-2 text-meta text-destructive">
             <AlertTriangle className="h-2.5 w-2.5" aria-hidden />
             <span>
               Após o rollback essas {usage.calls} chamada{usage.calls === 1 ? '' : 's'}/semana ficarão sem ferramenta.
@@ -293,12 +293,12 @@ function ToolImpactRow({
         </>
       )}
       {kind === 'removed' && (!usage || usage.calls === 0) && (
-        <p className="text-[10px] text-muted-foreground italic">
+        <p className="text-meta text-muted-foreground italic">
           Sem chamadas registradas nos últimos 7d — perda de baixo risco operacional.
         </p>
       )}
       {kind === 'added' && (
-        <p className="text-[10px] text-muted-foreground italic">
+        <p className="text-meta text-muted-foreground italic">
           Capability nova — sem histórico de uso ainda. Reasoner do agente decidirá quando invocar.
         </p>
       )}
@@ -318,9 +318,9 @@ function ModelImpactCard({ data, diff }: { data: AgentBehaviorImpact; diff: Rest
     <section className="rounded-md border border-border/50 bg-background/50 p-2.5 space-y-2">
       <header className="flex items-center gap-1.5 flex-wrap">
         <Cpu className="h-3 w-3 text-nexus-emerald" aria-hidden />
-        <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground">Modelo &amp; parâmetros</span>
+        <span className="text-meta font-semibold uppercase tracking-wider text-foreground">Modelo &amp; parâmetros</span>
         {modelChange && (
-          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-primary/15 text-primary inline-flex items-center gap-1">
+          <span className="text-meta font-mono px-1.5 py-0.5 rounded bg-primary/15 text-primary inline-flex items-center gap-1">
             <span className="font-mono">{String(modelChange.before)}</span>
             <ArrowRight className="h-2.5 w-2.5" aria-hidden />
             <span className="font-mono">{String(modelChange.after)}</span>
@@ -328,7 +328,7 @@ function ModelImpactCard({ data, diff }: { data: AgentBehaviorImpact; diff: Rest
         )}
       </header>
 
-      <div className="grid grid-cols-2 gap-2 text-[11px]">
+      <div className="grid grid-cols-2 gap-2 text-meta">
         <Metric label="Latência p50" value={`${data.model.p50LatencyMs} ms`} />
         <Metric label="Latência p95" value={`${data.model.p95LatencyMs} ms`} />
         <Metric label="Custo médio" value={`$${data.model.avgCostUsd.toFixed(4)}`} />
@@ -336,7 +336,7 @@ function ModelImpactCard({ data, diff }: { data: AgentBehaviorImpact; diff: Rest
       </div>
 
       {data.model.observedModel && modelChange && data.model.observedModel !== String(modelChange.after) && (
-        <p className="text-[10px] text-nexus-amber bg-nexus-amber/5 border border-nexus-amber/20 rounded px-2 py-1.5 flex items-start gap-1.5">
+        <p className="text-meta text-nexus-amber bg-nexus-amber/5 border border-nexus-amber/20 rounded px-2 py-1.5 flex items-start gap-1.5">
           <AlertTriangle className="h-3 w-3 shrink-0 mt-0.5" aria-hidden />
           <span>
             Métricas acima são do modelo <code className="font-mono">{data.model.observedModel}</code> em uso.
@@ -348,10 +348,10 @@ function ModelImpactCard({ data, diff }: { data: AgentBehaviorImpact; diff: Rest
 
       {paramChanges.length > 0 && (
         <div className="border-t border-border/40 pt-1.5">
-          <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+          <p className="text-meta font-semibold text-muted-foreground uppercase tracking-wider mb-1">
             Parâmetros que mudam ({paramChanges.length})
           </p>
-          <ul className="space-y-0.5 text-[10px]">
+          <ul className="space-y-0.5 text-meta">
             {paramChanges.map((c) => (
               <li key={c.field} className="flex items-center justify-between gap-2 font-mono">
                 <span className="text-foreground/80">{c.label}</span>
@@ -361,7 +361,7 @@ function ModelImpactCard({ data, diff }: { data: AgentBehaviorImpact; diff: Rest
               </li>
             ))}
           </ul>
-          <p className="text-[10px] text-muted-foreground italic mt-1">
+          <p className="text-meta text-muted-foreground italic mt-1">
             Esses ajustes alteram criatividade, tamanho e profundidade das respostas em todas as próximas execuções.
           </p>
         </div>
@@ -374,7 +374,7 @@ function Metric({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded bg-muted/30 px-2 py-1.5">
       <p className="text-[9px] uppercase tracking-wider text-muted-foreground">{label}</p>
-      <p className="font-mono text-xs font-semibold text-foreground">{value}</p>
+      <p className="font-mono text-meta font-semibold text-foreground">{value}</p>
     </div>
   );
 }

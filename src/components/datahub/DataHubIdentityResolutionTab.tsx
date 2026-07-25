@@ -127,10 +127,10 @@ export function DataHubIdentityResolutionTab() {
   return (
     <div className="space-y-4">
       <div>
-        <h3 className="text-sm font-heading font-semibold text-foreground flex items-center gap-2">
+        <h3 className="text-body-sm font-heading font-semibold text-foreground flex items-center gap-2">
           <Link2 className="h-4 w-4 text-primary" /> Identity Resolution
         </h3>
-        <p className="text-[11px] text-muted-foreground mt-0.5">
+        <p className="text-meta text-muted-foreground mt-0.5">
           Encontre a mesma entidade (cliente, fornecedor, contato) em todos os 5 bancos do DataHub. Auto-detecta CNPJ, CPF, email, telefone ou nome.
         </p>
       </div>
@@ -139,7 +139,7 @@ export function DataHubIdentityResolutionTab() {
       <div className="nexus-card space-y-3">
         <div className="flex gap-2 items-end flex-wrap">
           <div className="flex-1 min-w-[260px] space-y-1.5">
-            <Label className="text-xs">Valor para buscar</Label>
+            <Label className="text-meta">Valor para buscar</Label>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -154,9 +154,9 @@ export function DataHubIdentityResolutionTab() {
             </div>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Tipo</Label>
+            <Label className="text-meta">Tipo</Label>
             <Select value={queryType} onValueChange={setQueryType}>
-              <SelectTrigger className="bg-secondary/50 text-xs w-[180px]">
+              <SelectTrigger className="bg-secondary/50 text-meta w-[180px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -174,7 +174,7 @@ export function DataHubIdentityResolutionTab() {
           </Button>
         </div>
         {queryType === 'auto' && query && (
-          <p className="text-[10px] text-muted-foreground">
+          <p className="text-meta text-muted-foreground">
             Auto-detectado: <span className="font-mono text-primary">{detectQueryType(query)}</span>
           </p>
         )}
@@ -184,16 +184,16 @@ export function DataHubIdentityResolutionTab() {
       {result && submittedQuery && (
         <div className="grid grid-cols-3 gap-3">
           <div className="nexus-card text-center py-3">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Matches</p>
+            <p className="text-meta text-muted-foreground uppercase tracking-wider">Matches</p>
             <p className="text-xl font-bold text-primary mt-1">{result.total_matches}</p>
           </div>
           <div className="nexus-card text-center py-3">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Bancos</p>
+            <p className="text-meta text-muted-foreground uppercase tracking-wider">Bancos</p>
             <p className="text-xl font-bold text-nexus-emerald mt-1">{Object.keys(groupedByDb).length}/{result.databases_searched}</p>
           </div>
           <div className="nexus-card text-center py-3">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Tipo</p>
-            <p className="text-sm font-semibold text-nexus-purple mt-1">{result.query_type}</p>
+            <p className="text-meta text-muted-foreground uppercase tracking-wider">Tipo</p>
+            <p className="text-body-sm font-semibold text-nexus-purple mt-1">{result.query_type}</p>
           </div>
         </div>
       )}
@@ -206,10 +206,10 @@ export function DataHubIdentityResolutionTab() {
       ) : result && result.total_matches === 0 && submittedQuery ? (
         <div className="nexus-card text-center py-12">
           <AlertTriangle className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
-          <p className="text-sm text-muted-foreground">
+          <p className="text-body-sm text-muted-foreground">
             Nenhum match encontrado para "<span className="font-mono">{submittedQuery}</span>"
           </p>
-          <p className="text-[11px] text-muted-foreground/70 mt-1">
+          <p className="text-meta text-muted-foreground/70 mt-1">
             Tente usar nome parcial ou outro identificador
           </p>
         </div>
@@ -221,9 +221,9 @@ export function DataHubIdentityResolutionTab() {
               <div key={db} className="nexus-card">
                 <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border/30">
                   <Database className="h-4 w-4" style={{ color: dbCfg.color }} />
-                  <p className="text-xs font-semibold">{dbCfg.label}</p>
+                  <p className="text-meta font-semibold">{dbCfg.label}</p>
                   <code className="text-[9px] text-muted-foreground font-mono">{db}</code>
-                  <Badge variant="outline" className="ml-auto text-[10px]">
+                  <Badge variant="outline" className="ml-auto text-meta">
                     {matches.length} match(es)
                   </Badge>
                 </div>
@@ -233,7 +233,7 @@ export function DataHubIdentityResolutionTab() {
                       <div className="flex items-start justify-between gap-2 mb-1.5">
                         <div className="flex items-center gap-2 min-w-0 flex-1">
                           <CheckCircle2 className="h-3 w-3 text-nexus-emerald shrink-0" />
-                          <span className="text-xs font-mono text-foreground truncate">{m.matched_value}</span>
+                          <span className="text-meta font-mono text-foreground truncate">{m.matched_value}</span>
                         </div>
                         <Badge
                           variant="outline"
@@ -250,7 +250,7 @@ export function DataHubIdentityResolutionTab() {
                           {(m.confidence * 100).toFixed(0)}%
                         </Badge>
                       </div>
-                      <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mb-1">
+                      <div className="flex items-center gap-1.5 text-meta text-muted-foreground mb-1">
                         <span className="font-mono">{m.source_table}</span>
                         <ArrowRight className="h-2.5 w-2.5" />
                         <code>{m.source_id}</code>
@@ -258,7 +258,7 @@ export function DataHubIdentityResolutionTab() {
                       {Object.keys(m.fields).length > 0 && (
                         <div className="grid grid-cols-2 gap-1 mt-2 pt-2 border-t border-border/20">
                           {Object.entries(m.fields).slice(0, 4).map(([k, v]) => (
-                            <div key={k} className="text-[10px]">
+                            <div key={k} className="text-meta">
                               <span className="text-muted-foreground">{k}:</span>{' '}
                               <span className="text-foreground font-mono">
                                 {v == null ? 'null' : String(v).slice(0, 30)}
@@ -277,7 +277,7 @@ export function DataHubIdentityResolutionTab() {
       ) : (
         <div className="nexus-card text-center py-12 text-muted-foreground">
           <Search className="h-12 w-12 mx-auto opacity-30 mb-3" />
-          <p className="text-sm">Digite um identificador acima para começar</p>
+          <p className="text-body-sm">Digite um identificador acima para começar</p>
         </div>
       )}
     </div>

@@ -1,3 +1,4 @@
+import type { DbRow } from '@/types/dbRow';
 /**
  * ═══════════════════════════════════════════════════════════════
  * Nexus Agents Studio — AG-UI Protocol Implementation
@@ -78,7 +79,7 @@ export function createSSEEmitter() {
     emit({ type: 'TOOL_CALL_START', timestamp: Date.now(), toolCallId, data: { name } });
   }
 
-  function emitToolEnd(toolCallId: string, result: unknown) {
+  function emitToolEnd(toolCallId: string, result: DbRow) {
     emit({ type: 'TOOL_CALL_END', timestamp: Date.now(), toolCallId, data: { result } });
   }
 

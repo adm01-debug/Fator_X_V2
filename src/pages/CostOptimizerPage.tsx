@@ -30,26 +30,26 @@ export default function CostOptimizerPage() {
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-8 max-w-[1440px] mx-auto animate-page-enter">
       {/* FinOps Industrial Header */}
-      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-xl shadow-nexus-emerald/5 relative overflow-hidden group">
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-nexus-xl shadow-nexus-emerald/5 relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-96 h-96 bg-nexus-emerald/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
         
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative">
           <div className="flex items-center gap-7">
-            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-nexus-emerald/20 to-nexus-emerald/5 flex items-center justify-center border border-nexus-emerald/20 shadow-2xl shadow-nexus-emerald/10 group-hover:scale-105 transition-transform duration-500">
+            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-nexus-emerald/20 to-nexus-emerald/5 flex items-center justify-center border border-nexus-emerald/20 shadow-nexus-2xl shadow-nexus-emerald/10 group-hover:scale-105 transition-transform duration-500">
               <TrendingDown className="h-11 w-11 text-nexus-emerald animate-float" />
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-3">
                 <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Cost Optimizer</h1>
-                <Badge className="bg-nexus-emerald/10 text-nexus-emerald border-none font-black px-3 py-1 rounded-full text-[10px] tracking-widest uppercase">FinOps Neural</Badge>
+                <Badge className="bg-nexus-emerald/10 text-nexus-emerald border-none font-black px-3 py-1 rounded-full text-meta tracking-widest uppercase">FinOps Neural</Badge>
               </div>
-              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+              <p className="text-title-sm text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Maximização de eficiência cognitiva. Recomendações automáticas baseadas em padrões reais de consumo e qualidade de modelos.
               </p>
             </div>
           </div>
           <div className="flex items-center gap-4">
-             <Button className="h-12 px-8 rounded-2xl font-bold nexus-gradient-bg text-primary-foreground shadow-xl shadow-primary/20" onClick={() => toast.success("Audit de Custos disparado")}>
+             <Button className="h-12 px-8 rounded-2xl font-bold nexus-gradient-bg text-primary-foreground shadow-nexus-xl shadow-primary/20" onClick={() => toast.success("Audit de Custos disparado")}>
                <Sparkles className="h-5 w-5 mr-2" />
                Deep Audit AI
              </Button>
@@ -65,13 +65,13 @@ export default function CostOptimizerPage() {
 
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
-          <Card className="border-border/40 rounded-[2rem] overflow-hidden bg-card/50 backdrop-blur-xl shadow-sm">
+          <Card className="border-border/40 rounded-[2rem] overflow-hidden bg-card/50 backdrop-blur-xl shadow-nexus-sm">
             <CardHeader className="p-8 border-b bg-muted/20 flex flex-row items-center justify-between">
               <div>
                 <CardTitle className="text-xl font-bold flex items-center gap-3">
                   <Lightbulb className="h-5 w-5 text-nexus-amber" /> Neural Recommendations
                 </CardTitle>
-                <CardDescription className="text-xs uppercase tracking-widest font-black mt-1">Atualizado em tempo real via telemetria Nexus</CardDescription>
+                <CardDescription className="text-meta uppercase tracking-widest font-black mt-1">Atualizado em tempo real via telemetria Nexus</CardDescription>
               </div>
               <Badge variant="outline" className="border-border/60">{recs.length} Oportunidades</Badge>
             </CardHeader>
@@ -90,18 +90,18 @@ export default function CostOptimizerPage() {
                         )}>
                           Impacto {r.impact}
                         </Badge>
-                        <h4 className="text-base font-bold text-foreground">{r.title}</h4>
+                        <h4 className="text-title-sm font-bold text-foreground">{r.title}</h4>
                       </div>
-                      <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl">{r.description}</p>
+                      <p className="text-body-sm text-muted-foreground leading-relaxed max-w-2xl">{r.description}</p>
                       {r.applied && (
-                        <div className="flex items-center gap-1.5 text-[10px] text-nexus-emerald font-bold uppercase tracking-widest pt-2">
+                        <div className="flex items-center gap-1.5 text-meta text-nexus-emerald font-bold uppercase tracking-widest pt-2">
                            <ShieldCheck className="h-3 w-3" /> Aplicado via Staged Deploy
                         </div>
                       )}
                     </div>
                     <div className="text-right space-y-4 shrink-0">
                        <div className="space-y-0.5">
-                          <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Savings / Mo</p>
+                          <p className="text-meta font-black uppercase text-muted-foreground tracking-widest">Savings / Mo</p>
                           <p className="text-2xl font-black font-mono text-nexus-emerald">-${r.savings.toFixed(2)}</p>
                        </div>
                        {!r.applied && (
@@ -120,7 +120,7 @@ export default function CostOptimizerPage() {
         <div className="space-y-8">
            <Card className="border-border/40 rounded-[2.5rem] bg-card/50 backdrop-blur-xl">
              <CardHeader className="p-8 border-b">
-               <CardTitle className="text-lg font-bold flex items-center gap-2">
+               <CardTitle className="text-title-sm font-bold flex items-center gap-2">
                  <PieChart className="h-5 w-5 text-primary" /> Cost Distribution
                </CardTitle>
              </CardHeader>
@@ -132,7 +132,7 @@ export default function CostOptimizerPage() {
                    { name: "Gemini 2.5 (High Volume)", val: 14, color: "bg-nexus-blue" }
                  ].map((item, i) => (
                    <div key={i} className="space-y-2">
-                     <div className="flex justify-between text-[11px] font-bold">
+                     <div className="flex justify-between text-meta font-bold">
                         <span className="text-muted-foreground">{item.name}</span>
                         <span>{item.val}%</span>
                      </div>
@@ -141,7 +141,7 @@ export default function CostOptimizerPage() {
                  ))}
                </div>
                <div className="pt-4 border-t border-border/40">
-                  <Button variant="outline" className="w-full h-10 rounded-xl text-[10px] font-bold uppercase tracking-widest border-border/40" asChild>
+                  <Button variant="outline" className="w-full h-10 rounded-xl text-meta font-bold uppercase tracking-widest border-border/40" asChild>
                      <a href="/billing">Gerenciar Billing</a>
                   </Button>
                </div>
@@ -153,11 +153,11 @@ export default function CostOptimizerPage() {
                <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
                   <DollarSign className="h-6 w-6 text-primary" />
                </div>
-               <h3 className="text-lg font-bold">Budget Guardrails</h3>
-               <p className="text-xs text-muted-foreground leading-relaxed">
+               <h3 className="text-title-sm font-bold">Budget Guardrails</h3>
+               <p className="text-meta text-muted-foreground leading-relaxed">
                  O Nexus bloqueia automaticamente chamadas se o orçamento diário for atingido, prevenindo picos de custo por loops infinitos ou ataques.
                </p>
-               <Button variant="link" className="p-0 h-auto text-primary font-bold text-xs uppercase tracking-widest" asChild>
+               <Button variant="link" className="p-0 h-auto text-primary font-bold text-meta uppercase tracking-widest" asChild>
                   <a href="/budget-settings">Configurar Limites →</a>
                </Button>
              </CardContent>
@@ -179,13 +179,13 @@ interface MetricCardProps {
 
 function FinOpsMetricCard({ label, value, icon: Icon, trend, subLabel, color = "text-foreground" }: MetricCardProps) {
   return (
-    <Card className="bg-card/50 border-border/40 rounded-[2.5rem] p-8 shadow-sm group hover:border-primary/20 transition-all">
+    <Card className="bg-card/50 border-border/40 rounded-[2.5rem] p-8 shadow-nexus-sm group hover:border-primary/20 transition-all">
       <div className="flex items-start justify-between mb-5">
         <div className="h-12 w-12 rounded-2xl bg-secondary flex items-center justify-center border border-border/20 group-hover:scale-110 transition-transform duration-500">
           <Icon className="h-6 w-6 text-primary" />
         </div>
         {trend && (
-           <Badge className="bg-nexus-emerald/10 text-nexus-emerald border-none text-[10px] font-black">
+           <Badge className="bg-nexus-emerald/10 text-nexus-emerald border-none text-meta font-black">
              {trend} SAVINGS
            </Badge>
         )}
@@ -194,9 +194,9 @@ function FinOpsMetricCard({ label, value, icon: Icon, trend, subLabel, color = "
          <span className={color}>{value}</span>
       </p>
       <div className="flex items-center gap-2">
-         <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{label}</p>
+         <p className="text-meta font-black uppercase tracking-widest text-muted-foreground">{label}</p>
          <span className="h-1 w-1 rounded-full bg-border" />
-         <p className="text-[10px] font-bold text-muted-foreground opacity-40">{subLabel}</p>
+         <p className="text-meta font-bold text-muted-foreground opacity-40">{subLabel}</p>
       </div>
     </Card>
   );

@@ -204,7 +204,7 @@ export default function PostmortemEditorPage() {
               <Badge variant="outline">{pm.incident_source.replace("_", " ")}</Badge>
               <Badge variant="outline">{status === "draft" ? "Rascunho" : status === "review" ? "Em revisão" : "Publicado"}</Badge>
               {pm.published_at && (
-                <span className="text-xs text-muted-foreground">
+                <span className="text-meta text-muted-foreground">
                   Publicado em {new Date(pm.published_at).toLocaleString("pt-BR")}
                 </span>
               )}
@@ -222,14 +222,14 @@ export default function PostmortemEditorPage() {
       </header>
 
       {!canPublish && status !== "published" && (
-        <div className="rounded-lg border border-nexus-amber/30 bg-nexus-amber/10 p-3 text-xs text-nexus-amber">
+        <div className="rounded-lg border border-nexus-amber/30 bg-nexus-amber/10 p-3 text-meta text-nexus-amber">
           Para publicar: resumo (≥10 chars), causa raiz (≥10 chars) e pelo menos 1 action item.
         </div>
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <Card><CardContent className="p-3">
-          <Label className="text-xs">Severidade</Label>
+          <Label className="text-meta">Severidade</Label>
           <Select value={severity} onValueChange={(v) => setSeverity(v as PostmortemSeverity)}>
             <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
             <SelectContent>
@@ -241,7 +241,7 @@ export default function PostmortemEditorPage() {
           </Select>
         </CardContent></Card>
         <Card><CardContent className="p-3">
-          <Label className="text-xs">Status</Label>
+          <Label className="text-meta">Status</Label>
           <Select value={status} onValueChange={(v) => setStatus(v as PostmortemStatus)} disabled={status === "published"}>
             <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
             <SelectContent>
@@ -251,13 +251,13 @@ export default function PostmortemEditorPage() {
           </Select>
         </CardContent></Card>
         <Card><CardContent className="p-3">
-          <Label className="text-xs">Origem</Label>
-          <p className="text-sm font-medium mt-1.5 capitalize">{pm.incident_source.replace("_", " ")}</p>
+          <Label className="text-meta">Origem</Label>
+          <p className="text-body-sm font-medium mt-1.5 capitalize">{pm.incident_source.replace("_", " ")}</p>
         </CardContent></Card>
       </div>
 
       <Card>
-        <CardHeader><CardTitle className="text-base">Resumo executivo</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-title-sm">Resumo executivo</CardTitle></CardHeader>
         <CardContent>
           <Textarea
             value={summary}
@@ -271,31 +271,31 @@ export default function PostmortemEditorPage() {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-base flex items-center gap-2"><Clock className="h-4 w-4" /> Timeline</CardTitle>
+            <CardTitle className="text-title-sm flex items-center gap-2"><Clock className="h-4 w-4" /> Timeline</CardTitle>
             <Button size="sm" variant="outline" onClick={addTimelineRow}><Plus className="h-3.5 w-3.5 mr-1" /> Evento</Button>
           </div>
         </CardHeader>
         <CardContent className="space-y-2">
-          {timeline.length === 0 && <p className="text-xs text-muted-foreground">Sem eventos. Adicione cronologia do incidente.</p>}
+          {timeline.length === 0 && <p className="text-meta text-muted-foreground">Sem eventos. Adicione cronologia do incidente.</p>}
           {timeline.map((t, i) => (
             <div key={i} className="grid grid-cols-12 gap-2 items-center">
               <Input
                 type="datetime-local"
                 value={t.at ? new Date(t.at).toISOString().slice(0, 16) : ""}
                 onChange={(e) => updateTimelineRow(i, { at: new Date(e.target.value).toISOString() })}
-                className="col-span-3 text-xs"
+                className="col-span-3 text-meta"
               />
               <Input
                 value={t.event}
                 onChange={(e) => updateTimelineRow(i, { event: e.target.value })}
                 placeholder="Evento"
-                className="col-span-3 text-xs"
+                className="col-span-3 text-meta"
               />
               <Input
                 value={t.detail ?? ""}
                 onChange={(e) => updateTimelineRow(i, { detail: e.target.value })}
                 placeholder="Detalhe"
-                className="col-span-5 text-xs"
+                className="col-span-5 text-meta"
               />
               <Button variant="ghost" size="icon" className="col-span-1" onClick={() => removeTimelineRow(i)}>
                 <Trash2 className="h-3.5 w-3.5 text-destructive" />
@@ -306,7 +306,7 @@ export default function PostmortemEditorPage() {
       </Card>
 
       <Card>
-        <CardHeader><CardTitle className="text-base">Causa raiz</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-title-sm">Causa raiz</CardTitle></CardHeader>
         <CardContent className="space-y-2">
           <Textarea
             value={rootCause}
@@ -314,19 +314,19 @@ export default function PostmortemEditorPage() {
             placeholder="Por que aconteceu? Use 5 Whys: 1) ... 2) ... 3) ..."
             rows={6}
           />
-          <p className="text-xs text-muted-foreground">
+          <p className="text-meta text-muted-foreground">
             Dica: aplique a técnica 5 Whys — pergunte "por quê?" cinco vezes para chegar à causa real, não ao sintoma.
           </p>
         </CardContent>
       </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <Card><CardHeader><CardTitle className="text-sm">O que deu certo</CardTitle></CardHeader>
+        <Card><CardHeader><CardTitle className="text-body-sm">O que deu certo</CardTitle></CardHeader>
           <CardContent>
             <Textarea value={wentWell} onChange={(e) => setWentWell(e.target.value)} rows={4} placeholder="Uma linha por item" />
           </CardContent>
         </Card>
-        <Card><CardHeader><CardTitle className="text-sm">O que deu errado</CardTitle></CardHeader>
+        <Card><CardHeader><CardTitle className="text-body-sm">O que deu errado</CardTitle></CardHeader>
           <CardContent>
             <Textarea value={wentWrong} onChange={(e) => setWentWrong(e.target.value)} rows={4} placeholder="Uma linha por item" />
           </CardContent>
@@ -334,7 +334,7 @@ export default function PostmortemEditorPage() {
       </div>
 
       <Card>
-        <CardHeader><CardTitle className="text-sm">Fatores contribuintes</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-body-sm">Fatores contribuintes</CardTitle></CardHeader>
         <CardContent>
           <Textarea value={contributing} onChange={(e) => setContributing(e.target.value)} rows={3} placeholder="Uma linha por fator" />
         </CardContent>
@@ -342,24 +342,24 @@ export default function PostmortemEditorPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2"><ListChecks className="h-4 w-4" /> Action items ({actions.length})</CardTitle>
+          <CardTitle className="text-title-sm flex items-center gap-2"><ListChecks className="h-4 w-4" /> Action items ({actions.length})</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="grid grid-cols-12 gap-2 items-end">
             <div className="col-span-5">
-              <Label className="text-xs">Descrição</Label>
+              <Label className="text-meta">Descrição</Label>
               <Input value={newActDesc} onChange={(e) => setNewActDesc(e.target.value)} placeholder="Ação a tomar" />
             </div>
             <div className="col-span-3">
-              <Label className="text-xs">Responsável</Label>
+              <Label className="text-meta">Responsável</Label>
               <Input value={newActOwner} onChange={(e) => setNewActOwner(e.target.value)} placeholder="Nome" />
             </div>
             <div className="col-span-2">
-              <Label className="text-xs">Prazo</Label>
+              <Label className="text-meta">Prazo</Label>
               <Input type="date" value={newActDue} onChange={(e) => setNewActDue(e.target.value)} />
             </div>
             <div className="col-span-1">
-              <Label className="text-xs">Prio</Label>
+              <Label className="text-meta">Prio</Label>
               <Select value={newActPrio} onValueChange={(v) => setNewActPrio(v as ActionPriority)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -378,11 +378,11 @@ export default function PostmortemEditorPage() {
             {actions.map((a) => (
               <div key={a.id} className="grid grid-cols-12 gap-2 items-center p-2 rounded-md border border-border bg-card">
                 <Badge variant="outline" className={`col-span-1 justify-center ${PRIORITY_COLORS[a.priority]}`}>{a.priority}</Badge>
-                <span className="col-span-4 text-sm truncate">{a.description}</span>
-                <span className="col-span-2 text-xs text-muted-foreground truncate">{a.owner_name || "—"}</span>
-                <span className="col-span-2 text-xs tabular-nums text-muted-foreground">{a.due_date || "—"}</span>
+                <span className="col-span-4 text-body-sm truncate">{a.description}</span>
+                <span className="col-span-2 text-meta text-muted-foreground truncate">{a.owner_name || "—"}</span>
+                <span className="col-span-2 text-meta tabular-nums text-muted-foreground">{a.due_date || "—"}</span>
                 <Select value={a.status} onValueChange={(v) => handleUpdateAction(a.id, { status: v as ActionStatus })}>
-                  <SelectTrigger className="col-span-2 h-7 text-xs"><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="col-span-2 h-7 text-meta"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="open">Aberto</SelectItem>
                     <SelectItem value="in_progress">Em andamento</SelectItem>
@@ -391,17 +391,17 @@ export default function PostmortemEditorPage() {
                   </SelectContent>
                 </Select>
                 <Button variant="ghost" size="icon" className="col-span-1 h-7 w-7" onClick={() => handleDeleteAction(a.id)}>
-                  {a.status === "done" ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> : <Trash2 className="h-3.5 w-3.5 text-destructive" />}
+                  {a.status === "done" ? <CheckCircle2 className="h-3.5 w-3.5 text-nexus-emerald" /> : <Trash2 className="h-3.5 w-3.5 text-destructive" />}
                 </Button>
               </div>
             ))}
-            {actions.length === 0 && <p className="text-xs text-muted-foreground text-center py-3">Nenhuma ação ainda.</p>}
+            {actions.length === 0 && <p className="text-meta text-muted-foreground text-center py-3">Nenhuma ação ainda.</p>}
           </div>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader><CardTitle className="text-sm">Lições aprendidas</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-body-sm">Lições aprendidas</CardTitle></CardHeader>
         <CardContent>
           <Textarea value={lessons} onChange={(e) => setLessons(e.target.value)} rows={3} placeholder="Conhecimento que fica para o time" />
         </CardContent>

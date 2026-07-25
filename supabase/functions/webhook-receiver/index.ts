@@ -5,13 +5,16 @@ import {
   checkRateLimit, 
   createAdminClient,
   jsonResponse,
-  errorResponse
+  errorResponse,
+  parseBody
 } from "../_shared/mod.ts";
+import { WebhookReceiverContracts } from "../_shared/contracts.ts";
 import { verifyHmac } from "../_shared/webhookSignature.ts";
+
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
-  const corsHeaders = getCorsHeaders(req);
+  const _corsHeaders = getCorsHeaders(req);
 
   const rateLimitResult = await checkRateLimit(req, { preset: "standard" });
   if (rateLimitResult) return rateLimitResult;
@@ -43,16 +46,16 @@ serve(async (req) => {
       return errorResponse(req, `Method ${req.method} not allowed`, 405);
     }
 
-    // Parse body for signature validation (need raw body for HMAC)
-    const rawBody = ['POST', 'PUT', 'PATCH'].includes(req.method) ? await req.text() : '';
-    let body = {};
-    if (rawBody) {
-      try {
-        body = JSON.parse(rawBody);
-      } catch {
-        body = {};
-      }
+    // Parse body with versioned contract validation
+    const { data: body, error: validationError, rawBody, _version } = await parseBody(req, WebhookReceiverContracts, { 
+      returnRawBody: true,
+      defaultVersion: 'v1' 
+    });
+
+    if (validationError) {
+      return validationError;
     }
+
 
     // Parse query params
     const queryParams: Record<string, string> = {};
@@ -104,9 +107,30 @@ serve(async (req) => {
       }
     }
 
+    // Dedupe: se o provedor enviou um event id conhecido, ignora duplicatas.
+    const externalEventId =
+      headers['x-github-delivery'] ||
+      headers['x-event-id'] ||
+      headers['x-request-id'] ||
+      headers['x-idempotency-key'] ||
+      (typeof body === 'object' && body !== null ? (body as Record<string, unknown>).id as string | undefined : undefined) ||
+      null;
+
+    if (externalEventId) {
+      const { data: existing } = await supabase
+        .from('webhook_events')
+        .select('id')
+        .eq('webhook_id', webhook.id)
+        .eq('external_event_id', externalEventId)
+        .maybeSingle();
+      if (existing) {
+        return jsonResponse(req, { success: true, deduped: true, webhook_id: webhook.id });
+      }
+    }
+
     // Log event
     const startTime = Date.now();
-    await logEvent(supabase, webhook.id, req.method, headers, queryParams, body, sourceIp, 'processed', 200);
+    await logEvent(supabase, webhook.id, req.method, headers, queryParams, body, sourceIp, 'processed', 200, externalEventId);
 
     // Update counter
     await supabase.rpc('increment_webhook_counter', { webhook_uuid: webhook.id });
@@ -120,19 +144,24 @@ serve(async (req) => {
       target: { type: webhook.target_type, id: webhook.target_id },
     });
 
+
   } catch (error) {
     return errorResponse(req, error instanceof Error ? error.message : 'Internal error', 500);
   }
 });
 
 async function logEvent(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
   supabase: any,
   webhookId: string, method: string, headers: Record<string, string>,
   queryParams: Record<string, string>, body: Record<string, unknown>,
   sourceIp: string, status: string, responseCode: number,
+  externalEventId: string | null = null,
 ) {
   await supabase.from('webhook_events').insert({
     webhook_id: webhookId, method, headers, query_params: queryParams,
     body, source_ip: sourceIp, status, response_code: responseCode,
+    external_event_id: externalEventId,
   });
 }
+

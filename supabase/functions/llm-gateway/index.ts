@@ -2,9 +2,20 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient, type SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { callLovable, callOpenRouter, callAnthropic, callOpenAICompatible, callHuggingFace, type LLMCallParams, type LLMResult } from "./providers.ts";
-import { getCorsHeaders, handleCorsPreflight, getRateLimitIdentifier, createRateLimitResponse, RATE_LIMITS } from "../_shared/mod.ts";
+import { 
+  getCorsHeaders, 
+  handleCorsPreflight, 
+  _getRateLimitIdentifier, 
+  _createRateLimitResponse, 
+  _RATE_LIMITS,
+  parseBody,
+  _jsonResponse,
+  errorResponse
+} from "../_shared/mod.ts";
+import { LLMGatewayContracts } from "../_shared/contracts.ts";
 import { startEdgeTrace } from "../_shared/otel.ts";
 import { maybeInjectFault, applyFault } from "../_shared/chaos.ts";
+
 
 // CORS handled by _shared/cors.ts — dynamic origin whitelist
 // corsHeaders removed — using getCorsHeaders(req) from _shared/cors.ts
@@ -32,43 +43,8 @@ function checkRateLimit(userId: string): boolean {
   return true;
 }
 
-// ═══ Input Validation ═══
-interface LLMRequest {
-  model: string;
-  messages: Array<{ role: string; content: string }>;
-  temperature: number;
-  max_tokens: number;
-  stream: boolean;
-  workspace_id?: string;
-  agent_id?: string;
-  session_id?: string;
-}
+// Validation logic removed — now using parseBody with LLMGatewayContracts
 
-function validateRequest(body: unknown): { valid: true; data: LLMRequest } | { valid: false; error: string } {
-  if (!body || typeof body !== 'object') return { valid: false, error: 'Request body must be a JSON object' };
-  const b = body as Record<string, unknown>;
-  if (typeof b.model !== 'string' || b.model.length < 2 || b.model.length > 200) return { valid: false, error: 'model must be a string (2-200 chars)' };
-  if (!Array.isArray(b.messages) || b.messages.length === 0 || b.messages.length > 100) return { valid: false, error: 'messages must be a non-empty array (max 100)' };
-  for (const msg of b.messages) {
-    if (!msg || typeof msg !== 'object') return { valid: false, error: 'Each message must be an object' };
-    const m = msg as Record<string, unknown>;
-    if (typeof m.role !== 'string' || !['system', 'user', 'assistant'].includes(m.role)) return { valid: false, error: 'Invalid message.role' };
-    if (typeof m.content !== 'string' || m.content.length === 0) return { valid: false, error: 'Empty message.content' };
-  }
-  return {
-    valid: true,
-    data: {
-      model: b.model as string,
-      messages: b.messages as Array<{ role: string; content: string }>,
-      temperature: typeof b.temperature === 'number' ? Math.max(0, Math.min(2, b.temperature)) : 0.7,
-      max_tokens: typeof b.max_tokens === 'number' ? Math.max(1, Math.min(32000, Math.floor(b.max_tokens))) : 4000,
-      workspace_id: typeof b.workspace_id === 'string' ? b.workspace_id : undefined,
-      agent_id: typeof b.agent_id === 'string' ? b.agent_id : undefined,
-      session_id: typeof b.session_id === 'string' ? b.session_id : undefined,
-      stream: b.stream === true,
-    },
-  };
-}
 
 // ═══ Cost Calculation from DB pricing ═══
 async function calculateCost(supabase: SupabaseClient, model: string, promptTokens: number, completionTokens: number): Promise<number> {
@@ -90,7 +66,7 @@ async function calculateCost(supabase: SupabaseClient, model: string, promptToke
 // ═══ PII Detection (Brazilian + International) ═══
 const PII_PATTERNS = [
   { name: 'cpf', regex: /\b\d{3}[.\s-]?\d{3}[.\s-]?\d{3}[.\s-]?\d{2}\b/g, repl: '[CPF]' },
-  { name: 'cnpj', regex: /\b\d{2}[.\s]?\d{3}[.\s]?\d{3}[\/\s]?\d{4}[.\s-]?\d{2}\b/g, repl: '[CNPJ]' },
+  { name: 'cnpj', regex: /\b\d{2}[.\s]?\d{3}[.\s]?\d{3}[/\s]?\d{4}[.\s-]?\d{2}\b/g, repl: '[CNPJ]' },
   { name: 'phone_br', regex: /\b(?:\+55\s?)?(?:\(?\d{2}\)?\s?)(?:9\s?\d{4}[-.\s]?\d{4}|\d{4}[-.\s]?\d{4})\b/g, repl: '[PHONE]' },
   { name: 'email', regex: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, repl: '[EMAIL]' },
   { name: 'credit_card', regex: /\b(?:\d{4}[-\s]?){3}\d{4}\b/g, repl: '[CARD]' },
@@ -191,6 +167,7 @@ async function checkGuardrails(supabase: SupabaseClient, agentId: string | undef
 }
 
 // ═══ Budget Check (legacy `budgets` + new `workspace_budgets` enforcement) ═══
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
 async function checkBudget(supabase: any, workspaceId: string | undefined, agentId: string | undefined): Promise<{ allowed: boolean; reason?: string; warning?: boolean; pct?: number }> {
   if (!workspaceId) return { allowed: true };
   // 1) New workspace_budgets enforcement (Sprint 31)
@@ -217,6 +194,7 @@ async function checkBudget(supabase: any, workspaceId: string | undefined, agent
           }
           if (agentId) {
             const { data: agent } = await supabase.from('agents').select('config').eq('id', agentId).single();
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
             if ((agent?.config as any)?.budget_kill_switch) {
               return { allowed: false, reason: `Budget "${b.name}" exceeded: $${Number(b.current_usd).toFixed(4)} / $${b.limit_usd}` };
             }
@@ -229,13 +207,16 @@ async function checkBudget(supabase: any, workspaceId: string | undefined, agent
 }
 
 // ═══ Record Trace + Usage (non-blocking) ═══
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
 async function recordTrace(supabase: any, p: {
   workspaceId?: string; agentId?: string; sessionId?: string; userId?: string;
   userInput: string; assistantOutput: string; model: string; provider: string;
   promptTokens: number; completionTokens: number; totalTokens: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
   costUsd: number; latencyMs: number; guardrailsTriggered: any[];
-  event: string; level: string;
+  event: string; level: string; caller?: string;
 }) {
+  const caller = p.caller || 'external';
   try {
     // 1. agent_traces (primary observability)
     await supabase.from('agent_traces').insert({
@@ -246,18 +227,21 @@ async function recordTrace(supabase: any, p: {
       cost_usd: p.costUsd,
       input: { user_message: p.userInput, model: p.model, provider: p.provider },
       output: { content: p.assistantOutput?.substring(0, 5000) },
-      metadata: { prompt_tokens: p.promptTokens, completion_tokens: p.completionTokens, guardrails: p.guardrailsTriggered },
+      metadata: { prompt_tokens: p.promptTokens, completion_tokens: p.completionTokens, guardrails: p.guardrailsTriggered, caller },
     });
 
     // 2. Sessions lifecycle — upsert session + insert session_trace
     if (p.sessionId && p.userId) {
       // Upsert session (create if new, update last activity)
       const agentId = p.agentId || '00000000-0000-0000-0000-000000000000';
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
       const { data: existingSession } = await (supabase as any).from('sessions').select('id').eq('id', p.sessionId).maybeSingle();
       if (!existingSession) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         await (supabase as any).from('sessions').insert({ id: p.sessionId, agent_id: agentId, user_id: p.userId, status: 'active' }).then(() => {}).catch(() => {});
       }
       // Insert session_trace
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
       const { data: strace } = await (supabase as any).from('session_traces').insert({
         session_id: p.sessionId, trace_type: p.event,
         input: { message: p.userInput }, output: { content: p.assistantOutput?.substring(0, 2000) },
@@ -266,6 +250,7 @@ async function recordTrace(supabase: any, p: {
       }).select('id').single().catch(() => null);
       // Insert trace_event
       if (strace?.data?.id) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         await (supabase as any).from('trace_events').insert({ 
           session_trace_id: strace.data.id, 
           event_type: p.event, 
@@ -275,6 +260,7 @@ async function recordTrace(supabase: any, p: {
       
       // FIX P2-05: Record audit for high-risk cost/usage
       if (p.costUsd > 0.5 || p.level === 'critical') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         await (supabase as any).from('audit_events').insert({
           workspace_id: p.workspaceId,
           user_id: p.userId,
@@ -292,7 +278,7 @@ async function recordTrace(supabase: any, p: {
       await supabase.from('usage_records').insert({
         workspace_id: p.workspaceId, agent_id: p.agentId || null, record_type: 'llm_call',
         tokens: p.totalTokens, cost_usd: p.costUsd,
-        metadata: { model: p.model, provider: p.provider, latency_ms: p.latencyMs },
+        metadata: { model: p.model, provider: p.provider, latency_ms: p.latencyMs, caller },
       });
       // 4. Daily aggregate
       if (p.userId) {
@@ -364,7 +350,10 @@ async function resolveFallbackChain(supabase: SupabaseClient, workspaceId: strin
   return chain.sort((a, b) => a.priority - b.priority);
 }
 
-// ═══ Call with Fallback — tries each provider in chain ═══
+// ═══ Call with Fallback — tries each provider in chain (com Circuit Breaker) ═══
+import { getBreaker } from "../_shared/circuitBreaker.ts";
+import { drainBreakerTransition } from "../_shared/breakerEvents.ts";
+
 async function callWithFallback(
   chain: ProviderOption[], callParams: LLMCallParams, supabaseUrl: string
 ): Promise<{ result: LLMResult; provider: string; model: string; attempt: number; errors: string[] }> {
@@ -372,6 +361,13 @@ async function callWithFallback(
 
   for (let i = 0; i < chain.length; i++) {
     const opt = chain[i];
+    const breaker = getBreaker(`llm:${opt.provider}`);
+    if (!breaker.canRequest()) {
+      const msg = `[${opt.provider}/${opt.model}] circuit_open`;
+      errors.push(msg);
+      console.warn(`Fallback attempt ${i + 1} skipped (circuit open):`, opt.provider);
+      continue;
+    }
     try {
       const params = { ...callParams, model: opt.model };
       const result = opt.provider === 'huggingface' ? await callHuggingFace(params, opt.apiKey)
@@ -380,15 +376,19 @@ async function callWithFallback(
         : opt.provider === 'anthropic' ? await callAnthropic(params, opt.apiKey)
         : await callOpenAICompatible(params, opt.apiKey, opt.provider);
 
+      breaker.recordSuccess();
+      drainBreakerTransition(breaker, { function: 'llm-gateway' });
       return { result, provider: opt.provider, model: opt.model, attempt: i + 1, errors };
     } catch (err) {
+      breaker.recordFailure(err);
+      drainBreakerTransition(breaker, { function: 'llm-gateway' });
       const errMsg = `[${opt.provider}/${opt.model}] ${err instanceof Error ? err.message : 'Unknown error'}`;
       errors.push(errMsg);
       console.error(`Fallback attempt ${i + 1} failed:`, errMsg);
       // Continue to next provider
     }
   }
-  throw new Error(`All ${chain.length} providers failed: ${errors.join(' | ')}`);
+  throw new Error(`Todos os ${chain.length} provedores falharam: ${errors.join(' | ')}`);
 }
 
 // ═══ Main Handler ═══
@@ -403,7 +403,8 @@ serve(async (req) => {
 
   try {
     const authHeader = req.headers.get('Authorization');
-    if (!authHeader) return new Response(JSON.stringify({ error: 'Missing authorization' }), { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    const caller = (req.headers.get('x-caller-function') || req.headers.get('x-caller') || 'external').slice(0, 64);
+    if (!authHeader) return errorResponse(req, 'Missing authorization', 401);
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
@@ -415,16 +416,20 @@ serve(async (req) => {
       else span.setAttribute('user.id', res.data.user.id);
       return res;
     });
-    if (authError || !user) { rootSpan.setStatus('error', 'unauthorized'); trace.endSpan(rootSpan, 'error'); trace.end('error'); return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }); }
-    if (!checkRateLimit(user.id)) { rootSpan.setStatus('error', 'rate_limited'); trace.endSpan(rootSpan, 'error'); trace.end('error'); return new Response(JSON.stringify({ error: 'Rate limit exceeded' }), { status: 429, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json', 'Retry-After': '60' } }); }
+    if (authError || !user) { rootSpan.setStatus('error', 'unauthorized'); trace.endSpan(rootSpan, 'error'); trace.end('error'); return errorResponse(req, 'Unauthorized', 401); }
+    if (!checkRateLimit(user.id)) { rootSpan.setStatus('error', 'rate_limited'); trace.endSpan(rootSpan, 'error'); trace.end('error'); return errorResponse(req, 'Rate limit exceeded', 429); }
 
-    let rawBody: unknown;
-    try { rawBody = await req.json(); } catch { rootSpan.setStatus('error', 'invalid_json'); trace.endSpan(rootSpan, 'error'); trace.end('error'); return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }); }
+    // Parse and Validate body with contract validation
+    const { data: body, error: validationError } = await parseBody(req, LLMGatewayContracts, { defaultVersion: 'v1' });
+    if (validationError) {
+      rootSpan.setStatus('error', 'validation_failed');
+      trace.endSpan(rootSpan, 'error');
+      trace.end('error');
+      return validationError;
+    }
+    if (!body) return errorResponse(req, 'Invalid request body', 400);
 
-    const validation = validateRequest(rawBody);
-    if (!validation.valid) { rootSpan.setStatus('error', 'validation_failed'); trace.endSpan(rootSpan, 'error'); trace.end('error'); return new Response(JSON.stringify({ error: validation.error }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }); }
-
-    const { model, messages, temperature, max_tokens, agent_id, session_id, stream } = validation.data;
+    const { model, messages, temperature, max_tokens, stream, workspace_id, agent_id, session_id } = body;
     rootSpan.setAttribute('gen_ai.request.model', model);
     rootSpan.setAttribute('gen_ai.system', 'llm-gateway');
     if (agent_id) rootSpan.setAttribute('agent.id', agent_id);
@@ -432,7 +437,7 @@ serve(async (req) => {
     const userMessage = messages.filter(m => m.role === 'user').pop()?.content || '';
 
     const { data: member } = await supabase.from('workspace_members').select('workspace_id').eq('user_id', user.id).limit(1).single();
-    const workspaceId = member?.workspace_id || validation.data.workspace_id;
+    const workspaceId = member?.workspace_id || workspace_id;
 
     // ═══ CHAOS ENGINEERING — fault injection (Sprint 28) ═══
     const chaosFault = await maybeInjectFault('llm-gateway', supabase);
@@ -451,14 +456,14 @@ serve(async (req) => {
     // ═══ PROMPT INJECTION DETECTION (Layer 1: ML via HuggingFace) ═══
     const injectionML = await detectInjectionML(userMessage);
     if (injectionML.detected) {
-      recordTrace(supabase, { workspaceId, agentId: agent_id, sessionId: session_id, userId: user.id, userInput: userMessage, assistantOutput: '[INJECTION_BLOCKED_ML]', model, provider: 'none', promptTokens: 0, completionTokens: 0, totalTokens: 0, costUsd: 0, latencyMs: 0, guardrailsTriggered: [{ name: `ml_${injectionML.label}`, severity: 'block', reason: `ML score: ${injectionML.score.toFixed(4)}` }], event: 'injection_block_ml', level: 'critical' });
+      recordTrace(supabase, { workspaceId, agentId: agent_id, sessionId: session_id, userId: user.id, userInput: userMessage, assistantOutput: '[INJECTION_BLOCKED_ML]', model, provider: 'none', promptTokens: 0, completionTokens: 0, totalTokens: 0, costUsd: 0, latencyMs: 0, guardrailsTriggered: [{ name: `ml_${injectionML.label}`, severity: 'block', reason: `ML score: ${injectionML.score.toFixed(4)}` }], event: 'injection_block_ml', level: 'critical', caller });
       return new Response(JSON.stringify({ error: 'Request blocked: prompt injection detected (ML)', detection: { label: injectionML.label, score: injectionML.score, method: 'ml' } }), { status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
     // ═══ PROMPT INJECTION DETECTION (Layer 2: Regex fallback) ═══
     const injection = detectInjection(userMessage);
     if (injection.detected && injection.riskLevel === 'critical') {
-      recordTrace(supabase, { workspaceId, agentId: agent_id, sessionId: session_id, userId: user.id, userInput: userMessage, assistantOutput: '[INJECTION_BLOCKED]', model, provider: 'none', promptTokens: 0, completionTokens: 0, totalTokens: 0, costUsd: 0, latencyMs: 0, guardrailsTriggered: injection.patterns.map(p => ({ name: p, severity: 'block', reason: 'prompt_injection_regex' })), event: 'injection_block', level: 'critical' });
+      recordTrace(supabase, { workspaceId, agentId: agent_id, sessionId: session_id, userId: user.id, userInput: userMessage, assistantOutput: '[INJECTION_BLOCKED]', model, provider: 'none', promptTokens: 0, completionTokens: 0, totalTokens: 0, costUsd: 0, latencyMs: 0, guardrailsTriggered: injection.patterns.map(p => ({ name: p, severity: 'block', reason: 'prompt_injection_regex' })), event: 'injection_block', level: 'critical', caller });
       return new Response(JSON.stringify({ error: 'Request blocked: potential prompt injection detected', patterns: injection.patterns }), { status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
@@ -478,10 +483,11 @@ serve(async (req) => {
           const toxResult = await toxResp.json();
           const labels = Array.isArray(toxResult?.[0]) ? toxResult[0] : toxResult;
           if (Array.isArray(labels)) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
             const toxic = labels.find((l: any) => l.label === 'toxic');
             toxicityScore = toxic?.score || 0;
             if (toxicityScore > 0.85) {
-              recordTrace(supabase, { workspaceId, agentId: agent_id, sessionId: session_id, userId: user.id, userInput: userMessage, assistantOutput: '[TOXICITY_BLOCKED]', model, provider: 'none', promptTokens: 0, completionTokens: 0, totalTokens: 0, costUsd: 0, latencyMs: 0, guardrailsTriggered: [{ name: 'toxicity', severity: 'block', reason: `toxic score: ${toxicityScore.toFixed(4)}` }], event: 'toxicity_block', level: 'warning' });
+              recordTrace(supabase, { workspaceId, agentId: agent_id, sessionId: session_id, userId: user.id, userInput: userMessage, assistantOutput: '[TOXICITY_BLOCKED]', model, provider: 'none', promptTokens: 0, completionTokens: 0, totalTokens: 0, costUsd: 0, latencyMs: 0, guardrailsTriggered: [{ name: 'toxicity', severity: 'block', reason: `toxic score: ${toxicityScore.toFixed(4)}` }], event: 'toxicity_block', level: 'warning', caller });
               return new Response(JSON.stringify({ error: 'Request blocked: toxic content detected', score: toxicityScore }), { status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
             }
           }
@@ -502,6 +508,7 @@ serve(async (req) => {
           const langResult = await langResp.json();
           const labels = Array.isArray(langResult?.[0]) ? langResult[0] : langResult;
           if (Array.isArray(labels) && labels.length > 0) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
             const sorted = [...labels].sort((a: any, b: any) => b.score - a.score);
             detectedLanguage = sorted[0]?.label || null;
           }
@@ -570,14 +577,14 @@ serve(async (req) => {
     // ═══ GUARDRAILS ═══
     const gr = await checkGuardrails(supabase, agent_id, userMessage);
     if (!gr.passed) {
-      recordTrace(supabase, { workspaceId, agentId: agent_id, sessionId: session_id, userId: user.id, userInput: userMessage, assistantOutput: '[BLOCKED]', model, provider: 'none', promptTokens: 0, completionTokens: 0, totalTokens: 0, costUsd: 0, latencyMs: 0, guardrailsTriggered: gr.triggered, event: 'guardrail_block', level: 'warning' });
+      recordTrace(supabase, { workspaceId, agentId: agent_id, sessionId: session_id, userId: user.id, userInput: userMessage, assistantOutput: '[BLOCKED]', model, provider: 'none', promptTokens: 0, completionTokens: 0, totalTokens: 0, costUsd: 0, latencyMs: 0, guardrailsTriggered: gr.triggered, event: 'guardrail_block', level: 'warning', caller });
       return new Response(JSON.stringify({ error: 'Blocked by guardrails', guardrails_triggered: gr.triggered }), { status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
     // ═══ BUDGET ═══
     const budget = await checkBudget(supabase, workspaceId ?? undefined, agent_id);
     if (!budget.allowed) return new Response(JSON.stringify({ error: 'Budget exceeded', reason: budget.reason }), { status: 402, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
-    const budgetWarningHeader: Record<string, string> = budget.warning ? { 'X-Budget-Warning': `${(budget.pct ?? 0).toFixed(0)}% used` } : {};
+    const _budgetWarningHeader: Record<string, string> = budget.warning ? { 'X-Budget-Warning': `${(budget.pct ?? 0).toFixed(0)}% used` } : {};
 
     // ═══ RESOLVE PROVIDER CHAIN ═══
     const chain = await resolveFallbackChain(supabase, workspaceId ?? undefined, model);
@@ -595,7 +602,7 @@ serve(async (req) => {
             const opt = chain[ci];
             try {
               let fullContent = '';
-              let insideThinkBlock = false; // Track <think> blocks for filtering
+              let insideThinkBlock = false; // Track <tool_call> blocks for filtering
               let promptTokens = 0, completionTokens = 0;
               const isAnthropic = opt.provider === 'anthropic';
               const isHuggingFace = opt.provider === 'huggingface';
@@ -659,10 +666,10 @@ serve(async (req) => {
                     }
                     if (token) {
                       fullContent += token;
-                      // Filter out <think>...</think> blocks from streaming output
-                      if (token.includes('<think>')) { insideThinkBlock = true; continue; }
+                      // Filter out <tool_call>...<tool_call> blocks from streaming output
+                      if (token.includes('<tool_call>')) { insideThinkBlock = true; continue; }
                       if (insideThinkBlock) {
-                        if (token.includes('</think>')) { insideThinkBlock = false; }
+                        if (token.includes('<tool_call>')) { insideThinkBlock = false; }
                         continue; // Skip tokens inside think block
                       }
                       controller.enqueue(encoder.encode(`data: ${JSON.stringify({ token, model: opt.model, provider: opt.provider })}\n\n`));
@@ -671,8 +678,8 @@ serve(async (req) => {
                 }
               }
               clearTimeout(streamTimeout);
-              // Strip <think> tags from Qwen models
-              const cleanContent = fullContent.replace(/<think>[\s\S]*?<\/think>\s*/g, '').trim();
+              // Strip <tool_call> tags from Qwen models
+              const cleanContent = fullContent.replace(/<tool_call>[\s\S]*?<\/think>\s*/g, '').trim();
               // Final summary event
               const latencyMs = Date.now() - startTime;
               const totalTokens = promptTokens + completionTokens;
@@ -680,7 +687,7 @@ serve(async (req) => {
               controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true, model: opt.model, provider: opt.provider, tokens: { prompt: promptTokens, completion: completionTokens, total: totalTokens }, cost_usd: costUsd, latency_ms: latencyMs })}\n\n`));
               controller.enqueue(encoder.encode('data: [DONE]\n\n'));
               controller.close();
-              recordTrace(supabase, { workspaceId, agentId: agent_id, sessionId: session_id, userId: user.id, userInput: userMessage, assistantOutput: cleanContent, model: opt.model, provider: opt.provider, promptTokens, completionTokens, totalTokens, costUsd, latencyMs, guardrailsTriggered: gr.triggered, event: 'llm_call_stream', level: injection.detected ? 'warning' : 'info' });
+              recordTrace(supabase, { workspaceId, agentId: agent_id, sessionId: session_id, userId: user.id, userInput: userMessage, assistantOutput: cleanContent, model: opt.model, provider: opt.provider, promptTokens, completionTokens, totalTokens, costUsd, latencyMs, guardrailsTriggered: gr.triggered, event: 'llm_call_stream', level: injection.detected ? 'warning' : 'info', caller });
             } catch (err) {
               console.error(`Stream fallback ${ci + 1} (${chain[ci].provider}) failed:`, err instanceof Error ? err.message : err);
               if (ci === chain.length - 1) {
@@ -730,7 +737,7 @@ serve(async (req) => {
     const latencyBreakdown = { guardrail_ms: guardrailMs, llm_ms: llmMs, total_ms: totalMs };
 
     // ═══ TRACE (non-blocking) ═══
-    recordTrace(supabase, { workspaceId, agentId: agent_id, sessionId: session_id, userId: user.id, userInput: userMessage, assistantOutput: result.content, model: usedModel, provider, promptTokens: result.usage.prompt_tokens, completionTokens: result.usage.completion_tokens, totalTokens: result.usage.total_tokens, costUsd, latencyMs: totalMs, guardrailsTriggered: gr.triggered, event: 'llm_call', level: fallbackErrors.length > 0 ? 'warning' : injection.detected ? 'warning' : 'info' });
+    recordTrace(supabase, { workspaceId, agentId: agent_id, sessionId: session_id, userId: user.id, userInput: userMessage, assistantOutput: result.content, model: usedModel, provider, promptTokens: result.usage.prompt_tokens, completionTokens: result.usage.completion_tokens, totalTokens: result.usage.total_tokens, costUsd, latencyMs: totalMs, guardrailsTriggered: gr.triggered, event: 'llm_call', level: fallbackErrors.length > 0 ? 'warning' : injection.detected ? 'warning' : 'info', caller });
 
     // ═══ OUTPUT GUARDRAILS (fire-and-forget) ═══
     const hfOutputToken = Deno.env.get('HF_API_TOKEN');

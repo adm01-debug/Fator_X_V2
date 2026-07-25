@@ -165,7 +165,7 @@ export function AgentRichMetrics({ agentId, agentName, days = 14 }: Props) {
               height={200}
               tooltipFormatter={(v) => formatCost(v)}
               yFormatter={(v) => v < 1 ? `$${v.toFixed(2)}` : `$${v.toFixed(0)}`}
-              onBarClick={(d) => setSelectedDay(d as DailyPoint)}
+              onBarClick={(d) => setSelectedDay(d as unknown as DailyPoint)}
             />
           ) : (
             <EmptyChart label="Sem custos registrados" />
@@ -196,7 +196,7 @@ export function AgentRichMetrics({ agentId, agentName, days = 14 }: Props) {
               height={200}
               tooltipFormatter={(v) => `${formatNumber(v)} tokens`}
               yFormatter={(v) => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v)}
-              onBarClick={(d) => setSelectedDay(d as DailyPoint)}
+              onBarClick={(d) => setSelectedDay(d as unknown as DailyPoint)}
             />
           ) : (
             <EmptyChart label="Sem consumo de tokens" />
@@ -219,13 +219,13 @@ export function AgentRichMetrics({ agentId, agentName, days = 14 }: Props) {
         </div>
 
         <div className="nexus-card">
-          <h3 className="text-sm font-heading font-semibold text-foreground mb-3">Distribuição de traces</h3>
+          <h3 className="text-body-sm font-heading font-semibold text-foreground mb-3">Distribuição de traces</h3>
           <div className="space-y-3">
             <StatusBar label="Sucesso" count={slo.successCount} total={slo.totalTraces} color="bg-nexus-emerald" />
             <StatusBar label="Avisos" count={slo.warningCount} total={slo.totalTraces} color="bg-nexus-amber" />
             <StatusBar label="Erros" count={slo.errorCount} total={slo.totalTraces} color="bg-destructive" />
           </div>
-          <div className="mt-4 pt-3 border-t border-border/50 grid grid-cols-2 gap-3 text-xs">
+          <div className="mt-4 pt-3 border-t border-border/50 grid grid-cols-2 gap-3 text-meta">
             <div>
               <p className="text-muted-foreground">Custo médio/req</p>
               <p className="font-mono font-semibold text-foreground mt-0.5">{formatCost(slo.avgCost)}</p>
@@ -242,17 +242,17 @@ export function AgentRichMetrics({ agentId, agentName, days = 14 }: Props) {
       <div className="nexus-card">
         <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
           <div>
-            <h3 className="text-sm font-heading font-semibold text-foreground">Histórico por dia</h3>
-            <p className="text-[11px] text-muted-foreground">Detalhamento dos últimos {days} dias</p>
+            <h3 className="text-body-sm font-heading font-semibold text-foreground">Histórico por dia</h3>
+            <p className="text-meta text-muted-foreground">Detalhamento dos últimos {days} dias</p>
           </div>
           {activeAlerts > 0 && (
-            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-destructive bg-destructive/10 border border-destructive/20 px-2 py-0.5 rounded-full">
+            <span className="inline-flex items-center gap-1 text-meta font-semibold text-destructive bg-destructive/10 border border-destructive/20 px-2 py-0.5 rounded-full">
               <AlertCircle className="h-3 w-3" /> {activeAlerts} alerta{activeAlerts !== 1 ? 's' : ''} ativo{activeAlerts !== 1 ? 's' : ''}
             </span>
           )}
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-xs">
+          <table className="w-full text-meta">
             <thead>
               <tr className="text-left text-muted-foreground border-b border-border/50">
                 <th className="py-2 px-2 font-medium">Data</th>
@@ -301,8 +301,8 @@ function ChartCard({ title, subtitle, icon: Icon, children }: { title: string; s
     <div className="nexus-card">
       <div className="flex items-center justify-between mb-3">
         <div>
-          <h3 className="text-sm font-heading font-semibold text-foreground">{title}</h3>
-          <p className="text-[11px] text-muted-foreground">{subtitle}</p>
+          <h3 className="text-body-sm font-heading font-semibold text-foreground">{title}</h3>
+          <p className="text-meta text-muted-foreground">{subtitle}</p>
         </div>
         <Icon className="h-4 w-4 text-muted-foreground" aria-hidden />
       </div>
@@ -315,7 +315,7 @@ function StatusBar({ label, count, total, color }: { label: string; count: numbe
   const pct = total > 0 ? (count / total) * 100 : 0;
   return (
     <div>
-      <div className="flex items-center justify-between text-[11px] mb-1">
+      <div className="flex items-center justify-between text-meta mb-1">
         <span className="text-muted-foreground">{label}</span>
         <span className="font-mono text-foreground">{count} <span className="text-muted-foreground">({pct.toFixed(1)}%)</span></span>
       </div>
@@ -328,7 +328,7 @@ function StatusBar({ label, count, total, color }: { label: string; count: numbe
 
 function EmptyChart({ label }: { label: string }) {
   return (
-    <div className="h-[200px] flex items-center justify-center text-xs text-muted-foreground">
+    <div className="h-[200px] flex items-center justify-center text-meta text-muted-foreground">
       {label}
     </div>
   );

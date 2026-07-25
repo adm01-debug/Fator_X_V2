@@ -18,6 +18,7 @@ const cache = new Map<string, { faults: ChaosFault[]; expiresAt: number }>();
 export async function maybeInjectFault(
   target: 'llm-gateway' | 'agent-workflow-runner',
   // deno-lint-ignore no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
   supabaseAdmin: any,
 ): Promise<ChaosFault | null> {
   try {
@@ -59,12 +60,14 @@ export async function applyFault(fault: ChaosFault): Promise<void> {
     case 'error_500': {
       const e = new Error('chaos: injected 500');
       // deno-lint-ignore no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
       (e as any).status = 500;
       throw e;
     }
     case 'error_429': {
       const e = new Error('chaos: injected 429 rate limit');
       // deno-lint-ignore no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
       (e as any).status = 429;
       throw e;
     }

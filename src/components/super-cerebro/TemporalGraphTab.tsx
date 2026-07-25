@@ -1,3 +1,4 @@
+import type { DbRow } from '@/types/dbRow';
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { invokeCerebroBrain } from "@/services/cerebroService";
@@ -112,16 +113,16 @@ export function TemporalGraphTab() {
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h3 className="text-sm font-heading font-semibold text-foreground flex items-center gap-2">
+          <h3 className="text-body-sm font-heading font-semibold text-foreground flex items-center gap-2">
             <Clock className="h-4 w-4 text-primary" /> Temporal Knowledge Graph
           </h3>
-          <p className="text-[11px] text-muted-foreground mt-0.5">
+          <p className="text-meta text-muted-foreground mt-0.5">
             Como o conhecimento evoluiu ao longo do tempo — velocidade, frescor e timeline
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Select value={window} onValueChange={(v) => setWindow(v as TemporalWindow)}>
-            <SelectTrigger className="bg-secondary/50 h-8 text-xs w-[160px]">
+            <SelectTrigger className="bg-secondary/50 h-8 text-meta w-[160px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -139,41 +140,41 @@ export function TemporalGraphTab() {
       {/* Stats grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="nexus-card text-center py-3">
-          <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Memórias</p>
+          <p className="text-meta text-muted-foreground uppercase tracking-wider">Memórias</p>
           <p className="text-xl font-bold text-nexus-purple mt-1">
             {snapshot?.total_memories ?? 0}
           </p>
         </div>
         <div className="nexus-card text-center py-3">
-          <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Chunks</p>
+          <p className="text-meta text-muted-foreground uppercase tracking-wider">Chunks</p>
           <p className="text-xl font-bold text-primary mt-1">
             {snapshot?.total_chunks ?? 0}
           </p>
         </div>
         <div className="nexus-card text-center py-3">
-          <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Velocidade</p>
+          <p className="text-meta text-muted-foreground uppercase tracking-wider">Velocidade</p>
           <p className="text-xl font-bold text-nexus-emerald mt-1 flex items-center justify-center gap-1">
             <TrendingUp className="h-3.5 w-3.5" />
             {snapshot?.velocity_per_day ?? 0}
           </p>
-          <p className="text-[10px] text-muted-foreground">/dia</p>
+          <p className="text-meta text-muted-foreground">/dia</p>
         </div>
         <div className="nexus-card text-center py-3">
-          <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Janela</p>
-          <p className="text-sm font-semibold text-foreground mt-1">
+          <p className="text-meta text-muted-foreground uppercase tracking-wider">Janela</p>
+          <p className="text-body-sm font-semibold text-foreground mt-1">
             {WINDOW_LABELS[window]}
           </p>
-          <p className="text-[10px] text-muted-foreground">{snapshot?.buckets?.length ?? 0} buckets</p>
+          <p className="text-meta text-muted-foreground">{snapshot?.buckets?.length ?? 0} buckets</p>
         </div>
       </div>
 
       {/* Sparkline */}
       <div className="nexus-card">
         <div className="flex items-center justify-between mb-3">
-          <h4 className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+          <h4 className="text-meta font-semibold text-foreground flex items-center gap-1.5">
             <Activity className="h-3.5 w-3.5" /> Atividade ao longo do tempo
           </h4>
-          <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
+          <div className="flex items-center gap-3 text-meta text-muted-foreground">
             <span className="flex items-center gap-1">
               <div className="h-2 w-2 rounded bg-nexus-purple" /> Memórias
             </span>
@@ -187,7 +188,7 @@ export function TemporalGraphTab() {
             <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
           </div>
         ) : (snapshot?.buckets?.length ?? 0) === 0 ? (
-          <p className="text-center text-xs text-muted-foreground py-8 italic">
+          <p className="text-center text-meta text-muted-foreground py-8 italic">
             Nenhum dado para esta janela
           </p>
         ) : (
@@ -197,7 +198,7 @@ export function TemporalGraphTab() {
 
       {/* Recent timeline */}
       <div className="nexus-card">
-        <h4 className="text-xs font-semibold text-foreground mb-3 flex items-center gap-1.5">
+        <h4 className="text-meta font-semibold text-foreground mb-3 flex items-center gap-1.5">
           <Calendar className="h-3.5 w-3.5" /> Eventos Recentes ({timeline.length})
         </h4>
         {timelineLoading ? (
@@ -205,7 +206,7 @@ export function TemporalGraphTab() {
             <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
           </div>
         ) : timeline.length === 0 ? (
-          <p className="text-center text-xs text-muted-foreground py-8 italic">
+          <p className="text-center text-meta text-muted-foreground py-8 italic">
             Sem eventos recentes
           </p>
         ) : (
@@ -222,16 +223,16 @@ export function TemporalGraphTab() {
                   key={String(memory.id)}
                   className="flex items-start gap-3 p-2.5 rounded-lg bg-secondary/30 border border-border/20"
                 >
-                  <div className="text-[10px] text-muted-foreground font-mono shrink-0 w-16 text-right pt-0.5">
+                  <div className="text-meta text-muted-foreground font-mono shrink-0 w-16 text-right pt-0.5">
                     {createdAt ? createdAt.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—'}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs text-foreground line-clamp-2">{content}</p>
+                    <p className="text-meta text-foreground line-clamp-2">{content}</p>
                     <div className="flex items-center gap-2 mt-1">
                       <Badge variant="outline" className="text-[9px] border-border">{memType}</Badge>
-                      {source && <span className="text-[10px] text-muted-foreground">{source}</span>}
+                      {source && <span className="text-meta text-muted-foreground">{source}</span>}
                       {relevance != null && (
-                        <span className="text-[10px] text-nexus-amber">
+                        <span className="text-meta text-nexus-amber">
                           {(relevance * 100).toFixed(0)}%
                         </span>
                       )}

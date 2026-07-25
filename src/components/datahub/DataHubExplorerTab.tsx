@@ -24,6 +24,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ENTITY_LIST } from "@/config/datahub-entities";
 import { queryEntity, getEntityDetail } from "@/services/datahubService";
 import { toast } from "sonner";
+import type { DbRow } from '@/types/dbRow';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 interface Row {
   id?: string | number;
@@ -32,7 +34,7 @@ interface Row {
 
 const PAGE_SIZE = 25;
 
-function formatValue(v: unknown): string {
+function formatValue(v: DbRow): string {
   if (v == null) return "—";
   if (typeof v === "boolean") return v ? "✓" : "✗";
   if (typeof v === "object") return JSON.stringify(v);
@@ -41,7 +43,7 @@ function formatValue(v: unknown): string {
 }
 
 function downloadCsv(rows: Row[], columns: string[], filename: string) {
-  const escape = (val: unknown) => {
+  const escape = (val: DbRow) => {
     if (val == null) return "";
     const s = typeof val === "object" ? JSON.stringify(val) : String(val);
     return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
@@ -174,19 +176,19 @@ export function DataHubExplorerTab() {
       <div className="flex flex-col sm:flex-row sm:items-center gap-3">
         <div className="flex items-center gap-2 min-w-0 flex-1">
           <Database className="h-4 w-4 text-primary shrink-0" />
-          <h3 className="text-sm font-heading font-semibold text-foreground">Data Explorer</h3>
-          <Badge variant="outline" className="text-[10px]">
+          <h3 className="text-body-sm font-heading font-semibold text-foreground">Data Explorer</h3>
+          <Badge variant="outline" className="text-meta">
             {filtered.length} {filtered.length === 1 ? 'linha' : 'linhas'}
           </Badge>
         </div>
 
         <Select value={entityKey} onValueChange={handleEntityChange}>
-          <SelectTrigger className="w-[200px] h-8 text-xs">
+          <SelectTrigger className="w-[200px] h-8 text-meta">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
             {ENTITY_LIST.map((e) => (
-              <SelectItem key={e.id} value={e.id} className="text-xs">
+              <SelectItem key={e.id} value={e.id} className="text-meta">
                 {e.icon} {e.name}
               </SelectItem>
             ))}
@@ -199,7 +201,7 @@ export function DataHubExplorerTab() {
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(0); }}
             placeholder="Filtrar..."
-            className="h-8 pl-7 text-xs w-[200px] bg-secondary/40"
+            className="h-8 pl-7 text-meta w-[200px] bg-secondary/40"
           />
         </div>
 
@@ -208,7 +210,7 @@ export function DataHubExplorerTab() {
           size="sm"
           onClick={() => refetch()}
           disabled={isFetching}
-          className="h-8 gap-1.5 text-xs"
+          className="h-8 gap-1.5 text-meta"
         >
           <RefreshCw className={`h-3 w-3 ${isFetching ? 'animate-spin' : ''}`} />
           Atualizar
@@ -219,7 +221,7 @@ export function DataHubExplorerTab() {
           size="sm"
           onClick={handleExport}
           disabled={filtered.length === 0}
-          className="h-8 gap-1.5 text-xs"
+          className="h-8 gap-1.5 text-meta"
         >
           <Download className="h-3 w-3" /> CSV
         </Button>
@@ -234,26 +236,26 @@ export function DataHubExplorerTab() {
         ) : error ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <AlertCircle className="h-10 w-10 text-destructive mb-3" />
-            <p className="text-sm font-semibold text-destructive">Erro ao carregar dados</p>
-            <p className="text-[11px] text-muted-foreground mt-1">{error instanceof Error ? error.message : String(error)}</p>
+            <p className="text-body-sm font-semibold text-destructive">Erro ao carregar dados</p>
+            <p className="text-meta text-muted-foreground mt-1">{error instanceof Error ? error.message : String(error)}</p>
           </div>
         ) : pageRows.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <Database className="h-10 w-10 text-muted-foreground mb-3" />
-            <p className="text-sm font-semibold text-foreground">Nenhuma linha</p>
-            <p className="text-[11px] text-muted-foreground mt-1">
+            <p className="text-body-sm font-semibold text-foreground">Nenhuma linha</p>
+            <p className="text-meta text-muted-foreground mt-1">
               {search ? 'Nenhum resultado para o filtro' : 'Tabela vazia ou entidade sem dados'}
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-xs">
+            <table className="w-full text-meta">
               <thead className="bg-secondary/30 border-b border-border/40">
                 <tr>
                   {columns.map((col) => (
                     <th
                       key={col}
-                      className="text-left px-3 py-2 font-medium text-[10px] uppercase tracking-wider text-muted-foreground cursor-pointer hover:text-foreground select-none"
+                      className="text-left px-3 py-2 font-medium text-meta uppercase tracking-wider text-muted-foreground cursor-pointer hover:text-foreground select-none"
                       onClick={() => toggleSort(col)}
                     >
                       <div className="flex items-center gap-1">
@@ -301,7 +303,7 @@ export function DataHubExplorerTab() {
 
       {/* Pagination */}
       {filtered.length > PAGE_SIZE && (
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
+        <div className="flex items-center justify-between text-meta text-muted-foreground">
           <span>
             Página {page + 1} de {totalPages} · {filtered.length} {filtered.length === 1 ? 'linha' : 'linhas'}
           </span>
@@ -330,17 +332,17 @@ export function DataHubExplorerTab() {
 
       {/* Detail modal */}
       {detailRow && (
-        <div
+        <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
           className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4"
           role="button" tabIndex={0} onClick={() => setDetailRow(null)} onKeyDown={onActivateKey(() => setDetailRow(null))}
         >
-          <div
+          <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
             className="nexus-card max-w-2xl w-full max-h-[80vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-heading font-semibold text-foreground">Detalhes do registro</h4>
-              <Button variant="ghost" size="sm" onClick={() => setDetailRow(null)} className="h-7 text-xs">
+              <h4 className="text-body-sm font-heading font-semibold text-foreground">Detalhes do registro</h4>
+              <Button variant="ghost" size="sm" onClick={() => setDetailRow(null)} className="h-7 text-meta">
                 Fechar
               </Button>
             </div>
@@ -349,7 +351,7 @@ export function DataHubExplorerTab() {
                 <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
               </div>
             ) : (
-              <pre className="text-[11px] text-foreground bg-secondary/30 p-3 rounded overflow-x-auto whitespace-pre-wrap">
+              <pre className="text-meta text-foreground bg-secondary/30 p-3 rounded overflow-x-auto whitespace-pre-wrap">
                 {JSON.stringify(fullDetail ?? detailRow, null, 2)}
               </pre>
             )}

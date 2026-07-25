@@ -8,6 +8,7 @@
  */
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import { logger } from '@/lib/logger';
+import type { DbRow } from '@/types/dbRow';
 
 export interface ToolUsageSummary {
   /** Nome canônico da tool (lowercase) usado para casar com `cfg.tools`. */
@@ -102,7 +103,7 @@ function percentile(sorted: number[], p: number): number {
   return Math.round(sorted[idx]);
 }
 
-function outputChars(o: unknown): number {
+function outputChars(o: DbRow): number {
   if (o === null || o === undefined) return 0;
   if (typeof o === 'string') return o.length;
   try { return JSON.stringify(o).length; } catch { return 0; }

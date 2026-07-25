@@ -51,6 +51,7 @@ export interface ModelPricingRow {
 }
 import { fromTable } from '@/lib/supabaseExtended';
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
+import type { DbRow } from '@/types/dbRow';
 
 // ═══ Usage ═══
 

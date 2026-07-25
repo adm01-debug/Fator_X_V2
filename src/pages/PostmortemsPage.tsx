@@ -1,358 +1,403 @@
-import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { logger } from "@/lib/logger";
+import { useEffect, useState, useCallback } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useWorkspaceId } from "@/hooks/use-data";
+import { PageHeader } from "@/components/shared/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
-import { toast } from "sonner";
-import { Plus, FileText, Wand2, ShieldAlert, Activity, ArchiveRestore } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import { getFirstWorkspaceId } from "@/services/workspaceContextService";
+import { Textarea } from "@/components/ui/textarea";
 import {
-  listPostmortems, createManualPostmortem, generateFromIncident, generateFromGameday,
-  listRecentIncidentRuns, listRecentGameDays,
-  type Postmortem, type PostmortemSeverity, type PostmortemStatus, type PostmortemSource,
-} from "@/services/postmortemService";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { FileText, Plus, CheckCircle2, Clock, AlertCircle } from "lucide-react";
+import { toast } from "sonner";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { handleKeyboardClick } from "@/lib/a11y";
 
-const SEV_COLORS: Record<PostmortemSeverity, string> = {
-  SEV1: "bg-destructive/15 text-destructive border-destructive/30",
-  SEV2: "bg-nexus-amber/15 text-nexus-amber border-nexus-amber/30",
-  SEV3: "bg-primary/10 text-primary border-primary/30",
-  SEV4: "bg-muted text-muted-foreground border-border",
+type Severity = "SEV1" | "SEV2" | "SEV3" | "SEV4";
+type PMStatus = "draft" | "review" | "published";
+type Source = "incident_run" | "game_day" | "dr_drill" | "manual";
+
+type Postmortem = {
+  id: string;
+  title: string;
+  incident_source: Source;
+  severity: Severity;
+  status: PMStatus;
+  summary: string | null;
+  root_cause: string | null;
+  lessons_learned: string | null;
+  published_at: string | null;
+  created_at: string;
 };
 
-const STATUS_COLORS: Record<PostmortemStatus, string> = {
-  draft: "bg-muted text-muted-foreground",
-  review: "bg-nexus-amber/15 text-nexus-amber",
-  published: "bg-emerald-500/15 text-emerald-500",
+type ActionItem = {
+  id: string;
+  postmortem_id: string;
+  description: string;
+  owner_name: string | null;
+  due_date: string | null;
+  priority: "P0" | "P1" | "P2";
+  status: "open" | "in_progress" | "done" | "cancelled";
 };
 
-const SOURCE_ICON: Record<PostmortemSource, React.ComponentType<{ className?: string }>> = {
-  incident_run: ShieldAlert,
-  game_day: Activity,
-  dr_drill: ArchiveRestore,
-  manual: FileText,
+const SEV_META: Record<Severity, { label: string; variant: "destructive" | "default" | "secondary" | "outline" }> = {
+  SEV1: { label: "SEV1 — Crítico", variant: "destructive" },
+  SEV2: { label: "SEV2 — Alto", variant: "destructive" },
+  SEV3: { label: "SEV3 — Médio", variant: "default" },
+  SEV4: { label: "SEV4 — Baixo", variant: "secondary" },
+};
+
+const STATUS_META: Record<PMStatus, { label: string; variant: "outline" | "default" | "secondary" }> = {
+  draft: { label: "Rascunho", variant: "outline" },
+  review: { label: "Em revisão", variant: "default" },
+  published: { label: "Publicado", variant: "secondary" },
+};
+
+const SOURCE_LABEL: Record<Source, string> = {
+  incident_run: "Incidente",
+  game_day: "Game Day",
+  dr_drill: "DR Drill",
+  manual: "Manual",
 };
 
 export default function PostmortemsPage() {
-  useAuth();
-  const navigate = useNavigate();
-  const [workspaceId, setWorkspaceId] = useState<string | null>(null);
+  const { data: workspaceId } = useWorkspaceId();
   const [items, setItems] = useState<Postmortem[]>([]);
+  const [actions, setActions] = useState<ActionItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [filterSev, setFilterSev] = useState<string>("all");
-  const [filterStatus, setFilterStatus] = useState<string>("all");
-  const [filterSource, setFilterSource] = useState<string>("all");
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selected, setSelected] = useState<Postmortem | null>(null);
+  const [form, setForm] = useState({
+    title: "",
+    incident_source: "manual" as Source,
+    severity: "SEV3" as Severity,
+    summary: "",
+    root_cause: "",
+    lessons_learned: "",
+  });
 
-  const [createOpen, setCreateOpen] = useState(false);
-  const [genOpen, setGenOpen] = useState(false);
-  const [genTab, setGenTab] = useState<"incident" | "gameday">("incident");
-  const [recentIncidents, setRecentIncidents] = useState<Array<{ id: string; started_at: string; status: string; triggered_by: string }>>([]);
-  const [recentGamedays, setRecentGamedays] = useState<Array<{ id: string; title: string; scenario: string; started_at: string | null }>>([]);
-
-  const [newTitle, setNewTitle] = useState("");
-  const [newSev, setNewSev] = useState<PostmortemSeverity>("SEV2");
-  const [newSummary, setNewSummary] = useState("");
-  const [creating, setCreating] = useState(false);
+  const load = useCallback(async () => {
+    if (!workspaceId) return;
+    setLoading(true);
+    const { data: pm, error } = await supabase
+      .from("postmortems")
+      .select("id,title,incident_source,severity,status,summary,root_cause,lessons_learned,published_at,created_at")
+      .eq("workspace_id", workspaceId)
+      .order("created_at", { ascending: false });
+    if (error) toast.error("Erro ao carregar post-mortems");
+    else {
+      setItems((pm ?? []) as Postmortem[]);
+      const ids = (pm ?? []).map((p) => p.id);
+      if (ids.length > 0) {
+        const { data: ai } = await supabase
+          .from("postmortem_action_items")
+          .select("id,postmortem_id,description,owner_name,due_date,priority,status")
+          .in("postmortem_id", ids);
+        setActions((ai ?? []) as ActionItem[]);
+      } else {
+        setActions([]);
+      }
+    }
+    setLoading(false);
+  }, [workspaceId]);
 
   useEffect(() => {
-    (async () => {
-      try {
-        const wsId = await getFirstWorkspaceId();
-        setWorkspaceId(wsId);
-        if (wsId) await refresh(wsId);
-        else setLoading(false);
-      } catch (e) {
-        logger.error("ws fetch failed", e);
-        setLoading(false);
-      }
-    })();
-  }, []);
+    void load();
+  }, [load]);
 
-  async function refresh(wsId: string) {
-    setLoading(true);
-    try {
-      const data = await listPostmortems(wsId);
-      setItems(data);
-    } catch (e) {
-      logger.error("listPostmortems failed", e);
-      toast.error("Falha ao carregar postmortems");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  const filtered = useMemo(() => {
-    return items.filter((p) => {
-      if (filterSev !== "all" && p.severity !== filterSev) return false;
-      if (filterStatus !== "all" && p.status !== filterStatus) return false;
-      if (filterSource !== "all" && p.incident_source !== filterSource) return false;
-      if (search.trim() && !p.title.toLowerCase().includes(search.toLowerCase())) return false;
-      return true;
-    });
-  }, [items, filterSev, filterStatus, filterSource, search]);
-
-  const stats = useMemo(() => ({
-    total: items.length,
-    sev1: items.filter(i => i.severity === "SEV1").length,
-    draft: items.filter(i => i.status === "draft").length,
-    published: items.filter(i => i.status === "published").length,
-  }), [items]);
-
-  async function openGenerator() {
+  const handleCreate = async () => {
     if (!workspaceId) return;
-    setGenOpen(true);
-    try {
-      const [inc, gd] = await Promise.all([
-        listRecentIncidentRuns(workspaceId, 20),
-        listRecentGameDays(workspaceId, 20),
-      ]);
-      setRecentIncidents(inc as never);
-      setRecentGamedays(gd as never);
-    } catch (e) {
-      logger.error("recent sources fetch failed", e);
+    if (!form.title.trim()) {
+      toast.error("Título obrigatório");
+      return;
     }
-  }
+    const { data: userData } = await supabase.auth.getUser();
+    if (!userData.user) return;
+    const { error } = await supabase.from("postmortems").insert({
+      workspace_id: workspaceId,
+      title: form.title.trim(),
+      incident_source: form.incident_source,
+      severity: form.severity,
+      status: "draft",
+      summary: form.summary.trim() || null,
+      root_cause: form.root_cause.trim() || null,
+      lessons_learned: form.lessons_learned.trim() || null,
+      author_id: userData.user.id,
+    });
+    if (error) {
+      toast.error(`Falha: ${error.message}`);
+      return;
+    }
+    toast.success("Post-mortem criado");
+    setDialogOpen(false);
+    setForm({ title: "", incident_source: "manual", severity: "SEV3", summary: "", root_cause: "", lessons_learned: "" });
+    void load();
+  };
 
-  async function handleGenIncident(id: string) {
-    try {
-      const pmId = await generateFromIncident(id);
-      toast.success("Postmortem gerado");
-      setGenOpen(false);
-      navigate(`/observability/postmortems/${pmId}`);
-    } catch (e) {
-      toast.error((e as Error).message);
+  const publish = async (id: string) => {
+    const { error } = await supabase
+      .from("postmortems")
+      .update({ status: "published", published_at: new Date().toISOString() })
+      .eq("id", id);
+    if (error) toast.error(`Falha: ${error.message}`);
+    else {
+      toast.success("Publicado");
+      void load();
     }
-  }
+  };
 
-  async function handleGenGameday(id: string) {
-    try {
-      const pmId = await generateFromGameday(id);
-      toast.success("Postmortem gerado");
-      setGenOpen(false);
-      navigate(`/observability/postmortems/${pmId}`);
-    } catch (e) {
-      toast.error((e as Error).message);
-    }
-  }
+  const actionsFor = (pmId: string) => actions.filter((a) => a.postmortem_id === pmId);
 
-  async function handleCreateManual() {
-    if (!workspaceId || !newTitle.trim()) return;
-    setCreating(true);
-    try {
-      const id = await createManualPostmortem({
-        workspace_id: workspaceId,
-        title: newTitle.trim(),
-        severity: newSev,
-        summary: newSummary.trim() || undefined,
-      });
-      toast.success("Postmortem criado");
-      setCreateOpen(false);
-      setNewTitle(""); setNewSummary(""); setNewSev("SEV2");
-      navigate(`/observability/postmortems/${id}`);
-    } catch (e) {
-      toast.error((e as Error).message);
-    } finally {
-      setCreating(false);
-    }
-  }
+  const stats = {
+    total: items.length,
+    published: items.filter((i) => i.status === "published").length,
+    open_actions: actions.filter((a) => a.status === "open" || a.status === "in_progress").length,
+    sev1_sev2: items.filter((i) => i.severity === "SEV1" || i.severity === "SEV2").length,
+  };
 
   return (
-    <div className="space-y-6 page-enter">
-      <header className="flex items-start justify-between gap-4 flex-wrap">
-        <div>
-          <h1 className="font-heading text-3xl font-extrabold tracking-tight bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
-            Postmortems
-          </h1>
-          <p className="text-muted-foreground mt-1.5 text-sm">
-            Aprendizado estruturado pós-incidente — blameless, acionável, publicado em até 5 dias.
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={openGenerator}>
-            <Wand2 className="h-4 w-4 mr-2" /> Gerar de incidente
-          </Button>
-          <Button onClick={() => setCreateOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" /> Novo postmortem
-          </Button>
-        </div>
-      </header>
+    <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
+      <PageHeader
+        title="Post-Mortems"
+        description="Documentação estruturada de incidentes com timeline, root cause e action items rastreáveis"
+      />
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StatCard label="Total" value={stats.total} />
-        <StatCard label="SEV1" value={stats.sev1} accent="text-destructive" />
-        <StatCard label="Rascunhos" value={stats.draft} />
-        <StatCard label="Publicados" value={stats.published} accent="text-emerald-500" />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-body-sm text-muted-foreground">Total</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-semibold">{stats.total}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-body-sm text-muted-foreground">Publicados</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-semibold text-primary">{stats.published}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-body-sm text-muted-foreground">Ações Abertas</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-semibold">{stats.open_actions}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-body-sm text-muted-foreground">SEV1/SEV2</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-semibold text-destructive">{stats.sev1_sev2}</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="flex justify-end">
+        <Button onClick={() => setDialogOpen(true)}>
+          <Plus className="mr-2 h-4 w-4" /> Novo Post-Mortem
+        </Button>
       </div>
 
       <Card>
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between gap-2 flex-wrap">
-            <CardTitle className="text-base">Lista</CardTitle>
-            <div className="flex gap-2 flex-wrap">
-              <Input placeholder="Buscar título…" value={search} onChange={(e) => setSearch(e.target.value)} className="w-48" />
-              <Select value={filterSev} onValueChange={setFilterSev}>
-                <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas SEV</SelectItem>
-                  <SelectItem value="SEV1">SEV1</SelectItem>
-                  <SelectItem value="SEV2">SEV2</SelectItem>
-                  <SelectItem value="SEV3">SEV3</SelectItem>
-                  <SelectItem value="SEV4">SEV4</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={filterStatus} onValueChange={setFilterStatus}>
-                <SelectTrigger className="w-36"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos status</SelectItem>
-                  <SelectItem value="draft">Rascunho</SelectItem>
-                  <SelectItem value="review">Em revisão</SelectItem>
-                  <SelectItem value="published">Publicado</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={filterSource} onValueChange={setFilterSource}>
-                <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas origens</SelectItem>
-                  <SelectItem value="incident_run">Incidente</SelectItem>
-                  <SelectItem value="game_day">Game Day</SelectItem>
-                  <SelectItem value="dr_drill">DR Drill</SelectItem>
-                  <SelectItem value="manual">Manual</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <FileText className="h-5 w-5" /> Documentos
+          </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-3">
           {loading ? (
-            <div className="space-y-2">{[0, 1, 2].map(i => <Skeleton key={i} className="h-16 w-full" />)}</div>
-          ) : filtered.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground">
-              <FileText className="h-10 w-10 mx-auto mb-3 opacity-50" />
-              <p className="text-sm">Nenhum postmortem encontrado.</p>
-            </div>
+            <p className="text-body-sm text-muted-foreground">Carregando…</p>
+          ) : items.length === 0 ? (
+            <p className="text-body-sm text-muted-foreground text-center py-8">
+              Nenhum post-mortem ainda. Registre incidentes para melhoria contínua.
+            </p>
           ) : (
-            <div className="space-y-2">
-              {filtered.map((pm) => {
-                const Icon = SOURCE_ICON[pm.incident_source];
-                return (
-                  <button
-                    key={pm.id}
-                    onClick={() => navigate(`/observability/postmortems/${pm.id}`)}
-                    className="w-full text-left flex items-center gap-3 p-3 rounded-lg border border-border bg-card hover:bg-secondary/30 transition-colors"
-                  >
-                    <Icon className="h-5 w-5 text-muted-foreground shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm truncate">{pm.title}</p>
-                      <p className="text-xs text-muted-foreground truncate">
-                        {pm.summary || "Sem resumo ainda"}
-                      </p>
+            items.map((pm) => {
+              const acts = actionsFor(pm.id);
+              const openActs = acts.filter((a) => a.status === "open" || a.status === "in_progress").length;
+              return (
+                <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
+                  key={pm.id}
+                  className="rounded-lg border border-border/60 p-4 hover:bg-muted/30 transition cursor-pointer"
+                  onClick={() => setSelected(pm)}
+                >
+                  <div className="flex flex-col md:flex-row md:items-start justify-between gap-3">
+                    <div className="space-y-1 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="font-medium">{pm.title}</p>
+                        <Badge variant={SEV_META[pm.severity].variant}>{SEV_META[pm.severity].label}</Badge>
+                        <Badge variant={STATUS_META[pm.status].variant}>{STATUS_META[pm.status].label}</Badge>
+                        <Badge variant="outline">{SOURCE_LABEL[pm.incident_source]}</Badge>
+                      </div>
+                      {pm.summary && <p className="text-body-sm text-muted-foreground line-clamp-2">{pm.summary}</p>}
+                      <div className="flex items-center gap-3 text-meta text-muted-foreground flex-wrap">
+                        <span>Criado {format(new Date(pm.created_at), "PPp", { locale: ptBR })}</span>
+                        {openActs > 0 && (
+                          <span className="flex items-center gap-1 text-nexus-amber">
+                            <AlertCircle className="h-3 w-3" /> {openActs} ação(ões) pendente(s)
+                          </span>
+                        )}
+                        {acts.length > 0 && openActs === 0 && (
+                          <span className="flex items-center gap-1 text-primary">
+                            <CheckCircle2 className="h-3 w-3" /> Todas ações concluídas
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    <Badge variant="outline" className={SEV_COLORS[pm.severity]}>{pm.severity}</Badge>
-                    <Badge variant="outline" className={STATUS_COLORS[pm.status]}>
-                      {pm.status === "draft" ? "Rascunho" : pm.status === "review" ? "Revisão" : "Publicado"}
-                    </Badge>
-                    <span className="text-xs text-muted-foreground tabular-nums whitespace-nowrap">
-                      {new Date(pm.created_at).toLocaleDateString("pt-BR")}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+                    {pm.status !== "published" && (
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          void publish(pm.id);
+                        }}
+                      >
+                        Publicar
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              );
+            })
           )}
         </CardContent>
       </Card>
 
-      {/* Manual create dialog */}
-      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent>
-          <DialogHeader><DialogTitle>Novo postmortem manual</DialogTitle></DialogHeader>
-          <div className="space-y-3">
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Novo Post-Mortem</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
             <div>
               <Label>Título</Label>
-              <Input value={newTitle} onChange={(e) => setNewTitle(e.target.value)} placeholder="Ex: SEV1 — Provider outage 2026-04-18" />
+              <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label>Origem</Label>
+                <Select value={form.incident_source} onValueChange={(v) => setForm({ ...form, incident_source: v as Source })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {(Object.keys(SOURCE_LABEL) as Source[]).map((s) => (
+                      <SelectItem key={s} value={s}>{SOURCE_LABEL[s]}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>Severidade</Label>
+                <Select value={form.severity} onValueChange={(v) => setForm({ ...form, severity: v as Severity })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {(Object.keys(SEV_META) as Severity[]).map((s) => (
+                      <SelectItem key={s} value={s}>{SEV_META[s].label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             <div>
-              <Label>Severidade</Label>
-              <Select value={newSev} onValueChange={(v) => setNewSev(v as PostmortemSeverity)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="SEV1">SEV1 — Outage crítico</SelectItem>
-                  <SelectItem value="SEV2">SEV2 — Degradação grave</SelectItem>
-                  <SelectItem value="SEV3">SEV3 — Impacto limitado</SelectItem>
-                  <SelectItem value="SEV4">SEV4 — Cosmético / interno</SelectItem>
-                </SelectContent>
-              </Select>
+              <Label>Resumo</Label>
+              <Textarea value={form.summary} onChange={(e) => setForm({ ...form, summary: e.target.value })} rows={2} />
             </div>
             <div>
-              <Label>Resumo (opcional)</Label>
-              <Input value={newSummary} onChange={(e) => setNewSummary(e.target.value)} placeholder="O que aconteceu, em uma frase" />
+              <Label>Root Cause</Label>
+              <Textarea value={form.root_cause} onChange={(e) => setForm({ ...form, root_cause: e.target.value })} rows={2} />
+            </div>
+            <div>
+              <Label>Lições aprendidas</Label>
+              <Textarea value={form.lessons_learned} onChange={(e) => setForm({ ...form, lessons_learned: e.target.value })} rows={2} />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setCreateOpen(false)}>Cancelar</Button>
-            <Button onClick={handleCreateManual} disabled={!newTitle.trim() || creating}>
-              {creating ? "Criando…" : "Criar"}
-            </Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancelar</Button>
+            <Button onClick={handleCreate}>Criar</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Generate from source dialog */}
-      <Dialog open={genOpen} onOpenChange={setGenOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader><DialogTitle>Gerar postmortem a partir de…</DialogTitle></DialogHeader>
-          <div className="flex gap-2 mb-3">
-            <Button size="sm" variant={genTab === "incident" ? "default" : "outline"} onClick={() => setGenTab("incident")}>
-              <ShieldAlert className="h-4 w-4 mr-2" /> Incidente
-            </Button>
-            <Button size="sm" variant={genTab === "gameday" ? "default" : "outline"} onClick={() => setGenTab("gameday")}>
-              <Activity className="h-4 w-4 mr-2" /> Game Day
-            </Button>
-          </div>
-          <div className="max-h-80 overflow-y-auto space-y-1.5">
-            {genTab === "incident" && recentIncidents.length === 0 && (
-              <p className="text-sm text-muted-foreground py-4 text-center">Nenhum incident run recente.</p>
-            )}
-            {genTab === "incident" && recentIncidents.map((r) => (
-              <button key={r.id} onClick={() => handleGenIncident(r.id)}
-                className="w-full text-left p-2.5 rounded-md border border-border hover:bg-secondary/40 transition-colors flex items-center gap-2">
-                <span className="text-xs text-muted-foreground tabular-nums">{new Date(r.started_at).toLocaleString("pt-BR")}</span>
-                <Badge variant="outline" className="text-[10px]">{r.status}</Badge>
-                <span className="text-xs text-muted-foreground truncate flex-1">trigger: {r.triggered_by}</span>
-              </button>
-            ))}
-            {genTab === "gameday" && recentGamedays.length === 0 && (
-              <p className="text-sm text-muted-foreground py-4 text-center">Nenhum game day finalizado.</p>
-            )}
-            {genTab === "gameday" && recentGamedays.map((g) => (
-              <button key={g.id} onClick={() => handleGenGameday(g.id)}
-                className="w-full text-left p-2.5 rounded-md border border-border hover:bg-secondary/40 transition-colors flex items-center gap-2">
-                <Activity className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium truncate flex-1">{g.title}</span>
-                <Badge variant="outline" className="text-[10px]">{g.scenario}</Badge>
-              </button>
-            ))}
-          </div>
+      <Dialog open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+          {selected && (
+            <>
+              <DialogHeader>
+                <DialogTitle>{selected.title}</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 text-body-sm">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Badge variant={SEV_META[selected.severity].variant}>{SEV_META[selected.severity].label}</Badge>
+                  <Badge variant={STATUS_META[selected.status].variant}>{STATUS_META[selected.status].label}</Badge>
+                  <Badge variant="outline">{SOURCE_LABEL[selected.incident_source]}</Badge>
+                </div>
+                {selected.summary && (
+                  <section>
+                    <h4 className="font-medium mb-1">Resumo</h4>
+                    <p className="text-muted-foreground whitespace-pre-wrap">{selected.summary}</p>
+                  </section>
+                )}
+                {selected.root_cause && (
+                  <section>
+                    <h4 className="font-medium mb-1">Root Cause</h4>
+                    <p className="text-muted-foreground whitespace-pre-wrap">{selected.root_cause}</p>
+                  </section>
+                )}
+                {selected.lessons_learned && (
+                  <section>
+                    <h4 className="font-medium mb-1">Lições Aprendidas</h4>
+                    <p className="text-muted-foreground whitespace-pre-wrap">{selected.lessons_learned}</p>
+                  </section>
+                )}
+                <section>
+                  <h4 className="font-medium mb-2 flex items-center gap-2"><Clock className="h-4 w-4" /> Action Items</h4>
+                  {actionsFor(selected.id).length === 0 ? (
+                    <p className="text-muted-foreground text-meta">Nenhuma ação registrada.</p>
+                  ) : (
+                    <ul className="space-y-2">
+                      {actionsFor(selected.id).map((a) => (
+                        <li key={a.id} className="rounded border p-2 flex justify-between gap-2">
+                          <div>
+                            <p>{a.description}</p>
+                            <p className="text-meta text-muted-foreground">
+                              {a.owner_name ?? "Sem responsável"}
+                              {a.due_date && ` • Prazo ${format(new Date(a.due_date), "PP", { locale: ptBR })}`}
+                            </p>
+                          </div>
+                          <div className="flex flex-col items-end gap-1">
+                            <Badge variant="outline">{a.priority}</Badge>
+                            <Badge variant={a.status === "done" ? "secondary" : "default"}>{a.status}</Badge>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </section>
+              </div>
+            </>
+          )}
         </DialogContent>
       </Dialog>
     </div>
-  );
-}
-
-function StatCard({ label, value, accent }: { label: string; value: number; accent?: string }) {
-  return (
-    <Card>
-      <CardContent className="p-4">
-        <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">{label}</p>
-        <p className={`text-2xl font-bold tabular-nums mt-1 ${accent ?? ""}`}>{value}</p>
-      </CardContent>
-    </Card>
   );
 }

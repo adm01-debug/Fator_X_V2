@@ -33,12 +33,12 @@ export function MiddlewarePipelinePanel() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Layers className="h-4 w-4 text-primary" />
-          <h3 className="text-sm font-heading font-semibold text-foreground">Middleware Pipeline</h3>
-          <Badge variant="secondary" className="text-[11px]">{pipelineSize} ativo(s)</Badge>
+          <h3 className="text-body-sm font-heading font-semibold text-foreground">Middleware Pipeline</h3>
+          <Badge variant="secondary" className="text-meta">{pipelineSize} ativo(s)</Badge>
         </div>
       </div>
 
-      <p className="text-xs text-muted-foreground">
+      <p className="text-meta text-muted-foreground">
         Pipeline de interceptors que processam todas as requisições LLM — logging, cache, rate limit, cost tracking.
       </p>
 
@@ -53,10 +53,10 @@ export function MiddlewarePipelinePanel() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <p className="text-xs font-semibold text-foreground">{mw.name}</p>
-                  <Badge variant="outline" className="text-[10px] font-mono">P{mw.priority}</Badge>
+                  <p className="text-meta font-semibold text-foreground">{mw.name}</p>
+                  <Badge variant="outline" className="text-meta font-mono">P{mw.priority}</Badge>
                 </div>
-                <p className="text-[11px] text-muted-foreground">{mw.description}</p>
+                <p className="text-meta text-muted-foreground">{mw.description}</p>
               </div>
               <Switch checked={enabled} onCheckedChange={() => toggleMiddleware(mw.id)} />
             </div>
@@ -65,7 +65,7 @@ export function MiddlewarePipelinePanel() {
       </div>
 
       <div className="rounded-lg bg-secondary/20 border border-border/30 p-3">
-        <p className="text-[11px] text-muted-foreground">
+        <p className="text-meta text-muted-foreground">
           <strong>Ordem de execução:</strong>{' '}
           {AVAILABLE_MIDDLEWARES.filter(m => enabledIds.has(m.id)).sort((a, b) => a.priority - b.priority).map(m => m.name).join(' → ') || 'Nenhum middleware ativo'}
         </p>

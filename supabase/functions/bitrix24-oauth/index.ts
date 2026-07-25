@@ -1,6 +1,14 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { handleCorsPreflight, jsonResponse, errorResponse, getCorsHeaders, getRateLimitIdentifier, checkRateLimit, RATE_LIMITS, createRateLimitResponse } from "../_shared/mod.ts";
+import { z } from "https://esm.sh/zod@3.23.8";
+
+const OAuthActionSchema = z.enum(['authorize', 'callback']);
+const OAuthQuerySchema = z.object({
+  action: OAuthActionSchema.optional(),
+  code: z.string().min(1).max(2048).optional(),
+  state: z.string().max(2048).optional(),
+});
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
@@ -10,12 +18,21 @@ serve(async (req) => {
   if (!rateCheck.allowed) return createRateLimitResponse(rateCheck);
 
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    if (!supabaseUrl || !supabaseServiceKey) {
+      return errorResponse(req, 'Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY', 500);
+    }
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const url = new URL(req.url);
-    const action = url.searchParams.get('action') || 'authorize';
+    const queryParsed = OAuthQuerySchema.safeParse({
+      action: url.searchParams.get('action') ?? undefined,
+      code: url.searchParams.get('code') ?? undefined,
+      state: url.searchParams.get('state') ?? undefined,
+    });
+    if (!queryParsed.success) return errorResponse(req, 'Parâmetros inválidos', 400);
+    const action = queryParsed.data.action ?? 'authorize';
     const clientId = Deno.env.get('BITRIX24_CLIENT_ID');
     const clientSecret = Deno.env.get('BITRIX24_CLIENT_SECRET');
     const bitrixDomain = Deno.env.get('BITRIX24_DOMAIN');
@@ -30,6 +47,9 @@ serve(async (req) => {
     }
 
     if (action === 'callback') {
+      if (!bitrixDomain || !clientId || !clientSecret) {
+        return errorResponse(req, 'Bitrix24 não configurado', 500);
+      }
       const code = url.searchParams.get('code');
       if (!code) return errorResponse(req, 'Missing authorization code', 400);
 
@@ -39,8 +59,8 @@ serve(async (req) => {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({
           grant_type: 'authorization_code',
-          client_id: clientId!,
-          client_secret: clientSecret!,
+          client_id: clientId,
+          client_secret: clientSecret,
           code,
           redirect_uri: redirectUri,
         }),

@@ -37,16 +37,16 @@ export default function DataResidencyPage() {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Região primária</div><div className="text-lg font-bold mt-1">🇧🇷 BR São Paulo</div></CardContent></Card>
-        <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Tenants ativos</div><div className="text-2xl font-bold">{TENANTS.length}</div></CardContent></Card>
-        <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Dados armazenados</div><div className="text-2xl font-bold">{TENANTS.reduce((s, t) => s + t.dataGB, 0)} GB</div></CardContent></Card>
-        <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Compliance</div><div className="flex gap-1 mt-1"><Badge className="text-[10px] bg-nexus-green/15 text-nexus-green border-nexus-green/30">LGPD</Badge><Badge className="text-[10px] bg-nexus-blue/15 text-nexus-blue border-nexus-blue/30">GDPR</Badge></div></CardContent></Card>
+        <Card><CardContent className="p-4"><div className="text-meta text-muted-foreground">Região primária</div><div className="text-title-sm font-bold mt-1">🇧🇷 BR São Paulo</div></CardContent></Card>
+        <Card><CardContent className="p-4"><div className="text-meta text-muted-foreground">Tenants ativos</div><div className="text-2xl font-bold">{TENANTS.length}</div></CardContent></Card>
+        <Card><CardContent className="p-4"><div className="text-meta text-muted-foreground">Dados armazenados</div><div className="text-2xl font-bold">{TENANTS.reduce((s, t) => s + t.dataGB, 0)} GB</div></CardContent></Card>
+        <Card><CardContent className="p-4"><div className="text-meta text-muted-foreground">Compliance</div><div className="flex gap-1 mt-1"><Badge className="text-meta bg-nexus-green/15 text-nexus-green border-nexus-green/30">LGPD</Badge><Badge className="text-meta bg-nexus-blue/15 text-nexus-blue border-nexus-blue/30">GDPR</Badge></div></CardContent></Card>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2"><MapPin className="h-4 w-4" />Regiões disponíveis</CardTitle>
+            <CardTitle className="text-title-sm flex items-center gap-2"><MapPin className="h-4 w-4" />Regiões disponíveis</CardTitle>
             <CardDescription>Escolha onde seus dados são armazenados e processados</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
@@ -60,15 +60,15 @@ export default function DataResidencyPage() {
                   <div className="flex items-center gap-3">
                     <span className="text-2xl">{r.flag}</span>
                     <div>
-                      <div className="text-sm font-medium">{r.name}</div>
-                      <div className="text-[10px] text-muted-foreground font-mono">{r.code}</div>
+                      <div className="text-body-sm font-medium">{r.name}</div>
+                      <div className="text-meta text-muted-foreground font-mono">{r.code}</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    {r.lgpd && <Badge variant="outline" className="text-[10px] h-5 bg-nexus-green/10 text-nexus-green border-nexus-green/30">LGPD</Badge>}
-                    {r.gdpr && <Badge variant="outline" className="text-[10px] h-5 bg-nexus-blue/10 text-nexus-blue border-nexus-blue/30">GDPR</Badge>}
-                    {r.sovereign && <Badge variant="outline" className="text-[10px] h-5 bg-nexus-purple/10 text-nexus-purple border-nexus-purple/30">Sovereign</Badge>}
-                    <span className="text-[11px] text-muted-foreground ml-2">{r.latency}</span>
+                    {r.lgpd && <Badge variant="outline" className="text-meta h-5 bg-nexus-green/10 text-nexus-green border-nexus-green/30">LGPD</Badge>}
+                    {r.gdpr && <Badge variant="outline" className="text-meta h-5 bg-nexus-blue/10 text-nexus-blue border-nexus-blue/30">GDPR</Badge>}
+                    {r.sovereign && <Badge variant="outline" className="text-meta h-5 bg-nexus-purple/10 text-nexus-purple border-nexus-purple/30">Sovereign</Badge>}
+                    <span className="text-meta text-muted-foreground ml-2">{r.latency}</span>
                     {primaryRegion === r.code && <CheckCircle2 className="h-4 w-4 text-primary ml-1" />}
                   </div>
                 </div>
@@ -79,33 +79,33 @@ export default function DataResidencyPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2"><Lock className="h-4 w-4" />Criptografia & Controles</CardTitle>
+            <CardTitle className="text-title-sm flex items-center gap-2"><Lock className="h-4 w-4" />Criptografia & Controles</CardTitle>
             <CardDescription>Proteção em repouso, em trânsito e BYOK</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <Label className="text-sm">Encryption at Rest (AES-256)</Label>
-                <p className="text-xs text-muted-foreground mt-0.5">Todos os dados em disco são cifrados</p>
+                <Label className="text-body-sm">Encryption at Rest (AES-256)</Label>
+                <p className="text-meta text-muted-foreground mt-0.5">Todos os dados em disco são cifrados</p>
               </div>
               <Switch checked={encryptionAtRest} onCheckedChange={setEncryptionAtRest} />
             </div>
             <div className="flex items-center justify-between">
               <div>
-                <Label className="text-sm">BYOK (Bring Your Own Key)</Label>
-                <p className="text-xs text-muted-foreground mt-0.5">Use sua própria CMK no AWS KMS / Azure Key Vault</p>
+                <Label className="text-body-sm">BYOK (Bring Your Own Key)</Label>
+                <p className="text-meta text-muted-foreground mt-0.5">Use sua própria CMK no AWS KMS / Azure Key Vault</p>
               </div>
               <Switch checked={byok} onCheckedChange={setByok} />
             </div>
             <div className="flex items-center justify-between">
               <div>
-                <Label className="text-sm">Bloquear export entre regiões</Label>
-                <p className="text-xs text-muted-foreground mt-0.5">Dados não saem da região primária</p>
+                <Label className="text-body-sm">Bloquear export entre regiões</Label>
+                <p className="text-meta text-muted-foreground mt-0.5">Dados não saem da região primária</p>
               </div>
               <Switch checked={dataExportBlock} onCheckedChange={setDataExportBlock} />
             </div>
             <div className="pt-3 border-t border-border/40">
-              <Label className="text-xs">Modelo de isolamento padrão para novos tenants</Label>
+              <Label className="text-meta">Modelo de isolamento padrão para novos tenants</Label>
               <Select defaultValue="schema">
                 <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -122,14 +122,14 @@ export default function DataResidencyPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2"><Database className="h-4 w-4" />Tenants</CardTitle>
+          <CardTitle className="text-title-sm flex items-center gap-2"><Database className="h-4 w-4" />Tenants</CardTitle>
           <CardDescription>Workspaces ativos e seus modelos de isolamento</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-body-sm">
               <thead>
-                <tr className="border-b border-border/40 text-left text-xs text-muted-foreground">
+                <tr className="border-b border-border/40 text-left text-meta text-muted-foreground">
                   <th className="pb-2 pr-4">Tenant</th>
                   <th className="pb-2 pr-4">Região</th>
                   <th className="pb-2 pr-4">Usuários</th>
@@ -145,13 +145,13 @@ export default function DataResidencyPage() {
                     <tr key={t.id} className="border-b border-border/20">
                       <td className="py-3 pr-4">
                         <div className="font-medium">{t.name}</div>
-                        <div className="text-[10px] text-muted-foreground font-mono">{t.id}</div>
+                        <div className="text-meta text-muted-foreground font-mono">{t.id}</div>
                       </td>
-                      <td className="py-3 pr-4 text-xs">{region.flag} {region.name.split(" — ")[1]}</td>
+                      <td className="py-3 pr-4 text-meta">{region.flag} {region.name.split(" — ")[1]}</td>
                       <td className="py-3 pr-4">{t.users}</td>
                       <td className="py-3 pr-4">{t.dataGB} GB</td>
-                      <td className="py-3 pr-4"><Badge variant="outline" className="text-[10px]">{t.isolation}</Badge></td>
-                      <td className="py-3"><Badge className="text-[10px] bg-nexus-green/15 text-nexus-green border-nexus-green/30"><CheckCircle2 className="h-3 w-3 mr-0.5" />Ativo</Badge></td>
+                      <td className="py-3 pr-4"><Badge variant="outline" className="text-meta">{t.isolation}</Badge></td>
+                      <td className="py-3"><Badge className="text-meta bg-nexus-green/15 text-nexus-green border-nexus-green/30"><CheckCircle2 className="h-3 w-3 mr-0.5" />Ativo</Badge></td>
                     </tr>
                   );
                 })}
@@ -165,8 +165,8 @@ export default function DataResidencyPage() {
         <CardContent className="p-4 flex items-start gap-3">
           <AlertTriangle className="h-5 w-5 text-nexus-amber shrink-0 mt-0.5" />
           <div>
-            <div className="text-sm font-medium">Migração entre regiões requer aprovação</div>
-            <div className="text-xs text-muted-foreground mt-1">
+            <div className="text-body-sm font-medium">Migração entre regiões requer aprovação</div>
+            <div className="text-meta text-muted-foreground mt-1">
               Mover dados entre regiões pode levar até 24h e exige autorização do Workspace Owner. Compliance officers serão notificados.
             </div>
           </div>

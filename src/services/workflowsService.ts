@@ -9,6 +9,7 @@ import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import { fromTable } from '@/lib/supabaseExtended';
 import { withTrace } from '@/lib/tracing';
 import type { Json } from '@/integrations/supabase/types';
+import type { DbRow } from '@/types/dbRow';
 
 export interface WorkflowNode {
   id: string;
@@ -257,11 +258,13 @@ export async function executeWorkflow(
           });
           if (error) throw new Error(error.message);
           if (data?.status === 'completed') {
-            span.setAttribute('workflow.steps_executed', data.stepsExecuted ?? 0);
-            span.setAttribute('cost.usd', data.cost ?? 0);
+            const stepsExecuted = Number(data.steps_executed ?? data.stepsExecuted ?? 0);
+            const cost = Number(data.total_cost_usd ?? data.cost ?? 0);
+            span.setAttribute('workflow.steps_executed', stepsExecuted);
+            span.setAttribute('cost.usd', cost);
             return {
-              stepsExecuted: data.stepsExecuted as number,
-              cost: (data.cost as number) ?? 0,
+              stepsExecuted,
+              cost,
             };
           }
           throw new Error(`workflow-engine status ${data?.status ?? 'unknown'}`);
@@ -275,7 +278,7 @@ export async function executeWorkflow(
 
         for (let i = 0; i < steps.length; i++) {
           const step = steps[i];
-          await ctx.withSpan(`workflow.step.${step}`, 'custom', async (span) => {
+          await ctx.withSpan(`workflow.step.${step}`, 'agent', async (span) => {
             span.setAttribute('workflow.id', workflowId);
             span.setAttribute('workflow.step_index', i);
             span.setAttribute('workflow.step_name', step);

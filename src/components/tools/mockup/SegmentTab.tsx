@@ -22,7 +22,7 @@ export function SegmentTab() {
       setSegments(data.segments);
       toast.success(`${data.segments.length} segmentos detectados (${data.model})`);
       if (data.note) toast.info(data.note);
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro inesperado");
     } finally {
       setLoading(false);
@@ -40,9 +40,9 @@ export function SegmentTab() {
           <Label>Objetos detectados</Label>
           <div className="bg-background rounded-lg border border-border p-3 space-y-1">
             {segments.map((s, i) => (
-              <div key={i} className="flex items-center justify-between text-xs">
+              <div key={i} className="flex items-center justify-between text-meta">
                 <span className="text-foreground">{s.label}</span>
-                <Badge variant="outline" className="text-[10px]">{(s.score * 100).toFixed(1)}%</Badge>
+                <Badge variant="outline" className="text-meta">{(s.score * 100).toFixed(1)}%</Badge>
               </div>
             ))}
           </div>

@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import type { PromptTechnique, FewShotExample, OutputFormat } from '@/types/agentTypes';
 import { PromptDiff } from '@/components/prompts/PromptDiff';
 import { PromptABTestDialog } from './PromptABTestDialog';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 const PROMPT_TECHNIQUES: { id: string; name: string; impact: string; description: string; example: string }[] = [
   { id: 'role', name: 'Role Prompting', impact: 'Alto', description: 'Define quem o agente É', example: 'Você é um especialista em...' },
@@ -124,7 +125,7 @@ export function PromptModule() {
           hint="Use variáveis como {{user_name}}, {{context}}, {{tools_available}} para tornar o prompt dinâmico."
         />
         <div className="mt-3 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <div className="flex items-center gap-2 text-meta text-muted-foreground">
             <span className="font-mono">{agent.system_prompt.length} chars</span>
             <span>·</span>
             <span className="font-mono">~{Math.ceil(agent.system_prompt.length / 4)} tokens</span>
@@ -184,13 +185,13 @@ export function PromptModule() {
                 >
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-semibold">v{pv.version}</span>
+                      <span className="text-body-sm font-semibold">v{pv.version}</span>
                       {pv.is_active && (
-                        <span className="text-[11px] px-1.5 py-0.5 rounded bg-primary/20 text-primary font-medium">ATIVA</span>
+                        <span className="text-meta px-1.5 py-0.5 rounded bg-primary/20 text-primary font-medium">ATIVA</span>
                       )}
                     </div>
-                    <p className="text-xs text-muted-foreground truncate">{pv.change_summary}</p>
-                    <p className="text-[11px] text-muted-foreground">{new Date(pv.created_at).toLocaleString('pt-BR')}</p>
+                    <p className="text-meta text-muted-foreground truncate">{pv.change_summary}</p>
+                    <p className="text-meta text-muted-foreground">{new Date(pv.created_at).toLocaleString('pt-BR')}</p>
                   </div>
                   <div className="flex items-center gap-1">
                     {!pv.is_active && (
@@ -248,7 +249,7 @@ export function PromptModule() {
                   <div className="grid grid-cols-2 gap-3">
                     <select
                       aria-label="Selecionar versão A para comparação"
-                      className="w-full rounded-md border border-border bg-muted/30 px-3 py-2 text-sm"
+                      className="w-full rounded-md border border-border bg-muted/30 px-3 py-2 text-body-sm"
                       value={diffVersionA || ''}
                       onChange={(e) => setDiffVersionA(e.target.value || null)}
                     >
@@ -257,7 +258,7 @@ export function PromptModule() {
                     </select>
                     <select
                       aria-label="Selecionar versão B para comparação"
-                      className="w-full rounded-md border border-border bg-muted/30 px-3 py-2 text-sm"
+                      className="w-full rounded-md border border-border bg-muted/30 px-3 py-2 text-body-sm"
                       value={diffVersionB || ''}
                       onChange={(e) => setDiffVersionB(e.target.value || null)}
                     >
@@ -292,20 +293,20 @@ export function PromptModule() {
           {PROMPT_TECHNIQUES.map((pt) => {
             const isEnabled = techniques.find(t => t.id === pt.id)?.enabled ?? false;
             return (
-              <div
+              <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
                 key={pt.id}
                 onClick={() => updateTechnique(pt.id, { enabled: !isEnabled })}
                 className={`cursor-pointer rounded-xl border p-4 transition-all duration-300 ${
                   isEnabled
                     ? 'border-primary bg-primary/5 ring-1 ring-primary/20'
-                    : 'border-border bg-card hover:border-muted-foreground/30 hover:shadow-lg hover:shadow-primary/5'
+                    : 'border-border bg-card hover:border-muted-foreground/30 hover:shadow-nexus-lg hover:shadow-primary/5'
                 }`}
               >
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-semibold text-foreground">{pt.name}</span>
+                  <span className="text-body-sm font-semibold text-foreground">{pt.name}</span>
                   <NexusBadge color={IMPACT_COLORS[pt.impact] || 'blue'}>{pt.impact}</NexusBadge>
                 </div>
-                <p className="text-xs text-muted-foreground mb-2">{pt.description}</p>
+                <p className="text-meta text-muted-foreground mb-2">{pt.description}</p>
                 <CodeBlock code={pt.example} language="text" />
               </div>
             );
@@ -352,18 +353,18 @@ export function PromptModule() {
         <SectionTitle icon="📤" title="Formato de Saída" subtitle="Como o agente deve formatar suas respostas." />
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {OUTPUT_FORMATS.map((fmt) => (
-            <div
+            <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
               key={fmt.value}
               onClick={() => updateAgent({ output_format: fmt.value })}
               className={`cursor-pointer rounded-xl border p-4 text-center transition-all duration-300 ${
                 agent.output_format === fmt.value
-                  ? 'border-primary bg-primary/5 ring-1 ring-primary/20 shadow-lg shadow-primary/5'
+                  ? 'border-primary bg-primary/5 ring-1 ring-primary/20 shadow-nexus-lg shadow-primary/5'
                   : 'border-border bg-card hover:border-muted-foreground/30'
               }`}
             >
               <span className="text-2xl">{fmt.icon}</span>
-              <p className="text-sm font-semibold text-foreground mt-2">{fmt.label}</p>
-              <p className="text-xs text-muted-foreground mt-1">{fmt.description}</p>
+              <p className="text-body-sm font-semibold text-foreground mt-2">{fmt.label}</p>
+              <p className="text-meta text-muted-foreground mt-1">{fmt.description}</p>
             </div>
           ))}
         </div>

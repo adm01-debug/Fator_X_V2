@@ -370,7 +370,7 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
                 <Play className="h-4 w-4 text-primary" /> Replay da execução
               </DialogTitle>
               <DialogDescription>
-                <span className="font-mono text-[11px]">
+                <span className="font-mono text-meta">
                   {execution.session_id.startsWith('auto-') ? '∅ sem session_id' : execution.session_id}
                 </span>
                 {' · '}{total} eventos · {execution.total_ms}ms total
@@ -418,7 +418,7 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
                 <BookmarkCheck className="h-3.5 w-3.5" />
                 <span className="sr-only">Anterior</span>
               </Button>
-              <Badge variant="outline" className="text-[10px] gap-1 text-nexus-amber border-nexus-amber/40">
+              <Badge variant="outline" className="text-meta gap-1 text-nexus-amber border-nexus-amber/40">
                 <BookmarkCheck className="h-3 w-3" /> {bookmarks.length}
               </Badge>
               <Button
@@ -440,7 +440,7 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
           <Button
             size="sm"
             variant={canCompare ? 'default' : 'outline'}
-            className="h-8 px-2 gap-1.5 text-[11px]"
+            className="h-8 px-2 gap-1.5 text-meta"
             disabled={!canCompare}
             onClick={() => setCompareOpen(true)}
             title={canCompare
@@ -450,7 +450,7 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
             <GitCompare className="h-3.5 w-3.5" />
             Comparar
             {(pickA || pickB) && (
-              <span className="font-mono text-[10px] opacity-80">
+              <span className="font-mono text-meta opacity-80">
                 {pickA ? `#${indexA + 1}` : '—'}/{pickB ? `#${indexB + 1}` : '—'}
               </span>
             )}
@@ -469,9 +469,9 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
           )}
 
           <div className="ml-2 flex items-center gap-2">
-            <span className="text-[10px] uppercase text-muted-foreground">Velocidade</span>
+            <span className="text-meta uppercase text-muted-foreground">Velocidade</span>
             <Select value={String(speed)} onValueChange={(v) => setSpeed(Number(v))}>
-              <SelectTrigger className="h-8 w-[80px] text-xs"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="h-8 w-[80px] text-meta"><SelectValue /></SelectTrigger>
               <SelectContent>
                 {SPEEDS.map((s) => (
                   <SelectItem key={s} value={String(s)}>{s}x</SelectItem>
@@ -484,37 +484,37 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
               evita que o usuário precise lembrar das teclas. */}
           <div className="ml-auto flex items-center gap-2 flex-wrap justify-end">
             <span
-              className="text-[11px] font-mono tabular-nums px-2 py-0.5 rounded-md bg-primary/10 text-primary border border-primary/20"
+              className="text-meta font-mono tabular-nums px-2 py-0.5 rounded-md bg-primary/10 text-primary border border-primary/20"
               aria-live="polite"
               title={`Passo ${step + 1} de ${total}`}
             >
               Passo <span className="font-semibold">{step + 1}</span>
               <span className="text-primary/60"> / {total}</span>
             </span>
-            <div className="hidden md:flex items-center gap-1 text-[10px] text-muted-foreground" aria-label="Atalhos de teclado disponíveis">
-              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-[10px]">←</kbd>
-              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-[10px]">→</kbd>
+            <div className="hidden md:flex items-center gap-1 text-meta text-muted-foreground" aria-label="Atalhos de teclado disponíveis">
+              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">←</kbd>
+              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">→</kbd>
               <span className="opacity-60">passo</span>
               <span className="opacity-30 mx-0.5">·</span>
-              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-[10px]">Espaço</kbd>
+              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">Espaço</kbd>
               <span className="opacity-60">play</span>
               <span className="opacity-30 mx-0.5">·</span>
-              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-[10px]">Home</kbd>
-              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-[10px]">End</kbd>
+              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">Home</kbd>
+              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">End</kbd>
               <span className="opacity-30 mx-0.5">·</span>
-              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-[10px]">R</kbd>
+              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">R</kbd>
               <span className="opacity-60">reset</span>
               <span className="opacity-30 mx-0.5">·</span>
-              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-[10px]">/</kbd>
+              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">/</kbd>
               <span className="opacity-60">buscar</span>
               <span className="opacity-30 mx-0.5">·</span>
-              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-[10px]">−</kbd>
-              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-[10px]">+</kbd>
+              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">−</kbd>
+              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">+</kbd>
               <span className="opacity-60">
                 velocidade <span className="font-mono text-primary/80">({speed}x)</span>
               </span>
               <span className="opacity-30 mx-0.5">·</span>
-              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-[10px]">0</kbd>
+              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">0</kbd>
               <span className="opacity-60">reset</span>
             </div>
           </div>
@@ -539,7 +539,7 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
                     key={b.traceId}
                     type="button"
                     onClick={() => { setStep(b.stepIndex); setPlaying(false); }}
-                    className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 w-2 h-3.5 rounded-sm bg-nexus-amber border border-nexus-amber/80 shadow-sm pointer-events-auto hover:scale-125 transition-transform"
+                    className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 w-2 h-3.5 rounded-sm bg-nexus-amber border border-nexus-amber/80 shadow-nexus-sm pointer-events-auto hover:scale-125 transition-transform"
                     style={{ left }}
                     aria-label={`Ir para marcador no passo ${b.stepIndex + 1}`}
                     title={b.note ? `#${b.stepIndex + 1}: ${b.note}` : `Marcador no passo ${b.stepIndex + 1}`}
@@ -591,7 +591,7 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
                 }
               }}
               placeholder='Buscar nos passos (event, input, output, metadata) — atalho "/"'
-              className="h-8 pl-7 pr-2 text-xs"
+              className="h-8 pl-7 pr-2 text-meta"
               aria-label="Buscar texto nos passos da execução"
             />
           </div>
@@ -599,7 +599,7 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
             <>
               <span
                 className={cn(
-                  'text-[11px] tabular-nums px-1.5 py-0.5 rounded font-mono',
+                  'text-meta tabular-nums px-1.5 py-0.5 rounded font-mono',
                   matchIndexes.length === 0
                     ? 'bg-destructive/10 text-destructive border border-destructive/30'
                     : stepMatches
@@ -661,15 +661,15 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
               )}>
                 {LEVEL_ICON[current.level]}
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-foreground truncate flex items-center gap-1.5">
+                  <p className="text-body-sm font-medium text-foreground truncate flex items-center gap-1.5">
                     {currentBookmark && <BookmarkCheck className="h-3.5 w-3.5 text-nexus-amber shrink-0" />}
                     {current.event}
                   </p>
-                  <p className="text-[10px] font-mono text-muted-foreground">
+                  <p className="text-meta font-mono text-muted-foreground">
                     {new Date(current.created_at).toLocaleString('pt-BR')}
                   </p>
                   {currentBookmark?.note && (
-                    <p className="text-[11px] italic text-nexus-amber/90 mt-1 line-clamp-2">
+                    <p className="text-meta italic text-nexus-amber/90 mt-1 line-clamp-2">
                       “{currentBookmark.note}”
                     </p>
                   )}
@@ -680,7 +680,7 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
                     size="sm"
                     variant={currentIsA ? 'default' : 'outline'}
                     className={cn(
-                      'h-7 px-2 text-[11px] font-mono',
+                      'h-7 px-2 text-meta font-mono',
                       currentIsA && 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
                     )}
                     onClick={() => toggleSlot('A')}
@@ -694,7 +694,7 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
                     size="sm"
                     variant={currentIsB ? 'default' : 'outline'}
                     className={cn(
-                      'h-7 px-2 text-[11px] font-mono',
+                      'h-7 px-2 text-meta font-mono',
                       currentIsB && 'bg-nexus-emerald text-white hover:bg-nexus-emerald/90',
                     )}
                     onClick={() => toggleSlot('B')}
@@ -710,7 +710,7 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
                   stepIndex={step}
                   onChange={setBookmarks}
                 />
-                <Badge variant="outline" className="text-[10px]">{current.level}</Badge>
+                <Badge variant="outline" className="text-meta">{current.level}</Badge>
               </div>
 
               <div className="grid grid-cols-2 gap-2">
@@ -750,7 +750,7 @@ function Pane({ title, data }: { title: string; data: unknown }) {
   try { body = typeof data === 'string' ? data : JSON.stringify(data ?? {}, null, 2); } catch { body = String(data); }
   return (
     <div>
-      <p className="text-[10px] uppercase font-semibold text-muted-foreground mb-1">{title}</p>
+      <p className="text-meta uppercase font-semibold text-muted-foreground mb-1">{title}</p>
       <pre className="text-[10.5px] font-mono bg-muted/40 border border-border/40 rounded p-2 overflow-auto max-h-40 whitespace-pre-wrap">
         {body || '—'}
       </pre>
@@ -761,8 +761,8 @@ function Pane({ title, data }: { title: string; data: unknown }) {
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-md border border-border/40 p-2 bg-card/40">
-      <p className="text-[10px] uppercase text-muted-foreground">{label}</p>
-      <p className="text-sm font-semibold text-foreground tabular-nums">{value}</p>
+      <p className="text-meta uppercase text-muted-foreground">{label}</p>
+      <p className="text-body-sm font-semibold text-foreground tabular-nums">{value}</p>
     </div>
   );
 }

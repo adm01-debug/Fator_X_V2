@@ -97,7 +97,7 @@ export function OracleAnalyticsPanel() {
   }, [history, metrics, serviceStats]);
 
   return (
-    <Card className="p-8 bg-card border-border rounded-3xl shadow-sm relative overflow-hidden group">
+    <Card className="p-8 bg-card border-border rounded-3xl shadow-nexus-sm relative overflow-hidden group">
       <div className="absolute top-0 right-0 w-64 h-64 bg-primary/[0.02] rounded-full -translate-y-1/2 translate-x-1/2" />
       
       <div className="flex items-center justify-between mb-8 relative">
@@ -107,7 +107,7 @@ export function OracleAnalyticsPanel() {
           </div>
           <div>
             <h3 className="text-xl font-bold text-foreground">Oracle Analytics</h3>
-            <p className="text-xs text-muted-foreground max-w-lg leading-relaxed">
+            <p className="text-meta text-muted-foreground max-w-lg leading-relaxed">
               Métricas consolidadas de performance e custo acumulado do conselho de especialistas.
             </p>
           </div>
@@ -121,8 +121,8 @@ export function OracleAnalyticsPanel() {
       ) : history.length === 0 ? (
         <div className="py-20 text-center opacity-40">
           <Target className="h-12 w-12 mx-auto mb-4" />
-          <p className="text-sm font-bold uppercase tracking-widest">Sem Dados Operacionais</p>
-          <p className="text-xs text-muted-foreground mt-1">As métricas surgirão após a primeira sessão do conselho.</p>
+          <p className="text-body-sm font-bold uppercase tracking-widest">Sem Dados Operacionais</p>
+          <p className="text-meta text-muted-foreground mt-1">As métricas surgirão após a primeira sessão do conselho.</p>
         </div>
       ) : (
         <div className="space-y-8 animate-in fade-in duration-700">
@@ -136,7 +136,7 @@ export function OracleAnalyticsPanel() {
             ].map(stat => (
               <Card key={stat.label} className="p-4 bg-secondary/20 border-border/40 text-center">
                 <div className="flex justify-center mb-1.5 opacity-60">{stat.icon}</div>
-                <p className={`text-sm font-extrabold ${stat.cls}`}>{stat.value}</p>
+                <p className={`text-body-sm font-extrabold ${stat.cls}`}>{stat.value}</p>
                 <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">{stat.label}</p>
               </Card>
             ))}
@@ -153,11 +153,11 @@ export function OracleAnalyticsPanel() {
                   <Trophy className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-extrabold text-primary uppercase tracking-widest">Configuração com Maior Acurácia</p>
-                  <p className="text-lg font-bold text-foreground">
+                  <p className="text-meta font-extrabold text-primary uppercase tracking-widest">Configuração com Maior Acurácia</p>
+                  <p className="text-title-sm font-bold text-foreground">
                     {ORACLE_MODES[totals.bestMode.mode as OracleMode]?.icon}{' '}
                     {ORACLE_MODES[totals.bestMode.mode as OracleMode]?.label ?? totals.bestMode.mode}
-                    <span className="text-[11px] text-primary font-mono ml-3 px-2 py-0.5 rounded bg-primary/10">
+                    <span className="text-meta text-primary font-mono ml-3 px-2 py-0.5 rounded bg-primary/10">
                       {totals.bestMode.avg_confidence.toFixed(0)}% AVG Confiança
                     </span>
                   </p>
@@ -168,11 +168,11 @@ export function OracleAnalyticsPanel() {
 
           {/* Per-mode breakdown */}
           <Card className="p-6 rounded-2xl border-border/60 bg-card/60">
-            <h4 className="text-xs font-extrabold text-muted-foreground uppercase tracking-widest mb-6 px-1 flex items-center gap-2">
+            <h4 className="text-meta font-extrabold text-muted-foreground uppercase tracking-widest mb-6 px-1 flex items-center gap-2">
               <Zap className="h-3.5 w-3.5 text-primary" /> Performance por Algoritmo
             </h4>
             <div className="overflow-x-auto scrollbar-hide">
-              <table className="w-full text-xs">
+              <table className="w-full text-meta">
                 <thead>
                   <tr className="border-b border-border/30">
                     <th className="text-left py-3 px-2 font-bold text-muted-foreground uppercase tracking-tighter">Modo Operacional</th>
@@ -189,7 +189,7 @@ export function OracleAnalyticsPanel() {
                       <tr key={m.mode} className="border-b border-border/10 hover:bg-secondary/40 transition-colors group">
                         <td className="py-3 px-2">
                           <div className="flex items-center gap-2">
-                            <span className="text-lg group-hover:scale-110 transition-transform">{modeInfo?.icon ?? '❓'}</span>
+                            <span className="text-title-sm group-hover:scale-110 transition-transform">{modeInfo?.icon ?? '❓'}</span>
                             <span className="font-bold text-foreground">{modeInfo?.label ?? m.mode}</span>
                           </div>
                         </td>
@@ -197,7 +197,7 @@ export function OracleAnalyticsPanel() {
                         <td className="text-right py-3 px-2">
                           <Badge
                             variant="outline"
-                            className="text-[10px] font-bold px-2 rounded-lg border-none"
+                            className="text-meta font-bold px-2 rounded-lg border-none"
                             style={{
                               backgroundColor:
                                 m.avg_confidence >= 80 ? 'hsl(var(--nexus-emerald) / 0.15)' :

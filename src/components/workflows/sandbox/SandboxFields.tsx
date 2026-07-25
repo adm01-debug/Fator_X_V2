@@ -1,5 +1,6 @@
 import { onActivateKey } from '@/lib/a11y';
 import { Shield } from 'lucide-react';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 export function SliderField({
   label, value, min, max, step, unit, onChange,
@@ -10,8 +11,8 @@ export function SliderField({
   return (
     <div className="space-y-1">
       <div className="flex items-center justify-between">
-        <label className="text-xs text-muted-foreground">{label}</label>
-        <span className="text-xs font-medium text-foreground">{value} {unit}</span>
+        <label className="text-meta text-muted-foreground">{label}</label>
+        <span className="text-meta font-medium text-foreground">{value} {unit}</span>
       </div>
       <input
         type="range" min={min} max={max} step={step} value={value}
@@ -29,19 +30,19 @@ export function ToggleField({
   onChange: (v: boolean) => void; icon?: typeof Shield;
 }) {
   return (
-    <div
+    <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
       className="flex items-center justify-between p-3 rounded-lg bg-background border border-border cursor-pointer hover:border-primary/30 transition-colors"
       role="button" tabIndex={0} onClick={() => onChange(!checked)} onKeyDown={onActivateKey(() => onChange(!checked))}
     >
       <div className="flex items-center gap-3">
         {Icon && <Icon className="w-4 h-4 text-muted-foreground" />}
         <div>
-          <p className="text-sm text-foreground">{label}</p>
-          {description && <p className="text-xs text-muted-foreground">{description}</p>}
+          <p className="text-body-sm text-foreground">{label}</p>
+          {description && <p className="text-meta text-muted-foreground">{description}</p>}
         </div>
       </div>
       <div className={`w-10 h-5 rounded-full flex items-center transition-colors ${checked ? 'bg-primary' : 'bg-muted'}`}>
-        <div className={`w-4 h-4 rounded-full bg-white shadow transition-transform ${checked ? 'translate-x-5' : 'translate-x-0.5'}`} />
+        <div className={`w-4 h-4 rounded-full bg-white shadow-nexus-md transition-transform ${checked ? 'translate-x-5' : 'translate-x-0.5'}`} />
       </div>
     </div>
   );

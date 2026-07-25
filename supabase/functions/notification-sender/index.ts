@@ -1,6 +1,18 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
+import { z } from "https://esm.sh/zod@3.23.8";
 import { handleCorsPreflight, getCorsHeaders, getRateLimitIdentifier, checkRateLimit, createRateLimitResponse, RATE_LIMITS } from "../_shared/mod.ts";
+
+const InputSchema = z.object({
+  channel: z.enum(['email', 'whatsapp', 'slack', 'in_app', 'webhook']),
+  recipient: z.string().min(1).max(500),
+  subject: z.string().max(500).optional(),
+  message: z.string().max(20000).optional(),
+  template_id: z.string().uuid().optional(),
+  template_vars: z.record(z.unknown()).optional(),
+  priority: z.enum(['low', 'normal', 'high', 'urgent']).optional(),
+  metadata: z.record(z.unknown()).optional(),
+}).refine(d => d.message || d.template_id, { message: 'message ou template_id é obrigatório' });
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
@@ -11,15 +23,16 @@ serve(async (req) => {
   if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, corsHeaders);
 
   try {
-    const body = await req.json();
-    const { channel, recipient, subject, message, template_id, template_vars, priority, metadata } = body;
-
-    if (!channel || !recipient || (!message && !template_id)) {
+    const raw = await req.json().catch(() => null);
+    const parsedIn = InputSchema.safeParse(raw);
+    if (!parsedIn.success) {
       return new Response(
-        JSON.stringify({ error: 'Missing required fields: channel, recipient, message or template_id' }),
+        JSON.stringify({ error: 'Payload inválido', details: parsedIn.error.flatten() }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+    const { channel, recipient, subject, message, template_id, template_vars, priority, metadata } = parsedIn.data;
+
 
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
@@ -123,7 +136,7 @@ function renderTemplate(template: string, vars: Record<string, unknown>): string
   });
 }
 
-async function sendEmail(subject: string, body: string, to: string): Promise<{ success: boolean; error?: string }> {
+async function sendEmail(_subject: string, _body: string, _to: string): Promise<{ success: boolean; error?: string }> {
   // Integration point: connect to SMTP, SendGrid, Resend, etc.
   // Using standard logging which follows no-console rules in non-deno environments
   // In Deno Edge Functions, console.log is the standard for Supabase Logs visibility
@@ -140,11 +153,13 @@ async function sendWhatsApp(message: string, to: string): Promise<{ success: boo
   }
 
   try {
-    const resp = await fetch(`${apiUrl}/message/sendText/${instance}`, {
+    const { withRetry, fetchWithTimeout } = await import('../_shared/retry.ts');
+    const resp = await withRetry(() => fetchWithTimeout(`${apiUrl}/message/sendText/${instance}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', apikey: apiKey },
       body: JSON.stringify({ number: to, text: message }),
-    });
+      timeoutMs: 15_000,
+    }), { attempts: 2, baseMs: 400, capMs: 3_000 });
     if (!resp.ok) return { success: false, error: `WhatsApp API returned ${resp.status}` };
     return { success: true };
   } catch (e) {
@@ -157,11 +172,13 @@ async function sendSlack(message: string, channel: string): Promise<{ success: b
   if (!token) return { success: false, error: 'Slack token not configured' };
 
   try {
-    const resp = await fetch('https://slack.com/api/chat.postMessage', {
+    const { withRetry, fetchWithTimeout } = await import('../_shared/retry.ts');
+    const resp = await withRetry(() => fetchWithTimeout('https://slack.com/api/chat.postMessage', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ channel, text: message }),
-    });
+      timeoutMs: 10_000,
+    }), { attempts: 3, baseMs: 300, capMs: 3_000 });
     const data = await resp.json();
     if (!data.ok) return { success: false, error: data.error ?? 'Slack send failed' };
     return { success: true };
@@ -172,11 +189,13 @@ async function sendSlack(message: string, channel: string): Promise<{ success: b
 
 async function sendWebhook(message: string, url: string, metadata?: Record<string, unknown>): Promise<{ success: boolean; error?: string }> {
   try {
-    const resp = await fetch(url, {
+    const { withRetry, fetchWithTimeout } = await import('../_shared/retry.ts');
+    const resp = await withRetry(() => fetchWithTimeout(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message, ...metadata }),
-    });
+      timeoutMs: 15_000,
+    }), { attempts: 3, baseMs: 300, capMs: 4_000 });
     if (!resp.ok) return { success: false, error: `Webhook returned ${resp.status}` };
     return { success: true };
   } catch (e) {

@@ -1,3 +1,4 @@
+import type { DbRow } from '@/types/dbRow';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -74,7 +75,7 @@ export function AuditTrailPanel() {
       'status',
       'reason',
     ];
-    const escape = (v: unknown) => {
+    const escape = (v: DbRow) => {
       const s = v == null ? '' : String(v);
       return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
     };
@@ -103,16 +104,16 @@ export function AuditTrailPanel() {
     <Card className="bg-card border-border">
       <CardHeader>
         <div className="flex items-center justify-between gap-4 flex-wrap">
-          <CardTitle className="flex items-center gap-2 text-base">
+          <CardTitle className="flex items-center gap-2 text-title-sm">
             <Shield className="h-4 w-4 text-nexus-purple" />
             Audit Trail
-            <Badge variant="outline" className="text-[10px] border-border">
+            <Badge variant="outline" className="text-meta border-border">
               últimas 200 entradas
             </Badge>
           </CardTitle>
           <div className="flex items-center gap-2">
             <Select value={actionFilter} onValueChange={(v) => setActionFilter(v as AuditAction | 'all')}>
-              <SelectTrigger className="bg-background border-border h-8 text-xs w-[180px]">
+              <SelectTrigger className="bg-background border-border h-8 text-meta w-[180px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-card border-border">
@@ -148,19 +149,19 @@ export function AuditTrailPanel() {
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div className="p-3 rounded-lg bg-background border border-border">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Total</p>
+            <p className="text-meta text-muted-foreground uppercase tracking-wider">Total</p>
             <p className="text-xl font-bold text-primary mt-1">{stats.total}</p>
           </div>
           <div className="p-3 rounded-lg bg-background border border-border">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Sucessos</p>
+            <p className="text-meta text-muted-foreground uppercase tracking-wider">Sucessos</p>
             <p className="text-xl font-bold text-nexus-emerald mt-1">{stats.success}</p>
           </div>
           <div className="p-3 rounded-lg bg-background border border-border">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Falhas</p>
+            <p className="text-meta text-muted-foreground uppercase tracking-wider">Falhas</p>
             <p className="text-xl font-bold text-destructive mt-1">{stats.failed}</p>
           </div>
           <div className="p-3 rounded-lg bg-background border border-border">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Negadas</p>
+            <p className="text-meta text-muted-foreground uppercase tracking-wider">Negadas</p>
             <p className="text-xl font-bold text-nexus-amber mt-1">{stats.denied}</p>
           </div>
         </div>
@@ -172,8 +173,8 @@ export function AuditTrailPanel() {
         ) : entries.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
             <Shield className="h-10 w-10 mx-auto mb-3 opacity-30" />
-            <p className="text-sm">Nenhuma entrada de audit ainda.</p>
-            <p className="text-xs mt-1 opacity-70">Ações sensíveis serão registradas aqui automaticamente.</p>
+            <p className="text-body-sm">Nenhuma entrada de audit ainda.</p>
+            <p className="text-meta mt-1 opacity-70">Ações sensíveis serão registradas aqui automaticamente.</p>
           </div>
         ) : (
           <div className="space-y-1 max-h-[600px] overflow-y-auto pr-1">
@@ -192,27 +193,27 @@ export function AuditTrailPanel() {
                         e.status === 'failed' ? 'text-destructive' :
                         'text-nexus-amber'
                       }`} />
-                      <Badge variant="outline" className="text-[10px] border-border font-mono shrink-0">
+                      <Badge variant="outline" className="text-meta border-border font-mono shrink-0">
                         {ACTION_LABELS[e.action] ?? e.action}
                       </Badge>
-                      <span className="text-xs text-foreground/80 truncate">
+                      <span className="text-meta text-foreground/80 truncate">
                         {e.resource_type}
                         {e.resource_name && (
                           <>: <span className="font-mono text-muted-foreground">{e.resource_name}</span></>
                         )}
                       </span>
                     </div>
-                    <span className="text-[10px] text-muted-foreground shrink-0">
+                    <span className="text-meta text-muted-foreground shrink-0">
                       {e.created_at ? new Date(e.created_at).toLocaleString('pt-BR') : '—'}
                     </span>
                   </div>
                   {e.reason && (
-                    <p className="text-[11px] text-muted-foreground mt-1.5 italic line-clamp-2 pl-5">
+                    <p className="text-meta text-muted-foreground mt-1.5 italic line-clamp-2 pl-5">
                       "{e.reason}"
                     </p>
                   )}
                   {e.user_id && (
-                    <p className="text-[10px] text-muted-foreground/70 mt-1 pl-5 font-mono">
+                    <p className="text-meta text-muted-foreground/70 mt-1 pl-5 font-mono">
                       user: {e.user_id.slice(0, 8)}…
                     </p>
                   )}

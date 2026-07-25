@@ -84,7 +84,7 @@ export function HealthTab() {
             color: 'hsl(var(--nexus-orange))',
           },
         ]);
-      } catch (err: unknown) {
+      } catch (err) {
         logger.error('Health check failed:', { error: err instanceof Error ? err.message : String(err) });
       } finally {
         setLoading(false);
@@ -109,8 +109,8 @@ export function HealthTab() {
         <div className="text-6xl font-bold mb-2" style={{ color: overallScore > 75 ? 'hsl(var(--nexus-emerald))' : overallScore > 50 ? 'hsl(var(--nexus-yellow))' : 'hsl(var(--nexus-red))' }}>
           {overallScore}
         </div>
-        <div className="text-sm text-muted-foreground">Health Score Geral</div>
-        <div className="text-xs text-muted-foreground mt-1">
+        <div className="text-body-sm text-muted-foreground">Health Score Geral</div>
+        <div className="text-meta text-muted-foreground mt-1">
           {overallScore > 75 ? 'Saudável' : overallScore > 50 ? 'Atenção necessária' : 'Crítico — ação urgente'}
         </div>
       </div>
@@ -121,17 +121,17 @@ export function HealthTab() {
           <div key={m.category} className="bg-card rounded-xl border border-border p-5">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <span className="text-lg">{m.icon}</span>
-                <span className="text-sm font-semibold text-foreground">{m.category}</span>
+                <span className="text-title-sm">{m.icon}</span>
+                <span className="text-body-sm font-semibold text-foreground">{m.category}</span>
               </div>
-              <span className="text-lg font-bold" style={{ color: m.color }}>{m.score}%</span>
+              <span className="text-title-sm font-bold" style={{ color: m.color }}>{m.score}%</span>
             </div>
             <div className="h-2 bg-muted rounded-full mb-2">
               <div className="h-full rounded-full transition-all" style={{ width: `${m.score}%`, backgroundColor: m.color }} />
             </div>
-            <p className="text-xs text-muted-foreground">{m.description}</p>
+            <p className="text-meta text-muted-foreground">{m.description}</p>
             {m.issues > 0 && (
-              <p className="text-xs text-destructive mt-1">⚠️ {m.issues} itens precisam de atenção</p>
+              <p className="text-meta text-destructive mt-1">⚠️ {m.issues} itens precisam de atenção</p>
             )}
           </div>
         ))}

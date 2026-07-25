@@ -87,7 +87,7 @@ export default function SearchPage() {
           </div>
 
           {imageDescription && (
-            <div className="rounded-md border border-border/50 bg-muted/40 p-3 text-sm">
+            <div className="rounded-md border border-border/50 bg-muted/40 p-3 text-body-sm">
               <span className="font-medium text-muted-foreground">
                 Descrição da imagem:
               </span>{" "}
@@ -99,13 +99,13 @@ export default function SearchPage() {
 
       <section className="space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">
+          <h2 className="text-title-sm font-semibold">
             Resultados {results.length > 0 && (
               <span className="text-muted-foreground">({results.length})</span>
             )}
           </h2>
           {cached && (
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-meta">
               cache hit
             </Badge>
           )}
@@ -130,28 +130,28 @@ export default function SearchPage() {
 
         {!loading &&
           results.map((r) => (
-            <Card key={r.chunk_id} className="transition-shadow hover:shadow-md">
+            <Card key={r.chunk_id} className="transition-shadow hover:shadow-nexus-md">
               <CardHeader className="pb-2">
                 <div className="flex items-start justify-between gap-3">
-                  <CardTitle className="flex items-center gap-2 text-base">
+                  <CardTitle className="flex items-center gap-2 text-title-sm">
                     <FileText className="h-4 w-4 text-primary" />
                     {r.document_title ?? "Documento sem título"}
                   </CardTitle>
                   <div className="flex items-center gap-2">
                     <Badge
                       variant={r.matched_via === "vector" ? "default" : "secondary"}
-                      className="text-xs"
+                      className="text-meta"
                     >
                       {r.matched_via}
                     </Badge>
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="text-meta">
                       {(r.similarity * 100).toFixed(0)}%
                     </Badge>
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-2">
-                <p className="line-clamp-3 text-sm text-muted-foreground">
+                <p className="line-clamp-3 text-body-sm text-muted-foreground">
                   {r.content}
                 </p>
                 {r.source_url && (
@@ -159,7 +159,7 @@ export default function SearchPage() {
                     href={r.source_url}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                    className="inline-flex items-center gap-1 text-meta text-primary hover:underline"
                   >
                     <ExternalLink className="h-3 w-3" />
                     Abrir fonte

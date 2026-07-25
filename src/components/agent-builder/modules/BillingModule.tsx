@@ -97,7 +97,7 @@ export function BillingModule() {
           { label: 'Interações/dia', value: '~340', color: 'nexus-purple' },
         ].map((c) => (
           <div key={c.label} className="rounded-xl border border-border bg-card p-4">
-            <p className="text-xs text-muted-foreground">{c.label}</p>
+            <p className="text-meta text-muted-foreground">{c.label}</p>
             <p className={`text-2xl font-bold text-[hsl(var(--${c.color}))]`}>{c.value}</p>
           </div>
         ))}
@@ -106,13 +106,13 @@ export function BillingModule() {
       {/* Cost Breakdown Chart */}
       <div className="rounded-xl border border-border bg-card p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-semibold text-foreground">Breakdown de Custos</h3>
+          <h3 className="text-body-sm font-semibold text-foreground">Breakdown de Custos</h3>
           <div className="flex gap-1">
             {(['daily', 'weekly', 'monthly'] as const).map((p) => (
               <button
                 key={p}
                 onClick={() => setPeriod(p)}
-                className={`px-3 py-1 rounded-md text-xs transition-all ${
+                className={`px-3 py-1 rounded-md text-meta transition-all ${
                   period === p
                     ? 'bg-primary text-primary-foreground'
                     : 'text-muted-foreground hover:text-foreground'
@@ -145,10 +145,10 @@ export function BillingModule() {
           const pct = (total / totalWeek) * 100;
           return (
             <div key={cat.key} className="rounded-xl border border-border bg-card p-4 space-y-2">
-              <p className="text-sm font-medium">{cat.label}</p>
+              <p className="text-body-sm font-medium">{cat.label}</p>
               <p className="text-xl font-bold" style={{ color: cat.color }}>${total.toFixed(2)}</p>
               <ProgressBar value={pct} max={100} color={cat.color} />
-              <p className="text-xs text-muted-foreground">{pct.toFixed(0)}% do total</p>
+              <p className="text-meta text-muted-foreground">{pct.toFixed(0)}% do total</p>
             </div>
           );
         })}
@@ -180,7 +180,7 @@ export function BillingModule() {
         />
         {agent.monthly_budget && (
           <div className="space-y-2 pt-2">
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-between text-body-sm">
               <span className="text-muted-foreground">Uso projetado vs Budget</span>
               <span className={budgetUsed > 100 ? 'text-[hsl(var(--nexus-red))]' : budgetUsed > 80 ? 'text-[hsl(var(--nexus-yellow))]' : 'text-[hsl(var(--nexus-green))]'}>
                 ${projectedMonth.toFixed(0)} / ${agent.monthly_budget}
@@ -200,17 +200,17 @@ export function BillingModule() {
       <div className="rounded-xl border border-border bg-card p-6 space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="md:col-span-2 space-y-1.5">
-            <label className="text-xs font-medium text-foreground flex items-center gap-1.5">
+            <label htmlFor="billingmodule-field-0e908b" className="text-meta font-medium text-foreground flex items-center gap-1.5">
               <Calculator className="h-3.5 w-3.5" /> Input de exemplo
             </label>
-            <Textarea
+            <Textarea id="billingmodule-field-0e908b"
               value={simInput}
               onChange={(e) => setSimInput(e.target.value)}
               rows={3}
-              className="text-xs bg-muted/30 border-border resize-none"
+              className="text-meta bg-muted/30 border-border resize-none"
               placeholder="Cole aqui um input típico do seu agente..."
             />
-            <p className="text-[10px] text-muted-foreground">~{estimateTokens(simInput)} tokens estimados</p>
+            <p className="text-meta text-muted-foreground">~{estimateTokens(simInput)} tokens estimados</p>
           </div>
           <div>
             <SliderField
@@ -230,24 +230,24 @@ export function BillingModule() {
             <div className="rounded-lg border border-nexus-green/30 bg-nexus-green/5 p-3 flex items-center gap-3">
               <TrendingDown className="h-5 w-5 text-[hsl(var(--nexus-green))]" />
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] text-muted-foreground uppercase">Mais barato</p>
-                <p className="text-sm font-semibold truncate">{cheapest.label}</p>
+                <p className="text-meta text-muted-foreground uppercase">Mais barato</p>
+                <p className="text-body-sm font-semibold truncate">{cheapest.label}</p>
               </div>
-              <Badge variant="outline" className="text-xs font-mono">${cheapest.costUsd.toFixed(5)}</Badge>
+              <Badge variant="outline" className="text-meta font-mono">${cheapest.costUsd.toFixed(5)}</Badge>
             </div>
             <div className="rounded-lg border border-nexus-blue/30 bg-nexus-blue/5 p-3 flex items-center gap-3">
               <Zap className="h-5 w-5 text-[hsl(var(--nexus-blue))]" />
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] text-muted-foreground uppercase">Mais rápido</p>
-                <p className="text-sm font-semibold truncate">{fastest.label}</p>
+                <p className="text-meta text-muted-foreground uppercase">Mais rápido</p>
+                <p className="text-body-sm font-semibold truncate">{fastest.label}</p>
               </div>
-              <Badge variant="outline" className="text-xs font-mono">~{(fastest.avg_latency_ms / 1000).toFixed(1)}s</Badge>
+              <Badge variant="outline" className="text-meta font-mono">~{(fastest.avg_latency_ms / 1000).toFixed(1)}s</Badge>
             </div>
           </div>
         )}
 
         <div className="overflow-x-auto -mx-6 px-6">
-          <table className="w-full text-xs">
+          <table className="w-full text-meta">
             <thead>
               <tr className="border-b border-border text-muted-foreground">
                 <th className="text-left py-2 font-medium">Modelo</th>
@@ -306,10 +306,10 @@ export function BillingModule() {
             </div>
             <div className="flex-1 space-y-1 text-center md:text-left">
               <div className="flex items-center justify-center md:justify-start gap-2">
-                <h4 className="font-bold text-lg">Recomendação: {idealModel.label}</h4>
+                <h4 className="font-bold text-title-sm">Recomendação: {idealModel.label}</h4>
                 <Badge className="bg-primary text-primary-foreground">Melhor Custo-Benefício</Badge>
               </div>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-body-sm text-muted-foreground">
                 Baseado no volume de {dailyInteractions.toLocaleString()} requisições diárias, este modelo economizaria aprox. 
                 <span className="font-bold text-foreground"> ${((trafficProjection[0].cost * 1.5) - trafficProjection[0].cost).toFixed(0)}/mês</span> 
                 mantendo a latência abaixo de 2s.
@@ -324,15 +324,15 @@ export function BillingModule() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {trafficProjection.map((p) => (
             <div key={p.month} className="rounded-lg border border-border bg-muted/20 p-4">
-              <p className="text-xs text-muted-foreground font-medium uppercase">{p.month}</p>
+              <p className="text-meta text-muted-foreground font-medium uppercase">{p.month}</p>
               <div className="flex items-end justify-between mt-1">
                 <div>
                   <p className="text-xl font-bold">${p.cost.toFixed(0)}</p>
-                  <p className="text-[10px] text-muted-foreground">Custo estimado</p>
+                  <p className="text-meta text-muted-foreground">Custo estimado</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-semibold">{p.traffic.toLocaleString()} req</p>
-                  <p className="text-[10px] text-muted-foreground">Volume mensal</p>
+                  <p className="text-body-sm font-semibold">{p.traffic.toLocaleString()} req</p>
+                  <p className="text-meta text-muted-foreground">Volume mensal</p>
                 </div>
               </div>
             </div>
@@ -354,7 +354,7 @@ export function BillingModule() {
       {/* Existing Projection */}
       <SectionTitle icon="📈" title="Histórico de Tendência" subtitle="Uso real vs Tendência nos últimos 7 dias" />
       <div className="rounded-xl border border-border bg-card p-6">
-        <p className="text-sm text-muted-foreground mb-4">
+        <p className="text-body-sm text-muted-foreground mb-4">
           Baseado no uso atual, projeção para o mês: <span className="text-foreground font-bold">${projectedMonth.toFixed(0)}</span>
         </p>
         <LightLineChart

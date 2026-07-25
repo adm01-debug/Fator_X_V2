@@ -32,7 +32,7 @@ function PasswordStrength({ password }: { password: string }) {
       </div>
       <div className="grid grid-cols-2 gap-1">
         {checks.map(c => (
-          <span key={c.label} className={`text-[11px] flex items-center gap-1 ${c.ok ? 'text-nexus-emerald' : 'text-muted-foreground'}`}>
+          <span key={c.label} className={`text-meta flex items-center gap-1 ${c.ok ? 'text-nexus-emerald' : 'text-muted-foreground'}`}>
             {c.ok ? <Check className="h-2.5 w-2.5" /> : <X className="h-2.5 w-2.5" />}
             {c.label}
           </span>
@@ -115,7 +115,7 @@ export default function ResetPasswordPage() {
             <ShieldCheck className="h-7 w-7 text-nexus-emerald" />
           </div>
           <h1 className="text-2xl font-heading font-bold text-foreground">Senha redefinida!</h1>
-          <p className="text-sm text-muted-foreground">Redirecionando para o painel...</p>
+          <p className="text-body-sm text-muted-foreground">Redirecionando para o painel...</p>
         </div>
       </div>
     );
@@ -129,7 +129,7 @@ export default function ResetPasswordPage() {
             <Bot className="h-7 w-7 text-primary" />
           </div>
           <h1 className="text-2xl font-heading font-bold text-foreground">Link inválido</h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-body-sm text-muted-foreground">
             Este link de recuperação é inválido ou expirou.
           </p>
           <Button onClick={() => navigate("/auth")} variant="outline" className="mx-auto">
@@ -148,13 +148,13 @@ export default function ResetPasswordPage() {
             <Bot className="h-7 w-7 text-primary" />
           </div>
           <h1 className="text-2xl font-heading font-bold text-foreground">Redefinir senha</h1>
-          <p className="text-sm text-muted-foreground">Escolha uma nova senha para sua conta</p>
+          <p className="text-body-sm text-muted-foreground">Escolha uma nova senha para sua conta</p>
         </div>
 
         <form onSubmit={handleSubmit} className="nexus-card space-y-5" noValidate>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="new-password" className="text-sm">Nova senha</Label>
+              <Label htmlFor="new-password" className="text-body-sm">Nova senha</Label>
               <div className="relative mt-1.5">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
                 <Input
@@ -179,12 +179,12 @@ export default function ResetPasswordPage() {
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
-              {errors.password && <p id="password-error" className="text-[11px] text-destructive mt-1" role="alert">{errors.password}</p>}
+              {errors.password && <p id="password-error" className="text-meta text-destructive mt-1" role="alert">{errors.password}</p>}
               <PasswordStrength password={password} />
             </div>
 
             <div>
-              <Label htmlFor="confirm-password" className="text-sm">Confirmar nova senha</Label>
+              <Label htmlFor="confirm-password" className="text-body-sm">Confirmar nova senha</Label>
               <div className="relative mt-1.5">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
                 <Input
@@ -201,7 +201,7 @@ export default function ResetPasswordPage() {
                   aria-describedby={errors.confirm ? 'confirm-error' : undefined}
                 />
               </div>
-              {errors.confirm && <p id="confirm-error" className="text-[11px] text-destructive mt-1" role="alert">{errors.confirm}</p>}
+              {errors.confirm && <p id="confirm-error" className="text-meta text-destructive mt-1" role="alert">{errors.confirm}</p>}
             </div>
           </div>
 

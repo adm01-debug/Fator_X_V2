@@ -1,11 +1,15 @@
+import { fetchWithTimeout } from "../_shared/retry.ts";
+import { z } from "https://esm.sh/zod@3.23.8";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
+
+import { getCorsHeaders } from "../_shared/cors.ts";
+const BodySchema = z.object({
+  system_prompt: z.string().min(10).max(20_000),
+  user_message: z.string().min(1).max(4000),
+  model: z.string().min(2).max(120).default('gpt-4o'),
+});
 // Quick Agent Test — runs a single LLM call against Lovable AI Gateway
 // for the wizard's "test before save" feature.
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers':
-    'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
-};
 
 function jsonResponse(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -27,38 +31,32 @@ function mapModel(model: string): string {
 }
 
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
 
   try {
     if (req.method !== 'POST') {
       return jsonResponse({ error: 'Method not allowed' }, 405);
     }
 
-    const apiKey = Deno.env.get('LOVABLE_API_KEY');
-    if (!apiKey) {
-      return jsonResponse({ error: 'LOVABLE_API_KEY não configurada' }, 500);
-    }
+    const apiKey = requireEnv('LOVABLE_API_KEY');
 
-    const body = await req.json().catch(() => null);
-    if (!body || typeof body !== 'object') {
-      return jsonResponse({ error: 'Body inválido' }, 400);
+    const raw = await req.json().catch(() => null);
+    const parsed = BodySchema.safeParse(raw);
+    if (!parsed.success) {
+      return jsonResponse({ error: 'Payload inválido', details: parsed.error.flatten().fieldErrors }, 400);
     }
+    const { system_prompt: systemPrompt, user_message: userMessage, model } = parsed.data;
 
-    const systemPrompt = String((body as Record<string, unknown>).system_prompt ?? '').trim();
-    const userMessage = String((body as Record<string, unknown>).user_message ?? '').trim();
-    const model = String((body as Record<string, unknown>).model ?? 'gpt-4o');
-
-    if (systemPrompt.length < 10) {
-      return jsonResponse({ error: 'system_prompt muito curto (min 10 chars)' }, 400);
-    }
-    if (userMessage.length === 0 || userMessage.length > 4000) {
-      return jsonResponse({ error: 'user_message vazio ou muito longo (max 4000)' }, 400);
-    }
 
     const mapped = mapModel(model);
     const startedAt = Date.now();
 
-    const upstream = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const upstream = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${apiKey}`,

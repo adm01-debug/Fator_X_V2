@@ -22,6 +22,12 @@ import {
   type RerankResult,
 } from '@/services/knowledgeService';
 import type { ContextTier } from '@/services/contextTiersService';
+import { CitedMarkdown } from './CitedMarkdown';
+import { splitCitationsSentinel, type CerebroCitation } from '@/types/cerebroCitations';
+import { useCerebroStore } from '@/stores/cerebroStore';
+import { useNotebooks } from '@/services/notebooksService';
+import { useCurrentWorkspace } from '@/hooks/useCurrentWorkspace';
+import { NotebookPen } from 'lucide-react';
 
 const HISTORY_KEY = 'nexus-cerebro-search-history';
 const HISTORY_MAX = 10;
@@ -46,6 +52,7 @@ export function SearchTab() {
   const [query, setQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<string | null>(null);
+  const [citations, setCitations] = useState<CerebroCitation[]>([]);
   const [history, setHistory] = useState<string[]>(() => loadHistory());
 
   // Rerank state
@@ -76,13 +83,19 @@ export function SearchTab() {
       });
   }, []);
 
+  const activeNotebookId = useCerebroStore((s) => s.activeNotebookId);
+  const { workspaceId } = useCurrentWorkspace();
+  const { data: notebooks = [] } = useNotebooks(workspaceId);
+  const activeNotebook = notebooks.find((n) => n.id === activeNotebookId) ?? null;
+
   const handleSearch = async () => {
     if (!query.trim()) return;
     setIsSearching(true);
     setSearchResults("");
+    setCitations([]);
     try {
-      const body = await invokeCerebroQuery({ query, mode: 'chat', stream: true });
-      
+      const body = await invokeCerebroQuery({ query, mode: 'chat', stream: true, notebook_id: activeNotebookId ?? undefined });
+
       if (body instanceof ReadableStream) {
         const reader = body.getReader();
         const decoder = new TextDecoder();
@@ -92,13 +105,18 @@ export function SearchTab() {
         while (!done) {
           const { value, done: doneReading } = await reader.read();
           done = doneReading;
-          const chunkValue = decoder.decode(value);
+          const chunkValue = decoder.decode(value, { stream: !done });
           fullText += chunkValue;
-          setSearchResults(fullText);
+          const { text } = splitCitationsSentinel(fullText);
+          setSearchResults(text);
         }
+        const { text, citations: cits } = splitCitationsSentinel(fullText);
+        setSearchResults(text);
+        setCitations(cits);
       } else {
-        const data = body;
+        const data = body as { response?: string; citations?: CerebroCitation[] };
         setSearchResults(data?.response || 'Sem resposta');
+        setCitations(Array.isArray(data?.citations) ? data.citations : []);
       }
 
       // Persist to history
@@ -106,7 +124,7 @@ export function SearchTab() {
       const next = [trimmed, ...history.filter((h) => h !== trimmed)].slice(0, HISTORY_MAX);
       setHistory(next);
       saveHistory(next);
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro na consulta');
     } finally {
       setIsSearching(false);
@@ -145,7 +163,7 @@ export function SearchTab() {
       toast.success(
         `Re-ranking concluído! Método: ${result.method} • ${result.total_input} chunks → top ${result.top_k}`,
       );
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro no re-ranking');
     } finally {
       setIsReranking(false);
@@ -185,34 +203,43 @@ export function SearchTab() {
 
   return (
     <div className="space-y-6">
+      <div className="flex items-center gap-2 flex-wrap">
+        <Badge variant="outline" className="gap-1.5 text-meta">
+          <NotebookPen className="h-3.5 w-3.5 text-primary" />
+          Buscando em:{" "}
+          <span className="font-semibold">
+            {activeNotebook ? activeNotebook.name : "Todos os notebooks"}
+          </span>
+        </Badge>
+      </div>
       {/* ── Context Tiers (Hierarchical Search) ── */}
-      <div className="nexus-card space-y-4 border-primary/20 bg-primary/5 shadow-lg">
+      <div className="nexus-card space-y-4 border-primary/20 bg-primary/5 shadow-nexus-lg">
         <div className="flex items-center justify-between">
-          <h3 className="text-base font-heading font-bold text-foreground flex items-center gap-2">
+          <h3 className="text-title-sm font-heading font-bold text-foreground flex items-center gap-2">
             <Layers className="h-5 w-5 text-primary" /> Context Tiers L0/L1/L2
           </h3>
-          <Badge className="bg-primary text-primary-foreground gap-1.5 py-1 px-3 text-[10px] font-bold">
+          <Badge className="bg-primary text-primary-foreground gap-1.5 py-1 px-3 text-meta font-bold">
             <Zap className="h-3.5 w-3.5" /> AGENT BRAIN OPTIMIZED
           </Badge>
         </div>
         
         <div className="bg-background/50 p-4 rounded-xl space-y-3">
-          <p className="text-xs text-muted-foreground leading-relaxed">
+          <p className="text-meta text-muted-foreground leading-relaxed">
             O Nexus utiliza uma arquitetura de contexto hierárquica inspirada no <span className="text-foreground font-semibold">OpenViking</span>. 
             Este mecanismo permite que os agentes consultem bases massivas mantendo a precisão e economizando até <span className="text-nexus-emerald font-bold">80% de tokens</span>.
           </p>
           <div className="grid grid-cols-3 gap-2 py-2">
              <div className="text-center space-y-1">
-               <div className="text-[10px] font-black uppercase text-muted-foreground">L0 Abstract</div>
-               <div className="text-xs font-mono text-primary">Relevance</div>
+               <div className="text-meta font-black uppercase text-muted-foreground">L0 Abstract</div>
+               <div className="text-meta font-mono text-primary">Relevance</div>
              </div>
              <div className="text-center space-y-1">
-               <div className="text-[10px] font-black uppercase text-muted-foreground">L1 Overview</div>
-               <div className="text-xs font-mono text-nexus-amber">Planning</div>
+               <div className="text-meta font-black uppercase text-muted-foreground">L1 Overview</div>
+               <div className="text-meta font-mono text-nexus-amber">Planning</div>
              </div>
              <div className="text-center space-y-1">
-               <div className="text-[10px] font-black uppercase text-muted-foreground">L2 Full</div>
-               <div className="text-xs font-mono text-nexus-emerald">Context</div>
+               <div className="text-meta font-black uppercase text-muted-foreground">L2 Full</div>
+               <div className="text-meta font-mono text-nexus-emerald">Context</div>
              </div>
           </div>
         </div>
@@ -223,7 +250,7 @@ export function SearchTab() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Consulte o cérebro usando tiers... Ex: Qual o histórico de negociação com a Ambev?"
-            className="h-14 pl-12 bg-background border-primary/20 focus:ring-primary/20 text-base rounded-2xl shadow-inner"
+            className="h-14 pl-12 bg-background border-primary/20 focus:ring-primary/20 text-title-sm rounded-2xl shadow-nexus-inner"
             onKeyDown={(e) => {
               if (e.key === 'Enter') handleTieredSearch();
             }}
@@ -235,7 +262,7 @@ export function SearchTab() {
             onClick={handleTieredSearch}
             disabled={isTieredSearching || !query.trim()}
             size="lg"
-            className="flex-1 gap-2 nexus-gradient-bg text-primary-foreground shadow-xl shadow-primary/20 h-12 font-bold"
+            className="flex-1 gap-2 nexus-gradient-bg text-primary-foreground shadow-nexus-xl shadow-primary/20 h-12 font-bold"
           >
             {isTieredSearching ? (
               <Loader2 className="h-5 w-5 animate-spin" />
@@ -260,42 +287,42 @@ export function SearchTab() {
         {tieredResults && (
           <div className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
             <div className="grid grid-cols-3 gap-3">
-              <div className="bg-background/40 backdrop-blur-sm rounded-xl p-3 text-center border border-border/20 shadow-sm">
+              <div className="bg-background/40 backdrop-blur-sm rounded-xl p-3 text-center border border-border/20 shadow-nexus-sm">
                 <p className="text-xl font-black text-primary">{tieredResults.l0Results}</p>
                 <p className="text-[9px] text-muted-foreground uppercase tracking-widest font-bold">L0 Matches</p>
               </div>
-              <div className="bg-background/40 backdrop-blur-sm rounded-xl p-3 text-center border border-border/20 shadow-sm">
+              <div className="bg-background/40 backdrop-blur-sm rounded-xl p-3 text-center border border-border/20 shadow-nexus-sm">
                 <p className="text-xl font-black text-nexus-amber">{tieredResults.l1Results}</p>
                 <p className="text-[9px] text-muted-foreground uppercase tracking-widest font-bold">L1 Filtered</p>
               </div>
-              <div className="bg-nexus-emerald/5 backdrop-blur-sm rounded-xl p-3 text-center border border-nexus-emerald/20 shadow-sm ring-1 ring-nexus-emerald/10">
+              <div className="bg-nexus-emerald/5 backdrop-blur-sm rounded-xl p-3 text-center border border-nexus-emerald/20 shadow-nexus-sm ring-1 ring-nexus-emerald/10">
                 <p className="text-xl font-black text-nexus-emerald">{tieredResults.tokensSaved}</p>
                 <p className="text-[9px] text-muted-foreground uppercase tracking-widest font-bold">Tokens Saved</p>
               </div>
             </div>
 
             <div className="space-y-2">
-              <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2 px-1">
+              <h4 className="text-meta font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2 px-1">
                 <div className="w-1 h-3 bg-primary rounded-full" /> Top Relevant Context (L2 Tier)
               </h4>
               <div className="grid grid-cols-1 gap-2">
                 {tieredResults.l2Results.map((tier, idx) => (
-                  <div key={tier.chunk_id} className="group p-4 rounded-2xl bg-background/60 border border-border/40 hover:border-primary/40 transition-all hover:shadow-md">
+                  <div key={tier.chunk_id} className="group p-4 rounded-2xl bg-background/60 border border-border/40 hover:border-primary/40 transition-all hover:shadow-nexus-md">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <Badge variant="secondary" className="text-[9px] font-black">RANK #{idx + 1}</Badge>
-                        <span className="text-[10px] text-muted-foreground font-mono bg-secondary/50 px-1.5 py-0.5 rounded">ID: {tier.chunk_id.slice(0, 8)}</span>
+                        <span className="text-meta text-muted-foreground font-mono bg-secondary/50 px-1.5 py-0.5 rounded">ID: {tier.chunk_id.slice(0, 8)}</span>
                       </div>
-                      <span className="text-[10px] font-bold text-nexus-emerald">{tier.token_count} tokens</span>
+                      <span className="text-meta font-bold text-nexus-emerald">{tier.token_count} tokens</span>
                     </div>
                     <div className="space-y-3">
                       <div className="bg-secondary/20 p-2 rounded-lg border border-border/10">
                         <p className="text-[9px] font-black uppercase text-primary/60 mb-1">L0 Abstract (Relevance)</p>
-                        <p className="text-xs text-foreground italic leading-relaxed">"{tier.l0_abstract}..."</p>
+                        <p className="text-meta text-foreground italic leading-relaxed">"{tier.l0_abstract}..."</p>
                       </div>
                       <div>
                         <p className="text-[9px] font-black uppercase text-nexus-emerald/60 mb-1">L2 Full Content (Context)</p>
-                        <p className="text-[11px] text-muted-foreground line-clamp-4 leading-relaxed">{tier.l2_content}</p>
+                        <p className="text-meta text-muted-foreground line-clamp-4 leading-relaxed">{tier.l2_content}</p>
                       </div>
                     </div>
                   </div>
@@ -309,17 +336,15 @@ export function SearchTab() {
           <div className="p-5 rounded-2xl bg-secondary/20 border border-border/40 animate-in fade-in slide-in-from-top-4">
             <div className="flex items-center gap-2 mb-3">
               <Sparkles className="h-4 w-4 text-primary" />
-              <p className="text-xs font-bold uppercase tracking-widest text-foreground">Resposta do Super Cérebro</p>
+              <p className="text-meta font-bold uppercase tracking-widest text-foreground">Resposta do Super Cérebro</p>
             </div>
-            <div className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
-              {searchResults}
-            </div>
+            <CitedMarkdown text={searchResults} citations={citations} />
           </div>
         )}
       </div>
 
       <div className="nexus-card opacity-60 hover:opacity-100 transition-opacity">
-        <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-2">
+        <h3 className="text-meta font-bold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-2">
           <History className="h-3.5 w-3.5" /> Histórico Sináptico
         </h3>
         {history.length > 0 ? (
@@ -328,30 +353,30 @@ export function SearchTab() {
               <button
                 key={i}
                 onClick={() => setQuery(h)}
-                className="px-3 py-1.5 text-[10px] font-medium rounded-xl bg-secondary/50 border border-border/30 text-muted-foreground hover:text-primary hover:border-primary/40 transition-all max-w-[200px] truncate"
+                className="px-3 py-1.5 text-meta font-medium rounded-xl bg-secondary/50 border border-border/30 text-muted-foreground hover:text-primary hover:border-primary/40 transition-all max-w-[200px] truncate"
               >
                 {h}
               </button>
             ))}
           </div>
         ) : (
-          <p className="text-[10px] italic text-muted-foreground">Nenhuma consulta recente registrada.</p>
+          <p className="text-meta italic text-muted-foreground">Nenhuma consulta recente registrada.</p>
         )}
       </div>
 
       {/* ── Re-Ranking Manual ── */}
       <div className="nexus-card space-y-4">
-        <h3 className="text-sm font-heading font-semibold text-foreground flex items-center gap-2">
+        <h3 className="text-body-sm font-heading font-semibold text-foreground flex items-center gap-2">
           <ArrowUpDown className="h-4 w-4 text-primary" /> Re-Ranking Manual de Chunks
         </h3>
-        <p className="text-[11px] text-muted-foreground">
+        <p className="text-meta text-muted-foreground">
           Reordene os chunks da base de conhecimento por relevância usando Cohere, HuggingFace BGE
           ou LLM fallback.
         </p>
 
         <div className="flex gap-3 items-end flex-wrap">
           <div className="flex-1 min-w-[200px] space-y-1">
-            <label htmlFor="rerank-query" className="text-xs text-muted-foreground">
+            <label htmlFor="rerank-query" className="text-meta text-muted-foreground">
               Query de referência
             </label>
             <div className="relative">
@@ -361,7 +386,7 @@ export function SearchTab() {
                 value={rerankQuery}
                 onChange={(e) => setRerankQuery(e.target.value)}
                 placeholder="Ex: política de devoluções"
-                className="bg-secondary/50 pl-9 text-sm"
+                className="bg-secondary/50 pl-9 text-body-sm"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') handleRerank();
                 }}
@@ -369,11 +394,11 @@ export function SearchTab() {
             </div>
           </div>
           <div className="w-48 space-y-1">
-            <label htmlFor="rerank-kb" className="text-xs text-muted-foreground">
+            <label htmlFor="rerank-kb" className="text-meta text-muted-foreground">
               Knowledge Base
             </label>
             <Select value={selectedKbId} onValueChange={setSelectedKbId}>
-              <SelectTrigger className="bg-secondary/50 text-sm">
+              <SelectTrigger className="bg-secondary/50 text-body-sm">
                 <SelectValue placeholder="Todas" />
               </SelectTrigger>
               <SelectContent>
@@ -387,7 +412,7 @@ export function SearchTab() {
             </Select>
           </div>
           <div className="w-24 space-y-1">
-            <label htmlFor="rerank-topk" className="text-xs text-muted-foreground">
+            <label htmlFor="rerank-topk" className="text-meta text-muted-foreground">
               Top K
             </label>
             <Input
@@ -397,7 +422,7 @@ export function SearchTab() {
               max={50}
               value={rerankTopK}
               onChange={(e) => setRerankTopK(Number(e.target.value) || 5)}
-              className="bg-secondary/50 text-sm"
+              className="bg-secondary/50 text-body-sm"
             />
           </div>
           <Button
@@ -417,16 +442,16 @@ export function SearchTab() {
         {rerankResults && rerankResults.length > 0 && (
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <p className="text-xs font-semibold text-foreground">Resultados re-rankeados</p>
+              <p className="text-meta font-semibold text-foreground">Resultados re-rankeados</p>
               {rerankMethod && (
                 <Badge
                   variant="outline"
-                  className={`text-[11px] ${methodColors[rerankMethod] || 'border-border'}`}
+                  className={`text-meta ${methodColors[rerankMethod] || 'border-border'}`}
                 >
                   {methodLabels[rerankMethod] || rerankMethod}
                 </Badge>
               )}
-              <Badge variant="outline" className="text-[11px]">
+              <Badge variant="outline" className="text-meta">
                 {rerankResults.length} chunks
               </Badge>
             </div>
@@ -445,26 +470,26 @@ export function SearchTab() {
                   <div key={idx} className="nexus-card p-3">
                     <div className="flex items-center justify-between mb-1.5">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-primary">#{idx + 1}</span>
+                        <span className="text-meta font-bold text-primary">#{idx + 1}</span>
                         {chunk.chunk_index !== undefined && (
-                          <Badge variant="outline" className="text-[11px]">
+                          <Badge variant="outline" className="text-meta">
                             Chunk #{String(chunk.chunk_index)}
                           </Badge>
                         )}
                         {chunk.token_count != null && (
-                          <span className="text-[11px] text-muted-foreground">
+                          <span className="text-meta text-muted-foreground">
                             {String(chunk.token_count)} tokens
                           </span>
                         )}
                       </div>
                       <div className="flex items-center gap-1">
-                        <span className="text-[11px] text-muted-foreground">Score:</span>
-                        <span className={`text-xs font-bold ${scoreColor}`}>
+                        <span className="text-meta text-muted-foreground">Score:</span>
+                        <span className={`text-meta font-bold ${scoreColor}`}>
                           {(score * 100).toFixed(1)}%
                         </span>
                       </div>
                     </div>
-                    <p className="text-xs text-muted-foreground line-clamp-3">
+                    <p className="text-meta text-muted-foreground line-clamp-3">
                       {String(
                         chunk.content || chunk.text || JSON.stringify(chunk).substring(0, 300),
                       )}
@@ -478,7 +503,7 @@ export function SearchTab() {
 
         {rerankResults && rerankResults.length === 0 && (
           <div className="text-center py-6">
-            <p className="text-xs text-muted-foreground">
+            <p className="text-meta text-muted-foreground">
               Nenhum resultado encontrado para reranking.
             </p>
           </div>

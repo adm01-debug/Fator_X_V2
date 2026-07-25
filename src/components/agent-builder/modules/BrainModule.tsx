@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Sparkles, Loader2, Cpu, Zap, Brain } from 'lucide-react';
 import { toast } from 'sonner';
+import type { DbRow } from '@/types/dbRow';
 
 const MODELS = [
   { id: 'claude-opus-4.6', icon: '🟤', title: 'Claude Opus 4.6', description: 'Anthropic · 200K ctx · $15/$75 por 1M', badge: <NexusBadge color="orange">Premium</NexusBadge>, accentColor: 'hsl(var(--nexus-gold))' },
@@ -79,7 +80,7 @@ export function BrainModule() {
       <section>
         <div className="flex items-center justify-between mb-2">
           <SectionTitle icon="🧠" title="Modelo Principal (LLM)" subtitle="Selecione o modelo de linguagem que alimentará o cérebro do agente." />
-          <Button variant="outline" size="sm" className="gap-1.5 text-xs shrink-0" onClick={handleAutoRoute} disabled={routing}>
+          <Button variant="outline" size="sm" className="gap-1.5 text-meta shrink-0" onClick={handleAutoRoute} disabled={routing}>
             {routing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
             Auto-Route
           </Button>
@@ -87,12 +88,12 @@ export function BrainModule() {
         {routeResult && (
           <div className="mb-4 p-3 rounded-lg border border-primary/20 bg-primary/5 animate-fade-in">
             <div className="flex items-center gap-2 flex-wrap">
-              <Badge variant="outline" className="text-[10px]">Complexidade: {routeResult.complexity.level} ({(routeResult.complexity.score * 100).toFixed(0)}%)</Badge>
-              <Badge variant="outline" className="text-[10px]">Tier: {routeResult.tier}</Badge>
-              <Badge variant="outline" className="text-[10px]">~${routeResult.estimated_cost_per_query.toFixed(4)}/query</Badge>
+              <Badge variant="outline" className="text-meta">Complexidade: {routeResult.complexity.level} ({(routeResult.complexity.score * 100).toFixed(0)}%)</Badge>
+              <Badge variant="outline" className="text-meta">Tier: {routeResult.tier}</Badge>
+              <Badge variant="outline" className="text-meta">~${routeResult.estimated_cost_per_query.toFixed(4)}/query</Badge>
             </div>
             {routeResult.alternatives.length > 0 && (
-              <p className="text-[11px] text-muted-foreground mt-1.5">
+              <p className="text-meta text-muted-foreground mt-1.5">
                 Alternativas: {routeResult.alternatives.map(a => `${a.model} (${a.tier})`).join(', ')}
               </p>
             )}
@@ -107,27 +108,27 @@ export function BrainModule() {
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="rounded-xl border border-border bg-card p-4 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-muted-foreground uppercase flex items-center gap-1.5">
+              <span className="text-meta font-bold text-muted-foreground uppercase flex items-center gap-1.5">
                 <Brain className="h-3 w-3" /> Poder Cognitivo
               </span>
-              <span className="text-xs font-bold text-primary">{modelStats.intelligence}%</span>
+              <span className="text-meta font-bold text-primary">{modelStats.intelligence}%</span>
             </div>
             <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
               <div className="h-full bg-primary transition-all duration-500" style={{ width: `${modelStats.intelligence}%` }} />
             </div>
-            <p className="text-[10px] text-muted-foreground italic">Capacidade de raciocínio lógico e aderência a instruções complexas.</p>
+            <p className="text-meta text-muted-foreground italic">Capacidade de raciocínio lógico e aderência a instruções complexas.</p>
           </div>
           <div className="rounded-xl border border-border bg-card p-4 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-muted-foreground uppercase flex items-center gap-1.5">
+              <span className="text-meta font-bold text-muted-foreground uppercase flex items-center gap-1.5">
                 <Zap className="h-3 w-3" /> Velocidade de Resposta
               </span>
-              <span className="text-xs font-bold text-nexus-blue">{modelStats.speed}%</span>
+              <span className="text-meta font-bold text-nexus-blue">{modelStats.speed}%</span>
             </div>
             <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
               <div className="h-full bg-nexus-blue transition-all duration-500" style={{ width: `${modelStats.speed}%` }} />
             </div>
-            <p className="text-[10px] text-muted-foreground italic">Latência estimada para tokens por segundo (TPS).</p>
+            <p className="text-meta text-muted-foreground italic">Latência estimada para tokens por segundo (TPS).</p>
           </div>
         </div>
       </section>
@@ -163,6 +164,7 @@ export function BrainModule() {
           className="space-y-2"
         >
           {REASONING_OPTIONS.map((opt) => (
+            // eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label
             <label
               key={opt.id}
               className={cn(
@@ -175,10 +177,10 @@ export function BrainModule() {
               <RadioGroupItem value={opt.id} className="mt-0.5" />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold text-foreground">{opt.name}</span>
+                  <span className="text-body-sm font-semibold text-foreground">{opt.name}</span>
                   {opt.recommended && <NexusBadge color="green">Recomendado</NexusBadge>}
                 </div>
-                <p className="text-xs text-muted-foreground mt-0.5">{opt.description}</p>
+                <p className="text-meta text-muted-foreground mt-0.5">{opt.description}</p>
               </div>
             </label>
           ))}
@@ -226,19 +228,19 @@ export function BrainModule() {
         <div className="rounded-lg border border-border/50 bg-secondary/20 p-4">
           <div className="flex items-center gap-2 mb-2">
             <Cpu className="h-4 w-4 text-primary" />
-            <span className="text-xs font-semibold text-foreground">Skills Registradas</span>
-            <Badge variant="secondary" className="text-[11px]">{skills.length}</Badge>
+            <span className="text-meta font-semibold text-foreground">Skills Registradas</span>
+            <Badge variant="secondary" className="text-meta">{skills.length}</Badge>
           </div>
-          <p className="text-[11px] text-muted-foreground">
+          <p className="text-meta text-muted-foreground">
             O sistema carrega apenas as skills relevantes para cada tarefa, otimizando uso de tokens e qualidade da resposta.
             Skills são selecionadas por matching semântico com a task description.
           </p>
           {skills.length > 0 && (
             <div className="flex flex-wrap gap-1 mt-2">
-              {skills.slice(0, 10).map((s: { id: string; name: string }) => (
-                <Badge key={s.id} variant="outline" className="text-[10px]">{s.name}</Badge>
+              {skills.slice(0, 10).map((s: DbRow) => (
+                <Badge key={s.id} variant="outline" className="text-meta">{s.name}</Badge>
               ))}
-              {skills.length > 10 && <Badge variant="secondary" className="text-[10px]">+{skills.length - 10} mais</Badge>}
+              {skills.length > 10 && <Badge variant="secondary" className="text-meta">+{skills.length - 10} mais</Badge>}
             </div>
           )}
         </div>

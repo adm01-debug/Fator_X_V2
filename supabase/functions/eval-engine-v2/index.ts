@@ -19,6 +19,7 @@
  * Used by: src/services/evalEngineService.ts
  * ═══════════════════════════════════════════════════════════════
  */
+import { fetchWithTimeout } from "../_shared/retry.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import {
   handleCorsPreflight, jsonResponse, errorResponse,
@@ -129,7 +130,7 @@ Metrics:
 - answer_correctness: 1.0 if ANSWER matches EXPECTED (or 0.5 if no expected provided)`;
 
   try {
-    const resp = await fetch(`${supabaseUrl}/functions/v1/llm-gateway`, {
+    const resp = await fetchWithTimeout(`${supabaseUrl}/functions/v1/llm-gateway`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

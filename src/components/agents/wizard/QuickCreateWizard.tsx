@@ -29,6 +29,9 @@ import { StepQuickIdentity } from './quickSteps/StepQuickIdentity';
 import { StepQuickType } from './quickSteps/StepQuickType';
 import { StepQuickModel } from './quickSteps/StepQuickModel';
 import { StepQuickPrompt } from './quickSteps/StepQuickPrompt';
+import { StepQuickSkills } from './quickSteps/StepQuickSkills';
+import { bulkInstallSkills } from '@/services/skillsRegistryService';
+import { z } from 'zod';
 import { PreflightReviewSummary } from './quickSteps/PreflightReviewSummary';
 import { DraftRecoveryBanner, type DraftBannerEntry } from './DraftRecoveryBanner';
 import { RestoreFeedbackBanner } from './RestoreFeedbackBanner';
@@ -72,11 +75,13 @@ const FIELD_LABEL: Partial<Record<keyof QuickAgentForm, string>> = {
   model: 'Modelo',
   prompt: 'Prompt',
 };
+const skillsStepSchema = z.object({});
 const STEPS = [
   { key: 'identity', label: 'Identidade', schema: quickIdentitySchema, fields: ['name', 'emoji', 'mission', 'description'] },
   { key: 'type', label: 'Tipo', schema: quickTypeSchema, fields: ['type'] },
   { key: 'model', label: 'Modelo', schema: quickModelSchema, fields: ['model'] },
   { key: 'prompt', label: 'Prompt', schema: quickPromptSchema, fields: ['prompt'] },
+  { key: 'skills', label: 'Skills', schema: skillsStepSchema, fields: [] as Array<keyof QuickAgentForm> },
 ] as const;
 
 const TYPE_LABEL: Record<QuickAgentType, string> = {
@@ -173,6 +178,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
     ...QUICK_AGENT_DEFAULTS,
     ...initialData
   }));
+  const [selectedSkillIds, setSelectedSkillIds] = useState<string[]>([]);
   const [draftsStore, setDraftsStore] = useState<DraftsStoreV2>({ version: 2, activeId: null, drafts: [] });
   const [pendingDrafts, setPendingDrafts] = useState<DraftEntry[]>([]);
   const [draftDecided, setDraftDecided] = useState(false);
@@ -509,7 +515,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
     };
     const tone = mode === 'partial' ? 'success' : !check.canRestore ? 'warning' : 'success';
     toast.custom((t) => (
-      <div className="nexus-card bg-card border-border/60 shadow-lg w-[min(420px,calc(100vw-2rem))] p-3">
+      <div className="nexus-card bg-card border-border/60 shadow-nexus-lg w-[min(420px,calc(100vw-2rem))] p-3">
         <DraftRestoredNotification
           draftName={draftDisplayName}
           mode={mode}
@@ -830,10 +836,19 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
       toast.error('Erro ao salvar agente', { description: error.message });
       return;
     }
+    const insertedId = (inserted as { id?: string } | null)?.id;
+    // Instala skills selecionadas em bulk (não bloqueia navegação em caso de erro)
+    if (insertedId && selectedSkillIds.length > 0) {
+      try {
+        await bulkInstallSkills(insertedId, selectedSkillIds);
+      } catch (skillErr) {
+        const msg = skillErr instanceof Error ? skillErr.message : 'Falha ao instalar skills';
+        toast.warning('Agente criado, mas falhou ao instalar skills', { description: msg });
+      }
+    }
     // If the user opted to bypass contradiction warnings, log a high-signal
     // audit entry so admins can review the rationale later.
     if (override) {
-      const insertedId = (inserted as { id?: string } | null)?.id;
       void logAudit({
         action: 'create',
         resource_type: 'agent',
@@ -900,10 +915,11 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
         const activeVariant = promptCustomLocked ? null : (selectedVariant ?? detected);
         return <StepQuickPrompt form={form} errors={errors} onPromptManualEdit={updatePromptManual} onRestore={restorePromptFromType} onSafeReset={safeResetPromptAndPreview} onApplyVariant={applyPromptVariant} customLocked={promptCustomLocked} onUnlockCustom={() => { if (promptCustomLocked) pushLockEvent('unlocked-manual', 'botão "Destravar" no editor'); setPromptCustomLocked(false); setSelectedVariant(null); }} activeVariant={activeVariant} lockEvents={lockEvents} highlightField={hfFor(['prompt'])} checklistAutoUnlock={checklistAutoUnlock} onToggleChecklistAutoUnlock={setChecklistAutoUnlock} />;
       }
+      case 4: return <StepQuickSkills mission={form.mission} role={form.type} selectedIds={selectedSkillIds} onChange={setSelectedSkillIds} />;
       default: return null;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step, form, errors, highlightField, restoreFeedback, promptCustomLocked, selectedVariant]);
+  }, [step, form, errors, highlightField, restoreFeedback, promptCustomLocked, selectedVariant, selectedSkillIds]);
 
   const bannerEntries: DraftBannerEntry[] = useMemo(
     () => pendingDrafts.map((d) => {
@@ -966,7 +982,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
         </Button>
         <div>
           <h1 className="text-xl font-heading font-bold text-foreground">Criação rápida ⚡</h1>
-          <p className="text-sm text-muted-foreground">Passo {step + 1} de {STEPS.length}</p>
+          <p className="text-body-sm text-muted-foreground">Passo {step + 1} de {STEPS.length}</p>
         </div>
       </div>
 
@@ -980,7 +996,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
               onClick={() => goToStep(i)}
               role="tab"
               aria-selected={isActive}
-              className={`flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium transition-all whitespace-nowrap ${
+              className={`flex items-center gap-2 rounded-lg px-3 py-2 text-meta font-medium transition-all whitespace-nowrap ${
                 isActive
                   ? 'bg-primary/15 text-primary'
                   : isDone
@@ -989,7 +1005,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
               }`}
             >
               <div
-                className={`h-6 w-6 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 ${
+                className={`h-6 w-6 rounded-full flex items-center justify-center text-meta font-bold shrink-0 ${
                   isDone
                     ? 'bg-primary text-primary-foreground'
                     : isActive
@@ -1012,8 +1028,8 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
           agente" se o prompt atual não atingir o nível selecionado. */}
       <div className="flex flex-wrap items-center gap-3 rounded-lg border border-border/50 bg-secondary/30 px-3 py-2">
         <div className="flex flex-col">
-          <span className="text-xs font-medium text-foreground">Profundidade mínima do prompt</span>
-          <span className="text-[11px] text-muted-foreground">
+          <span className="text-meta font-medium text-foreground">Profundidade mínima do prompt</span>
+          <span className="text-meta text-muted-foreground">
             Atual: <span className={`font-mono tabular-nums ${meetsDepth ? 'text-nexus-emerald' : 'text-nexus-amber'}`}>{promptWordCount}</span> palavra{promptWordCount === 1 ? '' : 's'}
             {' · '}mínimo exigido: <span className="font-mono tabular-nums">{minPromptDepth}</span>
           </span>
@@ -1037,9 +1053,9 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
                     : opt === 8 ? 'Equilibrado — recomendado'
                     : 'Rigoroso — exige descrição mais detalhada'
                 }
-                className={`text-xs font-medium px-3 py-1 rounded transition-colors ${
+                className={`text-meta font-medium px-3 py-1 rounded transition-colors ${
                   active
-                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    ? 'bg-primary text-primary-foreground shadow-nexus-sm'
                     : 'text-muted-foreground hover:text-foreground hover:bg-secondary/60'
                 }`}
               >
@@ -1054,7 +1070,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
         <Button variant="ghost" onClick={goPrev} className="gap-2">
           <ArrowLeft className="h-4 w-4" /> Voltar
         </Button>
-        <div className="text-xs text-muted-foreground hidden sm:block">
+        <div className="text-meta text-muted-foreground hidden sm:block">
           {step + 1} de {STEPS.length}
           {isLast && <span className="ml-2 opacity-60">(Ctrl+Enter para criar)</span>}
         </div>

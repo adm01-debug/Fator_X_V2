@@ -1,10 +1,16 @@
 // Eval Suite runner — executa dataset contra agente + LLM-as-judge
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.58.0';
+import { z } from "https://esm.sh/zod@3.23.8";
+import { checkIdempotency, saveIdempotency } from "../_shared/idempotency.ts";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { getCorsHeaders, requireEnv, validateRequiredEnv, checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS } from "../_shared/mod.ts";
+validateRequiredEnv(['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'SUPABASE_ANON_KEY', 'LOVABLE_API_KEY']);
+const EvalRunnerBodySchema = z.object({
+  agent_id: z.string().uuid().optional(),
+  workspace_id: z.string().uuid().optional(),
+  eval_set_id: z.string().uuid().optional(),
+  test_cases: z.array(z.record(z.unknown())).max(200).optional(),
+}).passthrough();
 
 interface EvalItem {
   input: string;
@@ -94,19 +100,23 @@ function estimateCost(model: string, tokensIn: number, tokensOut: number): numbe
 }
 
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
-  try {
-    const apiKey = Deno.env.get('LOVABLE_API_KEY');
-    if (!apiKey) throw new Error('LOVABLE_API_KEY não configurada');
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  try {
+    const apiKey = requireEnv('LOVABLE_API_KEY');
+    const supabaseUrl = requireEnv('SUPABASE_URL');
+    const serviceKey = requireEnv('SUPABASE_SERVICE_ROLE_KEY');
+    const anonKey = requireEnv('SUPABASE_ANON_KEY');
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) throw new Error('Sem autenticação');
 
     // user-scoped client to validate auth
-    const userClient = createClient(supabaseUrl, Deno.env.get('SUPABASE_ANON_KEY')!, {
+    const userClient = createClient(supabaseUrl, anonKey, {
       global: { headers: { Authorization: authHeader } },
     });
     const { data: userData, error: userErr } = await userClient.auth.getUser();
@@ -114,9 +124,22 @@ Deno.serve(async (req) => {
     const userId = userData.user.id;
 
     const admin = createClient(supabaseUrl, serviceKey);
-    const body = await req.json();
+    const rawBody = await req.json().catch(() => null);
+    const parsedBody = EvalRunnerBodySchema.safeParse(rawBody);
+    if (!parsedBody.success) {
+      return new Response(JSON.stringify({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+    }
+    const body = parsedBody.data;
     const { dataset_id, agent_id } = body as { dataset_id: string; agent_id: string };
     if (!dataset_id || !agent_id) throw new Error('dataset_id e agent_id obrigatórios');
+
+    // Idempotência opcional (Idempotency-Key header)
+    const idemKeyHeader = req.headers.get('Idempotency-Key');
+    const idemKey = idemKeyHeader ? `agent-eval-runner:${userId}:${idemKeyHeader}` : '';
+    if (idemKey) {
+      const dup = await checkIdempotency(idemKey, admin);
+      if (dup.isDuplicate && dup.response) return dup.response;
+    }
 
     const { data: dataset, error: dsErr } = await admin
       .from('agent_eval_datasets')
@@ -219,7 +242,9 @@ Deno.serve(async (req) => {
         .eq('id', run.id);
     });
 
-    return new Response(JSON.stringify({ run_id: run.id }), {
+    const responseBody = { run_id: run.id };
+    if (idemKey) await saveIdempotency(idemKey, 200, responseBody, admin);
+    return new Response(JSON.stringify(responseBody), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     });

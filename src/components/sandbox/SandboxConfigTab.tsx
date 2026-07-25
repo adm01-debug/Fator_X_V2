@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/label-has-associated-control, jsx-a11y/no-static-element-interactions -- a11y: row/card click mirrors a primary action available elsewhere ; visual caption for composite/custom control ; decorative wrapper / click-through container; tracked for dedicated a11y pass */
 import type { SandboxConfig, SandboxRuntime } from '@/components/workflows/SandboxExecutionPanel';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 const RUNTIME_OPTIONS: Array<{
   id: SandboxRuntime;
@@ -26,8 +27,9 @@ function SliderField({ label, value, min, max, step, unit, onChange }: {
   return (
     <div className="space-y-1">
       <div className="flex items-center justify-between">
-        <label className="text-xs text-muted-foreground">{label}</label>
-        <span className="text-xs font-medium text-foreground">{value} {unit}</span>
+        { }
+        <label className="text-meta text-muted-foreground">{label}</label>
+        <span className="text-meta font-medium text-foreground">{value} {unit}</span>
       </div>
       <input type="range" min={min} max={max} step={step} value={value} onChange={(e) => onChange(Number(e.target.value))} className="w-full h-1.5 bg-muted rounded-lg appearance-none cursor-pointer accent-primary" />
     </div>
@@ -43,19 +45,20 @@ export function SandboxConfigTab({ config, onUpdate }: SandboxConfigTabProps) {
   return (
     <div className="pt-4 space-y-4">
       <div className="space-y-2">
-        <label className="text-xs text-muted-foreground font-medium">Runtime</label>
+        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+        <label className="text-meta text-muted-foreground font-medium">Runtime</label>
         <div className="grid grid-cols-2 gap-2">
           {RUNTIME_OPTIONS.map((rt) => (
-            <div
+            <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
               key={rt.id}
               className={`p-3 rounded-lg border cursor-pointer transition-all ${config.runtime === rt.id ? 'border-primary bg-primary/10' : 'border-border bg-background hover:border-border'}`}
               onClick={() => onUpdate({ runtime: rt.id })}
             >
               <div className="flex items-center justify-between mb-1">
-                <span className="text-sm font-medium text-foreground">{rt.name}</span>
+                <span className="text-body-sm font-medium text-foreground">{rt.name}</span>
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: SECURITY_LEVEL_COLORS[rt.securityLevel] }} />
               </div>
-              <p className="text-xs text-muted-foreground">{rt.description}</p>
+              <p className="text-meta text-muted-foreground">{rt.description}</p>
             </div>
           ))}
         </div>
@@ -63,7 +66,8 @@ export function SandboxConfigTab({ config, onUpdate }: SandboxConfigTabProps) {
 
       {config.runtime !== 'none' && (
         <div className="space-y-3">
-          <label className="text-xs text-muted-foreground font-medium">Limites de Recursos</label>
+          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+          <label className="text-meta text-muted-foreground font-medium">Limites de Recursos</label>
           <SliderField label="CPU" value={config.cpuLimit} min={0.25} max={4} step={0.25} unit="cores" onChange={(v) => onUpdate({ cpuLimit: v })} />
           <SliderField label="Memória" value={config.memoryLimitMb} min={128} max={4096} step={128} unit="MB" onChange={(v) => onUpdate({ memoryLimitMb: v })} />
           <SliderField label="Timeout" value={config.timeoutSeconds} min={5} max={300} step={5} unit="seg" onChange={(v) => onUpdate({ timeoutSeconds: v })} />

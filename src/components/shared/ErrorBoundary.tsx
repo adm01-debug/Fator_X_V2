@@ -71,18 +71,18 @@ export class ErrorBoundary extends Component<Props, State> {
             <div className="h-14 w-14 rounded-2xl bg-destructive/10 flex items-center justify-center" aria-hidden="true">
               <AlertTriangle className="h-7 w-7 text-destructive" />
             </div>
-            <h2 className="text-lg font-heading font-semibold text-foreground">Algo deu errado</h2>
-            <p className="text-sm text-muted-foreground">
+            <h2 className="text-title-sm font-heading font-semibold text-foreground">Algo deu errado</h2>
+            <p className="text-body-sm text-muted-foreground">
               {canRetry
                 ? 'Ocorreu um erro inesperado. Tente novamente ou volte para o início.'
                 : 'O erro persiste após várias tentativas. Recarregue a página ou entre em contato com o suporte.'}
             </p>
             {this.state.error && (
               <details className="w-full">
-                <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground transition-colors">
+                <summary className="text-meta text-muted-foreground cursor-pointer hover:text-foreground transition-colors">
                   Detalhes técnicos
                 </summary>
-                <pre className="w-full rounded-lg bg-muted/50 p-3 text-xs text-muted-foreground overflow-auto max-h-32 text-left font-mono mt-2">
+                <pre className="w-full rounded-lg bg-muted/50 p-3 text-meta text-muted-foreground overflow-auto max-h-32 text-left font-mono mt-2">
                   {this.state.error.message}
                 </pre>
               </details>

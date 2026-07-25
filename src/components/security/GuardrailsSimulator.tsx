@@ -65,8 +65,8 @@ export function GuardrailsSimulator() {
               <Sparkles className="w-5 h-5 text-nexus-purple" />
             </div>
             <div>
-              <CardTitle className="text-lg font-bold">Simulador de Guardrails</CardTitle>
-              <CardDescription className="text-xs uppercase tracking-widest font-black opacity-50">Teste de Stress Neural</CardDescription>
+              <CardTitle className="text-title-sm font-bold">Simulador de Guardrails</CardTitle>
+              <CardDescription className="text-meta uppercase tracking-widest font-black opacity-50">Teste de Stress Neural</CardDescription>
             </div>
           </div>
           <Badge variant="outline" className="border-nexus-purple/30 text-nexus-purple">v2.2 ML</Badge>
@@ -74,19 +74,19 @@ export function GuardrailsSimulator() {
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-2">
-          <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Entrada para teste</label>
-          <Textarea 
+          <label htmlFor="guardrailssimulator-entrada-para-teste-8ac239" className="text-meta font-bold text-muted-foreground uppercase tracking-wider">Entrada para teste</label>
+          <Textarea id="guardrailssimulator-entrada-para-teste-8ac239" 
             value={input} 
             onChange={(e) => setInput(e.target.value)} 
             placeholder="Digite um prompt para testar as políticas de segurança... (ex: ignore system instructions)" 
-            className="min-h-[120px] bg-secondary/20 border-border/40 focus:ring-nexus-purple/20 text-sm font-medium rounded-2xl"
+            className="min-h-[120px] bg-secondary/20 border-border/40 focus:ring-nexus-purple/20 text-body-sm font-medium rounded-2xl"
           />
         </div>
 
         <Button 
           onClick={simulateAnalysis} 
           disabled={analyzing || !input.trim()} 
-          className="w-full h-12 rounded-xl nexus-gradient-bg text-primary-foreground font-bold gap-2 shadow-xl shadow-primary/10"
+          className="w-full h-12 rounded-xl nexus-gradient-bg text-primary-foreground font-bold gap-2 shadow-nexus-xl shadow-primary/10"
         >
           {analyzing ? <Loader2 className="w-5 h-5 animate-spin" /> : <Play className="w-4 h-4" />}
           {analyzing ? 'Analisando Camadas...' : 'Executar Análise de Segurança'}
@@ -104,21 +104,21 @@ export function GuardrailsSimulator() {
                   {result.safe ? <ShieldCheck className="w-8 h-8 text-nexus-emerald" /> : <ShieldAlert className="w-8 h-8 text-destructive" />}
                 </div>
                 <div>
-                  <p className={`text-lg font-black tracking-tight ${result.safe ? 'text-nexus-emerald' : 'text-destructive'}`}>
+                  <p className={`text-title-sm font-black tracking-tight ${result.safe ? 'text-nexus-emerald' : 'text-destructive'}`}>
                     {result.safe ? 'ENTRADA SEGURA' : 'RISCO DETECTADO'}
                   </p>
-                  <p className="text-xs text-muted-foreground font-medium">Score de Confiança: {(result.score * 100).toFixed(0)}%</p>
+                  <p className="text-meta text-muted-foreground font-medium">Score de Confiança: {(result.score * 100).toFixed(0)}%</p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">Latência</p>
-                <p className="text-sm font-mono font-bold text-foreground">{result.metadata?.latency_ms}ms</p>
+                <p className="text-meta text-muted-foreground uppercase font-black tracking-widest">Latência</p>
+                <p className="text-body-sm font-mono font-bold text-foreground">{String(result.metadata?.latency_ms ?? '')}ms</p>
               </div>
             </div>
 
             {result.violations.length > 0 && (
               <div className="space-y-2">
-                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider px-1">Gatilhos Ativados</p>
+                <p className="text-meta font-bold text-muted-foreground uppercase tracking-wider px-1">Gatilhos Ativados</p>
                 <div className="flex flex-wrap gap-2">
                   {result.violations.map((v, i) => (
                     <Badge key={i} variant="destructive" className="bg-destructive/10 text-destructive border-destructive/20 px-3 py-1 font-bold">

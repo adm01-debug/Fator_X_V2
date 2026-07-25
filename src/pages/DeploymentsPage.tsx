@@ -15,9 +15,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { A2APanel } from '@/components/integrations/A2APanel';
 import { WebWidgetPanel } from '@/components/deployments/WebWidgetPanel';
 import { WhatsAppSendDialog } from '@/components/deployments/WhatsAppSendDialog';
+import { WhatsAppInboxPanel } from '@/components/deployments/WhatsAppInboxPanel';
 import { cn } from "@/lib/utils";
 import { ApprovalQueuePanel } from "@/components/deployments/ApprovalQueuePanel";
 import { DeploymentWizard } from "@/components/deployments/DeploymentWizard";
+import type { DbRow } from '@/types/dbRow';
 
 export default function DeploymentsPage() {
   const [wizardOpen, setWizardOpen] = useState(false);
@@ -48,20 +50,20 @@ export default function DeploymentsPage() {
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-10 max-w-[1440px] mx-auto animate-page-enter">
       {/* Header Elevated 10/10 */}
-      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-xl shadow-primary/5 relative overflow-hidden group">
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-nexus-xl shadow-primary/5 relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/[0.06] transition-colors duration-500 pointer-events-none" />
         
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative">
           <div className="flex items-center gap-7">
-            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
+            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-nexus-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
               <Rocket className="h-11 w-11 text-primary animate-float" />
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-3">
                 <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Implantações</h1>
-                <Badge className="bg-nexus-emerald/10 text-nexus-emerald border-none font-black px-3 py-1 rounded-full text-[10px] tracking-widest uppercase">Live Operations</Badge>
+                <Badge className="bg-nexus-emerald/10 text-nexus-emerald border-none font-black px-3 py-1 rounded-full text-meta tracking-widest uppercase">Live Operations</Badge>
               </div>
-              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+              <p className="text-title-sm text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Orquestre a distribuição global dos seus agentes. Gerencie canais, WebWidgets e endpoints de API em tempo real.
               </p>
             </div>
@@ -76,6 +78,7 @@ export default function DeploymentsPage() {
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
           <WebWidgetPanel agentId={deployments[0]?.id} agentName={deployments[0]?.name} />
+          <WhatsAppInboxPanel />
           <ApprovalQueuePanel />
           
           <div className="space-y-4">
@@ -86,7 +89,7 @@ export default function DeploymentsPage() {
                 </div>
                 <h3 className="text-xl font-heading font-black text-foreground">Frota Ativa</h3>
               </div>
-              <Badge variant="outline" className="h-8 px-4 rounded-xl text-xs font-bold border-border/40 bg-card/50">{deployments.length} Ativos</Badge>
+              <Badge variant="outline" className="h-8 px-4 rounded-xl text-meta font-bold border-border/40 bg-card/50">{deployments.length} Ativos</Badge>
             </div>
 
             {isLoading ? (
@@ -104,15 +107,15 @@ export default function DeploymentsPage() {
                   <div key={dep.id} className="nexus-card nexus-card-interactive group p-6 rounded-[2.5rem] bg-card/50 backdrop-blur-sm border-border/40 hover:border-primary/30 transition-all duration-500">
                     <div className="flex items-start justify-between mb-5">
                       <div className="flex items-center gap-4">
-                        <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center text-2xl shadow-sm border border-primary/10 group-hover:scale-105 transition-transform duration-300">
+                        <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center text-2xl shadow-nexus-sm border border-primary/10 group-hover:scale-105 transition-transform duration-300">
                           {dep.emoji || '🤖'}
                         </div>
                         <div>
-                          <h3 className="text-base font-bold text-foreground group-hover:text-primary transition-colors">{dep.name}</h3>
+                          <h3 className="text-title-sm font-bold text-foreground group-hover:text-primary transition-colors">{dep.name}</h3>
                           <div className="flex items-center gap-2 mt-1">
-                            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{dep.environment}</span>
+                            <span className="text-meta font-black text-muted-foreground uppercase tracking-widest">{dep.environment}</span>
                             <div className="h-1 w-1 rounded-full bg-border" />
-                            <span className="text-[10px] font-mono text-primary font-bold">v{dep.version}</span>
+                            <span className="text-meta font-mono text-primary font-bold">v{dep.version}</span>
                           </div>
                         </div>
                       </div>
@@ -127,7 +130,7 @@ export default function DeploymentsPage() {
                               key={c.name} 
                               variant="secondary" 
                               className={cn(
-                                "h-7 px-3 rounded-xl border-none font-bold text-[10px] tracking-tight transition-all",
+                                "h-7 px-3 rounded-xl border-none font-bold text-meta tracking-tight transition-all",
                                 c.status === 'active' ? 'bg-nexus-emerald/10 text-nexus-emerald' : 'bg-muted text-muted-foreground'
                               )}
                             >
@@ -138,14 +141,14 @@ export default function DeploymentsPage() {
                         </div>
                       ) : (
                         <div className="h-7 flex items-center px-3 rounded-xl bg-muted/30 border border-dashed border-border/40">
-                          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Nenhum Canal Conectado</span>
+                          <span className="text-meta font-bold text-muted-foreground uppercase tracking-widest">Nenhum Canal Conectado</span>
                         </div>
                       )}
 
                       <div className="flex items-center justify-between pt-4 border-t border-border/20">
                         <div className="flex items-center gap-2">
                           <Zap className="h-3.5 w-3.5 text-nexus-amber" />
-                          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Updated {new Date(dep.updated).toLocaleDateString('pt-BR')}</span>
+                          <span className="text-meta font-bold text-muted-foreground uppercase tracking-widest">Updated {new Date(dep.updated).toLocaleDateString('pt-BR')}</span>
                         </div>
                         <div className="flex gap-2">
                           <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-lg hover:bg-primary/10" onClick={() => handleDeployClick(dep)}>
@@ -165,20 +168,20 @@ export default function DeploymentsPage() {
         </div>
 
         <div className="space-y-8">
-          <div className="bg-card/50 backdrop-blur-xl border border-border/40 p-8 rounded-[3rem] shadow-xl shadow-primary/5">
+          <div className="bg-card/50 backdrop-blur-xl border border-border/40 p-8 rounded-[3rem] shadow-nexus-xl shadow-primary/5">
             <div className="flex items-center gap-3 mb-6">
               <div className="h-10 w-10 rounded-xl bg-nexus-purple/10 flex items-center justify-center">
                 <Globe className="h-5 w-5 text-nexus-purple" />
               </div>
               <h3 className="text-xl font-heading font-black text-foreground">Orquestração A2A</h3>
             </div>
-            <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
+            <p className="text-body-sm text-muted-foreground mb-6 leading-relaxed">
               Protocolo Nexus Agent-to-Agent para comunicação inter-agentes em clusters distribuídos.
             </p>
             <A2APanel />
           </div>
 
-          <div className="bg-card/50 backdrop-blur-xl border border-border/40 p-8 rounded-[3rem] shadow-xl shadow-primary/5">
+          <div className="bg-card/50 backdrop-blur-xl border border-border/40 p-8 rounded-[3rem] shadow-nexus-xl shadow-primary/5">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-xl bg-nexus-cyan/10 flex items-center justify-center">
@@ -198,16 +201,16 @@ export default function DeploymentsPage() {
               ].map((s, i) => (
                 <div key={i} className="flex items-center justify-between p-3.5 rounded-2xl bg-secondary/30 border border-border/20 group hover:border-primary/20 transition-all">
                   <div className="flex flex-col">
-                    <span className="text-xs font-bold text-foreground">{s.label}</span>
+                    <span className="text-meta font-bold text-foreground">{s.label}</span>
                     <span className="text-[9px] text-muted-foreground uppercase font-black tracking-widest">{s.status}</span>
                   </div>
                   <div className="text-right">
-                    <span className={cn("text-xs font-black font-mono", s.color)}>{s.val}</span>
+                    <span className={cn("text-meta font-black font-mono", s.color)}>{s.val}</span>
                   </div>
                 </div>
               ))}
             </div>
-            <Button variant="outline" className="w-full mt-6 h-10 rounded-xl text-[10px] font-bold uppercase tracking-widest border-border/40" asChild>
+            <Button variant="outline" className="w-full mt-6 h-10 rounded-xl text-meta font-bold uppercase tracking-widest border-border/40" asChild>
                <a href="/observability">Ver Detalhes OTel</a>
             </Button>
           </div>
@@ -253,7 +256,7 @@ function EndpointGeneratorButton() {
           <span className="font-bold">API Access</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-2xl rounded-[2.5rem] border-border/40 p-8 shadow-2xl">
+      <DialogContent className="sm:max-w-2xl rounded-[2.5rem] border-border/40 p-8 shadow-nexus-2xl">
         <DialogHeader>
           <DialogTitle className="text-2xl font-heading font-black flex items-center gap-3">
             <Terminal className="h-6 w-6 text-primary" /> API Industrial Gateway
@@ -261,9 +264,9 @@ function EndpointGeneratorButton() {
         </DialogHeader>
         <div className="space-y-6 mt-6">
           <div className="bg-secondary/30 border border-border/40 p-5 rounded-2xl relative group">
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-3">Endpoint Base de Produção</p>
+            <p className="text-meta font-black text-muted-foreground uppercase tracking-widest mb-3">Endpoint Base de Produção</p>
             <div className="flex items-center gap-3">
-              <code className="flex-1 bg-background/50 p-2.5 rounded-xl text-xs font-mono text-primary truncate">{baseUrl}</code>
+              <code className="flex-1 bg-background/50 p-2.5 rounded-xl text-meta font-mono text-primary truncate">{baseUrl}</code>
               <Button size="icon" variant="ghost" className="h-10 w-10 rounded-xl hover:bg-primary/10 transition-colors" onClick={() => handleCopy(baseUrl, 'base')}>
                 {copied === 'base' ? <CheckCircle className="h-4 w-4 text-nexus-emerald" /> : <Copy className="h-4 w-4" />}
               </Button>
@@ -282,15 +285,15 @@ function EndpointGeneratorButton() {
                         <Layers className="h-4 w-4 text-primary" />
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-foreground">{ep.name}</p>
-                        <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-tight">{ep.desc}</p>
+                        <p className="text-body-sm font-bold text-foreground">{ep.name}</p>
+                        <p className="text-meta text-muted-foreground font-medium uppercase tracking-tight">{ep.desc}</p>
                       </div>
                     </div>
-                    <Badge variant="outline" className="bg-primary/5 text-primary border-none text-[10px] font-black">{ep.method}</Badge>
+                    <Badge variant="outline" className="bg-primary/5 text-primary border-none text-meta font-black">{ep.method}</Badge>
                   </div>
                   <div className="flex items-center gap-3 bg-muted/30 p-2 rounded-xl">
-                    <code className="text-[11px] text-muted-foreground font-mono truncate flex-1">{url}</code>
-                    <Button size="sm" variant="ghost" className="h-8 px-3 rounded-lg hover:bg-primary/10 text-[10px] font-bold" onClick={() => handleCopy(curl, ep.path)}>
+                    <code className="text-meta text-muted-foreground font-mono truncate flex-1">{url}</code>
+                    <Button size="sm" variant="ghost" className="h-8 px-3 rounded-lg hover:bg-primary/10 text-meta font-bold" onClick={() => handleCopy(curl, ep.path)}>
                       {copied === ep.path ? "COPIADO" : "COPIAR CURL"}
                     </Button>
                   </div>
@@ -301,7 +304,7 @@ function EndpointGeneratorButton() {
 
           <div className="flex items-center gap-3 p-4 rounded-2xl bg-nexus-amber/10 border border-nexus-amber/20">
             <Zap className="h-5 w-5 text-nexus-amber shrink-0" />
-            <p className="text-[11px] text-nexus-amber/80 font-bold leading-relaxed">
+            <p className="text-meta text-nexus-amber/80 font-bold leading-relaxed">
               AVISO: Utilize sua 'ANON_KEY' no header de autorização para chamadas seguras. 
               Para automações internas críticas, utilize a 'SERVICE_ROLE_KEY' com extrema cautela.
             </p>

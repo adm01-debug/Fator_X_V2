@@ -1,7 +1,9 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { fetchWithTimeout } from "../_shared/retry.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse, checkRateLimit, getRateLimitIdentifier, createRateLimitResponse, RATE_LIMITS } from "../_shared/mod.ts";
+import { getCorsHeaders, handleCorsPreflight, _jsonResponse, _errorResponse, checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS } from "../_shared/mod.ts";
+import { parseBody, z } from "../_shared/validation.ts";
 
 // CORS handled by _shared/cors.ts — dynamic origin whitelist
 
@@ -10,6 +12,25 @@ type CerebroAction = typeof VALID_ACTIONS[number];
 
 const VALID_EXTRACT_TYPES = ['entities', 'facts', 'rules', 'contacts'] as const;
 const VALID_CONTEXT_MODES = ['facts_only', 'rag_only', 'full', 'no_context'] as const;
+
+// Discriminated union por action: garante shape correto de cada payload.
+const AutoExtractSchema = z.object({
+  action: z.literal('auto_extract'),
+  text: z.string().min(3).max(50000),
+  extract_type: z.enum(VALID_EXTRACT_TYPES).optional(),
+}).passthrough();
+
+const BrainSandboxSchema = z.object({
+  action: z.literal('brain_sandbox'),
+  query: z.string().min(2).max(10000),
+  context_mode: z.enum(VALID_CONTEXT_MODES).optional(),
+}).passthrough();
+
+const GenericActionSchema = z.object({
+  action: z.enum(VALID_ACTIONS.filter(a => a !== 'auto_extract' && a !== 'brain_sandbox') as unknown as [CerebroAction, ...CerebroAction[]]),
+}).passthrough();
+
+const CerebroBodySchema = z.union([AutoExtractSchema, BrainSandboxSchema, GenericActionSchema]);
 
 interface KnowledgeGraphNode {
   id: string;
@@ -34,35 +55,14 @@ interface HealthItem {
   [key: string]: unknown;
 }
 
-function validateBody(body: unknown): { valid: true; action: CerebroAction; data: Record<string, unknown> } | { valid: false; error: string } {
-  if (!body || typeof body !== 'object') return { valid: false, error: 'Request body must be a JSON object' };
-  const b = body as Record<string, unknown>;
-  if (typeof b.action !== 'string' || !VALID_ACTIONS.includes(b.action as CerebroAction)) {
-    return { valid: false, error: `Invalid action. Valid: ${VALID_ACTIONS.join(', ')}` };
-  }
-  const action = b.action as CerebroAction;
 
-  if (action === 'auto_extract') {
-    if (typeof b.text !== 'string' || b.text.trim().length < 3) return { valid: false, error: 'text must be a string (min 3 chars)' };
-    if (b.text.length > 50000) return { valid: false, error: 'text must be <= 50000 chars' };
-    if (b.extract_type && !VALID_EXTRACT_TYPES.includes(b.extract_type as typeof VALID_EXTRACT_TYPES[number])) {
-      return { valid: false, error: `Invalid extract_type. Valid: ${VALID_EXTRACT_TYPES.join(', ')}` };
-    }
-  }
-
-  if (action === 'brain_sandbox') {
-    if (typeof b.query !== 'string' || b.query.trim().length < 2) return { valid: false, error: 'query must be a string (min 2 chars)' };
-    if (b.query.length > 10000) return { valid: false, error: 'query must be <= 10000 chars' };
-    if (b.context_mode && !VALID_CONTEXT_MODES.includes(b.context_mode as typeof VALID_CONTEXT_MODES[number])) {
-      return { valid: false, error: `Invalid context_mode. Valid: ${VALID_CONTEXT_MODES.join(', ')}` };
-    }
-  }
-
-  return { valid: true, action, data: b };
-}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
+
+  const identifier = getRateLimitIdentifier(req);
+  const rateResult = checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rateResult.allowed) return createRateLimitResponse(rateResult, req);
 
   try {
     const authHeader = req.headers.get('Authorization')!;
@@ -73,17 +73,11 @@ serve(async (req) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
 
-    let rawBody: unknown;
-    try { rawBody = await req.json(); } catch {
-      return new Response(JSON.stringify({ error: 'Invalid JSON body' }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
-    }
+    const parsed = await parseBody(req, CerebroBodySchema);
+    if (parsed.error) return parsed.error;
+    const body = parsed.data as Record<string, unknown>;
+    const action = body.action as CerebroAction;
 
-    const validation = validateBody(rawBody);
-    if (!validation.valid) {
-      return new Response(JSON.stringify({ error: validation.error }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
-    }
-
-    const { action, data: body } = validation;
 
     const { data: member } = await supabase.from('workspace_members').select('workspace_id').eq('user_id', user.id).limit(1).single();
     const _workspaceId = member?.workspace_id;
@@ -197,7 +191,7 @@ serve(async (req) => {
       const hfToken = Deno.env.get('HF_API_TOKEN');
       if (extract_type === 'entities' && hfToken) {
         try {
-          const nerResp = await fetch('https://router.huggingface.co/hf-inference/models/dslim/bert-base-NER', {
+          const nerResp = await fetchWithTimeout('https://router.huggingface.co/hf-inference/models/dslim/bert-base-NER', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hfToken}` },
             body: JSON.stringify({ inputs: text.substring(0, 5000) }),
@@ -224,6 +218,7 @@ serve(async (req) => {
                 type: extract_type,
                 method: 'hf_ner',
                 model: 'dslim/bert-base-NER',
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
                 entities_raw: nerEntities.filter((e: any) => e.score > 0.5),
                 tokens: { total: 0 },
                 cost_usd: 0,
@@ -244,7 +239,7 @@ serve(async (req) => {
       const prompt = extractPrompts[extract_type] || extractPrompts.entities;
 
       const gatewayUrl = `${supabaseUrl}/functions/v1/llm-gateway`;
-      const resp = await fetch(gatewayUrl, {
+      const resp = await fetchWithTimeout(gatewayUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': authHeader, 'apikey': supabaseKey },
         body: JSON.stringify({
@@ -337,7 +332,7 @@ serve(async (req) => {
       const systemPrompt = `Você é o Super Cérebro (modo sandbox). Contexto disponível:\n${contextParts.join('\n\n')}\n\nResponda a pergunta do usuário.`;
 
       const gatewayUrl = `${supabaseUrl}/functions/v1/llm-gateway`;
-      const resp = await fetch(gatewayUrl, {
+      const resp = await fetchWithTimeout(gatewayUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': authHeader, 'apikey': supabaseKey },
         body: JSON.stringify({

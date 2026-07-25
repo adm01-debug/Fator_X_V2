@@ -24,6 +24,7 @@ import { SpanTreeView, type SpanLike } from "@/components/monitoring/SpanTreeVie
 import { supabaseExternal } from "@/integrations/supabase/externalClient";
 import { logger } from "@/lib/logger";
 import { toast } from "sonner";
+import type { DbRow } from '@/types/dbRow';
 
 interface TraceRecord {
   trace_id: string;
@@ -54,7 +55,7 @@ const KIND_HEAT_COLOR: Record<string, string> = {
   guardrail: "bg-destructive/70",
   workflow: "bg-primary/70",
   http: "bg-nexus-emerald/70",
-  db: "bg-yellow-500/70",
+  db: "bg-nexus-yellow/70",
   custom: "bg-muted-foreground/50",
 };
 
@@ -82,7 +83,7 @@ export default function TracesTimelinePage() {
           .limit(200);
         if (error) throw error;
 
-        const records: TraceRecord[] = (data ?? []).map((row: { id: string; data: unknown; created_at: string | null }) => {
+        const records: TraceRecord[] = (data ?? []).map((row: DbRow) => {
           const d = (row.data ?? {}) as Record<string, unknown>;
           const spans = (Array.isArray(d.spans) ? d.spans : []) as SpanLike[];
           let cost = 0;
@@ -228,7 +229,7 @@ export default function TracesTimelinePage() {
       {kindStats.length > 0 && (
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm flex items-center gap-2">
+            <CardTitle className="text-body-sm flex items-center gap-2">
               <Activity className="h-4 w-4" /> Distribuição por tipo de span
             </CardTitle>
           </CardHeader>
@@ -243,8 +244,8 @@ export default function TracesTimelinePage() {
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-medium uppercase">{k.kind}</span>
-                    <span className="text-[10px] text-muted-foreground">{k.count}</span>
+                    <span className="text-meta font-medium uppercase">{k.kind}</span>
+                    <span className="text-meta text-muted-foreground">{k.count}</span>
                   </div>
                   <div className="h-1.5 bg-muted/30 rounded-full overflow-hidden mb-1">
                     <div
@@ -252,7 +253,7 @@ export default function TracesTimelinePage() {
                       style={{ width: `${(k.count / maxKindCount) * 100}%` }}
                     />
                   </div>
-                  <div className="text-[10px] text-muted-foreground">{k.avgMs.toFixed(0)}ms média</div>
+                  <div className="text-meta text-muted-foreground">{k.avgMs.toFixed(0)}ms média</div>
                 </button>
               ))}
             </div>
@@ -264,7 +265,7 @@ export default function TracesTimelinePage() {
         {/* Sessions list */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm flex items-center gap-2">
+            <CardTitle className="text-body-sm flex items-center gap-2">
               <Filter className="h-4 w-4" /> Filtros & Sessões
             </CardTitle>
             <div className="space-y-2 mt-3">
@@ -274,12 +275,12 @@ export default function TracesTimelinePage() {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Buscar trace_id, agent, span name..."
-                  className="h-8 pl-7 text-xs"
+                  className="h-8 pl-7 text-meta"
                 />
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="h-8 text-meta"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todos status</SelectItem>
                     <SelectItem value="success">✅ Sucesso</SelectItem>
@@ -287,7 +288,7 @@ export default function TracesTimelinePage() {
                   </SelectContent>
                 </Select>
                 <Select value={kindFilter} onValueChange={setKindFilter}>
-                  <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="h-8 text-meta"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todos kinds</SelectItem>
                     {kindStats.map(k => (
@@ -297,13 +298,13 @@ export default function TracesTimelinePage() {
                 </Select>
               </div>
               <div>
-                <div className="flex items-center justify-between text-[10px] text-muted-foreground mb-1">
+                <div className="flex items-center justify-between text-meta text-muted-foreground mb-1">
                   <span>Latência min</span><span className="font-mono">{minLatency}ms</span>
                 </div>
                 <Slider value={[minLatency]} onValueChange={(v) => setMinLatency(v[0])} max={10000} step={100} />
               </div>
               <div>
-                <div className="flex items-center justify-between text-[10px] text-muted-foreground mb-1">
+                <div className="flex items-center justify-between text-meta text-muted-foreground mb-1">
                   <span>Custo min</span><span className="font-mono">${minCost.toFixed(4)}</span>
                 </div>
                 <Slider value={[minCost * 10000]} onValueChange={(v) => setMinCost(v[0] / 10000)} max={1000} step={1} />
@@ -312,9 +313,9 @@ export default function TracesTimelinePage() {
           </CardHeader>
           <CardContent className="p-0">
             <ScrollArea className="h-[560px]">
-              {loading && <div className="p-4 text-sm text-muted-foreground">Carregando traces...</div>}
+              {loading && <div className="p-4 text-body-sm text-muted-foreground">Carregando traces...</div>}
               {!loading && filtered.length === 0 && (
-                <div className="p-6 text-center text-sm text-muted-foreground">
+                <div className="p-6 text-center text-body-sm text-muted-foreground">
                   <Filter className="h-8 w-8 mx-auto mb-2 opacity-50" />
                   Nenhum trace encontrado com esses filtros.
                 </div>
@@ -329,24 +330,24 @@ export default function TracesTimelinePage() {
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[11px] font-mono text-muted-foreground truncate max-w-[180px]">
+                      <span className="text-meta font-mono text-muted-foreground truncate max-w-[180px]">
                         {t.trace_id.slice(0, 16)}…
                       </span>
                       <Badge className={`h-4 text-[9px] px-1.5 ${STATUS_BADGE[t.status] || ''}`}>
                         {t.status}
                       </Badge>
                     </div>
-                    <div className="flex items-center gap-2.5 text-[10px] text-muted-foreground flex-wrap">
+                    <div className="flex items-center gap-2.5 text-meta text-muted-foreground flex-wrap">
                       <span className="flex items-center gap-1"><Clock className="h-2.5 w-2.5" />{t.duration_ms}ms</span>
                       <span className="flex items-center gap-1"><DollarSign className="h-2.5 w-2.5" />${t.cost_usd.toFixed(5)}</span>
                       <span className="flex items-center gap-1"><Zap className="h-2.5 w-2.5" />{t.span_count}</span>
                       {t.tokens > 0 && <span>{t.tokens.toLocaleString('pt-BR')} tk</span>}
                     </div>
-                    <div className="text-[10px] text-muted-foreground/70 mt-1">
+                    <div className="text-meta text-muted-foreground/70 mt-1">
                       {new Date(t.start_time).toLocaleString("pt-BR")}
                     </div>
                     {t.has_error && t.error_message && (
-                      <div className="text-[10px] text-destructive italic mt-1 truncate">⚠ {t.error_message}</div>
+                      <div className="text-meta text-destructive italic mt-1 truncate">⚠ {t.error_message}</div>
                     )}
                   </button>
                 ))}
@@ -359,20 +360,20 @@ export default function TracesTimelinePage() {
         <Card>
           <CardHeader className="pb-3 flex-row items-center justify-between space-y-0">
             <div>
-              <CardTitle className="text-sm">Waterfall hierárquico</CardTitle>
+              <CardTitle className="text-body-sm">Waterfall hierárquico</CardTitle>
               {selected && (
-                <p className="text-[11px] text-muted-foreground mt-0.5 font-mono">
+                <p className="text-meta text-muted-foreground mt-0.5 font-mono">
                   {selected.trace_id}
                 </p>
               )}
             </div>
             {selected && (
               <div className="flex gap-1.5">
-                <Button size="sm" variant="outline" className="h-7 text-xs" onClick={handleExportOTLP}>
+                <Button size="sm" variant="outline" className="h-7 text-meta" onClick={handleExportOTLP}>
                   <Download className="h-3 w-3 mr-1" /> OTLP
                 </Button>
                 <Button
-                  size="sm" variant="outline" className="h-7 text-xs"
+                  size="sm" variant="outline" className="h-7 text-meta"
                   onClick={() => {
                     window.location.href = `/replay-fork?trace_id=${selected.trace_id}`;
                   }}
@@ -384,7 +385,7 @@ export default function TracesTimelinePage() {
           </CardHeader>
           <CardContent>
             {!selected ? (
-              <div className="h-[600px] flex flex-col items-center justify-center text-muted-foreground text-sm gap-2">
+              <div className="h-[600px] flex flex-col items-center justify-center text-muted-foreground text-body-sm gap-2">
                 <Activity className="h-8 w-8 opacity-40" />
                 Selecione um trace para ver o waterfall hierárquico
               </div>
@@ -408,14 +409,14 @@ export default function TracesTimelinePage() {
 
                 <TabsContent value="raw">
                   <ScrollArea className="h-[560px]">
-                    <pre className="text-[10px] bg-muted/30 p-3 rounded font-mono">
+                    <pre className="text-meta bg-muted/30 p-3 rounded font-mono">
                       {JSON.stringify(selected, null, 2)}
                     </pre>
                   </ScrollArea>
                 </TabsContent>
 
                 <TabsContent value="metrics">
-                  <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div className="grid grid-cols-2 gap-3 text-meta">
                     <Metric label="Duration" value={`${selected.duration_ms}ms`} />
                     <Metric label="Spans" value={selected.span_count.toString()} />
                     <Metric label="Total cost" value={`$${selected.cost_usd.toFixed(6)}`} />
@@ -439,10 +440,10 @@ function KpiCard({ label, value, icon: Icon, accent }: { label: string; value: s
   return (
     <Card>
       <CardContent className="p-3">
-        <div className="flex items-center gap-2 text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">
+        <div className="flex items-center gap-2 text-meta text-muted-foreground mb-1 uppercase tracking-wide">
           <Icon className="h-3 w-3" /> {label}
         </div>
-        <div className={`text-xl font-bold ${accent === 'destructive' ? 'text-destructive' : ''}`}>{value}</div>
+        <div className={`text-title font-bold ${accent === 'destructive' ? 'text-destructive' : ''}`}>{value}</div>
       </CardContent>
     </Card>
   );
@@ -451,8 +452,8 @@ function KpiCard({ label, value, icon: Icon, accent }: { label: string; value: s
 function Metric({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
   return (
     <div className="bg-muted/20 p-2.5 rounded">
-      <div className="text-[10px] text-muted-foreground uppercase mb-0.5">{label}</div>
-      <div className={`text-foreground ${mono ? 'font-mono text-[11px]' : 'text-sm font-semibold'}`}>{value}</div>
+      <div className="text-meta text-muted-foreground uppercase mb-0.5">{label}</div>
+      <div className={`text-foreground ${mono ? 'font-mono text-meta' : 'text-body-sm font-semibold'}`}>{value}</div>
     </div>
   );
 }

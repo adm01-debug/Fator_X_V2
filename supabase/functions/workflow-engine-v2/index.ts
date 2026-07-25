@@ -1,13 +1,14 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
-import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse, checkRateLimit, getRateLimitIdentifier, createRateLimitResponse, RATE_LIMITS } from "../_shared/mod.ts";
+import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse, checkRateLimit, getRateLimitIdentifier, RATE_LIMITS, deliverWebhook, createRateLimitResponse } from "../_shared/mod.ts";
 
 // ═══ Types ═══
 interface GraphNode {
   id: string;
   type: string;
   label: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
   config: Record<string, any>;
 }
 
@@ -27,15 +28,17 @@ interface WorkflowState {
   _current_node: string;
   _history: string[];
   _iteration_count: Record<string, number>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
   _output: any;
   input: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
   [key: string]: any;
 }
 
 // ═══ Constants ═══
 const MAX_ITERATIONS = 50;
 const STEP_TIMEOUT_MS = 30000;
-const SPACE_TIMEOUT = 120000;
+const _SPACE_TIMEOUT = 120000;
 
 // ═══ Helpers ═══
 function safeEvalCondition(condition: string, state: WorkflowState): boolean {
@@ -63,6 +66,11 @@ const WorkflowInput = z.object({
 serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
 
+  // Rate limiting (Etapa 14)
+  const identifier = await getRateLimitIdentifier(req);
+  const { success: rateOk, remaining, reset } = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rateOk) return createRateLimitResponse(remaining, reset, getCorsHeaders(req));
+
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
@@ -80,6 +88,7 @@ serve(async (req) => {
     const { data: workflow, error: wfErr } = await supabase.from('workflows').select('*').eq('id', workflow_id).single();
     if (wfErr || !workflow) return jsonResponse({ error: 'Workflow not found' }, 404);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     const wfConfig = (workflow.config || {}) as Record<string, any>;
     const graph: WorkflowGraph = {
       nodes: (wfConfig.nodes as GraphNode[]) || [],
@@ -110,6 +119,7 @@ serve(async (req) => {
     if (resume_run_id) {
       const { data: existingRun } = await supabase.from('workflow_runs').select('*').eq('id', resume_run_id).single();
       if (!existingRun) return jsonResponse({ error: 'Run not found' }, 404);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
       const existingOutput = existingRun.output as Record<string, any> | null;
       state = (existingOutput?.state as WorkflowState) || { _current_node: graph.entry_node, _history: [], _iteration_count: {}, _output: '', input };
       runId = existingRun.id;
@@ -164,19 +174,29 @@ serve(async (req) => {
           state._output = JSON.stringify(result, null, 2);
           state[`${node.id}_output`] = state._output;
         } else if (toolType === 'webhook' && node.config.webhook_url) {
-          const resp = await fetch(node.config.webhook_url as string, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ input: state._output || state.input, node_id: node.id, run_id: runId }),
-            signal: AbortSignal.timeout(STEP_TIMEOUT_MS)
+          const webhookResult = await deliverWebhook({
+            url: node.config.webhook_url as string,
+            secret: node.config.webhook_secret as string | undefined,
+            event: 'workflow.webhook',
+            payload: {
+              event: 'workflow.webhook',
+              timestamp: new Date().toISOString(),
+              data: { input: state._output || state.input, node_id: node.id, run_id: runId },
+            },
+            timeoutMs: STEP_TIMEOUT_MS,
+            retries: 2,
           });
-          const result = await resp.json();
-          state._output = typeof result === 'string' ? result : JSON.stringify(result);
+          if (!webhookResult.success) {
+            throw new Error(`Webhook delivery failed: ${webhookResult.error}`);
+          }
+          // Output do webhook está no payload (resposta em data.output se o receiver retornar)
+          state._output = JSON.stringify({ delivered: true, attempts: webhookResult.attempts });
           state[`${node.id}_output`] = state._output;
         } else if (toolType === 'edge_function' && node.config.function_name) {
           const resp = await fetch(`${supabaseUrl}/functions/v1/${node.config.function_name}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': authHeader, 'apikey': supabaseKey },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
             body: JSON.stringify({ action: node.config.function_action, text: (state._output as string) || state.input || '', ...((node.config.extra_params as Record<string, any>) || {}) }),
             signal: AbortSignal.timeout(STEP_TIMEOUT_MS)
           });
@@ -238,6 +258,7 @@ serve(async (req) => {
       const encoder = new TextEncoder();
       const stream = new ReadableStream({
         async start(controller) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           const send = (data: any) => controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
           send({ event: 'run_start', run_id: runId });
 

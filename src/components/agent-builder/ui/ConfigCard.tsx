@@ -28,8 +28,10 @@ export function ConfigCard({
   const isClickable = !!onClick && !disabled;
 
   return (
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions -- collapsible card header with role
     <div
       role={isClickable ? 'button' : undefined}
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- div opera como button quando clickable — role/onKeyDown já aplicados condicionalmente
       tabIndex={isClickable ? 0 : undefined}
       onClick={isClickable ? onClick : undefined}
       onKeyDown={isClickable ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick?.(); } } : undefined}
@@ -49,10 +51,10 @@ export function ConfigCard({
         {icon && <span className="text-xl shrink-0 mt-0.5">{icon}</span>}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold text-foreground">{title}</span>
+            <span className="text-body-sm font-semibold text-foreground">{title}</span>
             {badge}
           </div>
-          {description && <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{description}</p>}
+          {description && <p className="text-meta text-muted-foreground mt-1 leading-relaxed">{description}</p>}
           {children && <div className="mt-3">{children}</div>}
         </div>
       </div>

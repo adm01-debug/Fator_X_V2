@@ -58,7 +58,7 @@ export const StatusBadge = memo(function StatusBadge({ status, size = 'sm' }: St
   const config = statusConfig[status] || { className: 'nexus-badge-info', label: status };
   const isActive = ACTIVE_STATUSES.has(status);
   return (
-    <span className={`${config.className} ${size === 'md' ? 'px-2.5 py-1 text-xs' : ''}`} role="status">
+    <span className={`${config.className} ${size === 'md' ? 'px-2.5 py-1 text-meta' : ''}`} role="status">
       <span
         className={`inline-block h-1.5 w-1.5 rounded-full bg-current ${isActive ? 'animate-glow-pulse' : 'opacity-80'}`}
         aria-hidden="true"

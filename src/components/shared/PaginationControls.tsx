@@ -17,7 +17,7 @@ export function PaginationControls({ pagination, onPageChange, className = '' }:
 
   return (
     <div className={`flex items-center justify-between ${className}`}>
-      <p className="text-xs text-muted-foreground">
+      <p className="text-meta text-muted-foreground">
         {from}–{to} de {total}
       </p>
       <div className="flex items-center gap-1">
@@ -27,7 +27,7 @@ export function PaginationControls({ pagination, onPageChange, className = '' }:
         <Button variant="ghost" size="icon" className="h-7 w-7" disabled={page <= 1} onClick={() => onPageChange(page - 1)} aria-label="Página anterior">
           <ChevronLeft className="h-3.5 w-3.5" />
         </Button>
-        <span className="text-xs text-muted-foreground px-2 font-mono">
+        <span className="text-meta text-muted-foreground px-2 font-mono">
           {page}/{totalPages}
         </span>
         <Button variant="ghost" size="icon" className="h-7 w-7" disabled={page >= totalPages} onClick={() => onPageChange(page + 1)} aria-label="Próxima página">

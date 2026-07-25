@@ -98,8 +98,8 @@ export function PromptABTestDialog({ open, onOpenChange, versionA, versionB }: P
                 <GitBranch className="h-8 w-8 text-primary" />
               </div>
               <div>
-                <h3 className="text-lg font-bold">Pronto para a Batalha?</h3>
-                <p className="text-sm text-muted-foreground max-w-sm">
+                <h3 className="text-title-sm font-bold">Pronto para a Batalha?</h3>
+                <p className="text-body-sm text-muted-foreground max-w-sm">
                   Serão executados 5 casos de teste padrão para avaliar a aderência das instruções.
                 </p>
               </div>
@@ -111,7 +111,7 @@ export function PromptABTestDialog({ open, onOpenChange, versionA, versionB }: P
 
           {running && (
             <div className="py-12 space-y-4">
-              <div className="flex items-center justify-between text-xs font-medium">
+              <div className="flex items-center justify-between text-meta font-medium">
                 <span>Executando simulações...</span>
                 <span>{Math.round(progress)}%</span>
               </div>
@@ -127,11 +127,11 @@ export function PromptABTestDialog({ open, onOpenChange, versionA, versionB }: P
               {/* Scoreboard */}
               <div className="grid grid-cols-2 gap-4">
                 <div className={`p-4 rounded-xl border-2 transition-all ${winCountA > winCountB ? 'border-nexus-emerald bg-nexus-emerald/5' : 'border-border'}`}>
-                  <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Versão A (v{versionA.version})</p>
+                  <p className="text-meta text-muted-foreground uppercase font-bold tracking-wider">Versão A (v{versionA.version})</p>
                   <p className="text-3xl font-bold mt-1">{winCountA} vitórias</p>
                 </div>
                 <div className={`p-4 rounded-xl border-2 transition-all ${winCountB > winCountA ? 'border-nexus-emerald bg-nexus-emerald/5' : 'border-border'}`}>
-                  <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Versão B (v{versionB.version})</p>
+                  <p className="text-meta text-muted-foreground uppercase font-bold tracking-wider">Versão B (v{versionB.version})</p>
                   <p className="text-3xl font-bold mt-1">{winCountB} vitórias</p>
                 </div>
               </div>
@@ -140,14 +140,14 @@ export function PromptABTestDialog({ open, onOpenChange, versionA, versionB }: P
               <div className="space-y-4">
                 {results.map((r) => (
                   <div key={r.id} className="rounded-xl border border-border overflow-hidden">
-                    <div className="bg-muted/30 px-4 py-2 text-xs font-bold flex items-center justify-between border-b">
+                    <div className="bg-muted/30 px-4 py-2 text-meta font-bold flex items-center justify-between border-b">
                       <span>CASO #{r.id}: {r.input}</span>
                       <Badge variant={r.winner === 'Tie' ? 'outline' : 'default'} className={r.winner === 'A' || r.winner === 'B' ? 'bg-nexus-emerald/20 text-nexus-emerald border-nexus-emerald/20' : ''}>
                         {r.winner === 'Tie' ? 'Empate' : `Vencedor: ${r.winner}`}
                       </Badge>
                     </div>
                     <div className="grid grid-cols-2 divide-x divide-border">
-                      <div className={`p-4 text-xs space-y-3 ${r.winner === 'A' ? 'bg-nexus-emerald/5' : ''}`}>
+                      <div className={`p-4 text-meta space-y-3 ${r.winner === 'A' ? 'bg-nexus-emerald/5' : ''}`}>
                         <div className="flex items-center justify-between">
                           <span className="font-bold opacity-50">v{versionA.version}</span>
                           {r.winner === 'A' && <Check className="h-3 w-3 text-nexus-emerald" />}
@@ -169,7 +169,7 @@ export function PromptABTestDialog({ open, onOpenChange, versionA, versionB }: P
                           </div>
                         </div>
                       </div>
-                      <div className={`p-4 text-xs space-y-3 ${r.winner === 'B' ? 'bg-nexus-emerald/5' : ''}`}>
+                      <div className={`p-4 text-meta space-y-3 ${r.winner === 'B' ? 'bg-nexus-emerald/5' : ''}`}>
                         <div className="flex items-center justify-between">
                           <span className="font-bold opacity-50">v{versionB.version}</span>
                           {r.winner === 'B' && <Check className="h-3 w-3 text-nexus-emerald" />}
@@ -200,7 +200,7 @@ export function PromptABTestDialog({ open, onOpenChange, versionA, versionB }: P
         </div>
 
         <DialogFooter className="p-6 border-t bg-muted/10">
-          <div className="flex items-center gap-2 mr-auto text-[10px] text-muted-foreground">
+          <div className="flex items-center gap-2 mr-auto text-meta text-muted-foreground">
             <Info className="h-3 w-3" />
             A avaliação de "vencedor" é baseada em heurísticas de latência e tamanho da resposta.
           </div>

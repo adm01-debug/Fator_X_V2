@@ -1,11 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { z } from "https://esm.sh/zod@3.23.8";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
-
+import { fetchWithTimeout } from "../_shared/retry.ts";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv, getCorsHeaders } from "../_shared/mod.ts";
 const BodySchema = z.object({
   goal: z.string().min(3).max(2000),
   start_url: z.string().url(),
@@ -23,7 +19,7 @@ interface SimplifiedDOM {
 }
 
 async function fetchAndSimplify(url: string): Promise<SimplifiedDOM> {
-  const resp = await fetch(url, {
+  const resp = await fetchWithTimeout(url, {
     headers: { "User-Agent": "Mozilla/5.0 (compatible; LovableBrowserAgent/1.0)" },
     redirect: "follow",
   });
@@ -79,8 +75,9 @@ async function fetchAndSimplify(url: string): Promise<SimplifiedDOM> {
   return { url, title, text, elements };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
 async function decideAction(goal: string, history: any[], dom: SimplifiedDOM, apiKey: string) {
-  const elementsList = dom.elements.map((e) =>
+  const _elementsList = dom.elements.map((e) =>
     `[${e.idx}] <${e.tag}${e.type ? ` type=${e.type}` : ""}${e.name ? ` name=${e.name}` : ""}${e.href ? ` href=${e.href.slice(0, 60)}` : ""}> ${e.text}`
   ).join("\n");
 
@@ -109,6 +106,7 @@ Regras de Ouro:
     userMsg.push({
       type: "image_url",
       image_url: { url: `data:image/jpeg;base64,${dom.screenshot}` }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     } as any);
   }
 
@@ -138,13 +136,14 @@ Regras de Ouro:
     },
   }];
 
-  const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+  const resp = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({
       model: "google/gemini-2.0-flash", // Use o modelo flash mais recente para melhor custo-benefício e visão
       messages: [
         { role: "system", content: systemPrompt },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         { role: "user", content: userMsg as any }
       ],
       tools,
@@ -165,7 +164,12 @@ Regras de Ouro:
 }
 
 Deno.serve(async (req: Request) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+  const identifier = getRateLimitIdentifier(req);
+  const rateResult = checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rateResult.allowed) return createRateLimitResponse(rateResult, req);
 
   try {
     const authHeader = req.headers.get("Authorization");
@@ -174,8 +178,8 @@ Deno.serve(async (req: Request) => {
     }
 
     const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
+      requireEnv("SUPABASE_URL"),
+      requireEnv("SUPABASE_ANON_KEY"),
       { global: { headers: { Authorization: authHeader } } },
     );
     const { data: claimsData, error: claimsErr } = await supabase.auth.getClaims(authHeader.replace("Bearer ", ""));
@@ -190,8 +194,7 @@ Deno.serve(async (req: Request) => {
     }
     const { goal, start_url, agent_id, workspace_id, max_steps } = parsed.data;
 
-    const apiKey = Deno.env.get("LOVABLE_API_KEY");
-    if (!apiKey) throw new Error("LOVABLE_API_KEY not set");
+    const apiKey = requireEnv("LOVABLE_API_KEY");
 
     // Create session
     const { data: session, error: sessErr } = await supabase.from("browser_sessions").insert({
@@ -207,6 +210,7 @@ Deno.serve(async (req: Request) => {
 
     // Run loop
     let currentUrl = start_url;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     const steps: any[] = [];
     let finalResult: string | null = null;
     let status: "completed" | "failed" | "cancelled" = "failed";

@@ -45,7 +45,7 @@ const TONE_CLASSES: Record<ChipProps['tone'], string> = {
 function FilterChip({ icon: Icon, label, onClear, tone }: ChipProps) {
   return (
     <span
-      className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-medium border ${TONE_CLASSES[tone]}`}
+      className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-meta font-medium border ${TONE_CLASSES[tone]}`}
     >
       <Icon className="h-2.5 w-2.5" aria-hidden />
       {label}
@@ -87,10 +87,10 @@ export function FilteredEmptyState({
       </div>
 
       <div className="space-y-1">
-        <h4 className="text-sm font-semibold text-foreground">
+        <h4 className="text-body-sm font-semibold text-foreground">
           Nenhuma versão para os filtros atuais
         </h4>
-        <p className="text-[11px] text-muted-foreground max-w-[280px]">
+        <p className="text-meta text-muted-foreground max-w-[280px]">
           Existem <span className="font-mono font-semibold text-foreground">{totalVersions}</span>{' '}
           {totalVersions === 1 ? 'versão' : 'versões'} no agente, mas nenhuma corresponde
           {activeCount === 1 ? ' ao filtro ativo' : ' à combinação de filtros ativos'}.
@@ -135,7 +135,7 @@ export function FilteredEmptyState({
           size="sm"
           variant="outline"
           onClick={onClearAll}
-          className="h-7 text-[11px] gap-1.5"
+          className="h-7 text-meta gap-1.5"
         >
           <X className="h-3 w-3" /> Limpar todos os filtros
         </Button>

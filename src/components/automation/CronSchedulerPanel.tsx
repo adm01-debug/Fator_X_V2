@@ -30,7 +30,7 @@ export function CronSchedulerPanel() {
   const [newName, setNewName] = useState('');
   const [newCron, setNewCron] = useState('* * * * *');
   const [saving, setSaving] = useState(false);
-  const [targetType, setTargetType] = useState('agent');
+  const [targetType, setTargetType] = useState<CronSchedule['target_type']>('agent');
   const [targetId, setTargetId] = useState('');
 
   const loadData = async () => {
@@ -115,7 +115,7 @@ export function CronSchedulerPanel() {
           <Card key={i} className="bg-card border-border">
             <CardContent className="p-4 text-center">
               <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
-              <p className="text-xs text-muted-foreground">{s.label}</p>
+              <p className="text-meta text-muted-foreground">{s.label}</p>
             </CardContent>
           </Card>
         ))}
@@ -123,7 +123,7 @@ export function CronSchedulerPanel() {
 
       {/* Actions */}
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-bold flex items-center gap-2">
+        <h3 className="text-title-sm font-bold flex items-center gap-2">
           <Calendar className="h-5 w-5 text-primary" />
           Agendamentos
         </h3>
@@ -134,13 +134,13 @@ export function CronSchedulerPanel() {
                 <Plus className="h-4 w-4" /> Novo Agendamento
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px] rounded-[2rem] border-border/40 p-8 shadow-2xl">
+            <DialogContent className="sm:max-w-[500px] rounded-[2rem] border-border/40 p-8 shadow-nexus-2xl">
               <DialogHeader>
                 <DialogTitle className="text-2xl font-heading font-black">Configurar Cron-Job</DialogTitle>
               </DialogHeader>
               <div className="space-y-6 mt-4">
                 <div className="space-y-2">
-                  <Label className="text-xs font-black uppercase text-muted-foreground tracking-widest">Nome da Automação</Label>
+                  <Label className="text-meta font-black uppercase text-muted-foreground tracking-widest">Nome da Automação</Label>
                   <Input 
                     value={newName} 
                     onChange={(e) => setNewName(e.target.value)} 
@@ -151,8 +151,8 @@ export function CronSchedulerPanel() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label className="text-xs font-black uppercase text-muted-foreground tracking-widest">Target Type</Label>
-                    <Select value={targetType} onValueChange={setTargetType}>
+                    <Label className="text-meta font-black uppercase text-muted-foreground tracking-widest">Target Type</Label>
+                    <Select value={targetType} onValueChange={(v) => setTargetType(v as CronSchedule['target_type'])}>
                       <SelectTrigger className="h-11 rounded-xl bg-secondary/30">
                         <SelectValue />
                       </SelectTrigger>
@@ -164,7 +164,7 @@ export function CronSchedulerPanel() {
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-xs font-black uppercase text-muted-foreground tracking-widest">ID do Alvo</Label>
+                    <Label className="text-meta font-black uppercase text-muted-foreground tracking-widest">ID do Alvo</Label>
                     <Input 
                       value={targetId} 
                       onChange={(e) => setTargetId(e.target.value)} 
@@ -175,13 +175,13 @@ export function CronSchedulerPanel() {
                 </div>
 
                 <div className="space-y-2">
-                   <Label className="text-xs font-black uppercase text-muted-foreground tracking-widest">Editor Visual Cron</Label>
+                   <Label className="text-meta font-black uppercase text-muted-foreground tracking-widest">Editor Visual Cron</Label>
                    <CronVisualEditor value={newCron} onChange={setNewCron} />
                 </div>
 
                 <DialogFooter className="pt-4">
                   <Button variant="outline" onClick={() => setCreateOpen(false)} className="h-12 rounded-xl px-6">Cancelar</Button>
-                  <Button onClick={handleCreate} disabled={saving} className="h-12 px-8 rounded-xl nexus-gradient-bg text-primary-foreground font-bold shadow-lg shadow-primary/20">
+                  <Button onClick={handleCreate} disabled={saving} className="h-12 px-8 rounded-xl nexus-gradient-bg text-primary-foreground font-bold shadow-nexus-lg shadow-primary/20">
                     {saving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Settings2 className="h-5 w-5" />}
                     <span className="ml-2">Ativar Job</span>
                   </Button>
@@ -212,11 +212,11 @@ export function CronSchedulerPanel() {
 
       {/* Presets */}
       <Card className="bg-card border-border">
-        <CardHeader className="pb-3"><CardTitle className="text-sm text-muted-foreground">Presets Disponíveis</CardTitle></CardHeader>
+        <CardHeader className="pb-3"><CardTitle className="text-body-sm text-muted-foreground">Presets Disponíveis</CardTitle></CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2">
             {Object.entries(CRON_PRESETS).map(([key, preset]) => (
-              <Badge key={key} variant="outline" className="border-border text-xs cursor-pointer hover:bg-accent" title={preset.description}>
+              <Badge key={key} variant="outline" className="border-border text-meta cursor-pointer hover:bg-accent" title={preset.description}>
                 <Clock size={10} className="mr-1 text-primary" />
                 {preset.label}
               </Badge>
@@ -233,7 +233,7 @@ export function CronSchedulerPanel() {
           <CardContent className="py-12 text-center text-muted-foreground">
             <Clock size={48} className="mx-auto mb-4 opacity-30" />
             <p>Nenhum agendamento criado ainda.</p>
-            <p className="text-sm mt-1">Use os presets acima ou crie um agendamento personalizado.</p>
+            <p className="text-body-sm mt-1">Use os presets acima ou crie um agendamento personalizado.</p>
           </CardContent>
         </Card>
       ) : (
@@ -246,7 +246,7 @@ export function CronSchedulerPanel() {
                     <Clock size={18} className="text-primary" />
                     <div>
                       <p className="font-medium">{s.name}</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-meta text-muted-foreground">
                         {s.cron_expression ? describeCronExpression(s.cron_expression) : s.frequency}
                         {s.next_run_at && ` • Próx: ${new Date(s.next_run_at).toLocaleString('pt-BR')}`}
                       </p>
@@ -256,7 +256,7 @@ export function CronSchedulerPanel() {
                     <Badge className={STATUS_COLORS[s.status] ?? 'bg-muted text-muted-foreground'}>
                       {s.status}
                     </Badge>
-                    <span className="text-xs text-muted-foreground">{s.run_count} runs</span>
+                    <span className="text-meta text-muted-foreground">{s.run_count} runs</span>
                   </div>
                 </div>
               </CardContent>

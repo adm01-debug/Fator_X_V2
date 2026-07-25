@@ -1,17 +1,47 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { fetchWithTimeout } from "../_shared/retry.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse, checkRateLimit, getRateLimitIdentifier, createRateLimitResponse, RATE_LIMITS } from "../_shared/mod.ts";
+import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse, authenticateRequest, checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS } from "../_shared/mod.ts";
+import { z } from "https://esm.sh/zod@3.23.8";
 
-// CORS handled by _shared/cors.ts — dynamic origin whitelist
+const CerebroBodySchema = z.object({
+  query: z.string().trim().min(2).max(10000),
+  stream: z.boolean().optional(),
+  notebook_id: z.string().uuid().nullable().optional(),
+  source_ids: z.array(z.string().uuid()).max(50).optional(),
+}).passthrough();
 
-function validateBody(body: unknown): { valid: true; query: string } | { valid: false; error: string } {
-  if (!body || typeof body !== 'object') return { valid: false, error: 'Request body must be a JSON object' };
-  const b = body as Record<string, unknown>;
-  if (typeof b.query !== 'string' || b.query.trim().length < 2 || b.query.length > 10000) {
-    return { valid: false, error: 'query must be a string (2-10000 chars)' };
-  }
-  return { valid: true, query: b.query };
+const MAX_CITATIONS = 8;
+const CITATIONS_SENTINEL = "\n\u241E";
+
+interface Citation {
+  n: number;
+  chunk_id: string;
+  document_id: string | null;
+  document_title: string;
+  page: number | null;
+  section: string | null;
+  snippet: string;
+  notebook_id: string | null;
+  notebook_name: string | null;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function extractMeta(chunk: any): { page: number | null; section: string | null } {
+  const md = chunk?.metadata ?? {};
+  const page = typeof md.page === "number" ? md.page
+    : typeof md.page_number === "number" ? md.page_number
+    : null;
+  const section = typeof md.section === "string" ? md.section
+    : typeof md.heading === "string" ? md.heading
+    : null;
+  return { page, section };
+}
+
+function snippet(text: string, max = 180): string {
+  const clean = (text ?? "").replace(/\s+/g, " ").trim();
+  return clean.length <= max ? clean : clean.slice(0, max - 1) + "…";
 }
 
 serve(async (req) => {
@@ -26,19 +56,20 @@ serve(async (req) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return errorResponse('Unauthorized', 401, req);
 
-    let rawBody: any;
-    try { rawBody = await req.json(); } catch {
-      return errorResponse('Invalid JSON body', 400, req);
+    const rateCheck = checkRateLimit(getRateLimitIdentifier(req, user.id), RATE_LIMITS.oracle);
+    if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, req);
+
+    const rawBody = await req.json().catch(() => null);
+    const parsedBody = CerebroBodySchema.safeParse(rawBody);
+    if (!parsedBody.success) {
+      return errorResponse('Payload inválido: ' + JSON.stringify(parsedBody.error.flatten().fieldErrors), 400, req);
     }
+    const { query, stream: streamOpt, notebook_id: notebookId, source_ids: sourceIds } = parsedBody.data;
+    const stream = streamOpt === true;
 
-    const validation = validateBody(rawBody);
-    if (!validation.valid) return errorResponse(validation.error, 400, req);
-    const { query } = validation;
-    const stream = rawBody.stream === true;
+    await supabase.from('workspace_members').select('workspace_id').eq('user_id', user.id).limit(1).single();
 
-    const { data: member } = await supabase.from('workspace_members').select('workspace_id').eq('user_id', user.id).limit(1).single();
-
-    // ═══ Gather context from LOCAL Supabase tables ═══
+    // ═══ Facts ═══
     const facts: string[] = [];
     const { count: agentCount } = await supabase.from('agents').select('id', { count: 'exact', head: true });
     if (agentCount) facts.push(`Temos ${agentCount} agentes configurados na plataforma`);
@@ -48,38 +79,127 @@ serve(async (req) => {
     const { count: traceCount } = await supabase.from('agent_traces').select('id', { count: 'exact', head: true }).gte('created_at', yesterday);
     if (traceCount) facts.push(`${traceCount} interações nas últimas 24h`);
 
-    // ═══ RAG context with reranking ═══
-    let ragContext = '';
+    // Fetch active notebook name (if scoped)
+    let activeNotebookName: string | null = null;
+    if (notebookId) {
+      const { data: nb } = await supabase.from('collections').select('name').eq('id', notebookId).maybeSingle();
+      activeNotebookName = (nb?.name as string | undefined) ?? null;
+      if (activeNotebookName) facts.push(`Busca escopada ao notebook "${activeNotebookName}"`);
+    }
+
+    // ═══ RAG with numbered citations (scoped by notebook when provided) ═══
+    let ragBlock = '';
+    let citations: Citation[] = [];
     let ragReranked = false;
+
     try {
-      const { data: chunks } = await supabase.from('chunks').select('id, content, metadata').eq('embedding_status', 'done').limit(15);
-      if (chunks?.length) {
+      let chunkQuery = supabase
+        .from('chunks')
+        .select('id, content, metadata, document_id, documents(id, title, collection_id, collections(id, name))')
+        .eq('embedding_status', 'done')
+        .eq('is_active', true)
+        .limit(15);
+
+      if (notebookId) {
+        // Isolation: only chunks whose metadata pins this notebook
+        chunkQuery = chunkQuery.filter('metadata->>collection_id', 'eq', notebookId);
+      }
+      if (sourceIds && sourceIds.length > 0) {
+        // NotebookLM-style: user restringiu o chat a fontes específicas
+        chunkQuery = chunkQuery.in('document_id', sourceIds);
+        facts.push(`Chat restrito a ${sourceIds.length} fontes selecionadas`);
+      }
+      const { data: chunks } = await chunkQuery;
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let selected: any[] = chunks ?? [];
+
+      if (selected.length > 0) {
+        // Try rerank with metadata preserved
         try {
           const rerankUrl = `${supabaseUrl}/functions/v1/rag-rerank`;
-          const rerankResp = await fetch(rerankUrl, {
+          const rerankResp = await fetchWithTimeout(rerankUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': authHeader, 'apikey': supabaseKey },
-            body: JSON.stringify({ query, chunks, top_k: 5 }),
+            body: JSON.stringify({ query, chunks: selected, top_k: MAX_CITATIONS }),
           });
           if (rerankResp.ok) {
             const rerankData = await rerankResp.json();
             if (rerankData.reranked?.length > 0) {
-              ragContext = rerankData.reranked.map((r: any) => r.chunk?.content || r.content).join('\n---\n').substring(0, 3000);
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              selected = rerankData.reranked.map((r: any) => r.chunk ?? r);
               ragReranked = true;
             }
           }
-        } catch { /* fallback */ }
-        if (!ragContext) ragContext = chunks.map((c: any) => c.content).join('\n---\n').substring(0, 3000);
+        } catch { /* fallback: keep original */ }
+
+        selected = selected.slice(0, MAX_CITATIONS);
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        citations = selected.map((c: any, i: number): Citation => {
+          const { page, section } = extractMeta(c);
+          const doc = Array.isArray(c.documents) ? c.documents[0] : c.documents;
+          const col = doc?.collections
+            ? (Array.isArray(doc.collections) ? doc.collections[0] : doc.collections)
+            : null;
+          const metaCollectionId = (c.metadata && typeof c.metadata === 'object')
+            ? (c.metadata.collection_id ?? null) : null;
+          const metaNotebookName = (c.metadata && typeof c.metadata === 'object')
+            ? (c.metadata.notebook_name ?? null) : null;
+          return {
+            n: i + 1,
+            chunk_id: c.id,
+            document_id: c.document_id ?? doc?.id ?? null,
+            document_title: doc?.title ?? 'Documento sem título',
+            page,
+            section,
+            snippet: snippet(c.content ?? ''),
+            notebook_id: col?.id ?? metaCollectionId ?? doc?.collection_id ?? null,
+            notebook_name: col?.name ?? metaNotebookName ?? null,
+          };
+        });
+
+        ragBlock = citations
+          .map((c) => {
+            const meta = [
+              `doc="${c.document_title}"`,
+              c.page != null ? `p.${c.page}` : null,
+              c.section ? `sec="${c.section}"` : null,
+            ].filter(Boolean).join(', ');
+            const body = (selected[c.n - 1]?.content ?? '').substring(0, 800);
+            return `[${c.n}] (${meta})\n${body}`;
+          })
+          .join('\n---\n');
       }
     } catch { /* skip */ }
 
-    const systemPrompt = `Você é o Super Cérebro da Promo Brindes — a inteligência central da empresa.
-Responda com base no contexto fornecido. Se não souber, seja honesto.
-Fatos: ${facts.join('; ')}
-RAG: ${ragContext || 'Nenhum dado disponível'}`;
+    const scopeNotice = activeNotebookName
+      ? `Você está operando escopado ao notebook "${activeNotebookName}". Ignore qualquer conhecimento de outros notebooks.`
+      : 'Você está operando em modo global (todos os notebooks visíveis).';
+
+    const systemPromptRaw = `Você é o Super Cérebro da Promo Brindes — a inteligência central da empresa.
+${scopeNotice}
+Responda em português, com base no bloco RAG fornecido. Se não houver base suficiente, seja honesto e diga.
+
+REGRA DE CITAÇÃO (obrigatória):
+- Sempre que usar uma informação do bloco RAG, insira o marcador [n] (com o número exato da fonte) IMEDIATAMENTE após a frase correspondente.
+- Você pode combinar fontes: "…texto [1][3]".
+- NUNCA invente um número que não esteja no bloco RAG.
+- Se responder sem usar o RAG, não inclua nenhum marcador.
+
+Fatos internos: ${facts.join('; ') || 'nenhum'}
+
+Bloco RAG:
+${ragBlock || '(vazio — nenhuma fonte disponível)'}`;
+
+    // Hard cap ~8k tokens (~32k chars) para evitar contexto explodir em notas grandes.
+    const MAX_PROMPT_CHARS = 32000;
+    const systemPrompt = systemPromptRaw.length > MAX_PROMPT_CHARS
+      ? systemPromptRaw.slice(0, MAX_PROMPT_CHARS) + "\n\n[...prompt truncado por segurança]"
+      : systemPromptRaw;
 
     const gatewayUrl = `${supabaseUrl}/functions/v1/llm-gateway`;
-    const resp = await fetch(gatewayUrl, {
+    const resp = await fetchWithTimeout(gatewayUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': authHeader, 'apikey': supabaseKey },
       body: JSON.stringify({
@@ -90,19 +210,34 @@ RAG: ${ragContext || 'Nenhum dado disponível'}`;
       }),
     });
 
-    if (stream) {
-      return new Response(resp.body, { headers: { ...getCorsHeaders(req), 'Content-Type': 'text/event-stream' } });
+    if (stream && resp.body) {
+      // Pipe upstream stream then append a sentinel + citations JSON at the end
+      const encoder = new TextEncoder();
+      const citationsPayload = JSON.stringify({ citations, rag_reranked: ragReranked });
+      const tail = encoder.encode(CITATIONS_SENTINEL + citationsPayload);
+
+      const transformed = resp.body.pipeThrough(new TransformStream({
+        flush(controller) {
+          controller.enqueue(tail);
+        },
+      }));
+
+      return new Response(transformed, {
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'text/event-stream' },
+      });
     }
 
     const result = await resp.json();
     return jsonResponse({
       response: result.content || result.error,
+      citations,
       facts_loaded: facts.length,
       rag_reranked: ragReranked,
       tokens: result.tokens,
       cost_usd: result.cost_usd,
     }, req);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     return errorResponse(error.message, 500, req);
   }

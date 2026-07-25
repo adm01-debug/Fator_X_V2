@@ -7,6 +7,7 @@ import {
   Star, Copy, Wand2, Download, ArrowRight, Loader2, GitBranch,
 } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
+import { handleKeyboardClick } from "@/lib/a11y";
 
 type AgentRow = Tables<"agents">;
 
@@ -37,12 +38,12 @@ export function AgentCardGrid({
         const isFav = favorites.includes(agent.id);
         const isSelected = selectedIds.has(agent.id);
         return (
-          <div
+          <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
             key={agent.id}
             className={`nexus-card nexus-card-interactive cursor-pointer group relative overflow-hidden min-h-[180px] flex flex-col ${isSelected ? 'ring-2 ring-primary border-primary/40' : ''}`}
             role="button" tabIndex={0} onClick={() => selectionMode ? onToggleSelect({ stopPropagation: () => {} } as React.MouseEvent, agent.id) : onNavigate(`/builder/${agent.id}`)} onKeyDown={onActivateKey(() => selectionMode ? onToggleSelect({ stopPropagation: () => {} } as React.MouseEvent, agent.id) : onNavigate(`/builder/${agent.id}`))}
           >
-            <div className={`absolute top-3 left-3 z-10 transition-opacity ${selectionMode || 'opacity-0 group-hover:opacity-100'}`}
+            <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className={`absolute top-3 left-3 z-10 transition-opacity ${selectionMode || 'opacity-0 group-hover:opacity-100'}`}
               onClick={(e) => onToggleSelect(e, agent.id)}>
               <Checkbox checked={isSelected} className="h-4 w-4" />
             </div>
@@ -50,7 +51,7 @@ export function AgentCardGrid({
             <div className={`flex items-start justify-between mb-3 ${selectionMode ? 'ml-7' : ''}`}>
               <div className="flex items-center gap-3">
                 <div className="relative">
-                  <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary/15 to-accent/10 flex items-center justify-center text-xl shadow-sm group-hover:shadow-md transition-shadow">
+                  <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary/15 to-accent/10 flex items-center justify-center text-xl shadow-nexus-sm group-hover:shadow-nexus-md transition-shadow">
                     {agent.avatar_emoji || "🤖"}
                   </div>
                   <span className={`absolute -top-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-card ${
@@ -60,8 +61,8 @@ export function AgentCardGrid({
                   }`} aria-hidden="true" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">{agent.name}</h3>
-                  <p className="text-[11px] text-muted-foreground">
+                  <h3 className="text-body-sm font-bold text-foreground group-hover:text-primary transition-colors">{agent.name}</h3>
+                  <p className="text-meta text-muted-foreground">
                     {(config as Record<string, unknown>).type as string || agent.persona} • {agent.model}
                   </p>
                 </div>
@@ -91,7 +92,7 @@ export function AgentCardGrid({
               </div>
             </div>
 
-            <p className="text-xs text-muted-foreground line-clamp-2 mb-3 flex-1">
+            <p className="text-meta text-muted-foreground line-clamp-2 mb-3 flex-1">
               {agent.mission || (config as Record<string, unknown>).description as string || "Sem descrição configurada"}
             </p>
 
@@ -99,14 +100,14 @@ export function AgentCardGrid({
               <div className="flex flex-wrap items-center gap-1.5">
                 <StatusBadge status={agent.status ?? 'draft'} />
                 {(agent.tags ?? []).slice(0, 2).map(tag => (
-                  <Badge key={tag} variant="outline" className="text-[10px] h-5 border-border/40 text-muted-foreground font-normal px-1.5">{tag}</Badge>
+                  <Badge key={tag} variant="outline" className="text-meta h-5 border-border/40 text-muted-foreground font-normal px-1.5">{tag}</Badge>
                 ))}
                 {(agent.tags ?? []).length > 2 && (
-                  <span className="text-[10px] text-muted-foreground">+{(agent.tags ?? []).length - 2}</span>
+                  <span className="text-meta text-muted-foreground">+{(agent.tags ?? []).length - 2}</span>
                 )}
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] text-muted-foreground font-mono flex items-center gap-0.5 opacity-60"><GitBranch className="h-2.5 w-2.5" /> v{agent.version || 1}</span>
+                <span className="text-meta text-muted-foreground font-mono flex items-center gap-0.5 opacity-60"><GitBranch className="h-2.5 w-2.5" /> v{agent.version || 1}</span>
                 <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/30 group-hover:text-primary transition-colors shrink-0" />
               </div>
             </div>

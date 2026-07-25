@@ -53,7 +53,7 @@ export function BulkEditDialog({
       toast.success(`${result?.updated_count ?? selectedRecords.length} registros atualizados`);
       handleClose();
       onSuccess();
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(`Erro: ${e instanceof Error ? e.message : String(e)}`);
     } finally {
       setSaving(false);
@@ -73,7 +73,7 @@ export function BulkEditDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             Edição em massa
-            <Badge variant="secondary" className="text-xs">{selectedRecords.length} registros</Badge>
+            <Badge variant="secondary" className="text-meta">{selectedRecords.length} registros</Badge>
           </DialogTitle>
           <DialogDescription>
             {step === 'select'
@@ -85,9 +85,9 @@ export function BulkEditDialog({
         {step === 'select' ? (
           <div className="space-y-4 py-2">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">Campo a alterar</label>
+              <label htmlFor="bulkeditdialog-campo-a-alterar-079983" className="text-body-sm font-medium text-foreground">Campo a alterar</label>
               <Select value={field} onValueChange={setField}>
-                <SelectTrigger><SelectValue placeholder="Selecione o campo..." /></SelectTrigger>
+                <SelectTrigger id="bulkeditdialog-campo-a-alterar-079983"><SelectValue placeholder="Selecione o campo..." /></SelectTrigger>
                 <SelectContent>
                   {editableColumns.map(c => (
                     <SelectItem key={c.key} value={c.key}>{c.label}</SelectItem>
@@ -98,10 +98,10 @@ export function BulkEditDialog({
 
             {field && (
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Novo valor</label>
+                <label htmlFor="bulkeditdialog-novo-valor-66f81b" className="text-body-sm font-medium text-foreground">Novo valor</label>
                 {selectedCol?.format === 'boolean' ? (
                   <Select value={value} onValueChange={setValue}>
-                    <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
+                    <SelectTrigger id="bulkeditdialog-novo-valor-66f81b"><SelectValue placeholder="Selecione..." /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="true">Sim (true)</SelectItem>
                       <SelectItem value="false">Não (false)</SelectItem>
@@ -121,7 +121,7 @@ export function BulkEditDialog({
           <div className="space-y-4 py-2">
             <div className="flex items-start gap-2 rounded-lg bg-destructive/10 border border-destructive/30 p-3">
               <AlertTriangle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
-              <div className="text-sm">
+              <div className="text-body-sm">
                 <p className="font-medium text-foreground">Confirme a alteração</p>
                 <p className="text-muted-foreground mt-1">
                   O campo <span className="font-mono font-semibold text-foreground">{selectedCol?.label}</span> será alterado para{' '}
@@ -134,7 +134,7 @@ export function BulkEditDialog({
             </div>
 
             <div className="rounded-lg border border-border max-h-[200px] overflow-y-auto">
-              <table className="w-full text-xs">
+              <table className="w-full text-meta">
                 <thead className="bg-secondary/50 sticky top-0">
                   <tr>
                     <th className="text-left p-2 font-medium text-muted-foreground">Registro</th>

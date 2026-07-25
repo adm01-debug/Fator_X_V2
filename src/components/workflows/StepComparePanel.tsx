@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { WorkflowCheckpoint } from "@/services/workflowCheckpointService";
+import type { DbRow } from '@/types/dbRow';
 
 interface Props {
   checkpointA: WorkflowCheckpoint;
@@ -33,7 +34,7 @@ type Section = {
   pickB: () => unknown;
 };
 
-function stringify(value: unknown): string {
+function stringify(value: DbRow): string {
   if (value === null || value === undefined) return "";
   if (typeof value === "string") return value;
   try {
@@ -97,7 +98,7 @@ function DiffColumn({
   side: "left" | "right";
 }) {
   return (
-    <pre className="text-[11px] leading-5 font-mono whitespace-pre-wrap break-all">
+    <pre className="text-meta leading-5 font-mono whitespace-pre-wrap break-all">
       {rows.map((r, i) => {
         let cls = "text-muted-foreground";
         if (r.kind === "removed") cls = "bg-destructive/15 text-destructive line-through";
@@ -155,11 +156,11 @@ export function StepComparePanel({ checkpointA, checkpointB, onClose, onSwap }: 
   return (
     <Card className="bg-card border-border">
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center justify-between text-sm text-foreground">
+        <CardTitle className="flex items-center justify-between text-body-sm text-foreground">
           <span className="flex items-center gap-2">
             <ArrowLeftRight className="w-4 h-4 text-nexus-purple" />
             Comparação de steps
-            <Badge variant="outline" className="text-[10px]">
+            <Badge variant="outline" className="text-meta">
               {totalChanges === 0 ? "sem diferenças" : `${totalChanges} seção(ões) alteradas`}
             </Badge>
           </span>
@@ -168,7 +169,7 @@ export function StepComparePanel({ checkpointA, checkpointB, onClose, onSwap }: 
               <Button
                 size="sm"
                 variant="ghost"
-                className="h-7 text-xs text-muted-foreground hover:text-foreground"
+                className="h-7 text-meta text-muted-foreground hover:text-foreground"
                 onClick={onSwap}
               >
                 <ArrowLeftRight className="w-3 h-3 mr-1" />
@@ -178,7 +179,7 @@ export function StepComparePanel({ checkpointA, checkpointB, onClose, onSwap }: 
             <Button
               size="sm"
               variant="ghost"
-              className="h-7 text-xs text-muted-foreground"
+              className="h-7 text-meta text-muted-foreground"
               onClick={onClose}
             >
               <X className="w-3 h-3 mr-1" />
@@ -190,18 +191,18 @@ export function StepComparePanel({ checkpointA, checkpointB, onClose, onSwap }: 
         {/* Header row identifying A and B */}
         <div className="grid grid-cols-2 gap-2 mt-2">
           <div className="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-1.5">
-            <p className="text-[10px] uppercase tracking-wide text-destructive font-semibold">A</p>
-            <p className="text-xs text-foreground font-medium">
+            <p className="text-meta uppercase tracking-wide text-destructive font-semibold">A</p>
+            <p className="text-meta text-foreground font-medium">
               #{checkpointA.step_index} · {checkpointA.node_type}
             </p>
-            <p className="text-[10px] text-muted-foreground truncate">{checkpointA.node_id}</p>
+            <p className="text-meta text-muted-foreground truncate">{checkpointA.node_id}</p>
           </div>
           <div className="rounded-md border border-nexus-emerald/30 bg-nexus-emerald/5 px-3 py-1.5">
-            <p className="text-[10px] uppercase tracking-wide text-nexus-emerald font-semibold">B</p>
-            <p className="text-xs text-foreground font-medium">
+            <p className="text-meta uppercase tracking-wide text-nexus-emerald font-semibold">B</p>
+            <p className="text-meta text-foreground font-medium">
               #{checkpointB.step_index} · {checkpointB.node_type}
             </p>
-            <p className="text-[10px] text-muted-foreground truncate">{checkpointB.node_id}</p>
+            <p className="text-meta text-muted-foreground truncate">{checkpointB.node_id}</p>
           </div>
         </div>
       </CardHeader>
@@ -210,15 +211,15 @@ export function StepComparePanel({ checkpointA, checkpointB, onClose, onSwap }: 
         {diffs.map((d) => (
           <div key={d.key} className="space-y-1.5">
             <div className="flex items-center gap-2">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              <p className="text-meta font-semibold text-muted-foreground uppercase tracking-wide">
                 {d.label}
               </p>
               {d.changed ? (
-                <Badge className="bg-nexus-amber/15 text-nexus-amber text-[10px] px-1.5 py-0">
+                <Badge className="bg-nexus-amber/15 text-nexus-amber text-meta px-1.5 py-0">
                   alterado
                 </Badge>
               ) : (
-                <Badge variant="outline" className="text-[10px] px-1.5 py-0 text-muted-foreground">
+                <Badge variant="outline" className="text-meta px-1.5 py-0 text-muted-foreground">
                   idêntico
                 </Badge>
               )}

@@ -39,13 +39,13 @@ export function TracesFilters({
           value={search}
           onChange={(e) => onSearch(e.target.value)}
           placeholder="Buscar evento, session_id, payload..."
-          className="h-9 pl-8 text-xs"
+          className="h-9 pl-8 text-meta"
           aria-label="Buscar traces"
         />
       </div>
 
       <Select value={level} onValueChange={(v) => onLevel(v as TraceLevel | 'all')}>
-        <SelectTrigger className="h-9 text-xs" aria-label="Filtrar por nível"><SelectValue /></SelectTrigger>
+        <SelectTrigger className="h-9 text-meta" aria-label="Filtrar por nível"><SelectValue /></SelectTrigger>
         <SelectContent>
           <SelectItem value="all">Todos níveis</SelectItem>
           <SelectItem value="info">ℹ Info</SelectItem>
@@ -55,7 +55,7 @@ export function TracesFilters({
       </Select>
 
       <Select value={event} onValueChange={onEvent}>
-        <SelectTrigger className="h-9 text-xs" aria-label="Filtrar por evento"><SelectValue /></SelectTrigger>
+        <SelectTrigger className="h-9 text-meta" aria-label="Filtrar por evento"><SelectValue /></SelectTrigger>
         <SelectContent>
           <SelectItem value="all">Todos eventos</SelectItem>
           {events.map((e) => (
@@ -65,7 +65,7 @@ export function TracesFilters({
       </Select>
 
       <Select value={agentId} onValueChange={onAgent}>
-        <SelectTrigger className="h-9 text-xs" aria-label="Filtrar por agente"><SelectValue /></SelectTrigger>
+        <SelectTrigger className="h-9 text-meta" aria-label="Filtrar por agente"><SelectValue /></SelectTrigger>
         <SelectContent>
           <SelectItem value="all">Todos agentes</SelectItem>
           {agents.map((a) => (
@@ -75,7 +75,7 @@ export function TracesFilters({
       </Select>
 
       <Select value={String(sinceHours)} onValueChange={(v) => onSinceHours(Number(v))}>
-        <SelectTrigger className="h-9 text-xs" aria-label="Janela temporal"><SelectValue /></SelectTrigger>
+        <SelectTrigger className="h-9 text-meta" aria-label="Janela temporal"><SelectValue /></SelectTrigger>
         <SelectContent>
           {RANGES.map(([h, label]) => (
             <SelectItem key={h} value={String(h)}>{label}</SelectItem>

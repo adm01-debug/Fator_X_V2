@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { DbRow } from '@/types/dbRow';
 
 // Mock supabase client
 const mockFrom = vi.fn();
@@ -28,7 +29,7 @@ const chainMock = () => ({
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
-    from: (...args: unknown[]) => {
+    from: (...args: DbRow[]) => {
       mockFrom(...args);
       const chain = chainMock();
       // Make all methods return the chain for chaining

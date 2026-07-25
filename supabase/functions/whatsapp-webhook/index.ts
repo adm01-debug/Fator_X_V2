@@ -11,24 +11,103 @@
  * verify_jwt: false (providers cannot send JWT)
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
+import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
+import {
+  handleCorsPreflight,
+  getCorsHeaders,
+  createAdminClient,
+  jsonResponse,
+  errorResponse,
+  parseBody,
+  checkRateLimit,
+  createRateLimitResponse,
+  getRateLimitIdentifier,
+  RATE_LIMITS,
+  requireEnv,
+} from "../_shared/mod.ts";
+import { WhatsAppWebhookContracts } from "../_shared/contracts.ts";
 import { verifyHmac } from "../_shared/webhookSignature.ts";
 
+// Replay protection window: reject signed events with a provider timestamp
+// older than 5 minutes (mitigates captured-body replay attacks).
+const REPLAY_WINDOW_MS = 5 * 60 * 1000;
 
-// ─── CORS ───
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "content-type, authorization, x-twilio-signature, x-hub-signature-256",
-};
-
-// ─── Supabase service-role client ───
-function getServiceClient() {
-  const url = Deno.env.get("SUPABASE_URL");
-  const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  if (!url || !key) throw new Error("Missing Supabase env vars");
-  return createClient(url, key);
+/** Extracts a unix-ms timestamp from provider-specific hints, if available. */
+function extractProviderTimestampMs(provider: Provider, headers: Headers, parsed: Record<string, unknown>): number | null {
+  // Generic override header (used by internal replays / tests)
+  const generic = headers.get('x-webhook-timestamp');
+  if (generic) {
+    const n = Number(generic);
+    if (Number.isFinite(n)) return n > 1e12 ? n : n * 1000;
+  }
+  if (provider === 'meta') {
+    const entry = (parsed.entry as Array<Record<string, unknown>> | undefined)?.[0];
+    const t = entry?.time;
+    if (typeof t === 'number' && Number.isFinite(t)) return t > 1e12 ? t : t * 1000;
+  }
+  if (provider === 'zapi') {
+    const t = parsed.momment ?? parsed.timestamp;
+    if (typeof t === 'number' && Number.isFinite(t)) return t > 1e12 ? t : t * 1000;
+  }
+  if (provider === 'evolution') {
+    const data = parsed.data as Record<string, unknown> | undefined;
+    const t = data?.messageTimestamp;
+    if (typeof t === 'number' && Number.isFinite(t)) return t > 1e12 ? t : t * 1000;
+  }
+  return null;
 }
+
+/** Check whether we already persisted this (provider, message_id) pair. */
+async function isReplay(client: SupabaseClient, provider: Provider, messageId: string | null): Promise<boolean> {
+  if (!messageId) return false;
+  const { data } = await client
+    .from('whatsapp_webhook_events')
+    .select('id')
+    .eq('provider', provider)
+    .eq('message_id', messageId)
+    .limit(1)
+    .maybeSingle();
+  return !!data;
+}
+
+/**
+ * Fallback replay-nonce: quando o provedor entrega message_id=null, geramos
+ * um hash estável (provider|from|ts|body[:256]) e verificamos janela de 5 min
+ * em openclaw_events (kind='wh.nonce'). Retorna true se já visto.
+ */
+async function isNonceReplay(
+  client: SupabaseClient,
+  provider: Provider,
+  fromPhone: string | null,
+  providerTsMs: number | null,
+  rawBody: string,
+): Promise<{ replay: boolean; hash: string }> {
+  const seed = `${provider}|${fromPhone ?? ''}|${providerTsMs ?? ''}|${rawBody.slice(0, 256)}`;
+  const buf = new TextEncoder().encode(seed);
+  const digest = await crypto.subtle.digest('SHA-256', buf);
+  const hash = Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+  const fiveMinAgo = new Date(Date.now() - 5 * 60_000).toISOString();
+  const { data } = await client
+    .from('openclaw_events')
+    .select('id')
+    .eq('kind', 'wh.nonce')
+    .contains('payload', { hash })
+    .gte('created_at', fiveMinAgo)
+    .limit(1)
+    .maybeSingle();
+  return { replay: !!data, hash };
+}
+
+async function recordNonce(client: SupabaseClient, hash: string, provider: Provider): Promise<void> {
+  await client.from('openclaw_events').insert({
+    kind: 'wh.nonce',
+    level: 'info',
+    source: 'webhook',
+    payload: { hash, provider },
+  }).then(() => undefined, () => undefined);
+}
+
+
 
 // ─── Trace ID generator ───
 function generateTraceId(): string {
@@ -39,7 +118,7 @@ function generateTraceId(): string {
 }
 
 // ─── Form-urlencoded parser (Twilio) ───
-function parseFormBody(body: string): Record<string, string> {
+function _parseFormBody(body: string): Record<string, string> {
   const params = new URLSearchParams(body);
   const result: Record<string, string> = {};
   for (const [k, v] of params.entries()) result[k] = v;
@@ -164,7 +243,7 @@ async function validateSignature(
 ): Promise<boolean> {
   switch (provider) {
     case 'twilio': {
-      const token = Deno.env.get('WHATSAPP_TWILIO_AUTH_TOKEN');
+      const token = requireEnv('WHATSAPP_TWILIO_AUTH_TOKEN');
       if (!token) return false; // Enforce secret presence for 10/10 security
       
       const provided = headers.get('x-twilio-signature');
@@ -175,7 +254,7 @@ async function validateSignature(
       return provided.length > 0;
     }
     case 'meta': {
-      const secret = Deno.env.get('WHATSAPP_META_APP_SECRET');
+      const secret = requireEnv('WHATSAPP_META_APP_SECRET');
       if (!secret) return false; // Enforce secret presence
       const provided = headers.get('x-hub-signature-256');
       if (!provided) return false;
@@ -184,9 +263,9 @@ async function validateSignature(
     case 'zapi':
     case 'evolution': {
       const tokens = [
-        Deno.env.get('WHATSAPP_ZAPI_TOKEN'),
-        Deno.env.get('WHATSAPP_EVOLUTION_TOKEN'),
-      ].filter(Boolean) as string[];
+        requireEnv('WHATSAPP_ZAPI_TOKEN'),
+        requireEnv('WHATSAPP_EVOLUTION_TOKEN'),
+      ];
       if (tokens.length === 0) return false; // Enforce secret
       const auth = headers.get('authorization') ?? '';
       return tokens.some((t) => auth.includes(t));
@@ -198,7 +277,7 @@ async function validateSignature(
 
 // ─── Workspace resolution by destination phone or default ───
 async function resolveWorkspace(
-  client: ReturnType<typeof createClient>,
+  client: SupabaseClient,
   toPhone: string | null,
 ): Promise<string | null> {
   if (!toPhone) return null;
@@ -213,7 +292,7 @@ async function resolveWorkspace(
 
 // ─── Routing lookup ───
 async function findAgentRoute(
-  client: ReturnType<typeof createClient>,
+  client: SupabaseClient,
   workspaceId: string,
   eventType: string,
 ): Promise<string | null> {
@@ -247,7 +326,7 @@ interface AuditRow {
 }
 
 async function writeAudit(
-  client: ReturnType<typeof createClient>,
+  client: SupabaseClient,
   row: AuditRow,
 ): Promise<void> {
   const { error } = await client.from('whatsapp_webhook_events').insert(row);
@@ -264,8 +343,12 @@ async function writeAudit(
 // ─── Main handler ───
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return handleCorsPreflight(req);
   }
+
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.light);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, getCorsHeaders(req));
 
   // Meta verification GET handshake
   if (req.method === 'GET') {
@@ -273,51 +356,42 @@ serve(async (req) => {
     const mode = url.searchParams.get('hub.mode');
     const token = url.searchParams.get('hub.verify_token');
     const challenge = url.searchParams.get('hub.challenge');
-    const expected = Deno.env.get('WHATSAPP_META_VERIFY_TOKEN');
+    const expected = requireEnv('WHATSAPP_META_VERIFY_TOKEN');
     if (mode === 'subscribe' && expected && token === expected && challenge) {
-      return new Response(challenge, { status: 200, headers: { ...corsHeaders, 'Content-Type': 'text/plain' } });
+      return new Response(challenge, { status: 200, headers: { ...getCorsHeaders(req), 'Content-Type': 'text/plain' } });
     }
-    return new Response('Forbidden', { status: 403, headers: corsHeaders });
+    return errorResponse(req, 'Forbidden', 403);
   }
 
+
   if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-      status: 405,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return errorResponse(req, 'Method not allowed', 405);
   }
 
   const traceId = generateTraceId();
   const startTime = Date.now();
-  let client: ReturnType<typeof createClient>;
+  let client;
   try {
-    client = getServiceClient();
+    client = createAdminClient();
   } catch (err) {
     console.error('Service client init failed', err);
-    return new Response(JSON.stringify({ error: 'Server configuration error' }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return errorResponse(req, 'Server configuration error', 500);
   }
 
-  // Read raw body once (need it for HMAC validation)
-  const rawBody = await req.text();
-  const contentType = req.headers.get('content-type') ?? '';
+  // Parse body with contract validation
+  const { data: parsed, error: validationError, rawBody } = await parseBody(req, WhatsAppWebhookContracts, { 
+    returnRawBody: true,
+    defaultVersion: 'v1' 
+  });
 
-  let parsed: Record<string, unknown>;
-  try {
-    if (contentType.includes('application/json')) {
-      parsed = JSON.parse(rawBody);
-    } else {
-      parsed = parseFormBody(rawBody);
-    }
-  } catch (err) {
-    console.error('Body parse failed', err);
-    return new Response(JSON.stringify({ error: 'Invalid request body' }), {
-      status: 400,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+  if (validationError) {
+    return validationError;
   }
+
+  if (!parsed || !rawBody) {
+    return errorResponse(req, 'Invalid request body', 400);
+  }
+
 
   const provider = detectProvider(req.headers, parsed);
   const event = normalizeEvent(provider, parsed);
@@ -345,18 +419,46 @@ serve(async (req) => {
     audit.routing_status = 'invalid_signature';
     audit.routing_error = 'HMAC validation failed';
     await writeAudit(client, audit);
-    return new Response(JSON.stringify({ error: 'Invalid signature', trace_id: traceId }), {
-      status: 401,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return jsonResponse(req, { error: 'Invalid signature', trace_id: traceId }, 401);
   }
+
+  // Replay protection: reject events with stale provider timestamps.
+  const providerTsMs = extractProviderTimestampMs(provider, req.headers, parsed);
+  if (providerTsMs !== null && Math.abs(Date.now() - providerTsMs) > REPLAY_WINDOW_MS) {
+    audit.routing_status = 'stale_event';
+    audit.routing_error = `Timestamp outside replay window (${REPLAY_WINDOW_MS}ms)`;
+    await writeAudit(client, audit);
+    return jsonResponse(req, { error: 'Stale event', trace_id: traceId }, 401);
+  }
+
+  // Dedupe: silently ack duplicates so providers stop retrying.
+  if (await isReplay(client, provider, event.message_id)) {
+    return jsonResponse(req, { ok: true, deduped: true, trace_id: traceId }, 200);
+  }
+
+  // Fallback nonce-hash: quando o provedor não entrega message_id.
+  let nonceHash: string | null = null;
+  if (!event.message_id) {
+    const { replay, hash } = await isNonceReplay(client, provider, event.from_phone, providerTsMs, rawBody);
+    if (replay) {
+      return jsonResponse(req, { ok: true, deduped: true, via: 'nonce', trace_id: traceId }, 200);
+    }
+    nonceHash = hash;
+    // fire-and-forget: registra o nonce para futuras janelas de 5 min
+    recordNonce(client, hash, provider);
+  }
+  void nonceHash;
+
+
+
+
 
   if (!workspaceId) {
     audit.routing_status = 'no_route';
     audit.routing_error = `Phone "${event.to_phone ?? 'unknown'}" not registered in workspace_secrets`;
     await writeAudit(client, audit);
     return new Response(JSON.stringify({ ok: true, message: 'Logged but no workspace matched', trace_id: traceId }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -369,7 +471,7 @@ serve(async (req) => {
     await writeAudit(client, audit);
     return new Response(JSON.stringify({ error: 'Routing lookup failed', trace_id: traceId }), {
       status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -378,7 +480,7 @@ serve(async (req) => {
     audit.routing_error = `No agent_routing_config for event ${event.event_type}`;
     await writeAudit(client, audit);
     return new Response(JSON.stringify({ ok: true, message: `No agent for ${event.event_type}`, trace_id: traceId }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -388,7 +490,7 @@ serve(async (req) => {
 
   // Emit trace_event for MonitoringPage
   try {
-    await (client.from('trace_events').insert as Function)({
+    await (client.from('trace_events').insert as unknown as (row: unknown) => Promise<unknown>)({
       event_type: 'whatsapp_webhook',
       data: {
         trace_id: traceId,
@@ -426,6 +528,6 @@ serve(async (req) => {
   }
 
   return new Response(JSON.stringify({ ok: true, routed_to: agentId, provider, trace_id: traceId }), {
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
   });
 });

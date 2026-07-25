@@ -3,6 +3,7 @@ import type { EvalRun, EvalResult } from '@/hooks/useAgentEvals';
 import { Button } from '@/components/ui/button';
 import { Download, FileJson, CheckCircle2, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import type { DbRow } from '@/types/dbRow';
 
 interface AuditReportProps {
   run: EvalRun;
@@ -51,7 +52,7 @@ export function AuditReportDialog({ run, results }: AuditReportProps) {
       <div className="flex items-center justify-between border-b pb-4 print:hidden">
         <div>
           <h2 className="text-xl font-bold">Relatório de Auditoria</h2>
-          <p className="text-xs text-muted-foreground">Auditoria detalhada da execução {run.id.slice(0, 8)}</p>
+          <p className="text-meta text-muted-foreground">Auditoria detalhada da execução {run.id.slice(0, 8)}</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={generateJSON} className="gap-2">
@@ -71,9 +72,9 @@ export function AuditReportDialog({ run, results }: AuditReportProps) {
       </div>
 
       <div className="space-y-4">
-        <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Evidências de Execução</h3>
+        <h3 className="text-body-sm font-bold uppercase tracking-widest text-muted-foreground">Evidências de Execução</h3>
         <div className="border rounded-xl overflow-hidden">
-          <table className="w-full text-xs text-left">
+          <table className="w-full text-meta text-left">
             <thead className="bg-muted/50 border-b">
               <tr>
                 <th className="p-3">Status</th>
@@ -98,7 +99,7 @@ export function AuditReportDialog({ run, results }: AuditReportProps) {
         </div>
       </div>
 
-      <div className="p-4 rounded-xl border border-dashed text-[10px] text-muted-foreground italic text-center">
+      <div className="p-4 rounded-xl border border-dashed text-meta text-muted-foreground italic text-center">
         Este documento é uma trilha de auditoria digital gerada pelo Oráculo Nexus. 
         Dados verificados contra modelos de referência.
       </div>
@@ -109,8 +110,8 @@ export function AuditReportDialog({ run, results }: AuditReportProps) {
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
     <div className="p-4 rounded-xl border bg-card/50">
-      <p className="text-[10px] font-bold text-muted-foreground uppercase mb-1">{label}</p>
-      <p className="text-lg font-black text-foreground">{value}</p>
+      <p className="text-meta font-bold text-muted-foreground uppercase mb-1">{label}</p>
+      <p className="text-title-sm font-black text-foreground">{value}</p>
     </div>
   );
 }

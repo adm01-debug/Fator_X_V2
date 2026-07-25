@@ -16,6 +16,7 @@ function computeReadiness(agent: AgentConfig): DetailedReadinessScore {
   const blockers: string[] = [];
   const recommendations: { label: string; tabId: string }[] = [];
 
+
   // Identity (max 10)
   const identityItems: ReadinessItem[] = [
     { label: 'Nome definido', passed: !!agent.name, weight: 3, is_blocker: false },
@@ -157,9 +158,9 @@ export function ReadinessModule() {
           >
             {readiness.total}
           </span>
-          <span className="text-sm text-muted-foreground mt-1">/ 100</span>
+          <span className="text-body-sm text-muted-foreground mt-1">/ 100</span>
           <span
-            className="mt-2 px-3 py-1 rounded-full text-xs font-semibold"
+            className="mt-2 px-3 py-1 rounded-full text-meta font-semibold"
             style={{
               background: `${MATURITY_COLORS[readiness.maturity_level]}20`,
               color: MATURITY_COLORS[readiness.maturity_level],
@@ -179,8 +180,8 @@ export function ReadinessModule() {
         {Object.entries(readiness.categories).map(([key, cat]) => (
           <div key={key} className="rounded-xl border border-border bg-card p-4 space-y-3">
             <div className="flex justify-between items-center">
-              <h4 className="text-sm font-semibold capitalize">{key}</h4>
-              <span className="text-sm font-bold text-foreground">{cat.score}/{cat.max}</span>
+              <h4 className="text-body-sm font-semibold capitalize">{key}</h4>
+              <span className="text-body-sm font-bold text-foreground">{cat.score}/{cat.max}</span>
             </div>
             <ProgressBar value={cat.score} max={cat.max} />
             <div className="space-y-1">
@@ -204,7 +205,7 @@ export function ReadinessModule() {
           <SectionTitle icon="⛔" title="Blockers" subtitle="Itens que impedem deploy em produção" />
           <div className="rounded-xl border border-[hsl(var(--nexus-red))] bg-[hsl(var(--nexus-red))/0.05] p-4 space-y-2">
             {readiness.blockers.map((b, i) => (
-              <p key={i} className="text-sm text-[hsl(var(--nexus-red))]">{b}</p>
+              <p key={i} className="text-body-sm text-[hsl(var(--nexus-red))]">{b}</p>
             ))}
           </div>
         </>
@@ -217,11 +218,11 @@ export function ReadinessModule() {
           <div className="rounded-xl border border-[hsl(var(--nexus-yellow))] bg-[hsl(var(--nexus-yellow))/0.05] p-4 space-y-2">
             {readiness.recommendations.map((r, i) => (
               <div key={i} className="flex items-center justify-between gap-4 p-2 rounded-lg hover:bg-[hsl(var(--nexus-yellow))/0.1] transition-colors group">
-                <p className="text-sm text-[hsl(var(--nexus-yellow))]">{r.label}</p>
+                <p className="text-body-sm text-[hsl(var(--nexus-yellow))]">{r.label}</p>
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="h-7 text-xs text-[hsl(var(--nexus-yellow))] hover:text-[hsl(var(--nexus-yellow))] hover:bg-[hsl(var(--nexus-yellow))/0.2] opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="h-7 text-meta text-[hsl(var(--nexus-yellow))] hover:text-[hsl(var(--nexus-yellow))] hover:bg-[hsl(var(--nexus-yellow))/0.2] opacity-0 group-hover:opacity-100 transition-opacity"
                   onClick={() => setActiveTab(r.tabId)}
                 >
                   <ExternalLink className="h-3 w-3 mr-1" /> Resolver
@@ -241,7 +242,7 @@ export function ReadinessModule() {
             return (
               <div key={stage.id} className="flex items-center gap-1">
                 <div
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                  className={`px-3 py-1.5 rounded-lg text-meta font-medium transition-all ${
                     isActive
                       ? 'ring-2 ring-offset-1 ring-offset-background'
                       : 'opacity-50'
@@ -257,7 +258,7 @@ export function ReadinessModule() {
                   {stage.label}
                 </div>
                 {idx < LIFECYCLE_STAGES.length - 1 && (
-                  <span className="text-muted-foreground text-xs">→</span>
+                  <span className="text-muted-foreground text-meta">→</span>
                 )}
               </div>
             );

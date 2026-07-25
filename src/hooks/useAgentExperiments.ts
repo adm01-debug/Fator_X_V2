@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fromTable } from '@/lib/supabaseExtended';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import type { DbRow } from '@/types/dbRow';
 
 export type ExperimentStatus = 'draft' | 'running' | 'paused' | 'completed';
 export type ExperimentVariant = 'a' | 'b';
@@ -102,15 +103,7 @@ export function computeVariantStats(runs: ExperimentRun[], variant: ExperimentVa
 export function useCreateExperiment() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (input: {
-      agent_id: string;
-      workspace_id: string;
-      name: string;
-      description?: string;
-      variant_a_config: Record<string, unknown>;
-      variant_b_config: Record<string, unknown>;
-      traffic_split: number;
-    }) => {
+    mutationFn: async (input: DbRow) => {
       const { data: userData } = await supabase.auth.getUser();
       const userId = userData.user?.id;
       if (!userId) throw new Error('Não autenticado');
@@ -185,18 +178,7 @@ export function useDeleteExperiment() {
 export function useLogRun() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (input: {
-      experiment_id: string;
-      variant: ExperimentVariant;
-      input: Record<string, unknown>;
-      output?: Record<string, unknown>;
-      latency_ms?: number;
-      tokens_input?: number;
-      tokens_output?: number;
-      cost_usd?: number;
-      score?: number;
-      feedback?: string;
-    }) => {
+    mutationFn: async (input: DbRow) => {
       const { data: userData } = await supabase.auth.getUser();
       const { error } = await fromTable('agent_experiment_runs').insert({
         ...input,

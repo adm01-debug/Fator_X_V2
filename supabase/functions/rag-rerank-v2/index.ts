@@ -19,6 +19,7 @@
  * ═══════════════════════════════════════════════════════════════
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { fetchWithTimeout } from "../_shared/retry.ts";
 import {
   handleCorsPreflight, jsonResponse, errorResponse,
   authenticateRequest,
@@ -52,7 +53,7 @@ async function rerankWithCohere(
   cohereKey: string,
 ): Promise<Array<{ id: string; content: string; relevance_score: number }> | null> {
   try {
-    const resp = await fetch('https://api.cohere.ai/v1/rerank', {
+    const resp = await fetchWithTimeout('https://api.cohere.ai/v1/rerank', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -88,7 +89,7 @@ async function rerankWithHF(
 ): Promise<Array<{ id: string; content: string; relevance_score: number }> | null> {
   try {
     const url = `https://api-inference.huggingface.co/models/${modelId}`;
-    const resp = await fetch(url, {
+    const resp = await fetchWithTimeout(url, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${hfKey}`,

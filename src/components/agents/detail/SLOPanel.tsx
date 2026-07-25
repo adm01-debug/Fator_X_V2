@@ -16,8 +16,8 @@ export function SLOPanel({ targets }: Props) {
     <div className="nexus-card">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-sm font-heading font-semibold text-foreground">Painel SLO</h3>
-          <p className="text-[11px] text-muted-foreground">Service Level Objectives — janela atual de traces</p>
+          <h3 className="text-body-sm font-heading font-semibold text-foreground">Painel SLO</h3>
+          <p className="text-meta text-muted-foreground">Service Level Objectives — janela atual de traces</p>
         </div>
       </div>
 
@@ -32,8 +32,8 @@ export function SLOPanel({ targets }: Props) {
           return (
             <div key={t.label} className={`rounded-lg border ${style.border} ${style.bg} p-3`}>
               <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-medium text-foreground">{t.label}</p>
-                <div className={`flex items-center gap-1 text-[10px] font-semibold ${style.color}`}>
+                <p className="text-meta font-medium text-foreground">{t.label}</p>
+                <div className={`flex items-center gap-1 text-meta font-semibold ${style.color}`}>
                   <style.Icon className="h-3 w-3" />
                   {style.label}
                 </div>
@@ -42,8 +42,8 @@ export function SLOPanel({ targets }: Props) {
                 <span className="text-xl font-heading font-extrabold text-foreground tabular-nums">
                   {t.unit === '%' ? t.value.toFixed(2) : Math.round(t.value).toLocaleString('pt-BR')}
                 </span>
-                <span className="text-[11px] text-muted-foreground">{t.unit}</span>
-                <span className="text-[10px] text-muted-foreground ml-auto font-mono">
+                <span className="text-meta text-muted-foreground">{t.unit}</span>
+                <span className="text-meta text-muted-foreground ml-auto font-mono">
                   alvo: {t.unit === '%' ? t.target : t.target.toLocaleString('pt-BR')}{t.unit}
                 </span>
               </div>

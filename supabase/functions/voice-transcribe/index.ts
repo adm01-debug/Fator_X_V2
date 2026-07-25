@@ -1,33 +1,38 @@
+import { fetchWithTimeout } from "../_shared/retry.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { z } from "https://esm.sh/zod@3.23.8";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+import { getCorsHeaders } from "../_shared/cors.ts";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
+const InputSchema = z.object({
+  audio_base64: z.string().min(1).max(14_000_000, "audio too large (max ~10MB)"),
+  mime_type: z.string().min(3).max(64).default("audio/webm"),
+  session_id: z.string().uuid().optional(),
+});
 
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
   try {
     const auth = req.headers.get("Authorization");
     if (!auth) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
-    const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, { global: { headers: { Authorization: auth } } });
+    const supabase = createClient(requireEnv("SUPABASE_URL"), requireEnv("SUPABASE_ANON_KEY"), { global: { headers: { Authorization: auth } } });
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
-    const body = await req.json();
-    const { audio_base64, mime_type = "audio/webm", session_id } = body || {};
-    if (!audio_base64 || typeof audio_base64 !== "string") {
-      return new Response(JSON.stringify({ error: "audio_base64 required" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-    }
-    if (audio_base64.length > 14_000_000) {
-      return new Response(JSON.stringify({ error: "audio too large (max ~10MB)" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-    }
+    const raw = await req.json().catch(() => null);
+    const parsed = InputSchema.safeParse(raw);
+    if (!parsed.success) return new Response(JSON.stringify({ error: "Payload inválido", details: parsed.error.flatten() }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    const { audio_base64, mime_type, session_id } = parsed.data;
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
 
-    const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const LOVABLE_API_KEY = requireEnv("LOVABLE_API_KEY");
+
+    const aiResp = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -60,6 +65,7 @@ Deno.serve(async (req) => {
     if (session_id) {
       const { data: session } = await supabase.from("voice_sessions").select("transcript, audio_in_seconds").eq("id", session_id).maybeSingle();
       if (session) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         const newTranscript = [...(session.transcript as any[] || []), { role: "user", text, ts: new Date().toISOString() }];
         await supabase.from("voice_sessions").update({
           transcript: newTranscript,

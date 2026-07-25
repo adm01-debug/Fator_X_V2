@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { toast } from "sonner";
+import { handleKeyboardClick } from "@/lib/a11y";
 
 type Detection = { label: string; confidence: number; bbox: [number, number, number, number] };
 
@@ -53,7 +54,7 @@ export default function VisionAgentsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-4">
         <Card>
           <CardHeader className="pb-3 flex-row items-center justify-between">
-            <CardTitle className="text-sm flex items-center gap-2"><ImageIcon className="h-4 w-4" />Imagem</CardTitle>
+            <CardTitle className="text-body-sm flex items-center gap-2"><ImageIcon className="h-4 w-4" />Imagem</CardTitle>
             <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0])} />
             <Button size="sm" variant="outline" onClick={() => fileRef.current?.click()}><Upload className="h-3.5 w-3.5 mr-1" />Upload</Button>
           </CardHeader>
@@ -67,8 +68,8 @@ export default function VisionAgentsPage() {
                 className="aspect-video border-2 border-dashed border-border/50 rounded-md flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-colors"
               >
                 <Upload className="h-10 w-10 text-muted-foreground/40 mb-2" />
-                <div className="text-sm text-muted-foreground">Clique ou arraste uma imagem</div>
-                <div className="text-[11px] text-muted-foreground/70 mt-1">JPG, PNG, WebP até 10MB</div>
+                <div className="text-body-sm text-muted-foreground">Clique ou arraste uma imagem</div>
+                <div className="text-meta text-muted-foreground/70 mt-1">JPG, PNG, WebP até 10MB</div>
               </div>
             ) : (
               <div className="relative rounded-md overflow-hidden border border-border/40">
@@ -84,7 +85,7 @@ export default function VisionAgentsPage() {
                       height: `${((d.bbox[3] - d.bbox[1]) / 450) * 100}%`,
                     }}
                   >
-                    <span className="absolute -top-5 left-0 text-[10px] bg-primary text-primary-foreground px-1.5 py-0.5 rounded font-mono">
+                    <span className="absolute -top-5 left-0 text-meta bg-primary text-primary-foreground px-1.5 py-0.5 rounded font-mono">
                       {d.label} {(d.confidence * 100).toFixed(0)}%
                     </span>
                   </div>
@@ -105,9 +106,9 @@ export default function VisionAgentsPage() {
         </Card>
 
         <Card>
-          <CardHeader className="pb-3"><CardTitle className="text-sm flex items-center gap-2"><Eye className="h-4 w-4" />Resultado</CardTitle></CardHeader>
+          <CardHeader className="pb-3"><CardTitle className="text-body-sm flex items-center gap-2"><Eye className="h-4 w-4" />Resultado</CardTitle></CardHeader>
           <CardContent>
-            {!analysis && <div className="text-center text-sm text-muted-foreground py-12">Faça upload e analise uma imagem</div>}
+            {!analysis && <div className="text-center text-body-sm text-muted-foreground py-12">Faça upload e analise uma imagem</div>}
             {analysis && (
               <Tabs defaultValue="caption">
                 <TabsList className="w-full">
@@ -116,20 +117,20 @@ export default function VisionAgentsPage() {
                   <TabsTrigger value="objects" className="flex-1"><Crop className="h-3 w-3 mr-1" />Objetos</TabsTrigger>
                 </TabsList>
                 <TabsContent value="caption" className="space-y-3">
-                  <div className="text-sm leading-relaxed">{analysis.caption}</div>
+                  <div className="text-body-sm leading-relaxed">{analysis.caption}</div>
                   <div className="flex flex-wrap gap-1.5">
                     {analysis.tags.map((t) => (
-                      <Badge key={t} variant="outline" className="text-[10px]"><Tag className="h-2.5 w-2.5 mr-0.5" />{t}</Badge>
+                      <Badge key={t} variant="outline" className="text-meta"><Tag className="h-2.5 w-2.5 mr-0.5" />{t}</Badge>
                     ))}
                   </div>
                 </TabsContent>
                 <TabsContent value="ocr">
-                  <pre className="text-xs bg-muted/30 p-3 rounded font-mono whitespace-pre-wrap">{analysis.ocr}</pre>
+                  <pre className="text-meta bg-muted/30 p-3 rounded font-mono whitespace-pre-wrap">{analysis.ocr}</pre>
                 </TabsContent>
                 <TabsContent value="objects">
                   <div className="space-y-1.5">
                     {analysis.detections.map((d, i) => (
-                      <div key={i} className="flex items-center justify-between p-2 bg-muted/30 rounded text-xs">
+                      <div key={i} className="flex items-center justify-between p-2 bg-muted/30 rounded text-meta">
                         <span className="font-medium">{d.label}</span>
                         <div className="flex items-center gap-2">
                           <div className="w-20 h-1.5 bg-muted rounded-full overflow-hidden">

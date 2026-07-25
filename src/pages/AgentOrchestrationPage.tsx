@@ -13,6 +13,7 @@ import { GraphCanvas } from '@/components/orchestration/GraphCanvas';
 import { NodeConfigPanel } from '@/components/orchestration/NodeConfigPanel';
 import { listAgentSummaries } from '@/services/agentsService';
 import { getWorkspaceId } from '@/lib/agentService';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 interface AgentLite { id: string; name: string }
 
@@ -145,15 +146,15 @@ export default function AgentOrchestrationPage() {
       <div className="grid grid-cols-12 gap-4">
         {/* Sidebar grafos */}
         <Card className="col-span-3">
-          <CardHeader><CardTitle className="text-sm">Grafos ({graphs.length})</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-body-sm">Grafos ({graphs.length})</CardTitle></CardHeader>
           <CardContent className="space-y-1 max-h-[600px] overflow-y-auto">
-            {graphs.length === 0 && <p className="text-xs text-muted-foreground">Crie seu primeiro grafo.</p>}
+            {graphs.length === 0 && <p className="text-meta text-muted-foreground">Crie seu primeiro grafo.</p>}
             {graphs.map(g => (
-              <div key={g.id} className={`group flex items-center gap-2 rounded-md px-2 py-2 cursor-pointer ${activeGraph?.id === g.id ? 'bg-primary/10' : 'hover:bg-muted/40'}`} onClick={() => setActiveGraph(g)}>
+              <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} key={g.id} className={`group flex items-center gap-2 rounded-md px-2 py-2 cursor-pointer ${activeGraph?.id === g.id ? 'bg-primary/10' : 'hover:bg-muted/40'}`} onClick={() => setActiveGraph(g)}>
                 <Network className="h-3.5 w-3.5 shrink-0 text-primary" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium truncate">{g.name}</p>
-                  <p className="text-[10px] text-muted-foreground">{g.nodes.length} nós · {g.edges.length} edges</p>
+                  <p className="text-meta font-medium truncate">{g.name}</p>
+                  <p className="text-meta text-muted-foreground">{g.nodes.length} nós · {g.edges.length} edges</p>
                 </div>
                 <Trash2 className="h-3 w-3 opacity-0 group-hover:opacity-100 text-destructive" onClick={(e) => { e.stopPropagation(); handleDeleteGraph(g.id); }} />
               </div>
@@ -167,7 +168,7 @@ export default function AgentOrchestrationPage() {
             <>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle className="text-sm">{activeGraph.name}</CardTitle>
+                  <CardTitle className="text-body-sm">{activeGraph.name}</CardTitle>
                   <Button size="sm" variant="outline" onClick={handleAddNode}><Plus className="h-3 w-3 mr-1" /> Adicionar nó</Button>
                 </CardHeader>
                 <CardContent className="p-0">
@@ -185,14 +186,14 @@ export default function AgentOrchestrationPage() {
               </Card>
 
               <Card>
-                <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Zap className="h-4 w-4 text-primary" /> Executar</CardTitle></CardHeader>
+                <CardHeader><CardTitle className="text-body-sm flex items-center gap-2"><Zap className="h-4 w-4 text-primary" /> Executar</CardTitle></CardHeader>
                 <CardContent className="space-y-3">
                   <Textarea placeholder="Input inicial para o grafo..." value={input} onChange={(e) => setInput(e.target.value)} rows={3} />
                   <Button onClick={handleRun} disabled={running || !input.trim() || activeGraph.nodes.length === 0} className="w-full">
                     {running ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Executando...</> : <><Play className="h-4 w-4 mr-2" /> Executar grafo</>}
                   </Button>
                   {activeExec?.final_output && (
-                    <div className="rounded-md bg-muted/40 p-3 text-xs">
+                    <div className="rounded-md bg-muted/40 p-3 text-meta">
                       <p className="font-semibold mb-1">Resultado final:</p>
                       <p className="whitespace-pre-wrap">{activeExec.final_output}</p>
                     </div>
@@ -202,7 +203,7 @@ export default function AgentOrchestrationPage() {
             </>
           ) : (
             <Card className="h-[600px] flex items-center justify-center">
-              <p className="text-muted-foreground text-sm">Selecione ou crie um grafo</p>
+              <p className="text-muted-foreground text-body-sm">Selecione ou crie um grafo</p>
             </Card>
           )}
         </div>
@@ -221,16 +222,16 @@ export default function AgentOrchestrationPage() {
           )}
           {activeGraph && (
             <Card>
-              <CardHeader><CardTitle className="text-sm flex items-center gap-2"><History className="h-4 w-4" /> Execuções</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="text-body-sm flex items-center gap-2"><History className="h-4 w-4" /> Execuções</CardTitle></CardHeader>
               <CardContent className="space-y-1 max-h-[300px] overflow-y-auto">
-                {executions.length === 0 && <p className="text-xs text-muted-foreground">Nenhuma ainda.</p>}
+                {executions.length === 0 && <p className="text-meta text-muted-foreground">Nenhuma ainda.</p>}
                 {executions.map(e => (
                   <button key={e.id} onClick={() => setActiveExec(e)} className="w-full text-left rounded-md hover:bg-muted/40 px-2 py-1.5">
                     <div className="flex items-center justify-between">
-                      <Badge variant={e.status === 'completed' ? 'default' : e.status === 'failed' ? 'destructive' : 'secondary'} className="text-[10px]">{e.status}</Badge>
-                      <span className="text-[10px] text-muted-foreground">{e.trace?.length ?? 0} passos</span>
+                      <Badge variant={e.status === 'completed' ? 'default' : e.status === 'failed' ? 'destructive' : 'secondary'} className="text-meta">{e.status}</Badge>
+                      <span className="text-meta text-muted-foreground">{e.trace?.length ?? 0} passos</span>
                     </div>
-                    <p className="text-xs truncate mt-1">{e.input}</p>
+                    <p className="text-meta truncate mt-1">{e.input}</p>
                   </button>
                 ))}
               </CardContent>
@@ -242,10 +243,10 @@ export default function AgentOrchestrationPage() {
       {/* Trace details */}
       {activeExec && (
         <Card>
-          <CardHeader><CardTitle className="text-sm">Trace · {new Date(activeExec.started_at).toLocaleString()}</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-body-sm">Trace · {new Date(activeExec.started_at).toLocaleString()}</CardTitle></CardHeader>
           <CardContent className="space-y-2">
             {activeExec.trace?.map((t, i) => (
-              <div key={i} className="rounded-md border bg-muted/20 p-3 text-xs space-y-1">
+              <div key={i} className="rounded-md border bg-muted/20 p-3 text-meta space-y-1">
                 <div className="flex items-center justify-between">
                   <span className="font-semibold">{i + 1}. {t.agent_name}</span>
                   <span className="text-muted-foreground">{t.latency_ms}ms · {(t.cost_cents / 100).toFixed(4)}¢</span>

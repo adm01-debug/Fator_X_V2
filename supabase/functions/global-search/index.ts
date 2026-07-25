@@ -9,11 +9,15 @@
  * Se o LLM falhar ou estiver indisponível, retorna ranking lexical puro (graceful).
  */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
+import { z } from "https://esm.sh/zod@3.23.8";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv, getCorsHeaders } from "../_shared/mod.ts";
+const InputSchema = z.object({
+  query: z.string().max(500).default(""),
+  limit: z.number().int().min(1).max(20).default(8),
+  semantic: z.boolean().optional(),
+});
+
 
 interface SearchHit {
   type: "agent" | "knowledge_base" | "article" | "workflow" | "eval_dataset" | "automation" | "document";
@@ -28,19 +32,32 @@ interface SearchHit {
 }
 
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, getCorsHeaders(req));
+
   try {
-    const body = await req.json();
-    const query = String(body?.query ?? "").trim();
-    const limit = Math.min(Math.max(Number(body?.limit ?? 8), 1), 20);
-    const semanticEnabled = body?.semantic !== false; // default true
+    const raw = await req.json().catch(() => null);
+    const parsed = InputSchema.safeParse(raw);
+    if (!parsed.success) {
+      return new Response(JSON.stringify({ error: "Payload inválido", details: parsed.error.flatten() }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const query = parsed.data.query.trim();
+    const limit = parsed.data.limit;
+    const semanticEnabled = parsed.data.semantic !== false;
 
     if (query.length < 2) {
       return new Response(JSON.stringify({ results: [], total: 0, mode: "empty" }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
 
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
@@ -50,8 +67,8 @@ Deno.serve(async (req) => {
       });
     }
 
-    const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-    const ANON = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const SUPABASE_URL = requireEnv("SUPABASE_URL");
+    const ANON = requireEnv("SUPABASE_ANON_KEY");
     const supabase = createClient(SUPABASE_URL, ANON, {
       global: { headers: { Authorization: authHeader } },
     });
@@ -63,6 +80,8 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    const rateCheck = checkRateLimit(getRateLimitIdentifier(req, user.id), RATE_LIMITS.standard);
+    if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, corsHeaders);
 
     const cleanQuery = query.replace(/[%_]/g, "");
     const pattern = `%${cleanQuery}%`;
@@ -101,6 +120,7 @@ Deno.serve(async (req) => {
 
     const candidates: SearchHit[] = [];
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     (agentsR.data ?? []).forEach((a: any) => candidates.push({
       type: "agent", id: a.id, title: a.name,
       snippet: a.mission || a.persona || a.model || "Agente",
@@ -109,6 +129,7 @@ Deno.serve(async (req) => {
       meta: { model: a.model },
     }));
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     (kbR.data ?? []).forEach((k: any) => candidates.push({
       type: "knowledge_base", id: k.id, title: k.name,
       snippet: k.description || "Base de conhecimento",
@@ -116,6 +137,7 @@ Deno.serve(async (req) => {
       score: 0, lexical_score: lexicalScore(`${k.name} ${k.description ?? ""}`),
     }));
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     (articlesR.data ?? []).forEach((a: any) => candidates.push({
       type: "article", id: a.id, title: a.title,
       snippet: a.excerpt || "Artigo da KB",
@@ -123,6 +145,7 @@ Deno.serve(async (req) => {
       score: 0, lexical_score: lexicalScore(`${a.title} ${a.excerpt ?? ""}`),
     }));
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     (workflowsR.data ?? []).forEach((w: any) => candidates.push({
       type: "workflow", id: w.id, title: w.name,
       snippet: w.description || `Status: ${w.status}`,
@@ -131,6 +154,7 @@ Deno.serve(async (req) => {
       meta: { status: w.status },
     }));
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     (evalsR.data ?? []).forEach((e: any) => candidates.push({
       type: "eval_dataset", id: e.id, title: e.name,
       snippet: e.description || "Dataset de avaliação",
@@ -138,6 +162,7 @@ Deno.serve(async (req) => {
       score: 0, lexical_score: lexicalScore(`${e.name} ${e.description ?? ""}`),
     }));
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     (autoR.data ?? []).forEach((r: any) => candidates.push({
       type: "automation", id: r.id, title: r.name,
       snippet: r.description || (r.is_active ? "Ativa" : "Inativa"),
@@ -146,6 +171,7 @@ Deno.serve(async (req) => {
       meta: { active: r.is_active },
     }));
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     (docsR.data ?? []).forEach((d: any) => candidates.push({
       type: "document", id: d.id, title: d.title,
       snippet: d.source_url || "Documento",
@@ -164,7 +190,7 @@ Deno.serve(async (req) => {
     const topCandidates = candidates.slice(0, Math.min(20, candidates.length));
 
     // STAGE 2 — Semantic re-rank via Lovable AI
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    const LOVABLE_API_KEY = requireEnv("LOVABLE_API_KEY");
     let mode: string = "lexical";
 
     if (semanticEnabled && LOVABLE_API_KEY && topCandidates.length > 1) {

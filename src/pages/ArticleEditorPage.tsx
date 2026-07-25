@@ -11,6 +11,7 @@ import { ArrowLeft, Save, GitBranch, Languages } from "lucide-react";
 import { toast } from "sonner";
 import { RichEditor } from "@/components/knowledge/RichEditor";
 import { ArticleDiffViewer } from "@/components/knowledge/ArticleDiffViewer";
+import type { DbRow } from '@/types/dbRow';
 import {
   getArticle, updateArticle,
   listArticleVersions,
@@ -124,9 +125,9 @@ export default function ArticleEditorPage() {
             </Select>
           </div>
           <div className="grid grid-cols-3 gap-4">
-            <div className="nexus-card text-center"><p className="text-2xl font-bold">{article.view_count}</p><p className="text-xs text-muted-foreground">Visualizações</p></div>
-            <div className="nexus-card text-center"><p className="text-2xl font-bold text-nexus-emerald">{article.helpful_count}</p><p className="text-xs text-muted-foreground">Úteis</p></div>
-            <div className="nexus-card text-center"><p className="text-2xl font-bold text-destructive">{article.not_helpful_count}</p><p className="text-xs text-muted-foreground">Não úteis</p></div>
+            <div className="nexus-card text-center"><p className="text-2xl font-bold">{article.view_count}</p><p className="text-meta text-muted-foreground">Visualizações</p></div>
+            <div className="nexus-card text-center"><p className="text-2xl font-bold text-nexus-emerald">{article.helpful_count}</p><p className="text-meta text-muted-foreground">Úteis</p></div>
+            <div className="nexus-card text-center"><p className="text-2xl font-bold text-destructive">{article.not_helpful_count}</p><p className="text-meta text-muted-foreground">Não úteis</p></div>
           </div>
         </TabsContent>
       </Tabs>
@@ -138,9 +139,9 @@ function VersionsTab({ articleId, currentTitle, currentHtml }: { articleId: stri
   const { data: versions = [] } = useQuery({ queryKey: ["versions", articleId], queryFn: () => listArticleVersions(articleId) });
   const [selected, setSelected] = useState<string>("");
 
-  const selectedVersion = versions.find((v: { id: string }) => v.id === selected);
+  const selectedVersion = versions.find((v: DbRow) => v.id === selected);
 
-  if (versions.length === 0) return <div className="text-center text-sm text-muted-foreground py-12">Sem versões anteriores. Edite e salve para criar histórico.</div>;
+  if (versions.length === 0) return <div className="text-center text-body-sm text-muted-foreground py-12">Sem versões anteriores. Edite e salve para criar histórico.</div>;
 
   return (
     <div className="space-y-4">
@@ -149,7 +150,7 @@ function VersionsTab({ articleId, currentTitle, currentHtml }: { articleId: stri
         <Select value={selected} onValueChange={setSelected}>
           <SelectTrigger className="w-[300px]"><SelectValue placeholder="Escolha uma versão..." /></SelectTrigger>
           <SelectContent>
-            {versions.map((v: { id: string; version: number; created_at: string }) => (
+            {versions.map((v: DbRow) => (
               <SelectItem key={v.id} value={v.id}>v{v.version} — {new Date(v.created_at).toLocaleString("pt-BR")}</SelectItem>
             ))}
           </SelectContent>
@@ -158,7 +159,7 @@ function VersionsTab({ articleId, currentTitle, currentHtml }: { articleId: stri
       {selectedVersion && (
         <>
           <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">Comparando v{(selectedVersion as { version: number }).version} → versão atual</p>
+            <p className="text-body-sm text-muted-foreground">Comparando v{(selectedVersion as { version: number }).version} → versão atual</p>
           </div>
           <ArticleDiffViewer
             oldText={`${(selectedVersion as { title: string }).title}\n\n${stripHtml((selectedVersion as { content_html?: string }).content_html ?? "")}`}
@@ -202,13 +203,13 @@ function TranslationsTab({ articleId, sourceLanguage }: { articleId: string; sou
       </div>
       <div className="space-y-2">
         {translations.length === 0 ? (
-          <div className="text-center text-sm text-muted-foreground py-12">Nenhuma tradução. Use a IA para traduzir.</div>
-        ) : translations.map((t: { id: string; target_language: string; translated_title: string; translation_method: string; reviewed: boolean; updated_at: string }) => (
+          <div className="text-center text-body-sm text-muted-foreground py-12">Nenhuma tradução. Use a IA para traduzir.</div>
+        ) : translations.map((t: DbRow) => (
           <div key={t.id} className="nexus-card flex items-center gap-4">
             <Languages className="h-5 w-5 text-primary" />
             <div className="flex-1">
               <p className="font-medium">{t.translated_title}</p>
-              <p className="text-xs text-muted-foreground">{t.target_language} • {t.translation_method} • {new Date(t.updated_at).toLocaleString("pt-BR")}</p>
+              <p className="text-meta text-muted-foreground">{t.target_language} • {t.translation_method} • {new Date(t.updated_at).toLocaleString("pt-BR")}</p>
             </div>
             <Badge variant={t.reviewed ? "default" : "secondary"}>{t.reviewed ? "Revisada" : "Auto"}</Badge>
             {!t.reviewed && <Button size="sm" variant="ghost" onClick={async () => { await markTranslationReviewed(t.id); qc.invalidateQueries({ queryKey: ["translations", articleId] }); toast.success("Marcada como revisada"); }}>Marcar como revisada</Button>}

@@ -253,9 +253,10 @@ export function RAGModule() {
               <div className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-medium text-foreground">Nome</label>
+                    {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label */}
+                    <label className="text-meta font-medium text-foreground">Nome</label>
                     <input
-                      className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-sm text-foreground"
+                      className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-body-sm text-foreground"
                       value={source.name}
                       onChange={(e) => updateSource(source.id, { name: e.target.value })}
                       placeholder="Ex: Base de conhecimento interna"
@@ -269,9 +270,10 @@ export function RAGModule() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-foreground">Localização / URL</label>
+                  {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label */}
+                  <label className="text-meta font-medium text-foreground">Localização / URL</label>
                   <input
-                    className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-sm text-foreground"
+                    className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-body-sm text-foreground"
                     value={source.location}
                     onChange={(e) => updateSource(source.id, { location: e.target.value })}
                     placeholder="URL, caminho ou connection string"
@@ -322,7 +324,7 @@ export function RAGModule() {
               placeholder="Digite uma pergunta para testar a busca..." 
               value={testQuery}
               onChange={(e) => setTestQuery(e.target.value)}
-              className="text-sm"
+              className="text-body-sm"
             />
             <Button onClick={handleSimulate} disabled={isSimulating || !testQuery.trim()} className="gap-2">
               {isSimulating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
@@ -332,7 +334,7 @@ export function RAGModule() {
 
           {simResults && (
             <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase flex items-center gap-1.5">
+              <p className="text-meta font-bold text-muted-foreground uppercase flex items-center gap-1.5">
                 <CheckCircle2 className="h-3 w-3 text-nexus-green" /> {simResults.length} Chunks Recuperados (Simulação)
               </p>
               <div className="grid grid-cols-1 gap-2">
@@ -341,11 +343,11 @@ export function RAGModule() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <FileText className="h-3 w-3 text-primary" />
-                        <span className="text-[11px] font-bold">{res.source}</span>
+                        <span className="text-meta font-bold">{res.source}</span>
                       </div>
-                      <Badge variant="outline" className="text-[10px] font-mono">Score: {res.score.toFixed(2)}</Badge>
+                      <Badge variant="outline" className="text-meta font-mono">Score: {res.score.toFixed(2)}</Badge>
                     </div>
-                    <p className="text-[11px] text-muted-foreground italic">"{res.chunk}"</p>
+                    <p className="text-meta text-muted-foreground italic">"{res.chunk}"</p>
                   </div>
                 ))}
               </div>
@@ -353,7 +355,7 @@ export function RAGModule() {
           )}
 
           {!simResults && !isSimulating && (
-            <div className="flex items-center gap-2 text-[11px] text-muted-foreground bg-muted/30 p-2 rounded-lg">
+            <div className="flex items-center gap-2 text-meta text-muted-foreground bg-muted/30 p-2 rounded-lg">
               <Info className="h-3.5 w-3.5" />
               Use o simulador para validar o Threshold de Similaridade e o Top K.
             </div>

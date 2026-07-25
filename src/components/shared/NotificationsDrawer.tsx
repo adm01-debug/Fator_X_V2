@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import {
-  Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger,
+  Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Bell, AlertTriangle, XCircle, Info, CheckCircle2, FlaskConical } from "lucide-react";
@@ -8,6 +8,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabaseExternal } from "@/integrations/supabase/externalClient";
 import { toast } from "sonner";
 import { useNotificationStore } from "@/stores/notificationStore";
+import type { DbRow } from '@/types/dbRow';
 
 interface Notification {
   id: string;
@@ -240,7 +241,7 @@ export function NotificationsDrawer() {
           <Bell className="h-4 w-4" aria-hidden="true" />
           {uniqueUnread > 0 && (
               <span
-                className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full nexus-gradient-bg flex items-center justify-center text-[11px] font-bold text-primary-foreground"
+                className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full nexus-gradient-bg flex items-center justify-center text-meta font-bold text-primary-foreground"
               >
                 {uniqueUnread > 9 ? '9+' : uniqueUnread}
               </span>
@@ -250,22 +251,25 @@ export function NotificationsDrawer() {
       </SheetTrigger>
       <SheetContent className="w-[400px] sm:w-[440px] p-0">
         <SheetHeader className="px-5 pt-5 pb-3 border-b border-border/50">
-          <SheetTitle className="text-base font-heading font-bold text-foreground flex items-center justify-between">
+          <SheetTitle className="text-title-sm font-heading font-bold text-foreground flex items-center justify-between">
             Notificações
             {notifications.length > 0 && (
-              <Button variant="ghost" size="sm" className="text-xs text-muted-foreground h-7" onClick={markAllRead}>
+              <Button variant="ghost" size="sm" className="text-meta text-muted-foreground h-7" onClick={markAllRead}>
                 Marcar como lidas
               </Button>
             )}
           </SheetTitle>
+          <SheetDescription className="sr-only">
+            Alertas de agentes, avaliações e eventos operacionais em tempo real.
+          </SheetDescription>
         </SheetHeader>
 
         <div className="overflow-y-auto px-5 mt-3 space-y-2 max-h-[calc(100vh-80px)]">
           {notifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-center">
               <Bell className="h-10 w-10 text-muted-foreground mb-3" />
-              <p className="text-sm text-muted-foreground">Nenhuma notificação</p>
-              <p className="text-xs text-muted-foreground/60 mt-1">Alertas de agentes e avaliações aparecerão aqui em tempo real</p>
+              <p className="text-body-sm text-muted-foreground">Nenhuma notificação</p>
+              <p className="text-meta text-muted-foreground/60 mt-1">Alertas de agentes e avaliações aparecerão aqui em tempo real</p>
             </div>
           ) : (
             notifications.map((notif) => {
@@ -281,18 +285,18 @@ export function NotificationsDrawer() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
-                        <p className="text-xs font-semibold text-foreground truncate">{notif.title}</p>
-                        <span className="text-[11px] text-muted-foreground shrink-0 ml-2">
+                        <p className="text-meta font-semibold text-foreground truncate">{notif.title}</p>
+                        <span className="text-meta text-muted-foreground shrink-0 ml-2">
                           {new Date(notif.created_at).toLocaleString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
                       {notif.description && (
-                        <p className="text-[11px] text-muted-foreground mt-0.5">{notif.description}</p>
+                        <p className="text-meta text-muted-foreground mt-0.5">{notif.description}</p>
                       )}
                       <div className="flex items-center gap-1.5 mt-1">
-                        <span className={`inline-block text-[11px] px-1.5 py-0.5 rounded font-medium ${color}`}>{notif.level}</span>
+                        <span className={`inline-block text-meta px-1.5 py-0.5 rounded font-medium ${color}`}>{notif.level}</span>
                         {notif.type === 'evaluation' && (
-                          <span className="inline-block text-[11px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-medium">avaliação</span>
+                          <span className="inline-block text-meta bg-primary/10 text-primary px-1.5 py-0.5 rounded font-medium">avaliação</span>
                         )}
                         {!notif.read && (
                           <span className="h-1.5 w-1.5 rounded-full nexus-gradient-bg" />

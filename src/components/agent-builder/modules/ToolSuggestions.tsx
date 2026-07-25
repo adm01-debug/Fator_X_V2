@@ -71,7 +71,7 @@ export function ToolSuggestions({ mission, onAdd }: Props) {
   return (
     <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
       <div className="flex items-center justify-between">
-        <h4 className="text-xs font-semibold text-nexus-blue flex items-center gap-1.5 uppercase tracking-wider">
+        <h4 className="text-meta font-semibold text-nexus-blue flex items-center gap-1.5 uppercase tracking-wider">
           <Sparkles className="h-3 w-3" /> Sugestões da IA
         </h4>
         <Button variant="ghost" size="sm" onClick={() => setSuggestions([])} className="h-6 w-6 p-0">
@@ -83,13 +83,13 @@ export function ToolSuggestions({ mission, onAdd }: Props) {
           <div key={i} className="rounded-lg border border-nexus-blue/20 bg-nexus-blue/5 p-3 flex flex-col gap-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-bold text-foreground">{s.name}</span>
+                <span className="text-body-sm font-bold text-foreground">{s.name}</span>
                 <Badge variant="outline" className="text-[9px] h-4 uppercase">{s.category}</Badge>
               </div>
               <Button 
                 size="sm" 
                 variant="outline" 
-                className="h-7 gap-1 text-xs border-nexus-blue/30 hover:bg-nexus-blue/10"
+                className="h-7 gap-1 text-meta border-nexus-blue/30 hover:bg-nexus-blue/10"
                 onClick={() => {
                   onAdd(s);
                   setSuggestions(prev => prev.filter((_, idx) => idx !== i));
@@ -99,7 +99,7 @@ export function ToolSuggestions({ mission, onAdd }: Props) {
                 <Plus className="h-3 w-3" /> Adicionar
               </Button>
             </div>
-            <p className="text-[11px] text-muted-foreground leading-relaxed">{s.description}</p>
+            <p className="text-meta text-muted-foreground leading-relaxed">{s.description}</p>
             <div className="flex items-center gap-1.5 text-[9px] text-nexus-blue/70 font-medium">
               <Check className="h-2.5 w-2.5" /> {s.reason}
             </div>

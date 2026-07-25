@@ -332,7 +332,7 @@ export default function AgentVersioningPage() {
   if (!agent) {
     return (
       <div className="p-10 text-center">
-        <p className="text-sm text-muted-foreground">Agente não encontrado.</p>
+        <p className="text-body-sm text-muted-foreground">Agente não encontrado.</p>
         <Button onClick={() => navigate('/agents')} className="mt-4">Voltar</Button>
       </div>
     );
@@ -349,7 +349,7 @@ export default function AgentVersioningPage() {
             <CopyLinkButton />
             <Button
               size="sm"
-              className="gap-1.5 nexus-gradient-bg text-primary-foreground hover:opacity-90 font-bold px-4 rounded-xl shadow-lg shadow-primary/20"
+              className="gap-1.5 nexus-gradient-bg text-primary-foreground hover:opacity-90 font-bold px-4 rounded-xl shadow-nexus-lg shadow-primary/20"
               onClick={() => setNewOpen(true)}
               disabled={!selected}
             >
@@ -366,7 +366,7 @@ export default function AgentVersioningPage() {
           destaque persista além do necessário. */}
       {(runId || focusId || highlightId || selectedId) && (
         <div
-          className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg border border-primary/20 bg-primary/5 text-xs"
+          className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg border border-primary/20 bg-primary/5 text-meta"
           role="status"
           aria-live="polite"
         >
@@ -377,17 +377,17 @@ export default function AgentVersioningPage() {
             </span>
             <div className="flex items-center gap-1.5 flex-wrap">
               {runId && (
-                <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-nexus-cyan/10 text-nexus-cyan border border-nexus-cyan/20">
+                <span className="font-mono text-meta px-1.5 py-0.5 rounded bg-nexus-cyan/10 text-nexus-cyan border border-nexus-cyan/20">
                   run: {runId.slice(0, 8)}…
                 </span>
               )}
               {(focusId || highlightId) && (
-                <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-nexus-amber/10 text-nexus-amber border border-nexus-amber/20">
+                <span className="font-mono text-meta px-1.5 py-0.5 rounded bg-nexus-amber/10 text-nexus-amber border border-nexus-amber/20">
                   versão destacada
                 </span>
               )}
               {selectedId && !focusId && !highlightId && (
-                <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-secondary/60 text-muted-foreground border border-border/40">
+                <span className="font-mono text-meta px-1.5 py-0.5 rounded bg-secondary/60 text-muted-foreground border border-border/40">
                   seleção: {selectedId.slice(0, 8)}…
                 </span>
               )}
@@ -397,7 +397,7 @@ export default function AgentVersioningPage() {
             type="button"
             size="sm"
             variant="ghost"
-            className="h-7 px-2 text-[11px] gap-1 text-muted-foreground hover:text-foreground shrink-0"
+            className="h-7 px-2 text-meta gap-1 text-muted-foreground hover:text-foreground shrink-0"
             onClick={() => {
               // Remove todos os params de "contexto restaurado" e o highlight
               // visual. Mantém preset/range/types/mode pois esses são filtros
@@ -427,8 +427,8 @@ export default function AgentVersioningPage() {
       {versions.length === 0 ? (
         <div className="nexus-card flex flex-col items-center justify-center py-16 text-center">
           <GitBranch className="h-10 w-10 text-muted-foreground/30 mb-3" aria-hidden />
-          <h3 className="text-sm font-semibold text-foreground mb-1">Nenhuma versão registrada</h3>
-          <p className="text-xs text-muted-foreground mb-4">Crie a primeira versão para começar o histórico.</p>
+          <h3 className="text-body-sm font-semibold text-foreground mb-1">Nenhuma versão registrada</h3>
+          <p className="text-meta text-muted-foreground mb-4">Crie a primeira versão para começar o histórico.</p>
         </div>
       ) : (
         <div className="grid lg:grid-cols-3 gap-6">
@@ -447,7 +447,7 @@ export default function AgentVersioningPage() {
               counts={typeCounts}
             />
             <div className="flex items-center gap-1.5 mb-2 flex-wrap">
-              <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+              <span className="text-meta uppercase tracking-wider text-muted-foreground font-semibold">
                 Intervalo
               </span>
               <TimelineRangeFilter range={range} onChange={setRange} versions={versions} />
@@ -459,7 +459,7 @@ export default function AgentVersioningPage() {
                   type="button"
                   size="sm"
                   variant="ghost"
-                  className="h-6 px-2 text-[10px] text-muted-foreground hover:text-foreground"
+                  className="h-6 px-2 text-meta text-muted-foreground hover:text-foreground"
                   onClick={() => setRange({
                     mode: 'version',
                     vMin: Math.min(versionA.version, versionB.version),
@@ -507,7 +507,7 @@ export default function AgentVersioningPage() {
               />
             )}
             {(activePreset.id !== 'all' || range.mode !== 'off' || activeTypes.size > 0) && filteredVersions.length > 0 && filteredVersions.length < versions.length && (
-              <p className="text-[10px] text-muted-foreground mt-2 px-1">
+              <p className="text-meta text-muted-foreground mt-2 px-1">
                 Mostrando {filteredVersions.length} de {versions.length} versões
                 {activePreset.id !== 'all' && <> · preset "{activePreset.label}"</>}
                 {range.mode !== 'off' && <> · intervalo ativo</>}
@@ -544,14 +544,14 @@ export default function AgentVersioningPage() {
             <div className="flex items-center gap-1.5 p-1 bg-secondary/40 rounded-lg w-fit">
               <Button
                 size="sm" variant={mode === 'detail' ? 'default' : 'ghost'}
-                className="h-7 text-xs gap-1.5"
+                className="h-7 text-meta gap-1.5"
                 onClick={() => setMode('detail')}
               >
                 <Eye className="h-3 w-3" /> Detalhe {selected ? `v${selected.version}` : ''}
               </Button>
               <Button
                 size="sm" variant={mode === 'compare' ? 'default' : 'ghost'}
-                className="h-7 text-xs gap-1.5"
+                className="h-7 text-meta gap-1.5"
                 disabled={!canCompare}
                 onClick={() => setMode('compare')}
                 title={!canCompare ? 'Selecione duas versões diferentes (A e B) na timeline' : undefined}
@@ -580,7 +580,7 @@ export default function AgentVersioningPage() {
             {mode === 'compare' && !canCompare && (
               <div className="nexus-card text-center py-10">
                 <GitCompare className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" aria-hidden />
-                <p className="text-xs text-muted-foreground">
+                <p className="text-meta text-muted-foreground">
                   Selecione duas versões diferentes (botões A e B na timeline) para comparar.
                 </p>
               </div>

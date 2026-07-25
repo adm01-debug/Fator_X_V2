@@ -30,6 +30,7 @@ import {
 import { logger } from '@/lib/logger';
 import { formatDistanceToNow, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 const INCIDENT_TYPES: IRIncidentType[] = ['data_breach','ddos','ransomware','account_takeover','insider_threat','service_outage','supply_chain','other'];
 const SEVERITIES: IRSeverity[] = ['low','medium','high','critical'];
@@ -186,7 +187,7 @@ export default function IRPlaybooksPage() {
           <h1 className="text-3xl font-heading font-bold bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
             Playbooks de IR
           </h1>
-          <p className="text-muted-foreground text-sm mt-1">
+          <p className="text-muted-foreground text-body-sm mt-1">
             Procedimentos formais por tipo de incidente — NIST SP 800-61, SOC2 CC7.4, ISO 27035
           </p>
         </div>
@@ -215,7 +216,7 @@ export default function IRPlaybooksPage() {
                 </div>
               </div>
               <div><Label>Descrição</Label><Textarea rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
-              <p className="text-xs text-muted-foreground">Após criar, abra o playbook e adicione steps por fase NIST (Detect/Contain/Eradicate/Recover/Postmortem).</p>
+              <p className="text-meta text-muted-foreground">Após criar, abra o playbook e adicione steps por fase NIST (Detect/Contain/Eradicate/Recover/Postmortem).</p>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancelar</Button>
@@ -255,23 +256,23 @@ export default function IRPlaybooksPage() {
                         <h3 className="font-semibold">{pb.name}</h3>
                         <Badge variant="outline">{INCIDENT_TYPE_LABELS[pb.incident_type]}</Badge>
                         <Badge variant={severityVariant(pb.severity_default)}>{SEVERITY_LABELS[pb.severity_default]}</Badge>
-                        <Badge variant={pb.status === 'active' ? 'default' : pb.status === 'archived' ? 'secondary' : 'outline'} className="text-[10px]">
+                        <Badge variant={pb.status === 'active' ? 'default' : pb.status === 'archived' ? 'secondary' : 'outline'} className="text-meta">
                           {pb.status} v{pb.version}
                         </Badge>
                         {overdue && (
-                          <Badge variant="destructive" className="text-[10px] animate-pulse">
+                          <Badge variant="destructive" className="text-meta animate-pulse">
                             Review vencido
                           </Badge>
                         )}
                       </div>
-                      {pb.description && <p className="text-sm text-muted-foreground line-clamp-2">{pb.description}</p>}
-                      <p className="text-xs text-muted-foreground mt-1">
+                      {pb.description && <p className="text-body-sm text-muted-foreground line-clamp-2">{pb.description}</p>}
+                      <p className="text-meta text-muted-foreground mt-1">
                         {pb.next_review_due
                           ? `Próx. revisão: ${format(new Date(pb.next_review_due), 'dd/MM/yyyy', { locale: ptBR })}`
                           : 'Sem revisão registrada'}
                       </p>
                     </div>
-                    <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                    <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                       {pb.status === 'draft' && (
                         <Button size="sm" variant="outline" onClick={() => handleActivate(pb.id)}><Play className="h-3 w-3 mr-1" />Ativar</Button>
                       )}
@@ -301,12 +302,12 @@ export default function IRPlaybooksPage() {
                   <div className="flex items-center justify-between gap-4 flex-wrap">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-medium text-sm">{pb?.name ?? 'Playbook removido'}</span>
+                        <span className="font-medium text-body-sm">{pb?.name ?? 'Playbook removido'}</span>
                         <Badge variant={outcomeVariant(t.outcome)}>{OUTCOME_LABELS[t.outcome]}</Badge>
-                        {t.mttr_actual_minutes != null && <Badge variant="outline" className="text-[10px]">MTTR {t.mttr_actual_minutes}min</Badge>}
-                        {t.gaps.length > 0 && <Badge variant="secondary" className="text-[10px]">{t.gaps.length} gaps</Badge>}
+                        {t.mttr_actual_minutes != null && <Badge variant="outline" className="text-meta">MTTR {t.mttr_actual_minutes}min</Badge>}
+                        {t.gaps.length > 0 && <Badge variant="secondary" className="text-meta">{t.gaps.length} gaps</Badge>}
                       </div>
-                      <p className="text-xs text-muted-foreground mt-1">
+                      <p className="text-meta text-muted-foreground mt-1">
                         {t.scenario} · {formatDistanceToNow(new Date(t.executed_at ?? t.scheduled_for), { addSuffix: true, locale: ptBR })}
                       </p>
                     </div>
@@ -370,9 +371,9 @@ export default function IRPlaybooksPage() {
                   </div>
                   {PHASES.map(phase => (
                     <div key={phase}>
-                      <h4 className="text-sm font-semibold mb-2 text-muted-foreground">{PHASE_LABELS[phase]}</h4>
+                      <h4 className="text-body-sm font-semibold mb-2 text-muted-foreground">{PHASE_LABELS[phase]}</h4>
                       {playbooksByPhase[phase].length === 0 ? (
-                        <p className="text-xs text-muted-foreground italic pl-2">— nenhum step</p>
+                        <p className="text-meta text-muted-foreground italic pl-2">— nenhum step</p>
                       ) : (
                         <div className="space-y-2">
                           {playbooksByPhase[phase].map(s => (
@@ -380,12 +381,12 @@ export default function IRPlaybooksPage() {
                               <CardContent className="py-3">
                                 <div className="flex items-start justify-between gap-2">
                                   <div className="flex-1 min-w-0">
-                                    <p className="font-medium text-sm">{s.title}</p>
-                                    {s.instructions && <p className="text-xs text-muted-foreground mt-1 whitespace-pre-wrap">{s.instructions}</p>}
+                                    <p className="font-medium text-body-sm">{s.title}</p>
+                                    {s.instructions && <p className="text-meta text-muted-foreground mt-1 whitespace-pre-wrap">{s.instructions}</p>}
                                     <div className="flex items-center gap-1 mt-2 flex-wrap">
-                                      {s.expected_duration_minutes != null && <Badge variant="outline" className="text-[10px]">{s.expected_duration_minutes}min</Badge>}
-                                      {s.responsible_role && <Badge variant="secondary" className="text-[10px]">{s.responsible_role}</Badge>}
-                                      {s.automation_hint && <Badge variant="outline" className="text-[10px]">⚙ {s.automation_hint}</Badge>}
+                                      {s.expected_duration_minutes != null && <Badge variant="outline" className="text-meta">{s.expected_duration_minutes}min</Badge>}
+                                      {s.responsible_role && <Badge variant="secondary" className="text-meta">{s.responsible_role}</Badge>}
+                                      {s.automation_hint && <Badge variant="outline" className="text-meta">⚙ {s.automation_hint}</Badge>}
                                     </div>
                                   </div>
                                   <Button size="icon" variant="ghost" onClick={() => handleDeleteStep(s.id)}><Trash2 className="h-3 w-3" /></Button>
@@ -402,31 +403,31 @@ export default function IRPlaybooksPage() {
                 <TabsContent value="exercises" className="space-y-2 mt-4">
                   <Button size="sm" onClick={() => setTabletopDialog(drillPlaybook)}><Plus className="h-3 w-3 mr-1" />Registrar exercício</Button>
                   {drillTabletops.length === 0 ? (
-                    <p className="text-sm text-muted-foreground py-6 text-center">Nenhum exercício para este playbook.</p>
+                    <p className="text-body-sm text-muted-foreground py-6 text-center">Nenhum exercício para este playbook.</p>
                   ) : drillTabletops.map(t => (
                     <Card key={t.id}>
                       <CardContent className="py-3">
                         <div className="flex items-center gap-2 mb-1 flex-wrap">
                           <Badge variant={outcomeVariant(t.outcome)}>{OUTCOME_LABELS[t.outcome]}</Badge>
-                          {t.mttr_actual_minutes != null && <Badge variant="outline" className="text-[10px]">MTTR {t.mttr_actual_minutes}min</Badge>}
-                          <span className="text-xs text-muted-foreground">{format(new Date(t.executed_at ?? t.scheduled_for), 'dd/MM/yyyy', { locale: ptBR })}</span>
+                          {t.mttr_actual_minutes != null && <Badge variant="outline" className="text-meta">MTTR {t.mttr_actual_minutes}min</Badge>}
+                          <span className="text-meta text-muted-foreground">{format(new Date(t.executed_at ?? t.scheduled_for), 'dd/MM/yyyy', { locale: ptBR })}</span>
                         </div>
-                        <p className="text-sm">{t.scenario}</p>
+                        <p className="text-body-sm">{t.scenario}</p>
                         {t.gaps.length > 0 && (
                           <div className="mt-2">
-                            <p className="text-xs font-semibold text-destructive mb-1">Gaps:</p>
-                            <ul className="text-xs text-muted-foreground list-disc list-inside">
+                            <p className="text-meta font-semibold text-destructive mb-1">Gaps:</p>
+                            <ul className="text-meta text-muted-foreground list-disc list-inside">
                               {t.gaps.map((g, i) => <li key={i}>{g}</li>)}
                             </ul>
                           </div>
                         )}
-                        {t.action_items && <p className="text-xs text-muted-foreground mt-2"><b>Ações:</b> {t.action_items}</p>}
+                        {t.action_items && <p className="text-meta text-muted-foreground mt-2"><b>Ações:</b> {t.action_items}</p>}
                       </CardContent>
                     </Card>
                   ))}
                 </TabsContent>
 
-                <TabsContent value="details" className="space-y-2 mt-4 text-sm">
+                <TabsContent value="details" className="space-y-2 mt-4 text-body-sm">
                   <p><b>Status:</b> {drillPlaybook.status} (v{drillPlaybook.version})</p>
                   <p><b>Tipo:</b> {INCIDENT_TYPE_LABELS[drillPlaybook.incident_type]}</p>
                   <p><b>Severidade padrão:</b> {SEVERITY_LABELS[drillPlaybook.severity_default]}</p>
@@ -446,7 +447,7 @@ export default function IRPlaybooksPage() {
           <DialogHeader><DialogTitle>Registrar exercício tabletop</DialogTitle></DialogHeader>
           {tabletopDialog && (
             <div className="space-y-3">
-              <p className="text-xs text-muted-foreground">Playbook: <b>{tabletopDialog.name}</b></p>
+              <p className="text-meta text-muted-foreground">Playbook: <b>{tabletopDialog.name}</b></p>
               <div className="grid grid-cols-2 gap-3">
                 <div><Label>Agendado para</Label><Input type="datetime-local" value={tabletopForm.scheduled_for} onChange={(e) => setTabletopForm({ ...tabletopForm, scheduled_for: e.target.value })} /></div>
                 <div><Label>Executado em</Label><Input type="datetime-local" value={tabletopForm.executed_at} onChange={(e) => setTabletopForm({ ...tabletopForm, executed_at: e.target.value })} /></div>
@@ -482,7 +483,7 @@ function StatCard({ icon: Icon, label, value, pulse }: { icon: React.ComponentTy
   return (
     <Card className={pulse ? 'border-destructive/40' : ''}>
       <CardHeader className="pb-2">
-        <CardTitle className="text-xs text-muted-foreground font-medium flex items-center gap-2">
+        <CardTitle className="text-meta text-muted-foreground font-medium flex items-center gap-2">
           <Icon className={`h-3.5 w-3.5 ${pulse ? 'text-destructive animate-pulse' : ''}`} />
           {label}
         </CardTitle>

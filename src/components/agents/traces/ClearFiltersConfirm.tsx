@@ -69,9 +69,9 @@ export function ClearFiltersConfirm({ trigger, activeFilters, onConfirm }: Props
                 na sua conta também serão removidas:
               </p>
               {activeFilters.length === 0 ? (
-                <p className="text-xs italic">Nenhum filtro ativo no momento.</p>
+                <p className="text-meta italic">Nenhum filtro ativo no momento.</p>
               ) : (
-                <ul className="text-xs space-y-1 bg-muted/40 rounded-md p-2.5 max-h-40 overflow-y-auto">
+                <ul className="text-meta space-y-1 bg-muted/40 rounded-md p-2.5 max-h-40 overflow-y-auto">
                   {activeFilters.map((f) => (
                     <li key={f.label}>
                       <span className="font-medium">{f.label}:</span>{' '}
@@ -80,7 +80,8 @@ export function ClearFiltersConfirm({ trigger, activeFilters, onConfirm }: Props
                   ))}
                 </ul>
               )}
-              <label className="flex items-center gap-2 text-xs cursor-pointer">
+              {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+              <label className="flex items-center gap-2 text-meta cursor-pointer">
                 <Checkbox checked={skip} onCheckedChange={(v) => setSkip(v === true)} />
                 <span>Não perguntar novamente nesta sessão</span>
               </label>

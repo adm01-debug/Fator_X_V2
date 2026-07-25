@@ -288,7 +288,7 @@ describe('C. Funções Puras — Cost Calculator', () => {
     expect(getBudget().maxCostPerDayUsd).toBe(50);
   });
   it('tokens negativos rejeitados', () => {
-    expect(() => calculateCost('anthropic', 'claude-sonnet-4-6', -1, 0)).toThrow();
+    return expect(calculateCost('anthropic', 'claude-sonnet-4-6', -1, 0)).rejects.toThrow();
   });
 });
 

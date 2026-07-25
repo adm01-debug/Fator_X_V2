@@ -36,7 +36,7 @@ export function ChaosBanner() {
   if (activeCount === 0) return null;
 
   return (
-    <div className="sticky top-0 z-50 border-b border-nexus-amber/40 bg-nexus-amber/15 backdrop-blur-md px-4 py-2 text-sm flex items-center justify-center gap-2 text-nexus-amber">
+    <div className="sticky top-0 z-50 border-b border-nexus-amber/40 bg-nexus-amber/15 backdrop-blur-md px-4 py-2 text-body-sm flex items-center justify-center gap-2 text-nexus-amber">
       <AlertTriangle className="h-4 w-4" aria-hidden="true" />
       <span className="font-medium">
         {activeCount} experimento{activeCount > 1 ? 's' : ''} de Chaos Engineering ativo{activeCount > 1 ? 's' : ''}

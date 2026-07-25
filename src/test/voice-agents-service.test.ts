@@ -7,12 +7,13 @@ const invokeMock = vi.fn();
 const fromMock = vi.fn();
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
-    functions: { invoke: (...args: unknown[]) => invokeMock(...args) },
-    from: (...args: unknown[]) => fromMock(...args),
+    functions: { invoke: (...args: DbRow[]) => invokeMock(...args) },
+    from: (...args: DbRow[]) => fromMock(...args),
   },
 }));
 
 import * as svc from '@/services/voiceAgentService';
+import type { DbRow } from '@/types/dbRow';
 
 beforeEach(() => {
   invokeMock.mockReset();

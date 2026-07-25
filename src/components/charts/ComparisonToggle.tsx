@@ -10,9 +10,9 @@ export function ComparisonToggle({ enabled, onToggle, label = 'Comparar período
   return (
     <button
       onClick={() => onToggle(!enabled)}
-      className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all border cursor-pointer ${
+      className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-meta font-medium transition-all border cursor-pointer ${
         enabled
-          ? 'bg-primary/10 border-primary/30 text-primary shadow-sm shadow-primary/10'
+          ? 'bg-primary/10 border-primary/30 text-primary shadow-nexus-sm shadow-primary/10'
           : 'bg-secondary/50 border-border/50 text-muted-foreground hover:text-foreground hover:border-primary/30 hover:bg-primary/5'
       }`}
       aria-pressed={enabled}

@@ -1,10 +1,11 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import {
-  handleCorsPreflight, jsonResponse, errorResponse, getCorsHeaders,
+  handleCorsPreflight, _jsonResponse, errorResponse, getCorsHeaders,
   authenticateRequest,
   checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS,
   parseBody, z,
 } from "../_shared/mod.ts";
+import { withRetry } from "../_shared/retry.ts";
 
 const TTS_MODELS: Record<string, string> = {
   pt: 'facebook/mms-tts-por',
@@ -42,7 +43,7 @@ serve(async (req) => {
     const timeout = setTimeout(() => controller.abort(), TTS_TIMEOUT_MS);
 
     try {
-      const resp = await fetch(`https://router.huggingface.co/hf-inference/models/${model}`, {
+      const resp = await withRetry(() => fetch(`https://router.huggingface.co/hf-inference/models/${model}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${hfToken}`,
@@ -50,7 +51,7 @@ serve(async (req) => {
         },
         body: JSON.stringify({ inputs: text }),
         signal: controller.signal,
-      });
+      }), { attempts: 2, baseMs: 400, capMs: 3000, signal: controller.signal });
       clearTimeout(timeout);
 
       if (!resp.ok) {

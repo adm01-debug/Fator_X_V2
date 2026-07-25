@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getUnresolvedAlerts, subscribeToAlerts } from '@/services/dashboardService';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 export function DashboardAlerts() {
   const navigate = useNavigate();
@@ -25,11 +26,11 @@ export function DashboardAlerts() {
     <div className="nexus-card border-destructive/20 bg-destructive/5 relative overflow-hidden group">
       <div className="absolute top-0 right-0 w-24 h-24 bg-destructive/[0.03] rounded-full blur-xl -translate-y-1/2 translate-x-1/2" />
       <div className="flex items-center justify-between mb-3 relative">
-        <h3 className="text-sm font-heading font-semibold text-foreground flex items-center gap-2">
+        <h3 className="text-title-sm text-foreground flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-destructive animate-ping" />
           Alertas Críticos ({alerts.length})
         </h3>
-        <button onClick={() => navigate('/monitoring')} className="text-[11px] font-semibold text-primary hover:text-primary/80 transition-colors bg-primary/10 px-2 py-0.5 rounded">Ver todos</button>
+        <button onClick={() => navigate('/monitoring')} className="text-meta font-semibold text-primary hover:text-primary/80 transition-colors bg-primary/10 px-2 py-0.5 rounded">Ver todos</button>
       </div>
       <div className="space-y-2 relative">
         {alerts.map((a) => (

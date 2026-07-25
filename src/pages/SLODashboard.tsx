@@ -235,18 +235,18 @@ function MetricCard({
   return (
     <Card className="relative overflow-hidden">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
+        <CardTitle className="text-body-sm font-medium text-muted-foreground">{title}</CardTitle>
         <Icon className={`h-4 w-4 ${statusColor[status]}`} />
       </CardHeader>
       <CardContent>
         <div className={`text-2xl font-bold ${statusColor[status]}`}>{value}</div>
         <div className="flex items-center justify-between mt-2">
-          <p className="text-xs text-muted-foreground">Alvo: {target}</p>
+          <p className="text-meta text-muted-foreground">Alvo: {target}</p>
           <StatusBadge status={status} />
         </div>
         {showDelta && delta && (
           <div
-            className="mt-2 pt-2 border-t border-border/40 flex items-center justify-between text-[11px]"
+            className="mt-2 pt-2 border-t border-border/40 flex items-center justify-between text-meta"
             title={`Comparado com ${compareLabel ?? 'janela anterior'}`}
           >
             <span className="text-muted-foreground font-mono">
@@ -741,7 +741,7 @@ export default function SLODashboard() {
             SLO Dashboard
             {sanitizeWindowName(windowName) && (
               <span
-                className="ml-3 align-middle text-base font-semibold text-primary bg-primary/10 border border-primary/20 px-2.5 py-0.5 rounded-md"
+                className="ml-3 align-middle text-title-sm font-semibold text-primary bg-primary/10 border border-primary/20 px-2.5 py-0.5 rounded-md"
                 title="Nome desta janela de avaliação"
               >
                 {sanitizeWindowName(windowName)}
@@ -757,7 +757,7 @@ export default function SLODashboard() {
             const sel = summary?.top_agents.find((a) => a.agent_id === selectedAgentId);
             const label = sel?.agent_name ?? `agente ${selectedAgentId.slice(0, 8)}…`;
             return (
-              <div className="mt-2 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 pl-3 pr-1 py-0.5 text-xs">
+              <div className="mt-2 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 pl-3 pr-1 py-0.5 text-meta">
                 <span className="text-muted-foreground">Escopo:</span>
                 <span className="font-medium text-foreground">{label}</span>
                 <button
@@ -780,7 +780,7 @@ export default function SLODashboard() {
           <span
             role="status"
             aria-live="polite"
-            className={`inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary transition-opacity duration-200 ${
+            className={`inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-meta font-medium text-primary transition-opacity duration-200 ${
               recomputing ? 'opacity-100' : 'opacity-0 pointer-events-none'
             }`}
           >
@@ -793,7 +793,7 @@ export default function SLODashboard() {
           {/* Last-updated indicator + live pulse when auto-refresh is on */}
           {lastRefreshAt && (
             <span
-              className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-mono text-muted-foreground"
+              className="hidden sm:inline-flex items-center gap-1.5 text-meta font-mono text-muted-foreground"
               title={`Última atualização: ${lastRefreshAt.toLocaleString('pt-BR')}`}
             >
               {autoRefreshMs > 0 && (
@@ -816,7 +816,7 @@ export default function SLODashboard() {
           <select
             value={autoRefreshMs}
             onChange={(e) => handleAutoRefreshChange(Number(e.target.value))}
-            className="rounded-md border border-input bg-background px-3 py-1.5 text-sm focus-ring"
+            className="rounded-md border border-input bg-background px-3 py-1.5 text-body-sm focus-ring"
             aria-label="Intervalo de auto-atualização"
             title="Atualiza SLOs e timeline automaticamente"
           >
@@ -830,7 +830,7 @@ export default function SLODashboard() {
             value={windowHours}
             onChange={(e) => { setWindowHours(Number(e.target.value)); lockFiltersBriefly(); }}
             disabled={filtersLocked}
-            className="rounded-md border border-input bg-background px-3 py-1.5 text-sm focus-ring disabled:opacity-60 disabled:cursor-not-allowed"
+            className="rounded-md border border-input bg-background px-3 py-1.5 text-body-sm focus-ring disabled:opacity-60 disabled:cursor-not-allowed"
             aria-label="Janela de tempo"
             aria-busy={filtersLocked}
             title={filtersLocked ? 'Aguarde — aplicando última troca…' : undefined}
@@ -844,7 +844,7 @@ export default function SLODashboard() {
             value={compareHours}
             onChange={(e) => { setCompareHours(Number(e.target.value)); lockFiltersBriefly(); }}
             disabled={filtersLocked}
-            className="rounded-md border border-input bg-background px-3 py-1.5 text-sm focus-ring disabled:opacity-60 disabled:cursor-not-allowed"
+            className="rounded-md border border-input bg-background px-3 py-1.5 text-body-sm focus-ring disabled:opacity-60 disabled:cursor-not-allowed"
             aria-label="Janela de comparação"
             aria-busy={filtersLocked}
             title={filtersLocked ? 'Aguarde — aplicando última troca…' : 'Compara a janela atual com outra para ver tendências'}
@@ -865,7 +865,7 @@ export default function SLODashboard() {
             onBlur={(e) => setWindowName(sanitizeWindowName(e.target.value))}
             placeholder="Nome da janela (ex: Sprint 27)"
             maxLength={WINDOW_NAME_MAX_LEN}
-            className="rounded-md border border-input bg-background px-3 py-1.5 text-sm focus-ring w-44 md:w-56"
+            className="rounded-md border border-input bg-background px-3 py-1.5 text-body-sm focus-ring w-44 md:w-56"
             aria-label="Nome da janela de avaliação"
             title="Adicione um rótulo a esta visualização. Vai junto no link compartilhado."
           />
@@ -943,7 +943,7 @@ export default function SLODashboard() {
         <div
           role="alert"
           aria-live="polite"
-          className="flex items-start gap-3 rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm"
+          className="flex items-start gap-3 rounded-md border border-destructive/40 bg-destructive/10 p-3 text-body-sm"
         >
           <AlertTriangle className="h-4 w-4 mt-0.5 text-destructive shrink-0" aria-hidden />
           <div className="flex-1 min-w-0">
@@ -952,18 +952,18 @@ export default function SLODashboard() {
                 Falha ao carregar métricas SLO
               </span>
               {errorAgg.count > 1 && (
-                <span className="rounded-full border border-destructive/40 bg-destructive/15 px-1.5 py-0.5 text-[10px] font-mono text-destructive">
+                <span className="rounded-full border border-destructive/40 bg-destructive/15 px-1.5 py-0.5 text-meta font-mono text-destructive">
                   {errorAgg.count} falhas agregadas
                 </span>
               )}
               <span
-                className="text-[11px] font-mono text-muted-foreground"
+                className="text-meta font-mono text-muted-foreground"
                 title={errorAgg.lastAt.toLocaleString('pt-BR')}
               >
                 · última às {errorAgg.lastAt.toLocaleTimeString('pt-BR')}
               </span>
             </div>
-            <p className="mt-1 text-xs text-muted-foreground break-words">
+            <p className="mt-1 text-meta text-muted-foreground break-words">
               {errorAgg.lastMessage}
             </p>
           </div>
@@ -976,7 +976,7 @@ export default function SLODashboard() {
               aria-label="Tentar novamente"
             >
               <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? 'animate-spin' : ''}`} />
-              <span className="ml-1.5 text-xs">Tentar novamente</span>
+              <span className="ml-1.5 text-meta">Tentar novamente</span>
             </Button>
             <button
               type="button"
@@ -999,8 +999,8 @@ export default function SLODashboard() {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-16 text-center">
             <Activity className="h-12 w-12 text-muted-foreground/40 mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Sem dados ainda</h3>
-            <p className="text-sm text-muted-foreground max-w-md">
+            <h3 className="text-title-sm font-semibold mb-2">Sem dados ainda</h3>
+            <p className="text-body-sm text-muted-foreground max-w-md">
               Execute um agente ou workflow para gerar traces — as métricas de SLO aparecerão aqui em tempo real.
             </p>
             <Button className="mt-4" onClick={() => { window.location.href = '/agents'; }}>
@@ -1287,22 +1287,22 @@ export default function SLODashboard() {
                         </PopoverTrigger>
                         <PopoverContent
                           align="end"
-                          className="w-80 text-xs leading-relaxed space-y-3"
+                          className="w-80 text-meta leading-relaxed space-y-3"
                         >
                           <div className="space-y-1">
-                            <p className="text-sm font-semibold text-foreground">
+                            <p className="text-body-sm font-semibold text-foreground">
                               O que conta como tool failure?
                             </p>
                             <p className="text-muted-foreground">
                               Traces de erro originados em <span className="font-medium text-foreground">chamadas de ferramenta</span>{' '}
-                              (eventos com prefixo <code className="px-1 py-0.5 rounded bg-muted text-foreground/90 font-mono text-[10px]">tool.*</code>{' '}
-                              ou <code className="px-1 py-0.5 rounded bg-muted text-foreground/90 font-mono text-[10px]">metadata.tool</code> presente).
+                              (eventos com prefixo <code className="px-1 py-0.5 rounded bg-muted text-foreground/90 font-mono text-meta">tool.*</code>{' '}
+                              ou <code className="px-1 py-0.5 rounded bg-muted text-foreground/90 font-mono text-meta">metadata.tool</code> presente).
                               São falhas de integração externa — não erros do agente em si.
                             </p>
                           </div>
 
                           <div className="space-y-1.5 pt-2 border-t border-border/40">
-                            <p className="text-sm font-semibold text-foreground">
+                            <p className="text-body-sm font-semibold text-foreground">
                               Como o toggle muda os percentis
                             </p>
                             <ul className="space-y-1 text-muted-foreground">
@@ -1318,15 +1318,15 @@ export default function SLODashboard() {
                                 <span>
                                   <span className="font-medium text-foreground">Sem tool failures</span>:
                                   os percentis são recalculados a partir dos campos{' '}
-                                  <code className="px-1 py-0.5 rounded bg-muted font-mono text-[10px]">*_no_tools</code> da RPC,
-                                  e o ranking usa <code className="px-1 py-0.5 rounded bg-muted font-mono text-[10px]">non_tool_errors</code>.
+                                  <code className="px-1 py-0.5 rounded bg-muted font-mono text-meta">*_no_tools</code> da RPC,
+                                  e o ranking usa <code className="px-1 py-0.5 rounded bg-muted font-mono text-meta">non_tool_errors</code>.
                                   Útil para isolar regressões do próprio agente.
                                 </span>
                               </li>
                             </ul>
                           </div>
 
-                          <p className="text-[10px] text-muted-foreground/80 pt-2 border-t border-border/40">
+                          <p className="text-meta text-muted-foreground/80 pt-2 border-t border-border/40">
                             A escolha é persistida na URL (<code className="font-mono">?tools=0</code>) — links compartilhados preservam a visão.
                           </p>
                         </PopoverContent>
@@ -1345,7 +1345,7 @@ export default function SLODashboard() {
                             return next;
                           });
                         }}
-                        className={`flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium transition-colors focus-ring ${
+                        className={`flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-meta font-medium transition-colors focus-ring ${
                           includeToolFailures
                             ? 'border-primary/40 bg-primary/10 text-primary hover:bg-primary/15'
                             : 'border-border/50 bg-background text-muted-foreground hover:bg-secondary/50'
@@ -1374,7 +1374,7 @@ export default function SLODashboard() {
                             return next;
                           });
                         }}
-                        className={`flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium transition-colors focus-ring ${
+                        className={`flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-meta font-medium transition-colors focus-ring ${
                           compareToolModes
                             ? 'border-primary/40 bg-primary/10 text-primary hover:bg-primary/15'
                             : 'border-border/50 bg-background text-muted-foreground hover:bg-secondary/50'
@@ -1408,7 +1408,7 @@ export default function SLODashboard() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {compareToolModes && sectionsCompare && (
-                    <div className="flex flex-wrap items-center gap-2 rounded-md border border-primary/20 bg-primary/5 px-3 py-2 text-[11px]">
+                    <div className="flex flex-wrap items-center gap-2 rounded-md border border-primary/20 bg-primary/5 px-3 py-2 text-meta">
                       <Columns2 className="h-3.5 w-3.5 text-primary" />
                       <span className="text-foreground font-medium">Modo de comparação ativo:</span>
                       <span className="text-muted-foreground">
@@ -1434,12 +1434,12 @@ export default function SLODashboard() {
                           className="flex items-start gap-2 p-2 rounded-md border border-border/40 bg-secondary/20 hover:bg-secondary/50 hover:border-primary/40 transition-colors group focus-ring"
                           title={`Abrir traces: ${row.label}`}
                         >
-                          <span className="text-[10px] font-bold text-muted-foreground tabular-nums w-4 mt-0.5">
+                          <span className="text-meta font-bold text-muted-foreground tabular-nums w-4 mt-0.5">
                             #{idx + 1}
                           </span>
                           <span className="flex-1 min-w-0">
                             <span className="flex items-center gap-1.5">
-                              <span className="block text-xs font-medium text-foreground truncate group-hover:text-primary">
+                              <span className="block text-meta font-medium text-foreground truncate group-hover:text-primary">
                                 {row.label}
                               </span>
                               {diff?.isNew && (
@@ -1449,7 +1449,7 @@ export default function SLODashboard() {
                               )}
                               {diff && !diff.isNew && diff.rankDelta !== null && diff.rankDelta !== 0 && (
                                 <span
-                                  className={`text-[10px] font-mono shrink-0 ${
+                                  className={`text-meta font-mono shrink-0 ${
                                     diff.rankDelta < 0 ? 'text-destructive' : 'text-nexus-emerald'
                                   }`}
                                   title={diff.rankDelta < 0
@@ -1460,10 +1460,10 @@ export default function SLODashboard() {
                                 </span>
                               )}
                             </span>
-                            <span className="block text-[11px] text-muted-foreground truncate">
+                            <span className="block text-meta text-muted-foreground truncate">
                               {row.detail}
                             </span>
-                            <span className={`block text-[10px] font-mono font-semibold mt-0.5 ${
+                            <span className={`block text-meta font-mono font-semibold mt-0.5 ${
                               row.worse ? 'text-destructive' : 'text-nexus-emerald'
                             }`}>
                               {row.deltaLabel}
@@ -1500,13 +1500,13 @@ export default function SLODashboard() {
                           {sections.map((section) => (
                             <div key={section.title} className="space-y-2">
                               <div className="flex items-center justify-between">
-                                <h4 className="text-xs font-semibold uppercase text-muted-foreground tracking-wide">
+                                <h4 className="text-meta font-semibold uppercase text-muted-foreground tracking-wide">
                                   {section.title}
                                 </h4>
-                                <Badge variant="outline" className="text-[10px]">{section.kpi}</Badge>
+                                <Badge variant="outline" className="text-meta">{section.kpi}</Badge>
                               </div>
                               {section.rows.length === 0 ? (
-                                <p className="text-[11px] text-muted-foreground italic py-3">{section.empty}</p>
+                                <p className="text-meta text-muted-foreground italic py-3">{section.empty}</p>
                               ) : (
                                 <ul className="space-y-1.5">
                                   {section.rows.map((row, idx) => renderRow(row, idx))}
@@ -1532,18 +1532,18 @@ export default function SLODashboard() {
                           return (
                             <div key={section.title} className="space-y-2">
                               <div className="flex items-center justify-between">
-                                <h4 className="text-xs font-semibold uppercase text-muted-foreground tracking-wide">
+                                <h4 className="text-meta font-semibold uppercase text-muted-foreground tracking-wide">
                                   {section.title}
                                 </h4>
-                                <Badge variant="outline" className="text-[10px]">{section.kpi}</Badge>
+                                <Badge variant="outline" className="text-meta">{section.kpi}</Badge>
                               </div>
                               <div className="grid gap-3 md:grid-cols-2">
                                 <div className="space-y-1.5 rounded-md border border-primary/20 bg-primary/[0.03] p-2">
-                                  <p className="text-[10px] font-semibold uppercase tracking-wide text-primary/80">
+                                  <p className="text-meta font-semibold uppercase tracking-wide text-primary/80">
                                     {leftLabel}
                                   </p>
                                   {section.rows.length === 0 ? (
-                                    <p className="text-[11px] text-muted-foreground italic py-2">{section.empty}</p>
+                                    <p className="text-meta text-muted-foreground italic py-2">{section.empty}</p>
                                   ) : (
                                     <ul className="space-y-1.5">
                                       {section.rows.map((row, idx) => renderRow(row, idx, leftDiffs[idx]))}
@@ -1551,11 +1551,11 @@ export default function SLODashboard() {
                                   )}
                                 </div>
                                 <div className="space-y-1.5 rounded-md border border-border/50 bg-secondary/10 p-2">
-                                  <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                                  <p className="text-meta font-semibold uppercase tracking-wide text-muted-foreground">
                                     {rightLabel}
                                   </p>
                                   {compareSection.rows.length === 0 ? (
-                                    <p className="text-[11px] text-muted-foreground italic py-2">{compareSection.empty}</p>
+                                    <p className="text-meta text-muted-foreground italic py-2">{compareSection.empty}</p>
                                   ) : (
                                     <ul className="space-y-1.5">
                                       {compareSection.rows.map((row, idx) => renderRow(row, idx, rightDiffs[idx]))}
@@ -1602,34 +1602,34 @@ export default function SLODashboard() {
                 <CardContent className="space-y-4">
                   <div className="grid gap-3 md:grid-cols-4">
                     <div className="rounded-lg border border-border/40 p-3">
-                      <p className="text-[11px] uppercase text-muted-foreground tracking-wide">Traces analisados</p>
+                      <p className="text-meta uppercase text-muted-foreground tracking-wide">Traces analisados</p>
                       <p className="text-2xl font-bold tabular-nums mt-1">{summary.total_traces.toLocaleString('pt-BR')}</p>
-                      <p className="text-[11px] text-muted-foreground mt-0.5">
+                      <p className="text-meta text-muted-foreground mt-0.5">
                         ~{tracesPerHour.toFixed(tracesPerHour < 10 ? 1 : 0)}/h em média
                       </p>
                     </div>
                     <div className="rounded-lg border border-border/40 p-3">
-                      <p className="text-[11px] uppercase text-muted-foreground tracking-wide">Cobertura temporal</p>
+                      <p className="text-meta uppercase text-muted-foreground tracking-wide">Cobertura temporal</p>
                       <p className={`text-2xl font-bold tabular-nums mt-1 ${statusColor[coverageStatus]}`}>
                         {coveragePct.toFixed(1)}%
                       </p>
-                      <p className="text-[11px] text-muted-foreground mt-0.5">
+                      <p className="text-meta text-muted-foreground mt-0.5">
                         {bucketsWithData}/{expectedBuckets} janelas horárias com dados
                       </p>
                     </div>
                     <div className="rounded-lg border border-border/40 p-3">
-                      <p className="text-[11px] uppercase text-muted-foreground tracking-wide">Lacunas</p>
+                      <p className="text-meta uppercase text-muted-foreground tracking-wide">Lacunas</p>
                       <p className="text-2xl font-bold tabular-nums mt-1">{missingBuckets}</p>
-                      <p className="text-[11px] text-muted-foreground mt-0.5">
+                      <p className="text-meta text-muted-foreground mt-0.5">
                         {missingBuckets === 0 ? 'sem horas vazias' : `hora${missingBuckets > 1 ? 's' : ''} sem traces`}
                       </p>
                     </div>
                     <div className="rounded-lg border border-border/40 p-3">
-                      <p className="text-[11px] uppercase text-muted-foreground tracking-wide">Confiança</p>
+                      <p className="text-meta uppercase text-muted-foreground tracking-wide">Confiança</p>
                       <p className={`text-2xl font-bold mt-1 ${statusColor[coverageStatus]}`}>
                         {coverageStatus === 'healthy' ? 'Alta' : coverageStatus === 'warning' ? 'Média' : 'Baixa'}
                       </p>
-                      <p className="text-[11px] text-muted-foreground mt-0.5">
+                      <p className="text-meta text-muted-foreground mt-0.5">
                         baseada na cobertura
                       </p>
                     </div>
@@ -1637,7 +1637,7 @@ export default function SLODashboard() {
 
                   {/* Visual bar — proportion of buckets with data. */}
                   <div>
-                    <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-1">
+                    <div className="flex items-center justify-between text-meta text-muted-foreground mb-1">
                       <span>Janela de {windowLabel(windowHours)}</span>
                       <span className="font-mono tabular-nums">
                         {bucketsWithData} de {expectedBuckets} buckets
@@ -1659,7 +1659,7 @@ export default function SLODashboard() {
                   </div>
 
                   {missingBuckets > 0 && (
-                    <div className="flex items-start gap-2 text-[11px] p-2.5 rounded-md bg-nexus-amber/10 border border-nexus-amber/20 text-nexus-amber">
+                    <div className="flex items-start gap-2 text-meta p-2.5 rounded-md bg-nexus-amber/10 border border-nexus-amber/20 text-nexus-amber">
                       <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
                       <span>
                         {missingBuckets} {missingBuckets > 1 ? 'horas não tiveram traces' : 'hora não teve traces'} no período.
@@ -1686,8 +1686,8 @@ export default function SLODashboard() {
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead className="text-xs uppercase text-muted-foreground border-b">
+                  <table className="w-full text-body-sm">
+                    <thead className="text-meta uppercase text-muted-foreground border-b">
                       <tr>
                         <th className="text-left py-2 font-semibold">Métrica</th>
                         <th className="text-right py-2 font-semibold">{windowLabel(windowHours)} (atual)</th>
@@ -1751,8 +1751,8 @@ export default function SLODashboard() {
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead className="text-xs uppercase text-muted-foreground border-b">
+                  <table className="w-full text-body-sm">
+                    <thead className="text-meta uppercase text-muted-foreground border-b">
                       <tr>
                         <th className="text-left py-2 font-semibold">Tipo</th>
                         <th className="text-right py-2 font-semibold">{windowLabel(windowHours)} (atual)</th>
@@ -1781,13 +1781,13 @@ export default function SLODashboard() {
                             </td>
                             <td className="text-right tabular-nums font-semibold">
                               {curr.toLocaleString('pt-BR')}
-                              <span className="ml-1 text-xs font-normal text-muted-foreground">
+                              <span className="ml-1 text-meta font-normal text-muted-foreground">
                                 ({currPct.toFixed(1)}%)
                               </span>
                             </td>
                             <td className="text-right tabular-nums text-muted-foreground">
                               {prev.toLocaleString('pt-BR')}
-                              <span className="ml-1 text-xs">({prevPct.toFixed(1)}%)</span>
+                              <span className="ml-1 text-meta">({prevPct.toFixed(1)}%)</span>
                             </td>
                             <td className={`text-right tabular-nums font-mono font-semibold ${d.className}`}>
                               {d.arrow} {Math.abs(d.pct).toFixed(1)}%
@@ -1796,7 +1796,7 @@ export default function SLODashboard() {
                         );
                       })}
                     </tbody>
-                    <tfoot className="text-xs text-muted-foreground border-t">
+                    <tfoot className="text-meta text-muted-foreground border-t">
                       <tr>
                         <td className="pt-2" colSpan={4}>
                           Base: {totalBucketsCurrent} buckets na janela atual ·{' '}
@@ -1910,14 +1910,14 @@ export default function SLODashboard() {
                         className="rounded-lg border border-border/40 bg-secondary/10 p-3 hover:bg-secondary/30 transition-colors"
                         title={row.hint}
                       >
-                        <p className="text-[11px] uppercase text-muted-foreground tracking-wide">
+                        <p className="text-meta uppercase text-muted-foreground tracking-wide">
                           {row.label}
                         </p>
                         <div className="flex items-baseline justify-between gap-2 mt-1">
                           <p className="text-xl font-bold tabular-nums">{row.value}</p>
                           {row.trend && (
                             <span
-                              className={`text-xs font-mono font-semibold tabular-nums ${row.trend.className}`}
+                              className={`text-meta font-mono font-semibold tabular-nums ${row.trend.className}`}
                               aria-label={`Variação de ${Math.abs(row.trend.pct).toFixed(1)} por cento`}
                             >
                               {row.trend.arrow} {Math.abs(row.trend.pct).toFixed(1)}%
@@ -1925,11 +1925,11 @@ export default function SLODashboard() {
                           )}
                         </div>
                         {row.prevValue && (
-                          <p className="text-[11px] text-muted-foreground mt-1 font-mono">
+                          <p className="text-meta text-muted-foreground mt-1 font-mono">
                             {row.prevLabel}: <span className="tabular-nums">{row.prevValue}</span>
                           </p>
                         )}
-                        <p className="text-[11px] text-muted-foreground/80 mt-2 leading-snug">
+                        <p className="text-meta text-muted-foreground/80 mt-2 leading-snug">
                           {row.hint}
                         </p>
                       </div>
@@ -1959,7 +1959,7 @@ export default function SLODashboard() {
                 {/* Failure-mode filters: choose which signals count as a
                     violation in the timeline + comparison table. */}
                 <div className="flex items-center gap-2 flex-wrap pt-2">
-                  <span className="text-[11px] uppercase text-muted-foreground tracking-wide">
+                  <span className="text-meta uppercase text-muted-foreground tracking-wide">
                     Tipos de falha:
                   </span>
                   {ALL_FAILURE_MODES.map((mode) => {
@@ -1971,7 +1971,7 @@ export default function SLODashboard() {
                         onClick={() => toggleFailureMode(mode)}
                         title={FAILURE_MODE_META[mode].description}
                         aria-pressed={active}
-                        className={`px-2.5 py-1 text-xs rounded-full border transition-colors focus-ring ${
+                        className={`px-2.5 py-1 text-meta rounded-full border transition-colors focus-ring ${
                           active
                             ? 'bg-primary/15 border-primary/40 text-primary font-medium'
                             : 'bg-secondary/30 border-border text-muted-foreground hover:bg-secondary/60'
@@ -1985,7 +1985,7 @@ export default function SLODashboard() {
                     type="button"
                     disabled
                     title="Granularidade de falhas de ferramentas requer extensão do RPC get_slo_summary — em breve."
-                    className="px-2.5 py-1 text-xs rounded-full border border-dashed border-border text-muted-foreground/60 cursor-not-allowed"
+                    className="px-2.5 py-1 text-meta rounded-full border border-dashed border-border text-muted-foreground/60 cursor-not-allowed"
                   >
                     Tool failures (em breve)
                   </button>
@@ -2000,7 +2000,7 @@ export default function SLODashboard() {
                         toast.success('Filtros de falha resetados');
                       }}
                       title="Voltar para todos os tipos de falha selecionados"
-                      className="ml-auto px-2.5 py-1 text-xs rounded-full border border-border bg-secondary/30 text-muted-foreground hover:bg-secondary/60 hover:text-foreground transition-colors focus-ring"
+                      className="ml-auto px-2.5 py-1 text-meta rounded-full border border-border bg-secondary/30 text-muted-foreground hover:bg-secondary/60 hover:text-foreground transition-colors focus-ring"
                     >
                       Resetar filtros
                     </button>
@@ -2010,7 +2010,7 @@ export default function SLODashboard() {
                     é aproximada a partir do P95 agregado por bucket (não temos
                     granularidade por trace ainda) e que Tool failures depende
                     de extensão do RPC. Em <details> para não poluir o cabeçalho. */}
-                <details className="mt-3 text-xs rounded-md border border-nexus-amber/30 bg-nexus-amber/5 group">
+                <details className="mt-3 text-meta rounded-md border border-nexus-amber/30 bg-nexus-amber/5 group">
                   <summary className="flex items-center gap-2 px-3 py-2 cursor-pointer list-none [&::-webkit-details-marker]:hidden focus-ring rounded-md">
                     <AlertTriangle className="h-3.5 w-3.5 text-nexus-amber shrink-0" />
                     <span className="font-medium text-foreground">
@@ -2023,7 +2023,7 @@ export default function SLODashboard() {
                   <div className="px-3 pb-3 pt-1 space-y-2 text-muted-foreground border-t border-nexus-amber/20">
                     <p>
                       Os tipos de falha são derivados dos agregados por hora retornados
-                      pelo RPC <code className="text-foreground font-mono text-[11px] bg-secondary/50 px-1 rounded">get_slo_summary</code> —
+                      pelo RPC <code className="text-foreground font-mono text-meta bg-secondary/50 px-1 rounded">get_slo_summary</code> —
                       não há granularidade por trace individual.
                     </p>
                     <ul className="space-y-1.5 pl-1">
@@ -2034,7 +2034,7 @@ export default function SLODashboard() {
                         />
                         <span>
                           <span className="font-medium text-foreground">Erros</span> — exato.
-                          Conta buckets com pelo menos 1 trace <code className="text-foreground font-mono text-[11px] bg-secondary/50 px-1 rounded">level=error</code>.
+                          Conta buckets com pelo menos 1 trace <code className="text-foreground font-mono text-meta bg-secondary/50 px-1 rounded">level=error</code>.
                         </span>
                       </li>
                       <li className="flex items-start gap-2">
@@ -2077,14 +2077,14 @@ export default function SLODashboard() {
                       <Link to="/agents/traces" className="text-primary hover:underline font-medium">
                         Traces
                       </Link>
-                      {' '}com filtro por <code className="text-foreground font-mono text-[11px] bg-secondary/50 px-1 rounded">level</code> e janela equivalente.
+                      {' '}com filtro por <code className="text-foreground font-mono text-meta bg-secondary/50 px-1 rounded">level</code> e janela equivalente.
                     </p>
                   </div>
                 </details>
               </CardHeader>
               <CardContent>
                 {chartData.length === 0 ? (
-                  <div className="h-64 flex items-center justify-center text-sm text-muted-foreground">
+                  <div className="h-64 flex items-center justify-center text-body-sm text-muted-foreground">
                     Sem dados temporais para esta janela
                   </div>
                 ) : (
@@ -2161,7 +2161,7 @@ export default function SLODashboard() {
                         Hover reveals the bucket time + matched modes. */}
                     <div className="mt-4 space-y-2">
                       <div className="flex items-center justify-between gap-4 flex-wrap">
-                        <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                        <span className="text-meta uppercase tracking-wide text-muted-foreground">
                           Violações por bucket
                         </span>
                         <div
@@ -2186,7 +2186,7 @@ export default function SLODashboard() {
                                     ? 'Mantenha pelo menos um tipo selecionado'
                                     : `${meta.description} — clique para ${enabled ? 'ocultar' : 'mostrar'}`
                                 }
-                                className={`flex items-center gap-1.5 text-[11px] rounded-md px-1.5 py-0.5 border transition-colors focus-ring ${
+                                className={`flex items-center gap-1.5 text-meta rounded-md px-1.5 py-0.5 border transition-colors focus-ring ${
                                   enabled
                                     ? 'text-foreground border-border bg-secondary/40 hover:bg-secondary/70'
                                     : 'text-muted-foreground/70 line-through border-transparent hover:bg-secondary/40 hover:text-muted-foreground'
@@ -2204,7 +2204,7 @@ export default function SLODashboard() {
                           })}
                           <div
                             title="Bucket sem violação sob o filtro atual"
-                            className="flex items-center gap-1.5 text-[11px] text-muted-foreground"
+                            className="flex items-center gap-1.5 text-meta text-muted-foreground"
                           >
                             <span aria-hidden className="h-2.5 w-2.5 rounded-sm bg-secondary border border-border" />
                             <span>Sem violação</span>
@@ -2271,7 +2271,7 @@ export default function SLODashboard() {
                 <CardTitle>Resumo</CardTitle>
                 <CardDescription>Janela: {summary.window_hours}h</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-3 text-sm">
+              <CardContent className="space-y-3 text-body-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Total traces</span>
                   <span className="font-semibold tabular-nums">{summary.total_traces.toLocaleString('pt-BR')}</span>
@@ -2303,13 +2303,13 @@ export default function SLODashboard() {
             </CardHeader>
             <CardContent>
               {summary.top_agents.length === 0 ? (
-                <p className="text-sm text-muted-foreground py-8 text-center">
+                <p className="text-body-sm text-muted-foreground py-8 text-center">
                   Nenhum agente com dados suficientes nesta janela.
                 </p>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead className="text-xs uppercase text-muted-foreground border-b">
+                  <table className="w-full text-body-sm">
+                    <thead className="text-meta uppercase text-muted-foreground border-b">
                       <tr>
                         <th className="text-left py-2 font-semibold">Agente</th>
                         <th className="text-right py-2 font-semibold">Traces</th>
@@ -2359,7 +2359,7 @@ export default function SLODashboard() {
           operator audit whether rapid filter toggling is actually being
           coalesced (dropped > 0 means the token guard saved a render). */}
       <div
-        className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] font-mono text-muted-foreground/80 border-t border-border/40 pt-2"
+        className="flex flex-wrap items-center gap-x-3 gap-y-1 text-meta font-mono text-muted-foreground/80 border-t border-border/40 pt-2"
         role="status"
         aria-label="Telemetria interna do debounce"
         title="Métricas internas: ajuda a auditar se o debounce/token-guard está coalescendo trocas rápidas de filtro"

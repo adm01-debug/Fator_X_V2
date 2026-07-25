@@ -1,6 +1,11 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { handleCorsPreflight, getCorsHeaders, getRateLimitIdentifier, checkRateLimit, RATE_LIMITS, createRateLimitResponse } from "../_shared/mod.ts";
+import { fetchWithTimeout } from "../_shared/retry.ts";
+import { z } from "https://esm.sh/zod@3.23.8";
+
+// Body vazio ou opcional — invocado por cron.
+const BodySchema = z.object({}).passthrough().optional();
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
@@ -11,10 +16,23 @@ serve(async (req) => {
   if (!rateCheck.allowed) return createRateLimitResponse(rateCheck);
 
   try {
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    );
+    if (req.method === 'POST') {
+      const rawBody = await req.json().catch(() => ({}));
+      const parsed = BodySchema.safeParse(rawBody);
+      if (!parsed.success) {
+        return new Response(JSON.stringify({ error: 'Payload inválido', details: parsed.error.flatten().fieldErrors }), {
+          status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    }
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    if (!supabaseUrl || !serviceRoleKey) {
+      return new Response(JSON.stringify({ error: 'Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY' }), {
+        status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const supabase = createClient(supabaseUrl, serviceRoleKey);
 
     const now = new Date().toISOString();
 
@@ -41,12 +59,13 @@ serve(async (req) => {
         switch (schedule.target_type) {
           case 'edge_function': {
             const targetConfig = schedule.target_config as Record<string, unknown>;
-            const fnUrl = `${Deno.env.get('SUPABASE_URL')}/functions/v1/${schedule.target_id}`;
-            const resp = await fetch(fnUrl, {
+            const baseUrl = Deno.env.get('SUPABASE_URL') ?? 'https://qdlnzopxrlsoljcrcmzv.supabase.co';
+            const fnUrl = `${baseUrl}/functions/v1/${schedule.target_id}`;
+            const resp = await fetchWithTimeout(fnUrl, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+                Authorization: `Bearer ${serviceRoleKey}`,
               },
               body: JSON.stringify(targetConfig),
             });
@@ -59,7 +78,7 @@ serve(async (req) => {
 
           case 'webhook': {
             const webhookUrl = schedule.target_id;
-            const resp = await fetch(webhookUrl, {
+            const resp = await fetchWithTimeout(webhookUrl, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -113,7 +132,7 @@ serve(async (req) => {
         updatePayload.status = 'completed';
         updatePayload.next_run_at = null;
       } else if (schedule.cron_expression) {
-        updatePayload.next_run_at = getNextCronRun(schedule.cron_expression);
+        updatePayload.next_run_at = computeNextCronUtc(schedule.cron_expression);
       } else if (schedule.interval_seconds) {
         const next = new Date();
         next.setSeconds(next.getSeconds() + schedule.interval_seconds);
@@ -144,7 +163,9 @@ serve(async (req) => {
   }
 });
 
-function getNextCronRun(expr: string): string {
+// UTC-correct cron next-run (mirrors cronSchedulerService.ts)
+// Parses cron in UTC — use this for all schedule calculations.
+function computeNextCronUtc(expr: string): string {
   const parts = expr.trim().split(/\s+/);
   if (parts.length !== 5) return new Date(Date.now() + 60000).toISOString();
 
@@ -173,21 +194,21 @@ function getNextCronRun(expr: string): string {
     dow: parseField(parts[4], 0, 6),
   };
 
-  const next = new Date();
-  next.setSeconds(0, 0);
-  next.setMinutes(next.getMinutes() + 1);
+  const start = new Date(Date.now() + 60000);
+  start.setUTCSeconds(0, 0);
 
   for (let i = 0; i < 525960; i++) {
+    // All fields use UTC getters — correct for Supabase Edge Functions (UTC environment)
     if (
-      cron.month.includes(next.getMonth() + 1) &&
-      cron.dom.includes(next.getDate()) &&
-      cron.dow.includes(next.getDay()) &&
-      cron.hour.includes(next.getHours()) &&
-      cron.minute.includes(next.getMinutes())
+      cron.month.includes(start.getUTCMonth() + 1) &&
+      cron.dom.includes(start.getUTCDate()) &&
+      cron.dow.includes(start.getUTCDay()) &&
+      cron.hour.includes(start.getUTCHours()) &&
+      cron.minute.includes(start.getUTCMinutes())
     ) {
-      return next.toISOString();
+      return start.toISOString();
     }
-    next.setMinutes(next.getMinutes() + 1);
+    start.setUTCMinutes(start.getUTCMinutes() + 1);
   }
 
   return new Date(Date.now() + 3600000).toISOString();

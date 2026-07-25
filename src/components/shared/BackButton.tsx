@@ -69,7 +69,7 @@ export function BackButton({ className, to }: BackButtonProps) {
       <TooltipTrigger asChild>
         {button}
       </TooltipTrigger>
-      <TooltipContent side="bottom" className="text-[10px] font-bold uppercase tracking-widest bg-background/95 backdrop-blur-md border-primary/20">
+      <TooltipContent side="bottom" className="text-meta font-bold uppercase tracking-widest bg-background/95 backdrop-blur-md border-primary/20">
         Voltar <span className="ml-2 text-muted-foreground/60">Alt+←</span>
       </TooltipContent>
     </Tooltip>

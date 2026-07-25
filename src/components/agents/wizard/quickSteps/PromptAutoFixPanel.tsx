@@ -54,7 +54,7 @@ export function PromptAutoFixPanel({ prompt, onApply }: Props) {
     <>
       <div className="rounded-lg border border-primary/30 bg-primary/5 p-2.5 space-y-2">
         <div className="flex items-center justify-between gap-2 flex-wrap">
-          <p className="text-xs font-semibold text-primary flex items-center gap-1.5">
+          <p className="text-meta font-semibold text-primary flex items-center gap-1.5">
             <Sparkles className="h-3.5 w-3.5" />
             Correções automáticas disponíveis
           </p>
@@ -64,7 +64,7 @@ export function PromptAutoFixPanel({ prompt, onApply }: Props) {
               size="sm"
               variant="default"
               onClick={() => openPreview('Aplicar todas as correções', allFix)}
-              className="h-7 gap-1.5 text-[11px]"
+              className="h-7 gap-1.5 text-meta"
             >
               <Wand2 className="h-3 w-3" />
               🪄 Aplicar tudo ({fixes.length})
@@ -96,8 +96,8 @@ export function PromptAutoFixPanel({ prompt, onApply }: Props) {
             </AlertDialogTitle>
             <AlertDialogDescription asChild>
               <div className="space-y-2">
-                <p className="text-xs">{preview.result?.summary}</p>
-                <div className="flex items-center gap-2 flex-wrap text-[11px] font-mono">
+                <p className="text-meta">{preview.result?.summary}</p>
+                <div className="flex items-center gap-2 flex-wrap text-meta font-mono">
                   {preview.result && preview.result.removedChars !== 0 && (
                     <span
                       className={cn(
@@ -163,14 +163,14 @@ interface FixRowProps {
 
 function FixRow({ fix, onPreview, onApply }: FixRowProps) {
   return (
-    <li className="flex items-center justify-between gap-2 text-xs bg-background/50 rounded-md px-2 py-1.5 border border-border/40">
+    <li className="flex items-center justify-between gap-2 text-meta bg-background/50 rounded-md px-2 py-1.5 border border-border/40">
       <div className="flex items-center gap-2 min-w-0">
-        <span className="text-base shrink-0" aria-hidden>
+        <span className="text-title-sm shrink-0" aria-hidden>
           {fix.icon}
         </span>
         <div className="min-w-0">
           <p className="text-foreground font-medium truncate">{fix.label}</p>
-          <p className="text-[10px] font-mono text-muted-foreground">{fix.result.description}</p>
+          <p className="text-meta font-mono text-muted-foreground">{fix.result.description}</p>
         </div>
       </div>
       <div className="flex items-center gap-1 shrink-0">
@@ -179,7 +179,7 @@ function FixRow({ fix, onPreview, onApply }: FixRowProps) {
           size="sm"
           variant="ghost"
           onClick={onPreview}
-          className="h-7 gap-1 text-[11px]"
+          className="h-7 gap-1 text-meta"
           aria-label={`Pré-visualizar correção: ${fix.label}`}
         >
           <Eye className="h-3 w-3" /> Prévia
@@ -189,7 +189,7 @@ function FixRow({ fix, onPreview, onApply }: FixRowProps) {
           size="sm"
           variant="outline"
           onClick={onApply}
-          className="h-7 gap-1 text-[11px] border-primary/40 text-primary hover:bg-primary/10 hover:text-primary"
+          className="h-7 gap-1 text-meta border-primary/40 text-primary hover:bg-primary/10 hover:text-primary"
           aria-label={`Aplicar correção: ${fix.label}`}
         >
           <Wand2 className="h-3 w-3" /> Aplicar

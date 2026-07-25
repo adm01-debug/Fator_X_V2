@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Shield, Terminal, HardDrive, Wifi, WifiOff, AlertTriangle } from 'lucide-react';
 import type { SandboxConfig, SandboxRuntime } from '@/components/workflows/SandboxExecutionPanel';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 const RUNTIME_OPTIONS: Array<{ id: SandboxRuntime; name: string; securityLevel: string }> = [
   { id: 'docker', name: 'Docker Container', securityLevel: 'high' },
@@ -22,16 +23,16 @@ function ToggleField({ label, description, checked, onChange, icon: Icon }: {
   label: string; description?: string; checked: boolean; onChange: (v: boolean) => void; icon?: typeof Shield;
 }) {
   return (
-    <div className="flex items-center justify-between p-3 rounded-lg bg-background border border-border cursor-pointer hover:border-primary/30 transition-colors" onClick={() => onChange(!checked)}>
+    <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className="flex items-center justify-between p-3 rounded-lg bg-background border border-border cursor-pointer hover:border-primary/30 transition-colors" onClick={() => onChange(!checked)}>
       <div className="flex items-center gap-3">
         {Icon && <Icon className="w-4 h-4 text-muted-foreground" />}
         <div>
-          <p className="text-sm text-foreground">{label}</p>
-          {description && <p className="text-xs text-muted-foreground">{description}</p>}
+          <p className="text-body-sm text-foreground">{label}</p>
+          {description && <p className="text-meta text-muted-foreground">{description}</p>}
         </div>
       </div>
       <div className={`w-10 h-5 rounded-full flex items-center transition-colors ${checked ? 'bg-primary' : 'bg-muted'}`}>
-        <div className={`w-4 h-4 rounded-full bg-white shadow transition-transform ${checked ? 'translate-x-5' : 'translate-x-0.5'}`} />
+        <div className={`w-4 h-4 rounded-full bg-white shadow-nexus-md transition-transform ${checked ? 'translate-x-5' : 'translate-x-0.5'}`} />
       </div>
     </div>
   );
@@ -54,19 +55,20 @@ export function SandboxSecurityTab({ config, onUpdate }: SandboxSecurityTabProps
 
         {config.networkEnabled && (
           <div className="space-y-1">
-            <label className="text-xs text-muted-foreground">Domínios Permitidos</label>
+            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+            <label className="text-meta text-muted-foreground">Domínios Permitidos</label>
             <textarea
               value={config.allowedDomains.join('\n')}
               onChange={(e) => onUpdate({ allowedDomains: e.target.value.split('\n').filter(Boolean) })}
-              className="w-full h-20 p-2 bg-background border border-border rounded text-xs font-mono text-muted-foreground resize-none focus:border-primary focus:outline-none"
+              className="w-full h-20 p-2 bg-background border border-border rounded text-meta font-mono text-muted-foreground resize-none focus:border-primary focus:outline-none"
               placeholder={"api.exemplo.com\ngithub.com\npypi.org"}
             />
           </div>
         )}
 
         <div className="p-3 rounded-lg bg-background border border-border">
-          <p className="text-xs font-medium text-foreground mb-2">Resumo de Segurança</p>
-          <div className="space-y-1 text-xs">
+          <p className="text-meta font-medium text-foreground mb-2">Resumo de Segurança</p>
+          <div className="space-y-1 text-meta">
             <div className="flex items-center justify-between"><span className="text-muted-foreground">Runtime</span><span className="text-foreground">{selectedRuntime?.name ?? 'N/A'}</span></div>
             <div className="flex items-center justify-between"><span className="text-muted-foreground">Isolamento</span>
               <Badge className="text-[9px]" style={{ backgroundColor: `${SECURITY_LEVEL_COLORS[selectedRuntime?.securityLevel ?? 'none']}20`, color: SECURITY_LEVEL_COLORS[selectedRuntime?.securityLevel ?? 'none'] }}>{selectedRuntime?.securityLevel ?? 'N/A'}</Badge>
@@ -85,8 +87,8 @@ export function SandboxSecurityTab({ config, onUpdate }: SandboxSecurityTabProps
           <div className="flex items-start gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/30">
             <AlertTriangle className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
             <div>
-              <p className="text-xs font-medium text-destructive">Atenção: Configuração de Risco</p>
-              <p className="text-xs text-destructive/80 mt-1">
+              <p className="text-meta font-medium text-destructive">Atenção: Configuração de Risco</p>
+              <p className="text-meta text-destructive/80 mt-1">
                 {config.runtime === 'local' ? 'Runtime local não tem isolamento. Use apenas em ambiente de desenvolvimento.' : 'Acesso ao shell permite execução arbitrária de comandos. Use com cautela.'}
               </p>
             </div>

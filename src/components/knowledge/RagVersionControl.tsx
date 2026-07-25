@@ -64,8 +64,8 @@ export function RagVersionControl() {
             <History className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-foreground">Pipeline Versioning</h3>
-            <p className="text-xs text-muted-foreground">Gerencie o histórico e reversão do pipeline RAG</p>
+            <h3 className="text-title-sm font-bold text-foreground">Pipeline Versioning</h3>
+            <p className="text-meta text-muted-foreground">Gerencie o histórico e reversão do pipeline RAG</p>
           </div>
         </div>
         <Button variant="outline" size="sm" className="gap-2 border-primary/20 text-primary hover:bg-primary/5">
@@ -80,26 +80,26 @@ export function RagVersionControl() {
             className={cn(
               "p-4 rounded-[1.5rem] border transition-all duration-300",
               v.status === 'active' 
-                ? "bg-primary/[0.03] border-primary/30 shadow-lg shadow-primary/5" 
+                ? "bg-primary/[0.03] border-primary/30 shadow-nexus-lg shadow-primary/5" 
                 : "bg-secondary/10 border-border/40 hover:border-primary/20"
             )}
           >
             <div className="flex items-start justify-between">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-black uppercase tracking-tight text-foreground">{v.version}</span>
+                  <span className="text-body-sm font-black uppercase tracking-tight text-foreground">{v.version}</span>
                   {v.status === 'active' && (
                     <Badge className="bg-nexus-emerald/10 text-nexus-emerald border-nexus-emerald/20 text-[9px] uppercase font-black">
                       Live
                     </Badge>
                   )}
                 </div>
-                <p className="text-[11px] text-muted-foreground font-medium">{v.description}</p>
+                <p className="text-meta text-muted-foreground font-medium">{v.description}</p>
               </div>
               <div className="flex items-center gap-2">
                 <div className="text-right mr-3">
-                  <p className="text-[10px] text-muted-foreground font-mono">{v.date}</p>
-                  <p className="text-[10px] font-bold text-foreground uppercase tracking-tighter">By {v.author}</p>
+                  <p className="text-meta text-muted-foreground font-mono">{v.date}</p>
+                  <p className="text-meta font-bold text-foreground uppercase tracking-tighter">By {v.author}</p>
                 </div>
                 {v.status === 'active' ? (
                   <div className="h-8 w-8 rounded-full bg-nexus-emerald/10 flex items-center justify-center">
@@ -116,11 +116,11 @@ export function RagVersionControl() {
             <div className="mt-4 pt-4 border-t border-border/10 grid grid-cols-2 gap-4">
               <div className="flex items-center gap-2">
                 <Zap className="h-3 w-3 text-primary" />
-                <span className="text-[10px] font-bold uppercase text-muted-foreground">Latency: <span className="text-foreground">{v.stats.latency}</span></span>
+                <span className="text-meta font-bold uppercase text-muted-foreground">Latency: <span className="text-foreground">{v.stats.latency}</span></span>
               </div>
               <div className="flex items-center gap-2">
                 <Check className="h-3 w-3 text-nexus-emerald" />
-                <span className="text-[10px] font-bold uppercase text-muted-foreground">Precision: <span className="text-foreground">{v.stats.precision}</span></span>
+                <span className="text-meta font-bold uppercase text-muted-foreground">Precision: <span className="text-foreground">{v.stats.precision}</span></span>
               </div>
             </div>
 

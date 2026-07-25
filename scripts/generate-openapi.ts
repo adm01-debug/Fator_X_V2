@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, readdirSync, existsSync } from 'fs';
+import { _readFileSync, writeFileSync, readdirSync, existsSync } from 'fs';
 import { join } from 'path';
 
 const FUNCTIONS_DIR = join(process.cwd(), 'supabase/functions');
@@ -40,6 +40,7 @@ paths:
   }
 
   writeFileSync(OUTPUT_FILE, yaml);
+  // eslint-disable-next-line no-console -- script de build/CI, output para stdout é o comportamento esperado.
   console.log(`Generated OpenAPI spec for ${functions.length} functions at ${OUTPUT_FILE}`);
 }
 

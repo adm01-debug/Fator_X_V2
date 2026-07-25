@@ -27,8 +27,8 @@ function escapeHtml(s: string): string {
 function inlineFmt(s: string): string {
   return escapeHtml(s)
     .replace(/\*\*([^*]+)\*\*/g, '<strong class="text-foreground">$1</strong>')
-    .replace(/`([^`]+)`/g, '<code class="px-1 py-0.5 rounded bg-secondary text-primary text-[11px] font-mono">$1</code>')
-    .replace(/\{\{([^}]+)\}\}/g, '<span class="px-1 py-0.5 rounded bg-nexus-amber/15 text-nexus-amber font-mono text-[11px]">{{$1}}</span>');
+    .replace(/`([^`]+)`/g, '<code class="px-1 py-0.5 rounded bg-secondary text-primary text-meta font-mono">$1</code>')
+    .replace(/\{\{([^}]+)\}\}/g, '<span class="px-1 py-0.5 rounded bg-nexus-amber/15 text-nexus-amber font-mono text-meta">{{$1}}</span>');
 }
 
 function renderMarkdown(text: string, thinByHeading: Map<number, ThinHit> = new Map()): React.ReactNode {
@@ -79,7 +79,7 @@ function renderMarkdown(text: string, thinByHeading: Map<number, ThinHit> = new 
     bucket.push(
       <ul key={`ul-${key}`} className="list-disc pl-5 space-y-0.5 my-1.5 text-foreground/90">
         {listBuf.map((it, i) => (
-          <li key={i} className="text-xs" dangerouslySetInnerHTML={{ __html: inlineFmt(it) }} />
+          <li key={i} className="text-meta" dangerouslySetInnerHTML={{ __html: inlineFmt(it) }} />
         ))}
       </ul>,
     );
@@ -95,29 +95,29 @@ function renderMarkdown(text: string, thinByHeading: Map<number, ThinHit> = new 
     flushList(String(i));
 
     if (line.startsWith('### ')) {
-      bucket.push(<h4 key={i} className="text-xs font-heading font-semibold text-foreground mt-2.5">{line.slice(4)}</h4>);
+      bucket.push(<h4 key={i} className="text-meta font-heading font-semibold text-foreground mt-2.5">{line.slice(4)}</h4>);
     } else if (line.startsWith('## ')) {
       // Boundary between sections — flush whatever we had and start a new
       // bucket whose first child is this heading.
       flushList('pre-h2-' + i);
       flushBucket();
       bucketHeadingLine = i;
-      bucket.push(<h3 key={i} className="text-sm font-heading font-semibold text-foreground mt-3">{line.slice(3)}</h3>);
+      bucket.push(<h3 key={i} className="text-body-sm font-heading font-semibold text-foreground mt-3">{line.slice(3)}</h3>);
     } else if (line.startsWith('# ')) {
-      bucket.push(<h2 key={i} className="text-base font-heading font-bold text-foreground mt-3">{line.slice(2)}</h2>);
+      bucket.push(<h2 key={i} className="text-title-sm font-heading font-bold text-foreground mt-3">{line.slice(2)}</h2>);
     } else if (line.startsWith('> ')) {
       bucket.push(
-        <blockquote key={i} className="border-l-2 border-primary/40 pl-2.5 text-muted-foreground italic my-1.5 text-xs">
+        <blockquote key={i} className="border-l-2 border-primary/40 pl-2.5 text-muted-foreground italic my-1.5 text-meta">
           {line.slice(2)}
         </blockquote>,
       );
     } else if (line.startsWith('<!--')) {
-      bucket.push(<p key={i} className="text-[10px] text-muted-foreground/60 font-mono mt-2">{line}</p>);
+      bucket.push(<p key={i} className="text-meta text-muted-foreground/60 font-mono mt-2">{line}</p>);
     } else if (line === '') {
       bucket.push(<div key={i} className="h-1.5" />);
     } else {
       bucket.push(
-        <p key={i} className="text-xs text-foreground/85 leading-relaxed" dangerouslySetInnerHTML={{ __html: inlineFmt(line) }} />,
+        <p key={i} className="text-meta text-foreground/85 leading-relaxed" dangerouslySetInnerHTML={{ __html: inlineFmt(line) }} />,
       );
     }
   });
@@ -157,7 +157,7 @@ function RawWithThinHighlights({
   if (current.lines.length > 0) blocks.push(current);
 
   return (
-    <pre className="text-[11px] font-mono leading-relaxed text-foreground/85 whitespace-pre-wrap break-words">
+    <pre className="text-meta font-mono leading-relaxed text-foreground/85 whitespace-pre-wrap break-words">
       {blocks.map((b, idx) => (
         <span
           key={idx}
@@ -283,10 +283,10 @@ export function CompiledPromptPreview({ form, defaultOpen = false, lastChangeKin
             <Sparkles className="h-4 w-4 text-primary" />
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-heading font-semibold text-foreground">
+            <p className="text-body-sm font-heading font-semibold text-foreground">
               Prévia do prompt consolidado
             </p>
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-meta text-muted-foreground">
               Como o LLM vai receber as instruções no momento de salvar
             </p>
           </div>
@@ -294,7 +294,7 @@ export function CompiledPromptPreview({ form, defaultOpen = false, lastChangeKin
         <div className="flex items-center gap-1.5 shrink-0 flex-wrap justify-end">
           {resolvedCount > 0 && (
             <span
-              className="text-[10px] font-mono px-1.5 py-0.5 rounded-full border border-nexus-emerald/30 bg-nexus-emerald/10 text-nexus-emerald"
+              className="text-meta font-mono px-1.5 py-0.5 rounded-full border border-nexus-emerald/30 bg-nexus-emerald/10 text-nexus-emerald"
               title={`${resolvedCount} variável(eis) resolvida(s)`}
             >
               ✓ {resolvedCount}
@@ -302,7 +302,7 @@ export function CompiledPromptPreview({ form, defaultOpen = false, lastChangeKin
           )}
           {unresolvedCount > 0 && (
             <span
-              className="text-[10px] font-mono px-1.5 py-0.5 rounded-full border border-nexus-amber/40 bg-nexus-amber/10 text-nexus-amber"
+              className="text-meta font-mono px-1.5 py-0.5 rounded-full border border-nexus-amber/40 bg-nexus-amber/10 text-nexus-amber"
               title={`${unresolvedCount} variável(eis) sem valor`}
             >
               ⚠ {unresolvedCount}
@@ -310,20 +310,20 @@ export function CompiledPromptPreview({ form, defaultOpen = false, lastChangeKin
           )}
           {thinCount > 0 && (
             <span
-              className="text-[10px] font-mono px-1.5 py-0.5 rounded-full border border-nexus-amber/40 bg-nexus-amber/15 text-nexus-amber inline-flex items-center gap-1"
+              className="text-meta font-mono px-1.5 py-0.5 rounded-full border border-nexus-amber/40 bg-nexus-amber/15 text-nexus-amber inline-flex items-center gap-1"
               title={`${thinCount} seção(ões) com conteúdo insuficiente — destacadas no preview`}
             >
               <AlertTriangle className="h-2.5 w-2.5" />
               {thinCount} thin
             </span>
           )}
-          <Badge variant="outline" className="text-[10px] font-mono">
+          <Badge variant="outline" className="text-meta font-mono">
             ~{compiled.stats.estimatedTokens.toLocaleString('pt-BR')} tokens
           </Badge>
           {tokenDelta !== null && tokenDelta !== 0 && (
             <span
               className={cn(
-                'text-[10px] font-mono px-1.5 py-0.5 rounded-full animate-fade-in',
+                'text-meta font-mono px-1.5 py-0.5 rounded-full animate-fade-in',
                 tokenDelta > 0
                   ? 'bg-nexus-emerald/10 text-nexus-emerald border border-nexus-emerald/30'
                   : 'bg-destructive/10 text-destructive border border-destructive/30',
@@ -345,8 +345,8 @@ export function CompiledPromptPreview({ form, defaultOpen = false, lastChangeKin
                 type="button"
                 onClick={() => setView('preview')}
                 className={cn(
-                  'inline-flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-md transition-colors',
-                  view === 'preview' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground',
+                  'inline-flex items-center gap-1.5 text-meta px-2.5 py-1 rounded-md transition-colors',
+                  view === 'preview' ? 'bg-background text-foreground shadow-nexus-sm' : 'text-muted-foreground hover:text-foreground',
                 )}
               >
                 <Eye className="h-3 w-3" /> Renderizado
@@ -355,8 +355,8 @@ export function CompiledPromptPreview({ form, defaultOpen = false, lastChangeKin
                 type="button"
                 onClick={() => setView('raw')}
                 className={cn(
-                  'inline-flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-md transition-colors',
-                  view === 'raw' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground',
+                  'inline-flex items-center gap-1.5 text-meta px-2.5 py-1 rounded-md transition-colors',
+                  view === 'raw' ? 'bg-background text-foreground shadow-nexus-sm' : 'text-muted-foreground hover:text-foreground',
                 )}
               >
                 <FileText className="h-3 w-3" /> Texto bruto
@@ -364,7 +364,7 @@ export function CompiledPromptPreview({ form, defaultOpen = false, lastChangeKin
             </div>
             <div className="flex items-center gap-2 flex-wrap">
               {activeVariantLabel && (
-                <Badge variant="outline" className="text-[10px] font-mono border-primary/30 text-primary bg-primary/5">
+                <Badge variant="outline" className="text-meta font-mono border-primary/30 text-primary bg-primary/5">
                   Aplicado: {activeVariantLabel}
                 </Badge>
               )}
@@ -375,7 +375,7 @@ export function CompiledPromptPreview({ form, defaultOpen = false, lastChangeKin
             </div>
           </div>
 
-          <div className="flex items-start gap-1.5 flex-wrap text-[11px]">
+          <div className="flex items-start gap-1.5 flex-wrap text-meta">
             <span className="text-muted-foreground mt-0.5">Variáveis:</span>
             {compiled.detectedVariables.length === 0 ? (
               <span className="text-muted-foreground/70 italic">nenhuma detectada</span>
@@ -386,7 +386,7 @@ export function CompiledPromptPreview({ form, defaultOpen = false, lastChangeKin
                   <span
                     key={v}
                     className={cn(
-                      'inline-flex items-center gap-1 px-2 py-0.5 rounded-full font-mono border text-[10px]',
+                      'inline-flex items-center gap-1 px-2 py-0.5 rounded-full font-mono border text-meta',
                       unresolved
                         ? 'border-nexus-amber/40 bg-nexus-amber/10 text-nexus-amber'
                         : 'border-nexus-emerald/30 bg-nexus-emerald/10 text-nexus-emerald',
@@ -401,7 +401,7 @@ export function CompiledPromptPreview({ form, defaultOpen = false, lastChangeKin
           </div>
 
           {hasUnresolved && (
-            <div className="text-[11px] text-nexus-amber bg-nexus-amber/10 border border-nexus-amber/30 rounded-md px-2.5 py-1.5">
+            <div className="text-meta text-nexus-amber bg-nexus-amber/10 border border-nexus-amber/30 rounded-md px-2.5 py-1.5">
               {compiled.unresolvedVariables.length} variável(eis) sem valor permanecerão literais no prompt salvo.
             </div>
           )}
@@ -417,7 +417,7 @@ export function CompiledPromptPreview({ form, defaultOpen = false, lastChangeKin
             )}
           </div>
 
-          <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-mono flex-wrap">
+          <div className="flex items-center gap-2 text-meta text-muted-foreground font-mono flex-wrap">
             <span>{compiled.stats.chars.toLocaleString('pt-BR')} chars</span>
             <span>·</span>
             <span>{compiled.stats.words.toLocaleString('pt-BR')} palavras</span>

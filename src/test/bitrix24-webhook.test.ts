@@ -6,13 +6,14 @@
  * signature validation pattern) plus the frontend service contracts.
  */
 import { describe, it, expect, vi } from 'vitest';
+import type { DbRow } from '@/types/dbRow';
 
 function makeQB() {
   const qb: Record<string, unknown> = {};
   const chain = ['select', 'eq', 'order', 'limit', 'delete', 'update', 'in', 'is', 'neq', 'gte', 'lte'];
   for (const m of chain) qb[m] = vi.fn(() => qb);
   qb.upsert = vi.fn().mockResolvedValue({ data: null, error: null });
-  qb.then = (resolve: (v: { data: unknown[]; error: null }) => void) => resolve({ data: [], error: null });
+  qb.then = (resolve: (v: DbRow) => void) => resolve({ data: [], error: null });
   return qb;
 }
 

@@ -95,20 +95,20 @@ export default function BudgetSettingsPage() {
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-8 max-w-[1440px] mx-auto animate-page-enter">
       {/* Budget Industrial Header */}
-      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-xl shadow-primary/5 relative overflow-hidden group">
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-nexus-xl shadow-primary/5 relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
         
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative">
           <div className="flex items-center gap-7">
-            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
+            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-nexus-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
               <Wallet className="h-11 w-11 text-primary animate-float" />
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-3">
                 <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Budget & Limits</h1>
-                <Badge className="bg-primary/10 text-primary border-none font-black px-3 py-1 rounded-full text-[10px] tracking-widest uppercase">Guardrails de Gasto</Badge>
+                <Badge className="bg-primary/10 text-primary border-none font-black px-3 py-1 rounded-full text-meta tracking-widest uppercase">Guardrails de Gasto</Badge>
               </div>
-              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+              <p className="text-title-sm text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Proteção financeira automatizada. Configure limites rígidos e avisos de consumo para evitar surpresas no faturamento LLM.
               </p>
             </div>
@@ -120,36 +120,36 @@ export default function BudgetSettingsPage() {
         <div className="grid gap-4 md:grid-cols-2">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Gasto mensal</CardTitle>
+              <CardTitle className="text-body-sm font-medium">Gasto mensal</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="flex items-baseline justify-between">
                 <span className={`text-2xl font-bold ${monthlyColor}`}>
                   ${Number(status.monthly_spend ?? 0).toFixed(2)}
                 </span>
-                <span className="text-sm text-muted-foreground">
+                <span className="text-body-sm text-muted-foreground">
                   / ${Number(status.monthly_limit ?? 0).toFixed(2)}
                 </span>
               </div>
               <Progress value={Math.min(monthlyPct, 100)} className="h-2" />
-              <p className="text-xs text-muted-foreground">{monthlyPct.toFixed(1)}% utilizado</p>
+              <p className="text-meta text-muted-foreground">{monthlyPct.toFixed(1)}% utilizado</p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Gasto diário</CardTitle>
+              <CardTitle className="text-body-sm font-medium">Gasto diário</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="flex items-baseline justify-between">
                 <span className={`text-2xl font-bold ${dailyColor}`}>
                   ${Number(status.daily_spend ?? 0).toFixed(2)}
                 </span>
-                <span className="text-sm text-muted-foreground">
+                <span className="text-body-sm text-muted-foreground">
                   / ${Number(status.daily_limit ?? 0).toFixed(2)}
                 </span>
               </div>
               <Progress value={Math.min(dailyPct, 100)} className="h-2" />
-              <p className="text-xs text-muted-foreground">{dailyPct.toFixed(1)}% utilizado</p>
+              <p className="text-meta text-muted-foreground">{dailyPct.toFixed(1)}% utilizado</p>
             </CardContent>
           </Card>
         </div>
@@ -178,15 +178,15 @@ export default function BudgetSettingsPage() {
               <Badge variant="outline">{threshold}%</Badge>
             </div>
             <Slider value={[threshold]} onValueChange={(v) => setThreshold(v[0])} min={50} max={99} step={5} />
-            <p className="text-xs text-muted-foreground">Ao atingir esta porcentagem, um aviso é emitido.</p>
+            <p className="text-meta text-muted-foreground">Ao atingir esta porcentagem, um aviso é emitido.</p>
           </div>
 
           <div className="flex items-center justify-between rounded-lg border p-4">
             <div className="flex items-start gap-3">
               <ShieldOff className="h-5 w-5 text-destructive mt-0.5" />
               <div>
-                <Label className="text-base">Bloqueio rígido (hard stop)</Label>
-                <p className="text-sm text-muted-foreground">Ao atingir 100%, bloqueia chamadas e pausa agentes ativos.</p>
+                <Label className="text-title-sm">Bloqueio rígido (hard stop)</Label>
+                <p className="text-body-sm text-muted-foreground">Ao atingir 100%, bloqueia chamadas e pausa agentes ativos.</p>
               </div>
             </div>
             <Switch checked={hardStop} onCheckedChange={setHardStop} />
@@ -221,7 +221,7 @@ export default function BudgetSettingsPage() {
         </CardHeader>
         <CardContent>
           {events.length === 0 ? (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground py-6 justify-center">
+            <div className="flex items-center gap-2 text-body-sm text-muted-foreground py-6 justify-center">
               <Info className="h-4 w-4" />
               Nenhum evento registrado ainda.
             </div>
@@ -233,12 +233,12 @@ export default function BudgetSettingsPage() {
                   <div key={e.id} className="flex items-center justify-between border-b last:border-b-0 py-2">
                     <div className="flex items-center gap-3">
                       <Badge variant={meta.variant}>{meta.text}</Badge>
-                      <span className="text-sm">
+                      <span className="text-body-sm">
                         ${Number(e.period_spend_usd).toFixed(2)} / ${Number(e.period_limit_usd).toFixed(2)} ({e.pct_used}%)
                       </span>
-                      <span className="text-xs text-muted-foreground">{e.period === "daily" ? "diário" : "mensal"}</span>
+                      <span className="text-meta text-muted-foreground">{e.period === "daily" ? "diário" : "mensal"}</span>
                     </div>
-                    <span className="text-xs text-muted-foreground">{new Date(e.triggered_at).toLocaleString("pt-BR")}</span>
+                    <span className="text-meta text-muted-foreground">{new Date(e.triggered_at).toLocaleString("pt-BR")}</span>
                   </div>
                 );
               })}

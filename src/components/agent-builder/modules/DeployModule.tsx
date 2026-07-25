@@ -1,8 +1,9 @@
+import { useState } from 'react';
 import { fromTable } from '@/lib/supabaseExtended';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import type { AgentConfig } from '@/types/agentTypes';
 import { SectionTitle, NexusBadge, ToggleField } from '../ui';
-import { Globe, MessageSquare, Mail, Hash, Send, Radio, Sparkles, Activity, Map as MapIcon, BarChart3, Rocket, CheckCircle, ShieldCheck, AlertTriangle, Zap } from 'lucide-react';
+import { Globe, MessageSquare, Mail, Hash, Send, Radio, Sparkles, Activity, Map as MapIcon, BarChart3, Rocket, CheckCircle, ShieldCheck, AlertTriangle, Zap, Cloud } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
@@ -10,6 +11,10 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 import { getWorkspaceId } from '@/lib/agentService';
+import { compileAgentForOpenclaw } from '@/lib/openclawCompiler';
+import { publishAgentToOpenclaw } from '@/services/openclawDeployService';
+import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
 import type { DeployChannelConfig, MonitoringKPI, DeployChannel } from '@/types/agentTypes';
 
 const ENVIRONMENT_OPTIONS = [
@@ -122,9 +127,67 @@ const DEFAULT_KPIS: MonitoringKPI[] = [
 export function DeployModule() {
   const agent = useAgentBuilderStore((s) => s.agent);
   const updateAgent = useAgentBuilderStore((s) => s.updateAgent);
+  const [publishing, setPublishing] = useState(false);
 
   const channels = agent.deploy_channels.length > 0 ? agent.deploy_channels : DEFAULT_CHANNELS;
   const kpis = agent.monitoring_kpis.length > 0 ? agent.monitoring_kpis : DEFAULT_KPIS;
+
+  const handlePublishToOpenclaw = async () => {
+    if (!agent.id) {
+      toast.error('Salve o agente antes de publicar no OpenClaw.');
+      return;
+    }
+    setPublishing(true);
+    let deploymentId: string | undefined;
+    try {
+      const manifest = compileAgentForOpenclaw(agent);
+      const workspaceId = await getWorkspaceId();
+      const { data: userData } = await supabase.auth.getUser();
+
+      const { data: row, error: insertErr } = await fromTable('openclaw_deployments')
+        .insert({
+          agent_id: agent.id,
+          workspace_id: workspaceId,
+          version: manifest.version,
+          status: 'pending',
+          manifest: manifest as unknown as Record<string, unknown>,
+          deployed_by: userData.user?.id ?? null,
+        })
+        .select('id')
+        .single();
+      if (insertErr) throw insertErr;
+      deploymentId = (row as { id: string } | null)?.id;
+
+      const result = await publishAgentToOpenclaw({
+        agent_id: agent.id,
+        manifest: manifest as unknown as Record<string, unknown>,
+      });
+      const remoteId = result.data?.openclaw_agent_id;
+
+      if (deploymentId) {
+        await fromTable('openclaw_deployments')
+          .update({
+            status: 'deployed',
+            openclaw_agent_id: remoteId ?? null,
+            deployed_at: new Date().toISOString(),
+          })
+          .eq('id', deploymentId);
+      }
+      toast.success(`Agente publicado no OpenClaw${remoteId ? ` (id: ${remoteId})` : ''}.`);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Falha ao publicar no OpenClaw';
+      logger.error('openclaw publish failed', { agentId: agent.id, error: msg });
+      if (deploymentId) {
+        await fromTable('openclaw_deployments')
+          .update({ status: 'failed', error: msg })
+          .eq('id', deploymentId)
+          .then(() => undefined, () => undefined);
+      }
+      toast.error(msg);
+    } finally {
+      setPublishing(false);
+    }
+  };
 
   const updateChannel = (id: string, partial: Partial<DeployChannelConfig>) => {
     const updated = channels.map((c) => (c.id === id ? { ...c, ...partial } : c));
@@ -176,7 +239,7 @@ export function DeployModule() {
         />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div className="rounded-xl border border-border bg-card p-4 space-y-4">
-            <p className="text-[10px] font-bold text-muted-foreground uppercase flex items-center gap-1.5">
+            <p className="text-meta font-bold text-muted-foreground uppercase flex items-center gap-1.5">
               <BarChart3 className="h-3 w-3" /> Tráfego por Canal (Simulado)
             </p>
             <div className="h-[180px] w-full">
@@ -198,26 +261,26 @@ export function DeployModule() {
             </div>
           </div>
           <div className="rounded-xl border border-border bg-card p-4 flex flex-col justify-center">
-            <p className="text-[10px] font-bold text-muted-foreground uppercase mb-4 flex items-center gap-1.5">
+            <p className="text-meta font-bold text-muted-foreground uppercase mb-4 flex items-center gap-1.5">
               <Activity className="h-3 w-3 text-nexus-blue" /> Saúde da Infraestrutura
             </p>
             <div className="space-y-4">
-              <div className="flex items-center justify-between text-xs">
+              <div className="flex items-center justify-between text-meta">
                 <span className="text-muted-foreground">API Latency</span>
                 <span className="font-bold text-nexus-emerald">124ms (Healthy)</span>
               </div>
-              <div className="flex items-center justify-between text-xs">
+              <div className="flex items-center justify-between text-meta">
                 <span className="text-muted-foreground">Auto-scaling Group</span>
                 <span className="font-bold text-nexus-blue">2 nodes active</span>
               </div>
-              <div className="flex items-center justify-between text-xs">
+              <div className="flex items-center justify-between text-meta">
                 <span className="text-muted-foreground">Database Pool</span>
                 <span className="font-bold text-nexus-amber">85% Capacity</span>
               </div>
               <div className="pt-2">
                 <div className="flex items-center gap-2 mb-1">
                   <MapIcon className="h-3 w-3 text-muted-foreground" />
-                  <span className="text-[10px] text-muted-foreground font-bold uppercase">Multi-Region Edge</span>
+                  <span className="text-meta text-muted-foreground font-bold uppercase">Multi-Region Edge</span>
                 </div>
                 <div className="flex gap-1">
                   <div className="h-1.5 w-1.5 rounded-full bg-nexus-emerald" title="US-East" />
@@ -243,8 +306,8 @@ export function DeployModule() {
                   : 'border-border bg-card hover:border-primary/30'
               }`}
             >
-              <p className="text-sm font-medium text-foreground">{env.label}</p>
-              <p className="text-[11px] text-muted-foreground mt-1">{env.description}</p>
+              <p className="text-body-sm font-medium text-foreground">{env.label}</p>
+              <p className="text-meta text-muted-foreground mt-1">{env.description}</p>
             </button>
           ))}
         </div>
@@ -288,7 +351,7 @@ export function DeployModule() {
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <span className="text-muted-foreground">{meta.icon}</span>
-                    <span className="text-sm font-medium text-foreground">{meta.label}</span>
+                    <span className="text-body-sm font-medium text-foreground">{meta.label}</span>
                   </div>
                   <ToggleField
                     label=""
@@ -302,12 +365,12 @@ export function DeployModule() {
                   <div className="space-y-2">
                     {Object.entries(ch.config).map(([key, value]) => (
                       <div key={key}>
-                        <label className="text-[11px] text-muted-foreground uppercase">
+                        <label className="text-meta text-muted-foreground uppercase">
                           {key.replace(/_/g, ' ')}
                         </label>
                         <input
                           aria-label={`${meta.label} — ${key.replace(/_/g, ' ')}`}
-                          className="w-full rounded-lg border border-border bg-muted/30 px-3 py-1.5 text-xs text-foreground"
+                          className="w-full rounded-lg border border-border bg-muted/30 px-3 py-1.5 text-meta text-foreground"
                           value={value}
                           onChange={(e) =>
                             updateChannel(ch.id, {
@@ -321,7 +384,7 @@ export function DeployModule() {
                       <span
                         className={`h-2 w-2 rounded-full ${ch.status === 'active' ? 'bg-nexus-emerald' : ch.status === 'error' ? 'bg-destructive' : 'bg-muted-foreground'}`}
                       />
-                      <span className="text-[11px] text-muted-foreground capitalize">
+                      <span className="text-meta text-muted-foreground capitalize">
                         {ch.status}
                       </span>
                     </div>
@@ -359,16 +422,16 @@ export function DeployModule() {
                   checked={kpi.enabled}
                   onCheckedChange={(v) => updateKPI(kpi.id, { enabled: v })}
                 />
-                <span className="text-lg">{kpi.icon}</span>
+                <span className="text-title-sm">{kpi.icon}</span>
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-foreground">{kpi.name}</p>
-                  <p className="text-[11px] text-muted-foreground">Target: {kpi.target}</p>
+                  <p className="text-body-sm font-medium text-foreground">{kpi.name}</p>
+                  <p className="text-meta text-muted-foreground">Target: {kpi.target}</p>
                 </div>
               </div>
               {kpi.enabled && (
                 <input
                   aria-label={`Meta KPI ${kpi.name}`}
-                  className="w-24 rounded-lg border border-border bg-muted/30 px-2 py-1 text-xs text-foreground text-right"
+                  className="w-24 rounded-lg border border-border bg-muted/30 px-2 py-1 text-meta text-foreground text-right"
                   value={kpi.target}
                   onChange={(e) => updateKPI(kpi.id, { target: e.target.value })}
                 />
@@ -387,13 +450,13 @@ export function DeployModule() {
         />
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label htmlFor="deploy-budget" className="text-xs text-muted-foreground mb-1 block">
+            <label htmlFor="deploy-budget" className="text-meta text-muted-foreground mb-1 block">
               Budget Mensal (USD)
             </label>
             <input
               id="deploy-budget"
               type="number"
-              className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-sm text-foreground"
+              className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-body-sm text-foreground"
               value={agent.monthly_budget ?? ''}
               onChange={(e) =>
                 updateAgent({ monthly_budget: e.target.value ? Number(e.target.value) : undefined })
@@ -402,13 +465,13 @@ export function DeployModule() {
             />
           </div>
           <div>
-            <label htmlFor="deploy-alert-pct" className="text-xs text-muted-foreground mb-1 block">
+            <label htmlFor="deploy-alert-pct" className="text-meta text-muted-foreground mb-1 block">
               Alerta em (%)
             </label>
             <input
               id="deploy-alert-pct"
               type="number"
-              className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-sm text-foreground"
+              className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-body-sm text-foreground"
               value={agent.budget_alert_threshold}
               onChange={(e) => updateAgent({ budget_alert_threshold: Number(e.target.value) })}
               min={0}
@@ -435,8 +498,8 @@ export function DeployModule() {
               <Rocket className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h3 className="text-lg font-black text-foreground">Deploy Industrial Nexus</h3>
-              <p className="text-xs text-muted-foreground">Promova este agente através dos estágios de governança.</p>
+              <h3 className="text-title-sm font-black text-foreground">Deploy Industrial Nexus</h3>
+              <p className="text-meta text-muted-foreground">Promova este agente através dos estágios de governança.</p>
             </div>
           </div>
 
@@ -453,7 +516,7 @@ export function DeployModule() {
                     className={cn(
                       "flex flex-col p-4 rounded-2xl border text-left transition-all duration-300",
                       agent.status === env.id 
-                        ? "bg-background border-primary shadow-xl shadow-primary/10 scale-[1.02]" 
+                        ? "bg-background border-primary shadow-nexus-xl shadow-primary/10 scale-[1.02]" 
                         : "bg-background/40 border-border/40 hover:border-primary/40"
                     )}
                   >
@@ -461,16 +524,16 @@ export function DeployModule() {
                       <div className={cn("h-7 w-7 rounded-lg flex items-center justify-center", agent.status === env.id ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground")}>
                         {env.icon}
                       </div>
-                      <span className="text-sm font-bold">{env.label}</span>
+                      <span className="text-body-sm font-bold">{env.label}</span>
                       {agent.status === env.id && <Badge className="ml-auto bg-nexus-emerald text-white border-none text-[9px] font-black">ACTIVE</Badge>}
                     </div>
-                    <p className="text-[10px] text-muted-foreground leading-relaxed">{env.desc}</p>
+                    <p className="text-meta text-muted-foreground leading-relaxed">{env.desc}</p>
                   </button>
                 ))}
               </div>
 
               <div className="p-4 rounded-2xl border border-border/40 bg-background/40 space-y-4">
-                <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+                <h4 className="text-meta font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
                   <ShieldCheck className="h-3 w-3" /> Verificações de Saúde
                 </h4>
                 <div className="space-y-2">
@@ -481,7 +544,7 @@ export function DeployModule() {
                     { label: 'Canais de Comunicação', ok: agent.deploy_channels.some(c => c.enabled) },
                   ].map((check, i) => (
                     <div key={i} className="flex items-center justify-between p-2 rounded-xl bg-card/30 border border-border/20">
-                      <span className="text-[11px] font-medium text-foreground">{check.label}</span>
+                      <span className="text-meta font-medium text-foreground">{check.label}</span>
                       {check.ok ? <CheckCircle className="h-3.5 w-3.5 text-nexus-emerald" /> : <AlertTriangle className="h-3.5 w-3.5 text-nexus-amber" />}
                     </div>
                   ))}
@@ -490,15 +553,15 @@ export function DeployModule() {
             </div>
 
             <div className="p-6 rounded-[2rem] border border-border/40 bg-background/20 backdrop-blur-sm flex flex-col justify-center items-center text-center space-y-4">
-              <div className="h-16 w-16 rounded-3xl bg-primary/10 flex items-center justify-center border border-primary/20 shadow-lg">
+              <div className="h-16 w-16 rounded-3xl bg-primary/10 flex items-center justify-center border border-primary/20 shadow-nexus-lg">
                 <Zap className="h-8 w-8 text-primary animate-pulse" />
               </div>
               <div>
-                <h4 className="text-base font-black text-foreground">Snapshot & Deploy</h4>
-                <p className="text-xs text-muted-foreground max-w-[240px] mt-1">Gere um rastro imutável e promova as alterações para o cluster industrial.</p>
+                <h4 className="text-title-sm font-black text-foreground">Snapshot & Deploy</h4>
+                <p className="text-meta text-muted-foreground max-w-[240px] mt-1">Gere um rastro imutável e promova as alterações para o cluster industrial.</p>
               </div>
               <Button 
-                className="w-full h-12 rounded-2xl nexus-gradient-bg text-primary-foreground font-bold shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
+                className="w-full h-12 rounded-2xl nexus-gradient-bg text-primary-foreground font-bold shadow-nexus-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
                 onClick={() => {
                   const target = agent.status === 'production' ? 'Produção' : 'Staging';
                   toast.promise(
@@ -512,6 +575,15 @@ export function DeployModule() {
                 }}
               >
                 Promover para {agent.status === 'production' ? 'Produção' : 'Staging'}
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full h-11 rounded-2xl border-primary/40 gap-2"
+                onClick={handlePublishToOpenclaw}
+                disabled={publishing || !agent.id}
+              >
+                <Cloud className="h-4 w-4" />
+                {publishing ? 'Publicando no OpenClaw…' : 'Publicar no OpenClaw'}
               </Button>
               <div className="flex items-center gap-1.5 text-[9px] font-bold text-muted-foreground uppercase tracking-tighter">
                 <Activity className="h-3 w-3" /> Transição segura com rollback automático

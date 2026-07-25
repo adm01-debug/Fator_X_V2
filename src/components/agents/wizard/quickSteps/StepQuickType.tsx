@@ -25,8 +25,8 @@ export function StepQuickType({ form, errors, update, applyTemplate, highlightFi
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-lg font-heading font-semibold text-foreground">Tipo do agente</h2>
-        <p className="text-sm text-muted-foreground">
+        <h2 className="text-title-sm font-heading font-semibold text-foreground">Tipo do agente</h2>
+        <p className="text-body-sm text-muted-foreground">
           Escolha o papel principal — depois você pode aplicar um template pronto.
         </p>
       </div>
@@ -47,27 +47,27 @@ export function StepQuickType({ form, errors, update, applyTemplate, highlightFi
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-2xl">{tpl.emoji}</span>
                 <div className="min-w-0 flex-1">
-                  <p className="font-medium text-sm text-foreground">{t.label}</p>
-                  <p className="text-[11px] text-muted-foreground">Sugerido: {tpl.suggestedName}</p>
+                  <p className="font-medium text-body-sm text-foreground">{t.label}</p>
+                  <p className="text-meta text-muted-foreground">Sugerido: {tpl.suggestedName}</p>
                 </div>
                 {selected && <Check className="h-4 w-4 text-primary shrink-0" />}
               </div>
-              <p className="text-xs text-muted-foreground">{t.desc}</p>
+              <p className="text-meta text-muted-foreground">{t.desc}</p>
             </button>
           );
         })}
       </div>
 
-      {errors.type && <p className="text-xs text-destructive">{errors.type}</p>}
+      {errors.type && <p className="text-meta text-destructive">{errors.type}</p>}
 
       {selectedTemplate && (
         <div className="nexus-card flex flex-col sm:flex-row sm:items-center gap-3 bg-primary/5 border-primary/20">
           <div className="flex-1">
-            <p className="text-sm font-medium text-foreground flex items-center gap-2">
+            <p className="text-body-sm font-medium text-foreground flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-primary" />
               Template "{selectedTemplate.suggestedName}" disponível
             </p>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-meta text-muted-foreground mt-1">
               Preenche nome, missão, modelo recomendado ({selectedTemplate.recommendedModel}) e um system prompt completo.
             </p>
           </div>

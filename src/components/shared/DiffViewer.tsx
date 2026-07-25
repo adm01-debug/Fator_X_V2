@@ -14,7 +14,7 @@ export function DiffViewer({ oldText, newText, className = "" }: Props) {
   }, [oldText, newText]);
 
   return (
-    <div className={`font-mono text-[11px] leading-relaxed p-2 rounded bg-background/50 border border-border/40 whitespace-pre-wrap break-all ${className}`}>
+    <div className={`font-mono text-meta leading-relaxed p-2 rounded bg-background/50 border border-border/40 whitespace-pre-wrap break-all ${className}`}>
       {changes.map((part, index) => {
         const color = part.added 
           ? 'bg-nexus-emerald/20 text-nexus-emerald line-through-none' 

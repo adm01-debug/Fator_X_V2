@@ -15,7 +15,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { listKnowledgeBases, deleteKnowledgeBase, listVectorIndexes, getChunkEmbeddingStats } from "@/services/knowledgeService";
 import { CreateKnowledgeBaseDialog } from "@/components/dialogs/CreateKnowledgeBaseDialog";
-import { EditKnowledgeBaseDialog } from "@/components/dialogs/EditKnowledgeBaseDialog";
+import { EditKnowledgeBaseDialog, type KnowledgeBase } from "@/components/dialogs/EditKnowledgeBaseDialog";
 import { KnowledgeBaseDetail } from "@/components/knowledge/KnowledgeBaseDetail";
 import { AudioUploadDialog } from "@/components/knowledge/AudioUploadDialog";
 import { DocOcrDialog } from "@/components/knowledge/DocOcrDialog";
@@ -32,10 +32,12 @@ import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
+import type { DbRow } from '@/types/dbRow';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 const pipeline = [
-  { name: 'Parsing', icon: FileText, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-  { name: 'Chunking', icon: Layers, color: 'text-purple-500', bg: 'bg-purple-500/10' },
+  { name: 'Parsing', icon: FileText, color: 'text-nexus-blue', bg: 'bg-nexus-blue/10' },
+  { name: 'Chunking', icon: Layers, color: 'text-nexus-purple', bg: 'bg-nexus-purple/10' },
   { name: 'Metadata', icon: Shield, color: 'text-nexus-emerald', bg: 'bg-nexus-emerald/10' },
   { name: 'Embeddings', icon: BrainCircuit, color: 'text-nexus-amber', bg: 'bg-nexus-amber/10' },
   { name: 'Indexing', icon: Database, color: 'text-primary', bg: 'bg-primary/10' }
@@ -44,8 +46,7 @@ const pipeline = [
 export default function KnowledgePage() {
   const [search, setSearch] = useState("");
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [editKb, setEditKb] = useState<any>(null);
+  const [editKb, setEditKb] = useState<KnowledgeBase | null>(null);
   const [selectedKb, setSelectedKb] = useState<{ id: string; name: string } | null>(null);
   const queryClient = useQueryClient();
 
@@ -80,32 +81,32 @@ export default function KnowledgePage() {
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-10 max-w-[1440px] mx-auto animate-page-enter">
       {/* Header Elevated 10/10 */}
-      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-2xl shadow-primary/5 mb-10 relative overflow-hidden group">
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-nexus-2xl shadow-primary/5 mb-10 relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/[0.06] transition-colors duration-500 pointer-events-none" />
         
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative">
           <div className="flex items-center gap-7">
-            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
+            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-nexus-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
               <Database className="h-11 w-11 text-primary animate-float" />
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-3">
                 <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Conhecimento & RAG</h1>
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-nexus-cyan/10 text-nexus-cyan text-[10px] font-bold uppercase tracking-widest border border-nexus-cyan/20">
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-nexus-cyan/10 text-nexus-cyan text-meta font-bold uppercase tracking-widest border border-nexus-cyan/20">
                   <Radio className="h-3 w-3 animate-pulse" /> Neural Network
                 </div>
               </div>
-              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+              <p className="text-title-sm text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Ecossistema de recuperação vetorial. Orquestre o conhecimento dos seus agentes através de Retrieval-Augmented Generation em escala industrial.
               </p>
             </div>
           </div>
           <div className="flex items-center gap-3">
              <div className="flex flex-col items-end gap-1">
-              <div className="flex items-center gap-2 text-nexus-emerald font-black text-sm uppercase tracking-tighter">
+              <div className="flex items-center gap-2 text-nexus-emerald font-black text-body-sm uppercase tracking-tighter">
                 <ShieldCheck className="h-4 w-4" /> Vector DB Nominal
               </div>
-              <p className="text-[10px] text-muted-foreground font-bold tracking-widest uppercase">Auto-Scaling Ingestion</p>
+              <p className="text-meta text-muted-foreground font-bold tracking-widest uppercase">Auto-Scaling Ingestion</p>
             </div>
             <div className="h-10 w-px bg-border/40 mx-4" />
             <div className="flex items-center gap-2">
@@ -121,16 +122,16 @@ export default function KnowledgePage() {
       <Tabs defaultValue="bases" className="space-y-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <TabsList className="bg-secondary/20 p-1 rounded-2xl h-14 w-full md:w-auto border border-border/40">
-            <TabsTrigger value="bases" className="rounded-xl px-6 font-bold h-full data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-lg gap-2">
+            <TabsTrigger value="bases" className="rounded-xl px-6 font-bold h-full data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-nexus-lg gap-2">
               <Database className="h-4 w-4" /> Bases de Conhecimento
             </TabsTrigger>
-            <TabsTrigger value="tuning" className="rounded-xl px-6 font-bold h-full data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-lg gap-2">
+            <TabsTrigger value="tuning" className="rounded-xl px-6 font-bold h-full data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-nexus-lg gap-2">
               <Settings2 className="h-4 w-4" /> Pipeline Tuning
             </TabsTrigger>
-            <TabsTrigger value="search" className="rounded-xl px-6 font-bold h-full data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-lg gap-2">
+            <TabsTrigger value="search" className="rounded-xl px-6 font-bold h-full data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-nexus-lg gap-2">
               <Search className="h-4 w-4" /> Neural Search
             </TabsTrigger>
-            <TabsTrigger value="versions" className="rounded-xl px-6 font-bold h-full data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-lg gap-2">
+            <TabsTrigger value="versions" className="rounded-xl px-6 font-bold h-full data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-nexus-lg gap-2">
               <History className="h-4 w-4" /> Versionamento
             </TabsTrigger>
           </TabsList>
@@ -159,7 +160,7 @@ export default function KnowledgePage() {
                     </div>
                     <h3 className="text-xl font-heading font-black text-foreground">Fluxo de Ingestão Neural</h3>
                   </div>
-                  <Badge variant="secondary" className="bg-primary/5 text-primary border-none font-black text-[10px] uppercase tracking-widest px-3 py-1">Execution: Multi-Thread</Badge>
+                  <Badge variant="secondary" className="bg-primary/5 text-primary border-none font-black text-meta uppercase tracking-widest px-3 py-1">Execution: Multi-Thread</Badge>
                 </div>
                 
                 <div className="relative pt-4 pb-2">
@@ -169,17 +170,17 @@ export default function KnowledgePage() {
                       <div key={step.name} className="flex flex-col items-center group">
                         <div className={cn(
                           "h-14 w-14 rounded-2xl flex items-center justify-center relative z-10 transition-all duration-500",
-                          "bg-card border border-border/40 shadow-xl group-hover:scale-110 group-hover:border-primary/40",
+                          "bg-card border border-border/40 shadow-nexus-xl group-hover:scale-110 group-hover:border-primary/40",
                           step.bg
                         )}>
                           <step.icon className={cn("h-6 w-6 transition-transform group-hover:rotate-6", step.color)} />
-                          <div className="absolute -top-2 -right-2 h-5 w-5 rounded-lg bg-background border border-border/40 flex items-center justify-center text-[10px] font-black shadow-sm">
+                          <div className="absolute -top-2 -right-2 h-5 w-5 rounded-lg bg-background border border-border/40 flex items-center justify-center text-meta font-black shadow-nexus-sm">
                             {i + 1}
                           </div>
                         </div>
                         <div className="mt-4 text-center">
-                          <p className="text-sm font-black text-foreground uppercase tracking-tight">{step.name}</p>
-                          <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest mt-1">Stage {i + 1}</p>
+                          <p className="text-body-sm font-black text-foreground uppercase tracking-tight">{step.name}</p>
+                          <p className="text-meta font-bold text-muted-foreground/60 uppercase tracking-widest mt-1">Stage {i + 1}</p>
                         </div>
                       </div>
                     ))}
@@ -195,7 +196,7 @@ export default function KnowledgePage() {
                       placeholder="Pesquisar bases de conhecimento..." 
                       value={search} 
                       onChange={(e) => setSearch(e.target.value)} 
-                      className="pl-12 h-14 rounded-2xl bg-card border-border/40 focus:ring-primary/20 text-base" 
+                      className="pl-12 h-14 rounded-2xl bg-card border-border/40 focus:ring-primary/20 text-title-sm" 
                     />
                   </div>
                   <div className="flex bg-secondary/20 border border-border/40 rounded-2xl p-1 h-14">
@@ -229,8 +230,8 @@ export default function KnowledgePage() {
                   <div className="h-20 w-20 rounded-full bg-secondary/30 flex items-center justify-center mb-6 border border-border/20">
                     <Database className="h-10 w-10 text-muted-foreground/50" />
                   </div>
-                  <h2 className="text-lg font-bold text-foreground mb-2">Vácuo de Informação Detectado</h2>
-                  <p className="text-sm text-muted-foreground max-sm mb-6">Sua infraestrutura RAG ainda não possui bases de dados ativas. Comece conectando uma fonte de conhecimento.</p>
+                  <h2 className="text-title-sm font-bold text-foreground mb-2">Vácuo de Informação Detectado</h2>
+                  <p className="text-body-sm text-muted-foreground max-sm mb-6">Sua infraestrutura RAG ainda não possui bases de dados ativas. Comece conectando uma fonte de conhecimento.</p>
                   <CreateKnowledgeBaseDialog onCreated={() => refetch()} />
                 </div>
               ) : viewMode === 'grid' ? (
@@ -247,32 +248,32 @@ export default function KnowledgePage() {
                               <BookOpen className="h-6 w-6 text-primary" />
                             </div>
                             <div>
-                              <h3 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">{kb.name}</h3>
+                              <h3 className="text-body-sm font-bold text-foreground group-hover:text-primary transition-colors">{kb.name}</h3>
                               <div className="flex items-center gap-2 mt-0.5">
                                 <Badge variant="outline" className="text-[9px] py-0 px-1.5 border-border/40 font-mono">{kb.vector_db}</Badge>
-                                <span className="text-[10px] text-muted-foreground">{kb.embedding_model?.split('-').slice(-1)}</span>
+                                <span className="text-meta text-muted-foreground">{kb.embedding_model?.split('-').slice(-1)}</span>
                               </div>
                             </div>
                           </div>
                           <StatusBadge status={kb.status || 'active'} />
                         </div>
                         
-                        <p className="text-xs text-muted-foreground line-clamp-2 h-8">{kb.description || 'Base de conhecimento ativa em produção'}</p>
+                        <p className="text-meta text-muted-foreground line-clamp-2 h-8">{kb.description || 'Base de conhecimento ativa em produção'}</p>
                         
                         <div className="grid grid-cols-2 gap-4 bg-secondary/20 rounded-xl p-3 border border-border/10">
                           <div>
-                            <p className="text-sm font-bold text-foreground">{kb.document_count ?? 0}</p>
-                            <p className="text-[10px] text-muted-foreground uppercase tracking-tighter">Documentos</p>
+                            <p className="text-body-sm font-bold text-foreground">{kb.document_count ?? 0}</p>
+                            <p className="text-meta text-muted-foreground uppercase tracking-tighter">Documentos</p>
                           </div>
                           <div className="border-l border-border/20 pl-4">
-                            <p className="text-sm font-bold text-foreground">{(kb.chunk_count ?? 0).toLocaleString()}</p>
-                            <p className="text-[10px] text-muted-foreground uppercase tracking-tighter">Segmentos</p>
+                            <p className="text-body-sm font-bold text-foreground">{(kb.chunk_count ?? 0).toLocaleString()}</p>
+                            <p className="text-meta text-muted-foreground uppercase tracking-tighter">Segmentos</p>
                           </div>
                         </div>
                       </div>
 
-                      <div className="bg-secondary/10 border-t border-border/30 p-3 flex items-center gap-2" onClick={e => e.stopPropagation()}>
-                        <Button variant="ghost" size="sm" className="flex-1 h-8 text-[11px] gap-1.5 hover:bg-primary/5" onClick={() => setEditKb(kb)}>
+                      <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className="bg-secondary/10 border-t border-border/30 p-3 flex items-center gap-2" onClick={e => e.stopPropagation()}>
+                        <Button variant="ghost" size="sm" className="flex-1 h-8 text-meta gap-1.5 hover:bg-primary/5" onClick={() => setEditKb(kb)}>
                           <Pencil className="h-3 w-3" /> Configurar
                         </Button>
                         <AccessControl permission="knowledge.delete">
@@ -303,11 +304,11 @@ export default function KnowledgePage() {
                   <table className="w-full text-left">
                     <thead className="bg-secondary/30 border-b border-border/40">
                       <tr>
-                        <th className="px-6 py-3 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Base de Dados</th>
-                        <th className="px-6 py-3 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Engine / Modelo</th>
-                        <th className="px-6 py-3 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Volume</th>
-                        <th className="px-6 py-3 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Status</th>
-                        <th className="px-6 py-3 text-[10px] font-bold text-muted-foreground uppercase tracking-widest text-right">Ações</th>
+                        <th className="px-6 py-3 text-meta font-bold text-muted-foreground uppercase tracking-widest">Base de Dados</th>
+                        <th className="px-6 py-3 text-meta font-bold text-muted-foreground uppercase tracking-widest">Engine / Modelo</th>
+                        <th className="px-6 py-3 text-meta font-bold text-muted-foreground uppercase tracking-widest">Volume</th>
+                        <th className="px-6 py-3 text-meta font-bold text-muted-foreground uppercase tracking-widest">Status</th>
+                        <th className="px-6 py-3 text-meta font-bold text-muted-foreground uppercase tracking-widest text-right">Ações</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border/20">
@@ -316,16 +317,16 @@ export default function KnowledgePage() {
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-3">
                               <BookOpen className="h-4 w-4 text-primary" />
-                              <span className="text-sm font-semibold">{kb.name}</span>
+                              <span className="text-body-sm font-semibold">{kb.name}</span>
                             </div>
                           </td>
                           <td className="px-6 py-4">
                             <div className="flex flex-col">
-                              <span className="text-xs font-mono">{kb.vector_db}</span>
-                              <span className="text-[10px] text-muted-foreground">{kb.embedding_model}</span>
+                              <span className="text-meta font-mono">{kb.vector_db}</span>
+                              <span className="text-meta text-muted-foreground">{kb.embedding_model}</span>
                             </div>
                           </td>
-                          <td className="px-6 py-4 text-xs">
+                          <td className="px-6 py-4 text-meta">
                             <span className="font-bold">{kb.document_count ?? 0}</span> docs • <span className="font-bold">{(kb.chunk_count ?? 0).toLocaleString()}</span> chunks
                           </td>
                           <td className="px-6 py-4">
@@ -350,18 +351,18 @@ export default function KnowledgePage() {
               <div className="nexus-card bg-gradient-to-br from-primary/10 to-transparent border-primary/20 p-5 space-y-4">
                 <div className="flex items-center gap-2">
                   <Zap className="h-4 w-4 text-primary" />
-                  <h4 className="text-xs font-bold uppercase tracking-widest text-primary">Performance RAG</h4>
+                  <h4 className="text-meta font-bold uppercase tracking-widest text-primary">Performance RAG</h4>
                 </div>
                 <div className="space-y-4">
                   <div className="space-y-1.5">
-                    <div className="flex justify-between text-[10px] font-bold uppercase tracking-tight">
+                    <div className="flex justify-between text-meta font-bold uppercase tracking-tight">
                       <span>Latência de Busca</span>
                       <span className="text-primary">12ms avg</span>
                     </div>
                     <Progress value={85} className="h-1 bg-primary/10" />
                   </div>
                   <div className="space-y-1.5">
-                    <div className="flex justify-between text-[10px] font-bold uppercase tracking-tight">
+                    <div className="flex justify-between text-meta font-bold uppercase tracking-tight">
                       <span>Precisão Semântica</span>
                       <span className="text-nexus-emerald">94.2%</span>
                     </div>
@@ -371,12 +372,12 @@ export default function KnowledgePage() {
               </div>
 
               <div className="nexus-card p-5 space-y-4">
-                <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground text-center">Neural Ecosystem Status</h4>
+                <h4 className="text-meta font-bold uppercase tracking-widest text-muted-foreground text-center">Neural Ecosystem Status</h4>
                 <div className="grid grid-cols-3 gap-2">
                   {[
                     { icon: Globe, color: 'text-nexus-cyan' },
                     { icon: Database, color: 'text-primary' },
-                    { icon: Layers, color: 'text-purple-500' },
+                    { icon: Layers, color: 'text-nexus-purple' },
                   ].map((s, i) => (
                     <div key={i} className="flex flex-col items-center justify-center p-3 rounded-xl bg-secondary/20 border border-border/10">
                       <s.icon className={cn("h-4 w-4 mb-1", s.color)} />
@@ -429,7 +430,7 @@ function VectorIndexesStatus() {
   return (
     <div className="nexus-card bg-card/50 backdrop-blur-sm border-border/40 p-5 space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+        <h3 className="text-meta font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
           <BrainCircuit className="h-4 w-4 text-primary" /> Monitoramento Neural
         </h3>
         <TooltipProvider>
@@ -444,8 +445,8 @@ function VectorIndexesStatus() {
         <div className="grid grid-cols-1 gap-3">
           <div className="flex items-center justify-between p-3 rounded-xl bg-nexus-emerald/5 border border-nexus-emerald/20">
             <div>
-              <p className="text-sm font-bold text-nexus-emerald">{chunkStats.done.toLocaleString()}</p>
-              <p className="text-[10px] text-muted-foreground uppercase">Sincronizados</p>
+              <p className="text-body-sm font-bold text-nexus-emerald">{chunkStats.done.toLocaleString()}</p>
+              <p className="text-meta text-muted-foreground uppercase">Sincronizados</p>
             </div>
             <div className="h-8 w-8 rounded-full bg-nexus-emerald/10 flex items-center justify-center">
               <Shield className="h-4 w-4 text-nexus-emerald" />
@@ -453,8 +454,8 @@ function VectorIndexesStatus() {
           </div>
           <div className="flex items-center justify-between p-3 rounded-xl bg-nexus-amber/5 border border-nexus-amber/20">
             <div>
-              <p className="text-sm font-bold text-nexus-amber">{chunkStats.pending.toLocaleString()}</p>
-              <p className="text-[10px] text-muted-foreground uppercase">Na Fila</p>
+              <p className="text-body-sm font-bold text-nexus-amber">{chunkStats.pending.toLocaleString()}</p>
+              <p className="text-meta text-muted-foreground uppercase">Na Fila</p>
             </div>
             <div className="h-8 w-8 rounded-full bg-nexus-amber/10 flex items-center justify-center animate-pulse">
               <RefreshCcw className="h-4 w-4 text-nexus-amber" />

@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { fetchWithTimeout } from "../_shared/retry.ts";
 import {
   handleCorsPreflight, jsonResponse, errorResponse,
   authenticateRequest,
@@ -30,7 +31,7 @@ serve(async (req) => {
 
     const parsed = await parseBody(req, ImageInput);
     if (parsed.error) return parsed.error;
-    const { action, image_base64, image_url, prompt, categories } = parsed.data;
+    const { action, image_base64, image_url, prompt, _categories } = parsed.data;
 
     const hfToken = Deno.env.get('HF_API_TOKEN');
     if (!hfToken) return errorResponse(req, 'HF_API_TOKEN not configured', 503);
@@ -41,7 +42,7 @@ serve(async (req) => {
       imageBytes = new Uint8Array(raw.length);
       for (let i = 0; i < raw.length; i++) imageBytes[i] = raw.charCodeAt(i);
     } else if (image_url) {
-      const resp = await fetch(image_url);
+      const resp = await fetchWithTimeout(image_url);
       if (!resp.ok) return errorResponse(req, `Failed to fetch image`, 400);
       imageBytes = new Uint8Array(await resp.arrayBuffer());
     } else {
@@ -53,7 +54,7 @@ serve(async (req) => {
     
     switch (action) {
       case 'nsfw_check': {
-        const resp = await fetch('https://router.huggingface.co/hf-inference/models/Falconsai/nsfw_image_detection', {
+        const resp = await fetchWithTimeout('https://router.huggingface.co/hf-inference/models/Falconsai/nsfw_image_detection', {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${hfToken}` },
           body: imageBytes,
@@ -63,7 +64,7 @@ serve(async (req) => {
       }
       case 'classify': {
         const model = 'google/vit-base-patch16-224';
-        const resp = await fetch(`https://router.huggingface.co/hf-inference/models/${model}`, {
+        const resp = await fetchWithTimeout(`https://router.huggingface.co/hf-inference/models/${model}`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${hfToken}` },
           body: imageBytes,
@@ -73,7 +74,7 @@ serve(async (req) => {
       }
       default: {
         // Vision LLM analysis
-        const resp = await fetch('https://router.huggingface.co/v1/chat/completions', {
+        const resp = await fetchWithTimeout('https://router.huggingface.co/v1/chat/completions', {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${hfToken}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({

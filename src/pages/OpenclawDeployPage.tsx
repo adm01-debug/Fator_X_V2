@@ -15,9 +15,9 @@ import {
   Package,
   Upload,
   Loader2,
-  CheckCircle2,
-  XCircle,
   RefreshCw,
+  MessageSquare,
+  QrCode,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -26,6 +26,9 @@ import {
   listOpenclawSkills,
   deploySkillToOpenclaw,
 } from "@/services/openclawDeployService";
+import { OpenclawStatusBadge } from "@/components/openclaw/OpenclawStatusBadge";
+import { OpenclawTestConsole } from "@/components/openclaw/OpenclawTestConsole";
+import { OpenclawWhatsappSetup } from "@/components/openclaw/OpenclawWhatsappSetup";
 
 export default function OpenclawDeployPage() {
   const queryClient = useQueryClient();
@@ -99,23 +102,11 @@ export default function OpenclawDeployPage() {
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
       <PageHeader
-        title="OpenClaw Deploy"
-        description="Runtime SKILL.md — deploy e monitoramento"
+        title="Runtime OpenClaw"
+        description="Plano de execução remoto — SKILL.md, agentes e canais"
         actions={
           <div className="flex items-center gap-2">
-            <Badge
-              variant="outline"
-              className={`gap-1.5 ${healthOk ? "border-nexus-emerald/50 text-nexus-emerald" : "border-destructive/50 text-destructive"}`}
-            >
-              {healthLoading ? (
-                <Loader2 className="h-3 w-3 animate-spin" />
-              ) : healthOk ? (
-                <CheckCircle2 className="h-3 w-3" />
-              ) : (
-                <XCircle className="h-3 w-3" />
-              )}
-              {healthLoading ? "Checando" : healthOk ? "Online" : "Offline"}
-            </Badge>
+            <OpenclawStatusBadge />
             <Button
               variant="outline"
               size="sm"
@@ -133,6 +124,23 @@ export default function OpenclawDeployPage() {
         }
       />
 
+      {health?.configError && (
+        <div
+          role="alert"
+          className="flex items-start gap-3 rounded-lg border border-nexus-amber/40 bg-nexus-amber/10 p-4 text-body-sm text-nexus-amber"
+        >
+          <Activity className="h-4 w-4 mt-0.5 shrink-0" aria-hidden />
+          <div className="space-y-1">
+            <p className="font-medium">Configuração inválida do OpenClaw</p>
+            <p className="text-nexus-amber/90">{health.configError.message}</p>
+            {health.configError.hint && (
+              <p className="text-meta text-nexus-amber/70">{health.configError.hint}</p>
+            )}
+          </div>
+        </div>
+      )}
+
+
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="bg-secondary/50 border border-border/50 p-1">
           <TabsTrigger value="overview" className="gap-1.5">
@@ -144,6 +152,12 @@ export default function OpenclawDeployPage() {
           <TabsTrigger value="skills" className="gap-1.5">
             <Package className="h-3.5 w-3.5" /> Skills ({skills.length})
           </TabsTrigger>
+          <TabsTrigger value="console" className="gap-1.5">
+            <MessageSquare className="h-3.5 w-3.5" /> Console
+          </TabsTrigger>
+          <TabsTrigger value="whatsapp" className="gap-1.5">
+            <QrCode className="h-3.5 w-3.5" /> WhatsApp
+          </TabsTrigger>
           <TabsTrigger value="deploy" className="gap-1.5">
             <Upload className="h-3.5 w-3.5" /> Deploy
           </TabsTrigger>
@@ -152,32 +166,32 @@ export default function OpenclawDeployPage() {
         <TabsContent value="overview" className="mt-6">
           <Card className="bg-card border-border">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-base">
+              <CardTitle className="flex items-center gap-2 text-title-sm">
                 <Server className="h-4 w-4 text-primary" /> Status do Runtime
               </CardTitle>
             </CardHeader>
             <CardContent>
               {healthLoading ? (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2 text-body-sm text-muted-foreground">
                   <Loader2 className="h-4 w-4 animate-spin" /> Verificando saúde do OpenClaw...
                 </div>
               ) : healthError ? (
-                <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/30 text-sm text-destructive">
+                <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/30 text-body-sm text-destructive">
                   Falha ao contatar OpenClaw: {healthError instanceof Error ? healthError.message : "erro desconhecido"}
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="p-3 rounded-lg bg-background border border-border">
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Status</p>
-                    <p className="text-sm font-mono mt-1">{health?.status ?? "—"}</p>
+                    <p className="text-meta text-muted-foreground uppercase tracking-wider">Status</p>
+                    <p className="text-body-sm font-mono mt-1">{health?.status ?? "—"}</p>
                   </div>
                   <div className="p-3 rounded-lg bg-background border border-border">
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Versão</p>
-                    <p className="text-sm font-mono mt-1">{health?.version ?? "—"}</p>
+                    <p className="text-meta text-muted-foreground uppercase tracking-wider">Versão</p>
+                    <p className="text-body-sm font-mono mt-1">{health?.version ?? "—"}</p>
                   </div>
                   <div className="p-3 rounded-lg bg-background border border-border">
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Uptime</p>
-                    <p className="text-sm font-mono mt-1">
+                    <p className="text-meta text-muted-foreground uppercase tracking-wider">Uptime</p>
+                    <p className="text-body-sm font-mono mt-1">
                       {typeof health?.uptime === "number" ? `${Math.round(health.uptime)}s` : "—"}
                     </p>
                   </div>
@@ -206,11 +220,11 @@ export default function OpenclawDeployPage() {
                   <CardContent className="p-3 flex items-center gap-3">
                     <Bot className="h-4 w-4 text-primary" />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium">{a.name}</p>
-                      {a.description && <p className="text-xs text-muted-foreground truncate">{a.description}</p>}
+                      <p className="text-body-sm font-medium">{a.name}</p>
+                      {a.description && <p className="text-meta text-muted-foreground truncate">{a.description}</p>}
                     </div>
                     {a.status && (
-                      <Badge variant="outline" className="text-[10px] border-border">
+                      <Badge variant="outline" className="text-meta border-border">
                         {a.status}
                       </Badge>
                     )}
@@ -240,11 +254,11 @@ export default function OpenclawDeployPage() {
                   <CardContent className="p-3 flex items-center gap-3">
                     <Package className="h-4 w-4 text-nexus-purple" />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium">{s.name}</p>
-                      {s.description && <p className="text-xs text-muted-foreground truncate">{s.description}</p>}
+                      <p className="text-body-sm font-medium">{s.name}</p>
+                      {s.description && <p className="text-meta text-muted-foreground truncate">{s.description}</p>}
                     </div>
                     {s.version && (
-                      <Badge variant="outline" className="text-[10px] border-border font-mono">
+                      <Badge variant="outline" className="text-meta border-border font-mono">
                         v{s.version}
                       </Badge>
                     )}
@@ -255,10 +269,20 @@ export default function OpenclawDeployPage() {
           )}
         </TabsContent>
 
+        <TabsContent value="console" className="mt-6">
+          <OpenclawTestConsole agents={agents} disabled={!healthOk} />
+        </TabsContent>
+
+        <TabsContent value="whatsapp" className="mt-6">
+          <OpenclawWhatsappSetup />
+        </TabsContent>
+
+
+
         <TabsContent value="deploy" className="mt-6">
           <Card className="bg-card border-border">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-base">
+              <CardTitle className="flex items-center gap-2 text-title-sm">
                 <Upload className="h-4 w-4 text-nexus-emerald" /> Deploy de SKILL.md
               </CardTitle>
             </CardHeader>
@@ -302,7 +326,7 @@ export default function OpenclawDeployPage() {
                   value={skillContent}
                   onChange={(e) => setSkillContent(e.target.value)}
                   rows={12}
-                  className="bg-background border-border font-mono text-xs resize-none"
+                  className="bg-background border-border font-mono text-meta resize-none"
                 />
               </div>
               <div className="flex justify-end">
@@ -316,7 +340,7 @@ export default function OpenclawDeployPage() {
                 </Button>
               </div>
               {!healthOk && (
-                <p className="text-xs text-destructive text-right">
+                <p className="text-meta text-destructive text-right">
                   ⚠ OpenClaw offline — verifique o VPS antes de tentar deploy.
                 </p>
               )}

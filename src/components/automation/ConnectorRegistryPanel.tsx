@@ -33,7 +33,7 @@ export function ConnectorRegistryPanel() {
           <Card key={i} className="bg-card border-border">
             <CardContent className="p-4 text-center">
               <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
-              <p className="text-xs text-muted-foreground">{s.label}</p>
+              <p className="text-meta text-muted-foreground">{s.label}</p>
             </CardContent>
           </Card>
         ))}
@@ -49,17 +49,17 @@ export function ConnectorRegistryPanel() {
                   <div className="flex items-center gap-2">
                     <span className="text-xl">{conn.icon}</span>
                     <div>
-                      <p className="font-semibold text-sm">{conn.name}</p>
-                      <Badge variant="outline" className="text-[10px] border-border">{conn.category}</Badge>
+                      <p className="font-semibold text-body-sm">{conn.name}</p>
+                      <Badge variant="outline" className="text-meta border-border">{conn.category}</Badge>
                     </div>
                   </div>
                   {isConnected ? <CheckCircle size={18} className="text-nexus-emerald" /> : <XCircle size={18} className="text-muted-foreground" />}
                 </div>
-                <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{conn.description}</p>
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <p className="text-meta text-muted-foreground mb-3 line-clamp-2">{conn.description}</p>
+                <div className="flex items-center justify-between text-meta text-muted-foreground">
                   <span>{conn.operations.length} operações</span>
                   <span>{conn.auth_type}</span>
-                  {conn.supports_webhooks && <Badge variant="outline" className="text-[10px] border-border">Webhook</Badge>}
+                  {conn.supports_webhooks && <Badge variant="outline" className="text-meta border-border">Webhook</Badge>}
                 </div>
               </CardContent>
             </Card>

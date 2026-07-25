@@ -12,7 +12,7 @@ export function WorkflowHandoffVisualizer() {
   });
 
   if (isLoading) return <div className="flex justify-center py-12"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>;
-  if (handoffs.length === 0) return <div className="text-center py-12 text-sm text-muted-foreground">Nenhuma transferência entre agentes registrada.</div>;
+  if (handoffs.length === 0) return <div className="text-center py-12 text-body-sm text-muted-foreground">Nenhuma transferência entre agentes registrada.</div>;
 
   const statusColors: Record<string, string> = {
     pending: 'text-nexus-amber border-nexus-amber/20 bg-nexus-amber/5',
@@ -26,13 +26,13 @@ export function WorkflowHandoffVisualizer() {
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-lg font-bold flex items-center gap-2">
+          <h3 className="text-title-sm font-bold flex items-center gap-2">
             <ArrowRightLeft className="h-5 w-5 text-primary" />
             Fluxo de Handoffs
           </h3>
-          <p className="text-xs text-muted-foreground">Visualização de transferências de contexto e escalonamento</p>
+          <p className="text-meta text-muted-foreground">Visualização de transferências de contexto e escalonamento</p>
         </div>
-        <Badge variant="outline" className="px-3 py-1 font-mono uppercase tracking-widest text-[10px] bg-primary/5">
+        <Badge variant="outline" className="px-3 py-1 font-mono uppercase tracking-widest text-meta bg-primary/5">
           {handoffs.length} Eventos Recentes
         </Badge>
       </div>
@@ -50,8 +50,8 @@ export function WorkflowHandoffVisualizer() {
                       <Bot className="h-5 w-5 text-primary" />
                     </div>
                     <div className="space-y-0.5">
-                      <p className="text-[10px] font-black uppercase text-muted-foreground tracking-tighter">Origem</p>
-                      <p className="text-xs font-bold truncate max-w-[120px]">{h.source_agent_id.split('-')[0]}</p>
+                      <p className="text-meta font-black uppercase text-muted-foreground tracking-tighter">Origem</p>
+                      <p className="text-meta font-bold truncate max-w-[120px]">{h.source_agent_id.split('-')[0]}</p>
                     </div>
                   </div>
 
@@ -64,7 +64,7 @@ export function WorkflowHandoffVisualizer() {
                       {h.status}
                     </Badge>
                     <div className="flex flex-col items-center gap-1 z-10">
-                       <p className="text-[10px] font-bold text-foreground">{h.reason}</p>
+                       <p className="text-meta font-bold text-foreground">{h.reason}</p>
                        <p className="text-[9px] text-muted-foreground">{new Date(h.created_at).toLocaleTimeString()}</p>
                     </div>
                   </div>
@@ -75,8 +75,8 @@ export function WorkflowHandoffVisualizer() {
                       {h.reason === 'human_required' ? <User className="h-5 w-5 text-nexus-purple" /> : <Bot className="h-5 w-5 text-nexus-purple" />}
                     </div>
                     <div className="space-y-0.5">
-                      <p className="text-[10px] font-black uppercase text-muted-foreground tracking-tighter">Destino</p>
-                      <p className="text-xs font-bold truncate max-w-[120px]">{h.target_agent_id.split('-')[0]}</p>
+                      <p className="text-meta font-black uppercase text-muted-foreground tracking-tighter">Destino</p>
+                      <p className="text-meta font-bold truncate max-w-[120px]">{h.target_agent_id.split('-')[0]}</p>
                     </div>
                   </div>
 
@@ -84,10 +84,10 @@ export function WorkflowHandoffVisualizer() {
                   <div className="flex-[2] p-4 bg-secondary/5 space-y-2 border-l border-border/20">
                     <div className="flex items-center gap-2">
                        {h.status === 'completed' ? <CheckCircle2 className="h-3.5 w-3.5 text-nexus-emerald" /> : <Clock className="h-3.5 w-3.5 text-nexus-amber" />}
-                       <p className="text-xs font-medium text-foreground line-clamp-1">{h.reason_text || 'Transferência de contexto operacional'}</p>
+                       <p className="text-meta font-medium text-foreground line-clamp-1">{h.reason_text || 'Transferência de contexto operacional'}</p>
                     </div>
                     <div className="bg-background/40 rounded-lg p-2 border border-border/10">
-                       <p className="text-[10px] text-muted-foreground italic line-clamp-2">
+                       <p className="text-meta text-muted-foreground italic line-clamp-2">
                          {h.context?.messages?.[h.context.messages.length - 1]?.content || 'Nenhum log de mensagem'}
                        </p>
                     </div>

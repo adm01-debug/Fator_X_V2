@@ -64,8 +64,31 @@ export interface ListSkillsFilters {
   limit?: number;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function mergeMeta(skill: any, meta: any | undefined): MarketplaceSkill {
+interface SkillRow {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  version?: string | null;
+  author?: string | null;
+  category?: string | null;
+  tags?: string[] | null;
+  install_count?: number | null;
+}
+
+interface SkillMetaRow {
+  skill_id: string;
+  price_cents?: number | null;
+  pricing_model?: 'free' | 'one_time' | 'subscription' | null;
+  creator_id?: string | null;
+  creator_payout_pct?: number | null;
+  verified?: boolean | null;
+  avg_rating?: number | string | null;
+  review_count?: number | null;
+  install_count?: number | null;
+}
+
+function mergeMeta(skill: SkillRow, meta: SkillMetaRow | undefined): MarketplaceSkill {
   return {
     id: skill.id,
     name: skill.name,
@@ -101,10 +124,11 @@ export async function listSkills(filters: ListSkillsFilters = {}): Promise<Marke
   if (ids.length === 0) return [];
 
   const { data: metas } = await fromTable('skill_marketplace_meta').select('*').in('skill_id', ids);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const byId = new Map<string, any>((metas ?? []).map((m: any) => [m.skill_id, m]));
+  const byId = new Map<string, SkillMetaRow>(
+    ((metas ?? []) as unknown as SkillMetaRow[]).map((m) => [m.skill_id, m])
+  );
 
-  let merged = (skills ?? []).map((s) => mergeMeta(s, byId.get(s.id)));
+  let merged = ((skills ?? []) as unknown as SkillRow[]).map((s) => mergeMeta(s, byId.get(s.id)));
   if (pricing === 'free') merged = merged.filter((s) => s.price_cents === 0);
   if (pricing === 'paid') merged = merged.filter((s) => s.price_cents > 0);
   if (minRating > 0) merged = merged.filter((s) => s.avg_rating >= minRating);

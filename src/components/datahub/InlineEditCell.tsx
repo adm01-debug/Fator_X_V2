@@ -5,6 +5,7 @@ import { supabaseExternal } from "@/integrations/supabase/externalClient";
 import { toast } from "sonner";
 import { formatCellValue } from "@/config/datahub-columns";
 import type { ColumnDef } from "@/config/datahub-columns";
+import { handleKeyboardClick } from "@/lib/a11y";
 
 const NON_EDITABLE = new Set(['id', 'created_at', 'updated_at', 'search_vector', 'is_customer', 'is_supplier', 'is_carrier']);
 
@@ -40,7 +41,7 @@ export function InlineEditCell({ row, col, entityId, onUpdate }: InlineEditCellP
       if (result?.record) onUpdate(String(row.id), result.record);
       setEditing(false);
       toast.success(`"${col.label}" atualizado`);
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(`Erro: ${e instanceof Error ? e.message : String(e)}`);
     } finally {
       setSaving(false);
@@ -62,7 +63,7 @@ export function InlineEditCell({ row, col, entityId, onUpdate }: InlineEditCellP
           value={value}
           onChange={e => setValue(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter') handleSave(); if (e.key === 'Escape') handleCancel(); }}
-          className="h-6 text-[11px] font-mono bg-secondary/50 border-primary/30 px-1.5 min-w-[80px]"
+          className="h-6 text-meta font-mono bg-secondary/50 border-primary/30 px-1.5 min-w-[80px]"
           disabled={saving}
         />
         {saving ? (
@@ -78,8 +79,8 @@ export function InlineEditCell({ row, col, entityId, onUpdate }: InlineEditCellP
   }
 
   return (
-    <span
-      className={`font-mono text-[11px] truncate block max-w-[300px] ${
+    <span role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
+      className={`font-mono text-meta truncate block max-w-[300px] ${
         isSensitive ? 'text-destructive/60' : 'text-foreground'
       } ${canEdit ? 'cursor-pointer hover:bg-primary/5 hover:text-primary rounded px-0.5 -mx-0.5 transition-colors' : ''}`}
       onDoubleClick={() => {

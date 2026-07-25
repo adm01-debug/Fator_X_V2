@@ -29,6 +29,7 @@ import {
   AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import type { DbRow } from '@/types/dbRow';
 
 export default function AgentDetailPage() {
   const { id } = useParams();
@@ -91,8 +92,8 @@ export default function AgentDetailPage() {
     return (
       <div className="flex flex-col items-center justify-center h-[60vh] text-center">
         <Bot className="h-12 w-12 text-muted-foreground mb-4" />
-        <h2 className="text-lg font-semibold text-foreground mb-1">Agente não encontrado</h2>
-        <p className="text-sm text-muted-foreground mb-4">O agente pode ter sido removido.</p>
+        <h2 className="text-title-sm font-semibold text-foreground mb-1">Agente não encontrado</h2>
+        <p className="text-body-sm text-muted-foreground mb-4">O agente pode ter sido removido.</p>
         <Button onClick={() => navigate('/agents')}>Voltar para agentes</Button>
       </div>
     );
@@ -125,7 +126,7 @@ export default function AgentDetailPage() {
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-card border border-border p-6 rounded-2xl">
         <div className="flex items-center gap-4">
-          <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary/15 to-accent/10 flex items-center justify-center text-3xl shadow-sm">
+          <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary/15 to-accent/10 flex items-center justify-center text-3xl shadow-nexus-sm">
             {agent.avatar_emoji || '🤖'}
           </div>
           <div>
@@ -133,8 +134,8 @@ export default function AgentDetailPage() {
               <h1 className="text-xl font-bold text-foreground">{agent.name}</h1>
               <StatusBadge status={agent.status || 'draft'} />
             </div>
-            <div className="flex items-center gap-3 mt-1.5 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1 bg-secondary/50 px-2 py-0.5 rounded text-[10px] font-mono"><Cpu className="h-3 w-3" /> {String(agent.model ?? '')}</span>
+            <div className="flex items-center gap-3 mt-1.5 text-meta text-muted-foreground">
+              <span className="flex items-center gap-1 bg-secondary/50 px-2 py-0.5 rounded text-meta font-mono"><Cpu className="h-3 w-3" /> {String(agent.model ?? '')}</span>
               <span>•</span>
               <span className="flex items-center gap-1"><MessageSquare className="h-3 w-3" /> {String(agent.persona ?? '')}</span>
               <span>•</span>
@@ -145,43 +146,43 @@ export default function AgentDetailPage() {
 
         <div className="flex items-center gap-6 border-l border-border/50 pl-6 hidden md:flex">
           <div className="text-center">
-            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Health Score</p>
+            <p className="text-meta text-muted-foreground uppercase font-bold tracking-wider mb-1">Health Score</p>
             <p className="text-xl font-bold text-nexus-emerald">98%</p>
           </div>
           <div className="text-center">
-            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Uptime</p>
+            <p className="text-meta text-muted-foreground uppercase font-bold tracking-wider mb-1">Uptime</p>
             <p className="text-xl font-bold text-nexus-blue">99.9%</p>
           </div>
           <div className="text-center">
-            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Avg Latency</p>
+            <p className="text-meta text-muted-foreground uppercase font-bold tracking-wider mb-1">Avg Latency</p>
             <p className="text-xl font-bold text-foreground">145ms</p>
           </div>
         </div>
       </div>
 
       <div className="grid md:grid-cols-2 gap-4">
-        <div className="bg-card border border-border p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-card border border-border p-5 rounded-xl shadow-nexus-sm hover:shadow-nexus-md transition-shadow">
           <div className="flex items-center gap-2 mb-4">
             <Wrench className="h-4 w-4 text-primary" />
-            <h3 className="text-sm font-bold text-foreground">Configuração</h3>
+            <h3 className="text-body-sm font-bold text-foreground">Configuração</h3>
           </div>
-          <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-[11px]">
+          <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-meta">
             <div className="flex justify-between border-b border-border/50 pb-1.5"><span className="text-muted-foreground uppercase font-bold text-[9px]">Modelo</span><span className="text-foreground font-mono">{String(agent.model ?? '—')}</span></div>
             <div className="flex justify-between border-b border-border/50 pb-1.5"><span className="text-muted-foreground uppercase font-bold text-[9px]">Persona</span><span className="text-foreground">{String(agent.persona ?? '—')}</span></div>
             <div className="flex justify-between border-b border-border/50 pb-1.5"><span className="text-muted-foreground uppercase font-bold text-[9px]">Raciocínio</span><span className="text-foreground">{String(agent.reasoning ?? '—')}</span></div>
             <div className="flex justify-between border-b border-border/50 pb-1.5"><span className="text-muted-foreground uppercase font-bold text-[9px]">Versão</span><span className="text-foreground font-mono">v{String(agent.version ?? '1')}</span></div>
           </div>
         </div>
-        <div className="bg-card border border-border p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-card border border-border p-5 rounded-xl shadow-nexus-sm hover:shadow-nexus-md transition-shadow">
           <div className="flex items-center gap-2 mb-4">
             <Bot className="h-4 w-4 text-nexus-purple" />
-            <h3 className="text-sm font-bold text-foreground">Taxonomia & Tags</h3>
+            <h3 className="text-body-sm font-bold text-foreground">Taxonomia & Tags</h3>
           </div>
           <div className="flex flex-wrap gap-1.5">
             {(agent.tags ?? []).map(tag => (
-              <span key={tag} className="px-2 py-0.5 rounded-md bg-nexus-purple/10 text-nexus-purple text-[10px] font-bold border border-nexus-purple/20">{tag}</span>
+              <span key={tag} className="px-2 py-0.5 rounded-md bg-nexus-purple/10 text-nexus-purple text-meta font-bold border border-nexus-purple/20">{tag}</span>
             ))}
-            {(agent.tags ?? []).length === 0 && <p className="text-[11px] text-muted-foreground italic">Nenhuma tag atribuída</p>}
+            {(agent.tags ?? []).length === 0 && <p className="text-meta text-muted-foreground italic">Nenhuma tag atribuída</p>}
           </div>
         </div>
       </div>
@@ -225,7 +226,7 @@ function VersionHistory({ agentId }: { agentId: string }) {
   // Overrides aplicados via "correções rápidas" das validações — repassados
   // para `restoreAgentVersion` via `configOverrides` / `modelOverride`.
   const [fixOverrides, setFixOverrides] = useState<{
-    config: Partial<{ temperature: number | null; max_tokens: number | null; reasoning: string | null; tools: unknown[] | null }>;
+    config: Partial<{ temperature: number | null; max_tokens: number | null; reasoning: string | null; tools: DbRow[] | null }>;
     model?: string | null;
   }>({ config: {} });
 
@@ -329,13 +330,13 @@ function VersionHistory({ agentId }: { agentId: string }) {
     <>
     <div className="nexus-card">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-heading font-semibold text-foreground">Histórico de Versões</h3>
+        <h3 className="text-body-sm font-heading font-semibold text-foreground">Histórico de Versões</h3>
         <div className="flex items-center gap-1.5">
           {canRollback && (
             <Button
               variant="outline"
               size="sm"
-              className="gap-1.5 text-xs h-7 border-nexus-amber/40 text-nexus-amber hover:bg-nexus-amber/10 hover:text-nexus-amber"
+              className="gap-1.5 text-meta h-7 border-nexus-amber/40 text-nexus-amber hover:bg-nexus-amber/10 hover:text-nexus-amber"
               onClick={() => setRollbackOpen(true)}
               disabled={rollbackMut.isPending}
               title={`Restaurar v${previous.version} criando v${nextVersionNumber}`}
@@ -344,11 +345,11 @@ function VersionHistory({ agentId }: { agentId: string }) {
               Rollback v{previous.version}
             </Button>
           )}
-          <Button variant="outline" size="sm" className="gap-1.5 text-xs h-7" onClick={() => navigate(`/agents/${agentId}/versions`)}>
+          <Button variant="outline" size="sm" className="gap-1.5 text-meta h-7" onClick={() => navigate(`/agents/${agentId}/versions`)}>
             <GitBranch className="h-3 w-3" /> Gerenciar versões
           </Button>
           {versions.length >= 2 && (
-            <Button variant="ghost" size="sm" className="gap-1.5 text-xs h-7" onClick={() => setDiffOpen(true)}>
+            <Button variant="ghost" size="sm" className="gap-1.5 text-meta h-7" onClick={() => setDiffOpen(true)}>
               <GitCompare className="h-3 w-3" /> Comparar
             </Button>
           )}
@@ -356,14 +357,14 @@ function VersionHistory({ agentId }: { agentId: string }) {
       </div>
       <div className="space-y-2 max-h-[250px] overflow-y-auto">
         {versions.map((v, i) => (
-          <div key={v.id} className={`flex items-center justify-between py-2 px-3 rounded-lg text-xs ${i === 0 ? 'bg-primary/10 border border-primary/20' : 'bg-secondary/30'}`}>
+          <div key={v.id} className={`flex items-center justify-between py-2 px-3 rounded-lg text-meta ${i === 0 ? 'bg-primary/10 border border-primary/20' : 'bg-secondary/30'}`}>
             <div className="flex items-center gap-3">
               <span className="font-mono font-bold text-foreground">v{v.version}</span>
               <span className="text-muted-foreground">{String(v.model ?? '')}</span>
               {v.change_summary && <span className="text-muted-foreground truncate max-w-[200px]">{String(v.change_summary)}</span>}
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-muted-foreground text-[11px]">{new Date(v.created_at).toLocaleDateString('pt-BR')}</span>
+              <span className="text-muted-foreground text-meta">{new Date(v.created_at).toLocaleDateString('pt-BR')}</span>
             </div>
           </div>
         ))}
@@ -378,13 +379,13 @@ function VersionHistory({ agentId }: { agentId: string }) {
               Rollback rápido para v{previous?.version}
             </AlertDialogTitle>
             <AlertDialogDescription asChild>
-              <div className="space-y-3 text-sm">
+              <div className="space-y-3 text-body-sm">
                 <p>
                   Será criada uma nova versão <span className="font-mono font-semibold text-foreground">v{nextVersionNumber}</span>{' '}
                   copiando os campos selecionados de{' '}
                   <span className="font-mono font-semibold text-foreground">v{previous?.version}</span>.
                 </p>
-                <div className="rounded-lg bg-secondary/40 p-3 text-xs space-y-1.5">
+                <div className="rounded-lg bg-secondary/40 p-3 text-meta space-y-1.5">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Atual</span>
                     <span className="font-mono text-foreground">v{current?.version} · {String(current?.model ?? '—')}</span>
@@ -402,7 +403,7 @@ function VersionHistory({ agentId }: { agentId: string }) {
                 {/* Seleção granular de campos a copiar — desmarcar tudo bloqueia o rollback */}
                 <fieldset className="rounded-lg border border-border bg-card/40 p-3 space-y-2">
                   <div className="flex items-center justify-between gap-2 px-1">
-                    <legend className="text-[11px] font-semibold uppercase tracking-wider text-foreground p-0">
+                    <legend className="text-meta font-semibold uppercase tracking-wider text-foreground p-0">
                       Campos a copiar
                     </legend>
                     {/* Presets: aplica/salva combinações em 1 clique. O onPresetsLoaded
@@ -457,7 +458,7 @@ function VersionHistory({ agentId }: { agentId: string }) {
                   {!hasAnyOptionSelected && (
                     <div
                       role="alert"
-                      className="flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 px-2.5 py-1.5 text-[11px] text-destructive"
+                      className="flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 px-2.5 py-1.5 text-meta text-destructive"
                     >
                       <AlertTriangle className="h-3 w-3 mt-0.5 shrink-0" aria-hidden />
                       <span>Selecione ao menos um campo para restaurar — sem nada marcado o rollback não tem efeito.</span>
@@ -543,7 +544,7 @@ function VersionHistory({ agentId }: { agentId: string }) {
                     />
                   </>
                 )}
-                <p className="text-xs text-muted-foreground">
+                <p className="text-meta text-muted-foreground">
                   Nenhum histórico será apagado — o rollback é não destrutivo.
                 </p>
               </div>
@@ -588,7 +589,7 @@ function RestoreOptionRow({ id, icon: Icon, label, description, checked, onChang
   return (
     <label
       htmlFor={id}
-      className={`flex items-start gap-2.5 rounded-md border px-2.5 py-2 text-xs cursor-pointer transition-colors ${
+      className={`flex items-start gap-2.5 rounded-md border px-2.5 py-2 text-meta cursor-pointer transition-colors ${
         checked
           ? 'border-primary/40 bg-primary/5 hover:bg-primary/10'
           : 'border-border bg-background/40 hover:bg-secondary/40'
@@ -604,7 +605,7 @@ function RestoreOptionRow({ id, icon: Icon, label, description, checked, onChang
       <Icon className={`h-3.5 w-3.5 mt-0.5 shrink-0 ${checked ? 'text-primary' : 'text-muted-foreground'}`} aria-hidden />
       <div className="min-w-0">
         <p className="font-medium text-foreground">{label}</p>
-        <p className="text-[11px] text-muted-foreground leading-snug">{description}</p>
+        <p className="text-meta text-muted-foreground leading-snug">{description}</p>
       </div>
     </label>
   );

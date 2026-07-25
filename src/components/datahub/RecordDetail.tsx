@@ -54,18 +54,18 @@ export function RecordDetail({ record, enrichedData, entityId, onClose, onRecord
   return (
     <div className="space-y-4 border-t border-border pt-4 animate-in slide-in-from-bottom-2 duration-200">
       <div className="flex items-center justify-between">
-        <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
+        <h4 className="text-body-sm font-semibold text-foreground flex items-center gap-2">
           📋 {String(currentRecord[displayCol] || 'Registro')}
-          {currentRecord.id ? <span className="text-[11px] font-mono text-muted-foreground">#{String(currentRecord.id).slice(0, 8)}</span> : null}
+          {currentRecord.id ? <span className="text-meta font-mono text-muted-foreground">#{String(currentRecord.id).slice(0, 8)}</span> : null}
         </h4>
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-[11px] gap-1 text-primary border-primary/30"><Pencil className="h-3 w-3" /> Clique para editar</Badge>
+          <Badge variant="outline" className="text-meta gap-1 text-primary border-primary/30"><Pencil className="h-3 w-3" /> Clique para editar</Badge>
           <Button size="sm" variant="ghost" onClick={onClose}><XCircle className="h-4 w-4" /></Button>
         </div>
       </div>
 
       <div className="rounded-lg bg-secondary/20 border border-border/20 p-3">
-        <h5 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">Dados Primários</h5>
+        <h5 className="text-meta font-semibold text-muted-foreground uppercase tracking-wider mb-2">Dados Primários</h5>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
           {primaryFields.map(([key, val]) => (
             <FieldValue key={key} label={key} value={val} sensitive={sensitiveFields.has(key)}
@@ -73,14 +73,14 @@ export function RecordDetail({ record, enrichedData, entityId, onClose, onRecord
           ))}
         </div>
         {currentRecord.created_at ? (
-          <p className="text-[11px] text-muted-foreground mt-2 border-t border-border/10 pt-1">
+          <p className="text-meta text-muted-foreground mt-2 border-t border-border/10 pt-1">
             Criado: {formatDate(String(currentRecord.created_at))} · Atualizado: {formatDate(String(currentRecord.updated_at))}
           </p>
         ) : null}
       </div>
 
       {sensitiveFields.size > 0 && (
-        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-destructive/10 border border-destructive/20 text-[11px] text-destructive">
+        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-destructive/10 border border-destructive/20 text-meta text-destructive">
           <Lock className="h-3.5 w-3.5 shrink-0" />
           <span>Campos protegidos pela LGPD estão redactados: <strong>{Array.from(sensitiveFields).join(', ')}</strong></span>
         </div>
@@ -89,9 +89,9 @@ export function RecordDetail({ record, enrichedData, entityId, onClose, onRecord
       {tabCount > 0 && (
         <Tabs defaultValue="enriched" className="space-y-3">
           <TabsList className="bg-secondary/50">
-            {hasEnriched && <TabsTrigger value="enriched" className="gap-1.5 text-xs"><GitBranch className="h-3 w-3" /> Enriquecidos<Badge variant="secondary" className="text-[10px] h-4 ml-1">{enrichedEntries.length}</Badge></TabsTrigger>}
-            {hasCrossDb && <TabsTrigger value="crossdb" className="gap-1.5 text-xs"><Link2 className="h-3 w-3" /> Cross-DB</TabsTrigger>}
-            {hasGroup && <TabsTrigger value="group" className="gap-1.5 text-xs"><Building2 className="h-3 w-3" /> Grupo</TabsTrigger>}
+            {hasEnriched && <TabsTrigger value="enriched" className="gap-1.5 text-meta"><GitBranch className="h-3 w-3" /> Enriquecidos<Badge variant="secondary" className="text-meta h-4 ml-1">{enrichedEntries.length}</Badge></TabsTrigger>}
+            {hasCrossDb && <TabsTrigger value="crossdb" className="gap-1.5 text-meta"><Link2 className="h-3 w-3" /> Cross-DB</TabsTrigger>}
+            {hasGroup && <TabsTrigger value="group" className="gap-1.5 text-meta"><Building2 className="h-3 w-3" /> Grupo</TabsTrigger>}
           </TabsList>
 
           {hasEnriched && (
@@ -101,10 +101,10 @@ export function RecordDetail({ record, enrichedData, entityId, onClose, onRecord
                 const renderer = SECONDARY_RENDERERS[table];
                 return (
                   <div key={table} className="space-y-1.5">
-                    <div className="flex items-center gap-1.5 text-[11px]">
+                    <div className="flex items-center gap-1.5 text-meta">
                       {info?.icon ?? <GitBranch className="h-3 w-3 text-muted-foreground" />}
                       <span className="font-semibold text-foreground">{info?.label ?? table}</span>
-                      <Badge variant="secondary" className="text-[11px] h-4">{Array.isArray(rows) ? rows.length : 0}</Badge>
+                      <Badge variant="secondary" className="text-meta h-4">{Array.isArray(rows) ? rows.length : 0}</Badge>
                     </div>
                     {renderer ? renderer(rows as Record<string, unknown>[]) : <GenericSecondaryCard tableName={table} data={rows as Record<string, unknown>[]} />}
                   </div>

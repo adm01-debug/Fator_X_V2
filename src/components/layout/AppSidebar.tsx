@@ -6,11 +6,12 @@ import {
   LayoutDashboard, Bot, BookOpen, Brain, Puzzle, FileText, GitBranch, Zap,
   FlaskConical, Rocket, Activity, Database, Shield, Users, CreditCard, Settings,
   Sparkles, PanelLeftClose, PanelLeft, LogOut, ServerCog, ChevronDown, Palette, Dna, Workflow, Package,
-  Globe, ShieldCheck, CircleCheckBig, Crown, Route as RouteIcon, Languages,
-  Mic, GitBranch as GitBranchIcon, KeyRound, Globe2, Monitor, Eye, Smartphone, TestTube2,
+  ShieldCheck, CircleCheckBig, Crown, Route as RouteIcon, Languages,
+
+  Mic, GitBranch as GitBranchIcon, KeyRound, Globe2, Monitor, Eye, Smartphone, TestTube2, MessageCircle,
   Store, Cpu, Wand2, GitMerge, Terminal, Mail, Bug, FileCheck2,
-  PhoneCall, Network, FlaskRound, TrendingDown,
-  Share2, Building2, Radar, ShieldAlert, Wallet, Swords, Phone, Archive, AlertOctagon, LifeBuoy, GitPullRequest, Boxes,
+  PhoneCall, Network, FlaskRound, TrendingDown, Calculator,
+  Share2, Building2, Radar, ShieldAlert, Wallet, Swords, Phone, Archive, AlertOctagon, LifeBuoy, GitPullRequest, Boxes, MessageSquare, Fingerprint, Snowflake,
 } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
@@ -33,6 +34,7 @@ const navSections = [
     items: [
       { title: "Dashboard", url: "/", icon: LayoutDashboard },
       { title: "Agentes", url: "/agents", icon: Bot },
+      { title: "Conversar", url: "/chat", icon: MessageCircle },
       { title: "Super Cérebro", url: "/brain", icon: Brain },
       { title: "Oráculo", url: "/oracle", icon: Sparkles },
       { title: "AI Studio", url: "/ai-studio", icon: Palette },
@@ -45,14 +47,26 @@ const navSections = [
       { title: "Conhecimento / RAG", url: "/knowledge", icon: BookOpen },
       { title: "Memória", url: "/memory", icon: Brain },
       { title: "Ferramentas", url: "/tools", icon: Puzzle },
+      { title: "MCP Servers", url: "/mcp-servers", icon: Boxes },
       { title: "Prompts", url: "/prompts", icon: FileText },
       { title: "Workflows", url: "/workflows", icon: GitBranch },
       { title: "Orquestração Multi-Agente", url: "/orchestration", icon: Network },
+      { title: "Painel A2A", url: "/a2a", icon: Share2 },
       { title: "Automação", url: "/automation", icon: Zap },
       { title: "Roteamento", url: "/routing", icon: RouteIcon },
       { title: "Fine-tuning", url: "/fine-tuning", icon: Dna },
       { title: "Smolagent", url: "/smolagent", icon: Workflow },
       { title: "Skills Marketplace", url: "/skills", icon: Package },
+      { title: "Skillbook · Auditoria", url: "/skills/audit", icon: BookOpen },
+      { title: "Skills dos Agentes", url: "/agents/installed-skills", icon: Puzzle },
+      { title: "Workflows de Agentes", url: "/agents/workflows", icon: GitBranch },
+      { title: "Engenharia de Caos", url: "/security/chaos-experiments", icon: Zap },
+      { title: "Testes BCP", url: "/security/bcp-tests", icon: LifeBuoy },
+      { title: "Sessões de Agentes", url: "/agent-sessions", icon: Mic },
+      { title: "Execuções de Grafos", url: "/graph-executions", icon: GitBranch },
+      { title: "Resolução de Entidades", url: "/entity-resolution", icon: GitMerge },
+      { title: "Custo LLM por Função", url: "/llm-cost-by-caller", icon: Calculator },
+      
       { title: "NLP Pipeline", url: "/nlp", icon: Languages },
       { title: "Computer Use", url: "/computer-use", icon: Monitor },
       { title: "Browser Agent", url: "/browser-agent", icon: Globe2 },
@@ -67,6 +81,7 @@ const navSections = [
       { title: "Email Triggers", url: "/email-triggers", icon: Mail },
       { title: "Agent Debugger", url: "/debugger", icon: Bug },
       { title: "Compliance Reports", url: "/compliance-reports", icon: FileCheck2 },
+      { title: "Frameworks Compliance", url: "/compliance-frameworks", icon: ShieldCheck },
       { title: "Voice & Telefonia", url: "/voice-telephony", icon: PhoneCall },
       { title: "Knowledge Graph", url: "/knowledge-graph", icon: Network },
       { title: "Simulation Lab", url: "/simulation", icon: FlaskRound },
@@ -82,13 +97,27 @@ const navSections = [
     key: "ops",
     items: [
       { title: "Avaliações", url: "/evaluations", icon: FlaskConical },
+      { title: "Eval de Agente", url: "/agent-evals", icon: FlaskConical },
+      { title: "Experimentos A/B", url: "/agent-experiments", icon: FlaskConical },
+      { title: "Decaimento de Conhecimento", url: "/knowledge-decay", icon: Archive },
+      { title: "Jobs de Sistema", url: "/system-jobs", icon: ServerCog },
+      { title: "Playbook Particionamento", url: "/docs/partitioning", icon: BookOpen },
+      { title: "Eventos de Webhook", url: "/webhook-events", icon: Zap },
+      { title: "Governança", url: "/governance", icon: ShieldCheck },
+      { title: "Janelas de Congelamento", url: "/governance/freeze-windows", icon: Snowflake },
+      { title: "Orçamentos", url: "/budgets", icon: Wallet },
       { title: "Implantações", url: "/deployments", icon: Rocket },
+      { title: "Runtime OpenClaw", url: "/openclaw", icon: ServerCog },
+      { title: "Templates OpenClaw", url: "/openclaw/templates", icon: Sparkles },
+      { title: "Widget Builder", url: "/widget-builder", icon: MessageSquare },
       { title: "Monitoramento", url: "/monitoring", icon: Activity },
+      { title: "Métricas Diárias", url: "/monitoring/metrics", icon: Activity },
       { title: "Traces & Spans", url: "/traces", icon: Activity },
       { title: "SLO Dashboard", url: "/observability/slo", icon: Activity },
       { title: "Chaos Lab", url: "/observability/chaos", icon: Zap },
       { title: "Synthetic Monitoring", url: "/observability/synthetic", icon: Radar },
       { title: "Anomalias de Custo", url: "/observability/cost-anomalies", icon: TrendingDown },
+      { title: "Simulador de Custos", url: "/cost-simulator", icon: Calculator },
       { title: "Game Days", url: "/observability/game-days", icon: Swords },
       { title: "Playbooks", url: "/observability/playbooks", icon: BookOpen },
       { title: "On-Call", url: "/observability/oncall", icon: Phone },
@@ -118,12 +147,16 @@ const navSections = [
       { title: "Mudanças (CAB)", url: "/security/changes", icon: GitPullRequest },
       { title: "Playbooks (IR)", url: "/security/ir", icon: BookOpen },
       { title: "Inventário (CMDB)", url: "/security/assets", icon: Boxes },
+      { title: "IP Whitelist", url: "/security/ip-whitelist", icon: Network },
+      { title: "Pentest & Achados", url: "/security/pentests", icon: ShieldCheck },
+      { title: "Snapshots Forenses", url: "/security/forensic-snapshots", icon: Fingerprint },
       { title: "SSO Enterprise", url: "/sso", icon: KeyRound },
       { title: "Data Residency", url: "/residency", icon: Globe2 },
       { title: "LGPD", url: "/lgpd", icon: ShieldCheck },
       { title: "Aprovações", url: "/approvals", icon: CircleCheckBig },
       { title: "Equipe", url: "/team", icon: Users },
       { title: "Faturamento", url: "/billing", icon: CreditCard },
+      { title: "Payouts do Criador", url: "/creator-payouts", icon: Wallet },
       { title: "Orçamento", url: "/settings/budget", icon: Wallet },
       { title: "Configurações", url: "/settings", icon: Settings },
       { title: "Admin BD", url: "/admin", icon: ServerCog },
@@ -196,12 +229,12 @@ export function AppSidebar() {
     <Sidebar collapsible="icon" className="border-r border-border/40 bg-sidebar" aria-label="Navegação principal">
       <SidebarHeader className="p-5">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg shadow-primary/20 shrink-0">
+          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-nexus-lg shadow-primary/20 shrink-0">
             <img src={fatorxIcon} alt="" className="h-6 w-6 invert brightness-0" />
           </div>
           {!collapsed && (
             <div className="flex flex-col">
-              <span className="font-black text-lg tracking-tight leading-none text-foreground uppercase" aria-label="Fator X">
+              <span className="font-black text-title-sm tracking-tight leading-none text-foreground uppercase" aria-label="Fator X">
                 Fator<span className="text-primary">X</span>
               </span>
               <span className="text-[9px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] mt-1">Industrial Intelligence</span>
@@ -222,7 +255,7 @@ export function AppSidebar() {
                   aria-expanded={!isCollapsedSection}
                   aria-controls={`nav-section-${section.key}`}
                 >
-                  <SidebarGroupLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 pointer-events-none p-0 h-auto">
+                  <SidebarGroupLabel className="text-meta font-black uppercase tracking-[0.2em] text-muted-foreground/60 pointer-events-none p-0 h-auto">
                     {section.label}
                   </SidebarGroupLabel>
                   <ChevronDown
@@ -248,9 +281,9 @@ export function AppSidebar() {
                           <NavLink
                             to={item.url}
                             end={item.url === "/"}
-                            className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all duration-300 group/navitem ${
+                            className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-body-sm transition-all duration-300 group/navitem ${
                               isActive
-                                ? 'text-primary font-black bg-primary/10 shadow-sm shadow-primary/5'
+                                ? 'text-primary font-black bg-primary/10 shadow-nexus-sm shadow-primary/5'
                                 : 'text-sidebar-foreground/70 hover:bg-secondary/40 hover:text-foreground hover:translate-x-1'
                             }`}
                             activeClassName=""
@@ -259,7 +292,7 @@ export function AppSidebar() {
                             <item.icon className={`h-4 w-4 shrink-0 transition-all duration-200 group-hover/navitem:scale-110 ${isActive ? 'text-primary' : ''}`} />
                             {!collapsed && <span className="transition-colors duration-150">{item.title}</span>}
                             {!collapsed && badgeCounts[item.url] > 0 && (
-                              <span className="ml-auto text-[10px] font-semibold bg-primary/15 text-primary rounded-full px-1.5 py-0.5 tabular-nums leading-none">
+                              <span className="ml-auto text-meta font-semibold bg-primary/15 text-primary rounded-full px-1.5 py-0.5 tabular-nums leading-none">
                                 {badgeCounts[item.url]}
                               </span>
                             )}
@@ -282,22 +315,22 @@ export function AppSidebar() {
         {!collapsed && (
           <>
             <Separator className="bg-border/30" />
-            <div className="rounded-2xl bg-secondary/30 border border-border/40 p-4 shadow-sm">
+            <div className="rounded-2xl bg-secondary/30 border border-border/40 p-4 shadow-nexus-sm">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80">Vazão do Workspace</p>
+                <p className="text-meta font-black uppercase tracking-widest text-muted-foreground/80">Vazão do Workspace</p>
                 <Badge variant="outline" className="bg-primary/5 text-primary border-none text-[9px] font-black">{planLabel}</Badge>
               </div>
               <div className="h-1.5 rounded-full bg-secondary/50 mb-2 overflow-hidden" role="progressbar" aria-valuenow={usage} aria-valuemin={0} aria-valuemax={100} aria-label="Uso de agentes">
                 <div className={cn("h-full rounded-full transition-all duration-1000", usage >= 100 ? 'bg-destructive' : 'nexus-gradient-bg')} style={{ width: `${Math.max(usage, 4)}%` }} />
               </div>
-              <div className="flex justify-between items-center text-[10px] font-bold text-muted-foreground mb-3">
+              <div className="flex justify-between items-center text-meta font-bold text-muted-foreground mb-3">
                 <span>{agentCount} Agentes</span>
                 <span>Limit {maxAgents}</span>
               </div>
               {usage >= 80 && planLabel === 'Free' && (
                 <Button
                   onClick={() => navigate('/billing')}
-                  className="w-full h-8 rounded-xl bg-nexus-amber/10 border border-nexus-amber/20 text-nexus-amber hover:bg-nexus-amber/20 text-[10px] font-black uppercase tracking-widest gap-2"
+                  className="w-full h-8 rounded-xl bg-nexus-amber/10 border border-nexus-amber/20 text-nexus-amber hover:bg-nexus-amber/20 text-meta font-black uppercase tracking-widest gap-2"
                 >
                   <Crown className="h-3 w-3" /> UPGRADE
                 </Button>
@@ -310,15 +343,15 @@ export function AppSidebar() {
                   {user.user_metadata?.avatar_url ? (
                     <img src={user.user_metadata.avatar_url} alt="" className="h-9 w-9 rounded-xl object-cover border border-white/10" referrerPolicy="no-referrer" />
                   ) : (
-                    <div className="h-9 w-9 rounded-xl nexus-gradient-bg flex items-center justify-center text-xs font-black text-primary-foreground shadow-sm">
+                    <div className="h-9 w-9 rounded-xl nexus-gradient-bg flex items-center justify-center text-meta font-black text-primary-foreground shadow-nexus-sm">
                       {(wsInfo?.userName?.[0] || user.email?.[0] || 'U').toUpperCase()}
                     </div>
                   )}
                   <div className="absolute -bottom-1 -right-1 h-3 w-3 rounded-full bg-nexus-emerald border-2 border-background shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-black text-foreground uppercase tracking-tight truncate">{wsInfo?.userName || 'Operador'}</p>
-                  <p className="text-[10px] font-medium text-muted-foreground truncate">{user.email}</p>
+                  <p className="text-meta font-black text-foreground uppercase tracking-tight truncate">{wsInfo?.userName || 'Operador'}</p>
+                  <p className="text-meta font-medium text-muted-foreground truncate">{user.email}</p>
                 </div>
                 <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-xl" onClick={signOut} aria-label="Sair da conta">
                   <LogOut className="h-4 w-4" />
@@ -329,11 +362,10 @@ export function AppSidebar() {
               <p className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em] select-none">Fator X Core v1.0</p>
               <button
                 onClick={() => setLocale(locale === 'pt-BR' ? 'en' : 'pt-BR')}
-                className="flex items-center gap-1.5 text-[10px] font-black text-muted-foreground hover:text-primary transition-colors rounded-lg px-2 py-1 hover:bg-primary/5 border border-transparent hover:border-primary/20"
-                title="Alternar idioma"
+                className="text-[9px] font-black text-muted-foreground/60 hover:text-primary transition-colors uppercase tracking-widest"
+                aria-label="Alternar idioma"
               >
-                <Globe className="h-3 w-3" />
-                {locale === 'pt-BR' ? 'BR' : 'US'}
+                {locale === 'pt-BR' ? 'EN' : 'PT'}
               </button>
             </div>
           </>
@@ -342,7 +374,7 @@ export function AppSidebar() {
           variant="ghost"
           size="sm"
           onClick={toggleSidebar}
-          className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground text-xs h-8"
+          className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground text-meta h-8"
           aria-label={collapsed ? "Expandir sidebar" : "Recolher sidebar"}
         >
           {collapsed ? <PanelLeft className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}

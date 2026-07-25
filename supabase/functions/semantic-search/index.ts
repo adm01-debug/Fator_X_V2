@@ -14,13 +14,17 @@
  * ═══════════════════════════════════════════════════════════════
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { fetchWithTimeout } from "../_shared/retry.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { z } from "https://esm.sh/zod@3.23.8";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-};
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv, getCorsHeaders } from "../_shared/mod.ts";
+const InputSchema = z.object({
+  query: z.string().min(2).max(2000),
+  knowledge_base_id: z.string().uuid().nullish(),
+  top_k: z.number().int().min(1).max(50).default(10),
+});
+
 
 interface SearchResult {
   chunk_id: string;
@@ -40,21 +44,41 @@ function cacheKey(q: string, kb: string | null, k: number) {
 }
 
 serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS")
     return new Response(null, { headers: corsHeaders });
 
   try {
-    const body = await req.json();
-    const query = String(body?.query ?? "").trim();
-    const knowledgeBaseId: string | null = body?.knowledge_base_id ?? null;
-    const topK = Math.min(Math.max(Number(body?.top_k ?? 10), 1), 50);
+    // Auth — required
+    const auth = req.headers.get("Authorization");
+    if (!auth) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const supabase = createClient(requireEnv("SUPABASE_URL"), requireEnv("SUPABASE_SERVICE_ROLE_KEY"), {
+      global: { headers: { Authorization: auth } },
+    });
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const rateCheck = checkRateLimit(getRateLimitIdentifier(req, user.id), RATE_LIMITS.heavy);
+    if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, corsHeaders);
 
-    if (!query || query.length < 2) {
+    const raw = await req.json().catch(() => null);
+    const parsed = InputSchema.safeParse(raw);
+    if (!parsed.success) {
       return new Response(
-        JSON.stringify({ error: "query must be at least 2 chars" }),
+        JSON.stringify({ error: "Payload inválido", details: parsed.error.flatten() }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
+    const { query, knowledge_base_id, top_k: topK } = parsed.data;
+    const knowledgeBaseId = knowledge_base_id ?? null;
+
 
     // ── Cache lookup ─────────────────────────────────────────────
     const key = cacheKey(query, knowledgeBaseId, topK);
@@ -66,15 +90,14 @@ serve(async (req) => {
       );
     }
 
-    const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-    const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
+    const SUPABASE_URL = requireEnv("SUPABASE_URL");
+    const SERVICE_KEY = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
 
     let results: SearchResult[] = [];
 
     // ── 1. Try vector search via rag-embed-v2 + match_documents RPC ──
     try {
-      const embedResp = await fetch(
+      const embedResp = await fetchWithTimeout(
         `${SUPABASE_URL}/functions/v1/rag-embed-v2`,
         {
           method: "POST",
@@ -129,7 +152,7 @@ serve(async (req) => {
       const tokens = query.split(/\s+/).filter((t) => t.length > 2).slice(0, 5);
       const ilikePattern = `%${query.replace(/[%_]/g, "")}%`;
 
-      let q = supabase
+      const q = supabase
         .from("chunks")
         .select("id, document_id, content")
         .ilike("content", ilikePattern)

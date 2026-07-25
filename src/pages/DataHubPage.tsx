@@ -73,7 +73,7 @@ export default function DataHubPage() {
         }
       });
 
-    } catch (e: unknown) { 
+    } catch (e) { 
       toast.error(`Erro ao testar conexões: ${e instanceof Error ? e.message : String(e)}`); 
     } finally { 
       setTestingConnections(false); 
@@ -94,7 +94,7 @@ export default function DataHubPage() {
         }
       });
 
-    } catch (e: unknown) { 
+    } catch (e) { 
       toast.error(`Erro ao carregar contagens: ${e instanceof Error ? e.message : String(e)}`); 
     } finally { 
       setLoadingCounts(false); 
@@ -136,34 +136,34 @@ export default function DataHubPage() {
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-10 max-w-[1440px] mx-auto animate-page-enter">
       {/* Header Elevated 10/10 */}
-      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-2xl shadow-primary/5 mb-10 relative overflow-hidden group">
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-nexus-2xl shadow-primary/5 mb-10 relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/[0.06] transition-colors duration-500 pointer-events-none" />
         
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative">
           <div className="flex items-center gap-7">
-            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
+            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-nexus-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
               <Database className="h-11 w-11 text-primary animate-float" />
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-3">
                 <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">DataHub</h1>
-                <Badge className="bg-nexus-cyan/10 text-nexus-cyan border-none font-black px-3 py-1 rounded-full text-[10px] tracking-widest uppercase">Grid de Dados Industrial</Badge>
+                <Badge className="bg-nexus-cyan/10 text-nexus-cyan border-none font-black px-3 py-1 rounded-full text-meta tracking-widest uppercase">Grid de Dados Industrial</Badge>
               </div>
-              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+              <p className="text-title-sm text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Orquestração unificada de dados. Gerencie entidades, conexões federadas e mapeamentos cross-database com precisão industrial.
               </p>
             </div>
           </div>
           <div className="flex items-center gap-3">
              <div className="flex flex-col items-end gap-1">
-              <div className="flex items-center gap-2 text-nexus-emerald font-black text-sm uppercase tracking-tighter">
+              <div className="flex items-center gap-2 text-nexus-emerald font-black text-body-sm uppercase tracking-tighter">
                 <ShieldCheck className="h-4 w-4" /> Federado & Seguro
               </div>
-              <p className="text-[10px] text-muted-foreground font-bold tracking-widest uppercase">Conectividade Ativa</p>
+              <p className="text-meta text-muted-foreground font-bold tracking-widest uppercase">Conectividade Ativa</p>
             </div>
             <div className="h-10 w-px bg-border/40 mx-4" />
             {isStreaming && (
-              <Badge className="bg-nexus-cyan/20 text-nexus-cyan border-nexus-cyan/30 animate-pulse font-black px-3 py-1 rounded-full text-[10px] tracking-widest uppercase mr-4">
+              <Badge className="bg-nexus-cyan/20 text-nexus-cyan border-nexus-cyan/30 animate-pulse font-black px-3 py-1 rounded-full text-meta tracking-widest uppercase mr-4">
                 <Activity className="h-3 w-3 mr-1" /> Live Stream Ativo
               </Badge>
             )}
@@ -185,7 +185,7 @@ export default function DataHubPage() {
               <stat.icon className={cn("h-7 w-7", stat.color)} />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{stat.label}</p>
+              <p className="text-meta font-bold uppercase tracking-widest text-muted-foreground">{stat.label}</p>
               <p className="text-2xl font-black text-foreground">{stat.value}</p>
             </div>
           </div>
@@ -212,7 +212,7 @@ export default function DataHubPage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input placeholder="Buscar entidade, tabela ou conexão..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10 bg-secondary/30" />
             </div>
-            <Button variant="outline" size="sm" className="gap-1.5 text-xs ml-3" onClick={loadEntityCounts} disabled={loadingCounts}>
+            <Button variant="outline" size="sm" className="gap-1.5 text-meta ml-3" onClick={loadEntityCounts} disabled={loadingCounts}>
               {loadingCounts ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCcw className="h-3.5 w-3.5" />} Atualizar Contagens
             </Button>
           </div>
@@ -223,9 +223,9 @@ export default function DataHubPage() {
               return (
                 <button key={entity.id} onClick={() => setBrowsingEntity(entity.id)} className="nexus-card p-3 text-center hover:border-primary/40 hover:bg-primary/5 transition-all group">
                   <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-2 group-hover:bg-primary/20 transition-colors"><Icon className="h-4 w-4 text-primary" /></div>
-                  <p className="text-xs font-semibold text-foreground">{entity.name}</p>
-                  {count !== undefined && count >= 0 && <p className="text-[11px] text-muted-foreground font-mono mt-0.5">{count.toLocaleString()}</p>}
-                  {count === -1 && <p className="text-[11px] text-destructive mt-0.5">erro</p>}
+                  <p className="text-meta font-semibold text-foreground">{entity.name}</p>
+                  {count !== undefined && count >= 0 && <p className="text-meta text-muted-foreground font-mono mt-0.5">{count.toLocaleString()}</p>}
+                  {count === -1 && <p className="text-meta text-destructive mt-0.5">erro</p>}
                 </button>
               );
             })}
@@ -242,21 +242,21 @@ export default function DataHubPage() {
                       <div className="flex items-center gap-3">
                         <div className={`h-9 w-9 rounded-lg flex items-center justify-center ${isSelected ? 'bg-primary/20' : 'bg-primary/10'}`}><Icon className="h-4.5 w-4.5 text-primary" /></div>
                         <div>
-                          <h3 className="text-sm font-semibold text-foreground">{entity.name}</h3>
-                          <p className="text-[11px] text-muted-foreground font-mono">{entity.primary.table} → {getConnectionLabel(entity.primary.connection)}</p>
+                          <h3 className="text-body-sm font-semibold text-foreground">{entity.name}</h3>
+                          <p className="text-meta text-muted-foreground font-mono">{entity.primary.table} → {getConnectionLabel(entity.primary.connection)}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        {count !== undefined && count >= 0 && <Badge variant="secondary" className="text-[11px] font-mono">{count.toLocaleString()}</Badge>}
-                        {(entity.secondary?.length ?? 0) > 0 && <Badge variant="secondary" className="text-[11px]">+{entity.secondary?.length} joins</Badge>}
-                        {(entity.cross_db?.length ?? 0) > 0 && <Badge variant="outline" className="text-[11px] border-nexus-emerald/30 text-nexus-emerald">{entity.cross_db?.length} cross-db</Badge>}
+                        {count !== undefined && count >= 0 && <Badge variant="secondary" className="text-meta font-mono">{count.toLocaleString()}</Badge>}
+                        {(entity.secondary?.length ?? 0) > 0 && <Badge variant="secondary" className="text-meta">+{entity.secondary?.length} joins</Badge>}
+                        {(entity.cross_db?.length ?? 0) > 0 && <Badge variant="outline" className="text-meta border-nexus-emerald/30 text-nexus-emerald">{entity.cross_db?.length} cross-db</Badge>}
                         <ArrowRight className={`h-4 w-4 text-muted-foreground transition-transform ${isSelected ? 'rotate-90' : ''}`} />
                       </div>
                     </div>
                   </button>
                 );
               })}
-              {filteredEntities.length === 0 && <div className="text-center py-8 text-sm text-muted-foreground">Nenhuma entidade encontrada para "{search}"</div>}
+              {filteredEntities.length === 0 && <div className="text-center py-8 text-body-sm text-muted-foreground">Nenhuma entidade encontrada para "{search}"</div>}
             </div>
             <div>
               {selectedEntity && selectedMapping ? (
@@ -264,7 +264,7 @@ export default function DataHubPage() {
               ) : (
                 <div className="nexus-card flex flex-col items-center justify-center py-16 text-center">
                   <Eye className="h-10 w-10 text-muted-foreground/30 mb-3" />
-                  <p className="text-sm text-muted-foreground">Selecione uma entidade para ver o mapeamento completo</p>
+                  <p className="text-body-sm text-muted-foreground">Selecione uma entidade para ver o mapeamento completo</p>
                 </div>
               )}
             </div>
@@ -273,20 +273,20 @@ export default function DataHubPage() {
 
         <TabsContent value="connections" className="space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground"><span className="font-semibold text-foreground">{connectedCount}</span> de {activeConnections.length} conexões ativas</p>
-            <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={testConnections} disabled={testingConnections}>
+            <p className="text-body-sm text-muted-foreground"><span className="font-semibold text-foreground">{connectedCount}</span> de {activeConnections.length} conexões ativas</p>
+            <Button variant="outline" size="sm" className="gap-1.5 text-meta" onClick={testConnections} disabled={testingConnections}>
               {testingConnections ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCcw className="h-3.5 w-3.5" />} Testar Conexões
             </Button>
           </div>
           <div className="grid gap-4 md:grid-cols-2">{connections.map((conn) => <ConnectionCard key={conn.id} conn={conn} />)}</div>
           <div className="nexus-card space-y-3">
-            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2"><Link2 className="h-4 w-4 text-nexus-emerald" /> Mapeamentos Cross-Database</h3>
+            <h3 className="text-body-sm font-semibold text-foreground flex items-center gap-2"><Link2 className="h-4 w-4 text-nexus-emerald" /> Mapeamentos Cross-Database</h3>
             <div className="space-y-2">
               {ENTITY_LIST.filter((e) => e.cross_db && e.cross_db.length > 0).map((entity) => (
                 <div key={entity.id} className="rounded-lg bg-secondary/20 border border-border/20 p-3">
-                  <div className="flex items-center gap-2 mb-2"><span>{entity.icon}</span><span className="text-sm font-semibold text-foreground">{entity.name}</span></div>
+                  <div className="flex items-center gap-2 mb-2"><span>{entity.icon}</span><span className="text-body-sm font-semibold text-foreground">{entity.name}</span></div>
                   {entity.cross_db?.map((cross, i) => (
-                    <div key={i} className="flex items-center gap-2 text-[11px] text-muted-foreground ml-6">
+                    <div key={i} className="flex items-center gap-2 text-meta text-muted-foreground ml-6">
                       <span className="font-mono text-foreground">{getConnectionLabel(entity.primary.connection)}</span>
                       <ArrowRight className="h-3 w-3" />
                       <span className="font-mono text-nexus-emerald">{getConnectionLabel(cross.connection)}</span>
@@ -301,9 +301,9 @@ export default function DataHubPage() {
 
         <TabsContent value="schema" className="space-y-4">
           <div className="nexus-card space-y-3">
-            <h3 className="text-sm font-semibold text-foreground">Tabelas Blacklisted ({(DATAHUB_TABLE_BLACKLIST as Set<string>).size})</h3>
+            <h3 className="text-body-sm font-semibold text-foreground">Tabelas Blacklisted ({(DATAHUB_TABLE_BLACKLIST as Set<string>).size})</h3>
             <div className="flex flex-wrap gap-1.5">
-              {Array.from(DATAHUB_TABLE_BLACKLIST as Set<string>).sort().map((t) => <Badge key={t} variant="outline" className="text-[11px] font-mono text-destructive/70 border-destructive/20">{t}</Badge>)}
+              {Array.from(DATAHUB_TABLE_BLACKLIST as Set<string>).sort().map((t) => <Badge key={t} variant="outline" className="text-meta font-mono text-destructive/70 border-destructive/20">{t}</Badge>)}
             </div>
           </div>
           <div className="grid gap-4 md:grid-cols-2">
@@ -314,14 +314,14 @@ export default function DataHubPage() {
               return (
                 <div key={conn.id} className={`nexus-card space-y-2 ${conn.status === 'hibernated' ? 'opacity-50' : ''}`}>
                   <div className="flex items-center gap-2">
-                    <span>{conn.icon}</span><h4 className="text-sm font-semibold text-foreground">{conn.label}</h4>
-                    <Badge variant="secondary" className="text-[11px]">{allTables.size} tabelas</Badge>
+                    <span>{conn.icon}</span><h4 className="text-body-sm font-semibold text-foreground">{conn.label}</h4>
+                    <Badge variant="secondary" className="text-meta">{allTables.size} tabelas</Badge>
                     {conn.status === 'connected' && <CheckCircle2 className="h-3.5 w-3.5 text-nexus-emerald" />}
                     {conn.status === 'hibernated' && <Snowflake className="h-3.5 w-3.5 text-primary" />}
                   </div>
                   {allTables.size > 0 ? (
-                    <div className="flex flex-wrap gap-1">{Array.from(allTables).sort().map((t) => <Badge key={t} variant="outline" className="text-[11px] font-mono">{t}</Badge>)}</div>
-                  ) : <p className="text-[11px] text-muted-foreground italic">Nenhuma tabela mapeada</p>}
+                    <div className="flex flex-wrap gap-1">{Array.from(allTables).sort().map((t) => <Badge key={t} variant="outline" className="text-meta font-mono">{t}</Badge>)}</div>
+                  ) : <p className="text-meta text-muted-foreground italic">Nenhuma tabela mapeada</p>}
                 </div>
               );
             })}

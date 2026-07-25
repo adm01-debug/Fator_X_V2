@@ -1,0 +1,319 @@
+/**
+ * E2EESyncPanel — UI para Wave M (sync criptografado ponta-a-ponta por notebook).
+ *
+ * Fluxo:
+ *  1. Usuário define/confirma uma passphrase (fica somente na sessionStorage).
+ *  2. "Exportar bundle" → decripta notas do notebook, cifra AES-GCM, baixa .json.
+ *  3. "Importar bundle" → seleciona arquivo, decripta, mostra plano (insert/update/skip/conflict).
+ *  4. Usuário marca quais conflitos sobrescrever; aplica reconciliação.
+ */
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
+import { Lock, Unlock, Download, Upload, ShieldCheck, KeyRound, AlertTriangle, RefreshCw } from "lucide-react";
+import { E2EESyncStatusBadge } from "@/components/super-cerebro/notebook/E2EESyncStatusBadge";
+import { useAutoE2EESync } from "@/hooks/useAutoE2EESync";
+import { ConflictResolver, type ResolvedConflict } from "@/components/super-cerebro/notebook/ConflictResolver";
+import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
+import { useCerebroStore } from "@/stores/cerebroStore";
+import { useNotes } from "@/services/notesService";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  buildBundleFromNotebook,
+  encryptBundle,
+  decryptBundle,
+  downloadBundle,
+  readBundleFile,
+  planReconciliation,
+  applyReconciliation,
+  getSessionPassphrase,
+  setSessionPassphrase,
+  clearSessionPassphrase,
+  type BundlePayload,
+  type ReconciliationPlan,
+} from "@/services/e2eeService";
+import { logger } from "@/lib/logger";
+
+export function E2EESyncPanel() {
+  const { workspaceId } = useCurrentWorkspace();
+  const notebookId = useCerebroStore((s) => s.activeNotebookId);
+  const { data: localNotes = [] } = useNotes(notebookId);
+  const qc = useQueryClient();
+
+  const [pass, setPass] = useState<string>(() => (notebookId ? getSessionPassphrase(notebookId) ?? "" : ""));
+  const [confirmPass, setConfirmPass] = useState<string>("");
+  const [busy, setBusy] = useState(false);
+  const [incoming, setIncoming] = useState<BundlePayload | null>(null);
+  const [plan, setPlan] = useState<ReconciliationPlan | null>(null);
+  const [resolutions, setResolutions] = useState<Map<string, ResolvedConflict>>(new Map());
+  const [autoSyncOn, setAutoSyncOn] = useState<boolean>(() => {
+    try { return localStorage.getItem("nexus.e2ee.autosync:" + (notebookId ?? "")) === "1"; } catch { return false; }
+  });
+  const [intervalSec, setIntervalSec] = useState<number>(60);
+
+  const unlocked = notebookId ? !!getSessionPassphrase(notebookId) : false;
+  const { status: autoStatus, runNow } = useAutoE2EESync(notebookId, autoSyncOn && unlocked, intervalSec * 1000);
+
+  const toggleAutoSync = (on: boolean) => {
+    setAutoSyncOn(on);
+    try { localStorage.setItem("nexus.e2ee.autosync:" + (notebookId ?? ""), on ? "1" : "0"); } catch { /* ignore */ }
+    if (on && !unlocked) toast.warning("Defina a passphrase para o auto-sync começar a rodar.");
+  };
+
+  if (!notebookId || !workspaceId) {
+    return (
+      <Card>
+        <CardHeader><CardTitle className="text-body">Sync E2EE</CardTitle></CardHeader>
+        <CardContent><p className="text-body-sm text-muted-foreground">Selecione um notebook para gerenciar o sync criptografado.</p></CardContent>
+      </Card>
+    );
+  }
+
+  const savePassphrase = () => {
+    if (pass.length < 8) { toast.error("A passphrase precisa ter ao menos 8 caracteres."); return; }
+    if (pass !== confirmPass) { toast.error("As passphrases não conferem."); return; }
+    setSessionPassphrase(notebookId, pass);
+    setConfirmPass("");
+    toast.success("Passphrase carregada na sessão. Nunca deixa este navegador.");
+  };
+
+  const forget = () => {
+    clearSessionPassphrase(notebookId);
+    setPass("");
+    setConfirmPass("");
+    setIncoming(null);
+    setPlan(null);
+    toast.success("Passphrase esquecida.");
+  };
+
+  const doExport = async () => {
+    const secret = getSessionPassphrase(notebookId);
+    if (!secret) { toast.error("Defina uma passphrase primeiro."); return; }
+    setBusy(true);
+    try {
+      const payload = await buildBundleFromNotebook(notebookId);
+      const bundle = await encryptBundle(payload, secret);
+      downloadBundle(bundle);
+      toast.success(`Bundle cifrado exportado (${payload.notes.length} notas).`);
+    } catch (e) {
+      logger.error("e2ee.export.failed", { error: e instanceof Error ? e.message : String(e) });
+      toast.error(e instanceof Error ? e.message : "Falha ao exportar bundle.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const onFile = async (file: File | undefined) => {
+    if (!file) return;
+    const secret = getSessionPassphrase(notebookId);
+    if (!secret) { toast.error("Defina a passphrase antes de importar."); return; }
+    setBusy(true);
+    try {
+      const bundle = await readBundleFile(file);
+      if (bundle.notebook_id !== notebookId) {
+        toast.warning("Bundle foi exportado de outro notebook. Prosseguindo mesmo assim.");
+      }
+      const payload = await decryptBundle(bundle, secret);
+      const localSlim = localNotes.map((n) => ({
+        id: n.id, title: n.title, body_md: n.body_md, tags: n.tags ?? [], updated_at: n.updated_at, is_archived: n.is_archived,
+      }));
+      const rec = planReconciliation(payload, localSlim);
+      setIncoming(payload);
+      setPlan(rec);
+      setResolutions(new Map());
+      toast.success(`Bundle decifrado: ${payload.notes.length} notas recebidas.`);
+    } catch (e) {
+      logger.error("e2ee.import.failed", { error: e instanceof Error ? e.message : String(e) });
+      toast.error(e instanceof Error ? e.message : "Falha ao decifrar bundle.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const apply = async () => {
+    if (!incoming || !plan) return;
+    setBusy(true);
+    try {
+      // Aplica resoluções de conflito: "incoming" e "merge" viram overwrite.
+      // Para "merge", substituímos o body_md da nota incoming pelo body mesclado.
+      const overwriteIds = new Set<string>();
+      const patched: BundlePayload = {
+        ...incoming,
+        notes: incoming.notes.map((n) => {
+          const r = resolutions.get(n.id);
+          if (!r || r.resolution === "local") return n;
+          overwriteIds.add(n.id);
+          if (r.resolution === "merge" && r.mergedBody !== undefined) {
+            return { ...n, body_md: r.mergedBody, updated_at: new Date().toISOString() };
+          }
+          return n;
+        }),
+      };
+      const res = await applyReconciliation(patched, plan, workspaceId, { overwriteConflictIds: overwriteIds });
+      toast.success(`Sync aplicado: +${res.inserted} novas, ~${res.updated} atualizadas, ${res.skipped} mantidas.`);
+      await qc.invalidateQueries({ queryKey: ["notes", notebookId] });
+      setIncoming(null);
+      setPlan(null);
+      setResolutions(new Map());
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Falha ao aplicar reconciliação.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+
+  return (
+    <div className="space-y-4 max-w-4xl">
+      <Alert>
+        <ShieldCheck className="h-4 w-4" />
+        <AlertTitle>Sync E2EE por notebook</AlertTitle>
+        <AlertDescription>
+          O bundle é cifrado no seu navegador com AES-GCM 256 derivado por PBKDF2-SHA256 (250k iterações).
+          A passphrase <strong>nunca</strong> sai desta máquina — se você a esquecer, o bundle é irrecuperável.
+        </AlertDescription>
+      </Alert>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-body flex items-center gap-2">
+            <KeyRound className="h-4 w-4" /> Passphrase da sessão
+            {unlocked ? (
+              <Badge variant="default" className="ml-2 gap-1"><Unlock className="h-3 w-3" /> Ativa</Badge>
+            ) : (
+              <Badge variant="outline" className="ml-2 gap-1"><Lock className="h-3 w-3" /> Bloqueado</Badge>
+            )}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="e2ee-pass" className="text-meta">Passphrase</Label>
+              <Input id="e2ee-pass" type="password" autoComplete="off" value={pass} onChange={(e) => setPass(e.target.value)} placeholder="mínimo 8 caracteres" />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="e2ee-confirm" className="text-meta">Confirmar</Label>
+              <Input id="e2ee-confirm" type="password" autoComplete="off" value={confirmPass} onChange={(e) => setConfirmPass(e.target.value)} placeholder="repita" />
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button size="sm" onClick={savePassphrase} disabled={busy}>Carregar na sessão</Button>
+            <Button size="sm" variant="outline" onClick={forget} disabled={busy || !unlocked}>Esquecer</Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-body flex items-center gap-2">
+            <RefreshCw className="h-4 w-4" /> Auto-sync em segundo plano
+            <E2EESyncStatusBadge status={autoStatus} />
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Switch id="autosync" checked={autoSyncOn} onCheckedChange={toggleAutoSync} disabled={!unlocked} />
+              <Label htmlFor="autosync" className="cursor-pointer">Ativar auto-sync</Label>
+            </div>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="autosync-interval" className="text-meta text-muted-foreground">Intervalo (s)</Label>
+              <Input
+                id="autosync-interval"
+                type="number"
+                min={10}
+                max={3600}
+                className="w-24 h-8"
+                value={intervalSec}
+                onChange={(e) => setIntervalSec(Math.max(10, Number(e.target.value) || 60))}
+                disabled={autoSyncOn}
+              />
+            </div>
+            <Button size="sm" variant="outline" onClick={runNow} disabled={!unlocked || !autoSyncOn}>
+              <RefreshCw className="h-3.5 w-3.5 mr-1.5" /> Rodar agora
+            </Button>
+          </div>
+          <p className="text-meta text-muted-foreground">
+            Cifra o notebook e registra um checkpoint local a cada intervalo. Em falha, aplica retry exponencial
+            (base 5s, teto 5min) até a próxima execução bem-sucedida.
+          </p>
+        </CardContent>
+      </Card>
+
+
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-body flex items-center gap-2"><Download className="h-4 w-4" /> Exportar bundle cifrado</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-meta text-muted-foreground">
+              Empacota <strong>{localNotes.length}</strong> nota{localNotes.length === 1 ? "" : "s"} deste notebook em um arquivo JSON cifrado.
+            </p>
+            <Button size="sm" onClick={doExport} disabled={!unlocked || busy}>Exportar agora</Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-body flex items-center gap-2"><Upload className="h-4 w-4" /> Importar bundle</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Input type="file" accept="application/json,.json" onChange={(e) => onFile(e.target.files?.[0])} disabled={!unlocked || busy} />
+            <p className="text-meta text-muted-foreground">
+              O arquivo é decifrado localmente. Você revisa o plano antes de aplicar.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {plan && incoming && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-body">Plano de reconciliação</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex flex-wrap gap-2 text-meta">
+              <Badge variant="default">Inserir: {plan.toInsert.length}</Badge>
+              <Badge variant="secondary">Atualizar: {plan.toUpdate.length}</Badge>
+              <Badge variant="outline">Manter local: {plan.toKeep.length}</Badge>
+              <Badge variant="destructive">Conflitos: {plan.conflicts.length}</Badge>
+            </div>
+
+            {plan.conflicts.length > 0 && (
+              <>
+                <Separator />
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-body-sm font-semibold">
+                    <AlertTriangle className="h-4 w-4 text-nexus-amber" />
+                    Conflitos — revise diffs e escolha como resolver cada nota
+                  </div>
+                  <ConflictResolver
+                    conflicts={plan.conflicts}
+                    localNotes={localNotes.map((n) => ({ id: n.id, title: n.title, body_md: n.body_md, updated_at: n.updated_at }))}
+                    incoming={incoming}
+                    onChange={setResolutions}
+                  />
+                </div>
+              </>
+            )}
+
+            <div className="flex gap-2">
+              <Button size="sm" onClick={apply} disabled={busy}>Aplicar reconciliação</Button>
+              <Button size="sm" variant="outline" onClick={() => { setPlan(null); setIncoming(null); setResolutions(new Map()); }} disabled={busy}>Cancelar</Button>
+            </div>
+
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}

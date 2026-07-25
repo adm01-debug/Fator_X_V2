@@ -27,7 +27,7 @@ function MetricBar({ value, label, color }: { value: number; label: string; colo
   const percentage = Math.round(value * 100);
   return (
     <div className="space-y-1">
-      <div className="flex justify-between text-[11px]">
+      <div className="flex justify-between text-meta">
         <span className="font-medium text-foreground">{label}</span>
         <span className={`font-bold ${color}`}>{percentage}%</span>
       </div>
@@ -96,34 +96,34 @@ export function RAGASMetricsPanel() {
           <FlaskConical className="h-4 w-4 text-nexus-purple" />
         </div>
         <div>
-          <h3 className="text-sm font-bold text-foreground">Métricas RAGAS</h3>
-          <p className="text-[11px] text-muted-foreground">Avaliação de qualidade RAG (Faithfulness, Relevancy, Precision, Recall)</p>
+          <h3 className="text-body-sm font-bold text-foreground">Métricas RAGAS</h3>
+          <p className="text-meta text-muted-foreground">Avaliação de qualidade RAG (Faithfulness, Relevancy, Precision, Recall)</p>
         </div>
-        <Badge variant="outline" className="ml-auto text-[10px]">eval-engine-v2</Badge>
+        <Badge variant="outline" className="ml-auto text-meta">eval-engine-v2</Badge>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="space-y-2">
-          <label className="text-[11px] font-medium text-muted-foreground">Agente</label>
+          <label htmlFor="ragasmetricspanel-agente-a9f55b" className="text-meta font-medium text-muted-foreground">Agente</label>
           <Select value={agentId} onValueChange={setAgentId}>
-            <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Selecionar agente" /></SelectTrigger>
+            <SelectTrigger id="ragasmetricspanel-agente-a9f55b" className="h-8 text-meta"><SelectValue placeholder="Selecionar agente" /></SelectTrigger>
             <SelectContent>
               {agents.map(a => <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
         <div className="space-y-2">
-          <label className="text-[11px] font-medium text-muted-foreground">Perguntas de teste (1 por linha)</label>
-          <Textarea
+          <label htmlFor="ragasmetricspanel-perguntas-de-teste-1-por-linha-416539" className="text-meta font-medium text-muted-foreground">Perguntas de teste (1 por linha)</label>
+          <Textarea id="ragasmetricspanel-perguntas-de-teste-1-por-linha-416539"
             placeholder="Qual o horário de funcionamento?\nComo fazer uma troca?"
             value={testInput}
             onChange={e => setTestInput(e.target.value)}
-            className="text-xs min-h-[60px]"
+            className="text-meta min-h-[60px]"
           />
         </div>
       </div>
 
-      <Button size="sm" className="gap-1.5 text-xs" onClick={handleRunRAGAS} disabled={running || !agentId}>
+      <Button size="sm" className="gap-1.5 text-meta" onClick={handleRunRAGAS} disabled={running || !agentId}>
         {running ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <TrendingUp className="h-3.5 w-3.5" />}
         Executar RAGAS
       </Button>
@@ -135,11 +135,11 @@ export function RAGASMetricsPanel() {
               {(result.overall_score * 100).toFixed(0)}%
             </div>
             <div>
-              <p className="text-xs font-semibold">Score Geral</p>
-              <p className="text-[10px] text-muted-foreground">{result.sample_count} amostra(s) avaliada(s)</p>
+              <p className="text-meta font-semibold">Score Geral</p>
+              <p className="text-meta text-muted-foreground">{result.sample_count} amostra(s) avaliada(s)</p>
             </div>
             {result.overall_score < 0.5 && (
-              <Badge variant="destructive" className="text-[10px] gap-1 ml-auto">
+              <Badge variant="destructive" className="text-meta gap-1 ml-auto">
                 <AlertTriangle className="h-3 w-3" /> Atenção necessária
               </Badge>
             )}

@@ -37,16 +37,17 @@ export function DashboardInsight({ agents, usageStats, recentTraces }: InsightPr
         <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center ring-4 ring-primary/5">
           <Sparkles className="h-3.5 w-3.5 text-primary animate-pulse" aria-hidden="true" />
         </div>
-        <h3 className="text-sm font-heading font-semibold text-foreground">Insights da IA</h3>
+        <h3 className="text-title-sm text-foreground">Insights da IA</h3>
       </div>
       <div className="space-y-3">
         {insights.slice(0, 3).map((insight, i) => (
-          <div key={i} className={`flex items-start gap-3 text-xs p-2.5 rounded-lg border transition-all ${
+          <div key={i} className={`flex items-start gap-3 text-body-sm p-2.5 rounded-lg border transition-all ${
+
             insight.type === 'warning' ? 'bg-nexus-amber/5 border-nexus-amber/10 text-nexus-amber/90' :
             insight.type === 'success' ? 'bg-nexus-emerald/5 border-nexus-emerald/10 text-nexus-emerald/90' :
             'bg-primary/5 border-primary/10 text-muted-foreground'
           }`}>
-            <span className="shrink-0 text-base" aria-hidden="true">{insight.icon}</span>
+            <span className="shrink-0 text-title-sm" aria-hidden="true">{insight.icon}</span>
             <p className="leading-relaxed font-medium">{insight.text}</p>
           </div>
         ))}

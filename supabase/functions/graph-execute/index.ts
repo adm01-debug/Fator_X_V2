@@ -1,23 +1,29 @@
 // Multi-Agent Graph Executor (LangGraph-style BFS)
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { z } from "https://esm.sh/zod@3.23.8";
+import { fetchWithTimeout, withRetry } from "../_shared/retry.ts";
+import { checkIdempotency, saveIdempotency } from "../_shared/idempotency.ts";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv, getCorsHeaders } from "../_shared/mod.ts";
+const InputSchema = z.object({
+  graph_id: z.string().uuid(),
+  input: z.string().min(1).max(20000),
+});
+
 
 const MAX_NODES = 15;
-const LOVABLE_KEY = Deno.env.get('LOVABLE_API_KEY')!;
-const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
-const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+const LOVABLE_KEY = requireEnv("LOVABLE_API_KEY");
+const SUPABASE_URL = requireEnv("SUPABASE_URL");
+const SERVICE_KEY = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
 
 interface GraphNode { id: string; agent_id?: string | null; role?: string; label?: string; position?: { x: number; y: number } }
 interface GraphEdge { from: string; to: string; condition?: string }
 
 async function callLLM(systemPrompt: string, userInput: string): Promise<{ text: string; latency: number; cost_cents: number }> {
   const start = Date.now();
-  const res = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+  const res = await withRetry(() => fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
     method: 'POST',
+    timeoutMs: 60_000,
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${LOVABLE_KEY}` },
     body: JSON.stringify({
       model: 'google/gemini-2.5-flash',
@@ -26,10 +32,10 @@ async function callLLM(systemPrompt: string, userInput: string): Promise<{ text:
         { role: 'user', content: userInput },
       ],
     }),
-  });
+  }), { attempts: 3, baseMs: 300 });
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`LLM error ${res.status}: ${text}`);
+    const errText = await res.text();
+    throw new Error(`LLM error ${res.status}: ${errText}`);
   }
   const data = await res.json();
   const text = data.choices?.[0]?.message?.content ?? '';
@@ -47,21 +53,38 @@ async function chooseNextNode(currentOutput: string, candidates: { node: GraphNo
 }
 
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, getCorsHeaders(req));
+
   try {
     const auth = req.headers.get('Authorization');
     if (!auth) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
     const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
-    const userClient = createClient(SUPABASE_URL, Deno.env.get('SUPABASE_ANON_KEY')!, { global: { headers: { Authorization: auth } } });
+    const userClient = createClient(SUPABASE_URL, requireEnv("SUPABASE_ANON_KEY"), { global: { headers: { Authorization: auth } } });
     const { data: userData } = await userClient.auth.getUser();
     const user = userData?.user;
     if (!user) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
-    const { graph_id, input } = await req.json();
-    if (!graph_id || typeof input !== 'string') {
-      return new Response(JSON.stringify({ error: 'graph_id and input required' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    const raw = await req.json().catch(() => null);
+    const parsed = InputSchema.safeParse(raw);
+    if (!parsed.success) {
+      return new Response(JSON.stringify({ error: 'Payload inválido', details: parsed.error.flatten() }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
+    const { graph_id, input } = parsed.data;
+
+    // Idempotency: se o cliente forneceu Idempotency-Key, retornamos cache em replays
+    const idemKeyHeader = req.headers.get('Idempotency-Key');
+    const idemKey = idemKeyHeader ? `graph-execute:${user.id}:${idemKeyHeader}` : '';
+    if (idemKey) {
+      const dup = await checkIdempotency(idemKey, supabase);
+      if (dup.isDuplicate && dup.response) return dup.response;
+    }
+
 
     const { data: graph, error: ge } = await supabase.from('agent_graphs').select('*').eq('id', graph_id).single();
     if (ge || !graph) return new Response(JSON.stringify({ error: 'Graph not found' }), { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
@@ -84,6 +107,7 @@ Deno.serve(async (req) => {
       : { data: [] };
     const agentMap = new Map((agents || []).map(a => [a.id, a]));
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     const trace: any[] = [];
     let totalCost = 0;
     let currentNodeId = entryId;
@@ -134,7 +158,10 @@ Deno.serve(async (req) => {
       status: 'completed', final_output: finalOutput, ended_at: new Date().toISOString(), trace, total_cost_cents: totalCost,
     }).eq('id', exec.id);
 
-    return new Response(JSON.stringify({ execution_id: exec.id, final_output: finalOutput, steps: trace.length, total_cost_cents: totalCost }), {
+    const responseBody = { execution_id: exec.id, final_output: finalOutput, steps: trace.length, total_cost_cents: totalCost };
+    if (idemKey) await saveIdempotency(idemKey, 200, responseBody, supabase);
+
+    return new Response(JSON.stringify(responseBody), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e) {

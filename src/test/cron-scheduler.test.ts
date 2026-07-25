@@ -72,16 +72,25 @@ describe('cronSchedulerService — getNextCronRun', () => {
   it('finds the next minute for "* * * * *"', () => {
     const now = new Date('2026-04-08T10:30:15Z');
     const next = getNextCronRun('* * * * *', now);
-    // Should be 10:31:00 (next whole minute)
+    // Should be 10:31:00 UTC (next whole minute)
     expect(next.getUTCMinutes()).toBe(31);
     expect(next.getUTCSeconds()).toBe(0);
   });
 
-  it('finds the next 9 AM for "0 9 * * *"', () => {
+  it('finds the next 9 AM for "0 9 * * *" in Sao Paulo timezone', () => {
+    // 10:30 UTC = 07:30 BRT. Next 9 AM BRT = 09:00 BRT same day = 12:00 UTC (UTCDate=8)
     const now = new Date('2026-04-08T10:30:00Z');
-    const next = getNextCronRun('0 9 * * *', now);
-    // Should jump to next day 9:00
-    expect(next.getUTCHours()).toBe(9);
+    const next = getNextCronRun('0 9 * * *', now, 'America/Sao_Paulo');
+    expect(next.getUTCHours()).toBe(12);
+    expect(next.getUTCMinutes()).toBe(0);
+    expect(next.getUTCDate()).toBe(8);
+    expect(next.getTime()).toBeGreaterThan(now.getTime());
+  });
+
+  it('finds the next hour boundary for "0 * * * *" in Sao Paulo timezone', () => {
+    // 10:31 UTC = 07:31 BRT. First minute=0 in BRT after that = 08:00 BRT = 11:00 UTC
+    const now = new Date('2026-04-08T10:31:00Z');
+    const next = getNextCronRun('0 * * * *', now, 'America/Sao_Paulo');
     expect(next.getUTCMinutes()).toBe(0);
     expect(next.getTime()).toBeGreaterThan(now.getTime());
   });

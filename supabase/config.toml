@@ -1,1 +1,16 @@
-project_id = "fqdohnmgmtaycfwsioik"
+project_id = "qdlnzopxrlsoljcrcmzv"
+
+[functions.openclaw-webhook]
+verify_jwt = false
+
+[functions.whatsapp-router]
+verify_jwt = false
+
+[functions.rag-embed-backfill]
+verify_jwt = false
+
+[functions.slack-events-webhook]
+verify_jwt = false
+
+[functions.migrate-helper]
+verify_jwt = false

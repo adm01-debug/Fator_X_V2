@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getHelpCenterBySlug, listPublicArticles, getPublicArticleBySlug, rateArticle, listThreads } from "@/services/knowledgeManagementService";
 import { toast } from "sonner";
+import { toSafeHtml } from "@/lib/sanitize";
+import type { DbRow } from '@/types/dbRow';
 
 export default function PublicHelpCenterPage() {
   const { slug, articleSlug } = useParams<{ slug: string; articleSlug?: string }>();
@@ -35,7 +37,7 @@ export default function PublicHelpCenterPage() {
           <p className="text-muted-foreground mb-6">{hc.description}</p>
           <div className="relative max-w-xl">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar artigos..." className="pl-12 h-12 bg-card text-base" />
+            <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar artigos..." className="pl-12 h-12 bg-card text-title-sm" />
           </div>
         </div>
       </header>
@@ -45,7 +47,7 @@ export default function PublicHelpCenterPage() {
       </main>
 
       <footer className="border-t border-border py-6 mt-12">
-        <div className="max-w-5xl mx-auto px-6 text-center text-xs text-muted-foreground">
+        <div className="max-w-5xl mx-auto px-6 text-center text-meta text-muted-foreground">
           Powered by Nexus Agents Studio
         </div>
       </footer>
@@ -65,16 +67,16 @@ function ArticleList({ helpCenterId, hcSlug, search, primaryColor }: { helpCente
   return (
     <div className="grid md:grid-cols-3 gap-8">
       <div className="md:col-span-2 space-y-3">
-        <h2 className="text-lg font-heading font-semibold mb-4">Artigos</h2>
+        <h2 className="text-title-sm font-heading font-semibold mb-4">Artigos</h2>
         {filtered.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-8 text-center">Nenhum artigo encontrado.</p>
+          <p className="text-body-sm text-muted-foreground py-8 text-center">Nenhum artigo encontrado.</p>
         ) : filtered.map((a) => (
           <Link key={a.id} to={`/help/${hcSlug}/${a.slug}`} className="nexus-card block hover:border-primary/50 transition-colors group">
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1 min-w-0">
                 <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">{a.title}</h3>
-                {a.excerpt && <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{a.excerpt}</p>}
-                <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                {a.excerpt && <p className="text-body-sm text-muted-foreground line-clamp-2 mt-1">{a.excerpt}</p>}
+                <div className="flex items-center gap-4 mt-2 text-meta text-muted-foreground">
                   <span className="flex items-center gap-1"><Eye className="h-3 w-3" />{a.view_count}</span>
                   <span className="flex items-center gap-1"><ThumbsUp className="h-3 w-3" />{a.helpful_count}</span>
                 </div>
@@ -86,20 +88,20 @@ function ArticleList({ helpCenterId, hcSlug, search, primaryColor }: { helpCente
       </div>
       <aside>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-heading font-semibold">Comunidade</h2>
+          <h2 className="text-title-sm font-heading font-semibold">Comunidade</h2>
           <Button size="sm" variant="outline" onClick={() => navigate(`/help/${hcSlug}/forum`)}>Ver fórum</Button>
         </div>
         <div className="space-y-2">
-          {threads.slice(0, 5).map((t: { id: string; title: string; reply_count: number; is_resolved: boolean }) => (
+          {threads.slice(0, 5).map((t: DbRow) => (
             <Link key={t.id} to={`/help/${hcSlug}/forum/${t.id}`} className="block p-3 rounded-lg border border-border hover:border-primary/50 transition-colors">
-              <p className="text-sm font-medium text-foreground line-clamp-1">{t.title}</p>
+              <p className="text-body-sm font-medium text-foreground line-clamp-1">{t.title}</p>
               <div className="flex items-center gap-2 mt-1">
-                <span className="text-xs text-muted-foreground flex items-center gap-1"><MessageSquare className="h-3 w-3" />{t.reply_count}</span>
-                {t.is_resolved && <Badge variant="default" className="text-[10px] py-0">Resolvido</Badge>}
+                <span className="text-meta text-muted-foreground flex items-center gap-1"><MessageSquare className="h-3 w-3" />{t.reply_count}</span>
+                {t.is_resolved && <Badge variant="default" className="text-meta py-0">Resolvido</Badge>}
               </div>
             </Link>
           ))}
-          {threads.length === 0 && <p className="text-xs text-muted-foreground">Sem tópicos ainda.</p>}
+          {threads.length === 0 && <p className="text-meta text-muted-foreground">Sem tópicos ainda.</p>}
           <Button size="sm" className="w-full mt-2" style={{ background: primaryColor }} onClick={() => navigate(`/help/${hcSlug}/forum`)}>
             Iniciar tópico
           </Button>
@@ -118,13 +120,13 @@ function ArticleView({ helpCenterId, articleSlug }: { helpCenterId: string; arti
   return (
     <article className="max-w-3xl mx-auto">
       <h1 className="text-3xl font-heading font-bold text-foreground mb-3">{article.title}</h1>
-      <div className="flex items-center gap-4 text-xs text-muted-foreground mb-6">
+      <div className="flex items-center gap-4 text-meta text-muted-foreground mb-6">
         <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{new Date(article.updated_at).toLocaleDateString("pt-BR")}</span>
         <span className="flex items-center gap-1"><Eye className="h-3 w-3" />{article.view_count} visualizações</span>
       </div>
-      <div className="prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: article.content_html ?? "" }} />
+      <div className="prose prose-invert max-w-none" dangerouslySetInnerHTML={toSafeHtml(article.content_html ?? "", "rich")} />
       <div className="border-t border-border mt-12 pt-6">
-        <p className="text-sm text-muted-foreground mb-3">Este artigo foi útil?</p>
+        <p className="text-body-sm text-muted-foreground mb-3">Este artigo foi útil?</p>
         <div className="flex gap-2">
           <Button variant={rated === "yes" ? "default" : "outline"} size="sm" disabled={!!rated} onClick={async () => { await rateArticle(article.id, true); setRated("yes"); toast.success("Obrigado!"); }}>
             <ThumbsUp className="h-4 w-4 mr-2" />Sim

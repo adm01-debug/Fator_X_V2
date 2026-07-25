@@ -63,7 +63,7 @@ export function CreateEvaluationDialog({ onCreated }: CreateEvaluationDialogProp
           try {
             const judgeResult = await invokeEvalJudge({ agent_id: result.data.agentId, dataset_id: result.data.datasetId, evaluation_run_id: evalRun.id, mode: result.data.judgeMode });
             toast.success(`Judge concluído: score médio ${judgeResult?.average_score?.toFixed(1)}/5 (${judgeResult?.total_cases} cases)`);
-          } catch (judgeErr: unknown) {
+          } catch (judgeErr) {
             toast.warning(`Avaliação criada mas judge falhou: ${judgeErr instanceof Error ? judgeErr.message : 'Erro'}`);
             await updateEvaluationRun(evalRun.id, { status: 'failed' });
           }
@@ -73,7 +73,7 @@ export function CreateEvaluationDialog({ onCreated }: CreateEvaluationDialogProp
             const runResult = await invokeTestRunner({ agent_id: result.data.agentId, dataset_id: result.data.datasetId, evaluation_run_id: evalRun.id });
             const r = runResult as Record<string, unknown> | undefined;
             toast.success(`Testes concluídos: ${r?.passed || 0}/${r?.total || 0} aprovados (${(((r?.pass_rate as number) || 0) * 100).toFixed(0)}%)`);
-          } catch (runErr: unknown) {
+          } catch (runErr) {
             toast.warning(`Avaliação criada mas execução falhou: ${runErr instanceof Error ? runErr.message : 'Erro'}`);
             await updateEvaluationRun(evalRun.id, { status: 'failed' });
           }
@@ -85,7 +85,7 @@ export function CreateEvaluationDialog({ onCreated }: CreateEvaluationDialogProp
       setName('');
       setDatasetId('');
       onCreated?.();
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro ao criar avaliação');
     } finally {
       setLoading(false);
@@ -105,22 +105,22 @@ export function CreateEvaluationDialog({ onCreated }: CreateEvaluationDialogProp
         </DialogHeader>
         <div className="space-y-4 mt-2">
           <div className="space-y-1.5">
-            <Label className="text-xs">Nome *</Label>
+            <Label className="text-meta">Nome *</Label>
             <Input value={name} onChange={e => setName(e.target.value)} placeholder="Ex: Teste de Factualidade v2" className={`bg-secondary/50 ${errors.name ? 'border-destructive' : ''}`} />
-            {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
+            {errors.name && <p className="text-meta text-destructive">{errors.name}</p>}
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Agente *</Label>
+            <Label className="text-meta">Agente *</Label>
             <Select value={agentId} onValueChange={setAgentId}>
               <SelectTrigger className={`bg-secondary/50 ${errors.agentId ? 'border-destructive' : ''}`}><SelectValue placeholder="Selecione um agente" /></SelectTrigger>
               <SelectContent>
                 {agents.map(a => <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>)}
               </SelectContent>
             </Select>
-            {errors.agentId && <p className="text-xs text-destructive">{errors.agentId}</p>}
+            {errors.agentId && <p className="text-meta text-destructive">{errors.agentId}</p>}
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Dataset de Testes</Label>
+            <Label className="text-meta">Dataset de Testes</Label>
             <Select value={datasetId} onValueChange={setDatasetId}>
               <SelectTrigger className="bg-secondary/50"><SelectValue placeholder="Selecione um dataset (opcional)" /></SelectTrigger>
               <SelectContent>
@@ -129,17 +129,17 @@ export function CreateEvaluationDialog({ onCreated }: CreateEvaluationDialogProp
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Número de test cases</Label>
+            <Label className="text-meta">Número de test cases</Label>
             <Input type="number" value={testCases} onChange={e => setTestCases(e.target.value)} min="1" max="100" className="bg-secondary/50" />
-            {errors.testCases && <p className="text-xs text-destructive">{errors.testCases}</p>}
+            {errors.testCases && <p className="text-meta text-destructive">{errors.testCases}</p>}
           </div>
           <div className="flex items-center gap-3 py-1">
             <input type="checkbox" checked={useJudge} onChange={e => setUseJudge(e.target.checked)} className="rounded" id="use-judge" />
-            <label htmlFor="use-judge" className="text-xs text-foreground cursor-pointer">Usar LLM-as-Judge (avaliação automatizada por IA)</label>
+            <label htmlFor="use-judge" className="text-meta text-foreground cursor-pointer">Usar LLM-as-Judge (avaliação automatizada por IA)</label>
           </div>
           {useJudge && (
             <div className="space-y-1.5">
-              <Label className="text-xs">Modo do Judge</Label>
+              <Label className="text-meta">Modo do Judge</Label>
               <Select value={judgeMode} onValueChange={(v) => setJudgeMode(v as "faithfulness" | "pointwise")}>
                 <SelectTrigger className="bg-secondary/50"><SelectValue /></SelectTrigger>
                 <SelectContent>

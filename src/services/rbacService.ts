@@ -6,6 +6,7 @@
  */
 
 import { fromTable } from '@/lib/supabaseExtended';
+import type { DbRow } from '@/types/dbRow';
 
 // ═══ Types ═══
 
@@ -151,7 +152,7 @@ export async function assignRole(
       assigned_by: assignedBy,
     }, { onConflict: 'user_id,workspace_id' })
     .select()
-    .single();
+    .maybeSingle();
 
   if (error) throw error;
   return data as UserRole;

@@ -1,8 +1,15 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse, checkRateLimit, getRateLimitIdentifier, createRateLimitResponse, RATE_LIMITS } from "../_shared/mod.ts";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv, getCorsHeaders, handleCorsPreflight, _jsonResponse, _errorResponse } from "../_shared/mod.ts";
+import { z } from "https://esm.sh/zod@3.23.8";
 
-// CORS handled by _shared/cors.ts — dynamic origin whitelist
+const SmolagentBodySchema = z.object({
+  action: z.string().min(1).max(120),
+  stream: z.boolean().optional(),
+}).passthrough();
+
+// jsonHeaders is set per-request inside the handler (dynamic CORS)
+let jsonHeaders: Record<string, string> = { "Content-Type": "application/json" };
 
 function jsonResponse(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), { status, headers: jsonHeaders });
@@ -381,7 +388,7 @@ async function runAgent(
     let response = '';
     const reader = llmResp.body?.getReader();
     if (!reader) throw new Error("No reader available from LLM Gateway");
-    const decoder = new TextEncoder();
+    const _decoder = new TextEncoder();
     const textDecoder = new TextDecoder();
 
     while (true) {
@@ -400,7 +407,7 @@ async function runAgent(
             response += token;
             onEvent?.({ type: 'TEXT_MESSAGE_CONTENT', data: { token } });
           }
-        } catch (e) {
+        } catch (_e) {
           // Skip parse errors for non-JSON lines
         }
       }
@@ -524,21 +531,26 @@ async function runAgent(
 // ═══ MAIN HANDLER ═══
 
 serve(async (req) => {
+  jsonHeaders = { ...getCorsHeaders(req), "Content-Type": "application/json" };
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
 
   try {
     const authHeader = req.headers.get('Authorization')!;
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabaseUrl = requireEnv('SUPABASE_URL');
+    const supabaseKey = requireEnv('SUPABASE_ANON_KEY');
     const supabase = createClient(supabaseUrl, supabaseKey, { global: { headers: { Authorization: authHeader } } });
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return jsonResponse({ error: 'Unauthorized' }, 401);
 
-    const hfToken = Deno.env.get('HF_API_TOKEN');
-    if (!hfToken) return jsonResponse({ error: 'HF_API_TOKEN not configured' }, 400);
+    const hfToken = requireEnv('HF_API_TOKEN');
 
-    const body = await req.json();
+    const rawBody = await req.json().catch(() => null);
+    const parsedBody = SmolagentBodySchema.safeParse(rawBody);
+    if (!parsedBody.success) {
+      return jsonResponse({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }, 400);
+    }
+    const body = parsedBody.data as Record<string, unknown> & { action: string; stream?: boolean };
     const { action, stream } = body;
 
     const ctx: AgentContext = { supabaseUrl, supabaseKey, authHeader, hfToken };

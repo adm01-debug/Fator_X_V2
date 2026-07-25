@@ -5,6 +5,7 @@
  */
 import { logger } from '@/lib/logger';
 import { supabase } from '@/integrations/supabase/client';
+import type { DbRow } from '@/types/dbRow';
 
 export type DatasetSource = 'traces' | 'test_cases' | 'custom';
 export type TaskType = 'text-generation' | 'text-classification' | 'embedding';
@@ -27,7 +28,7 @@ export interface TrainingConfig {
 interface PrepareDatasetResult {
   samples_count?: number;
   dataset_id?: string;
-  preview?: unknown[];
+  preview?: DbRow[];
 }
 
 interface StartTrainingResult {

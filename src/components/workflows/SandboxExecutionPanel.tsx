@@ -20,6 +20,7 @@ import {
   DEFAULT_CONFIG, RUNTIME_OPTIONS, SECURITY_LEVEL_COLORS,
 } from './sandbox/sandboxTypes';
 import { SliderField, ToggleField } from './sandbox/SandboxFields';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 // Re-export types for consumers
 export type { SandboxRuntime, SandboxConfig, SandboxExecution } from './sandbox/sandboxTypes';
@@ -63,12 +64,12 @@ export function SandboxExecutionPanel({ agentId, onConfigChange, onExecute }: Sa
       {/* Header */}
       <Card className="bg-card border-border">
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center justify-between text-base text-foreground">
+          <CardTitle className="flex items-center justify-between text-title-sm text-foreground">
             <span className="flex items-center gap-2">
               <Shield className="w-4 h-4 text-nexus-emerald" /> Sandboxed Execution
-              {agentId && <Badge className="bg-primary/20 text-primary text-[10px] ml-1">Agent Config</Badge>}
+              {agentId && <Badge className="bg-primary/20 text-primary text-meta ml-1">Agent Config</Badge>}
             </span>
-            <Badge className="text-[10px]" style={{
+            <Badge className="text-meta" style={{
               backgroundColor: `${SECURITY_LEVEL_COLORS[selectedRuntime?.securityLevel ?? 'none']}20`,
               color: SECURITY_LEVEL_COLORS[selectedRuntime?.securityLevel ?? 'none'],
             }}>
@@ -96,24 +97,26 @@ export function SandboxExecutionPanel({ agentId, onConfigChange, onExecute }: Sa
           <Card className="bg-card border-border">
             <CardContent className="pt-4 space-y-4">
               <div className="space-y-2">
-                <label className="text-xs text-muted-foreground font-medium">Runtime</label>
+                {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+                <label className="text-meta text-muted-foreground font-medium">Runtime</label>
                 <div className="grid grid-cols-2 gap-2">
                   {RUNTIME_OPTIONS.map((rt) => (
-                    <div key={rt.id}
+                    <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} key={rt.id}
                       className={`p-3 rounded-lg border cursor-pointer transition-all ${config.runtime === rt.id ? 'border-primary bg-primary/10' : 'border-border bg-background hover:border-border'}`}
                       onClick={() => updateConfig({ runtime: rt.id })}>
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm font-medium text-foreground">{rt.name}</span>
+                        <span className="text-body-sm font-medium text-foreground">{rt.name}</span>
                         <div className="w-2 h-2 rounded-full" style={{ backgroundColor: SECURITY_LEVEL_COLORS[rt.securityLevel] }} />
                       </div>
-                      <p className="text-xs text-muted-foreground">{rt.description}</p>
+                      <p className="text-meta text-muted-foreground">{rt.description}</p>
                     </div>
                   ))}
                 </div>
               </div>
               {config.runtime !== 'none' && (
                 <div className="space-y-3">
-                  <label className="text-xs text-muted-foreground font-medium">Limites de Recursos</label>
+                  {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+                  <label className="text-meta text-muted-foreground font-medium">Limites de Recursos</label>
                   <SliderField label="CPU" value={config.cpuLimit} min={0.25} max={4} step={0.25} unit="cores" onChange={(v) => updateConfig({ cpuLimit: v })} />
                   <SliderField label="Memória" value={config.memoryLimitMb} min={128} max={4096} step={128} unit="MB" onChange={(v) => updateConfig({ memoryLimitMb: v })} />
                   <SliderField label="Timeout" value={config.timeoutSeconds} min={5} max={300} step={5} unit="seg" onChange={(v) => updateConfig({ timeoutSeconds: v })} />
@@ -129,16 +132,17 @@ export function SandboxExecutionPanel({ agentId, onConfigChange, onExecute }: Sa
           <Card className="bg-card border-border">
             <CardContent className="pt-4 space-y-3">
               <div className="flex items-center gap-2">
-                <label className="text-xs text-muted-foreground">Linguagem:</label>
+                {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+                <label className="text-meta text-muted-foreground">Linguagem:</label>
                 <div className="flex gap-1">
                   {config.allowedLanguages.map((lang) => (
-                    <Badge key={lang} className={`cursor-pointer text-[10px] ${language === lang ? 'bg-primary text-foreground' : 'bg-muted text-muted-foreground hover:bg-muted'}`}
+                    <Badge key={lang} className={`cursor-pointer text-meta ${language === lang ? 'bg-primary text-foreground' : 'bg-muted text-muted-foreground hover:bg-muted'}`}
                       onClick={() => setLanguage(lang)}>{lang}</Badge>
                   ))}
                 </div>
               </div>
               <textarea value={codeInput} onChange={(e) => setCodeInput(e.target.value)}
-                className="w-full h-40 p-3 bg-background border border-border rounded-lg text-sm font-mono text-muted-foreground resize-none focus:border-primary focus:outline-none"
+                className="w-full h-40 p-3 bg-background border border-border rounded-lg text-body-sm font-mono text-muted-foreground resize-none focus:border-primary focus:outline-none"
                 placeholder={`# Escreva seu código ${language} aqui...`} spellCheck={false} />
               <div className="flex items-center gap-2">
                 <Button onClick={handleExecute} disabled={isRunning || config.runtime === 'none' || !codeInput.trim()} className="bg-nexus-emerald hover:bg-nexus-emerald/80 text-foreground">
@@ -156,7 +160,7 @@ export function SandboxExecutionPanel({ agentId, onConfigChange, onExecute }: Sa
               {config.runtime === 'none' && (
                 <div className="flex items-center gap-2 p-3 rounded-lg bg-nexus-amber/10 border border-nexus-amber/30">
                   <AlertTriangle className="w-4 h-4 text-nexus-amber" />
-                  <span className="text-xs text-nexus-amber">Execução de código está desabilitada. Selecione um runtime na aba Configuração.</span>
+                  <span className="text-meta text-nexus-amber">Execução de código está desabilitada. Selecione um runtime na aba Configuração.</span>
                 </div>
               )}
             </CardContent>
@@ -170,7 +174,7 @@ export function SandboxExecutionPanel({ agentId, onConfigChange, onExecute }: Sa
               <ScrollArea className="h-[400px]">
                 {executions.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
-                    <Terminal className="w-8 h-8 mb-2 opacity-50" /><p className="text-sm">Nenhuma execução ainda</p><p className="text-xs">Execute código na aba anterior</p>
+                    <Terminal className="w-8 h-8 mb-2 opacity-50" /><p className="text-body-sm">Nenhuma execução ainda</p><p className="text-meta">Execute código na aba anterior</p>
                   </div>
                 ) : (
                   <div className="divide-y divide-[#222244]">
@@ -184,21 +188,21 @@ export function SandboxExecutionPanel({ agentId, onConfigChange, onExecute }: Sa
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                               <StatusIcon className="w-4 h-4" style={{ color: statusColor }} />
-                              <Badge className="bg-muted text-muted-foreground text-[10px]">{exec.language}</Badge>
-                              <span className="text-xs text-muted-foreground">{exec.durationMs}ms</span>
+                              <Badge className="bg-muted text-muted-foreground text-meta">{exec.language}</Badge>
+                              <span className="text-meta text-muted-foreground">{exec.durationMs}ms</span>
                             </div>
-                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <div className="flex items-center gap-2 text-meta text-muted-foreground">
                               <Cpu className="w-3 h-3" /><span>{exec.resourceUsage.cpuPercent.toFixed(1)}%</span>
                               <HardDrive className="w-3 h-3 ml-1" /><span>{exec.resourceUsage.memoryMb.toFixed(0)}MB</span>
                             </div>
                           </div>
-                          <pre className="p-2 bg-background rounded text-xs font-mono text-muted-foreground overflow-x-auto max-h-20 overflow-y-auto">{exec.code}</pre>
-                          {exec.output && <div className="p-2 bg-background rounded border-l-2 border-nexus-emerald"><pre className="text-xs font-mono text-nexus-emerald whitespace-pre-wrap">{exec.output}</pre></div>}
-                          {exec.error && <div className="p-2 bg-background rounded border-l-2 border-destructive"><pre className="text-xs font-mono text-destructive whitespace-pre-wrap">{exec.error}</pre></div>}
+                          <pre className="p-2 bg-background rounded text-meta font-mono text-muted-foreground overflow-x-auto max-h-20 overflow-y-auto">{exec.code}</pre>
+                          {exec.output && <div className="p-2 bg-background rounded border-l-2 border-nexus-emerald"><pre className="text-meta font-mono text-nexus-emerald whitespace-pre-wrap">{exec.output}</pre></div>}
+                          {exec.error && <div className="p-2 bg-background rounded border-l-2 border-destructive"><pre className="text-meta font-mono text-destructive whitespace-pre-wrap">{exec.error}</pre></div>}
                           {exec.artifacts.length > 0 && (
                             <div className="flex items-center gap-2 flex-wrap">
                               {exec.artifacts.map((art, idx) => (
-                                <Badge key={idx} className="bg-nexus-orange/20 text-nexus-orange text-[10px] cursor-pointer hover:bg-nexus-orange/30">
+                                <Badge key={idx} className="bg-nexus-orange/20 text-nexus-orange text-meta cursor-pointer hover:bg-nexus-orange/30">
                                   <Download className="w-3 h-3 mr-1" />{art.name} ({(art.size / 1024).toFixed(1)}KB)
                                 </Badge>
                               ))}
@@ -223,15 +227,16 @@ export function SandboxExecutionPanel({ agentId, onConfigChange, onExecute }: Sa
               <ToggleField label="Acesso ao Shell" description="Permitir execução de comandos shell (bash/sh)" checked={config.shellAccess} onChange={(v) => updateConfig({ shellAccess: v })} icon={Terminal} />
               {config.networkEnabled && (
                 <div className="space-y-1">
-                  <label className="text-xs text-muted-foreground">Domínios Permitidos</label>
+                  {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+                  <label className="text-meta text-muted-foreground">Domínios Permitidos</label>
                   <textarea value={config.allowedDomains.join('\n')} onChange={(e) => updateConfig({ allowedDomains: e.target.value.split('\n').filter(Boolean) })}
-                    className="w-full h-20 p-2 bg-background border border-border rounded text-xs font-mono text-muted-foreground resize-none focus:border-primary focus:outline-none"
+                    className="w-full h-20 p-2 bg-background border border-border rounded text-meta font-mono text-muted-foreground resize-none focus:border-primary focus:outline-none"
                     placeholder="api.exemplo.com&#10;github.com&#10;pypi.org" />
                 </div>
               )}
               <div className="p-3 rounded-lg bg-background border border-border">
-                <p className="text-xs font-medium text-foreground mb-2">Resumo de Segurança</p>
-                <div className="space-y-1 text-xs">
+                <p className="text-meta font-medium text-foreground mb-2">Resumo de Segurança</p>
+                <div className="space-y-1 text-meta">
                   <div className="flex items-center justify-between"><span className="text-muted-foreground">Runtime</span><span className="text-foreground">{selectedRuntime?.name ?? 'N/A'}</span></div>
                   <div className="flex items-center justify-between"><span className="text-muted-foreground">Isolamento</span>
                     <Badge className="text-[9px]" style={{ backgroundColor: `${SECURITY_LEVEL_COLORS[selectedRuntime?.securityLevel ?? 'none']}20`, color: SECURITY_LEVEL_COLORS[selectedRuntime?.securityLevel ?? 'none'] }}>{selectedRuntime?.securityLevel ?? 'N/A'}</Badge>
@@ -245,8 +250,8 @@ export function SandboxExecutionPanel({ agentId, onConfigChange, onExecute }: Sa
                 <div className="flex items-start gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/30">
                   <AlertTriangle className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-xs font-medium text-destructive">Atenção: Configuração de Risco</p>
-                    <p className="text-xs text-destructive/80 mt-1">{config.runtime === 'local' ? 'Runtime local não tem isolamento. Use apenas em ambiente de desenvolvimento.' : 'Acesso ao shell permite execução arbitrária de comandos. Use com cautela.'}</p>
+                    <p className="text-meta font-medium text-destructive">Atenção: Configuração de Risco</p>
+                    <p className="text-meta text-destructive/80 mt-1">{config.runtime === 'local' ? 'Runtime local não tem isolamento. Use apenas em ambiente de desenvolvimento.' : 'Acesso ao shell permite execução arbitrária de comandos. Use com cautela.'}</p>
                   </div>
                 </div>
               )}

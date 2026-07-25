@@ -28,10 +28,10 @@ export default function FederatedLearningPage() {
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card><CardContent className="pt-6"><p className="text-sm text-muted-foreground">Nós ativos</p><p className="text-2xl font-bold">4</p></CardContent></Card>
-        <Card><CardContent className="pt-6"><p className="text-sm text-muted-foreground">Samples totais</p><p className="text-2xl font-bold">11.7K</p></CardContent></Card>
-        <Card><CardContent className="pt-6"><p className="text-sm text-muted-foreground">Acurácia global</p><p className="text-2xl font-bold">88.5%</p></CardContent></Card>
-        <Card><CardContent className="pt-6"><p className="text-sm text-muted-foreground">Round atual</p><p className="text-2xl font-bold">7/20</p></CardContent></Card>
+        <Card><CardContent className="pt-6"><p className="text-body-sm text-muted-foreground">Nós ativos</p><p className="text-2xl font-bold">4</p></CardContent></Card>
+        <Card><CardContent className="pt-6"><p className="text-body-sm text-muted-foreground">Samples totais</p><p className="text-2xl font-bold">11.7K</p></CardContent></Card>
+        <Card><CardContent className="pt-6"><p className="text-body-sm text-muted-foreground">Acurácia global</p><p className="text-2xl font-bold">88.5%</p></CardContent></Card>
+        <Card><CardContent className="pt-6"><p className="text-body-sm text-muted-foreground">Round atual</p><p className="text-2xl font-bold">7/20</p></CardContent></Card>
       </div>
 
       <Card>
@@ -41,7 +41,7 @@ export default function FederatedLearningPage() {
         </CardHeader>
         <CardContent>
           <Progress value={75} />
-          <p className="text-xs text-muted-foreground mt-2">Budget de privacidade: 75% restante</p>
+          <p className="text-meta text-muted-foreground mt-2">Budget de privacidade: 75% restante</p>
         </CardContent>
       </Card>
 
@@ -52,7 +52,7 @@ export default function FederatedLearningPage() {
             <div key={n.id} className="p-4 border border-border rounded-lg flex items-center justify-between">
               <div>
                 <p className="font-semibold">{n.name}</p>
-                <p className="text-xs text-muted-foreground">{n.samples.toLocaleString()} samples • acurácia local {(n.accuracy * 100).toFixed(0)}%</p>
+                <p className="text-meta text-muted-foreground">{n.samples.toLocaleString()} samples • acurácia local {(n.accuracy * 100).toFixed(0)}%</p>
               </div>
               <Badge variant={n.status === "completed" ? "default" : n.status === "training" ? "secondary" : "outline"}>
                 <Activity className="h-3 w-3 mr-1" />{n.status}

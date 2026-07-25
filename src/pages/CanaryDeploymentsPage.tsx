@@ -45,10 +45,10 @@ export default function CanaryDeploymentsPage() {
           <div className="flex items-center gap-3">
             {isCanaryHealthy ? <CheckCircle2 className="h-8 w-8 text-nexus-green" /> : <AlertCircle className="h-8 w-8 text-nexus-red" />}
             <div>
-              <div className="text-sm font-semibold">
+              <div className="text-body-sm font-semibold">
                 {isCanaryHealthy ? "Canary saudável — pronto para promover" : "Canary degradado — recomenda rollback"}
               </div>
-              <div className="text-xs text-muted-foreground mt-0.5">
+              <div className="text-meta text-muted-foreground mt-0.5">
                 Error rate: {canary.errorRate}% (vs {stable.errorRate}%) · Latência p95: {canary.p95Latency}ms (vs {stable.p95Latency}ms)
               </div>
             </div>
@@ -61,24 +61,24 @@ export default function CanaryDeploymentsPage() {
       </Card>
 
       <Card>
-        <CardHeader className="pb-3"><CardTitle className="text-sm flex items-center gap-2"><GitMerge className="h-4 w-4" />Distribuição de tráfego</CardTitle></CardHeader>
+        <CardHeader className="pb-3"><CardTitle className="text-body-sm flex items-center gap-2"><GitMerge className="h-4 w-4" />Distribuição de tráfego</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <div className="flex justify-between text-xs mb-2">
+            <div className="flex justify-between text-meta mb-2">
               <span>Stable v3.2.1: <span className="font-bold">{100 - canaryTraffic[0]}%</span></span>
               <span>Canary v3.3.0-rc1: <span className="font-bold text-primary">{canaryTraffic[0]}%</span></span>
             </div>
             <Slider value={canaryTraffic} onValueChange={setCanaryTraffic} min={0} max={100} step={5} />
             <div className="flex gap-1 mt-3">
               {[1, 5, 10, 25, 50, 100].map((p) => (
-                <Button key={p} size="sm" variant="outline" className="h-7 text-xs flex-1" onClick={() => setCanaryTraffic([p])}>
+                <Button key={p} size="sm" variant="outline" className="h-7 text-meta flex-1" onClick={() => setCanaryTraffic([p])}>
                   {p}%
                 </Button>
               ))}
             </div>
           </div>
 
-          <div className="flex items-center justify-between p-3 bg-muted/30 rounded text-xs">
+          <div className="flex items-center justify-between p-3 bg-muted/30 rounded text-meta">
             <span>Auto-promote se canary saudável por &gt; 30 min</span>
             <Button size="sm" variant={autoPromote ? "default" : "outline"} onClick={() => setAutoPromote(!autoPromote)}>
               {autoPromote ? "Ativado" : "Desativado"}
@@ -91,29 +91,29 @@ export default function CanaryDeploymentsPage() {
         {deployments.map((d) => (
           <Card key={d.version} className={d.status === "canary" ? "border-primary/40" : ""}>
             <CardHeader className="pb-3 flex-row items-center justify-between">
-              <CardTitle className="text-sm flex items-center gap-2">
+              <CardTitle className="text-body-sm flex items-center gap-2">
                 <Activity className="h-4 w-4" />{d.version}
-                <Badge variant={d.status === "stable" ? "default" : "outline"} className="text-[10px] capitalize">{d.status}</Badge>
+                <Badge variant={d.status === "stable" ? "default" : "outline"} className="text-meta capitalize">{d.status}</Badge>
               </CardTitle>
               <div className="text-2xl font-bold">{d.traffic}%</div>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className="grid grid-cols-3 gap-2 text-xs">
+              <div className="grid grid-cols-3 gap-2 text-meta">
                 <div className="p-2.5 bg-muted/30 rounded">
                   <div className="text-muted-foreground">Error rate</div>
-                  <div className={`text-lg font-bold mt-0.5 ${d.errorRate > 1 ? "text-nexus-red" : "text-nexus-green"}`}>{d.errorRate}%</div>
+                  <div className={`text-title-sm font-bold mt-0.5 ${d.errorRate > 1 ? "text-nexus-red" : "text-nexus-green"}`}>{d.errorRate}%</div>
                 </div>
                 <div className="p-2.5 bg-muted/30 rounded">
                   <div className="text-muted-foreground">p95</div>
-                  <div className="text-lg font-bold mt-0.5">{d.p95Latency}ms</div>
+                  <div className="text-title-sm font-bold mt-0.5">{d.p95Latency}ms</div>
                 </div>
                 <div className="p-2.5 bg-muted/30 rounded">
                   <div className="text-muted-foreground">CSAT</div>
-                  <div className="text-lg font-bold mt-0.5">{d.satisfaction}%</div>
+                  <div className="text-title-sm font-bold mt-0.5">{d.satisfaction}%</div>
                 </div>
               </div>
               <div>
-                <div className="flex justify-between text-xs mb-1"><span>Saúde geral</span><span className="font-semibold">{d.satisfaction}%</span></div>
+                <div className="flex justify-between text-meta mb-1"><span>Saúde geral</span><span className="font-semibold">{d.satisfaction}%</span></div>
                 <Progress value={d.satisfaction} />
               </div>
             </CardContent>
@@ -122,8 +122,8 @@ export default function CanaryDeploymentsPage() {
       </div>
 
       <Card>
-        <CardHeader className="pb-3"><CardTitle className="text-sm flex items-center gap-2"><TrendingUp className="h-4 w-4" />Critérios de rollback automático</CardTitle></CardHeader>
-        <CardContent className="space-y-2 text-xs">
+        <CardHeader className="pb-3"><CardTitle className="text-body-sm flex items-center gap-2"><TrendingUp className="h-4 w-4" />Critérios de rollback automático</CardTitle></CardHeader>
+        <CardContent className="space-y-2 text-meta">
           {[
             "Error rate > 2× versão estável por 5 min consecutivos",
             "p95 latency > 1.5× versão estável por 10 min",

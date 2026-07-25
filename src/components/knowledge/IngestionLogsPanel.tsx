@@ -13,6 +13,7 @@ import {
   Activity
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 interface LogEntry {
   id: string;
@@ -83,15 +84,15 @@ export function IngestionLogsPanel() {
       <div className="p-4 border-b border-border/40 bg-muted/20 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Terminal className="h-4 w-4 text-primary" />
-          <h3 className="text-xs font-bold uppercase tracking-widest">Ingestion Logs</h3>
+          <h3 className="text-meta font-bold uppercase tracking-widest">Ingestion Logs</h3>
         </div>
-        <Badge variant="outline" className="text-[10px] font-mono border-primary/20 text-primary">Live</Badge>
+        <Badge variant="outline" className="text-meta font-mono border-primary/20 text-primary">Live</Badge>
       </div>
 
       <ScrollArea className="flex-1">
         <div className="divide-y divide-border/20">
           {mockLogs.map((log) => (
-            <div 
+            <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} 
               key={log.id}
               className={cn(
                 "p-4 cursor-pointer transition-colors hover:bg-primary/5",
@@ -103,8 +104,8 @@ export function IngestionLogsPanel() {
                 <div className="flex items-center gap-2">
                   {getStatusIcon(log.status)}
                   <div className="space-y-0.5">
-                    <p className="text-[11px] font-black uppercase tracking-tight text-foreground">{log.stage}</p>
-                    <p className="text-[10px] text-muted-foreground font-mono">{log.timestamp}</p>
+                    <p className="text-meta font-black uppercase tracking-tight text-foreground">{log.stage}</p>
+                    <p className="text-meta text-muted-foreground font-mono">{log.timestamp}</p>
                   </div>
                 </div>
                 <ChevronRight className={cn(
@@ -113,11 +114,11 @@ export function IngestionLogsPanel() {
                 )} />
               </div>
               
-              <p className="text-xs mt-2 text-foreground/80 leading-relaxed">{log.message}</p>
+              <p className="text-meta mt-2 text-foreground/80 leading-relaxed">{log.message}</p>
               
               {selectedLog === log.id && log.details && (
                 <div className="mt-3 p-2 rounded bg-background/50 border border-border/20">
-                  <p className="text-[10px] text-muted-foreground font-mono whitespace-pre-wrap">{log.details}</p>
+                  <p className="text-meta text-muted-foreground font-mono whitespace-pre-wrap">{log.details}</p>
                 </div>
               )}
             </div>
@@ -129,9 +130,9 @@ export function IngestionLogsPanel() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Activity className="h-3 w-3 text-nexus-emerald" />
-            <span className="text-[10px] font-bold uppercase tracking-tighter text-muted-foreground">Pipeline Health</span>
+            <span className="text-meta font-bold uppercase tracking-tighter text-muted-foreground">Pipeline Health</span>
           </div>
-          <span className="text-[10px] font-bold text-nexus-emerald">99.8% Nominal</span>
+          <span className="text-meta font-bold text-nexus-emerald">99.8% Nominal</span>
         </div>
       </div>
     </Card>

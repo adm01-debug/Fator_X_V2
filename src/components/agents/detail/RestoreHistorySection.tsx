@@ -348,10 +348,10 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <Undo2 className="h-3.5 w-3.5 text-nexus-amber" aria-hidden />
-          <h3 className="text-sm font-heading font-semibold text-foreground">
+          <h3 className="text-body-sm font-heading font-semibold text-foreground">
             Histórico de Restaurações
           </h3>
-          <span className="text-[10px] font-mono text-muted-foreground bg-secondary/50 px-1.5 py-0.5 rounded">
+          <span className="text-meta font-mono text-muted-foreground bg-secondary/50 px-1.5 py-0.5 rounded">
             {entries.length}
           </span>
         </div>
@@ -367,12 +367,12 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
         {entries.length === 0 && (
           <li className="flex flex-col items-center justify-center py-8 text-center bg-secondary/10 rounded-lg border border-dashed border-border/40">
             <Clock className="h-6 w-6 text-muted-foreground/40 mb-2" />
-            <p className="text-xs text-muted-foreground">Nenhum rollback encontrado para este filtro.</p>
+            <p className="text-meta text-muted-foreground">Nenhum rollback encontrado para este filtro.</p>
             {filter !== "all" && (
               <Button 
                 variant="link" 
                 size="sm" 
-                className="text-[10px] h-auto p-0 mt-1" 
+                className="text-meta h-auto p-0 mt-1" 
                 onClick={() => setFilter("all")}
               >
                 Limpar filtros
@@ -402,7 +402,7 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
             >
               {/* Linha principal: v{src} → v{new} + data */}
               <div className="flex items-center justify-between gap-2 mb-1.5">
-                <div className="flex items-center gap-1.5 text-xs font-mono">
+                <div className="flex items-center gap-1.5 text-meta font-mono">
                   <span className="text-muted-foreground">v{entry.meta.restored_from_version}</span>
                   <ArrowRight className="h-3 w-3 text-nexus-amber" aria-hidden />
                   <button
@@ -414,7 +414,7 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
                     v{entry.versionNumber}
                   </button>
                 </div>
-                <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                <div className="flex items-center gap-1 text-meta text-muted-foreground">
                   <Clock className="h-2.5 w-2.5" aria-hidden />
                   <time dateTime={entry.meta.restored_at}>{formatDate(entry.meta.restored_at)}</time>
                 </div>
@@ -422,13 +422,13 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
 
               {/* Summary (custom ou auto) */}
               {entry.changeSummary && (
-                <p className="text-xs text-foreground mb-1 truncate" title={entry.changeSummary}>
+                <p className="text-meta text-foreground mb-1 truncate" title={entry.changeSummary}>
                   {entry.changeSummary}
                 </p>
               )}
 
               {/* Resumo curto das opções (sempre presente, complementa os badges) */}
-              <p className="text-[10px] text-muted-foreground italic mb-1.5">
+              <p className="text-meta text-muted-foreground italic mb-1.5">
                 {summarizeRestoreOptions(entry.meta.options, {
                   config: entry.meta.config_overrides as Record<string, unknown>,
                   model: entry.meta.model_override
@@ -490,7 +490,7 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
                       (com ícone de timer riscado) depois que a janela acaba. */}
                   {expired ? (
                     <span
-                      className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-mono bg-muted/40 text-muted-foreground border border-border/40"
+                      className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-meta font-mono bg-muted/40 text-muted-foreground border border-border/40"
                       title={`Janela de ${UNDO_WINDOW_MS / 60000} min para desfazer já expirou`}
                     >
                       <TimerOff className="h-2.5 w-2.5" aria-hidden />
@@ -498,7 +498,7 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
                     </span>
                   ) : (
                     <span
-                      className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-mono tabular-nums border ${
+                      className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-meta font-mono tabular-nums border ${
                         urgent
                           ? "bg-destructive/10 text-destructive border-destructive/30 animate-pulse"
                           : "bg-nexus-amber/10 text-nexus-amber border-nexus-amber/30"
@@ -514,7 +514,7 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
                       que torna o undo cego perigoso. */}
                   {stale && (
                     <span
-                      className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] bg-destructive/10 text-destructive border border-destructive/30"
+                      className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-meta bg-destructive/10 text-destructive border border-destructive/30"
                       title={`Versão atual v${currentVersion?.version} é posterior — recarregue antes de desfazer`}
                     >
                       <AlertTriangle className="h-2.5 w-2.5" aria-hidden />
@@ -524,7 +524,7 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-5 px-1.5 text-[10px] gap-0.5 text-nexus-amber hover:text-nexus-amber hover:bg-nexus-amber/10 disabled:opacity-40"
+                    className="h-5 px-1.5 text-meta gap-0.5 text-nexus-amber hover:text-nexus-amber hover:bg-nexus-amber/10 disabled:opacity-40"
                     onClick={() => {
                       if (stale) {
                         toast.error(`Uma versão mais nova (v${currentVersion.version}) foi detectada. Recarregue para revisar antes de desfazer.`, {
@@ -561,7 +561,7 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-5 px-1.5 text-[10px] gap-0.5"
+                    className="h-5 px-1.5 text-meta gap-0.5"
                     onClick={() => navigate(`/agents/${agentId}/versions/v/${entry.versionId}`)}
                   >
                     Ver versão <ArrowRight className="h-2.5 w-2.5" aria-hidden />
@@ -610,7 +610,7 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
               Confirmar Desfazer Rollback
             </AlertDialogTitle>
             <AlertDialogDescription asChild>
-              <div className="space-y-3 text-sm">
+              <div className="space-y-3 text-body-sm">
                 <p>
                   Será criada uma nova versão{" "}
                   <span className="font-mono font-semibold text-foreground">
@@ -624,7 +624,7 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
                 </p>
 
                 {/* Quadro comparativo: rollback alvo, referência e nova versão */}
-                <div className="rounded-lg bg-secondary/40 p-3 text-xs space-y-1.5">
+                <div className="rounded-lg bg-secondary/40 p-3 text-meta space-y-1.5">
                   <div className="flex justify-between gap-2">
                     <span className="text-muted-foreground">Rollback que será desfeito</span>
                     <span className="font-mono text-foreground">
@@ -651,7 +651,7 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
 
                 {/* Lista de campos que serão restaurados — espelha o rollback original */}
                 <fieldset className="rounded-lg border border-border bg-card/40 p-3">
-                  <legend className="text-[10px] font-semibold uppercase tracking-wider text-foreground px-1">
+                  <legend className="text-meta font-semibold uppercase tracking-wider text-foreground px-1">
                     Campos que serão restaurados
                   </legend>
                   <ul className="space-y-1.5 mt-1">
@@ -662,7 +662,7 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
                       return (
                         <li
                           key={key}
-                          className={`flex items-center gap-2 text-xs ${
+                          className={`flex items-center gap-2 text-meta ${
                             active ? "text-foreground" : "text-muted-foreground/50 line-through"
                           }`}
                         >
@@ -674,7 +674,7 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
                           />
                           {FIELD_LABELS[key]}
                           {!active && (
-                            <span className="text-[10px] uppercase tracking-wider text-muted-foreground/60">
+                            <span className="text-meta uppercase tracking-wider text-muted-foreground/60">
                               (não incluído)
                             </span>
                           )}
@@ -688,7 +688,7 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
                     espelha o badge da lista para reforçar a urgência. */}
                 {undoTarget && (
                   targetExpired ? (
-                    <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-2.5 text-xs text-destructive">
+                    <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-2.5 text-meta text-destructive">
                       <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" aria-hidden />
                       <span>
                         A janela de <strong>{UNDO_WINDOW_MS / 60000} minutos</strong> para
@@ -699,7 +699,7 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
                     </div>
                   ) : (
                     <div
-                      className={`flex items-center gap-2 rounded-lg border p-2.5 text-xs ${
+                      className={`flex items-center gap-2 rounded-lg border p-2.5 text-meta ${
                         targetUrgent
                           ? "border-destructive/30 bg-destructive/5 text-destructive"
                           : "border-nexus-amber/30 bg-nexus-amber/5 text-nexus-amber"
@@ -724,7 +724,7 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
                 {undoTarget &&
                   !undoTarget.preRollback &&
                   !undoTarget.meta.restored_from_version_id && (
-                  <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-2.5 text-xs text-destructive">
+                  <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-2.5 text-meta text-destructive">
                     <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" aria-hidden />
                     <span>
                       Não há versão anterior ao rollback para usar como referência — não é
@@ -737,7 +737,7 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
                 {undoTarget &&
                   !undoTarget.preRollback &&
                   undoTarget.meta.restored_from_version_id && (
-                  <div className="flex items-start gap-2 rounded-lg border border-nexus-amber/30 bg-nexus-amber/5 p-2.5 text-xs text-nexus-amber">
+                  <div className="flex items-start gap-2 rounded-lg border border-nexus-amber/30 bg-nexus-amber/5 p-2.5 text-meta text-nexus-amber">
                     <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" aria-hidden />
                     <span>
                       A versão de referência (v{undoTarget.meta.restored_from_version}) não
@@ -748,7 +748,7 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
 
                 {/* Aviso de drift: versão mais nova já criada após o rollback. */}
                 {targetStale && undoTarget && (
-                  <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-2.5 text-xs text-destructive">
+                  <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-2.5 text-meta text-destructive">
                     <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" aria-hidden />
                     <span>
                       Foi criada uma versão mais nova (v{currentVersion?.version}) depois
@@ -759,7 +759,7 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
                   </div>
                 )}
 
-                <p className="text-xs text-muted-foreground">
+                <p className="text-meta text-muted-foreground">
                   Nenhum histórico será apagado — desfazer o rollback é não destrutivo e
                   cria uma nova versão.
                 </p>
@@ -851,7 +851,7 @@ function RestoreOptionBadge({
 }) {
   return (
     <span
-      className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono ${
+      className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-meta font-mono ${
         active
           ? "bg-primary/10 text-primary border border-primary/20"
           : "bg-muted/30 text-muted-foreground/50 border border-border/40 line-through"

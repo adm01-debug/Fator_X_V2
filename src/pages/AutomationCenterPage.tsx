@@ -41,10 +41,10 @@ export default function AutomationCenterPage() {
             <TabsTrigger
               key={tab.id}
               value={tab.id}
-              className="flex items-center gap-2 px-3 py-2 text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+              className="flex items-center gap-2 px-3 py-2 text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-nexus-sm"
             >
               <tab.icon className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">{tab.label}</span>
+              <span className="text-meta sm:text-body-sm">{tab.label}</span>
             </TabsTrigger>
           ))}
         </TabsList>

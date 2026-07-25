@@ -28,10 +28,10 @@ export default function MultiTenancyPage() {
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card><CardContent className="pt-6"><p className="text-sm text-muted-foreground">Tenants ativos</p><p className="text-2xl font-bold">{tenants.length}</p></CardContent></Card>
-        <Card><CardContent className="pt-6"><p className="text-sm text-muted-foreground">Usuários totais</p><p className="text-2xl font-bold">64</p></CardContent></Card>
-        <Card><CardContent className="pt-6"><p className="text-sm text-muted-foreground">MRR combinado</p><p className="text-2xl font-bold">$ 8.4K</p></CardContent></Card>
-        <Card><CardContent className="pt-6"><p className="text-sm text-muted-foreground">Regiões</p><p className="text-2xl font-bold">3</p></CardContent></Card>
+        <Card><CardContent className="pt-6"><p className="text-body-sm text-muted-foreground">Tenants ativos</p><p className="text-2xl font-bold">{tenants.length}</p></CardContent></Card>
+        <Card><CardContent className="pt-6"><p className="text-body-sm text-muted-foreground">Usuários totais</p><p className="text-2xl font-bold">64</p></CardContent></Card>
+        <Card><CardContent className="pt-6"><p className="text-body-sm text-muted-foreground">MRR combinado</p><p className="text-2xl font-bold">$ 8.4K</p></CardContent></Card>
+        <Card><CardContent className="pt-6"><p className="text-body-sm text-muted-foreground">Regiões</p><p className="text-2xl font-bold">3</p></CardContent></Card>
       </div>
 
       <Card>
@@ -55,11 +55,11 @@ export default function MultiTenancyPage() {
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <div className="flex items-center gap-2"><h4 className="font-semibold">{t.name}</h4><Badge>{t.plan}</Badge></div>
-                  <p className="text-xs text-muted-foreground font-mono">{t.slug}.nexus.app</p>
+                  <p className="text-meta text-muted-foreground font-mono">{t.slug}.nexus.app</p>
                 </div>
                 <Button size="sm" variant="outline"><Settings className="h-4 w-4" /></Button>
               </div>
-              <div className="grid grid-cols-4 gap-3 text-sm">
+              <div className="grid grid-cols-4 gap-3 text-body-sm">
                 <div><span className="text-muted-foreground">Users:</span> <span className="font-bold">{t.users}</span></div>
                 <div><span className="text-muted-foreground">Agents:</span> <span className="font-bold">{t.agents}</span></div>
                 <div className="flex items-center gap-1"><Globe className="h-3 w-3" /><span>{t.region}</span></div>

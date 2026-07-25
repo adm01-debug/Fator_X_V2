@@ -26,7 +26,7 @@ export function AlertSimulationPanel({ rule, traces, onEdit }: Props) {
 
   if (!rule) {
     return (
-      <div className="h-[560px] flex flex-col items-center justify-center text-sm text-muted-foreground gap-2">
+      <div className="h-[560px] flex flex-col items-center justify-center text-body-sm text-muted-foreground gap-2">
         <Activity className="h-8 w-8 opacity-40" />
         Selecione uma regra à esquerda para ver a prévia e simular o comportamento.
       </div>
@@ -41,11 +41,11 @@ export function AlertSimulationPanel({ rule, traces, onEdit }: Props) {
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h3 className="text-base font-semibold text-foreground truncate">{rule.name}</h3>
+          <h3 className="text-title-sm font-semibold text-foreground truncate">{rule.name}</h3>
           {rule.description && (
-            <p className="text-xs text-muted-foreground mt-0.5">{rule.description}</p>
+            <p className="text-meta text-muted-foreground mt-0.5">{rule.description}</p>
           )}
-          <p className="text-[11px] text-muted-foreground font-mono mt-1">
+          <p className="text-meta text-muted-foreground font-mono mt-1">
             {rule.metric} · {rule.aggregation} {rule.operator} {rule.threshold} · janela {windowLabel}
           </p>
         </div>
@@ -61,23 +61,23 @@ export function AlertSimulationPanel({ rule, traces, onEdit }: Props) {
             {triggers
               ? <XCircle className="h-4 w-4 text-destructive" aria-hidden />
               : <CheckCircle2 className="h-4 w-4 text-nexus-emerald" aria-hidden />}
-            <span className="text-sm font-medium text-foreground">
+            <span className="text-body-sm font-medium text-foreground">
               Prévia agora — {triggers ? 'disparando' : 'OK'}
             </span>
             {!rule.is_enabled && (
-              <Badge variant="outline" className="text-[10px]">regra pausada</Badge>
+              <Badge variant="outline" className="text-meta">regra pausada</Badge>
             )}
           </div>
-          <div className="grid grid-cols-2 gap-3 text-xs">
+          <div className="grid grid-cols-2 gap-3 text-meta">
             <div>
               <p className="text-muted-foreground">Valor atual</p>
-              <p className="font-mono text-foreground text-base font-semibold tabular-nums">
+              <p className="font-mono text-foreground text-title-sm font-semibold tabular-nums">
                 {evalResult?.formatted ?? '—'}
               </p>
             </div>
             <div>
               <p className="text-muted-foreground">Threshold</p>
-              <p className="font-mono text-foreground text-base font-semibold tabular-nums">
+              <p className="font-mono text-foreground text-title-sm font-semibold tabular-nums">
                 {rule.operator} {evalResult?.formattedThreshold ?? '—'}
               </p>
             </div>
@@ -90,8 +90,8 @@ export function AlertSimulationPanel({ rule, traces, onEdit }: Props) {
         <CardContent className="p-4 space-y-3">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-foreground">Simulação 24h (buckets de 1h)</p>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-body-sm font-medium text-foreground">Simulação 24h (buckets de 1h)</p>
+              <p className="text-meta text-muted-foreground">
                 Roda a regra retroativamente sobre os traces mockados para estimar quantos disparos teria gerado.
               </p>
             </div>
@@ -142,7 +142,7 @@ function SimulationBody({ rule, sim }: { rule: AlertRule; sim: NonNullable<Retur
 
       {triggeredBuckets.length > 0 ? (
         <div>
-          <p className="text-xs font-medium text-foreground mb-1.5 flex items-center gap-1.5">
+          <p className="text-meta font-medium text-foreground mb-1.5 flex items-center gap-1.5">
             <AlertTriangle className="h-3 w-3 text-destructive" />
             Buckets que dispararam
           </p>
@@ -150,7 +150,7 @@ function SimulationBody({ rule, sim }: { rule: AlertRule; sim: NonNullable<Retur
             {triggeredBuckets.map((b) => (
               <li
                 key={b.ts}
-                className="flex items-center justify-between text-[11px] py-1.5 px-2 rounded bg-destructive/5 border border-destructive/20"
+                className="flex items-center justify-between text-meta py-1.5 px-2 rounded bg-destructive/5 border border-destructive/20"
               >
                 <span className="font-mono text-foreground">{new Date(b.ts).toLocaleString('pt-BR')}</span>
                 <span className="font-mono tabular-nums text-destructive">{formatMetricValue(rule.metric, b.value)}</span>
@@ -160,7 +160,7 @@ function SimulationBody({ rule, sim }: { rule: AlertRule; sim: NonNullable<Retur
           </ul>
         </div>
       ) : (
-        <p className="text-xs text-muted-foreground text-center py-2">
+        <p className="text-meta text-muted-foreground text-center py-2">
           Nenhum bucket dispararia nas últimas 24h com este threshold. Tente reduzir o limite.
         </p>
       )}
@@ -174,8 +174,8 @@ function Stat({ label, value, accent }: { label: string; value: string; accent?:
     accent === 'ok' ? 'text-nexus-emerald' : 'text-foreground';
   return (
     <div className="rounded-md border border-border/40 p-2 bg-card/40">
-      <p className="text-[10px] uppercase text-muted-foreground">{label}</p>
-      <p className={`text-base font-semibold tabular-nums ${color}`}>{value}</p>
+      <p className="text-meta uppercase text-muted-foreground">{label}</p>
+      <p className={`text-title-sm font-semibold tabular-nums ${color}`}>{value}</p>
     </div>
   );
 }

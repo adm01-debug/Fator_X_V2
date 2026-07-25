@@ -23,6 +23,9 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { SkeletonLoader } from "@/components/shared/SkeletonLoader";
 import { SharedEmptyState } from "@/components/shared/SharedEmptyState";
+import { AccessControl } from "@/components/rbac";
+import { handleKeyboardClick } from "@/lib/a11y";
+
 
 
 function DashboardLoadingSkeleton() {
@@ -75,26 +78,26 @@ export default function DashboardPage() {
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-10 max-w-[1440px] mx-auto animate-page-enter">
       {/* Header Elevated 10/10 */}
-      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-2xl shadow-primary/5 relative overflow-hidden group">
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-nexus-2xl shadow-primary/5 relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/[0.04] rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:bg-primary/[0.06] transition-colors duration-700" />
         
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10 relative">
           <div className="flex items-center gap-8">
-            <div className="h-24 w-24 rounded-[2rem] bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
+            <div className="h-24 w-24 rounded-[2rem] bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-nexus-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
               <Cpu className="h-12 w-12 text-primary animate-float" />
             </div>
             <div className="space-y-2">
               <div className="flex items-center gap-3">
                 <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-6xl">{getGreeting()}, {user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'Nexus'}</h1>
               </div>
-              <p className="text-lg text-muted-foreground max-w-2xl font-medium leading-relaxed">
+              <p className="text-title-sm text-muted-foreground max-w-2xl font-medium leading-relaxed">
                 Bem-vindo ao Centro de Comando Nexus. Sua infraestrutura de agentes está processando em alta performance.
               </p>
               <div className="flex items-center gap-4 pt-2">
-                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-nexus-emerald/10 text-nexus-emerald text-[10px] font-bold uppercase tracking-widest border border-nexus-emerald/20">
+                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-nexus-emerald/10 text-nexus-emerald text-meta font-bold uppercase tracking-widest border border-nexus-emerald/20">
                   <Globe className="h-3 w-3" /> Sistema Nominal
                 </div>
-                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest border border-primary/20">
+                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-meta font-bold uppercase tracking-widest border border-primary/20">
                   <Activity className="h-3 w-3" /> {usageStats?.totalRequests || 0} Requests
                 </div>
               </div>
@@ -102,11 +105,14 @@ export default function DashboardPage() {
           </div>
           <div className="flex flex-col sm:flex-row items-center gap-4">
             <DateRangePicker value={dateRange} onChange={setDateRange} />
-            <Button onClick={() => navigate('/agents/new')} className="nexus-gradient-bg text-primary-foreground gap-3 h-14 px-8 rounded-2xl shadow-xl shadow-primary/25 hover:scale-[1.03] active:scale-[0.98] transition-all duration-300 group overflow-hidden relative">
-              <Plus className="h-6 w-6 group-hover:rotate-90 transition-transform duration-300" /> 
-              <span className="font-bold text-lg tracking-tight">Novo Agente</span>
-            </Button>
+            <AccessControl permission="agents.create">
+              <Button onClick={() => navigate('/agents/new')} className="nexus-gradient-bg text-primary-foreground gap-3 h-14 px-8 rounded-2xl shadow-nexus-xl shadow-primary/25 hover:scale-[1.03] active:scale-[0.98] transition-all duration-300 group overflow-hidden relative">
+                <Plus className="h-6 w-6 group-hover:rotate-90 transition-transform duration-300" /> 
+                <span className="font-bold text-title-sm tracking-tight">Novo Agente</span>
+              </Button>
+            </AccessControl>
           </div>
+
         </div>
       </div>
 
@@ -132,7 +138,7 @@ export default function DashboardPage() {
         ].map((metric, i) => (
           <div 
             key={i} 
-            className="bg-card border border-border/40 p-8 rounded-[2.5rem] relative overflow-hidden group hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500"
+            className="bg-card border border-border/40 p-8 rounded-[2.5rem] relative overflow-hidden group hover:border-primary/40 hover:shadow-nexus-2xl hover:shadow-primary/5 transition-all duration-500"
           >
             <div className="absolute -right-4 -bottom-4 h-24 w-24 bg-primary/[0.02] rounded-full blur-2xl group-hover:bg-primary/[0.06] transition-colors" />
             <div className="flex items-center justify-between mb-6">
@@ -140,14 +146,14 @@ export default function DashboardPage() {
                 <metric.icon className={cn("h-7 w-7", metric.color)} />
               </div>
               <div className="flex flex-col items-end gap-1">
-                <Badge className="bg-muted/50 text-muted-foreground border-none font-black text-[10px] px-2.5 py-1 uppercase tracking-widest">
+                <Badge className="bg-muted/50 text-muted-foreground border-none font-black text-meta px-2.5 py-1 uppercase tracking-widest">
                   {metric.trend}
                 </Badge>
                 <span className="text-[9px] font-black text-nexus-emerald uppercase tracking-tighter">{metric.status}</span>
               </div>
             </div>
             <div className="space-y-1">
-              <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">{metric.label}</p>
+              <p className="text-meta font-black uppercase tracking-widest text-muted-foreground/60">{metric.label}</p>
               <div className="flex items-baseline gap-1">
                 <p className="text-5xl font-black text-foreground tracking-tighter">
                   <AnimatedCounter value={metric.value} prefix={metric.prefix} decimals={metric.decimals} />
@@ -157,7 +163,7 @@ export default function DashboardPage() {
                 <div className="h-1 flex-1 bg-border/40 rounded-full overflow-hidden">
                   <div className={cn("h-full rounded-full transition-all duration-1000", i === 0 ? 'w-[75%] bg-primary' : i === 1 ? 'w-[90%] bg-nexus-emerald' : i === 2 ? 'w-[45%] bg-nexus-amber' : 'w-[82%] bg-nexus-cyan')} />
                 </div>
-                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{metric.subLabel}</span>
+                <span className="text-meta font-black text-muted-foreground uppercase tracking-widest">{metric.subLabel}</span>
               </div>
             </div>
           </div>
@@ -167,30 +173,30 @@ export default function DashboardPage() {
       {/* Industrial Quick Actions Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
         {[
-          { label: 'Conhecimento', icon: BookOpen, path: '/knowledge', color: 'text-blue-500', bg: 'bg-blue-500/10' },
-          { label: 'Workflows', icon: GitBranch, path: '/workflows', color: 'text-purple-500', bg: 'bg-purple-500/10' },
-          { label: 'Monitoramento', icon: Activity, path: '/monitoring', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-          { label: 'Segurança', icon: Shield, path: '/security', color: 'text-orange-500', bg: 'bg-orange-500/10' },
-          { label: 'Ferramentas', icon: Zap, path: '/tools', color: 'text-cyan-500', bg: 'bg-cyan-500/10' },
-          { label: 'Analytics', icon: BarChart3, path: '/monitoring', color: 'text-pink-500', bg: 'bg-pink-500/10' },
+          { label: 'Conhecimento', icon: BookOpen, path: '/knowledge', color: 'text-nexus-blue', bg: 'bg-nexus-blue/10' },
+          { label: 'Workflows', icon: GitBranch, path: '/workflows', color: 'text-nexus-purple', bg: 'bg-nexus-purple/10' },
+          { label: 'Monitoramento', icon: Activity, path: '/monitoring', color: 'text-nexus-emerald', bg: 'bg-nexus-emerald/10' },
+          { label: 'Segurança', icon: Shield, path: '/security', color: 'text-nexus-orange', bg: 'bg-nexus-orange/10' },
+          { label: 'Ferramentas', icon: Zap, path: '/tools', color: 'text-nexus-cyan', bg: 'bg-nexus-cyan/10' },
+          { label: 'Analytics', icon: BarChart3, path: '/monitoring', color: 'text-nexus-rose', bg: 'bg-nexus-rose/10' },
         ].map((action, i) => (
           <button
             key={i}
             onClick={() => navigate(action.path)}
-            className="flex flex-col items-center justify-center gap-4 p-7 rounded-[2.5rem] bg-card/50 border border-border/40 hover:border-primary/40 hover:bg-card hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 group relative overflow-hidden"
+            className="flex flex-col items-center justify-center gap-4 p-7 rounded-[2.5rem] bg-card/50 border border-border/40 hover:border-primary/40 hover:bg-card hover:shadow-nexus-2xl hover:shadow-primary/5 transition-all duration-500 group relative overflow-hidden"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className={cn("h-16 w-16 rounded-[1.5rem] flex items-center justify-center relative z-10 transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 shadow-lg", action.bg)}>
+            <div className={cn("h-16 w-16 rounded-[1.5rem] flex items-center justify-center relative z-10 transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 shadow-nexus-lg", action.bg)}>
               <action.icon className={cn("h-8 w-8", action.color)} />
             </div>
-            <span className="text-sm font-black text-foreground group-hover:text-primary transition-colors relative z-10 uppercase tracking-tight">{action.label}</span>
+            <span className="text-body-sm font-black text-foreground group-hover:text-primary transition-colors relative z-10 uppercase tracking-tight">{action.label}</span>
           </button>
         ))}
       </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-8">
-              <div className="bg-card/30 border border-border/40 p-10 rounded-[3.5rem] shadow-xl shadow-primary/[0.02]">
+              <div className="bg-card/30 border border-border/40 p-10 rounded-[3.5rem] shadow-nexus-xl shadow-primary/[0.02]">
                 <div className="flex items-center justify-between mb-10">
                   <div className="flex items-center gap-4">
                     <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center">
@@ -198,7 +204,7 @@ export default function DashboardPage() {
                     </div>
                     <div>
                       <h3 className="text-2xl font-heading font-black text-foreground tracking-tight">Utilização da Infraestrutura</h3>
-                      <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">Sincronização em Tempo Real</p>
+                      <p className="text-meta font-bold text-muted-foreground uppercase tracking-widest mt-1">Sincronização em Tempo Real</p>
                     </div>
                   </div>
                 </div>
@@ -207,27 +213,27 @@ export default function DashboardPage() {
 
               <div className="grid md:grid-cols-2 gap-8">
                 {/* Recent Agents Widget Elevated */}
-                <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem] flex flex-col shadow-xl shadow-primary/[0.02] hover:shadow-2xl hover:shadow-primary/[0.04] transition-all duration-500">
+                <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem] flex flex-col shadow-nexus-xl shadow-primary/[0.02] hover:shadow-nexus-2xl hover:shadow-primary/[0.04] transition-all duration-500">
                   <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-2xl bg-blue-500/10 flex items-center justify-center">
-                        <Layers className="h-6 w-6 text-blue-500" />
+                      <div className="h-12 w-12 rounded-2xl bg-nexus-blue/10 flex items-center justify-center">
+                        <Layers className="h-6 w-6 text-nexus-blue" />
                       </div>
                       <h3 className="text-xl font-heading font-black text-foreground tracking-tight">Top Agentes</h3>
                     </div>
-                    <Button variant="ghost" size="sm" onClick={() => navigate('/agents')} className="text-[10px] font-black h-8 px-4 rounded-xl hover:bg-primary/10 tracking-widest uppercase">Full Fleet</Button>
+                    <Button variant="ghost" size="sm" onClick={() => navigate('/agents')} className="text-meta font-black h-8 px-4 rounded-xl hover:bg-primary/10 tracking-widest uppercase">Full Fleet</Button>
                   </div>
                   <div className="space-y-4 flex-1">
                     {agents.slice(0, 4).map(agent => (
                       <div key={agent.id} className="flex items-center justify-between p-5 rounded-[2rem] bg-card border border-border/40 hover:border-primary/40 hover:bg-background/80 hover:shadow-xl transition-all duration-300 cursor-pointer group" role="button" tabIndex={0} onClick={() => navigate(`/builder/${agent.id}`)} onKeyDown={onActivateKey(() => navigate(`/builder/${agent.id}`))}>
                         <div className="flex items-center gap-5">
-                          <div className="h-14 w-14 rounded-2xl bg-muted/30 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-sm">{agent.avatar_emoji || '🤖'}</div>
+                          <div className="h-14 w-14 rounded-2xl bg-muted/30 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-nexus-sm">{agent.avatar_emoji || '🤖'}</div>
                           <div>
-                            <p className="text-base font-black text-foreground group-hover:text-primary transition-colors line-clamp-1">{agent.name}</p>
+                            <p className="text-title-sm font-black text-foreground group-hover:text-primary transition-colors line-clamp-1">{agent.name}</p>
                             <div className="flex items-center gap-2 mt-1">
                               <Badge variant="outline" className="text-[9px] font-black uppercase tracking-tighter border-primary/20 text-primary">{agent.model?.split('-')[0]}</Badge>
                               <span className="h-1 w-1 rounded-full bg-muted-foreground/30" />
-                              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Active</span>
+                              <span className="text-meta font-bold text-muted-foreground uppercase tracking-widest">Active</span>
                             </div>
                           </div>
                         </div>
@@ -240,7 +246,7 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Real-time Activity Widget Elevated */}
-                <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem] flex flex-col shadow-xl shadow-primary/[0.02] hover:shadow-2xl hover:shadow-primary/[0.04] transition-all duration-500">
+                <div className="bg-card/30 border border-border/40 p-8 rounded-[3rem] flex flex-col shadow-nexus-xl shadow-primary/[0.02] hover:shadow-nexus-2xl hover:shadow-primary/[0.04] transition-all duration-500">
                   <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-4">
                       <div className="h-12 w-12 rounded-2xl bg-nexus-emerald/10 flex items-center justify-center">
@@ -248,7 +254,7 @@ export default function DashboardPage() {
                       </div>
                       <h3 className="text-xl font-heading font-black text-foreground tracking-tight">Live Telemetria</h3>
                     </div>
-                    <Button variant="ghost" size="sm" onClick={() => navigate('/monitoring')} className="text-[10px] font-black h-8 px-4 rounded-xl hover:bg-nexus-emerald/10 tracking-widest uppercase">Logs</Button>
+                    <Button variant="ghost" size="sm" onClick={() => navigate('/monitoring')} className="text-meta font-black h-8 px-4 rounded-xl hover:bg-nexus-emerald/10 tracking-widest uppercase">Logs</Button>
                   </div>
                   <div className="space-y-4 flex-1">
                     {recentTraces.slice(0, 4).map((trace) => (
@@ -259,15 +265,15 @@ export default function DashboardPage() {
                             trace.level === 'error' ? 'bg-destructive shadow-[0_0_12px_rgba(239,68,68,0.6)]' : 'bg-nexus-emerald shadow-[0_0_12px_rgba(16,185,129,0.6)]'
                           )} />
                           <div className="min-w-0">
-                            <p className="text-base font-black text-foreground group-hover:text-nexus-emerald transition-colors truncate">{trace.event}</p>
+                            <p className="text-title-sm font-black text-foreground group-hover:text-nexus-emerald transition-colors truncate">{trace.event}</p>
                             <div className="flex items-center gap-2 mt-1">
-                              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{new Date(trace.created_at).toLocaleTimeString('pt-BR')}</span>
+                              <span className="text-meta font-black text-muted-foreground uppercase tracking-widest">{new Date(trace.created_at).toLocaleTimeString('pt-BR')}</span>
                               <span className="h-1 w-1 rounded-full bg-muted-foreground/30" />
                               <Badge variant="outline" className="text-[9px] font-black uppercase tracking-tighter border-nexus-emerald/20 text-nexus-emerald">Verified</Badge>
                             </div>
                           </div>
                         </div>
-                        {trace.latency_ms && <span className="text-[10px] font-black text-muted-foreground/60 bg-muted px-2.5 py-1 rounded-lg border border-border/40">{trace.latency_ms}ms</span>}
+                        {trace.latency_ms && <span className="text-meta font-black text-muted-foreground/60 bg-muted px-2.5 py-1 rounded-lg border border-border/40">{trace.latency_ms}ms</span>}
                       </div>
                     ))}
                   </div>
@@ -276,7 +282,7 @@ export default function DashboardPage() {
             </div>
 
             <div className="space-y-8">
-              <div className="bg-card/30 border border-border/40 p-10 rounded-[3rem] shadow-xl shadow-primary/[0.02]">
+              <div className="bg-card/30 border border-border/40 p-10 rounded-[3rem] shadow-nexus-xl shadow-primary/[0.02]">
                 <div className="flex items-center gap-4 mb-8">
                   <div className="h-12 w-12 rounded-2xl bg-nexus-purple/10 flex items-center justify-center">
                     <Activity className="h-6 w-6 text-nexus-purple" />
@@ -286,7 +292,7 @@ export default function DashboardPage() {
                 <ActivityFeed />
               </div>
               
-              <div className="bg-card/30 border border-border/40 p-10 rounded-[3rem] shadow-xl shadow-primary/[0.02]">
+              <div className="bg-card/30 border border-border/40 p-10 rounded-[3rem] shadow-nexus-xl shadow-primary/[0.02]">
                 <div className="flex items-center gap-4 mb-8">
                   <div className="h-12 w-12 rounded-2xl bg-nexus-cyan/10 flex items-center justify-center">
                     <Target className="h-6 w-6 text-nexus-cyan" />

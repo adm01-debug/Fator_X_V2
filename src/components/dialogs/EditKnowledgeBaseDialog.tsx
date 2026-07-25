@@ -10,7 +10,7 @@ import { updateKnowledgeBase } from '@/services/knowledgeService';
 import { editKnowledgeBaseSchema } from '@/lib/validations/dialogSchemas';
 import { toast } from 'sonner';
 
-interface KnowledgeBase {
+export interface KnowledgeBase {
   id: string;
   name: string;
   description: string | null;
@@ -18,6 +18,7 @@ interface KnowledgeBase {
   embedding_model: string | null;
   status: string | null;
 }
+
 
 interface EditKnowledgeBaseDialogProps {
   kb: KnowledgeBase | null;
@@ -66,7 +67,7 @@ export function EditKnowledgeBaseDialog({ kb, open, onOpenChange, onUpdated }: E
       toast.success('Base atualizada!');
       onOpenChange(false);
       onUpdated?.();
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro ao atualizar');
     } finally {
       setLoading(false);
@@ -81,17 +82,17 @@ export function EditKnowledgeBaseDialog({ kb, open, onOpenChange, onUpdated }: E
         </DialogHeader>
         <div className="space-y-4 mt-2">
           <div className="space-y-1.5">
-            <Label className="text-xs">Nome *</Label>
+            <Label className="text-meta">Nome *</Label>
             <Input value={name} onChange={e => setName(e.target.value)} className={`bg-secondary/50 ${errors.name ? 'border-destructive' : ''}`} />
-            {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
+            {errors.name && <p className="text-meta text-destructive">{errors.name}</p>}
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Descrição</Label>
+            <Label className="text-meta">Descrição</Label>
             <Textarea value={description} onChange={e => setDescription(e.target.value)} className="bg-secondary/50" rows={3} />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label className="text-xs">Vector DB</Label>
+              <Label className="text-meta">Vector DB</Label>
               <Select value={vectorDb} onValueChange={setVectorDb}>
                 <SelectTrigger className="bg-secondary/50"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -101,7 +102,7 @@ export function EditKnowledgeBaseDialog({ kb, open, onOpenChange, onUpdated }: E
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Embedding Model</Label>
+              <Label className="text-meta">Embedding Model</Label>
               <Select value={embeddingModel} onValueChange={(v) => setEmbeddingModel(v as typeof embeddingModel)}>
                 <SelectTrigger className="bg-secondary/50"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -112,7 +113,7 @@ export function EditKnowledgeBaseDialog({ kb, open, onOpenChange, onUpdated }: E
             </div>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Status</Label>
+            <Label className="text-meta">Status</Label>
             <Select value={status} onValueChange={(v) => setStatus(v as typeof status)}>
               <SelectTrigger className="bg-secondary/50"><SelectValue /></SelectTrigger>
               <SelectContent>

@@ -34,19 +34,23 @@ export function CitationRenderer({ text, citations }: CitationRendererProps) {
 
   return (
     <div className="space-y-2">
-      <div className="text-sm text-foreground leading-relaxed">
+      <div className="text-body-sm text-foreground leading-relaxed">
         {parts.map((part, i) => {
           const match = part.match(/^\[(\d+)\]$/);
           if (match) {
             const idx = parseInt(match[1]);
             const citation = citations.find(c => c.index === idx);
-            if (!citation) return <sup key={i} className="text-muted-foreground text-[11px]">[{idx}]</sup>;
+            if (!citation) return <sup key={i} className="text-muted-foreground text-meta">[{idx}]</sup>;
             return (
               <sup key={i}
                 className="inline-flex items-center cursor-pointer"
                 onClick={() => setExpandedCitation(expandedCitation === idx ? null : idx)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpandedCitation(expandedCitation === idx ? null : idx); } }}
+                // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role -- sup usado como botão de expansão de citação
+                role="button"
+                tabIndex={0}
               >
-                <Badge variant="outline" className="text-[11px] h-4 px-1 ml-0.5 hover:bg-primary/10 transition-colors">
+                <Badge variant="outline" className="text-meta h-4 px-1 ml-0.5 hover:bg-primary/10 transition-colors">
                   {idx}
                 </Badge>
               </sup>
@@ -58,7 +62,7 @@ export function CitationRenderer({ text, citations }: CitationRendererProps) {
 
       {/* Citation details panel */}
       {expandedCitation !== null && (
-        <div className="rounded-lg border border-border/50 bg-secondary/30 p-3 text-xs space-y-1.5">
+        <div className="rounded-lg border border-border/50 bg-secondary/30 p-3 text-meta space-y-1.5">
           {(() => {
             const c = citations.find(ci => ci.index === expandedCitation);
             if (!c) return null;
@@ -76,7 +80,7 @@ export function CitationRenderer({ text, citations }: CitationRendererProps) {
                 <p className="text-muted-foreground italic">{c.content_preview}</p>
                 {c.source_url && (
                   <a href={c.source_url} target="_blank" rel="noopener noreferrer"
-                    className="flex items-center gap-1 text-primary hover:underline text-[11px]">
+                    className="flex items-center gap-1 text-primary hover:underline text-meta">
                     <ExternalLink className="h-3 w-3" /> Ver fonte
                   </a>
                 )}
@@ -89,9 +93,9 @@ export function CitationRenderer({ text, citations }: CitationRendererProps) {
       {/* Citation list footer */}
       {citations.length > 0 && (
         <div className="flex flex-wrap gap-1.5 pt-1 border-t border-border/30">
-          <span className="text-[11px] text-muted-foreground mr-1">Fontes:</span>
+          <span className="text-meta text-muted-foreground mr-1">Fontes:</span>
           {citations.map(c => (
-            <Badge key={c.index} variant="outline" className="text-[11px] cursor-pointer hover:bg-primary/10"
+            <Badge key={c.index} variant="outline" className="text-meta cursor-pointer hover:bg-primary/10"
               onClick={() => setExpandedCitation(expandedCitation === c.index ? null : c.index)}>
               [{c.index}] {c.document_title?.substring(0, 20) || 'Doc'}
             </Badge>

@@ -1,0 +1,1 @@
+CREATE INDEX IF NOT EXISTS idx_openclaw_events_wh_nonce ON public.openclaw_events (created_at DESC) WHERE kind = 'wh.nonce';

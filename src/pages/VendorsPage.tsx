@@ -64,7 +64,7 @@ export default function VendorsPage() {
   const [selected, setSelected] = useState<Vendor | null>(null);
 
   useEffect(() => {
-    if (user) getWorkspaceId().then(setWorkspaceId).catch((e: unknown) => logger.error("ws", e));
+    if (user) getWorkspaceId().then(setWorkspaceId).catch((e) => logger.error("ws", e));
   }, [user]);
 
   const { data: vendors = [], isLoading } = useQuery({
@@ -117,7 +117,7 @@ export default function VendorsPage() {
       <Card>
         <CardHeader>
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <CardTitle className="text-base">Inventário de fornecedores</CardTitle>
+            <CardTitle className="text-title-sm">Inventário de fornecedores</CardTitle>
             <div className="flex flex-wrap gap-2">
               <Select value={filterCrit} onValueChange={setFilterCrit}>
                 <SelectTrigger className="h-8 w-[140px]"><SelectValue placeholder="Criticidade" /></SelectTrigger>
@@ -148,7 +148,7 @@ export default function VendorsPage() {
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <p className="text-sm text-muted-foreground py-8 text-center">Carregando…</p>
+            <p className="text-body-sm text-muted-foreground py-8 text-center">Carregando…</p>
           ) : filtered.length === 0 ? (
             <EmptyState icon={Building2} title="Sem fornecedores" description="Cadastre seu primeiro fornecedor para começar." />
           ) : (
@@ -175,9 +175,9 @@ export default function VendorsPage() {
                   return (
                     <TableRow key={v.id} className="cursor-pointer hover:bg-muted/40" onClick={() => setSelected(v)}>
                       <TableCell className="font-medium">{v.name}</TableCell>
-                      <TableCell className="text-xs text-muted-foreground">{VENDOR_TYPES.find(t => t.v === v.vendor_type)?.l ?? v.vendor_type}</TableCell>
+                      <TableCell className="text-meta text-muted-foreground">{VENDOR_TYPES.find(t => t.v === v.vendor_type)?.l ?? v.vendor_type}</TableCell>
                       <TableCell><Badge variant="outline" className={criticalityColor(v.criticality)}>{v.criticality}</Badge></TableCell>
-                      <TableCell className="text-xs uppercase tracking-wider text-muted-foreground">{v.data_classification}</TableCell>
+                      <TableCell className="text-meta uppercase tracking-wider text-muted-foreground">{v.data_classification}</TableCell>
                       <TableCell>
                         {!v.dpa_signed ? (
                           <Badge variant="outline" className="bg-secondary text-muted-foreground">Não assinado</Badge>
@@ -202,11 +202,11 @@ export default function VendorsPage() {
                             </Badge>
                           )}
                           {!v.soc2_valid_until && !v.iso27001_valid_until && (
-                            <span className="text-xs text-muted-foreground">—</span>
+                            <span className="text-meta text-muted-foreground">—</span>
                           )}
                         </div>
                       </TableCell>
-                      <TableCell className="text-xs">
+                      <TableCell className="text-meta">
                         {reviewOverdue ? (
                           <Badge variant="outline" className="bg-destructive/15 text-destructive border-destructive/30 animate-pulse">Atrasada</Badge>
                         ) : (
@@ -403,7 +403,7 @@ function DetailsTab({ vendor, onChanged, onClose }: { vendor: Vendor; onChanged:
     } finally { setOffboarding(false); }
   };
   return (
-    <div className="space-y-3 mt-4 text-sm">
+    <div className="space-y-3 mt-4 text-body-sm">
       <Field label="Website">
         {vendor.website ? <a href={vendor.website} target="_blank" rel="noreferrer" className="text-primary inline-flex items-center gap-1 hover:underline">{vendor.website} <ExternalLink className="h-3 w-3" /></a> : "—"}
       </Field>
@@ -468,7 +468,7 @@ function AssessmentsTab({ vendor, onChanged }: { vendor: Vendor; onChanged: () =
   return (
     <div className="space-y-4 mt-4">
       <Card>
-        <CardHeader><CardTitle className="text-sm">Novo assessment</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-body-sm">Novo assessment</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           <ScoreInput label="Segurança" value={sec} onChange={setSec} />
           <ScoreInput label="Compliance" value={comp} onChange={setComp} />
@@ -486,32 +486,32 @@ function AssessmentsTab({ vendor, onChanged }: { vendor: Vendor; onChanged: () =
       </Card>
 
       <div>
-        <h3 className="text-sm font-semibold mb-2">Histórico ({list.length})</h3>
+        <h3 className="text-body-sm font-semibold mb-2">Histórico ({list.length})</h3>
         {list.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Sem avaliações ainda.</p>
+          <p className="text-body-sm text-muted-foreground">Sem avaliações ainda.</p>
         ) : (
           <div className="space-y-2">
             {list.map((a: VendorAssessment) => (
               <Card key={a.id}>
-                <CardContent className="pt-4 text-sm space-y-2">
+                <CardContent className="pt-4 text-body-sm space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">{new Date(a.assessed_at).toLocaleString("pt-BR")}</span>
+                    <span className="text-meta text-muted-foreground">{new Date(a.assessed_at).toLocaleString("pt-BR")}</span>
                     <Badge variant="outline" className={a.risk_score >= 15 ? "bg-destructive/15 text-destructive border-destructive/30" : a.risk_score >= 9 ? "bg-nexus-amber/15 text-nexus-amber border-nexus-amber/30" : "bg-nexus-emerald/15 text-nexus-emerald border-nexus-emerald/30"}>
                       Risco {a.risk_score}
                     </Badge>
                   </div>
-                  <div className="grid grid-cols-3 gap-2 text-xs">
+                  <div className="grid grid-cols-3 gap-2 text-meta">
                     <span>Segurança: <strong>{a.security_score}/5</strong></span>
                     <span>Compliance: <strong>{a.compliance_score}/5</strong></span>
                     <span>Operacional: <strong>{a.operational_score}/5</strong></span>
                   </div>
                   {a.findings?.length > 0 && (
-                    <ul className="list-disc pl-5 text-xs text-muted-foreground">
+                    <ul className="list-disc pl-5 text-meta text-muted-foreground">
                       {a.findings.map((f, i) => <li key={i}>{f}</li>)}
                     </ul>
                   )}
-                  {a.recommendations && <p className="text-xs italic text-muted-foreground">→ {a.recommendations}</p>}
-                  {a.next_review_due && <p className="text-xs text-muted-foreground">Próxima review: {fmtDate(a.next_review_due)}</p>}
+                  {a.recommendations && <p className="text-meta italic text-muted-foreground">→ {a.recommendations}</p>}
+                  {a.next_review_due && <p className="text-meta text-muted-foreground">Próxima review: {fmtDate(a.next_review_due)}</p>}
                 </CardContent>
               </Card>
             ))}
@@ -525,7 +525,7 @@ function AssessmentsTab({ vendor, onChanged }: { vendor: Vendor; onChanged: () =
 function ScoreInput({ label, value, onChange }: { label: string; value: number; onChange: (n: number) => void }) {
   return (
     <div>
-      <div className="flex justify-between text-xs mb-1">
+      <div className="flex justify-between text-meta mb-1">
         <Label>{label}</Label>
         <span className="text-muted-foreground">{value}/5</span>
       </div>
@@ -535,7 +535,7 @@ function ScoreInput({ label, value, onChange }: { label: string; value: number; 
             key={n}
             type="button"
             onClick={() => onChange(n)}
-            className={`flex-1 h-8 rounded-md text-xs font-medium border transition-colors ${value === n ? "bg-primary text-primary-foreground border-primary" : "bg-secondary text-muted-foreground border-border/40 hover:bg-secondary/80"}`}
+            className={`flex-1 h-8 rounded-md text-meta font-medium border transition-colors ${value === n ? "bg-primary text-primary-foreground border-primary" : "bg-secondary text-muted-foreground border-border/40 hover:bg-secondary/80"}`}
           >{n}</button>
         ))}
       </div>
@@ -573,7 +573,7 @@ function DocumentsTab({ vendor, onChanged }: { vendor: Vendor; onChanged: () => 
   return (
     <div className="space-y-4 mt-4">
       <Card>
-        <CardHeader><CardTitle className="text-sm">Novo documento</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-body-sm">Novo documento</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           <div className="grid grid-cols-2 gap-2">
             <div>
@@ -601,9 +601,9 @@ function DocumentsTab({ vendor, onChanged }: { vendor: Vendor; onChanged: () => 
       </Card>
 
       <div>
-        <h3 className="text-sm font-semibold mb-2">Documentos ({docs.length})</h3>
+        <h3 className="text-body-sm font-semibold mb-2">Documentos ({docs.length})</h3>
         {docs.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Sem documentos.</p>
+          <p className="text-body-sm text-muted-foreground">Sem documentos.</p>
         ) : (
           <div className="space-y-2">
             {docs.map((d: VendorDocument) => {
@@ -612,13 +612,13 @@ function DocumentsTab({ vendor, onChanged }: { vendor: Vendor; onChanged: () => 
               const soon = soonDays !== null && soonDays >= 0 && soonDays <= 30;
               return (
                 <Card key={d.id}>
-                  <CardContent className="pt-4 flex items-center justify-between text-sm">
+                  <CardContent className="pt-4 flex items-center justify-between text-body-sm">
                     <div>
                       <div className="flex items-center gap-2">
                         <Badge variant="outline">{DOC_TYPES.find(t => t.v === d.doc_type)?.l ?? d.doc_type}</Badge>
                         <span className="font-medium">{d.title}</span>
                       </div>
-                      <p className="text-xs text-muted-foreground mt-1">
+                      <p className="text-meta text-muted-foreground mt-1">
                         Enviado em {new Date(d.uploaded_at).toLocaleDateString("pt-BR")}
                         {d.valid_until && <> · Válido até {fmtDate(d.valid_until)}</>}
                       </p>

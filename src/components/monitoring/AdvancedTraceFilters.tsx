@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { X, SlidersHorizontal } from 'lucide-react';
+import type { DbRow } from '@/types/dbRow';
 
 export interface TraceFilters {
   dateFrom: string;
@@ -51,17 +52,17 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
         <Button
           variant={expanded ? 'default' : 'outline'}
           size="sm"
-          className="gap-1.5 text-xs h-8"
+          className="gap-1.5 text-meta h-8"
           onClick={() => setExpanded(!expanded)}
         >
           <SlidersHorizontal className="h-3.5 w-3.5" />
           Filtros avançados
           {activeCount > 0 && (
-            <Badge variant="secondary" className="text-[10px] h-4 px-1 ml-1">{activeCount}</Badge>
+            <Badge variant="secondary" className="text-meta h-4 px-1 ml-1">{activeCount}</Badge>
           )}
         </Button>
         {activeCount > 0 && (
-          <Button variant="ghost" size="sm" className="gap-1 text-xs h-7 text-muted-foreground" onClick={handleClear}>
+          <Button variant="ghost" size="sm" className="gap-1 text-meta h-7 text-muted-foreground" onClick={handleClear}>
             <X className="h-3 w-3" /> Limpar
           </Button>
         )}
@@ -76,7 +77,7 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
               type="date"
               value={filters.dateFrom}
               onChange={e => onChange({ ...filters, dateFrom: e.target.value })}
-              className="h-8 text-xs bg-background"
+              className="h-8 text-meta bg-background"
             />
           </div>
           <div className="space-y-1">
@@ -86,7 +87,7 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
               type="date"
               value={filters.dateTo}
               onChange={e => onChange({ ...filters, dateTo: e.target.value })}
-              className="h-8 text-xs bg-background"
+              className="h-8 text-meta bg-background"
             />
           </div>
           <div className="space-y-1">
@@ -97,7 +98,7 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
               placeholder="0"
               value={filters.minLatency}
               onChange={e => onChange({ ...filters, minLatency: e.target.value })}
-              className="h-8 text-xs bg-background"
+              className="h-8 text-meta bg-background"
             />
           </div>
           <div className="space-y-1">
@@ -108,7 +109,7 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
               placeholder="∞"
               value={filters.maxLatency}
               onChange={e => onChange({ ...filters, maxLatency: e.target.value })}
-              className="h-8 text-xs bg-background"
+              className="h-8 text-meta bg-background"
             />
           </div>
           <div className="space-y-1">
@@ -120,7 +121,7 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
               placeholder="0"
               value={filters.minCost}
               onChange={e => onChange({ ...filters, minCost: e.target.value })}
-              className="h-8 text-xs bg-background"
+              className="h-8 text-meta bg-background"
             />
           </div>
           <div className="space-y-1">
@@ -132,7 +133,7 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
               placeholder="∞"
               value={filters.maxCost}
               onChange={e => onChange({ ...filters, maxCost: e.target.value })}
-              className="h-8 text-xs bg-background"
+              className="h-8 text-meta bg-background"
             />
           </div>
           <div className="space-y-1">
@@ -156,7 +157,7 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
               placeholder="Buscar evento..."
               value={filters.event}
               onChange={e => onChange({ ...filters, event: e.target.value })}
-              className="h-8 text-xs bg-background"
+              className="h-8 text-meta bg-background"
             />
           </div>
         </div>

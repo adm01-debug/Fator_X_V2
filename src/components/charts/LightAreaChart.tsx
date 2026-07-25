@@ -27,7 +27,10 @@ interface Props {
   tooltipExtras?: (datum: Record<string, unknown>, index: number) => TooltipExtraSection[] | undefined;
   showLegend?: boolean;
   showGrid?: boolean;
+  /** Optional click handler on a data point. Receives the datum and its index. */
+  onPointClick?: (datum: Record<string, string | number>, index: number) => void;
 }
+
 
 function niceMax(v: number) {
   if (v <= 0) return 10;
@@ -38,10 +41,13 @@ function niceMax(v: number) {
 }
 
 export function LightAreaChart({
-  data, xKey, series, height = 220, margin,
+  data: rawData, xKey, series, height = 220, margin,
   yFormatter = String, tooltipFormatter, tooltipTitle, tooltipExtras,
   showLegend = false, showGrid = true,
+  onPointClick,
 }: Props) {
+  const data = rawData as ReadonlyArray<Record<string, string | number>>;
+
   const { ref, width, margin: m, inner } = useChartDimensions(margin);
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const uid = useId().replace(/:/g, '');
@@ -131,9 +137,21 @@ export function LightAreaChart({
 
           {/* Invisible hover area */}
           <rect x={0} y={0} width={inner.width} height={inner.height} fill="transparent"
+            className={onPointClick ? 'cursor-pointer' : undefined}
             onMouseMove={handleMouseMove}
             onMouseLeave={() => setTooltip(null)}
+            onClick={(e) => {
+              if (!onPointClick) return;
+              const rect = ref.current?.getBoundingClientRect();
+              if (!rect) return;
+              const x = e.clientX - rect.left - m.left;
+              const idx = Math.round((x / inner.width) * (data.length - 1));
+              if (idx >= 0 && idx < data.length) {
+                onPointClick(data[idx], idx);
+              }
+            }}
           />
+
 
           {data.map((d, i) => {
             if (i % labelInterval !== 0 && i !== data.length - 1) return null;

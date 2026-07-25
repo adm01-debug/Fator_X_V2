@@ -7,6 +7,7 @@ import { Star, Copy, Wand2, Download, Loader2, GitBranch, Zap, Activity, Message
 import type { Tables } from '@/integrations/supabase/types';
 import { AgentCardViewer } from './AgentCardViewer';
 import { cn } from '@/lib/utils';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 type AgentRow = Tables<'agents'>;
 
@@ -32,7 +33,7 @@ export function AgentCard({
   const metrics = config.metrics || { calls: 0, accuracy: 0, latency: 0 };
 
   return (
-    <div
+    <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
       className={cn(
         "nexus-card nexus-card-interactive cursor-pointer group relative overflow-hidden flex flex-col transition-all duration-300",
         "bg-gradient-to-br from-card to-card/95 border-border/40 hover:border-primary/30",
@@ -43,7 +44,7 @@ export function AgentCard({
       {/* Background patterns */}
       <div className="absolute top-0 right-0 w-32 h-32 bg-primary/[0.03] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
       
-      <div className={cn(
+      <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className={cn(
         "absolute top-3 left-3 z-10 transition-all duration-300",
         selectionMode ? "opacity-100 scale-100" : "opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100"
       )} onClick={(e) => onToggleSelect(e, agent.id)}>
@@ -53,7 +54,7 @@ export function AgentCard({
       <div className={cn("flex items-start justify-between mb-4", selectionMode ? "ml-8" : "")}>
         <div className="flex items-center gap-4">
           <div className="relative">
-            <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/5 flex items-center justify-center text-2xl shadow-sm border border-primary/10 group-hover:shadow-md group-hover:scale-105 transition-all duration-300">
+            <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/5 flex items-center justify-center text-2xl shadow-nexus-sm border border-primary/10 group-hover:shadow-nexus-md group-hover:scale-105 transition-all duration-300">
               {agent.avatar_emoji || '🤖'}
             </div>
             <span
@@ -66,12 +67,12 @@ export function AgentCard({
             />
           </div>
           <div className="space-y-0.5">
-            <h3 className="text-base font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1">{agent.name}</h3>
+            <h3 className="text-title-sm font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1">{agent.name}</h3>
             <div className="flex items-center gap-2">
               <Badge variant="secondary" className="px-1.5 py-0 h-4 text-[9px] font-mono bg-primary/5 text-primary border-none">
                 {agent.model?.split('-').slice(0, 2).join('-') || 'unknown'}
               </Badge>
-              <span className="text-[10px] text-muted-foreground/60 font-medium uppercase tracking-wider">
+              <span className="text-meta text-muted-foreground/60 font-medium uppercase tracking-wider">
                 {(config.type as string) || agent.persona || 'Generalist'}
               </span>
             </div>
@@ -79,7 +80,7 @@ export function AgentCard({
         </div>
         
         <div className="flex items-center gap-1">
-          <div className="opacity-0 group-hover:opacity-100 transition-all" onClick={(e) => e.stopPropagation()}>
+          <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className="opacity-0 group-hover:opacity-100 transition-all" onClick={(e) => e.stopPropagation()}>
             <AgentCardViewer agentId={agent.id} agentName={agent.name} />
           </div>
           <button onClick={(e) => onExport(e, agent)} className="h-8 w-8 rounded-lg flex items-center justify-center text-muted-foreground/40 hover:text-nexus-cyan hover:bg-nexus-cyan/10 opacity-0 group-hover:opacity-100 transition-all" title="Exportar JSON">
@@ -101,7 +102,7 @@ export function AgentCard({
         </div>
       </div>
 
-      <p className="text-xs text-muted-foreground/80 line-clamp-2 mb-4 leading-relaxed min-h-[32px]">
+      <p className="text-meta text-muted-foreground/80 line-clamp-2 mb-4 leading-relaxed min-h-[32px]">
         {agent.mission || 'Agente de inteligência autônoma orquestrado para alta performance no ecossistema Nexus.'}
       </p>
 
@@ -112,33 +113,33 @@ export function AgentCard({
             <MessageSquare className="h-3 w-3" />
             <span className="text-[9px] font-semibold uppercase tracking-tighter">Calls</span>
           </div>
-          <span className="text-[11px] font-bold font-mono">{metrics.calls || '1.2k'}</span>
+          <span className="text-meta font-bold font-mono">{metrics.calls || '1.2k'}</span>
         </div>
         <div className="flex flex-col items-center justify-center gap-1 border-x border-border/30">
           <div className="flex items-center gap-1 text-muted-foreground/60">
             <Activity className="h-3 w-3" />
             <span className="text-[9px] font-semibold uppercase tracking-tighter">Health</span>
           </div>
-          <span className="text-[11px] font-bold font-mono text-nexus-emerald">{metrics.accuracy || '98'}%</span>
+          <span className="text-meta font-bold font-mono text-nexus-emerald">{metrics.accuracy || '98'}%</span>
         </div>
         <div className="flex flex-col items-center justify-center gap-1">
           <div className="flex items-center gap-1 text-muted-foreground/60">
             <Zap className="h-3 w-3" />
             <span className="text-[9px] font-semibold uppercase tracking-tighter">Lat</span>
           </div>
-          <span className="text-[11px] font-bold font-mono">{metrics.latency || '240'}ms</span>
+          <span className="text-meta font-bold font-mono">{metrics.latency || '240'}ms</span>
         </div>
       </div>
 
       <div className="flex items-center gap-2 flex-wrap mt-auto pt-3 border-t border-border/20">
         <StatusBadge status={agent.status || 'draft'} />
         {(agent.tags ?? []).slice(0, 2).map(tag => (
-          <Badge key={tag} variant="outline" className="text-[10px] h-5 bg-background/50 border-border/50 font-medium px-2 py-0">
+          <Badge key={tag} variant="outline" className="text-meta h-5 bg-background/50 border-border/50 font-medium px-2 py-0">
             {tag}
           </Badge>
         ))}
         {(agent.tags ?? []).length > 2 && <span className="text-[9px] text-muted-foreground font-semibold">+{(agent.tags ?? []).length - 2}</span>}
-        <div className="flex items-center gap-2 ml-auto text-[10px] text-muted-foreground font-mono font-medium">
+        <div className="flex items-center gap-2 ml-auto text-meta text-muted-foreground font-mono font-medium">
           <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-muted/50">
             <GitBranch className="h-2.5 w-2.5" /> v{agent.version || 1}
           </div>

@@ -1,6 +1,12 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse, checkRateLimit, getRateLimitIdentifier, createRateLimitResponse, RATE_LIMITS } from "../_shared/mod.ts";
+import { _getCorsHeaders, handleCorsPreflight, jsonResponse, _errorResponse, _checkRateLimit, _getRateLimitIdentifier, _createRateLimitResponse, _RATE_LIMITS } from "../_shared/mod.ts";
+import { fetchWithTimeout } from "../_shared/retry.ts";
+import { z } from "https://esm.sh/zod@3.23.8";
+
+const MockupBodySchema = z.object({
+  action: z.string().min(1).max(80),
+}).passthrough();
 
 // CORS handled by _shared/cors.ts — dynamic origin whitelist
 
@@ -21,7 +27,7 @@ function jsonResponse(data: unknown, status = 200) {
  */
 
 // Gradio Space endpoints (public, free with queue)
-const SPACES = {
+const _SPACES = {
   bg_removal: 'https://briaai-bria-rmbg-2-0.hf.space/api/predict',
   sdxl_inpaint: 'https://diffusers-stable-diffusion-xl-inpainting.hf.space/api/predict',
   upscaler: 'https://jasperai-flux-dev-upscaler.hf.space/api/predict',
@@ -43,7 +49,12 @@ serve(async (req) => {
     if (!user) return jsonResponse({ error: 'Unauthorized' }, 401);
 
     const hfToken = Deno.env.get('HF_API_TOKEN');
-    const body = await req.json();
+    const rawBody = await req.json().catch(() => null);
+    const parsedBody = MockupBodySchema.safeParse(rawBody);
+    if (!parsedBody.success) {
+      return jsonResponse({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }, 400);
+    }
+    const body = parsedBody.data as Record<string, unknown> & { action: string };
     const { action } = body;
 
     // ═══ ACTION: generate_mockup — Full product mockup pipeline (#51) ═══
@@ -58,7 +69,7 @@ serve(async (req) => {
       if (hfToken) {
         try {
           const imgBytes = Uint8Array.from(atob(product_image_base64), c => c.charCodeAt(0));
-          const bgResp = await fetch(`https://router.huggingface.co/hf-inference/models/briaai/RMBG-2.0`, {
+          const bgResp = await fetchWithTimeout(`https://router.huggingface.co/hf-inference/models/briaai/RMBG-2.0`, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${hfToken}` },
             body: imgBytes,
@@ -77,11 +88,11 @@ serve(async (req) => {
 
       // Step 2: Generate new background with product description
       const bgPrompt = background_prompt || `Professional product photography of ${product_name || 'a promotional product'}, studio lighting, white gradient background, commercial quality, 4k`;
-      let finalImageBase64 = cleanProductBase64;
+      const _finalImageBase64: string = cleanProductBase64;
 
       if (hfToken) {
         try {
-          const genResp = await fetch('https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell', {
+          const genResp = await fetchWithTimeout('https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hfToken}` },
             body: JSON.stringify({ inputs: bgPrompt }),
@@ -125,7 +136,7 @@ serve(async (req) => {
         try {
           const imgBytes = Uint8Array.from(atob(image_base64), c => c.charCodeAt(0));
           // Try ESRGAN super-resolution model
-          const upResp = await fetch('https://router.huggingface.co/hf-inference/models/caidas/swin2SR-classical-sr-x2-64', {
+          const upResp = await fetchWithTimeout('https://router.huggingface.co/hf-inference/models/caidas/swin2SR-classical-sr-x2-64', {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${hfToken}` },
             body: imgBytes,
@@ -160,7 +171,7 @@ serve(async (req) => {
       if (hfToken) {
         try {
           // For now, generate a new image based on the prompt (simplified inpainting)
-          const genResp = await fetch('https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell', {
+          const genResp = await fetchWithTimeout('https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hfToken}` },
             body: JSON.stringify({ inputs: inpPrompt }),
@@ -192,7 +203,7 @@ serve(async (req) => {
         try {
           const imgBytes = Uint8Array.from(atob(segImg), c => c.charCodeAt(0));
           // Use image segmentation model
-          const segResp = await fetch('https://router.huggingface.co/hf-inference/models/facebook/detr-resnet-50-panoptic', {
+          const segResp = await fetchWithTimeout('https://router.huggingface.co/hf-inference/models/facebook/detr-resnet-50-panoptic', {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${hfToken}` },
             body: imgBytes,

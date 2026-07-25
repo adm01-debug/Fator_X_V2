@@ -49,10 +49,10 @@ export function DataHubHealthTab() {
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h3 className="text-sm font-heading font-semibold text-foreground flex items-center gap-2">
+          <h3 className="text-body-sm font-heading font-semibold text-foreground flex items-center gap-2">
             <Activity className="h-4 w-4 text-primary" /> Health Metrics dos Bancos
           </h3>
-          <p className="text-[11px] text-muted-foreground mt-0.5">
+          <p className="text-meta text-muted-foreground mt-0.5">
             Status, latência e contagem de tabelas/linhas para os 5 bancos do DataHub. Auto-refresh a cada 60s.
           </p>
         </div>
@@ -77,17 +77,17 @@ export function DataHubHealthTab() {
           <div className="flex items-center gap-3">
             <OverallIcon className="h-6 w-6" style={{ color: overallCfg.color }} />
             <div>
-              <p className="text-sm font-semibold" style={{ color: overallCfg.color }}>
+              <p className="text-body-sm font-semibold" style={{ color: overallCfg.color }}>
                 Status Geral: {overallCfg.label}
               </p>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-meta text-muted-foreground">
                 {report.reachable_count} de {report.total_count} bancos online
               </p>
             </div>
           </div>
           <div className="text-right">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Última verificação</p>
-            <p className="text-xs font-mono">
+            <p className="text-meta text-muted-foreground uppercase tracking-wider">Última verificação</p>
+            <p className="text-meta font-mono">
               {new Date(report.timestamp).toLocaleString('pt-BR', {
                 hour: '2-digit',
                 minute: '2-digit',
@@ -119,7 +119,7 @@ export function DataHubHealthTab() {
                   ) : (
                     <XCircle className="h-4 w-4 text-destructive shrink-0" />
                   )}
-                  <p className="text-xs font-semibold truncate">{p.project}</p>
+                  <p className="text-meta font-semibold truncate">{p.project}</p>
                 </div>
                 <Badge
                   variant="outline"
@@ -141,7 +141,7 @@ export function DataHubHealthTab() {
                 <div className="p-1.5 rounded bg-secondary/30">
                   <p className="text-[9px] text-muted-foreground uppercase">Latência</p>
                   <p
-                    className="text-xs font-bold mt-0.5"
+                    className="text-meta font-bold mt-0.5"
                     style={{ color: latencyColor(p.latency_ms) }}
                   >
                     {formatLatency(p.latency_ms)}
@@ -149,20 +149,20 @@ export function DataHubHealthTab() {
                 </div>
                 <div className="p-1.5 rounded bg-secondary/30">
                   <p className="text-[9px] text-muted-foreground uppercase">Tabelas</p>
-                  <p className="text-xs font-bold mt-0.5 text-primary">
+                  <p className="text-meta font-bold mt-0.5 text-primary">
                     {p.table_count ?? '—'}
                   </p>
                 </div>
                 <div className="p-1.5 rounded bg-secondary/30">
                   <p className="text-[9px] text-muted-foreground uppercase">Linhas</p>
-                  <p className="text-xs font-bold mt-0.5 text-nexus-purple">
+                  <p className="text-meta font-bold mt-0.5 text-nexus-purple">
                     {p.total_rows != null ? p.total_rows.toLocaleString('pt-BR') : '—'}
                   </p>
                 </div>
               </div>
 
               {p.error && (
-                <p className="text-[10px] text-destructive mt-2 italic line-clamp-2">
+                <p className="text-meta text-destructive mt-2 italic line-clamp-2">
                   {p.error}
                 </p>
               )}
@@ -173,10 +173,10 @@ export function DataHubHealthTab() {
 
       {/* Legend */}
       <div className="nexus-card">
-        <h4 className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2">
+        <h4 className="text-meta text-muted-foreground uppercase tracking-wider mb-2">
           Legenda — latência
         </h4>
-        <div className="flex flex-wrap items-center gap-3 text-[10px]">
+        <div className="flex flex-wrap items-center gap-3 text-meta">
           <span className="flex items-center gap-1">
             <div className="h-2 w-2 rounded-full bg-nexus-emerald" /> &lt; 200ms (excelente)
           </span>

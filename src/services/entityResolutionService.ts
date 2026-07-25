@@ -198,3 +198,54 @@ export async function mergeEntityCluster(cluster: EntityCluster): Promise<number
 
   return idsToDelete.length;
 }
+
+/**
+ * Merge manual (wizard):
+ *  - `canonicalId`: id da entrada que permanecerá.
+ *  - `canonicalContent`: conteúdo final da entrada canônica (após edição).
+ *  - `duplicateIds`: ids que serão apagados. Não devem incluir `canonicalId`.
+ *
+ * Executa update do canônico (se conteúdo mudou) e delete das duplicatas
+ * em duas operações consecutivas. Retorna `{ updated, deleted }`.
+ */
+export async function mergeEntitiesManually(params: {
+  canonicalId: string;
+  canonicalContent: string;
+  duplicateIds: string[];
+  originalContent?: string;
+}): Promise<{ updated: boolean; deleted: number }> {
+  const { canonicalId, canonicalContent, duplicateIds, originalContent } = params;
+
+  if (!canonicalId) throw new Error('canonicalId é obrigatório');
+  if (duplicateIds.includes(canonicalId)) {
+    throw new Error('canonicalId não pode estar em duplicateIds');
+  }
+
+  let updated = false;
+  if (originalContent !== undefined && canonicalContent !== originalContent) {
+    const { error: upErr } = await supabaseExternal
+      .from('agent_memories')
+      .update({ content: canonicalContent })
+      .eq('id', canonicalId);
+    if (upErr) {
+      logger.error('mergeEntitiesManually update failed', { error: upErr.message });
+      throw new Error(upErr.message);
+    }
+    updated = true;
+  }
+
+  let deleted = 0;
+  if (duplicateIds.length > 0) {
+    const { error: delErr } = await supabaseExternal
+      .from('agent_memories')
+      .delete()
+      .in('id', duplicateIds);
+    if (delErr) {
+      logger.error('mergeEntitiesManually delete failed', { error: delErr.message });
+      throw new Error(delErr.message);
+    }
+    deleted = duplicateIds.length;
+  }
+
+  return { updated, deleted };
+}

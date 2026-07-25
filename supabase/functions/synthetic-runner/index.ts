@@ -6,14 +6,16 @@
  * `consecutive_failures`. Pode também rodar 1 check on-demand via POST { check_id }.
  */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
+import { z } from "https://esm.sh/zod@3.23.8";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+import { getCorsHeaders } from "../_shared/cors.ts";
+const SyntheticBodySchema = z.object({
+  check_id: z.string().uuid().optional(),
+}).passthrough();
 
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const SUPABASE_URL = requireEnv("SUPABASE_URL");
+const SERVICE_ROLE = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
 
 interface Check {
   id: string;
@@ -74,7 +76,12 @@ async function pingTarget(target: string): Promise<{ success: boolean; latency_m
 }
 
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
 
   const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
 
@@ -83,8 +90,13 @@ Deno.serve(async (req) => {
 
     // On-demand mode: { check_id }
     if (req.method === "POST") {
-      const body = await req.json().catch(() => ({}));
-      if (body?.check_id) {
+      const rawBody = await req.json().catch(() => ({}));
+      const parsedBody = SyntheticBodySchema.safeParse(rawBody);
+      if (!parsedBody.success) {
+        return new Response(JSON.stringify({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+      const body = parsedBody.data;
+      if (body.check_id) {
         const { data } = await admin
           .from("synthetic_checks")
           .select("*")

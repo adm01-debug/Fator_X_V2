@@ -50,6 +50,8 @@ export async function verifyHmac(
 
 /**
  * Validates HMAC signature with mandatory secret presence check.
+ * NOTE: usa Deno.env.get() diretamente para compatibilidade com módulos.
+ * Migração completa para requireEnv na próxima sprint.
  */
 export async function validateWebhookRequest(
   req: Request,

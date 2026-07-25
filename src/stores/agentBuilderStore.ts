@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import { audit } from '@/lib/auditService';
 import { agentToDbRow, dbRowToAgent, generateChangeSummary } from './agentBuilderHelpers';
+import type { DbRow } from '@/types/dbRow';
 
 export interface PlaygroundSeed {
   input: string;
@@ -25,7 +26,7 @@ interface AgentBuilderStore {
 
   setPlaygroundSeed: (seed: PlaygroundSeed | null) => void;
   clearPlaygroundSeed: () => void;
-  replayTrace: (trace: { id: string; user_input: string }) => void;
+  replayTrace: (trace: DbRow) => void;
 
   setActiveTab: (tab: string) => void;
   nextTab: () => void;

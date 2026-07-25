@@ -55,7 +55,7 @@ export function RealTimeCostStream() {
         { event: "INSERT", schema: "public", table: "usage_records" },
         (payload: { new?: Record<string, unknown> }) => {
           if (pausedRef.current) return;
-          const row = payload.new as Record<string, unknown>;
+          const row = ((payload as { new?: Record<string, unknown> } | null)?.new ?? {}) as Record<string, unknown>;
           const evt: StreamEvent = {
             id: String(row.id ?? `${Date.now()}-${Math.random()}`),
             record_type: String(row.record_type ?? "llm"),
@@ -115,7 +115,7 @@ export function RealTimeCostStream() {
           <div className="relative flex h-2.5 w-2.5">
             <span
               className={`absolute inline-flex h-full w-full rounded-full opacity-75 ${
-                connected && !paused ? "animate-ping bg-emerald-400" : ""
+                connected && !paused ? "animate-ping bg-nexus-emerald" : ""
               }`}
             />
             <span
@@ -123,15 +123,15 @@ export function RealTimeCostStream() {
                 paused
                   ? "bg-nexus-amber"
                   : connected
-                    ? "bg-emerald-500"
+                    ? "bg-nexus-emerald"
                     : "bg-muted-foreground"
               }`}
             />
           </div>
-          <h3 className="text-sm font-heading font-semibold text-foreground">
+          <h3 className="text-body-sm font-heading font-semibold text-foreground">
             Stream em tempo real
           </h3>
-          <Badge variant="outline" className="text-[10px]">
+          <Badge variant="outline" className="text-meta">
             {paused ? "PAUSADO" : connected ? "AO VIVO" : "CONECTANDO"}
           </Badge>
         </div>
@@ -141,7 +141,7 @@ export function RealTimeCostStream() {
             variant="outline"
             size="sm"
             onClick={() => setPaused((p) => !p)}
-            className="h-7 gap-1.5 text-xs"
+            className="h-7 gap-1.5 text-meta"
           >
             {paused ? (
               <>
@@ -158,7 +158,7 @@ export function RealTimeCostStream() {
             size="sm"
             onClick={() => setEvents([])}
             disabled={events.length === 0}
-            className="h-7 gap-1.5 text-xs"
+            className="h-7 gap-1.5 text-meta"
           >
             <Trash2 className="h-3 w-3" /> Limpar
           </Button>
@@ -170,7 +170,7 @@ export function RealTimeCostStream() {
         <div className="nexus-card">
           <div className="flex items-center gap-2 mb-1">
             <DollarSign className="h-3.5 w-3.5 text-primary" />
-            <span className="text-[11px] uppercase tracking-wider text-muted-foreground">
+            <span className="text-meta uppercase tracking-wider text-muted-foreground">
               Custo (sessão)
             </span>
           </div>
@@ -181,7 +181,7 @@ export function RealTimeCostStream() {
         <div className="nexus-card">
           <div className="flex items-center gap-2 mb-1">
             <Hash className="h-3.5 w-3.5 text-primary" />
-            <span className="text-[11px] uppercase tracking-wider text-muted-foreground">
+            <span className="text-meta uppercase tracking-wider text-muted-foreground">
               Tokens
             </span>
           </div>
@@ -192,7 +192,7 @@ export function RealTimeCostStream() {
         <div className="nexus-card">
           <div className="flex items-center gap-2 mb-1">
             <Activity className="h-3.5 w-3.5 text-primary" />
-            <span className="text-[11px] uppercase tracking-wider text-muted-foreground">
+            <span className="text-meta uppercase tracking-wider text-muted-foreground">
               Eventos
             </span>
           </div>
@@ -205,7 +205,7 @@ export function RealTimeCostStream() {
       {/* Per-type breakdown */}
       {byType.length > 0 && (
         <div className="nexus-card">
-          <h4 className="text-[11px] uppercase tracking-wider text-muted-foreground mb-3">
+          <h4 className="text-meta uppercase tracking-wider text-muted-foreground mb-3">
             Por tipo
           </h4>
           <div className="flex flex-wrap gap-2">
@@ -213,7 +213,7 @@ export function RealTimeCostStream() {
               <Badge
                 key={type}
                 variant="outline"
-                className="text-[11px] gap-1.5"
+                className="text-meta gap-1.5"
               >
                 <span className="font-mono">{type}</span>
                 <span className="text-muted-foreground">·</span>
@@ -232,7 +232,7 @@ export function RealTimeCostStream() {
       {/* Event ticker */}
       <div className="nexus-card overflow-hidden p-0">
         <div className="px-4 py-2 border-b border-border/50 flex items-center justify-between">
-          <h4 className="text-[11px] uppercase tracking-wider text-muted-foreground">
+          <h4 className="text-meta uppercase tracking-wider text-muted-foreground">
             Últimos eventos (máx {MAX_EVENTS})
           </h4>
           <Zap className="h-3.5 w-3.5 text-primary" />
@@ -240,10 +240,10 @@ export function RealTimeCostStream() {
         {events.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <Activity className="h-10 w-10 text-muted-foreground mb-3" />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-meta text-muted-foreground">
               Aguardando eventos de uso...
             </p>
-            <p className="text-[11px] text-muted-foreground/70 mt-1">
+            <p className="text-meta text-muted-foreground/70 mt-1">
               Eventos aparecerão aqui assim que agentes consumirem tokens.
             </p>
           </div>
@@ -251,7 +251,7 @@ export function RealTimeCostStream() {
           <div className="max-h-[420px] overflow-y-auto">
             <table className="w-full">
               <thead className="sticky top-0 bg-card">
-                <tr className="border-b border-border/50 text-[10px] text-muted-foreground uppercase tracking-wider">
+                <tr className="border-b border-border/50 text-meta text-muted-foreground uppercase tracking-wider">
                   <th className="text-left px-4 py-2 font-medium">Tipo</th>
                   <th className="text-left px-4 py-2 font-medium">Modelo</th>
                   <th className="text-right px-4 py-2 font-medium">Tokens</th>
@@ -268,20 +268,20 @@ export function RealTimeCostStream() {
                     }`}
                   >
                     <td className="px-4 py-2">
-                      <Badge variant="outline" className="text-[10px] font-mono">
+                      <Badge variant="outline" className="text-meta font-mono">
                         {e.record_type}
                       </Badge>
                     </td>
-                    <td className="px-4 py-2 text-[11px] text-muted-foreground font-mono truncate max-w-[140px]">
+                    <td className="px-4 py-2 text-meta text-muted-foreground font-mono truncate max-w-[140px]">
                       {e.model ?? "—"}
                     </td>
-                    <td className="px-4 py-2 text-right text-xs text-foreground tabular-nums">
+                    <td className="px-4 py-2 text-right text-meta text-foreground tabular-nums">
                       {e.tokens.toLocaleString()}
                     </td>
-                    <td className="px-4 py-2 text-right text-xs text-foreground tabular-nums">
+                    <td className="px-4 py-2 text-right text-meta text-foreground tabular-nums">
                       ${e.cost_usd.toFixed(6)}
                     </td>
-                    <td className="px-4 py-2 text-right text-[11px] text-muted-foreground">
+                    <td className="px-4 py-2 text-right text-meta text-muted-foreground">
                       {formatRelative(e.receivedAt)}
                     </td>
                   </tr>

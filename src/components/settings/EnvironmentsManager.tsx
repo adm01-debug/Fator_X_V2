@@ -42,19 +42,19 @@ export function EnvironmentsManager() {
 
   return (
     <div className="nexus-card space-y-4">
-      <h3 className="text-sm font-semibold text-foreground">Ambientes de Deploy</h3>
-      <p className="text-xs text-muted-foreground">Gerencie ambientes (development, staging, production) para isolamento de configurações.</p>
+      <h3 className="text-body-sm font-semibold text-foreground">Ambientes de Deploy</h3>
+      <p className="text-meta text-muted-foreground">Gerencie ambientes (development, staging, production) para isolamento de configurações.</p>
       <div className="flex gap-2">
-        <Input value={newEnvName} onChange={e => setNewEnvName(e.target.value)} placeholder="Ex: staging" className="bg-secondary/50 text-xs" />
+        <Input value={newEnvName} onChange={e => setNewEnvName(e.target.value)} placeholder="Ex: staging" className="bg-secondary/50 text-meta" />
         <Button size="sm" onClick={handleCreate} disabled={creating}>Criar</Button>
       </div>
-      {isLoading ? <p className="text-xs text-muted-foreground">Carregando...</p> : (
+      {isLoading ? <p className="text-meta text-muted-foreground">Carregando...</p> : (
         <div className="space-y-2">
           {environments.map((env) => (
             <div key={env.id} className="flex items-center justify-between py-2 px-3 rounded-lg bg-secondary/30">
               <div>
-                <p className="text-sm font-medium text-foreground">{env.name}</p>
-                <p className="text-[11px] text-muted-foreground">{new Date(String(env.created_at)).toLocaleDateString('pt-BR')}</p>
+                <p className="text-body-sm font-medium text-foreground">{env.name}</p>
+                <p className="text-meta text-muted-foreground">{new Date(String(env.created_at)).toLocaleDateString('pt-BR')}</p>
               </div>
               <AccessControl permission="settings.write">
                 <DangerousActionDialog
@@ -67,7 +67,7 @@ export function EnvironmentsManager() {
               </AccessControl>
             </div>
           ))}
-          {environments.length === 0 && <p className="text-xs text-muted-foreground text-center py-4">Nenhum ambiente criado. Padrão: development.</p>}
+          {environments.length === 0 && <p className="text-meta text-muted-foreground text-center py-4">Nenhum ambiente criado. Padrão: development.</p>}
         </div>
       )}
     </div>

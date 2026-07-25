@@ -63,8 +63,8 @@ export function getRiskLevelColor(level: 'critical' | 'high' | 'medium' | 'low')
   switch (level) {
     case 'critical': return 'bg-destructive text-destructive-foreground';
     case 'high': return 'bg-nexus-amber/80 text-background';
-    case 'medium': return 'bg-yellow-500/80 text-background';
-    case 'low': return 'bg-emerald-500/80 text-background';
+    case 'medium': return 'bg-nexus-yellow/80 text-background';
+    case 'low': return 'bg-nexus-emerald/80 text-background';
   }
 }
 

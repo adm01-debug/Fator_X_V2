@@ -13,6 +13,8 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 
 import { Database, Plus, Loader2, Trash2, FileText, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
+import type { DbRow } from '@/types/dbRow';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 export function EvaluationDatasetsPanel() {
   const queryClient = useQueryClient();
@@ -51,7 +53,7 @@ export function EvaluationDatasetsPanel() {
       setNewDsOpen(false);
       setDsName(''); setDsDesc('');
       queryClient.invalidateQueries({ queryKey: ['evaluation_datasets'] });
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro inesperado');
     } finally {
       setSaving(false);
@@ -69,7 +71,7 @@ export function EvaluationDatasetsPanel() {
         tags: caseTags.trim() ? caseTags.split(',').map(t => t.trim()) : [],
       });
       await updateDatasetCaseCount(selectedDatasetId);
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro'); setSaving(false); return;
     }
 
@@ -86,7 +88,7 @@ export function EvaluationDatasetsPanel() {
       await deleteTestCase(id);
       toast.success('Test case removido');
       queryClient.invalidateQueries({ queryKey: ['test_cases', selectedDatasetId] });
-    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : 'Erro'); }
+    } catch (e) { toast.error(e instanceof Error ? e.message : 'Erro'); }
   };
 
   const handleDeleteDataset = async (id: string) => {
@@ -94,7 +96,7 @@ export function EvaluationDatasetsPanel() {
       const { supabaseExternal } = await import('@/integrations/supabase/externalClient');
       await supabaseExternal.from('test_cases').delete().eq('dataset_id', id);
       await supabaseExternal.from('evaluation_datasets').delete().eq('id', id);
-    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : 'Erro'); return; }
+    } catch (e) { toast.error(e instanceof Error ? e.message : 'Erro'); return; }
     if (selectedDatasetId === id) setSelectedDatasetId(null);
     toast.success('Dataset removido');
     queryClient.invalidateQueries({ queryKey: ['evaluation_datasets'] });
@@ -103,16 +105,16 @@ export function EvaluationDatasetsPanel() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-heading font-semibold text-foreground">Datasets de avaliação</h3>
+        <h3 className="text-body-sm font-heading font-semibold text-foreground">Datasets de avaliação</h3>
         <Dialog open={newDsOpen} onOpenChange={setNewDsOpen}>
           <DialogTrigger asChild>
-            <Button variant="outline" size="sm" className="gap-1.5 text-xs"><Plus className="h-3 w-3" /> Novo dataset</Button>
+            <Button variant="outline" size="sm" className="gap-1.5 text-meta"><Plus className="h-3 w-3" /> Novo dataset</Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[420px]">
             <DialogHeader><DialogTitle>Novo Dataset</DialogTitle></DialogHeader>
             <div className="space-y-3 mt-2">
-              <div className="space-y-1"><Label className="text-xs">Nome *</Label><Input value={dsName} onChange={e => setDsName(e.target.value)} className="bg-secondary/50" placeholder="Ex: Factualidade v1" /></div>
-              <div className="space-y-1"><Label className="text-xs">Descrição</Label><Input value={dsDesc} onChange={e => setDsDesc(e.target.value)} className="bg-secondary/50" /></div>
+              <div className="space-y-1"><Label className="text-meta">Nome *</Label><Input value={dsName} onChange={e => setDsName(e.target.value)} className="bg-secondary/50" placeholder="Ex: Factualidade v1" /></div>
+              <div className="space-y-1"><Label className="text-meta">Descrição</Label><Input value={dsDesc} onChange={e => setDsDesc(e.target.value)} className="bg-secondary/50" /></div>
               <Button onClick={handleCreateDataset} disabled={saving} className="w-full nexus-gradient-bg text-primary-foreground">
                 {saving && <Loader2 className="h-4 w-4 animate-spin mr-2" />} Criar
               </Button>
@@ -130,7 +132,7 @@ export function EvaluationDatasetsPanel() {
             {datasets.length === 0 ? (
               <div className="text-center py-8">
                 <Database className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                <p className="text-xs text-muted-foreground">Nenhum dataset criado</p>
+                <p className="text-meta text-muted-foreground">Nenhum dataset criado</p>
               </div>
             ) : (
               datasets.map((ds) => (
@@ -141,8 +143,8 @@ export function EvaluationDatasetsPanel() {
                 >
                   <div className="flex items-center justify-between">
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-foreground truncate">{ds.name}</p>
-                      <p className="text-[11px] text-muted-foreground">{ds.case_count ?? 0} cases</p>
+                      <p className="text-body-sm font-medium text-foreground truncate">{ds.name}</p>
+                      <p className="text-meta text-muted-foreground">{ds.case_count ?? 0} cases</p>
                     </div>
                     <div className="flex items-center gap-1">
                       <AlertDialog>
@@ -167,20 +169,20 @@ export function EvaluationDatasetsPanel() {
           {/* Test cases */}
           <div className="lg:col-span-2 space-y-3">
             <div className="flex items-center justify-between">
-              <h4 className="text-xs font-heading font-semibold text-muted-foreground uppercase tracking-wider">
-                Test Cases {selectedDatasetId && <Badge variant="outline" className="text-[11px] ml-1">{testCases.length}</Badge>}
+              <h4 className="text-meta font-heading font-semibold text-muted-foreground uppercase tracking-wider">
+                Test Cases {selectedDatasetId && <Badge variant="outline" className="text-meta ml-1">{testCases.length}</Badge>}
               </h4>
               {selectedDatasetId && (
                 <Dialog open={newCaseOpen} onOpenChange={setNewCaseOpen}>
                   <DialogTrigger asChild>
-                    <Button variant="outline" size="sm" className="gap-1 text-xs h-7"><Plus className="h-3 w-3" /> Adicionar</Button>
+                    <Button variant="outline" size="sm" className="gap-1 text-meta h-7"><Plus className="h-3 w-3" /> Adicionar</Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[480px]">
                     <DialogHeader><DialogTitle>Novo Test Case</DialogTitle></DialogHeader>
                     <div className="space-y-3 mt-2">
-                      <div className="space-y-1"><Label className="text-xs">Input *</Label><Textarea value={caseInput} onChange={e => setCaseInput(e.target.value)} className="bg-secondary/50" rows={3} placeholder="Pergunta ou prompt de teste" /></div>
-                      <div className="space-y-1"><Label className="text-xs">Output esperado</Label><Textarea value={caseExpected} onChange={e => setCaseExpected(e.target.value)} className="bg-secondary/50" rows={3} placeholder="Resposta correta esperada" /></div>
-                      <div className="space-y-1"><Label className="text-xs">Tags (separadas por vírgula)</Label><Input value={caseTags} onChange={e => setCaseTags(e.target.value)} className="bg-secondary/50" placeholder="factualidade, safety" /></div>
+                      <div className="space-y-1"><Label className="text-meta">Input *</Label><Textarea value={caseInput} onChange={e => setCaseInput(e.target.value)} className="bg-secondary/50" rows={3} placeholder="Pergunta ou prompt de teste" /></div>
+                      <div className="space-y-1"><Label className="text-meta">Output esperado</Label><Textarea value={caseExpected} onChange={e => setCaseExpected(e.target.value)} className="bg-secondary/50" rows={3} placeholder="Resposta correta esperada" /></div>
+                      <div className="space-y-1"><Label className="text-meta">Tags (separadas por vírgula)</Label><Input value={caseTags} onChange={e => setCaseTags(e.target.value)} className="bg-secondary/50" placeholder="factualidade, safety" /></div>
                       <Button onClick={handleCreateTestCase} disabled={saving} className="w-full nexus-gradient-bg text-primary-foreground">
                         {saving && <Loader2 className="h-4 w-4 animate-spin mr-2" />} Adicionar
                       </Button>
@@ -191,13 +193,13 @@ export function EvaluationDatasetsPanel() {
             </div>
 
             {!selectedDatasetId ? (
-              <div className="text-center py-12"><p className="text-xs text-muted-foreground">Selecione um dataset à esquerda</p></div>
+              <div className="text-center py-12"><p className="text-meta text-muted-foreground">Selecione um dataset à esquerda</p></div>
             ) : loadingCases ? (
               <div className="flex justify-center py-8"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>
             ) : testCases.length === 0 ? (
               <div className="text-center py-8">
                 <FileText className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                <p className="text-xs text-muted-foreground">Nenhum test case. Adicione casos para avaliar agentes.</p>
+                <p className="text-meta text-muted-foreground">Nenhum test case. Adicione casos para avaliar agentes.</p>
               </div>
             ) : (
               <div className="space-y-2 max-h-[500px] overflow-y-auto">
@@ -220,8 +222,8 @@ export function EvaluationDatasetsPanel() {
                       </AlertDialog>
                     </div>
                     <div className="space-y-1.5">
-                      <div><p className="text-[11px] font-semibold text-muted-foreground uppercase">Input</p><p className="text-xs text-foreground">{tc.input}</p></div>
-                      {tc.expected_output && <div><p className="text-[11px] font-semibold text-muted-foreground uppercase">Expected</p><p className="text-xs text-foreground">{tc.expected_output}</p></div>}
+                      <div><p className="text-meta font-semibold text-muted-foreground uppercase">Input</p><p className="text-meta text-foreground">{tc.input}</p></div>
+                      {tc.expected_output && <div><p className="text-meta font-semibold text-muted-foreground uppercase">Expected</p><p className="text-meta text-foreground">{tc.expected_output}</p></div>}
                     </div>
                   </div>
                 ))}

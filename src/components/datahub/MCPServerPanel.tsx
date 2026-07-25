@@ -28,7 +28,7 @@ export function MCPServerPanel() {
       const args = testQuery.trim() ? JSON.parse(testQuery) : {};
       const data = await invokeDatahubMCPTool(testTool, args);
       setMcpResult(data);
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro ao executar MCP tool');
     } finally {
       setTesting(false);
@@ -43,24 +43,24 @@ export function MCPServerPanel() {
             <Server className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <h3 className="text-sm font-heading font-semibold text-foreground">DataHub MCP Server</h3>
-            <p className="text-[11px] text-muted-foreground">Exponha o DataHub como MCP Server para Claude Desktop, VS Code ou qualquer cliente MCP.</p>
+            <h3 className="text-body-sm font-heading font-semibold text-foreground">DataHub MCP Server</h3>
+            <p className="text-meta text-muted-foreground">Exponha o DataHub como MCP Server para Claude Desktop, VS Code ou qualquer cliente MCP.</p>
           </div>
         </div>
         <div className="bg-secondary/30 rounded-lg p-3 mb-3">
           <div className="flex items-center justify-between mb-1">
-            <p className="text-xs font-medium text-foreground">Endpoint MCP</p>
-            <Button variant="ghost" size="sm" className="h-6 text-xs gap-1" onClick={() => { navigator.clipboard.writeText(mcpUrl); toast.success('URL copiada!'); }}>
+            <p className="text-meta font-medium text-foreground">Endpoint MCP</p>
+            <Button variant="ghost" size="sm" className="h-6 text-meta gap-1" onClick={() => { navigator.clipboard.writeText(mcpUrl); toast.success('URL copiada!'); }}>
               <Copy className="h-3 w-3" /> Copiar
             </Button>
           </div>
-          <code className="text-[11px] text-muted-foreground font-mono break-all">{mcpUrl}</code>
+          <code className="text-meta text-muted-foreground font-mono break-all">{mcpUrl}</code>
         </div>
       </div>
 
       <div className="nexus-card bg-primary/5 border-primary/20">
-        <h4 className="text-xs font-bold uppercase tracking-widest text-primary mb-3">Configuração Claude Desktop</h4>
-        <pre className="text-[10px] font-mono bg-background p-4 rounded-xl border border-primary/10 overflow-x-auto">
+        <h4 className="text-meta font-bold uppercase tracking-widest text-primary mb-3">Configuração Claude Desktop</h4>
+        <pre className="text-meta font-mono bg-background p-4 rounded-xl border border-primary/10 overflow-x-auto">
 {`{
   "mcpServers": {
     "nexus-datahub": {
@@ -76,29 +76,29 @@ export function MCPServerPanel() {
       </div>
 
       <div className="nexus-card">
-        <h3 className="text-sm font-heading font-semibold text-foreground mb-3">MCP Tools ({mcpTools.length})</h3>
+        <h3 className="text-body-sm font-heading font-semibold text-foreground mb-3">MCP Tools ({mcpTools.length})</h3>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-2">
           {mcpTools.map((t) => (
             <div key={t.name} className="p-3 rounded-lg bg-secondary/20 border border-border/30">
-              <p className="text-xs font-medium text-foreground font-mono">{t.name}</p>
-              <p className="text-[11px] text-muted-foreground mt-0.5">{t.desc}</p>
+              <p className="text-meta font-medium text-foreground font-mono">{t.name}</p>
+              <p className="text-meta text-muted-foreground mt-0.5">{t.desc}</p>
             </div>
           ))}
         </div>
       </div>
 
       <div className="nexus-card">
-        <h3 className="text-sm font-heading font-semibold text-foreground mb-3">Testar MCP Tool</h3>
+        <h3 className="text-body-sm font-heading font-semibold text-foreground mb-3">Testar MCP Tool</h3>
         <div className="grid md:grid-cols-3 gap-3 mb-3">
           <div>
-            <label htmlFor="mcp-tool-select" className="text-[11px] text-muted-foreground">Tool</label>
-            <select id="mcp-tool-select" value={testTool} onChange={(e) => setTestTool(e.target.value)} className="w-full rounded-lg border border-border bg-secondary/50 px-2 py-1.5 text-xs text-foreground">
+            <label htmlFor="mcp-tool-select" className="text-meta text-muted-foreground">Tool</label>
+            <select id="mcp-tool-select" value={testTool} onChange={(e) => setTestTool(e.target.value)} className="w-full rounded-lg border border-border bg-secondary/50 px-2 py-1.5 text-meta text-foreground">
               {mcpTools.map((t) => <option key={t.name} value={t.name}>{t.name}</option>)}
             </select>
           </div>
           <div className="md:col-span-2">
-            <label htmlFor="mcp-params-input" className="text-[11px] text-muted-foreground">Parametros (JSON)</label>
-            <Input id="mcp-params-input" value={testQuery} onChange={(e) => setTestQuery(e.target.value)} placeholder='{"entity_type": "Clientes", "query": "..."}' className="bg-secondary/50 text-xs font-mono" />
+            <label htmlFor="mcp-params-input" className="text-meta text-muted-foreground">Parametros (JSON)</label>
+            <Input id="mcp-params-input" value={testQuery} onChange={(e) => setTestQuery(e.target.value)} placeholder='{"entity_type": "Clientes", "query": "..."}' className="bg-secondary/50 text-meta font-mono" />
           </div>
         </div>
         <Button size="sm" onClick={handleTest} disabled={testing} className="gap-1.5">
@@ -106,7 +106,7 @@ export function MCPServerPanel() {
         </Button>
         {mcpResult && (
           <div className="mt-3 p-3 rounded-lg bg-secondary/30 border border-border/30">
-            <pre className="text-[11px] text-muted-foreground overflow-auto max-h-[250px] font-mono">{JSON.stringify(mcpResult, null, 2)}</pre>
+            <pre className="text-meta text-muted-foreground overflow-auto max-h-[250px] font-mono">{JSON.stringify(mcpResult, null, 2)}</pre>
           </div>
         )}
       </div>

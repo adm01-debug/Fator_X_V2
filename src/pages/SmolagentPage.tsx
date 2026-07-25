@@ -80,7 +80,7 @@ export default function SmolagentPage() {
       if (error) throw error;
       setResult(data as AgentResult);
       toast.success(`Completou em ${data.total_steps} passos`);
-    } catch (err: unknown) {
+    } catch (err) {
       toast.error('Erro', { description: err instanceof Error ? err.message : 'Erro' });
     } finally {
       setLoading(false);
@@ -112,7 +112,7 @@ export default function SmolagentPage() {
       <div className="grid gap-6 lg:grid-cols-5">
         <div className="lg:col-span-2 space-y-4">
           <div className="rounded-lg border border-border p-4 space-y-4">
-            <h3 className="font-semibold text-sm">Configuração</h3>
+            <h3 className="font-semibold text-body-sm">Configuração</h3>
             <div className="space-y-2">
               <Label>Tarefa</Label>
               <Textarea
@@ -170,12 +170,12 @@ export default function SmolagentPage() {
           </div>
           {tools.length > 0 && (
             <div className="rounded-lg border border-border p-4">
-              <h3 className="font-semibold text-sm mb-2 flex items-center gap-1.5">
+              <h3 className="font-semibold text-body-sm mb-2 flex items-center gap-1.5">
                 <Wrench className="h-3.5 w-3.5" /> Tools ({tools.length})
               </h3>
               <div className="flex flex-wrap gap-1">
                 {tools.map((t) => (
-                  <Badge key={t} variant="outline" className="text-xs">
+                  <Badge key={t} variant="outline" className="text-meta">
                     {t}
                   </Badge>
                 ))}
@@ -188,37 +188,37 @@ export default function SmolagentPage() {
           {loading && (
             <div className="flex flex-col items-center justify-center py-20 gap-3">
               <Loader2 className="h-10 w-10 animate-spin text-primary" />
-              <p className="text-sm text-muted-foreground animate-pulse">Agente pensando...</p>
+              <p className="text-body-sm text-muted-foreground animate-pulse">Agente pensando...</p>
             </div>
           )}
           {result && !loading && (
             <>
               <div className="rounded-lg border border-primary/30 bg-primary/5 p-4">
-                <Label className="text-xs text-primary mb-1 block">Resposta Final</Label>
-                <p className="text-sm whitespace-pre-wrap">{result.answer}</p>
+                <Label className="text-meta text-primary mb-1 block">Resposta Final</Label>
+                <p className="text-body-sm whitespace-pre-wrap">{result.answer}</p>
               </div>
               <div className="grid grid-cols-4 gap-2">
                 <div className="rounded-lg border border-border p-3 text-center">
-                  <p className="text-lg font-bold">{result.total_steps}</p>
-                  <p className="text-[10px] text-muted-foreground">Passos</p>
+                  <p className="text-title-sm font-bold">{result.total_steps}</p>
+                  <p className="text-meta text-muted-foreground">Passos</p>
                 </div>
                 <div className="rounded-lg border border-border p-3 text-center">
-                  <p className="text-lg font-bold">{result.total_tokens?.toLocaleString()}</p>
-                  <p className="text-[10px] text-muted-foreground">Tokens</p>
+                  <p className="text-title-sm font-bold">{result.total_tokens?.toLocaleString()}</p>
+                  <p className="text-meta text-muted-foreground">Tokens</p>
                 </div>
                 <div className="rounded-lg border border-border p-3 text-center">
-                  <p className="text-lg font-bold">
+                  <p className="text-title-sm font-bold">
                     {((result.total_latency_ms || 0) / 1000).toFixed(1)}s
                   </p>
-                  <p className="text-[10px] text-muted-foreground">Latência</p>
+                  <p className="text-meta text-muted-foreground">Latência</p>
                 </div>
                 <div className="rounded-lg border border-border p-3 text-center">
-                  <p className="text-lg font-bold">${result.total_cost_usd?.toFixed(4)}</p>
-                  <p className="text-[10px] text-muted-foreground">Custo</p>
+                  <p className="text-title-sm font-bold">${result.total_cost_usd?.toFixed(4)}</p>
+                  <p className="text-meta text-muted-foreground">Custo</p>
                 </div>
               </div>
               <div className="space-y-2">
-                <Label className="text-xs text-muted-foreground">Passos de Execução</Label>
+                <Label className="text-meta text-muted-foreground">Passos de Execução</Label>
                 {result.steps?.map((step, idx) => (
                   <div key={idx} className="rounded-lg border border-border overflow-hidden">
                     <button
@@ -231,12 +231,12 @@ export default function SmolagentPage() {
                         ) : (
                           <ChevronRight className="h-3.5 w-3.5" />
                         )}
-                        <Badge variant="outline" className="text-[10px]">
+                        <Badge variant="outline" className="text-meta">
                           Step {step.step}
                         </Badge>
-                        <span className="text-xs font-medium">{step.action || 'think'}</span>
+                        <span className="text-meta font-medium">{step.action || 'think'}</span>
                       </div>
-                      <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                      <div className="flex items-center gap-2 text-meta text-muted-foreground">
                         {step.latency_ms && (
                           <span className="flex items-center gap-0.5">
                             <Clock className="h-2.5 w-2.5" />
@@ -252,7 +252,7 @@ export default function SmolagentPage() {
                       </div>
                     </button>
                     {expandedSteps.has(idx) && (
-                      <div className="border-t border-border p-3 bg-muted/20 space-y-2 text-xs">
+                      <div className="border-t border-border p-3 bg-muted/20 space-y-2 text-meta">
                         {step.thought && (
                           <div>
                             <span className="font-semibold text-primary">💭 Thought:</span>
@@ -289,8 +289,8 @@ export default function SmolagentPage() {
           {!result && !loading && (
             <div className="flex flex-col items-center justify-center py-20 text-center">
               <div className="text-5xl mb-4">🤖</div>
-              <h2 className="text-lg font-semibold mb-1">Smolagent Runtime</h2>
-              <p className="text-sm text-muted-foreground max-w-md">
+              <h2 className="text-title-sm font-semibold mb-1">Smolagent Runtime</h2>
+              <p className="text-body-sm text-muted-foreground max-w-md">
                 Descreva uma tarefa e o agente autônomo irá executá-la.
               </p>
             </div>
@@ -307,11 +307,11 @@ export default function SmolagentPage() {
                 <Cpu className="w-4 h-4 text-primary" />
               </div>
               <div>
-                <h3 className="text-sm font-bold">Autonomous Chat</h3>
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">ReAct Loop Playground</p>
+                <h3 className="text-body-sm font-bold">Autonomous Chat</h3>
+                <p className="text-meta text-muted-foreground uppercase tracking-wider">ReAct Loop Playground</p>
               </div>
             </div>
-            <Badge variant="outline" className="text-[10px] bg-green-500/10 text-green-500 border-green-500/20">
+            <Badge variant="outline" className="text-meta bg-nexus-green/10 text-nexus-green border-nexus-green/20">
               Streaming Active
             </Badge>
           </div>
@@ -331,8 +331,8 @@ export default function SmolagentPage() {
               <Wrench className="w-4 h-4 text-accent" />
             </div>
             <div>
-              <h3 className="text-sm font-bold">Tool Inventory</h3>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Capabilities Registry</p>
+              <h3 className="text-body-sm font-bold">Tool Inventory</h3>
+              <p className="text-meta text-muted-foreground uppercase tracking-wider">Capabilities Registry</p>
             </div>
           </div>
 
@@ -340,16 +340,16 @@ export default function SmolagentPage() {
             {tools.map((t) => (
               <div key={t} className="p-3 rounded-lg border border-border/50 bg-muted/5 hover:border-primary/30 transition-all group">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-mono font-bold text-primary">{t}</span>
+                  <span className="text-meta font-mono font-bold text-primary">{t}</span>
                   <Badge variant="secondary" className="text-[9px]">Edge Tool</Badge>
                 </div>
-                <p className="text-[10px] text-muted-foreground line-clamp-2">
+                <p className="text-meta text-muted-foreground line-clamp-2">
                   Integrated capability for {t.replace(/_/g, ' ')} operations within the ReAct loop.
                 </p>
               </div>
             ))}
             {tools.length === 0 && (
-              <div className="py-12 text-center text-muted-foreground text-xs animate-pulse">
+              <div className="py-12 text-center text-muted-foreground text-meta animate-pulse">
                 Carregando inventário de ferramentas...
               </div>
             )}

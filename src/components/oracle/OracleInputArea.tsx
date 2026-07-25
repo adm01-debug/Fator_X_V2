@@ -47,7 +47,7 @@ export function OracleInputArea() {
   }, [store.isRunning, store.query]);
 
   return (
-    <Card className="p-8 bg-card border-border rounded-3xl shadow-sm relative overflow-hidden group">
+    <Card className="p-8 bg-card border-border rounded-3xl shadow-nexus-sm relative overflow-hidden group">
       <div className="absolute top-0 right-0 w-48 h-48 bg-primary/[0.02] rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700" />
       
       {/* Mode & Preset selector */}
@@ -55,10 +55,10 @@ export function OracleInputArea() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowPresets(!showPresets)}
-            className="flex items-center gap-3 px-4 py-2 rounded-xl bg-secondary/80 border border-border/60 hover:bg-secondary hover:border-primary/30 transition-all shadow-sm"
+            className="flex items-center gap-3 px-4 py-2 rounded-xl bg-secondary/80 border border-border/60 hover:bg-secondary hover:border-primary/30 transition-all shadow-nexus-sm"
           >
             <span className="text-xl">{currentPreset?.icon || '🏛️'}</span>
-            <span className="text-sm font-bold text-foreground uppercase tracking-tight">
+            <span className="text-body-sm font-bold text-foreground uppercase tracking-tight">
               {currentPreset?.name.replace(/^[^\s]+\s/, '') || 'Conselho Executivo'}
             </span>
             {showPresets ? (
@@ -68,17 +68,17 @@ export function OracleInputArea() {
             )}
           </button>
           <div className="flex gap-2">
-            <Badge variant="outline" className="h-7 rounded-lg bg-primary/5 text-primary border-primary/20 text-[10px] font-bold uppercase">
+            <Badge variant="outline" className="h-7 rounded-lg bg-primary/5 text-primary border-primary/20 text-meta font-bold uppercase">
               {modeConfig.icon} {modeConfig.label}
             </Badge>
-            <Badge variant="outline" className="h-7 rounded-lg bg-muted/50 text-muted-foreground border-border/50 text-[10px] font-bold uppercase">
+            <Badge variant="outline" className="h-7 rounded-lg bg-muted/50 text-muted-foreground border-border/50 text-meta font-bold uppercase">
               {currentPreset?.members.length || 3} Especialistas
             </Badge>
           </div>
         </div>
         <button
           onClick={() => setShowAdvanced(!showAdvanced)}
-          className="flex items-center gap-1.5 text-xs font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-widest"
+          className="flex items-center gap-1.5 text-meta font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-widest"
         >
           <Settings2 className="h-4 w-4" />
           Configurações
@@ -104,7 +104,7 @@ export function OracleInputArea() {
           <div className="p-6 rounded-2xl bg-secondary/30 border border-border/40 space-y-5">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                <Label className="text-meta font-extrabold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
                   <Cpu className="h-3 w-3" /> Chairman (Sintetizador)
                 </Label>
                 <Select value={store.chairmanModel} onValueChange={store.setChairmanModel}>
@@ -113,7 +113,7 @@ export function OracleInputArea() {
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">
                     {CHAIRMAN_MODELS.map((m) => (
-                      <SelectItem key={m.value} value={m.value} className="text-xs font-medium">
+                      <SelectItem key={m.value} value={m.value} className="text-meta font-medium">
                         {m.label}
                       </SelectItem>
                     ))}
@@ -121,7 +121,7 @@ export function OracleInputArea() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider">Seleção do Presidente</Label>
+                <Label className="text-meta font-extrabold text-muted-foreground uppercase tracking-wider">Seleção do Presidente</Label>
                 <Select
                   value={store.chairmanSelection}
                   onValueChange={(v) => store.setChairmanSelection(v as 'auto' | 'manual')}
@@ -130,22 +130,22 @@ export function OracleInputArea() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">
-                    <SelectItem value="auto" className="text-xs font-medium italic">🤖 Automática (por domínio)</SelectItem>
-                    <SelectItem value="manual" className="text-xs font-medium">✋ Manual (fixo)</SelectItem>
+                    <SelectItem value="auto" className="text-meta font-medium italic">🤖 Automática (por domínio)</SelectItem>
+                    <SelectItem value="manual" className="text-meta font-medium">✋ Manual (fixo)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+              <Label className="text-meta font-extrabold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
                 <ShieldCheck className="h-3 w-3" /> Guardrails (Políticas do Conselho)
               </Label>
               <Textarea
                 placeholder="Ex: Não use termos técnicos excessivos. Sempre apresente riscos financeiros."
                 value={store.customGuardrails}
                 onChange={(e) => store.setCustomGuardrails(e.target.value)}
-                className="min-h-[80px] bg-card border-border/60 rounded-xl text-xs"
+                className="min-h-[80px] bg-card border-border/60 rounded-xl text-meta"
               />
             </div>
 
@@ -155,8 +155,8 @@ export function OracleInputArea() {
                   <Brain className="h-4 w-4 text-primary" />
                 </div>
                 <div>
-                  <Label className="text-xs font-bold text-foreground">💭 Modo Raciocínio (Thinking)</Label>
-                  <p className="text-[10px] text-muted-foreground">
+                  <Label className="text-meta font-bold text-foreground">💭 Modo Raciocínio (Thinking)</Label>
+                  <p className="text-meta text-muted-foreground">
                     Exibe a cadeia de pensamento completa de cada membro do conselho
                   </p>
                 </div>
@@ -173,10 +173,10 @@ export function OracleInputArea() {
           placeholder="Qual decisão complexa o conselho deve analisar hoje?"
           value={store.query}
           onChange={(e) => store.setQuery(e.target.value)}
-          className="min-h-[140px] bg-secondary/40 border-border/60 rounded-2xl p-6 text-base focus:ring-primary focus:border-primary transition-all shadow-inner placeholder:italic"
+          className="min-h-[140px] bg-secondary/40 border-border/60 rounded-2xl p-6 text-title-sm focus:ring-primary focus:border-primary transition-all shadow-nexus-inner placeholder:italic"
         />
         {store.query.length > 0 && (
-          <div className="absolute bottom-4 right-4 text-[10px] font-mono text-muted-foreground bg-card px-2 py-0.5 rounded border border-border/40">
+          <div className="absolute bottom-4 right-4 text-meta font-mono text-muted-foreground bg-card px-2 py-0.5 rounded border border-border/40">
             {store.query.length} caracteres
           </div>
         )}
@@ -187,9 +187,9 @@ export function OracleInputArea() {
         <div className="mt-4 px-2 flex items-center justify-between animate-in fade-in slide-in-from-top-1">
           <div className="flex items-center gap-2">
             <Loader2 className="h-3 w-3 animate-spin text-primary" />
-            <span className="text-[10px] font-bold text-primary uppercase tracking-widest">{store.stageLabel}</span>
+            <span className="text-meta font-bold text-primary uppercase tracking-widest">{store.stageLabel}</span>
           </div>
-          <span className="text-[10px] text-muted-foreground uppercase font-bold">Pressione ESC para cancelar</span>
+          <span className="text-meta text-muted-foreground uppercase font-bold">Pressione ESC para cancelar</span>
         </div>
       )}
 
@@ -197,12 +197,12 @@ export function OracleInputArea() {
         <div className="mt-4 p-3 rounded-xl bg-destructive/10 border border-destructive/20 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <AlertTriangle className="h-4 w-4 text-destructive" />
-            <p className="text-xs text-destructive font-medium">{store.error}</p>
+            <p className="text-meta text-destructive font-medium">{store.error}</p>
           </div>
           <Button 
             variant="ghost" 
             size="sm" 
-            className="h-8 text-[10px] font-bold uppercase gap-1.5 text-destructive hover:bg-destructive/10"
+            className="h-8 text-meta font-bold uppercase gap-1.5 text-destructive hover:bg-destructive/10"
             onClick={() => store.submitQuery()}
           >
             <RotateCcw className="h-3 w-3" /> Tentar Novamente
@@ -215,9 +215,9 @@ export function OracleInputArea() {
         <div className="mt-4 px-2 flex items-center justify-between animate-in fade-in slide-in-from-top-1">
           <div className="flex items-center gap-2">
             <Loader2 className="h-3 w-3 animate-spin text-primary" />
-            <span className="text-[10px] font-bold text-primary uppercase tracking-widest">{store.stageLabel}</span>
+            <span className="text-meta font-bold text-primary uppercase tracking-widest">{store.stageLabel}</span>
           </div>
-          <span className="text-[10px] text-muted-foreground uppercase font-bold">Pressione ESC para cancelar</span>
+          <span className="text-meta text-muted-foreground uppercase font-bold">Pressione ESC para cancelar</span>
         </div>
       )}
 
@@ -225,12 +225,12 @@ export function OracleInputArea() {
         <div className="mt-4 p-3 rounded-xl bg-destructive/10 border border-destructive/20 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <AlertTriangle className="h-4 w-4 text-destructive" />
-            <p className="text-xs text-destructive font-medium">{store.error}</p>
+            <p className="text-meta text-destructive font-medium">{store.error}</p>
           </div>
           <Button 
             variant="ghost" 
             size="sm" 
-            className="h-8 text-[10px] font-bold uppercase gap-1.5 text-destructive hover:bg-destructive/10"
+            className="h-8 text-meta font-bold uppercase gap-1.5 text-destructive hover:bg-destructive/10"
             onClick={() => store.submitQuery()}
           >
             <RotateCcw className="h-3 w-3" /> Tentar Novamente
@@ -243,7 +243,7 @@ export function OracleInputArea() {
         <div className="flex items-center gap-2">
           {modeConfig.stages.map((stage, idx) => (
             <div key={stage} className="flex items-center gap-2">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase">{stage}</span>
+              <span className="text-meta font-bold text-muted-foreground uppercase">{stage}</span>
               {idx < modeConfig.stages.length - 1 && (
                 <ChevronRight className="h-3 w-3 text-muted-foreground/30" />
               )}
@@ -254,7 +254,7 @@ export function OracleInputArea() {
           <Button
             onClick={store.submitQuery}
             disabled={store.isRunning || !store.query.trim()}
-            className="nexus-gradient-bg text-primary-foreground gap-3 h-12 px-8 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all font-bold group"
+            className="nexus-gradient-bg text-primary-foreground gap-3 h-12 px-8 rounded-xl shadow-nexus-lg shadow-primary/20 hover:scale-[1.02] transition-all font-bold group"
           >
             {store.isRunning ? (
               <Loader2 className="h-5 w-5 animate-spin" />

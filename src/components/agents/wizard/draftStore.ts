@@ -6,9 +6,10 @@ import {
 } from '@/lib/validations/quickAgentSchema';
 import type { PromptVariantId } from '@/data/quickAgentTemplates';
 import type { DraftSummary } from './DraftRecoveryBanner';
+import type { DbRow } from '@/types/dbRow';
 
 const VALID_VARIANTS: ReadonlyArray<PromptVariantId> = ['balanced', 'concise', 'detailed'];
-function normalizeVariant(v: unknown): PromptVariantId | null {
+function normalizeVariant(v: DbRow): PromptVariantId | null {
   return typeof v === 'string' && (VALID_VARIANTS as readonly string[]).includes(v)
     ? (v as PromptVariantId)
     : null;
@@ -38,7 +39,7 @@ export interface DraftResumeTarget {
 interface ResumeStepDef {
   key: string;
   label?: string;
-  schema: { safeParse: (v: unknown) => { success: boolean; error?: { errors: Array<{ path: (string | number)[]; message: string; code?: string }> } } };
+  schema: { safeParse: (v: DbRow) => { success: boolean; error?: { errors: Array<{ path: (string | number)[]; message: string; code?: string }> } } };
   fields: readonly string[];
 }
 

@@ -44,7 +44,7 @@ export function GuardrailPolicies() {
       setNewOpen(false);
       setGrName('');
       queryClient.invalidateQueries({ queryKey: ['guardrail_policies'] });
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro inesperado');
     } finally {
       setSaving(false);
@@ -52,20 +52,20 @@ export function GuardrailPolicies() {
   };
 
   const handleToggle = async (id: string, enabled: boolean) => {
-    try { await toggleGuardrailPolicy(id, enabled); } catch (e: unknown) { toast.error(e instanceof Error ? e.message : 'Erro'); }
+    try { await toggleGuardrailPolicy(id, enabled); } catch (e) { toast.error(e instanceof Error ? e.message : 'Erro'); }
     queryClient.invalidateQueries({ queryKey: ['guardrail_policies'] });
   };
 
   const handleDelete = async (id: string) => {
-    try { await deleteGuardrailPolicy(id); toast.success('Guardrail removido'); } catch (e: unknown) { toast.error(e instanceof Error ? e.message : 'Erro'); }
+    try { await deleteGuardrailPolicy(id); toast.success('Guardrail removido'); } catch (e) { toast.error(e instanceof Error ? e.message : 'Erro'); }
     queryClient.invalidateQueries({ queryKey: ['guardrail_policies'] });
   };
 
   return (
     <div className="nexus-card">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-heading font-semibold text-foreground flex items-center gap-2">
-          <ShieldAlert className="h-4 w-4 text-primary" /> Guardrail Policies <Badge variant="outline" className="text-[11px] ml-1">{guardrails.length}</Badge>
+        <h3 className="text-body-sm font-heading font-semibold text-foreground flex items-center gap-2">
+          <ShieldAlert className="h-4 w-4 text-primary" /> Guardrail Policies <Badge variant="outline" className="text-meta ml-1">{guardrails.length}</Badge>
         </h3>
         <Dialog open={newOpen} onOpenChange={setNewOpen}>
           <DialogTrigger asChild>
@@ -76,9 +76,9 @@ export function GuardrailPolicies() {
           <DialogContent className="sm:max-w-[420px]">
             <DialogHeader><DialogTitle>Novo Guardrail</DialogTitle></DialogHeader>
             <div className="space-y-3 mt-2">
-              <div className="space-y-1"><Label className="text-xs">Nome *</Label><Input value={grName} onChange={e => setGrName(e.target.value)} className="bg-secondary/50" placeholder="Ex: Filtro LGPD" /></div>
+              <div className="space-y-1"><Label className="text-meta">Nome *</Label><Input value={grName} onChange={e => setGrName(e.target.value)} className="bg-secondary/50" placeholder="Ex: Filtro LGPD" /></div>
               <div className="space-y-1">
-                <Label className="text-xs">Tipo</Label>
+                <Label className="text-meta">Tipo</Label>
                 <Select value={grType} onValueChange={setGrType}>
                   <SelectTrigger className="bg-secondary/50"><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -103,8 +103,8 @@ export function GuardrailPolicies() {
       ) : guardrails.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-center">
           <Shield className="h-10 w-10 text-muted-foreground mb-3" />
-          <p className="text-xs text-muted-foreground">Nenhum guardrail configurado.</p>
-          <p className="text-[11px] text-muted-foreground mt-1">Crie guardrails para proteger seus agentes.</p>
+          <p className="text-meta text-muted-foreground">Nenhum guardrail configurado.</p>
+          <p className="text-meta text-muted-foreground mt-1">Crie guardrails para proteger seus agentes.</p>
         </div>
       ) : (
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
@@ -114,8 +114,8 @@ export function GuardrailPolicies() {
             >
               <ShieldCheck className={`h-5 w-5 shrink-0 ${g.is_enabled ? 'text-nexus-emerald' : 'text-muted-foreground'}`} />
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-foreground truncate">{g.name}</p>
-                <p className="text-[11px] text-muted-foreground">{typeLabels[g.type] || g.type}</p>
+                <p className="text-meta font-medium text-foreground truncate">{g.name}</p>
+                <p className="text-meta text-muted-foreground">{typeLabels[g.type] || g.type}</p>
               </div>
               <Switch checked={g.is_enabled ?? true} onCheckedChange={(v) => handleToggle(g.id, v)} />
               <AlertDialog>
@@ -154,7 +154,7 @@ function GuardrailTester() {
       const data = await testGuardrails(testInput.trim());
       setResult(data as Record<string, unknown>);
       toast.success('Verificação concluída!');
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro ao testar guardrails');
     } finally {
       setTesting(false);
@@ -163,7 +163,7 @@ function GuardrailTester() {
 
   return (
     <div className="mt-4 pt-4 border-t border-border/30">
-      <h4 className="text-xs font-semibold text-foreground flex items-center gap-1.5 mb-3">
+      <h4 className="text-meta font-semibold text-foreground flex items-center gap-1.5 mb-3">
         <FlaskConical className="h-3.5 w-3.5 text-primary" /> Testar Guardrails Engine
       </h4>
       <div className="space-y-2">
@@ -172,7 +172,7 @@ function GuardrailTester() {
           onChange={e => setTestInput(e.target.value)}
           placeholder="Digite um texto para verificar (PII, injection, toxicidade)..."
           rows={2}
-          className="bg-secondary/50 text-xs"
+          className="bg-secondary/50 text-meta"
         />
         <Button size="sm" onClick={handleTest} disabled={testing} className="gap-1.5">
           {testing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FlaskConical className="h-3.5 w-3.5" />}
@@ -182,14 +182,14 @@ function GuardrailTester() {
       {result && (
         <div className="mt-3 p-3 rounded-lg bg-secondary/30 border border-border/30">
           <div className="flex items-center gap-2 mb-2">
-            <Badge variant={result.passed ? 'default' : 'destructive'} className="text-[11px]">
+            <Badge variant={result.passed ? 'default' : 'destructive'} className="text-meta">
               {result.passed ? '✅ Aprovado' : '❌ Bloqueado'}
             </Badge>
             {result.score != null && (
-              <span className="text-[11px] text-muted-foreground">Score: {String(result.score)}</span>
+              <span className="text-meta text-muted-foreground">Score: {String(result.score)}</span>
             )}
           </div>
-          <pre className="text-[11px] text-muted-foreground overflow-auto max-h-[150px]">
+          <pre className="text-meta text-muted-foreground overflow-auto max-h-[150px]">
             {JSON.stringify(result, null, 2)}
           </pre>
         </div>

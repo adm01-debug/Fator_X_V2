@@ -1,5 +1,15 @@
 // Agent Conversational Builder — chat-to-agent via Lovable AI
 import { corsHeaders } from "https://esm.sh/@supabase/supabase-js@2.95.0/cors";
+import { z } from "https://esm.sh/zod@3.23.8";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS } from "../_shared/mod.ts";
+
+const BuilderBodySchema = z.object({
+  messages: z.array(z.object({
+    role: z.enum(['system', 'user', 'assistant', 'tool']),
+    content: z.union([z.string(), z.array(z.record(z.unknown())), z.null()]).optional(),
+  }).passthrough()).min(1).max(100),
+  currentAgent: z.record(z.unknown()).nullable().optional(),
+}).passthrough();
 
 const SYSTEM_PROMPT = `Você é um assistente especializado em ajudar usuários a configurar agentes de IA na plataforma Fator X.
 
@@ -25,11 +35,20 @@ REGRAS:
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
+  const identifier = getRateLimitIdentifier(req);
+  const rateResult = checkRateLimit(identifier, RATE_LIMITS.medium);
+  if (!rateResult.allowed) return createRateLimitResponse(rateResult, req);
+
   try {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY missing");
 
-    const { messages, currentAgent } = await req.json();
+    const rawBody = await req.json().catch(() => null);
+    const parsedBody = BuilderBodySchema.safeParse(rawBody);
+    if (!parsedBody.success) {
+      return new Response(JSON.stringify({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+    const { messages, currentAgent } = parsedBody.data;
 
     const contextMsg = currentAgent
       ? `\n\nESTADO ATUAL DO AGENTE:\n${JSON.stringify(currentAgent, null, 2)}`

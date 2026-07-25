@@ -62,14 +62,14 @@ export function SavedTestRunsPanel({ agentId, agentName }: Props) {
     return (
       <div className="nexus-card">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-heading font-semibold text-foreground flex items-center gap-2">
+          <h3 className="text-body-sm font-heading font-semibold text-foreground flex items-center gap-2">
             <History className="h-4 w-4 text-primary" aria-hidden="true" />
             Test Runs salvos
           </h3>
         </div>
         <div className="flex flex-col items-center justify-center py-8 text-center">
           <FlaskConical className="h-8 w-8 text-muted-foreground/50 mb-2" aria-hidden="true" />
-          <p className="text-xs text-muted-foreground">
+          <p className="text-meta text-muted-foreground">
             Nenhum run salvo ainda. Use <span className="font-medium text-foreground">Simular run</span> e salve o resultado para comparar depois.
           </p>
         </div>
@@ -79,23 +79,23 @@ export function SavedTestRunsPanel({ agentId, agentName }: Props) {
 
   return (
     <>
-      <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
+      <div className="bg-card border border-border rounded-2xl shadow-nexus-sm overflow-hidden">
         <div className="flex items-center justify-between p-6 border-b border-border/50 flex-wrap gap-2 bg-secondary/5">
-          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+          <h3 className="text-body-sm font-bold text-foreground flex items-center gap-2">
             <History className="h-4 w-4 text-primary" aria-hidden="true" />
             Histórico de Testes & Simulações
-            <span className="text-[10px] bg-secondary px-1.5 py-0.5 rounded-full font-mono text-muted-foreground">{runs.length}</span>
+            <span className="text-meta bg-secondary px-1.5 py-0.5 rounded-full font-mono text-muted-foreground">{runs.length}</span>
           </h3>
           <div className="flex items-center gap-2">
             {compareIds.length > 0 && (
-              <span className="text-[11px] text-muted-foreground">
+              <span className="text-meta text-muted-foreground">
                 {compareIds.length}/2 selecionados
               </span>
             )}
             <Button
               size="sm"
               variant="outline"
-              className="h-7 text-xs gap-1.5"
+              className="h-7 text-meta gap-1.5"
               disabled={compareSelected.length !== 2}
               onClick={() => setCompareOpen(true)}
             >
@@ -104,9 +104,9 @@ export function SavedTestRunsPanel({ agentId, agentName }: Props) {
           </div>
         </div>
         <div className="p-6">
-        <div className="rounded-xl border border-border/50 overflow-hidden shadow-inner">
+        <div className="rounded-xl border border-border/50 overflow-hidden shadow-nexus-inner">
           <div className="max-h-[320px] overflow-y-auto">
-            <table className="w-full text-xs">
+            <table className="w-full text-meta">
               <thead className="bg-secondary/40 sticky top-0">
                 <tr className="text-left text-muted-foreground border-b border-border/50">
                   <th scope="col" className="py-2 px-2 font-medium w-8"></th>
@@ -175,7 +175,7 @@ export function SavedTestRunsPanel({ agentId, agentName }: Props) {
           </div>
         </div>
 
-        <p className="text-[10px] text-muted-foreground/70 mt-2">
+        <p className="text-meta text-muted-foreground/70 mt-2">
           Marque até 2 runs nas caixas e clique em Comparar para ver as diferenças. Salvos localmente neste navegador.
         </p>
       </div>
@@ -247,7 +247,7 @@ function CompareDialog({
         </div>
 
         <div className="rounded-lg border border-border/50 overflow-hidden">
-          <table className="w-full text-xs">
+          <table className="w-full text-meta">
             <thead className="bg-secondary/40">
               <tr className="text-left text-muted-foreground border-b border-border/50">
                 <th scope="col" className="py-2 px-3 font-medium">Métrica</th>
@@ -302,13 +302,13 @@ function CompareDialog({
 function RunMiniCard({ run, label }: { run: SavedTestRun; label: string }) {
   return (
     <div className="rounded-lg border border-border/50 bg-card/50 p-3">
-      <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">{label}</p>
-      <p className="text-sm font-semibold text-foreground truncate" title={run.name}>{run.name}</p>
-      <p className="text-[10px] text-muted-foreground tabular-nums mt-0.5">
+      <p className="text-meta uppercase tracking-wider text-muted-foreground mb-1">{label}</p>
+      <p className="text-body-sm font-semibold text-foreground truncate" title={run.name}>{run.name}</p>
+      <p className="text-meta text-muted-foreground tabular-nums mt-0.5">
         {new Date(run.savedAt).toLocaleString('pt-BR')} · {run.summary.total} runs
       </p>
       {run.prompt && (
-        <p className="text-[10px] text-muted-foreground/80 mt-1 truncate font-mono" title={run.prompt}>
+        <p className="text-meta text-muted-foreground/80 mt-1 truncate font-mono" title={run.prompt}>
           “{run.prompt}”
         </p>
       )}

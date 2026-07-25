@@ -1,3 +1,4 @@
+import type { DbRow } from '@/types/dbRow';
 type LogLevel = 'debug' | 'info' | 'warn' | 'error' | 'critical';
 
 interface LogEntry {
@@ -23,14 +24,14 @@ function formatEntry(entry: LogEntry): string {
   return `[${entry.timestamp}] [${entry.level.toUpperCase()}] ${entry.message}${ctx}`;
 }
 
-function normalizeContext(ctx: unknown): Record<string, unknown> | undefined {
+function normalizeContext(ctx: DbRow): Record<string, unknown> | undefined {
   if (ctx === undefined) return undefined;
   if (ctx instanceof Error) return { error: ctx.message, stack: ctx.stack };
   if (typeof ctx === 'object' && ctx !== null) return ctx as Record<string, unknown>;
   return { value: String(ctx) };
 }
 
-function log(level: LogLevel, message: string, context?: unknown) {
+function log(level: LogLevel, message: string, context?: DbRow) {
   if (!shouldLog(level)) return;
 
   const entry: LogEntry = {
@@ -46,8 +47,8 @@ function log(level: LogLevel, message: string, context?: unknown) {
     case 'debug': console.debug(formatted); break;
     case 'info': console.info(formatted); break;
     case 'warn': console.warn(formatted); break;
-    case 'error':
-    case 'critical': console.error(formatted); break;
+    case 'error': console.error(formatted); break;
+    case 'critical': console.error(`%c${formatted}`, 'color: white; background: red; font-weight: bold; padding: 2px;'); break;
   }
 
   // Forward errors to Sentry (no-op if not initialized)
@@ -64,11 +65,11 @@ function log(level: LogLevel, message: string, context?: unknown) {
 }
 
 export const logger = {
-  debug: (msg: string, ctx?: unknown) => log('debug', msg, ctx),
-  info: (msg: string, ctx?: unknown) => log('info', msg, ctx),
-  warn: (msg: string, ctx?: unknown) => log('warn', msg, ctx),
-  error: (msg: string, ctx?: unknown) => log('error', msg, ctx),
-  critical: (msg: string, ctx?: unknown) => log('critical', msg, ctx),
+  debug: (msg: string, ctx?: DbRow) => log('debug', msg, ctx),
+  info: (msg: string, ctx?: DbRow) => log('info', msg, ctx),
+  warn: (msg: string, ctx?: DbRow) => log('warn', msg, ctx),
+  error: (msg: string, ctx?: DbRow) => log('error', msg, ctx),
+  critical: (msg: string, ctx?: DbRow) => log('critical', msg, ctx),
 };
 
 /** Attach global error handlers — call once at app boot */

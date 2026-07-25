@@ -72,7 +72,7 @@ export function OverviewTab() {
     { label: 'Entidades', value: stats?.entities ?? 0, icon: '🏢', color: 'text-nexus-blue' },
     { label: 'Relações', value: stats?.relations ?? 0, icon: '🔗', color: 'text-nexus-amber' },
     { label: 'Traces', value: stats?.traces ?? 0, icon: '📊', color: 'text-nexus-rose' },
-    { label: 'Consultas Hoje', value: stats?.today_traces ?? 0, icon: '🔍', color: 'text-teal-400' },
+    { label: 'Consultas Hoje', value: stats?.today_traces ?? 0, icon: '🔍', color: 'text-nexus-teal' },
     { label: 'Ferramentas', value: stats?.tools ?? 0, icon: '🔧', color: 'text-nexus-amber' },
   ];
 
@@ -121,11 +121,11 @@ export function OverviewTab() {
                   </div>
                 </div>
                 <div>
-                  <h3 className="text-sm font-heading font-semibold text-foreground flex items-center gap-2">
+                  <h3 className="text-body-sm font-heading font-semibold text-foreground flex items-center gap-2">
                     <Activity className="h-4 w-4 text-primary" /> Health Score
                   </h3>
-                  <p className={`text-xs font-medium mt-0.5 ${healthColor}`}>{healthLabel}</p>
-                  <p className="text-[11px] text-muted-foreground mt-0.5">
+                  <p className={`text-meta font-medium mt-0.5 ${healthColor}`}>{healthLabel}</p>
+                  <p className="text-meta text-muted-foreground mt-0.5">
                     {health?.collections ?? 0} coleções · {health?.docs ?? 0} docs · {health?.chunks ?? 0} chunks
                   </p>
                 </div>
@@ -134,7 +134,7 @@ export function OverviewTab() {
                 <Badge variant="outline" className="border-nexus-emerald/30 text-nexus-emerald gap-1">
                   <TrendingUp className="h-3 w-3" /> Cérebro online
                 </Badge>
-                <span className="text-[10px] text-muted-foreground">
+                <span className="text-meta text-muted-foreground">
                   {stats?.today_traces ?? 0} consultas nas últimas 24h
                 </span>
               </div>
@@ -147,14 +147,14 @@ export function OverviewTab() {
               <div key={m.label} className="nexus-card text-center py-4">
                 <p className="text-2xl mb-1">{m.icon}</p>
                 <p className={`text-xl font-heading font-bold ${m.color}`}>{m.value}</p>
-                <p className="text-[11px] text-muted-foreground">{m.label}</p>
+                <p className="text-meta text-muted-foreground">{m.label}</p>
               </div>
             ))}
           </div>
 
           {/* Memory architecture */}
           <div className="nexus-card">
-            <h3 className="text-sm font-heading font-semibold text-foreground mb-3 flex items-center gap-2">
+            <h3 className="text-body-sm font-heading font-semibold text-foreground mb-3 flex items-center gap-2">
               <Network className="h-4 w-4 text-primary" /> Arquitetura de Memória
             </h3>
             <div className="grid md:grid-cols-3 gap-3">
@@ -165,13 +165,13 @@ export function OverviewTab() {
               ].map((l) => (
                 <div key={l.title} className="p-3 rounded-lg bg-secondary/30 border border-border/30">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="text-lg">{l.icon}</span>
-                    <span className="text-xs font-semibold text-foreground">{l.title}</span>
-                    <Badge variant="outline" className="text-[10px] ml-auto border-nexus-emerald/30 text-nexus-emerald">Ativo</Badge>
+                    <span className="text-title-sm">{l.icon}</span>
+                    <span className="text-meta font-semibold text-foreground">{l.title}</span>
+                    <Badge variant="outline" className="text-meta ml-auto border-nexus-emerald/30 text-nexus-emerald">Ativo</Badge>
                   </div>
-                  <p className="text-[11px] text-muted-foreground mb-2">{l.desc}</p>
-                  <p className="text-sm font-bold text-foreground">
-                    {l.count.toLocaleString('pt-BR')} <span className="text-[10px] text-muted-foreground font-normal">{l.unit}</span>
+                  <p className="text-meta text-muted-foreground mb-2">{l.desc}</p>
+                  <p className="text-body-sm font-bold text-foreground">
+                    {l.count.toLocaleString('pt-BR')} <span className="text-meta text-muted-foreground font-normal">{l.unit}</span>
                   </p>
                 </div>
               ))}
@@ -180,7 +180,7 @@ export function OverviewTab() {
 
           {/* Telemetria Neural — Real-time stream */}
           <div className="nexus-card">
-            <h3 className="text-sm font-heading font-semibold text-foreground mb-3 flex items-center gap-2">
+            <h3 className="text-body-sm font-heading font-semibold text-foreground mb-3 flex items-center gap-2">
               <Zap className="h-4 w-4 text-nexus-amber" /> Telemetria Neural (Memórias Recentes)
             </h3>
             <div className="space-y-2">
@@ -199,7 +199,7 @@ export function OverviewTab() {
                           {new Date(m.created_at).toLocaleTimeString()}
                         </span>
                       </div>
-                      <p className="text-[11px] text-foreground line-clamp-2 leading-relaxed">
+                      <p className="text-meta text-foreground line-clamp-2 leading-relaxed">
                         {m.content}
                       </p>
                     </div>
@@ -207,14 +207,14 @@ export function OverviewTab() {
                 ))
               ) : (
                 <div className="text-center py-6 border border-dashed border-border/50 rounded-lg">
-                  <p className="text-xs text-muted-foreground italic">Aguardando novos impulsos sinápticos...</p>
+                  <p className="text-meta text-muted-foreground italic">Aguardando novos impulsos sinápticos...</p>
                 </div>
               )}
             </div>
             <div className="mt-3 pt-3 border-t border-border/30 flex items-center justify-between">
               <div className="flex items-center gap-1.5">
                 <div className="h-1.5 w-1.5 rounded-full bg-nexus-emerald animate-pulse" />
-                <span className="text-[10px] text-muted-foreground">Monitoramento em tempo real ativo</span>
+                <span className="text-meta text-muted-foreground">Monitoramento em tempo real ativo</span>
               </div>
               <Badge variant="outline" className="text-[9px] border-primary/20 text-primary">
                 v10.0-PROD
@@ -225,7 +225,7 @@ export function OverviewTab() {
           {/* Quick Management */}
           <div className="grid md:grid-cols-2 gap-4">
             <div className="nexus-card">
-              <h3 className="text-sm font-heading font-semibold text-foreground mb-3 flex items-center gap-2">
+              <h3 className="text-body-sm font-heading font-semibold text-foreground mb-3 flex items-center gap-2">
                 <TrendingUp className="h-4 w-4 text-nexus-emerald" /> Insights de Operação
               </h3>
               <div className="grid grid-cols-1 gap-2">
@@ -249,7 +249,7 @@ export function OverviewTab() {
                 return insights.map((insight, i) => (
                   <div
                     key={i}
-                    className={`flex items-start gap-2 p-2 rounded text-[11px] ${
+                    className={`flex items-start gap-2 p-2 rounded text-meta ${
                       insight.type === 'good' ? 'bg-nexus-emerald/10 border border-nexus-emerald/20 text-nexus-emerald' :
                       insight.type === 'warn' ? 'bg-nexus-amber/10 border border-nexus-amber/20 text-nexus-amber' :
                       'bg-primary/10 border border-primary/20 text-primary'
@@ -264,7 +264,7 @@ export function OverviewTab() {
             </div>
             
             <div className="nexus-card">
-              <h3 className="text-sm font-heading font-semibold text-foreground mb-3 flex items-center gap-2">
+              <h3 className="text-body-sm font-heading font-semibold text-foreground mb-3 flex items-center gap-2">
                 <Zap className="h-4 w-4 text-primary" /> Manutenção de Memória
               </h3>
               <div className="space-y-3">
@@ -272,14 +272,14 @@ export function OverviewTab() {
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <Layers className="h-4 w-4 text-nexus-purple" />
-                      <span className="text-xs font-semibold">Compactação Automática</span>
+                      <span className="text-meta font-semibold">Compactação Automática</span>
                     </div>
-                    <Badge variant="outline" className="text-[10px] border-nexus-emerald/30 text-nexus-emerald">Otimizado</Badge>
+                    <Badge variant="outline" className="text-meta border-nexus-emerald/30 text-nexus-emerald">Otimizado</Badge>
                   </div>
-                  <p className="text-[11px] text-muted-foreground mb-3">Reduza o custo de contexto fundindo memórias episódicas similares em fatos canônicos.</p>
+                  <p className="text-meta text-muted-foreground mb-3">Reduza o custo de contexto fundindo memórias episódicas similares em fatos canônicos.</p>
                   <Button 
                     size="sm" 
-                    className="w-full h-8 gap-2 text-xs" 
+                    className="w-full h-8 gap-2 text-meta" 
                     variant="outline" 
                     onClick={handleCompact}
                     disabled={compacting}
@@ -293,11 +293,11 @@ export function OverviewTab() {
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <TrendingDown className="h-4 w-4 text-nexus-orange" />
-                      <span className="text-xs font-semibold">Temporal Decay</span>
+                      <span className="text-meta font-semibold">Temporal Decay</span>
                     </div>
-                    <Badge variant="outline" className="text-[10px]">Ativo</Badge>
+                    <Badge variant="outline" className="text-meta">Ativo</Badge>
                   </div>
-                  <p className="text-[11px] text-muted-foreground">O Super Cérebro esquece gradualmente informações irrelevantes para manter a precisão.</p>
+                  <p className="text-meta text-muted-foreground">O Super Cérebro esquece gradualmente informações irrelevantes para manter a precisão.</p>
                 </div>
               </div>
             </div>

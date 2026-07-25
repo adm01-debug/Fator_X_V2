@@ -35,19 +35,21 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { verifyHmac } from "../_shared/webhookSignature.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
+import { z } from "https://esm.sh/zod@3.23.8";
+const Bitrix24PayloadSchema = z.object({
+  event: z.string().max(120).optional(),
+  auth: z.record(z.unknown()).optional(),
+  data: z.record(z.unknown()).optional(),
+  ts: z.union([z.string(), z.number()]).optional(),
+}).passthrough();
 
 // ─── CORS ───
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "content-type, authorization",
-};
-
 // ─── Supabase client (service role to bypass RLS) ───
 function getServiceClient() {
-  const url = Deno.env.get("SUPABASE_URL");
-  const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  if (!url || !key) throw new Error("Missing Supabase env vars");
+  const url = requireEnv("SUPABASE_URL");
+  const key = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
   return createClient(url, key);
 }
 
@@ -75,12 +77,8 @@ function parseFormBody(body: string): Record<string, unknown> {
 }
 
 // ─── HMAC validation (Bitrix24 sends application_token in payload) ───
-async function validateSignature(parsed: Record<string, unknown>, rawBody: string): Promise<boolean> {
-  const expectedToken = Deno.env.get("BITRIX24_APP_TOKEN");
-  if (!expectedToken) {
-    console.error("BITRIX24_APP_TOKEN not configured");
-    return false;
-  }
+async function validateSignature(parsed: Record<string, unknown>, _rawBody: string): Promise<boolean> {
+  const expectedToken = requireEnv("BITRIX24_APP_TOKEN");
   
   const auth = parsed.auth as Record<string, unknown> | undefined;
   const received = auth?.application_token;
@@ -158,6 +156,7 @@ async function writeAudit(
 
 // ─── Main handler ───
 serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -167,6 +166,10 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
+
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.light);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
 
   const traceId = generateTraceId();
   const startTime = Date.now();
@@ -193,11 +196,19 @@ serve(async (req) => {
     }
   } catch (err) {
     console.error("Body parse failed", err);
-    return new Response(JSON.stringify({ error: "Invalid request body" }), {
+    return new Response(JSON.stringify({ error: "Corpo da requisição inválido" }), {
       status: 400,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
+
+  const parsedZ = Bitrix24PayloadSchema.safeParse(parsed);
+  if (!parsedZ.success) {
+    return new Response(JSON.stringify({ error: 'Payload inválido', details: parsedZ.error.flatten().fieldErrors }), {
+      status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+  parsed = parsedZ.data as Record<string, unknown>;
 
   const eventType = String(parsed.event ?? "UNKNOWN");
   const auth = (parsed.auth ?? {}) as Record<string, unknown>;
@@ -225,6 +236,22 @@ serve(async (req) => {
     trace_id: traceId,
     processed_at: new Date().toISOString(),
   };
+
+  // ─── Dedupe: se já processamos este bitrix_event_id, retorna OK sem re-executar ───
+  if (bitrixEventId && workspaceId) {
+    const { data: existing } = await client
+      .from("bitrix24_webhook_events")
+      .select("id")
+      .eq("workspace_id", workspaceId)
+      .eq("event_type", eventType)
+      .eq("bitrix_event_id", bitrixEventId)
+      .maybeSingle();
+    if (existing) {
+      return new Response(JSON.stringify({ ok: true, deduped: true, trace_id: traceId }), {
+        status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+  }
 
   // ─── 1. Reject if signature invalid ───
   if (!signatureValid) {
@@ -294,7 +321,7 @@ serve(async (req) => {
 
   // Also create a trace_event entry so the new TracingPanel shows it
   try {
-    await (client.from("trace_events").insert as Function)({
+    await (client.from("trace_events").insert as unknown as (row: unknown) => Promise<unknown>)({
       event_type: "bitrix24_webhook",
       data: {
         trace_id: traceId,

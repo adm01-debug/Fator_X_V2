@@ -42,7 +42,7 @@ export async function registerMCPServer(server: {
     tools = result.tools;
     status = 'connected';
     clients.set(server.url, client);
-  } catch (err: unknown) {
+  } catch (err) {
     status = 'error';
     errorMsg = err instanceof Error ? err.message : 'Connection failed';
   }

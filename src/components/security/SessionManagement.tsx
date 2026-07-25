@@ -29,13 +29,13 @@ export function SessionManagement() {
 
   return (
     <div className="nexus-card">
-      <h3 className="text-sm font-heading font-semibold text-foreground mb-4 flex items-center gap-2">
+      <h3 className="text-body-sm font-heading font-semibold text-foreground mb-4 flex items-center gap-2">
         <Monitor className="h-4 w-4 text-primary" /> Sessões Ativas
-        {email && <Badge variant="outline" className="text-[10px] ml-1">{email}</Badge>}
+        {email && <Badge variant="outline" className="text-meta ml-1">{email}</Badge>}
       </h3>
       <div className="space-y-2">
         {sessions.length === 0 ? (
-          <p className="text-xs text-muted-foreground text-center py-6">Nenhuma sessão ativa</p>
+          <p className="text-meta text-muted-foreground text-center py-6">Nenhuma sessão ativa</p>
         ) : sessions.map(s => {
           const d = parseDevice(s.device);
           return (
@@ -45,10 +45,10 @@ export function SessionManagement() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <p className="text-xs font-medium text-foreground">{d.name}</p>
-                  {s.current && <Badge className="text-[10px] bg-nexus-emerald/10 text-nexus-emerald border-nexus-emerald/20">Atual</Badge>}
+                  <p className="text-meta font-medium text-foreground">{d.name}</p>
+                  {s.current && <Badge className="text-meta bg-nexus-emerald/10 text-nexus-emerald border-nexus-emerald/20">Atual</Badge>}
                 </div>
-                <p className="text-[11px] text-muted-foreground flex items-center gap-2">
+                <p className="text-meta text-muted-foreground flex items-center gap-2">
                   <Globe className="h-3 w-3 inline" /> Sessão ativa • <Clock className="h-3 w-3 inline" /> {new Date(s.lastActive).toLocaleString('pt-BR')}
                 </p>
               </div>
@@ -57,7 +57,7 @@ export function SessionManagement() {
         })}
       </div>
       {sessions.length > 1 && (
-        <Button variant="outline" size="sm" className="mt-3 text-xs text-destructive" onClick={() => signOutOtherSessions().then(() => toast.success('Outras sessões encerradas')).catch(() => toast.error('Falha'))}>
+        <Button variant="outline" size="sm" className="mt-3 text-meta text-destructive" onClick={() => signOutOtherSessions().then(() => toast.success('Outras sessões encerradas')).catch(() => toast.error('Falha'))}>
           Encerrar todas as outras sessões
         </Button>
       )}

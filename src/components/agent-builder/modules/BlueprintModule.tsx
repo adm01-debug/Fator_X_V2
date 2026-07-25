@@ -66,8 +66,8 @@ export function BlueprintModule() {
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {summaryCards.map((card) => (
           <div key={card.label} className="rounded-xl border border-border bg-card p-4">
-            <p className="text-xs text-muted-foreground mb-1">{card.label}</p>
-            <p className="text-sm font-semibold text-foreground">{card.value}</p>
+            <p className="text-meta text-muted-foreground mb-1">{card.label}</p>
+            <p className="text-body-sm font-semibold text-foreground">{card.value}</p>
           </div>
         ))}
       </div>
@@ -78,7 +78,7 @@ export function BlueprintModule() {
         <div className="flex gap-2">
           <button
             onClick={() => setShowFormat('json')}
-            className={`px-4 py-2 rounded-lg text-sm transition-all ${
+            className={`px-4 py-2 rounded-lg text-body-sm transition-all ${
               showFormat === 'json' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:text-foreground'
             }`}
           >
@@ -86,7 +86,7 @@ export function BlueprintModule() {
           </button>
           <button
             onClick={() => setShowFormat('markdown')}
-            className={`px-4 py-2 rounded-lg text-sm transition-all ${
+            className={`px-4 py-2 rounded-lg text-body-sm transition-all ${
               showFormat === 'markdown' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:text-foreground'
             }`}
           >
@@ -101,7 +101,7 @@ export function BlueprintModule() {
         <div className="flex gap-2">
           <button
             onClick={() => handleCopy(showFormat === 'json' ? json : markdown, showFormat.toUpperCase())}
-            className="px-4 py-2 rounded-lg bg-muted text-foreground text-sm hover:bg-muted/80 transition-all"
+            className="px-4 py-2 rounded-lg bg-muted text-foreground text-body-sm hover:bg-muted/80 transition-all"
           >
             📋 Copiar {showFormat.toUpperCase()}
           </button>
@@ -113,7 +113,7 @@ export function BlueprintModule() {
                 showFormat === 'json' ? 'application/json' : 'text/markdown'
               )
             }
-            className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-all"
+            className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-body-sm hover:bg-primary/90 transition-all"
           >
             💾 Baixar .{showFormat === 'json' ? 'json' : 'md'}
           </button>
@@ -124,13 +124,13 @@ export function BlueprintModule() {
       <SectionTitle icon="✅" title="Checklist de Prontidão" subtitle="Resumo rápido dos itens essenciais" />
       <div className="rounded-xl border border-border bg-card p-4 space-y-2">
         {checks.map((check) => (
-          <div key={check.label} className="flex items-center gap-3 text-sm">
-            <span className={`text-lg ${check.ok ? '' : 'opacity-50'}`}>{check.ok ? '✅' : '❌'}</span>
+          <div key={check.label} className="flex items-center gap-3 text-body-sm">
+            <span className={`text-title-sm ${check.ok ? '' : 'opacity-50'}`}>{check.ok ? '✅' : '❌'}</span>
             <span className={check.ok ? 'text-muted-foreground' : 'text-foreground'}>{check.label}</span>
           </div>
         ))}
         <div className="pt-2 border-t border-border mt-2">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-body-sm text-muted-foreground">
             {checks.filter(c => c.ok).length}/{checks.length} itens concluídos
           </p>
         </div>
@@ -142,12 +142,12 @@ export function BlueprintModule() {
           <SectionTitle icon="🕒" title="Histórico de Versões" subtitle={`${versions.length} versões salvas`} />
           <div className="rounded-xl border border-border bg-card p-4 space-y-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2 text-body-sm text-muted-foreground">
                 <History className="h-4 w-4" />
                 Últimas alterações
               </div>
               {versions.length >= 2 && (
-                <Button size="sm" variant="outline" onClick={() => setHistoryOpen(true)} className="gap-1.5 h-7 text-xs">
+                <Button size="sm" variant="outline" onClick={() => setHistoryOpen(true)} className="gap-1.5 h-7 text-meta">
                   <GitCompare className="h-3 w-3" />
                   Comparar versões
                 </Button>
@@ -155,7 +155,7 @@ export function BlueprintModule() {
             </div>
             <div className="space-y-1.5 max-h-64 overflow-auto">
               {versions.slice(0, 10).map((v) => (
-                <div key={v.id} className="flex items-center justify-between text-xs py-1.5 px-2 rounded-md hover:bg-muted/50">
+                <div key={v.id} className="flex items-center justify-between text-meta py-1.5 px-2 rounded-md hover:bg-muted/50">
                   <div className="flex items-center gap-2 min-w-0">
                     <span className="font-mono font-semibold text-foreground shrink-0">v{v.version}</span>
                     <span className="text-muted-foreground truncate">{v.model || '—'}</span>

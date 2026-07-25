@@ -32,7 +32,7 @@ export function RestoreValidationPanel({ validation, onApplyFix }: Props) {
     return (
       <div
         role="status"
-        className="flex items-center gap-2 rounded-lg border border-nexus-emerald/30 bg-nexus-emerald/5 px-3 py-2 text-xs text-nexus-emerald"
+        className="flex items-center gap-2 rounded-lg border border-nexus-emerald/30 bg-nexus-emerald/5 px-3 py-2 text-meta text-nexus-emerald"
       >
         <CheckCircle2 className="h-3.5 w-3.5 shrink-0" aria-hidden />
         <span>Validação OK — nenhuma incompatibilidade detectada.</span>
@@ -63,7 +63,7 @@ export function RestoreValidationPanel({ validation, onApplyFix }: Props) {
           ) : (
             <AlertTriangle className="h-3.5 w-3.5 text-nexus-amber" aria-hidden />
           )}
-          <h4 className={`text-xs font-semibold ${errors.length ? 'text-destructive' : 'text-nexus-amber'}`}>
+          <h4 className={`text-meta font-semibold ${errors.length ? 'text-destructive' : 'text-nexus-amber'}`}>
             {errors.length
               ? `${errors.length} erro${errors.length === 1 ? '' : 's'} ${
                   warnings.length ? `· ${warnings.length} aviso${warnings.length === 1 ? '' : 's'}` : ''
@@ -76,7 +76,7 @@ export function RestoreValidationPanel({ validation, onApplyFix }: Props) {
             <Button
               variant="ghost"
               size="sm"
-              className={`h-6 px-2 text-[10px] gap-1 font-semibold ${
+              className={`h-6 px-2 text-meta gap-1 font-semibold ${
                 errors.length ? 'hover:bg-destructive/20 text-destructive' : 'hover:bg-nexus-amber/20 text-nexus-amber'
               }`}
               onClick={() => {
@@ -91,7 +91,7 @@ export function RestoreValidationPanel({ validation, onApplyFix }: Props) {
               Corrigir tudo
             </Button>
           )}
-          <span className="text-[10px] font-mono text-muted-foreground">
+          <span className="text-meta font-mono text-muted-foreground">
             {errors.length ? 'rollback bloqueado' : 'rollback permitido'}
           </span>
         </div>
@@ -123,7 +123,7 @@ function IssueRow({ issue, onApplyFix }: { issue: ValidationIssue; onApplyFix?: 
         <Icon className={`h-3.5 w-3.5 mt-0.5 shrink-0 ${tone}`} aria-hidden />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className={`text-[11px] font-semibold ${isError ? 'text-foreground' : 'text-foreground/90'}`}>
+            <span className={`text-meta font-semibold ${isError ? 'text-foreground' : 'text-foreground/90'}`}>
               {issue.title}
             </span>
             <span className="text-[9px] font-mono uppercase tracking-wider px-1 py-0.5 rounded bg-muted/60 text-muted-foreground">
@@ -145,9 +145,9 @@ function IssueRow({ issue, onApplyFix }: { issue: ValidationIssue; onApplyFix?: 
       </button>
       {open && (
         <div className="px-3 pb-2.5 pl-8 space-y-1.5">
-          <p className="text-[11px] text-foreground/85 leading-relaxed">{issue.detail}</p>
+          <p className="text-meta text-foreground/85 leading-relaxed">{issue.detail}</p>
           {issue.hint && (
-            <p className="text-[10px] text-muted-foreground italic border-l-2 border-border pl-2">
+            <p className="text-meta text-muted-foreground italic border-l-2 border-border pl-2">
               💡 {issue.hint}
             </p>
           )}
@@ -163,7 +163,7 @@ function IssueRow({ issue, onApplyFix }: { issue: ValidationIssue; onApplyFix?: 
                   type="button"
                   size="sm"
                   variant="outline"
-                  className="h-6 px-2 text-[10px] gap-1 border-primary/30 text-primary hover:bg-primary/10 hover:text-primary"
+                  className="h-6 px-2 text-meta gap-1 border-primary/30 text-primary hover:bg-primary/10 hover:text-primary"
                   onClick={() => onApplyFix(fix)}
                   title={fix.description ?? fix.label}
                 >

@@ -1,3 +1,4 @@
+import type { DbRow } from '@/types/dbRow';
 /**
  * Resumo curto e legível das opções de um rollback/undo, incluindo overrides técnicos.
  */
@@ -8,7 +9,7 @@ export function summarizeRestoreOptions(
     copyModel: boolean;
   },
   overrides?: {
-    config?: Partial<{ temperature: number | null; max_tokens: number | null; reasoning: string | null; tools: unknown[] | null }>;
+    config?: Partial<{ temperature: number | null; max_tokens: number | null; reasoning: string | null; tools: DbRow[] | null }>;
     model?: string | null;
   }
 ): string {

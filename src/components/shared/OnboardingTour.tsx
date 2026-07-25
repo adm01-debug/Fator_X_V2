@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { X, ArrowRight, Bot, Sparkles, Keyboard, Rocket, Brain, Shield, GitBranch } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUIStore } from "@/stores/uiStore";
+import { handleKeyboardClick } from "@/lib/a11y";
 
 interface TourStep {
   title: string;
@@ -105,12 +106,13 @@ export function OnboardingTour() {
   const progress = ((step + 1) / TOUR_STEPS.length) * 100;
 
   return (
-    <div
+    <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
       className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-4"
       onClick={dismiss}
     >
+      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/click-events-have-key-events -- stopPropagation apenas; interações principais ficam em botões internos */}
       <div
-        className="w-full max-w-md rounded-2xl border border-primary/20 bg-background/95 backdrop-blur-xl shadow-2xl shadow-primary/10 overflow-hidden animate-fade-in-up"
+        className="w-full max-w-md rounded-2xl border border-primary/20 bg-background/95 backdrop-blur-xl shadow-nexus-2xl shadow-primary/10 overflow-hidden animate-fade-in-up"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-label="Tour de boas-vindas"
@@ -130,7 +132,7 @@ export function OnboardingTour() {
               <Icon className="h-6 w-6 text-primary" />
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-[11px] text-muted-foreground">
+              <span className="text-meta text-muted-foreground">
                 {step + 1}/{TOUR_STEPS.length}
               </span>
               <button
@@ -143,11 +145,11 @@ export function OnboardingTour() {
             </div>
           </div>
 
-          <h3 className="text-lg font-heading font-bold text-foreground mb-2">{current.title}</h3>
-          <p id="tour-description" className="text-sm text-muted-foreground leading-relaxed">{current.description}</p>
+          <h3 className="text-title-sm font-heading font-bold text-foreground mb-2">{current.title}</h3>
+          <p id="tour-description" className="text-body-sm text-muted-foreground leading-relaxed">{current.description}</p>
 
           {current.tip && (
-            <p className="text-[11px] text-primary/70 mt-2 flex items-center gap-1">
+            <p className="text-meta text-primary/70 mt-2 flex items-center gap-1">
               <Sparkles className="h-3 w-3 shrink-0" aria-hidden="true" />
               {current.tip}
             </p>
@@ -172,7 +174,7 @@ export function OnboardingTour() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-xs text-muted-foreground"
+                  className="text-meta text-muted-foreground"
                   onClick={prev}
                 >
                   Anterior
@@ -182,7 +184,7 @@ export function OnboardingTour() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="text-xs"
+                  className="text-meta"
                   onClick={() => handleAction(current.action!.path)}
                 >
                   {current.action.label}
@@ -190,7 +192,7 @@ export function OnboardingTour() {
               )}
               <Button
                 size="sm"
-                className="gap-1.5 text-xs nexus-gradient-bg text-primary-foreground hover:opacity-90"
+                className="gap-1.5 text-meta nexus-gradient-bg text-primary-foreground hover:opacity-90"
                 onClick={next}
               >
                 {isLast ? "Começar!" : "Próximo"}

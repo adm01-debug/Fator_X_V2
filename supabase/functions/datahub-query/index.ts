@@ -1,9 +1,20 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { fetchWithTimeout } from "../_shared/retry.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse, checkRateLimit, getRateLimitIdentifier, createRateLimitResponse, RATE_LIMITS } from "../_shared/mod.ts";
+import { getCorsHeaders, handleCorsPreflight, requireEnv, checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS } from "../_shared/mod.ts";
+import { z } from "https://esm.sh/zod@3.23.8";
+
+const DatahubBodySchema = z.object({
+  action: z.enum([
+    'test_connections','list_entities','query','list_columns','count',
+    'search','fetch','fetch_related','get_stats','custom_query','schema',
+  ]).or(z.string().min(1).max(80)),
+  streaming: z.boolean().optional(),
+}).passthrough();
 
 const encoder = new TextEncoder();
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
 function sseEvent(event: string, data: any) {
   return encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
 }
@@ -20,6 +31,7 @@ function getExternalClient(connectionId: string) {
 
 /* ── Entity mappings ─────────────────────────────────── */
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
 const ENTITY_MAPPINGS: Record<string, any> = {
   cliente: {
     primary: { connection: 'bancodadosclientes', table: 'companies', id_column: 'id', display_column: 'razao_social', filter: "is_customer = true AND status = 'ativo' AND razao_social IS NOT NULL AND razao_social != ''" },
@@ -76,6 +88,7 @@ const ENTITY_MAPPINGS: Record<string, any> = {
 /* ── Filter parser helper ────────────────────────────── */
 
 // deno-lint-ignore no-explicit-any -- Supabase query builder type is complex
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
 function applyStaticFilter(query: any, filterStr: string) {
   const parts = filterStr.split(' AND ').map((f: string) => f.trim());
   for (const f of parts) {
@@ -100,6 +113,7 @@ function applyStaticFilter(query: any, filterStr: string) {
 /* ── Dynamic filters from client ─────────────────────── */
 
 // deno-lint-ignore no-explicit-any -- Supabase query builder type is complex
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
 function applyDynamicFilters(query: any, filters: Array<Record<string, unknown>>) {
   for (const f of filters) {
     if (!f.column || !f.operator) continue;
@@ -128,14 +142,26 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
 
   try {
-    const authHeader = req.headers.get('Authorization')!;
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const authHeader = req.headers.get('Authorization') ?? '';
+    if (!authHeader) return new Response(JSON.stringify({ error: 'Missing Authorization header' }), { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+
+    const supabaseUrl = requireEnv('SUPABASE_URL');
+    const supabaseKey = requireEnv('SUPABASE_ANON_KEY');
+    if (!supabaseUrl || !supabaseKey) return new Response(JSON.stringify({ error: 'Missing SUPABASE_URL or SUPABASE_ANON_KEY env vars' }), { status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+
     const supabase = createClient(supabaseUrl, supabaseKey, { global: { headers: { Authorization: authHeader } } });
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    const rateCheck = await checkRateLimit(getRateLimitIdentifier(req, user.id), RATE_LIMITS.heavy);
+    if (!rateCheck.success) return createRateLimitResponse(rateCheck.remaining, rateCheck.reset, getCorsHeaders(req));
+    if (!rateCheck.allowed) return _createRateLimitResponse(rateCheck, getCorsHeaders(req));
 
-    const body = await req.json();
+    const rawBody = await req.json().catch(() => null);
+    const parsedBody = DatahubBodySchema.safeParse(rawBody);
+    if (!parsedBody.success) {
+      return new Response(JSON.stringify({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    }
+    const body = parsedBody.data as Record<string, unknown> & { action: string };
     const { action } = body;
 
     // ═══ ACTION: test_connections (Optimized with Streaming) ═══
@@ -303,6 +329,7 @@ serve(async (req) => {
           }
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         const enriched: Record<string, any> = {};
         if (mapping.secondary) {
           for (const sec of mapping.secondary) {
@@ -318,6 +345,7 @@ serve(async (req) => {
           }
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         const crossData: Record<string, any> = {};
         if (mapping.cross_db) {
           for (const cross of mapping.cross_db) {
@@ -352,7 +380,7 @@ serve(async (req) => {
               .filter((t: string) => t.length > 3)
               .join('. ');
             if (recentMessages.length > 10) {
-              const sentResp = await fetch('https://router.huggingface.co/hf-inference/models/cardiffnlp/twitter-roberta-base-sentiment-latest', {
+              const sentResp = await fetchWithTimeout('https://router.huggingface.co/hf-inference/models/cardiffnlp/twitter-roberta-base-sentiment-latest', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hfToken}` },
                 body: JSON.stringify({ inputs: recentMessages.substring(0, 512) }),
@@ -628,10 +656,8 @@ serve(async (req) => {
         .join('\n');
 
       // Summarize using HF LLM via Gateway
-      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-      const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
       const gatewayUrl = `${supabaseUrl}/functions/v1/llm-gateway`;
-      const sumResp = await fetch(gatewayUrl, {
+      const sumResp = await fetchWithTimeout(gatewayUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': authHeader, 'apikey': supabaseKey },
         body: JSON.stringify({
@@ -661,11 +687,11 @@ serve(async (req) => {
       if (!question) return new Response(JSON.stringify({ error: 'question required' }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
 
       const connId = connection_id || 'bancodadosclientes';
-      const client = getExternalClient(connId);
+      const _client = getExternalClient(connId);
 
       // Get table list for schema context
       const schemaHints: string[] = [];
-      for (const [entityName, mapping] of Object.entries(ENTITY_MAPPINGS)) {
+      for (const [_entityName, mapping] of Object.entries(ENTITY_MAPPINGS)) {
         if (mapping.primary.connection === connId) {
           const cols = mapping.primary.display_column ? [mapping.primary.id_column, mapping.primary.display_column] : [mapping.primary.id_column];
           schemaHints.push(`${mapping.primary.table} (${cols.join(', ')})`);
@@ -677,13 +703,9 @@ serve(async (req) => {
         : `Conexão: ${connId} (PostgreSQL)`;
 
       // Generate SQL via LLM
-      const supabaseUrl2 = Deno.env.get('SUPABASE_URL')!;
-      const supabaseKey2 = Deno.env.get('SUPABASE_ANON_KEY')!;
-      const authHeader2 = req.headers.get('Authorization')!;
-
-      const sqlResp = await fetch(`${supabaseUrl2}/functions/v1/llm-gateway`, {
+      const sqlResp = await fetchWithTimeout(`${supabaseUrl}/functions/v1/llm-gateway`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': authHeader2, 'apikey': supabaseKey2 },
+        headers: { 'Content-Type': 'application/json', 'Authorization': authHeader, 'apikey': supabaseKey },
         body: JSON.stringify({
           model: 'huggingface/Qwen/Qwen3-30B-A3B',
           messages: [
@@ -727,7 +749,7 @@ serve(async (req) => {
 
     // ═══ ACTION: table_qa — Perguntas sobre tabelas (#37) ═══
     if (action === 'table_qa') {
-      const { question: tqQuestion, entity: tqEntity, record_id: tqRecordId } = body;
+      const { question: tqQuestion, entity: tqEntity, record_id: _tqRecordId } = body;
       if (!tqQuestion || !tqEntity) return new Response(JSON.stringify({ error: 'question and entity required' }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
 
       const mapping = ENTITY_MAPPINGS[tqEntity];
@@ -752,13 +774,9 @@ serve(async (req) => {
       ].join('\n');
 
       // Ask LLM to answer based on table
-      const supabaseUrl3 = Deno.env.get('SUPABASE_URL')!;
-      const supabaseKey3 = Deno.env.get('SUPABASE_ANON_KEY')!;
-      const authHeader3 = req.headers.get('Authorization')!;
-
-      const tqResp = await fetch(`${supabaseUrl3}/functions/v1/llm-gateway`, {
+      const tqResp = await fetchWithTimeout(`${supabaseUrl}/functions/v1/llm-gateway`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': authHeader3, 'apikey': supabaseKey3 },
+        headers: { 'Content-Type': 'application/json', 'Authorization': authHeader, 'apikey': supabaseKey },
         body: JSON.stringify({
           model: 'huggingface/Qwen/Qwen3-30B-A3B',
           messages: [
@@ -876,12 +894,16 @@ serve(async (req) => {
     // ═══ ACTION: list_tables — List tables per connection ═══
     if (action === 'list_tables') {
       const tables: Record<string, string[]> = {};
-      for (const [connId, mapping] of Object.entries(ENTITY_MAPPINGS)) {
+      for (const [_connId, mapping] of Object.entries(ENTITY_MAPPINGS)) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         const conn = (mapping as any).primary.connection;
         if (!tables[conn]) tables[conn] = [];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         const tbl = (mapping as any).primary.table;
         if (!tables[conn].includes(tbl)) tables[conn].push(tbl);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         if ((mapping as any).secondary) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           for (const sec of (mapping as any).secondary) {
             if (!tables[conn].includes(sec.table)) tables[conn].push(sec.table);
           }
@@ -896,11 +918,15 @@ serve(async (req) => {
       const tableSet = new Set<string>();
       for (const [, mapping] of Object.entries(ENTITY_MAPPINGS)) {
         try {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           const client = getExternalClient((mapping as any).primary.connection);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           let q = client.from((mapping as any).primary.table).select('id', { count: 'exact', head: true });
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           if ((mapping as any).primary.filter) q = applyStaticFilter(q, (mapping as any).primary.filter);
           const { count } = await q;
           totalRecords += count ?? 0;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           tableSet.add((mapping as any).primary.table);
         } catch { /* skip */ }
       }

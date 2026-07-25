@@ -137,22 +137,22 @@ export function QuickAgentTestPanel({ form }: Props) {
     <div className="nexus-card space-y-3">
       <div className="flex items-start justify-between gap-2 flex-wrap">
         <div>
-          <p className="text-sm font-heading font-semibold text-foreground flex items-center gap-1.5">
+          <p className="text-body-sm font-heading font-semibold text-foreground flex items-center gap-1.5">
             <Play className="h-3.5 w-3.5 text-primary" />
             Bateria de testes
           </p>
-          <p className="text-[11px] text-muted-foreground">
+          <p className="text-meta text-muted-foreground">
             Rode múltiplas execuções e compare resposta, custo e latência entre cenários.
           </p>
         </div>
-        <div className="text-[10px] font-mono text-muted-foreground/80 text-right">
+        <div className="text-meta font-mono text-muted-foreground/80 text-right">
           est. {estimate.totalTokens.toLocaleString('pt-BR')} tk · {formatBrl(estimate.costBrl)}
         </div>
       </div>
 
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-2">
-          <Label htmlFor="qa-test-input" className="text-xs text-muted-foreground">
+          <Label htmlFor="qa-test-input" className="text-meta text-muted-foreground">
             Mensagem de teste
           </Label>
           <Select
@@ -161,12 +161,12 @@ export function QuickAgentTestPanel({ form }: Props) {
               if (m) setUserInput(m.input);
             }}
           >
-            <SelectTrigger className="h-7 w-auto min-w-[160px] text-[11px] bg-secondary/40">
+            <SelectTrigger className="h-7 w-auto min-w-[160px] text-meta bg-secondary/40">
               <SelectValue placeholder="Mock por tipo" />
             </SelectTrigger>
             <SelectContent>
               {mocks.map((m) => (
-                <SelectItem key={m.label} value={m.label} className="text-xs">
+                <SelectItem key={m.label} value={m.label} className="text-meta">
                   {m.label}
                 </SelectItem>
               ))}
@@ -180,19 +180,19 @@ export function QuickAgentTestPanel({ form }: Props) {
           rows={3}
           maxLength={4000}
           placeholder="Digite uma mensagem para testar o agente…"
-          className="bg-secondary/50 border-border/50 text-sm resize-none"
+          className="bg-secondary/50 border-border/50 text-body-sm resize-none"
         />
       </div>
 
       {!promptValid && (
-        <div className="flex items-start gap-2 text-[11px] text-nexus-amber bg-nexus-amber/5 border border-nexus-amber/30 rounded-md p-2">
+        <div className="flex items-start gap-2 text-meta text-nexus-amber bg-nexus-amber/5 border border-nexus-amber/30 rounded-md p-2">
           <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
           <span>Complete o system prompt (incluindo as 4 seções obrigatórias) antes de testar.</span>
         </div>
       )}
 
       <div className="flex items-center justify-between gap-2 flex-wrap">
-        <p className="text-[10px] text-muted-foreground/80 font-mono">
+        <p className="text-meta text-muted-foreground/80 font-mono">
           modelo: {form.model} · max_tokens: 800
         </p>
         <Button
@@ -222,7 +222,7 @@ export function QuickAgentTestPanel({ form }: Props) {
       {error && (
         <div
           role="alert"
-          className="flex items-start gap-2 text-xs text-destructive bg-destructive/5 border border-destructive/30 rounded-md p-2.5"
+          className="flex items-start gap-2 text-meta text-destructive bg-destructive/5 border border-destructive/30 rounded-md p-2.5"
         >
           <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
           <span>{error}</span>
@@ -256,7 +256,7 @@ export function QuickAgentTestPanel({ form }: Props) {
 
           <div className="rounded-lg border border-nexus-emerald/30 bg-nexus-emerald/5 p-3 space-y-2">
             <div className="flex items-center justify-between gap-2">
-              <p className="text-[11px] uppercase tracking-wider text-nexus-emerald font-semibold flex items-center gap-1.5">
+              <p className="text-meta uppercase tracking-wider text-nexus-emerald font-semibold flex items-center gap-1.5">
                 <CheckCircle2 className="h-3 w-3" /> Resposta do agente
               </p>
               <Button
@@ -264,15 +264,15 @@ export function QuickAgentTestPanel({ form }: Props) {
                 size="sm"
                 variant="ghost"
                 onClick={copyResponse}
-                className="h-6 gap-1 text-[10px]"
+                className="h-6 gap-1 text-meta"
               >
                 <Copy className="h-3 w-3" /> Copiar
               </Button>
             </div>
-            <pre className="whitespace-pre-wrap break-words text-xs text-foreground font-sans leading-relaxed max-h-64 overflow-y-auto">
+            <pre className="whitespace-pre-wrap break-words text-meta text-foreground font-sans leading-relaxed max-h-64 overflow-y-auto">
               {result.response || <span className="text-muted-foreground italic">(resposta vazia)</span>}
             </pre>
-            <p className="text-[10px] font-mono text-muted-foreground/70 pt-1 border-t border-nexus-emerald/15">
+            <p className="text-meta font-mono text-muted-foreground/70 pt-1 border-t border-nexus-emerald/15">
               servido por: {result.model_used}
             </p>
           </div>
@@ -299,12 +299,12 @@ function MetricCard({ icon, label, value, hint, tone }: MetricCardProps) {
       : 'border-border bg-secondary/40 text-foreground';
   return (
     <div className={cn('rounded-lg border p-2.5', toneClass)}>
-      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider opacity-80">
+      <div className="flex items-center gap-1.5 text-meta uppercase tracking-wider opacity-80">
         {icon}
         {label}
       </div>
-      <div className="text-sm font-mono font-semibold mt-1 tabular-nums">{value}</div>
-      {hint && <div className="text-[10px] font-mono text-muted-foreground mt-0.5">{hint}</div>}
+      <div className="text-body-sm font-mono font-semibold mt-1 tabular-nums">{value}</div>
+      {hint && <div className="text-meta font-mono text-muted-foreground mt-0.5">{hint}</div>}
     </div>
   );
 }

@@ -5,6 +5,7 @@ import {
   checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS,
   parseBody, z,
 } from "../_shared/mod.ts";
+import { withRetry } from "../_shared/retry.ts";
 
 const WHISPER_MODEL = 'openai/whisper-large-v3-turbo';
 const WHISPER_TIMEOUT_MS = 30000;
@@ -61,7 +62,7 @@ serve(async (req) => {
 
     try {
       const hfUrl = `https://router.huggingface.co/hf-inference/models/${WHISPER_MODEL}`;
-      const resp = await fetch(hfUrl, {
+      const resp = await withRetry(() => fetch(hfUrl, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${hfToken}`,
@@ -69,7 +70,7 @@ serve(async (req) => {
         },
         body: audioBytes,
         signal: controller.signal,
-      });
+      }), { attempts: 2, baseMs: 500, capMs: 4000, signal: controller.signal });
       clearTimeout(timeout);
 
       if (!resp.ok) {

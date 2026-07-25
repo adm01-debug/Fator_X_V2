@@ -31,6 +31,7 @@ import {
 import type { AgentVersion, RestoreOptions } from "@/services/agentsService";
 import { getVersionTools, getVersionPrompt, getVersionScalar } from "@/lib/agentChangelog";
 import { computeRestoreDiff, type FieldChange, type RiskLevel } from "@/components/agents/detail/restoreDiffHelpers";
+import type { DbRow } from '@/types/dbRow';
 
 interface Props {
   open: boolean;
@@ -160,7 +161,7 @@ export function RestoreVersionDialog({ open, onOpenChange, source, current, next
             </DialogHeader>
 
             {sameAsCurrent && (
-              <div className="text-xs text-nexus-amber bg-nexus-amber/10 border border-nexus-amber/30 rounded-lg px-3 py-2">
+              <div className="text-meta text-nexus-amber bg-nexus-amber/10 border border-nexus-amber/30 rounded-lg px-3 py-2">
                 Você está restaurando a versão atual sobre ela mesma — a nova versão será praticamente idêntica.
               </div>
             )}
@@ -169,7 +170,7 @@ export function RestoreVersionDialog({ open, onOpenChange, source, current, next
               <div className="flex items-start gap-2 rounded-lg border border-primary/30 bg-primary/[0.06] px-3 py-2">
                 <History className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" aria-hidden="true" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[11px] text-foreground">
+                  <p className="text-meta text-foreground">
                     Restauramos suas escolhas anteriores de rollback
                     {memory.lastSourceVersionNumber != null && (
                       <> (última visualização em <span className="font-mono">v{memory.lastSourceVersionNumber}</span>)</>
@@ -181,7 +182,7 @@ export function RestoreVersionDialog({ open, onOpenChange, source, current, next
                       type="button"
                       size="sm"
                       variant="ghost"
-                      className="h-6 px-2 text-[10px] gap-1 text-muted-foreground hover:text-foreground"
+                      className="h-6 px-2 text-meta gap-1 text-muted-foreground hover:text-foreground"
                       onClick={resetPreferences}
                     >
                       <RotateCw className="h-3 w-3" aria-hidden="true" />
@@ -191,7 +192,7 @@ export function RestoreVersionDialog({ open, onOpenChange, source, current, next
                       type="button"
                       size="sm"
                       variant="ghost"
-                      className="h-6 px-2 text-[10px] text-muted-foreground hover:text-foreground"
+                      className="h-6 px-2 text-meta text-muted-foreground hover:text-foreground"
                       onClick={() => setShowRestoredHint(false)}
                     >
                       Ocultar
@@ -249,8 +250,8 @@ export function RestoreVersionDialog({ open, onOpenChange, source, current, next
             />
 
             <div className="rounded-lg border border-border/50 bg-secondary/30 px-3 py-2.5">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Prévia do changelog</p>
-              <p className="text-xs font-mono text-foreground">{summary}</p>
+              <p className="text-meta uppercase tracking-wider text-muted-foreground mb-1">Prévia do changelog</p>
+              <p className="text-meta font-mono text-foreground">{summary}</p>
             </div>
 
             <DialogFooter className="gap-2 sm:gap-2">
@@ -301,10 +302,10 @@ function RestoreOption({ id, checked, onChange, icon, label, meta, preview }: {
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 mb-0.5">
           {icon}
-          <span className="text-sm font-semibold text-foreground">{label}</span>
-          <span className="text-[10px] text-muted-foreground ml-auto font-mono">{meta}</span>
+          <span className="text-body-sm font-semibold text-foreground">{label}</span>
+          <span className="text-meta text-muted-foreground ml-auto font-mono">{meta}</span>
         </div>
-        <p className="text-xs text-muted-foreground truncate">{preview}</p>
+        <p className="text-meta text-muted-foreground truncate">{preview}</p>
       </div>
     </label>
   );
@@ -314,7 +315,7 @@ function RestoreOption({ id, checked, onChange, icon, label, meta, preview }: {
 /*  Live diff preview                                                  */
 /* ------------------------------------------------------------------ */
 
-function fmtValue(v: unknown, max = 60): string {
+function fmtValue(v: DbRow, max = 60): string {
   if (v === null || v === undefined || v === '') return '—';
   if (Array.isArray(v)) {
     return v.length === 0 ? '∅' : v.slice(0, 4).join(', ') + (v.length > 4 ? ` +${v.length - 4}` : '');
@@ -405,12 +406,12 @@ function RiskBanner({ risk, score, changeCount }: { risk: RiskLevel; score: numb
       <Icon className="h-4 w-4 mt-0.5 shrink-0" aria-hidden="true" />
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2 flex-wrap">
-          <p className="text-xs font-semibold">{headlines[risk]}</p>
-          <span className="text-[10px] font-mono opacity-80">
+          <p className="text-meta font-semibold">{headlines[risk]}</p>
+          <span className="text-meta font-mono opacity-80">
             score {score}/100 · {changeCount} mudança{changeCount === 1 ? '' : 's'}
           </span>
         </div>
-        <p className="text-[11px] opacity-90 mt-0.5">{subtitles[risk]}</p>
+        <p className="text-meta opacity-90 mt-0.5">{subtitles[risk]}</p>
       </div>
     </div>
   );
@@ -461,18 +462,18 @@ function LiveDiffPreview({
     <div className="rounded-lg border border-primary/20 bg-primary/[0.03] px-3 py-3 space-y-2.5">
       <div className="flex items-center gap-1.5">
         <GitCompareArrows className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
-        <h4 className="text-xs font-semibold text-foreground">Diff em tempo real</h4>
-        <span className="text-[10px] text-muted-foreground ml-auto font-mono">
+        <h4 className="text-meta font-semibold text-foreground">Diff em tempo real</h4>
+        <span className="text-meta text-muted-foreground ml-auto font-mono">
           v{currentVersion} (atual) → v{sourceVersion} (origem)
         </span>
       </div>
 
       {!anyOptionSelected ? (
-        <p className="text-[11px] text-muted-foreground italic">
+        <p className="text-meta text-muted-foreground italic">
           Selecione ao menos um campo acima para ver o diff.
         </p>
       ) : changes.length === 0 ? (
-        <p className="text-[11px] text-muted-foreground">
+        <p className="text-meta text-muted-foreground">
           Nenhuma diferença detectada nos campos selecionados — a nova versão será idêntica à atual.
         </p>
       ) : (
@@ -481,7 +482,7 @@ function LiveDiffPreview({
           <RiskBanner risk={overallRisk} score={overallImpact} changeCount={changes.length} />
 
           {/* Badges resumo */}
-          <div className="flex flex-wrap items-center gap-1.5 text-[10px]">
+          <div className="flex flex-wrap items-center gap-1.5 text-meta">
             {toolsAdded.length > 0 && (
               <span className="inline-flex items-center gap-1 rounded-full border border-nexus-emerald/30 bg-nexus-emerald/10 text-nexus-emerald px-1.5 py-0.5 font-mono">
                 <Plus className="h-2.5 w-2.5" aria-hidden="true" />
@@ -509,7 +510,7 @@ function LiveDiffPreview({
               variant="ghost"
               size="sm"
               onClick={onShowFullDiff}
-              className="ml-auto h-6 px-2 text-[10px] font-semibold gap-1 text-primary hover:text-primary hover:bg-primary/10"
+              className="ml-auto h-6 px-2 text-meta font-semibold gap-1 text-primary hover:text-primary hover:bg-primary/10"
             >
               <Eye className="h-3 w-3" aria-hidden="true" />
               Ver detalhes
@@ -525,11 +526,11 @@ function LiveDiffPreview({
               </p>
               <ul className="space-y-0.5">
                 {topChanges.map((c, idx) => (
-                  <li key={`top-${c.group}-${c.field}`} className="flex items-center gap-1.5 text-[11px]">
+                  <li key={`top-${c.group}-${c.field}`} className="flex items-center gap-1.5 text-meta">
                     <span className="font-mono text-[9px] text-muted-foreground/70 w-3.5 shrink-0">#{idx + 1}</span>
                     <RiskBadge risk={c.risk} score={c.impact} showScore />
                     <span className="font-semibold text-foreground truncate">{c.label}</span>
-                    <span className="text-[10px] text-muted-foreground truncate" title={c.reason}>· {c.reason}</span>
+                    <span className="text-meta text-muted-foreground truncate" title={c.reason}>· {c.reason}</span>
                   </li>
                 ))}
               </ul>
@@ -545,7 +546,7 @@ function LiveDiffPreview({
                 <li
                   key={`${c.group}-${c.field}`}
                   className={`grid grid-cols-[auto_1fr] gap-2 items-start rounded-md border bg-background/40 px-2 py-1.5 border-l-4 ${meta.ringCls} ${
-                    isTop ? 'border-border/60 shadow-sm' : 'border-border/40'
+                    isTop ? 'border-border/60 shadow-nexus-sm' : 'border-border/40'
                   }`}
                 >
                   <div className="flex flex-col items-start gap-1 pt-0.5">
@@ -554,14 +555,14 @@ function LiveDiffPreview({
                     <span className="text-[9px] font-mono uppercase text-muted-foreground/70">{c.group}</span>
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[11px] font-semibold text-foreground flex items-center gap-1.5">
+                    <p className="text-meta font-semibold text-foreground flex items-center gap-1.5">
                       {c.label}
                       <span className="text-[9px] font-normal text-muted-foreground/80 truncate">· {c.reason}</span>
                     </p>
-                    <p className="text-[10px] font-mono text-muted-foreground truncate" title={fmtValue(c.before, 500)}>
+                    <p className="text-meta font-mono text-muted-foreground truncate" title={fmtValue(c.before, 500)}>
                       <span className="text-destructive/80">−</span> {fmtValue(c.before)}
                     </p>
-                    <p className="text-[10px] font-mono text-foreground/90 truncate" title={fmtValue(c.after, 500)}>
+                    <p className="text-meta font-mono text-foreground/90 truncate" title={fmtValue(c.after, 500)}>
                       <span className="text-nexus-emerald">+</span> {fmtValue(c.after)}
                     </p>
                   </div>
@@ -584,7 +585,7 @@ function LiveDiffPreview({
             variant="outline"
             size="sm"
             onClick={() => onGoToBuilder('prompt')}
-            className="h-8 text-[10px] gap-1 justify-start px-2 hover:border-primary/40 hover:bg-primary/5"
+            className="h-8 text-meta gap-1 justify-start px-2 hover:border-primary/40 hover:bg-primary/5"
             title="Abre a aba 'Prompts & Versões' do AgentBuilder"
           >
             <FileText className="h-3 w-3 shrink-0 text-primary" aria-hidden="true" />
@@ -595,7 +596,7 @@ function LiveDiffPreview({
             variant="outline"
             size="sm"
             onClick={() => onGoToBuilder('tools')}
-            className="h-8 text-[10px] gap-1 justify-start px-2 hover:border-primary/40 hover:bg-primary/5"
+            className="h-8 text-meta gap-1 justify-start px-2 hover:border-primary/40 hover:bg-primary/5"
             title="Abre a aba 'Ferramentas & MCP' do AgentBuilder"
           >
             <Wrench className="h-3 w-3 shrink-0 text-primary" aria-hidden="true" />
@@ -606,7 +607,7 @@ function LiveDiffPreview({
             variant="outline"
             size="sm"
             onClick={() => onGoToBuilder('brain')}
-            className="h-8 text-[10px] gap-1 justify-start px-2 hover:border-primary/40 hover:bg-primary/5"
+            className="h-8 text-meta gap-1 justify-start px-2 hover:border-primary/40 hover:bg-primary/5"
             title="Abre a aba 'Cérebro (LLM)' do AgentBuilder"
           >
             <Cpu className="h-3 w-3 shrink-0 text-primary" aria-hidden="true" />
@@ -616,7 +617,7 @@ function LiveDiffPreview({
       </div>
 
       {unchangedGroups.length > 0 && anyOptionSelected && (
-        <p className="text-[10px] text-muted-foreground/70 pt-1 border-t border-border/30">
+        <p className="text-meta text-muted-foreground/70 pt-1 border-t border-border/30">
           Sem mudanças em: {unchangedGroups.map((g) => groupLabel[g]).join(' · ')}
         </p>
       )}
@@ -634,7 +635,7 @@ function LiveDiffPreview({
  * estruturados (parâmetros do modelo, listas de tools) tenham uma linha por
  * propriedade — o que torna o realce muito mais útil.
  */
-function toDiffText(v: unknown): string {
+function toDiffText(v: DbRow): string {
   if (v === null || v === undefined) return '';
   if (typeof v === 'string') return v;
   try {
@@ -703,11 +704,11 @@ function FullDiffView({
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
           </Button>
           <div className="min-w-0">
-            <DialogTitle className="flex items-center gap-2 text-base">
+            <DialogTitle className="flex items-center gap-2 text-title-sm">
               <Eye className="h-4 w-4 text-primary" aria-hidden="true" />
               Diff detalhado — prompt & modelo
             </DialogTitle>
-            <DialogDescription className="text-xs">
+            <DialogDescription className="text-meta">
               Comparando v{currentVersion} (atual, em vermelho) com v{sourceVersion} (origem, em verde).
             </DialogDescription>
           </div>
@@ -716,7 +717,7 @@ function FullDiffView({
 
       {relevant.length === 0 ? (
         <div className="rounded-lg border border-border/50 bg-secondary/30 p-8 text-center">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-body-sm text-muted-foreground">
             Nenhuma diferença em prompt ou campos do modelo nas opções selecionadas.
           </p>
         </div>
@@ -752,10 +753,10 @@ function DiffBlock({ change }: { change: FieldChange }) {
         <div className="flex items-center gap-2 min-w-0">
           <ChangeKindBadge kind={change.kind} />
           <RiskBadge risk={change.risk} score={change.impact} showScore />
-          <span className="text-xs font-semibold text-foreground truncate">{change.label}</span>
-          <span className="text-[10px] font-mono uppercase text-muted-foreground/70">{change.group}</span>
+          <span className="text-meta font-semibold text-foreground truncate">{change.label}</span>
+          <span className="text-meta font-mono uppercase text-muted-foreground/70">{change.group}</span>
         </div>
-        <div className="flex items-center gap-2 text-[10px] font-mono shrink-0">
+        <div className="flex items-center gap-2 text-meta font-mono shrink-0">
           <span className="text-nexus-emerald">+{adds}</span>
           <span className="text-destructive">−{removes}</span>
         </div>
@@ -765,9 +766,9 @@ function DiffBlock({ change }: { change: FieldChange }) {
           conteúdos longos (prompts, JSON de parâmetros). */}
       <div className="max-h-72 overflow-auto bg-background/60">
         {lines.length === 0 ? (
-          <p className="p-3 text-xs text-muted-foreground italic">Conteúdo vazio dos dois lados.</p>
+          <p className="p-3 text-meta text-muted-foreground italic">Conteúdo vazio dos dois lados.</p>
         ) : (
-          <pre className="text-[11px] font-mono leading-relaxed">
+          <pre className="text-meta font-mono leading-relaxed">
             {lines.map((l, idx) => {
               const cls =
                 l.kind === 'add'

@@ -27,47 +27,47 @@ export function CronVisualEditor({ value, onChange }: CronVisualEditorProps) {
     <div className="space-y-4 p-4 bg-muted/20 rounded-xl border border-border/40">
       <div className="grid grid-cols-5 gap-2">
         <div className="space-y-1.5">
-          <Label className="text-[10px] uppercase font-bold text-muted-foreground">Minuto</Label>
+          <Label className="text-meta uppercase font-bold text-muted-foreground">Minuto</Label>
           <Input 
             value={parts[0] || '*'} 
             onChange={(e) => updatePart(0, e.target.value)} 
-            className="h-8 text-xs font-mono"
+            className="h-8 text-meta font-mono"
             placeholder="0-59"
           />
         </div>
         <div className="space-y-1.5">
-          <Label className="text-[10px] uppercase font-bold text-muted-foreground">Hora</Label>
+          <Label className="text-meta uppercase font-bold text-muted-foreground">Hora</Label>
           <Input 
             value={parts[1] || '*'} 
             onChange={(e) => updatePart(1, e.target.value)} 
-            className="h-8 text-xs font-mono"
+            className="h-8 text-meta font-mono"
             placeholder="0-23"
           />
         </div>
         <div className="space-y-1.5">
-          <Label className="text-[10px] uppercase font-bold text-muted-foreground">Dia</Label>
+          <Label className="text-meta uppercase font-bold text-muted-foreground">Dia</Label>
           <Input 
             value={parts[2] || '*'} 
             onChange={(e) => updatePart(2, e.target.value)} 
-            className="h-8 text-xs font-mono"
+            className="h-8 text-meta font-mono"
             placeholder="1-31"
           />
         </div>
         <div className="space-y-1.5">
-          <Label className="text-[10px] uppercase font-bold text-muted-foreground">Mês</Label>
+          <Label className="text-meta uppercase font-bold text-muted-foreground">Mês</Label>
           <Input 
             value={parts[3] || '*'} 
             onChange={(e) => updatePart(3, e.target.value)} 
-            className="h-8 text-xs font-mono"
+            className="h-8 text-meta font-mono"
             placeholder="1-12"
           />
         </div>
         <div className="space-y-1.5">
-          <Label className="text-[10px] uppercase font-bold text-muted-foreground">Semana</Label>
+          <Label className="text-meta uppercase font-bold text-muted-foreground">Semana</Label>
           <Input 
             value={parts[4] || '*'} 
             onChange={(e) => updatePart(4, e.target.value)} 
-            className="h-8 text-xs font-mono"
+            className="h-8 text-meta font-mono"
             placeholder="0-6"
           />
         </div>
@@ -75,12 +75,12 @@ export function CronVisualEditor({ value, onChange }: CronVisualEditorProps) {
 
       <div className="flex items-center justify-between pt-2 border-t border-border/20">
         <div className="space-y-0.5">
-          <p className="text-[10px] font-black uppercase text-primary tracking-widest">Expressão Cron</p>
-          <code className="text-xs font-mono text-foreground">{value}</code>
+          <p className="text-meta font-black uppercase text-primary tracking-widest">Expressão Cron</p>
+          <code className="text-meta font-mono text-foreground">{value}</code>
         </div>
         <div className="text-right">
-          <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Descrição</p>
-          <p className="text-xs font-medium text-foreground">{describeCronExpression(value)}</p>
+          <p className="text-meta font-black uppercase text-muted-foreground tracking-widest">Descrição</p>
+          <p className="text-meta font-medium text-foreground">{describeCronExpression(value)}</p>
         </div>
       </div>
 
@@ -88,7 +88,7 @@ export function CronVisualEditor({ value, onChange }: CronVisualEditorProps) {
          <Button 
            variant="ghost" 
            size="sm" 
-           className="h-7 text-[10px] font-bold uppercase border border-border/20"
+           className="h-7 text-meta font-bold uppercase border border-border/20"
            onClick={() => onChange('* * * * *')}
          >
            Reset para *
@@ -96,7 +96,7 @@ export function CronVisualEditor({ value, onChange }: CronVisualEditorProps) {
          <Button 
            variant="ghost" 
            size="sm" 
-           className="h-7 text-[10px] font-bold uppercase border border-border/20"
+           className="h-7 text-meta font-bold uppercase border border-border/20"
            onClick={() => onChange('0 0 * * *')}
          >
            Meia-noite

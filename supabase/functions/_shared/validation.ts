@@ -1,9 +1,3 @@
-/**
- * Nexus Agents Studio — Shared Validation (HARDENED)
- * FIX P2-03: max length constraints on all string fields
- * FIX P2-04: body size guard before parsing
- */
-
 import { z, type ZodSchema, type ZodError } from "https://esm.sh/zod@3.23.8";
 import { errorResponse } from "./cors.ts";
 
@@ -14,12 +8,14 @@ export interface ParseSuccess<T> {
   data: T;
   rawBody?: string;
   error: null;
+  version: string;
 }
 
 export interface ParseFailure {
   data: null;
   rawBody?: string;
   error: Response;
+  version: string;
 }
 
 export type ParseResult<T> = ParseSuccess<T> | ParseFailure;
@@ -36,51 +32,88 @@ function checkBodySize(req: Request): Response | null {
 }
 
 /**
- * Parse and validate request body with size guard.
+ * Parse and validate request body with size guard and versioning.
  * Returns raw body string for HMAC validation if needed.
  */
 export async function parseBody<T>(
   req: Request,
-  schema: ZodSchema<T>,
-  options: { returnRawBody?: boolean } = {}
+  schema: ZodSchema<T> | Record<string, ZodSchema<T>>,
+  options: { 
+    returnRawBody?: boolean;
+    defaultVersion?: string;
+  } = {}
 ): Promise<ParseResult<T>> {
+  const version = req.headers.get('x-api-version') || options.defaultVersion || 'v1';
+
+  // Resolve schema based on version if it's a record
+  let activeSchema: ZodSchema<T>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
+  if ('safeParse' in (schema as any)) {
+    activeSchema = schema as ZodSchema<T>;
+  } else {
+    activeSchema = (schema as Record<string, ZodSchema<T>>)[version];
+    if (!activeSchema) {
+      return { 
+        data: null, 
+        version,
+        error: errorResponse(req, `Unsupported API version: ${version}`, 400) 
+      };
+    }
+  }
+
   // P2-04: Size guard
   const sizeError = checkBodySize(req);
-  if (sizeError) return { data: null, error: sizeError };
+  if (sizeError) return { data: null, version, error: sizeError };
 
   let rawBody: string;
   let raw: unknown;
+  const contentType = req.headers.get('content-type') || '';
 
   try {
     rawBody = await req.text();
     if (rawBody.length > MAX_BODY_SIZE) {
       return {
         data: null,
+        version,
         error: errorResponse(req, `Request body too large (max ${MAX_BODY_SIZE / 1024 / 1024}MB)`, 413),
       };
     }
-    raw = JSON.parse(rawBody);
+
+    if (contentType.includes('application/x-www-form-urlencoded')) {
+      const params = new URLSearchParams(rawBody);
+      const obj: Record<string, string> = {};
+      for (const [k, v] of params.entries()) obj[k] = v;
+      raw = obj;
+    } else {
+      raw = JSON.parse(rawBody);
+    }
   } catch {
     return {
       data: null,
-      error: errorResponse(req, 'Invalid JSON body', 400),
+      version,
+      error: errorResponse(req, 'Invalid request body', 400),
     };
   }
 
-  const result = schema.safeParse(raw);
+  const result = activeSchema.safeParse(raw);
 
   if (!result.success) {
+    const issues = formatZodErrors(result.error);
     return {
       data: null,
+      version,
       rawBody: options.returnRawBody ? rawBody : undefined,
-      error: errorResponse(req, 'Validation failed', 400, {
-        issues: formatZodErrors(result.error),
+      error: errorResponse(req, 'Validation failed', 422, {
+        code: 'VALIDATION_ERROR',
+        message: 'The request payload is invalid.',
+        fields: issues,
       }),
     };
   }
 
   return {
     data: result.data,
+    version,
     rawBody: options.returnRawBody ? rawBody : undefined,
     error: null,
   };
@@ -104,10 +137,11 @@ export async function getRawBody(req: Request): Promise<{ body: string; error: R
   }
 }
 
-function formatZodErrors(error: ZodError): Array<{ field: string; message: string }> {
+function formatZodErrors(error: ZodError): Array<{ field: string; message: string; code?: string }> {
   return error.issues.map(issue => ({
     field: issue.path.join('.') || '(root)',
     message: issue.message,
+    code: issue.code,
   }));
 }
 

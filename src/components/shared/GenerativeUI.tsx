@@ -23,8 +23,8 @@ function TableWidget({ widget }: { widget: UIWidget }) {
   const columns = (widget.data.columns || Object.keys(rows[0] || {})) as string[];
   return (
     <div className="bg-secondary/30 rounded-lg overflow-hidden border border-border/30">
-      {widget.title && <div className="px-3 py-2 text-xs font-bold text-foreground border-b border-border/30">{widget.title}</div>}
-      <table className="w-full text-xs">
+      {widget.title && <div className="px-3 py-2 text-meta font-bold text-foreground border-b border-border/30">{widget.title}</div>}
+      <table className="w-full text-meta">
         <thead><tr>{columns.map(c => <th key={c} className="px-3 py-2 text-left text-muted-foreground border-b border-border/30">{c}</th>)}</tr></thead>
         <tbody>{rows.map((row, i) => (
           <tr key={i} className="border-b border-border/20 hover:bg-secondary/50">
@@ -43,21 +43,21 @@ function CardWidget({ widget }: { widget: UIWidget }) {
   };
   return (
     <div className="nexus-card space-y-3">
-      {(cardTitle || widget.title) && <h4 className="text-sm font-bold text-foreground">{cardTitle || widget.title}</h4>}
-      {description && <p className="text-xs text-muted-foreground">{description}</p>}
+      {(cardTitle || widget.title) && <h4 className="text-body-sm font-bold text-foreground">{cardTitle || widget.title}</h4>}
+      {description && <p className="text-meta text-muted-foreground">{description}</p>}
       {metrics && (
         <div className="grid grid-cols-3 gap-2">
           {metrics.map((m, i) => (
             <div key={i} className="bg-secondary/30 rounded p-2 text-center border border-border/20">
-              <div className="text-lg font-bold text-primary">{m.value}</div>
-              <div className="text-[10px] text-muted-foreground">{m.label}</div>
+              <div className="text-title-sm font-bold text-primary">{m.value}</div>
+              <div className="text-meta text-muted-foreground">{m.label}</div>
             </div>
           ))}
         </div>
       )}
       {actions && (
         <div className="flex gap-2">{actions.map((a, i) => (
-          <Button key={i} size="sm" variant="outline" className="text-xs">{a.label}</Button>
+          <Button key={i} size="sm" variant="outline" className="text-meta">{a.label}</Button>
         ))}</div>
       )}
     </div>
@@ -68,9 +68,9 @@ function ProgressWidget({ widget }: { widget: UIWidget }) {
   const { steps, current } = widget.data as { steps: string[]; current: number };
   return (
     <div className="nexus-card space-y-2">
-      {widget.title && <h4 className="text-sm font-bold text-foreground">{widget.title}</h4>}
+      {widget.title && <h4 className="text-body-sm font-bold text-foreground">{widget.title}</h4>}
       {steps.map((step, i) => (
-        <div key={i} className={`flex items-center gap-2 text-xs ${i < current ? 'text-nexus-emerald' : i === current ? 'text-primary' : 'text-muted-foreground/50'}`}>
+        <div key={i} className={`flex items-center gap-2 text-meta ${i < current ? 'text-nexus-emerald' : i === current ? 'text-primary' : 'text-muted-foreground/50'}`}>
           <span>{i < current ? '✅' : i === current ? '⏳' : '○'}</span>
           <span>{step}</span>
         </div>
@@ -88,7 +88,7 @@ function AlertWidget({ widget }: { widget: UIWidget }) {
     success: 'bg-nexus-emerald/10 border-nexus-emerald/30 text-nexus-emerald',
   };
   return (
-    <div className={`rounded-lg p-3 text-xs border ${colorMap[severity]}`}>
+    <div className={`rounded-lg p-3 text-meta border ${colorMap[severity]}`}>
       <Badge variant="outline" className="mb-1">{severity}</Badge>
       <p className="text-foreground">{message}</p>
     </div>
@@ -99,8 +99,8 @@ function CodeWidget({ widget }: { widget: UIWidget }) {
   const { language, code } = widget.data as { language?: string; code: string };
   return (
     <div className="bg-secondary/30 rounded-lg overflow-hidden border border-border/30">
-      {(widget.title || language) && <div className="px-3 py-1.5 text-[10px] text-muted-foreground border-b border-border/30">{widget.title || language}</div>}
-      <pre className="p-3 text-xs text-foreground overflow-x-auto font-mono"><code>{code}</code></pre>
+      {(widget.title || language) && <div className="px-3 py-1.5 text-meta text-muted-foreground border-b border-border/30">{widget.title || language}</div>}
+      <pre className="p-3 text-meta text-foreground overflow-x-auto font-mono"><code>{code}</code></pre>
     </div>
   );
 }
@@ -115,8 +115,8 @@ export function GenerativeUI({ widgets, onAction: _onAction }: GenerativeUIProps
           case 'progress': return <ProgressWidget key={i} widget={w} />;
           case 'alert': return <AlertWidget key={i} widget={w} />;
           case 'code': return <CodeWidget key={i} widget={w} />;
-          case 'text': return <p key={i} className="text-sm text-foreground">{String(w.data.content)}</p>;
-          default: return <div key={i} className="text-xs text-muted-foreground">[Widget: {w.type}]</div>;
+          case 'text': return <p key={i} className="text-body-sm text-foreground">{String(w.data.content)}</p>;
+          default: return <div key={i} className="text-meta text-muted-foreground">[Widget: {w.type}]</div>;
         }
       })}
     </div>

@@ -1,0 +1,37 @@
+# CODEOWNERS — revisão obrigatória por domínio
+# Sintaxe: <path>  <owner> [<owner>…]
+# Docs: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-security/customizing-your-repository/about-code-owners
+
+# Fallback global — qualquer arquivo não coberto abaixo
+*                                       @nexus/core
+
+# Backend / banco / edge functions — mudanças com impacto em produção
+/supabase/                              @nexus/backend @nexus/security
+/supabase/migrations/                   @nexus/backend @nexus/dba
+/supabase/functions/                    @nexus/backend
+/src/integrations/supabase/             @nexus/backend
+/src/lib/validations/                   @nexus/backend @nexus/security
+
+# Segurança, auth, RLS, LGPD
+/src/lib/sanitize.ts                    @nexus/security
+/src/lib/securityGuards.ts              @nexus/security
+/src/lib/sentry.ts                      @nexus/security
+/src/pages/LGPDCompliancePage.tsx       @nexus/security
+/src/pages/SecurityPage.tsx             @nexus/security
+/src/components/security/               @nexus/security
+/docs/adr/                              @nexus/architecture
+
+# CI/CD, orçamento de bundle, scripts de release
+/.github/workflows/                     @nexus/devops
+/scripts/                               @nexus/devops
+/bundle-budget.json                     @nexus/devops @nexus/frontend
+/vite.config.ts                         @nexus/frontend @nexus/devops
+
+# Design system e tipografia
+/tailwind.config.ts                     @nexus/design
+/src/index.css                          @nexus/design
+/src/components/ui/                     @nexus/design
+
+# Documentação executiva / auditoria
+/docs/AUDITORIA_NEXUS_10-10.md          @nexus/leadership
+/README.md                              @nexus/leadership

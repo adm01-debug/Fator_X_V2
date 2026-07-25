@@ -237,7 +237,7 @@ export function criticalityColor(c: Criticality): string {
 
 export function statusColor(s: VendorStatus): string {
   switch (s) {
-    case "active": return "bg-emerald-500/15 text-emerald-500 border-emerald-500/30";
+    case "active": return "bg-nexus-emerald/15 text-nexus-emerald border-nexus-emerald/30";
     case "under_review": return "bg-primary/12 text-primary border-primary/30";
     case "suspended": return "bg-nexus-amber/15 text-nexus-amber border-nexus-amber/30";
     case "offboarded": return "bg-secondary text-muted-foreground border-border/40";

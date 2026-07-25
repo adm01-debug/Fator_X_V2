@@ -17,8 +17,22 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
+import { z } from "https://esm.sh/zod@3.23.8";
+
+const A2ATaskSchema = z.object({
+  message: z.object({
+    role: z.enum(['user', 'agent']).optional(),
+    parts: z.array(z.object({
+      type: z.enum(['text', 'data']),
+      text: z.string().max(50_000).optional(),
+      data: z.record(z.unknown()).optional(),
+    })).min(1).max(50),
+  }),
+  id: z.string().max(200).optional(),
+  agentId: z.string().uuid().optional(),
+}).passthrough();
 import {
-  handleCorsPreflight, jsonResponse, errorResponse, getCorsHeaders,
+  handleCorsPreflight, jsonResponse, errorResponse,
   checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS,
 } from "../_shared/mod.ts";
 
@@ -117,9 +131,9 @@ async function processTask(
   supabaseUrl: string,
   supabaseKey: string,
   authHeader: string,
+  anonKey: string,
 ): Promise<A2ATask> {
   const taskId = crypto.randomUUID();
-  const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
 
   try {
     if (task.agentId) {
@@ -142,7 +156,8 @@ async function processTask(
     const hfToken = Deno.env.get('HF_API_TOKEN');
     if (!hfToken) throw new Error('HF_API_TOKEN not configured');
 
-    const hfResp = await fetch('https://router.huggingface.co/v1/chat/completions', {
+    const { withRetry, fetchWithTimeout } = await import('../_shared/retry.ts');
+    const hfResp = await withRetry(() => fetchWithTimeout('https://router.huggingface.co/v1/chat/completions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hfToken}` },
       body: JSON.stringify({
@@ -154,9 +169,11 @@ async function processTask(
         temperature: 0.7, max_tokens: 2048,
         chat_template_kwargs: { enable_thinking: false },
       }),
-    });
+      timeoutMs: 45_000,
+    }), { attempts: 3, baseMs: 600, capMs: 5_000 });
 
     const hfResult = await hfResp.json();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     let text = (hfResult as any)?.choices?.[0]?.message?.content || JSON.stringify(hfResult);
     text = text.replace(/<think>[\s\S]*?<\/think>\s*/g, '').trim();
 
@@ -180,8 +197,11 @@ serve(async (req) => {
 
   const url = new URL(req.url);
   const path = url.pathname.replace(/^\/a2a-server\/?/, '/').replace(/\/+$/, '') || '/';
-  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  const supabaseUrl = Deno.env.get('SUPABASE_URL');
+  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  if (!supabaseUrl || !supabaseKey) {
+    return errorResponse(req, 'Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY', 500);
+  }
 
   // Rate limiting
   const identifier = getRateLimitIdentifier(req);
@@ -198,15 +218,21 @@ serve(async (req) => {
 
     // ═══ Send Task ═══
     if (req.method === 'POST' && (path === '/tasks/send' || path === '/tasks' || path === '/')) {
-      const body = await req.json() as Record<string, unknown>;
+      const rawTask = await req.json().catch(() => null);
+      const parsedTask = A2ATaskSchema.safeParse(rawTask);
+      if (!parsedTask.success) {
+        return errorResponse(req, 'Payload inválido: ' + JSON.stringify(parsedTask.error.flatten().fieldErrors), 400);
+      }
+      const body = parsedTask.data as Record<string, unknown>;
       const message = body.message as Record<string, unknown>;
       const textPart = (message?.parts as Array<Record<string, string>>)?.find(p => p.type === 'text');
 
       if (!textPart?.text) {
-        return errorResponse(req, 'Message with text part required', 400);
+        return errorResponse(req, 'Mensagem com parte texto obrigatória', 400);
       }
 
       const authHeader = req.headers.get('Authorization') || `Bearer ${Deno.env.get('SUPABASE_ANON_KEY')}`;
+      const anonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? supabaseKey;
       const result = await processTask(
         {
           message: textPart.text,
@@ -216,6 +242,7 @@ serve(async (req) => {
         supabaseUrl,
         supabaseKey,
         authHeader,
+        anonKey,
       );
 
       return jsonResponse(req, { id: result.id, result });

@@ -96,7 +96,7 @@ export function AgentLivePreviewCard({ form }: Props) {
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Sparkles className="h-3.5 w-3.5 text-primary" />
-          <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium">
+          <p className="text-meta uppercase tracking-wider text-muted-foreground font-medium">
             Prévia ao vivo
           </p>
         </div>
@@ -106,7 +106,7 @@ export function AgentLivePreviewCard({ form }: Props) {
               pulsing ? 'bg-nexus-amber animate-pulse' : 'bg-nexus-emerald'
             }`}
           />
-          <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+          <span className="text-meta uppercase tracking-wider text-muted-foreground">
             {pulsing ? 'atualizando' : 'sincronizado'}
           </span>
         </div>
@@ -119,16 +119,16 @@ export function AgentLivePreviewCard({ form }: Props) {
         </div>
         <div className="min-w-0 flex-1 space-y-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <p className="font-heading font-semibold text-foreground text-base truncate">
+            <p className="font-heading font-semibold text-foreground text-title-sm truncate">
               {debounced.name || 'Sem nome'}
             </p>
             {debounced.type && (
-              <Badge variant="secondary" className="text-[10px] uppercase tracking-wider">
+              <Badge variant="secondary" className="text-meta uppercase tracking-wider">
                 {debounced.type}
               </Badge>
             )}
           </div>
-          <div className="flex items-center gap-2 text-[11px] text-muted-foreground font-mono flex-wrap">
+          <div className="flex items-center gap-2 text-meta text-muted-foreground font-mono flex-wrap">
             <span>modelo: {debounced.model}</span>
             <span className="opacity-50">·</span>
             <span className={sectionsCount === sectionsTotal ? 'text-nexus-emerald' : 'text-nexus-amber'}>
@@ -146,7 +146,7 @@ export function AgentLivePreviewCard({ form }: Props) {
       <div className="space-y-2 pt-3 border-t border-border/50">
         <div className="flex items-center gap-1.5">
           <Coins className="h-3 w-3 text-nexus-amber" />
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+          <p className="text-meta uppercase tracking-wider text-muted-foreground">
             Custo estimado por execução
           </p>
           <Tooltip>
@@ -159,7 +159,7 @@ export function AgentLivePreviewCard({ form }: Props) {
                 <Info className="h-3 w-3" />
               </button>
             </TooltipTrigger>
-            <TooltipContent className="max-w-[260px] text-xs">
+            <TooltipContent className="max-w-[260px] text-meta">
               Estimativa com base no prompt atual + input médio de teste do tipo
               {' '}<span className="font-mono">"{debounced.type}"</span>. O custo real
               varia conforme o input do usuário e o tamanho da resposta.
@@ -167,7 +167,7 @@ export function AgentLivePreviewCard({ form }: Props) {
           </Tooltip>
         </div>
 
-        <div className={`font-mono text-xs ${tierColor}`}>
+        <div className={`font-mono text-meta ${tierColor}`}>
           ~{cost.totalTokens.toLocaleString('pt-BR')} tokens · US$ {cost.costUsd.toFixed(4)} ·
           {' '}R$ {cost.costBrl.toFixed(2).replace('.', ',')} · ~{(cost.estLatencyMs / 1000).toFixed(1)}s
         </div>
@@ -176,12 +176,12 @@ export function AgentLivePreviewCard({ form }: Props) {
           <div className="bg-primary/70" style={{ width: `${inputPct}%` }} />
           <div className="bg-nexus-amber/70" style={{ width: `${100 - inputPct}%` }} />
         </div>
-        <div className="flex justify-between text-[10px] font-mono text-muted-foreground">
+        <div className="flex justify-between text-meta font-mono text-muted-foreground">
           <span>entrada {cost.inputTokens.toLocaleString('pt-BR')}</span>
           <span>saída {cost.outputTokens.toLocaleString('pt-BR')}</span>
         </div>
 
-        <p className="text-[10px] text-muted-foreground pt-1.5 border-t border-border/30">
+        <p className="text-meta text-muted-foreground pt-1.5 border-t border-border/30">
           Em {dailyExecs} execuções/dia:{' '}
           <span className="font-mono text-foreground/80">US$ {dailyUsd.toFixed(2)}</span>
           {' · '}
@@ -191,8 +191,8 @@ export function AgentLivePreviewCard({ form }: Props) {
 
 
       <div className="space-y-1">
-        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Missão</p>
-        <p className="text-xs text-foreground/90 line-clamp-2">
+        <p className="text-meta uppercase tracking-wider text-muted-foreground">Missão</p>
+        <p className="text-meta text-foreground/90 line-clamp-2">
           {debounced.mission || <span className="text-muted-foreground italic">Sem missão definida</span>}
         </p>
       </div>
@@ -200,7 +200,7 @@ export function AgentLivePreviewCard({ form }: Props) {
       {/* Prompt summary */}
       <div className="space-y-2 pt-2 border-t border-border/50">
         <div className="flex items-center justify-between gap-2">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+          <p className="text-meta uppercase tracking-wider text-muted-foreground">
             Resumo do system prompt
           </p>
           {hasPrompt && (
@@ -209,7 +209,7 @@ export function AgentLivePreviewCard({ form }: Props) {
               variant="ghost"
               size="sm"
               onClick={() => setExpanded((v) => !v)}
-              className="h-6 px-2 text-[11px] gap-1"
+              className="h-6 px-2 text-meta gap-1"
               aria-expanded={expanded}
             >
               {expanded ? (
@@ -228,7 +228,7 @@ export function AgentLivePreviewCard({ form }: Props) {
         {hasPrompt ? (
           <div className="relative">
             <pre
-              className={`bg-secondary/30 rounded-lg p-3 text-[11px] leading-relaxed font-mono text-foreground/85 overflow-hidden whitespace-pre-wrap break-words ${
+              className={`bg-secondary/30 rounded-lg p-3 text-meta leading-relaxed font-mono text-foreground/85 overflow-hidden whitespace-pre-wrap break-words ${
                 expanded ? 'max-h-[480px] overflow-y-auto' : 'max-h-[280px]'
               }`}
             >
@@ -238,13 +238,13 @@ export function AgentLivePreviewCard({ form }: Props) {
               <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-card to-transparent rounded-b-lg" />
             )}
             {hidden > 0 && (
-              <p className="text-[10px] text-muted-foreground mt-1.5 font-mono">
+              <p className="text-meta text-muted-foreground mt-1.5 font-mono">
                 +{hidden} {hidden === 1 ? 'linha oculta' : 'linhas ocultas'} · {totalLines} no total
               </p>
             )}
           </div>
         ) : (
-          <p className="text-xs text-muted-foreground italic py-3">
+          <p className="text-meta text-muted-foreground italic py-3">
             Comece a escrever o prompt para ver a prévia aqui.
           </p>
         )}

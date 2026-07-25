@@ -12,6 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import { logger } from '@/lib/logger';
 import { startTrace, type SpanKind } from '@/lib/tracing';
+import type { DbRow } from '@/types/dbRow';
 
 /**
  * Wraps a Supabase Edge Function invoke with a complete trace.
@@ -19,15 +20,15 @@ import { startTrace, type SpanKind } from '@/lib/tracing';
  */
 async function tracedInvoke<T = unknown>(
   functionName: string,
-  body: unknown,
+  body: DbRow,
   options: {
     spanKind?: SpanKind;
     agentId?: string;
     sessionId?: string;
     workflowId?: string;
-    extractCostUsd?: (data: unknown) => number | undefined;
-    extractTokens?: (data: unknown) => { input?: number; output?: number } | undefined;
-    extractModel?: (body: unknown) => string | undefined;
+    extractCostUsd?: (data: DbRow) => number | undefined;
+    extractTokens?: (data: DbRow) => { input?: number; output?: number } | undefined;
+    extractModel?: (body: DbRow) => string | undefined;
   } = {}
 ): Promise<T> {
   const ctx = startTrace({
@@ -46,7 +47,13 @@ async function tracedInvoke<T = unknown>(
   try {
     // Propagate W3C traceparent so edge function can continue the same trace (Sprint 26)
     // Format: 00-{32 hex traceId}-{16 hex spanId}-{2 hex flags}
-    const traceparent = `00-${ctx.traceId.padEnd(32, '0').slice(0, 32)}-${span.id.padEnd(16, '0').slice(0, 16)}-01`;
+    const traceId = typeof ctx.traceId === 'string' && ctx.traceId.length > 0
+      ? ctx.traceId
+      : crypto.randomUUID().replace(/-/g, '');
+    const spanId = typeof span.id === 'string' && span.id.length > 0
+      ? span.id
+      : crypto.randomUUID().replace(/-/g, '').slice(0, 16);
+    const traceparent = `00-${traceId.padEnd(32, '0').slice(0, 32)}-${spanId.padEnd(16, '0').slice(0, 16)}-01`;
     const { data, error } = await supabase.functions.invoke(functionName, {
       body: body as Record<string, unknown>,
       headers: { traceparent },
@@ -173,7 +180,7 @@ export async function invokeTestRunner(body: Record<string, unknown>) {
  */
 export async function invokeTracedFunction<T = unknown>(
   functionName: string,
-  body: unknown,
+  body: DbRow,
   options?: Parameters<typeof tracedInvoke>[2]
 ): Promise<T> {
   return tracedInvoke<T>(functionName, body, options);

@@ -56,11 +56,11 @@ export function getRateLimitIdentifier(req: Request, userId?: string | null): st
 }
 
 /**
- * Check rate limit (synchronous, in-memory sliding window).
+ * Check rate limit — identifier-based (canonical).
  */
 export function checkRateLimit(
   identifier: string,
-  config: RateLimitConfig = RATE_LIMITS.standard
+  config: RateLimitConfig = RATE_LIMITS.standard,
 ): RateLimitResult {
   const now = Date.now();
   cleanup(now);
@@ -94,11 +94,26 @@ export function checkRateLimit(
 }
 
 /**
+ * Check rate limit — Request-based convenience overload.
+ * Extracts identifier from Authorization header (user JWT) or IP.
+ */
+export function checkRateLimitFromRequest(
+  req: Request,
+  options: { preset: keyof typeof RATE_LIMITS } | { config: RateLimitConfig } = { preset: 'standard' },
+): RateLimitResult {
+  const config = 'preset' in options
+    ? RATE_LIMITS[options.preset]
+    : options.config;
+  const identifier = getRateLimitIdentifier(req);
+  return checkRateLimit(identifier, config);
+}
+
+/**
  * Create 429 response with standard headers.
  */
 export function createRateLimitResponse(
   result: RateLimitResult,
-  corsHeaders: Record<string, string> = {}
+  corsHeaders: Record<string, string> = {},
 ): Response {
   const retryAfterSeconds = Math.ceil(result.retryAfterMs / 1000);
   return new Response(

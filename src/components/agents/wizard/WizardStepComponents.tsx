@@ -1,3 +1,4 @@
+import type { DbRow } from '@/types/dbRow';
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -50,24 +51,24 @@ const MEMORY_OPTIONS = [
 
 type FormType = Record<string, string | string[]>;
 
-export function StepIdentity({ form, update }: { form: FormType; update: (k: string, v: unknown) => void }) {
+export function StepIdentity({ form, update }: { form: FormType; update: (k: string, v: DbRow) => void }) {
   return (
     <div className="nexus-card space-y-5">
-      <h2 className="text-lg font-heading font-semibold text-foreground">Identidade do agente</h2>
+      <h2 className="text-title-sm font-heading font-semibold text-foreground">Identidade do agente</h2>
       <div className="grid gap-4">
-        <div><Label className="text-sm">Nome do agente *</Label><Input value={form.name} onChange={e => update("name", e.target.value)} placeholder="Ex: Atlas, Scout, Sentinel..." className="mt-1.5 bg-secondary/50 border-border/50" /></div>
-        <div><Label className="text-sm">Descrição</Label><Textarea value={form.description} onChange={e => update("description", e.target.value)} placeholder="Descreva o propósito deste agente..." rows={3} className="mt-1.5 bg-secondary/50 border-border/50 resize-none" /></div>
-        <div><Label className="text-sm">Objetivo principal</Label><Input value={form.objective} onChange={e => update("objective", e.target.value)} placeholder="Ex: Atender dúvidas técnicas de clientes premium" className="mt-1.5 bg-secondary/50 border-border/50" /></div>
+        <div><Label className="text-body-sm">Nome do agente *</Label><Input value={form.name} onChange={e => update("name", e.target.value)} placeholder="Ex: Atlas, Scout, Sentinel..." className="mt-1.5 bg-secondary/50 border-border/50" /></div>
+        <div><Label className="text-body-sm">Descrição</Label><Textarea value={form.description} onChange={e => update("description", e.target.value)} placeholder="Descreva o propósito deste agente..." rows={3} className="mt-1.5 bg-secondary/50 border-border/50 resize-none" /></div>
+        <div><Label className="text-body-sm">Objetivo principal</Label><Input value={form.objective} onChange={e => update("objective", e.target.value)} placeholder="Ex: Atender dúvidas técnicas de clientes premium" className="mt-1.5 bg-secondary/50 border-border/50" /></div>
       </div>
     </div>
   );
 }
 
-export function StepType({ form, update }: { form: FormType; update: (k: string, v: unknown) => void }) {
+export function StepType({ form, update }: { form: FormType; update: (k: string, v: DbRow) => void }) {
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-heading font-semibold text-foreground">Tipo do agente</h2>
-      <p className="text-sm text-muted-foreground">Selecione o tipo que melhor descreve o papel deste agente.</p>
+      <h2 className="text-title-sm font-heading font-semibold text-foreground">Tipo do agente</h2>
+      <p className="text-body-sm text-muted-foreground">Selecione o tipo que melhor descreve o papel deste agente.</p>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {AGENT_TYPES.map(t => {
           const Icon = t.icon;
@@ -76,9 +77,9 @@ export function StepType({ form, update }: { form: FormType; update: (k: string,
             <button key={t.id} onClick={() => update("type", t.id)} className={`nexus-card text-left transition-all ${selected ? "ring-2 ring-primary bg-primary/5" : "hover:bg-secondary/60"}`}>
               <div className="flex items-center gap-3 mb-2">
                 <div className={`h-10 w-10 rounded-xl flex items-center justify-center ${selected ? "bg-primary/20" : "bg-secondary"}`}><Icon className={`h-5 w-5 ${selected ? "text-primary" : "text-muted-foreground"}`} /></div>
-                <span className="font-medium text-sm text-foreground">{t.label}</span>
+                <span className="font-medium text-body-sm text-foreground">{t.label}</span>
               </div>
-              <p className="text-xs text-muted-foreground">{t.desc}</p>
+              <p className="text-meta text-muted-foreground">{t.desc}</p>
             </button>
           );
         })}
@@ -87,21 +88,21 @@ export function StepType({ form, update }: { form: FormType; update: (k: string,
   );
 }
 
-export function StepModel({ form, update }: { form: FormType; update: (k: string, v: unknown) => void }) {
+export function StepModel({ form, update }: { form: FormType; update: (k: string, v: DbRow) => void }) {
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-heading font-semibold text-foreground">Modelo base</h2>
-      <p className="text-sm text-muted-foreground">Escolha o modelo de linguagem para este agente.</p>
+      <h2 className="text-title-sm font-heading font-semibold text-foreground">Modelo base</h2>
+      <p className="text-body-sm text-muted-foreground">Escolha o modelo de linguagem para este agente.</p>
       <div className="grid gap-3 sm:grid-cols-2">
         {MODELS.map(m => {
           const selected = form.model === m.id;
           return (
             <button key={m.id} onClick={() => update("model", m.id)} className={`nexus-card text-left transition-all ${selected ? "ring-2 ring-primary bg-primary/5" : "hover:bg-secondary/60"}`}>
               <div className="flex items-center justify-between mb-2">
-                <span className="font-semibold text-sm text-foreground">{m.name}</span>
-                <Badge variant="outline" className="text-[11px]">{m.provider}</Badge>
+                <span className="font-semibold text-body-sm text-foreground">{m.name}</span>
+                <Badge variant="outline" className="text-meta">{m.provider}</Badge>
               </div>
-              <div className="flex gap-3 text-xs text-muted-foreground">
+              <div className="flex gap-3 text-meta text-muted-foreground">
                 <span>Custo: <strong className="text-foreground">{m.cost}</strong></span>
                 <span>Velocidade: <strong className="text-foreground">{m.speed}</strong></span>
                 <span>Qualidade: <strong className="text-foreground">{m.quality}</strong></span>
@@ -114,13 +115,13 @@ export function StepModel({ form, update }: { form: FormType; update: (k: string
   );
 }
 
-export function StepPrompt({ form, update }: { form: FormType; update: (k: string, v: unknown) => void }) {
+export function StepPrompt({ form, update }: { form: FormType; update: (k: string, v: DbRow) => void }) {
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-heading font-semibold text-foreground">System Prompt</h2>
-      <p className="text-sm text-muted-foreground">Defina as instruções de comportamento do agente.</p>
+      <h2 className="text-title-sm font-heading font-semibold text-foreground">System Prompt</h2>
+      <p className="text-body-sm text-muted-foreground">Defina as instruções de comportamento do agente.</p>
       <div className="nexus-card">
-        <Textarea value={form.prompt} onChange={e => update("prompt", e.target.value)} rows={14} className="bg-secondary/50 border-border/50 font-mono text-xs leading-relaxed resize-none" />
+        <Textarea value={form.prompt} onChange={e => update("prompt", e.target.value)} rows={14} className="bg-secondary/50 border-border/50 font-mono text-meta leading-relaxed resize-none" />
       </div>
     </div>
   );
@@ -129,8 +130,8 @@ export function StepPrompt({ form, update }: { form: FormType; update: (k: strin
 export function StepTools({ form, toggle }: { form: FormType; toggle: (id: string) => void }) {
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-heading font-semibold text-foreground">Ferramentas</h2>
-      <p className="text-sm text-muted-foreground">Habilite as ferramentas que o agente poderá utilizar.</p>
+      <h2 className="text-title-sm font-heading font-semibold text-foreground">Ferramentas</h2>
+      <p className="text-body-sm text-muted-foreground">Habilite as ferramentas que o agente poderá utilizar.</p>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {TOOLS.map(t => {
           const Icon = t.icon;
@@ -139,7 +140,7 @@ export function StepTools({ form, toggle }: { form: FormType; toggle: (id: strin
             <button key={t.id} onClick={() => toggle(t.id)} className={`nexus-card text-left transition-all relative ${selected ? "ring-2 ring-primary bg-primary/5" : "hover:bg-secondary/60"}`}>
               <div className="flex items-center gap-2.5">
                 <div className={`h-9 w-9 rounded-lg flex items-center justify-center ${selected ? "bg-primary/20" : "bg-secondary"}`}><Icon className={`h-4 w-4 ${selected ? "text-primary" : "text-muted-foreground"}`} /></div>
-                <div><p className="text-xs font-medium text-foreground">{t.name}</p><p className="text-[11px] text-muted-foreground">{t.category}</p></div>
+                <div><p className="text-meta font-medium text-foreground">{t.name}</p><p className="text-meta text-muted-foreground">{t.category}</p></div>
               </div>
               {selected && <Check className="h-3.5 w-3.5 text-primary absolute top-2 right-2" />}
             </button>
@@ -153,14 +154,14 @@ export function StepTools({ form, toggle }: { form: FormType; toggle: (id: strin
 export function StepMemory({ form, toggle }: { form: FormType; toggle: (id: string) => void }) {
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-heading font-semibold text-foreground">Memória</h2>
-      <p className="text-sm text-muted-foreground">Configure as camadas de memória do agente.</p>
+      <h2 className="text-title-sm font-heading font-semibold text-foreground">Memória</h2>
+      <p className="text-body-sm text-muted-foreground">Configure as camadas de memória do agente.</p>
       <div className="space-y-3">
         {MEMORY_OPTIONS.map(m => {
           const enabled = (form.memory as string[]).includes(m.id);
           return (
             <div key={m.id} className="nexus-card flex items-center justify-between">
-              <div><p className="text-sm font-medium text-foreground">{m.label}</p><p className="text-xs text-muted-foreground">{m.desc}</p></div>
+              <div><p className="text-body-sm font-medium text-foreground">{m.label}</p><p className="text-meta text-muted-foreground">{m.desc}</p></div>
               <Switch checked={enabled} onCheckedChange={() => toggle(m.id)} />
             </div>
           );
@@ -178,8 +179,8 @@ export function StepKnowledge({ form, toggle }: { form: FormType; toggle: (id: s
   ];
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-heading font-semibold text-foreground">Knowledge Base</h2>
-      <p className="text-sm text-muted-foreground">Vincule bases de conhecimento para RAG.</p>
+      <h2 className="text-title-sm font-heading font-semibold text-foreground">Knowledge Base</h2>
+      <p className="text-body-sm text-muted-foreground">Vincule bases de conhecimento para RAG.</p>
       <div className="space-y-3">
         {kbs.map(kb => {
           const selected = (form.knowledgeBases as string[]).includes(kb.id);
@@ -187,7 +188,7 @@ export function StepKnowledge({ form, toggle }: { form: FormType; toggle: (id: s
             <button key={kb.id} onClick={() => toggle(kb.id)} className={`nexus-card w-full text-left flex items-center justify-between transition-all ${selected ? "ring-2 ring-primary bg-primary/5" : "hover:bg-secondary/60"}`}>
               <div className="flex items-center gap-3">
                 <div className={`h-10 w-10 rounded-xl flex items-center justify-center ${selected ? "bg-primary/20" : "bg-secondary"}`}><Database className={`h-5 w-5 ${selected ? "text-primary" : "text-muted-foreground"}`} /></div>
-                <div><p className="text-sm font-medium text-foreground">{kb.name}</p><p className="text-xs text-muted-foreground">{kb.docs} documentos • {kb.status === "synced" ? "Sincronizado" : "Sincronizando..."}</p></div>
+                <div><p className="text-body-sm font-medium text-foreground">{kb.name}</p><p className="text-meta text-muted-foreground">{kb.docs} documentos • {kb.status === "synced" ? "Sincronizado" : "Sincronizando..."}</p></div>
               </div>
               {selected && <Check className="h-4 w-4 text-primary" />}
             </button>
@@ -198,7 +199,7 @@ export function StepKnowledge({ form, toggle }: { form: FormType; toggle: (id: s
   );
 }
 
-export function StepDeploy({ form, update }: { form: FormType; update: (k: string, v: unknown) => void }) {
+export function StepDeploy({ form, update }: { form: FormType; update: (k: string, v: DbRow) => void }) {
   const envs = [
     { id: "development", label: "Development", desc: "Testes internos" },
     { id: "staging", label: "Staging", desc: "Validação pré-produção" },
@@ -209,10 +210,10 @@ export function StepDeploy({ form, update }: { form: FormType; update: (k: strin
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-heading font-semibold text-foreground">Revisão & Deploy</h2>
+      <h2 className="text-title-sm font-heading font-semibold text-foreground">Revisão & Deploy</h2>
       <div className="nexus-card space-y-3">
-        <h3 className="text-sm font-semibold text-foreground">Resumo</h3>
-        <div className="grid grid-cols-2 gap-3 text-xs">
+        <h3 className="text-body-sm font-semibold text-foreground">Resumo</h3>
+        <div className="grid grid-cols-2 gap-3 text-meta">
           <div><span className="text-muted-foreground">Nome:</span> <strong className="text-foreground ml-1">{String(form.name || "—")}</strong></div>
           <div><span className="text-muted-foreground">Tipo:</span> <strong className="text-foreground ml-1">{selectedType?.label || "—"}</strong></div>
           <div><span className="text-muted-foreground">Modelo:</span> <strong className="text-foreground ml-1">{selectedModel?.name || "—"}</strong></div>
@@ -228,9 +229,9 @@ export function StepDeploy({ form, update }: { form: FormType; update: (k: strin
             <button key={e.id} onClick={() => update("environment", e.id)} className={`nexus-card text-left transition-all ${selected ? "ring-2 ring-primary bg-primary/5" : "hover:bg-secondary/60"}`}>
               <div className="flex items-center gap-2 mb-1">
                 <div className={`h-2 w-2 rounded-full ${e.id === "production" ? "bg-nexus-emerald" : e.id === "staging" ? "bg-nexus-amber" : "bg-muted-foreground"}`} />
-                <span className="text-sm font-medium text-foreground">{e.label}</span>
+                <span className="text-body-sm font-medium text-foreground">{e.label}</span>
               </div>
-              <p className="text-xs text-muted-foreground">{e.desc}</p>
+              <p className="text-meta text-muted-foreground">{e.desc}</p>
             </button>
           );
         })}
@@ -238,8 +239,8 @@ export function StepDeploy({ form, update }: { form: FormType; update: (k: strin
       <div className="rounded-lg bg-primary/5 border border-primary/20 p-4 flex items-start gap-3">
         <Shield className="h-5 w-5 text-primary shrink-0 mt-0.5" />
         <div>
-          <p className="text-sm font-medium text-foreground">Guardrails recomendados</p>
-          <p className="text-xs text-muted-foreground mt-1">Após a criação, configure PII masking, limites de custo e moderação na aba Security.</p>
+          <p className="text-body-sm font-medium text-foreground">Guardrails recomendados</p>
+          <p className="text-meta text-muted-foreground mt-1">Após a criação, configure PII masking, limites de custo e moderação na aba Security.</p>
         </div>
       </div>
     </div>

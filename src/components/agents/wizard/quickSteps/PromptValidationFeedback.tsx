@@ -29,7 +29,7 @@ export function PromptValidationFeedback({ prompt, onApplyFix, onJumpToLine }: P
   return (
     <div className="space-y-2">
       {/* Counters */}
-      <div className="flex items-center justify-between gap-4 text-[11px] flex-wrap">
+      <div className="flex items-center justify-between gap-4 text-meta flex-wrap">
         <div className="flex items-center gap-1.5 text-muted-foreground">
           <FileText className="h-3 w-3" />
           <span className="font-mono">
@@ -71,7 +71,7 @@ export function PromptValidationFeedback({ prompt, onApplyFix, onJumpToLine }: P
           className="rounded-lg border border-destructive/30 bg-destructive/5 p-2.5 space-y-1"
         >
           {errors.map((e, i) => (
-            <div key={i} className="flex items-start gap-2 text-xs text-destructive">
+            <div key={i} className="flex items-start gap-2 text-meta text-destructive">
               <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
               <span>{e.message}</span>
             </div>
@@ -87,7 +87,7 @@ export function PromptValidationFeedback({ prompt, onApplyFix, onJumpToLine }: P
           className="rounded-lg border border-nexus-amber/30 bg-nexus-amber/5 p-2.5 space-y-1"
         >
           {warnings.map((w, i) => (
-            <div key={i} className="flex items-start gap-2 text-xs text-nexus-amber">
+            <div key={i} className="flex items-start gap-2 text-meta text-nexus-amber">
               <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
               <span>{w.message}</span>
             </div>

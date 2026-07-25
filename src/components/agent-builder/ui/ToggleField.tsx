@@ -14,8 +14,8 @@ export function ToggleField({ label, description, checked, onCheckedChange, disa
   return (
     <div className={cn('flex items-center justify-between gap-3 py-1', className)}>
       <div className="min-w-0">
-        <span className="text-sm font-medium text-foreground">{label}</span>
-        {description && <p className="text-[11px] text-muted-foreground mt-0.5">{description}</p>}
+        <span className="text-body-sm font-medium text-foreground">{label}</span>
+        {description && <p className="text-meta text-muted-foreground mt-0.5">{description}</p>}
       </div>
       <Switch checked={checked} onCheckedChange={onCheckedChange} disabled={disabled} />
     </div>

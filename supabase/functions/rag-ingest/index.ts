@@ -1,15 +1,17 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import { getCorsHeaders, handleCorsPreflight, jsonResponse } from "../_shared/mod.ts";
+import { getCorsHeaders, handleCorsPreflight, jsonResponse, checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
+import { z } from "https://esm.sh/zod@3.23.8";
 
-interface IngestRequest {
-  document_id: string;
-  content: string;
-  chunk_size?: number;
-  chunk_overlap?: number;
-  contextual_chunking?: boolean;
-}
+const IngestBodySchema = z.object({
+  document_id: z.string().uuid(),
+  content: z.string().min(1).max(2_000_000),
+  chunk_size: z.number().int().min(100).max(8000).optional(),
+  chunk_overlap: z.number().int().min(0).max(2000).optional(),
+  contextual_chunking: z.boolean().optional(),
+});
+type IngestRequest = z.infer<typeof IngestBodySchema>;
 
 function chunkText(text: string, chunkSize = 1000, overlap = 200): string[] {
   if (overlap >= chunkSize) overlap = Math.floor(chunkSize * 0.2);
@@ -31,21 +33,29 @@ serve(async (req) => {
 
   try {
     const authHeader = req.headers.get('Authorization')!;
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabaseUrl = requireEnv("SUPABASE_URL");
+    const supabaseKey = requireEnv("SUPABASE_ANON_KEY");
     const supabase = createClient(supabaseUrl, supabaseKey, { global: { headers: { Authorization: authHeader } } });
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Unauthorized');
+    const rateCheck = checkRateLimit(getRateLimitIdentifier(req, user.id), RATE_LIMITS.heavy);
+    if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, getCorsHeaders(req));
 
-    const body: IngestRequest = await req.json();
-    const { document_id, content, chunk_size = 1000, chunk_overlap = 200, contextual_chunking = false } = body;
+    const rawBody = await req.json().catch(() => null);
+    const parsedBody = IngestBodySchema.safeParse(rawBody);
+    if (!parsedBody.success) {
+      return jsonResponse({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }, 400);
+    }
+    const body: IngestRequest = parsedBody.data;
+    const { document_id, content, chunk_size = 1000, chunk_overlap = 200 } = body;
 
     if (isStream) {
       const { readable, writable } = new TransformStream();
       const writer = writable.getWriter();
       const encoder = new TextEncoder();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
       const send = async (type: string, data: any) => {
         await writer.write(encoder.encode(`data: ${JSON.stringify({ type, data })}\n\n`));
       };
@@ -70,13 +80,14 @@ serve(async (req) => {
           await send('status', { message: 'Chunks salvos no banco de dados', stage: 'db_insert' });
 
           if (secret?.key_value && insertedChunks) {
+            const { withRetry, fetchWithTimeout } = await import('../_shared/retry.ts');
             for (let i = 0; i < insertedChunks.length; i++) {
-              // Simulated parallel processing for speed in high-performance RAG
-              const resp = await fetch('https://api.openai.com/v1/embeddings', {
+              const resp = await withRetry(() => fetchWithTimeout('https://api.openai.com/v1/embeddings', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${secret.key_value}` },
                 body: JSON.stringify({ model: 'text-embedding-3-small', input: chunks[i] }),
-              });
+                timeoutMs: 20_000,
+              }), { attempts: 3, baseMs: 500, capMs: 5_000 });
               const res = await resp.json();
               if (res.data?.[0]?.embedding) {
                 await supabase.from('chunks').update({ embedding_status: 'done' }).eq('id', insertedChunks[i].id);
@@ -88,6 +99,7 @@ serve(async (req) => {
           await supabase.from('documents').update({ status: 'indexed', size_bytes: content.length }).eq('id', document_id);
           await send('status', { message: 'Indexação concluída com sucesso!', stage: 'complete' });
           await writer.close();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         } catch (err: any) {
           await send('error', err.message);
           await writer.close();
@@ -105,6 +117,7 @@ serve(async (req) => {
     await supabase.from('documents').update({ status: 'indexed' }).eq('id', document_id);
     return jsonResponse({ status: 'ok', chunks: chunks.length });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
   } catch (error: any) {
     return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
   }

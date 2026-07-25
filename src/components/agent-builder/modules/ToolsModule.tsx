@@ -124,7 +124,7 @@ export function ToolsModule() {
                           onCheckedChange={(v) => updateTool(tool.id, { enabled: v })}
                         />
                         <input
-                          className="flex-1 bg-transparent border-none text-sm font-medium text-foreground outline-none placeholder:text-muted-foreground"
+                          className="flex-1 bg-transparent border-none text-body-sm font-medium text-foreground outline-none placeholder:text-muted-foreground"
                           value={tool.name}
                           onChange={(e) => updateTool(tool.id, { name: e.target.value })}
                           placeholder="Nome da ferramenta"
@@ -137,7 +137,7 @@ export function ToolsModule() {
                     {tool.enabled && (
                       <div className="space-y-3 pt-2 border-t border-border">
                         <input
-                          className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground"
+                          className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-meta text-foreground placeholder:text-muted-foreground"
                           value={tool.description}
                           onChange={(e) => updateTool(tool.id, { description: e.target.value })}
                           placeholder="Descrição da ferramenta"
@@ -240,18 +240,20 @@ export function ToolsModule() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-foreground">Nome</label>
+                  {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+                  <label className="text-meta font-medium text-foreground">Nome</label>
                   <input
-                    className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-sm text-foreground"
+                    className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-body-sm text-foreground"
                     value={server.name}
                     onChange={(e) => updateMCP(server.id, { name: e.target.value })}
                     placeholder="Ex: Notion MCP"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-foreground">URL</label>
+                  {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+                  <label className="text-meta font-medium text-foreground">URL</label>
                   <input
-                    className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-sm text-foreground"
+                    className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-body-sm text-foreground"
                     value={server.url}
                     onChange={(e) => updateMCP(server.id, { url: e.target.value })}
                     placeholder="https://mcp-server.example.com"
@@ -285,9 +287,10 @@ export function ToolsModule() {
               <div className="space-y-3">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-medium text-foreground">Nome</label>
+                    {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+                    <label className="text-meta font-medium text-foreground">Nome</label>
                     <input
-                      className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-sm text-foreground"
+                      className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-body-sm text-foreground"
                       value={api.name}
                       onChange={(e) => updateAPI(api.id, { name: e.target.value })}
                       placeholder="Nome da API"
@@ -306,9 +309,10 @@ export function ToolsModule() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-foreground">URL</label>
+                  {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+                  <label className="text-meta font-medium text-foreground">URL</label>
                   <input
-                    className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-sm text-foreground"
+                    className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-body-sm text-foreground"
                     value={api.url}
                     onChange={(e) => updateAPI(api.id, { url: e.target.value })}
                     placeholder="https://api.example.com/endpoint"
@@ -328,9 +332,10 @@ export function ToolsModule() {
                     ]}
                   />
                   <div className="space-y-1.5">
-                    <label className="text-xs font-medium text-foreground">Descrição</label>
+                    {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+                    <label className="text-meta font-medium text-foreground">Descrição</label>
                     <input
-                      className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-sm text-foreground"
+                      className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-body-sm text-foreground"
                       value={api.description}
                       onChange={(e) => updateAPI(api.id, { description: e.target.value })}
                       placeholder="O que este endpoint faz"
@@ -354,20 +359,20 @@ export function ToolsModule() {
       <section className="p-4 rounded-xl border border-primary/20 bg-primary/5">
         <div className="flex items-center gap-2 mb-4">
           <Wrench className="h-4 w-4 text-primary" />
-          <h4 className="text-xs font-bold text-foreground uppercase tracking-tight">Status das Ferramentas</h4>
+          <h4 className="text-meta font-bold text-foreground uppercase tracking-tight">Status das Ferramentas</h4>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-1">
-            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Capacidades</p>
-            <p className="text-sm font-semibold">{agent.tools.length} Ferramentas / {agent.mcp_servers.length} MCP</p>
+            <p className="text-meta text-muted-foreground uppercase font-bold tracking-widest">Capacidades</p>
+            <p className="text-body-sm font-semibold">{agent.tools.length} Ferramentas / {agent.mcp_servers.length} MCP</p>
           </div>
           <div className="space-y-1">
-            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Ativas</p>
-            <p className="text-sm font-semibold text-nexus-emerald">{agent.tools.filter(t => t.enabled).length} Habilitadas</p>
+            <p className="text-meta text-muted-foreground uppercase font-bold tracking-widest">Ativas</p>
+            <p className="text-body-sm font-semibold text-nexus-emerald">{agent.tools.filter(t => t.enabled).length} Habilitadas</p>
           </div>
           <div className="space-y-1">
-            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Segurança</p>
-            <p className="text-sm font-semibold text-nexus-blue">
+            <p className="text-meta text-muted-foreground uppercase font-bold tracking-widest">Segurança</p>
+            <p className="text-body-sm font-semibold text-nexus-blue">
               {agent.tools.filter(t => t.requires_approval).length} com aprovação humana
             </p>
           </div>
@@ -375,7 +380,7 @@ export function ToolsModule() {
         {agent.tools.length === 0 && (
           <div className="mt-4 p-3 rounded-lg bg-nexus-amber/10 border border-nexus-amber/20 flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-nexus-amber animate-pulse" />
-            <p className="text-[11px] text-nexus-amber font-medium">Considere adicionar ferramentas para que o agente possa executar ações reais.</p>
+            <p className="text-meta text-nexus-amber font-medium">Considere adicionar ferramentas para que o agente possa executar ações reais.</p>
           </div>
         )}
       </section>

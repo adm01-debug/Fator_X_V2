@@ -7,6 +7,7 @@ import { Check, FileClock, FolderOpen, Layers, Minus, Pencil, RotateCcw, SkipFor
 import { quickIdentitySchema } from '@/lib/validations/quickAgentSchema';
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
 import { cn } from '@/lib/utils';
+import { handleKeyboardClick } from "@/lib/a11y";
 
 function discardCopy(name: string) {
   const label = name.trim() ? `"${name.trim()}"` : 'sem nome ainda';
@@ -101,7 +102,7 @@ function NameLabelOrEditor({ draft, isEditing, onStartEdit, onCancel, onConfirm 
 
   if (isEditing) {
     return (
-      <div className="flex flex-col gap-1 flex-1 min-w-0" onClick={(e) => e.stopPropagation()}>
+      <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className="flex flex-col gap-1 flex-1 min-w-0" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center gap-1.5">
           <Input
             ref={inputRef}
@@ -112,7 +113,7 @@ function NameLabelOrEditor({ draft, isEditing, onStartEdit, onCancel, onConfirm 
             maxLength={60}
             aria-invalid={!!error}
             aria-label="Novo nome do agente"
-            className="h-7 text-sm py-1"
+            className="h-7 text-body-sm py-1"
           />
           <button
             type="button"
@@ -137,7 +138,7 @@ function NameLabelOrEditor({ draft, isEditing, onStartEdit, onCancel, onConfirm 
             <X className="h-3.5 w-3.5" />
           </button>
         </div>
-        {error && <p className="text-[11px] text-destructive">{error}</p>}
+        {error && <p className="text-meta text-destructive">{error}</p>}
       </div>
     );
   }
@@ -145,7 +146,7 @@ function NameLabelOrEditor({ draft, isEditing, onStartEdit, onCancel, onConfirm 
   const display = draft.summary.name.trim() ? `"${draft.summary.name.trim()}"` : 'sem nome ainda';
   return (
     <span className="inline-flex items-center gap-1 min-w-0">
-      <span className="text-sm font-medium text-foreground truncate">{display}</span>
+      <span className="text-body-sm font-medium text-foreground truncate">{display}</span>
       <button
         type="button"
         onClick={(e) => { e.stopPropagation(); onStartEdit(); }}
@@ -216,12 +217,12 @@ function RestoreModeSelector({ mode, onChange, summary }: RestoreModeSelectorPro
           />
           <div className="min-w-0 flex-1">
             <p className={cn(
-              'text-[11px] font-semibold leading-tight',
+              'text-meta font-semibold leading-tight',
               mode === 'full' ? 'text-foreground' : 'text-muted-foreground',
             )}>
               Restaurar completo
             </p>
-            <p className="text-[10px] text-muted-foreground mt-0.5 leading-tight">
+            <p className="text-meta text-muted-foreground mt-0.5 leading-tight">
               Tudo do rascunho — campos vazios também
             </p>
           </div>
@@ -257,12 +258,12 @@ function RestoreModeSelector({ mode, onChange, summary }: RestoreModeSelectorPro
           />
           <div className="min-w-0 flex-1">
             <p className={cn(
-              'text-[11px] font-semibold leading-tight',
+              'text-meta font-semibold leading-tight',
               mode === 'partial' && !partialDisabled ? 'text-foreground' : 'text-muted-foreground',
             )}>
               Restaurar parcial
             </p>
-            <p className="text-[10px] text-muted-foreground mt-0.5 leading-tight">
+            <p className="text-meta text-muted-foreground mt-0.5 leading-tight">
               Só preenchidos — pula e destaca o resto
             </p>
           </div>
@@ -270,7 +271,7 @@ function RestoreModeSelector({ mode, onChange, summary }: RestoreModeSelectorPro
       </div>
 
       {/* Painel de explicação do efeito do modo escolhido */}
-      <div className="rounded-md bg-secondary/30 px-2.5 py-2 space-y-1.5 text-[10px]">
+      <div className="rounded-md bg-secondary/30 px-2.5 py-2 space-y-1.5 text-meta">
         {mode === 'full' ? (
           <>
             <div className="flex items-start gap-1.5">
@@ -359,11 +360,11 @@ function DraftPreviewLine({ entry }: { entry: DraftBannerEntry }) {
   const absolute = formatAbsolute(entry.savedAt);
   return (
     <div
-      className="rounded-md border border-border/40 bg-background/40 px-2.5 py-2 text-[11px] text-muted-foreground space-y-1"
+      className="rounded-md border border-border/40 bg-background/40 px-2.5 py-2 text-meta text-muted-foreground space-y-1"
       aria-label="Prévia do rascunho antes de restaurar"
     >
       <div className="flex items-center gap-1.5 flex-wrap">
-        <span className="text-muted-foreground/70 uppercase tracking-wider text-[10px]">Prévia</span>
+        <span className="text-muted-foreground/70 uppercase tracking-wider text-meta">Prévia</span>
         <span className="text-foreground font-medium truncate max-w-[220px]" title={name}>{name}</span>
         <span className="text-muted-foreground/50">·</span>
         <span className="font-mono tabular-nums" title="Salvo em">{absolute}</span>
@@ -388,7 +389,7 @@ function DraftPreviewLine({ entry }: { entry: DraftBannerEntry }) {
 function StatusChip({ label, ok }: { label: string; ok: boolean }) {
   return (
     <span
-      className={`inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border ${
+      className={`inline-flex items-center gap-1 text-meta px-2 py-0.5 rounded-full border ${
         ok
           ? 'border-nexus-emerald/30 bg-nexus-emerald/10 text-nexus-emerald'
           : 'border-border/50 bg-secondary/40 text-muted-foreground'
@@ -436,7 +437,7 @@ function CompletionMeter({ summary, compact = false }: { summary: DraftSummary; 
           style={{ width: `${pct}%` }}
         />
       </div>
-      <span className={`text-[11px] font-mono tabular-nums shrink-0 ${toneText}`}>
+      <span className={`text-meta font-mono tabular-nums shrink-0 ${toneText}`}>
         {pct}%
       </span>
     </div>
@@ -501,10 +502,10 @@ export function DraftRecoveryBanner({
             <FileClock className="h-5 w-5 text-primary" />
           </div>
           <div className="min-w-0 flex-1">
-            <h3 className="text-sm font-heading font-semibold text-foreground">
+            <h3 className="text-body-sm font-heading font-semibold text-foreground">
               Rascunho encontrado
             </h3>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="text-meta text-muted-foreground mt-0.5">
               Você começou um agente {formatRelative(only.savedAt)}. Renomeie ou continue de onde parou.
             </p>
             <div className="mt-2">
@@ -521,7 +522,7 @@ export function DraftRecoveryBanner({
 
         <div className="space-y-2">
           <div className="flex items-center gap-2">
-            <span className="text-[11px] uppercase tracking-wide text-muted-foreground shrink-0">
+            <span className="text-meta uppercase tracking-wide text-muted-foreground shrink-0">
               Completude
             </span>
             <CompletionMeter summary={only.summary} />
@@ -532,7 +533,7 @@ export function DraftRecoveryBanner({
             <StatusChip label="Modelo" ok={only.summary.hasModel} />
             <StatusChip label="Prompt" ok={only.summary.hasPrompt} />
             {blocked && (
-              <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border border-warning/30 bg-warning/10 text-warning">
+              <span className="inline-flex items-center gap-1 text-meta px-2 py-0.5 rounded-full border border-warning/30 bg-warning/10 text-warning">
                 Incompleto
               </span>
             )}
@@ -604,10 +605,10 @@ export function DraftRecoveryBanner({
           <FolderOpen className="h-5 w-5 text-primary" />
         </div>
         <div className="min-w-0 flex-1">
-          <h3 className="text-sm font-heading font-semibold text-foreground">
+          <h3 className="text-body-sm font-heading font-semibold text-foreground">
             {drafts.length} rascunhos encontrados
           </h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
+          <p className="text-meta text-muted-foreground mt-0.5">
             Selecione qual deseja retomar. Os outros continuam salvos.
           </p>
         </div>
@@ -656,17 +657,17 @@ export function DraftRecoveryBanner({
                     onConfirm={(newName) => handleConfirmRename(d.id, newName)}
                   />
                   {d.typeLabel && (
-                    <span className="text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded bg-secondary/60 text-muted-foreground">
+                    <span className="text-meta uppercase tracking-wide px-1.5 py-0.5 rounded bg-secondary/60 text-muted-foreground">
                       {d.typeLabel}
                     </span>
                   )}
-                  <span className="text-[11px] text-muted-foreground">·</span>
-                  <span className="text-[11px] text-muted-foreground">
+                  <span className="text-meta text-muted-foreground">·</span>
+                  <span className="text-meta text-muted-foreground">
                     {formatRelative(d.savedAt)}
                   </span>
                   {d.restorable === false && (
                     <span
-                      className="text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded border border-warning/30 bg-warning/10 text-warning"
+                      className="text-meta uppercase tracking-wide px-1.5 py-0.5 rounded border border-warning/30 bg-warning/10 text-warning"
                       title={d.restoreBlockedReason ?? 'Incompleto demais para retomar'}
                     >
                       Incompleto
@@ -684,7 +685,7 @@ export function DraftRecoveryBanner({
                 </div>
               </div>
 
-              <span onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+              <span role="button" tabIndex={0} onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
                 <ConfirmDialog
                   trigger={
                     <button

@@ -1,31 +1,39 @@
 // Sprint 33: Incident Orchestrator — executes playbook actions sequentially
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
+import { z } from "https://esm.sh/zod@3.23.8";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
+import { getCorsHeaders } from "../_shared/cors.ts";
 type Action = {
   type: 'notify' | 'disable_chaos' | 'pause_agent' | 'switch_provider' | 'page_oncall';
   config?: Record<string, unknown>;
 };
 
+const InputSchema = z.object({
+  playbook_id: z.string().uuid(),
+  trigger_event: z.record(z.unknown()).optional(),
+  triggered_by: z.string().max(120).optional(),
+});
+
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
-  try {
-    const { playbook_id, trigger_event, triggered_by } = await req.json();
-    if (!playbook_id) {
-      return new Response(JSON.stringify({ error: 'playbook_id required' }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
+
+    const raw = await req.json().catch(() => null);
+    const parsed = InputSchema.safeParse(raw);
+    if (!parsed.success) {
+      return new Response(JSON.stringify({ error: 'Payload inválido', details: parsed.error.flatten() }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
+    const { playbook_id, trigger_event, triggered_by } = parsed.data;
+
 
     const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+      requireEnv('SUPABASE_URL'),
+      requireEnv('SUPABASE_SERVICE_ROLE_KEY'),
     );
 
     // Create run (returns null if cooldown)

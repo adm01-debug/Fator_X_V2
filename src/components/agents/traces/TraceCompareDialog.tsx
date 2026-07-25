@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { AgentTraceRow, TraceLevel } from '@/services/agentTracesService';
+import type { DbRow } from '@/types/dbRow';
 
 interface Props {
   open: boolean;
@@ -30,7 +31,7 @@ const LEVEL_ICON: Record<TraceLevel, JSX.Element> = {
   error: <XCircle className="h-3 w-3 text-destructive" aria-hidden />,
 };
 
-function stringify(value: unknown): string {
+function stringify(value: DbRow): string {
   if (value === null || value === undefined) return '';
   if (typeof value === 'string') return value;
   try { return JSON.stringify(value, null, 2); } catch { return String(value); }
@@ -68,7 +69,7 @@ function buildSideDiff(textA: string, textB: string) {
 
 function DiffColumn({ rows, side }: { rows: Array<{ value: string; kind: string }>; side: 'left' | 'right' }) {
   return (
-    <pre className="text-[11px] leading-5 font-mono whitespace-pre-wrap break-all">
+    <pre className="text-meta leading-5 font-mono whitespace-pre-wrap break-all">
       {rows.map((r, i) => {
         let cls = 'text-foreground/80';
         if (r.kind === 'removed') cls = 'bg-destructive/15 text-destructive line-through';
@@ -106,24 +107,24 @@ export function TraceCompareDialog({ open, onOpenChange, traceA, indexA, traceB,
         <DialogHeader>
           <div className="flex items-start justify-between gap-3">
             <div>
-              <DialogTitle className="flex items-center gap-2 text-sm">
+              <DialogTitle className="flex items-center gap-2 text-body-sm">
                 <ArrowLeftRight className="w-4 h-4 text-nexus-purple" />
                 Comparação de passos
-                <Badge variant="outline" className="text-[10px]">
+                <Badge variant="outline" className="text-meta">
                   {totalChanges === 0 ? 'sem diferenças' : `${totalChanges} seção(ões) alteradas`}
                 </Badge>
               </DialogTitle>
-              <DialogDescription className="text-[11px]">
+              <DialogDescription className="text-meta">
                 Diferenças linha-a-linha entre dois eventos da mesma execução.
               </DialogDescription>
             </div>
             <div className="flex items-center gap-1 mr-6">
               {onSwap && (
-                <Button size="sm" variant="ghost" className="h-7 text-xs text-muted-foreground hover:text-foreground" onClick={onSwap}>
+                <Button size="sm" variant="ghost" className="h-7 text-meta text-muted-foreground hover:text-foreground" onClick={onSwap}>
                   <ArrowLeftRight className="w-3 h-3 mr-1" /> Inverter A/B
                 </Button>
               )}
-              <Button size="sm" variant="ghost" className="h-7 text-xs text-muted-foreground" onClick={() => onOpenChange(false)}>
+              <Button size="sm" variant="ghost" className="h-7 text-meta text-muted-foreground" onClick={() => onOpenChange(false)}>
                 <X className="w-3 h-3 mr-1" /> Fechar
               </Button>
             </div>
@@ -133,24 +134,24 @@ export function TraceCompareDialog({ open, onOpenChange, traceA, indexA, traceB,
         {/* A/B header strip */}
         <div className="grid grid-cols-2 gap-2">
           <div className="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-1.5">
-            <p className="text-[10px] uppercase tracking-wide text-destructive font-semibold flex items-center gap-1.5">
+            <p className="text-meta uppercase tracking-wide text-destructive font-semibold flex items-center gap-1.5">
               A {LEVEL_ICON[traceA.level]}
             </p>
-            <p className="text-xs text-foreground font-medium truncate">
+            <p className="text-meta text-foreground font-medium truncate">
               #{indexA + 1} · {traceA.event}
             </p>
-            <p className="text-[10px] text-muted-foreground font-mono truncate">
+            <p className="text-meta text-muted-foreground font-mono truncate">
               {new Date(traceA.created_at).toLocaleString('pt-BR')}
             </p>
           </div>
           <div className="rounded-md border border-nexus-emerald/30 bg-nexus-emerald/5 px-3 py-1.5">
-            <p className="text-[10px] uppercase tracking-wide text-nexus-emerald font-semibold flex items-center gap-1.5">
+            <p className="text-meta uppercase tracking-wide text-nexus-emerald font-semibold flex items-center gap-1.5">
               B {LEVEL_ICON[traceB.level]}
             </p>
-            <p className="text-xs text-foreground font-medium truncate">
+            <p className="text-meta text-foreground font-medium truncate">
               #{indexB + 1} · {traceB.event}
             </p>
-            <p className="text-[10px] text-muted-foreground font-mono truncate">
+            <p className="text-meta text-muted-foreground font-mono truncate">
               {new Date(traceB.created_at).toLocaleString('pt-BR')}
             </p>
           </div>
@@ -160,10 +161,10 @@ export function TraceCompareDialog({ open, onOpenChange, traceA, indexA, traceB,
           {sections.map((s) => (
             <div key={s.key} className="space-y-1.5">
               <div className="flex items-center gap-2">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{s.label}</p>
+                <p className="text-meta font-semibold text-muted-foreground uppercase tracking-wide">{s.label}</p>
                 {s.changed
-                  ? <Badge className="bg-nexus-amber/15 text-nexus-amber text-[10px] px-1.5 py-0">alterado</Badge>
-                  : <Badge variant="outline" className="text-[10px] px-1.5 py-0 text-muted-foreground">idêntico</Badge>}
+                  ? <Badge className="bg-nexus-amber/15 text-nexus-amber text-meta px-1.5 py-0">alterado</Badge>
+                  : <Badge variant="outline" className="text-meta px-1.5 py-0 text-muted-foreground">idêntico</Badge>}
               </div>
               <div className="rounded-md border border-border overflow-hidden">
                 <ScrollArea className="h-[220px]">

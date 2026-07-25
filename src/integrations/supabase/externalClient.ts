@@ -21,16 +21,18 @@ const FALLBACK_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const resolvedUrl = EXTERNAL_SUPABASE_URL || FALLBACK_URL;
 const resolvedKey = EXTERNAL_SUPABASE_ANON_KEY || FALLBACK_KEY;
 
-if (!EXTERNAL_SUPABASE_URL || !EXTERNAL_SUPABASE_ANON_KEY) {
+const usingFallback = !EXTERNAL_SUPABASE_URL || !EXTERNAL_SUPABASE_ANON_KEY;
+
+if (usingFallback && import.meta.env.DEV) {
   logger.warn(
-    '⚠️ VITE_EXTERNAL_SUPABASE_URL or VITE_EXTERNAL_SUPABASE_ANON_KEY not set.',
-    { detail: 'Falling back to Lovable Cloud DB. Set them in Lovable environment settings to use the external DB.' }
+    '⚠️ VITE_EXTERNAL_SUPABASE_URL/ANON_KEY não definidos — usando Lovable Cloud DB como fallback.'
   );
 }
 
 /**
  * External Supabase client for ALL data operations.
- * Falls back to Lovable Cloud DB when external vars are not configured.
+ * Uses a distinct storageKey to avoid the "Multiple GoTrueClient instances" warning
+ * when sharing the same project URL as the auth client.
  */
 export const supabaseExternal = createClient<Database>(
   resolvedUrl,
@@ -39,9 +41,11 @@ export const supabaseExternal = createClient<Database>(
     auth: {
       persistSession: false,
       autoRefreshToken: false,
+      storageKey: 'sb-external-data-client',
     },
   }
 );
+
 
 /**
  * Set the access token on the external client so RLS works.

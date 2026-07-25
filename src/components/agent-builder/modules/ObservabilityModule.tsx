@@ -93,7 +93,7 @@ export function ObservabilityModule() {
               key={s}
               variant={statusFilter === s ? 'default' : 'outline'}
               size="sm"
-              className="text-xs h-7"
+              className="text-meta h-7"
               onClick={() => setStatusFilter(s)}
             >
               {s === 'all' ? 'Todos' : STATUS_CONFIG[s]?.label ?? s}
@@ -117,12 +117,12 @@ export function ObservabilityModule() {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <span className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium ${sc.className}`}>
+                    <span className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-meta font-medium ${sc.className}`}>
                       {sc.icon} {sc.label}
                     </span>
-                    <p className="text-sm text-foreground truncate">{trace.user_input}</p>
+                    <p className="text-body-sm text-foreground truncate">{trace.user_input}</p>
                   </div>
-                  <div className="flex items-center gap-4 text-[11px] text-muted-foreground shrink-0 ml-3">
+                  <div className="flex items-center gap-4 text-meta text-muted-foreground shrink-0 ml-3">
                     <span>{trace.total_tokens} tok</span>
                     <span>{trace.latency_ms}ms</span>
                     <span>${trace.total_cost.toFixed(4)}</span>
@@ -130,7 +130,7 @@ export function ObservabilityModule() {
                     <Button
                       size="sm"
                       variant="ghost"
-                      className="h-6 px-2 text-[11px] gap-1 hover:bg-primary/10 hover:text-primary"
+                      className="h-6 px-2 text-meta gap-1 hover:bg-primary/10 hover:text-primary"
                       onClick={(e) => handleReplay(trace, e)}
                       title="Replay no Playground"
                     >
@@ -155,7 +155,7 @@ export function ObservabilityModule() {
           </div>
           <div className="space-y-3">
             <CollapsibleCard title="📥 Input do Usuário" defaultOpen>
-              <p className="text-sm text-foreground bg-muted/30 rounded-lg p-3">{selected.user_input}</p>
+              <p className="text-body-sm text-foreground bg-muted/30 rounded-lg p-3">{selected.user_input}</p>
             </CollapsibleCard>
 
             {selected.context_retrieved.length > 0 && (
@@ -163,11 +163,11 @@ export function ObservabilityModule() {
                 <div className="space-y-2">
                   {selected.context_retrieved.map((ctx, i) => (
                     <div key={i} className="rounded-lg bg-muted/30 p-3">
-                      <div className="flex justify-between text-[11px] text-muted-foreground mb-1">
+                      <div className="flex justify-between text-meta text-muted-foreground mb-1">
                         <span>Fonte: {ctx.source}</span>
                         <span>Score: {ctx.score.toFixed(2)}</span>
                       </div>
-                      <p className="text-sm text-foreground">{ctx.chunk}</p>
+                      <p className="text-body-sm text-foreground">{ctx.chunk}</p>
                     </div>
                   ))}
                 </div>
@@ -179,8 +179,8 @@ export function ObservabilityModule() {
                 <div className="space-y-2">
                   {selected.memories_used.map((mem, i) => (
                     <div key={i} className="rounded-lg bg-muted/30 p-3">
-                      <span className="text-[11px] font-medium text-primary uppercase">{mem.type}</span>
-                      <p className="text-sm text-foreground mt-1">{mem.content}</p>
+                      <span className="text-meta font-medium text-primary uppercase">{mem.type}</span>
+                      <p className="text-body-sm text-foreground mt-1">{mem.content}</p>
                     </div>
                   ))}
                 </div>
@@ -192,14 +192,14 @@ export function ObservabilityModule() {
                 <div className="space-y-2">
                   {selected.tool_calls.map((tc, i) => (
                     <div key={i} className={`rounded-lg p-3 ${tc.success ? 'bg-nexus-emerald/5 border border-nexus-emerald/20' : 'bg-destructive/5 border border-destructive/20'}`}>
-                      <div className="flex items-center justify-between text-xs mb-1">
+                      <div className="flex items-center justify-between text-meta mb-1">
                         <span className="font-medium text-foreground">{tc.tool}</span>
                         <span className={tc.success ? 'text-nexus-emerald' : 'text-destructive'}>
                           {tc.success ? '✓' : '✗'} {tc.latency_ms}ms
                         </span>
                       </div>
-                      <p className="text-[11px] text-muted-foreground">Input: {JSON.stringify(tc.input)}</p>
-                      <p className="text-[11px] text-muted-foreground">Output: {JSON.stringify(tc.output)}</p>
+                      <p className="text-meta text-muted-foreground">Input: {JSON.stringify(tc.input)}</p>
+                      <p className="text-meta text-muted-foreground">Output: {JSON.stringify(tc.output)}</p>
                     </div>
                   ))}
                 </div>
@@ -211,11 +211,11 @@ export function ObservabilityModule() {
                 <div className="space-y-2">
                   {selected.guardrails_triggered.map((gr, i) => (
                     <div key={i} className="rounded-lg bg-nexus-orange/5 border border-nexus-orange/20 p-3">
-                      <div className="flex items-center justify-between text-xs">
+                      <div className="flex items-center justify-between text-meta">
                         <span className="font-medium text-foreground">{gr.id}</span>
-                        <span className="text-nexus-orange uppercase text-[11px]">{gr.action}</span>
+                        <span className="text-nexus-orange uppercase text-meta">{gr.action}</span>
                       </div>
-                      <p className="text-[11px] text-muted-foreground mt-1">{gr.reason}</p>
+                      <p className="text-meta text-muted-foreground mt-1">{gr.reason}</p>
                     </div>
                   ))}
                 </div>
@@ -223,17 +223,17 @@ export function ObservabilityModule() {
             )}
 
             <CollapsibleCard title="📤 Output Final">
-              <p className="text-sm text-foreground bg-muted/30 rounded-lg p-3 whitespace-pre-wrap">{selected.final_output}</p>
+              <p className="text-body-sm text-foreground bg-muted/30 rounded-lg p-3 whitespace-pre-wrap">{selected.final_output}</p>
             </CollapsibleCard>
 
             {selected.error_details && (
               <CollapsibleCard title="❌ Detalhes do Erro">
-                <p className="text-sm text-destructive bg-destructive/5 rounded-lg p-3">{selected.error_details}</p>
+                <p className="text-body-sm text-destructive bg-destructive/5 rounded-lg p-3">{selected.error_details}</p>
               </CollapsibleCard>
             )}
 
             {/* Summary bar */}
-            <div className="flex items-center gap-4 rounded-lg bg-muted/20 border border-border p-3 text-xs text-muted-foreground">
+            <div className="flex items-center gap-4 rounded-lg bg-muted/20 border border-border p-3 text-meta text-muted-foreground">
               <span>Tokens: <strong className="text-foreground">{selected.total_tokens}</strong></span>
               <span>Custo: <strong className="text-foreground">${selected.total_cost.toFixed(4)}</strong></span>
               <span>Latência: <strong className="text-foreground">{selected.latency_ms}ms</strong></span>
@@ -250,8 +250,8 @@ function MetricBox({ icon, label, value }: { icon: React.ReactNode; label: strin
   return (
     <div className="rounded-xl border border-border bg-card p-4 text-center">
       <div className="flex justify-center mb-2">{icon}</div>
-      <p className="text-lg font-bold text-foreground">{value}</p>
-      <p className="text-[11px] text-muted-foreground">{label}</p>
+      <p className="text-title-sm font-bold text-foreground">{value}</p>
+      <p className="text-meta text-muted-foreground">{label}</p>
     </div>
   );
 }
@@ -297,7 +297,7 @@ function AbTestPanel({ agentId }: { agentId: string; currentVersion?: number }) 
       toast.success('Teste A/B criado!');
       setTestName('');
       queryClient.invalidateQueries({ queryKey: ['prompt_ab_tests'] });
-    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Erro inesperado"); }
+    } catch (e) { toast.error(e instanceof Error ? e.message : "Erro inesperado"); }
     finally { setCreating(false); }
   };
 
@@ -315,24 +315,24 @@ function AbTestPanel({ agentId }: { agentId: string; currentVersion?: number }) 
 
   return (
     <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 space-y-3">
-      <p className="text-xs font-semibold text-foreground">A/B Testing — Gerenciamento</p>
+      <p className="text-meta font-semibold text-foreground">A/B Testing — Gerenciamento</p>
 
       {/* Create form */}
       <div className="flex gap-2 items-end">
         <div className="flex-1">
-          <label className="text-[11px] text-muted-foreground">Nome do teste</label>
-          <Input value={testName} onChange={e => setTestName(e.target.value)} placeholder="Ex: Teste tom formal vs informal" className="bg-secondary/50 text-xs h-8" />
+          <label htmlFor="observabilitymodule-nome-do-teste-ffdac9" className="text-meta text-muted-foreground">Nome do teste</label>
+          <Input id="observabilitymodule-nome-do-teste-ffdac9" value={testName} onChange={e => setTestName(e.target.value)} placeholder="Ex: Teste tom formal vs informal" className="bg-secondary/50 text-meta h-8" />
         </div>
         <div className="w-20">
-          <label className="text-[11px] text-muted-foreground">Split A%</label>
-          <Input type="number" value={split} onChange={e => setSplit(e.target.value)} min="10" max="90" className="bg-secondary/50 text-xs h-8" />
+          <label htmlFor="observabilitymodule-split-a-b85404" className="text-meta text-muted-foreground">Split A%</label>
+          <Input id="observabilitymodule-split-a-b85404" type="number" value={split} onChange={e => setSplit(e.target.value)} min="10" max="90" className="bg-secondary/50 text-meta h-8" />
         </div>
-        <Button size="sm" onClick={handleCreate} disabled={creating} className="h-8 text-xs gap-1">
+        <Button size="sm" onClick={handleCreate} disabled={creating} className="h-8 text-meta gap-1">
           {creating ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plus className="h-3 w-3" />} Criar
         </Button>
       </div>
 
-      <p className="text-[11px] text-muted-foreground">
+      <p className="text-meta text-muted-foreground">
         Variante A: v{versions[0]?.version || '?'} ({versions[0]?.change_summary || 'atual'}) •
         Variante B: v{versions[1]?.version || '?'} ({versions[1]?.change_summary || 'anterior'}) •
         {versions.length} versões disponíveis
@@ -342,14 +342,14 @@ function AbTestPanel({ agentId }: { agentId: string; currentVersion?: number }) 
       {isLoading ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : tests.length > 0 && (
         <div className="space-y-2 pt-2 border-t border-border/30">
           {tests.map((t: Record<string, unknown>) => (
-            <div key={String(t.id)} className="flex items-center justify-between text-xs py-1">
+            <div key={String(t.id)} className="flex items-center justify-between text-meta py-1">
               <div>
                 <span className="font-medium text-foreground">{String(t.name)}</span>
                 <span className="text-muted-foreground ml-2">Split: {((Number(t.traffic_split) || 0.5) * 100).toFixed(0)}/{(100 - (Number(t.traffic_split) || 0.5) * 100).toFixed(0)}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Badge variant={t.status === 'running' ? 'default' : 'outline'} className="text-[11px]">{String(t.status)}</Badge>
-                {t.status === 'running' && <Button variant="ghost" size="sm" className="h-6 text-[11px]" onClick={() => handleStop(String(t.id))}>Encerrar</Button>}
+                <Badge variant={t.status === 'running' ? 'default' : 'outline'} className="text-meta">{String(t.status)}</Badge>
+                {t.status === 'running' && <Button variant="ghost" size="sm" className="h-6 text-meta" onClick={() => handleStop(String(t.id))}>Encerrar</Button>}
                 <Button variant="ghost" size="icon" className="h-5 w-5 text-destructive" onClick={() => handleDelete(String(t.id))}><Trash2 className="h-3 w-3" /></Button>
               </div>
             </div>

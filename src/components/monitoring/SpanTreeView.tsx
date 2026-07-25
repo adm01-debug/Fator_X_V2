@@ -114,7 +114,7 @@ function SpanRow({ node, traceStart, traceDuration, expanded, onToggle }: SpanRo
   return (
     <>
       <div
-        className="grid grid-cols-[minmax(180px,1fr)_120px_1fr] gap-2 items-center py-1.5 px-2 border-b border-border/20 hover:bg-secondary/20 transition-colors text-xs"
+        className="grid grid-cols-[minmax(180px,1fr)_120px_1fr] gap-2 items-center py-1.5 px-2 border-b border-border/20 hover:bg-secondary/20 transition-colors text-meta"
         style={{ paddingLeft: `${node.depth * 16 + 8}px` }}
       >
         {/* Name + chevron + status */}
@@ -179,7 +179,7 @@ function SpanRow({ node, traceStart, traceDuration, expanded, onToggle }: SpanRo
       {/* Error message inline — always visible (not gated by expansion) */}
       {node.status === 'error' && node.status_message && (
         <div
-          className="text-[11px] text-destructive italic py-1 px-2 border-b border-border/20 bg-destructive/5"
+          className="text-meta text-destructive italic py-1 px-2 border-b border-border/20 bg-destructive/5"
           style={{ paddingLeft: `${node.depth * 16 + 32}px` }}
         >
           ⚠ {node.status_message}
@@ -249,7 +249,7 @@ export function SpanTreeView({
 
   if (spans.length === 0) {
     return (
-      <div className="text-center py-6 text-[11px] text-muted-foreground italic">
+      <div className="text-center py-6 text-meta text-muted-foreground italic">
         Sem spans para exibir
       </div>
     );
@@ -258,7 +258,7 @@ export function SpanTreeView({
   return (
     <div className="rounded-md border border-border/30 overflow-hidden">
       {/* Header */}
-      <div className="grid grid-cols-[minmax(180px,1fr)_120px_1fr] gap-2 px-2 py-1.5 bg-secondary/30 border-b border-border/40 text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
+      <div className="grid grid-cols-[minmax(180px,1fr)_120px_1fr] gap-2 px-2 py-1.5 bg-secondary/30 border-b border-border/40 text-meta uppercase tracking-wider text-muted-foreground font-medium">
         <div>Span</div>
         <div className="text-right">Duração</div>
         <div>Linha do tempo ({computedDuration.toFixed(0)}ms)</div>

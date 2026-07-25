@@ -8,17 +8,29 @@
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(self), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=()" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.gpteng.co https://*.lovable.app https://*.lovable.dev; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.lovable.app https://*.lovable.dev https://api.anthropic.com https://openrouter.ai https://api-inference.huggingface.co https://*.sentry.io https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://*.ingest.de.sentry.io; frame-src 'self' https://*.lovable.app https://*.lovable.dev; frame-ancestors 'self' https://*.lovable.app https://*.lovable.dev; object-src 'none'; base-uri 'self'; form-action 'self';" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.gpteng.co https://*.lovable.app https://*.lovable.dev; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com https://cdn.gpteng.co; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.lovable.app https://*.lovable.dev https://cdn.gpteng.co https://api.anthropic.com https://openrouter.ai https://api-inference.huggingface.co https://*.sentry.io https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://*.ingest.de.sentry.io; frame-src 'self' https://*.lovable.app https://*.lovable.dev; object-src 'none'; base-uri 'self'; form-action 'self';" />
 
-    <!-- Preconnect for performance -->
+    <!-- Preconnect + carregamento não-bloqueante de fontes (LCP) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="dns-prefetch" href="https://tdprnylgyrogbbhgdoik.supabase.co" />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+      />
+    </noscript>
     
     <!-- Primary Meta Tags -->
     <title>Fator X — Plataforma de Agentes de IA</title>
     <meta name="title" content="Fator X — Plataforma de Agentes de IA" />
-    <meta name="description" content="Crie, configure, avalie e opere agentes de IA com governança completa. Plataforma enterprise para superagentes inteligentes." />
+    <meta name="description" content="Crie, configure, avalie e opere agentes de IA com governança completa. Plataforma enterprise para superagentes inteligentes.">
     <meta name="author" content="Fator X" />
     <meta name="robots" content="index, follow" />
     <meta name="theme-color" content="#0a0f1e" />
@@ -36,18 +48,18 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://superagent-lab.lovable.app" />
-    <meta property="og:title" content="Fator X — Plataforma de Agentes de IA" />
-    <meta property="og:description" content="Crie, configure, avalie e opere agentes de IA com governança completa. Plataforma enterprise para superagentes inteligentes." />
-    <meta property="og:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/87e5cc31-e639-4705-a384-1819f7c27e84/id-preview-778298cb--fe73d8c7-cbb0-4153-9038-7f60b90d6917.lovable.app-1774955219365.png" />
+    
+    
+    <meta property="og:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/87e5cc31-e639-4705-a384-1819f7c27e84/id-preview-778298cb--fe73d8c7-cbb0-4153-9038-7f60b90d6917.lovable.app-1774955219365.png">
     <meta property="og:locale" content="pt_BR" />
     <meta property="og:site_name" content="Fator X" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content="https://superagent-lab.lovable.app" />
-    <meta name="twitter:title" content="Fator X — Plataforma de Agentes de IA" />
-    <meta name="twitter:description" content="Crie, configure, avalie e opere agentes de IA com governança completa. Plataforma enterprise para superagentes inteligentes." />
-    <meta name="twitter:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/87e5cc31-e639-4705-a384-1819f7c27e84/id-preview-778298cb--fe73d8c7-cbb0-4153-9038-7f60b90d6917.lovable.app-1774955219365.png" />
+    
+    
+    <meta name="twitter:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/87e5cc31-e639-4705-a384-1819f7c27e84/id-preview-778298cb--fe73d8c7-cbb0-4153-9038-7f60b90d6917.lovable.app-1774955219365.png">
 
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
@@ -66,7 +78,12 @@
       }
     }
     </script>
-  </head>
+    <meta property="og:title" content="Fator X — Plataforma de Agentes de IA">
+  <meta name="twitter:title" content="Fator X — Plataforma de Agentes de IA">
+  <meta property="og:description" content="Crie, configure, avalie e opere agentes de IA com governança completa. Plataforma enterprise para superagentes inteligentes.">
+  <meta name="twitter:description" content="Crie, configure, avalie e opere agentes de IA com governança completa. Plataforma enterprise para superagentes inteligentes.">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
 
   <body>
     <div id="root"></div>

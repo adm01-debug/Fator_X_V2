@@ -1,7 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
-import { getCorsHeaders, handleCorsPreflight, errorResponse } from "../_shared/mod.ts";
+import { getCorsHeaders, handleCorsPreflight, errorResponse, checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
+import { fetchWithTimeout } from "../_shared/retry.ts";
 
 function hfJsonResponse(req: Request, data: unknown, status = 200) {
   const cors = getCorsHeaders(req);
@@ -33,19 +34,21 @@ serve(async (req) => {
 
   try {
     const authHeader = req.headers.get('Authorization')!;
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabaseUrl = requireEnv("SUPABASE_URL");
+    const supabaseKey = requireEnv("SUPABASE_ANON_KEY");
     const supabase = createClient(supabaseUrl, supabaseKey, { global: { headers: { Authorization: authHeader } } });
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return hfJsonResponse(req, { error: 'Unauthorized' }, 401);
+    const rateCheck = checkRateLimit(getRateLimitIdentifier(req, user.id), RATE_LIMITS.heavy);
+    if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, getCorsHeaders(req));
 
     const rawBody = await req.json();
     const parsed = ActionSchema.safeParse(rawBody);
     if (!parsed.success) return hfJsonResponse(req, { error: 'Validation failed', details: parsed.error.flatten().fieldErrors }, 400);
 
     const { action, agent_id, dataset_config, training_config, job_id } = parsed.data;
-    const hfToken = Deno.env.get('HF_API_TOKEN');
+    const hfToken = requireEnv("HF_API_TOKEN");
     if (!hfToken) return hfJsonResponse(req, { error: 'HF_API_TOKEN not configured' }, 400);
 
     const { data: member } = await supabase.from('workspace_members').select('workspace_id').eq('user_id', user.id).limit(1).single();
@@ -53,7 +56,7 @@ serve(async (req) => {
 
     if (action === 'export_traces') {
       if (!agent_id) return hfJsonResponse(req, { error: 'agent_id required' }, 400);
-      const minScore = dataset_config?.min_quality_score || 3;
+      const _minScore = dataset_config?.min_quality_score || 3;
       const maxSamples = dataset_config?.max_samples || 1000;
       const { data: traces, error } = await supabase
         .from('agent_traces').select('input, output, metadata, cost_usd')
@@ -61,8 +64,10 @@ serve(async (req) => {
         .order('created_at', { ascending: false }).limit(maxSamples);
       if (error) throw new Error(error.message);
       // deno-lint-ignore no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
       const dataset = (traces || []).filter((t: any) => t.input?.user_message && t.output?.content)
         // deno-lint-ignore no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         .map((t: any) => ({ instruction: String(t.input.user_message || ''), output: String(t.output.content || ''), input: '' }));
       return hfJsonResponse(req, { dataset_size: dataset.length, format: 'alpaca', sample: dataset.slice(0, 3), dataset, agent_id });
     }
@@ -78,16 +83,20 @@ serve(async (req) => {
           .eq('agent_id', agent_id).eq('event', 'llm_call').eq('level', 'info')
           .order('created_at', { ascending: false }).limit(maxSamples);
         // deno-lint-ignore no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         dataset = (traces || []).filter((t: any) => t.input?.user_message && t.output?.content)
           // deno-lint-ignore no-explicit-any
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           .map((t: any) => ({ text: `<s>[INST] ${t.input.user_message} [/INST] ${t.output.content}</s>` }));
       } else if (taskType === 'text-classification') {
         const { data: traces } = await supabase.from('agent_traces').select('input, metadata')
           .eq('agent_id', agent_id).not('metadata->auto_category', 'is', null)
           .order('created_at', { ascending: false }).limit(maxSamples);
         // deno-lint-ignore no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         dataset = (traces || []).filter((t: any) => t.input?.user_message && t.metadata?.auto_category)
           // deno-lint-ignore no-explicit-any
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           .map((t: any) => ({ text: t.input.user_message, label: t.metadata.auto_category }));
       }
       const issues: string[] = [];
@@ -102,15 +111,16 @@ serve(async (req) => {
       const epochs = training_config?.epochs || 3;
       const lr = training_config?.learning_rate || 0.00002;
       const repoName = training_config?.repo_name || `fatorx-finetune-${Date.now()}`;
-      const whoResp = await fetch('https://huggingface.co/api/whoami-v2', { headers: { 'Authorization': `Bearer ${hfToken}` } });
+      const whoResp = await fetchWithTimeout('https://huggingface.co/api/whoami-v2', { headers: { 'Authorization': `Bearer ${hfToken}` } });
       const whoami = await whoResp.json();
       const hfUsername = (whoami as Record<string, string>).name;
-      await fetch('https://huggingface.co/api/repos/create', {
+      await fetchWithTimeout('https://huggingface.co/api/repos/create', {
         method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hfToken}` },
         body: JSON.stringify({ name: repoName, type: 'model', private: true }),
       });
       if (wsId) {
         // deno-lint-ignore no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         await (supabase as any).from('agent_traces').insert({
           agent_id: agent_id || '00000000-0000-0000-0000-000000000000', user_id: user.id,
           event: 'finetune_started', level: 'info',
@@ -128,14 +138,15 @@ serve(async (req) => {
     }
 
     if (action === 'list_models') {
-      const whoResp = await fetch('https://huggingface.co/api/whoami-v2', { headers: { 'Authorization': `Bearer ${hfToken}` } });
+      const whoResp = await fetchWithTimeout('https://huggingface.co/api/whoami-v2', { headers: { 'Authorization': `Bearer ${hfToken}` } });
       const whoami = await whoResp.json();
       const hfUsername = (whoami as Record<string, string>).name;
-      const modelsResp = await fetch(`https://huggingface.co/api/models?author=${hfUsername}&sort=lastModified&direction=-1&limit=20`, { headers: { 'Authorization': `Bearer ${hfToken}` } });
+      const modelsResp = await fetchWithTimeout(`https://huggingface.co/api/models?author=${hfUsername}&sort=lastModified&direction=-1&limit=20`, { headers: { 'Authorization': `Bearer ${hfToken}` } });
       const models = await modelsResp.json();
       return hfJsonResponse(req, {
         hf_username: hfUsername,
         // deno-lint-ignore no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         models: (models as any[] || []).map((m: Record<string, unknown>) => ({
           id: m.id, name: (m.id as string)?.split('/')?.pop(), private: m.private,
           downloads: m.downloads, updated: m.lastModified, tags: m.tags,
@@ -146,10 +157,10 @@ serve(async (req) => {
 
     if (action === 'check_status') {
       if (!job_id) return hfJsonResponse(req, { error: 'job_id (repo_id) required' }, 400);
-      const repoResp = await fetch(`https://huggingface.co/api/models/${job_id}`, { headers: { 'Authorization': `Bearer ${hfToken}` } });
+      const repoResp = await fetchWithTimeout(`https://huggingface.co/api/models/${job_id}`, { headers: { 'Authorization': `Bearer ${hfToken}` } });
       if (!repoResp.ok) return hfJsonResponse(req, { error: 'Model not found', job_id }, 404);
       const repoData = await repoResp.json() as Record<string, unknown>;
-      const filesResp = await fetch(`https://huggingface.co/api/models/${job_id}/tree/main`, { headers: { 'Authorization': `Bearer ${hfToken}` } });
+      const filesResp = await fetchWithTimeout(`https://huggingface.co/api/models/${job_id}/tree/main`, { headers: { 'Authorization': `Bearer ${hfToken}` } });
       const files = filesResp.ok ? await filesResp.json() as Array<Record<string, unknown>> : [];
       const hasModelFiles = files.some((f) => {
         const fname = String(f.path || '');

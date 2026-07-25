@@ -94,7 +94,7 @@ export function DocOcrDialog() {
       });
       setResult(data.text || "(sem resposta)");
       toast.success(`OCR concluído (${data.model})`);
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro inesperado");
     } finally {
       setLoading(false);
@@ -125,7 +125,7 @@ export function DocOcrDialog() {
       }}
     >
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-1.5 text-xs">
+        <Button variant="outline" size="sm" className="gap-1.5 text-meta">
           <FileSearch className="h-3.5 w-3.5" />
           OCR de documento
         </Button>
@@ -150,7 +150,7 @@ export function DocOcrDialog() {
                 type="file"
                 accept="image/*"
                 onChange={handleFile}
-                className="flex-1 text-xs file:mr-3 file:px-3 file:py-1.5 file:rounded-md file:border-0 file:bg-background file:text-foreground hover:file:bg-muted"
+                className="flex-1 text-meta file:mr-3 file:px-3 file:py-1.5 file:rounded-md file:border-0 file:bg-background file:text-foreground hover:file:bg-muted"
               />
               <Upload className="h-4 w-4 text-muted-foreground" />
             </div>
@@ -215,7 +215,7 @@ export function DocOcrDialog() {
               {fields.length > 0 && (
                 <div className="flex flex-wrap gap-1.5">
                   {fields.map((f) => (
-                    <Badge key={f} variant="outline" className="gap-1 text-xs">
+                    <Badge key={f} variant="outline" className="gap-1 text-meta">
                       {f}
                       <button onClick={() => removeField(f)}>
                         <X className="h-3 w-3" />
@@ -249,7 +249,7 @@ export function DocOcrDialog() {
                 value={result}
                 readOnly
                 rows={10}
-                className="bg-background border-border font-mono text-xs"
+                className="bg-background border-border font-mono text-meta"
               />
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" onClick={handleCopy} className="gap-1.5">

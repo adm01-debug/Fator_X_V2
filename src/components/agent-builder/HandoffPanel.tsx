@@ -82,18 +82,18 @@ export function HandoffPanel({ agentId }: Props) {
           <ArrowRightLeft className="h-4 w-4 text-nexus-purple" />
         </div>
         <div>
-          <h4 className="text-sm font-bold text-foreground">Agent Handoff</h4>
-          <p className="text-[11px] text-muted-foreground">Transferência formal de contexto entre agentes</p>
+          <h4 className="text-body-sm font-bold text-foreground">Agent Handoff</h4>
+          <p className="text-meta text-muted-foreground">Transferência formal de contexto entre agentes</p>
         </div>
-        <Badge variant="outline" className="ml-auto text-[10px]">A2A Protocol</Badge>
+        <Badge variant="outline" className="ml-auto text-meta">A2A Protocol</Badge>
       </div>
 
       {/* Initiate new handoff */}
       <div className="rounded-xl border border-border bg-card p-3 space-y-2.5">
-        <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Novo Handoff</p>
+        <p className="text-meta font-semibold text-muted-foreground uppercase tracking-wider">Novo Handoff</p>
         <div className="grid grid-cols-2 gap-2">
           <Select value={targetAgentId} onValueChange={setTargetAgentId}>
-            <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Agente destino" /></SelectTrigger>
+            <SelectTrigger className="h-8 text-meta"><SelectValue placeholder="Agente destino" /></SelectTrigger>
             <SelectContent>
               {agents.map(a => (
                 <SelectItem key={a.id} value={a.id}>
@@ -103,7 +103,7 @@ export function HandoffPanel({ agentId }: Props) {
             </SelectContent>
           </Select>
           <Select value={reason} onValueChange={v => setReason(v as HandoffReason)}>
-            <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="h-8 text-meta"><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="skill_mismatch">Skill Mismatch</SelectItem>
               <SelectItem value="escalation">Escalação</SelectItem>
@@ -113,7 +113,7 @@ export function HandoffPanel({ agentId }: Props) {
             </SelectContent>
           </Select>
         </div>
-        <Button size="sm" className="w-full gap-1.5 text-xs" onClick={handleInitiate} disabled={initiating || !targetAgentId}>
+        <Button size="sm" className="w-full gap-1.5 text-meta" onClick={handleInitiate} disabled={initiating || !targetAgentId}>
           {initiating ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plus className="h-3 w-3" />}
           Iniciar Handoff
         </Button>
@@ -121,11 +121,11 @@ export function HandoffPanel({ agentId }: Props) {
 
       {/* History */}
       <div className="space-y-1.5">
-        <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Histórico ({history.length})</p>
+        <p className="text-meta font-semibold text-muted-foreground uppercase tracking-wider">Histórico ({history.length})</p>
         {isLoading ? (
           <div className="flex justify-center py-4"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>
         ) : history.length === 0 ? (
-          <p className="text-xs text-muted-foreground text-center py-4">Nenhum handoff registrado</p>
+          <p className="text-meta text-muted-foreground text-center py-4">Nenhum handoff registrado</p>
         ) : (
           <div className="space-y-1.5 max-h-[200px] overflow-auto">
             {history.map((h: HandoffRecord) => {
@@ -135,18 +135,18 @@ export function HandoffPanel({ agentId }: Props) {
                 <div key={h.id} className="flex items-center gap-2 rounded-lg border border-border bg-secondary/20 px-3 py-2">
                   <span className={meta.color}>{meta.icon}</span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[11px] font-medium truncate">
+                    <p className="text-meta font-medium truncate">
                       {isSent ? '→ Enviado' : '← Recebido'} · {h.reason}
                     </p>
-                    <p className="text-[10px] text-muted-foreground">
+                    <p className="text-meta text-muted-foreground">
                       {h.created_at ? new Date(h.created_at).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : ''}
                     </p>
                   </div>
                   <Badge variant="outline" className="text-[9px]">{h.status}</Badge>
                   {h.status === 'pending' && !isSent && (
                     <div className="flex gap-1">
-                      <Button variant="ghost" size="sm" className="h-6 px-1.5 text-[10px]" onClick={() => handleAction(h.id, 'accept')}>✓</Button>
-                      <Button variant="ghost" size="sm" className="h-6 px-1.5 text-[10px]" onClick={() => handleAction(h.id, 'reject')}>✕</Button>
+                      <Button variant="ghost" size="sm" className="h-6 px-1.5 text-meta" onClick={() => handleAction(h.id, 'accept')}>✓</Button>
+                      <Button variant="ghost" size="sm" className="h-6 px-1.5 text-meta" onClick={() => handleAction(h.id, 'reject')}>✕</Button>
                     </div>
                   )}
                 </div>

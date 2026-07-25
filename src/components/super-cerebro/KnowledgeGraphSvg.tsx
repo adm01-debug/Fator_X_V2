@@ -93,7 +93,7 @@ export function KnowledgeGraphSvg({
 
   if (positioned.length === 0) {
     return (
-      <div className="flex items-center justify-center h-[300px] text-xs text-muted-foreground italic">
+      <div className="flex items-center justify-center h-[300px] text-meta text-muted-foreground italic">
         Nenhum nó no grafo
       </div>
     );

@@ -62,7 +62,7 @@ export default function BillingPage() {
       setNewBudgetOpen(false);
       setBudgetName('');
       queryClient.invalidateQueries({ queryKey: ['budgets'] });
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro inesperado');
     } finally {
       setSaving(false);
@@ -74,7 +74,7 @@ export default function BillingPage() {
       await deleteBudget(id);
       toast.success('Orçamento removido');
       queryClient.invalidateQueries({ queryKey: ['budgets'] });
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro inesperado');
     }
   };
@@ -82,26 +82,26 @@ export default function BillingPage() {
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-8 max-w-[1440px] mx-auto animate-page-enter">
       {/* Billing Industrial Header */}
-      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-xl shadow-primary/5 relative overflow-hidden group">
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-nexus-xl shadow-primary/5 relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
         
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative">
           <div className="flex items-center gap-7">
-            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
+            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-nexus-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
               <Wallet className="h-11 w-11 text-primary animate-pulse" />
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-3">
                 <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Billing & Usage</h1>
-                <Badge className="bg-primary/10 text-primary border-none font-black px-3 py-1 rounded-full text-[10px] tracking-widest uppercase">FinOps Hub</Badge>
+                <Badge className="bg-primary/10 text-primary border-none font-black px-3 py-1 rounded-full text-meta tracking-widest uppercase">FinOps Hub</Badge>
               </div>
-              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+              <p className="text-title-sm text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Gestão centralizada de orçamentos e consumo de tokens. Monitore custos em tempo real e configure limites operacionais.
               </p>
             </div>
           </div>
           <div className="flex items-center gap-4">
-             <Button className="h-12 px-8 rounded-2xl font-bold nexus-gradient-bg text-primary-foreground shadow-xl shadow-primary/20" asChild>
+             <Button className="h-12 px-8 rounded-2xl font-bold nexus-gradient-bg text-primary-foreground shadow-nexus-xl shadow-primary/20" asChild>
                 <a href="/cost-optimizer">Otimizar Custos →</a>
              </Button>
           </div>
@@ -125,8 +125,8 @@ export default function BillingPage() {
           ) : usage.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-center">
               <BarChart3 className="h-12 w-12 text-muted-foreground mb-4" />
-              <h2 className="text-lg font-semibold text-foreground mb-1">Sem dados de uso</h2>
-              <p className="text-sm text-muted-foreground">Dados de uso aparecerão após o primeiro agente ativo.</p>
+              <h2 className="text-title-sm font-semibold text-foreground mb-1">Sem dados de uso</h2>
+              <p className="text-body-sm text-muted-foreground">Dados de uso aparecerão após o primeiro agente ativo.</p>
             </div>
           ) : (
             <>
@@ -137,7 +137,7 @@ export default function BillingPage() {
                 <MetricCard title="Tokens saída" value={`${(totals.tokensOut / 1000).toFixed(0)}k`} icon={Hash} />
               </div>
               <div className="nexus-card">
-                <h3 className="text-sm font-heading font-semibold text-foreground mb-4">Custo diário (últimos 30 dias)</h3>
+                <h3 className="text-body-sm font-heading font-semibold text-foreground mb-4">Custo diário (últimos 30 dias)</h3>
                 <LightBarChart
                   data={chartData}
                   xKey="date"
@@ -165,16 +165,16 @@ export default function BillingPage() {
 
         <TabsContent value="budgets">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-heading font-semibold text-foreground">Orçamentos</h3>
+            <h3 className="text-body-sm font-heading font-semibold text-foreground">Orçamentos</h3>
             <Dialog open={newBudgetOpen} onOpenChange={setNewBudgetOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-1.5 text-xs"><Plus className="h-3 w-3" /> Novo orçamento</Button>
+                <Button variant="outline" size="sm" className="gap-1.5 text-meta"><Plus className="h-3 w-3" /> Novo orçamento</Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[400px]">
                 <DialogHeader><DialogTitle>Novo Orçamento</DialogTitle></DialogHeader>
                 <div className="space-y-3 mt-2">
-                  <div className="space-y-1"><Label className="text-xs">Nome *</Label><Input value={budgetName} onChange={e => setBudgetName(e.target.value)} className="bg-secondary/50" placeholder="Ex: Mensal Produção" /></div>
-                  <div className="space-y-1"><Label className="text-xs">Limite (USD)</Label><Input type="number" value={budgetLimit} onChange={e => setBudgetLimit(e.target.value)} className="bg-secondary/50" /></div>
+                  <div className="space-y-1"><Label className="text-meta">Nome *</Label><Input value={budgetName} onChange={e => setBudgetName(e.target.value)} className="bg-secondary/50" placeholder="Ex: Mensal Produção" /></div>
+                  <div className="space-y-1"><Label className="text-meta">Limite (USD)</Label><Input type="number" value={budgetLimit} onChange={e => setBudgetLimit(e.target.value)} className="bg-secondary/50" /></div>
                   <Button onClick={handleCreateBudget} disabled={saving} className="w-full nexus-gradient-bg text-primary-foreground">
                     {saving && <Loader2 className="h-4 w-4 animate-spin mr-2" />} Criar
                   </Button>
@@ -188,7 +188,7 @@ export default function BillingPage() {
           ) : budgets.length === 0 ? (
             <div className="text-center py-12">
               <Wallet className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
-              <p className="text-xs text-muted-foreground">Nenhum orçamento configurado</p>
+              <p className="text-meta text-muted-foreground">Nenhum orçamento configurado</p>
             </div>
           ) : (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -199,8 +199,8 @@ export default function BillingPage() {
                   <div key={b.id} className="nexus-card group">
                     <div className="flex items-center justify-between mb-3">
                       <div>
-                        <h4 className="text-sm font-semibold text-foreground">{b.name}</h4>
-                        <p className="text-[11px] text-muted-foreground">{b.period} • {b.is_active ? 'Ativo' : 'Inativo'}</p>
+                        <h4 className="text-body-sm font-semibold text-foreground">{b.name}</h4>
+                        <p className="text-meta text-muted-foreground">{b.period} • {b.is_active ? 'Ativo' : 'Inativo'}</p>
                       </div>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
@@ -216,7 +216,7 @@ export default function BillingPage() {
                     </div>
                     <div className="flex items-baseline gap-1 mb-2">
                       <span className="text-xl font-heading font-bold text-foreground">${(b.current_usd ?? 0).toFixed(2)}</span>
-                      <span className="text-xs text-muted-foreground">/ ${b.limit_usd.toFixed(2)}</span>
+                      <span className="text-meta text-muted-foreground">/ ${b.limit_usd.toFixed(2)}</span>
                     </div>
                     <div className="h-2 rounded-full bg-secondary overflow-hidden">
                       <div className={`h-full rounded-full transition-all ${pct > 90 ? 'bg-destructive' : pct > 70 ? 'bg-nexus-amber' : 'bg-primary'}`} style={{ width: `${Math.min(pct, 100)}%` }} />
@@ -224,7 +224,7 @@ export default function BillingPage() {
                     {overThreshold && (
                       <div className="flex items-center gap-1 mt-2 text-nexus-amber">
                         <AlertTriangle className="h-3 w-3" />
-                        <span className="text-[11px]">Alerta: {pct.toFixed(0)}% do limite</span>
+                        <span className="text-meta">Alerta: {pct.toFixed(0)}% do limite</span>
                       </div>
                     )}
                   </div>
@@ -235,14 +235,14 @@ export default function BillingPage() {
         </TabsContent>
 
         <TabsContent value="records">
-          <h3 className="text-sm font-heading font-semibold text-foreground mb-4">Registros de uso recentes</h3>
+          <h3 className="text-body-sm font-heading font-semibold text-foreground mb-4">Registros de uso recentes</h3>
           {usageRecords.length === 0 ? (
-            <div className="text-center py-12"><p className="text-xs text-muted-foreground">Nenhum registro encontrado</p></div>
+            <div className="text-center py-12"><p className="text-meta text-muted-foreground">Nenhum registro encontrado</p></div>
           ) : (
             <div className="nexus-card overflow-hidden p-0">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-border/50 text-[11px] text-muted-foreground uppercase tracking-wider">
+                  <tr className="border-b border-border/50 text-meta text-muted-foreground uppercase tracking-wider">
                     <th className="text-left px-4 py-2 font-medium">Tipo</th>
                     <th className="text-left px-4 py-2 font-medium">Tokens</th>
                     <th className="text-left px-4 py-2 font-medium">Custo</th>
@@ -252,10 +252,10 @@ export default function BillingPage() {
                 <tbody>
                   {usageRecords.map((r) => (
                     <tr key={r.id} className="border-b border-border/30 hover:bg-secondary/30 transition-colors">
-                      <td className="px-4 py-2"><Badge variant="outline" className="text-[11px]">{r.record_type}</Badge></td>
-                      <td className="px-4 py-2 text-xs text-foreground">{(r.tokens ?? 0).toLocaleString()}</td>
-                      <td className="px-4 py-2 text-xs text-foreground">${Number(r.cost_usd ?? 0).toFixed(4)}</td>
-                      <td className="px-4 py-2 text-xs text-muted-foreground">{r.created_at ? new Date(r.created_at).toLocaleString('pt-BR') : '—'}</td>
+                      <td className="px-4 py-2"><Badge variant="outline" className="text-meta">{r.record_type}</Badge></td>
+                      <td className="px-4 py-2 text-meta text-foreground">{(r.tokens ?? 0).toLocaleString()}</td>
+                      <td className="px-4 py-2 text-meta text-foreground">${Number(r.cost_usd ?? 0).toFixed(4)}</td>
+                      <td className="px-4 py-2 text-meta text-muted-foreground">{r.created_at ? new Date(r.created_at).toLocaleString('pt-BR') : '—'}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -282,7 +282,7 @@ function PricingTable() {
 
   return (
     <div className="nexus-card overflow-x-auto">
-      <table className="w-full text-xs">
+      <table className="w-full text-meta">
         <thead><tr className="border-b border-border/50 text-muted-foreground">
           <th className="text-left p-3 font-medium">Modelo</th>
           <th className="text-right p-3 font-medium">Input ($/1K tokens)</th>

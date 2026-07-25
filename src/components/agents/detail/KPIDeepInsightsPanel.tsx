@@ -105,7 +105,7 @@ export function KPIDeepInsightsPanel({ daily, traces, agentName }: Props) {
 
   return (
     <div
-      className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden relative"
+      className="bg-card border border-border rounded-2xl shadow-nexus-sm overflow-hidden relative"
       role="region"
       aria-label="Insights detalhados por KPI"
     >
@@ -113,15 +113,15 @@ export function KPIDeepInsightsPanel({ daily, traces, agentName }: Props) {
 
       <div className="flex items-center justify-between gap-3 p-6 border-b border-border/50 relative flex-wrap bg-secondary/10">
         <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/15 shadow-inner">
+          <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/15 shadow-nexus-inner">
             <Lightbulb className="h-4 w-4 text-primary" aria-hidden />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5">
+            <h3 className="text-body-sm font-bold text-foreground flex items-center gap-1.5">
               Insights de Inteligência Operacional
               <Sparkles className="h-3 w-3 text-primary animate-pulse" />
             </h3>
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-meta text-muted-foreground">
               Diagnóstico causal dos desvios de performance nos últimos {windowLabel}
             </p>
           </div>
@@ -133,7 +133,7 @@ export function KPIDeepInsightsPanel({ daily, traces, agentName }: Props) {
             role="group"
             aria-label="Janela de comparação"
           >
-            <span className="text-[10px] font-semibold text-muted-foreground px-1.5 uppercase tracking-wide">
+            <span className="text-meta font-semibold text-muted-foreground px-1.5 uppercase tracking-wide">
               Janela
             </span>
             {WINDOW_PRESETS.map((w) => {
@@ -149,7 +149,7 @@ export function KPIDeepInsightsPanel({ daily, traces, agentName }: Props) {
                   title={supported
                     ? `Comparar últimos ${w.value} dias com os ${w.value} anteriores`
                     : `Sem histórico suficiente (precisa de ${w.value * 2} dias)`}
-                  className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                  className={`px-2 py-0.5 rounded-md text-meta font-mono font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                     selected
                       ? 'bg-primary text-primary-foreground'
                       : supported
@@ -168,7 +168,7 @@ export function KPIDeepInsightsPanel({ daily, traces, agentName }: Props) {
             role="group"
             aria-label="Limiar de destaque do delta percentual"
           >
-            <span className="text-[10px] font-semibold text-muted-foreground px-1.5 uppercase tracking-wide">
+            <span className="text-meta font-semibold text-muted-foreground px-1.5 uppercase tracking-wide">
               Limiar
             </span>
             {THRESHOLD_PRESETS.map((t) => (
@@ -177,7 +177,7 @@ export function KPIDeepInsightsPanel({ daily, traces, agentName }: Props) {
                 type="button"
                 onClick={() => setThreshold(t)}
                 aria-pressed={threshold === t}
-                className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                className={`px-2 py-0.5 rounded-md text-meta font-mono font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                   threshold === t
                     ? 'bg-primary text-primary-foreground'
                     : 'text-muted-foreground hover:text-foreground hover:bg-secondary/60'
@@ -192,7 +192,7 @@ export function KPIDeepInsightsPanel({ daily, traces, agentName }: Props) {
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
-                className="flex items-center gap-1.5 rounded-lg border border-border bg-secondary/30 px-2.5 py-1.5 text-[11px] font-semibold text-foreground hover:bg-secondary/60 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="flex items-center gap-1.5 rounded-lg border border-border bg-secondary/30 px-2.5 py-1.5 text-meta font-semibold text-foreground hover:bg-secondary/60 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 aria-label="Exportar comparativo de KPIs"
               >
                 <Download className="h-3.5 w-3.5" aria-hidden />
@@ -219,8 +219,8 @@ export function KPIDeepInsightsPanel({ daily, traces, agentName }: Props) {
               >
                 <FileText className="h-3.5 w-3.5 text-destructive" />
                 <div className="flex flex-col">
-                  <span className="text-xs font-medium">Exportar como PDF</span>
-                  <span className="text-[10px] text-muted-foreground">
+                  <span className="text-meta font-medium">Exportar como PDF</span>
+                  <span className="text-meta text-muted-foreground">
                     Relatório completo com diagnóstico
                   </span>
                 </div>
@@ -243,8 +243,8 @@ export function KPIDeepInsightsPanel({ daily, traces, agentName }: Props) {
               >
                 <FileSpreadsheet className="h-3.5 w-3.5 text-nexus-emerald" />
                 <div className="flex flex-col">
-                  <span className="text-xs font-medium">Exportar como CSV</span>
-                  <span className="text-[10px] text-muted-foreground">
+                  <span className="text-meta font-medium">Exportar como CSV</span>
+                  <span className="text-meta text-muted-foreground">
                     Tabela para planilha / análise
                   </span>
                 </div>
@@ -276,25 +276,25 @@ export function KPIDeepInsightsPanel({ daily, traces, agentName }: Props) {
                 active ? 'border-primary/50 bg-primary/5' : 'border-border bg-secondary/30 hover:bg-secondary/50'
               }`}
             >
-              <div className="flex items-center gap-1.5 text-[11px] font-semibold">
+              <div className="flex items-center gap-1.5 text-meta font-semibold">
                 <Icon className={`h-3 w-3 ${active ? 'text-primary' : 'text-muted-foreground'}`} />
                 <span className={active ? 'text-foreground' : 'text-muted-foreground'}>{i.label}</span>
               </div>
               <div className="flex items-baseline gap-1.5">
-                <span className="text-base font-heading font-extrabold text-foreground tabular-nums">
+                <span className="text-title-sm font-heading font-extrabold text-foreground tabular-nums">
                   {i.currentLabel}
                 </span>
                 {i.cmp.hasPrev && (() => {
                   const unit = i.cmp.deltaUnit ?? '%';
                   const digits = unit === 'pp' ? 2 : 1;
                   return relevant ? (
-                    <span className={`flex items-center gap-0.5 text-[10px] font-mono font-semibold ${deltaColor}`}>
+                    <span className={`flex items-center gap-0.5 text-meta font-mono font-semibold ${deltaColor}`}>
                       <Trend className="h-3 w-3" />
                       {i.cmp.deltaPct >= 0 ? '+' : ''}{i.cmp.deltaPct.toFixed(digits)}{unit}
                     </span>
                   ) : (
                     <span
-                      className="text-[10px] font-mono text-muted-foreground/70"
+                      className="text-meta font-mono text-muted-foreground/70"
                       title={`Δ ${i.cmp.deltaPct >= 0 ? '+' : ''}${i.cmp.deltaPct.toFixed(digits)}${unit} < limiar ≥${threshold}${unit === 'pp' ? 'pp' : '%'}`}
                     >
                       —
@@ -313,11 +313,11 @@ export function KPIDeepInsightsPanel({ daily, traces, agentName }: Props) {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <Sparkles className="h-3.5 w-3.5 text-primary" aria-hidden />
-              <h4 className="text-xs font-heading font-semibold text-foreground">
+              <h4 className="text-meta font-heading font-semibold text-foreground">
                 Diagnóstico — {active.label}
               </h4>
             </div>
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-meta text-muted-foreground">
               <span className="font-mono">{active.previousLabel}</span> →{' '}
               <span className="font-mono text-foreground font-semibold">{active.currentLabel}</span>
               {active.cmp.hasPrev && active.cmp.trend !== 'flat' && (() => {
@@ -335,15 +335,15 @@ export function KPIDeepInsightsPanel({ daily, traces, agentName }: Props) {
         </div>
 
         {!active.cmp.hasPrev ? (
-          <p className="text-xs text-muted-foreground italic py-3 text-center">
+          <p className="text-meta text-muted-foreground italic py-3 text-center">
             Sem dados suficientes na janela anterior para diagnosticar.
           </p>
         ) : !activeRelevant ? (
           <div className="flex items-start gap-2.5 rounded-md border border-border/50 bg-secondary/30 p-3">
             <Minus className="h-3.5 w-3.5 mt-0.5 shrink-0 text-muted-foreground" aria-hidden />
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-semibold text-foreground">Sem mudança relevante</p>
-              <p className="text-[11px] text-muted-foreground mt-0.5 leading-snug">
+              <p className="text-meta font-semibold text-foreground">Sem mudança relevante</p>
+              <p className="text-meta text-muted-foreground mt-0.5 leading-snug">
                 Variação de{' '}
                 <span className="font-mono text-foreground/80">
                   {active.cmp.deltaPct >= 0 ? '+' : ''}
@@ -366,8 +366,8 @@ export function KPIDeepInsightsPanel({ daily, traces, agentName }: Props) {
                 >
                   <style.Icon className={`h-3.5 w-3.5 mt-0.5 shrink-0 ${style.color}`} aria-hidden />
                   <div className="min-w-0 flex-1">
-                    <p className={`text-xs font-semibold ${style.color}`}>{cause.headline}</p>
-                    <p className="text-[11px] text-foreground/80 mt-0.5 leading-snug">{cause.detail}</p>
+                    <p className={`text-meta font-semibold ${style.color}`}>{cause.headline}</p>
+                    <p className="text-meta text-foreground/80 mt-0.5 leading-snug">{cause.detail}</p>
                   </div>
                 </li>
               );
@@ -377,7 +377,7 @@ export function KPIDeepInsightsPanel({ daily, traces, agentName }: Props) {
 
         {activeRelevant && active.recommendation && (
           <div className="mt-3 pt-3 border-t border-border/50">
-            <p className="text-[11px] text-muted-foreground flex items-start gap-1.5">
+            <p className="text-meta text-muted-foreground flex items-start gap-1.5">
               <ChevronDown className="h-3 w-3 mt-0.5 shrink-0 -rotate-90 text-primary" aria-hidden />
               <span>
                 <span className="font-semibold text-foreground">Sugestão:</span> {active.recommendation}

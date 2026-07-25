@@ -67,7 +67,7 @@ export function GraphCanvas({ nodes, edges, entryNodeId, activeNodeId, onChange,
         const pc = positionChanges.find((c) => c.id === n.id);
         return pc ? { ...n, position: pc.position } : n;
       });
-      onChange(updatedNodes, edges);
+      onChange(updatedNodes as GraphNode[], edges);
     }
   }, [edges, nodes, onChange, onNodesChange]);
 

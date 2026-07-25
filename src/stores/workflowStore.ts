@@ -4,6 +4,7 @@
  */
 
 import { create } from 'zustand';
+import type { DbRow } from '@/types/dbRow';
 
 interface WorkflowNode {
   id: string;
@@ -47,7 +48,7 @@ interface WorkflowState {
   setEdges: (edges: WorkflowEdge[]) => void;
   selectNode: (id: string | null) => void;
   setExecuting: (nodeId: string | null) => void;
-  setExecutionResult: (nodeId: string, result: unknown) => void;
+  setExecutionResult: (nodeId: string, result: DbRow) => void;
   markClean: () => void;
   reset: () => void;
 }

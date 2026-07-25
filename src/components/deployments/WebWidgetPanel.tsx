@@ -79,10 +79,10 @@ export function WebWidgetPanel({ agentId: initialAgentId, agentName }: WebWidget
   return (
     <Card className="bg-card border-border">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="flex items-center gap-2 text-title-sm">
           <Globe className="h-4 w-4 text-primary" />
           Web Widget Embed
-          {agentName && <Badge variant="outline" className="text-[10px] border-border">{agentName}</Badge>}
+          {agentName && <Badge variant="outline" className="text-meta border-border">{agentName}</Badge>}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -94,7 +94,7 @@ export function WebWidgetPanel({ agentId: initialAgentId, agentName }: WebWidget
               value={agentId}
               onChange={(e) => setAgentId(e.target.value)}
               placeholder="uuid do agente"
-              className="bg-background border-border font-mono text-xs"
+              className="bg-background border-border font-mono text-meta"
             />
             <Button
               variant="outline"
@@ -126,12 +126,12 @@ export function WebWidgetPanel({ agentId: initialAgentId, agentName }: WebWidget
                   variant="ghost"
                   size="sm"
                   onClick={() => handleCopy(snippet.htmlSnippet, "Snippet")}
-                  className="h-6 text-[10px] gap-1"
+                  className="h-6 text-meta gap-1"
                 >
                   <Copy className="h-3 w-3" /> Copiar
                 </Button>
               </div>
-              <pre className="p-3 rounded-lg bg-background border border-border text-[11px] font-mono text-foreground/80 overflow-x-auto">
+              <pre className="p-3 rounded-lg bg-background border border-border text-meta font-mono text-foreground/80 overflow-x-auto">
                 {snippet.htmlSnippet}
               </pre>
             </div>
@@ -143,12 +143,12 @@ export function WebWidgetPanel({ agentId: initialAgentId, agentName }: WebWidget
                   variant="ghost"
                   size="sm"
                   onClick={() => handleCopy(snippet.scriptUrl, "URL")}
-                  className="h-6 text-[10px] gap-1"
+                  className="h-6 text-meta gap-1"
                 >
                   <Copy className="h-3 w-3" /> Copiar
                 </Button>
               </div>
-              <code className="block p-2 rounded bg-background border border-border text-[10px] font-mono text-muted-foreground break-all">
+              <code className="block p-2 rounded bg-background border border-border text-meta font-mono text-muted-foreground break-all">
                 {snippet.scriptUrl}
               </code>
             </div>
@@ -160,7 +160,7 @@ export function WebWidgetPanel({ agentId: initialAgentId, agentName }: WebWidget
                 value={testMessage}
                 onChange={(e) => setTestMessage(e.target.value)}
                 rows={2}
-                className="bg-background border-border text-xs resize-none"
+                className="bg-background border-border text-meta resize-none"
               />
               <Button
                 onClick={handleTestChat}
@@ -174,8 +174,8 @@ export function WebWidgetPanel({ agentId: initialAgentId, agentName }: WebWidget
 
               {chatReply && (
                 <div className="mt-3 p-3 rounded-lg bg-background border border-primary/30">
-                  <p className="text-[10px] text-primary uppercase tracking-wider mb-1">Resposta do Agent</p>
-                  <p className="text-xs text-foreground/90 whitespace-pre-wrap">{chatReply}</p>
+                  <p className="text-meta text-primary uppercase tracking-wider mb-1">Resposta do Agent</p>
+                  <p className="text-meta text-foreground/90 whitespace-pre-wrap">{chatReply}</p>
                 </div>
               )}
             </div>
@@ -183,7 +183,7 @@ export function WebWidgetPanel({ agentId: initialAgentId, agentName }: WebWidget
         )}
 
         {!snippet && (
-          <p className="text-xs text-muted-foreground italic">
+          <p className="text-meta text-muted-foreground italic">
             Informe o Agent ID acima para gerar o snippet de embed e testar o widget.
           </p>
         )}

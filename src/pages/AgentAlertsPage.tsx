@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { getAgentById } from '@/services/agentsService';
-import { listAgentTraces } from '@/services/agentTracesService';
+import { listAgentTraces, type AgentTraceRow } from '@/services/agentTracesService';
 import {
   alertRulesService, evaluateRule, makeRuleFromTemplate, ALERT_RULE_TEMPLATES,
   type AlertRule,
@@ -137,8 +137,8 @@ export default function AgentAlertsPage() {
                 <DropdownMenuSeparator />
                 {ALERT_RULE_TEMPLATES.map((t, i) => (
                   <DropdownMenuItem key={t.name} onClick={() => handleApplyTemplate(i)} className="flex-col items-start gap-0.5">
-                    <span className="text-xs font-medium">{t.name}</span>
-                    <span className="text-[10px] text-muted-foreground">{t.description}</span>
+                    <span className="text-meta font-medium">{t.name}</span>
+                    <span className="text-meta text-muted-foreground">{t.description}</span>
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
@@ -155,11 +155,11 @@ export default function AgentAlertsPage() {
         <CardContent className="p-4 flex items-center gap-4 flex-wrap">
           <div className="flex items-center gap-2">
             <Bell className="h-4 w-4 text-primary" aria-hidden />
-            <span className="text-sm font-medium text-foreground">{summary.total} regras</span>
+            <span className="text-body-sm font-medium text-foreground">{summary.total} regras</span>
           </div>
-          <span className="text-xs text-muted-foreground">{summary.active} ativas</span>
+          <span className="text-meta text-muted-foreground">{summary.active} ativas</span>
           <div className="ml-auto flex items-center gap-2">
-            <span className="text-xs text-muted-foreground">Disparariam agora:</span>
+            <span className="text-meta text-muted-foreground">Disparariam agora:</span>
             <Badge className="bg-nexus-amber/15 text-nexus-amber border-nexus-amber/30 border">⚠ {summary.warnings} warning</Badge>
             <Badge className="bg-destructive/15 text-destructive border-destructive/30 border">✗ {summary.criticals} critical</Badge>
           </div>
@@ -169,7 +169,7 @@ export default function AgentAlertsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm">Regras configuradas</CardTitle>
+            <CardTitle className="text-body-sm">Regras configuradas</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             <ScrollArea className="h-[640px]">
@@ -189,7 +189,7 @@ export default function AgentAlertsPage() {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm">Prévia & simulação</CardTitle>
+            <CardTitle className="text-body-sm">Prévia & simulação</CardTitle>
           </CardHeader>
           <CardContent>
             <AlertSimulationPanel rule={selected} traces={traces} onEdit={openEdit} />

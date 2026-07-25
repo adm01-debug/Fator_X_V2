@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { History, Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { History, Search, Eye } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { listExecutions, getExecutionStats, type ExecutionRecord } from '@/services/executionHistoryService';
 import { useToast } from '@/hooks/use-toast';
+import { ExecutionTimelineDialog } from './ExecutionTimelineDialog';
+
 
 const STATUS_COLORS: Record<string, string> = { running: 'bg-nexus-blue/20 text-nexus-blue', success: 'bg-nexus-emerald/20 text-nexus-emerald', failed: 'bg-destructive/20 text-destructive', cancelled: 'bg-muted text-muted-foreground', timeout: 'bg-nexus-orange/20 text-nexus-orange', waiting: 'bg-nexus-amber/20 text-nexus-amber' };
 const TYPE_ICONS: Record<string, string> = { workflow: '🔄', agent: '🤖', automation: '⚡', webhook: '🔗', schedule: '⏰', manual: '👤' };
@@ -15,7 +18,10 @@ export function ExecutionHistoryPanel() {
   const [stats, setStats] = useState<Awaited<ReturnType<typeof getExecutionStats>> | null>(null);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const { toast } = useToast();
+
 
   useEffect(() => {
     Promise.all([
@@ -40,7 +46,7 @@ export function ExecutionHistoryPanel() {
           <Card key={i} className="bg-card border-border">
             <CardContent className="p-3 text-center">
               <p className="text-xl font-bold" style={{ color: s.color }}>{s.value}</p>
-              <p className="text-[10px] text-muted-foreground">{s.label}</p>
+              <p className="text-meta text-muted-foreground">{s.label}</p>
             </CardContent>
           </Card>
         ))}
@@ -58,23 +64,39 @@ export function ExecutionHistoryPanel() {
       ) : (
         <div className="space-y-2">
           {executions.map((e) => (
-            <Card key={e.id} className="bg-card border-border">
+            <Card key={e.id} className="bg-card border-border hover:border-primary/40 transition-colors">
               <CardContent className="p-3 flex items-center gap-3">
-                <span className="text-lg">{TYPE_ICONS[e.execution_type] ?? '⚡'}</span>
+                <span className="text-title-sm">{TYPE_ICONS[e.execution_type] ?? '⚡'}</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{e.source_name}</p>
-                  <p className="text-[10px] text-muted-foreground">{e.trigger} • {e.steps.length} steps • {e.tokens_used} tokens</p>
+                  <p className="text-body-sm font-medium truncate">{e.source_name}</p>
+                  <p className="text-meta text-muted-foreground">{e.trigger} • {e.steps.length} steps • {e.tokens_used} tokens</p>
                 </div>
                 <div className="text-right shrink-0">
                   <Badge className={STATUS_COLORS[e.status] ?? 'bg-muted text-muted-foreground'}>{e.status}</Badge>
-                  <p className="text-[10px] text-muted-foreground mt-1">{e.duration_ms ? `${(e.duration_ms / 1000).toFixed(1)}s` : '...'}</p>
+                  <p className="text-meta text-muted-foreground mt-1">{e.duration_ms ? `${(e.duration_ms / 1000).toFixed(1)}s` : '...'}</p>
                 </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="gap-1 shrink-0"
+                  onClick={() => { setSelectedId(e.id); setDialogOpen(true); }}
+                >
+                  <Eye size={14} />
+                  <span className="hidden sm:inline">Timeline</span>
+                </Button>
               </CardContent>
             </Card>
           ))}
-          <p className="text-xs text-muted-foreground text-center">Mostrando {executions.length} de {total} execuções</p>
+          <p className="text-meta text-muted-foreground text-center">Mostrando {executions.length} de {total} execuções</p>
         </div>
       )}
+
+      <ExecutionTimelineDialog
+        executionId={selectedId}
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+      />
     </div>
   );
+
 }

@@ -15,12 +15,16 @@
  * ═══════════════════════════════════════════════════════════════
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { z } from "https://esm.sh/zod@3.23.8";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-};
+import { getCorsHeaders } from "../_shared/cors.ts";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
+const VisualSearchBodySchema = z.object({
+  image: z.string().min(1).max(20_000_000),
+  hint: z.string().max(2000).optional(),
+  knowledge_base_id: z.string().uuid().nullable().optional(),
+  top_k: z.number().int().min(1).max(50).optional(),
+}).passthrough();
 
 const VISION_PROMPT = `Você é um sistema de busca visual. Analise a imagem e produza uma descrição
 densa e rica em palavras-chave (em português) que sirva como query de busca semântica
@@ -33,35 +37,32 @@ em uma base de conhecimento. Foque em:
 Retorne APENAS a descrição (1-3 frases), sem prefixos.`;
 
 serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS")
     return new Response(null, { headers: corsHeaders });
 
-  try {
-    const body = await req.json();
-    const imageRaw = String(body?.image ?? "").trim();
-    const hint = String(body?.hint ?? "").trim();
-    const knowledgeBaseId = body?.knowledge_base_id ?? null;
-    const topK = Math.min(Math.max(Number(body?.top_k ?? 10), 1), 50);
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
 
-    if (!imageRaw) {
-      return new Response(JSON.stringify({ error: "image is required" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+  try {
+    const rawBody = await req.json().catch(() => null);
+    const parsedBody = VisualSearchBodySchema.safeParse(rawBody);
+    if (!parsedBody.success) {
+      return new Response(JSON.stringify({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
+    const body = parsedBody.data;
+    const imageRaw = String(body.image ?? "").trim();
+    const hint = String(body.hint ?? "").trim();
+    const knowledgeBaseId = body.knowledge_base_id ?? null;
+    const topK = Math.min(Math.max(Number(body.top_k ?? 10), 1), 50);
 
     // Normalize image to data URL
     const imageDataUrl = imageRaw.startsWith("data:")
       ? imageRaw
       : `data:image/jpeg;base64,${imageRaw}`;
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) {
-      return new Response(
-        JSON.stringify({ error: "LOVABLE_API_KEY not configured" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
-    }
+    const LOVABLE_API_KEY = requireEnv("LOVABLE_API_KEY");
 
     // ── 1. Vision extraction ─────────────────────────────────────
     const visionResp = await fetch(
@@ -128,8 +129,8 @@ serve(async (req) => {
     }
 
     // ── 2. Forward to semantic-search ────────────────────────────
-    const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-    const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const SUPABASE_URL = requireEnv("SUPABASE_URL");
+    const SERVICE_KEY = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
 
     const searchResp = await fetch(
       `${SUPABASE_URL}/functions/v1/semantic-search`,

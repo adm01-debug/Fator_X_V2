@@ -15,10 +15,10 @@ export function RateLimitingPanel() {
   return (
     <div className="nexus-card">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-heading font-semibold text-foreground flex items-center gap-2">
+        <h3 className="text-body-sm font-heading font-semibold text-foreground flex items-center gap-2">
           <ShieldAlert className="h-4 w-4 text-primary" /> Rate Limiting
         </h3>
-        <Button variant="ghost" size="sm" className="h-7 text-xs gap-1" onClick={load} disabled={loading}>
+        <Button variant="ghost" size="sm" className="h-7 text-meta gap-1" onClick={load} disabled={loading}>
           <RefreshCw className={`h-3 w-3 ${loading ? 'animate-spin' : ''}`} /> Atualizar
         </Button>
       </div>
@@ -28,14 +28,14 @@ export function RateLimitingPanel() {
           const isHigh = pct > 80;
           return (
             <div key={l.name} className="p-3 rounded-lg bg-secondary/20 border border-border/30">
-              <p className="text-xs font-medium text-foreground">{l.name}</p>
-              <p className="text-lg font-heading font-bold text-foreground mt-1">
-                {l.current}<span className="text-xs font-normal text-muted-foreground">/{l.max} {l.unit}</span>
+              <p className="text-meta font-medium text-foreground">{l.name}</p>
+              <p className="text-title-sm font-heading font-bold text-foreground mt-1">
+                {l.current}<span className="text-meta font-normal text-muted-foreground">/{l.max} {l.unit}</span>
               </p>
               <div className="mt-2 h-1.5 rounded-full bg-secondary overflow-hidden">
                 <div className={`h-full rounded-full transition-all ${isHigh ? 'bg-nexus-amber' : 'bg-nexus-emerald'}`} style={{ width: `${Math.min(pct, 100)}%` }} />
               </div>
-              {isHigh && <p className="text-[10px] text-nexus-amber mt-1">Próximo do limite</p>}
+              {isHigh && <p className="text-meta text-nexus-amber mt-1">Próximo do limite</p>}
             </div>
           );
         })}

@@ -36,13 +36,47 @@ export default defineConfig(({ mode }) => ({
     dedupe: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime"],
   },
   build: {
+    // Sourcemaps só em dev (produção mantém apenas via Sentry upload no CI).
+    sourcemap: mode !== "production",
+    target: "es2020",
+    cssCodeSplit: true,
+    // Aumenta o limite pois hoje separamos bundles grandes intencionalmente (ex: reactflow, tiptap).
+    chunkSizeWarningLimit: 900,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-ui': ['sonner'],
-          'vendor-query': ['@tanstack/react-query'],
-          'vendor-supabase': ['@supabase/supabase-js'],
+        // Estratégia de chunking granular — reduz o bundle inicial (LCP/TTI):
+        //   • React/Router/Query/Supabase carregam em toda rota → chunks fixos.
+        //   • Bibliotecas pesadas de rotas específicas (reactflow, tiptap, recharts,
+        //     dagre, jspdf, react-day-picker) vão em chunks próprios e só chegam ao
+        //     cliente quando a página que as usa é acessada.
+        //   • Todo o restante dos @radix-ui agrupa em `vendor-radix` para maximizar
+        //     hit-rate de cache entre releases (evita chunks minúsculos).
+        manualChunks(id) {
+          if (!id.includes("node_modules")) return undefined;
+
+          if (id.includes("react-router")) return "vendor-router";
+          if (
+            id.match(/node_modules\/(react|react-dom|scheduler|react-is)\//) ||
+            id.includes("use-sync-external-store")
+          )
+            return "vendor-react";
+          if (id.includes("@tanstack/react-query")) return "vendor-query";
+          if (id.includes("@supabase/") || id.includes("@lovable.dev/cloud-auth-js"))
+            return "vendor-supabase";
+
+          if (id.includes("reactflow") || id.includes("@reactflow") || id.includes("/dagre/"))
+            return "vendor-flow";
+          if (id.includes("@tiptap") || id.includes("/lowlight/") || id.includes("/highlight.js/"))
+            return "vendor-editor";
+          if (id.includes("/recharts/") || id.includes("/d3-")) return "vendor-charts";
+          if (id.includes("jspdf")) return "vendor-pdf";
+          if (id.includes("react-day-picker") || id.includes("date-fns")) return "vendor-date";
+          if (id.includes("framer-motion")) return "vendor-motion";
+          if (id.includes("lucide-react")) return "vendor-icons";
+          if (id.includes("@radix-ui")) return "vendor-radix";
+          if (id.includes("@sentry")) return "vendor-sentry";
+
+          return "vendor";
         },
       },
     },

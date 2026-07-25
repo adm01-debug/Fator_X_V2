@@ -69,7 +69,7 @@ export default function SwarmOrchestrationPage() {
         direction: 'inbound',
         type: 'response',
         agent: 'Nexus-A2A-Server',
-        payload: response
+        payload: response as Record<string, unknown>
       });
       
       toast.success("Comunicação A2A concluída");
@@ -90,17 +90,17 @@ export default function SwarmOrchestrationPage() {
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-8 max-w-[1440px] mx-auto animate-page-enter">
       {/* Header */}
-      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-xl shadow-primary/5 relative overflow-hidden group">
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-nexus-xl shadow-primary/5 relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
         
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative">
           <div className="flex items-center gap-7">
-            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10">
+            <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-nexus-2xl shadow-primary/10">
               <Network className="h-11 w-11 text-primary animate-float" />
             </div>
             <div className="space-y-1">
               <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Swarm Orchestration</h1>
-              <p className="text-base text-muted-foreground max-w-xl font-medium leading-relaxed">
+              <p className="text-title-sm text-muted-foreground max-w-xl font-medium leading-relaxed">
                 Orquestração descentralizada de agentes via protocolo A2A. Gerencie a comunicação inter-agente com descoberta automática.
               </p>
             </div>
@@ -121,7 +121,7 @@ export default function SwarmOrchestrationPage() {
           
           <Card className="nexus-card overflow-hidden">
             <CardHeader className="bg-muted/30 border-b border-border/40">
-              <CardTitle className="text-sm flex items-center gap-2">
+              <CardTitle className="text-body-sm flex items-center gap-2">
                 <Play className="h-4 w-4 text-primary" />
                 Trigger Swarm Deliberation
               </CardTitle>
@@ -155,7 +155,7 @@ export default function SwarmOrchestrationPage() {
             <CardHeader className="border-b border-border/40 flex flex-row items-center justify-between">
               <div className="flex items-center gap-2">
                 <Terminal className="h-5 w-5 text-primary" />
-                <CardTitle className="text-lg">A2A Traffic Monitor</CardTitle>
+                <CardTitle className="text-title-sm">A2A Traffic Monitor</CardTitle>
               </div>
               <Activity className="h-4 w-4 text-nexus-emerald animate-pulse" />
             </CardHeader>
@@ -164,7 +164,7 @@ export default function SwarmOrchestrationPage() {
                 <div className="p-4 space-y-4" ref={scrollRef}>
                   {logs.map((log) => (
                     <div key={log.id} className="space-y-1.5 animate-in fade-in slide-in-from-right-2">
-                      <div className="flex items-center justify-between text-[10px]">
+                      <div className="flex items-center justify-between text-meta">
                         <div className="flex items-center gap-2">
                           {log.direction === 'outbound' ? 
                             <ArrowRightLeft className="h-3 w-3 text-primary" /> : 
@@ -184,7 +184,7 @@ export default function SwarmOrchestrationPage() {
                             {log.type}
                           </Badge>
                         </div>
-                        <pre className="text-[11px] font-mono text-foreground whitespace-pre-wrap overflow-x-auto">
+                        <pre className="text-meta font-mono text-foreground whitespace-pre-wrap overflow-x-auto">
                           {JSON.stringify(log.payload, null, 2)}
                         </pre>
                       </div>

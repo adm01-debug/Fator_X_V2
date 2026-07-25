@@ -134,31 +134,34 @@ describe('CronSchedulerService', () => {
 
   describe('getNextCronRun', () => {
     it('deve calcular próxima execução para a cada hora', () => {
+      // No timezone → UTC. 10:30 UTC → next minute=0 = 11:00 UTC
       const base = new Date('2026-04-05T10:30:00Z');
       const next = getNextCronRun('0 * * * *', base);
-      expect(next.getMinutes()).toBe(0);
-      expect(next.getHours()).toBe(11);
+      expect(next.getUTCMinutes()).toBe(0);
+      expect(next.getUTCHours()).toBe(11);
     });
 
     it('deve calcular próxima execução diária às 9h', () => {
+      // BRT (UTC-3). 10:00 UTC = 07:00 BRT. Next 09:00 BRT = 12:00 UTC TODAY (Apr 5)
       const base = new Date('2026-04-05T10:00:00Z');
-      const next = getNextCronRun('0 9 * * *', base);
-      // Próxima 9h será amanhã
-      expect(next.getHours()).toBe(9);
-      expect(next.getDate()).toBe(6);
+      const next = getNextCronRun('0 9 * * *', base, 'America/Sao_Paulo');
+      expect(next.getUTCHours()).toBe(12);
+      expect(next.getUTCDate()).toBe(5); // Same day (Apr 5), not next day
     });
 
     it('deve lidar com virada de mês', () => {
+      // 23:59 UTC Apr 30 = 20:59 BRT. First 00:00 in BRT = 03:00 UTC May 1
       const base = new Date('2026-04-30T23:59:00Z');
-      const next = getNextCronRun('0 0 1 * *', base);
-      expect(next.getMonth()).toBe(4); // maio (0-indexed)
-      expect(next.getDate()).toBe(1);
+      const next = getNextCronRun('0 0 1 * *', base, 'America/Sao_Paulo');
+      expect(next.getUTCMonth()).toBe(4); // maio (0-indexed)
+      expect(next.getUTCDate()).toBe(1);
+      expect(next.getUTCHours()).toBe(3);
     });
 
     it('deve lidar com a cada 15 minutos', () => {
       const base = new Date('2026-04-05T10:07:00Z');
       const next = getNextCronRun('*/15 * * * *', base);
-      expect(next.getMinutes()).toBe(15);
+      expect(next.getUTCMinutes()).toBe(15);
     });
   });
 

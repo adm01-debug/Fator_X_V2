@@ -5,6 +5,7 @@ import {
   checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS,
   parseBody, z,
 } from "../_shared/mod.ts";
+import { withRetry } from "../_shared/retry.ts";
 
 // ═══ Input Schema (Zod) ═══
 const RerankInput = z.object({
@@ -57,7 +58,7 @@ serve(async (req) => {
         const cohereKeyValue = secrets?.[0]?.key_value;
 
         if (cohereKeyValue) {
-          const resp = await fetch('https://api.cohere.ai/v1/rerank', {
+          const resp = await withRetry(() => fetch('https://api.cohere.ai/v1/rerank', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${cohereKeyValue}` },
             body: JSON.stringify({
@@ -67,7 +68,7 @@ serve(async (req) => {
               top_n: topK,
               return_documents: false,
             }),
-          });
+          }), { attempts: 3, baseMs: 250, capMs: 3000 });
           if (resp.ok) {
             const data = await resp.json();
             reranked = (data.results || []).map((r: Record<string, unknown>) => ({
@@ -92,12 +93,12 @@ serve(async (req) => {
         }));
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 5000);
-        const resp = await fetch('https://router.huggingface.co/hf-inference/models/BAAI/bge-reranker-v2-m3', {
+        const resp = await withRetry(() => fetch('https://router.huggingface.co/hf-inference/models/BAAI/bge-reranker-v2-m3', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hfToken}` },
           body: JSON.stringify({ inputs: pairs }),
           signal: controller.signal,
-        });
+        }), { attempts: 2, baseMs: 300, capMs: 2000, signal: controller.signal });
         clearTimeout(timeout);
         if (resp.ok) {
           const scores: unknown = await resp.json();

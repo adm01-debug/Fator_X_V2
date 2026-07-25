@@ -3,6 +3,7 @@
  */
 
 import { fromTable } from '@/lib/supabaseExtended';
+import type { DbRow } from '@/types/dbRow';
 
 export type {
   BackoffStrategy, CircuitState, DeadLetterAction, RetryPolicy,

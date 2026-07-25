@@ -11,6 +11,9 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { addMemory, searchMemory, forgetMemory, listMemories, compactMemories, promoteMemoryToFact } from "@/services/memoryService";
 import { AccessControl, DangerousActionDialog } from "@/components/rbac";
 import { memorySchema } from "@/lib/validations/agentSchema";
+import { MemoryTierBadge, type MemoryTier } from "@/components/memory/MemoryTierBadge";
+import { computeTier, MEMORY_TIERS, TIER_LABEL_PT } from "@/lib/memory/tiers";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const memoryTypes = [
   { key: 'short_term', icon: Clock, title: 'Short-term', desc: 'Memória da conversa atual', retention: 'Sessão', color: 'text-nexus-cyan' },
@@ -30,6 +33,7 @@ export default function MemoryPage() {
   const [search, setSearch] = useState('');
   const [saving, setSaving] = useState(false);
   const [compacting, setCompacting] = useState(false);
+  const [tierFilter, setTierFilter] = useState<MemoryTier | 'all'>('all');
   const queryClient = useQueryClient();
 
   const { data: memoryData = { memories: [], total: 0 }, isLoading } = useQuery({
@@ -44,8 +48,13 @@ export default function MemoryPage() {
       return listMemories(activeType, 100);
     },
   });
-  
-  const memories = memoryData.memories;
+
+  const memories = memoryData.memories.filter((entry) => {
+    if (tierFilter === 'all') return true;
+    const raw = entry as { memory_tier?: MemoryTier; pinned?: boolean; relevance_score?: number | null };
+    const tier = raw.memory_tier ?? computeTier(Number(raw.relevance_score ?? 0), Boolean(raw.pinned));
+    return tier === tierFilter;
+  });
 
   const handleAdd = async () => {
     const result = memorySchema.safeParse({ content: newContent, memory_type: activeType, source: newSource || undefined });
@@ -56,7 +65,7 @@ export default function MemoryPage() {
       setNewContent(''); setNewSource('');
       queryClient.invalidateQueries({ queryKey: ['agent_memories'] });
       toast.success('Memória salva via Memory Engine!');
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro inesperado");
     } finally { setSaving(false); }
   };
@@ -66,7 +75,7 @@ export default function MemoryPage() {
       await forgetMemory(id);
       queryClient.invalidateQueries({ queryKey: ['agent_memories'] });
       toast.success('Memória removida');
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro inesperado");
     }
   };
@@ -77,7 +86,7 @@ export default function MemoryPage() {
       const result = await compactMemories(activeType);
       queryClient.invalidateQueries({ queryKey: ['agent_memories'] });
       toast.success(`Compactação concluída: ${result?.compacted ?? 0} memórias consolidadas`);
-    } catch (e: unknown) {
+    } catch (e) {
       toast.error(e instanceof Error ? `Erro na compactação: ${e.message}` : "Erro na compactação");
     } finally { setCompacting(false); }
   };
@@ -99,8 +108,8 @@ export default function MemoryPage() {
             <button key={mt.key} onClick={() => setActiveType(mt.key)}
               className={`nexus-card text-left transition-all ${isActive ? 'ring-1 ring-primary border-primary' : 'hover:border-primary/30'}`}>
               <Icon className={`h-5 w-5 mb-2 ${mt.color}`} />
-              <div className="text-xs font-semibold text-foreground">{mt.title}</div>
-              <div className="text-[11px] text-muted-foreground mt-0.5">{mt.desc}</div>
+              <div className="text-meta font-semibold text-foreground">{mt.title}</div>
+              <div className="text-meta text-muted-foreground mt-0.5">{mt.desc}</div>
             </button>
           );
         })}
@@ -111,17 +120,28 @@ export default function MemoryPage() {
         <div className="flex gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-            <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar memórias (semântica via memory-tools)..." className="pl-9 bg-secondary/50 text-xs" />
+            <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar memórias (semântica via memory-tools)..." className="pl-9 bg-secondary/50 text-meta" />
           </div>
-          <Button size="sm" variant="outline" onClick={handleCompact} disabled={compacting} className="gap-1.5 text-xs shrink-0">
+          <Select value={tierFilter} onValueChange={(v) => setTierFilter(v as MemoryTier | 'all')}>
+            <SelectTrigger className="w-[160px] bg-secondary/50 text-meta shrink-0" aria-label="Filtrar por tier">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{TIER_LABEL_PT.all}</SelectItem>
+              {MEMORY_TIERS.map((t) => (
+                <SelectItem key={t} value={t}>{TIER_LABEL_PT[t]}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button size="sm" variant="outline" onClick={handleCompact} disabled={compacting} className="gap-1.5 text-meta shrink-0">
             {compacting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Archive className="h-3.5 w-3.5" />}
             Compactar
           </Button>
         </div>
         <div className="space-y-2">
-          <Textarea value={newContent} onChange={e => setNewContent(e.target.value)} placeholder="Conteúdo da memória..." rows={2} className="bg-secondary/50 text-xs" />
+          <Textarea value={newContent} onChange={e => setNewContent(e.target.value)} placeholder="Conteúdo da memória..." rows={2} className="bg-secondary/50 text-meta" />
           <div className="flex gap-2">
-            <Input value={newSource} onChange={e => setNewSource(e.target.value)} placeholder="Fonte (opcional)" className="bg-secondary/50 text-xs flex-1" />
+            <Input value={newSource} onChange={e => setNewSource(e.target.value)} placeholder="Fonte (opcional)" className="bg-secondary/50 text-meta flex-1" />
             <Button size="sm" onClick={handleAdd} disabled={saving} className="gap-1.5">
               {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Plus className="h-3.5 w-3.5" />}
               Adicionar
@@ -138,15 +158,21 @@ export default function MemoryPage() {
           <div className="h-16 w-16 rounded-2xl bg-nexus-cyan/10 flex items-center justify-center mb-4">
             <Brain className="h-8 w-8 text-nexus-cyan" />
           </div>
-          <p className="text-sm text-muted-foreground">{search ? 'Nenhuma memória encontrada para essa busca' : 'Nenhuma memória deste tipo ainda. Adicione acima para começar.'}</p>
+          <p className="text-body-sm text-muted-foreground">{search ? 'Nenhuma memória encontrada para essa busca' : 'Nenhuma memória deste tipo ainda. Adicione acima para começar.'}</p>
         </div>
       ) : (
         <div className="space-y-2">
-          {memories.map((entry) => (
+          {memories.map((entry) => {
+            const raw = entry as { memory_tier?: MemoryTier; pinned?: boolean; relevance_score?: number | null };
+            const tier: MemoryTier = raw.memory_tier ?? computeTier(Number(raw.relevance_score ?? 0), Boolean(raw.pinned));
+            return (
             <div key={entry.id} className="nexus-card flex items-start gap-3">
               <div className="flex-1 min-w-0">
-                <p className="text-xs text-foreground leading-relaxed">{entry.content}</p>
-                <div className="flex items-center gap-2 mt-1.5 text-[11px] text-muted-foreground">
+                <div className="flex items-center gap-2 mb-1">
+                  <MemoryTierBadge tier={tier} pinned={Boolean(raw.pinned)} />
+                </div>
+                <p className="text-meta text-foreground leading-relaxed">{entry.content}</p>
+                <div className="flex items-center gap-2 mt-1.5 text-meta text-muted-foreground">
                   <span>{entry.source}</span>
                   <span>•</span>
                   <span>{new Date(entry.created_at).toLocaleDateString('pt-BR')}</span>
@@ -194,7 +220,8 @@ export default function MemoryPage() {
                 />
               </AccessControl>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

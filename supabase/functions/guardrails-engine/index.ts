@@ -90,7 +90,7 @@ function checkSecretLeakage(text: string): RailResult {
     /sk-[a-zA-Z0-9]{20,}/,           // OpenAI API key
     /sk-ant-[a-zA-Z0-9]{20,}/,       // Anthropic API key
     /ghp_[a-zA-Z0-9]{36}/,           // GitHub token
-    /Bearer [a-zA-Z0-9-._~+\/]+=*/,  // Bearer tokens
+    /Bearer [a-zA-Z0-9-._~+/]+=*/,  // Bearer tokens
     /password\s*[:=]\s*\S+/i,        // Passwords in text
   ];
 

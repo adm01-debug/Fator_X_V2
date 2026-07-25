@@ -3,25 +3,33 @@
  * Suporta: disc_analysis, eq_analysis, bias_analysis, full_pipeline, notify, webhook
  */
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.0';
+import { fetchWithTimeout } from "../_shared/retry.ts";
+import { z } from "https://esm.sh/zod@3.23.8";
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { getCorsHeaders } from "../_shared/cors.ts";
+const BodySchema = z.object({
+  rule_id: z.string().uuid(),
+  payload: z.record(z.unknown()).optional(),
+});
 
-interface Body { rule_id: string; payload?: Record<string, unknown> }
 
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
 
   const startedAt = Date.now();
   try {
     const auth = req.headers.get('Authorization');
     if (!auth) return json({ error: 'unauthorized' }, 401);
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const userClient = createClient(supabaseUrl, Deno.env.get('SUPABASE_ANON_KEY')!, {
+    const supabaseUrl = requireEnv('SUPABASE_URL');
+    const serviceKey = requireEnv('SUPABASE_SERVICE_ROLE_KEY');
+    const userClient = createClient(supabaseUrl, requireEnv('SUPABASE_ANON_KEY'), {
       global: { headers: { Authorization: auth } },
     });
     const admin = createClient(supabaseUrl, serviceKey);
@@ -29,8 +37,11 @@ Deno.serve(async (req) => {
     const { data: userData } = await userClient.auth.getUser();
     if (!userData.user) return json({ error: 'unauthorized' }, 401);
 
-    const body = (await req.json()) as Body;
-    if (!body?.rule_id) return json({ error: 'rule_id required' }, 400);
+    const rawBody = await req.json().catch(() => null);
+    const parsed = BodySchema.safeParse(rawBody);
+    if (!parsed.success) return json({ error: 'Payload inválido', details: parsed.error.flatten().fieldErrors }, 400);
+    const body = parsed.data;
+
 
     const { data: rule, error: ruleErr } = await admin
       .from('automation_rules')
@@ -71,7 +82,7 @@ Deno.serve(async (req) => {
       case 'webhook': {
         const url = (rule.action_config as { url?: string })?.url;
         if (!url) throw new Error('webhook url missing in action_config');
-        const res = await fetch(url, {
+        const res = await fetchWithTimeout(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ rule_id: rule.id, payload: body.payload ?? {} }),

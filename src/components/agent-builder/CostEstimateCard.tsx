@@ -16,10 +16,10 @@ export function CostEstimateCard({ estimate, compact = false, className }: CostE
   if (compact) {
     return (
       <div className={cn(
-        'flex items-center gap-3 px-3 py-2 rounded-lg bg-secondary/40 border border-border/50 text-[11px]',
+        'flex items-center gap-3 px-3 py-2 rounded-lg bg-secondary/40 border border-border/50 text-meta',
         className,
       )}>
-        <Badge variant="outline" className="h-5 text-[10px] gap-1">
+        <Badge variant="outline" className="h-5 text-meta gap-1">
           <DollarSign className="h-3 w-3" /> Estimativa
         </Badge>
         <span className="flex items-center gap-1 text-muted-foreground">
@@ -43,9 +43,9 @@ export function CostEstimateCard({ estimate, compact = false, className }: CostE
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <DollarSign className="h-4 w-4 text-primary" />
-          <h4 className="text-sm font-semibold">Estimativa de Custo</h4>
+          <h4 className="text-body-sm font-semibold">Estimativa de Custo</h4>
         </div>
-        <Badge variant="outline" className="text-[10px]">{estimate.pricing.label}</Badge>
+        <Badge variant="outline" className="text-meta">{estimate.pricing.label}</Badge>
       </div>
       <div className="grid grid-cols-2 gap-3">
         <Metric icon={<Hash className="h-3 w-3" />} label="Input tokens" value={`~${estimate.inputTokens}`} />
@@ -62,10 +62,10 @@ export function CostEstimateCard({ estimate, compact = false, className }: CostE
 function Metric({ icon, label, value, accent }: { icon: React.ReactNode; label: string; value: string; accent?: boolean }) {
   return (
     <div className="space-y-1">
-      <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+      <div className="flex items-center gap-1 text-meta text-muted-foreground">
         {icon}<span>{label}</span>
       </div>
-      <p className={cn('text-sm font-mono font-semibold', accent ? 'text-primary' : 'text-foreground')}>{value}</p>
+      <p className={cn('text-body-sm font-mono font-semibold', accent ? 'text-primary' : 'text-foreground')}>{value}</p>
     </div>
   );
 }

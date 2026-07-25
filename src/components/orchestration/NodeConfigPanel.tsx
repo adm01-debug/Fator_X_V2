@@ -33,8 +33,8 @@ export function NodeConfigPanel({ node, agents, isEntry, onChange, onDelete, onS
   if (!node) {
     return (
       <Card className="h-full">
-        <CardHeader><CardTitle className="text-sm">Nó</CardTitle></CardHeader>
-        <CardContent><p className="text-xs text-muted-foreground">Selecione um nó no canvas para configurar.</p></CardContent>
+        <CardHeader><CardTitle className="text-body-sm">Nó</CardTitle></CardHeader>
+        <CardContent><p className="text-meta text-muted-foreground">Selecione um nó no canvas para configurar.</p></CardContent>
       </Card>
     );
   }
@@ -42,12 +42,12 @@ export function NodeConfigPanel({ node, agents, isEntry, onChange, onDelete, onS
   return (
     <Card className="h-full">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-sm">Configurar Nó</CardTitle>
-        {isEntry && <span className="text-[10px] font-semibold text-primary flex items-center gap-1"><Flag className="h-3 w-3" /> Entrada</span>}
+        <CardTitle className="text-body-sm">Configurar Nó</CardTitle>
+        {isEntry && <span className="text-meta font-semibold text-primary flex items-center gap-1"><Flag className="h-3 w-3" /> Entrada</span>}
       </CardHeader>
       <CardContent className="space-y-3">
         <div>
-          <Label className="text-xs">Rótulo</Label>
+          <Label className="text-meta">Rótulo</Label>
           <Input
             value={label}
             onChange={(e) => { setLabel(e.target.value); onChange({ label: e.target.value }); }}
@@ -56,7 +56,7 @@ export function NodeConfigPanel({ node, agents, isEntry, onChange, onDelete, onS
           />
         </div>
         <div>
-          <Label className="text-xs">Papel / Role</Label>
+          <Label className="text-meta">Papel / Role</Label>
           <Input
             value={role}
             onChange={(e) => { setRole(e.target.value); onChange({ role: e.target.value }); }}
@@ -65,7 +65,7 @@ export function NodeConfigPanel({ node, agents, isEntry, onChange, onDelete, onS
           />
         </div>
         <div>
-          <Label className="text-xs">Agente vinculado</Label>
+          <Label className="text-meta">Agente vinculado</Label>
           <Select value={agentId || 'none'} onValueChange={(v) => { const id = v === 'none' ? null : v; setAgentId(id ?? ''); onChange({ agent_id: id }); }}>
             <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
             <SelectContent>

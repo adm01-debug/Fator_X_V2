@@ -3,7 +3,7 @@ import { FatorXLogo } from '@/components/shared/FatorXLogo';
 
 function FeaturePill({ icon: Icon, text }: { icon: React.ElementType; text: string }) {
   return (
-    <div className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-xs text-muted-foreground">
+    <div className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-meta text-muted-foreground">
       <Icon className="h-3.5 w-3.5 text-primary" /><span>{text}</span>
     </div>
   );
@@ -47,7 +47,7 @@ export function AuthBrandingPanel() {
       <MeshGradient />
       <div className="animate-fade-in">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/20">
+          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-nexus-lg shadow-primary/20">
             <FatorXLogo size={22} className="text-primary-foreground" />
           </div>
           <span className="text-xl font-heading font-bold text-foreground tracking-tight">Fator X</span>
@@ -59,7 +59,7 @@ export function AuthBrandingPanel() {
             Construa agentes de IA{' '}
             <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">extraordinários</span>
           </h2>
-          <p className="text-base text-muted-foreground leading-relaxed max-w-md">Orquestre, monitore e escale seus agentes inteligentes com a plataforma mais completa do mercado.</p>
+          <p className="text-title-sm text-muted-foreground leading-relaxed max-w-md">Orquestre, monitore e escale seus agentes inteligentes com a plataforma mais completa do mercado.</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <FeaturePill icon={Brain} text="Multi-modelo (GPT, Gemini, Claude)" />
@@ -67,15 +67,15 @@ export function AuthBrandingPanel() {
           <FeaturePill icon={Zap} text="Deploy em 1 clique" />
         </div>
         <div className="mt-6 rounded-xl border border-border/30 bg-card/30 backdrop-blur-sm p-5 max-w-md">
-          <p className="text-sm text-muted-foreground italic leading-relaxed">"Reduzimos 60% do tempo de atendimento ao cliente com agentes criados no Fator X. A plataforma é intuitiva e segura."</p>
+          <p className="text-body-sm text-muted-foreground italic leading-relaxed">"Reduzimos 60% do tempo de atendimento ao cliente com agentes criados no Fator X. A plataforma é intuitiva e segura."</p>
           <div className="flex items-center gap-3 mt-3">
-            <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">MC</div>
-            <div><p className="text-xs font-medium text-foreground">Marcos Costa</p><p className="text-[11px] text-muted-foreground">Head de Operações, TechBR</p></div>
+            <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-meta font-bold text-primary">MC</div>
+            <div><p className="text-meta font-medium text-foreground">Marcos Costa</p><p className="text-meta text-muted-foreground">Head de Operações, TechBR</p></div>
           </div>
         </div>
       </div>
       <div className="animate-fade-in" style={{ animationDelay: '200ms' }}>
-        <p className="text-xs text-muted-foreground/60">🔒 Criptografia ponta-a-ponta · SOC 2 · LGPD Compliant</p>
+        <p className="text-meta text-muted-foreground/60">🔒 Criptografia ponta-a-ponta · SOC 2 · LGPD Compliant</p>
       </div>
     </div>
   );

@@ -54,12 +54,12 @@ export function DraftRestoredNotification({
           <span className="text-[13px] font-semibold text-foreground truncate">
             Rascunho restaurado
           </span>
-          <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-secondary/60 text-muted-foreground border border-border/50">
+          <span className="text-meta uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-secondary/60 text-muted-foreground border border-border/50">
             {mode === 'partial' ? 'Parcial' : 'Completo'}
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground min-w-0">
+        <div className="flex items-center gap-1.5 text-meta text-muted-foreground min-w-0">
           <FileText className="h-3 w-3 shrink-0" aria-hidden />
           <span className="font-mono font-medium text-foreground truncate" title={draftName}>
             {draftName || 'sem nome'}
@@ -75,12 +75,12 @@ export function DraftRestoredNotification({
         {hasField && (
           <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
             <AlertCircle className="h-3 w-3 text-warning shrink-0" aria-hidden />
-            <span className="text-[11px] text-muted-foreground">primeiro campo a corrigir:</span>
-            <span className="text-[11px] font-mono font-semibold text-foreground bg-secondary/60 px-1.5 py-0.5 rounded border border-border/50">
+            <span className="text-meta text-muted-foreground">primeiro campo a corrigir:</span>
+            <span className="text-meta font-mono font-semibold text-foreground bg-secondary/60 px-1.5 py-0.5 rounded border border-border/50">
               {fieldLabel}
             </span>
             {errorLabel && (
-              <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-warning/10 text-warning border border-warning/30">
+              <span className="text-meta uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-warning/10 text-warning border border-warning/30">
                 {errorLabel}
               </span>
             )}
@@ -95,7 +95,7 @@ export function DraftRestoredNotification({
                 onJumpToField();
                 onDismiss();
               }}
-              className="inline-flex items-center gap-1 h-6 px-2 rounded-md text-[11px] font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+              className="inline-flex items-center gap-1 h-6 px-2 rounded-md text-meta font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
             >
               Ir ao campo <ArrowRight className="h-3 w-3" />
             </button>

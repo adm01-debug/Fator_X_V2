@@ -140,12 +140,12 @@ export function ExecutionList({ executions, selectedId, onSelect, onReplay, load
           <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center border border-primary/10" aria-hidden>
             <span className="text-3xl">🔍</span>
           </div>
-          <div className="absolute -bottom-1 -right-1 h-8 w-8 rounded-xl bg-card border border-border flex items-center justify-center shadow-sm">
+          <div className="absolute -bottom-1 -right-1 h-8 w-8 rounded-xl bg-card border border-border flex items-center justify-center shadow-nexus-sm">
             <Filter className="h-4 w-4 text-muted-foreground" />
           </div>
         </div>
-        <h3 className="text-lg font-heading font-semibold text-foreground mb-1.5">Nenhuma execução para esses filtros</h3>
-        <p className="text-sm text-muted-foreground max-w-md leading-relaxed">
+        <h3 className="text-title-sm font-heading font-semibold text-foreground mb-1.5">Nenhuma execução para esses filtros</h3>
+        <p className="text-body-sm text-muted-foreground max-w-md leading-relaxed">
           Ajuste o nível, evento, agente ou janela temporal para ampliar a busca.
         </p>
         {button && (
@@ -169,7 +169,7 @@ export function ExecutionList({ executions, selectedId, onSelect, onReplay, load
             onChange={(e) => setLocalQuery(e.target.value)}
             placeholder="Filtrar por mensagem, endpoint ou tag…"
             aria-label="Filtrar execuções carregadas por mensagem, endpoint ou tag"
-            className="w-full h-7 pl-7 pr-7 text-xs rounded-md bg-card border border-border focus:outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground/70"
+            className="w-full h-7 pl-7 pr-7 text-meta rounded-md bg-card border border-border focus:outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground/70"
           />
           {localQuery && (
             <button
@@ -184,7 +184,7 @@ export function ExecutionList({ executions, selectedId, onSelect, onReplay, load
           )}
         </div>
         {localQuery && (
-          <p className="mt-1 text-[10px] text-muted-foreground px-0.5" role="status" aria-live="polite">
+          <p className="mt-1 text-meta text-muted-foreground px-0.5" role="status" aria-live="polite">
             {filtered.length} de {executions.length} execuç{executions.length === 1 ? 'ão' : 'ões'}
             {filtered.length === 0 ? ' — nenhuma corresponde' : ''}
           </p>
@@ -194,11 +194,11 @@ export function ExecutionList({ executions, selectedId, onSelect, onReplay, load
       {filtered.length === 0 ? (
         <div className="flex-1 flex flex-col items-center justify-center p-6 text-center" role="status">
           <Search className="h-6 w-6 text-muted-foreground/50 mb-2" aria-hidden />
-          <p className="text-xs font-medium text-foreground">Nenhum match para "{localQuery}"</p>
-          <p className="text-[11px] text-muted-foreground mt-1 max-w-xs">
+          <p className="text-meta font-medium text-foreground">Nenhum match para "{localQuery}"</p>
+          <p className="text-meta text-muted-foreground mt-1 max-w-xs">
             Tente outro termo, ou limpe a busca para ver todas as {executions.length} execuções carregadas.
           </p>
-          <Button size="sm" variant="outline" className="mt-3 h-7 text-xs" onClick={() => setLocalQuery('')}>
+          <Button size="sm" variant="outline" className="mt-3 h-7 text-meta" onClick={() => setLocalQuery('')}>
             Limpar busca
           </Button>
         </div>
@@ -247,7 +247,7 @@ export function ExecutionList({ executions, selectedId, onSelect, onReplay, load
                       <div className="flex items-center gap-2 min-w-0">
                         {compareMode && (
                           <span
-                            className={`h-4 w-4 rounded border flex items-center justify-center text-[10px] font-mono shrink-0 transition-colors ${
+                            className={`h-4 w-4 rounded border flex items-center justify-center text-meta font-mono shrink-0 transition-colors ${
                               isPicked
                                 ? 'bg-primary border-primary text-primary-foreground'
                                 : 'border-border bg-background'
@@ -258,19 +258,19 @@ export function ExecutionList({ executions, selectedId, onSelect, onReplay, load
                           </span>
                         )}
                         <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${dotColor}`} aria-hidden />
-                        <span className="text-[11px] font-mono text-muted-foreground truncate max-w-[200px]">
+                        <span className="text-meta font-mono text-muted-foreground truncate max-w-[200px]">
                           {e.session_id.startsWith('auto-')
                             ? '∅ sem session'
                             : highlightMatch(e.session_id.slice(0, 18), localQuery)}
                         </span>
                       </div>
-                      <span className={`text-[10px] text-muted-foreground shrink-0 ${onReplay ? 'mr-16' : ''}`}>
+                      <span className={`text-meta text-muted-foreground shrink-0 ${onReplay ? 'mr-16' : ''}`}>
                         {new Date(e.started_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
 
                     {preview && (
-                      <p className="text-[11px] text-foreground/85 truncate mb-1.5" title={previewLine(preview)}>
+                      <p className="text-meta text-foreground/85 truncate mb-1.5" title={previewLine(preview)}>
                         {highlightMatch(previewLine(preview), localQuery)}
                       </p>
                     )}
@@ -288,7 +288,7 @@ export function ExecutionList({ executions, selectedId, onSelect, onReplay, load
                       </div>
                     )}
 
-                    <div className="flex items-center gap-3 text-[10px] text-muted-foreground flex-wrap">
+                    <div className="flex items-center gap-3 text-meta text-muted-foreground flex-wrap">
                       <span className="flex items-center gap-1"><Activity className="h-2.5 w-2.5" />{e.traces.length}</span>
                       <span className="flex items-center gap-1 text-nexus-emerald"><CheckCircle2 className="h-2.5 w-2.5" />{e.counts.info}</span>
                       {e.counts.warning > 0 && (
@@ -308,7 +308,7 @@ export function ExecutionList({ executions, selectedId, onSelect, onReplay, load
                       size="sm"
                       variant="ghost"
                       onClick={(ev) => { ev.stopPropagation(); onSelect(e); onReplay(e); }}
-                      className="absolute top-2 right-2 h-6 px-2 text-[10px] gap-1 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity bg-primary/10 hover:bg-primary/20 text-primary"
+                      className="absolute top-2 right-2 h-6 px-2 text-meta gap-1 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity bg-primary/10 hover:bg-primary/20 text-primary"
                       aria-label={`Replay da execução ${e.session_id}`}
                       title="Reproduzir esta execução passo a passo"
                     >

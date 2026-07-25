@@ -91,46 +91,46 @@ export function CostCalculatorPanel() {
           <Calculator className="h-4 w-4 text-nexus-amber" />
         </div>
         <div>
-          <h3 className="text-sm font-bold text-foreground">Calculadora de Custos LLM</h3>
-          <p className="text-[11px] text-muted-foreground">{allPricing.length} modelos · {providers.length} providers · Fonte: Central de Preços Nexus</p>
+          <h3 className="text-body-sm font-bold text-foreground">Calculadora de Custos LLM</h3>
+          <p className="text-meta text-muted-foreground">{allPricing.length} modelos · {providers.length} providers · Fonte: Central de Preços Nexus</p>
         </div>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
         <div className="space-y-1">
-          <label className="text-[10px] font-medium text-muted-foreground uppercase">Provider</label>
+          <label htmlFor="costcalculatorpanel-provider-f51693" className="text-meta font-medium text-muted-foreground uppercase">Provider</label>
           <Select value={provider} onValueChange={v => { setProvider(v); setModel(''); }}>
-            <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+            <SelectTrigger id="costcalculatorpanel-provider-f51693" className="h-8 text-meta"><SelectValue /></SelectTrigger>
             <SelectContent>
               {providers.map(p => <SelectItem key={p} value={p}>{p.charAt(0).toUpperCase() + p.slice(1)}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
         <div className="space-y-1">
-          <label className="text-[10px] font-medium text-muted-foreground uppercase">Modelo</label>
+          <label htmlFor="costcalculatorpanel-modelo-f87495" className="text-meta font-medium text-muted-foreground uppercase">Modelo</label>
           <Select value={model || modelsForProvider[0]?.model || ''} onValueChange={setModel}>
-            <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+            <SelectTrigger id="costcalculatorpanel-modelo-f87495" className="h-8 text-meta"><SelectValue /></SelectTrigger>
             <SelectContent>
               {modelsForProvider.map(m => <SelectItem key={m.model} value={m.model}>{m.model}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
         <div className="space-y-1">
-          <label className="text-[10px] font-medium text-muted-foreground uppercase">Tokens Input</label>
-          <Input className="h-8 text-xs" type="number" value={inputTokens} onChange={e => setInputTokens(e.target.value)} />
+          <label htmlFor="costcalculatorpanel-tokens-input-06a254" className="text-meta font-medium text-muted-foreground uppercase">Tokens Input</label>
+          <Input id="costcalculatorpanel-tokens-input-06a254" className="h-8 text-meta" type="number" value={inputTokens} onChange={e => setInputTokens(e.target.value)} />
         </div>
         <div className="space-y-1">
-          <label className="text-[10px] font-medium text-muted-foreground uppercase">Tokens Output</label>
-          <Input className="h-8 text-xs" type="number" value={outputTokens} onChange={e => setOutputTokens(e.target.value)} />
+          <label htmlFor="costcalculatorpanel-tokens-output-0e76e0" className="text-meta font-medium text-muted-foreground uppercase">Tokens Output</label>
+          <Input id="costcalculatorpanel-tokens-output-0e76e0" className="h-8 text-meta" type="number" value={outputTokens} onChange={e => setOutputTokens(e.target.value)} />
         </div>
       </div>
 
       <div className="flex gap-2">
-        <Button size="sm" className="gap-1.5 text-xs" onClick={handleCalculate} disabled={calculating}>
+        <Button size="sm" className="gap-1.5 text-meta" onClick={handleCalculate} disabled={calculating}>
           {calculating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <DollarSign className="h-3.5 w-3.5" />} 
           Calcular
         </Button>
-        <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={toggleComparison} disabled={comparing}>
+        <Button variant="outline" size="sm" className="gap-1.5 text-meta" onClick={toggleComparison} disabled={comparing}>
           {comparing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ArrowUpDown className="h-3.5 w-3.5" />}
           {showComparison ? 'Ocultar' : 'Comparar'} Todos
         </Button>
@@ -139,32 +139,32 @@ export function CostCalculatorPanel() {
       {result && (
         <div className="grid grid-cols-3 gap-2.5 animate-fade-in">
           <div className="rounded-lg border border-border bg-muted/20 p-3 text-center">
-            <p className="text-lg font-black text-foreground">{formatCostUsd(result.totalCostUsd)}</p>
-            <p className="text-[10px] text-muted-foreground">Custo USD</p>
+            <p className="text-title-sm font-black text-foreground">{formatCostUsd(result.totalCostUsd)}</p>
+            <p className="text-meta text-muted-foreground">Custo USD</p>
           </div>
           <div className="rounded-lg border border-border bg-muted/20 p-3 text-center">
-            <p className="text-lg font-black text-foreground">{formatCostBrl(result.totalCostUsd)}</p>
-            <p className="text-[10px] text-muted-foreground">Custo BRL</p>
+            <p className="text-title-sm font-black text-foreground">{formatCostBrl(result.totalCostUsd)}</p>
+            <p className="text-meta text-muted-foreground">Custo BRL</p>
           </div>
           <div className="rounded-lg border border-border bg-muted/20 p-3 text-center">
-            <p className="text-lg font-black text-foreground">{result.totalTokens.toLocaleString()}</p>
-            <p className="text-[10px] text-muted-foreground">Total Tokens</p>
+            <p className="text-title-sm font-black text-foreground">{result.totalTokens.toLocaleString()}</p>
+            <p className="text-meta text-muted-foreground">Total Tokens</p>
           </div>
         </div>
       )}
 
       {showComparison && comparison.length > 0 && (
         <div className="animate-fade-in">
-          <p className="text-[11px] font-semibold text-muted-foreground mb-2 uppercase tracking-wider">Comparação de {comparison.length} modelos</p>
+          <p className="text-meta font-semibold text-muted-foreground mb-2 uppercase tracking-wider">Comparação de {comparison.length} modelos</p>
           <div className="space-y-1 max-h-[250px] overflow-auto">
             {comparison.map((c, i) => (
               <div key={i} className="flex items-center gap-2 rounded-lg border border-border bg-secondary/20 px-3 py-1.5">
-                <span className="text-[10px] text-muted-foreground w-5">{i + 1}</span>
+                <span className="text-meta text-muted-foreground w-5">{i + 1}</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[11px] font-medium truncate">{c.model}</p>
+                  <p className="text-meta font-medium truncate">{c.model}</p>
                 </div>
-                <Badge variant="outline" className="text-[10px]">{formatCostUsd(c.costUsd)}</Badge>
-                <span className="text-[10px] text-muted-foreground">{formatCostBrl(c.costUsd)}</span>
+                <Badge variant="outline" className="text-meta">{formatCostUsd(c.costUsd)}</Badge>
+                <span className="text-meta text-muted-foreground">{formatCostBrl(c.costUsd)}</span>
               </div>
             ))}
           </div>

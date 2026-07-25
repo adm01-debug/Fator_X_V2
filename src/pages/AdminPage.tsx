@@ -13,6 +13,7 @@ import { AccessControl, DangerousActionDialog } from "@/components/rbac";
 import { AuditTrailPanel } from "@/components/admin/AuditTrailPanel";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import type { DbRow } from '@/types/dbRow';
 
 type TableName = "agents" | "agent_traces" | "knowledge_bases" | "prompt_versions" | "evaluation_runs" | "oracle_history";
 
@@ -78,7 +79,7 @@ const TABLE_CONFIG: { key: TableName; label: string; icon: React.ElementType; co
   },
 ];
 
-function formatCell(value: unknown, key: string): string {
+function formatCell(value: DbRow, key: string): string {
   if (value === null || value === undefined) return "—";
   if (key.includes("_at") || key === "created_at" || key === "updated_at") {
     try { return format(new Date(String(value)), "dd/MM/yy HH:mm"); } catch (err) { logger.error("Operation failed:", err); return String(value); }
@@ -111,7 +112,7 @@ function AdminTable({ config }: { config: typeof TABLE_CONFIG[0] }) {
       toast.success("Registro removido");
       refetch();
       queryClient.invalidateQueries({ queryKey: [config.key] });
-    } catch (e: unknown) {
+    } catch (e) {
       const msg = e instanceof Error ? e.message : "Erro desconhecido";
       toast.error(`Erro ao deletar: ${msg}`);
     }
@@ -132,7 +133,7 @@ function AdminTable({ config }: { config: typeof TABLE_CONFIG[0] }) {
         <Button variant="outline" size="sm" onClick={() => refetch()} className="gap-1.5">
           <RefreshCw className="h-3.5 w-3.5" /> Atualizar
         </Button>
-        <Badge variant="secondary" className="text-xs">
+        <Badge variant="secondary" className="text-meta">
           {filtered.length} registro{filtered.length !== 1 ? "s" : ""}
         </Badge>
       </div>
@@ -144,7 +145,7 @@ function AdminTable({ config }: { config: typeof TABLE_CONFIG[0] }) {
       ) : filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <Database className="h-10 w-10 text-muted-foreground mb-3" />
-          <p className="text-sm text-muted-foreground">Nenhum registro encontrado</p>
+          <p className="text-body-sm text-muted-foreground">Nenhum registro encontrado</p>
         </div>
       ) : (
         <div className="rounded-lg border border-border/50 overflow-hidden">
@@ -153,20 +154,20 @@ function AdminTable({ config }: { config: typeof TABLE_CONFIG[0] }) {
               <TableHeader>
                 <TableRow className="bg-secondary/30">
                   {config.columns.map((col) => (
-                    <TableHead key={col.key} className="text-xs font-semibold whitespace-nowrap">
+                    <TableHead key={col.key} className="text-meta font-semibold whitespace-nowrap">
                       {col.label}
                     </TableHead>
                   ))}
-                  <TableHead className="text-xs font-semibold w-[60px]">Ações</TableHead>
+                  <TableHead className="text-meta font-semibold w-[60px]">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filtered.map((row: Record<string, unknown>) => (
                   <TableRow key={String(row.id)} className="hover:bg-secondary/20">
                     {config.columns.map((col) => (
-                      <TableCell key={col.key} className="text-xs py-2.5 max-w-[200px] truncate">
+                      <TableCell key={col.key} className="text-meta py-2.5 max-w-[200px] truncate">
                         {col.key === "status" || col.key === "level" ? (
-                          <Badge variant="outline" className="text-[11px]">
+                          <Badge variant="outline" className="text-meta">
                             {formatCell(row[col.key], col.key)}
                           </Badge>
                         ) : col.key === "is_active" ? (
@@ -230,12 +231,12 @@ export default function AdminPage() {
         <Tabs defaultValue="agents" className="space-y-4">
           <TabsList className="bg-secondary/50 flex-wrap h-auto gap-1 p-1">
             {TABLE_CONFIG.map((t) => (
-              <TabsTrigger key={t.key} value={t.key} className="gap-1.5 text-xs data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+              <TabsTrigger key={t.key} value={t.key} className="gap-1.5 text-meta data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
                 <t.icon className="h-3.5 w-3.5" />
                 {t.label}
               </TabsTrigger>
             ))}
-            <TabsTrigger value="audit_trail" className="gap-1.5 text-xs data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+            <TabsTrigger value="audit_trail" className="gap-1.5 text-meta data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
               <Shield className="h-3.5 w-3.5" />
               Audit Trail
             </TabsTrigger>

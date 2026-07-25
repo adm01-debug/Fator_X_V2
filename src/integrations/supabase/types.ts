@@ -494,43 +494,67 @@ export type Database = {
       }
       agent_memories_v2: {
         Row: {
+          access_count: number
           agent_id: string | null
           content: string
           context_tier: string | null
           created_at: string | null
           decay_rate: number | null
+          embed_attempts: number
+          embed_last_attempt_at: string | null
+          embed_last_error: string | null
           embedding: string | null
+          half_life_days: number
           id: string
           importance_score: number | null
           last_accessed_at: string | null
+          memory_tier: string
           memory_type: string
           metadata: Json | null
+          pinned: boolean
+          strength: number | null
         }
         Insert: {
+          access_count?: number
           agent_id?: string | null
           content: string
           context_tier?: string | null
           created_at?: string | null
           decay_rate?: number | null
+          embed_attempts?: number
+          embed_last_attempt_at?: string | null
+          embed_last_error?: string | null
           embedding?: string | null
+          half_life_days?: number
           id?: string
           importance_score?: number | null
           last_accessed_at?: string | null
+          memory_tier?: string
           memory_type: string
           metadata?: Json | null
+          pinned?: boolean
+          strength?: number | null
         }
         Update: {
+          access_count?: number
           agent_id?: string | null
           content?: string
           context_tier?: string | null
           created_at?: string | null
           decay_rate?: number | null
+          embed_attempts?: number
+          embed_last_attempt_at?: string | null
+          embed_last_error?: string | null
           embedding?: string | null
+          half_life_days?: number
           id?: string
           importance_score?: number | null
           last_accessed_at?: string | null
+          memory_tier?: string
           memory_type?: string
           metadata?: Json | null
+          pinned?: boolean
+          strength?: number | null
         }
         Relationships: []
       }
@@ -674,7 +698,727 @@ export type Database = {
         }
         Relationships: []
       }
+      agent_traces_v2_2026_04: {
+        Row: {
+          agent_id: string | null
+          cost_usd: number | null
+          created_at: string
+          event: string | null
+          id: string
+          input: Json | null
+          latency_ms: number | null
+          level: Database["public"]["Enums"]["trace_level"] | null
+          metadata: Json | null
+          output: Json | null
+          session_id: string | null
+          tokens_used: number | null
+          user_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       agent_traces_v2_2026_05: {
+        Row: {
+          agent_id: string | null
+          cost_usd: number | null
+          created_at: string
+          event: string | null
+          id: string
+          input: Json | null
+          latency_ms: number | null
+          level: Database["public"]["Enums"]["trace_level"] | null
+          metadata: Json | null
+          output: Json | null
+          session_id: string | null
+          tokens_used: number | null
+          user_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      agent_traces_v2_2026_06: {
+        Row: {
+          agent_id: string | null
+          cost_usd: number | null
+          created_at: string
+          event: string | null
+          id: string
+          input: Json | null
+          latency_ms: number | null
+          level: Database["public"]["Enums"]["trace_level"] | null
+          metadata: Json | null
+          output: Json | null
+          session_id: string | null
+          tokens_used: number | null
+          user_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      agent_traces_v2_2026_07: {
+        Row: {
+          agent_id: string | null
+          cost_usd: number | null
+          created_at: string
+          event: string | null
+          id: string
+          input: Json | null
+          latency_ms: number | null
+          level: Database["public"]["Enums"]["trace_level"] | null
+          metadata: Json | null
+          output: Json | null
+          session_id: string | null
+          tokens_used: number | null
+          user_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      agent_traces_v2_2026_08: {
+        Row: {
+          agent_id: string | null
+          cost_usd: number | null
+          created_at: string
+          event: string | null
+          id: string
+          input: Json | null
+          latency_ms: number | null
+          level: Database["public"]["Enums"]["trace_level"] | null
+          metadata: Json | null
+          output: Json | null
+          session_id: string | null
+          tokens_used: number | null
+          user_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      agent_traces_v2_2026_09: {
+        Row: {
+          agent_id: string | null
+          cost_usd: number | null
+          created_at: string
+          event: string | null
+          id: string
+          input: Json | null
+          latency_ms: number | null
+          level: Database["public"]["Enums"]["trace_level"] | null
+          metadata: Json | null
+          output: Json | null
+          session_id: string | null
+          tokens_used: number | null
+          user_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      agent_traces_v2_2026_10: {
+        Row: {
+          agent_id: string | null
+          cost_usd: number | null
+          created_at: string
+          event: string | null
+          id: string
+          input: Json | null
+          latency_ms: number | null
+          level: Database["public"]["Enums"]["trace_level"] | null
+          metadata: Json | null
+          output: Json | null
+          session_id: string | null
+          tokens_used: number | null
+          user_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      agent_traces_v2_2026_11: {
+        Row: {
+          agent_id: string | null
+          cost_usd: number | null
+          created_at: string
+          event: string | null
+          id: string
+          input: Json | null
+          latency_ms: number | null
+          level: Database["public"]["Enums"]["trace_level"] | null
+          metadata: Json | null
+          output: Json | null
+          session_id: string | null
+          tokens_used: number | null
+          user_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      agent_traces_v2_2026_12: {
+        Row: {
+          agent_id: string | null
+          cost_usd: number | null
+          created_at: string
+          event: string | null
+          id: string
+          input: Json | null
+          latency_ms: number | null
+          level: Database["public"]["Enums"]["trace_level"] | null
+          metadata: Json | null
+          output: Json | null
+          session_id: string | null
+          tokens_used: number | null
+          user_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      agent_traces_v2_2027_01: {
+        Row: {
+          agent_id: string | null
+          cost_usd: number | null
+          created_at: string
+          event: string | null
+          id: string
+          input: Json | null
+          latency_ms: number | null
+          level: Database["public"]["Enums"]["trace_level"] | null
+          metadata: Json | null
+          output: Json | null
+          session_id: string | null
+          tokens_used: number | null
+          user_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      agent_traces_v2_2027_02: {
+        Row: {
+          agent_id: string | null
+          cost_usd: number | null
+          created_at: string
+          event: string | null
+          id: string
+          input: Json | null
+          latency_ms: number | null
+          level: Database["public"]["Enums"]["trace_level"] | null
+          metadata: Json | null
+          output: Json | null
+          session_id: string | null
+          tokens_used: number | null
+          user_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      agent_traces_v2_2027_03: {
+        Row: {
+          agent_id: string | null
+          cost_usd: number | null
+          created_at: string
+          event: string | null
+          id: string
+          input: Json | null
+          latency_ms: number | null
+          level: Database["public"]["Enums"]["trace_level"] | null
+          metadata: Json | null
+          output: Json | null
+          session_id: string | null
+          tokens_used: number | null
+          user_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      agent_traces_v2_2027_04: {
+        Row: {
+          agent_id: string | null
+          cost_usd: number | null
+          created_at: string
+          event: string | null
+          id: string
+          input: Json | null
+          latency_ms: number | null
+          level: Database["public"]["Enums"]["trace_level"] | null
+          metadata: Json | null
+          output: Json | null
+          session_id: string | null
+          tokens_used: number | null
+          user_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      agent_traces_v2_2027_05: {
+        Row: {
+          agent_id: string | null
+          cost_usd: number | null
+          created_at: string
+          event: string | null
+          id: string
+          input: Json | null
+          latency_ms: number | null
+          level: Database["public"]["Enums"]["trace_level"] | null
+          metadata: Json | null
+          output: Json | null
+          session_id: string | null
+          tokens_used: number | null
+          user_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      agent_traces_v2_2027_06: {
+        Row: {
+          agent_id: string | null
+          cost_usd: number | null
+          created_at: string
+          event: string | null
+          id: string
+          input: Json | null
+          latency_ms: number | null
+          level: Database["public"]["Enums"]["trace_level"] | null
+          metadata: Json | null
+          output: Json | null
+          session_id: string | null
+          tokens_used: number | null
+          user_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          cost_usd?: number | null
+          created_at?: string
+          event?: string | null
+          id?: string
+          input?: Json | null
+          latency_ms?: number | null
+          level?: Database["public"]["Enums"]["trace_level"] | null
+          metadata?: Json | null
+          output?: Json | null
+          session_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      agent_traces_v2_2027_07: {
         Row: {
           agent_id: string | null
           cost_usd: number | null
@@ -1368,6 +2112,54 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_log_v2_2026_04: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          reason: string | null
+          resource_id: string | null
+          resource_name: string | null
+          resource_type: string
+          status: string | null
+          user_agent: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type?: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
       audit_log_v2_2026_05: {
         Row: {
           action: string
@@ -1402,6 +2194,630 @@ export type Database = {
         Relationships: []
       }
       audit_log_v2_2026_06: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          reason: string | null
+          resource_id: string | null
+          resource_name: string | null
+          resource_type: string
+          status: string | null
+          user_agent: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type?: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      audit_log_v2_2026_07: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          reason: string | null
+          resource_id: string | null
+          resource_name: string | null
+          resource_type: string
+          status: string | null
+          user_agent: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type?: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      audit_log_v2_2026_08: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          reason: string | null
+          resource_id: string | null
+          resource_name: string | null
+          resource_type: string
+          status: string | null
+          user_agent: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type?: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      audit_log_v2_2026_09: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          reason: string | null
+          resource_id: string | null
+          resource_name: string | null
+          resource_type: string
+          status: string | null
+          user_agent: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type?: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      audit_log_v2_2026_10: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          reason: string | null
+          resource_id: string | null
+          resource_name: string | null
+          resource_type: string
+          status: string | null
+          user_agent: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type?: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      audit_log_v2_2026_11: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          reason: string | null
+          resource_id: string | null
+          resource_name: string | null
+          resource_type: string
+          status: string | null
+          user_agent: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type?: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      audit_log_v2_2026_12: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          reason: string | null
+          resource_id: string | null
+          resource_name: string | null
+          resource_type: string
+          status: string | null
+          user_agent: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type?: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      audit_log_v2_2027_01: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          reason: string | null
+          resource_id: string | null
+          resource_name: string | null
+          resource_type: string
+          status: string | null
+          user_agent: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type?: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      audit_log_v2_2027_02: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          reason: string | null
+          resource_id: string | null
+          resource_name: string | null
+          resource_type: string
+          status: string | null
+          user_agent: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type?: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      audit_log_v2_2027_03: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          reason: string | null
+          resource_id: string | null
+          resource_name: string | null
+          resource_type: string
+          status: string | null
+          user_agent: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type?: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      audit_log_v2_2027_04: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          reason: string | null
+          resource_id: string | null
+          resource_name: string | null
+          resource_type: string
+          status: string | null
+          user_agent: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type?: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      audit_log_v2_2027_05: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          reason: string | null
+          resource_id: string | null
+          resource_name: string | null
+          resource_type: string
+          status: string | null
+          user_agent: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type?: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      audit_log_v2_2027_06: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          reason: string | null
+          resource_id: string | null
+          resource_name: string | null
+          resource_type: string
+          status: string | null
+          user_agent: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          reason?: string | null
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type?: string
+          status?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      audit_log_v2_2027_07: {
         Row: {
           action: string
           created_at: string
@@ -2032,11 +3448,13 @@ export type Database = {
       chunks: {
         Row: {
           chunk_index: number
+          chunk_version: number
           content: string
           created_at: string | null
           document_id: string | null
           embedding_status: string | null
           id: string
+          is_active: boolean
           l0_abstract: string | null
           l1_overview: string | null
           metadata: Json | null
@@ -2044,11 +3462,13 @@ export type Database = {
         }
         Insert: {
           chunk_index?: number
+          chunk_version?: number
           content: string
           created_at?: string | null
           document_id?: string | null
           embedding_status?: string | null
           id?: string
+          is_active?: boolean
           l0_abstract?: string | null
           l1_overview?: string | null
           metadata?: Json | null
@@ -2056,11 +3476,13 @@ export type Database = {
         }
         Update: {
           chunk_index?: number
+          chunk_version?: number
           content?: string
           created_at?: string | null
           document_id?: string | null
           embedding_status?: string | null
           id?: string
+          is_active?: boolean
           l0_abstract?: string | null
           l1_overview?: string | null
           metadata?: Json | null
@@ -2075,6 +3497,60 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      citation_telemetry: {
+        Row: {
+          chunk_id: string | null
+          citation_n: number
+          closed_at: string | null
+          created_at: string
+          document_id: string | null
+          document_title: string | null
+          dwell_ms: number | null
+          id: string
+          notebook_id: string | null
+          opened_at: string
+          opened_document: boolean
+          page: number | null
+          section: string | null
+          user_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          chunk_id?: string | null
+          citation_n: number
+          closed_at?: string | null
+          created_at?: string
+          document_id?: string | null
+          document_title?: string | null
+          dwell_ms?: number | null
+          id?: string
+          notebook_id?: string | null
+          opened_at?: string
+          opened_document?: boolean
+          page?: number | null
+          section?: string | null
+          user_id?: string
+          workspace_id?: string | null
+        }
+        Update: {
+          chunk_id?: string | null
+          citation_n?: number
+          closed_at?: string | null
+          created_at?: string
+          document_id?: string | null
+          document_title?: string | null
+          dwell_ms?: number | null
+          id?: string
+          notebook_id?: string | null
+          opened_at?: string
+          opened_document?: boolean
+          page?: number | null
+          section?: string | null
+          user_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
       }
       code_executions: {
         Row: {
@@ -2132,31 +3608,43 @@ export type Database = {
       }
       collections: {
         Row: {
+          color: string
           created_at: string | null
           description: string | null
+          icon: string
           id: string
+          is_archived: boolean
           knowledge_base_id: string | null
           metadata: Json | null
           name: string
           updated_at: string | null
+          workspace_id: string | null
         }
         Insert: {
+          color?: string
           created_at?: string | null
           description?: string | null
+          icon?: string
           id?: string
+          is_archived?: boolean
           knowledge_base_id?: string | null
           metadata?: Json | null
           name: string
           updated_at?: string | null
+          workspace_id?: string | null
         }
         Update: {
+          color?: string
           created_at?: string | null
           description?: string | null
+          icon?: string
           id?: string
+          is_archived?: boolean
           knowledge_base_id?: string | null
           metadata?: Json | null
           name?: string
           updated_at?: string | null
+          workspace_id?: string | null
         }
         Relationships: [
           {
@@ -2164,6 +3652,13 @@ export type Database = {
             columns: ["knowledge_base_id"]
             isOneToOne: false
             referencedRelation: "knowledge_bases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "collections_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
             referencedColumns: ["id"]
           },
         ]
@@ -2621,13 +4116,145 @@ export type Database = {
           },
         ]
       }
+      document_ingestion_events: {
+        Row: {
+          created_at: string
+          id: string
+          ingestion_id: string
+          message: string | null
+          metadata: Json
+          progress_pct: number
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ingestion_id: string
+          message?: string | null
+          metadata?: Json
+          progress_pct?: number
+          status: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ingestion_id?: string
+          message?: string | null
+          metadata?: Json
+          progress_pct?: number
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_ingestion_events_ingestion_id_fkey"
+            columns: ["ingestion_id"]
+            isOneToOne: false
+            referencedRelation: "document_ingestions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_ingestions: {
+        Row: {
+          cancel_requested: boolean
+          collection_id: string | null
+          content_hash: string | null
+          created_at: string
+          deduped_from: string | null
+          document_id: string | null
+          error_message: string | null
+          extraction_method: string | null
+          filename: string
+          id: string
+          mime: string
+          pages: number | null
+          progress_pct: number
+          size_bytes: number
+          status: string
+          storage_path: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cancel_requested?: boolean
+          collection_id?: string | null
+          content_hash?: string | null
+          created_at?: string
+          deduped_from?: string | null
+          document_id?: string | null
+          error_message?: string | null
+          extraction_method?: string | null
+          filename: string
+          id?: string
+          mime: string
+          pages?: number | null
+          progress_pct?: number
+          size_bytes?: number
+          status?: string
+          storage_path?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cancel_requested?: boolean
+          collection_id?: string | null
+          content_hash?: string | null
+          created_at?: string
+          deduped_from?: string | null
+          document_id?: string | null
+          error_message?: string | null
+          extraction_method?: string | null
+          filename?: string
+          id?: string
+          mime?: string
+          pages?: number | null
+          progress_pct?: number
+          size_bytes?: number
+          status?: string
+          storage_path?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_ingestions_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_ingestions_deduped_from_fkey"
+            columns: ["deduped_from"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_ingestions_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       documents: {
         Row: {
+          chunk_overlap: number
+          chunk_size: number
+          chunk_strategy: string
+          chunk_version: number
           collection_id: string | null
+          content_hash: string | null
           created_at: string | null
           id: string
           metadata: Json | null
           mime_type: string | null
+          parsed_text: string | null
           size_bytes: number | null
           source_type: string | null
           source_url: string | null
@@ -2636,11 +4263,17 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          chunk_overlap?: number
+          chunk_size?: number
+          chunk_strategy?: string
+          chunk_version?: number
           collection_id?: string | null
+          content_hash?: string | null
           created_at?: string | null
           id?: string
           metadata?: Json | null
           mime_type?: string | null
+          parsed_text?: string | null
           size_bytes?: number | null
           source_type?: string | null
           source_url?: string | null
@@ -2649,11 +4282,17 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          chunk_overlap?: number
+          chunk_size?: number
+          chunk_strategy?: string
+          chunk_version?: number
           collection_id?: string | null
+          content_hash?: string | null
           created_at?: string | null
           id?: string
           metadata?: Json | null
           mime_type?: string | null
+          parsed_text?: string | null
           size_bytes?: number | null
           source_type?: string | null
           source_url?: string | null
@@ -3051,6 +4690,7 @@ export type Database = {
           created_at: string
           id: string
           is_answer: boolean
+          is_published: boolean
           parent_post_id: string | null
           thread_id: string
           updated_at: string
@@ -3063,6 +4703,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_answer?: boolean
+          is_published?: boolean
           parent_post_id?: string | null
           thread_id: string
           updated_at?: string
@@ -3075,6 +4716,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_answer?: boolean
+          is_published?: boolean
           parent_post_id?: string | null
           thread_id?: string
           updated_at?: string
@@ -3136,6 +4778,7 @@ export type Database = {
           id: string
           is_locked: boolean
           is_pinned: boolean
+          is_published: boolean
           is_resolved: boolean
           last_activity_at: string
           reply_count: number
@@ -3153,6 +4796,7 @@ export type Database = {
           id?: string
           is_locked?: boolean
           is_pinned?: boolean
+          is_published?: boolean
           is_resolved?: boolean
           last_activity_at?: string
           reply_count?: number
@@ -3170,6 +4814,7 @@ export type Database = {
           id?: string
           is_locked?: boolean
           is_pinned?: boolean
+          is_published?: boolean
           is_resolved?: boolean
           last_activity_at?: string
           reply_count?: number
@@ -4266,6 +5911,56 @@ export type Database = {
         }
         Relationships: []
       }
+      knowledge_links: {
+        Row: {
+          context: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          link_kind: string
+          source_id: string
+          source_type: string
+          target_id: string | null
+          target_label: string | null
+          target_type: string
+          workspace_id: string
+        }
+        Insert: {
+          context?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          link_kind?: string
+          source_id: string
+          source_type: string
+          target_id?: string | null
+          target_label?: string | null
+          target_type: string
+          workspace_id: string
+        }
+        Update: {
+          context?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          link_kind?: string
+          source_id?: string
+          source_type?: string
+          target_id?: string | null
+          target_label?: string | null
+          target_type?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "knowledge_links_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       knowledge_relations: {
         Row: {
           created_at: string | null
@@ -4376,6 +6071,54 @@ export type Database = {
           },
         ]
       }
+      mcp_servers: {
+        Row: {
+          created_at: string
+          error: string | null
+          id: string
+          last_connected: string | null
+          name: string
+          owner_id: string
+          resources: Json
+          status: string
+          tools: Json
+          tools_discovered: Json
+          transport: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          last_connected?: string | null
+          name: string
+          owner_id?: string
+          resources?: Json
+          status?: string
+          tools?: Json
+          tools_discovered?: Json
+          transport?: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          last_connected?: string | null
+          name?: string
+          owner_id?: string
+          resources?: Json
+          status?: string
+          tools?: Json
+          tools_discovered?: Json
+          transport?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
       model_pricing: {
         Row: {
           created_at: string
@@ -4399,6 +6142,301 @@ export type Database = {
           output_cost_per_1k?: number
         }
         Relationships: []
+      }
+      notebook_canvases: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          edges: Json
+          id: string
+          is_archived: boolean
+          name: string
+          nodes: Json
+          notebook_id: string
+          updated_at: string
+          viewport: Json
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          edges?: Json
+          id?: string
+          is_archived?: boolean
+          name?: string
+          nodes?: Json
+          notebook_id: string
+          updated_at?: string
+          viewport?: Json
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          edges?: Json
+          id?: string
+          is_archived?: boolean
+          name?: string
+          nodes?: Json
+          notebook_id?: string
+          updated_at?: string
+          viewport?: Json
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notebook_canvases_notebook_id_fkey"
+            columns: ["notebook_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notebook_canvases_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notebook_note_templates: {
+        Row: {
+          body_md: string
+          collection_id: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          is_builtin: boolean
+          name: string
+          scope: string
+          tags: string[]
+          title_pattern: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          body_md?: string
+          collection_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_builtin?: boolean
+          name: string
+          scope?: string
+          tags?: string[]
+          title_pattern?: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          body_md?: string
+          collection_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_builtin?: boolean
+          name?: string
+          scope?: string
+          tags?: string[]
+          title_pattern?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notebook_note_templates_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notebook_note_versions: {
+        Row: {
+          body_md: string
+          created_at: string
+          created_by: string | null
+          id: string
+          note_id: string
+          reason: string | null
+          tags: string[]
+          title: string
+          version_number: number
+          workspace_id: string
+        }
+        Insert: {
+          body_md: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note_id: string
+          reason?: string | null
+          tags?: string[]
+          title: string
+          version_number: number
+          workspace_id: string
+        }
+        Update: {
+          body_md?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note_id?: string
+          reason?: string | null
+          tags?: string[]
+          title?: string
+          version_number?: number
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notebook_note_versions_note_id_fkey"
+            columns: ["note_id"]
+            isOneToOne: false
+            referencedRelation: "notebook_notes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notebook_notes: {
+        Row: {
+          body_md: string
+          collection_id: string
+          created_at: string
+          created_by: string | null
+          id: string
+          is_archived: boolean
+          is_daily: boolean
+          note_date: string | null
+          tags: string[]
+          title: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          body_md?: string
+          collection_id: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_archived?: boolean
+          is_daily?: boolean
+          note_date?: string | null
+          tags?: string[]
+          title: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          body_md?: string
+          collection_id?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_archived?: boolean
+          is_daily?: boolean
+          note_date?: string | null
+          tags?: string[]
+          title?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notebook_notes_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notebook_notes_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notebook_podcasts: {
+        Row: {
+          audio_path: string | null
+          audio_url: string | null
+          cancel_requested: boolean
+          content_hash: string | null
+          created_at: string
+          created_by: string
+          duration_seconds: number | null
+          error: string | null
+          id: string
+          notebook_id: string
+          script_md: string | null
+          status: string
+          title: string
+          updated_at: string
+          voice: string
+          workspace_id: string
+        }
+        Insert: {
+          audio_path?: string | null
+          audio_url?: string | null
+          cancel_requested?: boolean
+          content_hash?: string | null
+          created_at?: string
+          created_by: string
+          duration_seconds?: number | null
+          error?: string | null
+          id?: string
+          notebook_id: string
+          script_md?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          voice?: string
+          workspace_id: string
+        }
+        Update: {
+          audio_path?: string | null
+          audio_url?: string | null
+          cancel_requested?: boolean
+          content_hash?: string | null
+          created_at?: string
+          created_by?: string
+          duration_seconds?: number | null
+          error?: string | null
+          id?: string
+          notebook_id?: string
+          script_md?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          voice?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notebook_podcasts_notebook_id_fkey"
+            columns: ["notebook_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notebook_podcasts_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       oncall_schedule: {
         Row: {
@@ -4489,6 +6527,262 @@ export type Database = {
             columns: ["workspace_id"]
             isOneToOne: false
             referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      openclaw_agent_templates: {
+        Row: {
+          agents_md: string | null
+          category: string
+          created_at: string
+          cron_schedule: string | null
+          description_pt: string
+          difficulty: number
+          id: string
+          is_available: boolean
+          name_pt: string
+          origin: string
+          required_channels: Json
+          skills: Json
+          slug: string
+          soul_md: string | null
+          source_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          agents_md?: string | null
+          category: string
+          created_at?: string
+          cron_schedule?: string | null
+          description_pt: string
+          difficulty: number
+          id?: string
+          is_available?: boolean
+          name_pt: string
+          origin?: string
+          required_channels?: Json
+          skills?: Json
+          slug: string
+          soul_md?: string | null
+          source_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          agents_md?: string | null
+          category?: string
+          created_at?: string
+          cron_schedule?: string | null
+          description_pt?: string
+          difficulty?: number
+          id?: string
+          is_available?: boolean
+          name_pt?: string
+          origin?: string
+          required_channels?: Json
+          skills?: Json
+          slug?: string
+          soul_md?: string | null
+          source_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      openclaw_deployments: {
+        Row: {
+          agent_id: string
+          created_at: string
+          deployed_at: string | null
+          deployed_by: string | null
+          error: string | null
+          id: string
+          manifest: Json
+          openclaw_agent_id: string | null
+          status: string
+          updated_at: string
+          version: number
+          workspace_id: string
+        }
+        Insert: {
+          agent_id: string
+          created_at?: string
+          deployed_at?: string | null
+          deployed_by?: string | null
+          error?: string | null
+          id?: string
+          manifest?: Json
+          openclaw_agent_id?: string | null
+          status?: string
+          updated_at?: string
+          version?: number
+          workspace_id: string
+        }
+        Update: {
+          agent_id?: string
+          created_at?: string
+          deployed_at?: string | null
+          deployed_by?: string | null
+          error?: string | null
+          id?: string
+          manifest?: Json
+          openclaw_agent_id?: string | null
+          status?: string
+          updated_at?: string
+          version?: number
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "openclaw_deployments_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      openclaw_events: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          level: string
+          payload: Json
+          source: string
+          workspace_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: string
+          level?: string
+          payload?: Json
+          source?: string
+          workspace_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          level?: string
+          payload?: Json
+          source?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      openclaw_whatsapp_instances: {
+        Row: {
+          agent_id: string | null
+          auto_reply: boolean
+          created_at: string
+          error: string | null
+          id: string
+          instance_name: string
+          last_seen_at: string | null
+          phone_number: string | null
+          qr_code: string | null
+          status: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          agent_id?: string | null
+          auto_reply?: boolean
+          created_at?: string
+          error?: string | null
+          id?: string
+          instance_name: string
+          last_seen_at?: string | null
+          phone_number?: string | null
+          qr_code?: string | null
+          status?: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          agent_id?: string | null
+          auto_reply?: boolean
+          created_at?: string
+          error?: string | null
+          id?: string
+          instance_name?: string
+          last_seen_at?: string | null
+          phone_number?: string | null
+          qr_code?: string | null
+          status?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "openclaw_whatsapp_instances_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      openclaw_whatsapp_messages: {
+        Row: {
+          agent_id: string | null
+          body: string | null
+          created_at: string
+          direction: string
+          external_message_id: string | null
+          handled_by: string | null
+          id: string
+          instance_id: string | null
+          media_url: string | null
+          metadata: Json
+          remote_phone: string
+          status: string
+          workspace_id: string
+        }
+        Insert: {
+          agent_id?: string | null
+          body?: string | null
+          created_at?: string
+          direction: string
+          external_message_id?: string | null
+          handled_by?: string | null
+          id?: string
+          instance_id?: string | null
+          media_url?: string | null
+          metadata?: Json
+          remote_phone: string
+          status?: string
+          workspace_id: string
+        }
+        Update: {
+          agent_id?: string | null
+          body?: string | null
+          created_at?: string
+          direction?: string
+          external_message_id?: string | null
+          handled_by?: string | null
+          id?: string
+          instance_id?: string | null
+          media_url?: string | null
+          metadata?: Json
+          remote_phone?: string
+          status?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "openclaw_whatsapp_messages_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "openclaw_whatsapp_messages_instance_id_fkey"
+            columns: ["instance_id"]
+            isOneToOne: false
+            referencedRelation: "openclaw_whatsapp_instances"
             referencedColumns: ["id"]
           },
         ]
@@ -4735,6 +7029,39 @@ export type Database = {
           key?: string
           module?: string
           name?: string
+        }
+        Relationships: []
+      }
+      pg_net_smoke_runs: {
+        Row: {
+          error_msg: string | null
+          id: string
+          latency_ms: number | null
+          request_id: number | null
+          run_at: string
+          status_code: number | null
+          succeeded: boolean
+          target_url: string
+        }
+        Insert: {
+          error_msg?: string | null
+          id?: string
+          latency_ms?: number | null
+          request_id?: number | null
+          run_at?: string
+          status_code?: number | null
+          succeeded?: boolean
+          target_url: string
+        }
+        Update: {
+          error_msg?: string | null
+          id?: string
+          latency_ms?: number | null
+          request_id?: number | null
+          run_at?: string
+          status_code?: number | null
+          succeeded?: boolean
+          target_url?: string
         }
         Relationships: []
       }
@@ -5130,6 +7457,45 @@ export type Database = {
         }
         Relationships: []
       }
+      retention_job_runs: {
+        Row: {
+          created_at: string
+          details: Json
+          duration_ms: number | null
+          error_message: string | null
+          finished_at: string | null
+          id: string
+          job_name: string
+          partitions_dropped: number
+          started_at: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          details?: Json
+          duration_ms?: number | null
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          job_name: string
+          partitions_dropped?: number
+          started_at?: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          details?: Json
+          duration_ms?: number | null
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          job_name?: string
+          partitions_dropped?: number
+          started_at?: string
+          status?: string
+        }
+        Relationships: []
+      }
       risk_register: {
         Row: {
           category: string
@@ -5462,6 +7828,53 @@ export type Database = {
           },
         ]
       }
+      security_alerts: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          is_resolved: boolean | null
+          message: string
+          metadata: Json | null
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: string
+          workspace_id: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          is_resolved?: boolean | null
+          message: string
+          metadata?: Json | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity: string
+          workspace_id?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          is_resolved?: boolean | null
+          message?: string
+          metadata?: Json | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "security_alerts_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       session_traces: {
         Row: {
           cost_usd: number | null
@@ -5720,6 +8133,325 @@ export type Database = {
           skill_id?: string
         }
         Relationships: []
+      }
+      slack_agent_notifications: {
+        Row: {
+          agent_id: string
+          channel_id: string
+          channel_name: string | null
+          created_at: string
+          enabled: boolean
+          id: string
+          notify_on: string
+          template: string | null
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          agent_id: string
+          channel_id: string
+          channel_name?: string | null
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          notify_on?: string
+          template?: string | null
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          agent_id?: string
+          channel_id?: string
+          channel_name?: string | null
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          notify_on?: string
+          template?: string | null
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: []
+      }
+      slack_bot_bindings: {
+        Row: {
+          channel_overrides: Json
+          created_at: string
+          default_agent_id: string | null
+          enabled: boolean
+          id: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          channel_overrides?: Json
+          created_at?: string
+          default_agent_id?: string | null
+          enabled?: boolean
+          id?: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          channel_overrides?: Json
+          created_at?: string
+          default_agent_id?: string | null
+          enabled?: boolean
+          id?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: []
+      }
+      slack_channel_routes: {
+        Row: {
+          category: string
+          category_label: string | null
+          channel_id: string
+          channel_name: string | null
+          created_at: string
+          created_by: string | null
+          enabled: boolean
+          id: string
+          mention_users: string[]
+          min_severity: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          category: string
+          category_label?: string | null
+          channel_id: string
+          channel_name?: string | null
+          created_at?: string
+          created_by?: string | null
+          enabled?: boolean
+          id?: string
+          mention_users?: string[]
+          min_severity?: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          category?: string
+          category_label?: string | null
+          channel_id?: string
+          channel_name?: string | null
+          created_at?: string
+          created_by?: string | null
+          enabled?: boolean
+          id?: string
+          mention_users?: string[]
+          min_severity?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "slack_channel_routes_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      slack_dispatch_dlq: {
+        Row: {
+          alert_id: string | null
+          attempts: number
+          created_at: string
+          error: string
+          id: string
+          next_retry_at: string
+          payload: Json
+          resolved_at: string | null
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          alert_id?: string | null
+          attempts?: number
+          created_at?: string
+          error: string
+          id?: string
+          next_retry_at?: string
+          payload: Json
+          resolved_at?: string | null
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          alert_id?: string | null
+          attempts?: number
+          created_at?: string
+          error?: string
+          id?: string
+          next_retry_at?: string
+          payload?: Json
+          resolved_at?: string | null
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: []
+      }
+      slack_event_dedupe: {
+        Row: {
+          event_id: string
+          event_type: string
+          expires_at: string
+          received_at: string
+          team_id: string
+        }
+        Insert: {
+          event_id: string
+          event_type: string
+          expires_at?: string
+          received_at?: string
+          team_id: string
+        }
+        Update: {
+          event_id?: string
+          event_type?: string
+          expires_at?: string
+          received_at?: string
+          team_id?: string
+        }
+        Relationships: []
+      }
+      slack_rag_sources: {
+        Row: {
+          channel_id: string
+          channel_name: string | null
+          created_at: string
+          enabled: boolean
+          id: string
+          last_sync_error: string | null
+          last_sync_status: string | null
+          last_synced_at: string | null
+          message_count: number
+          oldest_ts: string | null
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          channel_id: string
+          channel_name?: string | null
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          last_sync_error?: string | null
+          last_sync_status?: string | null
+          last_synced_at?: string | null
+          message_count?: number
+          oldest_ts?: string | null
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          channel_id?: string
+          channel_name?: string | null
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          last_sync_error?: string | null
+          last_sync_status?: string | null
+          last_synced_at?: string | null
+          message_count?: number
+          oldest_ts?: string | null
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: []
+      }
+      slack_user_cache: {
+        Row: {
+          cached_at: string
+          display_name: string | null
+          email: string | null
+          expires_at: string
+          is_bot: boolean
+          real_name: string | null
+          slack_user_id: string
+          team_id: string
+        }
+        Insert: {
+          cached_at?: string
+          display_name?: string | null
+          email?: string | null
+          expires_at?: string
+          is_bot?: boolean
+          real_name?: string | null
+          slack_user_id: string
+          team_id: string
+        }
+        Update: {
+          cached_at?: string
+          display_name?: string | null
+          email?: string | null
+          expires_at?: string
+          is_bot?: boolean
+          real_name?: string | null
+          slack_user_id?: string
+          team_id?: string
+        }
+        Relationships: []
+      }
+      slack_workspace_config: {
+        Row: {
+          bot_display_name: string | null
+          bot_user_id: string
+          created_at: string
+          id: string
+          installed_at: string
+          installed_by: string | null
+          is_active: boolean
+          last_verified_at: string | null
+          metadata: Json
+          slack_team_id: string
+          slack_team_name: string | null
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          bot_display_name?: string | null
+          bot_user_id: string
+          created_at?: string
+          id?: string
+          installed_at?: string
+          installed_by?: string | null
+          is_active?: boolean
+          last_verified_at?: string | null
+          metadata?: Json
+          slack_team_id: string
+          slack_team_name?: string | null
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          bot_display_name?: string | null
+          bot_user_id?: string
+          created_at?: string
+          id?: string
+          installed_at?: string
+          installed_by?: string | null
+          is_active?: boolean
+          last_verified_at?: string | null
+          metadata?: Json
+          slack_team_id?: string
+          slack_team_name?: string | null
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "slack_workspace_config_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: true
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       synthetic_checks: {
         Row: {
@@ -6013,6 +8745,42 @@ export type Database = {
         }
         Relationships: []
       }
+      trace_events_v2_2026_04: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          data: Json | null
+          duration_ms: number | null
+          event_type: string
+          id: string
+          status: string | null
+          trace_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type: string
+          id?: string
+          status?: string | null
+          trace_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type?: string
+          id?: string
+          status?: string | null
+          trace_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
       trace_events_v2_2026_05: {
         Row: {
           agent_id: string | null
@@ -6050,6 +8818,474 @@ export type Database = {
         Relationships: []
       }
       trace_events_v2_2026_06: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          data: Json | null
+          duration_ms: number | null
+          event_type: string
+          id: string
+          status: string | null
+          trace_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type: string
+          id?: string
+          status?: string | null
+          trace_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type?: string
+          id?: string
+          status?: string | null
+          trace_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      trace_events_v2_2026_07: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          data: Json | null
+          duration_ms: number | null
+          event_type: string
+          id: string
+          status: string | null
+          trace_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type: string
+          id?: string
+          status?: string | null
+          trace_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type?: string
+          id?: string
+          status?: string | null
+          trace_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      trace_events_v2_2026_08: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          data: Json | null
+          duration_ms: number | null
+          event_type: string
+          id: string
+          status: string | null
+          trace_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type: string
+          id?: string
+          status?: string | null
+          trace_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type?: string
+          id?: string
+          status?: string | null
+          trace_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      trace_events_v2_2026_09: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          data: Json | null
+          duration_ms: number | null
+          event_type: string
+          id: string
+          status: string | null
+          trace_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type: string
+          id?: string
+          status?: string | null
+          trace_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type?: string
+          id?: string
+          status?: string | null
+          trace_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      trace_events_v2_2026_10: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          data: Json | null
+          duration_ms: number | null
+          event_type: string
+          id: string
+          status: string | null
+          trace_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type: string
+          id?: string
+          status?: string | null
+          trace_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type?: string
+          id?: string
+          status?: string | null
+          trace_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      trace_events_v2_2026_11: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          data: Json | null
+          duration_ms: number | null
+          event_type: string
+          id: string
+          status: string | null
+          trace_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type: string
+          id?: string
+          status?: string | null
+          trace_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type?: string
+          id?: string
+          status?: string | null
+          trace_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      trace_events_v2_2026_12: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          data: Json | null
+          duration_ms: number | null
+          event_type: string
+          id: string
+          status: string | null
+          trace_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type: string
+          id?: string
+          status?: string | null
+          trace_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type?: string
+          id?: string
+          status?: string | null
+          trace_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      trace_events_v2_2027_01: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          data: Json | null
+          duration_ms: number | null
+          event_type: string
+          id: string
+          status: string | null
+          trace_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type: string
+          id?: string
+          status?: string | null
+          trace_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type?: string
+          id?: string
+          status?: string | null
+          trace_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      trace_events_v2_2027_02: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          data: Json | null
+          duration_ms: number | null
+          event_type: string
+          id: string
+          status: string | null
+          trace_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type: string
+          id?: string
+          status?: string | null
+          trace_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type?: string
+          id?: string
+          status?: string | null
+          trace_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      trace_events_v2_2027_03: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          data: Json | null
+          duration_ms: number | null
+          event_type: string
+          id: string
+          status: string | null
+          trace_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type: string
+          id?: string
+          status?: string | null
+          trace_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type?: string
+          id?: string
+          status?: string | null
+          trace_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      trace_events_v2_2027_04: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          data: Json | null
+          duration_ms: number | null
+          event_type: string
+          id: string
+          status: string | null
+          trace_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type: string
+          id?: string
+          status?: string | null
+          trace_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type?: string
+          id?: string
+          status?: string | null
+          trace_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      trace_events_v2_2027_05: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          data: Json | null
+          duration_ms: number | null
+          event_type: string
+          id: string
+          status: string | null
+          trace_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type: string
+          id?: string
+          status?: string | null
+          trace_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type?: string
+          id?: string
+          status?: string | null
+          trace_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      trace_events_v2_2027_06: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          data: Json | null
+          duration_ms: number | null
+          event_type: string
+          id: string
+          status: string | null
+          trace_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type: string
+          id?: string
+          status?: string | null
+          trace_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          data?: Json | null
+          duration_ms?: number | null
+          event_type?: string
+          id?: string
+          status?: string | null
+          trace_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      trace_events_v2_2027_07: {
         Row: {
           agent_id: string | null
           created_at: string
@@ -6182,6 +9418,27 @@ export type Database = {
         Update: {
           filters?: Json
           scope?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_research_configs: {
+        Row: {
+          config: Json
+          created_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          config: Json
+          created_at?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
           updated_at?: string
           user_id?: string
         }
@@ -6588,6 +9845,104 @@ export type Database = {
           },
         ]
       }
+      webhook_endpoints: {
+        Row: {
+          auth_type: string | null
+          created_at: string | null
+          id: string
+          ip_whitelist: string[] | null
+          is_public: boolean | null
+          methods: string[] | null
+          path: string
+          secret: string | null
+          status: string | null
+          target_id: string | null
+          target_type: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          auth_type?: string | null
+          created_at?: string | null
+          id?: string
+          ip_whitelist?: string[] | null
+          is_public?: boolean | null
+          methods?: string[] | null
+          path: string
+          secret?: string | null
+          status?: string | null
+          target_id?: string | null
+          target_type?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          auth_type?: string | null
+          created_at?: string | null
+          id?: string
+          ip_whitelist?: string[] | null
+          is_public?: boolean | null
+          methods?: string[] | null
+          path?: string
+          secret?: string | null
+          status?: string | null
+          target_id?: string | null
+          target_type?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      webhook_events: {
+        Row: {
+          body: Json | null
+          created_at: string | null
+          external_event_id: string | null
+          headers: Json | null
+          id: string
+          method: string
+          query_params: Json | null
+          response_code: number | null
+          source: string | null
+          source_ip: string | null
+          status: string | null
+          webhook_id: string | null
+        }
+        Insert: {
+          body?: Json | null
+          created_at?: string | null
+          external_event_id?: string | null
+          headers?: Json | null
+          id?: string
+          method: string
+          query_params?: Json | null
+          response_code?: number | null
+          source?: string | null
+          source_ip?: string | null
+          status?: string | null
+          webhook_id?: string | null
+        }
+        Update: {
+          body?: Json | null
+          created_at?: string | null
+          external_event_id?: string | null
+          headers?: Json | null
+          id?: string
+          method?: string
+          query_params?: Json | null
+          response_code?: number | null
+          source?: string | null
+          source_ip?: string | null
+          status?: string | null
+          webhook_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "webhook_events_webhook_id_fkey"
+            columns: ["webhook_id"]
+            isOneToOne: false
+            referencedRelation: "webhook_endpoints"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workflow_runs: {
         Row: {
           completed_at: string | null
@@ -6812,6 +10167,13 @@ export type Database = {
             foreignKeyName: "workspace_member_emails_member_id_fkey"
             columns: ["member_id"]
             isOneToOne: true
+            referencedRelation: "workspace_members_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workspace_member_emails_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: true
             referencedRelation: "workspace_members_safe"
             referencedColumns: ["id"]
           },
@@ -6929,6 +10291,60 @@ export type Database = {
       }
     }
     Views: {
+      agent_daily_metrics: {
+        Row: {
+          agent_id: string | null
+          avg_latency_ms: number | null
+          day: string | null
+          errors: number | null
+          executions: number | null
+          p95_latency_ms: number | null
+          total_cost_usd: number | null
+          total_tokens: number | null
+        }
+        Relationships: []
+      }
+      audit_log_safe: {
+        Row: {
+          action: string | null
+          created_at: string | null
+          id: string | null
+          ip_address: string | null
+          resource: string | null
+          resource_id: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          action?: string | null
+          created_at?: string | null
+          id?: string | null
+          ip_address?: string | null
+          resource?: string | null
+          resource_id?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string | null
+          created_at?: string | null
+          id?: string | null
+          ip_address?: string | null
+          resource?: string | null
+          resource_id?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_events_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       forum_posts_public: {
         Row: {
           author_name: string | null
@@ -7211,6 +10627,40 @@ export type Database = {
           },
         ]
       }
+      knowledge_graph_health: {
+        Row: {
+          broken_links_score: number | null
+          computed_at: string | null
+          coverage_score: number | null
+          dedup_score: number | null
+          freshness_score: number | null
+          orphans_score: number | null
+          total_score: number | null
+          workspace_id: string | null
+        }
+        Relationships: []
+      }
+      llm_cost_by_caller: {
+        Row: {
+          caller: string | null
+          calls: number | null
+          cost_usd: number | null
+          day: string | null
+          model: string | null
+          provider: string | null
+          tokens: number | null
+          workspace_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usage_records_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       oncall_schedule_safe: {
         Row: {
           created_at: string | null
@@ -7295,6 +10745,83 @@ export type Database = {
         }
         Relationships: []
       }
+      slack_dispatch_health: {
+        Row: {
+          failures: number | null
+          last_dispatch_at: string | null
+          successes: number | null
+          total_dispatches: number | null
+          workspace_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_events_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      slack_dlq_stats: {
+        Row: {
+          dead: number | null
+          max_attempts: number | null
+          oldest_pending_at: string | null
+          pending: number | null
+          resolved: number | null
+          workspace_id: string | null
+        }
+        Relationships: []
+      }
+      usage_records_cost_safe: {
+        Row: {
+          agent_id: string | null
+          cost_usd: number | null
+          created_at: string | null
+          id: string | null
+          metadata: Json | null
+          record_type: string | null
+          tokens: number | null
+          workspace_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          cost_usd?: never
+          created_at?: string | null
+          id?: string | null
+          metadata?: never
+          record_type?: string | null
+          tokens?: number | null
+          workspace_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          cost_usd?: never
+          created_at?: string | null
+          id?: string | null
+          metadata?: never
+          record_type?: string | null
+          tokens?: number | null
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usage_records_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "usage_records_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workspace_members_directory: {
         Row: {
           accepted_at: string | null
@@ -7304,6 +10831,38 @@ export type Database = {
           role: string | null
           user_id: string | null
           workspace_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workspace_members_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workspace_members_public: {
+        Row: {
+          id: string | null
+          name: string | null
+          role: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          id?: string | null
+          name?: string | null
+          role?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          id?: string | null
+          name?: string | null
+          role?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
         }
         Relationships: [
           {
@@ -7379,6 +10938,7 @@ export type Database = {
         Returns: string
       }
       check_budget: { Args: { p_workspace_id: string }; Returns: Json }
+      check_retention_job_health: { Args: never; Returns: undefined }
       cleanup_old_auth_attempts: { Args: never; Returns: undefined }
       close_risk: {
         Args: { p_notes?: string; p_risk_id: string }
@@ -7457,12 +11017,14 @@ export type Database = {
         Returns: undefined
       }
       detect_cost_anomalies: { Args: never; Returns: Json }
+      detect_slow_queries_and_alert: { Args: never; Returns: number }
       disable_all_chaos: { Args: { p_workspace_id: string }; Returns: number }
       enforce_budget: { Args: never; Returns: Json }
       execute_change: {
         Args: { p_change_id: string; p_success: boolean }
         Returns: undefined
       }
+      explain_query_plan: { Args: { _query: string }; Returns: Json }
       generate_compliance_report: {
         Args: {
           _framework_code: string
@@ -7494,6 +11056,23 @@ export type Database = {
       get_bcp_summary: { Args: { p_workspace_id: string }; Returns: Json }
       get_change_summary: { Args: { p_workspace_id: string }; Returns: Json }
       get_creator_earnings: { Args: { p_creator_id?: string }; Returns: Json }
+      get_cron_job_health: {
+        Args: never
+        Returns: {
+          active: boolean
+          avg_duration_ms: number
+          failure_20: number
+          jobid: number
+          jobname: string
+          last_duration_ms: number
+          last_run_at: string
+          last_status: string
+          runs_20: number
+          schedule: string
+          success_20: number
+          success_rate: number
+        }[]
+      }
       get_current_oncall: {
         Args: { p_workspace_id: string }
         Returns: {
@@ -7508,7 +11087,64 @@ export type Database = {
         Args: { p_period?: string; p_workspace_id: string }
         Returns: number
       }
+      get_db_health_snapshot: { Args: never; Returns: Json }
+      get_db_health_timeseries: {
+        Args: { _hours?: number }
+        Returns: {
+          captured_at: string
+          connections_max: number
+          connections_pct: number
+          connections_used: number
+          long_running_count: number
+          top_slow_mean_ms: number
+          top_slow_preview: string
+          wal_bytes: number
+        }[]
+      }
+      get_db_rollback_rate: {
+        Args: never
+        Returns: {
+          commits: number
+          deadlocks: number
+          rollback_rate_pct: number
+          rollbacks: number
+        }[]
+      }
+      get_detector_slo_status: {
+        Args: never
+        Returns: {
+          active: boolean
+          job_name: string
+          last_run_at: string
+          last_status: string
+          schedule: string
+          seconds_since_last_run: number
+          slo_ok: boolean
+        }[]
+      }
+      get_embedding_coverage: {
+        Args: { _workspace_id: string }
+        Returns: {
+          dead_letter: number
+          embedded: number
+          pct: number
+          total: number
+        }[]
+      }
       get_ir_summary: { Args: { p_workspace_id: string }; Returns: Json }
+      get_knowledge_graph_health: {
+        Args: { p_workspace_id: string }
+        Returns: {
+          broken_links_score: number
+          computed_at: string
+          coverage_score: number
+          dedup_score: number
+          freshness_score: number
+          orphans_score: number
+          total_score: number
+          workspace_id: string
+        }[]
+      }
       get_masked_secrets: {
         Args: { p_workspace_id: string }
         Returns: {
@@ -7541,6 +11177,20 @@ export type Database = {
           workspace_id: string
         }[]
       }
+      get_partition_health_snapshot: {
+        Args: never
+        Returns: {
+          future_runway_months: number
+          largest_partition: string
+          largest_partition_bytes: number
+          latest_partition: string
+          latest_partition_end: string
+          parent_table: string
+          total_partitions: number
+          total_size_bytes: number
+          total_size_pretty: string
+        }[]
+      }
       get_pending_invites_for_email: {
         Args: { _email: string }
         Returns: {
@@ -7553,17 +11203,46 @@ export type Database = {
       }
       get_pentest_summary: { Args: { p_workspace_id: string }; Returns: Json }
       get_risk_summary: { Args: { p_workspace_id: string }; Returns: Json }
+      get_rollback_rate_per_min: {
+        Args: { window_minutes?: number }
+        Returns: {
+          minutes: number
+          rate_per_min: number
+          rollback_delta: number
+          window_end: string
+          window_start: string
+        }[]
+      }
       get_secrets_status_summary: {
         Args: { p_workspace_id: string }
         Returns: Json
       }
       get_slo_summary: { Args: { p_window_hours?: number }; Returns: Json }
+      get_slow_query_alerts_history: {
+        Args: { _days?: number }
+        Returns: {
+          created_at: string
+          id: string
+          message: string
+          metadata: Json
+          resolved_at: string
+          severity: string
+        }[]
+      }
       get_synthetic_summary: {
         Args: { p_check_id: string; p_window_hours?: number }
         Returns: Json
       }
       get_user_workspace_ids: { Args: { _user_id: string }; Returns: string[] }
       get_vendor_summary: { Args: { p_workspace_id: string }; Returns: Json }
+      get_wal_generation_rate: {
+        Args: { _minutes?: number }
+        Returns: {
+          bytes_per_min: number
+          captured_at: string
+          mb_per_min: number
+        }[]
+      }
       get_workspace_daily_usage_v2: {
         Args: { p_days?: number; p_workspace_id: string }
         Returns: {
@@ -7585,8 +11264,59 @@ export type Database = {
           workspace_id: string
         }[]
       }
+      hybrid_memory_search:
+        | {
+            Args: {
+              p_agent_id: string
+              p_limit?: number
+              p_query: string
+              p_tiers?: string[]
+            }
+            Returns: {
+              content: string
+              hybrid_score: number
+              id: string
+              memory_tier: string
+              memory_type: string
+              relevance: number
+              text_rank: number
+            }[]
+          }
+        | {
+            Args: {
+              p_agent_id: string
+              p_limit?: number
+              p_query: string
+              p_query_embedding: string
+              p_tiers?: string[]
+            }
+            Returns: {
+              content: string
+              cosine_similarity: number
+              hybrid_score: number
+              id: string
+              memory_tier: string
+              memory_type: string
+              relevance: number
+              text_rank: number
+            }[]
+          }
+      hybrid_memory_search_notebook: {
+        Args: { p_limit?: number; p_notebook_id: string; p_query: string }
+        Returns: {
+          content: string
+          document_id: string
+          id: string
+          metadata: Json
+          score: number
+        }[]
+      }
       increment_skill_installs: {
         Args: { p_skill_id: string }
+        Returns: undefined
+      }
+      increment_webhook_counter: {
+        Args: { webhook_uuid: string }
         Returns: undefined
       }
       invite_workspace_member: {
@@ -7601,10 +11331,12 @@ export type Database = {
       }
       is_mfa_valid_for_role: { Args: never; Returns: boolean }
       is_user_locked_out: { Args: { target_email: string }; Returns: boolean }
-      is_workspace_admin: {
-        Args: { _user_id: string; _workspace_id: string }
-        Returns: boolean
-      }
+      is_workspace_admin:
+        | { Args: { _user_id: string }; Returns: boolean }
+        | {
+            Args: { _user_id: string; _workspace_id: string }
+            Returns: boolean
+          }
       log_audit_entry: {
         Args: {
           p_action: string
@@ -7623,13 +11355,35 @@ export type Database = {
         Returns: undefined
       }
       mask_email: { Args: { p_email: string }; Returns: string }
+      memory_relevance: { Args: { p_id: string }; Returns: number }
       offboard_vendor: {
         Args: { p_notes?: string; p_vendor_id: string }
         Returns: undefined
       }
+      pg_net_schema: { Args: never; Returns: string }
+      pg_net_smoke_post: {
+        Args: { _body?: Json; _url: string }
+        Returns: number
+      }
+      pg_net_smoke_response: {
+        Args: { _request_id: number }
+        Returns: {
+          content_length: number
+          error_msg: string
+          status_code: number
+        }[]
+      }
       promote_experiment_winner: {
         Args: { p_experiment_id: string; p_winner: string }
         Returns: Json
+      }
+      prune_traces_retention: {
+        Args: { _days?: number }
+        Returns: {
+          dropped: boolean
+          partition_name: string
+          table_name: string
+        }[]
       }
       publish_compliance_report: {
         Args: { _report_id: string }
@@ -7637,6 +11391,7 @@ export type Database = {
       }
       publish_postmortem: { Args: { p_postmortem_id: string }; Returns: Json }
       purchase_skill: { Args: { p_skill_id: string }; Returns: Json }
+      recompute_memory_tier: { Args: never; Returns: number }
       record_bcp_test: {
         Args: {
           p_action_items?: string
@@ -7702,6 +11457,8 @@ export type Database = {
         }
         Returns: string
       }
+      refresh_agent_daily_metrics: { Args: never; Returns: undefined }
+      refresh_knowledge_graph_health: { Args: never; Returns: undefined }
       refresh_secrets_status: { Args: never; Returns: Json }
       register_asset: {
         Args: {
@@ -7789,6 +11546,10 @@ export type Database = {
         }
         Returns: string
       }
+      reset_embedding_dead_letter: {
+        Args: { _workspace_id: string }
+        Returns: number
+      }
       reset_workspace_budget: {
         Args: { p_workspace_id: string }
         Returns: Json
@@ -7805,6 +11566,11 @@ export type Database = {
         Args: { p_change_id: string; p_post_mortem_url: string }
         Returns: undefined
       }
+      run_pg_net_smoke_test: { Args: never; Returns: undefined }
+      run_prune_traces_retention_monitored: {
+        Args: { _days?: number }
+        Returns: string
+      }
       search_context_l0: {
         Args: { p_collection_id?: string; p_limit?: number; p_query: string }
         Returns: {
@@ -7818,6 +11584,8 @@ export type Database = {
           token_count: number
         }[]
       }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
       start_dr_drill: { Args: { p_drill_id: string }; Returns: Json }
       start_game_day: {
         Args: { p_game_day_id: string; p_inject_chaos?: boolean }
@@ -7837,6 +11605,7 @@ export type Database = {
         }
         Returns: string
       }
+      touch_memory: { Args: { p_id: string }; Returns: undefined }
       update_incident_run: {
         Args: {
           p_action_results: Json

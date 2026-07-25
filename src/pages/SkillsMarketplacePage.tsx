@@ -11,10 +11,13 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Package, Download, Star, CheckCircle2, Shield } from 'lucide-react';
+import { Search, Package, Download, Star, CheckCircle2, Shield, Plus } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { listSkills, type AgentSkillDefinition } from '@/services/skillsRegistryService';
 import { toast } from 'sonner';
+import { ProgressiveSkillLoaderPanel } from '@/components/skills/ProgressiveSkillLoaderPanel';
+import { SkillAutoRecommendationsPanel } from '@/components/skills/SkillAutoRecommendationsPanel';
 
 const CATEGORIES = [
   { value: 'all', label: 'Todas' },
@@ -50,16 +53,27 @@ export default function SkillsMarketplacePage() {
 
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
-      <PageHeader
-        title="Skills Marketplace"
-        description="Descubra e instale habilidades para potencializar seus agentes"
-      />
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <PageHeader
+          title="Skills Marketplace"
+          description="Descubra e instale habilidades para potencializar seus agentes"
+        />
+        <Button asChild variant="default" className="gap-2">
+          <Link to="/skills/composer">
+            <Plus className="h-4 w-4" /> Criar skill
+          </Link>
+        </Button>
+      </div>
 
       <InfoHint title="O que são Skills?">
         Skills são pacotes de capacidades que podem ser instalados em agentes — ferramentas, prompts, bases de conhecimento, workflows e integrações prontos para uso.
       </InfoHint>
 
+      <SkillAutoRecommendationsPanel />
+
       <div className="flex flex-col sm:flex-row gap-3">
+
+
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -98,10 +112,12 @@ export default function SkillsMarketplacePage() {
       )}
 
       {data && data.total > 0 && (
-        <p className="text-xs text-muted-foreground text-center">
+        <p className="text-meta text-muted-foreground text-center">
           {skills.length} de {data.total} skills
         </p>
       )}
+
+      <ProgressiveSkillLoaderPanel />
     </div>
   );
 }
@@ -114,25 +130,25 @@ function SkillCard({ skill }: { skill: AgentSkillDefinition }) {
       <div className="flex items-start justify-between">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="text-sm font-semibold text-foreground truncate">{skill.name}</h3>
+            <h3 className="text-body-sm font-semibold text-foreground truncate">{skill.name}</h3>
             {skill.is_verified && (
               <Shield className="h-3.5 w-3.5 text-nexus-emerald shrink-0" />
             )}
           </div>
-          <p className="text-xs text-muted-foreground line-clamp-2">{skill.description}</p>
+          <p className="text-meta text-muted-foreground line-clamp-2">{skill.description}</p>
         </div>
       </div>
 
       <div className="flex items-center gap-2 flex-wrap">
-        <Badge variant="outline" className={`text-[10px] ${colorClass}`}>
+        <Badge variant="outline" className={`text-meta ${colorClass}`}>
           {skill.category}
         </Badge>
-        <span className="text-[10px] text-muted-foreground">v{skill.version}</span>
-        <span className="text-[10px] text-muted-foreground">por {skill.author}</span>
+        <span className="text-meta text-muted-foreground">v{skill.version}</span>
+        <span className="text-meta text-muted-foreground">por {skill.author}</span>
       </div>
 
       <div className="flex items-center justify-between mt-auto pt-2 border-t border-border/50">
-        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+        <div className="flex items-center gap-3 text-meta text-muted-foreground">
           <span className="flex items-center gap-1">
             <Download className="h-3 w-3" /> {skill.install_count}
           </span>
@@ -143,7 +159,7 @@ function SkillCard({ skill }: { skill: AgentSkillDefinition }) {
         <Button
           size="sm"
           variant="outline"
-          className="h-7 text-xs gap-1"
+          className="h-7 text-meta gap-1"
           onClick={() => toast.info(`Selecione um agente para instalar "${skill.name}"`)}
         >
           <CheckCircle2 className="h-3 w-3" /> Instalar
@@ -153,7 +169,7 @@ function SkillCard({ skill }: { skill: AgentSkillDefinition }) {
       {skill.tags && skill.tags.length > 0 && (
         <div className="flex gap-1 flex-wrap">
           {skill.tags.slice(0, 3).map(tag => (
-            <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded bg-secondary text-muted-foreground">
+            <span key={tag} className="text-meta px-1.5 py-0.5 rounded bg-secondary text-muted-foreground">
               {tag}
             </span>
           ))}

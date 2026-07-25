@@ -36,7 +36,7 @@ export function KnowledgeGraphTab() {
     agent: { emoji: '🤖', label: 'Agentes', color: 'border-primary/50 bg-primary/5' },
     knowledge_base: { emoji: '📚', label: 'Bases de Conhecimento', color: 'border-nexus-emerald/50 bg-nexus-emerald/5' },
     tool: { emoji: '🔧', label: 'Ferramentas', color: 'border-nexus-amber/50 bg-nexus-amber/5' },
-    workflow: { emoji: '🔄', label: 'Workflows', color: 'border-cyan-500/50 bg-cyan-500/5' },
+    workflow: { emoji: '🔄', label: 'Workflows', color: 'border-nexus-cyan/50 bg-nexus-cyan/5' },
     person: { emoji: '👤', label: 'Pessoas', color: 'border-nexus-blue/50 bg-nexus-blue/5' },
     organization: { emoji: '🏢', label: 'Empresas', color: 'border-nexus-purple/50 bg-nexus-purple/5' },
     concept: { emoji: '💡', label: 'Conceitos', color: 'border-nexus-orange/50 bg-nexus-orange/5' },
@@ -46,12 +46,12 @@ export function KnowledgeGraphTab() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-heading font-semibold text-foreground flex items-center gap-2">
+          <h3 className="text-body-sm font-heading font-semibold text-foreground flex items-center gap-2">
             <Network className="h-4 w-4 text-primary" /> Grafo de Conhecimento
           </h3>
-          <p className="text-[11px] text-muted-foreground mt-0.5">Mapa visual de entidades e suas relações no ecossistema</p>
+          <p className="text-meta text-muted-foreground mt-0.5">Mapa visual de entidades e suas relações no ecossistema</p>
         </div>
-        <Button size="sm" variant="outline" onClick={() => refetch()} className="gap-1.5 text-xs">
+        <Button size="sm" variant="outline" onClick={() => refetch()} className="gap-1.5 text-meta">
           <RefreshCw className="h-3.5 w-3.5" /> Atualizar
         </Button>
       </div>
@@ -63,8 +63,8 @@ export function KnowledgeGraphTab() {
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2">
             {Object.entries(typeConfig).map(([type, cfg]) => (
               <div key={type} className={`nexus-card text-center py-2 border ${cfg.color}`}>
-                <p className="text-lg mb-0.5">{cfg.emoji}</p>
-                <p className="text-base font-bold text-foreground">{nodesByType(type).length}</p>
+                <p className="text-title-sm mb-0.5">{cfg.emoji}</p>
+                <p className="text-title-sm font-bold text-foreground">{nodesByType(type).length}</p>
                 <p className="text-[9px] text-muted-foreground uppercase font-black">{cfg.label}</p>
               </div>
             ))}
@@ -73,7 +73,7 @@ export function KnowledgeGraphTab() {
           {/* SVG Visualization */}
           {data?.nodes && data.nodes.length > 0 && (
             <div className="nexus-card">
-              <h4 className="text-xs font-semibold text-foreground mb-3 flex items-center gap-1.5">
+              <h4 className="text-meta font-semibold text-foreground mb-3 flex items-center gap-1.5">
                 <Network className="h-3.5 w-3.5" /> Visualização do Grafo
               </h4>
               <KnowledgeGraphSvg nodes={data.nodes} edges={data.edges ?? []} />
@@ -86,16 +86,16 @@ export function KnowledgeGraphTab() {
               if (nodes.length === 0) return null;
               return (
                 <div key={type} className="nexus-card">
-                  <h4 className="text-xs font-semibold text-foreground mb-3 flex items-center gap-1.5">
+                  <h4 className="text-meta font-semibold text-foreground mb-3 flex items-center gap-1.5">
                     {cfg.emoji} {cfg.label} ({nodes.length})
                   </h4>
                   <div className="space-y-2 max-h-[200px] overflow-y-auto">
                     {nodes.map(n => (
                       <div key={n.id} className="flex items-center gap-2 p-2 rounded-lg bg-secondary/30 border border-border/20">
-                        <span className="text-sm">{n.emoji || cfg.emoji}</span>
+                        <span className="text-body-sm">{n.emoji || cfg.emoji}</span>
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs font-medium text-foreground truncate">{n.label}</p>
-                          <p className="text-[11px] text-muted-foreground">
+                          <p className="text-meta font-medium text-foreground truncate">{n.label}</p>
+                          <p className="text-meta text-muted-foreground">
                             {n.status && <span className="capitalize">{n.status}</span>}
                             {n.docs != null && ` • ${n.docs} docs`}
                             {n.chunks != null && ` • ${n.chunks} chunks`}
@@ -113,13 +113,13 @@ export function KnowledgeGraphTab() {
 
           {data?.edges && data.edges.length > 0 && (
             <div className="nexus-card">
-              <h4 className="text-xs font-semibold text-foreground mb-3">🔗 Relações ({data.edges.length})</h4>
+              <h4 className="text-meta font-semibold text-foreground mb-3">🔗 Relações ({data.edges.length})</h4>
               <div className="space-y-1.5 max-h-[150px] overflow-y-auto">
                 {data.edges.map((e, i) => {
                   const source = data.nodes?.find(n => n.id === e.source);
                   const target = data.nodes?.find(n => n.id === e.target);
                   return (
-                    <div key={i} className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                    <div key={i} className="flex items-center gap-2 text-meta text-muted-foreground">
                       <span className="text-foreground font-medium">{source?.label || '?'}</span>
                       <span className="text-primary">→ {e.label} →</span>
                       <span className="text-foreground font-medium">{target?.label || '?'}</span>

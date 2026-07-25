@@ -58,12 +58,12 @@ export async function revokeApiKey(id: string) {
   if (error) throw error;
 }
 
-export async function getSecurityEvents(_options?: { severity?: string; limit?: number }) {
+export async function getSecurityEvents(options?: { severity?: string; limit?: number }) {
   try {
     const { data, error } = await fromTable('audit_log_safe')
       .select('*')
       .order('created_at', { ascending: false })
-      .limit(_options?.limit || 50);
+      .limit(options?.limit || 50);
 
     if (error) throw error;
     return (data ?? []).map((entry: { action: string; [key: string]: unknown }) => ({
@@ -75,6 +75,35 @@ export async function getSecurityEvents(_options?: { severity?: string; limit?: 
     logger.error('getSecurityEvents failed', { error: String(err) });
     return [];
   }
+}
+
+export async function getSecurityAlerts(options?: { unresolvedOnly?: boolean; limit?: number }) {
+  try {
+    let query = supabaseExternal
+      .from('security_alerts')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(options?.limit || 50);
+
+    if (options?.unresolvedOnly) {
+      query = query.eq('is_resolved', false);
+    }
+
+    const { data, error } = await query;
+    if (error) throw error;
+    return data ?? [];
+  } catch (err) {
+    logger.error('getSecurityAlerts failed', { error: String(err) });
+    return [];
+  }
+}
+
+export async function resolveSecurityAlert(id: string) {
+  const { error } = await supabaseExternal
+    .from('security_alerts')
+    .update({ is_resolved: true, resolved_at: new Date().toISOString() })
+    .eq('id', id);
+  if (error) throw error;
 }
 
 export async function getAuditLog(options?: { userId?: string; limit?: number }) {

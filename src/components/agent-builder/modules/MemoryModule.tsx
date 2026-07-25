@@ -28,7 +28,7 @@ function GovernancePanel({
 }) {
   return (
     <div className="mt-4 pt-4 border-t border-border space-y-4">
-      <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Governança</p>
+      <p className="text-meta font-semibold text-muted-foreground uppercase tracking-wider">Governança</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <SliderField
           label="Retenção (dias)"
@@ -299,16 +299,16 @@ export function MemoryModule() {
         <SectionTitle icon="🧠" title="Neural Context Heatmap" subtitle="Simulação de ativação das camadas de memória por input." />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card className="p-4 bg-card border-border">
-            <p className="text-xs font-semibold mb-3 flex items-center gap-2">
+            <p className="text-meta font-semibold mb-3 flex items-center gap-2">
               <Zap className="h-3.5 w-3.5 text-primary" /> Testar Ativação
             </p>
             <textarea
-              className="w-full h-24 bg-muted/30 border border-border rounded-lg p-3 text-xs focus:ring-1 ring-primary outline-none transition-all"
+              className="w-full h-24 bg-muted/30 border border-border rounded-lg p-3 text-meta focus:ring-1 ring-primary outline-none transition-all"
               placeholder="Digite uma mensagem para simular o que o agente lembraria..."
               value={testSimInput}
               onChange={(e) => setTestSimInput(e.target.value)}
             />
-            <div className="mt-2 flex items-center gap-2 text-[10px] text-muted-foreground">
+            <div className="mt-2 flex items-center gap-2 text-meta text-muted-foreground">
               <Info className="h-3 w-3" />
               A simulação estima a probabilidade de hit em cada camada de memória.
             </div>
@@ -322,7 +322,7 @@ export function MemoryModule() {
               
               return (
                 <div key={layer.id} className="space-y-1">
-                  <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider">
+                  <div className="flex items-center justify-between text-meta font-bold uppercase tracking-wider">
                     <span className="flex items-center gap-1.5" style={{ color: layer.active ? layer.color : 'hsl(var(--muted-foreground))' }}>
                       {layer.icon} {layer.name}
                     </span>

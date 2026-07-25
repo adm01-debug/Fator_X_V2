@@ -78,16 +78,16 @@ export default function RolesPage() {
                   >
                     <Icon className="w-6 h-6" />
                   </div>
-                  <Badge variant="outline" className="text-[10px]">Nível {role.level}</Badge>
+                  <Badge variant="outline" className="text-meta">Nível {role.level}</Badge>
                 </div>
 
                 <div>
-                  <h3 className="text-base font-bold text-foreground">{role.name}</h3>
-                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{role.description}</p>
+                  <h3 className="text-title-sm font-bold text-foreground">{role.name}</h3>
+                  <p className="text-meta text-muted-foreground mt-1 line-clamp-2">{role.description}</p>
                 </div>
 
                 <div className="space-y-1.5">
-                  <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                  <div className="flex items-center justify-between text-meta text-muted-foreground">
                     <span>Permissões</span>
                     <span className="font-mono">{permCount}/{totalPerms} ({pct}%)</span>
                   </div>
@@ -100,7 +100,7 @@ export default function RolesPage() {
                 </div>
 
                 <Link to={`/rbac/roles/${role.key}`}>
-                  <Button variant="outline" size="sm" className="w-full gap-2 text-xs">
+                  <Button variant="outline" size="sm" className="w-full gap-2 text-meta">
                     Ver permissões <ArrowRight className="w-3 h-3" />
                   </Button>
                 </Link>

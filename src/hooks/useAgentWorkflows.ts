@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import type { DbRow } from '@/types/dbRow';
 
 export interface WorkflowNode {
   id: string;
@@ -34,7 +35,7 @@ export interface WorkflowRun {
   status: string;
   input: unknown;
   output: unknown;
-  trace: unknown[];
+  trace: DbRow[];
   error_message: string | null;
   started_at: string;
   completed_at: string | null;
@@ -58,7 +59,7 @@ export function useAgentWorkflows(agentId?: string) {
   });
 
   const createWorkflow = useMutation({
-    mutationFn: async (input: { name: string; description?: string; workspace_id: string; nodes?: unknown[]; edges?: unknown[] }) => {
+    mutationFn: async (input: { name: string; description?: string; workspace_id: string; nodes?: DbRow[]; edges?: DbRow[] }) => {
       const { data: u } = await supabase.auth.getUser();
       if (!u.user) throw new Error('Não autenticado');
       const { data, error } = await supabase
@@ -85,7 +86,7 @@ export function useAgentWorkflows(agentId?: string) {
   });
 
   const updateWorkflow = useMutation({
-    mutationFn: async (input: { id: string; nodes?: unknown[]; edges?: unknown[]; name?: string; description?: string; status?: string }) => {
+    mutationFn: async (input: { id: string; nodes?: DbRow[]; edges?: DbRow[]; name?: string; description?: string; status?: string }) => {
       const { id, ...patch } = input;
       const { error } = await supabase.from('agent_workflows').update(patch as never).eq('id', id);
       if (error) throw error;
@@ -129,7 +130,7 @@ export function useWorkflowRuns(workflowId?: string) {
   });
 }
 
-export async function runWorkflow(workflowId: string, input: unknown) {
+export async function runWorkflow(workflowId: string, input: DbRow) {
   const { data, error } = await supabase.functions.invoke('agent-workflow-runner', {
     body: { workflow_id: workflowId, input },
   });

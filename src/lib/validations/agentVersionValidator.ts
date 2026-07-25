@@ -15,6 +15,7 @@ import {
   PROMPT_LIMITS,
 } from '@/lib/validations/promptSanitizer';
 import { compilePrompt } from '@/lib/promptCompiler';
+import type { DbRow } from '@/types/dbRow';
 
 export const VERSION_LIMITS = {
   LABEL_MIN: 3,
@@ -156,7 +157,7 @@ export function validateAgentVersion(
   }
 
   const tools = Array.isArray(agent.tools) ? agent.tools : [];
-  const enabledTools = tools.filter((t: { enabled?: boolean }) => t?.enabled);
+  const enabledTools = tools.filter((t: DbRow) => t?.enabled);
   const reasoning = (agent as unknown as Record<string, unknown>).reasoning as string | undefined;
   if (enabledTools.length === 0 && reasoning === 'react') {
     warnings.push({
@@ -182,7 +183,7 @@ export function validateAgentVersion(
   }
 
   const guardrails = Array.isArray(agent.guardrails) ? agent.guardrails : [];
-  const enabledGuards = guardrails.filter((g: { enabled?: boolean }) => g?.enabled);
+  const enabledGuards = guardrails.filter((g: DbRow) => g?.enabled);
   if (enabledGuards.length === 0 && agent.status === 'production') {
     warnings.push({
       level: 'warning',

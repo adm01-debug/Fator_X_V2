@@ -125,29 +125,29 @@ export function NewVersionDialog({ open, onOpenChange, agentId, baseVersion }: P
 
         <div className="space-y-4 mt-2">
           <div>
-            <Label className="text-xs font-medium text-foreground mb-1.5 block">System prompt</Label>
+            <Label className="text-meta font-medium text-foreground mb-1.5 block">System prompt</Label>
             <Textarea
               value={prompt}
               onChange={e => setPrompt(e.target.value)}
               rows={10}
-              className="bg-nexus-surface-1 border-border/50 font-mono text-xs leading-relaxed resize-none"
+              className="bg-nexus-surface-1 border-border/50 font-mono text-meta leading-relaxed resize-none"
               placeholder="Você é um assistente especializado em..."
             />
-            <p className="text-[10px] text-muted-foreground mt-1">{prompt.length} chars · {prompt.split(/\s+/).filter(Boolean).length} palavras</p>
+            <p className="text-meta text-muted-foreground mt-1">{prompt.length} chars · {prompt.split(/\s+/).filter(Boolean).length} palavras</p>
           </div>
 
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <Label className="text-xs font-medium text-foreground mb-1.5 block">Modelo</Label>
-              <Input value={model} onChange={e => setModel(e.target.value)} className="text-xs h-8" />
+              <Label className="text-meta font-medium text-foreground mb-1.5 block">Modelo</Label>
+              <Input value={model} onChange={e => setModel(e.target.value)} className="text-meta h-8" />
             </div>
             <div>
-              <Label className="text-xs font-medium text-foreground mb-1.5 block">Temperature</Label>
-              <Input type="number" min={0} max={2} step={0.1} value={temperature} onChange={e => setTemperature(e.target.value)} className="text-xs h-8 font-mono" />
+              <Label className="text-meta font-medium text-foreground mb-1.5 block">Temperature</Label>
+              <Input type="number" min={0} max={2} step={0.1} value={temperature} onChange={e => setTemperature(e.target.value)} className="text-meta h-8 font-mono" />
             </div>
             <div>
-              <Label className="text-xs font-medium text-foreground mb-1.5 block">Max tokens</Label>
-              <Input type="number" min={1} value={maxTokens} onChange={e => setMaxTokens(e.target.value)} className="text-xs h-8 font-mono" />
+              <Label className="text-meta font-medium text-foreground mb-1.5 block">Max tokens</Label>
+              <Input type="number" min={1} value={maxTokens} onChange={e => setMaxTokens(e.target.value)} className="text-meta h-8 font-mono" />
             </div>
           </div>
 
@@ -158,25 +158,25 @@ export function NewVersionDialog({ open, onOpenChange, agentId, baseVersion }: P
 
           <div className="rounded-lg border border-border/50 bg-secondary/30 p-3">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-xs font-semibold text-foreground">Changelog automático</p>
-              <Badge variant="outline" className="text-[10px]">{changelog.length} mudança(s)</Badge>
+              <p className="text-meta font-semibold text-foreground">Changelog automático</p>
+              <Badge variant="outline" className="text-meta">{changelog.length} mudança(s)</Badge>
             </div>
             {changelog.length === 0 ? (
-              <p className="text-[11px] text-muted-foreground italic">Sem alterações estruturais — ajuste algum campo para registrar uma nova versão.</p>
+              <p className="text-meta text-muted-foreground italic">Sem alterações estruturais — ajuste algum campo para registrar uma nova versão.</p>
             ) : (
-              <p className="text-[11px] text-foreground/80 font-mono">{autoSummary}</p>
+              <p className="text-meta text-foreground/80 font-mono">{autoSummary}</p>
             )}
           </div>
 
           <div>
-            <Label className="text-xs font-medium text-foreground mb-1.5 block">Resumo da mudança (opcional)</Label>
+            <Label className="text-meta font-medium text-foreground mb-1.5 block">Resumo da mudança (opcional)</Label>
             <Input
               value={summary}
               onChange={e => setSummary(e.target.value)}
               placeholder={autoSummary}
-              className="text-xs h-8"
+              className="text-meta h-8"
             />
-            <p className="text-[10px] text-muted-foreground mt-1">Se vazio, será usado o resumo automático acima.</p>
+            <p className="text-meta text-muted-foreground mt-1">Se vazio, será usado o resumo automático acima.</p>
           </div>
         </div>
 
@@ -200,13 +200,13 @@ export function NewVersionDialog({ open, onOpenChange, agentId, baseVersion }: P
 function ToolList({ title, items, onToggle }: { title: string; items: ToolEntry[]; onToggle: (i: number) => void }) {
   return (
     <div className="rounded-lg border border-border/50 p-3">
-      <p className="text-xs font-semibold text-foreground mb-2">{title} <span className="text-muted-foreground font-normal">({items.filter(i => i.enabled).length}/{items.length})</span></p>
+      <p className="text-meta font-semibold text-foreground mb-2">{title} <span className="text-muted-foreground font-normal">({items.filter(i => i.enabled).length}/{items.length})</span></p>
       {items.length === 0 ? (
-        <p className="text-[11px] text-muted-foreground italic">Nenhum item disponível.</p>
+        <p className="text-meta text-muted-foreground italic">Nenhum item disponível.</p>
       ) : (
         <div className="space-y-1.5 max-h-40 overflow-y-auto">
           {items.map((it, i) => (
-            <label key={`${it.name}-${i}`} className="flex items-center gap-2 text-xs cursor-pointer hover:bg-secondary/30 rounded px-1.5 py-1">
+            <label key={`${it.name}-${i}`} className="flex items-center gap-2 text-meta cursor-pointer hover:bg-secondary/30 rounded px-1.5 py-1">
               <Checkbox checked={it.enabled} onCheckedChange={() => onToggle(i)} />
               <span className="font-mono text-foreground/90 truncate">{it.name}</span>
             </label>

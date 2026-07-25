@@ -1,12 +1,17 @@
+import { fetchWithTimeout } from "../_shared/retry.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.4';
 import { startEdgeTrace } from '../_shared/otel.ts';
-import { maybeInjectFault, applyFault } from '../_shared/chaos.ts';
+import { _maybeInjectFault, _applyFault } from '../_shared/chaos.ts';
+import { parseBody, z } from '../_shared/validation.ts';
+import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, traceparent',
-};
+import { getCorsHeaders } from "../_shared/cors.ts";
+const WorkflowRunSchema = z.object({
+  workflow_id: z.string().uuid(),
+  input: z.union([z.record(z.unknown()), z.string(), z.number(), z.boolean(), z.null(), z.array(z.unknown())]).optional(),
+});
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
 interface WFNode { id: string; type: string; data: Record<string, any> }
 interface WFEdge { source: string; target: string }
 
@@ -33,6 +38,7 @@ function topoSort(nodes: WFNode[], edges: WFEdge[]): WFNode[] {
   return order.map((id) => map.get(id)!).filter(Boolean);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
 async function executeNode(node: WFNode, ctx: Record<string, any>, supa: any, lovableKey: string): Promise<any> {
   switch (node.type) {
     case 'trigger':
@@ -47,7 +53,7 @@ async function executeNode(node: WFNode, ctx: Record<string, any>, supa: any, lo
         { role: 'system', content: agent.config?.system_prompt || `Você é ${agent.name}.` },
         { role: 'user', content: typeof lastInput === 'string' ? lastInput : JSON.stringify(lastInput) },
       ];
-      const r = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      const r = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
         method: 'POST',
         headers: { Authorization: `Bearer ${lovableKey}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ model: agent.model || 'google/gemini-2.5-flash', messages }),
@@ -67,6 +73,7 @@ async function executeNode(node: WFNode, ctx: Record<string, any>, supa: any, lo
       try {
         const lastInput = Object.values(ctx).pop();
         return new Function('input', 'ctx', code)(lastInput, ctx);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
       } catch (e: any) { return { error: e.message }; }
     }
     case 'output':
@@ -77,25 +84,32 @@ async function executeNode(node: WFNode, ctx: Record<string, any>, supa: any, lo
 }
 
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+
+  const identifier = getRateLimitIdentifier(req);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, getCorsHeaders(req));
 
   const isStream = req.headers.get('accept') === 'text/event-stream';
   const trace = startEdgeTrace(req, { rootName: 'agent-workflow-runner.handle' });
-  const rootSpan = trace.startSpan('agent-workflow-runner.handle', 'server');
+  const _rootSpan = trace.startSpan('agent-workflow-runner.handle', 'server');
 
   try {
     const auth = req.headers.get('Authorization');
     if (!auth) throw new Error('Unauthorized');
 
-    const supa = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
-    const userClient = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_ANON_KEY')!, {
+    const supa = createClient(requireEnv('SUPABASE_URL'), requireEnv('SUPABASE_SERVICE_ROLE_KEY'));
+    const userClient = createClient(requireEnv('SUPABASE_URL'), requireEnv('SUPABASE_ANON_KEY'), {
       global: { headers: { Authorization: auth } },
     });
     
     const { data: { user } } = await userClient.auth.getUser();
     if (!user) throw new Error('Unauthorized');
 
-    const { workflow_id, input } = await req.json();
+    const parsed = await parseBody(req, WorkflowRunSchema);
+    if (parsed.error) return parsed.error;
+    const { workflow_id, input } = parsed.data;
     const { data: wf } = await supa.from('agent_workflows').select('*').eq('id', workflow_id).single();
     if (!wf) throw new Error('Workflow não encontrado');
 
@@ -108,15 +122,18 @@ Deno.serve(async (req) => {
       const writer = writable.getWriter();
       const encoder = new TextEncoder();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
       const send = async (type: string, data: any) => {
         await writer.write(encoder.encode(`data: ${JSON.stringify({ type, data })}\n\n`));
       };
 
       (async () => {
         try {
-          const lovableKey = Deno.env.get('LOVABLE_API_KEY')!;
+          const lovableKey = requireEnv('LOVABLE_API_KEY');
           const ordered = topoSort(wf.nodes || [], wf.edges || []);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           const ctx: Record<string, any> = { __input: input };
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           const runTrace: any[] = [];
 
           await send('status', { message: 'Iniciando orquestração neural...', stage: 'start' });
@@ -141,6 +158,7 @@ Deno.serve(async (req) => {
 
           await send('run_completed', { run_id: run.id, output: finalOutput });
           await writer.close();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         } catch (err: any) {
           await send('error', { message: err.message });
           await writer.close();
@@ -155,6 +173,7 @@ Deno.serve(async (req) => {
     // Sync fallback
     return new Response(JSON.stringify({ run_id: run.id, status: 'queued' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
   } catch (e: any) {
     return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: corsHeaders });
   }

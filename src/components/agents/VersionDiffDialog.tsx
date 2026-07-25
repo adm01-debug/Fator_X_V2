@@ -11,6 +11,7 @@ import { supabaseExternal } from "@/integrations/supabase/externalClient";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type { Json } from "@/integrations/supabase/types";
+import type { DbRow } from '@/types/dbRow';
 
 export interface Version {
   id: string;
@@ -62,15 +63,24 @@ function getCfg(v: Version): VersionConfig {
   } catch { return {}; }
 }
 
-function countEnabled(arr: unknown): number {
+function countEnabled(arr: DbRow): number {
   if (!Array.isArray(arr)) return 0;
   return arr.filter((x) => x && ((x as { enabled?: boolean }).enabled ?? true)).length;
 }
 
 interface Delta { label: string; from: string | number; to: string | number; }
 
+interface CfgShape {
+  temperature?: number;
+  max_tokens?: number;
+  tools?: DbRow[];
+  guardrails?: DbRow[];
+  system_prompt?: string;
+}
+
 function computeDeltas(a: Version, b: Version): Delta[] {
-  const ca = getCfg(a); const cb = getCfg(b);
+  const ca = getCfg(a) as CfgShape;
+  const cb = getCfg(b) as CfgShape;
   const out: Delta[] = [];
   if (a.model !== b.model) out.push({ label: 'Modelo', from: a.model || '—', to: b.model || '—' });
   const ta = ca.temperature, tb = cb.temperature;
@@ -122,7 +132,7 @@ export function VersionDiffDialog({ open, onOpenChange, versions, agentId }: Pro
       queryClient.invalidateQueries({ queryKey: ['agents'] });
       queryClient.invalidateQueries({ queryKey: ['agent-versions', agentId] });
       onOpenChange(false);
-    } catch (err: unknown) {
+    } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Erro ao restaurar');
     } finally {
       setRestoring(false);
@@ -141,9 +151,9 @@ export function VersionDiffDialog({ open, onOpenChange, versions, agentId }: Pro
 
         <div className="grid grid-cols-2 gap-3 mt-2">
           <div className="space-y-1">
-            <label className="text-xs font-medium text-muted-foreground">Versão A (anterior)</label>
+            <label htmlFor="versiondiffdialog-vers-o-a-anterior-4c1510" className="text-meta font-medium text-muted-foreground">Versão A (anterior)</label>
             <Select value={vA} onValueChange={setVA}>
-              <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
+              <SelectTrigger id="versiondiffdialog-vers-o-a-anterior-4c1510"><SelectValue placeholder="Selecione..." /></SelectTrigger>
               <SelectContent>
                 {versions.map(v => (
                   <SelectItem key={v.id} value={v.id}>
@@ -154,9 +164,9 @@ export function VersionDiffDialog({ open, onOpenChange, versions, agentId }: Pro
             </Select>
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-medium text-muted-foreground">Versão B (nova)</label>
+            <label htmlFor="versiondiffdialog-vers-o-b-nova-b20ff4" className="text-meta font-medium text-muted-foreground">Versão B (nova)</label>
             <Select value={vB} onValueChange={setVB}>
-              <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
+              <SelectTrigger id="versiondiffdialog-vers-o-b-nova-b20ff4"><SelectValue placeholder="Selecione..." /></SelectTrigger>
               <SelectContent>
                 {versions.map(v => (
                   <SelectItem key={v.id} value={v.id}>
@@ -172,15 +182,15 @@ export function VersionDiffDialog({ open, onOpenChange, versions, agentId }: Pro
           <div className="mt-4 space-y-3">
             {/* Resumo de mudanças */}
             <div className="rounded-lg border border-border bg-muted/30 p-3">
-              <p className="text-xs font-semibold text-foreground mb-2">
+              <p className="text-meta font-semibold text-foreground mb-2">
                 Resumo de mudanças ({deltas.length})
               </p>
               {deltas.length === 0 ? (
-                <p className="text-xs text-muted-foreground">Nenhuma diferença estrutural detectada.</p>
+                <p className="text-meta text-muted-foreground">Nenhuma diferença estrutural detectada.</p>
               ) : (
                 <div className="flex flex-wrap gap-1.5">
                   {deltas.map((d, i) => (
-                    <Badge key={i} variant="outline" className="text-[11px] gap-1 font-mono">
+                    <Badge key={i} variant="outline" className="text-meta gap-1 font-mono">
                       <span className="text-muted-foreground">{d.label}:</span>
                       <span>{String(d.from)}</span>
                       <ArrowRight className="h-2.5 w-2.5 text-muted-foreground" />
@@ -196,7 +206,7 @@ export function VersionDiffDialog({ open, onOpenChange, versions, agentId }: Pro
                 <Button
                   variant="outline"
                   size="sm"
-                  className="gap-1.5 text-xs h-7"
+                  className="gap-1.5 text-meta h-7"
                   disabled={restoring}
                   onClick={() => handleRestore(verA)}
                 >
@@ -206,7 +216,7 @@ export function VersionDiffDialog({ open, onOpenChange, versions, agentId }: Pro
                 <Button
                   variant="outline"
                   size="sm"
-                  className="gap-1.5 text-xs h-7"
+                  className="gap-1.5 text-meta h-7"
                   disabled={restoring}
                   onClick={() => handleRestore(verB)}
                 >
@@ -224,9 +234,9 @@ export function VersionDiffDialog({ open, onOpenChange, versions, agentId }: Pro
             />
           </div>
         ) : vA && vB && vA === vB ? (
-          <p className="text-xs text-muted-foreground text-center py-8">Selecione versões diferentes para comparar.</p>
+          <p className="text-meta text-muted-foreground text-center py-8">Selecione versões diferentes para comparar.</p>
         ) : (
-          <p className="text-xs text-muted-foreground text-center py-8">Selecione duas versões para visualizar as diferenças.</p>
+          <p className="text-meta text-muted-foreground text-center py-8">Selecione duas versões para visualizar as diferenças.</p>
         )}
       </DialogContent>
     </Dialog>

@@ -1,0 +1,116 @@
+/* ============================================================
+ * Obsidian Mode — skin alternativa opcional do Super Cérebro.
+ * Escopo restrito a [data-scope="super-cerebro"].obsidian-mode
+ * para não vazar em outras rotas do app.
+ * ============================================================ */
+
+[data-scope="super-cerebro"].obsidian-mode {
+  /* Bordas mais duras / técnicas */
+  --radius: 0.25rem;
+
+  /* Superfícies planas — sem tint translúcido */
+  --nexus-surface-1: 232 18% 10%;
+  --nexus-surface-2: 232 16% 13%;
+  --nexus-surface-3: 232 14% 16%;
+
+  /* Borda mais marcada para leitura densa */
+  --border: 232 12% 22%;
+  --nexus-border: 232 12% 22%;
+}
+
+/* Accent Obsidian (roxo) — opt-in via segundo toggle */
+[data-scope="super-cerebro"].obsidian-mode.obsidian-accent-purple {
+  --primary: 262 83% 58%;          /* #7c3aed */
+  --nexus-glow: 262 83% 65%;
+  --nexus-gradient-start: 262 83% 58%;
+  --nexus-gradient-end: 250 70% 50%;
+}
+
+/* -------- Glass morphism OFF -------- */
+[data-scope="super-cerebro"].obsidian-mode .backdrop-blur,
+[data-scope="super-cerebro"].obsidian-mode .backdrop-blur-sm,
+[data-scope="super-cerebro"].obsidian-mode .backdrop-blur-md,
+[data-scope="super-cerebro"].obsidian-mode .backdrop-blur-lg,
+[data-scope="super-cerebro"].obsidian-mode .backdrop-blur-xl,
+[data-scope="super-cerebro"].obsidian-mode [class*="backdrop-blur"] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Cards, popovers, dialogs — superfícies sólidas */
+[data-scope="super-cerebro"].obsidian-mode [class*="bg-card/"],
+[data-scope="super-cerebro"].obsidian-mode [class*="bg-background/"],
+[data-scope="super-cerebro"].obsidian-mode [class*="bg-secondary/"],
+[data-scope="super-cerebro"].obsidian-mode [class*="bg-muted/"] {
+  background-color: hsl(var(--card)) !important;
+}
+
+/* -------- Hover-glow e sombras suaves OFF -------- */
+[data-scope="super-cerebro"].obsidian-mode [class*="shadow-"],
+[data-scope="super-cerebro"].obsidian-mode [class*="hover:shadow-"] {
+  box-shadow: none !important;
+}
+
+[data-scope="super-cerebro"].obsidian-mode .card,
+[data-scope="super-cerebro"].obsidian-mode [data-slot="card"] {
+  border: 1px solid hsl(var(--border)) !important;
+  box-shadow: none !important;
+}
+
+/* Textura de grão do layout — desliga se existir dentro do escopo */
+[data-scope="super-cerebro"].obsidian-mode::before,
+[data-scope="super-cerebro"].obsidian-mode::after {
+  background-image: none !important;
+  opacity: 0 !important;
+}
+
+/* -------- Densidade -------- */
+[data-scope="super-cerebro"].obsidian-mode {
+  padding: 0.75rem 1rem !important;
+}
+@media (min-width: 640px) {
+  [data-scope="super-cerebro"].obsidian-mode {
+    padding: 1rem 1.25rem !important;
+  }
+}
+@media (min-width: 1024px) {
+  [data-scope="super-cerebro"].obsidian-mode {
+    padding: 1.25rem 1.5rem !important;
+  }
+}
+
+/* Espaço vertical mais compacto */
+[data-scope="super-cerebro"].obsidian-mode > .space-y-6 > * + *,
+[data-scope="super-cerebro"].obsidian-mode .space-y-6 > * + * {
+  margin-top: 0.75rem !important;
+}
+[data-scope="super-cerebro"].obsidian-mode .gap-3 { gap: 0.375rem !important; }
+[data-scope="super-cerebro"].obsidian-mode .gap-4 { gap: 0.5rem !important; }
+[data-scope="super-cerebro"].obsidian-mode .gap-6 { gap: 0.75rem !important; }
+
+/* -------- Tipografia neutra -------- */
+[data-scope="super-cerebro"].obsidian-mode h1,
+[data-scope="super-cerebro"].obsidian-mode h2,
+[data-scope="super-cerebro"].obsidian-mode h3,
+[data-scope="super-cerebro"].obsidian-mode h4 {
+  letter-spacing: 0 !important;
+}
+[data-scope="super-cerebro"].obsidian-mode {
+  line-height: 1.45;
+}
+
+/* Gradient text do PageHeader off (segurança extra caso `gradient` esteja true) */
+[data-scope="super-cerebro"].obsidian-mode .bg-clip-text.text-transparent {
+  background: none !important;
+  -webkit-text-fill-color: currentColor !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+/* Respeitar reduced motion — nenhuma animação extra na troca de modo */
+@media (prefers-reduced-motion: reduce) {
+  [data-scope="super-cerebro"].obsidian-mode,
+  [data-scope="super-cerebro"].obsidian-mode * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

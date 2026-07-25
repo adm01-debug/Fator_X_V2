@@ -107,14 +107,14 @@ export default function CodeInterpreterPage() {
       <div className="flex items-center gap-2 flex-wrap">
         {(["deno", "python", "node"] as const).map((r) => (
           <button key={r} onClick={() => { setRuntime(r); setCode(SNIPPETS[r][0].code); }}
-            className={`px-3 py-1.5 rounded-md text-xs font-medium border transition-all ${runtime === r ? "border-primary bg-primary/10" : "border-border/40 hover:border-border"}`}>
+            className={`px-3 py-1.5 rounded-md text-meta font-medium border transition-all ${runtime === r ? "border-primary bg-primary/10" : "border-border/40 hover:border-border"}`}>
             {r === "deno" && "🦕 Deno (real)"}
             {r === "python" && "🐍 Python (simulado)"}
             {r === "node" && "⬢ Node (simulado)"}
           </button>
         ))}
         <div className="flex-1" />
-        <Badge variant={isReal ? "default" : "outline"} className="text-[10px]">
+        <Badge variant={isReal ? "default" : "outline"} className="text-meta">
           {isReal ? "Sandbox real · timeout 30s" : "Simulação determinística via LLM"}
         </Badge>
       </div>
@@ -122,10 +122,10 @@ export default function CodeInterpreterPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <Card className="lg:col-span-2">
           <CardHeader className="pb-3 flex-row items-center justify-between gap-2">
-            <CardTitle className="text-sm flex items-center gap-2"><FileCode2 className="h-4 w-4" />Código</CardTitle>
+            <CardTitle className="text-body-sm flex items-center gap-2"><FileCode2 className="h-4 w-4" />Código</CardTitle>
             <div className="flex items-center gap-1.5 flex-wrap">
               {SNIPPETS[runtime].map((s) => (
-                <Button key={s.label} size="sm" variant="ghost" className="h-7 text-[11px]" onClick={() => setCode(s.code)}>
+                <Button key={s.label} size="sm" variant="ghost" className="h-7 text-meta" onClick={() => setCode(s.code)}>
                   <Sparkles className="h-3 w-3 mr-1" />{s.label}
                 </Button>
               ))}
@@ -135,7 +135,7 @@ export default function CodeInterpreterPage() {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Textarea value={code} onChange={(e) => setCode(e.target.value)} className="font-mono text-xs min-h-[280px] bg-muted/20" spellCheck={false} />
+            <Textarea value={code} onChange={(e) => setCode(e.target.value)} className="font-mono text-meta min-h-[280px] bg-muted/20" spellCheck={false} />
 
             <Tabs defaultValue="stdout">
               <TabsList>
@@ -146,14 +146,14 @@ export default function CodeInterpreterPage() {
               </TabsList>
               <TabsContent value="stdout">
                 <div className="relative group">
-                  <pre className="text-xs bg-muted/30 p-4 rounded font-mono whitespace-pre-wrap min-h-[180px] max-h-[300px] overflow-auto border border-border/40">
+                  <pre className="text-meta bg-muted/30 p-4 rounded font-mono whitespace-pre-wrap min-h-[180px] max-h-[300px] overflow-auto border border-border/40">
                     {liveStdout || (running ? "▶ Inicializando container..." : "Aguardando execução...")}
                   </pre>
-                  {running && <div className="absolute top-2 right-2 flex gap-1"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse delay-75" /></div>}
+                  {running && <div className="absolute top-2 right-2 flex gap-1"><div className="w-1.5 h-1.5 rounded-full bg-nexus-emerald animate-pulse" /><div className="w-1.5 h-1.5 rounded-full bg-nexus-emerald animate-pulse delay-75" /></div>}
                 </div>
               </TabsContent>
               <TabsContent value="stderr">
-                <pre className="text-xs bg-destructive/5 text-destructive p-4 rounded font-mono whitespace-pre-wrap min-h-[180px] max-h-[300px] overflow-auto border border-destructive/20">
+                <pre className="text-meta bg-destructive/5 text-destructive p-4 rounded font-mono whitespace-pre-wrap min-h-[180px] max-h-[300px] overflow-auto border border-destructive/20">
                   {liveStderr || "Sem erros registrados no fluxo."}
                 </pre>
               </TabsContent>
@@ -165,16 +165,16 @@ export default function CodeInterpreterPage() {
                         <div key={i} className="p-3 bg-muted/30 rounded-lg flex items-center justify-between border border-border/50 hover:bg-muted/40 transition-colors">
                           <div className="flex items-center gap-2">
                             <Package className="h-4 w-4 text-primary/60" />
-                            <span className="font-mono text-[11px] truncate">{f.name}</span>
+                            <span className="font-mono text-meta truncate">{f.name}</span>
                           </div>
-                          <Badge variant="outline" className="text-[10px]">{(f.size / 1024).toFixed(1)} KB</Badge>
+                          <Badge variant="outline" className="text-meta">{(f.size / 1024).toFixed(1)} KB</Badge>
                         </div>
                       ))}
                     </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center py-12 text-muted-foreground opacity-40">
                       <Package className="h-8 w-8 mb-2" />
-                      <p className="text-xs font-medium">Nenhum artefato persistido</p>
+                      <p className="text-meta font-medium">Nenhum artefato persistido</p>
                     </div>
                   )}
                 </div>
@@ -183,26 +183,26 @@ export default function CodeInterpreterPage() {
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                     <div className="p-3 bg-muted/20 rounded-lg border border-border/40">
-                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Status</p>
-                      <p className="text-sm font-medium mt-1">{current?.status || (running ? "Running" : "Idle")}</p>
+                      <p className="text-meta text-muted-foreground uppercase font-bold tracking-wider">Status</p>
+                      <p className="text-body-sm font-medium mt-1">{current?.status || (running ? "Running" : "Idle")}</p>
                     </div>
                     <div className="p-3 bg-muted/20 rounded-lg border border-border/40">
-                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Exit Code</p>
-                      <p className="text-sm font-mono mt-1">{current?.exit_code ?? "—"}</p>
+                      <p className="text-meta text-muted-foreground uppercase font-bold tracking-wider">Exit Code</p>
+                      <p className="text-body-sm font-mono mt-1">{current?.exit_code ?? "—"}</p>
                     </div>
                     <div className="p-3 bg-muted/20 rounded-lg border border-border/40">
-                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Latency</p>
-                      <p className="text-sm font-mono mt-1">{current?.duration_ms || "—"} ms</p>
+                      <p className="text-meta text-muted-foreground uppercase font-bold tracking-wider">Latency</p>
+                      <p className="text-body-sm font-mono mt-1">{current?.duration_ms || "—"} ms</p>
                     </div>
                     <div className="p-3 bg-muted/20 rounded-lg border border-border/40">
-                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Memory</p>
-                      <p className="text-sm font-mono mt-1">{current?.memory_mb || (running ? "42.5" : "—")} MB</p>
+                      <p className="text-meta text-muted-foreground uppercase font-bold tracking-wider">Memory</p>
+                      <p className="text-body-sm font-mono mt-1">{current?.memory_mb || (running ? "42.5" : "—")} MB</p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <div className="flex items-center justify-between"><span className="text-[10px] font-medium text-muted-foreground uppercase">CPU Load (%)</span><span className="text-[10px] font-mono">Real-time</span></div>
+                      <div className="flex items-center justify-between"><span className="text-meta font-medium text-muted-foreground uppercase">CPU Load (%)</span><span className="text-meta font-mono">Real-time</span></div>
                       <div className="h-16 flex items-end gap-1 px-1 bg-muted/10 rounded border border-border/30">
                         {(running ? metrics.cpu : [2, 5, 3, 8, 4]).map((v, i) => (
                           <div key={i} className="flex-1 bg-primary/40 rounded-t-sm" style={{ height: `${v}%` }} />
@@ -210,7 +210,7 @@ export default function CodeInterpreterPage() {
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <div className="flex items-center justify-between"><span className="text-[10px] font-medium text-muted-foreground uppercase">Memory Pressure</span><span className="text-[10px] font-mono">Isolated Sandbox</span></div>
+                      <div className="flex items-center justify-between"><span className="text-meta font-medium text-muted-foreground uppercase">Memory Pressure</span><span className="text-meta font-mono">Isolated Sandbox</span></div>
                       <div className="h-16 flex items-end gap-1 px-1 bg-muted/10 rounded border border-border/30">
                         {(running ? metrics.mem : [40, 42, 41, 43, 42]).map((v, i) => (
                           <div key={i} className="flex-1 bg-nexus-blue/40 rounded-t-sm" style={{ height: `${v}%` }} />
@@ -220,9 +220,9 @@ export default function CodeInterpreterPage() {
                   </div>
 
                   {current?.simulated && (
-                    <div className="p-3 rounded-lg bg-amber-500/5 border border-amber-500/20 text-amber-600 dark:text-amber-400 flex items-start gap-3">
+                    <div className="p-3 rounded-lg bg-nexus-amber/5 border border-nexus-amber/20 text-nexus-amber dark:text-nexus-amber flex items-start gap-3">
                       <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
-                      <div className="text-xs leading-relaxed">
+                      <div className="text-meta leading-relaxed">
                         <p className="font-semibold">Ambiente Virtualizado</p>
                         <p className="opacity-80">Este runtime é simulado determinísticamente via LLM. Saídas e métricas são representações estatísticas do comportamento esperado.</p>
                       </div>
@@ -236,9 +236,9 @@ export default function CodeInterpreterPage() {
 
         <Card>
           <CardHeader className="pb-3 flex-row items-center justify-between">
-            <CardTitle className="text-sm flex items-center gap-2"><History className="h-4 w-4" />Histórico</CardTitle>
+            <CardTitle className="text-body-sm flex items-center gap-2"><History className="h-4 w-4" />Histórico</CardTitle>
             {history.length > 0 && (
-              <Button size="sm" variant="ghost" onClick={clearHistory} className="h-7 text-[11px] text-destructive hover:text-destructive">
+              <Button size="sm" variant="ghost" onClick={clearHistory} className="h-7 text-meta text-destructive hover:text-destructive">
                 <Trash2 className="h-3 w-3 mr-1" />Limpar
               </Button>
             )}
@@ -246,7 +246,7 @@ export default function CodeInterpreterPage() {
           <CardContent>
             <ScrollArea className="h-[560px] pr-2">
               {history.length === 0 ? (
-                <div className="text-center text-xs text-muted-foreground py-12">
+                <div className="text-center text-meta text-muted-foreground py-12">
                   <Terminal className="h-6 w-6 mx-auto mb-2 opacity-50" />
                   Sem execuções
                 </div>
@@ -257,10 +257,10 @@ export default function CodeInterpreterPage() {
                       className={`w-full text-left p-2.5 rounded border transition-all hover:border-primary/40 ${current?.id === h.id ? "border-primary bg-primary/5" : "border-border/40 bg-muted/20"}`}>
                       <div className="flex items-center justify-between mb-1">
                         <Badge variant="outline" className="text-[9px] uppercase">{h.runtime}</Badge>
-                        <span className={`text-[10px] ${h.status === "completed" ? "text-emerald-500" : "text-destructive"}`}>{h.status}</span>
+                        <span className={`text-meta ${h.status === "completed" ? "text-nexus-emerald" : "text-destructive"}`}>{h.status}</span>
                       </div>
-                      <pre className="text-[10px] font-mono text-muted-foreground truncate">{h.code.split("\n")[0].slice(0, 50)}</pre>
-                      <div className="text-[10px] text-muted-foreground mt-1 flex items-center gap-2">
+                      <pre className="text-meta font-mono text-muted-foreground truncate">{h.code.split("\n")[0].slice(0, 50)}</pre>
+                      <div className="text-meta text-muted-foreground mt-1 flex items-center gap-2">
                         <span>{h.duration_ms}ms</span>
                         <span>·</span>
                         <span>{new Date(h.created_at).toLocaleTimeString("pt-BR")}</span>

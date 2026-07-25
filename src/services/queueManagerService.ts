@@ -166,6 +166,7 @@ export async function getQueueMetrics(queueId: string): Promise<QueueMetrics> {
     avg_processing_time_ms: processingTimes.length > 0 ? processingTimes.reduce((a, b) => a + b, 0) / processingTimes.length : 0,
     oldest_pending_age_ms: oldestPending,
   };
+
 }
 
 /* ── Presets ── */

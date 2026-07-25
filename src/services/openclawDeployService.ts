@@ -17,8 +17,12 @@ export type OpenclawAction =
   | 'agent.create'
   | 'agent.update'
   | 'agent.delete'
+  | 'agent.publish'
   | 'skills'
-  | 'skill.deploy';
+  | 'skill.deploy'
+  | 'whatsapp.pair'
+  | 'whatsapp.status'
+  | 'whatsapp.send';
 
 export interface OpenclawInvokeInput {
   action: OpenclawAction;
@@ -46,6 +50,11 @@ export interface OpenclawHealthResult {
   status: string;
   uptime?: number;
   version?: string;
+  configError?: {
+    code: 'invalid_openclaw_url' | 'missing_openclaw_token' | string;
+    message: string;
+    hint?: string;
+  };
   [key: string]: unknown;
 }
 
@@ -54,6 +63,20 @@ export interface OpenclawInvokeResult<T = unknown> {
   data?: T;
   error?: string;
   status?: number;
+}
+
+/**
+ * Extrai payload de erro estruturado devolvido pela EF (status != 2xx).
+ * supabase-js embrulha em FunctionsHttpError com `context.response`.
+ */
+async function extractEdgeErrorBody(err: unknown): Promise<Record<string, unknown> | null> {
+  const maybeResponse = (err as { context?: { response?: Response } })?.context?.response;
+  if (!maybeResponse || typeof maybeResponse.clone !== 'function') return null;
+  try {
+    return (await maybeResponse.clone().json()) as Record<string, unknown>;
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -72,11 +95,23 @@ export async function invokeOpenclaw<T = unknown>(
   });
 
   if (error) {
+    const body = await extractEdgeErrorBody(error);
+    const code = typeof body?.error === 'string' ? (body.error as string) : undefined;
+    const message = typeof body?.message === 'string' ? (body.message as string) : error.message;
     logger.error('openclaw-proxy invoke failed', {
       action: input.action,
-      error: error.message,
+      error: message,
+      code,
     });
-    throw new Error(error.message);
+    const wrapped = new Error(message) as Error & {
+      code?: string;
+      hint?: string;
+      body?: Record<string, unknown>;
+    };
+    wrapped.code = code;
+    wrapped.hint = typeof body?.hint === 'string' ? (body.hint as string) : undefined;
+    wrapped.body = body ?? undefined;
+    throw wrapped;
   }
 
   return (data as OpenclawInvokeResult<T>) ?? { ok: true };
@@ -84,9 +119,22 @@ export async function invokeOpenclaw<T = unknown>(
 
 /** Pings OpenClaw and returns its health status. */
 export async function getOpenclawHealth(): Promise<OpenclawHealthResult> {
-  const result = await invokeOpenclaw<OpenclawHealthResult>({ action: 'health' });
-  return (result.data as OpenclawHealthResult) ?? { status: 'unknown' };
+  try {
+    const result = await invokeOpenclaw<OpenclawHealthResult>({ action: 'health' });
+    return (result.data as OpenclawHealthResult) ?? { status: 'unknown' };
+  } catch (err) {
+    const e = err as Error & { code?: string; hint?: string };
+    if (e.code === 'invalid_openclaw_url' || e.code === 'missing_openclaw_token') {
+      return {
+        status: 'misconfigured',
+        configError: { code: e.code, message: e.message, hint: e.hint },
+      };
+    }
+    throw err;
+  }
 }
+
+
 
 /** Lists agents currently deployed on OpenClaw. */
 export async function listOpenclawAgents(): Promise<OpenclawAgent[]> {
@@ -136,5 +184,54 @@ export async function chatWithOpenclawAgent(
   return invokeOpenclaw<{ reply: string }>({
     action: 'chat',
     payload: { agent_id: agentId, message, context },
+  });
+}
+
+/**
+ * Publica um agente compilado (SOUL/AGENTS/SKILLS + openclaw.json) no runtime.
+ * Retorna o `openclaw_agent_id` remoto quando bem-sucedido.
+ */
+export async function publishAgentToOpenclaw(input: {
+  agent_id: string;
+  manifest: Record<string, unknown>;
+}): Promise<OpenclawInvokeResult<{ openclaw_agent_id?: string }>> {
+  return invokeOpenclaw<{ openclaw_agent_id?: string }>({
+    action: 'agent.publish',
+    payload: input,
+  });
+}
+
+export interface WhatsappPairResult {
+  instance_name: string;
+  qr_code?: string;
+  status?: 'pending' | 'connected' | 'expired' | 'disconnected' | 'error';
+  phone_number?: string;
+}
+
+/** Inicia (ou reinicia) o pareamento WhatsApp para a instância informada. */
+export async function pairWhatsapp(instanceName: string) {
+  return invokeOpenclaw<WhatsappPairResult>({
+    action: 'whatsapp.pair',
+    payload: { instance_name: instanceName },
+  });
+}
+
+/** Consulta o status atual da instância WhatsApp. */
+export async function getWhatsappStatus(instanceName: string) {
+  return invokeOpenclaw<WhatsappPairResult>({
+    action: 'whatsapp.status',
+    payload: { instance_name: instanceName },
+  });
+}
+
+/** Envia uma mensagem outbound pelo WhatsApp gerenciado. */
+export async function sendWhatsappMessage(input: {
+  instance_name: string;
+  to: string;
+  body: string;
+}) {
+  return invokeOpenclaw<{ message_id?: string }>({
+    action: 'whatsapp.send',
+    payload: input,
   });
 }

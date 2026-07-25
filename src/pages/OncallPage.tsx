@@ -80,7 +80,7 @@ export default function OncallPage() {
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-3xl font-heading font-bold bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">Escala On-Call</h1>
-          <p className="text-muted-foreground text-sm mt-1">Quem responde a incidentes em cada janela</p>
+          <p className="text-muted-foreground text-body-sm mt-1">Quem responde a incidentes em cada janela</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild><Button><Plus className="h-4 w-4 mr-2" />Adicionar plantão</Button></DialogTrigger>
@@ -103,11 +103,11 @@ export default function OncallPage() {
 
       <Card className="border-primary/30 bg-primary/5">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base"><ShieldAlert className="h-4 w-4 text-primary" />Quem está on-call agora</CardTitle>
+          <CardTitle className="flex items-center gap-2 text-title-sm"><ShieldAlert className="h-4 w-4 text-primary" />Quem está on-call agora</CardTitle>
         </CardHeader>
         <CardContent>
           {current.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Ninguém escalado para o momento atual.</p>
+            <p className="text-body-sm text-muted-foreground">Ninguém escalado para o momento atual.</p>
           ) : (
             <div className="space-y-2">
               {current.map((c, i) => (
@@ -115,9 +115,9 @@ export default function OncallPage() {
                   <div className="flex items-center gap-2">
                     <Badge variant="default">#{c.escalation_order}</Badge>
                     <span className="font-medium">{c.user_name ?? 'Sem nome'}</span>
-                    {c.user_email && <span className="text-xs text-muted-foreground">{c.user_email}</span>}
+                    {c.user_email && <span className="text-meta text-muted-foreground">{c.user_email}</span>}
                   </div>
-                  <span className="text-xs text-muted-foreground">até {format(new Date(c.ends_at), "dd/MM 'às' HH:mm", { locale: ptBR })}</span>
+                  <span className="text-meta text-muted-foreground">até {format(new Date(c.ends_at), "dd/MM 'às' HH:mm", { locale: ptBR })}</span>
                 </div>
               ))}
             </div>
@@ -126,19 +126,19 @@ export default function OncallPage() {
       </Card>
 
       <Card>
-        <CardHeader><CardTitle className="flex items-center gap-2 text-base"><Phone className="h-4 w-4" />Todos os plantões</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="flex items-center gap-2 text-title-sm"><Phone className="h-4 w-4" />Todos os plantões</CardTitle></CardHeader>
         <CardContent className="space-y-2">
-          {loading ? <p className="text-muted-foreground text-sm">Carregando…</p> : entries.length === 0 ? (
-            <p className="text-muted-foreground text-sm text-center py-8">Nenhum plantão configurado.</p>
+          {loading ? <p className="text-muted-foreground text-body-sm">Carregando…</p> : entries.length === 0 ? (
+            <p className="text-muted-foreground text-body-sm text-center py-8">Nenhum plantão configurado.</p>
           ) : entries.map((e) => (
             <div key={e.id} className="flex items-center justify-between gap-4 py-2 border-b border-border/30 last:border-0">
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <Badge variant="outline">#{e.escalation_order}</Badge>
-                  <span className="font-medium text-sm">{e.user_name}</span>
-                  {e.user_email && <span className="text-xs text-muted-foreground">{e.user_email}</span>}
+                  <span className="font-medium text-body-sm">{e.user_name}</span>
+                  {e.user_email && <span className="text-meta text-muted-foreground">{e.user_email}</span>}
                 </div>
-                <div className="text-xs text-muted-foreground mt-0.5">
+                <div className="text-meta text-muted-foreground mt-0.5">
                   {format(new Date(e.starts_at), "dd/MM/yy HH:mm", { locale: ptBR })} → {format(new Date(e.ends_at), "dd/MM/yy HH:mm", { locale: ptBR })}
                 </div>
               </div>
