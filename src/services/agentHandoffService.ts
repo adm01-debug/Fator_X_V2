@@ -55,7 +55,7 @@ export function toRecord(row: DbRow): HandoffRecord {
   return row as unknown as HandoffRecord;
 }
 
-export export function toRecords(rows: DbRow): HandoffRecord[] {
+export function toRecords(rows: DbRow): HandoffRecord[] {
   return (rows ?? []) as unknown as HandoffRecord[];
 }
 

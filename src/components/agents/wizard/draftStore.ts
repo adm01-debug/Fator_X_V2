@@ -169,9 +169,9 @@ export function loadDrafts(): DraftsStoreV2 {
           activeId: typeof parsed.activeId === 'string' ? parsed.activeId : null,
           drafts: parsed.drafts.map((d: Record<string, unknown>) => ({
             id: typeof d.id === 'string' ? d.id : genId(),
-            form: normalizeForm(d.form),
+            form: normalizeForm(d.form as Partial<QuickAgentForm> | undefined),
             savedAt: typeof d.savedAt === 'string' ? d.savedAt : new Date().toISOString(),
-            createdAt: typeof d.createdAt === 'string' ? d.createdAt : (d.savedAt ?? new Date().toISOString()),
+            createdAt: typeof d.createdAt === 'string' ? d.createdAt : (typeof d.savedAt === 'string' ? d.savedAt : new Date().toISOString()),
             promptCustomLocked: d.promptCustomLocked === true,
             selectedVariant: normalizeVariant(d.selectedVariant),
           })),

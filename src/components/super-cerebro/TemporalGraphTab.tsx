@@ -92,12 +92,12 @@ export function TemporalGraphTab() {
       try {
         const enhanced = await invokeCerebroBrain({ action: 'temporal_graph' });
         if (enhanced?.timeline?.length) {
-          return enhanced.timeline.map((e: { id: string; type: string; info: unknown }) => ({
+          return enhanced.timeline.map((e: { id: string; type: string; info: unknown; agent?: string; time?: string }) => ({
             id: e.id,
             content: `${e.type}: ${JSON.stringify(e.info)}`,
             memory_type: e.type,
-            source: e.agent,
-            created_at: e.time,
+            source: e.agent ?? '',
+            created_at: e.time ?? new Date().toISOString(),
             relevance_score: 1.0
           }));
         }
