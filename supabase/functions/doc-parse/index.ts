@@ -295,7 +295,9 @@ serve(async (req) => {
               chunk_version: existing.chunk_version,
               source: idempotencyHeader ? 'header' : 'body',
             },
-          }).then(() => {}, () => {});
+            // Best-effort, porém audível: perder o registro de reuso em
+            // silêncio deixa a trilha de auditoria incompleta sem aviso.
+          }).then(() => {}, (e) => console.warn(`[audit] falha ao registrar document.reuse (header): ${e?.message ?? e}`));
 
           return jsonResponse({
             status: 'ok',
