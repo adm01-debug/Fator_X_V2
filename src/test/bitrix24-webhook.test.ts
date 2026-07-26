@@ -1,30 +1,28 @@
 /**
- * Bitrix24 webhook routing tests (next-frontier #3)
+ * Bitrix24 webhook routing tests.
  *
- * The Edge Function itself runs in Deno and isn't executable here,
- * so we test the helper logic that the Edge Function uses (form parsing,
- * signature validation pattern) plus the frontend service contracts.
+ * Migrado do `makeQB()` local para o mock compartilhado. O mock antigo
+ * resolvia sempre `{data: [], error: null}` — o caminho de erro era
+ * inalcançável, e "retorna um array" passava mesmo com o serviço quebrado.
+ * As asserções abaixo verificam o isolamento por workspace + source, que é o
+ * que impede rotas de Bitrix e WhatsApp de se misturarem na mesma tabela.
  */
-import { describe, it, expect, vi } from 'vitest';
-import type { DbRow } from '@/types/dbRow';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { getSharedSupabaseMock } from './utils/supabaseMock';
 
-function makeQB() {
-  const qb: Record<string, unknown> = {};
-  const chain = ['select', 'eq', 'order', 'limit', 'delete', 'update', 'in', 'is', 'neq', 'gte', 'lte'];
-  for (const m of chain) qb[m] = vi.fn(() => qb);
-  qb.upsert = vi.fn().mockResolvedValue({ data: null, error: null });
-  qb.then = (resolve: (v: DbRow) => void) => resolve({ data: [], error: null });
-  return qb;
-}
+vi.mock('@/lib/supabaseExtended', async () => {
+  const m = await import('./utils/supabaseMock');
+  const mock = m.getSharedSupabaseMock('bitrix24-webhook');
+  return {
+    fromTable: (t: string) => (mock.client.from as (x: string) => unknown)(t),
+    rpcCall: vi.fn().mockResolvedValue({ data: null, error: null }),
+  };
+});
 
-vi.mock('@/lib/supabaseExtended', () => ({
-  fromTable: vi.fn(() => makeQB()),
-  rpcCall: vi.fn().mockResolvedValue({ data: null, error: null }),
-}));
-
-vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: vi.fn(() => makeQB()) },
-}));
+vi.mock('@/integrations/supabase/client', async () => {
+  const m = await import('./utils/supabaseMock');
+  return { supabase: m.getSharedSupabaseMock('bitrix24-webhook').client };
+});
 
 vi.mock('@/lib/agentService', () => ({
   getWorkspaceId: vi.fn().mockResolvedValue('ws-123'),
@@ -45,7 +43,9 @@ import {
   getBitrix24WebhookUrl,
 } from '@/services/bitrix24WebhookService';
 
-describe('bitrix24WebhookService — exports', () => {
+const db = getSharedSupabaseMock('bitrix24-webhook');
+
+describe('bitrix24WebhookService — catálogo', () => {
   it('exposes the documented event types', () => {
     expect(BITRIX24_EVENT_TYPES.length).toBeGreaterThanOrEqual(7);
     const ids = BITRIX24_EVENT_TYPES.map((e) => e.id);
@@ -61,29 +61,78 @@ describe('bitrix24WebhookService — exports', () => {
     }
   });
 
-  it('exposes CRUD functions', () => {
-    expect(typeof listBitrix24Routes).toBe('function');
-    expect(typeof upsertBitrix24Route).toBe('function');
-    expect(typeof deleteBitrix24Route).toBe('function');
-    expect(typeof toggleBitrix24Route).toBe('function');
-    expect(typeof listRecentBitrix24Events).toBe('function');
-    expect(typeof getBitrix24WebhookUrl).toBe('function');
+  it('não há ids duplicados (chave do upsert onConflict)', () => {
+    const ids = BITRIX24_EVENT_TYPES.map((e) => e.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+});
+
+describe('bitrix24WebhookService — CRUD de rotas', () => {
+  beforeEach(() => {
+    db.reset();
+    db.setResult({ data: [], error: null });
   });
 
-  it('listBitrix24Routes returns an array', async () => {
+  it('listBitrix24Routes isola por workspace E por source=bitrix24', async () => {
+    db.setTableResult('agent_routing_config', {
+      data: [{ id: 'r1', event_type: 'ONCRMDEALADD' }],
+      error: null,
+    });
     const routes = await listBitrix24Routes();
-    expect(Array.isArray(routes)).toBe(true);
+
+    expect(routes).toHaveLength(1);
+    expect(db.calls.from).toHaveBeenCalledWith('agent_routing_config');
+    expect(db.calls.eq).toHaveBeenCalledWith('workspace_id', 'ws-123');
+    expect(db.calls.eq).toHaveBeenCalledWith('source', 'bitrix24');
+    expect(db.calls.order).toHaveBeenCalledWith('event_type', { ascending: true });
   });
 
-  it('upsertBitrix24Route does not throw on success', async () => {
-    await expect(
-      upsertBitrix24Route('ONCRMDEALADD', 'agent-uuid-here', true)
-    ).resolves.not.toThrow();
+  it('listBitrix24Routes propaga erro de RLS', async () => {
+    db.setTableResult('agent_routing_config', { data: null, error: { message: 'rls denied' } });
+    await expect(listBitrix24Routes()).rejects.toMatchObject({ message: 'rls denied' });
   });
 
-  it('listRecentBitrix24Events returns array', async () => {
+  it('upsertBitrix24Route usa a chave de conflito correta', async () => {
+    await upsertBitrix24Route('ONCRMDEALADD', 'agent-uuid-here', true);
+
+    expect(db.calls.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        workspace_id: 'ws-123',
+        source: 'bitrix24',
+        event_type: 'ONCRMDEALADD',
+        agent_id: 'agent-uuid-here',
+        is_enabled: true,
+      }),
+      { onConflict: 'workspace_id,source,event_type' },
+    );
+  });
+
+  it('deleteBitrix24Route remove exatamente o id informado', async () => {
+    await deleteBitrix24Route('route-7');
+    expect(db.calls.delete).toHaveBeenCalled();
+    expect(db.calls.eq).toHaveBeenCalledWith('id', 'route-7');
+  });
+
+  it.each([[true], [false]])('toggleBitrix24Route grava is_enabled=%s', async (enabled) => {
+    await toggleBitrix24Route('route-1', enabled);
+    expect(db.calls.update).toHaveBeenCalledWith({ is_enabled: enabled });
+    expect(db.calls.eq).toHaveBeenCalledWith('id', 'route-1');
+  });
+
+  it('listRecentBitrix24Events ordena do mais recente e respeita o limite', async () => {
+    db.setTableResult('bitrix24_webhook_events', { data: [{ id: 'e1' }], error: null });
     const events = await listRecentBitrix24Events(10);
-    expect(Array.isArray(events)).toBe(true);
+
+    expect(events).toHaveLength(1);
+    expect(db.calls.from).toHaveBeenCalledWith('bitrix24_webhook_events');
+    expect(db.calls.eq).toHaveBeenCalledWith('workspace_id', 'ws-123');
+    expect(db.calls.order).toHaveBeenCalledWith('received_at', { ascending: false });
+    expect(db.calls.limit).toHaveBeenCalledWith(10);
+  });
+
+  it('listRecentBitrix24Events usa limite padrão de 50', async () => {
+    await listRecentBitrix24Events();
+    expect(db.calls.limit).toHaveBeenCalledWith(50);
   });
 
   it('getBitrix24WebhookUrl returns a URL string', () => {
@@ -92,6 +141,7 @@ describe('bitrix24WebhookService — exports', () => {
     expect(url).toContain('/functions/v1/bitrix24-webhook');
   });
 });
+
 
 // ════════════════════════════════════════════════════════════════
 // Tests for the HELPER LOGIC the Edge Function relies on.

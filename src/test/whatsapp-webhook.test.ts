@@ -1,31 +1,29 @@
 import type { DbRow } from '@/types/dbRow';
 /**
- * WhatsApp webhook routing tests (next-frontier sprint #2)
+ * WhatsApp webhook routing tests.
  *
- * Mirrors the Bitrix24 webhook test suite. Tests service contracts +
- * the helper logic the Edge Function relies on (form parser, provider
- * detection patterns, normalized event shapes).
+ * Migrado do `makeQB()` local para o mock compartilhado, validado por
+ * `supabase-mock-simulation.test.ts`. O `makeQB` anterior resolvia sempre
+ * `{data: [], error: null}`, o que tornava impossível testar o caminho de erro
+ * — e é justamente ele que importa aqui: roteamento de WhatsApp que falha em
+ * silêncio significa mensagem de cliente perdida sem rastro.
  */
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { getSharedSupabaseMock } from './utils/supabaseMock';
 
-// Build a chainable thenable mock that resolves to {data:[],error:null}
-function makeQB() {
-  const qb: Record<string, unknown> = {};
-  const chain = ['select', 'eq', 'order', 'limit', 'delete', 'update', 'in', 'is', 'neq', 'gte', 'lte'];
-  for (const m of chain) qb[m] = vi.fn(() => qb);
-  qb.upsert = vi.fn().mockResolvedValue({ data: null, error: null });
-  qb.then = (resolve: (v: DbRow) => void) => resolve({ data: [], error: null });
-  return qb;
-}
+vi.mock('@/lib/supabaseExtended', async () => {
+  const m = await import('./utils/supabaseMock');
+  const mock = m.getSharedSupabaseMock('whatsapp-webhook');
+  return {
+    fromTable: (t: string) => (mock.client.from as (x: string) => unknown)(t),
+    rpcCall: vi.fn().mockResolvedValue({ data: null, error: null }),
+  };
+});
 
-vi.mock('@/lib/supabaseExtended', () => ({
-  fromTable: vi.fn(() => makeQB()),
-  rpcCall: vi.fn().mockResolvedValue({ data: null, error: null }),
-}));
-
-vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: vi.fn(() => makeQB()) },
-}));
+vi.mock('@/integrations/supabase/client', async () => {
+  const m = await import('./utils/supabaseMock');
+  return { supabase: m.getSharedSupabaseMock('whatsapp-webhook').client };
+});
 
 vi.mock('@/lib/agentService', () => ({
   getWorkspaceId: vi.fn().mockResolvedValue('ws-123'),
@@ -47,7 +45,9 @@ import {
   getWhatsAppWebhookUrl,
 } from '@/services/whatsappWebhookService';
 
-describe('whatsappWebhookService — exports', () => {
+const db = getSharedSupabaseMock('whatsapp-webhook');
+
+describe('whatsappWebhookService — catálogo', () => {
   it('exposes documented event types', () => {
     expect(WHATSAPP_EVENT_TYPES.length).toBeGreaterThanOrEqual(8);
     const ids = WHATSAPP_EVENT_TYPES.map((e) => e.id);
@@ -78,29 +78,86 @@ describe('whatsappWebhookService — exports', () => {
     }
   });
 
-  it('exposes CRUD functions', () => {
-    expect(typeof listWhatsAppRoutes).toBe('function');
-    expect(typeof upsertWhatsAppRoute).toBe('function');
-    expect(typeof deleteWhatsAppRoute).toBe('function');
-    expect(typeof toggleWhatsAppRoute).toBe('function');
-    expect(typeof listRecentWhatsAppEvents).toBe('function');
-    expect(typeof getWhatsAppWebhookUrl).toBe('function');
+  it('não há ids de evento duplicados (chave do upsert onConflict)', () => {
+    const ids = WHATSAPP_EVENT_TYPES.map((e) => e.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+});
+
+describe('whatsappWebhookService — CRUD de rotas', () => {
+  beforeEach(() => {
+    db.reset();
+    db.setResult({ data: [], error: null });
   });
 
-  it('listWhatsAppRoutes returns an array', async () => {
+  it('listWhatsAppRoutes isola por workspace E por source=whatsapp', async () => {
+    db.setTableResult('agent_routing_config', {
+      data: [{ id: 'r1', event_type: 'message.text' }],
+      error: null,
+    });
     const routes = await listWhatsAppRoutes();
-    expect(Array.isArray(routes)).toBe(true);
+
+    expect(routes).toHaveLength(1);
+    expect(db.calls.from).toHaveBeenCalledWith('agent_routing_config');
+    // Sem o segundo eq, rotas de Bitrix/Slack vazariam para o painel do WhatsApp.
+    expect(db.calls.eq).toHaveBeenCalledWith('workspace_id', 'ws-123');
+    expect(db.calls.eq).toHaveBeenCalledWith('source', 'whatsapp');
+    expect(db.calls.order).toHaveBeenCalledWith('event_type', { ascending: true });
   });
 
-  it('upsertWhatsAppRoute does not throw on success', async () => {
-    await expect(
-      upsertWhatsAppRoute('message.text', 'agent-uuid-here', true)
-    ).resolves.not.toThrow();
+  it('listWhatsAppRoutes propaga erro em vez de devolver lista vazia', async () => {
+    db.setTableResult('agent_routing_config', { data: null, error: { message: 'rls denied' } });
+    await expect(listWhatsAppRoutes()).rejects.toMatchObject({ message: 'rls denied' });
   });
 
-  it('listRecentWhatsAppEvents returns array', async () => {
+  it('upsertWhatsAppRoute usa a chave de conflito correta (idempotência da rota)', async () => {
+    await upsertWhatsAppRoute('message.text', 'agent-uuid-here', true);
+
+    expect(db.calls.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        workspace_id: 'ws-123',
+        source: 'whatsapp',
+        event_type: 'message.text',
+        agent_id: 'agent-uuid-here',
+        is_enabled: true,
+      }),
+      { onConflict: 'workspace_id,source,event_type' },
+    );
+  });
+
+  it('upsertWhatsAppRoute propaga erro do banco', async () => {
+    db.setTableResult('agent_routing_config', { data: null, error: { message: 'conflito' } });
+    await expect(upsertWhatsAppRoute('message.image', 'a1')).rejects.toMatchObject({
+      message: 'conflito',
+    });
+  });
+
+  it('deleteWhatsAppRoute remove exatamente o id informado', async () => {
+    await deleteWhatsAppRoute('route-9');
+    expect(db.calls.delete).toHaveBeenCalled();
+    expect(db.calls.eq).toHaveBeenCalledWith('id', 'route-9');
+  });
+
+  it.each([[true], [false]])('toggleWhatsAppRoute grava is_enabled=%s', async (enabled) => {
+    await toggleWhatsAppRoute('route-1', enabled);
+    expect(db.calls.update).toHaveBeenCalledWith({ is_enabled: enabled });
+    expect(db.calls.eq).toHaveBeenCalledWith('id', 'route-1');
+  });
+
+  it('listRecentWhatsAppEvents ordena do mais recente e respeita o limite', async () => {
+    db.setTableResult('whatsapp_webhook_events', { data: [{ id: 'e1' }], error: null });
     const events = await listRecentWhatsAppEvents(10);
-    expect(Array.isArray(events)).toBe(true);
+
+    expect(events).toHaveLength(1);
+    expect(db.calls.from).toHaveBeenCalledWith('whatsapp_webhook_events');
+    expect(db.calls.eq).toHaveBeenCalledWith('workspace_id', 'ws-123');
+    expect(db.calls.order).toHaveBeenCalledWith('received_at', { ascending: false });
+    expect(db.calls.limit).toHaveBeenCalledWith(10);
+  });
+
+  it('listRecentWhatsAppEvents usa limite padrão de 50', async () => {
+    await listRecentWhatsAppEvents();
+    expect(db.calls.limit).toHaveBeenCalledWith(50);
   });
 
   it('getWhatsAppWebhookUrl returns a URL string', () => {
@@ -109,6 +166,7 @@ describe('whatsappWebhookService — exports', () => {
     expect(url).toContain('/functions/v1/whatsapp-webhook');
   });
 });
+
 
 // ════════════════════════════════════════════════════════════════
 // Tests for the Edge Function helper LOGIC (provider detection,
