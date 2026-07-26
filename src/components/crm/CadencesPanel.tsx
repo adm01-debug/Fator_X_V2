@@ -107,7 +107,7 @@ export function CadencesPanel() {
       refetchAll();
       toast({
         title: dryRun ? 'Simulação concluída' : 'Cadências executadas',
-        description: `Selecionados: ${summary.claimed} · enviados: ${summary.sent} · concluídos: ${summary.completed} · interrompidos: ${summary.stopped} · falhas: ${summary.failed}`,
+        description: `Selecionados: ${summary.claimed} · enviados: ${summary.sent} · concluídos: ${summary.completed} · interrompidos: ${summary.stopped} · falhas: ${summary.failed} · adiados por teto diário: ${summary.capped}`,
       });
     },
     onError: notifyError('Falha ao executar cadências'),

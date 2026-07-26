@@ -104,8 +104,10 @@ export {
 export {
   deliverWebhook,
   deliverWebhookWithLogging,
-  hmacSha256Hex,
 } from "./webhookSender.ts";
+// hmacSha256Hex vive em webhookSignature.ts; o barril apontava para o módulo
+// errado e derrubava o boot de qualquer função que importasse "mod.ts".
+export { hmacSha256Hex } from "./webhookSignature.ts";
 export type {
   WebhookPayload,
   WebhookDeliveryResult,

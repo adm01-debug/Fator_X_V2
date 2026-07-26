@@ -137,3 +137,26 @@ export function createRateLimitResponse(
     }
   );
 }
+
+/**
+ * Envelopa um handler aplicando rate limit antes de executá-lo.
+ *
+ * Existe porque o barril `mod.ts` já anunciava este símbolo: a falta dele
+ * derrubava o boot de TODA Edge Function que importa o barril, não só de quem
+ * usava rate limit. Preferi implementar o contrato prometido a apagá-lo — o
+ * padrão "limite antes do trabalho" é o correto para funções caras.
+ */
+export function withRateLimit(
+  handler: (req: Request) => Promise<Response> | Response,
+  options: { preset: keyof typeof RATE_LIMITS } | { config: RateLimitConfig } = { preset: 'standard' },
+  corsHeaders: Record<string, string> = {},
+): (req: Request) => Promise<Response> {
+  return async (req: Request): Promise<Response> => {
+    // Preflight não consome cota: navegador não escolhe emitir OPTIONS.
+    if (req.method === 'OPTIONS') return await handler(req);
+
+    const result = checkRateLimitFromRequest(req, options);
+    if (!result.allowed) return createRateLimitResponse(result, corsHeaders);
+    return await handler(req);
+  };
+}
