@@ -115,7 +115,8 @@ describe('memoryService — fronteira entre client local e banco externo', () =>
     // offset..offset+limit-1 — um off-by-one aqui duplica ou perde linhas na paginação.
     expect(external.calls.range).toHaveBeenCalledWith(20, 29);
     // A leitura NÃO pode vazar para o client local.
-    expect(local.calls.from).toBeUndefined();
+    expect(local.calls.from?.mock.calls ?? []).toHaveLength(0);
+
   });
 
   it('listMemories devolve total 0 quando o count vem nulo', async () => {
