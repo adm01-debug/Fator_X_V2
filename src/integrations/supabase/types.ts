@@ -504,6 +504,7 @@ export type Database = {
           embed_last_attempt_at: string | null
           embed_last_error: string | null
           embedding: string | null
+          embedding_model: string | null
           half_life_days: number
           id: string
           importance_score: number | null
@@ -525,6 +526,7 @@ export type Database = {
           embed_last_attempt_at?: string | null
           embed_last_error?: string | null
           embedding?: string | null
+          embedding_model?: string | null
           half_life_days?: number
           id?: string
           importance_score?: number | null
@@ -546,6 +548,7 @@ export type Database = {
           embed_last_attempt_at?: string | null
           embed_last_error?: string | null
           embedding?: string | null
+          embedding_model?: string | null
           half_life_days?: number
           id?: string
           importance_score?: number | null
@@ -3533,6 +3536,9 @@ export type Database = {
           content: string
           created_at: string | null
           document_id: string | null
+          embedded_at: string | null
+          embedding: string | null
+          embedding_model: string | null
           embedding_status: string | null
           id: string
           is_active: boolean
@@ -3547,6 +3553,9 @@ export type Database = {
           content: string
           created_at?: string | null
           document_id?: string | null
+          embedded_at?: string | null
+          embedding?: string | null
+          embedding_model?: string | null
           embedding_status?: string | null
           id?: string
           is_active?: boolean
@@ -3561,6 +3570,9 @@ export type Database = {
           content?: string
           created_at?: string | null
           document_id?: string | null
+          embedded_at?: string | null
+          embedding?: string | null
+          embedding_model?: string | null
           embedding_status?: string | null
           id?: string
           is_active?: boolean
@@ -9542,7 +9554,7 @@ export type Database = {
           name: string
           parent_span_id: string | null
           span_id: string
-          start_time: string
+          start_time: string | null
           status: string | null
           status_message: string | null
           trace_id: string
@@ -9558,7 +9570,7 @@ export type Database = {
           name: string
           parent_span_id?: string | null
           span_id: string
-          start_time: string
+          start_time?: string | null
           status?: string | null
           status_message?: string | null
           trace_id: string
@@ -9574,7 +9586,823 @@ export type Database = {
           name?: string
           parent_span_id?: string | null
           span_id?: string
-          start_time?: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id?: string
+        }
+        Relationships: []
+      }
+      spans_2026_04: {
+        Row: {
+          attributes: Json
+          created_at: string
+          duration_ms: number | null
+          end_time: string | null
+          events: Json
+          id: string
+          kind: string | null
+          name: string
+          parent_span_id: string | null
+          span_id: string
+          start_time: string | null
+          status: string | null
+          status_message: string | null
+          trace_id: string
+        }
+        Insert: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name: string
+          parent_span_id?: string | null
+          span_id: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id: string
+        }
+        Update: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name?: string
+          parent_span_id?: string | null
+          span_id?: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id?: string
+        }
+        Relationships: []
+      }
+      spans_2026_05: {
+        Row: {
+          attributes: Json
+          created_at: string
+          duration_ms: number | null
+          end_time: string | null
+          events: Json
+          id: string
+          kind: string | null
+          name: string
+          parent_span_id: string | null
+          span_id: string
+          start_time: string | null
+          status: string | null
+          status_message: string | null
+          trace_id: string
+        }
+        Insert: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name: string
+          parent_span_id?: string | null
+          span_id: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id: string
+        }
+        Update: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name?: string
+          parent_span_id?: string | null
+          span_id?: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id?: string
+        }
+        Relationships: []
+      }
+      spans_2026_06: {
+        Row: {
+          attributes: Json
+          created_at: string
+          duration_ms: number | null
+          end_time: string | null
+          events: Json
+          id: string
+          kind: string | null
+          name: string
+          parent_span_id: string | null
+          span_id: string
+          start_time: string | null
+          status: string | null
+          status_message: string | null
+          trace_id: string
+        }
+        Insert: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name: string
+          parent_span_id?: string | null
+          span_id: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id: string
+        }
+        Update: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name?: string
+          parent_span_id?: string | null
+          span_id?: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id?: string
+        }
+        Relationships: []
+      }
+      spans_2026_07: {
+        Row: {
+          attributes: Json
+          created_at: string
+          duration_ms: number | null
+          end_time: string | null
+          events: Json
+          id: string
+          kind: string | null
+          name: string
+          parent_span_id: string | null
+          span_id: string
+          start_time: string | null
+          status: string | null
+          status_message: string | null
+          trace_id: string
+        }
+        Insert: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name: string
+          parent_span_id?: string | null
+          span_id: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id: string
+        }
+        Update: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name?: string
+          parent_span_id?: string | null
+          span_id?: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id?: string
+        }
+        Relationships: []
+      }
+      spans_2026_08: {
+        Row: {
+          attributes: Json
+          created_at: string
+          duration_ms: number | null
+          end_time: string | null
+          events: Json
+          id: string
+          kind: string | null
+          name: string
+          parent_span_id: string | null
+          span_id: string
+          start_time: string | null
+          status: string | null
+          status_message: string | null
+          trace_id: string
+        }
+        Insert: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name: string
+          parent_span_id?: string | null
+          span_id: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id: string
+        }
+        Update: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name?: string
+          parent_span_id?: string | null
+          span_id?: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id?: string
+        }
+        Relationships: []
+      }
+      spans_2026_09: {
+        Row: {
+          attributes: Json
+          created_at: string
+          duration_ms: number | null
+          end_time: string | null
+          events: Json
+          id: string
+          kind: string | null
+          name: string
+          parent_span_id: string | null
+          span_id: string
+          start_time: string | null
+          status: string | null
+          status_message: string | null
+          trace_id: string
+        }
+        Insert: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name: string
+          parent_span_id?: string | null
+          span_id: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id: string
+        }
+        Update: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name?: string
+          parent_span_id?: string | null
+          span_id?: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id?: string
+        }
+        Relationships: []
+      }
+      spans_2026_10: {
+        Row: {
+          attributes: Json
+          created_at: string
+          duration_ms: number | null
+          end_time: string | null
+          events: Json
+          id: string
+          kind: string | null
+          name: string
+          parent_span_id: string | null
+          span_id: string
+          start_time: string | null
+          status: string | null
+          status_message: string | null
+          trace_id: string
+        }
+        Insert: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name: string
+          parent_span_id?: string | null
+          span_id: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id: string
+        }
+        Update: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name?: string
+          parent_span_id?: string | null
+          span_id?: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id?: string
+        }
+        Relationships: []
+      }
+      spans_2026_11: {
+        Row: {
+          attributes: Json
+          created_at: string
+          duration_ms: number | null
+          end_time: string | null
+          events: Json
+          id: string
+          kind: string | null
+          name: string
+          parent_span_id: string | null
+          span_id: string
+          start_time: string | null
+          status: string | null
+          status_message: string | null
+          trace_id: string
+        }
+        Insert: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name: string
+          parent_span_id?: string | null
+          span_id: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id: string
+        }
+        Update: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name?: string
+          parent_span_id?: string | null
+          span_id?: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id?: string
+        }
+        Relationships: []
+      }
+      spans_2026_12: {
+        Row: {
+          attributes: Json
+          created_at: string
+          duration_ms: number | null
+          end_time: string | null
+          events: Json
+          id: string
+          kind: string | null
+          name: string
+          parent_span_id: string | null
+          span_id: string
+          start_time: string | null
+          status: string | null
+          status_message: string | null
+          trace_id: string
+        }
+        Insert: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name: string
+          parent_span_id?: string | null
+          span_id: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id: string
+        }
+        Update: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name?: string
+          parent_span_id?: string | null
+          span_id?: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id?: string
+        }
+        Relationships: []
+      }
+      spans_2027_01: {
+        Row: {
+          attributes: Json
+          created_at: string
+          duration_ms: number | null
+          end_time: string | null
+          events: Json
+          id: string
+          kind: string | null
+          name: string
+          parent_span_id: string | null
+          span_id: string
+          start_time: string | null
+          status: string | null
+          status_message: string | null
+          trace_id: string
+        }
+        Insert: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name: string
+          parent_span_id?: string | null
+          span_id: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id: string
+        }
+        Update: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name?: string
+          parent_span_id?: string | null
+          span_id?: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id?: string
+        }
+        Relationships: []
+      }
+      spans_2027_02: {
+        Row: {
+          attributes: Json
+          created_at: string
+          duration_ms: number | null
+          end_time: string | null
+          events: Json
+          id: string
+          kind: string | null
+          name: string
+          parent_span_id: string | null
+          span_id: string
+          start_time: string | null
+          status: string | null
+          status_message: string | null
+          trace_id: string
+        }
+        Insert: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name: string
+          parent_span_id?: string | null
+          span_id: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id: string
+        }
+        Update: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name?: string
+          parent_span_id?: string | null
+          span_id?: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id?: string
+        }
+        Relationships: []
+      }
+      spans_2027_03: {
+        Row: {
+          attributes: Json
+          created_at: string
+          duration_ms: number | null
+          end_time: string | null
+          events: Json
+          id: string
+          kind: string | null
+          name: string
+          parent_span_id: string | null
+          span_id: string
+          start_time: string | null
+          status: string | null
+          status_message: string | null
+          trace_id: string
+        }
+        Insert: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name: string
+          parent_span_id?: string | null
+          span_id: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id: string
+        }
+        Update: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name?: string
+          parent_span_id?: string | null
+          span_id?: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id?: string
+        }
+        Relationships: []
+      }
+      spans_2027_04: {
+        Row: {
+          attributes: Json
+          created_at: string
+          duration_ms: number | null
+          end_time: string | null
+          events: Json
+          id: string
+          kind: string | null
+          name: string
+          parent_span_id: string | null
+          span_id: string
+          start_time: string | null
+          status: string | null
+          status_message: string | null
+          trace_id: string
+        }
+        Insert: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name: string
+          parent_span_id?: string | null
+          span_id: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id: string
+        }
+        Update: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name?: string
+          parent_span_id?: string | null
+          span_id?: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id?: string
+        }
+        Relationships: []
+      }
+      spans_2027_05: {
+        Row: {
+          attributes: Json
+          created_at: string
+          duration_ms: number | null
+          end_time: string | null
+          events: Json
+          id: string
+          kind: string | null
+          name: string
+          parent_span_id: string | null
+          span_id: string
+          start_time: string | null
+          status: string | null
+          status_message: string | null
+          trace_id: string
+        }
+        Insert: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name: string
+          parent_span_id?: string | null
+          span_id: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id: string
+        }
+        Update: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name?: string
+          parent_span_id?: string | null
+          span_id?: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id?: string
+        }
+        Relationships: []
+      }
+      spans_2027_06: {
+        Row: {
+          attributes: Json
+          created_at: string
+          duration_ms: number | null
+          end_time: string | null
+          events: Json
+          id: string
+          kind: string | null
+          name: string
+          parent_span_id: string | null
+          span_id: string
+          start_time: string | null
+          status: string | null
+          status_message: string | null
+          trace_id: string
+        }
+        Insert: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name: string
+          parent_span_id?: string | null
+          span_id: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id: string
+        }
+        Update: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name?: string
+          parent_span_id?: string | null
+          span_id?: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id?: string
+        }
+        Relationships: []
+      }
+      spans_2027_07: {
+        Row: {
+          attributes: Json
+          created_at: string
+          duration_ms: number | null
+          end_time: string | null
+          events: Json
+          id: string
+          kind: string | null
+          name: string
+          parent_span_id: string | null
+          span_id: string
+          start_time: string | null
+          status: string | null
+          status_message: string | null
+          trace_id: string
+        }
+        Insert: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name: string
+          parent_span_id?: string | null
+          span_id: string
+          start_time?: string | null
+          status?: string | null
+          status_message?: string | null
+          trace_id: string
+        }
+        Update: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name?: string
+          parent_span_id?: string | null
+          span_id?: string
+          start_time?: string | null
           status?: string | null
           status_message?: string | null
           trace_id?: string
@@ -10500,11 +11328,11 @@ export type Database = {
           created_at: string
           end_time: string | null
           id: string
-          root_name: string
+          root_name: string | null
           session_id: string | null
           source: string | null
           span_count: number
-          start_time: string
+          start_time: string | null
           status: string
           trace_id: string
           user_id: string | null
@@ -10515,11 +11343,11 @@ export type Database = {
           created_at?: string
           end_time?: string | null
           id?: string
-          root_name: string
+          root_name?: string | null
           session_id?: string | null
           source?: string | null
           span_count?: number
-          start_time: string
+          start_time?: string | null
           status?: string
           trace_id: string
           user_id?: string | null
@@ -10530,11 +11358,779 @@ export type Database = {
           created_at?: string
           end_time?: string | null
           id?: string
-          root_name?: string
+          root_name?: string | null
           session_id?: string | null
           source?: string | null
           span_count?: number
-          start_time?: string
+          start_time?: string | null
+          status?: string
+          trace_id?: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Relationships: []
+      }
+      traces_2026_04: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          end_time: string | null
+          id: string
+          root_name: string | null
+          session_id: string | null
+          source: string | null
+          span_count: number
+          start_time: string | null
+          status: string
+          trace_id: string
+          user_id: string | null
+          workflow_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id?: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Relationships: []
+      }
+      traces_2026_05: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          end_time: string | null
+          id: string
+          root_name: string | null
+          session_id: string | null
+          source: string | null
+          span_count: number
+          start_time: string | null
+          status: string
+          trace_id: string
+          user_id: string | null
+          workflow_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id?: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Relationships: []
+      }
+      traces_2026_06: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          end_time: string | null
+          id: string
+          root_name: string | null
+          session_id: string | null
+          source: string | null
+          span_count: number
+          start_time: string | null
+          status: string
+          trace_id: string
+          user_id: string | null
+          workflow_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id?: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Relationships: []
+      }
+      traces_2026_07: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          end_time: string | null
+          id: string
+          root_name: string | null
+          session_id: string | null
+          source: string | null
+          span_count: number
+          start_time: string | null
+          status: string
+          trace_id: string
+          user_id: string | null
+          workflow_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id?: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Relationships: []
+      }
+      traces_2026_08: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          end_time: string | null
+          id: string
+          root_name: string | null
+          session_id: string | null
+          source: string | null
+          span_count: number
+          start_time: string | null
+          status: string
+          trace_id: string
+          user_id: string | null
+          workflow_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id?: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Relationships: []
+      }
+      traces_2026_09: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          end_time: string | null
+          id: string
+          root_name: string | null
+          session_id: string | null
+          source: string | null
+          span_count: number
+          start_time: string | null
+          status: string
+          trace_id: string
+          user_id: string | null
+          workflow_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id?: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Relationships: []
+      }
+      traces_2026_10: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          end_time: string | null
+          id: string
+          root_name: string | null
+          session_id: string | null
+          source: string | null
+          span_count: number
+          start_time: string | null
+          status: string
+          trace_id: string
+          user_id: string | null
+          workflow_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id?: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Relationships: []
+      }
+      traces_2026_11: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          end_time: string | null
+          id: string
+          root_name: string | null
+          session_id: string | null
+          source: string | null
+          span_count: number
+          start_time: string | null
+          status: string
+          trace_id: string
+          user_id: string | null
+          workflow_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id?: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Relationships: []
+      }
+      traces_2026_12: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          end_time: string | null
+          id: string
+          root_name: string | null
+          session_id: string | null
+          source: string | null
+          span_count: number
+          start_time: string | null
+          status: string
+          trace_id: string
+          user_id: string | null
+          workflow_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id?: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Relationships: []
+      }
+      traces_2027_01: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          end_time: string | null
+          id: string
+          root_name: string | null
+          session_id: string | null
+          source: string | null
+          span_count: number
+          start_time: string | null
+          status: string
+          trace_id: string
+          user_id: string | null
+          workflow_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id?: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Relationships: []
+      }
+      traces_2027_02: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          end_time: string | null
+          id: string
+          root_name: string | null
+          session_id: string | null
+          source: string | null
+          span_count: number
+          start_time: string | null
+          status: string
+          trace_id: string
+          user_id: string | null
+          workflow_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id?: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Relationships: []
+      }
+      traces_2027_03: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          end_time: string | null
+          id: string
+          root_name: string | null
+          session_id: string | null
+          source: string | null
+          span_count: number
+          start_time: string | null
+          status: string
+          trace_id: string
+          user_id: string | null
+          workflow_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id?: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Relationships: []
+      }
+      traces_2027_04: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          end_time: string | null
+          id: string
+          root_name: string | null
+          session_id: string | null
+          source: string | null
+          span_count: number
+          start_time: string | null
+          status: string
+          trace_id: string
+          user_id: string | null
+          workflow_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id?: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Relationships: []
+      }
+      traces_2027_05: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          end_time: string | null
+          id: string
+          root_name: string | null
+          session_id: string | null
+          source: string | null
+          span_count: number
+          start_time: string | null
+          status: string
+          trace_id: string
+          user_id: string | null
+          workflow_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id?: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Relationships: []
+      }
+      traces_2027_06: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          end_time: string | null
+          id: string
+          root_name: string | null
+          session_id: string | null
+          source: string | null
+          span_count: number
+          start_time: string | null
+          status: string
+          trace_id: string
+          user_id: string | null
+          workflow_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id?: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Relationships: []
+      }
+      traces_2027_07: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          end_time: string | null
+          id: string
+          root_name: string | null
+          session_id: string | null
+          source: string | null
+          span_count: number
+          start_time: string | null
+          status: string
+          trace_id: string
+          user_id: string | null
+          workflow_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
+          status?: string
+          trace_id: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string | null
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string | null
           status?: string
           trace_id?: string
           user_id?: string | null
@@ -12401,6 +13997,16 @@ export type Database = {
       get_asset_summary: { Args: { p_workspace_id: string }; Returns: Json }
       get_bcp_summary: { Args: { p_workspace_id: string }; Returns: Json }
       get_change_summary: { Args: { p_workspace_id: string }; Returns: Json }
+      get_chunk_embedding_coverage: {
+        Args: { _workspace_id: string }
+        Returns: {
+          coverage_pct: number
+          distinct_models: number
+          embedded_chunks: number
+          pending_chunks: number
+          total_chunks: number
+        }[]
+      }
       get_creator_earnings: { Args: { p_creator_id?: string }; Returns: Json }
       get_cron_job_health: {
         Args: never
@@ -12701,6 +14307,21 @@ export type Database = {
         Returns: undefined
       }
       mask_email: { Args: { p_email: string }; Returns: string }
+      match_documents: {
+        Args: {
+          match_count?: number
+          match_threshold?: number
+          p_embedding_model?: string
+          p_knowledge_base_id?: string
+          query_embedding: string
+        }
+        Returns: {
+          content: string
+          document_id: string
+          id: string
+          similarity: number
+        }[]
+      }
       memory_relevance: { Args: { p_id: string }; Returns: number }
       offboard_vendor: {
         Args: { p_notes?: string; p_vendor_id: string }

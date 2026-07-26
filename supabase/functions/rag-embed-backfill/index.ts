@@ -13,7 +13,12 @@ interface MemoryRow {
   content: string;
 }
 
-async function embedBatch(texts: string[], authHeader: string, projectRef: string): Promise<number[][]> {
+interface EmbedBatchResult {
+  vectors: number[][];
+  model: string;
+}
+
+async function embedBatch(texts: string[], authHeader: string, projectRef: string): Promise<EmbedBatchResult> {
   const url = `https://${projectRef}.supabase.co/functions/v1/rag-embed-v2`;
   const res = await fetch(url, {
     method: "POST",
@@ -21,16 +26,28 @@ async function embedBatch(texts: string[], authHeader: string, projectRef: strin
       "Content-Type": "application/json",
       Authorization: authHeader,
     },
-    body: JSON.stringify({ texts, dimensions: EMBED_DIM }),
+    // O campo é `dimension` (singular). Antes enviávamos `dimensions`, que o
+    // schema Zod do embedder simplesmente ignorava: caía no default de 1024 e
+    // toda linha era rejeitada por dimensão inválida, indo para o dead-letter.
+    body: JSON.stringify({ texts, dimension: EMBED_DIM }),
     signal: AbortSignal.timeout(15000),
   });
   if (!res.ok) throw new Error(`embed batch failed: ${res.status}`);
   const data = await res.json();
+
+  // Vetor de hash é determinístico mas semanticamente vazio. Persistir isso é
+  // pior que deixar NULL: a busca passaria a devolver resultados errados com
+  // aparência de confiança, e não haveria como distinguir depois. Falhar aqui
+  // deixa a linha pendente para quando houver provedor real configurado.
+  if (data?.degraded === true) {
+    throw new Error("embedder em modo degradado (hash); nenhum provedor real disponível");
+  }
+
   const vectors: number[][] = data.embeddings ?? data.data ?? [];
   if (!Array.isArray(vectors) || vectors.length !== texts.length) {
     throw new Error("embedder returned mismatched vector count");
   }
-  return vectors;
+  return { vectors, model: String(data.model ?? data.provider_used ?? "unknown") };
 }
 
 Deno.serve(async (req) => {
@@ -96,7 +113,7 @@ Deno.serve(async (req) => {
     for (let i = 0; i < pending.length; i += BATCH_SIZE) {
       const batch = pending.slice(i, i + BATCH_SIZE) as MemoryRow[];
       try {
-        const vectors = await embedBatch(
+        const { vectors, model } = await embedBatch(
           batch.map((r) => r.content.slice(0, 8000)),
           authHeader,
           projectRef,
@@ -112,6 +129,9 @@ Deno.serve(async (req) => {
             .from("agent_memories_v2")
             .update({
               embedding: vectors[j] as unknown as string,
+              // Proveniência do modelo grava junto do vetor: sem isso não há
+              // como saber quais linhas invalidar ao trocar de embedder.
+              embedding_model: model,
               embed_last_error: null,
             })
             .eq("id", batch[j].id);
