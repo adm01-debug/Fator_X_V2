@@ -2,7 +2,7 @@ import { fetchWithTimeout } from "../_shared/retry.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { z } from "https://esm.sh/zod@3.23.8";
-import { _getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse, checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
+import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse, checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 
 const JUDGE_RUBRIC = `You are an expert AI evaluator. Score the following AI response on these criteria (0-5 each):
 
@@ -36,7 +36,7 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
 
   const rateCheck = checkRateLimit(getRateLimitIdentifier(req), RATE_LIMITS.heavy);
-  if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, _getCorsHeaders(req));
+  if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, getCorsHeaders(req));
 
   try {
     const authHeader = req.headers.get('Authorization')!;

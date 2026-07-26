@@ -4178,6 +4178,65 @@ export type Database = {
           },
         ]
       }
+      crm_cadence_runs: {
+        Row: {
+          capped: number
+          claimed: number
+          completed: number
+          created_at: string
+          dry_run: boolean
+          duration_ms: number
+          error_message: string | null
+          failed: number
+          id: string
+          sent: number
+          skipped: number
+          stopped: number
+          triggered_by: string
+          workspace_id: string | null
+        }
+        Insert: {
+          capped?: number
+          claimed?: number
+          completed?: number
+          created_at?: string
+          dry_run?: boolean
+          duration_ms?: number
+          error_message?: string | null
+          failed?: number
+          id?: string
+          sent?: number
+          skipped?: number
+          stopped?: number
+          triggered_by?: string
+          workspace_id?: string | null
+        }
+        Update: {
+          capped?: number
+          claimed?: number
+          completed?: number
+          created_at?: string
+          dry_run?: boolean
+          duration_ms?: number
+          error_message?: string | null
+          failed?: number
+          id?: string
+          sent?: number
+          skipped?: number
+          stopped?: number
+          triggered_by?: string
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_cadence_runs_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       crm_cadence_steps: {
         Row: {
           body: string

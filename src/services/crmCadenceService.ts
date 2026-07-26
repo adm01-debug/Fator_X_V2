@@ -333,3 +333,33 @@ export async function runCadences(options: { dryRun?: boolean; batchSize?: numbe
   const summary = (data as { summary?: RunnerSummary } | null)?.summary;
   return summary ?? { claimed: 0, sent: 0, completed: 0, stopped: 0, failed: 0, skipped: 0, capped: 0 };
 }
+
+/** Uma rodada do runner, gravada pela Edge Function (somente leitura no cliente). */
+export interface CrmCadenceRun extends RunnerSummary {
+  id: string;
+  workspace_id: string | null;
+  triggered_by: 'cron' | 'manual';
+  dry_run: boolean;
+  duration_ms: number;
+  error_message: string | null;
+  created_at: string;
+}
+
+/**
+ * Histórico de execuções do workspace. As rodadas globais do cron têm
+ * `workspace_id` nulo e são filtradas pela RLS para administradores, por isso
+ * não são pedidas aqui.
+ */
+export async function listCadenceRuns(limit = 50): Promise<CrmCadenceRun[]> {
+  const wsId = await getWorkspaceId();
+  const { data, error } = await fromTable('crm_cadence_runs')
+    .select('*')
+    .eq('workspace_id', wsId)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  if (error) {
+    logger.error('listCadenceRuns failed', { error: error.message });
+    throw error;
+  }
+  return (data ?? []) as unknown as CrmCadenceRun[];
+}

@@ -2,7 +2,7 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { fetchWithTimeout } from "../_shared/retry.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import { getCorsHeaders, _handleCorsPreflight, _jsonResponse, _errorResponse, checkRateLimit, _getRateLimitIdentifier, _createRateLimitResponse, _RATE_LIMITS } from "../_shared/mod.ts";
+import { getCorsHeaders, checkRateLimit } from "../_shared/mod.ts";
 import { z } from "https://esm.sh/zod@3.23.8";
 
 const CouncilBodySchema = z.object({
