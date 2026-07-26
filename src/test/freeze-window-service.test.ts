@@ -24,7 +24,7 @@ import {
   createFreezeWindow,
   updateFreezeWindow,
   deleteFreezeWindow,
-} from './freezeWindowService.ts';
+} from '@/services/freezeWindowService';
 
 describe('freezeWindowService', () => {
   beforeEach(() => {
