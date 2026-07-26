@@ -110,3 +110,52 @@ describe('scoreStatistical (ROUGE-L blend)', () => {
     }
   });
 });
+
+describe('evaluationsService — acesso a dados', () => {
+  beforeEach(() => {
+    ext.reset();
+    ext.setResult({ data: [], error: null, count: null });
+  });
+
+  it('listAgentsForSelect traz apenas id/name ordenados (payload mínimo p/ combo)', async () => {
+    ext.setTableResult('agents', { data: [{ id: 'a1', name: 'Alfa' }], error: null });
+    const agents = await listAgentsForSelect();
+
+    expect(agents).toEqual([{ id: 'a1', name: 'Alfa' }]);
+    expect(ext.calls.select).toHaveBeenCalledWith('id, name');
+    expect(ext.calls.order).toHaveBeenCalledWith('name');
+  });
+
+  it('listAgentsForSelect propaga erro em vez de devolver combo vazio', async () => {
+    ext.setTableResult('agents', { data: null, error: { message: 'rls' } });
+    await expect(listAgentsForSelect()).rejects.toMatchObject({ message: 'rls' });
+  });
+
+  it('updateDatasetCaseCount usa COUNT head:true e grava o total no dataset', async () => {
+    ext.setTableResult('test_cases', { data: null, error: null, count: 7 });
+    await updateDatasetCaseCount('ds-1');
+
+    expect(ext.calls.select).toHaveBeenCalledWith('id', { count: 'exact', head: true });
+    expect(ext.calls.eq).toHaveBeenCalledWith('dataset_id', 'ds-1');
+    expect(ext.calls.update).toHaveBeenCalledWith({ case_count: 7 });
+    expect(ext.calls.eq).toHaveBeenCalledWith('id', 'ds-1');
+  });
+
+  it('count nulo vira 0, nunca null/NaN (case_count é NOT NULL)', async () => {
+    ext.setTableResult('test_cases', { data: null, error: null, count: null });
+    await updateDatasetCaseCount('ds-2');
+    expect(ext.calls.update).toHaveBeenCalledWith({ case_count: 0 });
+  });
+
+  it('falha no COUNT aborta antes de gravar um total errado', async () => {
+    ext.setTableResult('test_cases', { data: null, error: { message: 'timeout' }, count: null });
+    await expect(updateDatasetCaseCount('ds-3')).rejects.toMatchObject({ message: 'timeout' });
+    expect(ext.calls.update).not.toHaveBeenCalled();
+  });
+
+  it('deleteTestCase remove exatamente o id informado', async () => {
+    await deleteTestCase('tc-1');
+    expect(ext.calls.delete).toHaveBeenCalled();
+    expect(ext.calls.eq).toHaveBeenCalledWith('id', 'tc-1');
+  });
+});
