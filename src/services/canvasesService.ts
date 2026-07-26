@@ -128,7 +128,7 @@ export function useUpdateCanvas() {
     }): Promise<NotebookCanvas> => {
       const { data, error } = await supabaseExternal
         .from("notebook_canvases")
-        .update(input.patch as unknown as Record<string, unknown>)
+        .update(input.patch as never)
         .eq("id", input.id)
         .select("*")
         .single();
