@@ -1,23 +1,37 @@
 /**
- * Pure-function tests for CLEAR scoring (deterministic + ROUGE-L statistical).
+ * evaluationsService — scoring CLEAR (funções puras) + acesso a dados.
+ *
+ * Antes só as funções puras eram cobertas; o `from: vi.fn()` devolvia
+ * `undefined`, deixando toda a camada de dados sem rede. O caso mais delicado
+ * é `updateDatasetCaseCount`, que faz um COUNT `head:true` e reescreve
+ * `case_count` — se o count vier `null` e virar `NaN`/`undefined`, o dataset
+ * passa a mentir sobre quantos casos tem e a avaliação roda incompleta.
  */
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { getSharedSupabaseMock } from './utils/supabaseMock';
 
-vi.mock('@/integrations/supabase/client', () => ({
-  supabase: {
-    from: vi.fn(),
-    auth: { getSession: vi.fn().mockResolvedValue({ data: { session: null } }) },
-    functions: { invoke: vi.fn() },
-  },
-}));
-vi.mock('@/integrations/supabase/externalClient', () => ({
-  supabaseExternal: { from: vi.fn() },
-}));
+vi.mock('@/integrations/supabase/client', async () => {
+  const m = await import('./utils/supabaseMock');
+  return { supabase: m.getSharedSupabaseMock('evaluations-local').client };
+});
+vi.mock('@/integrations/supabase/externalClient', async () => {
+  const m = await import('./utils/supabaseMock');
+  return { supabaseExternal: m.getSharedSupabaseMock('evaluations-external').client };
+});
 vi.mock('@/lib/logger', () => ({
   logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
 }));
 
-import { scoreDeterministic, scoreStatistical } from '@/services/evaluationsService';
+import {
+  scoreDeterministic,
+  scoreStatistical,
+  listAgentsForSelect,
+  updateDatasetCaseCount,
+  deleteTestCase,
+} from '@/services/evaluationsService';
+
+const ext = getSharedSupabaseMock('evaluations-external');
+
 
 describe('scoreDeterministic', () => {
   it('returns 0 for empty inputs', () => {
