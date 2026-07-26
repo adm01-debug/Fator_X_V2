@@ -98,16 +98,30 @@ export default function CrmPage() {
         title="Vendas"
         description="Funil comercial nativo do Nexus — negócios, contatos e empresas espelhados do Bitrix24 e prontos para automação com agentes."
         actions={
-          stages.length === 0 ? (
+          <div className="flex flex-wrap items-center gap-2">
             <Button
-              onClick={() => seedPipeline.mutate()}
-              disabled={seedPipeline.isPending}
+              variant="outline"
+              onClick={() => syncBitrix.mutate()}
+              disabled={syncBitrix.isPending}
               className="gap-2"
             >
-              <Layers className="h-4 w-4" aria-hidden="true" />
-              Criar funil padrão
+              <RefreshCw
+                className={cn('h-4 w-4', syncBitrix.isPending && 'animate-spin')}
+                aria-hidden="true"
+              />
+              {syncBitrix.isPending ? 'Sincronizando…' : 'Sincronizar Bitrix24'}
             </Button>
-          ) : undefined
+            {stages.length === 0 && (
+              <Button
+                onClick={() => seedPipeline.mutate()}
+                disabled={seedPipeline.isPending}
+                className="gap-2"
+              >
+                <Layers className="h-4 w-4" aria-hidden="true" />
+                Criar funil padrão
+              </Button>
+            )}
+          </div>
         }
       />
 
