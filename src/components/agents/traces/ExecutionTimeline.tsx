@@ -166,7 +166,6 @@ export function ExecutionTimeline({ execution, selectedStep, onSelectStep }: Pro
           ? 'ring-2 ring-primary/60 shadow-[0_0_0_4px_hsl(var(--primary)/0.08)]'
           : 'ring-1 ring-transparent',
       )}
-      aria-label="Linha do tempo navegável"
       aria-describedby="timeline-shortcuts-hint"
     >
       <ExecutionSummary

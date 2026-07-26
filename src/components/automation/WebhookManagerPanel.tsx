@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Webhook, Loader2, Send, Clipboard, PlayCircle, History, RotateCcw, CheckCircle2, XCircle } from 'lucide-react';
 import {
   listWebhooks,
+  getWebhookEvents,
   triggerWebhookViaEF,
   WEBHOOK_TEMPLATES,
   type WebhookEndpoint,
