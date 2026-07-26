@@ -15,7 +15,7 @@
  *   const PORT = requireEnv.number('PORT', 3000);
  */
 
-const MISSING_ENV_PREFIX = "[ENV-MISSING]";
+export const MISSING_ENV_PREFIX = "[ENV-MISSING]";
 
 function isDeno(): boolean {
   return typeof Deno !== "undefined";

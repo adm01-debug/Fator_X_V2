@@ -99,28 +99,108 @@ Deno.serve(async (req) => {
     const admin = createAdminClient();
 
     // Execução manual precisa de usuário autenticado E membro do workspace.
-    // Execução por cron chega sem usuário e opera sobre a fila global.
+    // Execução por cron chega sem usuário, então exige o segredo compartilhado:
+    // sem isso, um POST anônimo dispararia mensagens reais para toda a base.
     if (workspace_id) {
       const auth = await authenticateRequest(req);
       if (auth.error) return auth.error;
       const isMember = await validateWorkspaceMembership(admin, auth.user.id, workspace_id);
       if (!isMember) return errorResponse(req, "Sem acesso a este workspace", 403);
+    } else {
+      // Duas credenciais aceitas para a fila global, ambas server-to-server:
+      // o segredo dedicado de cron ou o próprio service_role (padrão já usado
+      // pelos jobs pg_cron do projeto). Sem uma delas, um POST anônimo
+      // dispararia mensagens reais para toda a base.
+      const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+      const bearer = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ?? "";
+      const byServiceRole = !!serviceKey && bearer === serviceKey;
+
+      // O token do pg_cron mora no banco (internal.cron_tokens) e é comparado
+      // lá dentro: assim o agendador consegue apresentá-lo — um secret de Edge
+      // Function seria ilegível para ele — sem que o valor circule por aqui.
+      let byCronToken = false;
+      const headerToken = req.headers.get("x-cron-secret");
+      if (!byServiceRole && headerToken) {
+        const { data: valid } = await admin.rpc("verify_cron_token", {
+          _name: "crm-cadence-runner",
+          _token: headerToken,
+        });
+        byCronToken = valid === true;
+      }
+
+      if (!byCronToken && !byServiceRole) {
+        return errorResponse(req, "Execução global requer credencial de serviço", 401);
+      }
     }
 
-    const { data: claimedData, error: claimError } = await admin.rpc(
-      "claim_due_cadence_enrollments",
-      { p_limit: batch_size, p_lease_minutes: 10 },
-    );
-    if (claimError) throw claimError;
+    let claimed: ClaimedEnrollment[];
+    if (dry_run) {
+      // Simulação NÃO reivindica: o claim empurra `next_run_at` em 10 min de
+      // lease, então prever o lote atrasaria os envios reais que ele previu.
+      let preview = admin
+        .from("crm_cadence_enrollments")
+        .select("id, workspace_id, cadence_id, deal_id, contact_id, current_step, attempts")
+        .eq("status", "active")
+        .lte("next_run_at", new Date().toISOString())
+        .order("next_run_at", { ascending: true })
+        .limit(batch_size);
+      if (workspace_id) preview = preview.eq("workspace_id", workspace_id);
+      const { data: previewData, error: previewError } = await preview;
+      if (previewError) throw previewError;
+      claimed = (previewData ?? []) as ClaimedEnrollment[];
+    } else {
+      const { data: claimedData, error: claimError } = await admin.rpc(
+        "claim_due_cadence_enrollments",
+        { p_limit: batch_size, p_lease_minutes: 10 },
+      );
+      if (claimError) throw claimError;
+      claimed = (claimedData ?? []) as ClaimedEnrollment[];
+      // O filtro por workspace acontece pós-claim de propósito: a reivindicação
+      // precisa ser um único statement atômico para não abrir janela de corrida.
+      // As inscrições de outros workspaces voltam à fila quando o lease expira.
+      if (workspace_id) claimed = claimed.filter((e) => e.workspace_id === workspace_id);
+    }
 
-    let claimed = (claimedData ?? []) as ClaimedEnrollment[];
-    // O filtro por workspace acontece pós-claim de propósito: a reivindicação
-    // precisa ser um único statement atômico para não abrir janela de corrida.
-    // As inscrições de outros workspaces voltam à fila quando o lease expira.
-    if (workspace_id) claimed = claimed.filter((e) => e.workspace_id === workspace_id);
-
-    const summary = { claimed: claimed.length, sent: 0, completed: 0, stopped: 0, failed: 0, skipped: 0 };
+    const summary = {
+      claimed: claimed.length,
+      sent: 0,
+      completed: 0,
+      stopped: 0,
+      failed: 0,
+      skipped: 0,
+      capped: 0,
+    };
     const details: Array<Record<string, unknown>> = [];
+
+    // Estado de teto diário por cadência, resolvido sob demanda e mantido em
+    // memória durante o lote — um SELECT por cadência, não por inscrição.
+    const startOfDay = new Date();
+    startOfDay.setUTCHours(0, 0, 0, 0);
+    const capState = new Map<string, { remaining: number; isActive: boolean }>();
+
+    async function getCapState(cadenceId: string) {
+      const cached = capState.get(cadenceId);
+      if (cached) return cached;
+      const [{ data: cadence }, { count }] = await Promise.all([
+        admin
+          .from("crm_cadences")
+          .select("is_active, daily_send_cap")
+          .eq("id", cadenceId)
+          .maybeSingle(),
+        admin
+          .from("crm_cadence_enrollments")
+          .select("id", { count: "exact", head: true })
+          .eq("cadence_id", cadenceId)
+          .gte("last_sent_at", startOfDay.toISOString()),
+      ]);
+      const row = cadence as { is_active?: boolean; daily_send_cap?: number } | null;
+      const state = {
+        isActive: row?.is_active ?? false,
+        remaining: Math.max(0, (row?.daily_send_cap ?? 100) - (count ?? 0)),
+      };
+      capState.set(cadenceId, state);
+      return state;
+    }
 
     for (const enrollment of claimed) {
       try {
@@ -152,6 +232,21 @@ Deno.serve(async (req) => {
           | { full_name: string; email: string | null; phone: string | null; opted_out: boolean }
           | null;
         const steps = (stepsRes.data ?? []) as StepRow[];
+
+        // Guarda 0 — cadência pausada ou teto diário atingido. Ambas devolvem a
+        // inscrição à fila (não param a sequência): a condição é temporária e
+        // parar aqui perderia follow-ups legítimos de amanhã.
+        const cap = await getCapState(enrollment.cadence_id);
+        if (!cap.isActive || cap.remaining <= 0) {
+          if (!dry_run) {
+            await admin
+              .from("crm_cadence_enrollments")
+              .update({ next_run_at: new Date(Date.now() + 6 * 3_600_000).toISOString() })
+              .eq("id", enrollment.id);
+          }
+          summary.capped++;
+          continue;
+        }
 
         // Guarda 1 — negócio fechado.
         if (!deal || deal.status !== "open") {
@@ -278,6 +373,7 @@ Deno.serve(async (req) => {
           summary.completed++;
         }
         summary.sent++;
+        cap.remaining--;
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
         console.error("crm-cadence-runner passo falhou", enrollment.id, message);

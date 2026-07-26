@@ -12252,6 +12252,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      verify_cron_token: {
+        Args: { _name: string; _token: string }
+        Returns: boolean
+      }
     }
     Enums: {
       agent_status:

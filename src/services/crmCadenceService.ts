@@ -316,6 +316,8 @@ export interface RunnerSummary {
   stopped: number;
   failed: number;
   skipped: number;
+  /** Inscrições adiadas por atingirem o teto diário de envios da cadência. */
+  capped: number;
 }
 
 /** Dispara o runner sob demanda. `dryRun` prevê o lote sem enviar nada. */
@@ -329,5 +331,5 @@ export async function runCadences(options: { dryRun?: boolean; batchSize?: numbe
     throw error;
   }
   const summary = (data as { summary?: RunnerSummary } | null)?.summary;
-  return summary ?? { claimed: 0, sent: 0, completed: 0, stopped: 0, failed: 0, skipped: 0 };
+  return summary ?? { claimed: 0, sent: 0, completed: 0, stopped: 0, failed: 0, skipped: 0, capped: 0 };
 }
