@@ -122,7 +122,9 @@ serve(async (req) => {
           body: JSON.stringify({
             texts: [query],
             provider: "qwen3-embedding-8b",
-            dimension: 1024,
+            // 1536 = dimensão canônica, igual à coluna chunks.embedding.
+            // Pedíamos 1024 antes, o que nunca poderia casar com o índice.
+            dimension: 1536,
             task: "retrieval.query",
           }),
         },
@@ -132,7 +134,12 @@ serve(async (req) => {
         const embedData = await embedResp.json();
         const queryEmbedding = embedData?.embeddings?.[0];
 
-        if (Array.isArray(queryEmbedding)) {
+        // Embedding de hash não tem significado semântico: buscar com ele
+        // devolveria vizinhos aleatórios apresentados como relevantes. É
+        // melhor cair no ILIKE, que ao menos é honesto sobre o que faz.
+        if (embedData?.degraded === true) {
+          console.warn("embedder degradado; usando fallback textual");
+        } else if (Array.isArray(queryEmbedding)) {
           const { data: matches, error: matchErr } = await supabase.rpc(
             "match_documents",
             {
@@ -140,6 +147,8 @@ serve(async (req) => {
               match_threshold: 0.4,
               match_count: topK,
               p_knowledge_base_id: knowledgeBaseId,
+              // Só compara contra trechos gerados pelo MESMO modelo.
+              p_embedding_model: embedData?.model ?? null,
             },
           );
 
