@@ -1,12 +1,28 @@
 /**
- * agentRoutingService tests (sprint #4 final)
- * Focuses on summarizeRoutes (pure function) + label helpers.
+ * agentRoutingService tests.
+ *
+ * A versão anterior cobria apenas `summarizeRoutes` e os labels — as funções
+ * que tocam o banco ficavam sem teste algum (`from: vi.fn()` devolvia
+ * `undefined`, então qualquer chamada real explodiria). Com o mock
+ * compartilhado passamos a cobrir também o caminho de dados, com destaque
+ * para `bulkToggleSource`, que é o botão de pânico de "desligar tudo de uma
+ * origem" e precisa devolver a contagem correta de linhas afetadas.
  */
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { getSharedSupabaseMock } from './utils/supabaseMock';
 
-vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: vi.fn() },
-}));
+vi.mock('@/lib/supabaseExtended', async () => {
+  const m = await import('./utils/supabaseMock');
+  const mock = m.getSharedSupabaseMock('agent-routing');
+  return {
+    fromTable: (t: string) => (mock.client.from as (x: string) => unknown)(t),
+    rpcCall: vi.fn().mockResolvedValue({ data: null, error: null }),
+  };
+});
+vi.mock('@/integrations/supabase/client', async () => {
+  const m = await import('./utils/supabaseMock');
+  return { supabase: m.getSharedSupabaseMock('agent-routing').client };
+});
 vi.mock('@/lib/agentService', () => ({
   getWorkspaceId: vi.fn().mockResolvedValue('ws-1'),
 }));
@@ -18,8 +34,16 @@ import {
   summarizeRoutes,
   getSourceLabel,
   SOURCE_LABELS,
+  listAllRoutes,
+  listRoutesBySource,
+  bulkToggleSource,
+  toggleRoute,
+  deleteRoute,
   type AgentRoutingRow,
 } from '@/services/agentRoutingService';
+
+const db = getSharedSupabaseMock('agent-routing');
+
 
 const buildRow = (overrides: Partial<AgentRoutingRow>): AgentRoutingRow => ({
   id: 'r-1',
