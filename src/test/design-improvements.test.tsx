@@ -475,10 +475,19 @@ describe("Round 2: UX & Interaction", () => {
   });
 
   describe("#21 Onboarding Tour v2", () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       localStorage.clear();
+      const { useUIStore } = await import("@/stores/uiStore");
+      useUIStore.getState().setOnboardingComplete(false);
       vi.useRealTimers();
     });
+
+    afterEach(() => {
+      // Um teste que falha antes do `vi.useRealTimers()` final deixaria os timers
+      // falsos ativos, travando todo `waitFor` das suítes seguintes.
+      vi.useRealTimers();
+    });
+
 
     it("shows the tour after a delay for first-time users", async () => {
       vi.useFakeTimers();
@@ -495,7 +504,8 @@ describe("Round 2: UX & Interaction", () => {
     });
 
     it("does NOT show the tour if already dismissed", async () => {
-      localStorage.setItem("nexus-onboarding-v2", "true");
+      const { useUIStore } = await import("@/stores/uiStore");
+      useUIStore.getState().setOnboardingComplete(true);
       vi.useFakeTimers();
       const { OnboardingTour } = await import("@/components/shared/OnboardingTour");
       const { container } = render(
@@ -556,6 +566,8 @@ describe("Round 2: UX & Interaction", () => {
     });
 
     it("dismisses on close button and persists", async () => {
+      const { useUIStore } = await import("@/stores/uiStore");
+      useUIStore.getState().setOnboardingComplete(false);
       vi.useFakeTimers();
       const { OnboardingTour } = await import("@/components/shared/OnboardingTour");
       render(
@@ -566,7 +578,7 @@ describe("Round 2: UX & Interaction", () => {
       await act(async () => { vi.advanceTimersByTime(1500); });
       await act(async () => { fireEvent.click(screen.getByLabelText("Fechar tour")); });
       expect(screen.queryByRole("dialog")).toBeNull();
-      expect(localStorage.getItem("nexus-onboarding-v2")).toBe("true");
+      expect(useUIStore.getState().onboardingComplete).toBe(true);
       vi.useRealTimers();
     });
 
