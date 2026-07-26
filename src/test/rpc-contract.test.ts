@@ -114,6 +114,21 @@ describe('contrato de RPC entre código e banco', () => {
     expect(offenders, offenders.join('\n')).toEqual([]);
   });
 
+  it('todo .from() referencia uma tabela ou view existente no schema', () => {
+    const known = declaredRelations();
+    expect(known.size).toBeGreaterThan(100);
+
+    const offenders: string[] = [];
+    for (const file of files) {
+      for (const name of extractTableNames(readFileSync(file, 'utf8'))) {
+        if (known.has(name) || name in KNOWN_ABSENT) continue;
+        offenders.push(`${file}: .from('${name}') não existe no schema`);
+      }
+    }
+
+    expect(offenders, offenders.join('\n')).toEqual([]);
+  });
+
   it('não acumula exceções sem justificativa', () => {
     for (const [name, reason] of Object.entries(KNOWN_ABSENT)) {
       expect(reason.length, `exceção '${name}' precisa de justificativa`).toBeGreaterThan(20);
