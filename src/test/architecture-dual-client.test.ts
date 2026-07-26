@@ -64,7 +64,11 @@ describe('arquitetura dual-client', () => {
     // A fronteira corta nos dois sentidos: mover auth para o banco externo
     // seria tão errado quanto o bug original.
     const src = readFileSync(resolve(__dirname, '../lib/supabaseExtended.ts'), 'utf-8');
-    const fn = src.slice(src.indexOf('export const isUserLockedOut'));
+    const start = src.indexOf('export const isUserLockedOut');
+    expect(start).toBeGreaterThan(-1);
+    // Recorta APENAS o corpo desta função — sem o `};` de fecho o slice
+    // vazaria para `rpcCall` e o assert perderia o sentido.
+    const fn = src.slice(start, src.indexOf('\n};', start));
     expect(fn).toContain('supabase.rpc(');
     expect(fn).not.toContain('looseClient.rpc(');
   });
