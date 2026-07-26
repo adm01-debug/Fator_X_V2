@@ -96,7 +96,7 @@ export function getNextCronRun(
 }
 
 /** Day-of-week (0=Sun) in the given timezone for a UTC instant. */
-function _getLocalDayOfWeek(utcMs: number, tz: string): number {
+export function _getLocalDayOfWeek(utcMs: number, tz: string): number {
   if (tz === 'America/Sao_Paulo') {
     const offset = getSaoPauloOffset(new Date(utcMs));
     return new Date(utcMs + offset).getUTCDay();
