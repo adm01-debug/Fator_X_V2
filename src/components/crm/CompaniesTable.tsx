@@ -18,6 +18,24 @@ interface CompaniesTableProps {
   onSelect?: (company: CrmCompany) => void;
 }
 
+/** Rótulos PT-BR para as camadas do enriquecimento cascata (crm-enrich). */
+const SOURCE_LABEL: Record<string, string> = {
+  email_domain: 'E-mail',
+  tld: 'TLD',
+  keyword: 'Palavra-chave',
+  llm: 'IA',
+};
+
+/**
+ * `enrichment_json` é JSONB livre e pode conter formatos antigos —
+ * nunca confie na forma, sempre valide antes de renderizar.
+ */
+function readSources(enrichment: Record<string, unknown> | null | undefined): string[] {
+  const raw = enrichment?.sources;
+  if (!Array.isArray(raw)) return [];
+  return Array.from(new Set(raw.filter((v): v is string => typeof v === 'string')));
+}
+
 const SIZE_LABEL: Record<CompanySizeBand, string> = {
   micro: 'Micro',
   small: 'Pequena',
@@ -56,6 +74,7 @@ export function CompaniesTable({ companies, isLoading, onSelect }: CompaniesTabl
             <TableHead>Domínio</TableHead>
             <TableHead>Setor</TableHead>
             <TableHead>Porte</TableHead>
+            <TableHead>Origem</TableHead>
             <TableHead className="text-right">Score ICP</TableHead>
           </TableRow>
         </TableHeader>
@@ -79,6 +98,23 @@ export function CompaniesTable({ companies, isLoading, onSelect }: CompaniesTabl
                 ) : (
                   <span className="text-muted-foreground">—</span>
                 )}
+              </TableCell>
+              <TableCell>
+                {(() => {
+                  const sources = readSources(company.enrichment_json);
+                  if (sources.length === 0) {
+                    return <span className="text-muted-foreground">—</span>;
+                  }
+                  return (
+                    <div className="flex flex-wrap gap-1">
+                      {sources.map((source) => (
+                        <Badge key={source} variant="outline" className="text-caption font-normal">
+                          {SOURCE_LABEL[source] ?? source}
+                        </Badge>
+                      ))}
+                    </div>
+                  );
+                })()}
               </TableCell>
               <TableCell className="text-right tabular-nums text-muted-foreground">
                 {company.icp_score === null ? '—' : company.icp_score.toFixed(0)}
