@@ -668,8 +668,8 @@ describe("Round 3: Visual & Token Polish", () => {
     });
   });
 
-  describe("#25 Empty State Cards", () => {
-    it("renders 3 feature cards when no agents exist", async () => {
+  describe("#25 Empty State", () => {
+    it("renders the shared empty state when no agents exist", async () => {
       const DashboardPage = (await import("@/pages/DashboardPage")).default;
       render(
         <Wrapper>
@@ -677,32 +677,28 @@ describe("Round 3: Visual & Token Polish", () => {
         </Wrapper>
       );
       await waitFor(() => {
-        expect(screen.getByText("Super Cérebro")).toBeInTheDocument();
-        expect(screen.getByText("Oráculo")).toBeInTheDocument();
-        expect(screen.getByText("Guardrails")).toBeInTheDocument();
+        expect(screen.getByText("Inicie sua Frota Neural")).toBeInTheDocument();
       });
+      expect(
+        screen.getByText(/Sua infraestrutura Nexus está pronta/)
+      ).toBeInTheDocument();
     });
 
-    it("each card has a distinct accent border class", async () => {
+    it("uses the dashed accent container for the empty state", async () => {
       const DashboardPage = (await import("@/pages/DashboardPage")).default;
-      render(
+      const { container } = render(
         <Wrapper>
           <DashboardPage />
         </Wrapper>
       );
       await waitFor(() => {
-        const cerebro = screen.getByLabelText(/Navegar para Super Cérebro/);
-        const oraculo = screen.getByLabelText(/Navegar para Oráculo/);
-        const guardrails = screen.getByLabelText(/Navegar para Guardrails/);
-        expect(cerebro.className).toContain("nexus-purple");
-        expect(oraculo.className).toContain("nexus-cyan");
-        expect(guardrails.className).toContain("nexus-emerald");
+        expect(container.querySelector(".border-dashed")).toBeTruthy();
       });
     });
   });
 
   describe("#26 CTA Deduplication", () => {
-    it("shows 'Criar seu primeiro agente' only in empty state", async () => {
+    it("shows the primary creation CTA exactly once in the empty state", async () => {
       const DashboardPage = (await import("@/pages/DashboardPage")).default;
       render(
         <Wrapper>
@@ -710,11 +706,12 @@ describe("Round 3: Visual & Token Polish", () => {
         </Wrapper>
       );
       await waitFor(() => {
-        expect(screen.getByText("Criar seu primeiro agente")).toBeInTheDocument();
-        expect(screen.queryByText("Criar agente")).not.toBeInTheDocument();
+        expect(screen.getByText("Criar Primeiro Agente")).toBeInTheDocument();
       });
+      expect(screen.getAllByText("Criar Primeiro Agente")).toHaveLength(1);
     });
   });
+
 
   describe("#27 Design Token Migration", () => {
     it("tailwind config includes all 13 nexus color tokens", () => {
@@ -792,7 +789,7 @@ describe("Round 3: Visual & Token Polish", () => {
   });
 
   describe("#31 Dashboard Quick Actions", () => {
-    it("renders feature cards in empty state", async () => {
+    it("keeps the 'Novo Agente' header action available", async () => {
       const DashboardPage = (await import("@/pages/DashboardPage")).default;
       render(
         <Wrapper>
@@ -800,7 +797,7 @@ describe("Round 3: Visual & Token Polish", () => {
         </Wrapper>
       );
       await waitFor(() => {
-        expect(screen.getByText("Super Cérebro")).toBeInTheDocument();
+        expect(screen.getByText("Novo Agente")).toBeInTheDocument();
       });
     });
   });
