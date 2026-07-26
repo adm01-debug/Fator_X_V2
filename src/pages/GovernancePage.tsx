@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useWorkspaceId } from "@/hooks/use-data";
 import {
   listIpWhitelist,
-  toggleIpWhitelist,
   listAllowedCountries,
   addAllowedCountry,
   deleteAllowedCountry,

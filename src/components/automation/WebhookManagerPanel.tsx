@@ -6,7 +6,6 @@ import { Webhook, Loader2, Send, Clipboard, PlayCircle, History, RotateCcw, Chec
 import {
   listWebhooks,
   triggerWebhookViaEF,
-  getWebhookEvents,
   WEBHOOK_TEMPLATES,
   type WebhookEndpoint,
   type WebhookEvent,

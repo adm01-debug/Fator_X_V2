@@ -2,7 +2,6 @@
  * Freeze Window Service Tests — Etapa 42/50
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { createFakeSupabaseClient } from './_test-utils.ts';
 
 const fakeInsert = vi.fn();
 const fakeUpdate = vi.fn();

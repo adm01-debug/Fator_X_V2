@@ -15,7 +15,6 @@ import { ConversationalBuilder } from './ConversationalBuilder';
 import { DraftVersionsDialog } from './DraftVersionsDialog';
 import { listDraftVersions } from '@/services/agentDraftVersionsService';
 import { cn } from '@/lib/utils';
-import { handleKeyboardClick } from "@/lib/a11y";
 
 const STATUS_LABELS: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
   draft: { label: 'Rascunho', variant: 'secondary' },

@@ -32,7 +32,6 @@ import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import type { DbRow } from '@/types/dbRow';
 import { handleKeyboardClick } from "@/lib/a11y";
 
 const pipeline = [

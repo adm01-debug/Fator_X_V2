@@ -19,8 +19,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { ArrowLeft, FolderOpen, FileText, Hash, Plus, Loader2, Trash2, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
-import type { DbRow } from '@/types/dbRow';
-import { handleKeyboardClick } from "@/lib/a11y";
 
 interface KnowledgeBaseDetailProps {
   kbId: string;

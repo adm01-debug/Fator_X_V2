@@ -10,7 +10,6 @@ import { ENTITY_MAPPINGS } from "@/config/datahub-entities";
 import { supabaseExternal } from "@/integrations/supabase/externalClient";
 import { logger } from "@/lib/logger";
 import { toast } from "sonner";
-import type { DbRow } from '@/types/dbRow';
 
 /* ── Helpers ─────────────────────────────────────────── */
 

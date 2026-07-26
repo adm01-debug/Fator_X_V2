@@ -13,8 +13,6 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 
 import { Database, Plus, Loader2, Trash2, FileText, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
-import type { DbRow } from '@/types/dbRow';
-import { handleKeyboardClick } from "@/lib/a11y";
 
 export function EvaluationDatasetsPanel() {
   const queryClient = useQueryClient();

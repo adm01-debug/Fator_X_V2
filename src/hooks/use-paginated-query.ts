@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import type { Database } from '@/integrations/supabase/types';
-import type { DbRow } from '@/types/dbRow';
 
 type TableName = keyof Database['public']['Tables'];
 

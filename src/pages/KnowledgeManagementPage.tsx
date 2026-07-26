@@ -21,7 +21,6 @@ import {
 import { listKnowledgeBases } from "@/services/knowledgeService";
 import { getCurrentUserWorkspace } from "@/services/workspaceContextService";
 import type { DbRow } from '@/types/dbRow';
-import { handleKeyboardClick } from "@/lib/a11y";
 
 export default function KnowledgeManagementPage() {
   const navigate = useNavigate();

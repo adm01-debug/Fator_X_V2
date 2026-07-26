@@ -30,10 +30,11 @@ export function AgentCard({
   onNavigate, onToggleFav, onClone, onAutoTag, onExport, onToggleSelect,
 }: AgentCardProps) {
   const config = (agent.config as Record<string, unknown>) ?? {};
-  const metrics = config.metrics || { calls: 0, accuracy: 0, latency: 0 };
+  const metrics = (config.metrics as { calls?: number; accuracy?: number; latency?: number } | undefined)
+    ?? { calls: 0, accuracy: 0, latency: 0 };
 
   return (
-    <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
+    <div
       className={cn(
         "nexus-card nexus-card-interactive cursor-pointer group relative overflow-hidden flex flex-col transition-all duration-300",
         "bg-gradient-to-br from-card to-card/95 border-border/40 hover:border-primary/30",

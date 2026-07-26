@@ -1,5 +1,4 @@
 import type { AgentConfig } from '@/types/agentTypes';
-import type { DbRow } from '@/types/dbRow';
 
 export interface ReadinessCheck {
   id: string;

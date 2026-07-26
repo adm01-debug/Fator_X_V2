@@ -10,7 +10,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { handleKeyboardClick } from "@/lib/a11y";
 
 export default function PromptsPage() {
   const navigate = useNavigate();
@@ -133,7 +132,7 @@ export default function PromptsPage() {
               {filteredPrompts.map((p) => {
                 const agent = agentMap.get(p.agent_id);
                 return (
-                  <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} 
+                  <div 
                     key={p.id} 
                     role="button" tabIndex={0} onClick={() => navigate(`/prompts/${p.agent_id}`)} onKeyDown={onActivateKey(() => navigate(`/prompts/${p.agent_id}`))}
                     className="nexus-card group cursor-pointer p-8 rounded-[2.5rem] flex flex-col justify-between min-h-[320px] bg-gradient-to-br from-card to-card/95 border-border/40 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 relative overflow-hidden"

@@ -14,7 +14,7 @@ interface AreaSeries {
 }
 
 interface Props {
-  data: Record<string, unknown>[];
+  data: readonly object[];
   xKey: string;
   series: AreaSeries[];
   height?: number;
@@ -46,7 +46,7 @@ export function LightAreaChart({
   showLegend = false, showGrid = true,
   onPointClick,
 }: Props) {
-  const data = rawData as ReadonlyArray<Record<string, string | number>>;
+  const data = rawData as unknown as ReadonlyArray<Record<string, string | number>>;
 
   const { ref, width, margin: m, inner } = useChartDimensions(margin);
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);

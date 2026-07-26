@@ -13,7 +13,7 @@ interface LineSeries {
 }
 
 interface Props {
-  data: Record<string, unknown>[];
+  data: readonly object[];
   xKey: string;
   series: LineSeries[];
   height?: number;
@@ -35,7 +35,7 @@ export function LightLineChart({
   data: rawData, xKey, series, height = 220, margin,
   yFormatter = String, tooltipFormatter, showGrid = true,
 }: Props) {
-  const data = rawData as ReadonlyArray<Record<string, unknown>>;
+  const data = rawData as unknown as ReadonlyArray<Record<string, unknown>>;
   const { ref, width, margin: m, inner } = useChartDimensions(margin);
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
 

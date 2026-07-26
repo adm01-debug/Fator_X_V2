@@ -332,7 +332,7 @@ export function DataHubExplorerTab() {
 
       {/* Detail modal */}
       {detailRow && (
-        <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
+        <div
           className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4"
           role="button" tabIndex={0} onClick={() => setDetailRow(null)} onKeyDown={onActivateKey(() => setDetailRow(null))}
         >

@@ -38,7 +38,7 @@ export function AgentCardGrid({
         const isFav = favorites.includes(agent.id);
         const isSelected = selectedIds.has(agent.id);
         return (
-          <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
+          <div
             key={agent.id}
             className={`nexus-card nexus-card-interactive cursor-pointer group relative overflow-hidden min-h-[180px] flex flex-col ${isSelected ? 'ring-2 ring-primary border-primary/40' : ''}`}
             role="button" tabIndex={0} onClick={() => selectionMode ? onToggleSelect({ stopPropagation: () => {} } as React.MouseEvent, agent.id) : onNavigate(`/builder/${agent.id}`)} onKeyDown={onActivateKey(() => selectionMode ? onToggleSelect({ stopPropagation: () => {} } as React.MouseEvent, agent.id) : onNavigate(`/builder/${agent.id}`))}

@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { X, SlidersHorizontal } from 'lucide-react';
-import type { DbRow } from '@/types/dbRow';
 
 export interface TraceFilters {
   dateFrom: string;

@@ -24,7 +24,6 @@ import { Badge } from "@/components/ui/badge";
 import { SkeletonLoader } from "@/components/shared/SkeletonLoader";
 import { SharedEmptyState } from "@/components/shared/SharedEmptyState";
 import { AccessControl } from "@/components/rbac";
-import { handleKeyboardClick } from "@/lib/a11y";
 
 
 

@@ -17,7 +17,6 @@ import { AlertRulesPanel } from "@/components/monitoring/AlertRulesPanel";
 import { WebVitalsPanel } from "@/components/monitoring/WebVitalsPanel";
 import { MiddlewarePipelinePanel } from "@/components/monitoring/MiddlewarePipelinePanel";
 import { RetryEnginePanel } from "@/components/monitoring/RetryEnginePanel";
-import { handleKeyboardClick } from "@/lib/a11y";
 
 const PIE_COLORS = ['hsl(var(--primary))', 'hsl(var(--nexus-emerald, 142 71% 45%))', 'hsl(var(--nexus-amber, 38 92% 50%))', 'hsl(var(--nexus-cyan, 190 90% 50%))', 'hsl(var(--destructive))'];
 
@@ -44,24 +43,6 @@ export default function MonitoringPage() {
   const unresolvedCount = alerts.filter((a) => !a.is_resolved).length;
   const agentName = (id: string | null) => { if (!id) return '—'; const a = agentsList.find((ag) => ag.id === id); return a ? a.name : id.substring(0, 8); };
 
-  interface AlertRow { id: string; is_resolved: boolean; [key: string]: unknown; }
-  interface AgentListItem { id: string; name: string; }
-  const typedTraces = filteredTraces as TraceRow[];
-  const typedAlerts = alerts as AlertRow[];
-  const typedAgents = agentsList as AgentListItem[];
-
-  const selected = typedTraces.find((t) => t.id === selectedId) || typedTraces[0];
-  const stats = {
-    total: typedTraces.length,
-    errors: typedTraces.filter((t) => t.level === 'error' || t.level === 'critical').length,
-    avgLatency: typedTraces.length ? Math.round(typedTraces.reduce((s, t) => s + (t.latency_ms || 0), 0) / typedTraces.length) : 0,
-    totalCost: typedTraces.reduce((s, t) => s + Number(t.cost_usd || 0), 0),
-  };
-  const levelCounts = typedTraces.reduce<Record<string, number>>((acc, t) => { const level = t.level || 'info'; acc[level] = (acc[level] || 0) + 1; return acc; }, {});
-  const pieData = Object.entries(levelCounts).map(([name, value]) => ({ name, value: value as number }));
-  const latencyData = typedTraces.slice(0, 20).reverse().map((t) => ({ time: new Date(t.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }), latency: t.latency_ms || 0 }));
-  const unresolvedCount = typedAlerts.filter((a) => !a.is_resolved).length;
-  const agentName = (id: string | null) => { if (!id) return '—'; const a = typedAgents.find((ag) => ag.id === id); return a ? a.name : id.substring(0, 8); };
 
 
   const handleResolveAlert = async (id: string) => { try { await resolveAlert(id); toast.success('Alerta resolvido'); queryClient.invalidateQueries({ queryKey: ['alerts'] }); } catch (e) { toast.error(e instanceof Error ? e.message : 'Erro inesperado'); } };

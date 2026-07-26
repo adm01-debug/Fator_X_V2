@@ -1,4 +1,3 @@
-import type { DbRow } from '@/types/dbRow';
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { invokeCerebroBrain } from "@/services/cerebroService";

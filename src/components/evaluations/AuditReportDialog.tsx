@@ -3,7 +3,6 @@ import type { EvalRun, EvalResult } from '@/hooks/useAgentEvals';
 import { Button } from '@/components/ui/button';
 import { Download, FileJson, CheckCircle2, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
-import type { DbRow } from '@/types/dbRow';
 
 interface AuditReportProps {
   run: EvalRun;

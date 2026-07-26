@@ -8,7 +8,6 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabaseExternal } from "@/integrations/supabase/externalClient";
 import { toast } from "sonner";
 import { useNotificationStore } from "@/stores/notificationStore";
-import type { DbRow } from '@/types/dbRow';
 
 interface Notification {
   id: string;

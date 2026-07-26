@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getUnresolvedAlerts, subscribeToAlerts } from '@/services/dashboardService';
-import { handleKeyboardClick } from "@/lib/a11y";
 
 export function DashboardAlerts() {
   const navigate = useNavigate();

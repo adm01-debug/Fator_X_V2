@@ -5,7 +5,6 @@ import { toast } from 'sonner';
 import { logger } from '@/lib/logger';
 import type { CanvasNode, CanvasEdge } from '@/components/workflows/WorkflowCanvas';
 import type { Json } from '@/integrations/supabase/types';
-import type { DbRow } from '@/types/dbRow';
 
 interface WorkflowRecord {
   id: string;

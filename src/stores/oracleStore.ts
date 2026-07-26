@@ -8,7 +8,6 @@ export type { OracleMode, OraclePreset, ModelResponse, ConsensusPoint, Citation,
 import type { OracleMode, OracleResult } from './types/oracleTypes';
 export { ORACLE_MODES, ORACLE_PRESETS } from './presets/oraclePresets';
 import { ORACLE_MODES, ORACLE_PRESETS } from './presets/oraclePresets';
-import type { DbRow } from '@/types/dbRow';
 
 interface OracleStore {
   query: string;
