@@ -24,6 +24,7 @@ import { ContactsTable } from '@/components/crm/ContactsTable';
 import { CompaniesTable } from '@/components/crm/CompaniesTable';
 import { IcpProfilePanel } from '@/components/crm/IcpProfilePanel';
 import { CadencesPanel } from '@/components/crm/CadencesPanel';
+import { CadenceRunsPanel } from '@/components/crm/CadenceRunsPanel';
 import { useDebounce } from '@/hooks/use-debounce';
 import { toast } from '@/hooks/use-toast';
 import { Search, Layers, RefreshCw, Gauge, Sparkles } from 'lucide-react';
