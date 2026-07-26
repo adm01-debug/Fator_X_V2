@@ -77,7 +77,10 @@ export function LeadScoreBadge({ score, scoreReason, className }: LeadScoreBadge
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <span tabIndex={0}>{badge}</span>
+        {/* botão em vez de span: o tooltip precisa ser alcançável por teclado */}
+        <button type="button" className="cursor-default rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label={`Detalhes do score ${score.toFixed(0)}`}>
+          {badge}
+        </button>
       </TooltipTrigger>
       <TooltipContent className="max-w-xs space-y-1">
         <ul className="space-y-0.5">
