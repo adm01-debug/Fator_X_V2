@@ -40,13 +40,13 @@ const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 const cache = new Map<string, { ts: number; data: SearchResult[] }>();
 
 /**
- * O ramo vetorial depende do RPC `match_documents`, que hoje NÃO existe: não há
- * nenhuma coluna `vector` no schema, então não há onde indexar embeddings de
- * chunks. Sem este circuit breaker, toda busca pagava uma chamada de embedding
- * (rag-embed-v2) para em seguida receber 42883 e cair no fallback ILIKE — custo
- * e latência puros. Ao detectar a ausência uma vez, desligamos o ramo pelo
- * tempo de vida da instância; quando o RPC for criado, um novo deploy (ou o
- * reciclo natural da isolate) volta a tentar.
+ * O RPC `match_documents` agora EXISTE (coluna chunks.embedding + índice HNSW).
+ * O circuit breaker permanece porque o cenário que ele cobre continua possível:
+ * se o RPC sumir em um ambiente (rollback, restore parcial, projeto externo),
+ * cada busca pagaria uma chamada de embedding só para receber 42883 e cair no
+ * ILIKE — custo e latência puros. Ao detectar a ausência uma vez, desligamos o
+ * ramo pelo tempo de vida da instância; um novo deploy (ou o reciclo natural da
+ * isolate) volta a tentar.
  */
 let vectorSearchAvailable = true;
 
