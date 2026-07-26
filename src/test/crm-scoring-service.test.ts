@@ -283,3 +283,114 @@ describe('DEFAULT_ICP_INPUT', () => {
     expect(DEFAULT_ICP_INPUT.min_company_size).toBeLessThanOrEqual(DEFAULT_ICP_INPUT.max_company_size);
   });
 });
+
+describe('rescoreOpenDeals', () => {
+  const setupTables = (overrides: Record<string, unknown[]> = {}) => {
+    db.setTableResult('crm_deals', {
+      data: overrides.deals ?? [
+        {
+          id: 'd1',
+          title: 'Negócio A',
+          workspace_id: 'ws-alpha',
+          company_id: 'c1',
+          contact_id: 'p1',
+          score_reason: { tier: 'cold' },
+        },
+      ],
+      error: null,
+    });
+    db.setTableResult('crm_companies', {
+      data: overrides.companies ?? [{ id: 'c1', industry: 'Tecnologia da Informação', size_band: '51-200' }],
+      error: null,
+    });
+    db.setTableResult('crm_contacts', {
+      data: overrides.contacts ?? [{ id: 'p1', job_title: 'Diretor de TI' }],
+      error: null,
+    });
+    db.setTableResult('crm_activities', {
+      data: overrides.activities ?? [{ deal_id: 'd1', occurred_at: NOW.toISOString() }],
+      error: null,
+    });
+  };
+
+  it('pontua o negócio a partir de empresa, contato e atividades', async () => {
+    const { rescoreOpenDeals } = await import('@/services/crmScoringService');
+    setupTables();
+
+    const outcome = await rescoreOpenDeals(profile, NOW);
+
+    expect(outcome.evaluated).toBe(1);
+    expect(outcome.updated).toBe(1);
+    const rows = db.calls.upsert.mock.calls.at(-1)?.[0] as Array<Record<string, unknown>>;
+    expect(rows[0].lead_score).toBeGreaterThan(0);
+    expect(rows[0].icp_profile_id).toBe('icp-1');
+  });
+
+  it('inclui workspace_id e title no payload — colunas NOT NULL sem default', async () => {
+    const { rescoreOpenDeals } = await import('@/services/crmScoringService');
+    setupTables();
+    await rescoreOpenDeals(profile, NOW);
+
+    const rows = db.calls.upsert.mock.calls.at(-1)?.[0] as Array<Record<string, unknown>>;
+    // Sem esses campos o caminho de INSERT do upsert violaria NOT NULL.
+    expect(rows[0].workspace_id).toBe('ws-alpha');
+    expect(rows[0].title).toBe('Negócio A');
+    expect(db.calls.upsert.mock.calls.at(-1)?.[1]).toEqual({ onConflict: 'id' });
+  });
+
+  it('reporta mudança de faixa em relação ao score anterior', async () => {
+    const { rescoreOpenDeals } = await import('@/services/crmScoringService');
+    setupTables();
+    const outcome = await rescoreOpenDeals(profile, NOW);
+
+    expect(outcome.tierChanges).toHaveLength(1);
+    expect(outcome.tierChanges[0]).toMatchObject({ dealId: 'd1', from: 'cold' });
+  });
+
+  it('score_reason ausente ou malformado não quebra a detecção de faixa', async () => {
+    const { rescoreOpenDeals } = await import('@/services/crmScoringService');
+    setupTables({
+      deals: [
+        { id: 'd1', title: 'A', workspace_id: 'ws-alpha', company_id: null, contact_id: null, score_reason: null },
+        { id: 'd2', title: 'B', workspace_id: 'ws-alpha', company_id: null, contact_id: null, score_reason: 'lixo' },
+      ],
+    });
+
+    const outcome = await rescoreOpenDeals(profile, NOW);
+    expect(outcome.evaluated).toBe(2);
+    expect(outcome.tierChanges.every((c) => c.from === null)).toBe(true);
+  });
+
+  it('negócio sem empresa e sem contato ainda é pontuado, com sinais faltantes', async () => {
+    const { rescoreOpenDeals } = await import('@/services/crmScoringService');
+    setupTables({
+      deals: [
+        { id: 'd9', title: 'Órfão', workspace_id: 'ws-alpha', company_id: null, contact_id: null, score_reason: {} },
+      ],
+      activities: [],
+    });
+
+    await rescoreOpenDeals(profile, NOW);
+    const rows = db.calls.upsert.mock.calls.at(-1)?.[0] as Array<Record<string, unknown>>;
+    expect(rows[0].lead_score).toBe(0);
+    expect((rows[0].score_reason as { missing_signals: string[] }).missing_signals).toHaveLength(4);
+  });
+
+  it('funil vazio não dispara escrita', async () => {
+    const { rescoreOpenDeals } = await import('@/services/crmScoringService');
+    setupTables({ deals: [] });
+
+    const outcome = await rescoreOpenDeals(profile, NOW);
+    expect(outcome.updated).toBe(0);
+    expect(db.calls.upsert).not.toHaveBeenCalled();
+  });
+
+  it('erro em qualquer leitura aborta antes de escrever', async () => {
+    const { rescoreOpenDeals } = await import('@/services/crmScoringService');
+    setupTables();
+    db.setTableResult('crm_contacts', { data: null, error: { message: 'timeout' } });
+
+    await expect(rescoreOpenDeals(profile, NOW)).rejects.toMatchObject({ message: 'timeout' });
+    expect(db.calls.upsert).not.toHaveBeenCalled();
+  });
+});
