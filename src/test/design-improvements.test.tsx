@@ -25,24 +25,31 @@ beforeEach(() => {
 });
 
 // ═══ Mocks ═══
+// IMPORTANTE: os valores retornados pelos hooks mockados precisam ter identidade
+// ESTÁVEL entre renders. Um objeto literal novo a cada chamada faz o efeito
+// `useEffect(..., [user])` do AppSidebar disparar em todo render → setState →
+// render → loop infinito (era a causa do travamento do worker do Vitest).
+const MOCK_USER = { email: "test@user.com" };
+const MOCK_SIGN_OUT = vi.fn();
+const MOCK_AUTH = { user: MOCK_USER, signOut: MOCK_SIGN_OUT };
+
 vi.mock("@/contexts/AuthContext", () => ({
-  useAuth: () => ({
-    user: { email: "test@user.com" },
-    signOut: vi.fn(),
-  }),
+  useAuth: () => MOCK_AUTH,
 }));
 
+const MOCK_WORKSPACE_INFO = {
+  name: "Test WS",
+  plan: "free",
+  maxAgents: 5,
+  agentCount: 2,
+  userName: "Test User",
+  email: "test@user.com",
+};
+
 vi.mock("@/lib/agentService", () => ({
-  getWorkspaceInfo: () =>
-    Promise.resolve({
-      name: "Test WS",
-      plan: "free",
-      maxAgents: 5,
-      agentCount: 2,
-      userName: "Test User",
-      email: "test@user.com",
-    }),
+  getWorkspaceInfo: () => Promise.resolve(MOCK_WORKSPACE_INFO),
 }));
+
 
 const mockChannel = {
   on: () => mockChannel,
