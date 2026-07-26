@@ -57,17 +57,20 @@ describe('deploymentsService', () => {
       local.setUser(null);
       const { createDeployment } = await import('@/services/deploymentsService');
       await expect(createDeployment('a1', 'widget', {})).rejects.toThrow('Not authenticated');
+      expect(ext.calls.insert).not.toHaveBeenCalled();
       expect(local.calls.insert).not.toHaveBeenCalled();
     });
 
     it('nasce com status active e preserva a config informada', async () => {
-      local.setTableResult('deploy_connections', { data: { id: 'd9' }, error: null });
+      ext.setTableResult('deploy_connections', { data: { id: 'd9' }, error: null });
       const { createDeployment } = await import('@/services/deploymentsService');
       await createDeployment('a1', 'slack', { channel_id: 'C123' });
 
-      expect(local.calls.insert).toHaveBeenCalledWith(
+      expect(ext.calls.insert).toHaveBeenCalledWith(
         expect.objectContaining({ agent_id: 'a1', channel: 'slack', status: 'active', config: { channel_id: 'C123' } }),
       );
+      // A escrita é dado: precisa ir para o banco externo, nunca para o de auth.
+      expect(local.calls.insert).not.toHaveBeenCalled();
     });
   });
 
