@@ -49,7 +49,6 @@ export interface ModelPricingRow {
   input_cost_per_1k: number;
   output_cost_per_1k: number;
 }
-import { fromTable } from '@/lib/supabaseExtended';
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
 
 // ═══ Usage ═══
@@ -59,10 +58,16 @@ export async function getUsageSummary(period: 'day' | 'week' | 'month' = 'week')
   const periodMs = period === 'day' ? 86400000 : period === 'week' ? 604800000 : 2592000000;
   const since = new Date(now.getTime() - periodMs).toISOString();
 
-  const { data, error } = await fromTable('usage_records')
+  // Usa o client EXTERNO — `usage_records` vive no banco de dados externo, o
+  // mesmo lido por `getUsageRecords`. Ler pelo client local devolvia zero
+  // consumo, o que fazia `checkBudgetStatus` reportar "ok" com o orçamento
+  // estourado (o budget vem do externo, o consumo vinha do local).
+  const { data, error } = await supabaseExternal
+    .from('usage_records')
     .select('cost_usd, record_type, tokens, created_at')
     .gte('created_at', since)
     .order('created_at', { ascending: true });
+
 
   if (error) throw error;
 
