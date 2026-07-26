@@ -9,9 +9,9 @@
  * **lançam** e funções que **degradam para lista vazia**.
  *
  * Nota sobre o duplo client: `securityService` usa `supabaseExternal` para
- * dados e `supabase` (local) para auth e para `fromTable(...)`, que aponta
- * para o client local. Ambos precisam ser mockados, com chaves distintas,
- * para que asserções de tabela não se misturem.
+ * TODO acesso a dados (inclusive via `fromTable(...)`) e o client local
+ * `supabase` apenas para auth. Ambos são mockados com chaves distintas para
+ * que a suíte prove essa fronteira em vez de apenas assumi-la.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { getSharedSupabaseMock } from './utils/supabaseMock';
@@ -132,20 +132,22 @@ describe('securityService', () => {
 
   describe('getSecurityEvents', () => {
     it('lê da view segura audit_log_safe e normaliza action → event_type', async () => {
-      local.setTableResult('audit_log_safe', {
+      ext.setTableResult('audit_log_safe', {
         data: [{ action: 'login_failed', created_at: '2026-07-25T00:00:00Z' }],
         error: null,
       });
       const { getSecurityEvents } = await import('@/services/securityService');
       const events = await getSecurityEvents({ limit: 5 });
 
-      expect(local.calls.from).toHaveBeenCalledWith('audit_log_safe');
+      expect(ext.calls.from).toHaveBeenCalledWith('audit_log_safe');
       expect(events[0]).toMatchObject({ event_type: 'login_failed', severity: 'info' });
-      expect(local.calls.limit).toHaveBeenCalledWith(5);
+      expect(ext.calls.limit).toHaveBeenCalledWith(5);
+      // Trilha de auditoria é dado, não auth: jamais pode cair no client local.
+      expect(local.calls.from).not.toHaveBeenCalled();
     });
 
     it('degrada para lista vazia em erro', async () => {
-      local.setTableResult('audit_log_safe', { data: null, error: { message: 'view ausente' } });
+      ext.setTableResult('audit_log_safe', { data: null, error: { message: 'view ausente' } });
       const { getSecurityEvents } = await import('@/services/securityService');
       expect(await getSecurityEvents()).toEqual([]);
     });
@@ -156,12 +158,12 @@ describe('securityService', () => {
       const { getAuditLog } = await import('@/services/securityService');
       await getAuditLog({ userId: 'u-9' });
 
-      expect(local.calls.eq).toHaveBeenCalledWith('user_id', 'u-9');
-      expect(local.calls.limit).toHaveBeenCalledWith(100);
+      expect(ext.calls.eq).toHaveBeenCalledWith('user_id', 'u-9');
+      expect(ext.calls.limit).toHaveBeenCalledWith(100);
     });
 
     it('devolve lista vazia quando a consulta falha', async () => {
-      local.setTableResult('audit_log_safe', { data: null, error: { message: 'denied' } });
+      ext.setTableResult('audit_log_safe', { data: null, error: { message: 'denied' } });
       const { getAuditLog } = await import('@/services/securityService');
       expect(await getAuditLog()).toEqual([]);
     });
