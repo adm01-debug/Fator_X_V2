@@ -23,6 +23,7 @@ Deno.serve(async (req) => {
   const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
   if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
 
+  try {
     const raw = await req.json().catch(() => null);
     const parsed = InputSchema.safeParse(raw);
     if (!parsed.success) {

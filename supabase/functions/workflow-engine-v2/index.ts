@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
-import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse, checkRateLimit, getRateLimitIdentifier, RATE_LIMITS, deliverWebhook, createRateLimitResponse } from "../_shared/mod.ts";
+import { getCorsHeaders, handleCorsPreflight, jsonResponse, checkRateLimit, getRateLimitIdentifier, RATE_LIMITS, deliverWebhook, createRateLimitResponse } from "../_shared/mod.ts";
 
 // ═══ Types ═══
 interface GraphNode {

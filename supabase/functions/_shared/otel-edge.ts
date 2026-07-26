@@ -133,6 +133,9 @@ export async function runWithObservability<T>(
     const err = error instanceof Error ? error : new Error(String(error));
 
     log('ERROR', 'error', {
+      // A duração também importa no caminho de erro: distingue falha imediata
+      // (validação) de timeout, que exigem investigações completamente diferentes.
+      durationMs,
       errorName: err.name,
       errorMessage: err.message,
       stack: err.stack?.split('\n').slice(0, 5).join('\n'), // Primeiras 5 linhas do stack
