@@ -171,3 +171,63 @@ describe('agentRoutingService exports', () => {
     expect(typeof mod.getSourceLabel).toBe('function');
   });
 });
+
+describe('agentRoutingService — acesso a dados', () => {
+  beforeEach(() => {
+    db.reset();
+    db.setResult({ data: [], error: null });
+  });
+
+  it('listAllRoutes escopa por workspace e ordena por source depois event_type', async () => {
+    db.setTableResult('agent_routing_config', { data: [{ id: 'r1' }], error: null });
+    const rows = await listAllRoutes();
+
+    expect(rows).toHaveLength(1);
+    expect(db.calls.eq).toHaveBeenCalledWith('workspace_id', 'ws-1');
+    expect(db.calls.order).toHaveBeenNthCalledWith(1, 'source', { ascending: true });
+    expect(db.calls.order).toHaveBeenNthCalledWith(2, 'event_type', { ascending: true });
+  });
+
+  it('listRoutesBySource acrescenta o filtro de origem ao escopo de workspace', async () => {
+    await listRoutesBySource('whatsapp');
+    expect(db.calls.eq).toHaveBeenCalledWith('workspace_id', 'ws-1');
+    expect(db.calls.eq).toHaveBeenCalledWith('source', 'whatsapp');
+  });
+
+  it('bulkToggleSource devolve a contagem de linhas realmente afetadas', async () => {
+    db.setTableResult('agent_routing_config', {
+      data: [{ id: 'a' }, { id: 'b' }, { id: 'c' }],
+      error: null,
+    });
+    const affected = await bulkToggleSource('bitrix24', false);
+
+    expect(affected).toBe(3);
+    expect(db.calls.update).toHaveBeenCalledWith({ is_enabled: false });
+    // o escopo de workspace é o que impede desligar rotas de outro tenant
+    expect(db.calls.eq).toHaveBeenCalledWith('workspace_id', 'ws-1');
+    expect(db.calls.eq).toHaveBeenCalledWith('source', 'bitrix24');
+    expect(db.calls.select).toHaveBeenCalledWith('id');
+  });
+
+  it('bulkToggleSource devolve 0 quando o banco retorna null (não quebra a UI)', async () => {
+    db.setTableResult('agent_routing_config', { data: null, error: null });
+    expect(await bulkToggleSource('gmail', true)).toBe(0);
+  });
+
+  it('bulkToggleSource propaga erro em vez de reportar sucesso silencioso', async () => {
+    db.setTableResult('agent_routing_config', { data: null, error: { message: 'rls' } });
+    await expect(bulkToggleSource('bitrix24', false)).rejects.toMatchObject({ message: 'rls' });
+  });
+
+  it('toggleRoute e deleteRoute agem exatamente sobre o id informado', async () => {
+    await toggleRoute('r-9', true);
+    expect(db.calls.update).toHaveBeenCalledWith({ is_enabled: true });
+    expect(db.calls.eq).toHaveBeenCalledWith('id', 'r-9');
+
+    db.reset();
+    db.setResult({ data: [], error: null });
+    await deleteRoute('r-9');
+    expect(db.calls.delete).toHaveBeenCalled();
+    expect(db.calls.eq).toHaveBeenCalledWith('id', 'r-9');
+  });
+});
