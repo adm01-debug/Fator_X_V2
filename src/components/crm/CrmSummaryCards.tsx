@@ -8,7 +8,7 @@ interface CrmSummaryCardsProps {
 }
 
 const CARD_BASE =
-  'transition-all duration-200 hover:shadow-lg hover:border-primary/40 hover:-translate-y-0.5';
+  'transition-all duration-200 hover:shadow-nexus-lg hover:border-primary/40 hover:-translate-y-0.5';
 
 export function CrmSummaryCards({ summary, isLoading }: CrmSummaryCardsProps) {
   const items = [
