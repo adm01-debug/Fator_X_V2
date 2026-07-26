@@ -612,7 +612,7 @@ describe("Round 3: Visual & Token Polish", () => {
       );
       const logo = container.querySelector("img");
       expect(logo).toBeTruthy();
-      expect(logo!.className).toContain("h-8");
+      expect(logo!.className).toContain("h-6");
       expect(logo!.className).not.toContain("h-14");
     });
   });
@@ -625,7 +625,8 @@ describe("Round 3: Visual & Token Polish", () => {
           <AppSidebar />
         </SidebarWrapper>
       );
-      expect(screen.getByText(/Workspace Free/)).toBeInTheDocument();
+      expect(screen.getByText(/Vazão do Workspace/)).toBeInTheDocument();
+      expect(screen.getByText("Free")).toBeInTheDocument();
       expect(screen.getByRole("progressbar")).toBeInTheDocument();
     });
 
@@ -661,8 +662,8 @@ describe("Round 3: Visual & Token Polish", () => {
         </SidebarWrapper>
       );
       expect(screen.getByText("Dashboard")).toBeInTheDocument();
-      expect(screen.getByText("Agents")).toBeInTheDocument();
-      expect(screen.getByText("Knowledge / RAG")).toBeInTheDocument();
+      expect(screen.getByText("Agentes")).toBeInTheDocument();
+      expect(screen.getByText("Conhecimento / RAG")).toBeInTheDocument();
       expect(screen.getByText("Prompts")).toBeInTheDocument();
     });
   });
@@ -929,9 +930,9 @@ describe("Cross-cutting: Theme & Styling", () => {
         <AppSidebar />
       </SidebarWrapper>
     );
-    expect(screen.getByText("FATOR")).toBeInTheDocument();
+    expect(screen.getByText("Fator")).toBeInTheDocument();
     const xSpan = screen.getByText("X");
     expect(xSpan).toBeInTheDocument();
-    expect(xSpan.className).toContain("bg-clip-text");
+    expect(xSpan.className).toContain("text-primary");
   });
 });
