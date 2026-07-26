@@ -1,54 +1,26 @@
 /**
  * Freeze Window Service Tests — Etapa 42/50
  *
- * O serviço usa o builder encadeável do PostgREST
- * (`.select().eq().order()`, `.insert().select().single()`, etc.) e
- * `supabase.auth.getUser()`. O mock precisa refletir essa cadeia real —
- * um mock raso (só `select`/`insert`) quebra com
- * "supabase.from(...).select(...).eq is not a function".
+ * Usa o mock compartilhado `getSharedSupabaseMock()` (validado por
+ * `supabase-mock-simulation.test.ts` em 800+ formas de cadeia), em vez de um
+ * mock raso. Isso mantém o teste focado no comportamento do serviço mesmo que
+ * a consulta ganhe novos elos no futuro.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { getSharedSupabaseMock } from './utils/supabaseMock';
 
-/** Resultado que a próxima cadeia terminará resolvendo. */
-type Result = { data: unknown; error: { message: string } | null };
+// A factory do `vi.mock` é içada acima dos `const` deste arquivo, então ela não
+// pode fechar sobre uma variável local. Ambos os lados resolvem a MESMA
+// instância pela chave da suíte.
+vi.mock('@/integrations/supabase/client', async () => {
+  const m = await import('./utils/supabaseMock');
+  return { supabase: m.getSharedSupabaseMock('freeze-window', { id: 'user-1' }).client };
+});
 
-const state: { result: Result } = { result: { data: null, error: null } };
+const db = getSharedSupabaseMock('freeze-window', { id: 'user-1' });
 
-const fakeFrom = vi.fn();
-const fakeSelect = vi.fn();
-const fakeInsert = vi.fn();
-const fakeUpdate = vi.fn();
-const fakeDelete = vi.fn();
-const fakeEq = vi.fn();
-const fakeOrder = vi.fn();
-const fakeSingle = vi.fn();
-const fakeGetUser = vi.fn();
 
-/**
- * Builder thenable: qualquer método encadeável devolve o próprio builder e o
- * objeto resolve para `state.result` quando aguardado (`await`), replicando o
- * comportamento do PostgREST.
- */
-function makeBuilder() {
-  const builder: Record<string, unknown> = {
-    select: (...args: unknown[]) => { fakeSelect(...args); return builder; },
-    insert: (...args: unknown[]) => { fakeInsert(...args); return builder; },
-    update: (...args: unknown[]) => { fakeUpdate(...args); return builder; },
-    delete: (...args: unknown[]) => { fakeDelete(...args); return builder; },
-    eq: (...args: unknown[]) => { fakeEq(...args); return builder; },
-    order: (...args: unknown[]) => { fakeOrder(...args); return builder; },
-    single: (...args: unknown[]) => { fakeSingle(...args); return Promise.resolve(state.result); },
-    then: (resolve: (v: Result) => unknown) => Promise.resolve(state.result).then(resolve),
-  };
-  return builder;
-}
 
-vi.mock('@/integrations/supabase/client', () => ({
-  supabase: {
-    from: (...args: unknown[]) => { fakeFrom(...args); return makeBuilder(); },
-    auth: { getUser: () => fakeGetUser() },
-  },
-}));
 
 import {
   listFreezeWindows,
@@ -59,9 +31,7 @@ import {
 
 describe('freezeWindowService', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
-    state.result = { data: null, error: null };
-    fakeGetUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
+    db.reset();
   });
 
   describe('listFreezeWindows', () => {
@@ -70,24 +40,24 @@ describe('freezeWindowService', () => {
         { id: '2', workspace_id: 'ws1', starts_at: '2025-01-15', ends_at: '2025-01-21' },
         { id: '1', workspace_id: 'ws1', starts_at: '2025-01-01', ends_at: '2025-01-07' },
       ];
-      state.result = { data: mockWindows, error: null };
+      db.setResult({ data: mockWindows, error: null });
 
       const result = await listFreezeWindows('ws1');
 
       expect(result).toEqual(mockWindows);
-      expect(fakeFrom).toHaveBeenCalledWith('freeze_windows');
-      expect(fakeSelect).toHaveBeenCalledWith('*');
-      expect(fakeEq).toHaveBeenCalledWith('workspace_id', 'ws1');
-      expect(fakeOrder).toHaveBeenCalledWith('starts_at', { ascending: false });
+      expect(db.calls.from).toHaveBeenCalledWith('freeze_windows');
+      expect(db.calls.select).toHaveBeenCalledWith('*');
+      expect(db.calls.eq).toHaveBeenCalledWith('workspace_id', 'ws1');
+      expect(db.calls.order).toHaveBeenCalledWith('starts_at', { ascending: false });
     });
 
     it('retorna array vazio quando não há dados', async () => {
-      state.result = { data: null, error: null };
+      db.setResult({ data: null, error: null });
       await expect(listFreezeWindows('ws1')).resolves.toEqual([]);
     });
 
     it('propaga erro do banco', async () => {
-      state.result = { data: null, error: { message: 'Table not found' } };
+      db.setResult({ data: null, error: { message: 'Table not found' } });
       await expect(listFreezeWindows('ws1')).rejects.toThrow('Table not found');
     });
   });
@@ -100,11 +70,11 @@ describe('freezeWindowService', () => {
         ends_at: '2025-12-27T00:00:00Z',
       };
       const inserted = { id: 'fw1', workspace_id: 'ws1', ...input };
-      state.result = { data: inserted, error: null };
+      db.setResult({ data: inserted, error: null });
 
       const result = await createFreezeWindow('ws1', input);
 
-      expect(fakeInsert).toHaveBeenCalledWith({
+      expect(db.calls.insert).toHaveBeenCalledWith({
         workspace_id: 'ws1',
         name: 'Freeze Natal',
         reason: null,
@@ -117,7 +87,7 @@ describe('freezeWindowService', () => {
     });
 
     it('rejeita quando não há sessão válida', async () => {
-      fakeGetUser.mockResolvedValue({ data: { user: null }, error: null });
+      db.setUser(null);
       await expect(
         createFreezeWindow('ws1', {
           name: 'Test',
@@ -125,11 +95,11 @@ describe('freezeWindowService', () => {
           ends_at: '2025-12-27T00:00:00Z',
         }),
       ).rejects.toThrow('Sessão inválida');
-      expect(fakeInsert).not.toHaveBeenCalled();
+      expect(db.calls.insert).not.toHaveBeenCalled();
     });
 
     it('propaga erro de RLS na inserção', async () => {
-      state.result = { data: null, error: { message: 'RLS violation' } };
+      db.setResult({ data: null, error: { message: 'RLS violation', code: '42501' } });
       await expect(
         createFreezeWindow('ws1', {
           name: 'Test',
@@ -144,32 +114,32 @@ describe('freezeWindowService', () => {
     it('faz update por ID e retorna a row atualizada', async () => {
       const patch = { allow_emergency: true };
       const updated = { id: 'fw1', allow_emergency: true };
-      state.result = { data: updated, error: null };
+      db.setResult({ data: updated, error: null });
 
       const result = await updateFreezeWindow('fw1', patch);
 
-      expect(fakeUpdate).toHaveBeenCalledWith(patch);
-      expect(fakeEq).toHaveBeenCalledWith('id', 'fw1');
+      expect(db.calls.update).toHaveBeenCalledWith(patch);
+      expect(db.calls.eq).toHaveBeenCalledWith('id', 'fw1');
       expect(result).toEqual(updated);
     });
 
     it('propaga erro no update', async () => {
-      state.result = { data: null, error: { message: 'Not found' } };
+      db.setResult({ data: null, error: { message: 'Not found' } });
       await expect(updateFreezeWindow('fw1', { name: 'x' })).rejects.toThrow('Not found');
     });
   });
 
   describe('deleteFreezeWindow', () => {
     it('deleta por ID sem erro', async () => {
-      state.result = { data: null, error: null };
+      db.setResult({ data: null, error: null });
 
       await expect(deleteFreezeWindow('fw1')).resolves.toBeUndefined();
-      expect(fakeDelete).toHaveBeenCalled();
-      expect(fakeEq).toHaveBeenCalledWith('id', 'fw1');
+      expect(db.calls.delete).toHaveBeenCalled();
+      expect(db.calls.eq).toHaveBeenCalledWith('id', 'fw1');
     });
 
     it('propaga erro na deleção', async () => {
-      state.result = { data: null, error: { message: 'Not found' } };
+      db.setResult({ data: null, error: { message: 'Not found' } });
       await expect(deleteFreezeWindow('fw1')).rejects.toThrow('Not found');
     });
   });
