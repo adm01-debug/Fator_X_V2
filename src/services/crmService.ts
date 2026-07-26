@@ -97,6 +97,11 @@ export interface CrmDeal {
   status: DealStatus;
   lead_score: number | null;
   score_breakdown: Record<string, unknown>;
+  /** Decomposição explicável do lead score (Fase 2 — ICP). */
+  score_reason: Record<string, unknown>;
+  icp_profile_id: string | null;
+  scored_at: string | null;
+
   expected_close_at: string | null;
   closed_at: string | null;
   last_activity_at: string | null;
