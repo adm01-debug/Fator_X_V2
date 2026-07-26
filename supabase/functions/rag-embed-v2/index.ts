@@ -172,31 +172,61 @@ serve(async (req) => {
 
     let embeddings: number[][] | null = null;
     let usedProvider = 'fallback_hash';
+    const rejected: string[] = [];
 
     // Try HF first
     if (hfKey && HF_MODEL_MAP[provider]) {
-      embeddings = await embedWithHF(texts, HF_MODEL_MAP[provider], hfKey);
-      if (embeddings) usedProvider = `hf:${HF_MODEL_MAP[provider]}`;
+      const hf = await embedWithHF(texts, HF_MODEL_MAP[provider], hfKey);
+      if (hf && hasExactDimension(hf, dimension)) {
+        embeddings = hf;
+        usedProvider = `hf:${HF_MODEL_MAP[provider]}`;
+      } else if (hf) {
+        // Dimensão nativa != pedida. Truncar seria tentador, mas só é válido em
+        // modelos Matryoshka e exigiria renormalizar; adivinhar aqui produziria
+        // vetores silenciosamente ruins. Descartamos e caímos para o próximo.
+        rejected.push(`hf:${HF_MODEL_MAP[provider]} devolveu dim=${hf[0]?.length}, esperado ${dimension}`);
+      }
     }
 
     // Try OpenAI
     if (!embeddings && openaiKey) {
-      embeddings = await embedWithOpenAI(texts, openaiKey, dimension);
-      if (embeddings) usedProvider = 'openai:text-embedding-3-large';
+      const oa = await embedWithOpenAI(texts, openaiKey, dimension);
+      if (oa && hasExactDimension(oa, dimension)) {
+        embeddings = oa;
+        usedProvider = 'openai:text-embedding-3-large';
+      } else if (oa) {
+        rejected.push(`openai devolveu dim=${oa[0]?.length}, esperado ${dimension}`);
+      }
     }
 
     // Deterministic fallback
+    const degraded = embeddings === null;
     if (!embeddings) {
       embeddings = texts.map(t => hashEmbed(t, dimension));
       usedProvider = 'fallback_hash';
     }
 
+    if (rejected.length > 0) {
+      console.warn('rag-embed-v2: provedores descartados por dimensão', rejected);
+    }
+
     return jsonResponse(req, {
       embeddings,
       provider_used: usedProvider,
+      // Proveniência: quem persiste precisa gravar isto junto do vetor, porque
+      // comparar embeddings de modelos diferentes é ruído estatístico.
+      model: usedProvider,
+      /**
+       * `degraded: true` significa vetor de hash — estável, mas SEM significado
+       * semântico. Persistir isso é pior que não ter embedding: a busca passa a
+       * devolver resultados errados com aparência de confiança. Quem grava DEVE
+       * recusar quando este flag estiver ligado.
+       */
+      degraded,
+      rejected_providers: rejected,
       dimension: embeddings[0]?.length ?? dimension,
       count: embeddings.length,
-      version: 'rag-embed-v2.0',
+      version: 'rag-embed-v2.1',
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
