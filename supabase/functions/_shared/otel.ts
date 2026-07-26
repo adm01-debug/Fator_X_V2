@@ -269,13 +269,22 @@ function getExporter(): SupabaseClient | null {
   }
 }
 
+/**
+ * Falha de telemetria nunca pode derrubar o handler — por isso todo insert é
+ * best-effort. Mas engolir o erro em silêncio foi exatamente o que escondeu,
+ * por muito tempo, o fato de as tabelas `traces`/`spans` sequer existirem:
+ * cada escrita falhava e ninguém via. Continua não-bloqueante, agora audível.
+ */
+function reportExportFailure(target: string, error: unknown): void {
+  const msg = error instanceof Error ? error.message : String(error);
+  console.warn(`[otel] falha ao exportar ${target}: ${msg}`);
+}
+
 async function exportTrace(record: TraceRecord): Promise<void> {
   const supa = getExporter();
   if (!supa) return;
   try {
-    // Best-effort insert into `traces` (mirrors client schema).
-    // Schema may evolve; ignore failures silently — tracing must not break the handler.
-    await supa.from("traces").insert({
+    const { error: traceErr } = await supa.from("traces").insert({
       trace_id: record.trace_id,
       root_name: record.root_name,
       user_id: record.user_id ?? null,
@@ -287,7 +296,8 @@ async function exportTrace(record: TraceRecord): Promise<void> {
       status: record.status,
       source: record.source,
       span_count: record.spans.length,
-    }).then(() => {}, () => {});
+    });
+    if (traceErr) reportExportFailure("traces", traceErr);
 
     if (record.spans.length > 0) {
       const rows = record.spans.map((s) => ({
@@ -304,9 +314,10 @@ async function exportTrace(record: TraceRecord): Promise<void> {
         attributes: s.attributes,
         events: s.events,
       }));
-      await supa.from("spans").insert(rows).then(() => {}, () => {});
+      const { error: spanErr } = await supa.from("spans").insert(rows);
+      if (spanErr) reportExportFailure("spans", spanErr);
     }
-  } catch {
-    // swallow — tracing is best-effort
+  } catch (err) {
+    reportExportFailure("trace", err);
   }
 }
