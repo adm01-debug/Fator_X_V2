@@ -10,32 +10,32 @@
  * Mocks supabase.functions.invoke so the engine path can be controlled.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { getSharedSupabaseMock } from './utils/supabaseMock';
 
+/**
+ * O mock anterior era raso (`insert` devolvia `this`, sem `upsert`/`in`), então
+ * o tracer podia gravar spans errados — ou nenhum — sem que o teste notasse.
+ * Agora usamos o mock compartilhado com `setInvokeImpl`, que permite controlar
+ * a resposta da engine chamada por chamada (sucesso, erro, sequência).
+ */
+const supabaseMock = getSharedSupabaseMock('workflow-tracer');
 const mockInvoke = vi.fn();
+supabaseMock.setInvokeImpl((name, opts) => mockInvoke(name, opts));
 
-vi.mock('@/integrations/supabase/client', () => ({
-  supabase: {
-    functions: { invoke: (...args: DbRow[]) => mockInvoke(...args) },
-    from: vi.fn(() => ({
-      select: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
-      order: vi.fn().mockReturnThis(),
-      single: vi.fn().mockResolvedValue({ data: null, error: null }),
-    })),
-  },
-}));
+vi.mock('@/integrations/supabase/client', async () => {
+  const m = await import('./utils/supabaseMock');
+  return { supabase: m.getSharedSupabaseMock('workflow-tracer').client };
+});
 
-vi.mock('@/lib/supabaseExtended', () => ({
-  fromTable: vi.fn(() => ({
-    select: vi.fn().mockReturnThis(),
-    insert: vi.fn().mockReturnThis(),
-    update: vi.fn().mockReturnThis(),
-    delete: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
-    order: vi.fn().mockReturnThis(),
-    single: vi.fn().mockResolvedValue({ data: null, error: null }),
-  })),
-}));
+vi.mock('@/lib/supabaseExtended', async () => {
+  const m = await import('./utils/supabaseMock');
+  const mock = m.getSharedSupabaseMock('workflow-tracer');
+  return {
+    fromTable: (t: string) => (mock.client.from as (x: string) => unknown)(t),
+    rpcCall: vi.fn().mockResolvedValue({ data: null, error: null }),
+  };
+});
+
 
 vi.mock('@/lib/logger', () => ({
   logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
