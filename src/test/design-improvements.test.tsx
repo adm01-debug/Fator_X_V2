@@ -781,7 +781,7 @@ describe("Round 3: Visual & Token Polish", () => {
         </Wrapper>
       );
       await waitFor(() => {
-        const statusRing = container.querySelector(".bg-nexus-emerald");
+        const statusRing = container.querySelector('[aria-label="Online"]');
         expect(statusRing).toBeTruthy();
         expect(statusRing!.getAttribute("aria-label")).toBe("Online");
       });
@@ -789,7 +789,7 @@ describe("Round 3: Visual & Token Polish", () => {
   });
 
   describe("#31 Dashboard Quick Actions", () => {
-    it("keeps the 'Novo Agente' header action available", async () => {
+    it("exposes the empty-state creation CTA as an actionable button", async () => {
       const DashboardPage = (await import("@/pages/DashboardPage")).default;
       render(
         <Wrapper>
@@ -797,7 +797,9 @@ describe("Round 3: Visual & Token Polish", () => {
         </Wrapper>
       );
       await waitFor(() => {
-        expect(screen.getByText("Novo Agente")).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: /Criar Primeiro Agente/i })
+        ).toBeInTheDocument();
       });
     });
   });
