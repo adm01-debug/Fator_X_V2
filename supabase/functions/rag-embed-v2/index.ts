@@ -25,12 +25,32 @@ import {
 } from "../_shared/mod.ts";
 
 // ═══ Input Schema ═══
+/**
+ * 1536 é a dimensão CANÔNICA do sistema: é o que as colunas
+ * `chunks.embedding` e `agent_memories_v2.embedding` declaram. pgvector exige
+ * dimensão fixa por coluna, então qualquer outro valor gera um vetor
+ * impossível de persistir. O default anterior era 1024 — divergente das duas
+ * colunas, o que tornava toda escrita de embedding uma falha garantida.
+ */
+const CANONICAL_DIM = 1536;
+
 const EmbedInput = z.object({
   texts: z.array(z.string().min(1).max(8000)).min(1).max(100),
   provider: z.string().default('qwen3-embedding-8b'),
-  dimension: z.number().int().positive().max(4096).default(1024),
+  dimension: z.number().int().positive().max(4096).default(CANONICAL_DIM),
   task: z.enum(['retrieval.passage', 'retrieval.query', 'classification', 'clustering']).default('retrieval.passage'),
 });
+
+/**
+ * Todo vetor devolvido precisa ter EXATAMENTE a dimensão pedida.
+ * Provedores não respeitam o pedido por igual: a API de feature-extraction da
+ * HF devolve a dimensão nativa do modelo (Qwen3-Embedding-8B → 4096) e ignora
+ * qualquer parâmetro. Sem esta checagem, o vetor errado só falha lá na frente,
+ * no INSERT, com uma mensagem que não aponta para o provedor culpado.
+ */
+function hasExactDimension(vectors: number[][], dim: number): boolean {
+  return vectors.length > 0 && vectors.every((v) => Array.isArray(v) && v.length === dim);
+}
 
 // ═══ Provider Map ═══
 const HF_MODEL_MAP: Record<string, string> = {
