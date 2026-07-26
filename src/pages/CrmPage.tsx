@@ -25,7 +25,7 @@ import { CompaniesTable } from '@/components/crm/CompaniesTable';
 import { IcpProfilePanel } from '@/components/crm/IcpProfilePanel';
 import { useDebounce } from '@/hooks/use-debounce';
 import { toast } from '@/hooks/use-toast';
-import { Search, Layers, RefreshCw } from 'lucide-react';
+import { Search, Layers, RefreshCw, Gauge, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   listDeals,
@@ -35,8 +35,10 @@ import {
   ensureDefaultPipeline,
   summarizeDeals,
   syncFromBitrix24,
+  enrichCompanies,
   type DealStatus,
 } from '@/services/crmService';
+import { ensureDefaultIcpProfile, rescoreOpenDeals } from '@/services/crmScoringService';
 
 export default function CrmPage() {
   const [tab, setTab] = useState('deals');
@@ -105,6 +107,44 @@ export default function CrmPage() {
       }),
   });
 
+  const enrich = useMutation({
+    mutationFn: () => enrichCompanies(),
+    onSuccess: (outcome) => {
+      toast({
+        title: 'Enriquecimento concluído',
+        description: `${outcome.updated}/${outcome.evaluated} empresa(s) atualizada(s) · ${outcome.layers.llm} via IA.`,
+      });
+      queryClient.invalidateQueries({ queryKey: ['crm', 'companies'] });
+    },
+    onError: (error: unknown) =>
+      toast({
+        title: 'Falha no enriquecimento',
+        description: error instanceof Error ? error.message : String(error),
+        variant: 'destructive',
+      }),
+  });
+
+  const rescore = useMutation({
+    mutationFn: async () => {
+      // Garante o perfil antes de pontuar: sem ICP não existe critério de corte.
+      const profile = await ensureDefaultIcpProfile();
+      return rescoreOpenDeals(profile);
+    },
+    onSuccess: (outcome) => {
+      toast({
+        title: 'Scores recalculados',
+        description: `${outcome.updated} negócio(s) pontuados · ${outcome.tierChanges.length} mudança(s) de faixa.`,
+      });
+      queryClient.invalidateQueries({ queryKey: ['crm', 'deals'] });
+    },
+    onError: (error: unknown) =>
+      toast({
+        title: 'Falha ao recalcular scores',
+        description: error instanceof Error ? error.message : String(error),
+        variant: 'destructive',
+      }),
+  });
+
   const deals = useMemo(() => dealsQuery.data ?? [], [dealsQuery.data]);
   const stages = useMemo(() => stagesQuery.data ?? [], [stagesQuery.data]);
   const summary = useMemo(() => summarizeDeals(deals, stages), [deals, stages]);
@@ -134,6 +174,24 @@ export default function CrmPage() {
                 aria-hidden="true"
               />
               {syncBitrix.isPending ? 'Sincronizando…' : 'Sincronizar Bitrix24'}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => rescore.mutate()}
+              disabled={rescore.isPending}
+              className="gap-2"
+            >
+              <Gauge className="h-4 w-4" aria-hidden="true" />
+              {rescore.isPending ? 'Pontuando…' : 'Recalcular scores'}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => enrich.mutate()}
+              disabled={enrich.isPending}
+              className="gap-2"
+            >
+              <Sparkles className="h-4 w-4" aria-hidden="true" />
+              {enrich.isPending ? 'Enriquecendo…' : 'Enriquecer empresas'}
             </Button>
             {stages.length === 0 && (
               <Button

@@ -384,3 +384,155 @@ export const TIER_LABELS: Record<LeadTier, string> = {
   nurture: 'Nutrição',
   cold: 'Frio',
 };
+
+// ═══════════════════════════════════════════════════════════════════
+// Recálculo em lote
+// ═══════════════════════════════════════════════════════════════════
+
+export interface RescoreOutcome {
+  evaluated: number;
+  updated: number;
+  /** Negócios cujo score mudou de faixa — o que realmente interessa ao time. */
+  tierChanges: Array<{ dealId: string; title: string; from: LeadTier | null; to: LeadTier }>;
+  skipped: number;
+}
+
+/** Faixa persistida anteriormente, quando houver — permite detectar promoções/rebaixamentos. */
+function previousTier(scoreReason: unknown): LeadTier | null {
+  if (!scoreReason || typeof scoreReason !== 'object') return null;
+  const tier = (scoreReason as { tier?: unknown }).tier;
+  return tier === 'hot' || tier === 'qualified' || tier === 'nurture' || tier === 'cold' ? tier : null;
+}
+
+const ENGAGEMENT_WINDOW_DAYS = 30;
+const RESCORE_CHUNK = 100;
+
+/**
+ * Recalcula o score de todos os negócios abertos do workspace.
+ *
+ * Estratégia de I/O: quatro leituras em bloco (negócios, empresas, contatos,
+ * atividades da janela) em vez de N+1 por negócio. Com 500 negócios isso é a
+ * diferença entre 4 e ~2.000 round-trips.
+ *
+ * A escrita usa `upsert` na PK `id` em blocos de 100. Diferente das tabelas
+ * espelhadas do Bitrix — cujo índice único é *parcial* e por isso incompatível
+ * com `ON CONFLICT` via PostgREST — aqui o conflito é na chave primária, que o
+ * Postgres infere sem ambiguidade. `workspace_id` e `title` viajam no payload
+ * porque são `NOT NULL` sem default e o caminho de INSERT do upsert os valida
+ * mesmo quando a linha já existe.
+ */
+export async function rescoreOpenDeals(profile: IcpProfile, now: Date = new Date()): Promise<RescoreOutcome> {
+  const wsId = await getWorkspaceId();
+  const since = new Date(now.getTime() - ENGAGEMENT_WINDOW_DAYS * 86_400_000).toISOString();
+
+  const [dealsRes, companiesRes, contactsRes, activitiesRes] = await Promise.all([
+    fromTable('crm_deals')
+      .select('id, title, workspace_id, company_id, contact_id, score_reason, lead_score')
+      .eq('workspace_id', wsId)
+      .eq('status', 'open')
+      .is('deleted_at', null)
+      .limit(2000),
+    fromTable('crm_companies')
+      .select('id, industry, size_band')
+      .eq('workspace_id', wsId)
+      .is('deleted_at', null)
+      .limit(5000),
+    fromTable('crm_contacts')
+      .select('id, job_title')
+      .eq('workspace_id', wsId)
+      .is('deleted_at', null)
+      .limit(5000),
+    fromTable('crm_activities')
+      .select('deal_id, occurred_at')
+      .eq('workspace_id', wsId)
+      .is('deleted_at', null)
+      .gte('occurred_at', since)
+      .limit(10000),
+  ]);
+
+  const firstError = dealsRes.error ?? companiesRes.error ?? contactsRes.error ?? activitiesRes.error;
+  if (firstError) {
+    logger.error('rescoreOpenDeals read failed', { error: firstError.message });
+    throw firstError;
+  }
+
+  type DealRow = {
+    id: string;
+    title: string;
+    workspace_id: string;
+    company_id: string | null;
+    contact_id: string | null;
+    score_reason: unknown;
+  };
+  const deals = (dealsRes.data ?? []) as unknown as DealRow[];
+
+  const companyById = new Map(
+    ((companiesRes.data ?? []) as unknown as Array<{ id: string; industry: string | null; size_band: string | null }>)
+      .map((c) => [c.id, c]),
+  );
+  const contactById = new Map(
+    ((contactsRes.data ?? []) as unknown as Array<{ id: string; job_title: string | null }>).map((c) => [c.id, c]),
+  );
+
+  const activityCount = new Map<string, number>();
+  const lastActivity = new Map<string, string>();
+  for (const raw of (activitiesRes.data ?? []) as unknown as Array<{ deal_id: string | null; occurred_at: string | null }>) {
+    if (!raw.deal_id) continue;
+    activityCount.set(raw.deal_id, (activityCount.get(raw.deal_id) ?? 0) + 1);
+    const current = lastActivity.get(raw.deal_id);
+    if (raw.occurred_at && (!current || raw.occurred_at > current)) lastActivity.set(raw.deal_id, raw.occurred_at);
+  }
+
+  const scoredAt = now.toISOString();
+  const tierChanges: RescoreOutcome['tierChanges'] = [];
+  const payload = deals.map((deal) => {
+    const company = deal.company_id ? companyById.get(deal.company_id) : undefined;
+    const contact = deal.contact_id ? contactById.get(deal.contact_id) : undefined;
+
+    const result = scoreLead(
+      {
+        industry: company?.industry ?? null,
+        sizeBand: company?.size_band ?? null,
+        jobTitle: contact?.job_title ?? null,
+        recentActivityCount: activityCount.get(deal.id) ?? 0,
+        lastActivityAt: lastActivity.get(deal.id) ?? null,
+      },
+      profile,
+      now,
+    );
+
+    const before = previousTier(deal.score_reason);
+    if (before !== result.tier) {
+      tierChanges.push({ dealId: deal.id, title: deal.title, from: before, to: result.tier });
+    }
+
+    return {
+      id: deal.id,
+      workspace_id: deal.workspace_id,
+      title: deal.title,
+      lead_score: result.score,
+      icp_profile_id: profile.id,
+      scored_at: scoredAt,
+      score_reason: {
+        tier: result.tier,
+        criteria: result.criteria,
+        missing_signals: result.missingSignals,
+        profile_name: profile.name,
+      },
+    };
+  });
+
+  let updated = 0;
+  for (let i = 0; i < payload.length; i += RESCORE_CHUNK) {
+    const chunk = payload.slice(i, i + RESCORE_CHUNK);
+    const { error } = await fromTable('crm_deals').upsert(chunk, { onConflict: 'id' });
+    if (error) {
+      logger.error('rescoreOpenDeals write failed', { error: error.message, offset: i });
+      throw error;
+    }
+    updated += chunk.length;
+  }
+
+  logger.info('rescoreOpenDeals completed', { evaluated: deals.length, updated, tierChanges: tierChanges.length });
+  return { evaluated: deals.length, updated, tierChanges, skipped: deals.length - updated };
+}

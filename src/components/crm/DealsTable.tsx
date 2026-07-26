@@ -9,6 +9,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { EmptyState } from '@/components/shared/EmptyState';
+import { LeadScoreBadge } from './LeadScoreBadge';
 import { Briefcase } from 'lucide-react';
 import { formatCurrency, type CrmDeal, type CrmStage } from '@/services/crmService';
 
@@ -96,8 +97,8 @@ export function DealsTable({ deals, stages, isLoading, onSelect, onCreate }: Dea
               <TableCell>
                 <Badge variant={STATUS_VARIANT[deal.status]}>{STATUS_LABEL[deal.status]}</Badge>
               </TableCell>
-              <TableCell className="tabular-nums text-muted-foreground">
-                {deal.lead_score === null ? '—' : deal.lead_score.toFixed(0)}
+              <TableCell>
+                <LeadScoreBadge score={deal.lead_score} scoreReason={deal.score_reason} />
               </TableCell>
               <TableCell className="text-muted-foreground">
                 {formatDate(deal.expected_close_at)}
