@@ -143,7 +143,16 @@ serve(async (req) => {
             },
           );
 
-          if (!matchErr && Array.isArray(matches)) {
+          if (matchErr) {
+            // 42883 = undefined_function: o RPC não existe neste banco. Não
+            // adianta repetir a chamada de embedding nas próximas requisições.
+            if (matchErr.code === "42883") {
+              vectorSearchAvailable = false;
+              console.warn("match_documents ausente; ramo vetorial desativado nesta instância");
+            } else {
+              console.warn("match_documents falhou", matchErr.message);
+            }
+          } else if (Array.isArray(matches)) {
             results = matches.map((m: Record<string, unknown>) => ({
               chunk_id: String(m.id),
               document_id: m.document_id ? String(m.document_id) : null,
@@ -157,7 +166,9 @@ serve(async (req) => {
         }
       }
     } catch (e) {
-      console.warn("vector search failed, falling back to text", e);
+      if (!(e instanceof Error && e.message === "vector_search_disabled")) {
+        console.warn("vector search failed, falling back to text", e);
+      }
     }
 
     // ── 2. Fallback: ILIKE on chunks.content ─────────────────────
