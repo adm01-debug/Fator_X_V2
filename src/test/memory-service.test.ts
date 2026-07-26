@@ -51,9 +51,10 @@ describe('memoryService — envelope memory-tools', () => {
     expect(local.calls.invoke).toHaveBeenCalledWith('memory-tools', {
       body: {
         tool: 'memory_save',
-        params: { content: 'lembrar disto', memory_type: 'procedural', source: 'Manual' === 'Manual' ? 'Wizard' : 'Wizard' },
+        params: { content: 'lembrar disto', memory_type: 'procedural', source: 'Wizard' },
       },
     });
+
   });
 
   it('addMemory aplica defaults semantic/Manual quando omitidos', async () => {
