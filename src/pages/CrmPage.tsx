@@ -23,6 +23,7 @@ import { DealsTable } from '@/components/crm/DealsTable';
 import { ContactsTable } from '@/components/crm/ContactsTable';
 import { CompaniesTable } from '@/components/crm/CompaniesTable';
 import { IcpProfilePanel } from '@/components/crm/IcpProfilePanel';
+import { CadencesPanel } from '@/components/crm/CadencesPanel';
 import { useDebounce } from '@/hooks/use-debounce';
 import { toast } from '@/hooks/use-toast';
 import { Search, Layers, RefreshCw, Gauge, Sparkles } from 'lucide-react';
@@ -252,6 +253,7 @@ export default function CrmPage() {
           <TabsTrigger value="contacts">Contatos</TabsTrigger>
           <TabsTrigger value="companies">Empresas</TabsTrigger>
           <TabsTrigger value="icp">ICP &amp; Score</TabsTrigger>
+          <TabsTrigger value="cadences">Cadências</TabsTrigger>
         </TabsList>
 
         <TabsContent value="deals">
@@ -282,7 +284,13 @@ export default function CrmPage() {
           {/* Montagem tardia: o painel busca o perfil e só faz sentido na aba ativa. */}
           {tab === 'icp' && <IcpProfilePanel />}
         </TabsContent>
+
+        <TabsContent value="cadences">
+          {/* Idem: cadências disparam várias queries; só montar quando visível. */}
+          {tab === 'cadences' && <CadencesPanel />}
+        </TabsContent>
       </Tabs>
+
     </div>
   );
 }

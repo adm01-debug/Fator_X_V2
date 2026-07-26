@@ -4105,6 +4105,165 @@ export type Database = {
           },
         ]
       }
+      crm_cadence_enrollments: {
+        Row: {
+          attempts: number
+          cadence_id: string
+          contact_id: string | null
+          created_at: string
+          current_step: number
+          deal_id: string
+          id: string
+          last_error: string | null
+          last_sent_at: string | null
+          next_run_at: string
+          status: string
+          stop_reason: string | null
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          attempts?: number
+          cadence_id: string
+          contact_id?: string | null
+          created_at?: string
+          current_step?: number
+          deal_id: string
+          id?: string
+          last_error?: string | null
+          last_sent_at?: string | null
+          next_run_at?: string
+          status?: string
+          stop_reason?: string | null
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          attempts?: number
+          cadence_id?: string
+          contact_id?: string | null
+          created_at?: string
+          current_step?: number
+          deal_id?: string
+          id?: string
+          last_error?: string | null
+          last_sent_at?: string | null
+          next_run_at?: string
+          status?: string
+          stop_reason?: string | null
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_cadence_enrollments_cadence_id_fkey"
+            columns: ["cadence_id"]
+            isOneToOne: false
+            referencedRelation: "crm_cadences"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_cadence_enrollments_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "crm_contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_cadence_enrollments_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "crm_deals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_cadence_steps: {
+        Row: {
+          body: string
+          cadence_id: string
+          channel: string
+          created_at: string
+          delay_hours: number
+          id: string
+          position: number
+          subject: string | null
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          body: string
+          cadence_id: string
+          channel: string
+          created_at?: string
+          delay_hours?: number
+          id?: string
+          position: number
+          subject?: string | null
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          body?: string
+          cadence_id?: string
+          channel?: string
+          created_at?: string
+          delay_hours?: number
+          id?: string
+          position?: number
+          subject?: string | null
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_cadence_steps_cadence_id_fkey"
+            columns: ["cadence_id"]
+            isOneToOne: false
+            referencedRelation: "crm_cadences"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_cadences: {
+        Row: {
+          created_at: string
+          daily_send_cap: number
+          deleted_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          trigger_tier: string | null
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          daily_send_cap?: number
+          deleted_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          trigger_tier?: string | null
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          daily_send_cap?: number
+          deleted_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          trigger_tier?: string | null
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: []
+      }
       crm_companies: {
         Row: {
           country: string | null
@@ -11399,6 +11558,18 @@ export type Database = {
       }
       check_budget: { Args: { p_workspace_id: string }; Returns: Json }
       check_retention_job_health: { Args: never; Returns: undefined }
+      claim_due_cadence_enrollments: {
+        Args: { p_lease_minutes?: number; p_limit?: number }
+        Returns: {
+          attempts: number
+          cadence_id: string
+          contact_id: string
+          current_step: number
+          deal_id: string
+          id: string
+          workspace_id: string
+        }[]
+      }
       cleanup_old_auth_attempts: { Args: never; Returns: undefined }
       close_risk: {
         Args: { p_notes?: string; p_risk_id: string }
