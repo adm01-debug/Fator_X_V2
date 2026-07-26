@@ -41,6 +41,14 @@ const navSections = [
     ],
   },
   {
+    label: "Vendas",
+    key: "vendas",
+    items: [
+      { title: "CRM", url: "/crm", icon: Briefcase },
+      { title: "Roteamento CRM", url: "/routing", icon: RouteIcon },
+    ],
+  },
+  {
     label: "Desenvolvimento",
     key: "dev",
     items: [
