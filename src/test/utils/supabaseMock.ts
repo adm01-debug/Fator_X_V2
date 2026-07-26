@@ -84,10 +84,19 @@ export interface SupabaseMock {
   setTableResult: (table: string, result: Partial<PostgrestLikeResult>) => void;
   /** Define o retorno de `supabase.rpc(name, ...)`. */
   setRpcResult: (fn: string, result: Partial<PostgrestLikeResult>) => void;
+  /** Define o retorno de `supabase.functions.invoke(name, ...)`. */
+  setFunctionResult: (fn: string, result: Partial<PostgrestLikeResult>) => void;
+  /**
+   * Substitui a implementação de `functions.invoke` — use quando o teste
+   * precisa de respostas sequenciais (ex.: 1ª chamada falha, 2ª sucede) ou
+   * de lógica dependente do payload.
+   */
+  setInvokeImpl: (impl: ((name: string, opts?: unknown) => unknown) | null) => void;
   /** Define o usuário devolvido por `auth.getUser()` / `auth.getSession()`. */
   setUser: (user: { id: string; email?: string } | null) => void;
   /** Limpa espiões e resultados, voltando ao estado inicial. */
   reset: () => void;
+
 }
 
 /**
