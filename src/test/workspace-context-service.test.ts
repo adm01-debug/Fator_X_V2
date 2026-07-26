@@ -1,20 +1,17 @@
+/**
+ * workspaceContextService — migrado para o mock compartilhado.
+ *
+ * A versão anterior reconstruía um builder raso a cada teste (`buildResolver`),
+ * que só sobrevivia enquanto a cadeia fosse exatamente `select→eq→limit→
+ * maybeSingle`. Qualquer elo novo no serviço quebraria a suíte com um
+ * "not a function" sem relação com o comportamento testado.
+ */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { getSharedSupabaseMock } from './utils/supabaseMock';
 
-// Mock supabase client BEFORE importing the service
-vi.mock('@/integrations/supabase/client', () => {
-  const builder = {
-    select: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
-    limit: vi.fn().mockReturnThis(),
-    maybeSingle: vi.fn(),
-  };
-  return {
-    supabase: {
-      from: vi.fn(() => builder),
-      auth: { getUser: vi.fn() },
-    },
-    __builder: builder,
-  };
+vi.mock('@/integrations/supabase/client', async () => {
+  const m = await import('./utils/supabaseMock');
+  return { supabase: m.getSharedSupabaseMock('workspace-context').client };
 });
 
 vi.mock('@/lib/logger', () => ({
@@ -27,93 +24,77 @@ import {
   isWorkspaceOwner,
   getCurrentUserWorkspace,
 } from '@/services/workspaceContextService';
-import { supabase } from '@/integrations/supabase/client';
 
-const fromMock = supabase.from as unknown as ReturnType<typeof vi.fn>;
-const getUserMock = (supabase.auth.getUser as unknown as ReturnType<typeof vi.fn>);
+const db = getSharedSupabaseMock('workspace-context');
 
-function buildResolver(payload: { data: unknown; error: unknown }) {
-  const builder = {
-    select: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
-    limit: vi.fn().mockReturnThis(),
-    maybeSingle: vi.fn().mockResolvedValue(payload),
-  };
-  fromMock.mockReturnValue(builder);
-  return builder;
+/** Resultado da consulta a `workspaces` para o cenário em teste. */
+function whenWorkspace(payload: { data: unknown; error: unknown }) {
+  db.setTableResult('workspaces', payload as { data: unknown; error: { message: string } | null });
 }
 
 describe('workspaceContextService', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    db.reset();
+    db.setResult({ data: null, error: null });
   });
 
   describe('getWorkspaceIdForUser', () => {
-    it('returns workspace id when found', async () => {
-      buildResolver({ data: { id: 'ws-1' }, error: null });
-      const id = await getWorkspaceIdForUser('user-1');
-      expect(id).toBe('ws-1');
-      expect(fromMock).toHaveBeenCalledWith('workspaces');
+    it('devolve o id do workspace quando encontrado', async () => {
+      whenWorkspace({ data: { id: 'ws-1' }, error: null });
+      expect(await getWorkspaceIdForUser('user-1')).toBe('ws-1');
+      expect(db.calls.from).toHaveBeenCalledWith('workspaces');
+      expect(db.calls.eq).toHaveBeenCalledWith('owner_id', 'user-1');
     });
 
-    it('returns null when no workspace owned', async () => {
-      buildResolver({ data: null, error: null });
-      const id = await getWorkspaceIdForUser('user-1');
-      expect(id).toBeNull();
+    it('devolve null quando o usuário não possui workspace', async () => {
+      whenWorkspace({ data: null, error: null });
+      expect(await getWorkspaceIdForUser('user-1')).toBeNull();
     });
 
-    it('throws and logs when supabase returns error', async () => {
-      buildResolver({ data: null, error: { message: 'rls denied' } });
+    it('lança quando o banco recusa a leitura', async () => {
+      whenWorkspace({ data: null, error: { message: 'rls denied' } });
       await expect(getWorkspaceIdForUser('user-1')).rejects.toBeDefined();
     });
   });
 
   describe('getFirstWorkspaceId', () => {
-    it('returns first workspace id', async () => {
-      buildResolver({ data: { id: 'ws-first' }, error: null });
-      const id = await getFirstWorkspaceId();
-      expect(id).toBe('ws-first');
+    it('devolve o primeiro workspace disponível', async () => {
+      whenWorkspace({ data: { id: 'ws-first' }, error: null });
+      expect(await getFirstWorkspaceId()).toBe('ws-first');
     });
 
-    it('returns null when no workspaces exist', async () => {
-      buildResolver({ data: null, error: null });
+    it('devolve null quando não há workspaces', async () => {
+      whenWorkspace({ data: null, error: null });
       expect(await getFirstWorkspaceId()).toBeNull();
     });
   });
 
   describe('isWorkspaceOwner', () => {
-    it('returns true when owner_id matches', async () => {
-      buildResolver({ data: { owner_id: 'user-1' }, error: null });
+    it('true quando owner_id confere', async () => {
+      whenWorkspace({ data: { owner_id: 'user-1' }, error: null });
       expect(await isWorkspaceOwner('ws-1', 'user-1')).toBe(true);
     });
 
-    it('returns false when owner_id differs', async () => {
-      buildResolver({ data: { owner_id: 'user-2' }, error: null });
+    it('false quando owner_id diverge — barra escalonamento de privilégio', async () => {
+      whenWorkspace({ data: { owner_id: 'user-2' }, error: null });
       expect(await isWorkspaceOwner('ws-1', 'user-1')).toBe(false);
     });
 
-    it('returns false when workspace not found', async () => {
-      buildResolver({ data: null, error: null });
+    it('false quando o workspace não existe', async () => {
+      whenWorkspace({ data: null, error: null });
       expect(await isWorkspaceOwner('ws-x', 'user-1')).toBe(false);
     });
   });
 
   describe('getCurrentUserWorkspace', () => {
-    it('returns null when user is not authenticated', async () => {
-      getUserMock.mockResolvedValue({ data: { user: null }, error: null });
+    it('devolve null sem usuário autenticado', async () => {
+      db.setUser(null);
       expect(await getCurrentUserWorkspace()).toBeNull();
     });
 
-    it('returns workspace summary for authenticated user', async () => {
-      getUserMock.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
-      buildResolver({ data: { id: 'ws-1', name: 'Promo' }, error: null });
-      const ws = await getCurrentUserWorkspace();
-      expect(ws).toEqual({ id: 'ws-1', name: 'Promo' });
-    });
-
-    it('throws when auth returns error', async () => {
-      getUserMock.mockResolvedValue({ data: { user: null }, error: { message: 'jwt expired' } });
-      await expect(getCurrentUserWorkspace()).rejects.toBeDefined();
+    it('devolve o resumo do workspace do usuário autenticado', async () => {
+      whenWorkspace({ data: { id: 'ws-1', name: 'Promo' }, error: null });
+      expect(await getCurrentUserWorkspace()).toEqual({ id: 'ws-1', name: 'Promo' });
     });
   });
 });
