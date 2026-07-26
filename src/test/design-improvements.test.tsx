@@ -10,8 +10,10 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 
 // ═══ JSDOM polyfills ═══
 beforeEach(() => {
-  // scrollTo polyfill
+  // scrollTo / scrollIntoView polyfills (cmdk chama scrollIntoView ao selecionar item)
   Element.prototype.scrollTo = vi.fn();
+  Element.prototype.scrollIntoView = vi.fn();
+
   // ResizeObserver polyfill
   if (!globalThis.ResizeObserver) {
     globalThis.ResizeObserver = class {
@@ -23,24 +25,31 @@ beforeEach(() => {
 });
 
 // ═══ Mocks ═══
+// IMPORTANTE: os valores retornados pelos hooks mockados precisam ter identidade
+// ESTÁVEL entre renders. Um objeto literal novo a cada chamada faz o efeito
+// `useEffect(..., [user])` do AppSidebar disparar em todo render → setState →
+// render → loop infinito (era a causa do travamento do worker do Vitest).
+const MOCK_USER = { email: "test@user.com" };
+const MOCK_SIGN_OUT = vi.fn();
+const MOCK_AUTH = { user: MOCK_USER, signOut: MOCK_SIGN_OUT };
+
 vi.mock("@/contexts/AuthContext", () => ({
-  useAuth: () => ({
-    user: { email: "test@user.com" },
-    signOut: vi.fn(),
-  }),
+  useAuth: () => MOCK_AUTH,
 }));
 
+const MOCK_WORKSPACE_INFO = {
+  name: "Test WS",
+  plan: "free",
+  maxAgents: 5,
+  agentCount: 2,
+  userName: "Test User",
+  email: "test@user.com",
+};
+
 vi.mock("@/lib/agentService", () => ({
-  getWorkspaceInfo: () =>
-    Promise.resolve({
-      name: "Test WS",
-      plan: "free",
-      maxAgents: 5,
-      agentCount: 2,
-      userName: "Test User",
-      email: "test@user.com",
-    }),
+  getWorkspaceInfo: () => Promise.resolve(MOCK_WORKSPACE_INFO),
 }));
+
 
 const mockChannel = {
   on: () => mockChannel,
@@ -68,9 +77,71 @@ vi.mock("@/integrations/supabase/client", () => ({
   },
 }));
 
+// O CommandPalette consulta o banco externo via `supabaseExternal` + `useGlobalSearch`.
+// Sem estes mocks o jsdom dispara requisições de rede reais que nunca resolvem,
+// travando o worker do Vitest (causa do timeout global da suíte).
+vi.mock("@/integrations/supabase/externalClient", () => {
+  // Builder PostgREST universal: qualquer método encadeável devolve o próprio
+  // builder, e o objeto é thenable — resolvendo sempre `{ data: [], error: null }`.
+  // Um mock parcial deixa passar chamadas reais de rede que travam o worker.
+  const makeBuilder = (): Record<string, unknown> => {
+    const target: Record<string, unknown> = {
+      then: (resolve: (v: unknown) => unknown) => Promise.resolve(resolve({ data: [], error: null })),
+      catch: () => Promise.resolve({ data: [], error: null }),
+      finally: () => Promise.resolve({ data: [], error: null }),
+      maybeSingle: () => Promise.resolve({ data: null, error: null }),
+      single: () => Promise.resolve({ data: null, error: null }),
+      csv: () => Promise.resolve({ data: "", error: null }),
+    };
+    const proxy: Record<string, unknown> = new Proxy(target, {
+      get(obj, prop) {
+        if (prop in obj) return obj[prop as string];
+        if (typeof prop === "symbol") return undefined;
+        return () => proxy;
+      },
+    });
+    return proxy;
+  };
+
+  const channel = {
+    on: () => channel,
+    subscribe: () => channel,
+    unsubscribe: vi.fn(),
+    send: vi.fn(),
+  };
+
+  return {
+    supabaseExternal: {
+      from: () => makeBuilder(),
+      rpc: () => makeBuilder(),
+      channel: () => channel,
+      removeChannel: vi.fn(),
+      auth: {
+        getSession: () => Promise.resolve({ data: { session: null }, error: null }),
+        getUser: () => Promise.resolve({ data: { user: null }, error: null }),
+        onAuthStateChange: () => ({ data: { subscription: { unsubscribe: vi.fn() } } }),
+      },
+      storage: { from: () => makeBuilder() },
+      functions: { invoke: () => Promise.resolve({ data: null, error: null }) },
+    },
+  };
+});
+
+
+vi.mock("@/hooks/useGlobalSearch", () => ({
+  useGlobalSearch: () => ({
+    results: [],
+    isLoading: false,
+    error: null,
+    query: "",
+    setQuery: vi.fn(),
+  }),
+}));
+
 vi.mock("@/hooks/use-network-status", () => ({
   useNetworkStatus: () => {},
 }));
+
 
 vi.mock("@/hooks/use-mobile", () => ({
   useIsMobile: () => false,
