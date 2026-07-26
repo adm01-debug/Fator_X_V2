@@ -14,13 +14,19 @@
  * código contra ele transforma um erro silencioso de runtime em falha de CI.
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { join } from 'node:path';
+import { basename, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 const ROOTS = ['src', 'supabase/functions'];
 const SKIP_DIRS = new Set(['node_modules', 'dist', '.git']);
-/** Este próprio arquivo cita nomes de RPC em texto; não deve se auto-analisar. */
-const SELF = 'rpc-contract.test.ts';
+/**
+ * Este arquivo cita `.rpc('nome')` e `.from('tabela')` na própria documentação
+ * e não deve se auto-analisar. Derivado de import.meta.url em vez de literal:
+ * a versão anterior era um literal com o nome antigo e passou a se analisar
+ * silenciosamente assim que o arquivo foi renomeado.
+ */
+const SELF = basename(fileURLToPath(import.meta.url));
 
 /**
  * Exceções conscientes. Cada entrada precisa de justificativa: a lista existe
@@ -60,18 +66,39 @@ function extractRpcNames(source: string): string[] {
   return [...matches].map((m) => m[1]);
 }
 
-function declaredFunctions(): Set<string> {
-  const types = readFileSync('src/integrations/supabase/types.ts', 'utf8');
-  const start = types.indexOf('Functions: {');
-  expect(start, 'bloco Functions não encontrado em types.ts').toBeGreaterThan(-1);
-  // Nomes de função aparecem como chaves indentadas em 6 espaços no bloco
-  // gerado. Sobrecargas não abrem `{` — emitem uma união na linha seguinte —,
-  // então casar apenas `nome: {` perderia justamente as funções sobrecarregadas.
-  const block = types.slice(start, types.indexOf('\n    Enums: {', start));
-  return new Set([...block.matchAll(/^ {6}([a-z0-9_]+):/gm)].map((m) => m[1]));
+/**
+ * Nomes literais em `.from('tabela'`. O casamento tolera um `as never`/`as any`
+ * depois da string, porque esse cast é justamente o disfarce mais comum de uma
+ * tabela inexistente: sem a tabela no schema, os tipos gerados não a conhecem,
+ * alguém silencia o erro com um cast e o bug vira runtime.
+ */
+function extractTableNames(source: string): string[] {
+  const matches = source.matchAll(/\.from\(\s*['"`]([A-Za-z0-9_]+)['"`]/g);
+  return [...matches].map((m) => m[1]);
 }
 
-describe('contrato de RPC entre código e banco', () => {
+/** Extrai as chaves de um bloco de `types.ts` delimitado por dois marcadores. */
+function declaredKeys(startMarker: string, endMarker: string): Set<string> {
+  const types = readFileSync('src/integrations/supabase/types.ts', 'utf8');
+  const start = types.indexOf(startMarker);
+  expect(start, `bloco ${startMarker} não encontrado em types.ts`).toBeGreaterThan(-1);
+  const end = types.indexOf(endMarker, start);
+  expect(end, `fim do bloco ${startMarker} não encontrado`).toBeGreaterThan(start);
+  // As chaves ficam indentadas em 6 espaços. Sobrecargas de função não abrem
+  // `{` — emitem uma união na linha seguinte —, então casar apenas `nome: {`
+  // perderia justamente as funções sobrecarregadas.
+  return new Set([...types.slice(start, end).matchAll(/^ {6}([a-z0-9_]+):/gm)].map((m) => m[1]));
+}
+
+const declaredFunctions = () => declaredKeys('Functions: {', '\n    Enums: {');
+/** Views entram junto: `.from()` aceita view, e a distinção não importa aqui. */
+const declaredRelations = () =>
+  new Set([
+    ...declaredKeys('    Tables: {', '\n    Views: {'),
+    ...declaredKeys('    Views: {', '\n    Functions: {'),
+  ]);
+
+describe('contrato de schema entre código e banco', () => {
   const files = ROOTS.flatMap((root) => walk(root));
 
   it('encontra arquivos para analisar', () => {
@@ -87,6 +114,21 @@ describe('contrato de RPC entre código e banco', () => {
       for (const name of extractRpcNames(readFileSync(file, 'utf8'))) {
         if (known.has(name) || name in KNOWN_ABSENT) continue;
         offenders.push(`${file}: .rpc('${name}') não existe no schema`);
+      }
+    }
+
+    expect(offenders, offenders.join('\n')).toEqual([]);
+  });
+
+  it('todo .from() referencia uma tabela ou view existente no schema', () => {
+    const known = declaredRelations();
+    expect(known.size).toBeGreaterThan(100);
+
+    const offenders: string[] = [];
+    for (const file of files) {
+      for (const name of extractTableNames(readFileSync(file, 'utf8'))) {
+        if (known.has(name) || name in KNOWN_ABSENT) continue;
+        offenders.push(`${file}: .from('${name}') não existe no schema`);
       }
     }
 

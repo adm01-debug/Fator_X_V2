@@ -78,8 +78,11 @@ export function WhatsAppInboxPanel() {
   const { data: events = [], isLoading, refetch, isRefetching } = useQuery({
     queryKey: ["whatsapp_webhook_events"],
     queryFn: async () => {
+      // O `as never` que existia aqui era sintoma, não solução: a tabela não
+      // existia no schema, então os tipos gerados não a conheciam e o cast
+      // silenciava o erro. Com a tabela criada, a query é tipada de verdade.
       const { data, error } = await supabase
-        .from("whatsapp_webhook_events" as never)
+        .from("whatsapp_webhook_events")
         .select("*")
         .order("received_at", { ascending: false })
         .limit(100);
