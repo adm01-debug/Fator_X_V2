@@ -84,6 +84,51 @@ export function WebhookManagerPanel() {
     setTestDialogOpen(true);
   };
 
+  /** Abre o drawer de histórico e carrega os últimos eventos do webhook. */
+  const openHistory = async (w: WebhookEndpoint) => {
+    setHistoryWebhook(w);
+    setHistoryOpen(true);
+    setHistoryLoading(true);
+    try {
+      setHistoryEvents(await getWebhookEvents(w.id, 100));
+    } catch (e) {
+      setHistoryEvents([]);
+      toast({
+        title: 'Falha ao carregar histórico',
+        description: e instanceof Error ? e.message : 'Erro desconhecido',
+        variant: 'destructive',
+      });
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
+  /** Reenvia o payload original de um evento para o mesmo webhook. */
+  const handleReplay = async (ev: WebhookEvent) => {
+    if (!historyWebhook) return;
+    setReplayingId(ev.id);
+    try {
+      const result = await triggerWebhookViaEF({
+        path: historyWebhook.path,
+        payload: { ...(ev.body ?? {}), __replay_of: ev.id },
+      });
+      toast({
+        title: 'Evento reenviado',
+        description: `${historyWebhook.name} — status ${result.status}`,
+      });
+      setHistoryEvents(await getWebhookEvents(historyWebhook.id, 100));
+    } catch (e) {
+      toast({
+        title: 'Falha no replay',
+        description: e instanceof Error ? e.message : 'Erro desconhecido',
+        variant: 'destructive',
+      });
+    } finally {
+      setReplayingId(null);
+    }
+  };
+
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
