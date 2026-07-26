@@ -5,11 +5,7 @@ import { callLovable, callOpenRouter, callAnthropic, callOpenAICompatible, callH
 import { 
   getCorsHeaders, 
   handleCorsPreflight, 
-  _getRateLimitIdentifier, 
-  _createRateLimitResponse, 
-  _RATE_LIMITS,
   parseBody,
-  _jsonResponse,
   errorResponse
 } from "../_shared/mod.ts";
 import { LLMGatewayContracts } from "../_shared/contracts.ts";
