@@ -11584,8 +11584,6 @@ export type Database = {
           token_count: number
         }[]
       }
-      show_limit: { Args: never; Returns: number }
-      show_trgm: { Args: { "": string }; Returns: string[] }
       start_dr_drill: { Args: { p_drill_id: string }; Returns: Json }
       start_game_day: {
         Args: { p_game_day_id: string; p_inject_chaos?: boolean }

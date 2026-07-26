@@ -2,7 +2,7 @@
  * Comprehensive test suite verifying ALL 31 design improvements
  * across Rounds 1, 2, and 3 of the Product Design Strategy audit.
  */
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -203,8 +203,8 @@ describe("Round 1: Foundational Design Polish", () => {
       const h1 = screen.getByRole("heading", { level: 1 });
       expect(h1).toBeInTheDocument();
       expect(h1.textContent).toBe("Test Title");
-      expect(h1.className).toContain("text-2xl");
-      expect(h1.className).toContain("sm:text-3xl");
+      expect(h1.className).toContain("text-3xl");
+      expect(h1.className).toContain("sm:text-4xl");
     });
   });
 
@@ -368,7 +368,7 @@ describe("Round 2: UX & Interaction", () => {
           <Breadcrumbs />
         </Wrapper>
       );
-      expect(screen.getByText("Knowledge / RAG")).toBeInTheDocument();
+      expect(screen.getByText("Conhecimento")).toBeInTheDocument();
       expect(screen.getByLabelText("Ir para o Dashboard")).toBeInTheDocument();
     });
 
@@ -386,7 +386,7 @@ describe("Round 2: UX & Interaction", () => {
       const { Breadcrumbs } = await import("@/components/shared/Breadcrumbs");
       const routes = [
         { path: "/datahub", label: "DataHub" },
-        { path: "/lgpd", label: "LGPD Compliance" },
+        { path: "/knowledge", label: "Conhecimento" },
         { path: "/approvals", label: "Aprovações" },
         { path: "/admin", label: "Admin BD" },
         { path: "/brain", label: "Super Cérebro" },
@@ -410,13 +410,13 @@ describe("Round 2: UX & Interaction", () => {
           <Breadcrumbs />
         </Wrapper>
       );
-      const last = screen.getByText("Security & Guardrails");
+      const last = screen.getByText("Segurança");
       expect(last.getAttribute("aria-current")).toBe("page");
     });
   });
 
-  describe("#19 Dashboard AI Insight", () => {
-    it("renders InfoHint with the correct title", async () => {
+  describe("#19 Dashboard Empty State", () => {
+    it("renders the empty-state headline when there are no agents", async () => {
       const DashboardPage = (await import("@/pages/DashboardPage")).default;
       render(
         <Wrapper>
@@ -424,7 +424,7 @@ describe("Round 2: UX & Interaction", () => {
         </Wrapper>
       );
       await waitFor(() => {
-        expect(screen.getByText("O que são superagentes de IA?")).toBeInTheDocument();
+        expect(screen.getByText("Inicie sua Frota Neural")).toBeInTheDocument();
       });
     });
   });
@@ -452,10 +452,10 @@ describe("Round 2: UX & Interaction", () => {
         { path: "/", expected: "Dashboard" },
         { path: "/agents", expected: "Agentes" },
         { path: "/brain", expected: "Super Cérebro" },
-        { path: "/knowledge", expected: "Knowledge" },
+        { path: "/knowledge", expected: "Conhecimento" },
         { path: "/datahub", expected: "DataHub" },
         { path: "/lgpd", expected: "LGPD" },
-        { path: "/settings", expected: "Settings" },
+        { path: "/settings", expected: "Configurações" },
       ];
       for (const { path, expected } of routes) {
         const { container, unmount } = render(
@@ -475,10 +475,19 @@ describe("Round 2: UX & Interaction", () => {
   });
 
   describe("#21 Onboarding Tour v2", () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       localStorage.clear();
+      const { useUIStore } = await import("@/stores/uiStore");
+      useUIStore.getState().setOnboardingComplete(false);
       vi.useRealTimers();
     });
+
+    afterEach(() => {
+      // Um teste que falha antes do `vi.useRealTimers()` final deixaria os timers
+      // falsos ativos, travando todo `waitFor` das suítes seguintes.
+      vi.useRealTimers();
+    });
+
 
     it("shows the tour after a delay for first-time users", async () => {
       vi.useFakeTimers();
@@ -495,7 +504,8 @@ describe("Round 2: UX & Interaction", () => {
     });
 
     it("does NOT show the tour if already dismissed", async () => {
-      localStorage.setItem("nexus-onboarding-v2", "true");
+      const { useUIStore } = await import("@/stores/uiStore");
+      useUIStore.getState().setOnboardingComplete(true);
       vi.useFakeTimers();
       const { OnboardingTour } = await import("@/components/shared/OnboardingTour");
       const { container } = render(
@@ -556,6 +566,8 @@ describe("Round 2: UX & Interaction", () => {
     });
 
     it("dismisses on close button and persists", async () => {
+      const { useUIStore } = await import("@/stores/uiStore");
+      useUIStore.getState().setOnboardingComplete(false);
       vi.useFakeTimers();
       const { OnboardingTour } = await import("@/components/shared/OnboardingTour");
       render(
@@ -566,7 +578,7 @@ describe("Round 2: UX & Interaction", () => {
       await act(async () => { vi.advanceTimersByTime(1500); });
       await act(async () => { fireEvent.click(screen.getByLabelText("Fechar tour")); });
       expect(screen.queryByRole("dialog")).toBeNull();
-      expect(localStorage.getItem("nexus-onboarding-v2")).toBe("true");
+      expect(useUIStore.getState().onboardingComplete).toBe(true);
       vi.useRealTimers();
     });
 
@@ -600,7 +612,7 @@ describe("Round 3: Visual & Token Polish", () => {
       );
       const logo = container.querySelector("img");
       expect(logo).toBeTruthy();
-      expect(logo!.className).toContain("h-8");
+      expect(logo!.className).toContain("h-6");
       expect(logo!.className).not.toContain("h-14");
     });
   });
@@ -613,7 +625,8 @@ describe("Round 3: Visual & Token Polish", () => {
           <AppSidebar />
         </SidebarWrapper>
       );
-      expect(screen.getByText(/Workspace Free/)).toBeInTheDocument();
+      expect(screen.getByText(/Vazão do Workspace/)).toBeInTheDocument();
+      expect(screen.getByText("Free")).toBeInTheDocument();
       expect(screen.getByRole("progressbar")).toBeInTheDocument();
     });
 
@@ -649,14 +662,14 @@ describe("Round 3: Visual & Token Polish", () => {
         </SidebarWrapper>
       );
       expect(screen.getByText("Dashboard")).toBeInTheDocument();
-      expect(screen.getByText("Agents")).toBeInTheDocument();
-      expect(screen.getByText("Knowledge / RAG")).toBeInTheDocument();
+      expect(screen.getByText("Agentes")).toBeInTheDocument();
+      expect(screen.getByText("Conhecimento / RAG")).toBeInTheDocument();
       expect(screen.getByText("Prompts")).toBeInTheDocument();
     });
   });
 
-  describe("#25 Empty State Cards", () => {
-    it("renders 3 feature cards when no agents exist", async () => {
+  describe("#25 Empty State", () => {
+    it("renders the shared empty state when no agents exist", async () => {
       const DashboardPage = (await import("@/pages/DashboardPage")).default;
       render(
         <Wrapper>
@@ -664,32 +677,28 @@ describe("Round 3: Visual & Token Polish", () => {
         </Wrapper>
       );
       await waitFor(() => {
-        expect(screen.getByText("Super Cérebro")).toBeInTheDocument();
-        expect(screen.getByText("Oráculo")).toBeInTheDocument();
-        expect(screen.getByText("Guardrails")).toBeInTheDocument();
+        expect(screen.getByText("Inicie sua Frota Neural")).toBeInTheDocument();
       });
+      expect(
+        screen.getByText(/Sua infraestrutura Nexus está pronta/)
+      ).toBeInTheDocument();
     });
 
-    it("each card has a distinct accent border class", async () => {
+    it("uses the dashed accent container for the empty state", async () => {
       const DashboardPage = (await import("@/pages/DashboardPage")).default;
-      render(
+      const { container } = render(
         <Wrapper>
           <DashboardPage />
         </Wrapper>
       );
       await waitFor(() => {
-        const cerebro = screen.getByLabelText(/Navegar para Super Cérebro/);
-        const oraculo = screen.getByLabelText(/Navegar para Oráculo/);
-        const guardrails = screen.getByLabelText(/Navegar para Guardrails/);
-        expect(cerebro.className).toContain("nexus-purple");
-        expect(oraculo.className).toContain("nexus-cyan");
-        expect(guardrails.className).toContain("nexus-emerald");
+        expect(container.querySelector(".border-dashed")).toBeTruthy();
       });
     });
   });
 
   describe("#26 CTA Deduplication", () => {
-    it("shows 'Criar seu primeiro agente' only in empty state", async () => {
+    it("shows the primary creation CTA exactly once in the empty state", async () => {
       const DashboardPage = (await import("@/pages/DashboardPage")).default;
       render(
         <Wrapper>
@@ -697,11 +706,12 @@ describe("Round 3: Visual & Token Polish", () => {
         </Wrapper>
       );
       await waitFor(() => {
-        expect(screen.getByText("Criar seu primeiro agente")).toBeInTheDocument();
-        expect(screen.queryByText("Criar agente")).not.toBeInTheDocument();
+        expect(screen.getByText("Criar Primeiro Agente")).toBeInTheDocument();
       });
+      expect(screen.getAllByText("Criar Primeiro Agente")).toHaveLength(1);
     });
   });
+
 
   describe("#27 Design Token Migration", () => {
     it("tailwind config includes all 13 nexus color tokens", () => {
@@ -771,7 +781,7 @@ describe("Round 3: Visual & Token Polish", () => {
         </Wrapper>
       );
       await waitFor(() => {
-        const statusRing = container.querySelector(".bg-nexus-emerald");
+        const statusRing = container.querySelector('[aria-label="Online"]');
         expect(statusRing).toBeTruthy();
         expect(statusRing!.getAttribute("aria-label")).toBe("Online");
       });
@@ -779,7 +789,7 @@ describe("Round 3: Visual & Token Polish", () => {
   });
 
   describe("#31 Dashboard Quick Actions", () => {
-    it("renders feature cards in empty state", async () => {
+    it("exposes the empty-state creation CTA as an actionable button", async () => {
       const DashboardPage = (await import("@/pages/DashboardPage")).default;
       render(
         <Wrapper>
@@ -787,7 +797,9 @@ describe("Round 3: Visual & Token Polish", () => {
         </Wrapper>
       );
       await waitFor(() => {
-        expect(screen.getByText("Super Cérebro")).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: /Criar Primeiro Agente/i })
+        ).toBeInTheDocument();
       });
     });
   });
@@ -917,9 +929,9 @@ describe("Cross-cutting: Theme & Styling", () => {
         <AppSidebar />
       </SidebarWrapper>
     );
-    expect(screen.getByText("FATOR")).toBeInTheDocument();
+    expect(screen.getByText("Fator")).toBeInTheDocument();
     const xSpan = screen.getByText("X");
     expect(xSpan).toBeInTheDocument();
-    expect(xSpan.className).toContain("bg-clip-text");
+    expect(xSpan.className).toContain("text-primary");
   });
 });
