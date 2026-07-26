@@ -84,10 +84,19 @@ export interface SupabaseMock {
   setTableResult: (table: string, result: Partial<PostgrestLikeResult>) => void;
   /** Define o retorno de `supabase.rpc(name, ...)`. */
   setRpcResult: (fn: string, result: Partial<PostgrestLikeResult>) => void;
+  /** Define o retorno de `supabase.functions.invoke(name, ...)`. */
+  setFunctionResult: (fn: string, result: Partial<PostgrestLikeResult>) => void;
+  /**
+   * Substitui a implementação de `functions.invoke` — use quando o teste
+   * precisa de respostas sequenciais (ex.: 1ª chamada falha, 2ª sucede) ou
+   * de lógica dependente do payload.
+   */
+  setInvokeImpl: (impl: ((name: string, opts?: unknown) => unknown) | null) => void;
   /** Define o usuário devolvido por `auth.getUser()` / `auth.getSession()`. */
   setUser: (user: { id: string; email?: string } | null) => void;
   /** Limpa espiões e resultados, voltando ao estado inicial. */
   reset: () => void;
+
 }
 
 /**
@@ -103,6 +112,8 @@ export function createSupabaseMock(
   let defaultResult: PostgrestLikeResult = { ...DEFAULT_RESULT };
   const tableResults = new Map<string, PostgrestLikeResult>();
   const rpcResults = new Map<string, PostgrestLikeResult>();
+  const functionResults = new Map<string, PostgrestLikeResult>();
+  let invokeImpl: ((name: string, opts?: unknown) => unknown) | null = null;
   let user = initialUser;
 
   /** Espião memoizado por nome de método — permite `calls.eq` após o fato. */
@@ -190,7 +201,8 @@ export function createSupabaseMock(
     functions: {
       invoke: (name: string, opts?: unknown) => {
         spy('invoke')(name, opts);
-        return Promise.resolve(defaultResult);
+        if (invokeImpl) return Promise.resolve(invokeImpl(name, opts));
+        return Promise.resolve(functionResults.get(name) ?? defaultResult);
       },
     },
     storage: {
@@ -222,6 +234,12 @@ export function createSupabaseMock(
     setRpcResult: (fn, result) => {
       rpcResults.set(fn, { ...DEFAULT_RESULT, ...result });
     },
+    setFunctionResult: (fn, result) => {
+      functionResults.set(fn, { ...DEFAULT_RESULT, ...result });
+    },
+    setInvokeImpl: (impl) => {
+      invokeImpl = impl;
+    },
     setUser: (next) => {
       user = next;
     },
@@ -230,6 +248,8 @@ export function createSupabaseMock(
       defaultResult = { ...DEFAULT_RESULT };
       tableResults.clear();
       rpcResults.clear();
+      functionResults.clear();
+      invokeImpl = null;
       user = initialUser;
     },
   };
