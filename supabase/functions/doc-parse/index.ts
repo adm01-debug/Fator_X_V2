@@ -381,7 +381,8 @@ serve(async (req) => {
               reused_chunks: activeChunks ?? 0,
               source: 'server_computed',
             },
-          }).then(() => {}, () => {});
+            // Best-effort, porém audível (ver nota no bloco de reuso acima).
+          }).then(() => {}, (e) => console.warn(`[audit] falha ao registrar document.reuse (hash計): ${e?.message ?? e}`));
           return jsonResponse({
             status: 'ok',
             deduped: true,
