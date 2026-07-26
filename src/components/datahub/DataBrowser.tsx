@@ -53,7 +53,7 @@ export function DataBrowser({ entityId, onClose }: { entityId: string; onClose: 
   const debouncedSearch = useDebounce(searchTerm, 350);
   const [loading, setLoading] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<Record<string, unknown> | null>(null);
-  const [enrichedData, setEnrichedData] = useState<{ enriched?: unknown; cross_db?: unknown } | null>(null);
+  const [enrichedData, setEnrichedData] = useState<{ enriched: Record<string, unknown[]>; cross_db: Record<string, unknown[]> } | null>(null);
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [filters, setFilters] = useState<ActiveFilter[]>([]);

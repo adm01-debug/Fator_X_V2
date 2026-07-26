@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, type ComponentProps } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -264,7 +264,8 @@ function AuditReportView({ runId, runs }: { runId: string | null; runs: EvalRun[
   const { data: results = [] } = useEvalResults(runId);
   const run = (runs as Array<{ id?: string }>).find((r) => r?.id === runId);
   if (!run) return null;
-  return <AuditReportDialog run={run as unknown as Record<string, unknown>} results={results as unknown as Record<string, unknown>[]} />;
+  type AuditProps = ComponentProps<typeof AuditReportDialog>;
+  return <AuditReportDialog run={run as unknown as AuditProps['run']} results={results as unknown as AuditProps['results']} />;
 }
 
 function RunDetails({ runId }: { runId: string | null }) {

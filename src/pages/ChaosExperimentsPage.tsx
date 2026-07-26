@@ -134,7 +134,9 @@ export default function ChaosExperimentsPage() {
 
   const remove = async (id: string) => {
     if (!confirm("Excluir experimento?")) return;
-    const { error } = await supabase.from("chaos_experiments").delete().eq("id", id);
+    const { error } = await import("@/integrations/supabase/client").then(
+      (m) => m.supabase.from("chaos_experiments").delete().eq("id", id),
+    );
     if (error) {
       toast.error(error.message);
       return;

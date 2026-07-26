@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { getAgentById } from '@/services/agentsService';
+import { listAgentTraces, type AgentTraceRow } from '@/services/agentTracesService';
 import {
   alertRulesService, evaluateRule, makeRuleFromTemplate, ALERT_RULE_TEMPLATES,
   type AlertRule,
@@ -36,7 +37,7 @@ export default function AgentAlertsPage() {
   });
 
   // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
-  const traces = (traceData as { traces?: unknown[] }).traces || [];
+  const traces = ((traceData as { traces?: AgentTraceRow[] }).traces ?? []) as AgentTraceRow[];
 
   const [rules, setRules] = useState<AlertRule[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
