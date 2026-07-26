@@ -39,6 +39,17 @@ interface SearchResult {
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 const cache = new Map<string, { ts: number; data: SearchResult[] }>();
 
+/**
+ * O ramo vetorial depende do RPC `match_documents`, que hoje NÃO existe: não há
+ * nenhuma coluna `vector` no schema, então não há onde indexar embeddings de
+ * chunks. Sem este circuit breaker, toda busca pagava uma chamada de embedding
+ * (rag-embed-v2) para em seguida receber 42883 e cair no fallback ILIKE — custo
+ * e latência puros. Ao detectar a ausência uma vez, desligamos o ramo pelo
+ * tempo de vida da instância; quando o RPC for criado, um novo deploy (ou o
+ * reciclo natural da isolate) volta a tentar.
+ */
+let vectorSearchAvailable = true;
+
 function cacheKey(q: string, kb: string | null, k: number) {
   return `${kb ?? "*"}::${k}::${q.toLowerCase().trim()}`;
 }
@@ -97,6 +108,8 @@ serve(async (req) => {
 
     // ── 1. Try vector search via rag-embed-v2 + match_documents RPC ──
     try {
+      if (!vectorSearchAvailable) throw new Error("vector_search_disabled");
+
       const embedResp = await fetchWithTimeout(
         `${SUPABASE_URL}/functions/v1/rag-embed-v2`,
         {
@@ -130,7 +143,16 @@ serve(async (req) => {
             },
           );
 
-          if (!matchErr && Array.isArray(matches)) {
+          if (matchErr) {
+            // 42883 = undefined_function: o RPC não existe neste banco. Não
+            // adianta repetir a chamada de embedding nas próximas requisições.
+            if (matchErr.code === "42883") {
+              vectorSearchAvailable = false;
+              console.warn("match_documents ausente; ramo vetorial desativado nesta instância");
+            } else {
+              console.warn("match_documents falhou", matchErr.message);
+            }
+          } else if (Array.isArray(matches)) {
             results = matches.map((m: Record<string, unknown>) => ({
               chunk_id: String(m.id),
               document_id: m.document_id ? String(m.document_id) : null,
@@ -144,7 +166,9 @@ serve(async (req) => {
         }
       }
     } catch (e) {
-      console.warn("vector search failed, falling back to text", e);
+      if (!(e instanceof Error && e.message === "vector_search_disabled")) {
+        console.warn("vector search failed, falling back to text", e);
+      }
     }
 
     // ── 2. Fallback: ILIKE on chunks.content ─────────────────────

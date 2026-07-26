@@ -29,7 +29,13 @@ Deno.serve(async (req) => {
     );
     const { data: userData } = await userClient.auth.getUser();
     if (!userData?.user) return json({ error: "unauthorized" }, 401);
-    const { data: isAdmin } = await userClient.rpc("has_role", { _user_id: userData.user.id, _role: "admin" });
+    // `has_role` não existe neste banco: a chamada anterior sempre retornava
+    // erro, e o fail-closed abaixo transformava isto em 403 permanente para
+    // todo mundo, inclusive admins. O guard real do projeto é is_workspace_admin.
+    const { data: isAdmin, error: roleError } = await userClient.rpc("is_workspace_admin", {
+      _user_id: userData.user.id,
+    });
+    if (roleError) return json({ error: "auth_check_failed", details: roleError.message }, 500);
     if (!isAdmin) return json({ error: "forbidden", message: "acesso restrito a administradores" }, 403);
   } catch (e) {
     return json({ error: "auth_check_failed", details: e instanceof Error ? e.message : String(e) }, 500);
