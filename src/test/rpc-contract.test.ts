@@ -92,7 +92,7 @@ const declaredRelations = () =>
     ...declaredKeys('    Views: {', '\n    Functions: {'),
   ]);
 
-describe('contrato de RPC entre código e banco', () => {
+describe('contrato de schema entre código e banco', () => {
   const files = ROOTS.flatMap((root) => walk(root));
 
   it('encontra arquivos para analisar', () => {
