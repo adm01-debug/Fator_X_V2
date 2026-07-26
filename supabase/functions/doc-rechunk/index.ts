@@ -192,7 +192,10 @@ serve(async (req) => {
         to: { ...nextOpts, version: nextVersion },
         chunks_created: rows.length,
       },
-    }).then(() => {}, () => {});
+      // Auditoria é best-effort para não derrubar o rechunk, mas a falha
+      // precisa deixar rastro: um registro de auditoria perdido em silêncio
+      // é um buraco na trilha de conformidade que ninguém detecta.
+    }).then(() => {}, (e) => console.warn(`[audit] falha ao registrar document.rechunk: ${e?.message ?? e}`));
 
     // Fire embeddings in background
     supabase.functions.invoke('rag-embed-backfill', {
