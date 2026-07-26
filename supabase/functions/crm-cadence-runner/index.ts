@@ -172,6 +172,9 @@ Deno.serve(async (req) => {
     };
     const details: Array<Record<string, unknown>> = [];
     const startedAt = Date.now();
+    /** Falhas terminais por workspace, agregadas para um único alerta no fim. */
+    const failureDigest = new Map<string, string[]>();
+
 
 
     // Estado de teto diário por cadência, resolvido sob demanda e mantido em
