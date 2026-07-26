@@ -76,9 +76,9 @@ export default function SkillbookAuditPage() {
   const impactQuery = useQuery({ queryKey: ['skillbook-impact'], queryFn: fetchSkillbookImpact });
   const timelineQuery = useQuery({ queryKey: ['skillbook-timeline'], queryFn: () => fetchSkillbookTimeline(200) });
 
-  const learnedAll = learnedQuery.data ?? [];
-  const installedAll = installedQuery.data ?? [];
-  const timelineAll = timelineQuery.data ?? [];
+  const learnedAll = useMemo(() => learnedQuery.data ?? [], [learnedQuery.data]);
+  const installedAll = useMemo(() => installedQuery.data ?? [], [installedQuery.data]);
+  const timelineAll = useMemo(() => timelineQuery.data ?? [], [timelineQuery.data]);
 
   const learned = useMemo(() => filterByPeriod(learnedAll, period, 'created_at'), [learnedAll, period]);
   const installed = useMemo(() => filterByPeriod(installedAll, period, 'installed_at'), [installedAll, period]);
