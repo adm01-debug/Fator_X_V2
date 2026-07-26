@@ -4113,10 +4113,13 @@ export type Database = {
           domain: string | null
           enrichment_json: Json
           external_ref: string | null
+          icp_profile_id: string | null
           icp_score: number | null
           id: string
           industry: string | null
           name: string
+          score_reason: Json
+          scored_at: string | null
           size_band: string | null
           updated_at: string
           workspace_id: string
@@ -4128,10 +4131,13 @@ export type Database = {
           domain?: string | null
           enrichment_json?: Json
           external_ref?: string | null
+          icp_profile_id?: string | null
           icp_score?: number | null
           id?: string
           industry?: string | null
           name: string
+          score_reason?: Json
+          scored_at?: string | null
           size_band?: string | null
           updated_at?: string
           workspace_id: string
@@ -4143,15 +4149,26 @@ export type Database = {
           domain?: string | null
           enrichment_json?: Json
           external_ref?: string | null
+          icp_profile_id?: string | null
           icp_score?: number | null
           id?: string
           industry?: string | null
           name?: string
+          score_reason?: Json
+          scored_at?: string | null
           size_band?: string | null
           updated_at?: string
           workspace_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "crm_companies_icp_profile_id_fkey"
+            columns: ["icp_profile_id"]
+            isOneToOne: false
+            referencedRelation: "crm_icp_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       crm_contacts: {
         Row: {
@@ -4220,12 +4237,15 @@ export type Database = {
           deleted_at: string | null
           expected_close_at: string | null
           external_ref: string | null
+          icp_profile_id: string | null
           id: string
           last_activity_at: string | null
           lead_score: number | null
           owner_id: string | null
           pipeline_id: string | null
           score_breakdown: Json
+          score_reason: Json
+          scored_at: string | null
           stage_id: string | null
           status: string
           title: string
@@ -4242,12 +4262,15 @@ export type Database = {
           deleted_at?: string | null
           expected_close_at?: string | null
           external_ref?: string | null
+          icp_profile_id?: string | null
           id?: string
           last_activity_at?: string | null
           lead_score?: number | null
           owner_id?: string | null
           pipeline_id?: string | null
           score_breakdown?: Json
+          score_reason?: Json
+          scored_at?: string | null
           stage_id?: string | null
           status?: string
           title: string
@@ -4264,12 +4287,15 @@ export type Database = {
           deleted_at?: string | null
           expected_close_at?: string | null
           external_ref?: string | null
+          icp_profile_id?: string | null
           id?: string
           last_activity_at?: string | null
           lead_score?: number | null
           owner_id?: string | null
           pipeline_id?: string | null
           score_breakdown?: Json
+          score_reason?: Json
+          scored_at?: string | null
           stage_id?: string | null
           status?: string
           title?: string
@@ -4292,6 +4318,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "crm_deals_icp_profile_id_fkey"
+            columns: ["icp_profile_id"]
+            isOneToOne: false
+            referencedRelation: "crm_icp_profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "crm_deals_pipeline_id_fkey"
             columns: ["pipeline_id"]
             isOneToOne: false
@@ -4306,6 +4339,69 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      crm_icp_profiles: {
+        Row: {
+          created_at: string
+          deleted_at: string | null
+          description: string | null
+          hot_threshold: number
+          id: string
+          is_default: boolean
+          max_company_size: number | null
+          min_company_size: number | null
+          name: string
+          qualified_threshold: number
+          target_industries: string[]
+          target_job_titles: string[]
+          updated_at: string
+          weight_company_size: number
+          weight_engagement: number
+          weight_industry: number
+          weight_job_title: number
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          deleted_at?: string | null
+          description?: string | null
+          hot_threshold?: number
+          id?: string
+          is_default?: boolean
+          max_company_size?: number | null
+          min_company_size?: number | null
+          name: string
+          qualified_threshold?: number
+          target_industries?: string[]
+          target_job_titles?: string[]
+          updated_at?: string
+          weight_company_size?: number
+          weight_engagement?: number
+          weight_industry?: number
+          weight_job_title?: number
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          deleted_at?: string | null
+          description?: string | null
+          hot_threshold?: number
+          id?: string
+          is_default?: boolean
+          max_company_size?: number | null
+          min_company_size?: number | null
+          name?: string
+          qualified_threshold?: number
+          target_industries?: string[]
+          target_job_titles?: string[]
+          updated_at?: string
+          weight_company_size?: number
+          weight_engagement?: number
+          weight_industry?: number
+          weight_job_title?: number
+          workspace_id?: string
+        }
+        Relationships: []
       }
       crm_pipelines: {
         Row: {

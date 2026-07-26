@@ -22,6 +22,7 @@ import { CrmSummaryCards } from '@/components/crm/CrmSummaryCards';
 import { DealsTable } from '@/components/crm/DealsTable';
 import { ContactsTable } from '@/components/crm/ContactsTable';
 import { CompaniesTable } from '@/components/crm/CompaniesTable';
+import { IcpProfilePanel } from '@/components/crm/IcpProfilePanel';
 import { useDebounce } from '@/hooks/use-debounce';
 import { toast } from '@/hooks/use-toast';
 import { Search, Layers, RefreshCw } from 'lucide-react';
@@ -192,6 +193,7 @@ export default function CrmPage() {
           <TabsTrigger value="deals">Negócios</TabsTrigger>
           <TabsTrigger value="contacts">Contatos</TabsTrigger>
           <TabsTrigger value="companies">Empresas</TabsTrigger>
+          <TabsTrigger value="icp">ICP &amp; Score</TabsTrigger>
         </TabsList>
 
         <TabsContent value="deals">
@@ -216,6 +218,11 @@ export default function CrmPage() {
             companies={companiesQuery.data ?? []}
             isLoading={companiesQuery.isLoading}
           />
+        </TabsContent>
+
+        <TabsContent value="icp">
+          {/* Montagem tardia: o painel busca o perfil e só faz sentido na aba ativa. */}
+          {tab === 'icp' && <IcpProfilePanel />}
         </TabsContent>
       </Tabs>
     </div>
