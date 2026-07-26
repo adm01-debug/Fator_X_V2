@@ -103,7 +103,7 @@ Deno.serve(async (req) => {
     if (auth.error) return auth.error;
     const { user } = auth;
 
-    const rate = checkRateLimit(getRateLimitIdentifier(req, user.id), RATE_LIMITS.strict);
+    const rate = await checkRateLimit(getRateLimitIdentifier(req, user.id), RATE_LIMITS.heavy);
     if (!rate.allowed) return createRateLimitResponse(rate);
 
     const parsed = await parseBody(req, SyncInput);
@@ -111,15 +111,16 @@ Deno.serve(async (req) => {
     const { workspace_id, entities, max_pages } = parsed.data;
 
     // Autorização: o workspace vem do cliente, então precisa ser validado aqui.
-    const membership = await validateWorkspaceMembership(user.id, workspace_id);
-    if (!membership.valid) {
+    const adminForAuthz = createAdminClient();
+    const isMember = await validateWorkspaceMembership(adminForAuthz, user.id, workspace_id);
+    if (!isMember) {
       return errorResponse(req, "Sem acesso a este workspace", 403);
     }
 
     const domain = Deno.env.get("BITRIX24_DOMAIN");
     if (!domain) return errorResponse(req, "BITRIX24_DOMAIN não configurado", 503);
 
-    const admin = createAdminClient();
+    const admin = adminForAuthz;
     const token = await getAccessToken(admin, workspace_id);
 
     const summary: Record<string, { inserted: number; updated: number; failed: number }> = {};
