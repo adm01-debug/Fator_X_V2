@@ -42,7 +42,7 @@ export function SLOViolationTimeline({ data, daily, onDayClick, onViolationClick
           return (
             <Tooltip key={day.date}>
               <TooltipTrigger asChild>
-                {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- elemento com onClick + onKeyDown para navegação por teclado em timeline */}
+                { }
                 <div
                   role="button"
                   tabIndex={0}

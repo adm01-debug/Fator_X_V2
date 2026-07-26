@@ -7,7 +7,6 @@
 import { fromTable } from '@/lib/supabaseExtended';
 import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/lib/logger';
-import type { DbRow } from '@/types/dbRow';
 
 // Re-export types from dedicated file
 export type {

@@ -62,7 +62,7 @@ const relTime = (iso: string) => formatDistanceToNow(new Date(iso), { addSuffix:
 
 const confidenceColor = (c: number): string => {
   if (c < 0.4) return 'text-destructive';
-  if (c < 0.7) return 'text-amber-500';
+  if (c < 0.7) return 'text-nexus-amber';
   if (c < 0.9) return 'text-nexus-cyan';
   return 'text-nexus-emerald';
 };
@@ -76,9 +76,9 @@ export default function SkillbookAuditPage() {
   const impactQuery = useQuery({ queryKey: ['skillbook-impact'], queryFn: fetchSkillbookImpact });
   const timelineQuery = useQuery({ queryKey: ['skillbook-timeline'], queryFn: () => fetchSkillbookTimeline(200) });
 
-  const learnedAll = learnedQuery.data ?? [];
-  const installedAll = installedQuery.data ?? [];
-  const timelineAll = timelineQuery.data ?? [];
+  const learnedAll = useMemo(() => learnedQuery.data ?? [], [learnedQuery.data]);
+  const installedAll = useMemo(() => installedQuery.data ?? [], [installedQuery.data]);
+  const timelineAll = useMemo(() => timelineQuery.data ?? [], [timelineQuery.data]);
 
   const learned = useMemo(() => filterByPeriod(learnedAll, period, 'created_at'), [learnedAll, period]);
   const installed = useMemo(() => filterByPeriod(installedAll, period, 'installed_at'), [installedAll, period]);
@@ -224,7 +224,7 @@ export default function SkillbookAuditPage() {
           icon={DollarSign}
           label="Custo total (USD)"
           value={`$${stats.totalCost.toFixed(2)}`}
-          accent="text-amber-500"
+          accent="text-nexus-amber"
           loading={isLoading}
           className="col-span-2 md:col-span-1"
         />

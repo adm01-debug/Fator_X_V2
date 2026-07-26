@@ -8,7 +8,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { toast } from "sonner";
-import { handleKeyboardClick } from "@/lib/a11y";
 
 type Detection = { label: string; confidence: number; bbox: [number, number, number, number] };
 

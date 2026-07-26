@@ -37,7 +37,7 @@ export default function AgentAlertsPage() {
   });
 
   // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
-  const traces = (traceData as { traces?: unknown[] }).traces || [];
+  const traces = ((traceData as { traces?: AgentTraceRow[] }).traces ?? []) as AgentTraceRow[];
 
   const [rules, setRules] = useState<AlertRule[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);

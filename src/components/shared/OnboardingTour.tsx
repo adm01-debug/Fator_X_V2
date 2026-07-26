@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-static-element-interactions -- a11y: row/card click mirrors a primary action available elsewhere ; intentional interaction on semantic element ; decorative wrapper / click-through container; tracked for dedicated a11y pass */
+/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- a11y: row/card click mirrors a primary action available elsewhere ; intentional interaction on semantic element ; decorative wrapper / click-through container; tracked for dedicated a11y pass */
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { X, ArrowRight, Bot, Sparkles, Keyboard, Rocket, Brain, Shield, GitBranch } from "lucide-react";
@@ -110,7 +110,7 @@ export function OnboardingTour() {
       className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-4"
       onClick={dismiss}
     >
-      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/click-events-have-key-events -- stopPropagation apenas; interações principais ficam em botões internos */}
+      { }
       <div
         className="w-full max-w-md rounded-2xl border border-primary/20 bg-background/95 backdrop-blur-xl shadow-nexus-2xl shadow-primary/10 overflow-hidden animate-fade-in-up"
         onClick={(e) => e.stopPropagation()}

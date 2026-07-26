@@ -240,7 +240,7 @@ export function ToolsModule() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+                  { }
                   <label className="text-meta font-medium text-foreground">Nome</label>
                   <input
                     className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-body-sm text-foreground"
@@ -250,7 +250,7 @@ export function ToolsModule() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+                  { }
                   <label className="text-meta font-medium text-foreground">URL</label>
                   <input
                     className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-body-sm text-foreground"
@@ -287,7 +287,7 @@ export function ToolsModule() {
               <div className="space-y-3">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+                    { }
                     <label className="text-meta font-medium text-foreground">Nome</label>
                     <input
                       className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-body-sm text-foreground"
@@ -309,7 +309,7 @@ export function ToolsModule() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+                  { }
                   <label className="text-meta font-medium text-foreground">URL</label>
                   <input
                     className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-body-sm text-foreground"
@@ -332,7 +332,7 @@ export function ToolsModule() {
                     ]}
                   />
                   <div className="space-y-1.5">
-                    {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+                    { }
                     <label className="text-meta font-medium text-foreground">Descrição</label>
                     <input
                       className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-body-sm text-foreground"

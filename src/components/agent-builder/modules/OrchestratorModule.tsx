@@ -25,7 +25,6 @@ import { Plus, Save, Play, Trash2, Loader2, BookOpen, Wand2, LayoutDashboard } f
 import { nodeTypes, NODE_PALETTE } from '../orchestrator/nodes/CustomNodes';
 import { toast } from 'sonner';
 import { SectionTitle } from '../ui';
-import type { DbRow } from '@/types/dbRow';
 
 export function OrchestratorModule() {
   const agent = useAgentBuilderStore((s) => s.agent);

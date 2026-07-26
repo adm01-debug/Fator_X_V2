@@ -4,7 +4,6 @@
  * e tratamento de erros HF (503, 429, 500, 502, timeout, queue).
  */
 import { describe, it, expect } from 'vitest';
-import type { DbRow } from '@/types/dbRow';
 
 // ═══ Provider logic is in edge function, so we test the pure logic patterns ═══
 

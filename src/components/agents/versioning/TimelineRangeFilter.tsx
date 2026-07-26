@@ -169,7 +169,7 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
                   onChange={(e) => onChange({ ...range, mode: 'version', vMin: Number(e.target.value) || minVersion })}
                 />
               </label>
-              {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+              { }
               <label className="text-meta text-muted-foreground space-y-1">
                 <span>Até (vMax)</span>
                 <Input id="timelinerangefilter-field-07a674"
@@ -229,7 +229,7 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
                   onChange={(e) => onChange({ mode: 'time', lastMinutes: undefined, fromIso: fromLocalInput(e.target.value), toIso: range.toIso })}
                 />
               </label>
-              {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+              { }
               <label className="text-meta text-muted-foreground space-y-1">
                 <span>Até</span>
                 <Input id="timelinerangefilter-field-e1729d"
@@ -273,7 +273,7 @@ function fromLocalInput(local: string): string | undefined {
 
 /* ---------- helpers de filtragem reutilizáveis ---------- */
 
-// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
+ 
 export function filterByRange(versions: AgentVersion[], range: TimelineRange): AgentVersion[] {
   if (range.mode === 'off') return versions;
 
@@ -307,7 +307,7 @@ export function filterByRange(versions: AgentVersion[], range: TimelineRange): A
 }
 
 /** Serializa para a URL como `range=version:1-5` ou `range=time:60` ou `range=time:abs:from~to`. */
-// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
+ 
 export function serializeRange(range: TimelineRange): string | null {
   if (range.mode === 'off') return null;
   if (range.mode === 'version') {
@@ -320,7 +320,7 @@ export function serializeRange(range: TimelineRange): string | null {
   return null;
 }
 
-// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
+ 
 export function parseRange(raw: string | null): TimelineRange {
   if (!raw) return { mode: 'off' };
   if (raw.startsWith('version:')) {

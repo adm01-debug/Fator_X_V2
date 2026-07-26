@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- a11y: row/card click mirrors a primary action available elsewhere ; decorative wrapper / click-through container; tracked for dedicated a11y pass */
+ 
 /**
  * DataHubExplorerTab — Nexus Agents Studio (improvement #5)
  *
@@ -332,7 +332,7 @@ export function DataHubExplorerTab() {
 
       {/* Detail modal */}
       {detailRow && (
-        <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
+        <div
           className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4"
           role="button" tabIndex={0} onClick={() => setDetailRow(null)} onKeyDown={onActivateKey(() => setDetailRow(null))}
         >

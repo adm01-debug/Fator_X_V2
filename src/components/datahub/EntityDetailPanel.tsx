@@ -13,7 +13,7 @@ function getConnectionLabel(connId: string): string {
   return DEFAULT_CONNECTIONS.find((c) => c.id === connId)?.label ?? connId;
 }
 
-// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
+ 
 export { ENTITY_ICONS, getConnectionLabel };
 
 export function EntityDetailPanel({ entityId, mapping, onBrowse }: {

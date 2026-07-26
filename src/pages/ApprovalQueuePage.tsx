@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- a11y: row/card click mirrors a primary action available elsewhere ; decorative wrapper / click-through container; tracked for dedicated a11y pass */
+ 
 import { useState } from 'react';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { Button } from '@/components/ui/button';
@@ -79,9 +79,9 @@ export default function ApprovalQueuePage() {
                       <Badge variant="outline" className="text-meta text-nexus-amber border-nexus-amber/30">Aguardando aprovação</Badge>
                     </div>
                     <p className="text-meta text-muted-foreground">
-                      Etapa {run.current_step}/{run.total_steps} • Nodo: {pending?.label || 'HITL Gate'}
+                      Etapa {String(run.current_step)}/{String(run.total_steps)} • Nodo: {String(pending?.label ?? 'HITL Gate')}
                     </p>
-                    {pending?.context && <p className="text-meta text-foreground/80 mt-1 max-w-xl">{String(pending.context)}</p>}
+                    {pending?.context ? <p className="text-meta text-foreground/80 mt-1 max-w-xl">{String(pending.context)}</p> : null}
                   </div>
                   <span className="text-meta text-muted-foreground">{run.started_at ? new Date(run.started_at).toLocaleString('pt-BR') : ''}</span>
                 </div>

@@ -7,7 +7,6 @@
  * when the tab/session ends, matching the user's choice for "Local (sessão atual)".
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { DbRow } from '@/types/dbRow';
 
 const STORAGE_KEY = 'nexus.slo.drilldown.audit';
 const MAX_ENTRIES = 200;

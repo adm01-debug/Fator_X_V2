@@ -8,7 +8,6 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabaseExternal } from "@/integrations/supabase/externalClient";
 import { toast } from "sonner";
 import { useNotificationStore } from "@/stores/notificationStore";
-import type { DbRow } from '@/types/dbRow';
 
 interface Notification {
   id: string;
@@ -216,7 +215,7 @@ export function NotificationsDrawer() {
       });
     }
     for (const n of [...realtimeNotifs, ...dbAlerts]) {
-      if (!map.has(n.id)) map.set(n.id, n);
+      if (!map.has(n.id)) map.set(n.id, { ...n, title: n.title ?? '' });
     }
     return Array.from(map.values())
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())

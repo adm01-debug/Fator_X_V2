@@ -231,7 +231,7 @@ export function GroupMembers({ entityId, grupoId, excludeId }: { entityId: strin
   );
 }
 
-// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
+ 
 export const SECONDARY_RENDERERS: Record<string, (data: Array<Record<string, unknown>>) => React.ReactNode> = {
   company_phones: (data) => <PhoneList phones={data} />,
   company_emails: (data) => <EmailList emails={data} />,
@@ -241,7 +241,7 @@ export const SECONDARY_RENDERERS: Record<string, (data: Array<Record<string, unk
   messages: (data) => <MessagesTimeline messages={data} />,
 };
 
-// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
+ 
 export const SECONDARY_LABELS: Record<string, { label: string; icon: React.ReactNode }> = {
   company_phones: { label: 'Telefones', icon: <Phone className="h-3.5 w-3.5 text-primary" /> },
   company_emails: { label: 'Emails', icon: <Mail className="h-3.5 w-3.5 text-primary" /> },

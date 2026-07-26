@@ -2,7 +2,6 @@
  * Freeze Window Service Tests — Etapa 42/50
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { createFakeSupabaseClient } from './_test-utils.ts';
 
 const fakeInsert = vi.fn();
 const fakeUpdate = vi.fn();
@@ -25,7 +24,7 @@ import {
   createFreezeWindow,
   updateFreezeWindow,
   deleteFreezeWindow,
-} from './freezeWindowService.ts';
+} from '@/services/freezeWindowService';
 
 describe('freezeWindowService', () => {
   beforeEach(() => {
@@ -55,7 +54,7 @@ describe('freezeWindowService', () => {
 
   describe('createFreezeWindow', () => {
     it('insere com workspace_id injetado e retorna row', async () => {
-      const input = { name: 'Freeze Natal', start_time: '2025-12-20' };
+      const input = { name: 'Freeze Natal', starts_at: '2025-12-20T00:00:00Z', ends_at: '2025-12-27T00:00:00Z' };
       const inserted = { id: 'fw1', workspace_id: 'ws1', ...input };
       fakeInsert.mockResolvedValue({ data: inserted, error: null });
 
@@ -68,7 +67,7 @@ describe('freezeWindowService', () => {
     it('propaga erro na inserção', async () => {
       fakeInsert.mockResolvedValue({ data: null, error: { message: 'RLS violation' } });
 
-      await expect(createFreezeWindow('ws1', { name: 'Test' })).rejects.toThrow('RLS violation');
+      await expect(createFreezeWindow('ws1', { name: 'Test', starts_at: '2025-12-20T00:00:00Z', ends_at: '2025-12-27T00:00:00Z' })).rejects.toThrow('RLS violation');
     });
   });
 

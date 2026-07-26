@@ -19,7 +19,6 @@ import { WhatsAppInboxPanel } from '@/components/deployments/WhatsAppInboxPanel'
 import { cn } from "@/lib/utils";
 import { ApprovalQueuePanel } from "@/components/deployments/ApprovalQueuePanel";
 import { DeploymentWizard } from "@/components/deployments/DeploymentWizard";
-import type { DbRow } from '@/types/dbRow';
 
 export default function DeploymentsPage() {
   const [wizardOpen, setWizardOpen] = useState(false);

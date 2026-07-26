@@ -51,11 +51,11 @@ interface WorkflowHandoffRow {
 type HandoffTable = ReturnType<typeof fromTable>;
 const handoffs = (): HandoffTable => fromTable('workflow_handoffs');
 
-function toRecord(row: DbRow): HandoffRecord {
+export function toRecord(row: DbRow): HandoffRecord {
   return row as unknown as HandoffRecord;
 }
 
-function toRecords(rows: DbRow): HandoffRecord[] {
+export function toRecords(rows: DbRow): HandoffRecord[] {
   return (rows ?? []) as unknown as HandoffRecord[];
 }
 

@@ -13,7 +13,6 @@
 
  
 import { fromTable } from '@/lib/supabaseExtended';
-import type { DbRow } from '@/types/dbRow';
 
 
 // ──────── A2A Agent Card Types (following official spec) ────────

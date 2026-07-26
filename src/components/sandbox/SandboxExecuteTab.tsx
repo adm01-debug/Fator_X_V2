@@ -24,7 +24,7 @@ export function SandboxExecuteTab({
     <Card className="bg-card border-border">
       <CardContent className="pt-4 space-y-3">
         <div className="flex items-center gap-2">
-          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+          { }
           <label className="text-meta text-muted-foreground">Linguagem:</label>
           <div className="flex gap-1">
             {config.allowedLanguages.map((lang) => (

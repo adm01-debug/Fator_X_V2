@@ -11,7 +11,7 @@ interface ChartAnnotationProps {
   annotations: Annotation[];
   scaleX: (i: number) => number;
   scaleY: (v: number) => number;
-  data: Record<string, unknown>[];
+  data: readonly object[];
   dataKey: string;
   innerHeight: number;
 }
@@ -24,7 +24,7 @@ export function ChartAnnotations({ annotations, scaleX, scaleY, data, dataKey, i
       {annotations.map((ann, i) => {
         if (ann.dataIndex < 0 || ann.dataIndex >= data.length) return null;
         const x = scaleX(ann.dataIndex);
-        const v = Number(data[ann.dataIndex]?.[dataKey]) || 0;
+        const v = Number((data[ann.dataIndex] as Record<string, unknown> | undefined)?.[dataKey]) || 0;
         const y = scaleY(v);
         const color = ann.color || 'hsl(var(--primary))';
 

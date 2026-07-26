@@ -29,7 +29,7 @@ export async function createHelpCenter(payload: {
 }
 
 export async function updateHelpCenter(id: string, patch: Record<string, unknown>) {
-  const { data, error } = await supabase.from("help_centers").update(patch).eq("id", id).select().single();
+  const { data, error } = await supabase.from("help_centers").update(patch as never).eq("id", id).select().single();
   if (error) throw error;
   return data;
 }
@@ -88,7 +88,7 @@ export async function createArticle(payload: {
 }
 
 export async function updateArticle(id: string, patch: Record<string, unknown>) {
-  const { data, error } = await supabase.from("kb_articles").update(patch).eq("id", id).select().single();
+  const { data, error } = await supabase.from("kb_articles").update(patch as never).eq("id", id).select().single();
   if (error) throw error;
   return data;
 }

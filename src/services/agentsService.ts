@@ -277,7 +277,7 @@ export interface RestoreOptions {
     temperature: number | null;
     max_tokens: number | null;
     reasoning: string | null;
-    tools: DbRow[] | null;
+    tools: Record<string, unknown>[] | null;
   }>;
   modelOverride?: string | null;
 }

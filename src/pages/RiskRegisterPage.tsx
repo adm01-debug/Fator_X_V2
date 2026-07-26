@@ -83,99 +83,18 @@ export default function RiskRegisterPage() {
     enabled: !!workspaceId,
   });
 
+  // Heatmap 5x5: matrix[likelihood - 1][impact - 1] = riscos abertos naquela célula
   const heatmap = useMemo(() => {
-    const matrix: Risk[][][] = Array.from({ length: 5 }, () => Array.from({ length: 5 }, () => []));
+    const matrix: Risk[][][] = Array.from({ length: 5 }, () => Array.from({ length: 5 }, () => [] as Risk[]));
     for (const r of risks) {
       if (r.status === 'closed') continue;
-      matrix[r.likelihood - 1][r.impact - 1].push(r);
+      const l = Math.min(5, Math.max(1, r.likelihood)) - 1;
+      const i = Math.min(5, Math.max(1, r.impact)) - 1;
+      matrix[l][i].push(r);
     }
-  };
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
-  useEffect(() => { refresh(); }, [workspaceId]);
-
-  useEffect(() => {
-    if (!selectedRisk) { setReviews([]); return; }
-    listRiskReviews(selectedRisk.id).then(setReviews).catch(err => logger.error("reviews fetch:", err));
-    setReviewScore(selectedRisk.residual_score ?? selectedRisk.inherent_score);
-  }, [selectedRisk]);
-
-  const filtered = useMemo(() => {
-    return risks.filter(r => {
-      if (filterCategory !== "all" && r.category !== filterCategory) return false;
-      if (filterStatus === "active" && r.status === "closed") return false;
-      if (filterStatus === "closed" && r.status !== "closed") return false;
-      if (filterStatus === "overdue" && !isReviewOverdue(r.next_review_due)) return false;
-      return true;
-    });
-  }, [risks, filterCategory, filterStatus]);
-
-  const handleCreate = async () => {
-    if (!workspaceId || !title.trim()) return;
-    setSubmitting(true);
-    try {
-      await registerRisk({
-        workspaceId, title: title.trim(),
-        description: description.trim() || undefined,
-        category, likelihood, impact, treatment,
-        mitigationPlan: mitigationPlan.trim() || undefined,
-      });
-      toast.success("Risco registrado");
-      setCreateOpen(false);
-      setTitle(""); setDescription(""); setMitigationPlan("");
-      setLikelihood(3); setImpact(3); setCategory("security"); setTreatment("mitigate");
-      await refresh();
-    } catch (err) {
-      logger.error("register failed:", err);
-      toast.error(err instanceof Error ? err.message : "Falha ao registrar risco");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleReview = async () => {
-    if (!selectedRisk) return;
-    setSubmitting(true);
-    try {
-      await reviewRisk(selectedRisk.id, reviewScore, reviewNotes.trim() || undefined);
-      toast.success("Review registrado");
-      setReviewNotes("");
-      const updated = (await listRisks(workspaceId!)).find(r => r.id === selectedRisk.id);
-      if (updated) setSelectedRisk(updated);
-      await refresh();
-    } catch (err) {
-      logger.error("review failed:", err);
-      toast.error(err instanceof Error ? err.message : "Falha ao registrar review");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleClose = async () => {
-    if (!selectedRisk) return;
-    if (!confirm("Fechar este risco? Esta ação será registrada no audit log.")) return;
-    setSubmitting(true);
-    try {
-      await closeRisk(selectedRisk.id);
-      toast.success("Risco fechado");
-      setSelectedRisk(null);
-      await refresh();
-    } catch (err) {
-      logger.error("close failed:", err);
-      toast.error(err instanceof Error ? err.message : "Falha ao fechar risco");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  // Heatmap aggregation: 5x5 grid
-  const heatmapMatrix = useMemo(() => {
-    const matrix: number[][] = Array.from({ length: 5 }, () => Array(5).fill(0));
-    summary?.heatmap.forEach(({ likelihood: l, impact: i, count }) => {
-      matrix[5 - i][l - 1] = count; // top-left = high impact, low likelihood
-    });
     return matrix;
   }, [risks]);
+
 
   const stats = useMemo(() => {
     const open = risks.filter((r) => r.status !== 'closed');

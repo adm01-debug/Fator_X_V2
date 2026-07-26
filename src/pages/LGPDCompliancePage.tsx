@@ -85,7 +85,7 @@ export default function LGPDCompliancePage() {
             <h3 className="text-body-sm font-heading font-semibold text-foreground mb-4">Bases Legais para Processamento</h3>
             <div className="space-y-4">
               {purposes.map(p => {
-                const consent = consents.find((c: Record<string, unknown>) => c.purpose === p.key && c.granted);
+                const consent = consents.find((c) => c.purpose === p.key && c.granted);
                 return (
                   <div key={p.key} className="flex items-start justify-between py-3 border-b border-border/30 last:border-0">
                     <div>

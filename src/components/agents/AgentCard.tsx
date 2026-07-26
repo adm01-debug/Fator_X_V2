@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- a11y: row/card click mirrors a primary action available elsewhere ; decorative wrapper / click-through container; tracked for dedicated a11y pass */
+ 
 import { onActivateKey } from '@/lib/a11y';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -30,10 +30,11 @@ export function AgentCard({
   onNavigate, onToggleFav, onClone, onAutoTag, onExport, onToggleSelect,
 }: AgentCardProps) {
   const config = (agent.config as Record<string, unknown>) ?? {};
-  const metrics = config.metrics || { calls: 0, accuracy: 0, latency: 0 };
+  const metrics = (config.metrics as { calls?: number; accuracy?: number; latency?: number } | undefined)
+    ?? { calls: 0, accuracy: 0, latency: 0 };
 
   return (
-    <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
+    <div
       className={cn(
         "nexus-card nexus-card-interactive cursor-pointer group relative overflow-hidden flex flex-col transition-all duration-300",
         "bg-gradient-to-br from-card to-card/95 border-border/40 hover:border-primary/30",

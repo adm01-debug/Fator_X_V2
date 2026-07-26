@@ -8,7 +8,6 @@ export type { OracleMode, OraclePreset, ModelResponse, ConsensusPoint, Citation,
 import type { OracleMode, OracleResult } from './types/oracleTypes';
 export { ORACLE_MODES, ORACLE_PRESETS } from './presets/oraclePresets';
 import { ORACLE_MODES, ORACLE_PRESETS } from './presets/oraclePresets';
-import type { DbRow } from '@/types/dbRow';
 
 interface OracleStore {
   query: string;
@@ -98,7 +97,7 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
     await new Promise(r => setTimeout(r, 1000));
     set({ currentStage: 1, stageLabel: 'Replay: Coletando opiniões...' });
     
-    const results: { stage1_results: unknown[]; metrics: unknown } = { stage1_results: [], metrics: entry.metrics };
+    const results: Record<string, unknown> & { stage1_results: unknown[]; metrics: unknown } = { stage1_results: [], metrics: entry.metrics };
     for (const res of entry.stage1_results) {
       await new Promise(r => setTimeout(r, 800));
       (results.stage1_results as unknown[]).push(res);
@@ -200,11 +199,11 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
               set({ currentStage: data.stage, stageLabel: data.label });
             } else if (type === 'member_response') {
               tempResults.stage1_results.push(data);
-              set({ results: { ...tempResults } as OracleResult });
+              set({ results: { ...tempResults } as unknown as OracleResult });
             } else if (type === 'review_complete') {
               tempResults.stage2_results = [data];
               tempResults.consensus_points = data.consensus_points || [];
-              set({ results: { ...tempResults } as OracleResult });
+              set({ results: { ...tempResults } as unknown as OracleResult });
             } else if (type === 'final') {
               const finalResults = { ...tempResults, ...data };
               set({

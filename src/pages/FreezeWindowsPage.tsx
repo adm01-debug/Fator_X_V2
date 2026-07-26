@@ -18,7 +18,6 @@ import {
   Info,
 } from "lucide-react";
 
-import { supabase } from "@/integrations/supabase/client";
 import { listFreezeWindows, createFreezeWindow, updateFreezeWindow, deleteFreezeWindow } from "@/services/freezeWindowService";
 import { useWorkspaceId } from "@/hooks/use-data";
 import { PageHeader } from "@/components/shared/PageHeader";

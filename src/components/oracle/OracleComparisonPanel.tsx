@@ -217,7 +217,7 @@ export function OracleComparisonPanel() {
               const modeInfo = ORACLE_MODES[cfg.mode];
               const checked = selectedModes.includes(cfg.mode);
               return (
-                // eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label
+                 
                 <label
                   key={cfg.mode}
                   className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-all ${

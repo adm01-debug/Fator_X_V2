@@ -68,7 +68,7 @@ export function AccessControl({
  *     await deleteAgent(id);
  *   });
  */
-// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
+ 
 export function useAccessGuard() {
   const { can } = useRBAC();
 

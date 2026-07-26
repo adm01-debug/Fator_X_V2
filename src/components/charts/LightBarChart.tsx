@@ -13,7 +13,7 @@ interface BarSeries {
 }
 
 interface Props {
-  data: Record<string, unknown>[];
+  data: readonly object[];
   xKey: string;
   series: BarSeries[];
   height?: number;
@@ -39,7 +39,7 @@ export function LightBarChart({
   yFormatter = String, tooltipFormatter, showLegend = false, showGrid = true,
   onBarClick,
 }: Props) {
-  const data = rawData as ReadonlyArray<Record<string, unknown>>;
+  const data = rawData as unknown as ReadonlyArray<Record<string, unknown>>;
   const { ref, width, margin: m, inner } = useChartDimensions(margin);
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
 

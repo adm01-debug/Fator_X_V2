@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { describeCronExpression } from '@/services/cronSchedulerService';
@@ -104,9 +105,4 @@ export function CronVisualEditor({ value, onChange }: CronVisualEditorProps) {
       </div>
     </div>
   );
-}
-
-// Internal Button component since it's not exported from @/components/ui/button in this context
-function Button({ className, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
-  return <button className={`inline-flex items-center justify-center rounded-md px-3 py-1 transition-colors hover:bg-accent ${className}`} {...props} />;
 }

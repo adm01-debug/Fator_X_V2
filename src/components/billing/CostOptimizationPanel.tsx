@@ -10,7 +10,6 @@ import { Lightbulb, TrendingDown, ArrowRight, Zap, DollarSign, AlertTriangle, Ch
 import { getAgentUsage, getModelPricing } from '@/services/billingService';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import type { DbRow } from '@/types/dbRow';
 
 interface Recommendation {
   id: string;

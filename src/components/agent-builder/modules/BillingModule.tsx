@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/label-has-associated-control -- a11y: visual caption for composite/custom control; tracked for dedicated a11y pass */
+ 
 import { useMemo, useState } from 'react';
 import { SectionTitle, SliderField, InputField, ToggleField, ProgressBar } from '../ui';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { listModelPrices, USD_TO_BRL, estimateTokens, getModelPrice, type ModelPrice } from '@/lib/llmPricing';
+import type { AgentConfig } from '@/types/agentTypes';
 import { Calculator, TrendingDown, Zap, Check } from 'lucide-react';
 
 // Real data from Supabase via useBillingData hook — no more mocks!
@@ -315,7 +316,7 @@ export function BillingModule() {
                 mantendo a latência abaixo de 2s.
               </p>
             </div>
-            <Button onClick={() => updateAgent({ model: idealModel.model })} className="gap-2 shrink-0">
+            <Button onClick={() => updateAgent({ model: idealModel.model as AgentConfig['model'] })} className="gap-2 shrink-0">
               <Check className="h-4 w-4" /> Aplicar Modelo
             </Button>
           </div>

@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex, jsx-a11y/aria-activedescendant-has-tabindex, jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- composite keyboard-navigable timeline widget; tracked for dedicated a11y pass */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex, jsx-a11y/aria-activedescendant-has-tabindex -- composite keyboard-navigable timeline widget; tracked for dedicated a11y pass */
 import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ChevronDown, ChevronRight, Info, AlertTriangle, XCircle,
@@ -166,7 +166,6 @@ export function ExecutionTimeline({ execution, selectedStep, onSelectStep }: Pro
           ? 'ring-2 ring-primary/60 shadow-[0_0_0_4px_hsl(var(--primary)/0.08)]'
           : 'ring-1 ring-transparent',
       )}
-      aria-label="Linha do tempo navegável"
       aria-describedby="timeline-shortcuts-hint"
     >
       <ExecutionSummary
@@ -193,7 +192,7 @@ export function ExecutionTimeline({ execution, selectedStep, onSelectStep }: Pro
 
 // eslint-disable-next-line jsx-a11y/aria-activedescendant-has-tabindex -- tabIndex declarado no container pai (linha 150)
 
-      {/* eslint-disable-next-line jsx-a11y/aria-activedescendant-has-tabindex -- list container with keyboard nav */}
+      { }
       <ol
         className="space-y-1.5 mt-3"
         role="listbox"

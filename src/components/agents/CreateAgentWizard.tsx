@@ -34,7 +34,6 @@ interface MagicPreview {
 }
 import { QuickCreateWizard } from "./wizard/QuickCreateWizard";
 import { computeReadinessScore, READINESS_COLORS } from "@/lib/agentReadiness";
-import type { DbRow } from '@/types/dbRow';
 
 type WizardMode = "choose" | "template" | "scratch" | "quick";
 
@@ -46,17 +45,6 @@ const TYPE_LABEL: Record<string, string> = {
   support: 'Suporte',
   researcher: 'Pesquisa',
   orchestrator: 'Orquestrador',
-};
-
-type MagicPreview = {
-  name: string;
-  mission: string;
-  type: string;
-  model: string;
-  system_prompt: string;
-  emoji?: string;
-  tools?: Array<{ name: string }>;
-  guardrails?: Array<{ name: string }>;
 };
 
 export function CreateAgentWizard() {
@@ -288,7 +276,7 @@ Sempre priorize a precisão e a utilidade das informações fornecidas.
                     <span className="text-3xl">{magicPreview.emoji || '🤖'}</span>
                     <div>
                       <p className="font-bold text-title-sm">{magicPreview.name}</p>
-                      <p className="text-meta text-muted-foreground uppercase tracking-wider font-semibold">{TYPE_LABEL[magicPreview.type] || magicPreview.type}</p>
+                      <p className="text-meta text-muted-foreground uppercase tracking-wider font-semibold">{(magicPreview.type ? TYPE_LABEL[magicPreview.type] : undefined) || magicPreview.type}</p>
                     </div>
                   </div>
                   <Badge className={READINESS_COLORS[readiness.level].bg + " " + READINESS_COLORS[readiness.level].text + " px-3 py-1 text-meta font-bold"}>

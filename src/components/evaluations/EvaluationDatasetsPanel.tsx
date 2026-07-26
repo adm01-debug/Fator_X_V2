@@ -13,8 +13,6 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 
 import { Database, Plus, Loader2, Trash2, FileText, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
-import type { DbRow } from '@/types/dbRow';
-import { handleKeyboardClick } from "@/lib/a11y";
 
 export function EvaluationDatasetsPanel() {
   const queryClient = useQueryClient();
@@ -207,7 +205,7 @@ export function EvaluationDatasetsPanel() {
                   <div key={tc.id} className="nexus-card p-3 group">
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex flex-wrap gap-1">
-                        {(tc.tags ?? []).map((tag: string) => <Badge key={tag} variant="secondary" className="text-[11px]">{tag}</Badge>)}
+                        {(tc.tags ?? []).map((tag: string) => <Badge key={tag} variant="secondary" className="text-meta">{tag}</Badge>)}
                       </div>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>

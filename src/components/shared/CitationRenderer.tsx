@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- a11y: row/card click mirrors a primary action available elsewhere ; intentional interaction on semantic element; tracked for dedicated a11y pass */
+ 
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { ExternalLink, BookOpen } from 'lucide-react';
