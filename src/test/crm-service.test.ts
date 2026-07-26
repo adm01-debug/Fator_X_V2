@@ -12,20 +12,32 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { getSharedSupabaseMock } from '@/test/utils/supabaseMock';
 
-const db = getSharedSupabaseMock('crm-service');
-
-vi.mock('@/integrations/supabase/client', () => ({ supabase: db.client }));
-vi.mock('@/lib/supabaseExtended', () => ({
-  fromTable: (table: string) => (db.client.from as (t: string) => unknown)(table),
-  rpcCall: (fn: string, args?: unknown) =>
-    (db.client.rpc as (f: string, a?: unknown) => unknown)(fn, args),
-}));
+// `vi.mock` é içado: as factories precisam resolver o mock em tempo de
+// execução, nunca capturar uma variável do escopo do módulo.
+vi.mock('@/integrations/supabase/client', async () => {
+  const { getSharedSupabaseMock: get } = await import('@/test/utils/supabaseMock');
+  return { supabase: get('crm-service').client };
+});
+vi.mock('@/lib/supabaseExtended', async () => {
+  const { getSharedSupabaseMock: get } = await import('@/test/utils/supabaseMock');
+  const client = get('crm-service').client as {
+    from: (t: string) => unknown;
+    rpc: (f: string, a?: unknown) => unknown;
+  };
+  return {
+    fromTable: (table: string) => client.from(table),
+    rpcCall: (fn: string, args?: unknown) => client.rpc(fn, args),
+  };
+});
 vi.mock('@/lib/agentService', () => ({
   getWorkspaceId: vi.fn(async () => 'ws-alpha'),
 }));
 vi.mock('@/lib/logger', () => ({
   logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
 }));
+
+const db = getSharedSupabaseMock('crm-service');
+
 
 import {
   listDeals,
