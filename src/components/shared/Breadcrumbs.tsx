@@ -27,6 +27,22 @@ const PATH_LABELS: Record<string, string> = {
   deployments: "Implantações",
   security: "Segurança",
   datahub: "DataHub",
+  oracle: "Oráculo",
+  approvals: "Aprovações",
+  admin: "Admin BD",
+  lgpd: "LGPD",
+  chat: "Conversar",
+  skills: "Skills",
+  audit: "Auditoria",
+  evaluations: "Avaliações",
+  orchestration: "Orquestração",
+  routing: "Roteamento",
+  docs: "Documentação",
+  partitioning: "Particionamento",
+  "ai-studio": "AI Studio",
+  "mcp-servers": "MCP Servers",
+  "fine-tuning": "Fine-tuning",
+  "data-storage": "Dados & Storage",
 };
 
 export function Breadcrumbs() {
@@ -60,7 +76,10 @@ export function Breadcrumbs() {
           <div key={to} className="flex items-center">
             <ChevronRight className="h-3 w-3 mx-1 text-muted-foreground/20 stroke-[3px]" />
             {last ? (
-              <span className="text-foreground/90 font-black px-2 py-0.5 rounded-md bg-secondary/30 border border-border/40 shadow-nexus-sm animate-in fade-in slide-in-from-left-1 duration-300">
+              <span
+                aria-current="page"
+                className="text-foreground/90 font-black px-2 py-0.5 rounded-md bg-secondary/30 border border-border/40 shadow-nexus-sm animate-in fade-in slide-in-from-left-1 duration-300"
+              >
                 {label}
               </span>
             ) : (
