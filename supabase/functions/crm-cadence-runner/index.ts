@@ -409,6 +409,37 @@ Deno.serve(async (req) => {
       }
     }
 
+    // Alerta agregado de falhas terminais, um por workspace. Fica fora do laço
+    // de propósito: uma rodada com 40 falhas deve gerar 1 mensagem, não 40.
+    // Todo o bloco é best-effort — Slack indisponível não pode invalidar uma
+    // rodada que já entregou mensagens reais.
+    for (const [wsId, messages] of failureDigest) {
+      try {
+        const { data: route } = await admin
+          .from("slack_channel_routes")
+          .select("channel_id")
+          .eq("workspace_id", wsId)
+          .eq("enabled", true)
+          .limit(1)
+          .maybeSingle();
+        const channelId = (route as { channel_id?: string } | null)?.channel_id;
+        if (!channelId) continue;
+
+        // Amostra limitada: um digest gigante é truncado pelo Slack e some.
+        const sample = messages.slice(0, 5).map((m) => `• ${m}`).join("\n");
+        const extra = messages.length > 5 ? `\n…e mais ${messages.length - 5}.` : "";
+        await slackApiCall("chat.postMessage", {
+          channel: channelId,
+          text:
+            `:rotating_light: Cadências: ${messages.length} inscrição(ões) marcada(s) como *falha* ` +
+            `após esgotarem as tentativas.\n${sample}${extra}`,
+        });
+      } catch (alertError) {
+        console.error("crm-cadence-runner alerta de falha não enviado", wsId, alertError);
+      }
+    }
+
+
     // Histórico de auditoria: falha ao gravar não pode derrubar uma rodada que
     // já enviou mensagens reais, então o insert é best-effort e apenas logado.
     const { error: runLogError } = await admin.from("crm_cadence_runs").insert({
