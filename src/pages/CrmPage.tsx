@@ -35,6 +35,7 @@ import {
   ensureDefaultPipeline,
   summarizeDeals,
   syncFromBitrix24,
+  enrichCompanies,
   type DealStatus,
 } from '@/services/crmService';
 import { ensureDefaultIcpProfile, rescoreOpenDeals } from '@/services/crmScoringService';
