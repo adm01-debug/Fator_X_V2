@@ -282,6 +282,24 @@ serve(async (req) => {
     });
   }
 
+  // ─── 2.5. Espelhar no modelo canônico CRM (crm_deals/contacts/companies) ───
+  //   Falha aqui NÃO derruba o roteamento: o audit log continua sendo a fonte
+  //   de verdade bruta e a reconciliação em `crm-bitrix-sync` recupera o gap.
+  try {
+    const result = await upsertFromBitrix(client, {
+      workspaceId,
+      eventType,
+      fields,
+      traceId,
+      hydrated: false,
+    });
+    if (result) {
+      await logSyncActivity(client, { workspaceId, eventType, result, traceId });
+    }
+  } catch (err) {
+    console.error("CRM normalization failed", err);
+  }
+
   // ─── 3. Look up routing target ───
   let agentId: string | null = null;
   try {
