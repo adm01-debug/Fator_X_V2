@@ -97,8 +97,10 @@ export async function checkIdempotency(
     from: (t: string) => {
       select: (cols: string) => {
         eq: (k: string, v: unknown) => { single: () => Promise<{ data: Record<string, unknown>; error: { code?: string } | null }> };
+      };
     };
   };
+
 
   const { data, error } = await client
     .from('idempotency_keys')
