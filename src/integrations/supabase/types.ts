@@ -504,6 +504,7 @@ export type Database = {
           embed_last_attempt_at: string | null
           embed_last_error: string | null
           embedding: string | null
+          embedding_model: string | null
           half_life_days: number
           id: string
           importance_score: number | null
@@ -525,6 +526,7 @@ export type Database = {
           embed_last_attempt_at?: string | null
           embed_last_error?: string | null
           embedding?: string | null
+          embedding_model?: string | null
           half_life_days?: number
           id?: string
           importance_score?: number | null
@@ -546,6 +548,7 @@ export type Database = {
           embed_last_attempt_at?: string | null
           embed_last_error?: string | null
           embedding?: string | null
+          embedding_model?: string | null
           half_life_days?: number
           id?: string
           importance_score?: number | null
@@ -3533,6 +3536,9 @@ export type Database = {
           content: string
           created_at: string | null
           document_id: string | null
+          embedded_at: string | null
+          embedding: string | null
+          embedding_model: string | null
           embedding_status: string | null
           id: string
           is_active: boolean
@@ -3547,6 +3553,9 @@ export type Database = {
           content: string
           created_at?: string | null
           document_id?: string | null
+          embedded_at?: string | null
+          embedding?: string | null
+          embedding_model?: string | null
           embedding_status?: string | null
           id?: string
           is_active?: boolean
@@ -3561,6 +3570,9 @@ export type Database = {
           content?: string
           created_at?: string | null
           document_id?: string | null
+          embedded_at?: string | null
+          embedding?: string | null
+          embedding_model?: string | null
           embedding_status?: string | null
           id?: string
           is_active?: boolean
@@ -12401,6 +12413,16 @@ export type Database = {
       get_asset_summary: { Args: { p_workspace_id: string }; Returns: Json }
       get_bcp_summary: { Args: { p_workspace_id: string }; Returns: Json }
       get_change_summary: { Args: { p_workspace_id: string }; Returns: Json }
+      get_chunk_embedding_coverage: {
+        Args: { _workspace_id: string }
+        Returns: {
+          coverage_pct: number
+          distinct_models: number
+          embedded_chunks: number
+          pending_chunks: number
+          total_chunks: number
+        }[]
+      }
       get_creator_earnings: { Args: { p_creator_id?: string }; Returns: Json }
       get_cron_job_health: {
         Args: never
@@ -12701,6 +12723,21 @@ export type Database = {
         Returns: undefined
       }
       mask_email: { Args: { p_email: string }; Returns: string }
+      match_documents: {
+        Args: {
+          match_count?: number
+          match_threshold?: number
+          p_embedding_model?: string
+          p_knowledge_base_id?: string
+          query_embedding: string
+        }
+        Returns: {
+          content: string
+          document_id: string
+          id: string
+          similarity: number
+        }[]
+      }
       memory_relevance: { Args: { p_id: string }; Returns: number }
       offboard_vendor: {
         Args: { p_notes?: string; p_vendor_id: string }
