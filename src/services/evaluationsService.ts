@@ -65,7 +65,7 @@ export async function createEvaluationRun(run: {
   try {
     const { data, error } = await supabaseExternal
       .from('evaluation_runs')
-      .insert({ ...run, status: run.status || 'running' })
+      .insert({ ...run, status: run.status || 'running' } as never)
       .select()
       .single();
     if (error) throw error;
@@ -75,7 +75,7 @@ export async function createEvaluationRun(run: {
 
 export async function updateEvaluationRun(id: string, updates: Record<string, unknown>) {
   try {
-    const { error } = await supabaseExternal.from('evaluation_runs').update(updates).eq('id', id);
+    const { error } = await supabaseExternal.from('evaluation_runs').update(updates as never).eq('id', id);
     if (error) throw error;
   } catch (e) { wrapErr('updateEvaluationRun', e, { id }); }
 }
