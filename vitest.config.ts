@@ -10,6 +10,14 @@ export default defineConfig({
     setupFiles: ["./src/test/setup.ts"],
     include: ["src/**/*.{test,spec}.{ts,tsx}"],
     exclude: ["node_modules", "dist", "tests/rls/**", "e2e/**"],
+    // Renders de páginas inteiras em jsdom (DashboardPage, AppLayout) levam
+    // ~1,7s isoladamente, mas passam de 5s quando dezenas de workers disputam
+    // CPU — gerando flakes de "Test timed out in 5000ms" que não são bugs.
+    // 20s dá folga sob carga; travamentos reais continuam sendo capturados
+    // pelo `timeout-minutes: 10` do job de CI.
+    testTimeout: 20_000,
+    hookTimeout: 20_000,
+
     coverage: {
       provider: "v8",
       reporter: ["text", "lcov", "json-summary", "html"],
