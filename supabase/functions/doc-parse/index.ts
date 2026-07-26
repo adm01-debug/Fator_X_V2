@@ -382,7 +382,7 @@ serve(async (req) => {
               source: 'server_computed',
             },
             // Best-effort, porém audível (ver nota no bloco de reuso acima).
-          }).then(() => {}, (e) => console.warn(`[audit] falha ao registrar document.reuse (hash計): ${e?.message ?? e}`));
+          }).then(() => {}, (e) => console.warn(`[audit] falha ao registrar document.reuse (hash servidor): ${e?.message ?? e}`));
           return jsonResponse({
             status: 'ok',
             deduped: true,
