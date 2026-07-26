@@ -1,41 +1,42 @@
 /**
  * notificationEngineService + middlewarePipelineService tests
- * (next-frontier sprint #4 — coverage expansion continued)
  *
- * Targets:
- *   notificationEngineService.ts (~536 lines, 0% → ~25% via renderTemplate)
- *   middlewarePipelineService.ts (~464 lines, 0% → ~70% via the class)
+ * O mock anterior não implementava `.in()` nem `.maybeSingle()` — exatamente
+ * os elos usados por `markAllRead`, `getInAppNotifications` e `getTemplate`.
+ * Qualquer teste dessas funções morreria com `TypeError`, então elas ficaram
+ * sem cobertura. Migrado para o mock compartilhado e coberto o que de fato
+ * dói em produção: `markAllRead` sem escopo de destinatário marcaria como
+ * lida a caixa de entrada de TODOS os usuários.
  */
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { getSharedSupabaseMock } from './utils/supabaseMock';
 
-vi.mock('@/lib/supabaseExtended', () => ({
-  fromTable: vi.fn(() => ({
-    select: vi.fn().mockReturnThis(),
-    insert: vi.fn().mockReturnThis(),
-    update: vi.fn().mockReturnThis(),
-    delete: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
-    order: vi.fn().mockReturnThis(),
-    limit: vi.fn().mockReturnThis(),
-    single: vi.fn().mockResolvedValue({ data: null, error: null }),
-  })),
-}));
+vi.mock('@/lib/supabaseExtended', async () => {
+  const m = await import('./utils/supabaseMock');
+  const mock = m.getSharedSupabaseMock('notification-engine');
+  return {
+    fromTable: (t: string) => (mock.client.from as (x: string) => unknown)(t),
+    rpcCall: vi.fn().mockResolvedValue({ data: null, error: null }),
+  };
+});
 
-vi.mock('@/integrations/supabase/client', () => ({
-  supabase: {
-    from: vi.fn(() => ({
-      select: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
-      single: vi.fn().mockResolvedValue({ data: null, error: null }),
-    })),
-  },
-}));
+vi.mock('@/integrations/supabase/client', async () => {
+  const m = await import('./utils/supabaseMock');
+  return { supabase: m.getSharedSupabaseMock('notification-engine').client };
+});
 
 vi.mock('@/lib/logger', () => ({
   logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
 }));
 
-import { renderTemplate } from '@/services/notificationEngineService';
+import {
+  renderTemplate,
+  markAllRead,
+  getInAppNotifications,
+  listNotifications,
+  markDelivered,
+  cancelNotification,
+} from '@/services/notificationEngineService';
 import {
   MiddlewarePipeline,
   createLoggingMiddleware,
@@ -46,6 +47,72 @@ import {
   type LLMRequest,
   type LLMResponse,
 } from '@/services/middlewarePipelineService';
+
+const db = getSharedSupabaseMock('notification-engine');
+
+describe('notificationEngineService — acesso a dados', () => {
+  beforeEach(() => {
+    db.reset();
+    db.setResult({ data: [], error: null });
+  });
+
+  it('markAllRead escopa por canal in_app, destinatário e status pendentes', async () => {
+    db.setTableResult('notifications', { data: [{ id: 'n1' }, { id: 'n2' }], error: null });
+    const count = await markAllRead('user-1');
+
+    expect(count).toBe(2);
+    expect(db.calls.eq).toHaveBeenCalledWith('channel', 'in_app');
+    // sem este escopo, marcaríamos como lida a caixa de todo mundo
+    expect(db.calls.eq).toHaveBeenCalledWith('recipient_id', 'user-1');
+    expect(db.calls.in).toHaveBeenCalledWith('status', ['sent', 'delivered']);
+    expect(db.calls.select).toHaveBeenCalledWith('id');
+  });
+
+  it('markAllRead devolve 0 quando não há nada pendente', async () => {
+    db.setTableResult('notifications', { data: null, error: null });
+    expect(await markAllRead('user-1')).toBe(0);
+  });
+
+  it('markAllRead propaga erro em vez de fingir que zerou o badge', async () => {
+    db.setTableResult('notifications', { data: null, error: { message: 'rls' } });
+    await expect(markAllRead('user-1')).rejects.toMatchObject({ message: 'rls' });
+  });
+
+  it('getInAppNotifications só aplica o filtro .in() quando unreadOnly=true', async () => {
+    await getInAppNotifications('user-1', false);
+    expect(db.calls.in).not.toHaveBeenCalled();
+
+    db.reset();
+    db.setResult({ data: [], error: null });
+    await getInAppNotifications('user-1', true);
+    expect(db.calls.in).toHaveBeenCalledWith('status', ['sent', 'delivered']);
+    expect(db.calls.limit).toHaveBeenCalledWith(100);
+  });
+
+  it('listNotifications aplica somente os filtros informados', async () => {
+    await listNotifications({ channel: 'email', status: 'failed' }, 10);
+
+    expect(db.calls.eq).toHaveBeenCalledWith('channel', 'email');
+    expect(db.calls.eq).toHaveBeenCalledWith('status', 'failed');
+    expect(db.calls.eq).not.toHaveBeenCalledWith('priority', expect.anything());
+    expect(db.calls.limit).toHaveBeenCalledWith(10);
+    expect(db.calls.order).toHaveBeenCalledWith('created_at', { ascending: false });
+  });
+
+  it('transições de status gravam carimbo de tempo e alvo correto', async () => {
+    await markDelivered('n-9');
+    expect(db.calls.update).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'delivered', delivered_at: expect.any(String) }),
+    );
+    expect(db.calls.eq).toHaveBeenCalledWith('id', 'n-9');
+
+    db.reset();
+    db.setResult({ data: [], error: null });
+    await cancelNotification('n-9');
+    expect(db.calls.update).toHaveBeenCalledWith({ status: 'cancelled' });
+  });
+});
+
 
 // ════════════════════════════════════════════════════════════════
 // notificationEngineService — renderTemplate
