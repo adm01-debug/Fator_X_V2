@@ -31,6 +31,11 @@ const KNOWN_ABSENT: Record<string, string> = {
   // banco local. A ausência é tratada com degradação graciosa no chamador
   // (`list_rls_policies` reporta a conexão como indisponível, sem lançar).
   exec_sql: 'RPC de projeto externo; ausência já tratada com fallback em datahub-query',
+  // Gap conhecido e rastreado: não existe nenhuma coluna `vector` no schema,
+  // logo não há onde indexar embeddings de chunks e o RPC não pode ser criado
+  // ainda. semantic-search desativa o ramo vetorial ao detectar 42883 e usa o
+  // fallback ILIKE. Remover desta lista quando o armazenamento vetorial existir.
+  match_documents: 'busca vetorial pendente: schema ainda não possui coluna vector para chunks',
 };
 
 function walk(dir: string, out: string[] = []): string[] {
