@@ -24,7 +24,8 @@ import { ContactsTable } from '@/components/crm/ContactsTable';
 import { CompaniesTable } from '@/components/crm/CompaniesTable';
 import { useDebounce } from '@/hooks/use-debounce';
 import { toast } from '@/hooks/use-toast';
-import { Search, Layers } from 'lucide-react';
+import { Search, Layers, RefreshCw } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import {
   listDeals,
   listStages,
@@ -32,6 +33,7 @@ import {
   listCompanies,
   ensureDefaultPipeline,
   summarizeDeals,
+  syncFromBitrix24,
   type DealStatus,
 } from '@/services/crmService';
 
@@ -76,6 +78,27 @@ export default function CrmPage() {
     onError: (error: unknown) =>
       toast({
         title: 'Falha ao criar funil',
+        description: error instanceof Error ? error.message : String(error),
+        variant: 'destructive',
+      }),
+  });
+
+  const syncBitrix = useMutation({
+    mutationFn: () => syncFromBitrix24(),
+    onSuccess: (summary) => {
+      const total = Object.values(summary).reduce(
+        (acc, s) => acc + s.inserted + s.updated,
+        0,
+      );
+      toast({
+        title: 'Sincronização concluída',
+        description: `${total} registro(s) espelhados do Bitrix24.`,
+      });
+      queryClient.invalidateQueries({ queryKey: ['crm'] });
+    },
+    onError: (error: unknown) =>
+      toast({
+        title: 'Falha na sincronização',
         description: error instanceof Error ? error.message : String(error),
         variant: 'destructive',
       }),
