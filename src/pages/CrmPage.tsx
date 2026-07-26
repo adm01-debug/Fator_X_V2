@@ -285,9 +285,14 @@ export default function CrmPage() {
           {tab === 'icp' && <IcpProfilePanel />}
         </TabsContent>
 
-        <TabsContent value="cadences">
+        <TabsContent value="cadences" className="space-y-4">
           {/* Idem: cadências disparam várias queries; só montar quando visível. */}
-          {tab === 'cadences' && <CadencesPanel />}
+          {tab === 'cadences' && (
+            <>
+              <CadencesPanel />
+              <CadenceRunsPanel />
+            </>
+          )}
         </TabsContent>
       </Tabs>
 
