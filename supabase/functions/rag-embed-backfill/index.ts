@@ -113,7 +113,7 @@ Deno.serve(async (req) => {
     for (let i = 0; i < pending.length; i += BATCH_SIZE) {
       const batch = pending.slice(i, i + BATCH_SIZE) as MemoryRow[];
       try {
-        const vectors = await embedBatch(
+        const { vectors, model } = await embedBatch(
           batch.map((r) => r.content.slice(0, 8000)),
           authHeader,
           projectRef,
@@ -129,6 +129,9 @@ Deno.serve(async (req) => {
             .from("agent_memories_v2")
             .update({
               embedding: vectors[j] as unknown as string,
+              // Proveniência do modelo grava junto do vetor: sem isso não há
+              // como saber quais linhas invalidar ao trocar de embedder.
+              embedding_model: model,
               embed_last_error: null,
             })
             .eq("id", batch[j].id);
