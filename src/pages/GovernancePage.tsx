@@ -51,7 +51,7 @@ type FreezeWindow = {
   created_at: string;
 };
 
-type GeoCountry = {
+export type GeoCountry = {
   id: string;
   workspace_id: string;
   country_code: string;
@@ -59,7 +59,7 @@ type GeoCountry = {
   created_at: string;
 };
 
-type IPEntry = {
+export type IPEntry = {
   id: string;
   ip_address: string;
   label: string | null;
@@ -67,7 +67,7 @@ type IPEntry = {
   created_at: string;
 };
 
-type BlockedEntry = {
+export type BlockedEntry = {
   id: string;
   ip_address: string | null;
   country_code: string | null;

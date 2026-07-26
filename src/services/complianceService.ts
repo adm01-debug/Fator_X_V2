@@ -6,6 +6,7 @@ export type ComplianceFramework = {
   name: string;
   description: string | null;
   version: string | null;
+  created_at: string;
 };
 
 export type ComplianceControl = {
