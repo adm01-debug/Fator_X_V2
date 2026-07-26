@@ -38,6 +38,7 @@ import { verifyHmac } from "../_shared/webhookSignature.ts";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 import { z } from "https://esm.sh/zod@3.23.8";
+import { upsertFromBitrix, logSyncActivity } from "../_shared/crmNormalize.ts";
 const Bitrix24PayloadSchema = z.object({
   event: z.string().max(120).optional(),
   auth: z.record(z.unknown()).optional(),
