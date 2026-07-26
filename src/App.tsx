@@ -279,6 +279,8 @@ const App = () => {
                       <Route path="/deploy/openclaw" element={<SafePage><OpenclawDeployPage /></SafePage>} />
                       <Route path="/openclaw" element={<SafePage><OpenclawDeployPage /></SafePage>} />
                       <Route path="/openclaw/templates" element={<SafePage><OpenclawTemplatesPage /></SafePage>} />
+                      <Route path="/crm" element={<SafePage><CrmPage /></SafePage>} />
+                      <Route path="/vendas" element={<SafePage><CrmPage /></SafePage>} />
                       <Route path="/monitoring" element={<SafePage><MonitoringPage /></SafePage>} />
                       <Route path="/monitoring/metrics" element={<SafePage><AgentMetricsPage /></SafePage>} />
                       <Route path="/data-storage" element={<SafePage><DataStoragePage /></SafePage>} />
