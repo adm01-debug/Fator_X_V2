@@ -401,6 +401,17 @@ Deno.serve(async (req) => {
       }
     }
 
+    // Histórico de auditoria: falha ao gravar não pode derrubar uma rodada que
+    // já enviou mensagens reais, então o insert é best-effort e apenas logado.
+    const { error: runLogError } = await admin.from("crm_cadence_runs").insert({
+      workspace_id: workspace_id ?? null,
+      triggered_by: workspace_id ? "manual" : "cron",
+      dry_run,
+      ...summary,
+      duration_ms: Date.now() - startedAt,
+    });
+    if (runLogError) console.error("crm-cadence-runner run log failed", runLogError);
+
     return jsonResponse(req, { ok: true, dry_run, summary, details: dry_run ? details : undefined });
   } catch (error) {
     console.error("crm-cadence-runner error", error);
