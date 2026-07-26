@@ -59,9 +59,11 @@ function declaredFunctions(): Set<string> {
   const types = readFileSync('src/integrations/supabase/types.ts', 'utf8');
   const start = types.indexOf('Functions: {');
   expect(start, 'bloco Functions não encontrado em types.ts').toBeGreaterThan(-1);
-  // Nomes de função aparecem como chaves indentadas no bloco gerado.
+  // Nomes de função aparecem como chaves indentadas em 6 espaços no bloco
+  // gerado. Sobrecargas não abrem `{` — emitem uma união na linha seguinte —,
+  // então casar apenas `nome: {` perderia justamente as funções sobrecarregadas.
   const block = types.slice(start, types.indexOf('\n    Enums: {', start));
-  return new Set([...block.matchAll(/^ {6}([a-z0-9_]+): \{/gm)].map((m) => m[1]));
+  return new Set([...block.matchAll(/^ {6}([a-z0-9_]+):/gm)].map((m) => m[1]));
 }
 
 describe('contrato de RPC entre código e banco', () => {
