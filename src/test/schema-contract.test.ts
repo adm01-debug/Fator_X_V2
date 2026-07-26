@@ -14,13 +14,19 @@
  * código contra ele transforma um erro silencioso de runtime em falha de CI.
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { join } from 'node:path';
+import { basename, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 const ROOTS = ['src', 'supabase/functions'];
 const SKIP_DIRS = new Set(['node_modules', 'dist', '.git']);
-/** Este próprio arquivo cita nomes de RPC em texto; não deve se auto-analisar. */
-const SELF = 'rpc-contract.test.ts';
+/**
+ * Este arquivo cita `.rpc('nome')` e `.from('tabela')` na própria documentação
+ * e não deve se auto-analisar. Derivado de import.meta.url em vez de literal:
+ * a versão anterior era um literal com o nome antigo e passou a se analisar
+ * silenciosamente assim que o arquivo foi renomeado.
+ */
+const SELF = basename(fileURLToPath(import.meta.url));
 
 /**
  * Exceções conscientes. Cada entrada precisa de justificativa: a lista existe
