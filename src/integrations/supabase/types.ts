@@ -558,6 +558,39 @@ export type Database = {
         }
         Relationships: []
       }
+      agent_routing_config: {
+        Row: {
+          agent_id: string
+          created_at: string
+          event_type: string
+          id: string
+          is_enabled: boolean
+          source: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          agent_id: string
+          created_at?: string
+          event_type: string
+          id?: string
+          is_enabled?: boolean
+          source: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          agent_id?: string
+          created_at?: string
+          event_type?: string
+          id?: string
+          is_enabled?: boolean
+          source?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: []
+      }
       agent_skills: {
         Row: {
           agent_id: string
@@ -3055,6 +3088,54 @@ export type Database = {
           },
         ]
       }
+      bitrix24_webhook_events: {
+        Row: {
+          bitrix_event_id: string | null
+          created_at: string
+          event_type: string
+          id: string
+          processed_at: string | null
+          raw_payload: Json
+          received_at: string
+          routed_agent_id: string | null
+          routing_error: string | null
+          routing_status: string
+          signature_valid: boolean
+          trace_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          bitrix_event_id?: string | null
+          created_at?: string
+          event_type: string
+          id?: string
+          processed_at?: string | null
+          raw_payload?: Json
+          received_at?: string
+          routed_agent_id?: string | null
+          routing_error?: string | null
+          routing_status?: string
+          signature_valid?: boolean
+          trace_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          bitrix_event_id?: string | null
+          created_at?: string
+          event_type?: string
+          id?: string
+          processed_at?: string | null
+          raw_payload?: Json
+          received_at?: string
+          routed_agent_id?: string | null
+          routing_error?: string | null
+          routing_status?: string
+          signature_valid?: boolean
+          trace_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
       browser_sessions: {
         Row: {
           agent_id: string | null
@@ -4707,6 +4788,98 @@ export type Database = {
           },
         ]
       }
+      cron_schedule_executions: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          duration_ms: number | null
+          error: string | null
+          id: string
+          schedule_id: string
+          status: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          duration_ms?: number | null
+          error?: string | null
+          id?: string
+          schedule_id: string
+          status: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          duration_ms?: number | null
+          error?: string | null
+          id?: string
+          schedule_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cron_schedule_executions_schedule_id_fkey"
+            columns: ["schedule_id"]
+            isOneToOne: false
+            referencedRelation: "cron_schedules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cron_schedules: {
+        Row: {
+          created_at: string
+          cron_expression: string | null
+          id: string
+          interval_seconds: number | null
+          last_run_at: string | null
+          max_runs: number | null
+          name: string
+          next_run_at: string | null
+          run_count: number
+          status: string
+          target_config: Json
+          target_id: string
+          target_type: string
+          updated_at: string
+          workspace_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          cron_expression?: string | null
+          id?: string
+          interval_seconds?: number | null
+          last_run_at?: string | null
+          max_runs?: number | null
+          name: string
+          next_run_at?: string | null
+          run_count?: number
+          status?: string
+          target_config?: Json
+          target_id: string
+          target_type: string
+          updated_at?: string
+          workspace_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          cron_expression?: string | null
+          id?: string
+          interval_seconds?: number | null
+          last_run_at?: string | null
+          max_runs?: number | null
+          name?: string
+          next_run_at?: string | null
+          run_count?: number
+          status?: string
+          target_config?: Json
+          target_id?: string
+          target_type?: string
+          updated_at?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
       data_deletion_requests: {
         Row: {
           completed_at: string | null
@@ -5216,6 +5389,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      eval_runs: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          metric_type: string
+          sample_count: number
+          scores: Json
+          workspace_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          metric_type: string
+          sample_count?: number
+          scores?: Json
+          workspace_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          metric_type?: string
+          sample_count?: number
+          scores?: Json
+          workspace_id?: string | null
+        }
+        Relationships: []
       }
       evaluation_datasets: {
         Row: {
@@ -7116,6 +7322,104 @@ export type Database = {
           },
         ]
       }
+      notification_templates: {
+        Row: {
+          body_template: string
+          channel: string
+          created_at: string
+          id: string
+          name: string
+          subject_template: string
+          updated_at: string
+          workspace_id: string | null
+        }
+        Insert: {
+          body_template: string
+          channel: string
+          created_at?: string
+          id?: string
+          name: string
+          subject_template?: string
+          updated_at?: string
+          workspace_id?: string | null
+        }
+        Update: {
+          body_template?: string
+          channel?: string
+          created_at?: string
+          id?: string
+          name?: string
+          subject_template?: string
+          updated_at?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          body: string
+          channel: string
+          created_at: string
+          error: string | null
+          failed_at: string | null
+          id: string
+          metadata: Json
+          priority: string
+          recipient_address: string
+          sent_at: string | null
+          source_type: string
+          status: string
+          subject: string | null
+          template_id: string | null
+          template_vars: Json
+          workspace_id: string | null
+        }
+        Insert: {
+          body: string
+          channel: string
+          created_at?: string
+          error?: string | null
+          failed_at?: string | null
+          id?: string
+          metadata?: Json
+          priority?: string
+          recipient_address: string
+          sent_at?: string | null
+          source_type?: string
+          status?: string
+          subject?: string | null
+          template_id?: string | null
+          template_vars?: Json
+          workspace_id?: string | null
+        }
+        Update: {
+          body?: string
+          channel?: string
+          created_at?: string
+          error?: string | null
+          failed_at?: string | null
+          id?: string
+          metadata?: Json
+          priority?: string
+          recipient_address?: string
+          sent_at?: string | null
+          source_type?: string
+          status?: string
+          subject?: string | null
+          template_id?: string | null
+          template_vars?: Json
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "notification_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       oncall_schedule: {
         Row: {
           created_at: string
@@ -8030,6 +8334,71 @@ export type Database = {
           },
         ]
       }
+      queue_items: {
+        Row: {
+          attempt: number
+          completed_at: string | null
+          created_at: string
+          error: string | null
+          id: string
+          locked_by: string | null
+          locked_until: string | null
+          max_retries: number
+          payload: Json
+          priority: number
+          queue_id: string
+          result: Json | null
+          started_at: string | null
+          status: string
+          timeout_ms: number
+          updated_at: string
+        }
+        Insert: {
+          attempt?: number
+          completed_at?: string | null
+          created_at?: string
+          error?: string | null
+          id?: string
+          locked_by?: string | null
+          locked_until?: string | null
+          max_retries?: number
+          payload?: Json
+          priority?: number
+          queue_id: string
+          result?: Json | null
+          started_at?: string | null
+          status?: string
+          timeout_ms?: number
+          updated_at?: string
+        }
+        Update: {
+          attempt?: number
+          completed_at?: string | null
+          created_at?: string
+          error?: string | null
+          id?: string
+          locked_by?: string | null
+          locked_until?: string | null
+          max_retries?: number
+          payload?: Json
+          priority?: number
+          queue_id?: string
+          result?: Json | null
+          started_at?: string | null
+          status?: string
+          timeout_ms?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "queue_items_queue_id_fkey"
+            columns: ["queue_id"]
+            isOneToOne: false
+            referencedRelation: "task_queues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       replay_forks: {
         Row: {
           completed_at: string | null
@@ -8552,6 +8921,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      security_events: {
+        Row: {
+          created_at: string
+          details: Json
+          event_type: string
+          id: string
+          severity: string
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          details?: Json
+          event_type: string
+          id?: string
+          severity?: string
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          details?: Json
+          event_type?: string
+          id?: string
+          severity?: string
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
       }
       session_traces: {
         Row: {
@@ -9131,6 +9530,57 @@ export type Database = {
           },
         ]
       }
+      spans: {
+        Row: {
+          attributes: Json
+          created_at: string
+          duration_ms: number | null
+          end_time: string | null
+          events: Json
+          id: string
+          kind: string | null
+          name: string
+          parent_span_id: string | null
+          span_id: string
+          start_time: string
+          status: string | null
+          status_message: string | null
+          trace_id: string
+        }
+        Insert: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name: string
+          parent_span_id?: string | null
+          span_id: string
+          start_time: string
+          status?: string | null
+          status_message?: string | null
+          trace_id: string
+        }
+        Update: {
+          attributes?: Json
+          created_at?: string
+          duration_ms?: number | null
+          end_time?: string | null
+          events?: Json
+          id?: string
+          kind?: string | null
+          name?: string
+          parent_span_id?: string | null
+          span_id?: string
+          start_time?: string
+          status?: string | null
+          status_message?: string | null
+          trace_id?: string
+        }
+        Relationships: []
+      }
       synthetic_checks: {
         Row: {
           consecutive_failures: number
@@ -9221,6 +9671,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      task_queues: {
+        Row: {
+          created_at: string
+          current_size: number
+          description: string | null
+          failed_count: number
+          id: string
+          is_paused: boolean
+          max_concurrency: number
+          name: string
+          processed_count: number
+          strategy: string
+          updated_at: string
+          workspace_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          current_size?: number
+          description?: string | null
+          failed_count?: number
+          id?: string
+          is_paused?: boolean
+          max_concurrency?: number
+          name: string
+          processed_count?: number
+          strategy?: string
+          updated_at?: string
+          workspace_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          current_size?: number
+          description?: string | null
+          failed_count?: number
+          id?: string
+          is_paused?: boolean
+          max_concurrency?: number
+          name?: string
+          processed_count?: number
+          strategy?: string
+          updated_at?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
       }
       test_cases: {
         Row: {
@@ -9999,6 +10494,54 @@ export type Database = {
         }
         Relationships: []
       }
+      traces: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          end_time: string | null
+          id: string
+          root_name: string
+          session_id: string | null
+          source: string | null
+          span_count: number
+          start_time: string
+          status: string
+          trace_id: string
+          user_id: string | null
+          workflow_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name: string
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time: string
+          status?: string
+          trace_id: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          root_name?: string
+          session_id?: string | null
+          source?: string | null
+          span_count?: number
+          start_time?: string
+          status?: string
+          trace_id?: string
+          user_id?: string | null
+          workflow_id?: string | null
+        }
+        Relationships: []
+      }
       usage_records: {
         Row: {
           agent_id: string | null
@@ -10523,6 +11066,59 @@ export type Database = {
           },
         ]
       }
+      webhook_delivery_logs: {
+        Row: {
+          attempts: number
+          created_at: string
+          delivered_at: string | null
+          duration_ms: number | null
+          error_message: string | null
+          event: string
+          id: string
+          payload: Json
+          response_body: string | null
+          status: string
+          status_code: number | null
+          webhook_endpoint_id: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          delivered_at?: string | null
+          duration_ms?: number | null
+          error_message?: string | null
+          event: string
+          id?: string
+          payload?: Json
+          response_body?: string | null
+          status: string
+          status_code?: number | null
+          webhook_endpoint_id: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          delivered_at?: string | null
+          duration_ms?: number | null
+          error_message?: string | null
+          event?: string
+          id?: string
+          payload?: Json
+          response_body?: string | null
+          status?: string
+          status_code?: number | null
+          webhook_endpoint_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "webhook_delivery_logs_webhook_endpoint_id_fkey"
+            columns: ["webhook_endpoint_id"]
+            isOneToOne: false
+            referencedRelation: "webhook_endpoints"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       webhook_endpoints: {
         Row: {
           auth_type: string | null
@@ -10620,6 +11216,66 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      whatsapp_webhook_events: {
+        Row: {
+          body_preview: string | null
+          created_at: string
+          event_type: string
+          from_phone: string | null
+          id: string
+          message_id: string | null
+          processed_at: string | null
+          provider: string
+          raw_payload: Json
+          received_at: string
+          routed_agent_id: string | null
+          routing_error: string | null
+          routing_status: string
+          signature_valid: boolean
+          to_phone: string | null
+          trace_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          body_preview?: string | null
+          created_at?: string
+          event_type: string
+          from_phone?: string | null
+          id?: string
+          message_id?: string | null
+          processed_at?: string | null
+          provider: string
+          raw_payload?: Json
+          received_at?: string
+          routed_agent_id?: string | null
+          routing_error?: string | null
+          routing_status?: string
+          signature_valid?: boolean
+          to_phone?: string | null
+          trace_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          body_preview?: string | null
+          created_at?: string
+          event_type?: string
+          from_phone?: string | null
+          id?: string
+          message_id?: string | null
+          processed_at?: string | null
+          provider?: string
+          raw_payload?: Json
+          received_at?: string
+          routed_agent_id?: string | null
+          routing_error?: string | null
+          routing_status?: string
+          signature_valid?: boolean
+          to_phone?: string | null
+          trace_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: []
       }
       workflow_runs: {
         Row: {
