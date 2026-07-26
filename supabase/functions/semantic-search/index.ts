@@ -108,6 +108,8 @@ serve(async (req) => {
 
     // ── 1. Try vector search via rag-embed-v2 + match_documents RPC ──
     try {
+      if (!vectorSearchAvailable) throw new Error("vector_search_disabled");
+
       const embedResp = await fetchWithTimeout(
         `${SUPABASE_URL}/functions/v1/rag-embed-v2`,
         {
