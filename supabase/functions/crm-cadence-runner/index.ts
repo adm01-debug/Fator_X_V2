@@ -171,6 +171,8 @@ Deno.serve(async (req) => {
       capped: 0,
     };
     const details: Array<Record<string, unknown>> = [];
+    const startedAt = Date.now();
+
 
     // Estado de teto diário por cadência, resolvido sob demanda e mantido em
     // memória durante o lote — um SELECT por cadência, não por inscrição.
