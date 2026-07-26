@@ -8,6 +8,7 @@
 import { fromTable } from '@/lib/supabaseExtended';
 import { getWorkspaceId } from '@/lib/agentService';
 import { logger } from '@/lib/logger';
+import { supabase } from '@/integrations/supabase/client';
 
 // ═══ Tipos de domínio ═══
 
@@ -501,4 +502,27 @@ export function formatCurrency(value: number, currency = 'BRL'): string {
     currency,
     maximumFractionDigits: 0,
   }).format(value);
+}
+
+/**
+ * Dispara a reconciliação com o Bitrix24.
+ *
+ * O webhook entrega apenas o ID da entidade, criando registros "casca"
+ * (`enrichment_json.sync_state = 'pending'`). Esta chamada hidrata esses
+ * registros e executa a carga inicial. É idempotente por
+ * (workspace_id, external_ref), então reexecutar é seguro.
+ */
+export async function syncFromBitrix24(
+  entities: Array<'deal' | 'contact' | 'company' | 'lead'> = ['company', 'contact', 'deal'],
+): Promise<Record<string, { inserted: number; updated: number; failed: number }>> {
+  const wsId = await getWorkspaceId();
+  const { data, error } = await supabase.functions.invoke('crm-bitrix-sync', {
+    body: { workspace_id: wsId, entities },
+  });
+  if (error) {
+    logger.error('crm-bitrix-sync falhou', error);
+    throw error;
+  }
+  const summary = (data as { summary?: Record<string, { inserted: number; updated: number; failed: number }> } | null)?.summary;
+  return summary ?? {};
 }
