@@ -25,7 +25,7 @@ import { CompaniesTable } from '@/components/crm/CompaniesTable';
 import { IcpProfilePanel } from '@/components/crm/IcpProfilePanel';
 import { useDebounce } from '@/hooks/use-debounce';
 import { toast } from '@/hooks/use-toast';
-import { Search, Layers, RefreshCw, Gauge } from 'lucide-react';
+import { Search, Layers, RefreshCw, Gauge, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   listDeals,
@@ -106,6 +106,23 @@ export default function CrmPage() {
       }),
   });
 
+  const enrich = useMutation({
+    mutationFn: () => enrichCompanies(),
+    onSuccess: (outcome) => {
+      toast({
+        title: 'Enriquecimento concluído',
+        description: `${outcome.updated}/${outcome.evaluated} empresa(s) atualizada(s) · ${outcome.layers.llm} via IA.`,
+      });
+      queryClient.invalidateQueries({ queryKey: ['crm', 'companies'] });
+    },
+    onError: (error: unknown) =>
+      toast({
+        title: 'Falha no enriquecimento',
+        description: error instanceof Error ? error.message : String(error),
+        variant: 'destructive',
+      }),
+  });
+
   const rescore = useMutation({
     mutationFn: async () => {
       // Garante o perfil antes de pontuar: sem ICP não existe critério de corte.
@@ -165,6 +182,15 @@ export default function CrmPage() {
             >
               <Gauge className="h-4 w-4" aria-hidden="true" />
               {rescore.isPending ? 'Pontuando…' : 'Recalcular scores'}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => enrich.mutate()}
+              disabled={enrich.isPending}
+              className="gap-2"
+            >
+              <Sparkles className="h-4 w-4" aria-hidden="true" />
+              {enrich.isPending ? 'Enriquecendo…' : 'Enriquecer empresas'}
             </Button>
             {stages.length === 0 && (
               <Button

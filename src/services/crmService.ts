@@ -531,3 +531,27 @@ export async function syncFromBitrix24(
   const summary = (data as { summary?: Record<string, { inserted: number; updated: number; failed: number }> } | null)?.summary;
   return summary ?? {};
 }
+
+export interface EnrichOutcome {
+  evaluated: number;
+  updated: number;
+  layers: { deterministic: number; heuristic: number; llm: number };
+}
+
+/** Dispara o enriquecimento cascata (domínio → país → setor) das empresas com lacunas. */
+export async function enrichCompanies(options: { limit?: number; useLlm?: boolean } = {}): Promise<EnrichOutcome> {
+  const wsId = await getWorkspaceId();
+  const { data, error } = await supabase.functions.invoke('crm-enrich', {
+    body: { workspace_id: wsId, limit: options.limit ?? 50, use_llm: options.useLlm ?? true },
+  });
+  if (error) {
+    logger.error('crm-enrich falhou', error);
+    throw error;
+  }
+  const result = data as Partial<EnrichOutcome> | null;
+  return {
+    evaluated: result?.evaluated ?? 0,
+    updated: result?.updated ?? 0,
+    layers: result?.layers ?? { deterministic: 0, heuristic: 0, llm: 0 },
+  };
+}
