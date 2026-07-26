@@ -386,6 +386,11 @@ Deno.serve(async (req) => {
               .update({ status: "failed", last_error: message, stop_reason: "max_attempts" })
               .eq("id", enrollment.id);
             summary.failed++;
+            // Só falha terminal alerta: erros transitórios ainda vão tentar de
+            // novo, e avisar a cada retry transformaria o canal em ruído.
+            const bucket = failureDigest.get(enrollment.workspace_id) ?? [];
+            bucket.push(message);
+            failureDigest.set(enrollment.workspace_id, bucket);
           } else {
             // Backoff exponencial no lease: 2^tentativa minutos, teto de 2h.
             const backoffMin = Math.min(2 ** enrollment.attempts, 120);
