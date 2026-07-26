@@ -256,7 +256,7 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
           created_by: user.id,
           change_summary: customSummary || autoSummary || `Save at ${now}`,
           environment: savedAgent.status === 'production' ? 'production' : savedAgent.status === 'staging' ? 'staging' : 'development',
-        }).then(() => {}, () => {}); // Ignore duplicate version errors
+        } as never).then(() => {}, () => {}); // Ignore duplicate version errors
       }
     }
   },

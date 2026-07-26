@@ -189,11 +189,11 @@ export async function invokeTracedFunction<T = unknown>(
 export async function saveWorkspaceSecret(wsId: string, keyName: string, value: string, isUpdate: boolean) {
   try {
     if (isUpdate) {
-      const { error } = await supabaseExternal.from('workspace_secrets').update({ key_value: value, updated_at: new Date().toISOString() })
+      const { error } = await supabaseExternal.from('workspace_secrets').update({ key_value: value, updated_at: new Date().toISOString() } as never)
         .eq('workspace_id', wsId).eq('key_name', keyName);
       if (error) throw error;
     } else {
-      const { error } = await supabaseExternal.from('workspace_secrets').insert({ workspace_id: wsId, key_name: keyName, key_value: value });
+      const { error } = await supabaseExternal.from('workspace_secrets').insert({ workspace_id: wsId, key_name: keyName, key_value: value } as never);
       if (error) throw error;
     }
   } catch (err) {
