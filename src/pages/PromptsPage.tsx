@@ -135,7 +135,7 @@ export default function PromptsPage() {
                   <div 
                     key={p.id} 
                     role="button" tabIndex={0} onClick={() => navigate(`/prompts/${p.agent_id}`)} onKeyDown={onActivateKey(() => navigate(`/prompts/${p.agent_id}`))}
-                    className="nexus-card group cursor-pointer p-8 rounded-[2.5rem] flex flex-col justify-between min-h-[320px] bg-gradient-to-br from-card to-card/95 border-border/40 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 relative overflow-hidden"
+                    className="nexus-card group cursor-pointer p-8 rounded-[2.5rem] flex flex-col justify-between min-h-[320px] bg-gradient-to-br from-card to-card/95 border-border/40 hover:border-primary/40 hover:shadow-nexus-2xl hover:shadow-primary/5 transition-all duration-500 relative overflow-hidden"
                   >
                     <div className="absolute top-0 right-0 w-32 h-32 bg-primary/[0.02] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:bg-primary/[0.05] transition-colors" />
                     

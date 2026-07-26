@@ -164,7 +164,7 @@ export function BrainModule() {
           className="space-y-2"
         >
           {REASONING_OPTIONS.map((opt) => (
-            // eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label
+             
             <label
               key={opt.id}
               className={cn(

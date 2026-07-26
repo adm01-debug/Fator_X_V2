@@ -15,12 +15,12 @@ import { AlertTriangle } from 'lucide-react';
 
 const BYPASS_KEY = 'nexus.traces.clearFilters.skipConfirm';
 
-// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
+ 
 export function shouldSkipClearConfirm(): boolean {
   try { return sessionStorage.getItem(BYPASS_KEY) === '1'; } catch { return false; }
 }
 
-// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
+ 
 export function setSkipClearConfirm(skip: boolean) {
   try {
     if (skip) sessionStorage.setItem(BYPASS_KEY, '1');
@@ -80,7 +80,7 @@ export function ClearFiltersConfirm({ trigger, activeFilters, onConfirm }: Props
                   ))}
                 </ul>
               )}
-              {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+              { }
               <label className="flex items-center gap-2 text-meta cursor-pointer">
                 <Checkbox checked={skip} onCheckedChange={(v) => setSkip(v === true)} />
                 <span>Não perguntar novamente nesta sessão</span>

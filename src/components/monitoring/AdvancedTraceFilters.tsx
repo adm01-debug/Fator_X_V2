@@ -70,7 +70,7 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
       {expanded && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-3 rounded-lg bg-secondary/30 border border-border/30 animate-fade-in">
           <div className="space-y-1">
-            <label htmlFor="tf-date-from" className="text-[11px] font-medium text-muted-foreground">Data início</label>
+            <label htmlFor="tf-date-from" className="text-meta font-medium text-muted-foreground">Data início</label>
             <Input
               id="tf-date-from"
               type="date"
@@ -80,7 +80,7 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
             />
           </div>
           <div className="space-y-1">
-            <label htmlFor="tf-date-to" className="text-[11px] font-medium text-muted-foreground">Data fim</label>
+            <label htmlFor="tf-date-to" className="text-meta font-medium text-muted-foreground">Data fim</label>
             <Input
               id="tf-date-to"
               type="date"
@@ -90,7 +90,7 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
             />
           </div>
           <div className="space-y-1">
-            <label htmlFor="tf-min-latency" className="text-[11px] font-medium text-muted-foreground">Latência mín (ms)</label>
+            <label htmlFor="tf-min-latency" className="text-meta font-medium text-muted-foreground">Latência mín (ms)</label>
             <Input
               id="tf-min-latency"
               type="number"
@@ -101,7 +101,7 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
             />
           </div>
           <div className="space-y-1">
-            <label htmlFor="tf-max-latency" className="text-[11px] font-medium text-muted-foreground">Latência máx (ms)</label>
+            <label htmlFor="tf-max-latency" className="text-meta font-medium text-muted-foreground">Latência máx (ms)</label>
             <Input
               id="tf-max-latency"
               type="number"
@@ -112,7 +112,7 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
             />
           </div>
           <div className="space-y-1">
-            <label htmlFor="tf-min-cost" className="text-[11px] font-medium text-muted-foreground">Custo mín ($)</label>
+            <label htmlFor="tf-min-cost" className="text-meta font-medium text-muted-foreground">Custo mín ($)</label>
             <Input
               id="tf-min-cost"
               type="number"
@@ -124,7 +124,7 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
             />
           </div>
           <div className="space-y-1">
-            <label htmlFor="tf-max-cost" className="text-[11px] font-medium text-muted-foreground">Custo máx ($)</label>
+            <label htmlFor="tf-max-cost" className="text-meta font-medium text-muted-foreground">Custo máx ($)</label>
             <Input
               id="tf-max-cost"
               type="number"
@@ -136,9 +136,9 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
             />
           </div>
           <div className="space-y-1">
-            <label htmlFor="tf-level" className="text-[11px] font-medium text-muted-foreground">Nível</label>
+            <label htmlFor="tf-level" className="text-meta font-medium text-muted-foreground">Nível</label>
             <Select value={filters.level} onValueChange={v => onChange({ ...filters, level: v })}>
-              <SelectTrigger id="tf-level" className="h-8 text-xs bg-background"><SelectValue /></SelectTrigger>
+              <SelectTrigger id="tf-level" className="h-8 text-meta bg-background"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos</SelectItem>
                 <SelectItem value="debug">Debug</SelectItem>
@@ -150,7 +150,7 @@ export function AdvancedTraceFilters({ filters, onChange }: Props) {
             </Select>
           </div>
           <div className="space-y-1">
-            <label htmlFor="tf-event" className="text-[11px] font-medium text-muted-foreground">Evento</label>
+            <label htmlFor="tf-event" className="text-meta font-medium text-muted-foreground">Evento</label>
             <Input
               id="tf-event"
               placeholder="Buscar evento..."
@@ -173,7 +173,7 @@ export interface FilterableTrace {
   event?: string | null;
 }
 
-// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
+ 
 export function applyTraceFilters<T extends FilterableTrace>(traces: T[], filters: TraceFilters): T[] {
   return traces.filter(t => {
     if (filters.dateFrom) {
@@ -194,5 +194,5 @@ export function applyTraceFilters<T extends FilterableTrace>(traces: T[], filter
   });
 }
 
-// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
+ 
 export { EMPTY_FILTERS };

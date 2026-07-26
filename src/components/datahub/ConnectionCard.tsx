@@ -106,7 +106,7 @@ export function ConnectionCard({ conn }: { conn: ConnectionDef }) {
   );
 }
 
-// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
+ 
 export const DEFAULT_CONNECTIONS: ConnectionDef[] = [
   { id: 'bancodadosclientes', label: 'CRM Clientes', desc: 'Companies, customers, contacts, interactions', status: 'disconnected', tables: 14, icon: '👤' },
   { id: 'supabase-fuchsia-kite', label: 'Catálogo Produtos', desc: 'Products, variants, suppliers, pricing', status: 'disconnected', tables: 12, icon: '📦' },

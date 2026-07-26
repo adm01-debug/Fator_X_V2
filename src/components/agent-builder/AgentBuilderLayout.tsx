@@ -63,7 +63,7 @@ export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
       >
         <div className="flex items-center gap-6 min-w-0">
           <div className="flex items-center gap-3 group cursor-pointer" role="button" tabIndex={0} onClick={() => navigate('/agents')} onKeyDown={onActivateKey(() => navigate('/agents'))}>
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-primary/10">
+            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 group-hover:scale-110 transition-transform duration-300 shadow-nexus-lg shadow-primary/10">
               <Bot className="h-6 w-6 text-primary" />
             </div>
             <div className="flex flex-col">

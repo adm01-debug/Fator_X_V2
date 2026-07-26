@@ -62,7 +62,7 @@ const relTime = (iso: string) => formatDistanceToNow(new Date(iso), { addSuffix:
 
 const confidenceColor = (c: number): string => {
   if (c < 0.4) return 'text-destructive';
-  if (c < 0.7) return 'text-amber-500';
+  if (c < 0.7) return 'text-nexus-amber';
   if (c < 0.9) return 'text-nexus-cyan';
   return 'text-nexus-emerald';
 };
@@ -224,7 +224,7 @@ export default function SkillbookAuditPage() {
           icon={DollarSign}
           label="Custo total (USD)"
           value={`$${stats.totalCost.toFixed(2)}`}
-          accent="text-amber-500"
+          accent="text-nexus-amber"
           loading={isLoading}
           className="col-span-2 md:col-span-1"
         />

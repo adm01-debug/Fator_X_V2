@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- a11y: row/card click mirrors a primary action available elsewhere ; decorative wrapper / click-through container; tracked for dedicated a11y pass */
+ 
 import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Beaker, Play, Pause, Trash2, Trophy, Plus, Activity, Zap } from 'lucide-react';

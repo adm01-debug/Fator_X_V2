@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/label-has-associated-control, jsx-a11y/no-static-element-interactions -- a11y: row/card click mirrors a primary action available elsewhere ; visual caption for composite/custom control ; decorative wrapper / click-through container; tracked for dedicated a11y pass */
+/* eslint-disable jsx-a11y/label-has-associated-control -- a11y: row/card click mirrors a primary action available elsewhere ; visual caption for composite/custom control ; decorative wrapper / click-through container; tracked for dedicated a11y pass */
 import type { SandboxConfig, SandboxRuntime } from '@/components/workflows/SandboxExecutionPanel';
 import { handleKeyboardClick } from "@/lib/a11y";
 
@@ -45,7 +45,7 @@ export function SandboxConfigTab({ config, onUpdate }: SandboxConfigTabProps) {
   return (
     <div className="pt-4 space-y-4">
       <div className="space-y-2">
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+        { }
         <label className="text-meta text-muted-foreground font-medium">Runtime</label>
         <div className="grid grid-cols-2 gap-2">
           {RUNTIME_OPTIONS.map((rt) => (
@@ -66,7 +66,7 @@ export function SandboxConfigTab({ config, onUpdate }: SandboxConfigTabProps) {
 
       {config.runtime !== 'none' && (
         <div className="space-y-3">
-          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+          { }
           <label className="text-meta text-muted-foreground font-medium">Limites de Recursos</label>
           <SliderField label="CPU" value={config.cpuLimit} min={0.25} max={4} step={0.25} unit="cores" onChange={(v) => onUpdate({ cpuLimit: v })} />
           <SliderField label="Memória" value={config.memoryLimitMb} min={128} max={4096} step={128} unit="MB" onChange={(v) => onUpdate({ memoryLimitMb: v })} />
@@ -78,5 +78,5 @@ export function SandboxConfigTab({ config, onUpdate }: SandboxConfigTabProps) {
   );
 }
 
-// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
+ 
 export { RUNTIME_OPTIONS, SECURITY_LEVEL_COLORS };

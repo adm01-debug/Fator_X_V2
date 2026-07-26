@@ -224,7 +224,7 @@ export default function DashboardPage() {
                   </div>
                   <div className="space-y-4 flex-1">
                     {agents.slice(0, 4).map(agent => (
-                      <div key={agent.id} className="flex items-center justify-between p-5 rounded-[2rem] bg-card border border-border/40 hover:border-primary/40 hover:bg-background/80 hover:shadow-xl transition-all duration-300 cursor-pointer group" role="button" tabIndex={0} onClick={() => navigate(`/builder/${agent.id}`)} onKeyDown={onActivateKey(() => navigate(`/builder/${agent.id}`))}>
+                      <div key={agent.id} className="flex items-center justify-between p-5 rounded-[2rem] bg-card border border-border/40 hover:border-primary/40 hover:bg-background/80 hover:shadow-nexus-xl transition-all duration-300 cursor-pointer group" role="button" tabIndex={0} onClick={() => navigate(`/builder/${agent.id}`)} onKeyDown={onActivateKey(() => navigate(`/builder/${agent.id}`))}>
                         <div className="flex items-center gap-5">
                           <div className="h-14 w-14 rounded-2xl bg-muted/30 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-nexus-sm">{agent.avatar_emoji || '🤖'}</div>
                           <div>
@@ -257,7 +257,7 @@ export default function DashboardPage() {
                   </div>
                   <div className="space-y-4 flex-1">
                     {recentTraces.slice(0, 4).map((trace) => (
-                      <div key={trace.id} className="flex items-center justify-between p-5 rounded-[2rem] bg-card border border-border/40 hover:border-nexus-emerald/40 hover:bg-background/80 hover:shadow-xl transition-all duration-300 cursor-pointer group" onClick={() => navigate('/monitoring')}>
+                      <div key={trace.id} className="flex items-center justify-between p-5 rounded-[2rem] bg-card border border-border/40 hover:border-nexus-emerald/40 hover:bg-background/80 hover:shadow-nexus-xl transition-all duration-300 cursor-pointer group" onClick={() => navigate('/monitoring')}>
                         <div className="flex items-center gap-5 min-w-0">
                           <div className={cn(
                             "h-3 w-3 rounded-full shrink-0",

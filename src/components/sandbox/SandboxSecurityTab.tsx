@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/label-has-associated-control, jsx-a11y/no-static-element-interactions -- a11y: row/card click mirrors a primary action available elsewhere ; visual caption for composite/custom control ; decorative wrapper / click-through container; tracked for dedicated a11y pass */
+/* eslint-disable jsx-a11y/label-has-associated-control -- a11y: row/card click mirrors a primary action available elsewhere ; visual caption for composite/custom control ; decorative wrapper / click-through container; tracked for dedicated a11y pass */
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Shield, Terminal, HardDrive, Wifi, WifiOff, AlertTriangle } from 'lucide-react';
@@ -55,7 +55,7 @@ export function SandboxSecurityTab({ config, onUpdate }: SandboxSecurityTabProps
 
         {config.networkEnabled && (
           <div className="space-y-1">
-            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+            { }
             <label className="text-meta text-muted-foreground">Domínios Permitidos</label>
             <textarea
               value={config.allowedDomains.join('\n')}

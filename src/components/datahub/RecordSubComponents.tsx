@@ -14,10 +14,10 @@ import { toast } from "sonner";
 /* ── Helpers ─────────────────────────────────────────── */
 
 const SENSITIVE_MARKER = /^\*{3}$|REDACTED/;
-// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
+ 
 export const NON_EDITABLE = new Set(['id', 'created_at', 'updated_at', 'search_vector', 'is_customer', 'is_supplier', 'is_carrier']);
 
-// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
+ 
 export function isSensitive(value: unknown): boolean {
   return typeof value === 'string' && SENSITIVE_MARKER.test(value);
 }
@@ -285,7 +285,7 @@ export function GroupMembers({ entityId, grupoId, excludeId }: { entityId: strin
 }
 
 /* ── KNOWN SECONDARY TABLE RENDERERS ─────────────────── */
-// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
+ 
 export const SECONDARY_RENDERERS: Record<string, (data: Array<Record<string, unknown>>) => React.ReactElement | null> = {
   company_phones: (data) => <PhoneList phones={data} />,
   company_emails: (data) => <EmailList emails={data} />,
@@ -295,7 +295,7 @@ export const SECONDARY_RENDERERS: Record<string, (data: Array<Record<string, unk
   messages: (data) => <MessagesTimeline messages={data} />,
 };
 
-// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
+ 
 export const SECONDARY_LABELS: Record<string, { label: string; icon: React.ReactNode }> = {
   company_phones: { label: 'Telefones', icon: <Phone className="h-3.5 w-3.5 text-primary" /> },
   company_emails: { label: 'Emails', icon: <Mail className="h-3.5 w-3.5 text-primary" /> },

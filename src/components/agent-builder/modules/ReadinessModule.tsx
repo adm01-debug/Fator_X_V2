@@ -186,7 +186,7 @@ export function ReadinessModule() {
             <ProgressBar value={cat.score} max={cat.max} />
             <div className="space-y-1">
               {cat.items.map((item) => (
-                <div key={item.label} className="flex items-center gap-2 text-xs">
+                <div key={item.label} className="flex items-center gap-2 text-meta">
                   <span>{item.passed ? '✅' : '❌'}</span>
                   <span className={item.passed ? 'text-muted-foreground' : 'text-foreground'}>{item.label}</span>
                   {item.is_blocker && !item.passed && (

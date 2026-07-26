@@ -20,7 +20,7 @@ const AGENT_TYPES = [
   { id: "orchestrator", label: "Orquestrador", icon: Layers, desc: "Coordena múltiplos sub-agentes" },
 ];
 
-// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
+ 
 export const MODELS = [
   { id: "gpt-4o", name: "GPT-4o", provider: "OpenAI", cost: "$$", speed: "Rápido", quality: "Excelente" },
   { id: "gpt-4-turbo", name: "GPT-4 Turbo", provider: "OpenAI", cost: "$$$", speed: "Médio", quality: "Máxima" },
@@ -247,5 +247,5 @@ export function StepDeploy({ form, update }: { form: FormType; update: (k: strin
   );
 }
 
-// eslint-disable-next-line react-refresh/only-export-components -- co-located helper/constant export; HMR-only nicety
+ 
 export { AGENT_TYPES };

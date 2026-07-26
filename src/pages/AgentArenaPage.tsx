@@ -268,7 +268,7 @@ function CompetidorResult({ label, name, result, isWinner, loading }: { label: s
             </div>
 
             <div className="space-y-2">
-              {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label adjacent to control */}
+              { }
               <label className="text-meta font-bold uppercase tracking-widest text-muted-foreground">Resposta</label>
               <div className="bg-muted/30 rounded-2xl p-4 border border-border/20 max-h-[250px] overflow-y-auto text-meta font-medium leading-relaxed scrollbar-hide">
                 {result.response}
