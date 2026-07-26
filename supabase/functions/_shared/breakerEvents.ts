@@ -55,5 +55,9 @@ export function drainBreakerTransition(
       opened_at: snap.openedAt,
       ts: new Date().toISOString(),
     },
-  }).then(() => {}, () => {});
+    // Fire-and-forget por design (o breaker não pode bloquear no log), mas a
+    // falha vai para o console: se a gravação do evento quebrar, o painel de
+    // circuit breakers ficaria vazio sugerindo "tudo saudável" — o oposto da
+    // verdade, justamente no momento em que há incidente.
+  }).then(() => {}, (e) => console.warn(`[breaker] falha ao registrar evento ${snap.key}: ${e?.message ?? e}`));
 }
