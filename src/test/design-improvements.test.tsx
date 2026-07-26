@@ -10,8 +10,10 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 
 // ═══ JSDOM polyfills ═══
 beforeEach(() => {
-  // scrollTo polyfill
+  // scrollTo / scrollIntoView polyfills (cmdk chama scrollIntoView ao selecionar item)
   Element.prototype.scrollTo = vi.fn();
+  Element.prototype.scrollIntoView = vi.fn();
+
   // ResizeObserver polyfill
   if (!globalThis.ResizeObserver) {
     globalThis.ResizeObserver = class {
