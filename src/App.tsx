@@ -62,6 +62,7 @@ const BudgetsPage = lazy(() => import("./pages/BudgetsPage"));
 const DeploymentsPage = lazy(() => import("./pages/DeploymentsPage"));
 const OpenclawDeployPage = lazy(() => import("./pages/OpenclawDeployPage"));
 const OpenclawTemplatesPage = lazy(() => import("./pages/OpenclawTemplatesPage"));
+const CrmPage = lazy(() => import("./pages/CrmPage"));
 const ChatWithAgentPage = lazy(() => import("./pages/ChatWithAgentPage"));
 const MonitoringPage = lazy(() => import("./pages/MonitoringPage"));
 const DataStoragePage = lazy(() => import("./pages/DataStoragePage"));
