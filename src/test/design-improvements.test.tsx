@@ -2,7 +2,7 @@
  * Comprehensive test suite verifying ALL 31 design improvements
  * across Rounds 1, 2, and 3 of the Product Design Strategy audit.
  */
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -203,8 +203,8 @@ describe("Round 1: Foundational Design Polish", () => {
       const h1 = screen.getByRole("heading", { level: 1 });
       expect(h1).toBeInTheDocument();
       expect(h1.textContent).toBe("Test Title");
-      expect(h1.className).toContain("text-2xl");
-      expect(h1.className).toContain("sm:text-3xl");
+      expect(h1.className).toContain("text-3xl");
+      expect(h1.className).toContain("sm:text-4xl");
     });
   });
 
@@ -368,7 +368,7 @@ describe("Round 2: UX & Interaction", () => {
           <Breadcrumbs />
         </Wrapper>
       );
-      expect(screen.getByText("Knowledge / RAG")).toBeInTheDocument();
+      expect(screen.getByText("Conhecimento")).toBeInTheDocument();
       expect(screen.getByLabelText("Ir para o Dashboard")).toBeInTheDocument();
     });
 
@@ -386,7 +386,7 @@ describe("Round 2: UX & Interaction", () => {
       const { Breadcrumbs } = await import("@/components/shared/Breadcrumbs");
       const routes = [
         { path: "/datahub", label: "DataHub" },
-        { path: "/lgpd", label: "LGPD Compliance" },
+        { path: "/knowledge", label: "Conhecimento" },
         { path: "/approvals", label: "Aprovações" },
         { path: "/admin", label: "Admin BD" },
         { path: "/brain", label: "Super Cérebro" },
@@ -410,13 +410,13 @@ describe("Round 2: UX & Interaction", () => {
           <Breadcrumbs />
         </Wrapper>
       );
-      const last = screen.getByText("Security & Guardrails");
+      const last = screen.getByText("Segurança");
       expect(last.getAttribute("aria-current")).toBe("page");
     });
   });
 
-  describe("#19 Dashboard AI Insight", () => {
-    it("renders InfoHint with the correct title", async () => {
+  describe("#19 Dashboard Empty State", () => {
+    it("renders the empty-state headline when there are no agents", async () => {
       const DashboardPage = (await import("@/pages/DashboardPage")).default;
       render(
         <Wrapper>
@@ -424,7 +424,7 @@ describe("Round 2: UX & Interaction", () => {
         </Wrapper>
       );
       await waitFor(() => {
-        expect(screen.getByText("O que são superagentes de IA?")).toBeInTheDocument();
+        expect(screen.getByText("Inicie sua Frota Neural")).toBeInTheDocument();
       });
     });
   });
@@ -452,10 +452,10 @@ describe("Round 2: UX & Interaction", () => {
         { path: "/", expected: "Dashboard" },
         { path: "/agents", expected: "Agentes" },
         { path: "/brain", expected: "Super Cérebro" },
-        { path: "/knowledge", expected: "Knowledge" },
+        { path: "/knowledge", expected: "Conhecimento" },
         { path: "/datahub", expected: "DataHub" },
         { path: "/lgpd", expected: "LGPD" },
-        { path: "/settings", expected: "Settings" },
+        { path: "/settings", expected: "Configurações" },
       ];
       for (const { path, expected } of routes) {
         const { container, unmount } = render(
