@@ -74,24 +74,52 @@ vi.mock("@/integrations/supabase/client", () => ({
 // Sem estes mocks o jsdom dispara requisições de rede reais que nunca resolvem,
 // travando o worker do Vitest (causa do timeout global da suíte).
 vi.mock("@/integrations/supabase/externalClient", () => {
-  const builder: Record<string, unknown> = {};
-  const chain = () => builder;
-  Object.assign(builder, {
-    select: chain,
-    eq: chain,
-    ilike: chain,
-    or: chain,
-    order: chain,
-    limit: () => Promise.resolve({ data: [], error: null }),
-    then: (resolve: (v: unknown) => unknown) => resolve({ data: [], error: null }),
-  });
+  // Builder PostgREST universal: qualquer método encadeável devolve o próprio
+  // builder, e o objeto é thenable — resolvendo sempre `{ data: [], error: null }`.
+  // Um mock parcial deixa passar chamadas reais de rede que travam o worker.
+  const makeBuilder = (): Record<string, unknown> => {
+    const target: Record<string, unknown> = {
+      then: (resolve: (v: unknown) => unknown) => Promise.resolve(resolve({ data: [], error: null })),
+      catch: () => Promise.resolve({ data: [], error: null }),
+      finally: () => Promise.resolve({ data: [], error: null }),
+      maybeSingle: () => Promise.resolve({ data: null, error: null }),
+      single: () => Promise.resolve({ data: null, error: null }),
+      csv: () => Promise.resolve({ data: "", error: null }),
+    };
+    const proxy: Record<string, unknown> = new Proxy(target, {
+      get(obj, prop) {
+        if (prop in obj) return obj[prop as string];
+        if (typeof prop === "symbol") return undefined;
+        return () => proxy;
+      },
+    });
+    return proxy;
+  };
+
+  const channel = {
+    on: () => channel,
+    subscribe: () => channel,
+    unsubscribe: vi.fn(),
+    send: vi.fn(),
+  };
+
   return {
     supabaseExternal: {
-      from: () => builder,
-      rpc: () => Promise.resolve({ data: [], error: null }),
+      from: () => makeBuilder(),
+      rpc: () => makeBuilder(),
+      channel: () => channel,
+      removeChannel: vi.fn(),
+      auth: {
+        getSession: () => Promise.resolve({ data: { session: null }, error: null }),
+        getUser: () => Promise.resolve({ data: { user: null }, error: null }),
+        onAuthStateChange: () => ({ data: { subscription: { unsubscribe: vi.fn() } } }),
+      },
+      storage: { from: () => makeBuilder() },
+      functions: { invoke: () => Promise.resolve({ data: null, error: null }) },
     },
   };
 });
+
 
 vi.mock("@/hooks/useGlobalSearch", () => ({
   useGlobalSearch: () => ({
