@@ -68,9 +68,43 @@ vi.mock("@/integrations/supabase/client", () => ({
   },
 }));
 
+// O CommandPalette consulta o banco externo via `supabaseExternal` + `useGlobalSearch`.
+// Sem estes mocks o jsdom dispara requisições de rede reais que nunca resolvem,
+// travando o worker do Vitest (causa do timeout global da suíte).
+vi.mock("@/integrations/supabase/externalClient", () => {
+  const builder: Record<string, unknown> = {};
+  const chain = () => builder;
+  Object.assign(builder, {
+    select: chain,
+    eq: chain,
+    ilike: chain,
+    or: chain,
+    order: chain,
+    limit: () => Promise.resolve({ data: [], error: null }),
+    then: (resolve: (v: unknown) => unknown) => resolve({ data: [], error: null }),
+  });
+  return {
+    supabaseExternal: {
+      from: () => builder,
+      rpc: () => Promise.resolve({ data: [], error: null }),
+    },
+  };
+});
+
+vi.mock("@/hooks/useGlobalSearch", () => ({
+  useGlobalSearch: () => ({
+    results: [],
+    isLoading: false,
+    error: null,
+    query: "",
+    setQuery: vi.fn(),
+  }),
+}));
+
 vi.mock("@/hooks/use-network-status", () => ({
   useNetworkStatus: () => {},
 }));
+
 
 vi.mock("@/hooks/use-mobile", () => ({
   useIsMobile: () => false,
