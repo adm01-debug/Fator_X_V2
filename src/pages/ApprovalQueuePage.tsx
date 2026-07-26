@@ -81,7 +81,7 @@ export default function ApprovalQueuePage() {
                     <p className="text-meta text-muted-foreground">
                       Etapa {String(run.current_step)}/{String(run.total_steps)} • Nodo: {String(pending?.label ?? 'HITL Gate')}
                     </p>
-                    {pending?.context && <p className="text-meta text-foreground/80 mt-1 max-w-xl">{String(pending.context)}</p>}
+                    {pending?.context ? <p className="text-meta text-foreground/80 mt-1 max-w-xl">{String(pending.context)}</p> : null}
                   </div>
                   <span className="text-meta text-muted-foreground">{run.started_at ? new Date(run.started_at).toLocaleString('pt-BR') : ''}</span>
                 </div>
