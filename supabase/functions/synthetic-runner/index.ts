@@ -81,7 +81,7 @@ Deno.serve(async (req) => {
 
   const identifier = getRateLimitIdentifier(req);
   const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
-  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
+  if (!rate.allowed) return createRateLimitResponse(rate, corsHeaders);
 
   const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
 

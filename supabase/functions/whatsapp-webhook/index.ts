@@ -348,7 +348,7 @@ serve(async (req) => {
 
   const identifier = getRateLimitIdentifier(req);
   const rate = await checkRateLimit(identifier, RATE_LIMITS.light);
-  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, getCorsHeaders(req));
+  if (!rate.allowed) return createRateLimitResponse(rate, getCorsHeaders(req));
 
   // Meta verification GET handshake
   if (req.method === 'GET') {

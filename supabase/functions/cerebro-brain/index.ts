@@ -62,7 +62,7 @@ serve(async (req) => {
 
   const identifier = getRateLimitIdentifier(req);
   const rateResult = checkRateLimit(identifier, RATE_LIMITS.heavy);
-  if (!rateResult.allowed) return createRateLimitResponse(rateResult, req);
+  if (!rateResult.allowed) return createRateLimitResponse(rateResult, getCorsHeaders(req));
 
   try {
     const authHeader = req.headers.get('Authorization')!;

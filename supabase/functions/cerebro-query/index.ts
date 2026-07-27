@@ -57,7 +57,7 @@ serve(async (req) => {
     if (!user) return errorResponse('Unauthorized', 401, req);
 
     const rateCheck = checkRateLimit(getRateLimitIdentifier(req, user.id), RATE_LIMITS.oracle);
-    if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, req);
+    if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, getCorsHeaders(req));
 
     const rawBody = await req.json().catch(() => null);
     const parsedBody = CerebroBodySchema.safeParse(rawBody);

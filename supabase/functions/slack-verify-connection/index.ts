@@ -23,7 +23,7 @@ Deno.serve(async (req) => {
   // Rate limiting — Etapa 14
   const identifier = getRateLimitIdentifier(req);
   const rate = await checkRateLimit(identifier, RATE_LIMITS.medium);
-  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, handleCorsPreflight(req));
+  if (!rate.allowed) return createRateLimitResponse(rate, getCorsHeaders(req));
 
   const auth = req.headers.get("Authorization");
   if (!auth) return errorResponse(req, "Unauthorized", 401);

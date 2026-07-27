@@ -13,7 +13,7 @@ Deno.serve((req: Request): Response => {
 
   const identifier = getRateLimitIdentifier(req);
   const rate = checkRateLimit(identifier, RATE_LIMITS.light);
-  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
+  if (!rate.allowed) return createRateLimitResponse(rate, corsHeaders);
 
   if (req.method !== "GET") {
     return new Response(

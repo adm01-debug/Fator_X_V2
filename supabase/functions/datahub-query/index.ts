@@ -153,7 +153,7 @@ serve(async (req) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     const rateCheck = await checkRateLimit(getRateLimitIdentifier(req, user.id), RATE_LIMITS.heavy);
-    if (!rateCheck.success) return createRateLimitResponse(rateCheck.remaining, rateCheck.reset, getCorsHeaders(req));
+    if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, getCorsHeaders(req));
     if (!rateCheck.allowed) return _createRateLimitResponse(rateCheck, getCorsHeaders(req));
 
     const rawBody = await req.json().catch(() => null);
