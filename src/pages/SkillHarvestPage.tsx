@@ -159,7 +159,18 @@ export default function SkillHarvestPage() {
       <PageHeader
         title="Coleta de Skills"
         description="Varredura do GitHub, curadoria e promoção de skills por departamento."
+        actions={
+          <Button
+            variant="outline"
+            onClick={handleRebuildLinks}
+            disabled={rebuilding}
+            aria-label="Recalcular vínculos entre templates e skills"
+          >
+            {rebuilding ? 'Recalculando…' : 'Recalcular vínculos'}
+          </Button>
+        }
       />
+
 
       <Tabs defaultValue="queue" className="space-y-6">
         <TabsList>
