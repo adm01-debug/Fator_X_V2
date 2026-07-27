@@ -7,7 +7,7 @@
  * vezes durante um recálculo — o predicado descarta o ruído antes de tocar o
  * cache, e por ser puro é simulável sem WebSocket.
  */
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
@@ -60,12 +60,71 @@ export function shouldRefreshCurationFeed(
   return true;
 }
 
+/** Teto de acumulação: acima disso o número deixa de informar e vira ruído. */
+export const CURATION_PENDING_CAP = 99;
+
+/** Identidade estável de uma linha no feed: a dupla (template, skill). */
+function chaveDoEvento(evento: CurationRealtimeEvent): string | null {
+  for (const lado of [evento.new, evento.old]) {
+    if (lado?.template_id && lado?.skill_id) return `${lado.template_id}::${lado.skill_id}`;
+  }
+  return null;
+}
+
 /**
- * Assina as mudanças da tabela e invalida o feed apenas nos eventos relevantes.
- * O canal é recriado quando o filtro muda — o predicado depende dele.
+ * Acumula novidades pendentes sem tocar no cache.
+ *
+ * Por que não invalidar direto: invalidar puxa o conteúdo de baixo do cursor
+ * de leitura do curador e reinicia a paginação infinita — o item que ele
+ * estava lendo salta de posição. Acumular e deixar a atualização a cargo de um
+ * clique preserva a posição de leitura e o contexto.
+ *
+ * Função pura e **identity-preserving**: quando o evento é irrelevante ou
+ * repetido, devolve exatamente o mesmo Set, para que o React não re-renderize
+ * o painel durante um recálculo automático em lote.
  */
-export function useCurationRealtime(filtro: CurationFeedFilter, enabled = true) {
+export function applyCurationPendingEvent(
+  pendentes: ReadonlySet<string>,
+  evento: CurationRealtimeEvent,
+  filtro: CurationFeedFilter,
+): ReadonlySet<string> {
+  if (!shouldRefreshCurationFeed(evento, filtro)) return pendentes;
+
+  const chave = chaveDoEvento(evento);
+  if (!chave) return pendentes;
+  if (pendentes.has(chave)) return pendentes;
+  // Saturado: o rótulo já mostra "99+", contar mais não muda a tela.
+  if (pendentes.size >= CURATION_PENDING_CAP) return pendentes;
+
+  const proximo = new Set(pendentes);
+  proximo.add(chave);
+  return proximo;
+}
+
+/** Rótulo PT-BR do aviso de novidades. */
+export function formatPendingLabel(total: number): string | null {
+  if (!Number.isFinite(total) || total <= 0) return null;
+  if (total >= CURATION_PENDING_CAP) return '99+ novidades';
+  return total === 1 ? '1 novidade' : `${total} novidades`;
+}
+
+/**
+ * Assina as mudanças da tabela e reage apenas aos eventos relevantes.
+ * O canal é recriado quando o filtro muda — o predicado depende dele.
+ *
+ * Quando `onRelevantEvent` é fornecido, o hook **não** invalida o cache: quem
+ * decide o momento da atualização é o chamador (modo "novidade chegou").
+ */
+export function useCurationRealtime(
+  filtro: CurationFeedFilter,
+  enabled = true,
+  onRelevantEvent?: (evento: CurationRealtimeEvent) => void,
+) {
   const queryClient = useQueryClient();
+  // Ref evita recriar o canal a cada render por causa de um callback inline —
+  // reassinar um canal Realtime é caro e perde eventos na janela de troca.
+  const callbackRef = useRef(onRelevantEvent);
+  callbackRef.current = onRelevantEvent;
 
   useEffect(() => {
     if (!enabled) return;
@@ -83,6 +142,11 @@ export function useCurationRealtime(filtro: CurationFeedFilter, enabled = true) 
           };
 
           if (!shouldRefreshCurationFeed(evento, filtro)) return;
+
+          if (callbackRef.current) {
+            callbackRef.current(evento);
+            return;
+          }
 
           queryClient.invalidateQueries({ queryKey: ['recent_curations'] });
           queryClient.invalidateQueries({ queryKey: ['template_skill_links'] });
