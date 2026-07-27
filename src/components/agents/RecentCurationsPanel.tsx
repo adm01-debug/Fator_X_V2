@@ -116,11 +116,37 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
 
   const rotuloPendentes = formatPendingLabel(pendentes.size);
 
+  // Destaque das linhas que acabaram de entrar. Sinal de transição, não estado:
+  // expira sozinho para não passar a mentir sobre o que ainda é "novo".
+  const [destaques, setDestaques] = useState<CurationHighlightMap>(EMPTY_HIGHLIGHTS);
+  const [agora, setAgora] = useState(() => Date.now());
+
+  useEffect(() => {
+    if (destaques.size === 0) return;
+    // Tick curto o suficiente para o apagamento parecer imediato, e barato
+    // porque `pruneHighlights` preserva identidade enquanto nada expira.
+    const timer = window.setInterval(() => {
+      const t = Date.now();
+      setAgora(t);
+      setDestaques((atual) => pruneHighlights(atual, t));
+    }, 500);
+    return () => window.clearInterval(timer);
+  }, [destaques.size]);
+
+  // Trocar de recorte descarta o destaque: ele descrevia a tela anterior.
+  useEffect(() => {
+    setDestaques(EMPTY_HIGHLIGHTS);
+  }, [filtro, escopo, templateId]);
+
   const aplicarNovidades = () => {
+    const t = Date.now();
+    setDestaques(beginHighlight(pendentes, t));
+    setAgora(t);
     setPendentes(new Set());
     queryClient.invalidateQueries({ queryKey: ['recent_curations'] });
     queryClient.invalidateQueries({ queryKey: ['template_skill_links'] });
   };
+
 
 
 
