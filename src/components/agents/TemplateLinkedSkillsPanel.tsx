@@ -58,6 +58,16 @@ export function TemplateLinkedSkillsPanel({
   const queryClient = useQueryClient();
   const [pendingSkillId, setPendingSkillId] = useState<string>('');
 
+  // Usado apenas para personalizar a trilha de auditoria ("você" vs. admin X).
+  const currentUser = useQuery({
+    queryKey: ['auth_user_id'],
+    queryFn: async () => (await supabase.auth.getUser()).data.user?.id ?? null,
+    staleTime: 5 * 60_000,
+    retry: false,
+  });
+
+
+
   // 1ª fonte: vínculos persistidos (curadoria + recálculo por um clique).
   const persisted = useQuery({
     queryKey: ['template_skill_links', template.id],
