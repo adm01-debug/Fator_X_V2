@@ -71,6 +71,8 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
   const queryClient = useQueryClient();
   const [filtro, setFiltro] = useState<CurationFeedFilter>('all');
   const [escopo, setEscopo] = useState<CurationActorScope>('everyone');
+  const [templateId, setTemplateId] = useState<string>('all');
+
 
 
   // Curadoria é colaborativa: sem realtime, dois admins veem estados divergentes
