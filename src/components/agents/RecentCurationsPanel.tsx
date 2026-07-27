@@ -120,22 +120,39 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
           antigo. Remoções são reversíveis.
         </CardDescription>
 
-        <ToggleGroup
-          type="single"
-          value={filtro}
-          // ToggleGroup devolve '' ao desmarcar o item ativo — preservamos o
-          // filtro atual em vez de cair num estado sem seleção.
-          onValueChange={(valor) => valor && setFiltro(valor as CurationFeedFilter)}
-          className="justify-start pt-2"
-          aria-label="Filtrar eventos de curadoria"
-        >
-          {FILTROS.map((opcao) => (
-            <ToggleGroupItem key={opcao.value} value={opcao.value} className="text-meta h-7 px-3">
-              {opcao.label}
-            </ToggleGroupItem>
-          ))}
-        </ToggleGroup>
+        <div className="flex flex-wrap items-center gap-2 pt-2">
+          <ToggleGroup
+            type="single"
+            value={filtro}
+            // ToggleGroup devolve '' ao desmarcar o item ativo — preservamos o
+            // filtro atual em vez de cair num estado sem seleção.
+            onValueChange={(valor) => valor && setFiltro(valor as CurationFeedFilter)}
+            className="justify-start"
+            aria-label="Filtrar eventos de curadoria"
+          >
+            {FILTROS.map((opcao) => (
+              <ToggleGroupItem key={opcao.value} value={opcao.value} className="text-meta h-7 px-3">
+                {opcao.label}
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
+
+          <ToggleGroup
+            type="single"
+            value={escopo}
+            onValueChange={(valor) => valor && setEscopo(valor as CurationActorScope)}
+            className="justify-start"
+            aria-label="Filtrar por autoria"
+          >
+            {ESCOPOS.map((opcao) => (
+              <ToggleGroupItem key={opcao.value} value={opcao.value} className="text-meta h-7 px-3">
+                {opcao.label}
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
+        </div>
       </CardHeader>
+
 
       <CardContent className="space-y-6">
         {isLoading ? (
