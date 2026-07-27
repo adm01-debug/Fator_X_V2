@@ -378,6 +378,12 @@ export default function AgentTemplatesPage() {
                       </div>
                     </div>
                   </div>
+
+                  <TemplateLinkedSkillsPanel
+                    template={selectedTemplateForDetail}
+                    selectedIds={linkedSkillIds}
+                    onChange={setLinkedSkillIds}
+                  />
                 </div>
               </div>
 
