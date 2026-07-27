@@ -82,6 +82,112 @@ export async function fetchTemplateLinkCounts(): Promise<Record<string, number>>
   return counts;
 }
 
+/** Forma normalizada consumida pela UI, independente da origem do vínculo. */
+export interface DisplayTemplateSkillLink {
+  skillId: string;
+  skillName: string;
+  reason: string;
+  isStrongMatch: boolean;
+  origin: 'auto' | 'manual';
+}
+
+/**
+ * Mescla vínculos persistidos com o cálculo local (fallback), garantindo:
+ * 1. Curadoria manual sempre no topo e nunca descartada pelo limite;
+ * 2. Deduplicação por `skillId` (manual vence auto);
+ * 3. Ordenação estável: manual → match forte → score/ordem de entrada.
+ *
+ * Função pura: é ela que os cenários de simulação exercitam.
+ */
+export function mergeDisplayLinks(
+  persisted: DisplayTemplateSkillLink[],
+  computedFallback: DisplayTemplateSkillLink[],
+  limit = MAX_LINKS_PER_TEMPLATE,
+): DisplayTemplateSkillLink[] {
+  const safeLimit = Number.isFinite(limit) && limit > 0 ? Math.floor(limit) : MAX_LINKS_PER_TEMPLATE;
+
+  // Só usamos o fallback quando não há NADA persistido — evita misturar um
+  // recálculo local desatualizado com a curadoria salva pelo admin.
+  const source = persisted.length > 0 ? persisted : computedFallback;
+
+  const seen = new Set<string>();
+  const manual: DisplayTemplateSkillLink[] = [];
+  const auto: DisplayTemplateSkillLink[] = [];
+
+  for (const link of source) {
+    if (!link?.skillId || seen.has(link.skillId)) continue;
+    seen.add(link.skillId);
+    (link.origin === 'manual' ? manual : auto).push(link);
+  }
+
+  const sortedAuto = [...auto].sort(
+    (a, b) => Number(b.isStrongMatch) - Number(a.isStrongMatch),
+  );
+
+  // Manuais nunca são cortados: o limite se aplica ao restante.
+  return [...manual, ...sortedAuto.slice(0, Math.max(0, safeLimit - manual.length))];
+}
+
+/** Converte um vínculo persistido resolvido para a forma de exibição. */
+export function toDisplayLink(link: ResolvedTemplateSkillLink): DisplayTemplateSkillLink | null {
+  if (!link.skill) return null;
+  return {
+    skillId: link.skill.id,
+    skillName: link.skill.name,
+    reason: link.reason,
+    isStrongMatch: link.is_strong_match,
+    origin: link.origin,
+  };
+}
+
+/**
+ * Cria (ou promove) um vínculo manual entre um template e uma skill.
+ * Requer admin de workspace — a RLS rejeita os demais.
+ */
+export async function addManualTemplateSkillLink(
+  templateId: string,
+  skillId: string,
+  reason = 'Curadoria manual',
+): Promise<void> {
+  if (!templateId || !skillId) throw new Error('templateId e skillId são obrigatórios');
+
+  const { error } = await supabaseExternal.from('template_skill_links').upsert(
+    {
+      template_id: templateId,
+      skill_id: skillId,
+      score: 1,
+      reason,
+      is_strong_match: true,
+      department_match: false,
+      matched_keywords: [],
+      origin: 'manual',
+    },
+    { onConflict: 'template_id,skill_id' },
+  );
+
+  if (error) {
+    logger.error('addManualTemplateSkillLink failed', { templateId, skillId, error: error.message });
+    throw new Error(error.message);
+  }
+}
+
+/** Remove um vínculo (manual ou automático) de um template. */
+export async function removeTemplateSkillLink(
+  templateId: string,
+  skillId: string,
+): Promise<void> {
+  const { error } = await supabaseExternal
+    .from('template_skill_links')
+    .delete()
+    .eq('template_id', templateId)
+    .eq('skill_id', skillId);
+
+  if (error) {
+    logger.error('removeTemplateSkillLink failed', { templateId, skillId, error: error.message });
+    throw new Error(error.message);
+  }
+}
+
 export interface RebuildResult {
   templates: number;
   links: number;
