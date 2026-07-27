@@ -363,9 +363,17 @@ export function aggregateTemplateSkillLinks(
   let order = 0;
 
   for (const group of byTemplate) {
+    // A tabela tem UNIQUE(template_id, skill_id), mas o fallback local e
+    // payloads inesperados podem repetir a mesma skill no grupo — sem esta
+    // guarda, `templateCount` inflaria acima do nº real de blueprints.
+    const seenInGroup = new Set<string>();
+
     for (const link of group.links ?? []) {
-      if (!link?.skillId) continue;
+      if (!link?.skillId || seenInGroup.has(link.skillId)) continue;
+      seenInGroup.add(link.skillId);
       const existing = acc.get(link.skillId);
+
+
 
       if (!existing) {
         acc.set(link.skillId, {
