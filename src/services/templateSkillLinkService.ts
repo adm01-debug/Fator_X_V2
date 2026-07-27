@@ -648,11 +648,73 @@ export function filterCurationFeed(
     .filter((dia) => dia.entries.length > 0);
 }
 
-export async function fetchRecentCurations(
+/**
+ * Página do feed: os dias já agrupados + o cursor para a próxima página.
+ * `nextCursor` é `null` quando a consulta devolveu menos linhas que o limite —
+ * sinal inequívoco de fim de dataset, sem precisar de um COUNT caro.
+ */
+export interface CurationFeedPage {
+  days: CurationFeedDay[];
+  nextCursor: string | null;
+}
+
+/**
+ * Cursor = carimbo `updated_at` da última linha da página.
+ *
+ * Usamos `updated_at` (e não `deleted_at`) de propósito: é a coluna de ordenação
+ * da consulta e do índice parcial `idx_tsl_manual_recent`. Paginar por uma coluna
+ * diferente da ordenada produziria buracos e repetições entre páginas.
+ */
+export function resolveNextCursor(rows: RecentCurationRow[], limit: number): string | null {
+  if (rows.length < limit) return null;
+  const ultima = rows[rows.length - 1];
+  return ultima?.updated_at ?? ultima?.created_at ?? null;
+}
+
+/**
+ * Concatena páginas do feed preservando a ordem cronológica e a deduplicação
+ * por (template, skill) — a primeira ocorrência (página mais recente) vence.
+ *
+ * Função pura: é o alvo da simulação de cenários de paginação.
+ */
+export function mergeCurationFeeds(
+  paginas: CurationFeedDay[][],
+): CurationFeedDay[] {
+  const dias = new Map<string, CurationFeedDay>();
+  const vistos = new Set<string>();
+
+  for (const pagina of paginas) {
+    for (const dia of pagina) {
+      const alvo = dias.get(dia.dayKey);
+      const destino = alvo ?? { dayKey: dia.dayKey, dayLabel: dia.dayLabel, entries: [] };
+      if (!alvo) dias.set(dia.dayKey, destino);
+
+      for (const entrada of dia.entries) {
+        const chave = `${entrada.templateId}::${entrada.skillId}`;
+        if (vistos.has(chave)) continue;
+        vistos.add(chave);
+        destino.entries.push(entrada);
+      }
+    }
+  }
+
+  return [...dias.values()].filter((dia) => dia.entries.length > 0);
+}
+
+/**
+ * Lê uma página das curadorias manuais mais recentes.
+ *
+ * O filtro `origin = 'manual'` + `order by updated_at desc` casa exatamente com
+ * o índice parcial `idx_tsl_manual_recent`, então o custo não cresce com o
+ * volume de vínculos automáticos. O cursor mantém essa propriedade: `lt` sobre
+ * a mesma coluna ordenada é um range scan, não um OFFSET (que releria tudo).
+ */
+export async function fetchRecentCurationsPage(
   limit = 30,
   currentUserId?: string | null,
   filtro: CurationFeedFilter = 'all',
-): Promise<CurationFeedDay[]> {
+  cursor?: string | null,
+): Promise<CurationFeedPage> {
   let query = supabaseExternal
     .from('template_skill_links')
     .select(
@@ -664,16 +726,30 @@ export async function fetchRecentCurations(
   // cliente devolveria uma página cheia de eventos do tipo descartado.
   if (filtro === 'unlinked') query = query.not('deleted_at', 'is', null);
   if (filtro === 'linked') query = query.is('deleted_at', null);
+  if (cursor) query = query.lt('updated_at', cursor);
 
   const { data, error } = await query.order('updated_at', { ascending: false }).limit(limit);
 
   if (error) {
     logger.error('fetchRecentCurations failed', { error: error.message, filtro });
-    return [];
+    return { days: [], nextCursor: null };
   }
 
-  return filterCurationFeed(
-    buildCurationFeed((data ?? []) as unknown as RecentCurationRow[], currentUserId),
-    filtro,
-  );
+  const rows = (data ?? []) as unknown as RecentCurationRow[];
+
+  return {
+    days: filterCurationFeed(buildCurationFeed(rows, currentUserId), filtro),
+    nextCursor: resolveNextCursor(rows, limit),
+  };
 }
+
+/** Compatibilidade: primeira página apenas. */
+export async function fetchRecentCurations(
+  limit = 30,
+  currentUserId?: string | null,
+  filtro: CurationFeedFilter = 'all',
+): Promise<CurationFeedDay[]> {
+  const { days } = await fetchRecentCurationsPage(limit, currentUserId, filtro);
+  return days;
+}
+
