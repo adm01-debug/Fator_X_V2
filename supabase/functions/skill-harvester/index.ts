@@ -246,6 +246,22 @@ Deno.serve(async (req: Request) => {
         const fmCompleteness =
           (fmName ? 0.5 : 0) + (fmDesc ? 0.3 : 0) + (fmTags.length > 0 ? 0.2 : 0);
 
+        // A classificação precisa vir ANTES da nota: a confiança departamental
+        // é um dos sinais de especificidade da fórmula de qualidade.
+        const classification = classifyDepartment({ name, description, tags, content: fm.body });
+        const category = inferCategory({ name, description, tags, hasMcpServer: Boolean(mcpUrl) });
+
+        // Coletâneas (awesome-lists, cursos, roadmaps) não são skills
+        // instaláveis — detectá-las aqui evita que a popularidade do
+        // repositório carregue a nota para cima.
+        const isMeta = isMetaRepository({
+          name,
+          slug: repo.full_name,
+          description,
+          tags,
+          content: fm.body,
+        });
+
         const quality = computeQualityScore({
           stars: repo.stargazers_count,
           lastCommitAt: repo.pushed_at,
@@ -254,22 +270,24 @@ Deno.serve(async (req: Request) => {
           licenseAllowed: licenseOk,
           frontmatterCompleteness: fmCompleteness,
           descriptionLength: description.length,
+          isMeta,
+          departmentConfidence: classification.confidence,
         });
-
-        const classification = classifyDepartment({ name, description, tags, content: fm.body });
-        const category = inferCategory({ name, description, tags, hasMcpServer: Boolean(mcpUrl) });
 
         const reasons = [...risks];
         if (!licenseSpdx) reasons.push('license:missing');
         else if (!licenseOk) reasons.push(`license:blocked:${licenseSpdx}`);
         if (quality < MIN_QUALITY_SCORE) reasons.push(`quality:below_threshold:${quality}`);
+        if (isMeta) reasons.push('meta:collection_repo');
         if (classification.confidence < LOW_CONFIDENCE_THRESHOLD) reasons.push('department:low_confidence');
 
         const blocking = reasons.some(
           (r) => r.startsWith('secret:') || r.startsWith('prompt_injection:') || r.startsWith('shell:') ||
-                 r.startsWith('exfiltration:') || r.startsWith('license:') || r.startsWith('quality:'),
+                 r.startsWith('exfiltration:') || r.startsWith('license:') || r.startsWith('quality:') ||
+                 r.startsWith('meta:') || r.startsWith('department:'),
         );
         if (blocking) rejected++;
+
 
         candidates.push({
           run_id: runId,
