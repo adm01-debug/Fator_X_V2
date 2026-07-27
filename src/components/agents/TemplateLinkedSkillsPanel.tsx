@@ -11,8 +11,9 @@ import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 import type { AgentTemplate } from '@/data/agentTemplates';
-import { listSkills } from '@/services/skillsRegistryService';
+import { listSkills, type AgentSkillDefinition } from '@/services/skillsRegistryService';
 import { linkSkillsToTemplate } from '@/services/templateSkillRegistry';
+import { fetchTemplateSkillLinks } from '@/services/templateSkillLinkService';
 
 export interface TemplateLinkedSkillsPanelProps {
   template: AgentTemplate;
@@ -21,22 +22,56 @@ export interface TemplateLinkedSkillsPanelProps {
   className?: string;
 }
 
+/** Forma mínima que a lista renderiza, independente da origem do vínculo. */
+interface DisplayLink {
+  skill: Pick<AgentSkillDefinition, 'id' | 'name'>;
+  reason: string;
+  isStrongMatch: boolean;
+}
+
 export function TemplateLinkedSkillsPanel({
   template,
   selectedIds,
   onChange,
   className,
 }: TemplateLinkedSkillsPanelProps) {
-  const { data, isLoading } = useQuery({
+  // 1ª fonte: vínculos persistidos (curadoria + recálculo por um clique).
+  const persisted = useQuery({
+    queryKey: ['template_skill_links', template.id],
+    queryFn: () => fetchTemplateSkillLinks(template.id, 5),
+    staleTime: 60_000,
+    retry: false,
+  });
+
+  const hasPersisted = (persisted.data?.length ?? 0) > 0;
+
+  // 2ª fonte (fallback): cálculo local, usado só quando não há persistência.
+  const computed = useQuery({
     queryKey: ['skills_for_template_link'],
     queryFn: () => listSkills({ limit: 100 }),
     staleTime: 60_000,
+    enabled: !persisted.isLoading && !hasPersisted,
   });
 
-  const linked = useMemo(
-    () => (data?.skills ? linkSkillsToTemplate(template, data.skills, 5) : []),
-    [data, template],
-  );
+  const isLoading = persisted.isLoading || computed.isLoading;
+
+  const linked = useMemo<DisplayLink[]>(() => {
+    if (hasPersisted) {
+      return (persisted.data ?? [])
+        .filter((l): l is typeof l & { skill: AgentSkillDefinition } => l.skill !== null)
+        .map((l) => ({
+          skill: l.skill,
+          reason: l.reason,
+          isStrongMatch: l.is_strong_match,
+        }));
+    }
+    if (!computed.data?.skills) return [];
+    return linkSkillsToTemplate(template, computed.data.skills, 5).map((l) => ({
+      skill: l.skill,
+      reason: l.reason,
+      isStrongMatch: l.isStrongMatch,
+    }));
+  }, [hasPersisted, persisted.data, computed.data, template]);
 
   // Pré-seleciona os vínculos fortes assim que o cálculo estiver disponível.
   const strongIds = useMemo(

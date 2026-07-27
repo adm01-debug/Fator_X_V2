@@ -5,9 +5,9 @@
  */
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowLeft, Search, Sparkles, Wand2, Cpu, Wrench, Check, Rocket, Loader2, LayoutTemplate } from "lucide-react";
+import { ArrowLeft, Search, Sparkles, Wand2, Cpu, Wrench, Check, Rocket, Loader2, LayoutTemplate, Puzzle } from "lucide-react";
 
 
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,7 @@ import {
 import { AGENT_TEMPLATES, type AgentTemplate } from "@/data/agentTemplates";
 import { TemplateRecommenderCard } from "@/components/agents/TemplateRecommenderCard";
 import { TemplateLinkedSkillsPanel } from "@/components/agents/TemplateLinkedSkillsPanel";
+import { fetchTemplateLinkCounts } from "@/services/templateSkillLinkService";
 import { bulkInstallSkills } from "@/services/skillsRegistryService";
 
 import { saveAgent } from "@/lib/agentService";
@@ -65,6 +66,14 @@ export default function AgentTemplatesPage() {
   const [category, setCategory] = useState<string>(ALL);
   const [selectedTemplateForDetail, setSelectedTemplateForDetail] = useState<AgentTemplate | null>(null);
   const [linkedSkillIds, setLinkedSkillIds] = useState<string[]>([]);
+
+  // Contagem de skills vinculadas por template (persistida em template_skill_links).
+  const { data: linkCounts } = useQuery({
+    queryKey: ["template_skill_link_counts"],
+    queryFn: fetchTemplateLinkCounts,
+    staleTime: 5 * 60_000,
+    retry: false,
+  });
 
   const categories = useMemo(() => {
     const counts: Record<string, number> = { [ALL]: AGENT_TEMPLATES.length };
@@ -223,9 +232,14 @@ export default function AgentTemplatesPage() {
                     </div>
                   </div>
                 </div>
-                <div className="text-meta font-mono text-muted-foreground bg-secondary/50 px-2 py-0.5 rounded flex items-center gap-1">
-                  <Sparkles className="h-2.5 w-2.5" /> {(Math.random() * 5 + 1).toFixed(1)}k
-                </div>
+                {(linkCounts?.[t.id] ?? 0) > 0 && (
+                  <div
+                    className="text-meta font-mono text-muted-foreground bg-secondary/50 px-2 py-0.5 rounded flex items-center gap-1 shrink-0"
+                    title="Skills do Registry vinculadas a este template"
+                  >
+                    <Puzzle className="h-2.5 w-2.5 text-nexus-purple" /> {linkCounts?.[t.id]} skills
+                  </div>
+                )}
               </div>
 
               <p className="text-body-sm text-muted-foreground line-clamp-3 mb-6 leading-relaxed flex-1 italic">
