@@ -629,23 +629,51 @@ export function buildCurationFeed(
  * com o índice parcial `idx_tsl_manual_recent`, então o custo não cresce com
  * o volume de vínculos automáticos.
  */
+export type CurationFeedFilter = 'all' | 'linked' | 'unlinked';
+
+/**
+ * Filtro puro sobre o feed já construído.
+ *
+ * Mantido separado da consulta porque a UI alterna o filtro sem refetch quando
+ * o dataset já está em cache — e porque uma função pura é simulável.
+ * Dias que ficam sem entradas são descartados (não renderizamos cabeçalho vazio).
+ */
+export function filterCurationFeed(
+  feed: CurationFeedDay[],
+  filtro: CurationFeedFilter,
+): CurationFeedDay[] {
+  if (filtro === 'all') return feed;
+  return feed
+    .map((dia) => ({ ...dia, entries: dia.entries.filter((e) => e.kind === filtro) }))
+    .filter((dia) => dia.entries.length > 0);
+}
+
 export async function fetchRecentCurations(
   limit = 30,
   currentUserId?: string | null,
+  filtro: CurationFeedFilter = 'all',
 ): Promise<CurationFeedDay[]> {
-  const { data, error } = await supabaseExternal
+  let query = supabaseExternal
     .from('template_skill_links')
     .select(
       'template_id, skill_id, reason, updated_at, created_at, updated_by, created_by, deleted_at, deleted_by, skill:skill_registry(name)',
     )
-    .eq('origin', 'manual')
-    .order('updated_at', { ascending: false })
-    .limit(limit);
+    .eq('origin', 'manual');
+
+  // Empurrar o filtro para o banco mantém o LIMIT significativo: filtrar só no
+  // cliente devolveria uma página cheia de eventos do tipo descartado.
+  if (filtro === 'unlinked') query = query.not('deleted_at', 'is', null);
+  if (filtro === 'linked') query = query.is('deleted_at', null);
+
+  const { data, error } = await query.order('updated_at', { ascending: false }).limit(limit);
 
   if (error) {
-    logger.error('fetchRecentCurations failed', { error: error.message });
+    logger.error('fetchRecentCurations failed', { error: error.message, filtro });
     return [];
   }
 
-  return buildCurationFeed((data ?? []) as unknown as RecentCurationRow[], currentUserId);
+  return filterCurationFeed(
+    buildCurationFeed((data ?? []) as unknown as RecentCurationRow[], currentUserId),
+    filtro,
+  );
 }
