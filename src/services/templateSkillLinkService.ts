@@ -142,14 +142,20 @@ export function mergeDisplayLinks(
 /** Converte um vínculo persistido resolvido para a forma de exibição. */
 export function toDisplayLink(link: ResolvedTemplateSkillLink): DisplayTemplateSkillLink | null {
   if (!link.skill) return null;
+  const isManual = link.origin === 'manual';
   return {
     skillId: link.skill.id,
     skillName: link.skill.name,
     reason: link.reason,
     isStrongMatch: link.is_strong_match,
     origin: link.origin,
+    // Auditoria só faz sentido na curadoria humana; o gatilho no banco
+    // garante NULL para vínculos automáticos, mas normalizamos aqui também.
+    curatedBy: isManual ? (link.updated_by ?? link.created_by ?? null) : null,
+    curatedAt: isManual ? (link.updated_at ?? link.created_at ?? null) : null,
   };
 }
+
 
 /**
  * Cria (ou promove) um vínculo manual entre um template e uma skill.
