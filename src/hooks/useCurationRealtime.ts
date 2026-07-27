@@ -108,6 +108,75 @@ export function formatPendingLabel(total: number): string | null {
   return total === 1 ? '1 novidade' : `${total} novidades`;
 }
 
+/** Ordem canônica dos recortes. Fonte única para iteração e para os testes. */
+export const CURATION_FILTERS: readonly CurationFeedFilter[] = ['all', 'linked', 'unlinked'];
+
+/** Contagem de novidades pendentes por recorte, avaliada em paralelo. */
+export type CurationPendingByFilter = Readonly<
+  Record<CurationFeedFilter, ReadonlySet<string>>
+>;
+
+const CONJUNTO_VAZIO: ReadonlySet<string> = new Set();
+
+/** Estado inicial compartilhado: nada pendente em nenhum recorte. */
+export const EMPTY_PENDING_BY_FILTER: CurationPendingByFilter = Object.freeze({
+  all: CONJUNTO_VAZIO,
+  linked: CONJUNTO_VAZIO,
+  unlinked: CONJUNTO_VAZIO,
+});
+
+/**
+ * Acumula o evento em **todos** os recortes onde ele é relevante.
+ *
+ * Por que contar em paralelo: com uma contagem única, trocar de filtro obrigava
+ * a zerar o acumulado — os eventos tinham sido avaliados contra o recorte
+ * anterior. O curador que alternava "Vínculos" ↔ "Remoções" perdia o rastro do
+ * que havia chegado. Avaliando o mesmo evento contra os três predicados de uma
+ * vez, cada aba carrega sua própria contagem e nada se perde na troca.
+ *
+ * **Identity-preserving em dois níveis**: se nenhum recorte mudou, devolve o
+ * mesmo objeto; os recortes que não mudaram mantêm o mesmo `Set`. Sem isso um
+ * recálculo automático em lote re-renderizaria o painel a cada linha.
+ */
+export function applyCurationPendingEventByFilter(
+  estado: CurationPendingByFilter,
+  evento: CurationRealtimeEvent,
+): CurationPendingByFilter {
+  let mudou = false;
+  const proximo: Record<CurationFeedFilter, ReadonlySet<string>> = { ...estado };
+
+  for (const filtro of CURATION_FILTERS) {
+    const atualizado = applyCurationPendingEvent(estado[filtro], evento, filtro);
+    if (atualizado !== estado[filtro]) {
+      proximo[filtro] = atualizado;
+      mudou = true;
+    }
+  }
+
+  return mudou ? proximo : estado;
+}
+
+/**
+ * Zera apenas o recorte que acabou de ser atualizado na tela.
+ *
+ * Os demais continuam válidos: seus eventos ainda não foram vistos pelo
+ * curador, e apagá-los esconderia novidades reais atrás de uma aba silenciosa.
+ */
+export function clearPendingForFilter(
+  estado: CurationPendingByFilter,
+  filtro: CurationFeedFilter,
+): CurationPendingByFilter {
+  if (estado[filtro].size === 0) return estado;
+  return { ...estado, [filtro]: CONJUNTO_VAZIO };
+}
+
+/** Rótulo curto para o badge da aba (só o número, saturado no teto). */
+export function formatPendingBadge(total: number): string | null {
+  if (!Number.isFinite(total) || total <= 0) return null;
+  return total >= CURATION_PENDING_CAP ? '99+' : String(total);
+}
+
+
 /**
  * Assina as mudanças da tabela e reage apenas aos eventos relevantes.
  * O canal é recriado quando o filtro muda — o predicado depende dele.
