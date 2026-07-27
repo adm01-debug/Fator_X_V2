@@ -232,9 +232,14 @@ export default function AgentTemplatesPage() {
                     </div>
                   </div>
                 </div>
-                <div className="text-meta font-mono text-muted-foreground bg-secondary/50 px-2 py-0.5 rounded flex items-center gap-1">
-                  <Sparkles className="h-2.5 w-2.5" /> {(Math.random() * 5 + 1).toFixed(1)}k
-                </div>
+                {(linkCounts?.[t.id] ?? 0) > 0 && (
+                  <div
+                    className="text-meta font-mono text-muted-foreground bg-secondary/50 px-2 py-0.5 rounded flex items-center gap-1 shrink-0"
+                    title="Skills do Registry vinculadas a este template"
+                  >
+                    <Puzzle className="h-2.5 w-2.5 text-nexus-purple" /> {linkCounts?.[t.id]} skills
+                  </div>
+                )}
               </div>
 
               <p className="text-body-sm text-muted-foreground line-clamp-3 mb-6 leading-relaxed flex-1 italic">
