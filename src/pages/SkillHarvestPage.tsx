@@ -12,6 +12,8 @@ import {
   ShieldAlert, ExternalLink, Search, Layers,
 } from 'lucide-react';
 import { PageHeader } from '@/components/shared/PageHeader';
+import { RecentCurationsPanel } from '@/components/agents/RecentCurationsPanel';
+
 import { rebuildTemplateSkillLinks } from '@/services/templateSkillLinkService';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
