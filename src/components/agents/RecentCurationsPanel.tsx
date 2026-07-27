@@ -5,6 +5,7 @@
  * `idx_tsl_manual_recent` — o custo não cresce com o volume de vínculos
  * automáticos, que hoje representam a maioria absoluta da tabela.
  */
+import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { History, Link2, Sparkles, Undo2, Unlink, UserRound } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -13,10 +14,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import {
   fetchRecentCurations,
   restoreTemplateSkillLink,
+  type CurationFeedFilter,
 } from '@/services/templateSkillLinkService';
+
+const FILTROS: Array<{ value: CurationFeedFilter; label: string }> = [
+  { value: 'all', label: 'Tudo' },
+  { value: 'linked', label: 'Vínculos' },
+  { value: 'unlinked', label: 'Remoções' },
+];
 
 export interface RecentCurationsPanelProps {
   /** Quantos registros buscar (o feed agrupa por dia depois). */
@@ -36,6 +45,7 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
   });
 
   const queryClient = useQueryClient();
+  const [filtro, setFiltro] = useState<CurationFeedFilter>('all');
 
   const desfazer = useMutation({
     mutationFn: ({ templateId, skillId }: { templateId: string; skillId: string }) =>
@@ -55,8 +65,8 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
   });
 
   const { data: feed = [], isLoading } = useQuery({
-    queryKey: ['recent_curations', limit, currentUserId],
-    queryFn: () => fetchRecentCurations(limit, currentUserId),
+    queryKey: ['recent_curations', limit, currentUserId, filtro],
+    queryFn: () => fetchRecentCurations(limit, currentUserId, filtro),
     staleTime: 30_000,
     retry: false,
   });
@@ -72,6 +82,22 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
           Vínculos e desvinculações manuais entre templates e skills, do mais recente ao mais
           antigo. Remoções são reversíveis.
         </CardDescription>
+
+        <ToggleGroup
+          type="single"
+          value={filtro}
+          // ToggleGroup devolve '' ao desmarcar o item ativo — preservamos o
+          // filtro atual em vez de cair num estado sem seleção.
+          onValueChange={(valor) => valor && setFiltro(valor as CurationFeedFilter)}
+          className="justify-start pt-2"
+          aria-label="Filtrar eventos de curadoria"
+        >
+          {FILTROS.map((opcao) => (
+            <ToggleGroupItem key={opcao.value} value={opcao.value} className="text-meta h-7 px-3">
+              {opcao.label}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
       </CardHeader>
 
       <CardContent className="space-y-6">
@@ -85,7 +111,11 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
           <div className="py-8 text-center space-y-2">
             <Sparkles className="mx-auto h-6 w-6 text-muted-foreground" aria-hidden />
             <p className="text-body-sm text-muted-foreground">
-              Nenhuma curadoria manual registrada ainda.
+              {filtro === 'unlinked'
+                ? 'Nenhuma remoção registrada.'
+                : filtro === 'linked'
+                  ? 'Nenhum vínculo manual ativo.'
+                  : 'Nenhuma curadoria manual registrada ainda.'}
             </p>
             <p className="text-meta text-muted-foreground">
               Vincule skills a um template na galeria para que apareçam aqui.
