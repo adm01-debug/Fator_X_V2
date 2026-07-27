@@ -673,4 +673,5 @@ export const TEMPLATE_CATEGORIES = [
   { id: 'gestao', label: 'Gestão & Estratégia', icon: '🎯' },
   { id: 'pessoas', label: 'Pessoas & Cultura', icon: '🤝' },
   { id: 'producao', label: 'Produção & Gravação', icon: '🔥' },
+  { id: 'ti', label: 'TI & Infraestrutura', icon: '🖥️' },
 ];
