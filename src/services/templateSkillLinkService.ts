@@ -783,6 +783,13 @@ export async function fetchRecentCurationsPage(
     query = query.or(expr);
   }
 
+  // Template: allowlist resolvida antes da consulta; `eq` usa o índice
+  // idx_tsl_template quando a seletividade compensa.
+  const alvoTemplate = resolveTemplateFilter(templateId, AGENT_TEMPLATES.map((t) => t.id));
+  if (alvoTemplate) query = query.eq('template_id', alvoTemplate);
+
+
+
 
   const { data, error } = await query.order('updated_at', { ascending: false }).limit(limit);
 
