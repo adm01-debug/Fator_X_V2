@@ -760,6 +760,8 @@ export async function fetchRecentCurationsPage(
   filtro: CurationFeedFilter = 'all',
   cursor?: string | null,
   escopo: CurationActorScope = 'everyone',
+  templateId?: string | null,
+
 ): Promise<CurationFeedPage> {
   let query = supabaseExternal
     .from('template_skill_links')
