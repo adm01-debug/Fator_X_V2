@@ -40,7 +40,7 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
   return (
     <Card className={className}>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="flex items-center gap-2 text-body">
           <History className="h-4 w-4 text-primary" aria-hidden />
           Curadoria recente
         </CardTitle>
@@ -59,17 +59,17 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
         ) : feed.length === 0 ? (
           <div className="py-8 text-center space-y-2">
             <Sparkles className="mx-auto h-6 w-6 text-muted-foreground" aria-hidden />
-            <p className="text-sm text-muted-foreground">
+            <p className="text-body-sm text-muted-foreground">
               Nenhuma curadoria manual registrada ainda.
             </p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-meta text-muted-foreground">
               Vincule skills a um template na galeria para que apareçam aqui.
             </p>
           </div>
         ) : (
           feed.map((dia) => (
             <section key={dia.dayKey} className="space-y-2">
-              <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              <h3 className="text-meta font-medium uppercase tracking-wide text-muted-foreground">
                 {dia.dayLabel}
               </h3>
 
@@ -86,12 +86,12 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
                       <span className="text-muted-foreground" aria-hidden>
                         →
                       </span>
-                      <span className="text-sm font-medium text-foreground">
+                      <span className="text-body-sm font-medium text-foreground">
                         {entrada.skillName}
                       </span>
                     </div>
 
-                    <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                    <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-meta text-muted-foreground">
                       {entrada.actorLabel && (
                         <span className="inline-flex items-center gap-1">
                           <UserRound className="h-3 w-3" aria-hidden />
