@@ -66,12 +66,29 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
     },
   });
 
-  const { data: feed = [], isLoading } = useQuery({
+  const {
+    data,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: ['recent_curations', limit, currentUserId, filtro],
-    queryFn: () => fetchRecentCurations(limit, currentUserId, filtro),
+    queryFn: ({ pageParam }) =>
+      fetchRecentCurationsPage(limit, currentUserId, filtro, pageParam as string | null),
+    initialPageParam: null as string | null,
+    getNextPageParam: (ultima) => ultima.nextCursor,
     staleTime: 30_000,
     retry: false,
   });
+
+  // As páginas são mescladas fora do render loop: a dedup por (template, skill)
+  // é O(n) e não deve rodar a cada re-render por hover/estado local.
+  const feed = useMemo(
+    () => mergeCurationFeeds((data?.pages ?? []).map((p) => p.days)),
+    [data],
+  );
+
 
   return (
     <Card className={className}>
