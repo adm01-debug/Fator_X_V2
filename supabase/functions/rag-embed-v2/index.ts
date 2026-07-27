@@ -23,16 +23,11 @@ import {
   checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS,
   parseBody, z,
 } from "../_shared/mod.ts";
+import { CANONICAL_DIM, HF_MODEL_MAP, hasExactDimension, hashEmbed } from "./embedder.ts";
 
 // ═══ Input Schema ═══
-/**
- * 1536 é a dimensão CANÔNICA do sistema: é o que as colunas
- * `chunks.embedding` e `agent_memories_v2.embedding` declaram. pgvector exige
- * dimensão fixa por coluna, então qualquer outro valor gera um vetor
- * impossível de persistir. O default anterior era 1024 — divergente das duas
- * colunas, o que tornava toda escrita de embedding uma falha garantida.
- */
-const CANONICAL_DIM = 1536;
+// CANONICAL_DIM, HF_MODEL_MAP, hasExactDimension e hashEmbed vivem em
+// ./embedder.ts para permitir testes unitários sem HTTP.
 
 const EmbedInput = z.object({
   texts: z.array(z.string().min(1).max(8000)).min(1).max(100),
@@ -40,25 +35,6 @@ const EmbedInput = z.object({
   dimension: z.number().int().positive().max(4096).default(CANONICAL_DIM),
   task: z.enum(['retrieval.passage', 'retrieval.query', 'classification', 'clustering']).default('retrieval.passage'),
 });
-
-/**
- * Todo vetor devolvido precisa ter EXATAMENTE a dimensão pedida.
- * Provedores não respeitam o pedido por igual: a API de feature-extraction da
- * HF devolve a dimensão nativa do modelo (Qwen3-Embedding-8B → 4096) e ignora
- * qualquer parâmetro. Sem esta checagem, o vetor errado só falha lá na frente,
- * no INSERT, com uma mensagem que não aponta para o provedor culpado.
- */
-function hasExactDimension(vectors: number[][], dim: number): boolean {
-  return vectors.length > 0 && vectors.every((v) => Array.isArray(v) && v.length === dim);
-}
-
-// ═══ Provider Map ═══
-const HF_MODEL_MAP: Record<string, string> = {
-  'qwen3-embedding-8b': 'Qwen/Qwen3-Embedding-8B',
-  'bge-m3': 'BAAI/bge-m3',
-  'bge-large-en': 'BAAI/bge-large-en-v1.5',
-  'multilingual-e5': 'intfloat/multilingual-e5-large',
-};
 
 // ═══ HF Embedding ═══
 async function embedWithHF(texts: string[], model: string, hfKey: string): Promise<number[][] | null> {
@@ -108,23 +84,6 @@ async function embedWithOpenAI(texts: string[], openaiKey: string, dimension: nu
   } catch {
     return null;
   }
-}
-
-// ═══ Deterministic Fallback (dev only) ═══
-// Hash-based random projection — produces stable but meaningless vectors.
-// Allows tests to run without API keys.
-function hashEmbed(text: string, dim: number): number[] {
-  const vec = new Array(dim).fill(0);
-  for (let i = 0; i < text.length; i++) {
-    const code = text.charCodeAt(i);
-    const idx = (code * 2654435761) % dim;
-    vec[idx < 0 ? idx + dim : idx] += Math.sin(code + i) / Math.sqrt(text.length);
-  }
-  // L2 normalize
-  let norm = 0;
-  for (const v of vec) norm += v * v;
-  norm = Math.sqrt(norm) || 1;
-  return vec.map(v => v / norm);
 }
 
 // ═══ Server ═══
