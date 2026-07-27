@@ -233,6 +233,8 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
           </div>
         )}
       </CardContent>
+    </Card>
+
 
   );
 }
