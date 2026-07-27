@@ -12,12 +12,12 @@ const rows: string[] = [];
 let strong = 0, weak = 0, empty = 0;
 const esc = (s: string) => s.replace(/'/g, "''");
 for (const t of AGENT_TEMPLATES) {
-  const links = linkSkillsToTemplate(t, registry, 6);
+  const links = linkSkillsToTemplate(t, registry, 4);
   if (links.length === 0) { empty++; console.log('SEM VINCULO:', t.id); continue; }
   for (const l of links) {
     l.isStrongMatch ? strong++ : weak++;
     const kws = [...new Set([...l.affinities, ...l.matchedKeywords])].slice(0, 8);
-    rows.push(`('${esc(t.id)}','${l.skill.id}',${l.score.toFixed(3)},'${esc(l.reason)}',${l.isStrongMatch},${l.departmentMatch},ARRAY[${kws.map(k=>`'${esc(k)}'`).join(',')}]::text[],'auto')`);
+    rows.push(`('${esc(t.id)}','${l.skill.id}',${l.score.toFixed(3)},'${esc(l.reason)}',${l.isStrongMatch},${l.departmentMatch},ARRAY[${kws.slice(0,3).map(k=>`'${esc(k)}'`).join(',')}]::text[],'auto')`);
   }
 }
 console.log({ strong, weak, empty, total: rows.length });
