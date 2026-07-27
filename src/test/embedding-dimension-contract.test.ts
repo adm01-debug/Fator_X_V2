@@ -26,9 +26,20 @@ function readFn(name: string): string {
   return readFileSync(resolve(process.cwd(), `supabase/functions/${name}/index.ts`), 'utf-8');
 }
 
+/**
+ * `CANONICAL_DIM` e `hasExactDimension` foram extraídos de `index.ts` para
+ * `embedder.ts` (para permitir testes Deno unitários). O contrato é o mesmo,
+ * mas passou a ser cumprido por dois arquivos — o guard precisa olhar os dois,
+ * senão passa a acusar falha justamente quando o código melhora.
+ */
+function readEmbedderSurface(): string {
+  const dir = resolve(process.cwd(), 'supabase/functions/rag-embed-v2');
+  return `${readFileSync(resolve(dir, 'index.ts'), 'utf-8')}\n${readFileSync(resolve(dir, 'embedder.ts'), 'utf-8')}`;
+}
+
 describe('contrato de dimensão de embeddings', () => {
   it('o embedder declara 1536 como dimensão canônica', () => {
-    const src = readFn('rag-embed-v2');
+    const src = readEmbedderSurface();
     expect(src).toMatch(/const CANONICAL_DIM = 1536/);
     // O default do schema precisa vir da constante, não de um literal solto:
     // literais duplicados foram exatamente a origem da divergência anterior.
