@@ -125,3 +125,11 @@ export type {
   TraceContext,
   ObservabilityOptions,
 } from "./otel-edge.ts";
+
+// Runtime alerts — captura ReferenceError/TypeError e dispara alerta.
+export {
+  withRuntimeAlert,
+  reportRuntimeError,
+  isFatalCodeError,
+} from "./runtimeAlerts.ts";
+export type { RuntimeErrorContext } from "./runtimeAlerts.ts";
