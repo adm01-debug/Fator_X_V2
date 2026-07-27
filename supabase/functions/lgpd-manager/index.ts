@@ -26,7 +26,7 @@ serve(async (req) => {
 
     const identifier = getRateLimitIdentifier(req, user.id);
     const rateCheck = await checkRateLimit(identifier, RATE_LIMITS.heavy);
-    if (!rateCheck.success) return createRateLimitResponse(rateCheck.remaining, rateCheck.reset, getCorsHeaders(req));
+    if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, getCorsHeaders(req));
 
     const parsed = await parseBody(req, LGPDInput);
     if (parsed.error) return parsed.error;

@@ -46,8 +46,8 @@ function renderTemplate(tpl: string, vars: Record<string, string>): string {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return handleCorsPreflight(req);
   const identifier = getRateLimitIdentifier(req);
-  const rate = await checkRateLimit(identifier, RATE_LIMITS.medium);
-  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, getCorsHeaders(req));
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.standard);
+  if (!rate.allowed) return createRateLimitResponse(rate, getCorsHeaders(req));
   if (req.method !== "POST") return errorResponse(req, "Method not allowed", 405);
 
   let payload: z.infer<typeof PayloadSchema>;
