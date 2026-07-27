@@ -24,6 +24,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { AGENT_TEMPLATES, type AgentTemplate } from "@/data/agentTemplates";
+import { TemplateRecommenderCard } from "@/components/agents/TemplateRecommenderCard";
+
 import { saveAgent } from "@/lib/agentService";
 import type { AgentConfig } from "@/types/agentTypes";
 import { useAuth } from "@/contexts/AuthContext";
