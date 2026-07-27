@@ -213,7 +213,26 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
             </section>
           ))
         )}
+
+        {hasNextPage && (
+          <div className="pt-1 text-center">
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-meta"
+              disabled={isFetchingNextPage}
+              onClick={() => void fetchNextPage()}
+            >
+              {isFetchingNextPage ? (
+                <Loader2 className="mr-1 h-3 w-3 animate-spin" aria-hidden />
+              ) : (
+                <ChevronDown className="mr-1 h-3 w-3" aria-hidden />
+              )}
+              Carregar mais
+            </Button>
+          </div>
+        )}
       </CardContent>
-    </Card>
+
   );
 }
