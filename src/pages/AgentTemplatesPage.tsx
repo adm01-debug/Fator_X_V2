@@ -66,6 +66,14 @@ export default function AgentTemplatesPage() {
   const [selectedTemplateForDetail, setSelectedTemplateForDetail] = useState<AgentTemplate | null>(null);
   const [linkedSkillIds, setLinkedSkillIds] = useState<string[]>([]);
 
+  // Contagem de skills vinculadas por template (persistida em template_skill_links).
+  const { data: linkCounts } = useQuery({
+    queryKey: ["template_skill_link_counts"],
+    queryFn: fetchTemplateLinkCounts,
+    staleTime: 5 * 60_000,
+    retry: false,
+  });
+
   const categories = useMemo(() => {
     const counts: Record<string, number> = { [ALL]: AGENT_TEMPLATES.length };
     for (const t of AGENT_TEMPLATES) {
