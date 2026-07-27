@@ -23,9 +23,13 @@ import {
   type CurationFeedFilter,
 } from '@/services/templateSkillLinkService';
 import {
-  applyCurationPendingEvent,
+  applyCurationPendingEventByFilter,
+  clearPendingForFilter,
+  formatPendingBadge,
   formatPendingLabel,
   useCurationRealtime,
+  EMPTY_PENDING_BY_FILTER,
+  type CurationPendingByFilter,
   type CurationRealtimeEvent,
 } from '@/hooks/useCurationRealtime';
 import { AGENT_TEMPLATES } from '@/data/agentTemplates';
@@ -95,26 +99,32 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
   // Novidades chegam por realtime mas NÃO entram na tela sozinhas: invalidar
   // durante a leitura reinicia a paginação infinita e faz o item lido saltar
   // de posição. Acumulamos e deixamos a atualização a cargo de um clique.
-  const [pendentes, setPendentes] = useState<ReadonlySet<string>>(() => new Set());
-
-  const registrarPendente = useCallback(
-    (evento: CurationRealtimeEvent) => {
-      setPendentes((atual) => applyCurationPendingEvent(atual, evento, filtro));
-    },
-    [filtro],
+  //
+  // Contamos os três recortes em paralelo: com uma contagem única, alternar de
+  // aba obrigava a zerar tudo e o curador perdia o rastro do que havia chegado
+  // no recorte que ele não estava olhando.
+  const [pendentes, setPendentes] = useState<CurationPendingByFilter>(
+    EMPTY_PENDING_BY_FILTER,
   );
 
-  // Curadoria é colaborativa: sem realtime, dois admins veem estados divergentes
-  // até o staleTime de 30s expirar.
-  useCurationRealtime(filtro, true, registrarPendente);
+  const registrarPendente = useCallback((evento: CurationRealtimeEvent) => {
+    setPendentes((atual) => applyCurationPendingEventByFilter(atual, evento));
+  }, []);
 
-  // Trocar de filtro invalida a contagem: os eventos acumulados foram avaliados
-  // contra o recorte anterior e não descrevem mais o que está na tela.
+  // Assinamos com 'all' de propósito: ele é a união exata de 'linked' e
+  // 'unlinked', então um único canal alimenta os três contadores — e o canal
+  // deixa de ser reassinado a cada troca de aba (reassinar perde eventos).
+  useCurationRealtime('all', true, registrarPendente);
+
+  // Escopo e template mudam o conjunto de linhas na tela, não o predicado dos
+  // recortes: as contagens acumuladas deixam de descrever o recorte visível.
   useEffect(() => {
-    setPendentes(new Set());
-  }, [filtro, escopo, templateId]);
+    setPendentes(EMPTY_PENDING_BY_FILTER);
+  }, [escopo, templateId]);
 
-  const rotuloPendentes = formatPendingLabel(pendentes.size);
+  const pendentesDoFiltro = pendentes[filtro];
+  const rotuloPendentes = formatPendingLabel(pendentesDoFiltro.size);
+
 
   // Destaque das linhas que acabaram de entrar. Sinal de transição, não estado:
   // expira sozinho para não passar a mentir sobre o que ainda é "novo".
@@ -140,12 +150,14 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
 
   const aplicarNovidades = () => {
     const t = Date.now();
-    setDestaques(beginHighlight(pendentes, t));
+    setDestaques(beginHighlight(pendentesDoFiltro, t));
     setAgora(t);
-    setPendentes(new Set());
+    // Zera só a aba atualizada: as outras guardam novidades ainda não vistas.
+    setPendentes((atual) => clearPendingForFilter(atual, filtro));
     queryClient.invalidateQueries({ queryKey: ['recent_curations'] });
     queryClient.invalidateQueries({ queryKey: ['template_skill_links'] });
   };
+
 
 
 
@@ -264,11 +276,30 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
             className="justify-start"
             aria-label="Filtrar eventos de curadoria"
           >
-            {FILTROS.map((opcao) => (
-              <ToggleGroupItem key={opcao.value} value={opcao.value} className="text-meta h-7 px-3">
-                {opcao.label}
-              </ToggleGroupItem>
-            ))}
+            {FILTROS.map((opcao) => {
+              const badge = formatPendingBadge(pendentes[opcao.value].size);
+              return (
+                <ToggleGroupItem
+                  key={opcao.value}
+                  value={opcao.value}
+                  className="text-meta h-7 gap-1.5 px-3"
+                  // O número é lido junto do rótulo: quem usa leitor de tela
+                  // não enxerga o badge e ficaria sem saber que há novidades.
+                  aria-label={badge ? `${opcao.label}, ${badge} novidades` : opcao.label}
+                >
+                  {opcao.label}
+                  {badge && (
+                    <span
+                      aria-hidden
+                      className="rounded-full bg-primary/15 px-1.5 py-0.5 text-[0.6875rem] font-medium leading-none text-primary"
+                    >
+                      {badge}
+                    </span>
+                  )}
+                </ToggleGroupItem>
+              );
+            })}
+
           </ToggleGroup>
 
           <ToggleGroup
