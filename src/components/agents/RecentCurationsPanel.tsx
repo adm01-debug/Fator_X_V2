@@ -90,9 +90,10 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ['recent_curations', limit, currentUserId, filtro],
+    queryKey: ['recent_curations', limit, currentUserId, filtro, escopo],
     queryFn: ({ pageParam }) =>
-      fetchRecentCurationsPage(limit, currentUserId, filtro, pageParam as string | null),
+      fetchRecentCurationsPage(limit, currentUserId, filtro, pageParam as string | null, escopo),
+
     initialPageParam: null as string | null,
     getNextPageParam: (ultima) => ultima.nextCursor,
     staleTime: 30_000,
