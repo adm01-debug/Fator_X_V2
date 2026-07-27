@@ -2,7 +2,11 @@
  * Testes do embedder: dimensões, compatibilidade com vector(1536)
  * e contrato HTTP da função implantada.
  */
-import "https://deno.land/std@0.224.0/dotenv/load.ts";
+import { loadSync } from "https://deno.land/std@0.224.0/dotenv/mod.ts";
+
+// examplePath: null — o .env.example do projeto lista secrets opcionais que
+// não existem no ambiente de teste e fariam o loader abortar.
+loadSync({ export: true, allowEmptyValues: true, examplePath: null });
 import { assert, assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import {
   CANONICAL_DIM,
