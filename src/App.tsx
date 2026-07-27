@@ -302,6 +302,7 @@ const App = () => {
                       <Route path="/skills" element={<SafePage><SkillsMarketplacePage /></SafePage>} />
                       <Route path="/skills/composer" element={<SafePage><SkillComposerPage /></SafePage>} />
                       <Route path="/skills/audit" element={<SafePage><SkillbookAuditPage /></SafePage>} />
+                      <Route path="/skills/harvest" element={<SafePage><ProtectedRoute permission="team.roles"><SkillHarvestPage /></ProtectedRoute></SafePage>} />
                       <Route path="/rbac/roles" element={<SafePage><ProtectedRoute permission="team.roles"><RolesPage /></ProtectedRoute></SafePage>} />
                       <Route path="/rbac/roles/:roleKey" element={<SafePage><ProtectedRoute permission="team.roles"><RolePermissionsPage /></ProtectedRoute></SafePage>} />
                       <Route path="/rbac/permissions" element={<SafePage><ProtectedRoute permission="team.roles"><PermissionsPage /></ProtectedRoute></SafePage>} />
