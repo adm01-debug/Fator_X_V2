@@ -213,3 +213,100 @@ describe('buildCurationFeed — 500 cenários aleatórios', () => {
     }
   });
 });
+
+// ---------------------------------------------------------------------------
+// Remoção reversível (soft delete) — 500+ cenários
+// ---------------------------------------------------------------------------
+describe('buildCurationFeed — remoções reversíveis', () => {
+  const now = new Date('2026-07-27T15:00:00-03:00');
+
+  it('classifica linha com deleted_at como "unlinked" e usa o carimbo da remoção', () => {
+    const [dia] = buildCurationFeed(
+      [
+        {
+          template_id: 't-1',
+          skill_id: 's-1',
+          reason: 'Curadoria manual',
+          created_at: '2026-07-20T10:00:00-03:00',
+          updated_at: '2026-07-20T10:00:00-03:00',
+          created_by: 'u-1',
+          updated_by: 'u-1',
+          deleted_at: '2026-07-27T09:00:00-03:00',
+          deleted_by: 'u-2',
+          skill: { name: 'Skill A' },
+        },
+      ],
+      'u-2',
+      now,
+    );
+    expect(dia.dayLabel).toBe('Hoje');
+    expect(dia.entries[0].kind).toBe('unlinked');
+    expect(dia.entries[0].actorLabel).toBe('você');
+  });
+
+  it('mantém "linked" quando não há deleted_at', () => {
+    const [dia] = buildCurationFeed(
+      [
+        {
+          template_id: 't-1',
+          skill_id: 's-1',
+          reason: 'Curadoria manual',
+          created_at: '2026-07-27T08:00:00-03:00',
+          updated_at: '2026-07-27T08:00:00-03:00',
+          created_by: 'u-1',
+          updated_by: 'u-1',
+          deleted_at: null,
+          deleted_by: null,
+          skill: { name: 'Skill A' },
+        },
+      ],
+      'u-9',
+      now,
+    );
+    expect(dia.entries[0].kind).toBe('linked');
+  });
+
+  it('a remoção mais recente vence a vinculação antiga da mesma dupla (500 cenários)', () => {
+    for (let i = 0; i < 500; i += 1) {
+      const removidoDepois = i % 2 === 0;
+      const base = new Date('2026-07-27T09:00:00-03:00').getTime();
+      const tVinculo = new Date(base - (removidoDepois ? 3_600_000 : 0)).toISOString();
+      const tRemocao = new Date(base + (removidoDepois ? 0 : -7_200_000)).toISOString();
+
+      const dias = buildCurationFeed(
+        [
+          {
+            template_id: `t-${i % 7}`,
+            skill_id: `s-${i % 5}`,
+            reason: 'Curadoria manual',
+            created_at: tVinculo,
+            updated_at: tVinculo,
+            created_by: 'u-1',
+            updated_by: 'u-1',
+            deleted_at: null,
+            deleted_by: null,
+            skill: { name: `Skill ${i % 5}` },
+          },
+          {
+            template_id: `t-${i % 7}`,
+            skill_id: `s-${i % 5}`,
+            reason: 'Curadoria manual',
+            created_at: tVinculo,
+            updated_at: tVinculo,
+            created_by: 'u-1',
+            updated_by: 'u-1',
+            deleted_at: tRemocao,
+            deleted_by: 'u-2',
+            skill: { name: `Skill ${i % 5}` },
+          },
+        ],
+        'u-1',
+        now,
+      );
+
+      const entradas = dias.flatMap((d) => d.entries);
+      expect(entradas).toHaveLength(1);
+      expect(entradas[0].kind).toBe(removidoDepois ? 'unlinked' : 'linked');
+    }
+  });
+});
