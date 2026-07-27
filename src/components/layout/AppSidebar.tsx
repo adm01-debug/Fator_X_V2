@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import fatorxIcon from "@/assets/fatorx-icon.png";
 import { NavLink } from "@/components/NavLink";
 import {
-  LayoutDashboard, Bot, BookOpen, Brain, Puzzle, FileText, GitBranch, Zap,
+  LayoutDashboard, Bot, BookOpen, Brain, Puzzle, FileText, GitBranch, Zap, Download,
   FlaskConical, Rocket, Activity, Database, Shield, Users, CreditCard, Settings,
   Sparkles, PanelLeftClose, PanelLeft, LogOut, ServerCog, ChevronDown, Palette, Dna, Workflow, Package,
   ShieldCheck, CircleCheckBig, Crown, Route as RouteIcon, Languages,
