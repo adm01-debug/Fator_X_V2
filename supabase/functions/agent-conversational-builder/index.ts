@@ -37,7 +37,7 @@ Deno.serve(async (req) => {
 
   const identifier = getRateLimitIdentifier(req);
   const rateResult = checkRateLimit(identifier, RATE_LIMITS.medium);
-  if (!rateResult.allowed) return createRateLimitResponse(rateResult, getCorsHeaders(req));
+  if (!rateResult.allowed) return createRateLimitResponse(rateResult, corsHeaders);
 
   try {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");

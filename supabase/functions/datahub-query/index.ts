@@ -154,7 +154,6 @@ serve(async (req) => {
     if (!user) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     const rateCheck = await checkRateLimit(getRateLimitIdentifier(req, user.id), RATE_LIMITS.heavy);
     if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, getCorsHeaders(req));
-    if (!rateCheck.allowed) return _createRateLimitResponse(rateCheck, getCorsHeaders(req));
 
     const rawBody = await req.json().catch(() => null);
     const parsedBody = DatahubBodySchema.safeParse(rawBody);

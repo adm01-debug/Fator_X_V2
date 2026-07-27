@@ -68,8 +68,8 @@ serve(async (req) => {
 
   // Rate limiting (Etapa 14)
   const identifier = await getRateLimitIdentifier(req);
-  const { success: rateOk, remaining, reset } = await checkRateLimit(identifier, RATE_LIMITS.heavy);
-  if (!rateOk) return createRateLimitResponse(remaining, reset, getCorsHeaders(req));
+  const rate = checkRateLimit(identifier, RATE_LIMITS.heavy);
+  if (!rate.allowed) return createRateLimitResponse(rate, getCorsHeaders(req));
 
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;

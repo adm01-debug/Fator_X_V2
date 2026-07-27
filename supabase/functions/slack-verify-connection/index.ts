@@ -8,7 +8,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.50.0";
 import { z } from "npm:zod@3.23.8";
 import {
-  handleCorsPreflight, jsonResponse, errorResponse,
+  handleCorsPreflight, getCorsHeaders, jsonResponse, errorResponse,
   checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS,
   requireEnv,
 } from "../_shared/mod.ts";
@@ -22,7 +22,7 @@ Deno.serve(async (req) => {
 
   // Rate limiting — Etapa 14
   const identifier = getRateLimitIdentifier(req);
-  const rate = await checkRateLimit(identifier, RATE_LIMITS.medium);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.standard);
   if (!rate.allowed) return createRateLimitResponse(rate, getCorsHeaders(req));
 
   const auth = req.headers.get("Authorization");
