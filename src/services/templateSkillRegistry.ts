@@ -197,3 +197,106 @@ export function recommendTemplates(
     return [{ ...rec, template, departmentId: resolveDepartmentId(template) }];
   });
 }
+
+// ---------------------------------------------------------------------------
+// Vínculo template → skills reais do Registry
+// ---------------------------------------------------------------------------
+
+/** Peso somado ao score por cada afinidade explícita encontrada. */
+const AFFINITY_WEIGHT = 0.15;
+/** Score mínimo para considerar uma skill vinculada ao template. */
+const LINK_THRESHOLD = 0.02;
+
+export interface LinkedSkill extends Recommendation {
+  /** Sinais explícitos que ligaram a skill ao template (tags, tools, departamento). */
+  affinities: string[];
+  /** true quando há afinidade explícita (não apenas similaridade textual). */
+  isStrongMatch: boolean;
+}
+
+/** Sinais canônicos de um template usados para casar com tags/slug de skills. */
+export function buildTemplateSignals(template: AgentTemplate): string[] {
+  const departmentId = resolveDepartmentId(template);
+  return Array.from(
+    new Set(
+      [
+        ...(template.tags ?? []),
+        ...template.config.tools,
+        ...(template.config.memory_types ?? []),
+        ...(departmentId ? [departmentId, ...getDepartmentKeywords(departmentId)] : []),
+      ]
+        .map((s) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim())
+        .filter((s) => s.length >= 3),
+    ),
+  );
+}
+
+/**
+ * Vincula um template às skills reais do Registry.
+ *
+ * Combina o motor determinístico de recomendação (similaridade textual entre a
+ * missão do template e nome/descrição/tags da skill) com afinidades explícitas
+ * — tags, ferramentas, tipos de memória e departamento — que recebem um bônus
+ * de score. Skills virtuais (`tpl:`) são descartadas: elas não são instaláveis.
+ */
+export function linkSkillsToTemplate(
+  template: AgentTemplate,
+  registry: AgentSkillDefinition[],
+  limit = 5,
+): LinkedSkill[] {
+  const installable = registry.filter((s) => !isTemplateSkillId(s.id));
+  if (installable.length === 0) return [];
+
+  const departmentId = resolveDepartmentId(template);
+  const signals = buildTemplateSignals(template);
+  const mission = [
+    template.name,
+    template.description,
+    template.config.persona ?? '',
+    template.category,
+    signals.join(' '),
+  ]
+    .join(' ')
+    .trim();
+
+  const scored = recommendSkills(
+    { mission, role: template.config.persona ?? undefined, tools: template.config.tools },
+    installable,
+    installable.length,
+  );
+
+  const byId = new Map(scored.map((r) => [r.skill.id, r]));
+
+  const linked = installable.map<LinkedSkill>((skill) => {
+    const base = byId.get(skill.id);
+    const haystack = new Set(
+      [skill.slug, ...(skill.tags ?? []), skill.category]
+        .filter(Boolean)
+        .map((s) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')),
+    );
+    const affinities = signals.filter((sig) => haystack.has(sig));
+    const bonus = affinities.length * AFFINITY_WEIGHT;
+
+    return {
+      skill,
+      score: (base?.score ?? 0) + bonus,
+      reason: affinities.length > 0
+        ? `Afinidade com ${affinities.slice(0, 3).join(', ')}`
+        : base?.reason ?? 'Similaridade com a missão do template',
+      matchedKeywords: base?.matchedKeywords ?? [],
+      breakdown: base?.breakdown ?? {
+        keyword: 0,
+        category: 0,
+        weightedKeyword: 0,
+        weightedCategory: 0,
+      },
+      affinities,
+      isStrongMatch: affinities.length > 0 || Boolean(departmentId && haystack.has(departmentId)),
+    };
+  });
+
+  return linked
+    .filter((l) => l.isStrongMatch || l.score >= LINK_THRESHOLD)
+    .sort((a, b) => b.score - a.score || (b.skill.install_count ?? 0) - (a.skill.install_count ?? 0))
+    .slice(0, limit);
+}
