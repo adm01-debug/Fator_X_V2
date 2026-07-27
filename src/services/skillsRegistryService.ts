@@ -21,6 +21,10 @@ export interface AgentSkillDefinition {
   is_verified: boolean;
   is_public: boolean;
   created_at: string;
+  /** Departamento canônico (taxonomia SKILL_DEPARTMENTS). Preenchido pelo harvester. */
+  department?: string | null;
+  /** Nota de qualidade 0..100 atribuída na coleta. */
+  quality_score?: number;
 }
 
 // List available skills from registry

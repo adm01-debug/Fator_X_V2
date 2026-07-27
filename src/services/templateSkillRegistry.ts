@@ -11,6 +11,12 @@
  * `installSkill`. Use `isTemplateSkillId` para separar os dois mundos.
  */
 import { AGENT_TEMPLATES, TEMPLATE_CATEGORIES, type AgentTemplate } from '@/data/agentTemplates';
+import { DEPARTMENT_META } from '@/config/skill-departments';
+import {
+  isDepartmentCompatible,
+  isGenericCatalogSkill,
+  skillDepartmentsForTemplateCategory,
+} from '@/config/department-bridge';
 import type { AgentSkillDefinition } from './skillsRegistryService';
 import { recommendSkills, type Recommendation } from './skillRecommenderService';
 
@@ -204,6 +210,10 @@ export function recommendTemplates(
 
 /** Peso somado ao score por cada afinidade explícita encontrada. */
 const AFFINITY_WEIGHT = 0.15;
+/** Bônus quando o departamento da skill é compatível com a categoria do template. */
+const DEPARTMENT_MATCH_WEIGHT = 0.35;
+/** Fator multiplicador aplicado a repositórios "meta" (awesome-lists, coletâneas). */
+const GENERIC_PENALTY = 0.25;
 /** Score mínimo para considerar uma skill vinculada ao template. */
 const LINK_THRESHOLD = 0.02;
 
@@ -212,11 +222,18 @@ export interface LinkedSkill extends Recommendation {
   affinities: string[];
   /** true quando há afinidade explícita (não apenas similaridade textual). */
   isStrongMatch: boolean;
+  /** true quando a skill é uma coletânea/lista curada, não uma skill executável. */
+  isGenericCatalog: boolean;
+  /** true quando o departamento da skill é compatível com a categoria do template. */
+  departmentMatch: boolean;
 }
 
 /** Sinais canônicos de um template usados para casar com tags/slug de skills. */
 export function buildTemplateSignals(template: AgentTemplate): string[] {
   const departmentId = resolveDepartmentId(template);
+  const bridged = skillDepartmentsForTemplateCategory(departmentId);
+  const bridgedLexicon = bridged.flatMap((d) => DEPARTMENT_META[d].lexicon);
+
   return Array.from(
     new Set(
       [
@@ -224,6 +241,8 @@ export function buildTemplateSignals(template: AgentTemplate): string[] {
         ...template.config.tools,
         ...(template.config.memory_types ?? []),
         ...(departmentId ? [departmentId, ...getDepartmentKeywords(departmentId)] : []),
+        ...bridged,
+        ...bridgedLexicon,
       ]
         .map((s) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim())
         .filter((s) => s.length >= 3),
@@ -236,8 +255,10 @@ export function buildTemplateSignals(template: AgentTemplate): string[] {
  *
  * Combina o motor determinístico de recomendação (similaridade textual entre a
  * missão do template e nome/descrição/tags da skill) com afinidades explícitas
- * — tags, ferramentas, tipos de memória e departamento — que recebem um bônus
- * de score. Skills virtuais (`tpl:`) são descartadas: elas não são instaláveis.
+ * — tags, ferramentas, tipos de memória e departamento (via ponte de taxonomia)
+ * — que recebem bônus de score. Repositórios "meta" (awesome-lists) são
+ * penalizados e nunca contam como vínculo forte. Skills virtuais (`tpl:`) são
+ * descartadas: elas não são instaláveis.
  */
 export function linkSkillsToTemplate(
   template: AgentTemplate,
@@ -275,14 +296,25 @@ export function linkSkillsToTemplate(
         .map((s) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')),
     );
     const affinities = signals.filter((sig) => haystack.has(sig));
-    const bonus = affinities.length * AFFINITY_WEIGHT;
+    const departmentMatch = isDepartmentCompatible(departmentId, skill.department ?? null);
+    const isGenericCatalog = isGenericCatalogSkill(skill);
+
+    const rawScore =
+      (base?.score ?? 0) +
+      affinities.length * AFFINITY_WEIGHT +
+      (departmentMatch ? DEPARTMENT_MATCH_WEIGHT : 0);
+    const score = isGenericCatalog ? rawScore * GENERIC_PENALTY : rawScore;
+
+    const reason = departmentMatch
+      ? `Mesmo departamento (${skill.department})`
+      : affinities.length > 0
+        ? `Afinidade com ${affinities.slice(0, 3).join(', ')}`
+        : base?.reason ?? 'Similaridade com a missão do template';
 
     return {
       skill,
-      score: (base?.score ?? 0) + bonus,
-      reason: affinities.length > 0
-        ? `Afinidade com ${affinities.slice(0, 3).join(', ')}`
-        : base?.reason ?? 'Similaridade com a missão do template',
+      score,
+      reason,
       matchedKeywords: base?.matchedKeywords ?? [],
       breakdown: base?.breakdown ?? {
         keyword: 0,
@@ -291,12 +323,20 @@ export function linkSkillsToTemplate(
         weightedCategory: 0,
       },
       affinities,
-      isStrongMatch: affinities.length > 0 || Boolean(departmentId && haystack.has(departmentId)),
+      isGenericCatalog,
+      departmentMatch,
+      // Coletâneas nunca são vínculo forte: não são instaláveis como skill.
+      isStrongMatch: !isGenericCatalog && (departmentMatch || affinities.length > 0),
     };
   });
 
   return linked
     .filter((l) => l.isStrongMatch || l.score >= LINK_THRESHOLD)
-    .sort((a, b) => b.score - a.score || (b.skill.install_count ?? 0) - (a.skill.install_count ?? 0))
+    .sort((a, b) => {
+      // Vínculos fortes sempre acima dos meramente textuais.
+      if (a.isStrongMatch !== b.isStrongMatch) return a.isStrongMatch ? -1 : 1;
+      return b.score - a.score || (b.skill.install_count ?? 0) - (a.skill.install_count ?? 0);
+    })
     .slice(0, limit);
 }
+
