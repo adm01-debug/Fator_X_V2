@@ -95,7 +95,7 @@ export function TemplateRecommenderCard({ onUseTemplate, isBusy }: TemplateRecom
                 className="rounded-xl border border-border bg-card p-4 flex flex-col gap-2"
               >
                 <div className="flex items-start gap-2">
-                  <span aria-hidden className="text-lg leading-none">
+                  <span aria-hidden className="text-title-sm leading-none">
                     {rec.template.emoji}
                   </span>
                   <div className="min-w-0">
