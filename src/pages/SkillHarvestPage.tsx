@@ -159,7 +159,6 @@ export default function SkillHarvestPage() {
       <PageHeader
         title="Coleta de Skills"
         description="Varredura do GitHub, curadoria e promoção de skills por departamento."
-        icon={Github}
       />
 
       <Tabs defaultValue="queue" className="space-y-6">
