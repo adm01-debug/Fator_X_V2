@@ -29,10 +29,13 @@ import {
   fetchTemplateSkillLinks,
   mergeDisplayLinks,
   toDisplayLink,
+  formatCurationTrail,
   addManualTemplateSkillLink,
   removeTemplateSkillLink,
   type DisplayTemplateSkillLink,
 } from '@/services/templateSkillLinkService';
+import { supabase } from '@/integrations/supabase/client';
+
 
 export interface TemplateLinkedSkillsPanelProps {
   template: AgentTemplate;
