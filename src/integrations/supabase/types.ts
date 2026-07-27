@@ -10735,6 +10735,7 @@ export type Database = {
       template_skill_links: {
         Row: {
           created_at: string
+          created_by: string | null
           department_match: boolean
           id: string
           is_strong_match: boolean
@@ -10745,9 +10746,11 @@ export type Database = {
           skill_id: string
           template_id: string
           updated_at: string
+          updated_by: string | null
         }
         Insert: {
           created_at?: string
+          created_by?: string | null
           department_match?: boolean
           id?: string
           is_strong_match?: boolean
@@ -10758,9 +10761,11 @@ export type Database = {
           skill_id: string
           template_id: string
           updated_at?: string
+          updated_by?: string | null
         }
         Update: {
           created_at?: string
+          created_by?: string | null
           department_match?: boolean
           id?: string
           is_strong_match?: boolean
@@ -10771,6 +10776,7 @@ export type Database = {
           skill_id?: string
           template_id?: string
           updated_at?: string
+          updated_by?: string | null
         }
         Relationships: [
           {

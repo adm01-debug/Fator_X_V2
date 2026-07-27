@@ -28,12 +28,19 @@ export interface TemplateSkillLink {
   department_match: boolean;
   matched_keywords: string[];
   origin: 'auto' | 'manual';
+  /** Autor da curadoria manual (NULL em vínculos automáticos). */
+  created_by?: string | null;
+  /** Último admin que alterou a curadoria (NULL em vínculos automáticos). */
+  updated_by?: string | null;
+  created_at?: string;
+  updated_at?: string;
 }
 
 /** Vínculo já resolvido com a skill correspondente, pronto para a UI. */
 export interface ResolvedTemplateSkillLink extends TemplateSkillLink {
   skill: AgentSkillDefinition | null;
 }
+
 
 /**
  * Lê os vínculos persistidos de um template, do mais forte para o mais fraco.
@@ -89,7 +96,11 @@ export interface DisplayTemplateSkillLink {
   reason: string;
   isStrongMatch: boolean;
   origin: 'auto' | 'manual';
+  /** Trilha de auditoria — presente apenas em curadoria manual. */
+  curatedBy?: string | null;
+  curatedAt?: string | null;
 }
+
 
 /**
  * Mescla vínculos persistidos com o cálculo local (fallback), garantindo:
@@ -131,14 +142,58 @@ export function mergeDisplayLinks(
 /** Converte um vínculo persistido resolvido para a forma de exibição. */
 export function toDisplayLink(link: ResolvedTemplateSkillLink): DisplayTemplateSkillLink | null {
   if (!link.skill) return null;
+  const isManual = link.origin === 'manual';
   return {
     skillId: link.skill.id,
     skillName: link.skill.name,
     reason: link.reason,
     isStrongMatch: link.is_strong_match,
     origin: link.origin,
+    // Auditoria só faz sentido na curadoria humana; o gatilho no banco
+    // garante NULL para vínculos automáticos, mas normalizamos aqui também.
+    curatedBy: isManual ? (link.updated_by ?? link.created_by ?? null) : null,
+    curatedAt: isManual ? (link.updated_at ?? link.created_at ?? null) : null,
   };
 }
+
+/**
+ * Renderiza a trilha de auditoria de um vínculo em PT-BR.
+ * Retorna `null` quando não há curadoria manual a atribuir — a UI então não
+ * exibe nada, em vez de mostrar um rótulo vazio ou "desconhecido".
+ *
+ * Função pura: exercitada pelos cenários de simulação.
+ */
+export function formatCurationTrail(
+  link: Pick<DisplayTemplateSkillLink, 'origin' | 'curatedBy' | 'curatedAt'>,
+  currentUserId?: string | null,
+): string | null {
+  if (link.origin !== 'manual') return null;
+  if (!link.curatedBy && !link.curatedAt) return null;
+
+  const autor = link.curatedBy
+    ? link.curatedBy === currentUserId
+      ? 'você'
+      : `admin ${link.curatedBy.slice(0, 8)}`
+    : null;
+
+  let quando: string | null = null;
+  if (link.curatedAt) {
+    const data = new Date(link.curatedAt);
+    if (!Number.isNaN(data.getTime())) {
+      quando = data.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      });
+    }
+  }
+
+  if (autor && quando) return `Curado por ${autor} em ${quando}`;
+  if (autor) return `Curado por ${autor}`;
+  if (quando) return `Curado em ${quando}`;
+  return null;
+}
+
 
 /**
  * Cria (ou promove) um vínculo manual entre um template e uma skill.

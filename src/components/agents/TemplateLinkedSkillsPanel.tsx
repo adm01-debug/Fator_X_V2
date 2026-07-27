@@ -29,10 +29,13 @@ import {
   fetchTemplateSkillLinks,
   mergeDisplayLinks,
   toDisplayLink,
+  formatCurationTrail,
   addManualTemplateSkillLink,
   removeTemplateSkillLink,
   type DisplayTemplateSkillLink,
 } from '@/services/templateSkillLinkService';
+import { supabase } from '@/integrations/supabase/client';
+
 
 export interface TemplateLinkedSkillsPanelProps {
   template: AgentTemplate;
@@ -54,6 +57,16 @@ export function TemplateLinkedSkillsPanel({
 }: TemplateLinkedSkillsPanelProps) {
   const queryClient = useQueryClient();
   const [pendingSkillId, setPendingSkillId] = useState<string>('');
+
+  // Usado apenas para personalizar a trilha de auditoria ("você" vs. admin X).
+  const currentUser = useQuery({
+    queryKey: ['auth_user_id'],
+    queryFn: async () => (await supabase.auth.getUser()).data.user?.id ?? null,
+    staleTime: 5 * 60_000,
+    retry: false,
+  });
+
+
 
   // 1ª fonte: vínculos persistidos (curadoria + recálculo por um clique).
   const persisted = useQuery({
@@ -197,6 +210,13 @@ export function TemplateLinkedSkillsPanel({
                   )}
                 </span>
                 <span className="block text-meta text-muted-foreground">{l.reason}</span>
+                {(() => {
+                  const trilha = formatCurationTrail(l, currentUser.data);
+                  return trilha ? (
+                    <span className="block text-[10px] text-muted-foreground/70">{trilha}</span>
+                  ) : null;
+                })()}
+
               </label>
               {allowCuration && (
                 <Button

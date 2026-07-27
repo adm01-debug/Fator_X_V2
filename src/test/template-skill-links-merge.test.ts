@@ -7,6 +7,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   mergeDisplayLinks,
+  formatCurationTrail,
   MAX_LINKS_PER_TEMPLATE,
   type DisplayTemplateSkillLink,
 } from '@/services/templateSkillLinkService';
@@ -107,6 +108,87 @@ describe('mergeDisplayLinks — 500 cenários aleatórios', () => {
       const effective = limit > 0 ? limit : MAX_LINKS_PER_TEMPLATE;
       const manualCount = out.filter((l) => l.origin === 'manual').length;
       expect(out.length - manualCount).toBeLessThanOrEqual(Math.max(0, effective - manualCount));
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Simulação exaustiva da trilha de auditoria (formatCurationTrail)
+// ---------------------------------------------------------------------------
+describe('formatCurationTrail — simulação de cenários', () => {
+  const ME = '11111111-2222-3333-4444-555555555555';
+  const OUTRO = 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee';
+
+  it('nunca atribui autoria a vínculos automáticos', () => {
+    expect(
+      formatCurationTrail(
+        { origin: 'auto', curatedBy: ME, curatedAt: '2026-07-01T10:00:00Z' },
+        ME,
+      ),
+    ).toBeNull();
+  });
+
+  it('identifica o próprio usuário como "você"', () => {
+    const out = formatCurationTrail(
+      { origin: 'manual', curatedBy: ME, curatedAt: '2026-07-01T10:00:00Z' },
+      ME,
+    );
+    expect(out).toContain('você');
+    expect(out).toContain('01/07/2026');
+  });
+
+  it('mostra um identificador curto para outro admin', () => {
+    const out = formatCurationTrail(
+      { origin: 'manual', curatedBy: OUTRO, curatedAt: '2026-07-01T10:00:00Z' },
+      ME,
+    );
+    expect(out).toContain('admin aaaaaaaa');
+    expect(out).not.toContain('você');
+  });
+
+  it('degrada com elegância sem data ou sem autor', () => {
+    expect(formatCurationTrail({ origin: 'manual', curatedBy: ME, curatedAt: null }, ME)).toBe(
+      'Curado por você',
+    );
+    expect(
+      formatCurationTrail({ origin: 'manual', curatedBy: null, curatedAt: '2026-07-01T10:00:00Z' }, ME),
+    ).toBe('Curado em 01/07/2026');
+    expect(formatCurationTrail({ origin: 'manual', curatedBy: null, curatedAt: null }, ME)).toBeNull();
+  });
+
+  it('ignora datas inválidas sem lançar exceção', () => {
+    expect(formatCurationTrail({ origin: 'manual', curatedBy: ME, curatedAt: 'nao-e-data' }, ME)).toBe(
+      'Curado por você',
+    );
+  });
+
+  it('mantém invariantes em 500 cenários aleatórios determinísticos', () => {
+    let seed = 20260727;
+    const rand = () => {
+      seed = (seed * 1103515245 + 12345) % 2147483648;
+      return seed / 2147483648;
+    };
+
+    for (let i = 0; i < 500; i += 1) {
+      const origin = rand() > 0.5 ? 'manual' : 'auto';
+      const curatedBy = rand() > 0.3 ? (rand() > 0.5 ? ME : OUTRO) : null;
+      const curatedAt =
+        rand() > 0.3 ? new Date(Date.UTC(2026, Math.floor(rand() * 12), 1 + Math.floor(rand() * 28))).toISOString() : null;
+
+      const out = formatCurationTrail({ origin, curatedBy, curatedAt }, ME);
+
+      if (origin === 'auto') {
+        expect(out).toBeNull();
+        continue;
+      }
+      if (!curatedBy && !curatedAt) {
+        expect(out).toBeNull();
+        continue;
+      }
+      expect(out).toBeTruthy();
+      expect(out).toContain('Curado');
+      // Jamais vazamos o UUID completo de outro administrador.
+      if (curatedBy === OUTRO) expect(out).not.toContain(OUTRO);
     }
   });
 });
