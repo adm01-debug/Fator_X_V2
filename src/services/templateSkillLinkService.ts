@@ -156,6 +156,44 @@ export function toDisplayLink(link: ResolvedTemplateSkillLink): DisplayTemplateS
   };
 }
 
+/**
+ * Renderiza a trilha de auditoria de um vínculo em PT-BR.
+ * Retorna `null` quando não há curadoria manual a atribuir — a UI então não
+ * exibe nada, em vez de mostrar um rótulo vazio ou "desconhecido".
+ *
+ * Função pura: exercitada pelos cenários de simulação.
+ */
+export function formatCurationTrail(
+  link: Pick<DisplayTemplateSkillLink, 'origin' | 'curatedBy' | 'curatedAt'>,
+  currentUserId?: string | null,
+): string | null {
+  if (link.origin !== 'manual') return null;
+  if (!link.curatedBy && !link.curatedAt) return null;
+
+  const autor = link.curatedBy
+    ? link.curatedBy === currentUserId
+      ? 'você'
+      : `admin ${link.curatedBy.slice(0, 8)}`
+    : null;
+
+  let quando: string | null = null;
+  if (link.curatedAt) {
+    const data = new Date(link.curatedAt);
+    if (!Number.isNaN(data.getTime())) {
+      quando = data.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      });
+    }
+  }
+
+  if (autor && quando) return `Curado por ${autor} em ${quando}`;
+  if (autor) return `Curado por ${autor}`;
+  if (quando) return `Curado em ${quando}`;
+  return null;
+}
+
 
 /**
  * Cria (ou promove) um vínculo manual entre um template e uma skill.
