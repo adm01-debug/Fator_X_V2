@@ -41,7 +41,7 @@ export async function rerankDocuments(
 }
 
 export async function searchAndRerank(query: string, knowledgeBaseId: string, topK = 5) {
-  const embedResult = await embedTexts([query], 'qwen3-embedding-8b', 1024);
+  const embedResult = await embedTexts([query], 'qwen3-embedding-8b', EMBEDDING_DIM);
   const queryEmbedding = (embedResult as Record<string, unknown>)?.embeddings;
   const firstEmbed = Array.isArray(queryEmbedding) ? queryEmbedding[0] : null;
   if (!firstEmbed) throw new Error('Failed to embed query');
