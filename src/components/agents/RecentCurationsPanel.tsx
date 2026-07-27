@@ -7,7 +7,7 @@
  */
 import { useMemo, useState } from 'react';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ChevronDown, History, Link2, Loader2, Sparkles, Undo2, Unlink, UserRound } from 'lucide-react';
+import { ChevronDown, Download, History, Link2, Loader2, Sparkles, Undo2, Unlink, UserRound } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
