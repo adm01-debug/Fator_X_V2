@@ -26,6 +26,7 @@ import {
 import { AGENT_TEMPLATES, type AgentTemplate } from "@/data/agentTemplates";
 import { TemplateRecommenderCard } from "@/components/agents/TemplateRecommenderCard";
 import { TemplateLinkedSkillsPanel } from "@/components/agents/TemplateLinkedSkillsPanel";
+import { fetchTemplateLinkCounts } from "@/services/templateSkillLinkService";
 import { bulkInstallSkills } from "@/services/skillsRegistryService";
 
 import { saveAgent } from "@/lib/agentService";
