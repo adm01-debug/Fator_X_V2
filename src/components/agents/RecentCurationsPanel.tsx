@@ -445,7 +445,8 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
                       <span className="truncate">{entrada.reason}</span>
                     </div>
                   </li>
-                ))}
+                  );
+                })}
               </ul>
             </section>
           ))
