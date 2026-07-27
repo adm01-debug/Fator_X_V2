@@ -5,9 +5,9 @@
  * `idx_tsl_manual_recent` — o custo não cresce com o volume de vínculos
  * automáticos, que hoje representam a maioria absoluta da tabela.
  */
-import { useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { History, Link2, Sparkles, Undo2, Unlink, UserRound } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { ChevronDown, History, Link2, Loader2, Sparkles, Undo2, Unlink, UserRound } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,10 +16,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import {
-  fetchRecentCurations,
+  fetchRecentCurationsPage,
+  mergeCurationFeeds,
   restoreTemplateSkillLink,
   type CurationFeedFilter,
 } from '@/services/templateSkillLinkService';
+
 
 const FILTROS: Array<{ value: CurationFeedFilter; label: string }> = [
   { value: 'all', label: 'Tudo' },
@@ -64,12 +66,29 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
     },
   });
 
-  const { data: feed = [], isLoading } = useQuery({
+  const {
+    data,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: ['recent_curations', limit, currentUserId, filtro],
-    queryFn: () => fetchRecentCurations(limit, currentUserId, filtro),
+    queryFn: ({ pageParam }) =>
+      fetchRecentCurationsPage(limit, currentUserId, filtro, pageParam as string | null),
+    initialPageParam: null as string | null,
+    getNextPageParam: (ultima) => ultima.nextCursor,
     staleTime: 30_000,
     retry: false,
   });
+
+  // As páginas são mescladas fora do render loop: a dedup por (template, skill)
+  // é O(n) e não deve rodar a cada re-render por hover/estado local.
+  const feed = useMemo(
+    () => mergeCurationFeeds((data?.pages ?? []).map((p) => p.days)),
+    [data],
+  );
+
 
   return (
     <Card className={className}>
@@ -194,7 +213,28 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
             </section>
           ))
         )}
+
+        {hasNextPage && (
+          <div className="pt-1 text-center">
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-meta"
+              disabled={isFetchingNextPage}
+              onClick={() => void fetchNextPage()}
+            >
+              {isFetchingNextPage ? (
+                <Loader2 className="mr-1 h-3 w-3 animate-spin" aria-hidden />
+              ) : (
+                <ChevronDown className="mr-1 h-3 w-3" aria-hidden />
+              )}
+              Carregar mais
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
+
+
   );
 }
