@@ -132,4 +132,5 @@ export {
   reportRuntimeError,
   isFatalCodeError,
 } from "./runtimeAlerts.ts";
+export { installRuntimeAlerts } from "./runtimeAlerts.ts";
 export type { RuntimeErrorContext } from "./runtimeAlerts.ts";

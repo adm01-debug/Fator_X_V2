@@ -133,3 +133,30 @@ export function withRuntimeAlert(
     }
   };
 }
+
+/**
+ * Registra listeners globais para erros não capturados e promises rejeitadas.
+ *
+ * Auto-executado ao importar este módulo (e, por tabela, ao importar o barril
+ * `mod.ts`), de forma que qualquer Edge Function que use os utilitários
+ * compartilhados ganhe a rede de proteção sem alteração de código. Idempotente.
+ */
+let _installed = false;
+export function installRuntimeAlerts(functionName = Deno.env.get("SB_FUNCTION_NAME") ?? "unknown"): void {
+  if (_installed) return;
+  _installed = true;
+  try {
+    globalThis.addEventListener("error", (ev) => {
+      const err = (ev as ErrorEvent).error ?? new Error((ev as ErrorEvent).message ?? "erro desconhecido");
+      void reportRuntimeError(err, { functionName });
+    });
+    globalThis.addEventListener("unhandledrejection", (ev) => {
+      const reason = (ev as PromiseRejectionEvent).reason;
+      void reportRuntimeError(reason, { functionName });
+    });
+  } catch (e) {
+    console.warn(`[runtimeAlerts] não foi possível instalar listeners: ${(e as Error)?.message ?? e}`);
+  }
+}
+
+installRuntimeAlerts();
