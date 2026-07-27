@@ -5,9 +5,9 @@
  * `idx_tsl_manual_recent` — o custo não cresce com o volume de vínculos
  * automáticos, que hoje representam a maioria absoluta da tabela.
  */
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ChevronDown, Download, History, Link2, Loader2, Sparkles, Undo2, Unlink, UserRound } from 'lucide-react';
+import { ChevronDown, Download, History, Link2, Loader2, RefreshCw, Sparkles, Undo2, Unlink, UserRound } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,7 +22,12 @@ import {
   type CurationActorScope,
   type CurationFeedFilter,
 } from '@/services/templateSkillLinkService';
-import { useCurationRealtime } from '@/hooks/useCurationRealtime';
+import {
+  applyCurationPendingEvent,
+  formatPendingLabel,
+  useCurationRealtime,
+  type CurationRealtimeEvent,
+} from '@/hooks/useCurationRealtime';
 import { AGENT_TEMPLATES } from '@/data/agentTemplates';
 import {
   Select,
@@ -273,6 +278,22 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
             Exportar CSV
           </Button>
         </div>
+
+        {rotuloPendentes && (
+          <div className="pt-2">
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              className="text-meta h-7 px-3"
+              onClick={aplicarNovidades}
+              aria-live="polite"
+            >
+              <RefreshCw className="mr-1.5 h-3.5 w-3.5" aria-hidden />
+              {rotuloPendentes} — atualizar
+            </Button>
+          </div>
+        )}
 
 
       </CardHeader>
