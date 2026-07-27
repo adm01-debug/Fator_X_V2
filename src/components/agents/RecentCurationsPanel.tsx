@@ -173,7 +173,24 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
               </ToggleGroupItem>
             ))}
           </ToggleGroup>
+
+          <Select value={templateId} onValueChange={setTemplateId}>
+            <SelectTrigger className="text-meta h-7 w-[220px]" aria-label="Filtrar por template">
+              <SelectValue placeholder="Todos os templates" />
+            </SelectTrigger>
+            <SelectContent className="max-h-72">
+              <SelectItem value="all" className="text-meta">
+                Todos os templates
+              </SelectItem>
+              {TEMPLATES_ORDENADOS.map((template) => (
+                <SelectItem key={template.id} value={template.id} className="text-meta">
+                  {template.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
+
       </CardHeader>
 
 
