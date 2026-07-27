@@ -31,6 +31,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { buildCurationCsv, buildCurationCsvFilename } from '@/services/templateSkillLinkService';
+import { logger } from '@/lib/logger';
+
+
 
 const FILTROS: Array<{ value: CurationFeedFilter; label: string }> = [
   { value: 'all', label: 'Tudo' },
