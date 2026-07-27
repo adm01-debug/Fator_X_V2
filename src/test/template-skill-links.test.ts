@@ -11,7 +11,26 @@ import { CURATED_SKILLS } from '@/data/curatedSkills';
 import { linkSkillsToTemplate } from '@/services/templateSkillRegistry';
 import type { AgentSkillDefinition } from '@/services/skillsRegistryService';
 
-const registry = CURATED_SKILLS as unknown as AgentSkillDefinition[];
+/** Converte o catálogo curado no formato do registry (como vem do banco). */
+const registry: AgentSkillDefinition[] = CURATED_SKILLS.map((s, i) => ({
+  id: `00000000-0000-4000-9000-${String(i).padStart(12, '0')}`,
+  name: s.name,
+  slug: s.slug,
+  description: s.description,
+  version: '1.0.0',
+  author: 'Nexus',
+  category: s.category,
+  tags: s.tags,
+  install_count: 0,
+  rating: 0,
+  skill_config: {},
+  is_verified: true,
+  is_public: true,
+  created_at: new Date(0).toISOString(),
+  department: s.department,
+  quality_score: s.qualityScore,
+}));
+
 
 /** Coletânea sintética: deve ser penalizada e nunca virar vínculo forte. */
 const genericSkill: AgentSkillDefinition = {
