@@ -12,6 +12,8 @@ import {
   ShieldAlert, ExternalLink, Search, Layers,
 } from 'lucide-react';
 import { PageHeader } from '@/components/shared/PageHeader';
+import { rebuildTemplateSkillLinks } from '@/services/templateSkillLinkService';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -47,6 +49,8 @@ export default function SkillHarvestPage() {
   const [coverage, setCoverage] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const [harvesting, setHarvesting] = useState(false);
+  const [rebuilding, setRebuilding] = useState(false);
+
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const [statusFilter, setStatusFilter] = useState<CandidateStatus | 'all'>('pending');
@@ -102,6 +106,33 @@ export default function SkillHarvestPage() {
       setHarvesting(false);
     }
   };
+
+  /**
+   * Recalcula os vínculos automáticos entre os templates de agentes e as
+   * skills do registry. Exige permissão de admin (garantida por RLS).
+   */
+  const handleRebuildLinks = async () => {
+    setRebuilding(true);
+    try {
+      const result = await rebuildTemplateSkillLinks();
+      toast.success(
+        `${result.links} vínculos gravados em ${result.templates} templates`,
+        {
+          description: result.templatesWithoutLinks.length
+            ? `Sem vínculo: ${result.templatesWithoutLinks.join(', ')}`
+            : `${result.strongLinks} vínculos fortes`,
+        },
+      );
+    } catch (e) {
+      toast.error('Falha ao recalcular os vínculos', {
+        description: e instanceof Error ? e.message : undefined,
+      });
+    } finally {
+      setRebuilding(false);
+    }
+  };
+
+
 
   const toggleSelect = (id: string) => {
     setSelected((prev) => {
@@ -159,7 +190,18 @@ export default function SkillHarvestPage() {
       <PageHeader
         title="Coleta de Skills"
         description="Varredura do GitHub, curadoria e promoção de skills por departamento."
+        actions={
+          <Button
+            variant="outline"
+            onClick={handleRebuildLinks}
+            disabled={rebuilding}
+            aria-label="Recalcular vínculos entre templates e skills"
+          >
+            {rebuilding ? 'Recalculando…' : 'Recalcular vínculos'}
+          </Button>
+        }
       />
+
 
       <Tabs defaultValue="queue" className="space-y-6">
         <TabsList>

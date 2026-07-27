@@ -242,6 +242,84 @@ export function inferCategory(input: {
   return 'tools';
 }
 
+// ─────────────────────────────────────────── repositórios "meta"
+
+/**
+ * Padrões de repositórios que NÃO são skills instaláveis: listas curadas,
+ * coletâneas, cursos, roadmaps e materiais didáticos.
+ *
+ * Por que isso importa: na primeira varredura real, 9 dos 9 candidatos que
+ * chegaram à curadoria manual eram coletâneas (awesome-mcp-servers,
+ * public-apis, IoT-For-Beginners…). Elas passavam porque a nota era dominada
+ * por estrelas — `public-apis` tem 452k estrelas e zero skills executáveis.
+ */
+const META_REPO_PATTERNS: RegExp[] = [
+  /\bawesome\b/,
+  /\bawesome[-_]/,
+  /[-_]awesome\b/,
+  /\bcurated\b/,
+  /\bcollection\b/,
+  /\bcollective\b/,
+  /\blist of\b/,
+  /\blist[-_]of\b/,
+  /\bcheat[-_ ]?sheets?\b/,
+  /\bfor[-_ ]beginners\b/,
+  /\bfrom[-_ ]scratch\b/,
+  /\broadmap\b/,
+  /\btutorials?\b/,
+  /\bcourse\b/,
+  /\bcurriculum\b/,
+  /\bmasters\b/,
+  /\blessons\b/,
+  /\bexamples?[-_ ]repo\b/,
+  /\bpublic[-_ ]apis\b/,
+  /\bhandbook\b/,
+  /\binterview[-_ ]questions\b/,
+];
+
+const META_TAGS = new Set([
+  'awesome',
+  'awesome-list',
+  'awesome-lists',
+  'curated-list',
+  'list',
+  'collection',
+  'resources',
+  'tutorial',
+  'tutorials',
+  'course',
+  'learning',
+  'education',
+  'roadmap',
+  'books',
+]);
+
+/**
+ * true quando o repositório é uma coletânea/curso e não uma skill executável.
+ * Avalia nome, slug, descrição, tópicos e o início do README.
+ */
+export function isMetaRepository(input: {
+  name?: string;
+  slug?: string;
+  description?: string;
+  tags?: string[];
+  content?: string;
+}): boolean {
+  const haystack = [
+    input.name ?? '',
+    input.slug ?? '',
+    input.description ?? '',
+    (input.content ?? '').slice(0, 400),
+  ]
+    .join(' ')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+
+  if (META_REPO_PATTERNS.some((re) => re.test(haystack))) return true;
+  return (input.tags ?? []).some((t) => META_TAGS.has(t.toLowerCase()));
+}
+
 // ─────────────────────────────────────────── qualidade
 
 export interface QualitySignals {
@@ -252,27 +330,54 @@ export interface QualitySignals {
   licenseAllowed: boolean;
   frontmatterCompleteness: number;
   descriptionLength: number;
+  /** Repositório-coletânea (ver `isMetaRepository`): não é skill instalável. */
+  isMeta?: boolean;
+  /** Confiança da classificação departamental (0..1) — sinal de especificidade. */
+  departmentConfidence?: number;
 }
 
+/**
+ * Nota de qualidade 0..100 ponderada por INSTALABILIDADE, não por popularidade.
+ *
+ * Mudança em relação à v1: estrelas caíram de 30 para 12 pontos e passaram a
+ * ser um sinal de confiança, não o eixo principal. O peso migrou para os
+ * sinais que indicam uma skill real e específica — frontmatter completo
+ * (nome/descrição/tags), documentação, testes e confiança departamental.
+ * Coletâneas sofrem penalidade dura de 45 pontos, o que as joga abaixo do
+ * `MIN_QUALITY_SCORE` mesmo com centenas de milhares de estrelas.
+ */
 export function computeQualityScore(s: QualitySignals): number {
-  const stars = Math.min(1, Math.log10(Math.max(1, s.stars)) / 3) * 30;
+  const stars = Math.min(1, Math.log10(Math.max(1, s.stars)) / 3) * 12;
+
   let recency = 0;
   if (s.lastCommitAt) {
     const months = (Date.now() - new Date(s.lastCommitAt).getTime()) / (1000 * 60 * 60 * 24 * 30);
-    recency = Math.max(0, 1 - months / 24) * 25;
+    recency = Math.max(0, 1 - months / 24) * 18;
   }
+
+  const frontmatter = Math.max(0, Math.min(1, s.frontmatterCompleteness)) * 25;
+  const department = Math.max(0, Math.min(1, (s.departmentConfidence ?? 0) / 0.5)) * 12;
+
   const total =
     stars +
     recency +
-    (s.hasDocs ? 10 : 0) +
-    (s.hasTests ? 10 : 0) +
-    (s.licenseAllowed ? 15 : 0) +
-    Math.max(0, Math.min(1, s.frontmatterCompleteness)) * 5 +
-    Math.min(1, s.descriptionLength / 160) * 5;
-  return Number(total.toFixed(2));
+    frontmatter +
+    department +
+    (s.hasDocs ? 8 : 0) +
+    (s.hasTests ? 8 : 0) +
+    (s.licenseAllowed ? 12 : 0) +
+    Math.min(1, s.descriptionLength / 160) * 5 +
+    (s.isMeta ? META_PENALTY : 0);
+
+  return Number(Math.max(0, Math.min(100, total)).toFixed(2));
 }
 
+/** Penalidade aplicada a repositórios-coletânea. */
+export const META_PENALTY = -45;
+
 export const MIN_QUALITY_SCORE = 35;
+
+
 
 // ─────────────────────────────────────────── utilitários
 

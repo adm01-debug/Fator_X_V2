@@ -10732,6 +10732,63 @@ export type Database = {
         }
         Relationships: []
       }
+      template_skill_links: {
+        Row: {
+          created_at: string
+          department_match: boolean
+          id: string
+          is_strong_match: boolean
+          matched_keywords: string[]
+          origin: string
+          reason: string
+          score: number
+          skill_id: string
+          template_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          department_match?: boolean
+          id?: string
+          is_strong_match?: boolean
+          matched_keywords?: string[]
+          origin?: string
+          reason?: string
+          score?: number
+          skill_id: string
+          template_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          department_match?: boolean
+          id?: string
+          is_strong_match?: boolean
+          matched_keywords?: string[]
+          origin?: string
+          reason?: string
+          score?: number
+          skill_id?: string
+          template_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "template_skill_links_skill_id_fkey"
+            columns: ["skill_id"]
+            isOneToOne: false
+            referencedRelation: "skill_registry"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "template_skill_links_skill_id_fkey"
+            columns: ["skill_id"]
+            isOneToOne: false
+            referencedRelation: "skill_registry_safe"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       test_cases: {
         Row: {
           created_at: string | null
