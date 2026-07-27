@@ -53,6 +53,7 @@ export async function fetchTemplateSkillLinks(
     .from('template_skill_links')
     .select('*, skill:skill_registry(*)')
     .eq('template_id', templateId)
+    .is('deleted_at', null)
     .order('is_strong_match', { ascending: false })
     .order('score', { ascending: false })
     .limit(limit);
@@ -74,7 +75,8 @@ export async function fetchTemplateSkillLinks(
 export async function fetchTemplateLinkCounts(): Promise<Record<string, number>> {
   const { data, error } = await supabaseExternal
     .from('template_skill_links')
-    .select('template_id');
+    .select('template_id')
+    .is('deleted_at', null);
 
   if (error) {
     logger.error('fetchTemplateLinkCounts failed', { error: error.message });
@@ -216,6 +218,10 @@ export async function addManualTemplateSkillLink(
       department_match: false,
       matched_keywords: [],
       origin: 'manual',
+      // Re-vincular uma skill previamente removida "ressuscita" a linha —
+      // o UNIQUE(template_id, skill_id) impede uma segunda linha ativa.
+      deleted_at: null,
+      deleted_by: null,
     },
     { onConflict: 'template_id,skill_id' },
   );
@@ -226,19 +232,44 @@ export async function addManualTemplateSkillLink(
   }
 }
 
-/** Remove um vínculo (manual ou automático) de um template. */
+/**
+ * Remove um vínculo de forma REVERSÍVEL (soft delete).
+ *
+ * Por que não apagar? A remoção também é uma decisão de curadoria: preservá-la
+ * permite auditar quem desvinculou o quê e oferecer "desfazer" no feed. As
+ * leituras filtram `deleted_at IS NULL`, então o efeito prático é o mesmo.
+ */
 export async function removeTemplateSkillLink(
   templateId: string,
   skillId: string,
 ): Promise<void> {
   const { error } = await supabaseExternal
     .from('template_skill_links')
-    .delete()
+    .update({ deleted_at: new Date().toISOString() })
     .eq('template_id', templateId)
-    .eq('skill_id', skillId);
+    .eq('skill_id', skillId)
+    .is('deleted_at', null);
 
   if (error) {
     logger.error('removeTemplateSkillLink failed', { templateId, skillId, error: error.message });
+    throw new Error(error.message);
+  }
+}
+
+/** Desfaz uma remoção reversível, reativando o vínculo. */
+export async function restoreTemplateSkillLink(
+  templateId: string,
+  skillId: string,
+): Promise<void> {
+  const { error } = await supabaseExternal
+    .from('template_skill_links')
+    .update({ deleted_at: null, deleted_by: null })
+    .eq('template_id', templateId)
+    .eq('skill_id', skillId)
+    .not('deleted_at', 'is', null);
+
+  if (error) {
+    logger.error('restoreTemplateSkillLink failed', { templateId, skillId, error: error.message });
     throw new Error(error.message);
   }
 }
@@ -300,7 +331,8 @@ export async function rebuildTemplateSkillLinks(
   const { error: deleteError } = await supabaseExternal
     .from('template_skill_links')
     .delete()
-    .eq('origin', 'auto');
+    .eq('origin', 'auto')
+    .is('deleted_at', null);
 
   if (deleteError) {
     logger.error('rebuildTemplateSkillLinks: cleanup failed', { error: deleteError.message });
@@ -428,6 +460,7 @@ export async function fetchAggregatedTemplateSkillLinks(
     .from('template_skill_links')
     .select('*, skill:skill_registry(*)')
     .in('template_id', ids)
+    .is('deleted_at', null)
     .order('is_strong_match', { ascending: false })
     .order('score', { ascending: false });
 
@@ -466,6 +499,9 @@ export interface RecentCurationRow {
   created_at: string | null;
   updated_by: string | null;
   created_by: string | null;
+  /** Preenchido quando o vínculo foi desvinculado (remoção reversível). */
+  deleted_at?: string | null;
+  deleted_by?: string | null;
   skill?: { name?: string | null } | null;
 }
 
@@ -478,7 +514,11 @@ export interface CurationFeedDay {
   entries: CurationFeedEntry[];
 }
 
+/** Natureza do evento de curadoria exibido no feed. */
+export type CurationFeedKind = 'linked' | 'unlinked';
+
 export interface CurationFeedEntry {
+  kind: CurationFeedKind;
   templateId: string;
   templateName: string;
   skillId: string;
@@ -525,8 +565,8 @@ export function buildCurationFeed(
   const seen = new Set<string>();
 
   const ordenadas = [...rows].sort((a, b) => {
-    const ta = new Date(a.updated_at ?? a.created_at ?? 0).getTime() || 0;
-    const tb = new Date(b.updated_at ?? b.created_at ?? 0).getTime() || 0;
+    const ta = new Date(a.deleted_at ?? a.updated_at ?? a.created_at ?? 0).getTime() || 0;
+    const tb = new Date(b.deleted_at ?? b.updated_at ?? b.created_at ?? 0).getTime() || 0;
     return tb - ta;
   });
 
@@ -536,7 +576,9 @@ export function buildCurationFeed(
     if (seen.has(chave)) continue;
     seen.add(chave);
 
-    const at = row.updated_at ?? row.created_at ?? null;
+    const removido = Boolean(row.deleted_at);
+    // Numa remoção, o carimbo relevante é o da própria remoção.
+    const at = removido ? row.deleted_at ?? row.updated_at ?? null : row.updated_at ?? row.created_at ?? null;
     const data = at ? new Date(at) : null;
     const dataValida = data && !Number.isNaN(data.getTime()) ? data : null;
 
@@ -555,9 +597,12 @@ export function buildCurationFeed(
               year: 'numeric',
             });
 
-    const actorId = row.updated_by ?? row.created_by ?? null;
+    const actorId = removido
+      ? row.deleted_by ?? row.updated_by ?? null
+      : row.updated_by ?? row.created_by ?? null;
 
     const entry: CurationFeedEntry = {
+      kind: removido ? 'unlinked' : 'linked',
       templateId: row.template_id,
       templateName: TEMPLATE_NAME_BY_ID.get(row.template_id) ?? row.template_id,
       skillId: row.skill_id,
@@ -590,7 +635,9 @@ export async function fetchRecentCurations(
 ): Promise<CurationFeedDay[]> {
   const { data, error } = await supabaseExternal
     .from('template_skill_links')
-    .select('template_id, skill_id, reason, updated_at, created_at, updated_by, created_by, skill:skill_registry(name)')
+    .select(
+      'template_id, skill_id, reason, updated_at, created_at, updated_by, created_by, deleted_at, deleted_by, skill:skill_registry(name)',
+    )
     .eq('origin', 'manual')
     .order('updated_at', { ascending: false })
     .limit(limit);
