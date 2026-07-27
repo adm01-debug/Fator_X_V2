@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import fatorxIcon from "@/assets/fatorx-icon.png";
 import { NavLink } from "@/components/NavLink";
 import {
-  LayoutDashboard, Bot, BookOpen, Brain, Puzzle, FileText, GitBranch, Zap,
+  LayoutDashboard, Bot, BookOpen, Brain, Puzzle, FileText, GitBranch, Zap, Download,
   FlaskConical, Rocket, Activity, Database, Shield, Users, CreditCard, Settings,
   Sparkles, PanelLeftClose, PanelLeft, LogOut, ServerCog, ChevronDown, Palette, Dna, Workflow, Package,
   ShieldCheck, CircleCheckBig, Crown, Route as RouteIcon, Languages,
@@ -66,6 +66,7 @@ const navSections = [
       { title: "Smolagent", url: "/smolagent", icon: Workflow },
       { title: "Skills Marketplace", url: "/skills", icon: Package },
       { title: "Skillbook · Auditoria", url: "/skills/audit", icon: BookOpen },
+      { title: "Coleta de Skills", url: "/skills/harvest", icon: Download },
       { title: "Skills dos Agentes", url: "/agents/installed-skills", icon: Puzzle },
       { title: "Workflows de Agentes", url: "/agents/workflows", icon: GitBranch },
       { title: "Engenharia de Caos", url: "/security/chaos-experiments", icon: Zap },

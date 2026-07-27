@@ -9049,6 +9049,175 @@ export type Database = {
           },
         ]
       }
+      skill_harvest_candidates: {
+        Row: {
+          author: string
+          category: string
+          content_hash: string
+          created_at: string
+          department: string | null
+          department_confidence: number
+          description: string
+          id: string
+          last_commit_at: string | null
+          mcp_server_url: string | null
+          name: string
+          promoted_skill_id: string | null
+          quality_score: number
+          raw_content: string | null
+          rejection_reasons: string[]
+          reviewed_at: string | null
+          reviewed_by: string | null
+          run_id: string | null
+          skill_config: Json
+          slug: string
+          source_commit: string | null
+          source_license: string | null
+          source_path: string | null
+          source_repo: string
+          source_url: string
+          stars: number
+          status: string
+          tags: string[]
+          updated_at: string
+          version: string
+        }
+        Insert: {
+          author?: string
+          category?: string
+          content_hash: string
+          created_at?: string
+          department?: string | null
+          department_confidence?: number
+          description?: string
+          id?: string
+          last_commit_at?: string | null
+          mcp_server_url?: string | null
+          name: string
+          promoted_skill_id?: string | null
+          quality_score?: number
+          raw_content?: string | null
+          rejection_reasons?: string[]
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          run_id?: string | null
+          skill_config?: Json
+          slug: string
+          source_commit?: string | null
+          source_license?: string | null
+          source_path?: string | null
+          source_repo: string
+          source_url: string
+          stars?: number
+          status?: string
+          tags?: string[]
+          updated_at?: string
+          version?: string
+        }
+        Update: {
+          author?: string
+          category?: string
+          content_hash?: string
+          created_at?: string
+          department?: string | null
+          department_confidence?: number
+          description?: string
+          id?: string
+          last_commit_at?: string | null
+          mcp_server_url?: string | null
+          name?: string
+          promoted_skill_id?: string | null
+          quality_score?: number
+          raw_content?: string | null
+          rejection_reasons?: string[]
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          run_id?: string | null
+          skill_config?: Json
+          slug?: string
+          source_commit?: string | null
+          source_license?: string | null
+          source_path?: string | null
+          source_repo?: string
+          source_url?: string
+          stars?: number
+          status?: string
+          tags?: string[]
+          updated_at?: string
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "skill_harvest_candidates_promoted_skill_id_fkey"
+            columns: ["promoted_skill_id"]
+            isOneToOne: false
+            referencedRelation: "skill_registry"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "skill_harvest_candidates_promoted_skill_id_fkey"
+            columns: ["promoted_skill_id"]
+            isOneToOne: false
+            referencedRelation: "skill_registry_safe"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "skill_harvest_candidates_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "skill_harvest_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      skill_harvest_runs: {
+        Row: {
+          candidates_accepted: number
+          candidates_found: number
+          candidates_rejected: number
+          created_at: string
+          departments: string[]
+          duration_ms: number
+          error: string | null
+          id: string
+          queries: string[]
+          repos_scanned: number
+          status: string
+          triggered_by: string | null
+          updated_at: string
+        }
+        Insert: {
+          candidates_accepted?: number
+          candidates_found?: number
+          candidates_rejected?: number
+          created_at?: string
+          departments?: string[]
+          duration_ms?: number
+          error?: string | null
+          id?: string
+          queries?: string[]
+          repos_scanned?: number
+          status?: string
+          triggered_by?: string | null
+          updated_at?: string
+        }
+        Update: {
+          candidates_accepted?: number
+          candidates_found?: number
+          candidates_rejected?: number
+          created_at?: string
+          departments?: string[]
+          duration_ms?: number
+          error?: string | null
+          id?: string
+          queries?: string[]
+          repos_scanned?: number
+          status?: string
+          triggered_by?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       skill_marketplace_meta: {
         Row: {
           avg_rating: number
@@ -9142,6 +9311,7 @@ export type Database = {
           category: string
           created_at: string
           created_by: string | null
+          department: string | null
           description: string
           id: string
           install_count: number
@@ -9149,9 +9319,14 @@ export type Database = {
           is_verified: boolean
           mcp_server_url: string | null
           name: string
+          quality_score: number
           rating: number
           skill_config: Json
           slug: string
+          source_commit: string | null
+          source_license: string | null
+          source_repo: string | null
+          source_url: string | null
           tags: string[] | null
           updated_at: string
           version: string
@@ -9161,6 +9336,7 @@ export type Database = {
           category?: string
           created_at?: string
           created_by?: string | null
+          department?: string | null
           description?: string
           id?: string
           install_count?: number
@@ -9168,9 +9344,14 @@ export type Database = {
           is_verified?: boolean
           mcp_server_url?: string | null
           name: string
+          quality_score?: number
           rating?: number
           skill_config?: Json
           slug: string
+          source_commit?: string | null
+          source_license?: string | null
+          source_repo?: string | null
+          source_url?: string | null
           tags?: string[] | null
           updated_at?: string
           version?: string
@@ -9180,6 +9361,7 @@ export type Database = {
           category?: string
           created_at?: string
           created_by?: string | null
+          department?: string | null
           description?: string
           id?: string
           install_count?: number
@@ -9187,9 +9369,14 @@ export type Database = {
           is_verified?: boolean
           mcp_server_url?: string | null
           name?: string
+          quality_score?: number
           rating?: number
           skill_config?: Json
           slug?: string
+          source_commit?: string | null
+          source_license?: string | null
+          source_repo?: string | null
+          source_url?: string | null
           tags?: string[] | null
           updated_at?: string
           version?: string
