@@ -213,7 +213,7 @@ export default function SkillHarvestPage() {
           {selected.size > 0 && (
             <Card className="border-primary/40">
               <CardContent className="flex flex-wrap items-center gap-3 py-3">
-                <span className="text-sm font-medium">{selected.size} selecionado(s)</span>
+                <span className="text-body-sm font-medium">{selected.size} selecionado(s)</span>
                 <Button size="sm" onClick={() => void handleBulk('approved')}>
                   <CheckCircle2 className="h-4 w-4" /> Aprovar
                 </Button>
@@ -240,7 +240,7 @@ export default function SkillHarvestPage() {
               <CardContent className="py-12 text-center space-y-2">
                 <Layers className="mx-auto h-10 w-10 text-muted-foreground" />
                 <p className="font-medium">Nenhum candidato nesta visão</p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-body-sm text-muted-foreground">
                   Execute uma varredura ou ajuste os filtros para ver resultados.
                 </p>
               </CardContent>
@@ -265,14 +265,14 @@ export default function SkillHarvestPage() {
         <TabsContent value="harvest">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Configurar varredura no GitHub</CardTitle>
+              <CardTitle className="text-body">Configurar varredura no GitHub</CardTitle>
             </CardHeader>
             <CardContent className="space-y-5">
               <div>
                 <Label className="mb-2 block">Departamentos (vazio = todos)</Label>
                 <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
                   {SKILL_DEPARTMENTS.map((d) => (
-                    <label key={d} className="flex items-center gap-2 text-sm cursor-pointer">
+                    <label key={d} className="flex items-center gap-2 text-body-sm cursor-pointer">
                       <Checkbox
                         checked={pickedDepts.has(d)}
                         onCheckedChange={() => {
@@ -311,7 +311,7 @@ export default function SkillHarvestPage() {
                 {harvesting ? 'Varrendo o GitHub…' : 'Executar varredura'}
               </Button>
 
-              <p className="text-xs text-muted-foreground">
+              <p className="text-meta text-muted-foreground">
                 Skills com licença bloqueada, segredos embutidos ou padrões de prompt-injection são
                 rejeitadas automaticamente e nunca chegam ao registry.
               </p>
@@ -323,7 +323,7 @@ export default function SkillHarvestPage() {
         <TabsContent value="coverage">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Skills por departamento</CardTitle>
+              <CardTitle className="text-body">Skills por departamento</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {SKILL_DEPARTMENTS.map((d) => {
@@ -335,8 +335,8 @@ export default function SkillHarvestPage() {
                     className="flex items-center justify-between rounded-lg border p-3"
                   >
                     <div>
-                      <p className="text-sm font-medium">{DEPARTMENT_META[d].label}</p>
-                      <p className="text-xs text-muted-foreground">Meta: {COVERAGE_TARGET}</p>
+                      <p className="text-body-sm font-medium">{DEPARTMENT_META[d].label}</p>
+                      <p className="text-meta text-muted-foreground">Meta: {COVERAGE_TARGET}</p>
                     </div>
                     <Badge variant={below ? 'destructive' : 'secondary'}>{count}</Badge>
                   </div>
@@ -350,18 +350,18 @@ export default function SkillHarvestPage() {
         <TabsContent value="runs">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Execuções recentes</CardTitle>
+              <CardTitle className="text-body">Execuções recentes</CardTitle>
             </CardHeader>
             <CardContent>
               {runs.length === 0 ? (
-                <p className="py-8 text-center text-sm text-muted-foreground">
+                <p className="py-8 text-center text-body-sm text-muted-foreground">
                   Nenhuma varredura executada ainda.
                 </p>
               ) : (
                 <ScrollArea className="max-h-[420px]">
                   <div className="space-y-2">
                     {runs.map((r) => (
-                      <div key={r.id} className="rounded-lg border p-3 text-sm">
+                      <div key={r.id} className="rounded-lg border p-3 text-body-sm">
                         <div className="flex flex-wrap items-center gap-2">
                           <Badge variant={r.status === 'completed' ? 'secondary' : 'destructive'}>
                             {r.status}
@@ -369,16 +369,16 @@ export default function SkillHarvestPage() {
                           <span className="text-muted-foreground">
                             {new Date(r.created_at).toLocaleString('pt-BR')}
                           </span>
-                          <span className="ml-auto text-xs text-muted-foreground">
+                          <span className="ml-auto text-meta text-muted-foreground">
                             {r.duration_ms ? `${(r.duration_ms / 1000).toFixed(1)}s` : '—'}
                           </span>
                         </div>
-                        <p className="mt-2 text-xs text-muted-foreground">
+                        <p className="mt-2 text-meta text-muted-foreground">
                           {r.repos_scanned} repositórios · {r.candidates_found} candidatos ·{' '}
                           {r.candidates_accepted} aceitos · {r.candidates_rejected} rejeitados
                         </p>
                         {r.error && (
-                          <p className="mt-1 text-xs text-destructive line-clamp-2">{r.error}</p>
+                          <p className="mt-1 text-meta text-destructive line-clamp-2">{r.error}</p>
                         )}
                       </div>
                     ))}
@@ -397,7 +397,7 @@ function StatCard({ label, value }: { label: string; value: number }) {
   return (
     <Card>
       <CardContent className="py-4">
-        <p className="text-xs text-muted-foreground">{label}</p>
+        <p className="text-meta text-muted-foreground">{label}</p>
         <p className="text-2xl font-semibold">{value}</p>
       </CardContent>
     </Card>
@@ -435,10 +435,10 @@ function CandidateCard({ candidate, selected, onToggle, onPromote, onReclassify 
                 {STATUS_LABEL[candidate.status]}
               </Badge>
             </div>
-            <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
+            <p className="mt-1 line-clamp-2 text-body-sm text-muted-foreground">
               {candidate.description || 'Sem descrição.'}
             </p>
-            <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+            <div className="mt-2 flex flex-wrap items-center gap-3 text-meta text-muted-foreground">
               <span className="flex items-center gap-1">
                 <Star className="h-3 w-3" /> {candidate.stars}
               </span>
