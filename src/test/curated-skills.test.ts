@@ -10,7 +10,7 @@ import { CURATED_SKILLS, curatedCoverage } from '@/data/curatedSkills';
 import { SKILL_DEPARTMENTS } from '@/config/skill-departments';
 
 const VALID_CATEGORIES = new Set(['tools', 'knowledge', 'prompts', 'workflows', 'integrations']);
-const VALID_DEPARTMENTS = new Set<string>(SKILL_DEPARTMENTS.map((d) => d.id));
+const VALID_DEPARTMENTS = new Set<string>(SKILL_DEPARTMENTS.map((d) => d));
 
 describe('curatedSkills', () => {
   it('não possui slugs duplicados', () => {
@@ -39,7 +39,7 @@ describe('curatedSkills', () => {
   it('cobre todos os departamentos com no mínimo 4 skills', () => {
     const coverage = curatedCoverage();
     for (const dept of SKILL_DEPARTMENTS) {
-      expect(coverage[dept.id] ?? 0, `departamento ${dept.id}`).toBeGreaterThanOrEqual(4);
+      expect(coverage[dept] ?? 0, `departamento ${dept}`).toBeGreaterThanOrEqual(4);
     }
   });
 
