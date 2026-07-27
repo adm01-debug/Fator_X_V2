@@ -6,7 +6,7 @@
  */
 import { createClient } from "npm:@supabase/supabase-js@2.50.0";
 import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
-import { handleCorsPreflight, jsonResponse, errorResponse } from "../_shared/mod.ts";
+import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse } from "../_shared/mod.ts";
 import { verifySlackSignature, slackApiCall, isDuplicateEvent } from "../_shared/slack.ts";
 
 interface SlackEventEnvelope {
