@@ -364,11 +364,32 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
               </h3>
 
               <ul className="space-y-2">
-                {dia.entries.map((entrada) => (
+                {dia.entries.map((entrada) => {
+                  const novo = isHighlighted(
+                    destaques,
+                    highlightKey(entrada.templateId, entrada.skillId),
+                    agora,
+                  );
+                  return (
                   <li
                     key={`${entrada.templateId}-${entrada.skillId}`}
-                    className="rounded-md border border-border/60 bg-card/40 p-3 transition-colors hover:border-primary/40"
+                    className={cn(
+                      'rounded-md border p-3 transition-colors hover:border-primary/40',
+                      novo
+                        ? 'border-primary/60 bg-primary/5 ring-1 ring-primary/30'
+                        : 'border-border/60 bg-card/40',
+                    )}
+                    // Anunciado ao leitor de tela: o realce é a única pista de
+                    // que a linha acabou de chegar, e cor sozinha não acessível.
+                    aria-label={novo ? 'Novidade recém-chegada' : undefined}
                   >
+                    {novo && (
+                      <span className="sr-only">
+                        Atualizado nos últimos {Math.round(CURATION_HIGHLIGHT_TTL_MS / 1000)}{' '}
+                        segundos.
+                      </span>
+                    )}
+
                     <div className="flex flex-wrap items-center gap-2">
                       <Badge
                         variant={entrada.kind === 'unlinked' ? 'outline' : 'secondary'}
