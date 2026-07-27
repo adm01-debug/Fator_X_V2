@@ -62,6 +62,7 @@ export default function AgentTemplatesPage() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string>(ALL);
   const [selectedTemplateForDetail, setSelectedTemplateForDetail] = useState<AgentTemplate | null>(null);
+  const [linkedSkillIds, setLinkedSkillIds] = useState<string[]>([]);
 
   const categories = useMemo(() => {
     const counts: Record<string, number> = { [ALL]: AGENT_TEMPLATES.length };
