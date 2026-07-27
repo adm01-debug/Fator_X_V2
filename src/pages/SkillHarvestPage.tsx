@@ -47,6 +47,8 @@ export default function SkillHarvestPage() {
   const [coverage, setCoverage] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const [harvesting, setHarvesting] = useState(false);
+  const [rebuilding, setRebuilding] = useState(false);
+
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const [statusFilter, setStatusFilter] = useState<CandidateStatus | 'all'>('pending');
