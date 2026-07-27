@@ -737,6 +737,7 @@ export async function fetchRecentCurationsPage(
   currentUserId?: string | null,
   filtro: CurationFeedFilter = 'all',
   cursor?: string | null,
+  escopo: CurationActorScope = 'everyone',
 ): Promise<CurationFeedPage> {
   let query = supabaseExternal
     .from('template_skill_links')
@@ -750,6 +751,16 @@ export async function fetchRecentCurationsPage(
   if (filtro === 'unlinked') query = query.not('deleted_at', 'is', null);
   if (filtro === 'linked') query = query.is('deleted_at', null);
   if (cursor) query = query.lt('updated_at', cursor);
+
+  // Autoria também vai para o banco, pelo mesmo motivo do filtro de tipo.
+  if (escopo === 'me') {
+    const expr = buildActorOrExpression(currentUserId);
+    // Sem id válido não existe "minhas curadorias": devolver tudo seria pior
+    // que devolver nada, então filtramos por um predicado impossível.
+    if (!expr) return { days: [], nextCursor: null };
+    query = query.or(expr);
+  }
+
 
   const { data, error } = await query.order('updated_at', { ascending: false }).limit(limit);
 
