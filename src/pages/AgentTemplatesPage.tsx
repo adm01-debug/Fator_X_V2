@@ -7,7 +7,7 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowLeft, Search, Sparkles, Wand2, Cpu, Wrench, Check, Rocket, Loader2, LayoutTemplate } from "lucide-react";
+import { ArrowLeft, Search, Sparkles, Wand2, Cpu, Wrench, Check, Rocket, Loader2, LayoutTemplate, Puzzle } from "lucide-react";
 
 
 import { Button } from "@/components/ui/button";
