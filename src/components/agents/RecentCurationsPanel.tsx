@@ -276,11 +276,30 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
             className="justify-start"
             aria-label="Filtrar eventos de curadoria"
           >
-            {FILTROS.map((opcao) => (
-              <ToggleGroupItem key={opcao.value} value={opcao.value} className="text-meta h-7 px-3">
-                {opcao.label}
-              </ToggleGroupItem>
-            ))}
+            {FILTROS.map((opcao) => {
+              const badge = formatPendingBadge(pendentes[opcao.value].size);
+              return (
+                <ToggleGroupItem
+                  key={opcao.value}
+                  value={opcao.value}
+                  className="text-meta h-7 gap-1.5 px-3"
+                  // O número é lido junto do rótulo: quem usa leitor de tela
+                  // não enxerga o badge e ficaria sem saber que há novidades.
+                  aria-label={badge ? `${opcao.label}, ${badge} novidades` : opcao.label}
+                >
+                  {opcao.label}
+                  {badge && (
+                    <span
+                      aria-hidden
+                      className="rounded-full bg-primary/15 px-1.5 py-0.5 text-[0.6875rem] font-medium leading-none text-primary"
+                    >
+                      {badge}
+                    </span>
+                  )}
+                </ToggleGroupItem>
+              );
+            })}
+
           </ToggleGroup>
 
           <ToggleGroup
