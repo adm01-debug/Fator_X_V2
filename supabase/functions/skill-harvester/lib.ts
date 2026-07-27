@@ -34,6 +34,7 @@ export function tokenize(text: string): Set<string> {
 // ─────────────────────────────────────────── sanitização
 
 const TAG_RE = /<\/?[a-z][\s\S]*?>/gi;
+// eslint-disable-next-line no-control-regex -- remoção de caracteres de controle é o propósito da regex
 const CTRL_RE = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g;
 
 /** Remove HTML/JS e caracteres de controle. Nunca renderize sem isso. */
