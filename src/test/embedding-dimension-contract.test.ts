@@ -66,7 +66,7 @@ describe('contrato de dimensão de embeddings', () => {
   });
 
   it('o embedder valida a dimensão devolvida por cada provedor', () => {
-    const src = readFn('rag-embed-v2');
+    const src = readEmbedderSurface();
     // A API de feature-extraction da HF ignora o parâmetro e devolve a
     // dimensão nativa do modelo. Sem esta checagem, o vetor errado só quebra
     // no INSERT, longe do provedor que o originou.
@@ -76,7 +76,7 @@ describe('contrato de dimensão de embeddings', () => {
   });
 
   it('o embedder sinaliza o fallback de hash como degradado', () => {
-    const src = readFn('rag-embed-v2');
+    const src = readEmbedderSurface();
     expect(src).toMatch(/const degraded = embeddings === null/);
     expect(src).toMatch(/degraded,/);
   });
