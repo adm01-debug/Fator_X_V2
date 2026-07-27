@@ -21,6 +21,8 @@ import {
   restoreTemplateSkillLink,
   type CurationFeedFilter,
 } from '@/services/templateSkillLinkService';
+import { useCurationRealtime } from '@/hooks/useCurationRealtime';
+
 
 
 const FILTROS: Array<{ value: CurationFeedFilter; label: string }> = [
@@ -48,6 +50,12 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
 
   const queryClient = useQueryClient();
   const [filtro, setFiltro] = useState<CurationFeedFilter>('all');
+
+  // Curadoria é colaborativa: sem realtime, dois admins veem estados divergentes
+  // até o staleTime de 30s expirar.
+  useCurationRealtime(filtro);
+
+
 
   const desfazer = useMutation({
     mutationFn: ({ templateId, skillId }: { templateId: string; skillId: string }) =>
