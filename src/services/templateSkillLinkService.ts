@@ -658,6 +658,29 @@ export interface CurationFeedPage {
   nextCursor: string | null;
 }
 
+/** Escopo de autoria do feed: todos os curadores ou apenas o usuário atual. */
+export type CurationActorScope = 'everyone' | 'me';
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+/**
+ * Monta a expressão `or` do PostgREST para o filtro de autoria.
+ *
+ * O id é validado como UUID **antes** de ser interpolado: `.or()` recebe uma
+ * string de filtro crua, então um valor com vírgula ou ponto seria interpretado
+ * como sintaxe (ex.: `deleted_by.is.null`) e poderia ampliar o conjunto lido.
+ * Valor inválido devolve `null` — o chamador ignora o filtro em vez de vazar.
+ *
+ * Autoria cobre os dois lados do evento: quem vinculou (`updated_by`) e quem
+ * removeu (`deleted_by`), porque um mesmo registro pode ter autores distintos.
+ */
+export function buildActorOrExpression(actorId?: string | null): string | null {
+  if (!actorId || !UUID_RE.test(actorId.trim())) return null;
+  const id = actorId.trim();
+  return `updated_by.eq.${id},deleted_by.eq.${id},created_by.eq.${id}`;
+}
+
+
 /**
  * Cursor = carimbo `updated_at` da última linha da página.
  *
