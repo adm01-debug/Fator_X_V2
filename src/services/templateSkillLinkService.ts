@@ -818,3 +818,87 @@ export async function fetchRecentCurations(
   return days;
 }
 
+
+/* ------------------------------------------------------------------ *
+ * Exportação CSV do feed de curadoria
+ * ------------------------------------------------------------------ */
+
+/** Cabeçalho fixo do CSV — a ordem é contrato com planilhas já salvas. */
+export const CURATION_CSV_HEADER = [
+  'dia',
+  'hora',
+  'evento',
+  'template_id',
+  'template',
+  'skill_id',
+  'skill',
+  'motivo',
+  'autor',
+] as const;
+
+/**
+ * Escapa um campo para CSV (RFC 4180) e neutraliza injeção de fórmula.
+ *
+ * Dois riscos distintos são tratados aqui:
+ *
+ * 1. **Quebra estrutural** — vírgula, aspas, CR/LF dentro do valor mudariam a
+ *    contagem de colunas. Solução RFC: envolver em aspas e dobrar as internas.
+ * 2. **CSV injection** — Excel/Sheets executam células iniciadas por `=`, `+`,
+ *    `-`, `@`, TAB ou CR como fórmula (`=cmd|'/c calc'!A1`). Um `reason`
+ *    escrito por um curador chega ao CSV sem passar por HTML, então o escape
+ *    do React não protege nada aqui. Prefixamos com aspa simples, que o
+ *    aplicativo consome como marcador de texto literal.
+ */
+export function escapeCsvField(value: unknown): string {
+  const bruto = value === null || value === undefined ? '' : String(value);
+  // Sanitiza caracteres de controle que não sejam CR/LF (podem corromper o arquivo).
+  const limpo = bruto.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '');
+  const perigoso = /^[=+\-@\t\r]/.test(limpo);
+  const texto = perigoso ? `'${limpo}` : limpo;
+  return /[",\r\n]/.test(texto) ? `"${texto.replace(/"/g, '""')}"` : texto;
+}
+
+const CURATION_EVENT_LABEL: Record<CurationFeedKind, string> = {
+  linked: 'Vínculo',
+  unlinked: 'Remoção',
+};
+
+/**
+ * Serializa o feed já filtrado em CSV. Função pura: o que estiver na tela é
+ * exatamente o que sai no arquivo — exportar do banco de novo poderia
+ * devolver linhas que o curador não estava vendo.
+ *
+ * Usa CRLF por ser o separador que o Excel aceita sem ambiguidade.
+ */
+export function buildCurationCsv(days: CurationFeedDay[]): string {
+  const linhas: string[] = [CURATION_CSV_HEADER.join(',')];
+
+  for (const dia of days ?? []) {
+    for (const e of dia?.entries ?? []) {
+      linhas.push(
+        [
+          dia.dayKey,
+          e.timeLabel ?? '',
+          CURATION_EVENT_LABEL[e.kind] ?? e.kind,
+          e.templateId,
+          e.templateName,
+          e.skillId,
+          e.skillName,
+          e.reason,
+          e.actorLabel ?? '',
+        ]
+          .map(escapeCsvField)
+          .join(','),
+      );
+    }
+  }
+
+  return linhas.join('\r\n');
+}
+
+/** Nome de arquivo determinístico e ordenável: curadoria-YYYY-MM-DD-HHMM.csv */
+export function buildCurationCsvFilename(now: Date = new Date()): string {
+  const p = (n: number) => `${n}`.padStart(2, '0');
+  const d = Number.isNaN(now.getTime()) ? new Date(0) : now;
+  return `curadoria-${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}.csv`;
+}
