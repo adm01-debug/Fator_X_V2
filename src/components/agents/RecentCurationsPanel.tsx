@@ -7,7 +7,7 @@
  */
 import { useMemo, useState } from 'react';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ChevronDown, History, Link2, Loader2, Sparkles, Undo2, Unlink, UserRound } from 'lucide-react';
+import { ChevronDown, Download, History, Link2, Loader2, Sparkles, Undo2, Unlink, UserRound } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -31,6 +31,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { buildCurationCsv, buildCurationCsvFilename } from '@/services/templateSkillLinkService';
+import { logger } from '@/lib/logger';
+
+
 
 const FILTROS: Array<{ value: CurationFeedFilter; label: string }> = [
   { value: 'all', label: 'Tudo' },
@@ -130,6 +134,46 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
     [data],
   );
 
+  const totalEntradas = useMemo(
+    () => feed.reduce((acc, dia) => acc + dia.entries.length, 0),
+    [feed],
+  );
+
+  // Exporta exatamente o que está na tela (páginas já carregadas + filtros
+  // ativos). Reconsultar o banco aqui devolveria linhas que o curador não
+  // estava vendo — o arquivo deixaria de ser auditável contra a UI.
+  const exportarCsv = () => {
+    try {
+      const csv = buildCurationCsv(feed);
+      // BOM: sem ele o Excel em pt-BR lê UTF-8 como Latin-1 e quebra acentos.
+      const blob = new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = buildCurationCsvFilename();
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      // Revogar libera o blob; sem isso a aba retém o arquivo em memória.
+      URL.revokeObjectURL(url);
+      toast({
+        title: 'CSV exportado',
+        description: `${totalEntradas} evento(s) de curadoria no arquivo.`,
+      });
+    } catch (erro) {
+      logger.error('exportarCsv failed', {
+        error: erro instanceof Error ? erro.message : String(erro),
+      });
+      toast({
+        title: 'Falha ao exportar',
+        description: 'Não foi possível gerar o arquivo CSV.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+
+
 
   return (
     <Card className={className}>
@@ -189,7 +233,21 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
               ))}
             </SelectContent>
           </Select>
+
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="text-meta ml-auto h-7 px-3"
+            onClick={exportarCsv}
+            disabled={totalEntradas === 0}
+            aria-label="Exportar curadoria filtrada em CSV"
+          >
+            <Download className="mr-1.5 h-3.5 w-3.5" aria-hidden />
+            Exportar CSV
+          </Button>
         </div>
+
 
       </CardHeader>
 
