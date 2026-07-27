@@ -19,6 +19,7 @@ import {
   fetchRecentCurationsPage,
   mergeCurationFeeds,
   restoreTemplateSkillLink,
+  type CurationActorScope,
   type CurationFeedFilter,
 } from '@/services/templateSkillLinkService';
 import { useCurationRealtime } from '@/hooks/useCurationRealtime';
@@ -30,6 +31,12 @@ const FILTROS: Array<{ value: CurationFeedFilter; label: string }> = [
   { value: 'linked', label: 'Vínculos' },
   { value: 'unlinked', label: 'Remoções' },
 ];
+
+const ESCOPOS: Array<{ value: CurationActorScope; label: string }> = [
+  { value: 'everyone', label: 'Todos' },
+  { value: 'me', label: 'Minhas' },
+];
+
 
 export interface RecentCurationsPanelProps {
   /** Quantos registros buscar (o feed agrupa por dia depois). */
