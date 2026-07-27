@@ -680,6 +680,28 @@ export function buildActorOrExpression(actorId?: string | null): string | null {
   return `updated_by.eq.${id},deleted_by.eq.${id},created_by.eq.${id}`;
 }
 
+/**
+ * Valida o filtro por template contra o catálogo conhecido (allowlist).
+ *
+ * `template_id` é `text` livre — diferente de `skill_id`, que é UUID e se valida
+ * sozinho pelo tipo. Aceitar qualquer string aqui permitiria consultas por ids
+ * inexistentes (feed sempre vazio, sem sinal de erro) e transformaria o campo
+ * num canal de enumeração. Aceitamos apenas ids presentes no catálogo.
+ *
+ * Retorna `null` quando não há filtro aplicável — o chamador não filtra.
+ */
+export function resolveTemplateFilter(
+  templateId: string | null | undefined,
+  knownIds: readonly string[],
+): string | null {
+  if (!templateId) return null;
+  const alvo = templateId.trim();
+  if (!alvo || alvo === 'all') return null;
+  return knownIds.includes(alvo) ? alvo : null;
+}
+
+
+
 
 /**
  * Cursor = carimbo `updated_at` da última linha da página.
@@ -738,6 +760,8 @@ export async function fetchRecentCurationsPage(
   filtro: CurationFeedFilter = 'all',
   cursor?: string | null,
   escopo: CurationActorScope = 'everyone',
+  templateId?: string | null,
+
 ): Promise<CurationFeedPage> {
   let query = supabaseExternal
     .from('template_skill_links')
@@ -760,6 +784,13 @@ export async function fetchRecentCurationsPage(
     if (!expr) return { days: [], nextCursor: null };
     query = query.or(expr);
   }
+
+  // Template: allowlist resolvida antes da consulta; `eq` usa o índice
+  // idx_tsl_template quando a seletividade compensa.
+  const alvoTemplate = resolveTemplateFilter(templateId, AGENT_TEMPLATES.map((t) => t.id));
+  if (alvoTemplate) query = query.eq('template_id', alvoTemplate);
+
+
 
 
   const { data, error } = await query.order('updated_at', { ascending: false }).limit(limit);

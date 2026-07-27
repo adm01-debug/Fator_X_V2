@@ -23,8 +23,14 @@ import {
   type CurationFeedFilter,
 } from '@/services/templateSkillLinkService';
 import { useCurationRealtime } from '@/hooks/useCurationRealtime';
-
-
+import { AGENT_TEMPLATES } from '@/data/agentTemplates';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 const FILTROS: Array<{ value: CurationFeedFilter; label: string }> = [
   { value: 'all', label: 'Tudo' },
@@ -36,6 +42,13 @@ const ESCOPOS: Array<{ value: CurationActorScope; label: string }> = [
   { value: 'everyone', label: 'Todos' },
   { value: 'me', label: 'Minhas' },
 ];
+
+/** Ordenado por nome: a lista tem dezenas de itens e é varrida visualmente. */
+const TEMPLATES_ORDENADOS = [...AGENT_TEMPLATES].sort((a, b) =>
+  a.name.localeCompare(b.name, 'pt-BR'),
+);
+
+
 
 
 export interface RecentCurationsPanelProps {
@@ -58,6 +71,8 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
   const queryClient = useQueryClient();
   const [filtro, setFiltro] = useState<CurationFeedFilter>('all');
   const [escopo, setEscopo] = useState<CurationActorScope>('everyone');
+  const [templateId, setTemplateId] = useState<string>('all');
+
 
 
   // Curadoria é colaborativa: sem realtime, dois admins veem estados divergentes
@@ -90,9 +105,17 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ['recent_curations', limit, currentUserId, filtro, escopo],
+    queryKey: ['recent_curations', limit, currentUserId, filtro, escopo, templateId],
     queryFn: ({ pageParam }) =>
-      fetchRecentCurationsPage(limit, currentUserId, filtro, pageParam as string | null, escopo),
+      fetchRecentCurationsPage(
+        limit,
+        currentUserId,
+        filtro,
+        pageParam as string | null,
+        escopo,
+        templateId,
+      ),
+
 
     initialPageParam: null as string | null,
     getNextPageParam: (ultima) => ultima.nextCursor,
@@ -150,7 +173,24 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
               </ToggleGroupItem>
             ))}
           </ToggleGroup>
+
+          <Select value={templateId} onValueChange={setTemplateId}>
+            <SelectTrigger className="text-meta h-7 w-[220px]" aria-label="Filtrar por template">
+              <SelectValue placeholder="Todos os templates" />
+            </SelectTrigger>
+            <SelectContent className="max-h-72">
+              <SelectItem value="all" className="text-meta">
+                Todos os templates
+              </SelectItem>
+              {TEMPLATES_ORDENADOS.map((template) => (
+                <SelectItem key={template.id} value={template.id} className="text-meta">
+                  {template.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
+
       </CardHeader>
 
 
