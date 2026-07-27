@@ -4,7 +4,7 @@
  * Fase 7: erros permanentes são curto-circuitados (attempts=MAX_ATTEMPTS) para drenar rápido.
  */
 import { createClient } from "npm:@supabase/supabase-js@2.50.0";
-import { handleCorsPreflight, jsonResponse, errorResponse } from "../_shared/cors.ts";
+import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse } from "../_shared/cors.ts";
 import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 import { slackApiCall } from "../_shared/slack.ts";
 

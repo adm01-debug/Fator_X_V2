@@ -19,7 +19,7 @@
 
 import { createClient } from "npm:@supabase/supabase-js@2.50.0";
 import { z } from "npm:zod@3.23.8";
-import { handleCorsPreflight, jsonResponse, errorResponse } from "../_shared/cors.ts";
+import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse } from "../_shared/cors.ts";
 import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 import { slackApiCall } from "../_shared/slack.ts";
 
