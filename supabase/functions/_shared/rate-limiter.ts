@@ -26,7 +26,16 @@ export const RATE_LIMITS = {
   webhook:  { windowMs: 60_000, maxRequests: 60, name: 'webhook' } as RateLimitConfig,
   datahub:  { windowMs: 60_000, maxRequests: 20, name: 'datahub' } as RateLimitConfig,
   oracle:   { windowMs: 60_000, maxRequests: 3,  name: 'oracle' } as RateLimitConfig,
+  // `light` e `moderate` já eram usados por 8 funções (webhooks Bitrix/Slack/
+  // WhatsApp, smoke tests, rechunk) e não existiam aqui: o acesso resolvia
+  // para `undefined` e `checkRateLimit` lia `windowMs` de undefined —
+  // TypeError no primeiro request. Formalizados com os valores que o uso
+  // pressupõe: `light` para endpoints baratos de alta frequência (webhooks),
+  // `moderate` para trabalho de custo médio.
+  light:    { windowMs: 60_000, maxRequests: 60, name: 'light' } as RateLimitConfig,
+  moderate: { windowMs: 60_000, maxRequests: 20, name: 'moderate' } as RateLimitConfig,
 } as const;
+
 
 // In-memory store: identifier -> timestamps[]
 const store = new Map<string, number[]>();
