@@ -77,11 +77,37 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
   const [escopo, setEscopo] = useState<CurationActorScope>('everyone');
   const [templateId, setTemplateId] = useState<string>('all');
 
+  // Novidades chegam por realtime mas NÃO entram na tela sozinhas: invalidar
+  // durante a leitura reinicia a paginação infinita e faz o item lido saltar
+  // de posição. Acumulamos e deixamos a atualização a cargo de um clique.
+  const [pendentes, setPendentes] = useState<ReadonlySet<string>>(() => new Set());
 
+  const registrarPendente = useCallback(
+    (evento: CurationRealtimeEvent) => {
+      setPendentes((atual) => applyCurationPendingEvent(atual, evento, filtro));
+    },
+    [filtro],
+  );
 
   // Curadoria é colaborativa: sem realtime, dois admins veem estados divergentes
   // até o staleTime de 30s expirar.
-  useCurationRealtime(filtro);
+  useCurationRealtime(filtro, true, registrarPendente);
+
+  // Trocar de filtro invalida a contagem: os eventos acumulados foram avaliados
+  // contra o recorte anterior e não descrevem mais o que está na tela.
+  useEffect(() => {
+    setPendentes(new Set());
+  }, [filtro, escopo, templateId]);
+
+  const rotuloPendentes = formatPendingLabel(pendentes.size);
+
+  const aplicarNovidades = () => {
+    setPendentes(new Set());
+    queryClient.invalidateQueries({ queryKey: ['recent_curations'] });
+    queryClient.invalidateQueries({ queryKey: ['template_skill_links'] });
+  };
+
+
 
 
 
