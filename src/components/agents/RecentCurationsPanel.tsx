@@ -5,13 +5,18 @@
  * `idx_tsl_manual_recent` — o custo não cresce com o volume de vínculos
  * automáticos, que hoje representam a maioria absoluta da tabela.
  */
-import { useQuery } from '@tanstack/react-query';
-import { History, Sparkles, UserRound } from 'lucide-react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { History, Link2, Sparkles, Undo2, Unlink, UserRound } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
-import { fetchRecentCurations } from '@/services/templateSkillLinkService';
+import { toast } from '@/hooks/use-toast';
+import {
+  fetchRecentCurations,
+  restoreTemplateSkillLink,
+} from '@/services/templateSkillLinkService';
 
 export interface RecentCurationsPanelProps {
   /** Quantos registros buscar (o feed agrupa por dia depois). */
@@ -30,6 +35,25 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
     retry: false,
   });
 
+  const queryClient = useQueryClient();
+
+  const desfazer = useMutation({
+    mutationFn: ({ templateId, skillId }: { templateId: string; skillId: string }) =>
+      restoreTemplateSkillLink(templateId, skillId),
+    onSuccess: () => {
+      toast({ title: 'Vínculo restaurado', description: 'A skill voltou a ser recomendada.' });
+      queryClient.invalidateQueries({ queryKey: ['recent_curations'] });
+      queryClient.invalidateQueries({ queryKey: ['template_skill_links'] });
+    },
+    onError: (error: unknown) => {
+      toast({
+        title: 'Não foi possível restaurar',
+        description: error instanceof Error ? error.message : 'Erro desconhecido.',
+        variant: 'destructive',
+      });
+    },
+  });
+
   const { data: feed = [], isLoading } = useQuery({
     queryKey: ['recent_curations', limit, currentUserId],
     queryFn: () => fetchRecentCurations(limit, currentUserId),
@@ -45,7 +69,8 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
           Curadoria recente
         </CardTitle>
         <CardDescription>
-          Vínculos manuais entre templates e skills, do mais recente ao mais antigo.
+          Vínculos e desvinculações manuais entre templates e skills, do mais recente ao mais
+          antigo. Remoções são reversíveis.
         </CardDescription>
       </CardHeader>
 
@@ -80,15 +105,47 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
                     className="rounded-md border border-border/60 bg-card/40 p-3 transition-colors hover:border-primary/40"
                   >
                     <div className="flex flex-wrap items-center gap-2">
-                      <Badge variant="secondary" className="font-normal">
+                      <Badge
+                        variant={entrada.kind === 'unlinked' ? 'outline' : 'secondary'}
+                        className="font-normal"
+                      >
+                        {entrada.kind === 'unlinked' ? (
+                          <Unlink className="mr-1 h-3 w-3" aria-hidden />
+                        ) : (
+                          <Link2 className="mr-1 h-3 w-3" aria-hidden />
+                        )}
                         {entrada.templateName}
                       </Badge>
                       <span className="text-muted-foreground" aria-hidden>
                         →
                       </span>
-                      <span className="text-body-sm font-medium text-foreground">
+                      <span
+                        className={
+                          entrada.kind === 'unlinked'
+                            ? 'text-body-sm font-medium text-muted-foreground line-through'
+                            : 'text-body-sm font-medium text-foreground'
+                        }
+                      >
                         {entrada.skillName}
                       </span>
+
+                      {entrada.kind === 'unlinked' && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="ml-auto h-7 px-2 text-meta"
+                          disabled={desfazer.isPending}
+                          onClick={() =>
+                            desfazer.mutate({
+                              templateId: entrada.templateId,
+                              skillId: entrada.skillId,
+                            })
+                          }
+                        >
+                          <Undo2 className="mr-1 h-3 w-3" aria-hidden />
+                          Desfazer
+                        </Button>
+                      )}
                     </div>
 
                     <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-meta text-muted-foreground">
