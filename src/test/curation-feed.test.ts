@@ -11,6 +11,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildCurationFeed,
+  buildActorOrExpression,
   filterCurationFeed,
   type RecentCurationRow,
 } from '@/services/templateSkillLinkService';
