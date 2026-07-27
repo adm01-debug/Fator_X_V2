@@ -8,7 +8,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import {
-  Download, RefreshCw, Loader2, Github, CheckCircle2, XCircle, Star,
+  Download, RefreshCw, Loader2, CheckCircle2, XCircle, Star,
   ShieldAlert, ExternalLink, Search, Layers,
 } from 'lucide-react';
 import { PageHeader } from '@/components/shared/PageHeader';
