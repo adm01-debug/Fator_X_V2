@@ -88,10 +88,24 @@ export default function AgentTemplatesPage() {
       if (!user) throw new Error("Faça login para criar agentes");
       const agent = buildAgentFromTemplate(t);
       // Inclui a flag isDraft para salvar rascunho versionado automaticamente
-      return saveAgent(agent);
+      const saved = await saveAgent(agent);
+      // Instala as skills do Registry vinculadas ao template (best-effort:
+      // falha na instalação não deve impedir a criação do agente).
+      if (saved.id && linkedSkillIds.length > 0) {
+        try {
+          await bulkInstallSkills(saved.id, linkedSkillIds);
+        } catch (err) {
+          logger.warn("bulk install linked skills failed", { err });
+        }
+      }
+      return saved;
     },
     onSuccess: (agent, t) => {
-      toast.success(`Agente "${t.name}" criado!`, { description: "Abrindo no builder…" });
+      toast.success(`Agente "${t.name}" criado!`, {
+        description: linkedSkillIds.length > 0
+          ? `${linkedSkillIds.length} skill(s) vinculada(s) instalada(s). Abrindo no builder…`
+          : "Abrindo no builder…",
+      });
       queryClient.invalidateQueries({ queryKey: ["agents"] });
       if (agent.id) navigate(`/builder/${agent.id}`);
     },
