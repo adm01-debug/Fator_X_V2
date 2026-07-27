@@ -461,7 +461,7 @@ function CandidateCard({ candidate, selected, onToggle, onPromote, onReclassify 
           <div className="flex flex-wrap items-center gap-1.5 rounded-md bg-destructive/10 p-2">
             <ShieldAlert className="h-3.5 w-3.5 text-destructive" />
             {candidate.rejection_reasons.slice(0, 6).map((r) => (
-              <Badge key={r} variant="destructive" className="text-[11px]">{r}</Badge>
+              <Badge key={r} variant="destructive" className="text-meta">{r}</Badge>
             ))}
           </div>
         )}
