@@ -42,7 +42,7 @@ const BodySchema = z.object({
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return handleCorsPreflight(req);
   const identifier = getRateLimitIdentifier(req);
-  const rate = await checkRateLimit(identifier, RATE_LIMITS.medium);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.standard);
   if (!rate.allowed) return createRateLimitResponse(rate, getCorsHeaders(req));
   if (req.method !== "POST") return errorResponse(req, "Method not allowed", 405);
 

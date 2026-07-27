@@ -36,7 +36,7 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   const identifier = getRateLimitIdentifier(req);
-  const rateResult = checkRateLimit(identifier, RATE_LIMITS.medium);
+  const rateResult = checkRateLimit(identifier, RATE_LIMITS.standard);
   if (!rateResult.allowed) return createRateLimitResponse(rateResult, corsHeaders);
 
   try {

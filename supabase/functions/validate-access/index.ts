@@ -63,7 +63,7 @@ function ipMatches(ip: string, rule: string): boolean {
 serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
   const identifier = getRateLimitIdentifier(req);
-  const rate = await checkRateLimit(identifier, RATE_LIMITS.medium);
+  const rate = await checkRateLimit(identifier, RATE_LIMITS.standard);
   if (!rate.allowed) return createRateLimitResponse(rate, corsHeaders);
   if (req.method === "OPTIONS")
     return new Response(null, { headers: corsHeaders });
