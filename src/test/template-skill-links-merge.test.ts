@@ -7,6 +7,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   mergeDisplayLinks,
+  formatCurationTrail,
   MAX_LINKS_PER_TEMPLATE,
   type DisplayTemplateSkillLink,
 } from '@/services/templateSkillLinkService';
