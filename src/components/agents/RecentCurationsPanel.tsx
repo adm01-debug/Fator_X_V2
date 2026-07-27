@@ -233,7 +233,21 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
               ))}
             </SelectContent>
           </Select>
+
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="text-meta ml-auto h-7 px-3"
+            onClick={exportarCsv}
+            disabled={totalEntradas === 0}
+            aria-label="Exportar curadoria filtrada em CSV"
+          >
+            <Download className="mr-1.5 h-3.5 w-3.5" aria-hidden />
+            Exportar CSV
+          </Button>
         </div>
+
 
       </CardHeader>
 
