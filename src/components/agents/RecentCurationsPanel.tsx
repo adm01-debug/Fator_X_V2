@@ -23,8 +23,14 @@ import {
   type CurationFeedFilter,
 } from '@/services/templateSkillLinkService';
 import { useCurationRealtime } from '@/hooks/useCurationRealtime';
-
-
+import { AGENT_TEMPLATES } from '@/data/agentTemplates';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 const FILTROS: Array<{ value: CurationFeedFilter; label: string }> = [
   { value: 'all', label: 'Tudo' },
@@ -36,6 +42,13 @@ const ESCOPOS: Array<{ value: CurationActorScope; label: string }> = [
   { value: 'everyone', label: 'Todos' },
   { value: 'me', label: 'Minhas' },
 ];
+
+/** Ordenado por nome: a lista tem dezenas de itens e é varrida visualmente. */
+const TEMPLATES_ORDENADOS = [...AGENT_TEMPLATES].sort((a, b) =>
+  a.name.localeCompare(b.name, 'pt-BR'),
+);
+
+
 
 
 export interface RecentCurationsPanelProps {
