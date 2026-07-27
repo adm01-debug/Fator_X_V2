@@ -23,9 +23,13 @@ import {
   type CurationFeedFilter,
 } from '@/services/templateSkillLinkService';
 import {
-  applyCurationPendingEvent,
+  applyCurationPendingEventByFilter,
+  clearPendingForFilter,
+  formatPendingBadge,
   formatPendingLabel,
   useCurationRealtime,
+  EMPTY_PENDING_BY_FILTER,
+  type CurationPendingByFilter,
   type CurationRealtimeEvent,
 } from '@/hooks/useCurationRealtime';
 import { AGENT_TEMPLATES } from '@/data/agentTemplates';
