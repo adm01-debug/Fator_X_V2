@@ -37,6 +37,16 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { buildCurationCsv, buildCurationCsvFilename } from '@/services/templateSkillLinkService';
+import {
+  beginHighlight,
+  highlightKey,
+  isHighlighted,
+  pruneHighlights,
+  CURATION_HIGHLIGHT_TTL_MS,
+  EMPTY_HIGHLIGHTS,
+  type CurationHighlightMap,
+} from '@/lib/curationHighlight';
+import { cn } from '@/lib/utils';
 import { logger } from '@/lib/logger';
 
 
