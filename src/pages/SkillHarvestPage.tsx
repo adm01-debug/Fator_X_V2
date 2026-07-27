@@ -430,7 +430,13 @@ export default function SkillHarvestPage() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        {/* ─── Curadoria manual recente */}
+        <TabsContent value="curation">
+          <RecentCurationsPanel />
+        </TabsContent>
       </Tabs>
+
     </div>
   );
 }
