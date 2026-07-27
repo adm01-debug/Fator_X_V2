@@ -6,7 +6,15 @@ import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import { logger } from '@/lib/logger';
 import { supabase } from '@/integrations/supabase/client';
 
-export async function embedTexts(texts: string[], provider = 'qwen3-embedding-8b', dimension = 1024) {
+/**
+ * Dimensão canônica do sistema. As colunas `public.chunks.embedding` e
+ * `public.agent_memories_v2.embedding` são `vector(1536)`; pgvector exige
+ * dimensão fixa, então pedir 1024 (o default antigo) gerava vetores
+ * impossíveis de persistir e incomparáveis com os já gravados.
+ */
+export const EMBEDDING_DIM = 1536;
+
+export async function embedTexts(texts: string[], provider = 'qwen3-embedding-8b', dimension = EMBEDDING_DIM) {
   const { data, error } = await supabase.functions.invoke('rag-embed-v2', {
     body: { texts, provider, dimension, task: 'retrieval.passage' },
   });
@@ -33,7 +41,7 @@ export async function rerankDocuments(
 }
 
 export async function searchAndRerank(query: string, knowledgeBaseId: string, topK = 5) {
-  const embedResult = await embedTexts([query], 'qwen3-embedding-8b', 1024);
+  const embedResult = await embedTexts([query], 'qwen3-embedding-8b', EMBEDDING_DIM);
   const queryEmbedding = (embedResult as Record<string, unknown>)?.embeddings;
   const firstEmbed = Array.isArray(queryEmbedding) ? queryEmbedding[0] : null;
   if (!firstEmbed) throw new Error('Failed to embed query');

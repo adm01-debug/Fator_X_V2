@@ -49,7 +49,8 @@ describe('ragPipelineService — invokers', () => {
     expect(opts.body).toEqual({
       texts: ['olá'],
       provider: 'qwen3-embedding-8b',
-      dimension: 1024,
+      // Deve casar com `vector(1536)` das colunas de embedding.
+      dimension: 1536,
       task: 'retrieval.passage',
     });
   });
