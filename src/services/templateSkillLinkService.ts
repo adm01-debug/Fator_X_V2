@@ -28,12 +28,19 @@ export interface TemplateSkillLink {
   department_match: boolean;
   matched_keywords: string[];
   origin: 'auto' | 'manual';
+  /** Autor da curadoria manual (NULL em vínculos automáticos). */
+  created_by?: string | null;
+  /** Último admin que alterou a curadoria (NULL em vínculos automáticos). */
+  updated_by?: string | null;
+  created_at?: string;
+  updated_at?: string;
 }
 
 /** Vínculo já resolvido com a skill correspondente, pronto para a UI. */
 export interface ResolvedTemplateSkillLink extends TemplateSkillLink {
   skill: AgentSkillDefinition | null;
 }
+
 
 /**
  * Lê os vínculos persistidos de um template, do mais forte para o mais fraco.
