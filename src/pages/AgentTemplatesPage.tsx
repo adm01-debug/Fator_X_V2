@@ -25,6 +25,8 @@ import {
 } from "@/components/ui/dialog";
 import { AGENT_TEMPLATES, type AgentTemplate } from "@/data/agentTemplates";
 import { TemplateRecommenderCard } from "@/components/agents/TemplateRecommenderCard";
+import { TemplateLinkedSkillsPanel } from "@/components/agents/TemplateLinkedSkillsPanel";
+import { bulkInstallSkills } from "@/services/skillsRegistryService";
 
 import { saveAgent } from "@/lib/agentService";
 import type { AgentConfig } from "@/types/agentTypes";
