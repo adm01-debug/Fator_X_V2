@@ -150,12 +150,14 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
 
   const aplicarNovidades = () => {
     const t = Date.now();
-    setDestaques(beginHighlight(pendentes, t));
+    setDestaques(beginHighlight(pendentesDoFiltro, t));
     setAgora(t);
-    setPendentes(new Set());
+    // Zera só a aba atualizada: as outras guardam novidades ainda não vistas.
+    setPendentes((atual) => clearPendingForFilter(atual, filtro));
     queryClient.invalidateQueries({ queryKey: ['recent_curations'] });
     queryClient.invalidateQueries({ queryKey: ['template_skill_links'] });
   };
+
 
 
 
