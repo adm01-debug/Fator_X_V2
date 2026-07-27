@@ -21,6 +21,8 @@ import {
   restoreTemplateSkillLink,
   type CurationFeedFilter,
 } from '@/services/templateSkillLinkService';
+import { useCurationRealtime } from '@/hooks/useCurationRealtime';
+
 
 
 const FILTROS: Array<{ value: CurationFeedFilter; label: string }> = [
