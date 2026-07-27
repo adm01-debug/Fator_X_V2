@@ -110,9 +110,13 @@ describe("Edge Functions — contrato de runtime", () => {
     for (const file of files) {
       const raw = readFileSync(file, "utf8");
       const code = stripCommentsAndStrings(raw);
-      const importSection = raw.match(/^(?:import[\s\S]*?from\s*["'][^"']+["'];?\s*)+/m)?.[0] ?? "";
+      // Imports podem aparecer em qualquer ponto do arquivo (várias funções
+      // declaram schemas Zod antes do bloco de imports compartilhados), então
+      // coletamos TODAS as declarações, não só o cabeçalho.
+      const importSection = (code.match(/import[\s\S]*?from\s*["'][^"']*["']/g) ?? []).join("\n");
+      const body = code.split(/import[\s\S]*?from\s*["'][^"']*["']/).join("\n");
       for (const symbol of REQUIRED_IMPORT_SYMBOLS) {
-        const used = new RegExp(`\\b${symbol}\\b`).test(code.replace(importSection, ""));
+        const used = new RegExp(`\\b${symbol}\\b`).test(body);
         if (!used) continue;
         const imported = new RegExp(`\\b${symbol}\\b`).test(importSection);
         const declared = new RegExp(`(const|let|function)\\s+${symbol}\\b`).test(code);
@@ -120,5 +124,6 @@ describe("Edge Functions — contrato de runtime", () => {
       }
     }
     expect(offenders, `Símbolo usado sem import nem declaração local — ReferenceError em produção:\n${offenders.join("\n")}`).toEqual([]);
+
   });
 });
