@@ -103,6 +103,33 @@ export default function SkillHarvestPage() {
     }
   };
 
+  /**
+   * Recalcula os vínculos automáticos entre os templates de agentes e as
+   * skills do registry. Exige permissão de admin (garantida por RLS).
+   */
+  const handleRebuildLinks = async () => {
+    setRebuilding(true);
+    try {
+      const result = await rebuildTemplateSkillLinks();
+      toast.success(
+        `${result.links} vínculos gravados em ${result.templates} templates`,
+        {
+          description: result.templatesWithoutLinks.length
+            ? `Sem vínculo: ${result.templatesWithoutLinks.join(', ')}`
+            : `${result.strongLinks} vínculos fortes`,
+        },
+      );
+    } catch (e) {
+      toast.error('Falha ao recalcular os vínculos', {
+        description: e instanceof Error ? e.message : undefined,
+      });
+    } finally {
+      setRebuilding(false);
+    }
+  };
+
+
+
   const toggleSelect = (id: string) => {
     setSelected((prev) => {
       const next = new Set(prev);
