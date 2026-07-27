@@ -12,6 +12,8 @@ import {
   ShieldAlert, ExternalLink, Search, Layers,
 } from 'lucide-react';
 import { PageHeader } from '@/components/shared/PageHeader';
+import { RecentCurationsPanel } from '@/components/agents/RecentCurationsPanel';
+
 import { rebuildTemplateSkillLinks } from '@/services/templateSkillLinkService';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -209,6 +211,8 @@ export default function SkillHarvestPage() {
           <TabsTrigger value="harvest">Executar varredura</TabsTrigger>
           <TabsTrigger value="coverage">Cobertura</TabsTrigger>
           <TabsTrigger value="runs">Histórico</TabsTrigger>
+          <TabsTrigger value="curation">Curadoria recente</TabsTrigger>
+
         </TabsList>
 
         {/* ─── Fila */}
@@ -430,7 +434,13 @@ export default function SkillHarvestPage() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        {/* ─── Curadoria manual recente */}
+        <TabsContent value="curation">
+          <RecentCurationsPanel />
+        </TabsContent>
       </Tabs>
+
     </div>
   );
 }

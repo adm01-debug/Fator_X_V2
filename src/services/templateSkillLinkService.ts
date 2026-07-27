@@ -452,3 +452,153 @@ export async function fetchAggregatedTemplateSkillLinks(
 
   return aggregateTemplateSkillLinks(byTemplate, limit);
 }
+
+// ---------------------------------------------------------------------------
+// Feed de curadoria recente (consome o índice parcial idx_tsl_manual_recent)
+// ---------------------------------------------------------------------------
+
+/** Entrada crua do feed, como retornada pelo banco. */
+export interface RecentCurationRow {
+  template_id: string;
+  skill_id: string;
+  reason: string;
+  updated_at: string | null;
+  created_at: string | null;
+  updated_by: string | null;
+  created_by: string | null;
+  skill?: { name?: string | null } | null;
+}
+
+/** Um dia de curadoria, já agrupado e rotulado para a UI. */
+export interface CurationFeedDay {
+  /** Chave ISO (YYYY-MM-DD) do dia, em horário local. */
+  dayKey: string;
+  /** Rótulo PT-BR: "Hoje", "Ontem" ou dd/mm/aaaa. */
+  dayLabel: string;
+  entries: CurationFeedEntry[];
+}
+
+export interface CurationFeedEntry {
+  templateId: string;
+  templateName: string;
+  skillId: string;
+  skillName: string;
+  reason: string;
+  actorId: string | null;
+  /** "você" quando o autor é o usuário atual; null quando desconhecido. */
+  actorLabel: string | null;
+  at: string | null;
+  /** HH:MM local; null quando a data é inválida/ausente. */
+  timeLabel: string | null;
+}
+
+const TEMPLATE_NAME_BY_ID = new Map(AGENT_TEMPLATES.map((t) => [t.id, t.name]));
+
+function toDayKey(date: Date): string {
+  // Chave local (não UTC): agrupar por dia precisa respeitar o fuso do curador,
+  // senão uma curadoria das 21h em GMT-3 cairia no "dia seguinte".
+  const mes = `${date.getMonth() + 1}`.padStart(2, '0');
+  const dia = `${date.getDate()}`.padStart(2, '0');
+  return `${date.getFullYear()}-${mes}-${dia}`;
+}
+
+/**
+ * Agrupa as linhas de curadoria manual por dia, da mais recente para a mais
+ * antiga, resolvendo nomes de template/skill e rótulos relativos em PT-BR.
+ *
+ * Função pura — recebe `now` para que os cenários de simulação sejam
+ * determinísticos e não dependam do relógio da máquina.
+ */
+export function buildCurationFeed(
+  rows: RecentCurationRow[],
+  currentUserId?: string | null,
+  now: Date = new Date(),
+): CurationFeedDay[] {
+  const hojeKey = toDayKey(now);
+  const ontem = new Date(now.getTime());
+  ontem.setDate(ontem.getDate() - 1);
+  const ontemKey = toDayKey(ontem);
+
+  const byDay = new Map<string, CurationFeedDay>();
+  // Deduplica: a mesma dupla template+skill só aparece uma vez (o registro
+  // mais recente vence), evitando repetição após reedições da curadoria.
+  const seen = new Set<string>();
+
+  const ordenadas = [...rows].sort((a, b) => {
+    const ta = new Date(a.updated_at ?? a.created_at ?? 0).getTime() || 0;
+    const tb = new Date(b.updated_at ?? b.created_at ?? 0).getTime() || 0;
+    return tb - ta;
+  });
+
+  for (const row of ordenadas) {
+    if (!row?.template_id || !row?.skill_id) continue;
+    const chave = `${row.template_id}::${row.skill_id}`;
+    if (seen.has(chave)) continue;
+    seen.add(chave);
+
+    const at = row.updated_at ?? row.created_at ?? null;
+    const data = at ? new Date(at) : null;
+    const dataValida = data && !Number.isNaN(data.getTime()) ? data : null;
+
+    // Sem data utilizável não há como posicionar no feed cronológico.
+    if (!dataValida) continue;
+
+    const dayKey = toDayKey(dataValida);
+    const dayLabel =
+      dayKey === hojeKey
+        ? 'Hoje'
+        : dayKey === ontemKey
+          ? 'Ontem'
+          : dataValida.toLocaleDateString('pt-BR', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+            });
+
+    const actorId = row.updated_by ?? row.created_by ?? null;
+
+    const entry: CurationFeedEntry = {
+      templateId: row.template_id,
+      templateName: TEMPLATE_NAME_BY_ID.get(row.template_id) ?? row.template_id,
+      skillId: row.skill_id,
+      skillName: row.skill?.name?.trim() || row.skill_id,
+      reason: row.reason || 'Curadoria manual',
+      actorId,
+      actorLabel: actorId ? (actorId === currentUserId ? 'você' : `admin ${actorId.slice(0, 8)}`) : null,
+      at,
+      timeLabel: dataValida.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+    };
+
+    const grupo = byDay.get(dayKey);
+    if (grupo) grupo.entries.push(entry);
+    else byDay.set(dayKey, { dayKey, dayLabel, entries: [entry] });
+  }
+
+  // Map preserva a ordem de inserção, que já é a cronológica decrescente.
+  return [...byDay.values()];
+}
+
+/**
+ * Lê as curadorias manuais mais recentes.
+ * O filtro `origin = 'manual'` + `order by updated_at desc` casa exatamente
+ * com o índice parcial `idx_tsl_manual_recent`, então o custo não cresce com
+ * o volume de vínculos automáticos.
+ */
+export async function fetchRecentCurations(
+  limit = 30,
+  currentUserId?: string | null,
+): Promise<CurationFeedDay[]> {
+  const { data, error } = await supabaseExternal
+    .from('template_skill_links')
+    .select('template_id, skill_id, reason, updated_at, created_at, updated_by, created_by, skill:skill_registry(name)')
+    .eq('origin', 'manual')
+    .order('updated_at', { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    logger.error('fetchRecentCurations failed', { error: error.message });
+    return [];
+  }
+
+  return buildCurationFeed((data ?? []) as unknown as RecentCurationRow[], currentUserId);
+}
