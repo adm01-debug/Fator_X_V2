@@ -96,7 +96,11 @@ export interface DisplayTemplateSkillLink {
   reason: string;
   isStrongMatch: boolean;
   origin: 'auto' | 'manual';
+  /** Trilha de auditoria — presente apenas em curadoria manual. */
+  curatedBy?: string | null;
+  curatedAt?: string | null;
 }
+
 
 /**
  * Mescla vínculos persistidos com o cálculo local (fallback), garantindo:
