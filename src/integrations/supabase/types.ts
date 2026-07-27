@@ -14614,6 +14614,10 @@ export type Database = {
       }
       publish_postmortem: { Args: { p_postmortem_id: string }; Returns: Json }
       purchase_skill: { Args: { p_skill_id: string }; Returns: Json }
+      purge_removed_template_skill_links: {
+        Args: { _days?: number }
+        Returns: number
+      }
       recompute_memory_tier: { Args: never; Returns: number }
       record_bcp_test: {
         Args: {
@@ -14791,6 +14795,10 @@ export type Database = {
       }
       run_pg_net_smoke_test: { Args: never; Returns: undefined }
       run_prune_traces_retention_monitored: {
+        Args: { _days?: number }
+        Returns: string
+      }
+      run_purge_template_skill_links_monitored: {
         Args: { _days?: number }
         Returns: string
       }
