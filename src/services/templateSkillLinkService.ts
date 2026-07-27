@@ -330,3 +330,125 @@ export async function rebuildTemplateSkillLinks(
   logger.info('rebuildTemplateSkillLinks completed', result);
   return result;
 }
+
+// ---------------------------------------------------------------------------
+// Reaproveitamento de curadoria entre a galeria e o wizard rápido
+// ---------------------------------------------------------------------------
+
+/** Vínculo agregado a partir de VÁRIOS templates equivalentes. */
+export interface AggregatedSkillLink extends DisplayTemplateSkillLink {
+  /** Em quantos templates equivalentes esta skill aparece vinculada. */
+  templateCount: number;
+  /** Template canônico (primeiro da lista) que originou o vínculo. */
+  sourceTemplateId: string;
+}
+
+/**
+ * Agrega vínculos de múltiplos templates numa única lista priorizada.
+ *
+ * Precedência (determinística, sem empates aleatórios):
+ * 1. Curadoria manual;
+ * 2. Match forte;
+ * 3. Recorrência entre os templates equivalentes (mais templates = mais sinal);
+ * 4. Ordem de entrada — o template canônico vem primeiro na lista de origem.
+ *
+ * Função pura: exercitada pelos cenários de simulação.
+ */
+export function aggregateTemplateSkillLinks(
+  byTemplate: Array<{ templateId: string; links: DisplayTemplateSkillLink[] }>,
+  limit = MAX_LINKS_PER_TEMPLATE,
+): AggregatedSkillLink[] {
+  const safeLimit = Number.isFinite(limit) && limit > 0 ? Math.floor(limit) : MAX_LINKS_PER_TEMPLATE;
+  const acc = new Map<string, AggregatedSkillLink & { order: number }>();
+  let order = 0;
+
+  for (const group of byTemplate) {
+    // A tabela tem UNIQUE(template_id, skill_id), mas o fallback local e
+    // payloads inesperados podem repetir a mesma skill no grupo — sem esta
+    // guarda, `templateCount` inflaria acima do nº real de blueprints.
+    const seenInGroup = new Set<string>();
+
+    for (const link of group.links ?? []) {
+      if (!link?.skillId || seenInGroup.has(link.skillId)) continue;
+      seenInGroup.add(link.skillId);
+      const existing = acc.get(link.skillId);
+
+
+
+      if (!existing) {
+        acc.set(link.skillId, {
+          ...link,
+          templateCount: 1,
+          sourceTemplateId: group.templateId,
+          order: order++,
+        });
+        continue;
+      }
+
+      // Reforço: soma recorrência e promove os atributos mais fortes vistos.
+      existing.templateCount += 1;
+      existing.isStrongMatch = existing.isStrongMatch || link.isStrongMatch;
+      if (link.origin === 'manual' && existing.origin !== 'manual') {
+        existing.origin = 'manual';
+        existing.reason = link.reason;
+        existing.curatedBy = link.curatedBy ?? null;
+        existing.curatedAt = link.curatedAt ?? null;
+        existing.sourceTemplateId = group.templateId;
+      }
+    }
+  }
+
+  return [...acc.values()]
+    .sort(
+      (a, b) =>
+        Number(b.origin === 'manual') - Number(a.origin === 'manual') ||
+        Number(b.isStrongMatch) - Number(a.isStrongMatch) ||
+        b.templateCount - a.templateCount ||
+        a.order - b.order,
+    )
+    .slice(0, safeLimit)
+    .map(({ order: _order, ...rest }) => rest);
+}
+
+/**
+ * Lê os vínculos persistidos de vários templates numa ÚNICA consulta indexada
+ * (`idx_tsl_template`) e devolve-os já agregados e priorizados.
+ *
+ * Nunca lança: o wizard rápido tem o recomendador textual como caminho feliz
+ * alternativo, então uma falha de leitura degrada para lista vazia e é logada.
+ */
+export async function fetchAggregatedTemplateSkillLinks(
+  templateIds: string[],
+  limit = MAX_LINKS_PER_TEMPLATE,
+): Promise<AggregatedSkillLink[]> {
+  const ids = [...new Set(templateIds.filter(Boolean))];
+  if (ids.length === 0) return [];
+
+  const { data, error } = await supabaseExternal
+    .from('template_skill_links')
+    .select('*, skill:skill_registry(*)')
+    .in('template_id', ids)
+    .order('is_strong_match', { ascending: false })
+    .order('score', { ascending: false });
+
+  if (error) {
+    logger.warn('fetchAggregatedTemplateSkillLinks failed — degradando para vazio', {
+      templateIds: ids,
+      error: error.message,
+    });
+    return [];
+  }
+
+  const rows = (data ?? []) as unknown as ResolvedTemplateSkillLink[];
+
+  // Preserva a ordem declarada em QUICK_TYPE_TEMPLATE_MAP (canônico primeiro).
+  const byTemplate = ids.map((templateId) => ({
+    templateId,
+    links: rows
+      .filter((r) => r.template_id === templateId)
+      .map(toDisplayLink)
+      .filter((l): l is DisplayTemplateSkillLink => l !== null),
+  }));
+
+  return aggregateTemplateSkillLinks(byTemplate, limit);
+}
