@@ -210,6 +210,13 @@ export function TemplateLinkedSkillsPanel({
                   )}
                 </span>
                 <span className="block text-meta text-muted-foreground">{l.reason}</span>
+                {(() => {
+                  const trilha = formatCurationTrail(l, currentUser.data);
+                  return trilha ? (
+                    <span className="block text-[10px] text-muted-foreground/70">{trilha}</span>
+                  ) : null;
+                })()}
+
               </label>
               {allowCuration && (
                 <Button
