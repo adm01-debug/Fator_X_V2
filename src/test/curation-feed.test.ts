@@ -12,6 +12,7 @@ import { describe, expect, it } from 'vitest';
 import {
   buildCurationFeed,
   buildActorOrExpression,
+  resolveTemplateFilter,
   filterCurationFeed,
   type RecentCurationRow,
 } from '@/services/templateSkillLinkService';
@@ -413,6 +414,48 @@ describe('buildActorOrExpression — validação de UUID antes da interpolação
           /^(updated_by|deleted_by|created_by)\.eq\.[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
         );
       }
+    }
+  });
+});
+
+describe('resolveTemplateFilter — allowlist contra o catálogo', () => {
+  const IDS = AGENT_TEMPLATES.map((t) => t.id);
+
+  it('aceita qualquer id realmente presente no catálogo', () => {
+    for (const id of IDS) expect(resolveTemplateFilter(id, IDS)).toBe(id);
+  });
+
+  it.each([undefined, null, '', '   ', 'all', ' all '])(
+    'trata %p como "sem filtro"',
+    (entrada) => {
+      expect(resolveTemplateFilter(entrada as string | null | undefined, IDS)).toBeNull();
+    },
+  );
+
+  it('rejeita ids desconhecidos em vez de consultar às cegas', () => {
+    expect(resolveTemplateFilter('template-inexistente', IDS)).toBeNull();
+    expect(resolveTemplateFilter(`${IDS[0]}-extra`, IDS)).toBeNull();
+    expect(resolveTemplateFilter(IDS[0].toUpperCase(), IDS)).toBeNull();
+  });
+
+  it('nunca devolve valor fora da allowlist em 500 entradas aleatórias', () => {
+    const ruido = ['%', '*', ',', '.', ' ', "'", '"', ';', '(', ')', 'or', 'null'];
+    for (let i = 0; i < 500; i += 1) {
+      const base = IDS[Math.floor(Math.random() * IDS.length)];
+      const contaminar = Math.random() < 0.6;
+      const bruto = contaminar
+        ? `${base}${ruido[Math.floor(Math.random() * ruido.length)]}${Math.random().toString(36).slice(2, 5)}`
+        : base;
+      const resultado = resolveTemplateFilter(bruto, IDS);
+      // Invariante: ou é null, ou é literalmente um id do catálogo.
+      if (resultado !== null) expect(IDS).toContain(resultado);
+    }
+  });
+
+  it('é idempotente: aplicar duas vezes não muda o resultado', () => {
+    for (const entrada of [...IDS, 'all', 'lixo', '']) {
+      const uma = resolveTemplateFilter(entrada, IDS);
+      expect(resolveTemplateFilter(uma, IDS)).toBe(uma);
     }
   });
 });
