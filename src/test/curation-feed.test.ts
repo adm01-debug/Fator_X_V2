@@ -9,7 +9,11 @@
  *  5. Linhas sem data utilizável nunca entram no feed.
  */
 import { describe, expect, it } from 'vitest';
-import { buildCurationFeed, type RecentCurationRow } from '@/services/templateSkillLinkService';
+import {
+  buildCurationFeed,
+  filterCurationFeed,
+  type RecentCurationRow,
+} from '@/services/templateSkillLinkService';
 import { AGENT_TEMPLATES } from '@/data/agentTemplates';
 
 const NOW = new Date('2026-07-27T15:00:00-03:00');
@@ -307,6 +311,57 @@ describe('buildCurationFeed — remoções reversíveis', () => {
       const entradas = dias.flatMap((d) => d.entries);
       expect(entradas).toHaveLength(1);
       expect(entradas[0].kind).toBe(removidoDepois ? 'unlinked' : 'linked');
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Filtro do feed (Tudo / Vínculos / Remoções) — 600 cenários
+// ---------------------------------------------------------------------------
+describe('filterCurationFeed', () => {
+  const now = new Date('2026-07-27T15:00:00-03:00');
+
+  function feedAleatorio(seed: number) {
+    const linhas: RecentCurationRow[] = [];
+    for (let i = 0; i < 8; i += 1) {
+      const removido = (seed + i) % 3 === 0;
+      const t = new Date(now.getTime() - (i + 1) * 3_600_000).toISOString();
+      linhas.push({
+        template_id: `t-${i}`,
+        skill_id: `s-${i}`,
+        reason: 'Curadoria manual',
+        created_at: t,
+        updated_at: t,
+        created_by: 'u-1',
+        updated_by: 'u-1',
+        deleted_at: removido ? t : null,
+        deleted_by: removido ? 'u-2' : null,
+        skill: { name: `Skill ${i}` },
+      });
+    }
+    return buildCurationFeed(linhas, 'u-1', now);
+  }
+
+  it('"all" é identidade e os subconjuntos particionam o feed (600 cenários)', () => {
+    for (let seed = 0; seed < 600; seed += 1) {
+      const feed = feedAleatorio(seed);
+      const total = feed.flatMap((d) => d.entries).length;
+
+      expect(filterCurationFeed(feed, 'all')).toEqual(feed);
+
+      const vinculos = filterCurationFeed(feed, 'linked').flatMap((d) => d.entries);
+      const remocoes = filterCurationFeed(feed, 'unlinked').flatMap((d) => d.entries);
+
+      expect(vinculos.every((e) => e.kind === 'linked')).toBe(true);
+      expect(remocoes.every((e) => e.kind === 'unlinked')).toBe(true);
+      expect(vinculos.length + remocoes.length).toBe(total);
+    }
+  });
+
+  it('nunca devolve um dia sem entradas', () => {
+    const feed = feedAleatorio(1);
+    for (const filtro of ['all', 'linked', 'unlinked'] as const) {
+      expect(filterCurationFeed(feed, filtro).every((d) => d.entries.length > 0)).toBe(true);
     }
   });
 });
