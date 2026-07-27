@@ -211,6 +211,8 @@ export default function SkillHarvestPage() {
           <TabsTrigger value="harvest">Executar varredura</TabsTrigger>
           <TabsTrigger value="coverage">Cobertura</TabsTrigger>
           <TabsTrigger value="runs">Histórico</TabsTrigger>
+          <TabsTrigger value="curation">Curadoria recente</TabsTrigger>
+
         </TabsList>
 
         {/* ─── Fila */}
