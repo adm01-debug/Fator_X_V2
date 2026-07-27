@@ -11,6 +11,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildCurationFeed,
+  buildActorOrExpression,
   filterCurationFeed,
   type RecentCurationRow,
 } from '@/services/templateSkillLinkService';
@@ -362,6 +363,56 @@ describe('filterCurationFeed', () => {
     const feed = feedAleatorio(1);
     for (const filtro of ['all', 'linked', 'unlinked'] as const) {
       expect(filterCurationFeed(feed, filtro).every((d) => d.entries.length > 0)).toBe(true);
+    }
+  });
+});
+
+describe('buildActorOrExpression — validação de UUID antes da interpolação', () => {
+  const VALIDO = '3f2b7c1e-9a4d-4c6f-8b2a-1d5e7f9a0c3b';
+
+  it('monta a expressão cobrindo os três autores possíveis', () => {
+    expect(buildActorOrExpression(VALIDO)).toBe(
+      `updated_by.eq.${VALIDO},deleted_by.eq.${VALIDO},created_by.eq.${VALIDO}`,
+    );
+  });
+
+  it('aceita espaços em volta e normaliza', () => {
+    expect(buildActorOrExpression(`  ${VALIDO}  `)).toContain(`updated_by.eq.${VALIDO}`);
+  });
+
+  it.each([
+    undefined,
+    null,
+    '',
+    '   ',
+    'not-a-uuid',
+    `${VALIDO},deleted_by.is.null`,
+    `${VALIDO}) or (origin.eq.auto`,
+    `${VALIDO}.`,
+    '00000000-0000-0000-0000-000000000000',
+    `${VALIDO}${VALIDO}`,
+  ])('rejeita entrada inválida %p', (entrada) => {
+    expect(buildActorOrExpression(entrada as string | null | undefined)).toBeNull();
+  });
+
+  it('nunca produz sintaxe injetável em 500 entradas aleatórias', () => {
+    const sujeira = [',', '.', '(', ')', ' ', 'or', 'is', 'null', '*', ';', '"', "'"];
+    for (let i = 0; i < 500; i += 1) {
+      const injetar = Math.random() < 0.7;
+      const bruto = injetar
+        ? `${VALIDO}${sujeira[Math.floor(Math.random() * sujeira.length)]}${Math.random().toString(36).slice(2, 6)}`
+        : VALIDO;
+      const expr = buildActorOrExpression(bruto);
+      if (expr === null) continue;
+      // Invariante: se aceitou, a expressão tem exatamente 3 cláusulas e
+      // nenhum token além de <coluna>.eq.<uuid>.
+      const clausulas = expr.split(',');
+      expect(clausulas).toHaveLength(3);
+      for (const clausula of clausulas) {
+        expect(clausula).toMatch(
+          /^(updated_by|deleted_by|created_by)\.eq\.[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+        );
+      }
     }
   });
 });
