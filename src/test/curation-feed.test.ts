@@ -65,15 +65,16 @@ describe('buildCurationFeed — cenários determinísticos', () => {
     expect(feed[0].dayLabel).toMatch(/^\d{2}\/\d{2}\/\d{4}$/);
   });
 
-  it('não joga curadoria noturna local para o dia seguinte', () => {
-    // 21h em GMT-3 é 00h UTC do dia seguinte — agrupar por UTC quebraria isto.
-    const feed = buildCurationFeed(
-      [row({ updated_at: '2026-07-27T21:30:00-03:00' })],
-      UID,
-      NOW,
-    );
+  it('mantém curadoria noturna no mesmo dia local (independente de fuso)', () => {
+    // Agrupar por UTC quebraria isto em fusos negativos: 23h local pode ser
+    // o dia seguinte em UTC. Construímos a data no fuso DO RUNNER para que o
+    // teste valide a lógica, não o TZ da máquina de CI.
+    const noite = new Date(NOW.getTime());
+    noite.setHours(23, 45, 0, 0);
+    const feed = buildCurationFeed([row({ updated_at: noite.toISOString() })], UID, NOW);
     expect(feed[0].dayLabel).toBe('Hoje');
   });
+
 
   it('deduplica template+skill mantendo o registro mais recente', () => {
     const feed = buildCurationFeed(
