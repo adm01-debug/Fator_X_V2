@@ -130,6 +130,46 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
     [data],
   );
 
+  const totalEntradas = useMemo(
+    () => feed.reduce((acc, dia) => acc + dia.entries.length, 0),
+    [feed],
+  );
+
+  // Exporta exatamente o que está na tela (páginas já carregadas + filtros
+  // ativos). Reconsultar o banco aqui devolveria linhas que o curador não
+  // estava vendo — o arquivo deixaria de ser auditável contra a UI.
+  const exportarCsv = () => {
+    try {
+      const csv = buildCurationCsv(feed);
+      // BOM: sem ele o Excel em pt-BR lê UTF-8 como Latin-1 e quebra acentos.
+      const blob = new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = buildCurationCsvFilename();
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      // Revogar libera o blob; sem isso a aba retém o arquivo em memória.
+      URL.revokeObjectURL(url);
+      toast({
+        title: 'CSV exportado',
+        description: `${totalEntradas} evento(s) de curadoria no arquivo.`,
+      });
+    } catch (erro) {
+      logger.error('exportarCsv failed', {
+        error: erro instanceof Error ? erro.message : String(erro),
+      });
+      toast({
+        title: 'Falha ao exportar',
+        description: 'Não foi possível gerar o arquivo CSV.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+
+
 
   return (
     <Card className={className}>
