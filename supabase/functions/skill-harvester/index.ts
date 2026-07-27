@@ -32,6 +32,8 @@ import {
   computeQualityScore,
   inferCategory,
   isMcpUrlAllowed,
+  isMetaRepository,
+
   LOW_CONFIDENCE_THRESHOLD,
   MIN_QUALITY_SCORE,
   normalizeForHash,
