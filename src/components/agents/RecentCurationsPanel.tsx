@@ -37,6 +37,16 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { buildCurationCsv, buildCurationCsvFilename } from '@/services/templateSkillLinkService';
+import {
+  beginHighlight,
+  highlightKey,
+  isHighlighted,
+  pruneHighlights,
+  CURATION_HIGHLIGHT_TTL_MS,
+  EMPTY_HIGHLIGHTS,
+  type CurationHighlightMap,
+} from '@/lib/curationHighlight';
+import { cn } from '@/lib/utils';
 import { logger } from '@/lib/logger';
 
 
@@ -106,11 +116,37 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
 
   const rotuloPendentes = formatPendingLabel(pendentes.size);
 
+  // Destaque das linhas que acabaram de entrar. Sinal de transição, não estado:
+  // expira sozinho para não passar a mentir sobre o que ainda é "novo".
+  const [destaques, setDestaques] = useState<CurationHighlightMap>(EMPTY_HIGHLIGHTS);
+  const [agora, setAgora] = useState(() => Date.now());
+
+  useEffect(() => {
+    if (destaques.size === 0) return;
+    // Tick curto o suficiente para o apagamento parecer imediato, e barato
+    // porque `pruneHighlights` preserva identidade enquanto nada expira.
+    const timer = window.setInterval(() => {
+      const t = Date.now();
+      setAgora(t);
+      setDestaques((atual) => pruneHighlights(atual, t));
+    }, 500);
+    return () => window.clearInterval(timer);
+  }, [destaques.size]);
+
+  // Trocar de recorte descarta o destaque: ele descrevia a tela anterior.
+  useEffect(() => {
+    setDestaques(EMPTY_HIGHLIGHTS);
+  }, [filtro, escopo, templateId]);
+
   const aplicarNovidades = () => {
+    const t = Date.now();
+    setDestaques(beginHighlight(pendentes, t));
+    setAgora(t);
     setPendentes(new Set());
     queryClient.invalidateQueries({ queryKey: ['recent_curations'] });
     queryClient.invalidateQueries({ queryKey: ['template_skill_links'] });
   };
+
 
 
 
@@ -328,11 +364,32 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
               </h3>
 
               <ul className="space-y-2">
-                {dia.entries.map((entrada) => (
+                {dia.entries.map((entrada) => {
+                  const novo = isHighlighted(
+                    destaques,
+                    highlightKey(entrada.templateId, entrada.skillId),
+                    agora,
+                  );
+                  return (
                   <li
                     key={`${entrada.templateId}-${entrada.skillId}`}
-                    className="rounded-md border border-border/60 bg-card/40 p-3 transition-colors hover:border-primary/40"
+                    className={cn(
+                      'rounded-md border p-3 transition-colors hover:border-primary/40',
+                      novo
+                        ? 'border-primary/60 bg-primary/5 ring-1 ring-primary/30'
+                        : 'border-border/60 bg-card/40',
+                    )}
+                    // Anunciado ao leitor de tela: o realce é a única pista de
+                    // que a linha acabou de chegar, e cor sozinha não acessível.
+                    aria-label={novo ? 'Novidade recém-chegada' : undefined}
                   >
+                    {novo && (
+                      <span className="sr-only">
+                        Atualizado nos últimos {Math.round(CURATION_HIGHLIGHT_TTL_MS / 1000)}{' '}
+                        segundos.
+                      </span>
+                    )}
+
                     <div className="flex flex-wrap items-center gap-2">
                       <Badge
                         variant={entrada.kind === 'unlinked' ? 'outline' : 'secondary'}
@@ -388,7 +445,8 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
                       <span className="truncate">{entrada.reason}</span>
                     </div>
                   </li>
-                ))}
+                  );
+                })}
               </ul>
             </section>
           ))
