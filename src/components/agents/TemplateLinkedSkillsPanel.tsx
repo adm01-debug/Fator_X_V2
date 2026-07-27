@@ -108,7 +108,7 @@ export function TemplateLinkedSkillsPanel({
   const invalidate = () =>
     Promise.all([
       queryClient.invalidateQueries({ queryKey: ['template_skill_links', template.id] }),
-      queryClient.invalidateQueries({ queryKey: ['template_link_counts'] }),
+      queryClient.invalidateQueries({ queryKey: ['template_skill_link_counts'] }),
     ]);
 
   const addLink = useMutation({
