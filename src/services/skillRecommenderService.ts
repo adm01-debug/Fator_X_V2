@@ -49,6 +49,57 @@ export function tokenize(text: string): Set<string> {
   return new Set(tokens);
 }
 
+/**
+ * Sinônimos PT-BR ↔ EN e variações morfológicas.
+ * Sem expansão, uma missão em português nunca casa com skills nomeadas em inglês
+ * (e vice-versa), derrubando o recall do recomendador.
+ */
+const SYNONYMS: Record<string, string[]> = {
+  vendas: ['sales', 'comercial', 'pipeline', 'deal'],
+  sales: ['vendas', 'comercial'],
+  cliente: ['clientes', 'customer', 'lead', 'contato'],
+  clientes: ['cliente', 'customer', 'lead'],
+  lead: ['leads', 'prospect', 'cliente'],
+  suporte: ['support', 'atendimento', 'helpdesk', 'ticket'],
+  atendimento: ['suporte', 'support', 'helpdesk'],
+  documento: ['documentos', 'document', 'arquivo', 'pdf', 'rag'],
+  documentos: ['documento', 'document', 'arquivo', 'rag'],
+  pesquisa: ['research', 'busca', 'search', 'investigacao'],
+  busca: ['search', 'pesquisa', 'consulta'],
+  search: ['busca', 'pesquisa'],
+  codigo: ['code', 'programacao', 'engenharia', 'software'],
+  code: ['codigo', 'programacao', 'software'],
+  teste: ['testes', 'test', 'tdd', 'qa', 'qualidade'],
+  testes: ['teste', 'test', 'tdd', 'qa'],
+  depurar: ['debug', 'depuracao', 'bug', 'erro'],
+  bug: ['erro', 'debug', 'defeito'],
+  planejamento: ['plano', 'plan', 'planning', 'roadmap'],
+  plano: ['planejamento', 'plan', 'roadmap'],
+  revisao: ['review', 'code review', 'auditoria'],
+  review: ['revisao', 'auditoria'],
+  automacao: ['automation', 'workflow', 'fluxo', 'processo'],
+  workflow: ['automacao', 'fluxo', 'processo', 'pipeline'],
+  relatorio: ['relatorios', 'report', 'analytics', 'dashboard'],
+  dados: ['data', 'analytics', 'banco', 'database', 'sql'],
+  marketing: ['campanha', 'conteudo', 'seo', 'social'],
+  financeiro: ['finance', 'faturamento', 'billing', 'custos'],
+  email: ['emails', 'mail', 'mensagem', 'smtp'],
+  whatsapp: ['zap', 'mensagem', 'chat'],
+};
+
+/** Expande o conjunto de tokens com sinônimos conhecidos (1 nível, sem recursão). */
+export function expandTokens(tokens: Set<string>): Set<string> {
+  const expanded = new Set(tokens);
+  for (const token of tokens) {
+    for (const syn of SYNONYMS[token] ?? []) {
+      for (const part of syn.split(/\s+/)) {
+        if (part.length >= 3) expanded.add(part);
+      }
+    }
+  }
+  return expanded;
+}
+
 function jaccard(a: Set<string>, b: Set<string>): number {
   if (a.size === 0 || b.size === 0) return 0;
   let intersection = 0;
@@ -56,6 +107,7 @@ function jaccard(a: Set<string>, b: Set<string>): number {
   const union = a.size + b.size - intersection;
   return union > 0 ? intersection / union : 0;
 }
+
 
 const CATEGORY_HINTS: Record<string, string[]> = {
   tools: ['api', 'ferramenta', 'integracao', 'webhook', 'chamada', 'call'],
