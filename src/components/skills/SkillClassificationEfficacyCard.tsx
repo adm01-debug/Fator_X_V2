@@ -54,6 +54,7 @@ export function SkillClassificationEfficacyCard({
   onApplyThreshold,
 }: SkillClassificationEfficacyCardProps = {}) {
   const [decisoes, setDecisoes] = useState<ClassificationDecision[]>([]);
+  const [calibracoes, setCalibracoes] = useState<ThresholdCalibration[]>([]);
   const [loading, setLoading] = useState(true);
   const [filtro, setFiltro] = useState<EfficacyFilter>('all');
 
@@ -61,10 +62,29 @@ export function SkillClassificationEfficacyCard({
   const carregar = useCallback(async () => {
     setLoading(true);
     try {
-      setDecisoes(await fetchClassificationTimeline());
-    } catch (error) {
-      logger.error('fetchClassificationTimeline failed', { error: (error as Error).message });
-      toast.error('Não foi possível carregar o histórico de classificação.');
+      // As duas leituras são independentes: uma falhar não pode zerar a outra.
+      const [timeline, calibs] = await Promise.allSettled([
+        fetchClassificationTimeline(),
+        fetchThresholdCalibrations(),
+      ]);
+
+      if (timeline.status === 'fulfilled') {
+        setDecisoes(timeline.value);
+      } else {
+        logger.error('fetchClassificationTimeline failed', {
+          error: (timeline.reason as Error)?.message,
+        });
+        toast.error('Não foi possível carregar o histórico de classificação.');
+      }
+
+      if (calibs.status === 'fulfilled') {
+        setCalibracoes(calibs.value);
+      } else {
+        // Falha aqui é diagnóstica, não impede o uso do card.
+        logger.warn('fetchThresholdCalibrations failed', {
+          error: (calibs.reason as Error)?.message,
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -73,6 +93,7 @@ export function SkillClassificationEfficacyCard({
   useEffect(() => {
     void carregar();
   }, [carregar]);
+
 
   const resumo = useMemo(() => summarizeEfficacy(decisoes), [decisoes]);
   const visiveis = useMemo(() => filterByVerdict(decisoes, filtro), [decisoes, filtro]);
