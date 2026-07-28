@@ -18,9 +18,23 @@ export const SKILL_DEPARTMENTS = [
   'pos_venda',
   'dados',
   'executivo',
+  'transversal',
 ] as const;
 
 export type SkillDepartment = (typeof SKILL_DEPARTMENTS)[number];
+
+/**
+ * `transversal` NÃO é um domínio de negócio: é o balde de fallback para
+ * repositórios agregadores ("awesome-lists", catálogos, boilerplates) que não
+ * possuem vocabulário de domínio. O classificador só o atribui quando nenhum
+ * departamento real apresenta sinal — nunca compete com eles.
+ */
+export const FALLBACK_DEPARTMENT = 'transversal' satisfies SkillDepartment;
+
+/** Departamentos de negócio reais (exclui o balde de fallback). */
+export const DOMAIN_DEPARTMENTS = SKILL_DEPARTMENTS.filter(
+  (d) => d !== FALLBACK_DEPARTMENT,
+) as ReadonlyArray<Exclude<SkillDepartment, typeof FALLBACK_DEPARTMENT>>;
 
 export interface DepartmentMeta {
   id: SkillDepartment;
@@ -169,6 +183,19 @@ export const DEPARTMENT_META: Record<SkillDepartment, DepartmentMeta> = {
       'roadmap', 'meta', 'goal', 'governanca', 'governance', 'briefing', 'resumo',
       'summary', 'decisao', 'decision', 'competitivo', 'competitive', 'benchmark',
       'mercado', 'market', 'swot', 'investidor', 'investor', 'pitch',
+    ],
+  },
+  transversal: {
+    id: 'transversal',
+    label: 'Transversal / Agregadores',
+    icon: '🧩',
+    coverageTarget: 8,
+    lexicon: [
+      'awesome', 'list', 'lists', 'curated', 'collection', 'collections',
+      'cheatsheet', 'handbook', 'catalog', 'catalogo', 'directory', 'index',
+      'compendium', 'bookmarks', 'links', 'showcase', 'hacktoberfest',
+      'starter', 'boilerplate', 'repositorio', 'repository', 'agregador',
+      'meta', 'generico', 'generic', 'misc', 'geral',
     ],
   },
 };

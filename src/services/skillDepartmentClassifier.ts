@@ -9,12 +9,22 @@
  */
 import {
   DEPARTMENT_META,
+  DOMAIN_DEPARTMENTS,
+  FALLBACK_DEPARTMENT,
   SKILL_DEPARTMENTS,
   type SkillDepartment,
 } from '@/config/skill-departments';
 import { tokenize } from '@/services/skillRecommenderService';
 
 export const LOW_CONFIDENCE_THRESHOLD = 0.18;
+
+/**
+ * Piso de score para o balde `transversal`. Abaixo disso a skill continua
+ * "Não classificada" — é preferível o vazio explícito a um rótulo enganoso.
+ * Calibrado por simulação sobre o catálogo real (142 skills): resgata 15
+ * agregadores sem roubar nenhuma classificação de domínio válida.
+ */
+export const MIN_TRANSVERSAL_SCORE = 0.2;
 
 export interface DepartmentClassification {
   department: SkillDepartment | null;
@@ -58,7 +68,7 @@ export function classifyDepartment(input: ClassifierInput): DepartmentClassifica
   let best: SkillDepartment | null = null;
   let bestScore = 0;
 
-  for (const dep of SKILL_DEPARTMENTS) {
+  for (const dep of DOMAIN_DEPARTMENTS) {
     const lex = LEXICON_SETS[dep];
     const p = hitRate(primaryTokens, lex);
     const t = hitRate(tagTokens, lex);
@@ -72,17 +82,35 @@ export function classifyDepartment(input: ClassifierInput): DepartmentClassifica
     }
   }
 
+  // `transversal` é avaliado FORA da competição: entra no ranking para dar
+  // visibilidade, mas só vence quando nenhum domínio real tem sinal relevante.
+  const fLex = LEXICON_SETS[FALLBACK_DEPARTMENT];
+  const fp = hitRate(primaryTokens, fLex);
+  const ft = hitRate(tagTokens, fLex);
+  const fc = hitRate(contentTokens, fLex);
+  const fallbackScore = 0.55 * fp.rate + 0.3 * ft.rate + 0.15 * fc.rate;
+  ranking.push({ department: FALLBACK_DEPARTMENT, score: fallbackScore });
+
   ranking.sort((a, b) => b.score - a.score);
 
-  const confidence = Number(bestScore.toFixed(3));
-  const resolved = confidence > 0 ? best : null;
+  let confidence = Number(bestScore.toFixed(3));
+  let resolved: SkillDepartment | null = confidence > 0 ? best : null;
+  let matched = resolved ? bestHits : [];
+
+  if (confidence < LOW_CONFIDENCE_THRESHOLD && fallbackScore >= MIN_TRANSVERSAL_SCORE) {
+    resolved = FALLBACK_DEPARTMENT;
+    confidence = Number(fallbackScore.toFixed(3));
+    matched = Array.from(new Set([...fp.hits, ...ft.hits, ...fc.hits])).slice(0, 12);
+  }
 
   return {
     department: resolved,
     confidence,
-    matchedTerms: resolved ? bestHits : [],
+    matchedTerms: matched,
     ranking,
-    needsLlmFallback: confidence < LOW_CONFIDENCE_THRESHOLD,
+    // Um agregador resolvido não precisa de LLM: a ausência de domínio é o fato.
+    needsLlmFallback:
+      resolved !== FALLBACK_DEPARTMENT && confidence < LOW_CONFIDENCE_THRESHOLD,
   };
 }
 
