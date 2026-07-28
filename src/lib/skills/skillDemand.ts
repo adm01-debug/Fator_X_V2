@@ -48,6 +48,8 @@ export interface DemandSkillInput {
   department?: string | null;
   quality_score?: number | null;
   source_repo?: string | null;
+  description?: string | null;
+  tags?: readonly string[] | null;
 }
 
 /** Vínculo ativo template ↔ skill. */
@@ -66,6 +68,9 @@ export interface SkillDemandRow {
   sourceRepo: string | null;
   templateCount: number;
   tier: DemandTier;
+  /** Texto e tags usados pelo classificador de departamento na reclassificação. */
+  description: string;
+  tags: string[];
 }
 
 /** Resumo agregado exibido no cabeçalho do painel. */
@@ -120,6 +125,10 @@ export function buildSkillDemandRows(
       sourceRepo: typeof skill.source_repo === 'string' && skill.source_repo ? skill.source_repo : null,
       templateCount,
       tier: classifyDemand(templateCount),
+      description: typeof skill.description === 'string' ? skill.description : '',
+      tags: Array.isArray(skill.tags)
+        ? skill.tags.filter((t): t is string => typeof t === 'string' && t.trim().length > 0)
+        : [],
     });
   }
 

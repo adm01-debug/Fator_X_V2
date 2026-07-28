@@ -1,0 +1,224 @@
+/**
+ * SkillReclassifyDialog — revisão humana obrigatória antes de qualquer escrita.
+ *
+ * O plano é calculado localmente pelo classificador determinístico; este
+ * diálogo só existe para que um curador confirme item a item. Nada é aplicado
+ * sem seleção explícita, e o resultado (inclusive falhas parciais) fica
+ * visível em vez de virar um toast genérico.
+ */
+import { useCallback, useMemo, useState } from 'react';
+import { toast } from 'sonner';
+import { AlertTriangle, ArrowRight, Download, Loader2, Wand2 } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { departmentLabel } from '@/config/skill-departments';
+import {
+  MAX_RECLASSIFY_BATCH,
+  buildReclassificationPlan,
+  reclassificationToCsv,
+  selectProposals,
+  type ReclassifyCandidate,
+} from '@/lib/skills/departmentReclassification';
+import {
+  applyReclassification,
+  type ReclassifyFailure,
+} from '@/services/skillReclassificationService';
+import { logger } from '@/lib/logger';
+
+const FAILURE_LABEL: Record<ReclassifyFailure['kind'], string> = {
+  permission: 'Sem permissão',
+  conflict: 'Conflito de estado',
+  network: 'Falha de rede',
+  unknown: 'Erro',
+};
+
+export interface SkillReclassifyDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  candidates: readonly ReclassifyCandidate[];
+  /** Chamado após aplicar com sucesso ao menos uma troca. */
+  onApplied: () => void;
+}
+
+export function SkillReclassifyDialog({
+  open,
+  onOpenChange,
+  candidates,
+  onApplied,
+}: SkillReclassifyDialogProps) {
+  const plano = useMemo(() => buildReclassificationPlan(candidates), [candidates]);
+  const [desmarcados, setDesmarcados] = useState<Set<string>>(new Set());
+  const [aplicando, setAplicando] = useState(false);
+  const [falhas, setFalhas] = useState<ReclassifyFailure[]>([]);
+
+  // Seleção por exclusão: o padrão é aplicar tudo que o plano propôs, já que
+  // cada proposta passou pela barra de confiança E de margem.
+  const selecionados = useMemo(
+    () => plano.proposals.filter((p) => !desmarcados.has(p.skillId)).map((p) => p.skillId),
+    [plano.proposals, desmarcados],
+  );
+
+  const alternar = useCallback((skillId: string) => {
+    setDesmarcados((atual) => {
+      const proximo = new Set(atual);
+      if (proximo.has(skillId)) proximo.delete(skillId);
+      else proximo.add(skillId);
+      return proximo;
+    });
+  }, []);
+
+  const exportar = useCallback(() => {
+    const blob = new Blob([reclassificationToCsv(plano.proposals)], {
+      type: 'text/csv;charset=utf-8;',
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `plano-reclassificacao-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }, [plano.proposals]);
+
+  const aplicar = useCallback(async () => {
+    const lote = selectProposals(plano, selecionados);
+    if (lote.length === 0) return;
+    setAplicando(true);
+    setFalhas([]);
+    try {
+      const resultado = await applyReclassification(lote);
+      setFalhas(resultado.failures);
+      if (resultado.applied.length > 0) {
+        toast.success(
+          `${resultado.applied.length} skill${resultado.applied.length === 1 ? '' : 's'} reclassificada${resultado.applied.length === 1 ? '' : 's'}.`,
+        );
+        onApplied();
+      }
+      if (resultado.failures.length > 0) {
+        toast.error(`${resultado.failures.length} não puderam ser aplicadas — veja o detalhe.`);
+      } else {
+        onOpenChange(false);
+      }
+    } catch (error) {
+      logger.error('applyReclassification failed', { error: (error as Error).message });
+      toast.error('Não foi possível aplicar a reclassificação.');
+    } finally {
+      setAplicando(false);
+    }
+  }, [plano, selecionados, onApplied, onOpenChange]);
+
+  const excedeLote = selecionados.length > MAX_RECLASSIFY_BATCH;
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Wand2 className="h-4 w-4" aria-hidden />
+            Reclassificar departamento
+          </DialogTitle>
+          <DialogDescription>
+            Propostas geradas pelo classificador determinístico. Só entram trocas com evidência
+            léxica forte e vantagem clara sobre o segundo departamento mais provável.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge variant="outline">{plano.summary.evaluated} avaliadas</Badge>
+          <Badge variant="outline" className="border-primary/40 text-primary">
+            {plano.summary.proposed} propostas
+          </Badge>
+          <Badge variant="outline">{plano.summary.unchanged} já corretas</Badge>
+          <Badge variant="outline">{plano.summary.ambiguous} ambíguas</Badge>
+          <Badge variant="outline">{plano.summary.lowConfidence} sem evidência</Badge>
+        </div>
+
+        {plano.proposals.length === 0 ? (
+          <p className="text-body-sm text-muted-foreground py-8 text-center">
+            Nenhuma troca segura a propor neste recorte. Enriqueça as tags e a descrição das skills
+            para dar mais sinal ao classificador.
+          </p>
+        ) : (
+          <ScrollArea className="max-h-[320px] pr-3">
+            <ul className="space-y-2">
+              {plano.proposals.map((p) => (
+                <li
+                  key={p.skillId}
+                  className="flex items-start gap-3 rounded-lg border border-border bg-card/50 px-3 py-2"
+                >
+                  <Checkbox
+                    checked={!desmarcados.has(p.skillId)}
+                    onCheckedChange={() => alternar(p.skillId)}
+                    aria-label={`Aplicar reclassificação de ${p.name}`}
+                    className="mt-1"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-body-sm font-medium truncate">{p.name}</p>
+                    <p className="text-meta text-muted-foreground flex items-center gap-1 flex-wrap">
+                      <span>{departmentLabel(p.from)}</span>
+                      <ArrowRight className="h-3 w-3" aria-hidden />
+                      <span className="text-primary">{departmentLabel(p.to)}</span>
+                      <span>
+                        · confiança {p.confidence} · margem {p.margin}
+                      </span>
+                    </p>
+                    {p.matchedTerms.length > 0 && (
+                      <p className="text-meta text-muted-foreground truncate">
+                        termos: {p.matchedTerms.join(', ')}
+                      </p>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </ScrollArea>
+        )}
+
+        {falhas.length > 0 && (
+          <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 space-y-1">
+            <p className="text-body-sm font-medium flex items-center gap-2 text-destructive">
+              <AlertTriangle className="h-4 w-4" aria-hidden />
+              {falhas.length} falha{falhas.length === 1 ? '' : 's'}
+            </p>
+            {falhas.slice(0, 6).map((f) => (
+              <p key={f.skillId} className="text-meta text-muted-foreground truncate">
+                {f.slug} — {FAILURE_LABEL[f.kind]}: {f.message}
+              </p>
+            ))}
+          </div>
+        )}
+
+        <DialogFooter className="gap-2 sm:justify-between">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={exportar}
+            disabled={plano.proposals.length === 0}
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Exportar plano
+          </Button>
+          <div className="flex gap-2">
+            <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={aplicando}>
+              Cancelar
+            </Button>
+            <Button onClick={() => void aplicar()} disabled={aplicando || selecionados.length === 0}>
+              {aplicando && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              Aplicar {Math.min(selecionados.length, MAX_RECLASSIFY_BATCH)}
+              {excedeLote ? ` de ${selecionados.length}` : ''}
+            </Button>
+          </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}

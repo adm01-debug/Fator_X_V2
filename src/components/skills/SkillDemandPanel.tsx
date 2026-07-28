@@ -8,7 +8,7 @@
  */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
-import { Download, Loader2, RefreshCw, TrendingDown } from 'lucide-react';
+import { Download, Loader2, RefreshCw, TrendingDown, Wand2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -29,6 +29,8 @@ import {
   type DemandTier,
   type SkillDemandRow,
 } from '@/lib/skills/skillDemand';
+import { SkillReclassifyDialog } from '@/components/skills/SkillReclassifyDialog';
+import type { ReclassifyCandidate } from '@/lib/skills/departmentReclassification';
 import { logger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
 
@@ -44,6 +46,7 @@ export function SkillDemandPanel() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<DemandFilter>('zero');
   const [search, setSearch] = useState('');
+  const [reclassificarAberto, setReclassificarAberto] = useState(false);
 
   const carregar = useCallback(async () => {
     setLoading(true);
@@ -74,6 +77,20 @@ export function SkillDemandPanel() {
         (row.sourceRepo ?? '').toLowerCase().includes(termo),
     );
   }, [rows, filter, search]);
+
+  /** O recorte visível é exatamente o universo oferecido à reclassificação. */
+  const candidatos = useMemo<ReclassifyCandidate[]>(
+    () =>
+      visiveis.map((row) => ({
+        skillId: row.skillId,
+        name: row.name,
+        slug: row.slug,
+        description: row.description,
+        tags: row.tags,
+        department: row.department,
+      })),
+    [visiveis],
+  );
 
   const exportarCsv = useCallback(() => {
     const blob = new Blob([demandRowsToCsv(visiveis)], { type: 'text/csv;charset=utf-8;' });
@@ -108,6 +125,15 @@ export function SkillDemandPanel() {
               aria-label="Recarregar demanda"
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setReclassificarAberto(true)}
+              disabled={loading || candidatos.length === 0}
+            >
+              <Wand2 className="h-4 w-4 mr-2" />
+              Reclassificar
             </Button>
             <Button
               variant="outline"
@@ -206,6 +232,13 @@ export function SkillDemandPanel() {
           </ScrollArea>
         )}
       </CardContent>
+
+      <SkillReclassifyDialog
+        open={reclassificarAberto}
+        onOpenChange={setReclassificarAberto}
+        candidates={candidatos}
+        onApplied={() => void carregar()}
+      />
     </Card>
   );
 }
