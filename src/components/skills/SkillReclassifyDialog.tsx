@@ -17,6 +17,7 @@ import { toast } from 'sonner';
 import {
   AlertTriangle,
   ArrowRight,
+  ClipboardCheck,
   Download,
   Loader2,
   Sparkles,
