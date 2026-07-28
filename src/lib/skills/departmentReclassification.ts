@@ -124,6 +124,8 @@ export interface ReclassifyPlanSummary {
 export interface ReclassifyPlan {
   proposals: ReclassifyProposal[];
   summary: ReclassifyPlanSummary;
+  /** Recorte elegível ao fallback LLM (o balde `lowConfidence`, materializado). */
+  llmCandidates: LlmFallbackCandidate[];
 }
 
 function text(value: unknown): string {
