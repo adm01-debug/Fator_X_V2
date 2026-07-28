@@ -9274,6 +9274,45 @@ export type Database = {
           },
         ]
       }
+      skill_harvest_checkpoints: {
+        Row: {
+          created_at: string
+          file_offset: number
+          id: string
+          inserted_total: number
+          last_run_id: string | null
+          repo_key: string
+          repos: string[]
+          total_files: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          file_offset?: number
+          id?: string
+          inserted_total?: number
+          last_run_id?: string | null
+          repo_key: string
+          repos?: string[]
+          total_files?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          file_offset?: number
+          id?: string
+          inserted_total?: number
+          last_run_id?: string | null
+          repo_key?: string
+          repos?: string[]
+          total_files?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       skill_harvest_runs: {
         Row: {
           candidates_accepted: number
