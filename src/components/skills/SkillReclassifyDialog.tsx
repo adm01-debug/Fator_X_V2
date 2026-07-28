@@ -95,11 +95,43 @@ export function SkillReclassifyDialog({
   const [aplicando, setAplicando] = useState(false);
   const [falhas, setFalhas] = useState<ReclassifyFailure[]>([]);
 
+  const [propostasIa, setPropostasIa] = useState<ReclassifyProposal[]>([]);
+  const [fila, setFila] = useState<QueueSnapshot<LlmClassificationVerdict> | null>(null);
+  const [classificando, setClassificando] = useState(false);
+  const abortRef = useRef<AbortController | null>(null);
+
+  // Fechar o diálogo (ou trocar o recorte) tem que MATAR a fila. Sem isso, um
+  // lote continua consumindo créditos em background para escrever num
+  // componente que ninguém mais está olhando.
+  useEffect(() => {
+    if (!open) {
+      abortRef.current?.abort();
+      abortRef.current = null;
+    }
+  }, [open]);
+
+  useEffect(() => () => abortRef.current?.abort(), []);
+
+  // Um novo recorte invalida tudo que a IA produziu para o recorte anterior.
+  useEffect(() => {
+    abortRef.current?.abort();
+    setPropostasIa([]);
+    setFila(null);
+    setDesmarcados(new Set());
+    setFalhas([]);
+  }, [plano]);
+
+  const propostas = useMemo(
+    () => mergeLlmProposals(plano, propostasIa),
+    [plano, propostasIa],
+  );
+
   // Seleção por exclusão: o padrão é aplicar tudo que o plano propôs, já que
-  // cada proposta passou pela barra de confiança E de margem.
+  // cada proposta passou pela barra de confiança E de margem. Propostas de IA
+  // são a exceção — nascem desmarcadas e exigem um clique consciente.
   const selecionados = useMemo(
-    () => plano.proposals.filter((p) => !desmarcados.has(p.skillId)).map((p) => p.skillId),
-    [plano.proposals, desmarcados],
+    () => propostas.filter((p) => !desmarcados.has(p.skillId)).map((p) => p.skillId),
+    [propostas, desmarcados],
   );
 
   const alternar = useCallback((skillId: string) => {
@@ -111,8 +143,55 @@ export function SkillReclassifyDialog({
     });
   }, []);
 
+  const classificarComIa = useCallback(async () => {
+    if (plano.llmCandidates.length === 0) return;
+    const controller = new AbortController();
+    abortRef.current = controller;
+    setClassificando(true);
+    setFila(null);
+    try {
+      const { proposals, snapshot } = await runLlmFallbackQueue({
+        candidates: plano.llmCandidates,
+        signal: controller.signal,
+        onSnapshot: setFila,
+      });
+      setFila(snapshot);
+      setPropostasIa(proposals);
+      // Nascem desmarcadas: o curador opta por cada uma.
+      setDesmarcados((atual) => {
+        const proximo = new Set(atual);
+        for (const p of proposals) proximo.add(p.skillId);
+        return proximo;
+      });
+
+      const falhou = snapshot.items.filter((i) => i.status === 'falhou');
+      const semCredito = falhou.some((i) => i.errorKind === 'creditos');
+      if (semCredito) {
+        toast.error('Créditos de IA esgotados — o lote foi interrompido.');
+      } else if (proposals.length === 0) {
+        toast.info('A IA não encontrou nenhuma classificação defensável neste recorte.');
+      } else {
+        toast.success(
+          `${proposals.length} sugestão${proposals.length === 1 ? '' : 'ões'} da IA para revisar.`,
+        );
+      }
+    } catch (error) {
+      if (controller.signal.aborted) return;
+      logger.error('runLlmFallbackQueue failed', { error: (error as Error).message });
+      toast.error('Não foi possível concluir a classificação por IA.');
+    } finally {
+      if (abortRef.current === controller) abortRef.current = null;
+      setClassificando(false);
+    }
+  }, [plano]);
+
+  const cancelarIa = useCallback(() => {
+    abortRef.current?.abort();
+    setClassificando(false);
+  }, []);
+
   const exportar = useCallback(() => {
-    const blob = new Blob([reclassificationToCsv(plano.proposals)], {
+    const blob = new Blob([reclassificationToCsv(propostas)], {
       type: 'text/csv;charset=utf-8;',
     });
     const url = URL.createObjectURL(blob);
@@ -121,10 +200,10 @@ export function SkillReclassifyDialog({
     link.download = `plano-reclassificacao-${new Date().toISOString().slice(0, 10)}.csv`;
     link.click();
     URL.revokeObjectURL(url);
-  }, [plano.proposals]);
+  }, [propostas]);
 
   const aplicar = useCallback(async () => {
-    const lote = selectProposals(plano, selecionados);
+    const lote = selectProposals(propostas, selecionados);
     if (lote.length === 0) return;
     setAplicando(true);
     setFalhas([]);
