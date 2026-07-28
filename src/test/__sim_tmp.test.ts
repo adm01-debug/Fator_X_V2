@@ -2,7 +2,7 @@ import { describe, it } from 'vitest';
 import { runSkillsSimulation } from '@/services/skillsSimulationService';
 describe('sim', () => { it('roda', () => {
   const r = runSkillsSimulation();
-  console.log(JSON.stringify({ total: r.total ?? (r as any).cases?.length, passed: (r as any).passed, failed: (r as any).failed }));
-  const cases = (r as any).cases ?? [];
-  for (const c of cases) if (!c.passed) console.log('FAIL', c.id, c.suite, c.title, c.expectation);
+  console.log('TOTAL', r.total, 'PASS', r.passed, 'GAPS', r.failed);
+  console.log('SUITES', JSON.stringify(r.suites));
+  for (const g of r.gaps) console.log('GAP', g.gapKey, g.suite, 'x' + g.occurrences, '|', g.sample.name, '| esperado:', g.sample.expected, '| obtido:', g.sample.actual);
 }); });
