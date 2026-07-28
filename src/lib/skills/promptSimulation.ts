@@ -19,7 +19,7 @@ import {
   MAX_PROMPT_SKILLS,
   type CompiledPrompt,
   type CompilePromptInput,
-  type PromptSkill,
+
 } from '@/lib/promptCompiler';
 
 export { MAX_PROMPT_SKILLS };
