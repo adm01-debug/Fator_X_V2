@@ -556,6 +556,18 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
                 <span className="text-muted-foreground">
                   {f.skillCount} vínculo(s) pendente(s) — {f.message}
                 </span>
+                {f.failedAt && (
+                  <time
+                    dateTime={f.failedAt}
+                    className="text-muted-foreground/70"
+                    title={new Date(f.failedAt).toLocaleString('pt-BR')}
+                  >
+                    ({new Date(f.failedAt).toLocaleTimeString('pt-BR', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })})
+                  </time>
+                )}
               </li>
             ))}
           </ul>

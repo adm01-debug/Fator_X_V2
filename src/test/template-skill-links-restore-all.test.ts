@@ -18,6 +18,7 @@ import {
   buildRestoreFailuresCsv,
   buildRestoreFailuresFilename,
   parseStoredRestoreFailures,
+  pruneExpiredRestoreFailures,
   summarizeRestoreFailures,
   BULK_RESTORE_CONFIRM_THRESHOLD,
   type CurationFeedDay,
@@ -223,8 +224,10 @@ describe('retryFailedRestores', () => {
         skillCount: 1,
         message: 'RLS negou',
         kind: 'permission',
+        failedAt: expect.any(String),
       },
     ]);
+
   });
 });
 
@@ -272,9 +275,9 @@ describe('restoreBackoffDelay', () => {
 describe('summarizeRestoreFailures', () => {
   it('agrega vínculos pendentes por natureza', () => {
     const resumo = summarizeRestoreFailures([
-      { templateId: 't1', templateName: 't1', skillCount: 3, message: 'rls', kind: 'permission' },
-      { templateId: 't2', templateName: 't2', skillCount: 2, message: 'fetch', kind: 'network' },
-      { templateId: 't3', templateName: 't3', skillCount: 1, message: 'x', kind: 'network' },
+      { templateId: 't1', templateName: 't1', skillCount: 3, message: 'rls', kind: 'permission', failedAt: new Date().toISOString() },
+      { templateId: 't2', templateName: 't2', skillCount: 2, message: 'fetch', kind: 'network', failedAt: new Date().toISOString() },
+      { templateId: 't3', templateName: 't3', skillCount: 1, message: 'x', kind: 'network', failedAt: new Date().toISOString() },
     ]);
     expect(resumo).toEqual({ permission: 3, network: 3, unknown: 0 });
   });
@@ -292,7 +295,7 @@ describe('buildRestoreFailuresCsv', () => {
         templateName: 'Vendas, B2B',
         skillCount: 2,
         message: 'erro "grave"\nlinha 2',
-        kind: 'permission',
+        kind: 'permission', failedAt: new Date().toISOString()
       },
     ]);
     expect(csv.startsWith('\uFEFF')).toBe(true);
@@ -331,14 +334,47 @@ describe('parseStoredRestoreFailures', () => {
       JSON.stringify([{ templateId: ' t1 ', skillCount: '4', kind: 'hackeado' }]),
     );
     expect(parsed).toEqual([
-      { templateId: 't1', templateName: 't1', skillCount: 4, message: '', kind: 'unknown' },
+      { templateId: 't1', templateName: 't1', skillCount: 4, message: '', kind: 'unknown', failedAt: expect.any(String) },
     ]);
   });
 
   it('faz round-trip com falhas válidas', () => {
     const original = [
-      { templateId: 't1', templateName: 'Vendas', skillCount: 2, message: 'rls', kind: 'permission' as const },
+      {
+        templateId: 't1',
+        templateName: 'Vendas',
+        skillCount: 2,
+        message: 'rls',
+        kind: 'permission' as const,
+        failedAt: new Date('2026-07-28T10:00:00.000Z').toISOString(),
+      },
     ];
     expect(parseStoredRestoreFailures(JSON.stringify(original))).toEqual(original);
+  });
+});
+
+describe('pruneExpiredRestoreFailures', () => {
+  const base = (failedAt: string) => ({
+    templateId: 't1',
+    templateName: 'Vendas',
+    skillCount: 1,
+    message: 'fetch',
+    kind: 'network' as const,
+    failedAt,
+  });
+
+  it('mantém falhas dentro da janela de TTL', () => {
+    const agora = Date.parse('2026-07-28T12:00:00.000Z');
+    const recente = base('2026-07-28T11:00:00.000Z');
+    expect(pruneExpiredRestoreFailures([recente], agora)).toEqual([recente]);
+  });
+
+  it('descarta falhas mais antigas que o TTL', () => {
+    const agora = Date.parse('2026-07-28T12:00:00.000Z');
+    expect(pruneExpiredRestoreFailures([base('2026-07-26T12:00:00.000Z')], agora)).toEqual([]);
+  });
+
+  it('descarta registros com data inválida', () => {
+    expect(pruneExpiredRestoreFailures([base('não-é-data')], Date.now())).toEqual([]);
   });
 });
