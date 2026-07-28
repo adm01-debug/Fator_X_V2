@@ -17,6 +17,7 @@ import { toast } from 'sonner';
 import {
   AlertTriangle,
   ArrowRight,
+  ClipboardCheck,
   Download,
   Loader2,
   Sparkles,
@@ -53,6 +54,10 @@ import {
   type LlmClassificationVerdict,
   type ReclassifyFailure,
 } from '@/services/skillReclassificationService';
+import {
+  ReviewOperationError,
+  submitReclassificationReviews,
+} from '@/services/skillReclassificationReviewService';
 import { logger } from '@/lib/logger';
 
 const FAILURE_LABEL: Record<ReclassifyFailure['kind'], string> = {
@@ -93,6 +98,7 @@ export function SkillReclassifyDialog({
   const plano = useMemo(() => buildReclassificationPlan(candidates), [candidates]);
   const [desmarcados, setDesmarcados] = useState<Set<string>>(new Set());
   const [aplicando, setAplicando] = useState(false);
+  const [enviando, setEnviando] = useState(false);
   const [falhas, setFalhas] = useState<ReclassifyFailure[]>([]);
 
   const [propostasIa, setPropostasIa] = useState<ReclassifyProposal[]>([]);
@@ -201,6 +207,42 @@ export function SkillReclassifyDialog({
     link.click();
     URL.revokeObjectURL(url);
   }, [propostas]);
+
+  /**
+   * Enfileira as propostas selecionadas para revisão manual.
+   *
+   * Diferente de `aplicar`, este caminho não escreve no Registry: cria um
+   * registro auditável (antes/depois + evidência) que um administrador decide
+   * depois. Duplicatas não são erro — significam que a proposta já está na
+   * fila, e reportá-las como falha treinaria o curador a ignorar avisos.
+   */
+  const enviarParaRevisao = useCallback(async () => {
+    const lote = selectProposals(propostas, selecionados);
+    if (lote.length === 0) return;
+    setEnviando(true);
+    try {
+      const { queued, duplicates, failures } = await submitReclassificationReviews(lote);
+      if (queued > 0) {
+        toast.success(`${queued} proposta${queued === 1 ? '' : 's'} enviada${queued === 1 ? '' : 's'} para revisão.`);
+        onApplied();
+      }
+      if (duplicates.length > 0) {
+        toast.info(`${duplicates.length} já estavam na fila de revisão.`);
+      }
+      if (failures.length > 0) {
+        toast.error(`${failures.length} não puderam ser enfileiradas.`);
+      } else if (queued > 0) {
+        onOpenChange(false);
+      }
+    } catch (error) {
+      const mensagem =
+        error instanceof ReviewOperationError ? error.message : 'Não foi possível enviar para revisão.';
+      logger.error('submitReclassificationReviews failed', { error: (error as Error).message });
+      toast.error(mensagem);
+    } finally {
+      setEnviando(false);
+    }
+  }, [propostas, selecionados, onApplied, onOpenChange]);
 
   const aplicar = useCallback(async () => {
     const lote = selectProposals(propostas, selecionados);
@@ -407,9 +449,23 @@ export function SkillReclassifyDialog({
             <Button
               variant="ghost"
               onClick={() => onOpenChange(false)}
-              disabled={aplicando || classificando}
+              disabled={aplicando || classificando || enviando}
             >
               Cancelar
+            </Button>
+            {/* Caminho auditável: em vez de escrever direto, enfileira a
+                proposta com evidência para decisão de um administrador. */}
+            <Button
+              variant="secondary"
+              onClick={() => void enviarParaRevisao()}
+              disabled={aplicando || classificando || enviando || selecionados.length === 0}
+            >
+              {enviando ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <ClipboardCheck className="h-4 w-4 mr-2" />
+              )}
+              Enviar para revisão
             </Button>
             <Button
               onClick={() => void aplicar()}

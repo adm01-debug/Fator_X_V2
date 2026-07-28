@@ -40,6 +40,7 @@ import {
 } from '@/lib/skills/skillDemand';
 import { useFilterPersistence } from '@/hooks/useFilterPersistence';
 import { SkillReclassifyDialog } from '@/components/skills/SkillReclassifyDialog';
+import { SkillReclassificationReviewPanel } from '@/components/skills/SkillReclassificationReviewPanel';
 import type { ReclassifyCandidate } from '@/lib/skills/departmentReclassification';
 import { logger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
@@ -145,6 +146,7 @@ export function SkillDemandPanel() {
   }, [visiveis]);
 
   return (
+    <div className="space-y-6">
     <Card>
       <CardHeader className="gap-2">
         <div className="flex flex-wrap items-start justify-between gap-3">
@@ -317,5 +319,10 @@ export function SkillDemandPanel() {
         onApplied={() => void carregar()}
       />
     </Card>
+
+    {/* Fila de aprovação: fica logo abaixo porque é a consequência direta de
+        "Enviar para revisão" — esconder em outra tela quebraria o fluxo. */}
+    <SkillReclassificationReviewPanel onApproved={() => void carregar()} />
+    </div>
   );
 }
