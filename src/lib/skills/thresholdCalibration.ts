@@ -26,6 +26,11 @@ export interface ThresholdCalibration {
   /** Tamanho da amostra usada na sugestão; 0 quando ausente/inválido. */
   sampleSize: number;
   accuracy: number | null;
+  /**
+   * `true` quando o curador aplicou mesmo com alerta de instabilidade.
+   * Linhas legadas (sem o campo) valem `false` — ausência não é override.
+   */
+  overriddenInstability: boolean;
   /** ISO válido, ou `null` quando a data veio corrompida. */
   at: string | null;
 }
