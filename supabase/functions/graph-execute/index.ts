@@ -108,6 +108,13 @@ Deno.serve(async (req) => {
       : { data: [] };
     const agentMap = new Map((agents || []).map(a => [a.id, a]));
 
+    // Pré-carrega as skills instaladas de cada agente (uma vez por grafo,
+    // evitando N+1 dentro do loop BFS). Falha suave: mapa vazio.
+    const skillsByAgent = new Map<string, RuntimeSkill[]>();
+    for (const id of agentIds) {
+      skillsByAgent.set(id, await loadAgentSkills(supabase, id));
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     const trace: any[] = [];
     let totalCost = 0;
