@@ -124,7 +124,10 @@ describe('classifyApplyError — categorias acionáveis na gravação', () => {
     expect(classifyApplyError('ROW-LEVEL SECURITY')).toBe('permission');
     expect(classifyApplyError(null)).toBe('unknown');
     expect(classifyApplyError(undefined)).toBe('unknown');
-    expect(classifyApplyError({ toString: () => 'Failed to fetch' })).toBe('unknown');
+    // Objetos com toString útil (ex.: erros de libs que não estendem Error)
+    // são coagidos e classificados pelo texto, em vez de virarem 'unknown'.
+    expect(classifyApplyError({ toString: () => 'Failed to fetch' })).toBe('network');
+    expect(classifyApplyError({})).toBe('unknown');
   });
 
   it('permissão tem precedência sobre conflito quando a mensagem cita ambos', () => {
