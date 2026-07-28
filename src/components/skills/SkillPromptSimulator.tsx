@@ -134,7 +134,14 @@ export function SkillPromptSimulator() {
     }
   };
 
-  /** Exporta o artefato markdown de evidência (download local, sem backend). */
+  /**
+   * Exporta o artefato markdown e registra a evidência na trilha.
+   *
+   * O download acontece primeiro: se a auditoria falhar (rede, RLS), o curador
+   * ainda fica com o arquivo em mãos. A trilha é best-effort por design —
+   * `logAudit` já engole erros — mas o toast avisa quando o registro não pôde
+   * ser confirmado, para não dar falsa sensação de rastreabilidade.
+   */
   const exportar = () => {
     if (!result || !context) return;
     const meta = {
@@ -142,24 +149,30 @@ export function SkillPromptSimulator() {
       agentName: context.name,
       model: context.model,
       persona: context.persona,
+      generatedAt: new Date().toISOString(),
       forcedOverflow: forceOverflow,
       injectedDirtySkill: showSanitization,
     };
     try {
-      const blob = new Blob([buildPromptAuditArtifact(result, meta)], {
-        type: 'text/markdown;charset=utf-8',
-      });
+      const artifact = buildPromptAuditArtifact(result, meta);
+      const blob = new Blob([artifact], { type: 'text/markdown;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
       a.download = buildArtifactFilename(meta);
       a.click();
       URL.revokeObjectURL(url);
-      toast.success('Evidência de auditoria exportada');
+
+      const record = buildPromptEvidenceRecord(result, meta, artifact);
+      void audit.promptEvidenceExported(record);
+      toast.success('Evidência exportada', {
+        description: `Registrada na trilha · checksum ${record.checksum}`,
+      });
     } catch {
       toast.error('Não foi possível gerar o artefato');
     }
   };
+
 
 
   return (
