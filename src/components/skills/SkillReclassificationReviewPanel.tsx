@@ -56,8 +56,8 @@ const ABAS: { value: Aba; label: string }[] = [
 ];
 
 const STATUS_BADGE: Record<ReviewStatus, { label: string; className: string }> = {
-  pendente: { label: 'Pendente', className: 'border-amber-500/40 text-amber-500' },
-  aprovado: { label: 'Aprovada', className: 'border-emerald-500/40 text-emerald-500' },
+  pendente: { label: 'Pendente', className: 'border-nexus-amber/40 text-nexus-amber' },
+  aprovado: { label: 'Aprovada', className: 'border-nexus-emerald/40 text-nexus-emerald' },
   rejeitado: { label: 'Rejeitada', className: 'border-destructive/40 text-destructive' },
 };
 
@@ -161,11 +161,11 @@ export function SkillReclassificationReviewPanel({
     <Card>
       <CardHeader className="flex flex-row items-start justify-between gap-4 space-y-0">
         <div className="space-y-1">
-          <CardTitle className="flex items-center gap-2 text-base">
+          <CardTitle className="flex items-center gap-2 text-body">
             <ShieldCheck className="h-4 w-4 text-primary" aria-hidden />
             Revisão de classificações
             {pendentes > 0 && aba === 'pendente' && (
-              <Badge variant="outline" className="border-amber-500/40 text-amber-500">
+              <Badge variant="outline" className="border-nexus-amber/40 text-nexus-amber">
                 {pendentes} aguardando
               </Badge>
             )}
@@ -185,7 +185,7 @@ export function SkillReclassificationReviewPanel({
         <Tabs value={aba} onValueChange={(v) => setAba(v as Aba)}>
           <TabsList className="grid w-full grid-cols-4">
             {ABAS.map((item) => (
-              <TabsTrigger key={item.value} value={item.value} className="text-xs">
+              <TabsTrigger key={item.value} value={item.value} className="text-meta">
                 {item.label}
               </TabsTrigger>
             ))}
@@ -201,7 +201,7 @@ export function SkillReclassificationReviewPanel({
         ) : reviews.length === 0 ? (
           <div className="rounded-lg border border-dashed p-8 text-center">
             <Clock className="mx-auto mb-2 h-6 w-6 text-muted-foreground" aria-hidden />
-            <p className="text-sm text-muted-foreground">
+            <p className="text-body-sm text-muted-foreground">
               {aba === 'pendente'
                 ? 'Nenhuma proposta aguardando revisão.'
                 : 'Nenhum registro nesta situação.'}
@@ -216,8 +216,8 @@ export function SkillReclassificationReviewPanel({
                 return (
                   <li key={review.id} className="rounded-lg border bg-card/50 p-3 space-y-2">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-sm font-medium">{review.name}</span>
-                      <code className="text-[11px] text-muted-foreground">{review.slug}</code>
+                      <span className="text-body-sm font-medium">{review.name}</span>
+                      <code className="text-meta text-muted-foreground">{review.slug}</code>
                       <Badge variant="outline" className={badge.className}>
                         {badge.label}
                       </Badge>
@@ -230,7 +230,7 @@ export function SkillReclassificationReviewPanel({
                     </div>
 
                     {/* ANTES → DEPOIS: o coração da auditoria. */}
-                    <div className="flex flex-wrap items-center gap-2 text-xs">
+                    <div className="flex flex-wrap items-center gap-2 text-meta">
                       <Badge variant="secondary">
                         {review.from ? departmentLabel(review.from) : 'Sem departamento'}
                       </Badge>
@@ -245,12 +245,12 @@ export function SkillReclassificationReviewPanel({
                     </div>
 
                     {review.matchedTerms.length > 0 && (
-                      <p className="text-[11px] text-muted-foreground">
+                      <p className="text-meta text-muted-foreground">
                         Termos: {review.matchedTerms.slice(0, 8).join(', ')}
                       </p>
                     )}
                     {review.rationale && (
-                      <p className="text-[11px] italic text-muted-foreground">
+                      <p className="text-meta italic text-muted-foreground">
                         “{review.rationale}”
                       </p>
                     )}
@@ -266,7 +266,7 @@ export function SkillReclassificationReviewPanel({
                             }))
                           }
                           placeholder="Motivo da decisão (obrigatório ao rejeitar)"
-                          className="min-h-[3rem] text-xs"
+                          className="min-h-[3rem] text-meta"
                           disabled={ocupado}
                         />
                         <div className="flex justify-end gap-2">
@@ -298,7 +298,7 @@ export function SkillReclassificationReviewPanel({
                         </div>
                       </div>
                     ) : (
-                      <p className="text-[11px] text-muted-foreground">
+                      <p className="text-meta text-muted-foreground">
                         Decidida em {formatarData(review.reviewedAt ?? review.createdAt)}
                         {review.decisionReason ? ` — ${review.decisionReason}` : ''}
                       </p>
