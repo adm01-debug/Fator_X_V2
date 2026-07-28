@@ -77,7 +77,9 @@ const PREFS_PADRAO: DemandPreferences = {
   search: '',
   confidenceThreshold: MIN_RECLASSIFY_CONFIDENCE,
   onlyNeedsReview: false,
+  source: 'all',
 };
+
 
 export function SkillDemandPanel() {
   const [rows, setRows] = useState<SkillDemandRow[]>([]);
