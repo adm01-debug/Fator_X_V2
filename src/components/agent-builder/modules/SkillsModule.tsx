@@ -30,6 +30,7 @@ import {
   uninstallSkill,
   type AgentSkillDefinition,
   computeSkillSelectionDiff,
+  bulkUninstallSkills,
 } from '@/services/skillsRegistryService';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import { logger } from '@/lib/logger';
@@ -133,7 +134,7 @@ export function SkillsModule() {
         installedCount = res.installed.length;
         skippedCount = res.skipped.length;
       }
-      for (const id of idsToRemove) await uninstallSkill(agentId, id);
+      if (idsToRemove.length > 0) await bulkUninstallSkills(agentId, idsToRemove);
       await refresh();
 
       const parts: string[] = [];
