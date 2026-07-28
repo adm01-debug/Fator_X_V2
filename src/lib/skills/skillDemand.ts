@@ -216,6 +216,43 @@ export function countByDepartment(rows: readonly SkillDemandRow[]): Record<strin
   return out;
 }
 
+/** Preferências persistidas do painel de demanda. */
+export interface DemandPreferences {
+  tier: DemandFilter;
+  department: DepartmentFilter;
+  search: string;
+}
+
+/** Teto de busca persistida — evita gravar payload arbitrário na nuvem. */
+export const DEMAND_SEARCH_MAX = 120;
+
+/**
+ * Sanitiza preferências vindas de storage/nuvem. A camada de persistência faz
+ * spread cego (`{...defaults, ...remoto}`), então qualquer payload corrompido,
+ * de versão antiga ou de departamento removido da taxonomia chegaria intacto ao
+ * estado da UI e produziria um recorte vazio permanente e inexplicável para o
+ * usuário. Aqui todo campo desconhecido degrada para o default seguro.
+ */
+export function normalizeDemandPreferences(
+  value: unknown,
+  allowedDepartments: readonly string[],
+  defaults: DemandPreferences = { tier: 'zero', department: 'all', search: '' },
+): DemandPreferences {
+  const raw = (value ?? {}) as Partial<Record<keyof DemandPreferences, unknown>>;
+  if (typeof raw !== 'object' || Array.isArray(value)) return { ...defaults };
+
+  const tier =
+    typeof raw.tier === 'string' ? normalizeDemandFilter(raw.tier) : defaults.tier;
+  const department =
+    typeof raw.department === 'string'
+      ? normalizeDepartmentFilter(raw.department, allowedDepartments)
+      : defaults.department;
+  const search =
+    typeof raw.search === 'string' ? raw.search.slice(0, DEMAND_SEARCH_MAX) : '';
+
+  return { tier, department, search };
+}
+
 /** Exportação CSV (RFC 4180, com BOM) do recorte visível. */
 export function demandRowsToCsv(rows: readonly SkillDemandRow[]): string {
   const escape = (value: string | number | null) => {
