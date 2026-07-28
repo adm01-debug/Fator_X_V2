@@ -16,6 +16,7 @@ import { Gauge, Loader2, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { logger } from '@/lib/logger';
+import { audit } from '@/lib/auditService';
 import { fetchClassificationTimeline } from '@/services/skillClassificationTimelineService';
 import { normalizeConfidenceThreshold } from '@/lib/skills/skillDemand';
 
