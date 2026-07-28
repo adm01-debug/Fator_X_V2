@@ -202,12 +202,16 @@ export function SkillClassificationEfficacyCard({
                         : normalizeConfidenceThreshold(currentThreshold);
                     onApplyThreshold(sugerido);
                     // Auditoria não bloqueia a UI: falha vira log, não erro visível.
-                    void audit.skillThresholdCalibrated({
-                      from: anterior,
-                      to: sugerido,
-                      sampleSize: resumo.total,
-                      accuracy: resumo.accuracy,
-                    });
+                    void audit
+                      .skillThresholdCalibrated({
+                        from: anterior,
+                        to: sugerido,
+                        sampleSize: resumo.total,
+                        accuracy: resumo.accuracy,
+                      })
+                      // Só recarrega depois da escrita: refetch antes traria a
+                      // lista sem a linha nova e pareceria que nada foi gravado.
+                      .then(() => carregar());
                     toast.success(`Limiar de revisão ajustado para ${sugerido.toFixed(2)}`);
                   }}
                 >
