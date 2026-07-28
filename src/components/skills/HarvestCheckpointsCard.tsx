@@ -17,6 +17,7 @@ import { Progress } from '@/components/ui/progress';
 import {
   listHarvestCheckpoints,
   deleteHarvestCheckpointByKey,
+  deleteStaleHarvestCheckpoints,
   type HarvestCheckpointRow,
 } from '@/services/skillHarvestService';
 
