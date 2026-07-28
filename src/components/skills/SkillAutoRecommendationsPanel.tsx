@@ -88,7 +88,7 @@ export function SkillAutoRecommendationsPanel() {
 
   /** Recomendações ainda não instaladas — base do botão "Adicionar todas". */
   const pendingIds = useMemo(
-    () => recommendations.map((r) => r.skill.id).filter((id) => !installedIds.has(id)),
+    () => computePendingSkillIds(recommendations, installedIds),
     [recommendations, installedIds],
   );
 
