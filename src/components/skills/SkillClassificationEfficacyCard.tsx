@@ -149,12 +149,26 @@ export function SkillClassificationEfficacyCard({
         to: sugerido,
         sampleSize: resumo.total,
         accuracy: resumo.accuracy,
+        // Marca a decisão tomada CONTRA o alerta: sem isso, a série ruidosa
+        // fica indistinguível de uma calibração saudável na trilha.
+        overriddenInstability: instabilidade.unstable,
+        instabilityReason: instabilidade.reason,
+        eventsInWindow: instabilidade.eventsInWindow,
+        reversals: instabilidade.reversals,
       })
       // Só recarrega depois da escrita: refetch antes traria a lista sem a
       // linha nova e pareceria que nada foi gravado.
       .then(() => carregar());
     toast.success(`Limiar de revisão ajustado para ${sugerido.toFixed(2)}`);
-  }, [onApplyThreshold, sugerido, currentThreshold, resumo.total, resumo.accuracy, carregar]);
+  }, [
+    onApplyThreshold,
+    sugerido,
+    currentThreshold,
+    resumo.total,
+    resumo.accuracy,
+    instabilidade,
+    carregar,
+  ]);
 
   const podeAplicar =
     sugerido !== null &&
@@ -288,6 +302,15 @@ export function SkillClassificationEfficacyCard({
                   >
                     {DIRECTION_LABEL[calibrationDirection(c)]}
                   </Badge>
+                  {c.overriddenInstability && (
+                    <Badge
+                      variant="outline"
+                      className="text-meta border-amber-500/40 text-amber-600 dark:text-amber-400"
+                      title="Aplicado apesar do alerta de instabilidade"
+                    >
+                      sob alerta
+                    </Badge>
+                  )}
                   <span className="text-muted-foreground">
                     {c.from === null ? '—' : c.from.toFixed(2)} → {c.to.toFixed(2)}
                   </span>
