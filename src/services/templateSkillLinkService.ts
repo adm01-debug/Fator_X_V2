@@ -381,6 +381,61 @@ export interface BulkRestoreFailure {
   skillCount: number;
   /** Mensagem crua do backend — o curador precisa distinguir RLS de rede. */
   message: string;
+  /** Natureza classificada da falha (deriva de `message`). */
+  kind: RestoreFailureKind;
+}
+
+/**
+ * Natureza de uma falha de restauração — orienta a ação do curador.
+ *
+ * `permission`: RLS/autorização negou; retry não resolve sem mudar de papel.
+ * `network`: falha transitória; retry tende a funcionar.
+ * `unknown`: não classificável; mostrar mensagem crua.
+ */
+export type RestoreFailureKind = 'permission' | 'network' | 'unknown';
+
+/** Função pura: classifica a mensagem de erro do backend. */
+export function classifyRestoreFailure(message: string): RestoreFailureKind {
+  const m = (message ?? '').toLowerCase();
+  if (!m) return 'unknown';
+  if (
+    m.includes('rls') ||
+    m.includes('row-level') ||
+    m.includes('row level') ||
+    m.includes('permission') ||
+    m.includes('permissão') ||
+    m.includes('não autorizado') ||
+    m.includes('unauthorized') ||
+    m.includes('forbidden') ||
+    m.includes('policy') ||
+    m.includes('jwt')
+  ) {
+    return 'permission';
+  }
+  if (
+    m.includes('network') ||
+    m.includes('fetch') ||
+    m.includes('timeout') ||
+    m.includes('timed out') ||
+    m.includes('econn') ||
+    m.includes('offline') ||
+    m.includes('temporarily')
+  ) {
+    return 'network';
+  }
+  return 'unknown';
+}
+
+/** Rótulo curto em PT-BR para cada natureza de falha. */
+export const RESTORE_FAILURE_LABEL: Record<RestoreFailureKind, string> = {
+  permission: 'Sem permissão',
+  network: 'Falha de rede',
+  unknown: 'Erro',
+};
+
+/** Só faz sentido oferecer retry automático em falhas transitórias. */
+export function isRetriableFailure(kind: RestoreFailureKind): boolean {
+  return kind !== 'permission';
 }
 
 /** Resultado agregado de uma restauração em massa multi-template. */
@@ -450,6 +505,7 @@ async function runRestorePlan(
         templateName: nomes.get(grupo.templateId) ?? grupo.templateId,
         skillCount: grupo.skillIds.length,
         message,
+        kind: classifyRestoreFailure(message),
       });
       logger.error('bulkRestoreAllRemovals partial failure', {
         templateId: grupo.templateId,
