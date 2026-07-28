@@ -14940,6 +14940,10 @@ export type Database = {
         Args: { _days?: number }
         Returns: number
       }
+      purge_stale_harvest_checkpoints: {
+        Args: { _max_age?: string }
+        Returns: number
+      }
       recompute_memory_tier: { Args: never; Returns: number }
       record_bcp_test: {
         Args: {

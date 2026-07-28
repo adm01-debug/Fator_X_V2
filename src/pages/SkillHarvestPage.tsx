@@ -36,7 +36,7 @@ import {
 import {
   runHarvest, runHarvestAllBatches, listCandidates, listRuns, promoteCandidate, bulkUpdateStatus,
   updateCandidate, getDepartmentCoverage,
-  loadHarvestCheckpoint, saveHarvestCheckpoint, clearHarvestCheckpoint,
+  loadHarvestCheckpoint, saveHarvestCheckpoint, clearHarvestCheckpoint, purgeStaleLocalCheckpoints,
   type HarvestCandidate, type HarvestRun, type CandidateStatus, type HarvestBatchResult,
 } from '@/services/skillHarvestService';
 
@@ -125,6 +125,10 @@ export default function SkillHarvestPage() {
   }, [statusFilter, deptFilter, search]);
 
   useEffect(() => { void load(); }, [load]);
+
+  // Higiene de storage: remove checkpoints locais vencidos (>24h) de qualquer
+  // varredura antiga. Roda uma única vez por montagem, fora do caminho crítico.
+  useEffect(() => { purgeStaleLocalCheckpoints(); }, []);
 
   const handleHarvest = async () => {
     const controller = new AbortController();
