@@ -133,10 +133,7 @@ Deno.serve(async (req) => {
 
     // Limite por usuário autenticado, não por IP: o identificador de IP
     // agruparia curadores atrás do mesmo NAT corporativo em um só balde.
-    const rate = await checkRateLimit(
-      `skill-classify-llm:${userId}` || getRateLimitIdentifier(req),
-      RATE_LIMITS.llm,
-    );
+    const rate = checkRateLimit(getRateLimitIdentifier(req, userId), CLASSIFY_RATE_LIMIT);
     if (!rate.allowed) return createRateLimitResponse(rate, corsHeaders);
 
     const parsed = InputSchema.safeParse(await req.json().catch(() => null));
