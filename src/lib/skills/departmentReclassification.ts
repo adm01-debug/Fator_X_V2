@@ -275,18 +275,22 @@ export function buildReclassificationPlan(
 }
 
 /**
- * Restringe o plano aos ids selecionados na UI, preservando a ordem do plano e
- * respeitando o teto de lote. Ids desconhecidos são ignorados.
+ * Restringe a lista de propostas aos ids selecionados na UI, preservando a
+ * ordem original e respeitando o teto de lote. Ids desconhecidos são ignorados.
+ *
+ * Aceita o plano OU uma lista já fundida com as propostas de IA — depois do
+ * fallback LLM a fonte da verdade da tela deixa de ser `plan.proposals`.
  */
 export function selectProposals(
-  plan: ReclassifyPlan,
+  source: ReclassifyPlan | readonly ReclassifyProposal[],
   selectedIds: readonly string[] | null | undefined,
   maxBatch: number = MAX_RECLASSIFY_BATCH,
 ): ReclassifyProposal[] {
+  const lista = Array.isArray(source) ? source : (source as ReclassifyPlan).proposals;
   const teto = Number.isFinite(maxBatch) ? Math.max(0, Math.floor(maxBatch)) : MAX_RECLASSIFY_BATCH;
   const alvo = new Set((selectedIds ?? []).filter((id) => typeof id === 'string' && id.length > 0));
   if (alvo.size === 0) return [];
-  return plan.proposals.filter((p) => alvo.has(p.skillId)).slice(0, teto);
+  return lista.filter((p) => alvo.has(p.skillId)).slice(0, teto);
 }
 
 /**
