@@ -310,6 +310,31 @@ export function SkillReclassifyDialog({
           )}
         </div>
 
+        <div className="rounded-lg border border-border bg-card/40 px-3 py-2 space-y-2">
+          <div className="flex items-center justify-between gap-3">
+            <label htmlFor="limiar-confianca" className="text-meta text-muted-foreground">
+              Confiança mínima para propor
+            </label>
+            <span className="text-body-sm font-medium tabular-nums">{limiar.toFixed(2)}</span>
+          </div>
+          <Slider
+            id="limiar-confianca"
+            value={[limiar]}
+            min={MIN_RECLASSIFY_CONFIDENCE}
+            max={0.95}
+            step={0.05}
+            disabled={aplicando || classificando || enviando}
+            onValueChange={(v) => setLimiar(v[0] ?? MIN_RECLASSIFY_CONFIDENCE)}
+            aria-label="Confiança mínima para propor reclassificação"
+          />
+          <p className="text-meta text-muted-foreground">
+            O piso é {MIN_RECLASSIFY_CONFIDENCE.toFixed(2)} e não pode ser afrouxado. Subir o limiar
+            reduz propostas e descarta as sugestões de IA já geradas neste recorte.
+          </p>
+        </div>
+
+
+
         {plano.llmCandidates.length > 0 && (
           <div className="rounded-lg border border-border bg-muted/30 p-3 space-y-2">
             <div className="flex items-start justify-between gap-3">
