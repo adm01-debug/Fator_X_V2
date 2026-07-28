@@ -404,7 +404,9 @@ export function SkillDemandPanel() {
               filter === PREFS_PADRAO.tier &&
               deptFilter === PREFS_PADRAO.department &&
               search === '' &&
-              onlyNeedsReview === PREFS_PADRAO.onlyNeedsReview
+              onlyNeedsReview === PREFS_PADRAO.onlyNeedsReview &&
+              sourceFilter === PREFS_PADRAO.source
+
             }
           >
             Limpar filtros
