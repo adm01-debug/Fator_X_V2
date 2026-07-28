@@ -246,3 +246,102 @@ export function buildSkillAttribution(skill: SkillAttributionSource): SkillAttri
     noticeText,
   };
 }
+
+// ---------------------------------------------------------------------------
+// Filtro de licença do marketplace
+// ---------------------------------------------------------------------------
+
+/**
+ * Modos de filtro por licença.
+ *
+ * Motivação de produto: em contexto comercial, incorporar uma skill copyleft
+ * (GPL/AGPL/MPL/CC-BY-SA) ao produto pode obrigar a abrir o derivado. O filtro
+ * permite ao curador esconder esses casos sem apagá-los do catálogo, e também
+ * isolar as skills sem licença declarada — o pior cenário jurídico, porque
+ * "sem licença" significa *todos os direitos reservados*, não domínio público.
+ */
+export type LicenseFilter =
+  | 'all'
+  | 'native'
+  | 'permissive'
+  | 'copyleft'
+  | 'unlicensed';
+
+export const LICENSE_FILTERS: ReadonlyArray<{
+  value: LicenseFilter;
+  label: string;
+  hint: string;
+}> = [
+  { value: 'all', label: 'Todas as licenças', hint: 'Sem filtro de licença.' },
+  {
+    value: 'native',
+    label: 'Nativas do Nexus',
+    hint: 'Skills criadas internamente, sem origem externa.',
+  },
+  {
+    value: 'permissive',
+    label: 'Permissivas',
+    hint: 'MIT, Apache-2.0, BSD, ISC, CC0 — uso comercial sem reciprocidade.',
+  },
+  {
+    value: 'copyleft',
+    label: 'Copyleft',
+    hint: 'GPL, AGPL, LGPL, MPL, CC-BY-SA — exigem reciprocidade no derivado.',
+  },
+  {
+    value: 'unlicensed',
+    label: 'Licença indefinida',
+    hint: 'Origem externa sem licença reconhecida (ausente ou texto livre): revisar antes do uso comercial.',
+  },
+
+] as const;
+
+/** `true` quando o valor é um modo de filtro válido. */
+export function isLicenseFilter(value: unknown): value is LicenseFilter {
+  return (
+    typeof value === 'string' &&
+    LICENSE_FILTERS.some((f) => f.value === value)
+  );
+}
+
+/**
+ * Decide se uma skill passa pelo filtro de licença escolhido.
+ * Pura e total: qualquer valor de filtro desconhecido é tratado como `all`,
+ * de modo que a UI nunca "some" com o catálogo por causa de estado corrompido.
+ */
+export function matchesLicenseFilter(
+  skill: SkillAttributionSource,
+  filter: LicenseFilter | string,
+): boolean {
+  if (!isLicenseFilter(filter) || filter === 'all') return true;
+
+  const attribution = buildSkillAttribution(skill);
+
+  switch (filter) {
+    case 'native':
+      return attribution.isNative;
+    case 'copyleft':
+      return attribution.copyleft;
+    case 'permissive':
+      // Permissiva = SPDX conhecido e não recíproco. Licença desconhecida
+      // (texto livre) nunca é presumida permissiva.
+      return attribution.licenseKnown && !attribution.copyleft;
+    case 'unlicensed':
+      // Não-nativa cuja licença não é um SPDX reconhecido — inclui tanto a
+      // ausência total quanto textos livres ("Licença Proprietária"). Sem esta
+      // abrangência, esses itens ficariam órfãos: invisíveis em todo filtro
+      // exceto "Todas" (gap detectado na simulação de 616 cenários).
+      return !attribution.isNative && !attribution.licenseKnown;
+
+    default:
+      return true;
+  }
+}
+
+/** Aplica {@link matchesLicenseFilter} a uma lista preservando a ordem. */
+export function filterSkillsByLicense<T extends SkillAttributionSource>(
+  skills: readonly T[],
+  filter: LicenseFilter | string,
+): T[] {
+  return skills.filter((skill) => matchesLicenseFilter(skill, filter));
+}

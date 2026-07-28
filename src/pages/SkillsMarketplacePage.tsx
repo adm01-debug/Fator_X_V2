@@ -18,6 +18,12 @@ import { listSkills, type AgentSkillDefinition } from '@/services/skillsRegistry
 import { toast } from 'sonner';
 import { ProgressiveSkillLoaderPanel } from '@/components/skills/ProgressiveSkillLoaderPanel';
 import { SkillAttributionBadge } from '@/components/skills/SkillAttributionBadge';
+import {
+  filterSkillsByLicense,
+  LICENSE_FILTERS,
+  type LicenseFilter,
+} from '@/lib/skills/attribution';
+
 
 import { SkillAutoRecommendationsPanel } from '@/components/skills/SkillAutoRecommendationsPanel';
 
@@ -41,6 +47,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 export default function SkillsMarketplacePage() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
+  const [license, setLicense] = useState<LicenseFilter>('all');
 
   const { data, isLoading } = useQuery({
     queryKey: ['skills_marketplace', search, category],
@@ -51,7 +58,11 @@ export default function SkillsMarketplacePage() {
     }),
   });
 
-  const skills = data?.skills ?? [];
+  // O filtro de licença é aplicado no cliente: a coluna `source_license` é
+  // texto livre no banco (aliases como "mit"/"Apache License 2.0" convivem com
+  // SPDX), então a normalização precisa acontecer antes da comparação.
+  const skills = filterSkillsByLicense(data?.skills ?? [], license);
+
 
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
@@ -95,6 +106,21 @@ export default function SkillsMarketplacePage() {
             ))}
           </SelectContent>
         </Select>
+        <Select
+          value={license}
+          onValueChange={(value) => setLicense(value as LicenseFilter)}
+        >
+          <SelectTrigger className="w-[210px] bg-secondary/50" aria-label="Filtrar por licença">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {LICENSE_FILTERS.map(f => (
+              <SelectItem key={f.value} value={f.value} title={f.hint}>
+                {f.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {isLoading ? (
@@ -103,8 +129,13 @@ export default function SkillsMarketplacePage() {
         <EmptyState
           icon={Package}
           title="Nenhuma skill encontrada"
-          description="Tente outro termo de busca ou categoria."
+          description={
+            license === 'all'
+              ? 'Tente outro termo de busca ou categoria.'
+              : 'Nenhuma skill nesta faixa de licença. Tente "Todas as licenças".'
+          }
         />
+
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {skills.map((skill) => (
@@ -116,8 +147,10 @@ export default function SkillsMarketplacePage() {
       {data && data.total > 0 && (
         <p className="text-meta text-muted-foreground text-center">
           {skills.length} de {data.total} skills
+          {license !== 'all' && ' (filtro de licença ativo)'}
         </p>
       )}
+
 
       <ProgressiveSkillLoaderPanel />
     </div>
