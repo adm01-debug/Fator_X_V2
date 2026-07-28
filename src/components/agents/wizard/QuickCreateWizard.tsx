@@ -80,8 +80,8 @@ const STEPS = [
   { key: 'identity', label: 'Identidade', schema: quickIdentitySchema, fields: ['name', 'emoji', 'mission', 'description'] },
   { key: 'type', label: 'Tipo', schema: quickTypeSchema, fields: ['type'] },
   { key: 'model', label: 'Modelo', schema: quickModelSchema, fields: ['model'] },
-  { key: 'prompt', label: 'Prompt', schema: quickPromptSchema, fields: ['prompt'] },
   { key: 'skills', label: 'Skills', schema: skillsStepSchema, fields: [] as Array<keyof QuickAgentForm> },
+  { key: 'prompt', label: 'Prompt', schema: quickPromptSchema, fields: ['prompt'] },
 ] as const;
 
 const TYPE_LABEL: Record<QuickAgentType, string> = {
@@ -910,12 +910,12 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
       case 0: return <StepQuickIdentity form={form} errors={errors} update={update} highlightField={hfFor(['name', 'emoji', 'mission', 'description'])} highlightHint={hintFor(['name', 'emoji', 'mission', 'description'])} />;
       case 1: return <StepQuickType form={form} errors={errors} update={update} applyTemplate={applyTemplate} highlightField={hfFor(['type'])} />;
       case 2: return <StepQuickModel form={form} errors={errors} update={update} highlightField={hfFor(['model'])} />;
-      case 3: {
+      case 3: return <StepQuickSkills mission={form.mission} role={form.type} selectedIds={selectedSkillIds} onChange={setSelectedSkillIds} />;
+      case 4: {
         const detected = detectPromptVariant(form.type as QuickAgentType, form.prompt);
         const activeVariant = promptCustomLocked ? null : (selectedVariant ?? detected);
         return <StepQuickPrompt form={form} errors={errors} onPromptManualEdit={updatePromptManual} onRestore={restorePromptFromType} onSafeReset={safeResetPromptAndPreview} onApplyVariant={applyPromptVariant} customLocked={promptCustomLocked} onUnlockCustom={() => { if (promptCustomLocked) pushLockEvent('unlocked-manual', 'botão "Destravar" no editor'); setPromptCustomLocked(false); setSelectedVariant(null); }} activeVariant={activeVariant} lockEvents={lockEvents} highlightField={hfFor(['prompt'])} checklistAutoUnlock={checklistAutoUnlock} onToggleChecklistAutoUnlock={setChecklistAutoUnlock} skillIds={selectedSkillIds} />;
       }
-      case 4: return <StepQuickSkills mission={form.mission} role={form.type} selectedIds={selectedSkillIds} onChange={setSelectedSkillIds} />;
       default: return null;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
