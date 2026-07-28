@@ -225,13 +225,8 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
   // treina o curador a clicar "Sim" sem ler, e o diálogo perde a função.
   const [confirmarAberto, setConfirmarAberto] = useState(false);
 
-  const pedirRestauracaoEmMassa = useCallback(() => {
-    if (shouldConfirmBulkRestore(removocoesVisiveis)) {
-      setConfirmarAberto(true);
-      return;
-    }
-    restaurarTodas.mutate();
-  }, [removocoesVisiveis, restaurarTodas]);
+
+
 
   const {
     data,
