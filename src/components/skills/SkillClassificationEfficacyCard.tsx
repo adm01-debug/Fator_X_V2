@@ -39,10 +39,21 @@ function pct(value: number | null): string {
   return value === null ? '—' : `${Math.round(value * 100)}%`;
 }
 
-export function SkillClassificationEfficacyCard() {
+export interface SkillClassificationEfficacyCardProps {
+  /** Limiar hoje em vigor no painel de demanda (para comparar com o sugerido). */
+  currentThreshold?: number;
+  /** Aplica o limiar sugerido nas preferências do painel. Ausente = card só lê. */
+  onApplyThreshold?: (value: number) => void;
+}
+
+export function SkillClassificationEfficacyCard({
+  currentThreshold,
+  onApplyThreshold,
+}: SkillClassificationEfficacyCardProps = {}) {
   const [decisoes, setDecisoes] = useState<ClassificationDecision[]>([]);
   const [loading, setLoading] = useState(true);
   const [filtro, setFiltro] = useState<EfficacyFilter>('all');
+
 
   const carregar = useCallback(async () => {
     setLoading(true);
