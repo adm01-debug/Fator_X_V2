@@ -21,14 +21,24 @@ import { z } from 'https://esm.sh/zod@3.23.8';
 import {
   checkRateLimit,
   createRateLimitResponse,
+  fetchWithTimeout,
+  getAuthUserId,
   getCorsHeaders,
   getRateLimitIdentifier,
-  RATE_LIMITS,
   requireEnv,
 } from '../_shared/mod.ts';
-import { getAuthUserId } from '../_shared/auth.ts';
-import { fetchWithTimeout } from '../_shared/retry.ts';
 import { DEPARTMENT_HINT, isDepartment, SKILL_DEPARTMENTS } from './departments.ts';
+
+/**
+ * Teto próprio, mais alto que o preset `llm` (15/min).
+ *
+ * Este endpoint existe para ser chamado em rajada por uma fila de curadoria:
+ * com 15/min um lote de 60 skills levaria 4 minutos travado em 429. O custo
+ * por chamada é baixo (flash-lite, prompt curto, saída de ~30 tokens), então o
+ * limite aqui protege contra abuso, não contra volume legítimo. A fila do
+ * cliente já espaça os disparos bem abaixo deste teto.
+ */
+const CLASSIFY_RATE_LIMIT = { windowMs: 60_000, maxRequests: 90, name: 'skill-classify-llm' };
 
 const MAX_NAME = 200;
 const MAX_DESCRIPTION = 1200;
