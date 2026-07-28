@@ -46,6 +46,9 @@ export interface DepartmentClassification {
   tier: ClassificationTier;
   /** Fração de tokens de plataforma no texto primário + tags (0..1). */
   platformDensity: number;
+  /** Evidência que sustenta a confiança do tier de plataforma. */
+  platformEvidence: { distinctTerms: number; fieldsWithSignal: number };
+
   /** Veredito determinístico porém fraco: exige confirmação humana. */
   needsReview: boolean;
 }
