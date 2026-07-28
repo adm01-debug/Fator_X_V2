@@ -15,6 +15,8 @@ import {
   retryFailedRestores,
   shouldConfirmBulkRestore,
   restoreBackoffDelay,
+  buildRestoreFailuresCsv,
+  buildRestoreFailuresFilename,
   summarizeRestoreFailures,
   BULK_RESTORE_CONFIRM_THRESHOLD,
   type CurationFeedDay,
@@ -278,5 +280,39 @@ describe('summarizeRestoreFailures', () => {
 
   it('devolve zeros para lista vazia', () => {
     expect(summarizeRestoreFailures([])).toEqual({ permission: 0, network: 0, unknown: 0 });
+  });
+});
+
+describe('buildRestoreFailuresCsv', () => {
+  it('escapa aspas, vírgulas e quebras de linha nas mensagens', () => {
+    const csv = buildRestoreFailuresCsv([
+      {
+        templateId: 't1',
+        templateName: 'Vendas, B2B',
+        skillCount: 2,
+        message: 'erro "grave"\nlinha 2',
+        kind: 'permission',
+      },
+    ]);
+    expect(csv.startsWith('\uFEFF')).toBe(true);
+    expect(csv).toContain('"Vendas, B2B"');
+    expect(csv).toContain('"erro ""grave""\nlinha 2"');
+    expect(csv).toContain('"Sem permissão"');
+  });
+
+  it('gera apenas cabeçalho quando não há falhas', () => {
+    const csv = buildRestoreFailuresCsv([]);
+    expect(csv.trim().split('\r\n')).toHaveLength(1);
+  });
+});
+
+describe('buildRestoreFailuresFilename', () => {
+  it('usa a data ISO e cai para hoje em data inválida', () => {
+    expect(buildRestoreFailuresFilename(new Date('2026-07-28T10:00:00Z'))).toBe(
+      'restauracoes-parciais-2026-07-28.csv',
+    );
+    expect(buildRestoreFailuresFilename(new Date('inválida'))).toMatch(
+      /^restauracoes-parciais-\d{4}-\d{2}-\d{2}\.csv$/,
+    );
   });
 });

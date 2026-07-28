@@ -574,6 +574,46 @@ async function runRestorePlan(
   return { restored, failedTemplates: failures.map((f) => f.templateId), failures };
 }
 
+/**
+ * Escapa um campo para CSV RFC 4180.
+ *
+ * Mensagens de erro do Postgres contêm vírgulas, aspas e quebras de linha —
+ * sem escapar, o relatório abre desalinhado em qualquer planilha.
+ */
+function csvField(value: string | number): string {
+  const texto = String(value ?? '');
+  return `"${texto.replace(/"/g, '""')}"`;
+}
+
+/**
+ * Gera o CSV do relatório de restaurações parciais.
+ *
+ * Função pura: a UI só precisa disparar o download. Prefixo BOM para o Excel
+ * em PT-BR interpretar acentuação corretamente.
+ */
+export function buildRestoreFailuresCsv(failures: readonly BulkRestoreFailure[]): string {
+  const cabecalho = ['template_id', 'template_nome', 'vinculos_pendentes', 'natureza', 'mensagem'];
+  const linhas = (failures ?? [])
+    .filter(Boolean)
+    .map((f) =>
+      [
+        csvField(f.templateId),
+        csvField(f.templateName),
+        csvField(f.skillCount),
+        csvField(RESTORE_FAILURE_LABEL[f.kind] ?? f.kind),
+        csvField(f.message),
+      ].join(','),
+    );
+  return `\uFEFF${[cabecalho.map(csvField).join(','), ...linhas].join('\r\n')}\r\n`;
+}
+
+/** Nome de arquivo determinístico por data — facilita anexar em chamados. */
+export function buildRestoreFailuresFilename(date: Date = new Date()): string {
+  const iso = Number.isNaN(date.getTime()) ? new Date() : date;
+  return `restauracoes-parciais-${iso.toISOString().slice(0, 10)}.csv`;
+}
+
+
 
 /**
  * Restaura todas as remoções de um feed, um lote atômico por template.

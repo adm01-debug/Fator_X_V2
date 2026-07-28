@@ -26,6 +26,8 @@ import {
   RESTORE_FAILURE_LABEL,
   isRetriableFailure,
   summarizeRestoreFailures,
+  buildRestoreFailuresCsv,
+  buildRestoreFailuresFilename,
 
   groupRemovalsByTemplate,
   shouldConfirmBulkRestore,
@@ -207,6 +209,22 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
   const [falhas, setFalhas] = useState<BulkRestoreFailure[]>([]);
   // Resumo por natureza: o curador decide escalar (RLS) ou reenviar (rede).
   const resumoFalhas = useMemo(() => summarizeRestoreFailures(falhas), [falhas]);
+
+  // Exporta o relatório sem tocar no backend: os dados já estão em memória.
+  const exportarFalhasCsv = useCallback(() => {
+    const blob = new Blob([buildRestoreFailuresCsv(falhas)], {
+      type: 'text/csv;charset=utf-8;',
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = buildRestoreFailuresFilename();
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }, [falhas]);
+
 
   // Reprocessar um lote negado por RLS só repete o erro: o retry fica restrito
   // às falhas transitórias, e as de permissão ficam visíveis para escalar.
@@ -489,7 +507,22 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
               Tentar novamente ({templatesRetentaveis.length})
             </Button>
           )}
+
+          {falhas.length > 0 && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="text-meta h-7 px-3"
+              onClick={exportarFalhasCsv}
+              aria-label="Exportar relatório CSV das restaurações parciais"
+            >
+              <Download className="mr-1.5 h-3.5 w-3.5" aria-hidden />
+              Exportar CSV
+            </Button>
+          )}
         </div>
+
 
         {falhas.length > 0 && (
           <ul className="mt-2 space-y-1 rounded-md border border-destructive/40 bg-destructive/5 p-2">
