@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { AlertTriangle, Gauge, Loader2, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
 import { logger } from '@/lib/logger';
 import { audit } from '@/lib/auditService';
 import { fetchClassificationTimeline } from '@/services/skillClassificationTimelineService';
@@ -131,6 +132,30 @@ export function SkillClassificationEfficacyCard({
     [resumo.suggestedThreshold],
   );
 
+  /**
+   * Aplicar é sempre a MESMA operação; o que muda com instabilidade é apenas
+   * a fricção antes dela. Extraído para não duplicar a auditoria em dois
+   * caminhos de UI (que fatalmente divergiriam).
+   */
+  const aplicarSugerido = useCallback(() => {
+    if (!onApplyThreshold || sugerido === null) return;
+    const anterior =
+      currentThreshold === undefined ? null : normalizeConfidenceThreshold(currentThreshold);
+    onApplyThreshold(sugerido);
+    // Auditoria não bloqueia a UI: falha vira log, não erro visível.
+    void audit
+      .skillThresholdCalibrated({
+        from: anterior,
+        to: sugerido,
+        sampleSize: resumo.total,
+        accuracy: resumo.accuracy,
+      })
+      // Só recarrega depois da escrita: refetch antes traria a lista sem a
+      // linha nova e pareceria que nada foi gravado.
+      .then(() => carregar());
+    toast.success(`Limiar de revisão ajustado para ${sugerido.toFixed(2)}`);
+  }, [onApplyThreshold, sugerido, currentThreshold, resumo.total, resumo.accuracy, carregar]);
+
   const podeAplicar =
     sugerido !== null &&
     (currentThreshold === undefined ||
@@ -194,33 +219,40 @@ export function SkillClassificationEfficacyCard({
             </p>
             {onApplyThreshold && sugerido !== null && (
               <div className="flex flex-wrap items-center gap-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled={!podeAplicar}
-                  onClick={() => {
-                    const anterior =
-                      currentThreshold === undefined
-                        ? null
-                        : normalizeConfidenceThreshold(currentThreshold);
-                    onApplyThreshold(sugerido);
-                    // Auditoria não bloqueia a UI: falha vira log, não erro visível.
-                    void audit
-                      .skillThresholdCalibrated({
-                        from: anterior,
-                        to: sugerido,
-                        sampleSize: resumo.total,
-                        accuracy: resumo.accuracy,
-                      })
-                      // Só recarrega depois da escrita: refetch antes traria a
-                      // lista sem a linha nova e pareceria que nada foi gravado.
-                      .then(() => carregar());
-                    toast.success(`Limiar de revisão ajustado para ${sugerido.toFixed(2)}`);
-                  }}
-                >
-                  <Gauge className="mr-2 h-4 w-4" />
-                  Aplicar limiar sugerido
-                </Button>
+                {instabilidade.unstable ? (
+                  /* Instabilidade detectada: o sugerido nasce de uma amostra
+                     que ainda oscila. Aplicar sem fricção transformaria ruído
+                     em política. Não bloqueamos de vez (o curador pode ter
+                     contexto que os dados não têm), mas exigimos confirmação
+                     explícita — e o motivo aparece no próprio diálogo. */
+                  <ConfirmDialog
+                    trigger={
+                      <Button size="sm" variant="outline" disabled={!podeAplicar}>
+                        <AlertTriangle className="mr-2 h-4 w-4 text-warning" aria-hidden />
+                        Aplicar limiar sugerido
+                      </Button>
+                    }
+                    title="Calibração instável — confirmar mesmo assim?"
+                    description={`${
+                      instabilidade.reason === 'volume'
+                        ? `Houve ${instabilidade.eventsInWindow} calibrações nos últimos ${INSTABILITY_WINDOW_DAYS} dias`
+                        : `Houve ${instabilidade.reversals} inversões de sentido nos últimos ${INSTABILITY_WINDOW_DAYS} dias`
+                    } (amplitude de ${instabilidade.spread.toFixed(2)}). Recalibrar agora tende a perseguir ruído da amostra em vez de corrigir o classificador. Aplicar ${sugerido.toFixed(2)} assim mesmo?`}
+                    confirmLabel={`Aplicar ${sugerido.toFixed(2)}`}
+                    variant="default"
+                    onConfirm={aplicarSugerido}
+                  />
+                ) : (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={!podeAplicar}
+                    onClick={aplicarSugerido}
+                  >
+                    <Gauge className="mr-2 h-4 w-4" />
+                    Aplicar limiar sugerido
+                  </Button>
+                )}
                 <span className="text-caption text-muted-foreground">
                   {podeAplicar
                     ? `Atual: ${(currentThreshold ?? 0).toFixed(2)}`
