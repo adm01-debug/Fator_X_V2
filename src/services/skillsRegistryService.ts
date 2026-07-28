@@ -198,3 +198,21 @@ export const SKILL_CATEGORIES = [
   { id: 'workflows', name: 'Workflows', icon: '⚡', description: 'Automações pré-construídas' },
   { id: 'integrations', name: 'Integrações', icon: '🔗', description: 'Conectores externos' },
 ] as const;
+
+/**
+ * Diff determinístico entre o conjunto instalado e a nova seleção do picker.
+ * Sanitiza ids, deduplica e nunca marca o mesmo id em `toAdd` e `toRemove`.
+ */
+export function computeSkillSelectionDiff(
+  installedIds: readonly string[],
+  nextIds: readonly string[],
+): { toAdd: string[]; toRemove: string[] } {
+  const installed = normalizeSkillIdList(installedIds as unknown[]);
+  const next = normalizeSkillIdList(nextIds as unknown[]);
+  const installedSet = new Set(installed);
+  const nextSet = new Set(next);
+  return {
+    toAdd: next.filter((id) => !installedSet.has(id)),
+    toRemove: installed.filter((id) => !nextSet.has(id)),
+  };
+}
