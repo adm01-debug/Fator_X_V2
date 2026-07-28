@@ -272,31 +272,62 @@ export function SkillClassificationEfficacyCard({
                   /* Instabilidade detectada: o sugerido nasce de uma amostra
                      que ainda oscila. Aplicar sem fricção transformaria ruído
                      em política. Não bloqueamos de vez (o curador pode ter
-                     contexto que os dados não têm), mas exigimos confirmação
-                     explícita — e o motivo aparece no próprio diálogo. */
-                  <ConfirmDialog
-                    trigger={
+                     contexto que os dados não têm), mas exigimos justificativa
+                     textual — que fica na trilha para revisão de governança. */
+                  <Dialog
+                    open={overrideOpen}
+                    onOpenChange={(aberto) => {
+                      setOverrideOpen(aberto);
+                      // Fechar sem confirmar descarta o rascunho: reabrir com
+                      // texto antigo induziria justificativa reaproveitada.
+                      if (!aberto) setJustificativa('');
+                    }}
+                  >
+                    <DialogTrigger asChild>
                       <Button size="sm" variant="outline" disabled={!podeAplicar}>
                         <AlertTriangle className="mr-2 h-4 w-4 text-warning" aria-hidden />
                         Aplicar limiar sugerido
                       </Button>
-                    }
-                    title="Calibração instável — confirmar mesmo assim?"
-                    description={`${
-                      instabilidade.reason === 'volume'
-                        ? `Houve ${instabilidade.eventsInWindow} calibrações nos últimos ${INSTABILITY_WINDOW_DAYS} dias`
-                        : `Houve ${instabilidade.reversals} inversões de sentido nos últimos ${INSTABILITY_WINDOW_DAYS} dias`
-                    } (amplitude de ${instabilidade.spread.toFixed(2)}). Recalibrar agora tende a perseguir ruído da amostra em vez de corrigir o classificador. Aplicar ${sugerido.toFixed(2)} assim mesmo?`}
-                    confirmLabel={`Aplicar ${sugerido.toFixed(2)}`}
-                    variant="default"
-                    onConfirm={aplicarSugerido}
-                  />
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Calibração instável — justifique o override</DialogTitle>
+                        <DialogDescription>
+                          {instabilidade.reason === 'volume'
+                            ? `Houve ${instabilidade.eventsInWindow} calibrações nos últimos ${INSTABILITY_WINDOW_DAYS} dias`
+                            : `Houve ${instabilidade.reversals} inversões de sentido nos últimos ${INSTABILITY_WINDOW_DAYS} dias`}
+                          {` (amplitude de ${instabilidade.spread.toFixed(2)}). Recalibrar agora tende a perseguir ruído da amostra. Registre por que aplicar ${sugerido.toFixed(2)} mesmo assim.`}
+                        </DialogDescription>
+                      </DialogHeader>
+                      <Textarea
+                        value={justificativa}
+                        onChange={(e) => setJustificativa(e.target.value)}
+                        placeholder="Ex.: lote de skills de vendas importado hoje distorceu a amostra; limiar manual acordado com o time."
+                        maxLength={OVERRIDE_REASON_MAX}
+                        rows={4}
+                        aria-label="Justificativa do override"
+                      />
+                      <p className="text-meta text-muted-foreground">
+                        Mínimo de {OVERRIDE_REASON_MIN} caracteres · {justificativa.trim().length}/
+                        {OVERRIDE_REASON_MAX}
+                      </p>
+                      <DialogFooter>
+                        <Button
+                          size="sm"
+                          onClick={confirmarOverride}
+                          disabled={!justificativaValida || !podeAplicar}
+                        >
+                          Aplicar {sugerido.toFixed(2)}
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 ) : (
                   <Button
                     size="sm"
                     variant="outline"
                     disabled={!podeAplicar}
-                    onClick={aplicarSugerido}
+                    onClick={() => aplicarSugerido()}
                   >
                     <Gauge className="mr-2 h-4 w-4" />
                     Aplicar limiar sugerido
