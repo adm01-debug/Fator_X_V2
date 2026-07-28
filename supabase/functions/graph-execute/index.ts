@@ -3,6 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { z } from "https://esm.sh/zod@3.23.8";
 import { fetchWithTimeout, withRetry } from "../_shared/retry.ts";
 import { checkIdempotency, saveIdempotency } from "../_shared/idempotency.ts";
+import { appendSkillsToPrompt, loadAgentSkills, type RuntimeSkill } from "../_shared/skills.ts";
 
 import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv, getCorsHeaders } from "../_shared/mod.ts";
 const InputSchema = z.object({
@@ -107,6 +108,13 @@ Deno.serve(async (req) => {
       : { data: [] };
     const agentMap = new Map((agents || []).map(a => [a.id, a]));
 
+    // Pré-carrega as skills instaladas de cada agente (uma vez por grafo,
+    // evitando N+1 dentro do loop BFS). Falha suave: mapa vazio.
+    const skillsByAgent = new Map<string, RuntimeSkill[]>();
+    for (const id of agentIds) {
+      skillsByAgent.set(id, await loadAgentSkills(supabase, id));
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     const trace: any[] = [];
     let totalCost = 0;
@@ -120,9 +128,11 @@ Deno.serve(async (req) => {
       const node = nodes.find(n => n.id === currentNodeId);
       if (!node) break;
       const agent = node.agent_id ? agentMap.get(node.agent_id) : null;
-      const systemPrompt = agent
+      const baseSystemPrompt = agent
         ? `You are ${agent.name}. ${agent.persona || ''}\nMission: ${agent.mission || ''}\nRole in workflow: ${node.role || node.label || 'agent'}`
         : `You are an agent in a multi-agent workflow. Role: ${node.role || node.label || 'process input'}`;
+      const nodeSkills = node.agent_id ? (skillsByAgent.get(node.agent_id) ?? []) : [];
+      const systemPrompt = appendSkillsToPrompt(baseSystemPrompt, nodeSkills);
 
       const { text, latency, cost_cents } = await callLLM(systemPrompt, currentInput);
       totalCost += cost_cents;
@@ -134,6 +144,8 @@ Deno.serve(async (req) => {
         output: text,
         latency_ms: latency,
         cost_cents,
+        // Observabilidade: quantas skills entraram no prompt deste nó.
+        skills_injected_count: nodeSkills.length,
         ts: new Date().toISOString(),
       });
 
