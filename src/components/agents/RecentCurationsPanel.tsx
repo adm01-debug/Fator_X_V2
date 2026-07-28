@@ -23,6 +23,8 @@ import {
   retryFailedRestores,
   type BulkRestoreAllResult,
   type BulkRestoreFailure,
+  RESTORE_FAILURE_LABEL,
+  isRetriableFailure,
   groupRemovalsByTemplate,
   shouldConfirmBulkRestore,
   type CurationActorScope,
@@ -201,7 +203,12 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
   // toast) permite oferecer um retry cirúrgico, sem reprocessar o que já foi
   // restaurado com sucesso.
   const [falhas, setFalhas] = useState<BulkRestoreFailure[]>([]);
-  const templatesFalhos = useMemo(() => falhas.map((f) => f.templateId), [falhas]);
+  // Reprocessar um lote negado por RLS só repete o erro: o retry fica restrito
+  // às falhas transitórias, e as de permissão ficam visíveis para escalar.
+  const templatesRetentaveis = useMemo(
+    () => falhas.filter((f) => isRetriableFailure(f.kind)).map((f) => f.templateId),
+    [falhas],
+  );
 
   const aplicarResultado = useCallback(
     ({ restored, failures }: BulkRestoreAllResult) => {
@@ -242,7 +249,7 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
   });
 
   const tentarNovamente = useMutation({
-    mutationFn: () => retryFailedRestores(feedRef.current, templatesFalhos),
+    mutationFn: () => retryFailedRestores(feedRef.current, templatesRetentaveis),
     onSuccess: aplicarResultado,
     onError: aoFalhar,
   });
@@ -465,7 +472,7 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
               size="sm"
               className="text-meta h-7 px-3"
               onClick={() => tentarNovamente.mutate()}
-              disabled={tentarNovamente.isPending}
+              disabled={tentarNovamente.isPending || templatesRetentaveis.length === 0}
               aria-label={`Tentar novamente ${falhas.length} template(s) que falharam`}
               title={falhas.map((f) => `${f.templateName}: ${f.message}`).join('\n')}
             >
@@ -474,10 +481,26 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
               ) : (
                 <RefreshCw className="mr-1.5 h-3.5 w-3.5" aria-hidden />
               )}
-              Tentar novamente ({falhas.length})
+              Tentar novamente ({templatesRetentaveis.length})
             </Button>
           )}
         </div>
+
+        {falhas.length > 0 && (
+          <ul className="mt-2 space-y-1 rounded-md border border-destructive/40 bg-destructive/5 p-2">
+            {falhas.map((f) => (
+              <li key={f.templateId} className="text-meta flex flex-wrap items-center gap-1.5">
+                <Badge variant="destructive" className="text-meta">
+                  {RESTORE_FAILURE_LABEL[f.kind]}
+                </Badge>
+                <span className="font-medium text-foreground">{f.templateName}</span>
+                <span className="text-muted-foreground">
+                  {f.skillCount} vínculo(s) pendente(s) — {f.message}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
 
         {rotuloPendentes && (
           <div className="pt-2">
