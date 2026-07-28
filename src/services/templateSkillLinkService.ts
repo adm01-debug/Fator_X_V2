@@ -324,6 +324,74 @@ export async function bulkRestoreTemplateSkillLinks(
   return ids.length;
 }
 
+/**
+ * Agrupa as remoções visíveis do feed por template, deduplicando skills.
+ *
+ * Função pura: a UI precisa de um plano determinístico ANTES de disparar I/O,
+ * para poder contar quantos vínculos serão restaurados e em quantos lotes.
+ * A ordem de templates segue a primeira ocorrência no feed (mais recente).
+ */
+export function groupRemovalsByTemplate(
+  days: readonly CurationFeedDay[],
+): Array<{ templateId: string; skillIds: string[] }> {
+  const porTemplate = new Map<string, string[]>();
+
+  for (const dia of days ?? []) {
+    for (const entrada of dia?.entries ?? []) {
+      if (entrada.kind !== 'unlinked') continue;
+      const templateId = entrada.templateId?.trim();
+      const skillId = entrada.skillId?.trim();
+      if (!templateId || !skillId) continue;
+
+      const atual = porTemplate.get(templateId);
+      if (atual) atual.push(skillId);
+      else porTemplate.set(templateId, [skillId]);
+    }
+  }
+
+  return [...porTemplate.entries()].map(([templateId, skillIds]) => ({
+    templateId,
+    skillIds: sanitizeSkillIds(skillIds),
+  }));
+}
+
+/** Resultado agregado de uma restauração em massa multi-template. */
+export interface BulkRestoreAllResult {
+  /** Vínculos efetivamente enviados para restauração. */
+  restored: number;
+  /** Templates cujo lote falhou (a restauração é parcial, não atômica entre templates). */
+  failedTemplates: string[];
+}
+
+/**
+ * Restaura todas as remoções de um feed, um lote atômico por template.
+ *
+ * Não abortamos no primeiro erro: RLS pode negar um template específico e
+ * ainda assim faz sentido restaurar os demais. O chamador recebe a lista de
+ * falhas para informar o curador com honestidade.
+ */
+export async function bulkRestoreAllRemovals(
+  days: readonly CurationFeedDay[],
+): Promise<BulkRestoreAllResult> {
+  const grupos = groupRemovalsByTemplate(days);
+  let restored = 0;
+  const failedTemplates: string[] = [];
+
+  for (const grupo of grupos) {
+    try {
+      restored += await bulkRestoreTemplateSkillLinks(grupo.templateId, grupo.skillIds);
+    } catch (error) {
+      failedTemplates.push(grupo.templateId);
+      logger.error('bulkRestoreAllRemovals partial failure', {
+        templateId: grupo.templateId,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  }
+
+  return { restored, failedTemplates };
+}
+
 
 export interface RebuildResult {
   templates: number;
