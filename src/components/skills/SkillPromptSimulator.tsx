@@ -24,9 +24,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Copy, FlaskConical } from 'lucide-react';
+import { Copy, Download, FlaskConical } from 'lucide-react';
 import { SkillPromptSimulatorReport } from '@/components/skills/SkillPromptSimulatorReport';
+import { SkillPromptDiffView } from '@/components/skills/SkillPromptDiffView';
 import { simulatePrompt, MAX_PROMPT_SKILLS } from '@/lib/skills/promptSimulation';
+import { diffPromptSimulations } from '@/lib/skills/promptDiff';
+import {
+  buildPromptAuditArtifact,
+  buildArtifactFilename,
+} from '@/lib/skills/promptAuditArtifact';
 import {
   fetchAgentOptions,
   fetchAgentPromptContext,
@@ -52,6 +58,7 @@ function syntheticSkills(count: number): PromptSkill[] {
 
 export function SkillPromptSimulator() {
   const [agentId, setAgentId] = useState<string>('');
+  const [compareId, setCompareId] = useState<string>('');
   const [forceOverflow, setForceOverflow] = useState(false);
   const [showSanitization, setShowSanitization] = useState(false);
 
@@ -65,6 +72,16 @@ export function SkillPromptSimulator() {
     queryKey: ['agent_prompt_context', agentId],
     queryFn: () => fetchAgentPromptContext(agentId),
     enabled: agentId !== '',
+    staleTime: 60_000,
+  });
+
+  // O lado de comparação é sempre compilado SEM os toggles de estresse: os
+  // toggles existem para inspecionar o agente principal, e aplicá-los aos dois
+  // lados tornaria o diff sistematicamente vazio na parte sintética.
+  const { data: compareContext, isLoading: loadingCompare } = useQuery({
+    queryKey: ['agent_prompt_context', compareId],
+    queryFn: () => fetchAgentPromptContext(compareId),
+    enabled: compareId !== '',
     staleTime: 60_000,
   });
 
@@ -89,6 +106,24 @@ export function SkillPromptSimulator() {
     });
   }, [context, forceOverflow, showSanitization]);
 
+  const compareResult = useMemo(() => {
+    if (!compareContext) return null;
+    return simulatePrompt({
+      name: compareContext.name,
+      emoji: compareContext.emoji,
+      mission: compareContext.mission,
+      type: compareContext.persona,
+      model: compareContext.model,
+      prompt: compareContext.systemPrompt,
+      skills: compareContext.skills,
+    });
+  }, [compareContext]);
+
+  const diff = useMemo(
+    () => (compareResult && result ? diffPromptSimulations(compareResult, result) : null),
+    [compareResult, result],
+  );
+
   const copiar = async () => {
     if (!result) return;
     try {
@@ -98,6 +133,34 @@ export function SkillPromptSimulator() {
       toast.error('Não foi possível copiar o prompt');
     }
   };
+
+  /** Exporta o artefato markdown de evidência (download local, sem backend). */
+  const exportar = () => {
+    if (!result || !context) return;
+    const meta = {
+      agentId: context.id,
+      agentName: context.name,
+      model: context.model,
+      persona: context.persona,
+      forcedOverflow: forceOverflow,
+      injectedDirtySkill: showSanitization,
+    };
+    try {
+      const blob = new Blob([buildPromptAuditArtifact(result, meta)], {
+        type: 'text/markdown;charset=utf-8',
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = buildArtifactFilename(meta);
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success('Evidência de auditoria exportada');
+    } catch {
+      toast.error('Não foi possível gerar o artefato');
+    }
+  };
+
 
   return (
     <Card className="border-border/60">
@@ -113,18 +176,29 @@ export function SkillPromptSimulator() {
               {MAX_PROMPT_SKILLS} skills.
             </p>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-2"
-            onClick={() => void copiar()}
-            disabled={!result}
-          >
-            <Copy className="h-3.5 w-3.5" /> Copiar
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              onClick={() => void copiar()}
+              disabled={!result}
+            >
+              <Copy className="h-3.5 w-3.5" /> Copiar
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              onClick={exportar}
+              disabled={!result}
+            >
+              <Download className="h-3.5 w-3.5" /> Exportar evidência
+            </Button>
+          </div>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-3 sm:items-center">
+        <div className="grid gap-3 sm:grid-cols-2 sm:items-center">
           <Select value={agentId} onValueChange={setAgentId} disabled={loadingAgents}>
             <SelectTrigger aria-label="Selecionar agente">
               <SelectValue placeholder={loadingAgents ? 'Carregando…' : 'Selecione um agente'} />
@@ -135,6 +209,26 @@ export function SkillPromptSimulator() {
                   {a.name}
                 </SelectItem>
               ))}
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={compareId === '' ? '__none__' : compareId}
+            onValueChange={(v) => setCompareId(v === '__none__' ? '' : v)}
+            disabled={loadingAgents || agentId === ''}
+          >
+            <SelectTrigger aria-label="Comparar com outro agente">
+              <SelectValue placeholder="Comparar com… (opcional)" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__none__">Sem comparação</SelectItem>
+              {(agents ?? [])
+                .filter((a) => a.id !== agentId)
+                .map((a) => (
+                  <SelectItem key={a.id} value={a.id}>
+                    {a.name}
+                  </SelectItem>
+                ))}
             </SelectContent>
           </Select>
 
@@ -162,6 +256,7 @@ export function SkillPromptSimulator() {
             </Label>
           </div>
         </div>
+
       </CardHeader>
 
       <CardContent className="space-y-4">
@@ -185,7 +280,11 @@ export function SkillPromptSimulator() {
               <TabsTrigger value="prompt">Prompt final</TabsTrigger>
               <TabsTrigger value="skills">Seção de skills</TabsTrigger>
               <TabsTrigger value="diagnostico">Diagnóstico</TabsTrigger>
+              <TabsTrigger value="diff" disabled={compareId === ''}>
+                Comparar
+              </TabsTrigger>
             </TabsList>
+
 
             <TabsContent value="prompt" className="mt-4">
               <pre className="max-h-96 overflow-auto whitespace-pre-wrap break-words rounded-lg border border-border/60 bg-muted/30 p-4 text-meta leading-relaxed">
@@ -209,6 +308,23 @@ export function SkillPromptSimulator() {
             <TabsContent value="diagnostico" className="mt-4">
               <SkillPromptSimulatorReport result={result} />
             </TabsContent>
+
+            <TabsContent value="diff" className="mt-4">
+              {loadingCompare ? <Skeleton className="h-64 w-full" /> : null}
+              {diff ? (
+                <SkillPromptDiffView
+                  diff={diff}
+                  leftLabel={compareContext?.name ?? 'Referência'}
+                  rightLabel={context?.name ?? 'Atual'}
+                />
+              ) : null}
+              {!loadingCompare && !diff ? (
+                <p className="rounded-lg border border-dashed border-border/60 p-6 text-center text-body-sm text-muted-foreground">
+                  Selecione um agente de comparação para ver o diff.
+                </p>
+              ) : null}
+            </TabsContent>
+
           </Tabs>
         ) : null}
       </CardContent>
