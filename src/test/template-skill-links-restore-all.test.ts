@@ -18,6 +18,7 @@ import {
   buildRestoreFailuresCsv,
   buildRestoreFailuresFilename,
   parseStoredRestoreFailures,
+  pruneExpiredRestoreFailures,
   summarizeRestoreFailures,
   BULK_RESTORE_CONFIRM_THRESHOLD,
   type CurationFeedDay,
@@ -337,8 +338,41 @@ describe('parseStoredRestoreFailures', () => {
 
   it('faz round-trip com falhas válidas', () => {
     const original = [
-      { templateId: 't1', templateName: 'Vendas', skillCount: 2, message: 'rls', kind: 'permission' as const },
+      {
+        templateId: 't1',
+        templateName: 'Vendas',
+        skillCount: 2,
+        message: 'rls',
+        kind: 'permission' as const,
+        failedAt: new Date('2026-07-28T10:00:00.000Z').toISOString(),
+      },
     ];
     expect(parseStoredRestoreFailures(JSON.stringify(original))).toEqual(original);
+  });
+});
+
+describe('pruneExpiredRestoreFailures', () => {
+  const base = (failedAt: string) => ({
+    templateId: 't1',
+    templateName: 'Vendas',
+    skillCount: 1,
+    message: 'fetch',
+    kind: 'network' as const,
+    failedAt,
+  });
+
+  it('mantém falhas dentro da janela de TTL', () => {
+    const agora = Date.parse('2026-07-28T12:00:00.000Z');
+    const recente = base('2026-07-28T11:00:00.000Z');
+    expect(pruneExpiredRestoreFailures([recente], agora)).toEqual([recente]);
+  });
+
+  it('descarta falhas mais antigas que o TTL', () => {
+    const agora = Date.parse('2026-07-28T12:00:00.000Z');
+    expect(pruneExpiredRestoreFailures([base('2026-07-26T12:00:00.000Z')], agora)).toEqual([]);
+  });
+
+  it('descarta registros com data inválida', () => {
+    expect(pruneExpiredRestoreFailures([base('não-é-data')], Date.now())).toEqual([]);
   });
 });
