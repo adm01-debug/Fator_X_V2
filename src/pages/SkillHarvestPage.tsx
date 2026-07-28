@@ -63,6 +63,23 @@ export default function SkillHarvestPage() {
   const [pickedDepts, setPickedDepts] = useState<Set<SkillDepartment>>(new Set());
   const [minStars, setMinStars] = useState(3);
   const [maxRepos, setMaxRepos] = useState(40);
+  /** Lista livre de monorepos, um `owner/repo` por linha. */
+  const [reposInput, setReposInput] = useState('');
+  const [filesPerRepo, setFilesPerRepo] = useState(120);
+
+  /** Normaliza a caixa de texto: aceita URL completa ou `owner/repo`. */
+  const parsedRepos = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          reposInput
+            .split(/[\n,\s]+/)
+            .map((raw) => raw.trim().replace(/^https?:\/\/github\.com\//i, '').replace(/\.git$/i, '').replace(/\/+$/, ''))
+            .filter((s) => repoSlugRegex.test(s)),
+        ),
+      ).slice(0, 10),
+    [reposInput],
+  );
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -89,11 +106,18 @@ export default function SkillHarvestPage() {
   const handleHarvest = async () => {
     setHarvesting(true);
     try {
+      const directMode = parsedRepos.length > 0;
       const result = await runHarvest({
         departments: Array.from(pickedDepts),
         minStars,
         maxRepos,
+        repos: parsedRepos,
+        // Monorepos trazem centenas de SKILL.md; sem elevar os tetos a
+        // varredura pararia nos 8 primeiros arquivos.
+        filesPerRepo: directMode ? filesPerRepo : 8,
+        maxCandidates: directMode ? Math.min(1000, filesPerRepo * parsedRepos.length) : 120,
       });
+
       toast.success('Varredura concluída', {
         description: `${result.found} candidatos encontrados, ${result.inserted} novos, ${result.rejected} rejeitados automaticamente.`,
       });
