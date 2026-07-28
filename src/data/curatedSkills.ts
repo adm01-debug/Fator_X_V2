@@ -448,7 +448,152 @@ export const CURATED_SKILLS: CuratedSkill[] = [
     tags: ['executivo', 'ata', 'reuniao', 'decisao', 'followup', 'prazo', 'produtividade'],
     qualityScore: 88,
   },
+
+  // ------------------- ENGENHARIA / DISCIPLINAS (porte de obra/superpowers) -------------------
+  // Meta-skills de processo de engenharia portadas do repositório obra/superpowers
+  // (MIT). Reescritas em PT-BR e adaptadas ao vocabulário do Nexus.
+  {
+    slug: 'nexus-brainstorming-socratico',
+    name: 'Brainstorming Socrático de Requisitos',
+    description:
+      'Conduz uma rodada de perguntas socráticas antes de qualquer implementação, expõe premissas ocultas, mapeia alternativas descartadas e só encerra quando o escopo e os critérios de aceite estiverem inequívocos.',
+    department: 'ti',
+    category: 'prompts',
+    tags: ['ti', 'brainstorming', 'requisitos', 'descoberta', 'escopo', 'premissas', 'design'],
+    qualityScore: 93,
+  },
+  {
+    slug: 'nexus-plano-de-implementacao',
+    name: 'Redação de Planos de Implementação',
+    description:
+      'Transforma um pedido vago em plano executável com tarefas atômicas, ordem de dependência, critérios de verificação por etapa e um plano de rollback explícito antes de escrever a primeira linha de código.',
+    department: 'ti',
+    category: 'workflows',
+    tags: ['ti', 'plano', 'planejamento', 'tarefas', 'rollback', 'entrega', 'deploy'],
+    qualityScore: 94,
+  },
+  {
+    slug: 'nexus-execucao-de-planos',
+    name: 'Execução Disciplinada de Planos',
+    description:
+      'Executa um plano tarefa a tarefa, sem antecipar etapas nem agrupar mudanças, registrando evidência de verificação a cada passo e interrompendo a execução quando a realidade diverge do plano.',
+    department: 'ti',
+    category: 'workflows',
+    tags: ['ti', 'execucao', 'plano', 'disciplina', 'evidencia', 'pipeline', 'deploy'],
+    qualityScore: 92,
+  },
+  {
+    slug: 'nexus-tdd-red-green-refactor',
+    name: 'TDD Red-Green-Refactor',
+    description:
+      'Impõe o ciclo teste-primeiro: escreve o teste que falha, comprova a falha pelo motivo certo, implementa o mínimo para passar e só então refatora, proibindo código de produção sem teste que o justifique.',
+    department: 'ti',
+    category: 'workflows',
+    tags: ['ti', 'tdd', 'teste', 'testes', 'refactor', 'qualidade', 'ci', 'pipeline'],
+    qualityScore: 96,
+  },
+  {
+    slug: 'nexus-depuracao-sistematica',
+    name: 'Depuração Sistemática de Causa Raiz',
+    description:
+      'Aplica o método de quatro fases — reproduzir, isolar, formular hipótese falseável e corrigir a causa raiz — vetando correções sintomáticas e exigindo um teste que reproduza o defeito antes do conserto.',
+    department: 'ti',
+    category: 'workflows',
+    tags: ['ti', 'debug', 'depuracao', 'incidente', 'troubleshooting', 'causa', 'raiz', 'logs'],
+    qualityScore: 95,
+  },
+  {
+    slug: 'nexus-verificacao-antes-de-concluir',
+    name: 'Verificação Antes de Concluir',
+    description:
+      'Bloqueia a declaração de "pronto" enquanto não houver evidência executada: build, testes, lint e checagem manual do caminho feliz, com a saída real anexada em vez de afirmações não comprovadas.',
+    department: 'ti',
+    category: 'workflows',
+    tags: ['ti', 'verificacao', 'qualidade', 'checklist', 'build', 'ci', 'deploy', 'monitoramento'],
+    qualityScore: 94,
+  },
+  {
+    slug: 'nexus-solicitar-code-review',
+    name: 'Solicitação de Code Review Eficaz',
+    description:
+      'Prepara o pedido de revisão com contexto, diff enxuto, riscos conhecidos e as perguntas específicas que o revisor deve responder, reduzindo idas e vindas e revisões superficiais.',
+    department: 'ti',
+    category: 'prompts',
+    tags: ['ti', 'code', 'review', 'revisao', 'pull', 'request', 'qualidade', 'colaboracao'],
+    qualityScore: 89,
+  },
+  {
+    slug: 'nexus-receber-code-review',
+    name: 'Recepção Crítica de Code Review',
+    description:
+      'Trata cada apontamento de revisão como hipótese a ser avaliada: classifica em aceitar, contestar com evidência ou adiar com registro, e proíbe mudanças automáticas sem entender o motivo do apontamento.',
+    department: 'ti',
+    category: 'prompts',
+    tags: ['ti', 'code', 'review', 'feedback', 'revisao', 'qualidade', 'colaboracao'],
+    qualityScore: 88,
+  },
+  {
+    slug: 'nexus-agentes-paralelos',
+    name: 'Despacho de Agentes em Paralelo',
+    description:
+      'Decompõe um trabalho grande em frentes independentes, despacha sub-agentes com contrato de entrada e saída explícito e consolida os resultados, evitando conflito de escrita no mesmo arquivo ou recurso.',
+    department: 'ti',
+    category: 'workflows',
+    tags: ['ti', 'agentes', 'paralelismo', 'orquestracao', 'subagente', 'infra', 'pipeline'],
+    qualityScore: 91,
+  },
+  {
+    slug: 'nexus-desenvolvimento-por-subagentes',
+    name: 'Desenvolvimento Orientado a Sub-agentes',
+    description:
+      'Estrutura a entrega em ciclos delegados: um sub-agente implementa, outro revisa com olhar limpo e um terceiro verifica, mantendo o contexto principal enxuto e as decisões auditáveis.',
+    department: 'ti',
+    category: 'workflows',
+    tags: ['ti', 'subagente', 'delegacao', 'ciclo', 'revisao', 'arquitetura', 'devops'],
+    qualityScore: 90,
+  },
+  {
+    slug: 'nexus-git-worktrees',
+    name: 'Isolamento de Trabalho com Git Worktrees',
+    description:
+      'Cria uma worktree dedicada por frente de trabalho para isolar experimentos, permitir execução paralela de testes e descartar tentativas fracassadas sem poluir a branch principal.',
+    department: 'ti',
+    category: 'tools',
+    tags: ['ti', 'git', 'worktree', 'branch', 'isolamento', 'devops', 'pipeline'],
+    qualityScore: 87,
+  },
+  {
+    slug: 'nexus-encerramento-de-branch',
+    name: 'Encerramento de Branch de Desenvolvimento',
+    description:
+      'Fecha uma frente de trabalho com ritual completo: rebase limpo, suíte verde, remoção de código morto e artefatos temporários, mensagem de merge descritiva e limpeza das worktrees e branches remotas.',
+    department: 'ti',
+    category: 'workflows',
+    tags: ['ti', 'git', 'branch', 'merge', 'deploy', 'ci', 'cd', 'limpeza'],
+    qualityScore: 88,
+  },
+  {
+    slug: 'nexus-escrita-de-skills',
+    name: 'Escrita de Skills para Agentes',
+    description:
+      'Define o padrão de autoria de skills: gatilho de ativação explícito, instruções imperativas e testáveis, exemplos negativos do que não fazer e critério objetivo de sucesso para o agente.',
+    department: 'ti',
+    category: 'knowledge',
+    tags: ['ti', 'skill', 'skills', 'autoria', 'prompt', 'agente', 'documentacao'],
+    qualityScore: 92,
+  },
+  {
+    slug: 'nexus-uso-de-skills',
+    name: 'Seleção e Uso de Skills em Runtime',
+    description:
+      'Orienta o agente a inventariar as skills disponíveis, escolher a mais específica para a tarefa, seguir o processo por inteiro e declarar qual skill foi aplicada em cada etapa da execução.',
+    department: 'ti',
+    category: 'knowledge',
+    tags: ['ti', 'skill', 'skills', 'runtime', 'selecao', 'agente', 'orquestracao'],
+    qualityScore: 89,
+  },
 ];
+
 
 /** Quantidade de skills curadas por departamento. */
 export function curatedCoverage(): Record<string, number> {
