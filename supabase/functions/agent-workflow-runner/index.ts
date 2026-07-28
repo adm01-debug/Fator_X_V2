@@ -6,6 +6,7 @@ import { parseBody, z } from '../_shared/validation.ts';
 import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { appendSkillsToPrompt, loadAgentSkills } from "../_shared/skills.ts";
 const WorkflowRunSchema = z.object({
   workflow_id: z.string().uuid(),
   input: z.union([z.record(z.unknown()), z.string(), z.number(), z.boolean(), z.null(), z.array(z.unknown())]).optional(),
@@ -49,8 +50,11 @@ async function executeNode(node: WFNode, ctx: Record<string, any>, supa: any, lo
       const { data: agent } = await supa.from('agents').select('*').eq('id', agentId).single();
       if (!agent) return { error: 'agent não encontrado' };
       const lastInput = Object.values(ctx).filter((v) => v !== undefined).pop() ?? ctx.__input;
+      // Skills instaladas entram no system prompt de runtime (mesma seção do preview).
+      const agentSkills = await loadAgentSkills(supa, agentId);
+      const baseSystem = agent.config?.system_prompt || `Você é ${agent.name}.`;
       const messages = [
-        { role: 'system', content: agent.config?.system_prompt || `Você é ${agent.name}.` },
+        { role: 'system', content: appendSkillsToPrompt(baseSystem, agentSkills) },
         { role: 'user', content: typeof lastInput === 'string' ? lastInput : JSON.stringify(lastInput) },
       ];
       const r = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
