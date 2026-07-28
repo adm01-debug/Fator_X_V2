@@ -9412,6 +9412,7 @@ export type Database = {
       skill_reclassification_reviews: {
         Row: {
           confidence: number
+          confidence_threshold: number | null
           created_at: string
           decision_reason: string
           department_from: string | null
@@ -9433,6 +9434,7 @@ export type Database = {
         }
         Insert: {
           confidence?: number
+          confidence_threshold?: number | null
           created_at?: string
           decision_reason?: string
           department_from?: string | null
@@ -9454,6 +9456,7 @@ export type Database = {
         }
         Update: {
           confidence?: number
+          confidence_threshold?: number | null
           created_at?: string
           decision_reason?: string
           department_from?: string | null
@@ -14463,6 +14466,7 @@ export type Database = {
         Args: { _approve: boolean; _reason?: string; _review_id: string }
         Returns: {
           confidence: number
+          confidence_threshold: number | null
           created_at: string
           decision_reason: string
           department_from: string | null
