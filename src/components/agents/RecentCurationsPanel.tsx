@@ -203,7 +203,6 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
   // toast) permite oferecer um retry cirúrgico, sem reprocessar o que já foi
   // restaurado com sucesso.
   const [falhas, setFalhas] = useState<BulkRestoreFailure[]>([]);
-  const templatesFalhos = useMemo(() => falhas.map((f) => f.templateId), [falhas]);
   // Reprocessar um lote negado por RLS só repete o erro: o retry fica restrito
   // às falhas transitórias, e as de permissão ficam visíveis para escalar.
   const templatesRetentaveis = useMemo(

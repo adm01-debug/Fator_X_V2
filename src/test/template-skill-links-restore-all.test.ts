@@ -10,6 +10,8 @@ import {
   bulkRestoreAllRemovals,
   filterRemovalPlan,
   buildTemplateNameMap,
+  classifyRestoreFailure,
+  isRetriableFailure,
   retryFailedRestores,
   shouldConfirmBulkRestore,
   BULK_RESTORE_CONFIRM_THRESHOLD,
@@ -210,7 +212,13 @@ describe('retryFailedRestores', () => {
     const resultado = await retryFailedRestores(feed, ['t1']);
 
     expect(resultado.failures).toEqual([
-      { templateId: 't1', templateName: 't1', skillCount: 1, message: 'RLS negou' },
+      {
+        templateId: 't1',
+        templateName: 't1',
+        skillCount: 1,
+        message: 'RLS negou',
+        kind: 'permission',
+      },
     ]);
   });
 });
@@ -222,5 +230,26 @@ describe('buildTemplateNameMap', () => {
     const mapa = buildTemplateNameMap(feed);
     expect(mapa.get('t1')).toBe('t1');
     expect(mapa.get('t2')).toBe('t2');
+  });
+});
+
+describe('classifyRestoreFailure', () => {
+  it.each([
+    ['new row violates row-level security policy', 'permission'],
+    ['permission denied for table', 'permission'],
+    ['JWT expired', 'permission'],
+    ['Failed to fetch', 'network'],
+    ['request timed out', 'network'],
+    ['ECONNRESET', 'network'],
+    ['algo estranho aconteceu', 'unknown'],
+    ['', 'unknown'],
+  ])('classifica %s como %s', (mensagem, esperado) => {
+    expect(classifyRestoreFailure(mensagem)).toBe(esperado);
+  });
+
+  it('não oferece retry para falha de permissão', () => {
+    expect(isRetriableFailure('permission')).toBe(false);
+    expect(isRetriableFailure('network')).toBe(true);
+    expect(isRetriableFailure('unknown')).toBe(true);
   });
 });
