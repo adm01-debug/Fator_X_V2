@@ -355,6 +355,23 @@ export function groupRemovalsByTemplate(
   }));
 }
 
+/**
+ * A partir de quantos vínculos a restauração em massa pede confirmação.
+ *
+ * Abaixo disso o diálogo é ruído: o custo de desfazer é baixo e confirmar
+ * sempre ensina o curador a aceitar sem ler.
+ */
+export const BULK_RESTORE_CONFIRM_THRESHOLD = 5;
+
+/** Função pura: decide se a restauração em massa exige confirmação. */
+export function shouldConfirmBulkRestore(
+  count: number,
+  threshold: number = BULK_RESTORE_CONFIRM_THRESHOLD,
+): boolean {
+  if (!Number.isFinite(count) || count <= 0) return false;
+  return count >= threshold;
+}
+
 /** Resultado agregado de uma restauração em massa multi-template. */
 export interface BulkRestoreAllResult {
   /** Vínculos efetivamente enviados para restauração. */
