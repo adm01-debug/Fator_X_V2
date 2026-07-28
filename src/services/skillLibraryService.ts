@@ -10,8 +10,18 @@
 
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
 
-/** Origem da classificação de departamento gravada em `skill_registry`. */
-export type DepartmentSource = 'lexical' | 'llm' | 'human';
+/**
+ * Origem da classificação de departamento, agregada para leitura humana.
+ *
+ * O banco grava rótulos mais granulares (`lexical` legado, `heuristic`,
+ * `platform_heuristic`, `llm`, `human`, `unknown`). Agrupamos aqui porque o
+ * card de status responde a "quem decidiu isso?", não a "qual versão do motor
+ * decidiu". `heuristic` cobre o léxico determinístico (incluindo o rótulo
+ * legado `lexical`) e `platform` isola o tier de jargão de plataforma, que é
+ * deliberadamente de baixa confiança e vive na fila de revisão.
+ */
+export type DepartmentSource = 'heuristic' | 'platform' | 'llm' | 'human';
+
 
 export interface SkillLibraryOverview {
   /** Total de skills públicas no catálogo. */
