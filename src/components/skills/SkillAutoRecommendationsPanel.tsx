@@ -6,15 +6,18 @@ import { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Sparkles, Bot } from 'lucide-react';
+import { Sparkles, Bot, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { SkillRecommendationsCard } from './SkillRecommendationsCard';
 import { useAgents } from '@/hooks/use-data';
 import {
   listSkills,
   installSkill,
+  bulkInstallSkills,
   getInstalledSkills,
 } from '@/services/skillsRegistryService';
+
 import { recommendSkills } from '@/services/skillRecommenderService';
 
 export function SkillAutoRecommendationsPanel() {
