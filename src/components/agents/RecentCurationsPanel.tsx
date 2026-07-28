@@ -22,7 +22,6 @@ import {
   bulkRestoreAllRemovals,
   groupRemovalsByTemplate,
   shouldConfirmBulkRestore,
-  BULK_RESTORE_CONFIRM_THRESHOLD,
   type CurationActorScope,
   type CurationFeedFilter,
 } from '@/services/templateSkillLinkService';
