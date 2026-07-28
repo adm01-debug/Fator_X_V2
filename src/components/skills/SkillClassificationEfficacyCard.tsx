@@ -17,6 +17,8 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { logger } from '@/lib/logger';
 import { fetchClassificationTimeline } from '@/services/skillClassificationTimelineService';
+import { normalizeConfidenceThreshold } from '@/lib/skills/skillDemand';
+
 import {
   EFFICACY_VERDICTS,
   EFFICACY_VERDICT_LABEL,
