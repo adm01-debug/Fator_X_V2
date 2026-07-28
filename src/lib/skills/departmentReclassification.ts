@@ -186,6 +186,7 @@ export function buildReclassificationPlan(
 
   const vistos = new Set<string>();
   const proposals: ReclassifyProposal[] = [];
+  const llmCandidates: LlmFallbackCandidate[] = [];
   let evaluated = 0;
   let unchanged = 0;
   let lowConfidence = 0;
