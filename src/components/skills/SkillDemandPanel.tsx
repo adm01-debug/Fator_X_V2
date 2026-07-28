@@ -42,6 +42,8 @@ import {
 } from '@/lib/skills/skillDemand';
 import { useFilterPersistence } from '@/hooks/useFilterPersistence';
 import { SkillReclassifyDialog } from '@/components/skills/SkillReclassifyDialog';
+import { SkillClassificationEfficacyCard } from '@/components/skills/SkillClassificationEfficacyCard';
+
 import { SkillReclassificationReviewPanel } from '@/components/skills/SkillReclassificationReviewPanel';
 import { SkillDescriptionEnrichPanel } from '@/components/skills/SkillDescriptionEnrichPanel';
 import {
@@ -369,6 +371,11 @@ export function SkillDemandPanel() {
     {/* Fila de aprovação: fica logo abaixo porque é a consequência direta de
         "Enviar para revisão" — esconder em outra tela quebraria o fluxo. */}
     <SkillReclassificationReviewPanel onApproved={() => void carregar()} />
+
+    {/* Consequência de segunda ordem das decisões acima: sem medir a eficácia
+        do classificador, cada ajuste de limiar seria chute. */}
+    <SkillClassificationEfficacyCard />
+
 
     {/* Mesma família de problema (skill importada que o catálogo não expõe),
         então mora ao lado da demanda em vez de virar mais uma tela. */}
