@@ -87,6 +87,38 @@ export function StepQuickSkills({ mission, role, selectedIds, onChange }: StepQu
         </div>
       </div>
 
+      {capGuard && capGuard.effectiveAdds > 0 && capGuard.headroomAfter <= 5 && (
+        <div
+          className={cn(
+            'rounded-xl border p-3 text-body-sm flex items-start gap-2',
+            capGuard.additionalDropped > 0
+              ? 'border-destructive/40 bg-destructive/10 text-destructive'
+              : 'border-warning/40 bg-warning/10 text-foreground',
+          )}
+          role="status"
+        >
+          <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" />
+          <div className="space-y-1">
+            <p className="font-medium">
+              {capGuard.projectedSlots}/{MAX_PROMPT_SKILLS} slots do prompt
+            </p>
+            <p className="text-muted-foreground">{capGuard.message}</p>
+            {capGuard.additionalDropped > 0 && (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={handleTrimToCap}
+              >
+                Manter só o que cabe
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
+
+
+
       {inherited.length > 0 && (
         <section className="rounded-xl border border-nexus-purple/30 bg-nexus-purple/5 p-4 space-y-3">
           <header className="flex items-start justify-between gap-3">
