@@ -213,6 +213,7 @@ export default function SkillHarvestPage() {
           <TabsTrigger value="coverage">Cobertura</TabsTrigger>
           <TabsTrigger value="runs">Histórico</TabsTrigger>
           <TabsTrigger value="curation">Curadoria recente</TabsTrigger>
+          <TabsTrigger value="demand">Demanda</TabsTrigger>
 
         </TabsList>
 
