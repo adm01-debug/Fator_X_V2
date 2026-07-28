@@ -370,6 +370,11 @@ export function SkillDemandPanel() {
         "Enviar para revisão" — esconder em outra tela quebraria o fluxo. */}
     <SkillReclassificationReviewPanel onApproved={() => void carregar()} />
 
+    {/* Consequência de segunda ordem das decisões acima: sem medir a eficácia
+        do classificador, cada ajuste de limiar seria chute. */}
+    <SkillClassificationEfficacyCard />
+
+
     {/* Mesma família de problema (skill importada que o catálogo não expõe),
         então mora ao lado da demanda em vez de virar mais uma tela. */}
     <SkillDescriptionEnrichPanel onApplied={() => void carregar()} />
