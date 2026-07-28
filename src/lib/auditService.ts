@@ -97,6 +97,12 @@ export const audit = {
     instabilityReason?: 'volume' | 'oscilacao' | 'estavel';
     eventsInWindow?: number;
     reversals?: number;
+    /**
+     * Justificativa textual obrigatória quando há override. Normalizada pelo
+     * chamador; `null`/vazio nunca é gravado como string em branco para não
+     * dar aparência de justificativa onde não houve.
+     */
+    overrideReason?: string | null;
   }) =>
     logAudit({
       action: 'skill.threshold_calibrate',
@@ -111,6 +117,7 @@ export const audit = {
         instability_reason: params.instabilityReason ?? 'estavel',
         events_in_window: params.eventsInWindow ?? 0,
         reversals: params.reversals ?? 0,
+        ...(params.overrideReason ? { override_reason: params.overrideReason } : {}),
       },
     }),
 };
