@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { AlertTriangle, Gauge, Loader2, RefreshCw } from 'lucide-react';
+import { AlertTriangle, Download, Gauge, Loader2, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import {
@@ -33,15 +33,19 @@ import {
   INSTABILITY_WINDOW_DAYS,
   OVERRIDE_REASON_MAX,
   OVERRIDE_REASON_MIN,
+  OVERRIDE_REVIEW_DEADLINE_DAYS,
   calibrationDirection,
   detectCalibrationInstability,
   filterCalibrations,
+  findStaleOverrides,
   isOverrideReasonValid,
   normalizeOverrideReason,
   type CalibrationTimelineFilter,
   type ThresholdCalibration,
 } from '@/lib/skills/thresholdCalibration';
+import { buildCalibrationCsv, calibrationCsvFilename } from '@/lib/skills/calibrationCsv';
 import { normalizeConfidenceThreshold } from '@/lib/skills/skillDemand';
+
 
 import {
   EFFICACY_VERDICTS,
@@ -104,7 +108,39 @@ export function SkillClassificationEfficacyCard({
     () => filterCalibrations(calibracoes, filtroCalib),
     [calibracoes, filtroCalib],
   );
+  // Override sem revisão posterior vira pendência de governança após o prazo.
+  const overridesVencidos = useMemo(() => findStaleOverrides(calibracoes), [calibracoes]);
   const justificativaValida = isOverrideReasonValid(justificativa);
+
+  /**
+   * Exporta a lista já filtrada — o comitê leva exatamente o que está vendo,
+   * sem reprocessar filtro fora da tela.
+   */
+  const exportarCsv = useCallback(() => {
+    if (calibracoesVisiveis.length === 0) {
+      toast.error('Nada para exportar com o filtro atual.');
+      return;
+    }
+    try {
+      const blob = new Blob([buildCalibrationCsv(calibracoesVisiveis)], {
+        type: 'text/csv;charset=utf-8;',
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = calibrationCsvFilename(filtroCalib);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      // Liberar o object URL evita vazamento de memória em exportações repetidas.
+      URL.revokeObjectURL(url);
+      toast.success(`CSV exportado (${calibracoesVisiveis.length} calibrações).`);
+    } catch (error) {
+      logger.error('calibration csv export failed', { error: (error as Error)?.message });
+      toast.error('Falha ao gerar o CSV.');
+    }
+  }, [calibracoesVisiveis, filtroCalib]);
+
 
 
 
@@ -356,20 +392,45 @@ export function SkillClassificationEfficacyCard({
           <div className="space-y-2 rounded-lg border border-border/60 p-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p className="text-body-sm font-medium">Calibrações recentes</p>
-              {/* Governança revisa exceções, não a série inteira: o filtro
-                  isola justamente as decisões tomadas contra o alerta. */}
-              <Button
-                size="sm"
-                variant={filtroCalib === 'overridden' ? 'secondary' : 'ghost'}
-                onClick={() =>
-                  setFiltroCalib((atual) => (atual === 'overridden' ? 'all' : 'overridden'))
-                }
-                disabled={totalSobAlerta === 0 && filtroCalib === 'all'}
-              >
-                <AlertTriangle className="mr-2 h-3.5 w-3.5" />
-                Somente sob alerta ({totalSobAlerta})
-              </Button>
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Governança revisa exceções, não a série inteira: o filtro
+                    isola justamente as decisões tomadas contra o alerta. */}
+                <Button
+                  size="sm"
+                  variant={filtroCalib === 'overridden' ? 'secondary' : 'ghost'}
+                  onClick={() =>
+                    setFiltroCalib((atual) => (atual === 'overridden' ? 'all' : 'overridden'))
+                  }
+                  disabled={totalSobAlerta === 0 && filtroCalib === 'all'}
+                >
+                  <AlertTriangle className="mr-2 h-3.5 w-3.5" />
+                  Somente sob alerta ({totalSobAlerta})
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={exportarCsv}
+                  disabled={calibracoesVisiveis.length === 0}
+                >
+                  <Download className="mr-2 h-3.5 w-3.5" />
+                  Exportar CSV
+                </Button>
+              </div>
             </div>
+            {overridesVencidos.stale.length > 0 && (
+              <div className="flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 p-2 text-meta text-destructive">
+                <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                <span>
+                  {overridesVencidos.stale.length}{' '}
+                  {overridesVencidos.stale.length === 1
+                    ? 'override aplicado sob alerta segue'
+                    : 'overrides aplicados sob alerta seguem'}{' '}
+                  sem revisão há {overridesVencidos.oldestDays} dias (prazo:{' '}
+                  {OVERRIDE_REVIEW_DEADLINE_DAYS} dias). Reavalie o limiar ou registre nova
+                  calibração.
+                </span>
+              </div>
+            )}
             {instabilidade.unstable && (
               <div className="flex items-start gap-2 rounded-md border border-warning/40 bg-warning/10 p-2 text-meta text-warning-foreground">
                 <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warning" />
@@ -382,6 +443,7 @@ export function SkillClassificationEfficacyCard({
                 </span>
               </div>
             )}
+
 
             {calibracoesVisiveis.length === 0 ? (
               <p className="text-meta text-muted-foreground">
