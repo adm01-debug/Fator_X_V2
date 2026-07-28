@@ -289,12 +289,81 @@ export function selectProposals(
   return plan.proposals.filter((p) => alvo.has(p.skillId)).slice(0, teto);
 }
 
+/**
+ * Converte um veredito do LLM em proposta revisável.
+ *
+ * Retorna `null` — em vez de lançar — quando o veredito é inútil: departamento
+ * fora da taxonomia, confiança abaixo da barra, ou troca no-op. A fila trata
+ * `null` como "sem proposta", que é diferente de "falhou": o LLM respondeu,
+ * apenas não achou nada defensável.
+ *
+ * `margin` é 0 e `matchedTerms` é vazio de propósito: não existe segundo
+ * colocado nem evidência léxica aqui. Preencher esses campos com valores
+ * inventados faria uma proposta de IA parecer tão auditável quanto uma léxica.
+ */
+export function proposalFromLlmVerdict(
+  candidate: LlmFallbackCandidate,
+  verdict: { department: string | null; confidence: number; rationale?: string | null },
+  minConfidence: number = MIN_RECLASSIFY_CONFIDENCE,
+): ReclassifyProposal | null {
+  const dep = text(verdict.department);
+  if (!isDepartment(dep)) return null;
+  if (dep === candidate.from) return null;
+
+  const confianca = clamp01(verdict.confidence, 0);
+  if (confianca < clamp01(minConfidence, MIN_RECLASSIFY_CONFIDENCE)) return null;
+
+  return {
+    skillId: candidate.skillId,
+    name: candidate.name,
+    slug: candidate.slug,
+    from: candidate.from,
+    to: dep,
+    confidence: Number(confianca.toFixed(3)),
+    margin: 0,
+    runnerUp: null,
+    matchedTerms: [],
+    source: 'ia',
+    rationale: text(verdict.rationale) || undefined,
+  };
+}
+
+/**
+ * Funde as propostas do LLM ao plano léxico.
+ *
+ * Uma proposta léxica SEMPRE vence a de IA para o mesmo `skillId` — evidência
+ * verificável tem precedência sobre palpite. Na prática a colisão não deveria
+ * ocorrer (os baldes são disjuntos por construção), mas depender disso seria
+ * confiar que nenhum limiar mude no futuro.
+ */
+export function mergeLlmProposals(
+  plan: ReclassifyPlan,
+  llmProposals: readonly ReclassifyProposal[],
+): ReclassifyProposal[] {
+  const jaPropostos = new Set(plan.proposals.map((p) => p.skillId));
+  const extras: ReclassifyProposal[] = [];
+  const vistos = new Set<string>();
+  for (const p of llmProposals) {
+    if (!p || jaPropostos.has(p.skillId) || vistos.has(p.skillId)) continue;
+    vistos.add(p.skillId);
+    extras.push(p);
+  }
+  extras.sort((a, b) => {
+    if (a.confidence > b.confidence) return -1;
+    if (a.confidence < b.confidence) return 1;
+    return a.slug.localeCompare(b.slug);
+  });
+  return [...plan.proposals, ...extras];
+}
+
 /** Exportação CSV (RFC 4180, com BOM) do plano — trilha de auditoria offline. */
 export function reclassificationToCsv(proposals: readonly ReclassifyProposal[]): string {
   const escape = (value: string | number | null) =>
     `"${(value === null ? '' : String(value)).replace(/"/g, '""')}"`;
   const linhas = [
-    ['slug', 'nome', 'de', 'para', 'confianca', 'margem', 'segundo', 'termos'].map(escape).join(','),
+    ['slug', 'nome', 'de', 'para', 'confianca', 'margem', 'segundo', 'termos', 'origem', 'justificativa']
+      .map(escape)
+      .join(','),
   ];
   for (const p of proposals) {
     linhas.push(
@@ -307,6 +376,8 @@ export function reclassificationToCsv(proposals: readonly ReclassifyProposal[]):
         escape(p.margin),
         escape(p.runnerUp),
         escape(p.matchedTerms.join(' ')),
+        escape(p.source ?? 'lexico'),
+        escape(p.rationale ?? ''),
       ].join(','),
     );
   }
