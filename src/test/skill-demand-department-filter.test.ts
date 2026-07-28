@@ -18,6 +18,9 @@ import {
   DEMAND_SEARCH_MAX,
   DEMAND_TIERS,
   normalizeDemandPreferences,
+  normalizeConfidenceThreshold,
+  DEMAND_THRESHOLD_FLOOR_FALLBACK,
+  DEMAND_THRESHOLD_MAX,
   type DemandLinkInput,
   type DemandSkillInput,
 } from '@/lib/skills/skillDemand';
@@ -139,14 +142,24 @@ describe('filterByDepartment — invariantes sobre 400 skills', () => {
  * plausível vindo de localStorage/nuvem.
  */
 describe('normalizeDemandPreferences — payloads hostis', () => {
-  const PADRAO = { tier: 'zero', department: 'all', search: '' } as const;
+  const PADRAO = {
+    tier: 'zero',
+    department: 'all',
+    search: '',
+    confidenceThreshold: DEMAND_THRESHOLD_FLOOR_FALLBACK,
+  } as const;
 
   it('preserva um payload válido integralmente', () => {
     const out = normalizeDemandPreferences(
       { tier: 'baixa', department: 'transversal', search: 'pdf' },
       ALLOWED,
     );
-    expect(out).toEqual({ tier: 'baixa', department: 'transversal', search: 'pdf' });
+    expect(out).toEqual({
+      tier: 'baixa',
+      department: 'transversal',
+      search: 'pdf',
+      confidenceThreshold: DEMAND_THRESHOLD_FLOOR_FALLBACK,
+    });
   });
 
   it('degrada não-objetos e arrays para o default sem lançar', () => {
@@ -194,7 +207,12 @@ describe('normalizeDemandPreferences — payloads hostis', () => {
       { tier: 'zero', department: 'all', search: '', token: 'segredo', __proto__: { x: 1 } },
       ALLOWED,
     );
-    expect(Object.keys(out).sort()).toEqual(['department', 'search', 'tier']);
+    expect(Object.keys(out).sort()).toEqual([
+      'confidenceThreshold',
+      'department',
+      'search',
+      'tier',
+    ]);
   });
 
   it('o resultado sempre produz um recorte aplicável sobre linhas reais', () => {
