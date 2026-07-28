@@ -81,10 +81,12 @@ interface Props {
    * Custom lock instead of forcing a re-lock.
    */
   checklistAutoUnlock?: boolean;
+  /** Skills selecionadas no wizard, repassadas ao painel de teste. */
+  skillIds?: string[];
   onToggleChecklistAutoUnlock?: (next: boolean) => void;
 }
 
-export function StepQuickPrompt({ form, errors, onPromptManualEdit, onRestore, onSafeReset, onApplyVariant, customLocked, onUnlockCustom, activeVariant, lockEvents, highlightField, checklistAutoUnlock, onToggleChecklistAutoUnlock }: Props) {
+export function StepQuickPrompt({ form, errors, onPromptManualEdit, onRestore, onSafeReset, onApplyVariant, customLocked, onUnlockCustom, activeVariant, lockEvents, highlightField, checklistAutoUnlock, onToggleChecklistAutoUnlock, skillIds = [] }: Props) {
   // Active variant template + label — drives the checklist's per-section snippets
   // and the "Completar com X" CTA in real time.
   const activeVariantPrompt = activeVariant
@@ -564,7 +566,7 @@ export function StepQuickPrompt({ form, errors, onPromptManualEdit, onRestore, o
       />
 
       {/* Bateria de testes — múltiplas execuções comparativas contra o LLM */}
-      <QuickAgentTestPanel form={form} />
+      <QuickAgentTestPanel form={form} skillIds={skillIds} />
     </div>
   );
 }
