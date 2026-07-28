@@ -20,9 +20,12 @@ import { ProgressiveSkillLoaderPanel } from '@/components/skills/ProgressiveSkil
 import { SkillAttributionBadge } from '@/components/skills/SkillAttributionBadge';
 import {
   filterSkillsByLicense,
+  normalizeLicenseFilter,
   LICENSE_FILTERS,
   type LicenseFilter,
 } from '@/lib/skills/attribution';
+import { useFilterPersistence } from '@/hooks/useFilterPersistence';
+
 
 
 import { SkillAutoRecommendationsPanel } from '@/components/skills/SkillAutoRecommendationsPanel';
