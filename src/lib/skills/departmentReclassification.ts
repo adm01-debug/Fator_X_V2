@@ -84,6 +84,8 @@ export interface ReclassifyPlanSummary {
   unchanged: number;
   /** Sem evidência léxica suficiente. */
   lowConfidence: number;
+  /** Vencedor colado no segundo colocado — empate, não decisão. */
+  ambiguous: number;
 }
 
 export interface ReclassifyPlan {
