@@ -21,6 +21,8 @@ import {
   restoreTemplateSkillLink,
   bulkRestoreAllRemovals,
   groupRemovalsByTemplate,
+  shouldConfirmBulkRestore,
+  BULK_RESTORE_CONFIRM_THRESHOLD,
   type CurationActorScope,
   type CurationFeedFilter,
 } from '@/services/templateSkillLinkService';
@@ -52,6 +54,16 @@ import {
   EMPTY_HIGHLIGHTS,
   type CurationHighlightMap,
 } from '@/lib/curationHighlight';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { cn } from '@/lib/utils';
 import { logger } from '@/lib/logger';
 
@@ -209,6 +221,18 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
       });
     },
   });
+
+  // Confirmação só para lotes grandes: pedir confirmação para 1 ou 2 itens
+  // treina o curador a clicar "Sim" sem ler, e o diálogo perde a função.
+  const [confirmarAberto, setConfirmarAberto] = useState(false);
+
+  const pedirRestauracaoEmMassa = useCallback(() => {
+    if (shouldConfirmBulkRestore(removocoesVisiveis)) {
+      setConfirmarAberto(true);
+      return;
+    }
+    restaurarTodas.mutate();
+  }, [removocoesVisiveis, restaurarTodas]);
 
   const {
     data,
@@ -391,7 +415,7 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
               variant="outline"
               size="sm"
               className="text-meta h-7 px-3"
-              onClick={() => restaurarTodas.mutate()}
+              onClick={pedirRestauracaoEmMassa}
               disabled={restaurarTodas.isPending}
               aria-label={`Restaurar ${removocoesVisiveis} remoções visíveis`}
             >
@@ -561,6 +585,30 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
           </div>
         )}
       </CardContent>
+
+      <AlertDialog open={confirmarAberto} onOpenChange={setConfirmarAberto}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Restaurar {removocoesVisiveis} vínculos?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Todas as remoções visíveis no recorte atual voltarão a ser recomendadas nos
+              respectivos templates. A ação vale apenas para o que está carregado na tela e pode
+              ser desfeita removendo os vínculos novamente.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                setConfirmarAberto(false);
+                restaurarTodas.mutate();
+              }}
+            >
+              Restaurar todas
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
 
 
