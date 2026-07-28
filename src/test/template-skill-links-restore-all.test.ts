@@ -9,6 +9,7 @@ import {
   groupRemovalsByTemplate,
   bulkRestoreAllRemovals,
   filterRemovalPlan,
+  buildTemplateNameMap,
   retryFailedRestores,
   shouldConfirmBulkRestore,
   BULK_RESTORE_CONFIRM_THRESHOLD,
@@ -108,13 +109,13 @@ describe('bulkRestoreAllRemovals', () => {
 
     expect(updateMock).toHaveBeenCalledTimes(2);
     expect(updateMock).toHaveBeenCalledWith({ deleted_at: null, deleted_by: null });
-    expect(resultado).toEqual({ restored: 3, failedTemplates: [] });
+    expect(resultado).toEqual({ restored: 3, failedTemplates: [], failures: [] });
   });
 
   it('não dispara I/O quando não há remoções visíveis', async () => {
     const resultado = await bulkRestoreAllRemovals([day([entry('t1', 's1', 'linked')])]);
     expect(updateMock).not.toHaveBeenCalled();
-    expect(resultado).toEqual({ restored: 0, failedTemplates: [] });
+    expect(resultado).toEqual({ restored: 0, failedTemplates: [], failures: [] });
   });
 
   it('continua após falha de um template e reporta a falha', async () => {
@@ -128,7 +129,8 @@ describe('bulkRestoreAllRemovals', () => {
       day([entry('t1', 's1'), entry('t2', 's2')]),
     ]);
 
-    expect(resultado).toEqual({ restored: 1, failedTemplates: ['t1'] });
+    expect(resultado.restored).toBe(1);
+    expect(resultado.failedTemplates).toEqual(['t1']);
   });
 });
 
@@ -189,7 +191,7 @@ describe('retryFailedRestores', () => {
 
     const resultado = await retryFailedRestores(feed, ['t2']);
 
-    expect(resultado).toEqual({ restored: 1, failedTemplates: [] });
+    expect(resultado).toEqual({ restored: 1, failedTemplates: [], failures: [] });
     expect(updateMock).toHaveBeenCalledTimes(1);
   });
 
@@ -197,7 +199,7 @@ describe('retryFailedRestores', () => {
     const feed = [day([entry('t1', 's1')])];
     const resultado = await retryFailedRestores(feed, []);
 
-    expect(resultado).toEqual({ restored: 0, failedTemplates: [] });
+    expect(resultado).toEqual({ restored: 0, failedTemplates: [], failures: [] });
     expect(updateMock).not.toHaveBeenCalled();
   });
 
@@ -207,6 +209,18 @@ describe('retryFailedRestores', () => {
 
     const resultado = await retryFailedRestores(feed, ['t1']);
 
-    expect(resultado).toEqual({ restored: 0, failedTemplates: ['t1'] });
+    expect(resultado.failures).toEqual([
+      { templateId: 't1', templateName: 't1', skillCount: 1, message: 'RLS negou' },
+    ]);
+  });
+});
+
+describe('buildTemplateNameMap', () => {
+  it('usa o primeiro nome visto e cai para o id quando vazio', () => {
+    const semNome = { ...entry('t2', 's2'), templateName: '  ' };
+    const feed = [day([entry('t1', 's1'), semNome])];
+    const mapa = buildTemplateNameMap(feed);
+    expect(mapa.get('t1')).toBe('t1');
+    expect(mapa.get('t2')).toBe('t2');
   });
 });
