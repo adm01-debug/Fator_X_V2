@@ -23,6 +23,8 @@ import { recommendSkills } from '@/services/skillRecommenderService';
 export function SkillAutoRecommendationsPanel() {
   const [agentId, setAgentId] = useState<string | undefined>(undefined);
   const [installingIds, setInstallingIds] = useState<Set<string>>(new Set());
+  const [installingAll, setInstallingAll] = useState(false);
+
   const queryClient = useQueryClient();
 
   const { data: agents } = useAgents();
