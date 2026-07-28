@@ -98,6 +98,7 @@ export function SkillDescriptionEnrichPanel({
     setPropostas([]);
     setRecusadas([]);
     setDescartadas([]);
+    setFalhas(null);
     setProgresso({ concluidos: 0, total: candidatos.length });
 
     try {
@@ -122,7 +123,13 @@ export function SkillDescriptionEnrichPanel({
       setRecusadas([...resultado.rejections, ...resultado.skipped]);
       setDescartadas(resultado.skipped.map((s) => s.slug));
 
-      if (resultado.proposals.length === 0) {
+      // Resumo por causa raiz: "N falharam" não diz se retentar adianta.
+      const resumo = summarizeQueueFailures(resultado.snapshot);
+      setFalhas(resumo.totalFailed > 0 ? resumo : null);
+
+      if (resumo.totalFailed > 0 && resumo.retryPointless) {
+        toast.error(`Lote bloqueado: ${formatFailureSummary(resumo)}.`);
+      } else if (resultado.proposals.length === 0) {
         toast.info('Nenhuma descrição defensável foi gerada nesta rodada.');
       } else {
         toast.success(
