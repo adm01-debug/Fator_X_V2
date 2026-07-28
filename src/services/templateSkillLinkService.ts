@@ -281,6 +281,12 @@ export interface RebuildResult {
   templatesWithoutLinks: string[];
 }
 
+/** Linha escrita pelo rebuild — inclui a limpeza explícita do soft delete. */
+export type RebuildRow = Omit<TemplateSkillLink, 'id'> & {
+  deleted_at: null;
+  deleted_by: null;
+};
+
 /**
  * Recalcula e regrava TODOS os vínculos automáticos.
  *
@@ -304,7 +310,11 @@ export async function rebuildTemplateSkillLinks(
 
   const registry = (registryRows ?? []) as unknown as AgentSkillDefinition[];
   const templatesWithoutLinks: string[] = [];
-  const rows: Omit<TemplateSkillLink, 'id'>[] = [];
+  // `deleted_at`/`deleted_by` fazem parte do payload de reconstrução: sem eles,
+  // um vínculo automático que já havia sido soft-deletado sobreviveria ao
+  // DELETE (que filtra `deleted_at IS NULL`) e o UPSERT o reescreveria mantendo
+  // `deleted_at` preenchido — o vínculo recalculado ficaria invisível na UI.
+  const rows: RebuildRow[] = [];
 
   for (const template of AGENT_TEMPLATES) {
     const links = linkSkillsToTemplate(template, registry, limitPerTemplate);
@@ -324,6 +334,8 @@ export async function rebuildTemplateSkillLinks(
           new Set([...link.affinities, ...link.matchedKeywords]),
         ).slice(0, 8),
         origin: 'auto',
+        deleted_at: null,
+        deleted_by: null,
       });
     }
   }
