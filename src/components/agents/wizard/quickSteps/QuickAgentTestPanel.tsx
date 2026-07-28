@@ -139,7 +139,12 @@ export function QuickAgentTestPanel({ form, skillIds = [] }: Props) {
         model_used: String(payload.model_used ?? form.model),
         cost_usd: costUsd,
         cost_brl: costUsd * USD_TO_BRL,
-        skills_injected: resolvedSkills.length,
+        // O servidor é a fonte da verdade (dedupe/sanitização/limite de 25).
+        // Fallback para o total enviado apenas se o campo não vier na resposta.
+        skills_injected:
+          typeof payload.skills_injected_count === 'number'
+            ? payload.skills_injected_count
+            : resolvedSkills.length,
       };
       setResult(r);
       toast.success('Teste executado', { description: `${formatLatency(r.latency_ms)} · ${formatBrl(r.cost_brl)}` });

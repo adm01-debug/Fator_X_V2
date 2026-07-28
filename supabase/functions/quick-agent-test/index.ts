@@ -3,7 +3,7 @@ import { z } from "https://esm.sh/zod@3.23.8";
 import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
-import { appendSkillsToPrompt } from "../_shared/skills.ts";
+import { appendSkillsToPrompt, countInjectedSkills } from "../_shared/skills.ts";
 const BodySchema = z.object({
   system_prompt: z.string().min(10).max(20_000),
   user_message: z.string().min(1).max(4000),
@@ -70,6 +70,8 @@ Deno.serve(async (req) => {
     const { system_prompt: rawSystemPrompt, user_message: userMessage, model, skills } = parsed.data;
     // Mesma seção determinística do preview/runtime — sem duplicar se já existir.
     const systemPrompt = appendSkillsToPrompt(rawSystemPrompt, skills);
+    // Fonte da verdade para a UI: quantas skills realmente entraram no prompt.
+    const skillsInjectedCount = countInjectedSkills(skills);
 
 
     const mapped = mapModel(model);
@@ -123,6 +125,7 @@ Deno.serve(async (req) => {
       total_tokens: Number(usage.total_tokens ?? 0),
       model_used: mapped,
       requested_model: model,
+      skills_injected_count: skillsInjectedCount,
     });
   } catch (e) {
     console.error('quick-agent-test error', e);
