@@ -97,17 +97,28 @@ describe('classificador de departamento — invariantes', () => {
   });
 
   it('não acumula termos transversais: boilerplate puro nunca vira departamento de negócio', () => {
-    // Se algum dia alguém enfiar "agent" ou "awesome" num léxico de domínio,
-    // este teste cai. O balde `transversal` é o único destino aceitável.
+    // Se algum dia alguém enfiar "awesome" num léxico de domínio, este teste cai.
+    // Destinos aceitáveis para ruído puro: `transversal` (agregadores) ou o tier
+    // `platform` — que resolve para TI com confiança abaixo do limiar e marcado
+    // para revisão, justamente porque jargão de plataforma indica ferramental,
+    // nunca um domínio de negócio.
     for (const ruido of RUIDO_TRANSVERSAL) {
       const r = classifyDepartment({ name: ruido, description: ruido, tags: [ruido] });
       if (r.department === FALLBACK_DEPARTMENT) continue;
+      if (r.tier === 'platform') {
+        expect(r.confidence, `"${ruido}" nasceu com confiança alta`).toBeLessThan(
+          LOW_CONFIDENCE_THRESHOLD,
+        );
+        expect(r.needsReview, `"${ruido}" não foi marcado para revisão`).toBe(true);
+        continue;
+      }
       expect(r.department, `"${ruido}" virou sinal de departamento`).toBeNull();
       expect(r.confidence, `"${ruido}" pontuou em domínio`).toBeLessThan(
         LOW_CONFIDENCE_THRESHOLD,
       );
     }
   });
+
 
   it('transversal jamais compete com um departamento de negócio com sinal', () => {
     for (const ruido of RUIDO_TRANSVERSAL) {

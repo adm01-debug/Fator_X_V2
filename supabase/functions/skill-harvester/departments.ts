@@ -59,7 +59,7 @@ export const DEPARTMENT_LEXICON: Record<SkillDepartment, string[]> = {
     'runtime', 'plugin', 'plugins', 'typescript', 'javascript', 'python',
     'rust', 'golang', 'compiler', 'debugging', 'refactoring', 'tdd',
     'testing', 'lint', 'git', 'github', 'repo', 'webhook', 'http',
-    'kernel', 'binary', 'concurrency', 'scaffolding',
+    'kernel', 'binary', 'concurrency', 'scaffolding', 'crawler', 'scraper', 'scraping',
   ],
   marketing: [
     'marketing', 'campanha', 'campaign', 'ads', 'anuncio', 'trafego', 'traffic',
