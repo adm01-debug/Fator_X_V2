@@ -49,6 +49,57 @@ export function tokenize(text: string): Set<string> {
   return new Set(tokens);
 }
 
+/**
+ * Sinônimos PT-BR ↔ EN e variações morfológicas.
+ * Sem expansão, uma missão em português nunca casa com skills nomeadas em inglês
+ * (e vice-versa), derrubando o recall do recomendador.
+ */
+const SYNONYMS: Record<string, string[]> = {
+  vendas: ['sales', 'comercial', 'pipeline', 'deal'],
+  sales: ['vendas', 'comercial'],
+  cliente: ['clientes', 'customer', 'lead', 'contato'],
+  clientes: ['cliente', 'customer', 'lead'],
+  lead: ['leads', 'prospect', 'cliente'],
+  suporte: ['support', 'atendimento', 'helpdesk', 'ticket'],
+  atendimento: ['suporte', 'support', 'helpdesk'],
+  documento: ['documentos', 'document', 'arquivo', 'pdf', 'rag'],
+  documentos: ['documento', 'document', 'arquivo', 'rag'],
+  pesquisa: ['research', 'busca', 'search', 'investigacao'],
+  busca: ['search', 'pesquisa', 'consulta'],
+  search: ['busca', 'pesquisa'],
+  codigo: ['code', 'programacao', 'engenharia', 'software'],
+  code: ['codigo', 'programacao', 'software'],
+  teste: ['testes', 'test', 'tdd', 'qa', 'qualidade'],
+  testes: ['teste', 'test', 'tdd', 'qa'],
+  depurar: ['debug', 'depuracao', 'bug', 'erro'],
+  bug: ['erro', 'debug', 'defeito'],
+  planejamento: ['plano', 'plan', 'planning', 'roadmap'],
+  plano: ['planejamento', 'plan', 'roadmap'],
+  revisao: ['review', 'code review', 'auditoria'],
+  review: ['revisao', 'auditoria'],
+  automacao: ['automation', 'workflow', 'fluxo', 'processo'],
+  workflow: ['automacao', 'fluxo', 'processo', 'pipeline'],
+  relatorio: ['relatorios', 'report', 'analytics', 'dashboard'],
+  dados: ['data', 'analytics', 'banco', 'database', 'sql'],
+  marketing: ['campanha', 'conteudo', 'seo', 'social'],
+  financeiro: ['finance', 'faturamento', 'billing', 'custos'],
+  email: ['emails', 'mail', 'mensagem', 'smtp'],
+  whatsapp: ['zap', 'mensagem', 'chat'],
+};
+
+/** Expande o conjunto de tokens com sinônimos conhecidos (1 nível, sem recursão). */
+export function expandTokens(tokens: Set<string>): Set<string> {
+  const expanded = new Set(tokens);
+  for (const token of tokens) {
+    for (const syn of SYNONYMS[token] ?? []) {
+      for (const part of syn.split(/\s+/)) {
+        if (part.length >= 3) expanded.add(part);
+      }
+    }
+  }
+  return expanded;
+}
+
 function jaccard(a: Set<string>, b: Set<string>): number {
   if (a.size === 0 || b.size === 0) return 0;
   let intersection = 0;
@@ -56,6 +107,7 @@ function jaccard(a: Set<string>, b: Set<string>): number {
   const union = a.size + b.size - intersection;
   return union > 0 ? intersection / union : 0;
 }
+
 
 const CATEGORY_HINTS: Record<string, string[]> = {
   tools: ['api', 'ferramenta', 'integracao', 'webhook', 'chamada', 'call'],
@@ -73,14 +125,25 @@ function categoryFit(missionTokens: Set<string>, category: string): number {
   return Math.min(1, hits / 2); // 2 hits = fit máximo
 }
 
+export interface RecommendOptions {
+  /**
+   * Preenche o resultado com skills de baseline (mais instaladas/verificadas)
+   * quando o ranking semântico devolve menos que `limit`. Desligado por padrão
+   * para preservar determinismo em fluxos que exigem apenas matches reais.
+   */
+  fillBaseline?: boolean;
+}
+
 export function recommendSkills(
   input: RecommendationInput,
   registry: AgentSkillDefinition[],
   limit = 5,
+  options: RecommendOptions = {},
 ): Recommendation[] {
   const missionText = [input.mission, input.role ?? '', (input.tools ?? []).join(' ')].join(' ');
-  const missionTokens = tokenize(missionText);
-  if (missionTokens.size === 0 || registry.length === 0) return [];
+  const rawTokens = tokenize(missionText);
+  if (rawTokens.size === 0 || registry.length === 0) return [];
+  const missionTokens = expandTokens(rawTokens);
 
   const scored: Recommendation[] = registry.map((skill) => {
     const skillTokens = tokenize(
@@ -92,8 +155,12 @@ export function recommendSkills(
     const weightedCategory = 0.4 * catScore;
     const score = weightedKeyword + weightedCategory;
 
+    // Tokens literais da missão têm prioridade na explicação; sinônimos entram depois.
     const matched: string[] = [];
-    for (const t of missionTokens) if (skillTokens.has(t)) matched.push(t);
+    for (const t of rawTokens) if (skillTokens.has(t)) matched.push(t);
+    for (const t of missionTokens) {
+      if (!rawTokens.has(t) && skillTokens.has(t)) matched.push(t);
+    }
 
     const reason = matched.length > 0
       ? `Alinhada com "${matched.slice(0, 3).join('", "')}" da missão`
@@ -110,7 +177,7 @@ export function recommendSkills(
     };
   });
 
-  return scored
+  const ranked = scored
     .filter((r) => r.score > 0.01)
     .sort((a, b) => {
       if (Math.abs(a.score - b.score) < 0.01) {
@@ -119,7 +186,31 @@ export function recommendSkills(
       return b.score - a.score;
     })
     .slice(0, limit);
+
+  if (!options.fillBaseline || ranked.length >= limit) return ranked;
+
+  const chosen = new Set(ranked.map((r) => r.skill.id));
+  const baseline = registry
+    .filter((s) => !chosen.has(s.id))
+    .sort((a, b) => {
+      const verified = Number(b.is_verified) - Number(a.is_verified);
+      if (verified !== 0) return verified;
+      const installs = (b.install_count ?? 0) - (a.install_count ?? 0);
+      if (installs !== 0) return installs;
+      return (b.rating ?? 0) - (a.rating ?? 0);
+    })
+    .slice(0, limit - ranked.length)
+    .map<Recommendation>((skill) => ({
+      skill,
+      score: 0,
+      reason: 'Baseline recomendada: skill verificada e popular no marketplace',
+      matchedKeywords: [],
+      breakdown: { keyword: 0, category: 0, weightedKeyword: 0, weightedCategory: 0 },
+    }));
+
+  return [...ranked, ...baseline];
 }
+
 
 /**
  * Deriva os ids de skills recomendadas que ainda NÃO estão instaladas no agente.
