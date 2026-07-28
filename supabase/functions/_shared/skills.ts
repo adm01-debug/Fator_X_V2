@@ -106,3 +106,16 @@ export async function loadAgentSkills(
     return [];
   }
 }
+
+/**
+ * Conta quantas skills foram efetivamente injetadas no prompt (pós-sanitização,
+ * deduplicação e corte em MAX_PROMPT_SKILLS). É a fonte da verdade exibida na UI:
+ * evita divergência entre "selecionadas" e "realmente listadas no prompt".
+ */
+export function countInjectedSkills(skills?: RuntimeSkill[] | null): number {
+  const section = buildSkillsSection(skills);
+  if (!section) return 0;
+  return section
+    .split('\n')
+    .filter((line) => line.startsWith('- **')).length;
+}
