@@ -56,15 +56,21 @@ export const skillImportSchema = z.object({
 
 export type SkillImport = z.infer<typeof skillImportSchema>;
 
+/** `owner/repo` — mesma guarda aplicada na Edge Function. */
+export const repoSlugRegex = /^[A-Za-z0-9._-]+\/[A-Za-z0-9._-]+$/;
+
 export const harvestRequestSchema = z.object({
   departments: z.array(z.enum(SKILL_DEPARTMENTS)).max(10).default([]),
   topics: z.array(z.string().trim().min(2).max(60)).max(20).default([]),
   extraQueries: z.array(z.string().trim().min(2).max(120)).max(20).default([]),
+  repos: z.array(z.string().trim().regex(repoSlugRegex, 'Use o formato owner/repo')).max(10).default([]),
+  filesPerRepo: z.number().int().min(1).max(1000).default(8),
   maxRepos: z.number().int().min(1).max(200).default(40),
-  maxCandidates: z.number().int().min(1).max(500).default(120),
+  maxCandidates: z.number().int().min(1).max(1000).default(120),
   minStars: z.number().int().min(0).max(100000).default(3),
   dryRun: z.boolean().default(false),
 });
+
 
 export type HarvestRequest = z.infer<typeof harvestRequestSchema>;
 
