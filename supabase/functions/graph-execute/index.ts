@@ -128,9 +128,11 @@ Deno.serve(async (req) => {
       const node = nodes.find(n => n.id === currentNodeId);
       if (!node) break;
       const agent = node.agent_id ? agentMap.get(node.agent_id) : null;
-      const systemPrompt = agent
+      const baseSystemPrompt = agent
         ? `You are ${agent.name}. ${agent.persona || ''}\nMission: ${agent.mission || ''}\nRole in workflow: ${node.role || node.label || 'agent'}`
         : `You are an agent in a multi-agent workflow. Role: ${node.role || node.label || 'process input'}`;
+      const nodeSkills = node.agent_id ? (skillsByAgent.get(node.agent_id) ?? []) : [];
+      const systemPrompt = appendSkillsToPrompt(baseSystemPrompt, nodeSkills);
 
       const { text, latency, cost_cents } = await callLLM(systemPrompt, currentInput);
       totalCost += cost_cents;
@@ -142,6 +144,8 @@ Deno.serve(async (req) => {
         output: text,
         latency_ms: latency,
         cost_cents,
+        // Observabilidade: quantas skills entraram no prompt deste nó.
+        skills_injected_count: nodeSkills.length,
         ts: new Date().toISOString(),
       });
 
