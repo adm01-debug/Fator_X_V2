@@ -181,36 +181,130 @@ export async function runHarvest(params: HarvestParams): Promise<HarvestBatchRes
   };
 }
 
+// ---------------------------------------------------------------------------
+// Checkpoint de retomada
+// ---------------------------------------------------------------------------
+
+const CHECKPOINT_PREFIX = 'nexus.harvest.checkpoint.';
+
+export interface HarvestCheckpoint {
+  /** Próximo deslocamento a ser lido. */
+  offset: number;
+  /** Momento da última gravação (ISO) — usado para expirar checkpoints velhos. */
+  savedAt: string;
+  /** Total conhecido de SKILL.md, para exibir progresso ao retomar. */
+  total: number;
+}
+
+/** Checkpoints mais velhos que isto são descartados (o repo já mudou). */
+const CHECKPOINT_TTL_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * Chave estável por conjunto de repositórios. A ordenação evita que
+ * `a,b` e `b,a` gerem checkpoints distintos para a mesma varredura.
+ */
+export function harvestCheckpointKey(repos: string[]): string {
+  return CHECKPOINT_PREFIX + [...repos].map((r) => r.trim().toLowerCase()).sort().join('|');
+}
+
+export function loadHarvestCheckpoint(repos: string[]): HarvestCheckpoint | null {
+  if (repos.length === 0 || typeof localStorage === 'undefined') return null;
+  try {
+    const raw = localStorage.getItem(harvestCheckpointKey(repos));
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<HarvestCheckpoint>;
+    const offset = Number(parsed.offset);
+    if (!Number.isFinite(offset) || offset <= 0) return null;
+    const savedAt = String(parsed.savedAt ?? '');
+    const age = Date.now() - new Date(savedAt).getTime();
+    if (!Number.isFinite(age) || age > CHECKPOINT_TTL_MS) return null;
+    return { offset, savedAt, total: Number(parsed.total ?? 0) };
+  } catch {
+    return null; // storage indisponível ou JSON corrompido — recomeça do zero
+  }
+}
+
+export function saveHarvestCheckpoint(repos: string[], offset: number, total = 0): void {
+  if (repos.length === 0 || typeof localStorage === 'undefined') return;
+  try {
+    const payload: HarvestCheckpoint = { offset, total, savedAt: new Date().toISOString() };
+    localStorage.setItem(harvestCheckpointKey(repos), JSON.stringify(payload));
+  } catch { /* cota cheia — o progresso em memória segue válido */ }
+}
+
+export function clearHarvestCheckpoint(repos: string[]): void {
+  if (repos.length === 0 || typeof localStorage === 'undefined') return;
+  try { localStorage.removeItem(harvestCheckpointKey(repos)); } catch { /* noop */ }
+}
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 /**
  * Varre um monorepo até o fim, encadeando lotes.
  *
  * Cada lote é uma invocação independente da Edge Function — nenhuma delas
- * corre risco de estourar o limite de tempo da plataforma. O laço para quando
- * o servidor sinaliza que não há mais arquivos, quando o offset deixa de
- * avançar (proteção contra loop) ou quando o teto de lotes é atingido.
+ * corre risco de estourar o limite de tempo da plataforma.
+ *
+ * Resiliência: uma falha transitória (429/502 do GitHub, cold start) NÃO
+ * descarta os lotes já concluídos. O lote é retentado com backoff exponencial
+ * e, esgotadas as tentativas, o laço encerra devolvendo o progresso parcial —
+ * o checkpoint gravado permite retomar exatamente do mesmo ponto.
  */
 export async function runHarvestAllBatches(
   params: HarvestParams,
   options: {
     maxBatches?: number;
     onBatch?: (batch: HarvestBatchResult, index: number) => void;
+    /** Notifica falha de um lote antes da retentativa/desistência. */
+    onBatchError?: (error: Error, attempt: number, willRetry: boolean) => void;
+    /** Persiste o avanço a cada lote (padrão: grava o checkpoint local). */
+    onCheckpoint?: (offset: number, total: number) => void;
+    retriesPerBatch?: number;
     signal?: AbortSignal;
   } = {},
 ): Promise<HarvestBatchResult[]> {
   const maxBatches = options.maxBatches ?? 20;
+  const retries = options.retriesPerBatch ?? 2;
   const batches: HarvestBatchResult[] = [];
   let offset = params.fileOffset ?? 0;
 
   for (let i = 0; i < maxBatches; i++) {
     if (options.signal?.aborted) break;
 
-    const batch = await runHarvest({ ...params, fileOffset: offset });
+    let batch: HarvestBatchResult | null = null;
+
+    for (let attempt = 0; attempt <= retries; attempt++) {
+      try {
+        batch = await runHarvest({ ...params, fileOffset: offset });
+        break;
+      } catch (e) {
+        const err = e instanceof Error ? e : new Error(String(e));
+        const willRetry = attempt < retries && !options.signal?.aborted;
+        options.onBatchError?.(err, attempt + 1, willRetry);
+        logger.warn('Lote de harvest falhou', {
+          attempt: attempt + 1, offset, willRetry, error: err.message,
+        });
+        if (!willRetry) break;
+        // Backoff exponencial com teto — evita martelar a API do GitHub.
+        await sleep(Math.min(8000, 1000 * 2 ** attempt));
+      }
+    }
+
+    // Esgotadas as tentativas: preserva o que já foi coletado e para aqui.
+    if (!batch) break;
+
     batches.push(batch);
     options.onBatch?.(batch, i);
+
+    const total = Object.values(batch.repoFileTotals).reduce<number>(
+      (acc, n) => Math.max(acc, Number(n) || 0),
+      0,
+    );
 
     if (!batch.truncated) break;
     if (batch.nextFileOffset <= offset) break; // sem progresso — aborta
     offset = batch.nextFileOffset;
+    options.onCheckpoint?.(offset, total);
   }
 
   return batches;
