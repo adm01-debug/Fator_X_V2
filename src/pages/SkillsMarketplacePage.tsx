@@ -41,6 +41,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 export default function SkillsMarketplacePage() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
+  const [license, setLicense] = useState<LicenseFilter>('all');
 
   const { data, isLoading } = useQuery({
     queryKey: ['skills_marketplace', search, category],
@@ -51,7 +52,11 @@ export default function SkillsMarketplacePage() {
     }),
   });
 
-  const skills = data?.skills ?? [];
+  // O filtro de licença é aplicado no cliente: a coluna `source_license` é
+  // texto livre no banco (aliases como "mit"/"Apache License 2.0" convivem com
+  // SPDX), então a normalização precisa acontecer antes da comparação.
+  const skills = filterSkillsByLicense(data?.skills ?? [], license);
+
 
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
