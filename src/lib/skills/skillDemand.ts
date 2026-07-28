@@ -306,7 +306,49 @@ export interface DemandPreferences {
    * numa lista de trabalho estável entre sessões.
    */
   onlyNeedsReview: boolean;
+  /**
+   * Recorta por procedência da classificação (`all` mantém tudo).
+   *
+   * Motivo: "rever depto." mistura léxico fraco, palpite de plataforma e saída
+   * de LLM — três dívidas com tratamento diferente. Sem separar por origem, o
+   * curador não consegue auditar um lote específico (ex.: "todas as decisões
+   * que o tier de plataforma tomou") nem medir a qualidade por motor.
+   */
+  source: DepartmentSourceFilter;
 }
+
+/** Filtro por procedência; `all` preserva a ordem original. */
+export type DepartmentSourceFilter = 'all' | DepartmentSource;
+
+export function filterBySource(
+  rows: readonly SkillDemandRow[],
+  filter: DepartmentSourceFilter,
+): SkillDemandRow[] {
+  if (filter === 'all') return [...rows];
+  return rows.filter((row) => row.departmentSource === filter);
+}
+
+/** Normaliza o filtro de procedência; desconhecidos degradam para `all`. */
+export function normalizeSourceFilter(value: unknown): DepartmentSourceFilter {
+  if (typeof value !== 'string') return 'all';
+  const normalized = value.trim().toLowerCase();
+  if (normalized === 'all') return 'all';
+  return (DEPARTMENT_SOURCES as readonly string[]).includes(normalized)
+    ? (normalized as DepartmentSource)
+    : 'all';
+}
+
+/** Contagem por procedência sobre o conjunto bruto (todas as chaves presentes). */
+export function countBySource(
+  rows: readonly SkillDemandRow[],
+): Record<DepartmentSource, number> {
+  const out = Object.fromEntries(
+    DEPARTMENT_SOURCES.map((s) => [s, 0]),
+  ) as Record<DepartmentSource, number>;
+  for (const row of rows) out[row.departmentSource] += 1;
+  return out;
+}
+
 
 /**
  * Recorta as linhas que precisam de revisão departamental.
