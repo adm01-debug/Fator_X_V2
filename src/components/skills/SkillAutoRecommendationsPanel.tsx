@@ -221,22 +221,51 @@ export function SkillAutoRecommendationsPanel() {
         {agentId ? (
           <>
             {pendingIds.length > 0 && (
-              <div className="flex justify-end">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={handleInstallAll}
-                  disabled={installingAll}
-                >
-                  {installingAll ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Sparkles className="h-4 w-4" />
+              <div className="space-y-3">
+                {guard.additionalDropped > 0 && (
+                  <Alert variant="destructive">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertDescription>{guard.message}</AlertDescription>
+                  </Alert>
+                )}
+                {guard.additionalDropped === 0 && guard.verdict === 'atencao' && (
+                  <Alert>
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertDescription>{guard.message}</AlertDescription>
+                  </Alert>
+                )}
+                <div className="flex flex-wrap justify-end gap-2">
+                  {guard.additionalDropped > 0 && trimmed.length > 0 && (
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={handleInstallTrimmed}
+                      disabled={installingAll}
+                      className="gap-1"
+                    >
+                      <Scissors className="h-4 w-4" />
+                      Instalar só o que cabe ({trimmed.length})
+                    </Button>
                   )}
-                  Adicionar todas ({pendingIds.length})
-                </Button>
+                  <Button
+                    size="sm"
+                    variant={guard.additionalDropped > 0 ? 'ghost' : 'outline'}
+                    onClick={handleInstallAll}
+                    disabled={installingAll}
+                  >
+                    {installingAll ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Sparkles className="h-4 w-4" />
+                    )}
+                    {guard.additionalDropped > 0
+                      ? `Adicionar mesmo assim (${pendingIds.length})`
+                      : `Adicionar todas (${pendingIds.length})`}
+                  </Button>
+                </div>
               </div>
             )}
+
             <SkillRecommendationsCard
               title={`Sugestões para ${activeAgent?.name ?? 'este agente'}`}
               description="Cada skill exibe o score, categoria e as palavras-chave que combinam com a missão."
