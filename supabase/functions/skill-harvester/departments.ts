@@ -39,7 +39,7 @@ export const DEPARTMENT_LEXICON: Record<SkillDepartment, string[]> = {
     'icp', 'scoring', 'enrichment', 'enriquecimento',
   ],
   rh: [
-    'rh', 'hr', 'recursos', 'humanos', 'human', 'resources', 'people', 'talento',
+    'rh', 'hr', 'recursos', 'humanos', 'human', 'people', 'talento',
     'talent', 'recrutamento', 'recruiting', 'recruitment', 'vaga', 'vacancy', 'job',
     'candidato', 'candidate', 'curriculo', 'resume', 'cv', 'entrevista', 'interview',
     'onboarding', 'offboarding', 'admissao', 'desligamento', 'colaborador', 'employee',
@@ -90,7 +90,7 @@ export const DEPARTMENT_LEXICON: Record<SkillDepartment, string[]> = {
     'relatorio', 'report', 'reporting', 'sql', 'query', 'etl', 'elt', 'pipeline',
     'warehouse', 'lakehouse', 'bigquery', 'snowflake', 'databricks', 'dbt',
     'metrica', 'metric', 'kpi', 'visualizacao', 'visualization', 'chart', 'grafico',
-    'estatistica', 'statistics', 'machine', 'learning', 'modelo', 'forecast',
+    'estatistica', 'statistics', 'machine', 'modelo', 'forecast',
     'pandas', 'notebook', 'rag', 'embedding', 'vector', 'semantic',
   ],
   executivo: [

@@ -24,19 +24,21 @@ import {
 import { fetchSkillDemand } from '@/services/skillDemandService';
 import {
   countByDepartment,
+  DEMAND_SEARCH_MAX,
   DEMAND_TIERS,
   DEMAND_TIER_LABEL,
   demandRowsToCsv,
   filterByDemand,
   filterByDepartment,
   normalizeDemandFilter,
+  normalizeDemandPreferences,
   normalizeDepartmentFilter,
   summarizeSkillDemand,
-  type DemandFilter,
+  type DemandPreferences,
   type DemandTier,
-  type DepartmentFilter,
   type SkillDemandRow,
 } from '@/lib/skills/skillDemand';
+import { useFilterPersistence } from '@/hooks/useFilterPersistence';
 import { SkillReclassifyDialog } from '@/components/skills/SkillReclassifyDialog';
 import type { ReclassifyCandidate } from '@/lib/skills/departmentReclassification';
 import { logger } from '@/lib/logger';
@@ -49,13 +51,43 @@ const TIER_STYLE: Record<DemandTier, string> = {
   alta: 'border-success/40 text-success',
 };
 
+const DEPARTAMENTOS = [...SKILL_DEPARTMENTS];
+
+const PREFS_PADRAO: DemandPreferences = { tier: 'zero', department: 'all', search: '' };
+
 export function SkillDemandPanel() {
   const [rows, setRows] = useState<SkillDemandRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<DemandFilter>('zero');
-  const [deptFilter, setDeptFilter] = useState<DepartmentFilter>('all');
-  const [search, setSearch] = useState('');
   const [reclassificarAberto, setReclassificarAberto] = useState(false);
+
+  const { filters: prefsBrutas, setFilters: setPrefs, clearAll } = useFilterPersistence<
+    Record<string, unknown>
+  >({
+    scope: 'skill_demand',
+    defaults: PREFS_PADRAO as unknown as Record<string, unknown>,
+    storageKey: 'nexus.skillDemand.filters',
+  });
+
+  /**
+   * O hook faz spread cego do payload remoto sobre os defaults; qualquer valor
+   * corrompido ou de taxonomia antiga viraria um recorte vazio permanente.
+   * Sanitizamos a cada render — barato e totalmente defensivo.
+   */
+  const { tier: filter, department: deptFilter, search } = useMemo(
+    () => normalizeDemandPreferences(prefsBrutas, DEPARTAMENTOS, PREFS_PADRAO),
+    [prefsBrutas],
+  );
+
+  const atualizarPrefs = useCallback(
+    (patch: Partial<DemandPreferences>) => {
+      setPrefs((prev) => ({
+        ...normalizeDemandPreferences(prev, DEPARTAMENTOS, PREFS_PADRAO),
+        ...patch,
+      }));
+    },
+    [setPrefs],
+  );
+
 
   const carregar = useCallback(async () => {
     setLoading(true);
@@ -173,7 +205,7 @@ export function SkillDemandPanel() {
         <div className="flex flex-wrap items-center gap-3">
           <Select
             value={filter}
-            onValueChange={(value) => setFilter(normalizeDemandFilter(value))}
+            onValueChange={(value) => atualizarPrefs({ tier: normalizeDemandFilter(value) })}
           >
             <SelectTrigger className="w-[200px]" aria-label="Filtrar por faixa de demanda">
               <SelectValue />
@@ -190,7 +222,7 @@ export function SkillDemandPanel() {
           <Select
             value={deptFilter}
             onValueChange={(value) =>
-              setDeptFilter(normalizeDepartmentFilter(value, [...SKILL_DEPARTMENTS]))
+              atualizarPrefs({ department: normalizeDepartmentFilter(value, DEPARTAMENTOS) })
             }
           >
             <SelectTrigger className="w-[220px]" aria-label="Filtrar por departamento">
@@ -212,10 +244,24 @@ export function SkillDemandPanel() {
             className="flex-1 min-w-[220px]"
             placeholder="Buscar por nome, slug ou repositório de origem"
             value={search}
-            onChange={(event) => setSearch(event.target.value)}
+            maxLength={DEMAND_SEARCH_MAX}
+            onChange={(event) => atualizarPrefs({ search: event.target.value })}
             aria-label="Buscar skills"
           />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => void clearAll()}
+            disabled={
+              filter === PREFS_PADRAO.tier &&
+              deptFilter === PREFS_PADRAO.department &&
+              search === ''
+            }
+          >
+            Limpar filtros
+          </Button>
         </div>
+
 
         {loading ? (
           <div className="space-y-2">

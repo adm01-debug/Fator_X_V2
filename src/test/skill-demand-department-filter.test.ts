@@ -15,7 +15,9 @@ import {
   filterByDemand,
   filterByDepartment,
   normalizeDepartmentFilter,
+  DEMAND_SEARCH_MAX,
   DEMAND_TIERS,
+  normalizeDemandPreferences,
   type DemandLinkInput,
   type DemandSkillInput,
 } from '@/lib/skills/skillDemand';
@@ -127,5 +129,83 @@ describe('filterByDepartment — invariantes sobre 400 skills', () => {
     );
     expect(() => filterByDepartment(degeneradas, 'none')).not.toThrow();
     expect(filterByDepartment(degeneradas, 'all')).toHaveLength(3);
+  });
+});
+
+/**
+ * Simulação de preferências corrompidas. `useFilterPersistence` faz spread cego
+ * (`{...defaults, ...remoto}`), então um payload de versão antiga, truncado ou
+ * malicioso chegaria intacto ao estado. Cada cenário abaixo é um payload real
+ * plausível vindo de localStorage/nuvem.
+ */
+describe('normalizeDemandPreferences — payloads hostis', () => {
+  const PADRAO = { tier: 'zero', department: 'all', search: '' } as const;
+
+  it('preserva um payload válido integralmente', () => {
+    const out = normalizeDemandPreferences(
+      { tier: 'baixa', department: 'transversal', search: 'pdf' },
+      ALLOWED,
+    );
+    expect(out).toEqual({ tier: 'baixa', department: 'transversal', search: 'pdf' });
+  });
+
+  it('degrada não-objetos e arrays para o default sem lançar', () => {
+    for (const hostil of [null, undefined, 0, 'string', true, [], [1, 2]]) {
+      expect(normalizeDemandPreferences(hostil, ALLOWED)).toEqual(PADRAO);
+    }
+  });
+
+  it('neutraliza departamento removido da taxonomia (recorte vazio permanente)', () => {
+    const out = normalizeDemandPreferences(
+      { tier: 'zero', department: 'departamento_extinto', search: '' },
+      ALLOWED,
+    );
+    expect(out.department).toBe('all');
+  });
+
+  it('neutraliza faixa desconhecida sem esconder linhas', () => {
+    expect(normalizeDemandPreferences({ tier: 'gigante' }, ALLOWED).tier).toBe('all');
+  });
+
+  it('trunca busca gigante no teto e nunca persiste tipos errados', () => {
+    const gigante = 'x'.repeat(5000);
+    const out = normalizeDemandPreferences({ search: gigante }, ALLOWED);
+    expect(out.search).toHaveLength(DEMAND_SEARCH_MAX);
+    expect(normalizeDemandPreferences({ search: { a: 1 } }, ALLOWED).search).toBe('');
+    expect(normalizeDemandPreferences({ search: 42 }, ALLOWED).search).toBe('');
+  });
+
+  it('é idempotente: normalizar duas vezes não muda o resultado', () => {
+    const amostras: unknown[] = [
+      {},
+      { tier: 'ALTA', department: '  TI  ', search: ' busca ' },
+      { tier: null, department: [], search: undefined },
+      { department: 'none' },
+      { extra: 'campo-desconhecido', tier: 'media' },
+    ];
+    for (const amostra of amostras) {
+      const uma = normalizeDemandPreferences(amostra, ALLOWED);
+      expect(normalizeDemandPreferences(uma, ALLOWED)).toEqual(uma);
+    }
+  });
+
+  it('nunca vaza campos extras para a nuvem', () => {
+    const out = normalizeDemandPreferences(
+      { tier: 'zero', department: 'all', search: '', token: 'segredo', __proto__: { x: 1 } },
+      ALLOWED,
+    );
+    expect(Object.keys(out).sort()).toEqual(['department', 'search', 'tier']);
+  });
+
+  it('o resultado sempre produz um recorte aplicável sobre linhas reais', () => {
+    const amostras: unknown[] = [
+      { tier: 'zero', department: 'none' },
+      { tier: 'ruido', department: 'ruido' },
+      { department: 'transversal' },
+    ];
+    for (const amostra of amostras) {
+      const p = normalizeDemandPreferences(amostra, ALLOWED);
+      expect(() => filterByDepartment(filterByDemand(rows, p.tier), p.department)).not.toThrow();
+    }
   });
 });
