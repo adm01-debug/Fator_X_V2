@@ -256,6 +256,47 @@ export function SkillDescriptionEnrichPanel({
           </div>
         )}
 
+        {falhas && !gerando && (
+          <div
+            className={cn(
+              'space-y-2 rounded-md border p-3',
+              falhas.retryPointless
+                ? 'border-destructive/40 bg-destructive/5'
+                : 'border-border bg-muted/40',
+            )}
+            role="status"
+            aria-live="polite"
+          >
+            <div className="flex flex-wrap items-center gap-2">
+              <AlertTriangle
+                className={cn(
+                  'h-4 w-4 shrink-0',
+                  falhas.retryPointless ? 'text-destructive' : 'text-muted-foreground',
+                )}
+                aria-hidden="true"
+              />
+              <p className="text-sm font-medium">
+                {falhas.totalFailed} não {falhas.totalFailed === 1 ? 'processada' : 'processadas'}
+              </p>
+              {falhas.retryPointless && (
+                <Badge variant="destructive">Retentar não resolve</Badge>
+              )}
+            </div>
+            <ul className="space-y-1">
+              {falhas.buckets.map((b) => (
+                <li key={b.category} className="text-meta text-muted-foreground">
+                  <span className="font-medium text-foreground">
+                    {b.count}× {b.label}
+                  </span>{' '}
+                  — {b.hint}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+
+
         {propostas.length > 0 && (
           <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-2">
