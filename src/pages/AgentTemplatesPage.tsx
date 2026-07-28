@@ -101,26 +101,35 @@ export default function AgentTemplatesPage() {
       const agent = buildAgentFromTemplate(t);
       // Inclui a flag isDraft para salvar rascunho versionado automaticamente
       const saved = await saveAgent(agent);
-      // Instala as skills do Registry vinculadas ao template (best-effort:
-      // falha na instalação não deve impedir a criação do agente).
+      // Instala as skills do Registry vinculadas ao template (best-effort e
+      // idempotente: falha na instalação não deve impedir a criação do agente).
+      let installed = 0;
+      let skipped = 0;
+      let skillsFailed = false;
       if (saved.id && linkedSkillIds.length > 0) {
         try {
-          await bulkInstallSkills(saved.id, linkedSkillIds);
+          const result = await bulkInstallSkills(saved.id, linkedSkillIds);
+          installed = result.installed.length;
+          skipped = result.skipped.length;
         } catch (err) {
+          skillsFailed = true;
           logger.warn("bulk install linked skills failed", { err });
         }
       }
-      return saved;
+      return { agent: saved, installed, skipped, skillsFailed };
     },
-    onSuccess: (agent, t) => {
-      toast.success(`Agente "${t.name}" criado!`, {
-        description: linkedSkillIds.length > 0
-          ? `${linkedSkillIds.length} skill(s) vinculada(s) instalada(s). Abrindo no builder…`
-          : "Abrindo no builder…",
-      });
+    onSuccess: ({ agent, installed, skipped, skillsFailed }, t) => {
+      const description = skillsFailed
+        ? "Agente criado, mas falhou ao instalar as skills vinculadas."
+        : installed + skipped > 0
+          ? `${installed} skill(s) instalada(s)${skipped > 0 ? ` · ${skipped} já existente(s)` : ""}. Abrindo no builder…`
+          : "Abrindo no builder…";
+      if (skillsFailed) toast.warning(`Agente "${t.name}" criado`, { description });
+      else toast.success(`Agente "${t.name}" criado!`, { description });
       queryClient.invalidateQueries({ queryKey: ["agents"] });
       if (agent.id) navigate(`/builder/${agent.id}`);
     },
+
     onError: (err) => {
       logger.error("fork template failed", err);
       toast.error(err instanceof Error ? err.message : "Falha ao criar agente");
