@@ -9553,6 +9553,7 @@ export type Database = {
           description_source: string | null
           id: string
           install_count: number
+          is_meta_collection: boolean
           is_public: boolean
           is_verified: boolean
           mcp_server_url: string | null
@@ -9586,6 +9587,7 @@ export type Database = {
           description_source?: string | null
           id?: string
           install_count?: number
+          is_meta_collection?: boolean
           is_public?: boolean
           is_verified?: boolean
           mcp_server_url?: string | null
@@ -9619,6 +9621,7 @@ export type Database = {
           description_source?: string | null
           id?: string
           install_count?: number
+          is_meta_collection?: boolean
           is_public?: boolean
           is_verified?: boolean
           mcp_server_url?: string | null
@@ -14378,6 +14381,7 @@ export type Database = {
           description_source: string | null
           id: string
           install_count: number
+          is_meta_collection: boolean
           is_public: boolean
           is_verified: boolean
           mcp_server_url: string | null
