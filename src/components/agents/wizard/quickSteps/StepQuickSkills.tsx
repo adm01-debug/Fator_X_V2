@@ -61,6 +61,28 @@ export function StepQuickSkills({ mission, role, selectedIds, onChange }: StepQu
   const recommendedIds = recommendations.map((r) => r.skill.id);
   const inheritedIds = inherited.map((l) => l.skillId);
 
+  // Guarda de teto: o compilador só injeta MAX_PROMPT_SKILLS nomes distintos.
+  // Projetamos a ocupação já na seleção para o operador não descobrir a perda
+  // depois que o agente estiver rodando pior sem explicação aparente.
+  const selectedRefs: NamedSkillRef[] = useMemo(() => {
+    const porId = new Map((allSkills?.skills ?? []).map((s) => [s.id, s.name] as const));
+    return selectedIds
+      .filter((id) => porId.has(id))
+      .map((id) => ({ id, name: porId.get(id) ?? '' }));
+  }, [selectedIds, allSkills]);
+
+  const capGuard = useMemo(
+    () => (selectedRefs.length > 0 ? evaluateInstallImpact({ installed: [], selected: selectedRefs }) : null),
+    [selectedRefs],
+  );
+
+  const handleTrimToCap = () => {
+    const cabem = trimSelectionToCap({ installed: [], selected: selectedRefs });
+    const mantidos = new Set(cabem.map((s) => s.id));
+    onChange(selectedIds.filter((id) => mantidos.has(id)));
+  };
+
+
   const handleSelect = (id: string) => {
     if (selectedIds.includes(id)) onChange(selectedIds.filter((x) => x !== id));
     else onChange([...selectedIds, id]);
