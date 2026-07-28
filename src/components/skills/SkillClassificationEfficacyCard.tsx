@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Gauge, Loader2, RefreshCw } from 'lucide-react';
+import { AlertTriangle, Gauge, Loader2, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { logger } from '@/lib/logger';
@@ -20,7 +20,9 @@ import { audit } from '@/lib/auditService';
 import { fetchClassificationTimeline } from '@/services/skillClassificationTimelineService';
 import { fetchThresholdCalibrations } from '@/services/thresholdCalibrationService';
 import {
+  INSTABILITY_WINDOW_DAYS,
   calibrationDirection,
+  detectCalibrationInstability,
   type ThresholdCalibration,
 } from '@/lib/skills/thresholdCalibration';
 import { normalizeConfidenceThreshold } from '@/lib/skills/skillDemand';
@@ -74,6 +76,7 @@ export function SkillClassificationEfficacyCard({
   const [calibracoes, setCalibracoes] = useState<ThresholdCalibration[]>([]);
   const [loading, setLoading] = useState(true);
   const [filtro, setFiltro] = useState<EfficacyFilter>('all');
+  const instabilidade = useMemo(() => detectCalibrationInstability(calibracoes), [calibracoes]);
 
 
   const carregar = useCallback(async () => {
@@ -231,6 +234,19 @@ export function SkillClassificationEfficacyCard({
         {calibracoes.length > 0 && (
           <div className="space-y-2 rounded-lg border border-border/60 p-3">
             <p className="text-body-sm font-medium">Calibrações recentes</p>
+            {instabilidade.unstable && (
+              <div className="flex items-start gap-2 rounded-md border border-warning/40 bg-warning/10 p-2 text-meta text-warning-foreground">
+                <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warning" />
+                <span>
+                  {instabilidade.reason === 'volume'
+                    ? `${instabilidade.eventsInWindow} calibrações em ${INSTABILITY_WINDOW_DAYS} dias`
+                    : `${instabilidade.reversals} inversões de sentido em ${INSTABILITY_WINDOW_DAYS} dias`}
+                  {' — '}amplitude de {instabilidade.spread.toFixed(2)}. Sinal de amostra pequena ou
+                  léxico instável: acumule mais decisões antes de recalibrar.
+                </span>
+              </div>
+            )}
+
             <ul className="space-y-1">
               {calibracoes.map((c) => (
                 <li key={c.auditId} className="flex flex-wrap items-center gap-2 text-meta">

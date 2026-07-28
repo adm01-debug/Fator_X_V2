@@ -103,3 +103,75 @@ export function calibrationDirection(
   if (item.to < item.from) return 'reduziu';
   return 'manteve';
 }
+
+/** Janela padrão para julgar "calibrações frequentes". */
+export const INSTABILITY_WINDOW_DAYS = 7;
+/** A partir de quantas calibrações na janela o volume já é suspeito. */
+export const INSTABILITY_MIN_EVENTS = 3;
+
+export interface CalibrationInstability {
+  unstable: boolean;
+  /** Calibrações datadas dentro da janela. */
+  eventsInWindow: number;
+  /** Trocas de sentido (subiu→desceu ou vice-versa) dentro da janela. */
+  reversals: number;
+  /** Amplitude entre o menor e o maior limiar aplicado na janela. */
+  spread: number;
+  reason: 'estavel' | 'volume' | 'oscilacao';
+}
+
+/**
+ * Detecta instabilidade de calibração.
+ *
+ * Dois sintomas distintos justificam alerta e por motivos diferentes:
+ * - VOLUME: muitas calibrações na janela indicam que o limiar sugerido oscila
+ *   porque a amostra ainda é pequena — calibrar mais só amplifica o ruído.
+ * - OSCILAÇÃO: poucas calibrações, mas alternando de sentido, indicam léxico
+ *   instável (a acurácia sobe e desce), não amostra insuficiente.
+ *
+ * Linhas sem data são ignoradas: não dá para situá-las na janela, e assumir
+ * "agora" inflaria o contador artificialmente.
+ */
+export function detectCalibrationInstability(
+  items: readonly ThresholdCalibration[],
+  options?: { now?: Date; windowDays?: number; minEvents?: number },
+): CalibrationInstability {
+  const agora = options?.now?.getTime() ?? Date.now();
+  const janelaDias = Math.max(options?.windowDays ?? INSTABILITY_WINDOW_DAYS, 1);
+  const minimo = Math.max(options?.minEvents ?? INSTABILITY_MIN_EVENTS, 2);
+  const corte = agora - janelaDias * 24 * 60 * 60 * 1000;
+
+  const naJanela = items
+    .filter((i) => {
+      if (i.at === null) return false;
+      const ts = Date.parse(i.at);
+      // Datas futuras (relógio torto do cliente) não são descartadas: ainda
+      // são eventos recentes e contam para o volume.
+      return !Number.isNaN(ts) && ts >= corte;
+    })
+    .sort((a, b) => Date.parse(a.at as string) - Date.parse(b.at as string));
+
+  let reversals = 0;
+  let anterior: 'aumentou' | 'reduziu' | null = null;
+  for (const item of naJanela) {
+    const dir = calibrationDirection(item);
+    if (dir === 'manteve') continue;
+    if (anterior !== null && dir !== anterior) reversals += 1;
+    anterior = dir;
+  }
+
+  const valores = naJanela.map((i) => i.to);
+  const spread = valores.length === 0 ? 0 : Math.max(...valores) - Math.min(...valores);
+
+  const porVolume = naJanela.length >= minimo;
+  const porOscilacao = reversals >= 2;
+
+  return {
+    unstable: porVolume || porOscilacao,
+    eventsInWindow: naJanela.length,
+    reversals,
+    spread: Number(spread.toFixed(4)),
+    reason: porVolume ? 'volume' : porOscilacao ? 'oscilacao' : 'estavel',
+  };
+}
+
