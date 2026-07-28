@@ -843,20 +843,57 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
       return;
     }
     const insertedId = (inserted as { id?: string } | null)?.id;
-    // Instala skills selecionadas em bulk (idempotente; não bloqueia navegação em caso de erro)
+    // Instala skills selecionadas em bulk (idempotente; não bloqueia navegação em caso de erro).
+    // Guarda de teto: um agente novo começa com 0 slots, mas uma seleção grande
+    // (recomendadas + herdadas + manuais) pode nascer já acima do limite do
+    // compilador — nesse caso instalamos só o que cabe e registramos a perda.
     if (insertedId && selectedSkillIds.length > 0) {
       try {
-        const result = await bulkInstallSkills(insertedId, selectedSkillIds);
-        if (result.skipped.length > 0) {
-          toast.info(`${result.installed.length} skill(s) instalada(s)`, {
-            description: `${result.skipped.length} já estavam instaladas e foram ignoradas.`,
-          });
+        let idsParaInstalar = selectedSkillIds;
+        const definicoes = await getSkillsByIds(selectedSkillIds).catch(() => []);
+        if (definicoes.length > 0) {
+          const porId = new Map(definicoes.map((s) => [s.id, s]));
+          const selecionadas: NamedSkillRef[] = selectedSkillIds
+            .map((id) => porId.get(id))
+            .filter((s): s is (typeof definicoes)[number] => Boolean(s))
+            .map((s) => ({ id: s.id, name: s.name }));
+
+          const guard = evaluateInstallImpact({ installed: [], selected: selecionadas });
+          if (guard.additionalDropped > 0) {
+            const cabem = trimSelectionToCap({ installed: [], selected: selecionadas });
+            idsParaInstalar = cabem.map((s) => s.id);
+            toast.warning('Seleção acima do teto de skills', {
+              description: guard.message,
+            });
+            void audit.skillInstallOverCap(
+              buildInstallCapRecord({
+                agentId: insertedId,
+                agentName: form.name.trim(),
+                installed: [],
+                selected: selecionadas,
+                guard,
+                acknowledged: false,
+              }),
+            );
+          } else if (classifyInstallCap(guard) === 'proximo_do_teto' && guard.effectiveAdds > 0) {
+            toast.info('Agente perto do teto de skills', { description: guard.message });
+          }
+        }
+
+        if (idsParaInstalar.length > 0) {
+          const result = await bulkInstallSkills(insertedId, idsParaInstalar);
+          if (result.skipped.length > 0) {
+            toast.info(`${result.installed.length} skill(s) instalada(s)`, {
+              description: `${result.skipped.length} já estavam instaladas e foram ignoradas.`,
+            });
+          }
         }
       } catch (skillErr) {
         const msg = skillErr instanceof Error ? skillErr.message : 'Falha ao instalar skills';
         toast.warning('Agente criado, mas falhou ao instalar skills', { description: msg });
       }
     }
+
 
     // If the user opted to bypass contradiction warnings, log a high-signal
     // audit entry so admins can review the rationale later.
