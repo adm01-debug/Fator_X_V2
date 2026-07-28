@@ -223,9 +223,11 @@ describe('retryFailedRestores', () => {
         templateName: 't1',
         skillCount: 1,
         message: 'RLS negou',
-        kind: 'permission', failedAt: new Date().toISOString()
+        kind: 'permission',
+        failedAt: expect.any(String),
       },
     ]);
+
   });
 });
 
