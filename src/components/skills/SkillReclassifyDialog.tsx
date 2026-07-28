@@ -74,12 +74,7 @@ const QUEUE_ERROR_LABEL: Record<string, string> = {
   erro: 'Erro',
 };
 
-const FAILURE_LABEL: Record<ReclassifyFailure['kind'], string> = {
-  permission: 'Sem permissão',
-  conflict: 'Conflito de estado',
-  network: 'Falha de rede',
-  unknown: 'Erro',
-};
+
 
 export interface SkillReclassifyDialogProps {
   open: boolean;
