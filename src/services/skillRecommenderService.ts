@@ -188,15 +188,13 @@ export function recommendSkills(
     };
   });
 
-  // Ordenação por bucket quantizado (centésimos): garante transitividade —
-  // um comparador com epsilon direto sobre floats quebra a relação de ordem
-  // e produz sequências com score fora de ordem decrescente.
-  const bucketOf = (score: number) => Math.round(score * 100);
+  // Ordenação estritamente decrescente por score bruto. Um comparador com
+  // epsilon (|a-b| < 0.01) quebra a transitividade e produzia sequências com
+  // score fora de ordem; o desempate só ocorre em igualdade exata.
   const ranked = scored
     .filter((r) => r.score > 0.01)
     .sort((a, b) => {
-      const bucketDiff = bucketOf(b.score) - bucketOf(a.score);
-      if (bucketDiff !== 0) return bucketDiff;
+      if (b.score !== a.score) return b.score - a.score;
       const installDiff = (b.skill.install_count ?? 0) - (a.skill.install_count ?? 0);
       if (installDiff !== 0) return installDiff;
       return a.skill.id.localeCompare(b.skill.id);
