@@ -20,6 +20,7 @@ import {
   mergeCurationFeeds,
   restoreTemplateSkillLink,
   bulkRestoreAllRemovals,
+  retryFailedRestores,
   groupRemovalsByTemplate,
   shouldConfirmBulkRestore,
   type CurationActorScope,
@@ -448,6 +449,25 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
                 <Undo2 className="mr-1.5 h-3.5 w-3.5" aria-hidden />
               )}
               Restaurar todas ({removocoesVisiveis})
+            </Button>
+          )}
+
+          {templatesFalhos.length > 0 && (
+            <Button
+              type="button"
+              variant="destructive"
+              size="sm"
+              className="text-meta h-7 px-3"
+              onClick={() => tentarNovamente.mutate()}
+              disabled={tentarNovamente.isPending}
+              aria-label={`Tentar novamente ${templatesFalhos.length} template(s) que falharam`}
+            >
+              {tentarNovamente.isPending ? (
+                <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" aria-hidden />
+              ) : (
+                <RefreshCw className="mr-1.5 h-3.5 w-3.5" aria-hidden />
+              )}
+              Tentar novamente ({templatesFalhos.length})
             </Button>
           )}
         </div>
