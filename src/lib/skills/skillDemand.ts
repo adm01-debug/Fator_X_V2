@@ -105,6 +105,8 @@ export interface DemandSkillInput {
   department_confidence?: number | string | null;
   /** Procedencia da classificacao: unknown | heuristic | llm | human | import. */
   department_source?: string | null;
+  /** true quando o item e uma coletanea (awesome-list, curso), nao uma skill. */
+  is_meta_collection?: boolean | null;
 }
 
 /** Vínculo ativo template ↔ skill. */
@@ -135,6 +137,13 @@ export interface SkillDemandRow {
    * confianca — sinaliza revisao humana pendente antes de confiar no rotulo.
    */
   departmentNeedsReview: boolean;
+  /**
+   * Coletanea (awesome-list, curso, roadmap) em vez de skill instalavel.
+   *
+   * Nao e um defeito de classificacao: e um item que nunca devera ter
+   * departamento, entao fica fora da fila de revisao.
+   */
+  isMetaCollection: boolean;
 }
 
 /** Resumo agregado exibido no cabeçalho do painel. */
@@ -199,10 +208,17 @@ export function buildSkillDemandRows(
         : [],
       departmentConfidence: confidence,
       departmentSource: source,
+      isMetaCollection: skill.is_meta_collection === true,
       // Revisao humana ja feita ('human') nunca reabre; sem departamento nao
       // ha o que revisar — o vazio ja aparece no filtro "sem departamento".
+      // Coletaneas ficam fora: pedir a um curador o departamento de
+      // `awesome-go` e cobrar uma decisao que nao existe, e cada uma dessas
+      // linhas empurra para fora da tela uma skill que de fato precisa dele.
       departmentNeedsReview:
-        Boolean(department) && source !== 'human' && confidence < DEPARTMENT_REVIEW_THRESHOLD,
+        Boolean(department) &&
+        skill.is_meta_collection !== true &&
+        source !== 'human' &&
+        confidence < DEPARTMENT_REVIEW_THRESHOLD,
     });
   }
 
