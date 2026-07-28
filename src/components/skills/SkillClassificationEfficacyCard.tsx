@@ -108,7 +108,39 @@ export function SkillClassificationEfficacyCard({
     () => filterCalibrations(calibracoes, filtroCalib),
     [calibracoes, filtroCalib],
   );
+  // Override sem revisão posterior vira pendência de governança após o prazo.
+  const overridesVencidos = useMemo(() => findStaleOverrides(calibracoes), [calibracoes]);
   const justificativaValida = isOverrideReasonValid(justificativa);
+
+  /**
+   * Exporta a lista já filtrada — o comitê leva exatamente o que está vendo,
+   * sem reprocessar filtro fora da tela.
+   */
+  const exportarCsv = useCallback(() => {
+    if (calibracoesVisiveis.length === 0) {
+      toast.error('Nada para exportar com o filtro atual.');
+      return;
+    }
+    try {
+      const blob = new Blob([buildCalibrationCsv(calibracoesVisiveis)], {
+        type: 'text/csv;charset=utf-8;',
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = calibrationCsvFilename(filtroCalib);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      // Liberar o object URL evita vazamento de memória em exportações repetidas.
+      URL.revokeObjectURL(url);
+      toast.success(`CSV exportado (${calibracoesVisiveis.length} calibrações).`);
+    } catch (error) {
+      logger.error('calibration csv export failed', { error: (error as Error)?.message });
+      toast.error('Falha ao gerar o CSV.');
+    }
+  }, [calibracoesVisiveis, filtroCalib]);
+
 
 
 
