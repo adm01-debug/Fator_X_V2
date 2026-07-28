@@ -243,6 +243,44 @@ function dropLocalCheckpoint(repos: string[]): void {
 }
 
 /**
+ * Expurga checkpoints locais vencidos (>24h) de QUALQUER conjunto de repos.
+ *
+ * O `loadHarvestCheckpoint` já ignora registros velhos, mas eles continuariam
+ * ocupando cota do `localStorage` indefinidamente — inclusive de varreduras
+ * que o usuário nunca mais vai repetir. Esta rotina é o par local do
+ * `purge_stale_harvest_checkpoints()` executado por cron no banco.
+ *
+ * @returns quantidade de chaves removidas (0 quando o storage é indisponível).
+ */
+export function purgeStaleLocalCheckpoints(now = Date.now()): number {
+  if (typeof localStorage === 'undefined') return 0;
+  let removed = 0;
+  try {
+    // Coleta antes de remover: mutar o storage durante a iteração por índice
+    // reindexa as chaves e faria pular entradas.
+    const stale: string[] = [];
+    for (let i = 0; i < localStorage.length; i += 1) {
+      const key = localStorage.key(i);
+      if (!key || !key.startsWith(CHECKPOINT_PREFIX)) continue;
+      let expired = true; // entrada ilegível é lixo — remove
+      try {
+        const parsed = JSON.parse(localStorage.getItem(key) ?? '') as Partial<HarvestCheckpoint>;
+        const age = now - new Date(String(parsed.savedAt ?? '')).getTime();
+        expired = !Number.isFinite(age) || age > CHECKPOINT_TTL_MS;
+      } catch { /* JSON corrompido — mantém expired = true */ }
+      if (expired) stale.push(key);
+    }
+    for (const key of stale) {
+      try { localStorage.removeItem(key); removed += 1; } catch { /* noop */ }
+    }
+  } catch {
+    return removed; // storage bloqueado (modo privado) — nada a fazer
+  }
+  return removed;
+}
+
+
+/**
  * Lê o checkpoint do banco (retomada em qualquer dispositivo) e cai para o
  * armazenamento local quando a tabela está indisponível. Vence sempre o
  * deslocamento MAIOR: reler arquivos já processados só queima cota da API.
