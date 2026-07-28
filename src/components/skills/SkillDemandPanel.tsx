@@ -317,8 +317,11 @@ export function SkillDemandPanel() {
         open={reclassificarAberto}
         onOpenChange={setReclassificarAberto}
         candidates={candidatos}
+        confidenceThreshold={confidenceThreshold}
+        onConfidenceThresholdChange={(v) => atualizarPrefs({ confidenceThreshold: v })}
         onApplied={() => void carregar()}
       />
+
     </Card>
 
     {/* Fila de aprovação: fica logo abaixo porque é a consequência direta de
