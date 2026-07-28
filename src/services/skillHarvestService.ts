@@ -359,6 +359,72 @@ export async function clearHarvestCheckpoint(repos: string[]): Promise<void> {
   }
 }
 
+/** Checkpoint remoto pronto para retomada, já com idade calculada. */
+export interface HarvestCheckpointRow {
+  repoKey: string;
+  repos: string[];
+  offset: number;
+  total: number;
+  insertedTotal: number;
+  updatedAt: string;
+  /** Idade em horas — acima do TTL a retomada é descartada pelo loader. */
+  ageHours: number;
+  stale: boolean;
+}
+
+/**
+ * Lista as varreduras interrompidas do usuário (RLS já filtra por dono).
+ *
+ * Marca as vencidas em vez de escondê-las: o curador precisa saber que
+ * aquele progresso será descartado ao retomar, e não descobrir depois.
+ */
+export async function listHarvestCheckpoints(now = Date.now()): Promise<HarvestCheckpointRow[]> {
+  try {
+    const { data, error } = await supabaseExternal
+      .from('skill_harvest_checkpoints')
+      .select('repo_key, repos, file_offset, total_files, inserted_total, updated_at')
+      .order('updated_at', { ascending: false })
+      .limit(20);
+    if (error) throw new Error(error.message);
+
+    return ((data ?? []) as RawRow[]).map((row) => {
+      const updatedAt = String(row.updated_at ?? '');
+      const ageMs = now - new Date(updatedAt).getTime();
+      const ageHours = Number.isFinite(ageMs) ? ageMs / 3_600_000 : Number.POSITIVE_INFINITY;
+      return {
+        repoKey: String(row.repo_key ?? ''),
+        repos: Array.isArray(row.repos) ? (row.repos as string[]) : [],
+        offset: Number(row.file_offset ?? 0),
+        total: Number(row.total_files ?? 0),
+        insertedTotal: Number(row.inserted_total ?? 0),
+        updatedAt,
+        ageHours,
+        stale: !(ageMs <= CHECKPOINT_TTL_MS),
+      };
+    });
+  } catch (e) {
+    logger.warn('Falha ao listar checkpoints de varredura', {
+      error: e instanceof Error ? e.message : String(e),
+    });
+    return [];
+  }
+}
+
+/** Descarta um checkpoint pela chave canônica (usado no painel de retomadas). */
+export async function deleteHarvestCheckpointByKey(repoKey: string): Promise<void> {
+  if (!repoKey) return;
+  const { error } = await supabaseExternal
+    .from('skill_harvest_checkpoints')
+    .delete()
+    .eq('repo_key', repoKey);
+  if (error) throw new Error(error.message);
+  if (typeof localStorage !== 'undefined') {
+    try { localStorage.removeItem(CHECKPOINT_PREFIX + repoKey); } catch { /* noop */ }
+  }
+}
+
+
+
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**

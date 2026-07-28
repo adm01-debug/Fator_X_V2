@@ -14,6 +14,7 @@ import {
 import { PageHeader } from '@/components/shared/PageHeader';
 import { RecentCurationsPanel } from '@/components/agents/RecentCurationsPanel';
 import { SkillDemandPanel } from '@/components/skills/SkillDemandPanel';
+import { HarvestCheckpointsCard } from '@/components/skills/HarvestCheckpointsCard';
 
 import { rebuildTemplateSkillLinks } from '@/services/templateSkillLinkService';
 
@@ -89,6 +90,8 @@ export default function SkillHarvestPage() {
   /** Lista livre de monorepos, um `owner/repo` por linha. */
   const [reposInput, setReposInput] = useState('');
   const [filesPerRepo, setFilesPerRepo] = useState(120);
+  /** Incrementa para forçar recarga do painel de varreduras interrompidas. */
+  const [checkpointsToken, setCheckpointsToken] = useState(0);
 
   /** Normaliza a caixa de texto: aceita URL completa ou `owner/repo`. */
   const parsedRepos = useMemo(
@@ -222,6 +225,8 @@ export default function SkillHarvestPage() {
       // senão a próxima varredura do mesmo repo começaria no fim da lista.
       if (!incomplete) await clearHarvestCheckpoint(parsedRepos);
       else if (last) await saveHarvestCheckpoint(parsedRepos, last.nextFileOffset);
+      setCheckpointsToken((n) => n + 1);
+
 
       if (controller.signal.aborted) {
         toast.info('Varredura interrompida', {
@@ -589,7 +594,19 @@ export default function SkillHarvestPage() {
 
             </CardContent>
           </Card>
+
+          <HarvestCheckpointsCard
+            className="mt-4"
+            refreshToken={checkpointsToken}
+            onResume={(repos) => {
+              setReposInput(repos.join(', '));
+              toast.info('Repositórios carregados', {
+                description: 'Clique em varrer para continuar de onde parou.',
+              });
+            }}
+          />
         </TabsContent>
+
 
         {/* ─── Cobertura */}
         <TabsContent value="coverage">
