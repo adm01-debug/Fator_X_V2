@@ -103,3 +103,26 @@ describe('_shared/skills', () => {
     expect(await loadAgentSkills(ok, 'agent-1')).toEqual([{ id: '1', name: 'Busca CRM' }]);
   });
 });
+
+describe('countInjectedSkills', () => {
+  it('retorna 0 sem skills', () => {
+    expect(countInjectedSkills([])).toBe(0);
+    expect(countInjectedSkills(null)).toBe(0);
+  });
+  it('deduplica por id/nome', () => {
+    expect(
+      countInjectedSkills([
+        { id: 'a', name: 'Alpha' },
+        { id: 'a', name: 'Alpha' },
+        { id: 'b', name: 'Beta' },
+      ]),
+    ).toBe(2);
+  });
+  it('limita a MAX_PROMPT_SKILLS', () => {
+    const many = Array.from({ length: 40 }, (_, i) => ({ id: `s${i}`, name: `Skill ${i}` }));
+    expect(countInjectedSkills(many)).toBe(MAX_PROMPT_SKILLS);
+  });
+  it('ignora skills sem nome válido', () => {
+    expect(countInjectedSkills([{ id: 'x', name: '   ' }, { id: 'y', name: 'Ok' }])).toBe(1);
+  });
+});
