@@ -16,17 +16,25 @@ import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { departmentLabel, type SkillDepartment } from '@/config/skill-departments';
+import {
+  departmentLabel,
+  SKILL_DEPARTMENTS,
+  type SkillDepartment,
+} from '@/config/skill-departments';
 import { fetchSkillDemand } from '@/services/skillDemandService';
 import {
+  countByDepartment,
   DEMAND_TIERS,
   DEMAND_TIER_LABEL,
   demandRowsToCsv,
   filterByDemand,
+  filterByDepartment,
   normalizeDemandFilter,
+  normalizeDepartmentFilter,
   summarizeSkillDemand,
   type DemandFilter,
   type DemandTier,
+  type DepartmentFilter,
   type SkillDemandRow,
 } from '@/lib/skills/skillDemand';
 import { SkillReclassifyDialog } from '@/components/skills/SkillReclassifyDialog';
