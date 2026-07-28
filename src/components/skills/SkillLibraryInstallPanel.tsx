@@ -24,7 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Search, Download, Trash2, PackageCheck } from 'lucide-react';
+import { Search, Download, Trash2, PackageCheck, AlertTriangle, Scissors } from 'lucide-react';
 import { useAgents } from '@/hooks/use-data';
 import {
   listSkills,
@@ -32,6 +32,12 @@ import {
   bulkInstallSkills,
   bulkUninstallSkills,
 } from '@/services/skillsRegistryService';
+import {
+  evaluateInstallImpact,
+  trimSelectionToCap,
+  type NamedSkillRef,
+} from '@/lib/skills/installGuard';
+import { MAX_PROMPT_SKILLS } from '@/lib/skills/promptSimulation';
 
 export function SkillLibraryInstallPanel() {
   const queryClient = useQueryClient();
@@ -55,6 +61,42 @@ export function SkillLibraryInstallPanel() {
     () => new Set((installed ?? []).map((s) => s.id)),
     [installed],
   );
+
+  /**
+   * Guarda de teto: o runtime compila no máximo MAX_PROMPT_SKILLS skills. Sem
+   * este cálculo a instalação "dá certo" e o operador só descobre a perda pelo
+   * comportamento degradado do agente semanas depois.
+   */
+  const catalogById = useMemo(() => {
+    const map = new Map<string, NamedSkillRef>();
+    for (const skill of catalog?.skills ?? []) {
+      map.set(skill.id, { id: skill.id, name: skill.name ?? '' });
+    }
+    return map;
+  }, [catalog]);
+
+  const selectedRefs = useMemo<NamedSkillRef[]>(
+    () => selected.map((id) => catalogById.get(id) ?? { id, name: '' }),
+    [selected, catalogById],
+  );
+
+  const guard = useMemo(
+    () =>
+      evaluateInstallImpact({
+        installed: (installed ?? []).map((s) => ({ id: s.id, name: s.name ?? '' })),
+        selected: selectedRefs,
+      }),
+    [installed, selectedRefs],
+  );
+
+  const trimSelection = () => {
+    const aceitas = trimSelectionToCap({
+      installed: (installed ?? []).map((s) => ({ id: s.id, name: s.name ?? '' })),
+      selected: selectedRefs,
+    });
+    setSelected(aceitas.map((s) => s.id));
+    toast.info(`Seleção ajustada para ${aceitas.length} skill(s) que cabem no teto`);
+  };
 
   const invalidate = () => {
     void queryClient.invalidateQueries({ queryKey: ['skill_library_installed', agentId] });
@@ -169,6 +211,41 @@ export function SkillLibraryInstallPanel() {
                 })}
           </div>
         </ScrollArea>
+
+        {agentId && selected.length > 0 && guard.verdict !== 'ok' && (
+          <div
+            role="status"
+            className={
+              guard.verdict === 'bloqueio_recomendado'
+                ? 'rounded-lg border border-destructive/40 bg-destructive/10 p-3'
+                : 'rounded-lg border border-border bg-secondary/40 p-3'
+            }
+          >
+            <div className="flex items-start gap-2">
+              <AlertTriangle
+                className={
+                  guard.verdict === 'bloqueio_recomendado'
+                    ? 'mt-0.5 h-4 w-4 shrink-0 text-destructive'
+                    : 'mt-0.5 h-4 w-4 shrink-0 text-muted-foreground'
+                }
+              />
+              <div className="min-w-0 flex-1 space-y-2">
+                <p className="text-sm">{guard.message}</p>
+                <p className="text-xs text-muted-foreground">
+                  {guard.currentSlots} → {guard.projectedSlots} de {MAX_PROMPT_SKILLS} slots
+                  {guard.redundant.length > 0
+                    ? ` · ${guard.redundant.length} selecionada(s) sem efeito (duplicada/sem nome)`
+                    : ''}
+                </p>
+                {guard.additionalDropped > 0 && (
+                  <Button variant="outline" size="sm" className="gap-1" onClick={trimSelection}>
+                    <Scissors className="h-3.5 w-3.5" /> Instalar só o que cabe
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="flex items-center justify-between gap-3">
           <p className="text-sm text-muted-foreground">
