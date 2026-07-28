@@ -8,6 +8,8 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 import {
   groupRemovalsByTemplate,
   bulkRestoreAllRemovals,
+  filterRemovalPlan,
+  retryFailedRestores,
   shouldConfirmBulkRestore,
   BULK_RESTORE_CONFIRM_THRESHOLD,
   type CurationFeedDay,
@@ -150,5 +152,61 @@ describe('shouldConfirmBulkRestore', () => {
   it('aceita limiar customizado', () => {
     expect(shouldConfirmBulkRestore(2, 2)).toBe(true);
     expect(shouldConfirmBulkRestore(2, 3)).toBe(false);
+  });
+});
+
+describe('filterRemovalPlan', () => {
+  it('mantém apenas os templates informados', () => {
+    const feed = [day([entry('t1', 's1'), entry('t2', 's2'), entry('t3', 's3')])];
+    expect(filterRemovalPlan(feed, ['t1', 't3'])).toEqual([
+      { templateId: 't1', skillIds: ['s1'] },
+      { templateId: 't3', skillIds: ['s3'] },
+    ]);
+  });
+
+  it('normaliza espaços e ignora ids vazios', () => {
+    const feed = [day([entry('t1', 's1')])];
+    expect(filterRemovalPlan(feed, ['  t1  ', '', '   '])).toEqual([
+      { templateId: 't1', skillIds: ['s1'] },
+    ]);
+  });
+
+  it('devolve vazio quando não há alvos', () => {
+    const feed = [day([entry('t1', 's1')])];
+    expect(filterRemovalPlan(feed, [])).toEqual([]);
+  });
+
+  it('ignora templates que não estão no feed', () => {
+    const feed = [day([entry('t1', 's1')])];
+    expect(filterRemovalPlan(feed, ['inexistente'])).toEqual([]);
+  });
+});
+
+describe('retryFailedRestores', () => {
+  it('reprocessa somente os templates que falharam', async () => {
+    updateMock.mockImplementation(() => chain(null));
+    const feed = [day([entry('t1', 's1'), entry('t2', 's2')])];
+
+    const resultado = await retryFailedRestores(feed, ['t2']);
+
+    expect(resultado).toEqual({ restored: 1, failedTemplates: [] });
+    expect(updateMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('não dispara I/O quando a lista de falhas está vazia', async () => {
+    const feed = [day([entry('t1', 's1')])];
+    const resultado = await retryFailedRestores(feed, []);
+
+    expect(resultado).toEqual({ restored: 0, failedTemplates: [] });
+    expect(updateMock).not.toHaveBeenCalled();
+  });
+
+  it('reporta a falha novamente quando o retry também é negado', async () => {
+    updateMock.mockImplementation(() => chain({ message: 'RLS negou' }));
+    const feed = [day([entry('t1', 's1')])];
+
+    const resultado = await retryFailedRestores(feed, ['t1']);
+
+    expect(resultado).toEqual({ restored: 0, failedTemplates: ['t1'] });
   });
 });
