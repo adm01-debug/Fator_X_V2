@@ -93,7 +93,7 @@ describe('listHarvestCheckpoints', () => {
 
     const [item] = await listHarvestCheckpoints(NOW);
     expect(item.stale).toBe(true);
-    expect(Number.isNaN(item.ageHours)).toBe(true);
+    expect(item.ageHours).toBe(Number.POSITIVE_INFINITY);
   });
 
   it('normaliza campos ausentes sem quebrar a listagem', async () => {
