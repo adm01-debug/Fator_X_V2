@@ -44,6 +44,11 @@ import {
   fetchEnrichCandidates,
   runDescriptionEnrichQueue,
 } from '@/services/skillEnrichmentService';
+import {
+  formatFailureSummary,
+  summarizeQueueFailures,
+  type FailureSummary,
+} from '@/lib/skills/queueFailureSummary';
 import { logger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
 
