@@ -184,7 +184,8 @@ describe('buildPromptAuditArtifact', () => {
     const sim = simulatePrompt(input([{ id: 'p', name: 'Skill | pipe', description: 'a|b' }]));
     const md = buildPromptAuditArtifact(sim, meta);
     const linha = md.split('\n').find((l) => l.includes('pipe')) ?? '';
-    expect(linha.split('|').length).toBe(6); // 4 células + bordas
+    // Pipes internos escapados: nenhum `|` sem barra invertida além dos 5 delimitadores.
+    expect(linha.match(/(?<!\\)\|/g)?.length).toBe(5);
     expect(linha).toContain('\\|');
   });
 
@@ -199,7 +200,7 @@ describe('buildPromptAuditArtifact', () => {
     expect(buildArtifactFilename(meta)).toBe('prompt-agente-de-vendas-2026-07-28T10-00-00-000.md');
     expect(
       buildArtifactFilename({ ...meta, agentName: 'Ação/Çç *?<>' }),
-    ).toMatch(/^prompt-acao-c-2026-07-28T10-00-00-000\.md$/);
+    ).toMatch(/^prompt-acao-cc-2026-07-28T10-00-00-000\.md$/);
     expect(buildArtifactFilename({ ...meta, agentName: '' })).toContain('prompt-agent-1');
   });
 
