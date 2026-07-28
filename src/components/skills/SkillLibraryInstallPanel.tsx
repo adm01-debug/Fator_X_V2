@@ -37,6 +37,11 @@ import {
   trimSelectionToCap,
   type NamedSkillRef,
 } from '@/lib/skills/installGuard';
+import {
+  buildInstallCapRecord,
+  shouldAuditInstall,
+} from '@/lib/skills/installCapAudit';
+import { audit } from '@/lib/auditService';
 import { MAX_PROMPT_SKILLS } from '@/lib/skills/promptSimulation';
 
 export function SkillLibraryInstallPanel() {
