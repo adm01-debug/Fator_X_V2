@@ -186,7 +186,7 @@ export function SkillDescriptionEnrichPanel({
     <Card className={cn('border-border/60', className)}>
       <CardHeader className="flex flex-row items-start justify-between gap-4 space-y-0">
         <div className="space-y-1">
-          <CardTitle className="flex items-center gap-2 text-lg">
+          <CardTitle className="flex items-center gap-2 text-title-sm">
             <PenLine className="h-4 w-4 text-primary" aria-hidden="true" />
             Descrições ausentes
           </CardTitle>
@@ -224,7 +224,7 @@ export function SkillDescriptionEnrichPanel({
             <Skeleton className="h-4 w-1/2" />
           </div>
         ) : (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-body-sm text-muted-foreground">
             {candidatos.length === 0
               ? 'Nenhuma skill importada está sem descrição. Catálogo completo.'
               : `${candidatos.length} skill${candidatos.length === 1 ? '' : 's'} importada${
@@ -272,7 +272,7 @@ export function SkillDescriptionEnrichPanel({
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0 space-y-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className="truncate text-sm font-medium">{p.name}</span>
+                          <span className="truncate text-body-sm font-medium">{p.name}</span>
                           <Badge
                             variant={p.autoApply ? 'secondary' : 'outline'}
                             className="text-meta"
@@ -280,7 +280,7 @@ export function SkillDescriptionEnrichPanel({
                             {Math.round(p.confidence * 100)}% confiança
                           </Badge>
                         </div>
-                        <p className="text-sm text-muted-foreground">{p.description}</p>
+                        <p className="text-body-sm text-muted-foreground">{p.description}</p>
                         {p.rationale && (
                           <p className="text-meta text-muted-foreground/80">{p.rationale}</p>
                         )}
@@ -319,7 +319,7 @@ export function SkillDescriptionEnrichPanel({
 
         {recusadas.length > 0 && (
           <details className="rounded-lg border border-border/60 p-3">
-            <summary className="cursor-pointer text-sm text-muted-foreground">
+            <summary className="cursor-pointer text-body-sm text-muted-foreground">
               {recusadas.length} skill{recusadas.length === 1 ? '' : 's'} continuaram sem descrição
               {descartadas.length > 0 && ` (${descartadas.length} sem sinal suficiente)`}
             </summary>
