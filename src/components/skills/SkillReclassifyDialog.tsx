@@ -228,10 +228,35 @@ export function SkillReclassifyDialog({
     }
   }, [plano]);
 
+  /**
+   * Auto-disparo do lote de IA quando o diálogo é aberto pelo atalho da fila
+   * "Sem depto.".
+   *
+   * O marcador é por PLANO (identidade do objeto memoizado), não um booleano
+   * global: se o curador ajustar o limiar ou o recorte mudar, um novo plano
+   * nasce e merece um novo lote. Sem esse controle, o efeito re-dispararia a
+   * cada render e queimaria créditos em duplicidade.
+   */
+  const autoDisparadoRef = useRef<unknown>(null);
+  useEffect(() => {
+    if (!open || !autoRunLlm) return;
+    if (classificando) return;
+    if (autoDisparadoRef.current === plano) return;
+    if (plano.llmCandidates.length === 0) return;
+    autoDisparadoRef.current = plano;
+    void classificarComIa();
+  }, [open, autoRunLlm, plano, classificando, classificarComIa]);
+
+  // Fechar zera o marcador: reabrir é uma intenção nova do curador.
+  useEffect(() => {
+    if (!open) autoDisparadoRef.current = null;
+  }, [open]);
+
   const cancelarIa = useCallback(() => {
     abortRef.current?.abort();
     setClassificando(false);
   }, []);
+
 
   const exportar = useCallback(() => {
     const blob = new Blob([reclassificationToCsv(propostas)], {
