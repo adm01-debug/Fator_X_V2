@@ -112,7 +112,7 @@ export const skillCategorySchema = z.enum([
   'integrations',
 ]);
 
-export const skillDraftSchema = z.object({
+const skillDraftBaseSchema = z.object({
   name: z.string().trim().min(3, 'Mínimo 3 caracteres').max(80, 'Máximo 80 caracteres'),
   slug: z
     .string()
@@ -129,7 +129,227 @@ export const skillDraftSchema = z.object({
   prompt: skillPromptSchema,
   execution: skillExecutionSchema,
 });
-export type SkillDraft = z.infer<typeof skillDraftSchema>;
+
+/** Extrai placeholders `{{nome}}` de um template. */
+export function extractPlaceholders(template: string): string[] {
+  const found = new Set<string>();
+  const re = /\{\{\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*\}\}/g;
+  let match: RegExpExecArray | null;
+  while ((match = re.exec(template)) !== null) found.add(match[1]);
+  return Array.from(found);
+}
+
+/** Heurística de segredo literal (tokens tipo sk-live-..., ghp_..., JWTs, chaves longas). */
+export function looksLikeHardcodedSecret(value: string): boolean {
+  const v = value.trim();
+  if (!v) return false;
+  if (/\{\{.+\}\}/.test(v)) return false; // referência a variável — seguro
+  if (/(sk|pk|rk)[-_](live|test|proj)?[-_]?[A-Za-z0-9]{12,}/i.test(v)) return true;
+  if (/\b(ghp|gho|github_pat|xox[baprs]|AIza|ya29)[-_A-Za-z0-9]{10,}/.test(v)) return true;
+  if (/eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/.test(v)) return true; // JWT
+  if (/^Bearer\s+[A-Za-z0-9._-]{16,}$/i.test(v)) return true;
+  return false;
+}
+
+function isExecutionSectionConfigured(execution: SkillExecution, kind: SkillExecutionKind): boolean {
+  switch (kind) {
+    case 'http':
+      return execution.http.url.trim().length > 0 || execution.http.headers.length > 0;
+    case 'rag':
+      return execution.rag.collection.trim().length > 0;
+    case 'workflow':
+      return execution.workflow.steps.length > 0;
+    case 'llm':
+    case 'integration':
+      return false; // possuem apenas defaults — nunca indicam configuração explícita
+    default:
+      return false;
+  }
+}
+
+/**
+ * Schema do draft com invariantes semânticas (cross-field) que o schema estrutural
+ * sozinho não captura. Cada regra abaixo cobre um gap real detectado pela suíte
+ * determinística `skillsSimulationService`.
+ */
+export const skillDraftSchema = skillDraftBaseSchema.superRefine((draft, ctx) => {
+  // 1. Nomes de input/output únicos
+  const seenInputs = new Set<string>();
+  draft.inputs.forEach((input, index) => {
+    const key = input.name.trim().toLowerCase();
+    if (seenInputs.has(key)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['inputs', index, 'name'],
+        message: `Nome de input duplicado: "${input.name}"`,
+      });
+    }
+    seenInputs.add(key);
+  });
+
+  const seenOutputs = new Set<string>();
+  draft.outputs.forEach((output, index) => {
+    const key = output.name.trim().toLowerCase();
+    if (seenOutputs.has(key)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['outputs', index, 'name'],
+        message: `Nome de output duplicado: "${output.name}"`,
+      });
+    }
+    seenOutputs.add(key);
+  });
+
+  // 2. Pelo menos um output declarado
+  if (draft.outputs.length === 0) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['outputs'],
+      message: 'Declare pelo menos um output',
+    });
+  }
+
+  // 3. Validações por input: enum vazio, min > max, regex inválida
+  draft.inputs.forEach((input, index) => {
+    if (input.type === 'enum' && input.validation.enumValues.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['inputs', index, 'validation', 'enumValues'],
+        message: 'Enum precisa de ao menos um valor',
+      });
+    }
+    const { min, max, pattern } = input.validation;
+    if (typeof min === 'number' && typeof max === 'number' && min > max) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['inputs', index, 'validation', 'min'],
+        message: 'Valor mínimo não pode ser maior que o máximo',
+      });
+    }
+    if (pattern) {
+      try {
+        new RegExp(pattern);
+      } catch {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['inputs', index, 'validation', 'pattern'],
+          message: 'Expressão regular inválida',
+        });
+      }
+    }
+  });
+
+  // 4. Placeholders do prompt precisam existir como inputs declarados
+  const declared = new Set(draft.inputs.map((i) => i.name.trim().toLowerCase()));
+  const templates = [draft.prompt.template, draft.prompt.systemMessage, draft.execution.http.bodyTemplate];
+  const usedPlaceholders = new Set<string>();
+  for (const tpl of templates) {
+    for (const ph of extractPlaceholders(tpl)) {
+      usedPlaceholders.add(ph.toLowerCase());
+      if (!declared.has(ph.toLowerCase())) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['prompt', 'template'],
+          message: `Placeholder "{{${ph}}}" não está declarado nos inputs`,
+        });
+      }
+    }
+  }
+
+  // 5. Em skills de prompt, todo input obrigatório precisa ser referenciado
+  if (draft.category === 'prompts') {
+    draft.inputs.forEach((input, index) => {
+      if (input.required && !usedPlaceholders.has(input.name.trim().toLowerCase())) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['inputs', index, 'name'],
+          message: `Input obrigatório "${input.name}" nunca é usado no prompt`,
+        });
+      }
+    });
+  }
+
+  // 6. Coerência categoria × execução
+  const canonical = CATEGORY_TO_EXECUTION_KIND[draft.category];
+  const kind = draft.execution.kind;
+  if (kind !== canonical) {
+    // Um kind divergente só é aceito enquanto não estiver configurado (rascunho).
+    if (isExecutionSectionConfigured(draft.execution, kind)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['execution', 'kind'],
+        message: `Categoria "${draft.category}" espera execução "${canonical}", mas "${kind}" está configurada`,
+      });
+    }
+    return;
+  }
+
+  // 7. Regras específicas do kind canônico
+  if (kind === 'http') {
+    const url = draft.execution.http.url.trim();
+    if (!url) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['execution', 'http', 'url'], message: 'URL obrigatória' });
+    } else if (!/^https:\/\//i.test(url)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['execution', 'http', 'url'],
+        message: 'A URL precisa usar HTTPS',
+      });
+    }
+    draft.execution.http.headers.forEach((header, index) => {
+      if (looksLikeHardcodedSecret(header.value)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['execution', 'http', 'headers', index, 'value'],
+          message: 'Segredo literal detectado — use uma variável (ex.: {{API_KEY}})',
+        });
+      }
+    });
+  }
+
+  if (kind === 'rag' && !draft.execution.rag.collection.trim()) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['execution', 'rag', 'collection'],
+      message: 'Selecione uma coleção de conhecimento',
+    });
+  }
+
+  if (kind === 'llm' && !draft.prompt.template.trim()) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['prompt', 'template'],
+      message: 'Template de prompt obrigatório para execução LLM',
+    });
+  }
+
+  if (kind === 'workflow' && draft.execution.workflow.steps.length === 0) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['execution', 'workflow', 'steps'],
+      message: 'Adicione ao menos um passo ao workflow',
+    });
+  }
+
+  if (kind === 'integration') {
+    if (!draft.execution.integration.provider.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['execution', 'integration', 'provider'],
+        message: 'Provedor obrigatório',
+      });
+    }
+    if (!draft.execution.integration.event.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['execution', 'integration', 'event'],
+        message: 'Evento obrigatório',
+      });
+    }
+  }
+});
+export type SkillDraft = z.infer<typeof skillDraftBaseSchema>;
+
 
 // Mapa: categoria da skill → tipo de execução padrão
 export const CATEGORY_TO_EXECUTION_KIND: Record<
