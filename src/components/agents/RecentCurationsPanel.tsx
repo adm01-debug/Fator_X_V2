@@ -5,7 +5,7 @@
  * `idx_tsl_manual_recent` — o custo não cresce com o volume de vínculos
  * automáticos, que hoje representam a maioria absoluta da tabela.
  */
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ChevronDown, Download, History, Link2, Loader2, RefreshCw, Sparkles, Undo2, Unlink, UserRound } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -19,6 +19,8 @@ import {
   fetchRecentCurationsPage,
   mergeCurationFeeds,
   restoreTemplateSkillLink,
+  bulkRestoreAllRemovals,
+  groupRemovalsByTemplate,
   type CurationActorScope,
   type CurationFeedFilter,
 } from '@/services/templateSkillLinkService';
@@ -181,6 +183,33 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
     },
   });
 
+  const restaurarTodas = useMutation({
+    mutationFn: () => bulkRestoreAllRemovals(feedRef.current),
+    onSuccess: ({ restored, failedTemplates }) => {
+      queryClient.invalidateQueries({ queryKey: ['recent_curations'] });
+      queryClient.invalidateQueries({ queryKey: ['template_skill_links'] });
+      if (failedTemplates.length > 0) {
+        toast({
+          title: 'Restauração parcial',
+          description: `${restored} vínculo(s) restaurado(s); ${failedTemplates.length} template(s) falharam.`,
+          variant: 'destructive',
+        });
+        return;
+      }
+      toast({
+        title: 'Remoções desfeitas',
+        description: `${restored} vínculo(s) voltaram a ser recomendados.`,
+      });
+    },
+    onError: (error: unknown) => {
+      toast({
+        title: 'Não foi possível restaurar em massa',
+        description: error instanceof Error ? error.message : 'Erro desconhecido.',
+        variant: 'destructive',
+      });
+    },
+  });
+
   const {
     data,
     isLoading,
@@ -212,6 +241,17 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
     () => mergeCurationFeeds((data?.pages ?? []).map((p) => p.days)),
     [data],
   );
+
+  // O plano de restauração é derivado do que está na tela — nunca reconsultado
+  // — para que o botão prometa exatamente o que o curador está vendo.
+  const removocoesVisiveis = useMemo(
+    () => groupRemovalsByTemplate(feed).reduce((acc, g) => acc + g.skillIds.length, 0),
+    [feed],
+  );
+
+  // Ref evita recriar a mutation a cada página carregada do feed infinito.
+  const feedRef = useRef(feed);
+  feedRef.current = feed;
 
   const totalEntradas = useMemo(
     () => feed.reduce((acc, dia) => acc + dia.entries.length, 0),
@@ -344,6 +384,25 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
             <Download className="mr-1.5 h-3.5 w-3.5" aria-hidden />
             Exportar CSV
           </Button>
+
+          {removocoesVisiveis > 0 && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="text-meta h-7 px-3"
+              onClick={() => restaurarTodas.mutate()}
+              disabled={restaurarTodas.isPending}
+              aria-label={`Restaurar ${removocoesVisiveis} remoções visíveis`}
+            >
+              {restaurarTodas.isPending ? (
+                <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" aria-hidden />
+              ) : (
+                <Undo2 className="mr-1.5 h-3.5 w-3.5" aria-hidden />
+              )}
+              Restaurar todas ({removocoesVisiveis})
+            </Button>
+          )}
         </div>
 
         {rotuloPendentes && (
