@@ -568,6 +568,7 @@ async function runRestorePlan(
         templateName: nomes.get(grupo.templateId) ?? grupo.templateId,
         skillCount: grupo.skillIds.length,
         message: ultimaMensagem,
+        failedAt: new Date().toISOString(),
         kind: ultimoTipo,
       });
     }
@@ -594,7 +595,14 @@ function csvField(value: string | number): string {
  * em PT-BR interpretar acentuação corretamente.
  */
 export function buildRestoreFailuresCsv(failures: readonly BulkRestoreFailure[]): string {
-  const cabecalho = ['template_id', 'template_nome', 'vinculos_pendentes', 'natureza', 'mensagem'];
+  const cabecalho = [
+    'template_id',
+    'template_nome',
+    'vinculos_pendentes',
+    'natureza',
+    'mensagem',
+    'ocorrido_em',
+  ];
   const linhas = (failures ?? [])
     .filter(Boolean)
     .map((f) =>
@@ -604,6 +612,7 @@ export function buildRestoreFailuresCsv(failures: readonly BulkRestoreFailure[])
         csvField(f.skillCount),
         csvField(RESTORE_FAILURE_LABEL[f.kind] ?? f.kind),
         csvField(f.message),
+        csvField(f.failedAt ?? ''),
       ].join(','),
     );
   return `\uFEFF${[cabecalho.map(csvField).join(','), ...linhas].join('\r\n')}\r\n`;
@@ -627,6 +636,37 @@ const FAILURE_KINDS: readonly RestoreFailureKind[] = ['permission', 'network', '
  * anterior do app, edição manual). Descartamos silenciosamente o que não
  * satisfaz o contrato em vez de deixar a UI renderizar `undefined`.
  */
+/**
+ * Janela de validade das pendências persistidas.
+ *
+ * Uma falha de ontem não descreve mais o estado do banco: o curador pode ter
+ * restaurado por outro caminho. Expirar evita agir sobre informação morta.
+ */
+export const RESTORE_FAILURES_TTL_MS = 24 * 60 * 60 * 1000;
+
+/** Normaliza `failedAt` vindo de storage; datas inválidas viram "agora". */
+function normalizeFailedAt(valor: unknown): string {
+  if (typeof valor === 'string') {
+    const data = new Date(valor);
+    if (!Number.isNaN(data.getTime())) return data.toISOString();
+  }
+  return new Date().toISOString();
+}
+
+/** Função pura: descarta falhas mais antigas que o TTL. */
+export function pruneExpiredRestoreFailures(
+  failures: readonly BulkRestoreFailure[],
+  now: number = Date.now(),
+  ttlMs: number = RESTORE_FAILURES_TTL_MS,
+): BulkRestoreFailure[] {
+  return (failures ?? []).filter((f) => {
+    if (!f) return false;
+    const t = new Date(f.failedAt).getTime();
+    if (Number.isNaN(t)) return false;
+    return now - t < ttlMs;
+  });
+}
+
 export function parseStoredRestoreFailures(raw: string | null): BulkRestoreFailure[] {
   if (!raw) return [];
   let dados: unknown;
@@ -656,6 +696,7 @@ export function parseStoredRestoreFailures(raw: string | null): BulkRestoreFailu
       skillCount: Number.isFinite(skillCount) && skillCount > 0 ? Math.floor(skillCount) : 0,
       message: typeof registro.message === 'string' ? registro.message : '',
       kind,
+      failedAt: normalizeFailedAt(registro.failedAt),
     });
   }
   return resultado;
@@ -664,7 +705,9 @@ export function parseStoredRestoreFailures(raw: string | null): BulkRestoreFailu
 /** Lê as falhas persistidas; tolera storage indisponível (SSR, modo privado). */
 export function loadRestoreFailures(): BulkRestoreFailure[] {
   try {
-    return parseStoredRestoreFailures(sessionStorage.getItem(RESTORE_FAILURES_STORAGE_KEY));
+    return pruneExpiredRestoreFailures(
+      parseStoredRestoreFailures(sessionStorage.getItem(RESTORE_FAILURES_STORAGE_KEY)),
+    );
   } catch {
     return [];
   }

@@ -222,7 +222,7 @@ describe('retryFailedRestores', () => {
         templateName: 't1',
         skillCount: 1,
         message: 'RLS negou',
-        kind: 'permission',
+        kind: 'permission', failedAt: new Date().toISOString()
       },
     ]);
   });
@@ -272,9 +272,9 @@ describe('restoreBackoffDelay', () => {
 describe('summarizeRestoreFailures', () => {
   it('agrega vínculos pendentes por natureza', () => {
     const resumo = summarizeRestoreFailures([
-      { templateId: 't1', templateName: 't1', skillCount: 3, message: 'rls', kind: 'permission' },
-      { templateId: 't2', templateName: 't2', skillCount: 2, message: 'fetch', kind: 'network' },
-      { templateId: 't3', templateName: 't3', skillCount: 1, message: 'x', kind: 'network' },
+      { templateId: 't1', templateName: 't1', skillCount: 3, message: 'rls', kind: 'permission', failedAt: new Date().toISOString() },
+      { templateId: 't2', templateName: 't2', skillCount: 2, message: 'fetch', kind: 'network', failedAt: new Date().toISOString() },
+      { templateId: 't3', templateName: 't3', skillCount: 1, message: 'x', kind: 'network', failedAt: new Date().toISOString() },
     ]);
     expect(resumo).toEqual({ permission: 3, network: 3, unknown: 0 });
   });
@@ -292,7 +292,7 @@ describe('buildRestoreFailuresCsv', () => {
         templateName: 'Vendas, B2B',
         skillCount: 2,
         message: 'erro "grave"\nlinha 2',
-        kind: 'permission',
+        kind: 'permission', failedAt: new Date().toISOString()
       },
     ]);
     expect(csv.startsWith('\uFEFF')).toBe(true);
@@ -331,7 +331,7 @@ describe('parseStoredRestoreFailures', () => {
       JSON.stringify([{ templateId: ' t1 ', skillCount: '4', kind: 'hackeado' }]),
     );
     expect(parsed).toEqual([
-      { templateId: 't1', templateName: 't1', skillCount: 4, message: '', kind: 'unknown' },
+      { templateId: 't1', templateName: 't1', skillCount: 4, message: '', kind: 'unknown', failedAt: new Date().toISOString() },
     ]);
   });
 
