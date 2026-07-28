@@ -119,7 +119,10 @@ export default function SkillsMarketplacePage() {
             className="pl-9 bg-secondary/50"
           />
         </div>
-        <Select value={category} onValueChange={setCategory}>
+        <Select
+          value={category}
+          onValueChange={(value) => setFilters((prev) => ({ ...prev, category: value }))}
+        >
           <SelectTrigger className="w-[180px] bg-secondary/50">
             <SelectValue />
           </SelectTrigger>
@@ -131,7 +134,9 @@ export default function SkillsMarketplacePage() {
         </Select>
         <Select
           value={license}
-          onValueChange={(value) => setLicense(value as LicenseFilter)}
+          onValueChange={(value) =>
+            setFilters((prev) => ({ ...prev, license: normalizeLicenseFilter(value) }))
+          }
         >
           <SelectTrigger className="w-[210px] bg-secondary/50" aria-label="Filtrar por licença">
             <SelectValue />
@@ -145,6 +150,7 @@ export default function SkillsMarketplacePage() {
           </SelectContent>
         </Select>
       </div>
+
 
       {isLoading ? (
         <CardGridSkeleton count={9} cols={3} />
