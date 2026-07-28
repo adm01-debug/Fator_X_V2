@@ -28,6 +28,8 @@ import {
   summarizeRestoreFailures,
   buildRestoreFailuresCsv,
   buildRestoreFailuresFilename,
+  loadRestoreFailures,
+  saveRestoreFailures,
 
   groupRemovalsByTemplate,
   shouldConfirmBulkRestore,
