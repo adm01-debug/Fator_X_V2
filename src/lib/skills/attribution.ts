@@ -327,8 +327,12 @@ export function matchesLicenseFilter(
       // (texto livre) nunca é presumida permissiva.
       return attribution.licenseKnown && !attribution.copyleft;
     case 'unlicensed':
-      // Origem externa (tem rótulo) porém sem licença normalizada.
-      return !attribution.isNative && attribution.license === null;
+      // Não-nativa cuja licença não é um SPDX reconhecido — inclui tanto a
+      // ausência total quanto textos livres ("Licença Proprietária"). Sem esta
+      // abrangência, esses itens ficariam órfãos: invisíveis em todo filtro
+      // exceto "Todas" (gap detectado na simulação de 616 cenários).
+      return !attribution.isNative && !attribution.licenseKnown;
+
     default:
       return true;
   }
