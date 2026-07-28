@@ -271,7 +271,7 @@ export function SkillReclassifyDialog({
     } finally {
       setEnviando(false);
     }
-  }, [propostas, selecionados, onApplied, onOpenChange]);
+  }, [propostas, selecionados, limiar, onApplied, onOpenChange]);
 
   const aplicar = useCallback(async () => {
     const lote = selectProposals(propostas, selecionados);
