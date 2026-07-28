@@ -8,9 +8,17 @@ type AuditAction =
   | 'prompt.create' | 'prompt.activate'
   | 'secret.create' | 'secret.update' | 'secret.delete'
   | 'member.invite' | 'member.remove' | 'member.role_change'
-  | 'auth.login' | 'auth.logout' | 'auth.password_change';
+  | 'auth.login' | 'auth.logout' | 'auth.password_change'
+  | 'skill.threshold_calibrate';
 
-type AuditEntityType = 'agent' | 'knowledge_base' | 'prompt_version' | 'workspace_secret' | 'workspace_member' | 'auth';
+type AuditEntityType =
+  | 'agent'
+  | 'knowledge_base'
+  | 'prompt_version'
+  | 'workspace_secret'
+  | 'workspace_member'
+  | 'auth'
+  | 'skill_classifier';
 
 interface AuditEntry {
   action: AuditAction;
