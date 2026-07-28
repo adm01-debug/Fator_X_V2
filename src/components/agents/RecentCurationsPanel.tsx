@@ -194,11 +194,16 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
     },
   });
 
-  const restaurarTodas = useMutation({
-    mutationFn: () => bulkRestoreAllRemovals(feedRef.current),
-    onSuccess: ({ restored, failedTemplates }) => {
+  // Templates cujo lote falhou na última tentativa. Guardar aqui (e não só no
+  // toast) permite oferecer um retry cirúrgico, sem reprocessar o que já foi
+  // restaurado com sucesso.
+  const [templatesFalhos, setTemplatesFalhos] = useState<string[]>([]);
+
+  const aplicarResultado = useCallback(
+    ({ restored, failedTemplates }: { restored: number; failedTemplates: string[] }) => {
       queryClient.invalidateQueries({ queryKey: ['recent_curations'] });
       queryClient.invalidateQueries({ queryKey: ['template_skill_links'] });
+      setTemplatesFalhos(failedTemplates);
       if (failedTemplates.length > 0) {
         toast({
           title: 'Restauração parcial',
@@ -212,18 +217,33 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
         description: `${restored} vínculo(s) voltaram a ser recomendados.`,
       });
     },
-    onError: (error: unknown) => {
-      toast({
-        title: 'Não foi possível restaurar em massa',
-        description: error instanceof Error ? error.message : 'Erro desconhecido.',
-        variant: 'destructive',
-      });
-    },
+    [queryClient],
+  );
+
+  const aoFalhar = useCallback((error: unknown) => {
+    toast({
+      title: 'Não foi possível restaurar em massa',
+      description: error instanceof Error ? error.message : 'Erro desconhecido.',
+      variant: 'destructive',
+    });
+  }, []);
+
+  const restaurarTodas = useMutation({
+    mutationFn: () => bulkRestoreAllRemovals(feedRef.current),
+    onSuccess: aplicarResultado,
+    onError: aoFalhar,
+  });
+
+  const tentarNovamente = useMutation({
+    mutationFn: () => retryFailedRestores(feedRef.current, templatesFalhos),
+    onSuccess: aplicarResultado,
+    onError: aoFalhar,
   });
 
   // Confirmação só para lotes grandes: pedir confirmação para 1 ou 2 itens
   // treina o curador a clicar "Sim" sem ler, e o diálogo perde a função.
   const [confirmarAberto, setConfirmarAberto] = useState(false);
+
 
 
 
