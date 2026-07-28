@@ -58,14 +58,31 @@ const RequestSchema = z.object({
   repos: z.array(z.string().trim().regex(REPO_SLUG_RE, 'Formato esperado: owner/repo')).max(10).default([]),
   /** Teto de SKILL.md lidos por repositório — monorepos como sales-skills/sales têm centenas. */
   filesPerRepo: z.number().int().min(1).max(1000).default(8),
+  /** Deslocamento na lista ordenada de SKILL.md — permite varrer um monorepo em lotes. */
+  fileOffset: z.number().int().min(0).max(100000).default(0),
   maxRepos: z.number().int().min(1).max(200).default(40),
   maxCandidates: z.number().int().min(1).max(1000).default(120),
   minStars: z.number().int().min(0).max(100000).default(3),
   dryRun: z.boolean().default(false),
 });
 
+/**
+ * Orçamento de tempo de parede. A Edge Function é encerrada pela plataforma
+ * por volta de 150s; parar em 105s garante que ainda sobre janela para gravar
+ * os candidatos já coletados, fechar a run e responder. Sem isso, um monorepo
+ * grande morre no meio e a run fica presa em `running` para sempre.
+ */
+const TIME_BUDGET_MS = 105_000;
+
+/** Concorrência de leitura de arquivos brutos (raw.githubusercontent). */
+const RAW_CONCURRENCY = 6;
+
+/** Tamanho do lote de gravação — `raw_content` vai até 20KB por linha. */
+const UPSERT_CHUNK = 50;
+
 const SKILL_FILE_RE = /(^|\/)(SKILL\.md|skill\.md)$/;
 const AGENT_JSON_RE = /(^|\/)(agent\.json|mcp\.json)$/;
+
 
 
 interface CandidateRow {
