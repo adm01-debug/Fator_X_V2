@@ -392,20 +392,45 @@ export function SkillClassificationEfficacyCard({
           <div className="space-y-2 rounded-lg border border-border/60 p-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p className="text-body-sm font-medium">Calibrações recentes</p>
-              {/* Governança revisa exceções, não a série inteira: o filtro
-                  isola justamente as decisões tomadas contra o alerta. */}
-              <Button
-                size="sm"
-                variant={filtroCalib === 'overridden' ? 'secondary' : 'ghost'}
-                onClick={() =>
-                  setFiltroCalib((atual) => (atual === 'overridden' ? 'all' : 'overridden'))
-                }
-                disabled={totalSobAlerta === 0 && filtroCalib === 'all'}
-              >
-                <AlertTriangle className="mr-2 h-3.5 w-3.5" />
-                Somente sob alerta ({totalSobAlerta})
-              </Button>
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Governança revisa exceções, não a série inteira: o filtro
+                    isola justamente as decisões tomadas contra o alerta. */}
+                <Button
+                  size="sm"
+                  variant={filtroCalib === 'overridden' ? 'secondary' : 'ghost'}
+                  onClick={() =>
+                    setFiltroCalib((atual) => (atual === 'overridden' ? 'all' : 'overridden'))
+                  }
+                  disabled={totalSobAlerta === 0 && filtroCalib === 'all'}
+                >
+                  <AlertTriangle className="mr-2 h-3.5 w-3.5" />
+                  Somente sob alerta ({totalSobAlerta})
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={exportarCsv}
+                  disabled={calibracoesVisiveis.length === 0}
+                >
+                  <Download className="mr-2 h-3.5 w-3.5" />
+                  Exportar CSV
+                </Button>
+              </div>
             </div>
+            {overridesVencidos.stale.length > 0 && (
+              <div className="flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 p-2 text-meta text-destructive">
+                <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                <span>
+                  {overridesVencidos.stale.length}{' '}
+                  {overridesVencidos.stale.length === 1
+                    ? 'override aplicado sob alerta segue'
+                    : 'overrides aplicados sob alerta seguem'}{' '}
+                  sem revisão há {overridesVencidos.oldestDays} dias (prazo:{' '}
+                  {OVERRIDE_REVIEW_DEADLINE_DAYS} dias). Reavalie o limiar ou registre nova
+                  calibração.
+                </span>
+              </div>
+            )}
             {instabilidade.unstable && (
               <div className="flex items-start gap-2 rounded-md border border-warning/40 bg-warning/10 p-2 text-meta text-warning-foreground">
                 <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warning" />
@@ -418,6 +443,7 @@ export function SkillClassificationEfficacyCard({
                 </span>
               </div>
             )}
+
 
             {calibracoesVisiveis.length === 0 ? (
               <p className="text-meta text-muted-foreground">
