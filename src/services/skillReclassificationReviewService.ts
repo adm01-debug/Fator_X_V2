@@ -152,6 +152,9 @@ function toNumber(value: number | string | null): number {
  */
 export function toThreshold(value: number | string | null | undefined): number | null {
   if (value === null || value === undefined) return null;
+  // `Number('')` e `Number('   ')` valem 0 — string vazia viraria "limiar 0,00"
+  // em vez de "sem registro". Barrada antes da coerção.
+  if (typeof value === 'string' && value.trim() === '') return null;
   const n = typeof value === 'string' ? Number(value) : value;
   if (!Number.isFinite(n) || n < 0 || n > 1) return null;
   return n;
