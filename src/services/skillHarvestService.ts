@@ -200,14 +200,19 @@ export interface HarvestCheckpoint {
 const CHECKPOINT_TTL_MS = 24 * 60 * 60 * 1000;
 
 /**
- * Chave estável por conjunto de repositórios. A ordenação evita que
+ * Chave canônica do conjunto de repositórios. A ordenação evita que
  * `a,b` e `b,a` gerem checkpoints distintos para a mesma varredura.
  */
-export function harvestCheckpointKey(repos: string[]): string {
-  return CHECKPOINT_PREFIX + [...repos].map((r) => r.trim().toLowerCase()).sort().join('|');
+export function harvestRepoKey(repos: string[]): string {
+  return [...repos].map((r) => r.trim().toLowerCase()).filter(Boolean).sort().join('|');
 }
 
-export function loadHarvestCheckpoint(repos: string[]): HarvestCheckpoint | null {
+/** Chave usada no armazenamento local (fallback offline). */
+export function harvestCheckpointKey(repos: string[]): string {
+  return CHECKPOINT_PREFIX + harvestRepoKey(repos);
+}
+
+function readLocalCheckpoint(repos: string[]): HarvestCheckpoint | null {
   if (repos.length === 0 || typeof localStorage === 'undefined') return null;
   try {
     const raw = localStorage.getItem(harvestCheckpointKey(repos));
@@ -224,7 +229,7 @@ export function loadHarvestCheckpoint(repos: string[]): HarvestCheckpoint | null
   }
 }
 
-export function saveHarvestCheckpoint(repos: string[], offset: number, total = 0): void {
+function writeLocalCheckpoint(repos: string[], offset: number, total: number): void {
   if (repos.length === 0 || typeof localStorage === 'undefined') return;
   try {
     const payload: HarvestCheckpoint = { offset, total, savedAt: new Date().toISOString() };
@@ -232,9 +237,88 @@ export function saveHarvestCheckpoint(repos: string[], offset: number, total = 0
   } catch { /* cota cheia — o progresso em memória segue válido */ }
 }
 
-export function clearHarvestCheckpoint(repos: string[]): void {
+function dropLocalCheckpoint(repos: string[]): void {
   if (repos.length === 0 || typeof localStorage === 'undefined') return;
   try { localStorage.removeItem(harvestCheckpointKey(repos)); } catch { /* noop */ }
+}
+
+/**
+ * Lê o checkpoint do banco (retomada em qualquer dispositivo) e cai para o
+ * armazenamento local quando a tabela está indisponível. Vence sempre o
+ * deslocamento MAIOR: reler arquivos já processados só queima cota da API.
+ */
+export async function loadHarvestCheckpoint(repos: string[]): Promise<HarvestCheckpoint | null> {
+  if (repos.length === 0) return null;
+  const local = readLocalCheckpoint(repos);
+
+  let remote: HarvestCheckpoint | null = null;
+  try {
+    const { data, error } = await supabaseExternal
+      .from('skill_harvest_checkpoints')
+      .select('file_offset, total_files, updated_at')
+      .eq('repo_key', harvestRepoKey(repos))
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (data) {
+      const row = data as RawRow;
+      const offset = Number(row.file_offset ?? 0);
+      const savedAt = String(row.updated_at ?? '');
+      const age = Date.now() - new Date(savedAt).getTime();
+      // Checkpoint velho demais: o repositório já mudou, reinicia do zero.
+      if (offset > 0 && Number.isFinite(age) && age <= CHECKPOINT_TTL_MS) {
+        remote = { offset, savedAt, total: Number(row.total_files ?? 0) };
+      }
+    }
+  } catch (e) {
+    logger.warn('Checkpoint remoto indisponível — usando fallback local', {
+      error: e instanceof Error ? e.message : String(e),
+    });
+  }
+
+  if (!remote) return local;
+  if (!local) return remote;
+  return remote.offset >= local.offset ? remote : local;
+}
+
+/** Grava o avanço no banco e no armazenamento local (best-effort em ambos). */
+export async function saveHarvestCheckpoint(repos: string[], offset: number, total = 0): Promise<void> {
+  if (repos.length === 0) return;
+  writeLocalCheckpoint(repos, offset, total);
+  try {
+    const { error } = await supabaseExternal
+      .from('skill_harvest_checkpoints')
+      .upsert(
+        {
+          repo_key: harvestRepoKey(repos),
+          repos,
+          file_offset: offset,
+          total_files: total,
+        },
+        { onConflict: 'user_id,repo_key' },
+      );
+    if (error) throw new Error(error.message);
+  } catch (e) {
+    // Falha de rede não pode derrubar a varredura: o local já guardou o avanço.
+    logger.warn('Falha ao gravar checkpoint remoto', {
+      error: e instanceof Error ? e.message : String(e),
+    });
+  }
+}
+
+export async function clearHarvestCheckpoint(repos: string[]): Promise<void> {
+  if (repos.length === 0) return;
+  dropLocalCheckpoint(repos);
+  try {
+    const { error } = await supabaseExternal
+      .from('skill_harvest_checkpoints')
+      .delete()
+      .eq('repo_key', harvestRepoKey(repos));
+    if (error) throw new Error(error.message);
+  } catch (e) {
+    logger.warn('Falha ao limpar checkpoint remoto', {
+      error: e instanceof Error ? e.message : String(e),
+    });
+  }
 }
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

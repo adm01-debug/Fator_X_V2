@@ -162,7 +162,7 @@ export default function SkillHarvestPage() {
 
       // Retoma do último ponto conhecido em vez de reprocessar tudo — as
       // leituras já feitas consomem cota da API do GitHub sem gerar nada novo.
-      const checkpoint = loadHarvestCheckpoint(parsedRepos);
+      const checkpoint = await loadHarvestCheckpoint(parsedRepos);
       if (checkpoint) {
         toast.info('Retomando varredura', {
           description: `Continuando a partir do arquivo ${checkpoint.offset}.`,
@@ -207,7 +207,7 @@ export default function SkillHarvestPage() {
               });
             }
           },
-          onCheckpoint: (offset, total) => saveHarvestCheckpoint(parsedRepos, offset, total),
+          onCheckpoint: (offset, total) => { void saveHarvestCheckpoint(parsedRepos, offset, total); },
         },
       );
 
@@ -216,8 +216,8 @@ export default function SkillHarvestPage() {
 
       // Sem pendências: o checkpoint deixa de valer e precisa sair do storage,
       // senão a próxima varredura do mesmo repo começaria no fim da lista.
-      if (!incomplete) clearHarvestCheckpoint(parsedRepos);
-      else if (last) saveHarvestCheckpoint(parsedRepos, last.nextFileOffset);
+      if (!incomplete) await clearHarvestCheckpoint(parsedRepos);
+      else if (last) await saveHarvestCheckpoint(parsedRepos, last.nextFileOffset);
 
       if (controller.signal.aborted) {
         toast.info('Varredura interrompida', {
