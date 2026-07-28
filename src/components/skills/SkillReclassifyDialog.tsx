@@ -227,7 +227,7 @@ export function SkillReclassifyDialog({
     } finally {
       setAplicando(false);
     }
-  }, [plano, selecionados, onApplied, onOpenChange]);
+  }, [propostas, selecionados, onApplied, onOpenChange]);
 
   const excedeLote = selecionados.length > MAX_RECLASSIFY_BATCH;
 
