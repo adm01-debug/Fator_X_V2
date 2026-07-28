@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Gauge, Loader2, RefreshCw } from 'lucide-react';
+import { AlertTriangle, Gauge, Loader2, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { logger } from '@/lib/logger';
@@ -20,7 +20,9 @@ import { audit } from '@/lib/auditService';
 import { fetchClassificationTimeline } from '@/services/skillClassificationTimelineService';
 import { fetchThresholdCalibrations } from '@/services/thresholdCalibrationService';
 import {
+  INSTABILITY_WINDOW_DAYS,
   calibrationDirection,
+  detectCalibrationInstability,
   type ThresholdCalibration,
 } from '@/lib/skills/thresholdCalibration';
 import { normalizeConfidenceThreshold } from '@/lib/skills/skillDemand';
@@ -74,6 +76,7 @@ export function SkillClassificationEfficacyCard({
   const [calibracoes, setCalibracoes] = useState<ThresholdCalibration[]>([]);
   const [loading, setLoading] = useState(true);
   const [filtro, setFiltro] = useState<EfficacyFilter>('all');
+  const instabilidade = useMemo(() => detectCalibrationInstability(calibracoes), [calibracoes]);
 
 
   const carregar = useCallback(async () => {
