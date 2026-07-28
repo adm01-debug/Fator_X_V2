@@ -270,6 +270,38 @@ export interface DemandPreferences {
   search: string;
   /** Limiar de confiança escolhido pelo curador na reclassificação. */
   confidenceThreshold: number;
+  /**
+   * Recorta apenas classificações automáticas de baixa confiança.
+   *
+   * É o inverso de um filtro cosmético: sem ele, as skills que exibem o selo
+   * "Rever depto." ficam diluídas entre centenas de linhas e nunca chegam ao
+   * topo de nenhuma fila. Persistir o recorte transforma "olhar quando der"
+   * numa lista de trabalho estável entre sessões.
+   */
+  onlyNeedsReview: boolean;
+}
+
+/**
+ * Recorta as linhas que precisam de revisão departamental.
+ *
+ * Combina com os demais filtros por interseção (E lógico), não por
+ * substituição: "sem departamento + rever depto." é sempre vazio por
+ * construção — `departmentNeedsReview` exige departamento presente — e isso é
+ * correto, não um bug.
+ */
+export function filterByNeedsReview(
+  rows: readonly SkillDemandRow[],
+  only: boolean,
+): SkillDemandRow[] {
+  if (!only) return [...rows];
+  return rows.filter((row) => row.departmentNeedsReview);
+}
+
+/** Quantas linhas do conjunto bruto exibem o selo "Rever depto.". */
+export function countNeedsReview(rows: readonly SkillDemandRow[]): number {
+  let total = 0;
+  for (const row of rows) if (row.departmentNeedsReview) total += 1;
+  return total;
 }
 
 /** Teto de busca persistida — evita gravar payload arbitrário na nuvem. */
@@ -317,6 +349,7 @@ export function normalizeDemandPreferences(
     department: 'all',
     search: '',
     confidenceThreshold: DEMAND_THRESHOLD_FLOOR_FALLBACK,
+    onlyNeedsReview: false,
   },
 ): DemandPreferences {
   const piso = normalizeConfidenceThreshold(
@@ -335,8 +368,13 @@ export function normalizeDemandPreferences(
   const search =
     typeof raw.search === 'string' ? raw.search.slice(0, DEMAND_SEARCH_MAX) : '';
   const confidenceThreshold = normalizeConfidenceThreshold(raw.confidenceThreshold, piso);
+  // Aceita apenas boolean literal. Um `"false"` vindo de storage legado é
+  // truthy em JS e ligaria o recorte silenciosamente, escondendo a maior parte
+  // do catálogo sem que o curador tenha pedido nada.
+  const onlyNeedsReview =
+    typeof raw.onlyNeedsReview === 'boolean' ? raw.onlyNeedsReview : defaults.onlyNeedsReview ?? false;
 
-  return { tier, department, search, confidenceThreshold };
+  return { tier, department, search, confidenceThreshold, onlyNeedsReview };
 }
 
 
