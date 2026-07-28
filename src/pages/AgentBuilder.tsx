@@ -47,6 +47,7 @@ const MODULE_MAP: Record<string, React.LazyExoticComponent<React.ComponentType>>
   memory: MemoryModule,
   rag: RAGModule,
   tools: ToolsModule,
+  skills: SkillsModule,
   prompt: PromptModule,
   orchestration: OrchestrationModule,
   orchestrator: OrchestratorModule,
