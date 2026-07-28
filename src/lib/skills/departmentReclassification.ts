@@ -102,6 +102,40 @@ function safeTags(value: unknown): string[] {
   return value.filter((t): t is string => typeof t === 'string' && t.trim().length > 0);
 }
 
+/** Limiares configuráveis; um número solto é interpretado como confiança mínima. */
+export interface ReclassifyThresholds {
+  minConfidence?: number;
+  minMargin?: number;
+  minConfidenceOverride?: number;
+  minMarginOverride?: number;
+}
+
+function clamp01(value: unknown, fallback: number): number {
+  return typeof value === 'number' && Number.isFinite(value)
+    ? Math.min(1, Math.max(0, value))
+    : fallback;
+}
+
+function resolveThresholds(input: number | ReclassifyThresholds | undefined) {
+  const raw: ReclassifyThresholds = typeof input === 'number' ? { minConfidence: input } : (input ?? {});
+  const minConfidence = clamp01(raw.minConfidence, MIN_RECLASSIFY_CONFIDENCE);
+  const minMargin = clamp01(raw.minMargin, MIN_RECLASSIFY_MARGIN);
+  return {
+    minConfidence,
+    minMargin,
+    // A barra de sobrescrita nunca pode ser mais frouxa que a barra base:
+    // isso tornaria mais fácil destruir curadoria do que preencher um vazio.
+    minConfidenceOverride: Math.max(
+      minConfidence,
+      clamp01(raw.minConfidenceOverride, MIN_RECLASSIFY_CONFIDENCE_OVERRIDE),
+    ),
+    minMarginOverride: Math.max(
+      minMargin,
+      clamp01(raw.minMarginOverride, MIN_RECLASSIFY_MARGIN_OVERRIDE),
+    ),
+  };
+}
+
 /**
  * Monta o plano de reclassificação. Puro e total.
  *
@@ -111,17 +145,16 @@ function safeTags(value: unknown): string[] {
  */
 export function buildReclassificationPlan(
   candidates: readonly ReclassifyCandidate[] | null | undefined,
-  minConfidence: number = MIN_RECLASSIFY_CONFIDENCE,
+  options?: number | ReclassifyThresholds,
 ): ReclassifyPlan {
-  const limiar = Number.isFinite(minConfidence)
-    ? Math.min(1, Math.max(0, minConfidence))
-    : MIN_RECLASSIFY_CONFIDENCE;
+  const limiares = resolveThresholds(options);
 
   const vistos = new Set<string>();
   const proposals: ReclassifyProposal[] = [];
   let evaluated = 0;
   let unchanged = 0;
   let lowConfidence = 0;
+  let ambiguous = 0;
 
   for (const candidate of candidates ?? []) {
     if (!candidate || typeof candidate.skillId !== 'string') continue;
@@ -141,12 +174,23 @@ export function buildReclassificationPlan(
       tags: safeTags(candidate.tags),
     });
 
-    if (!resultado.department || resultado.confidence < limiar) {
+    // Sobrescrever curadoria existente exige evidência mais forte.
+    const confMin = from === null ? limiares.minConfidence : limiares.minConfidenceOverride;
+    const margemMin = from === null ? limiares.minMargin : limiares.minMarginOverride;
+
+    if (!resultado.department || resultado.confidence < confMin) {
       lowConfidence += 1;
       continue;
     }
     if (resultado.department === from) {
       unchanged += 1;
+      continue;
+    }
+
+    const segundo = resultado.ranking[1]?.score ?? 0;
+    const margem = Number((resultado.confidence - segundo).toFixed(6));
+    if (margem < margemMin) {
+      ambiguous += 1;
       continue;
     }
 
@@ -157,6 +201,8 @@ export function buildReclassificationPlan(
       from,
       to: resultado.department,
       confidence: resultado.confidence,
+      margin: margem,
+      runnerUp: resultado.ranking[1]?.department ?? null,
       matchedTerms: resultado.matchedTerms.slice(0, 6),
     });
   }
@@ -169,7 +215,7 @@ export function buildReclassificationPlan(
 
   return {
     proposals,
-    summary: { evaluated, proposed: proposals.length, unchanged, lowConfidence },
+    summary: { evaluated, proposed: proposals.length, unchanged, lowConfidence, ambiguous },
   };
 }
 
