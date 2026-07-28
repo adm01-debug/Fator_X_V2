@@ -74,26 +74,72 @@ export async function getSkillsByIds(ids: string[]): Promise<AgentSkillDefinitio
 }
 
 // Install a skill for an agent
+export interface BulkInstallResult {
+  /** Ids efetivamente inseridos nesta chamada. */
+  installed: string[];
+  /** Ids ignorados por já estarem instalados (ou repetidos no lote). */
+  skipped: string[];
+}
+
+/** Limite defensivo de ids por lote (evita payloads absurdos vindos de drafts). */
+export const MAX_BULK_INSTALL = 100;
+
+/** Normaliza: remove não-strings, espaços, vazios, duplicatas e aplica limite. */
+export function normalizeSkillIdList(ids: readonly unknown[]): string[] {
+  const out: string[] = [];
+  const seen = new Set<string>();
+  for (const raw of ids) {
+    if (typeof raw !== 'string') continue;
+    const id = raw.trim();
+    if (!id || seen.has(id)) continue;
+    seen.add(id);
+    out.push(id);
+    if (out.length >= MAX_BULK_INSTALL) break;
+  }
+  return out;
+}
+
 export async function installSkill(agentId: string, skillId: string): Promise<void> {
-  const { error } = await supabaseExternal.from('agent_installed_skills').insert({
-    agent_id: agentId,
-    skill_id: skillId,
-  });
-  if (error) throw error;
-
-  await supabaseExternal.rpc('increment_skill_installs', { p_skill_id: skillId });
+  await bulkInstallSkills(agentId, [skillId]);
 }
 
-// Bulk install skills for an agent (usado no wizard de criação)
-export async function bulkInstallSkills(agentId: string, skillIds: string[]): Promise<void> {
-  if (skillIds.length === 0) return;
-  const rows = skillIds.map((skill_id) => ({ agent_id: agentId, skill_id }));
-  const { error } = await supabaseExternal.from('agent_installed_skills').insert(rows);
+/**
+ * Instala skills em lote de forma **idempotente**.
+ *
+ * Usa UPSERT com `ignoreDuplicates` sobre a constraint UNIQUE (agent_id, skill_id),
+ * de modo que reinstalar uma skill já presente não aborta o lote inteiro
+ * (comportamento anterior: erro 23505 derrubava todas as instalações válidas).
+ * Os contadores de instalação são incrementados apenas para as linhas realmente
+ * inseridas e em modo best-effort — falha de telemetria nunca invalida a operação.
+ */
+export async function bulkInstallSkills(
+  agentId: string,
+  skillIds: readonly string[],
+): Promise<BulkInstallResult> {
+  const requested = normalizeSkillIdList(skillIds);
+  if (requested.length === 0) return { installed: [], skipped: [] };
+
+  const rows = requested.map((skill_id) => ({ agent_id: agentId, skill_id }));
+  const { data, error } = await supabaseExternal
+    .from('agent_installed_skills')
+    .upsert(rows, { onConflict: 'agent_id,skill_id', ignoreDuplicates: true })
+    .select('skill_id');
   if (error) throw error;
-  await Promise.all(
-    skillIds.map((id) => supabaseExternal.rpc('increment_skill_installs', { p_skill_id: id })),
-  );
+
+  const installed = (data ?? [])
+    .map((r) => (r as { skill_id: string }).skill_id)
+    .filter((id): id is string => typeof id === 'string');
+  const installedSet = new Set(installed);
+  const skipped = requested.filter((id) => !installedSet.has(id));
+
+  if (installed.length > 0) {
+    await Promise.allSettled(
+      installed.map((id) => supabaseExternal.rpc('increment_skill_installs', { p_skill_id: id })),
+    );
+  }
+  return { installed, skipped };
 }
+
 
 // Get installed skills for an agent
 export async function getInstalledSkills(agentId: string): Promise<AgentSkillDefinition[]> {
