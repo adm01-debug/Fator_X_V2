@@ -574,6 +574,7 @@ async function runRestorePlan(
         message: ultimaMensagem,
         failedAt: new Date().toISOString(),
         kind: ultimoTipo,
+        attempts: tentativasFeitas || 1,
       });
     }
   }
