@@ -102,6 +102,19 @@ export const DEPARTMENT_META: Record<SkillDepartment, DepartmentMeta> = {
       'incident', 'oncall', 'backup', 'restore', 'network', 'rede', 'firewall',
       'seguranca', 'security', 'vulnerability', 'patch', 'inventario', 'inventory',
       'helpdesk', 'troubleshooting', 'sysadmin', 'cloud', 'aws', 'azure', 'gcp',
+      // Vocabulário de engenharia de software e tooling de agentes de IA.
+      // Motivo: o catálogo importado do GitHub é majoritariamente em inglês e
+      // fala de "agent skills", "mcp", "cli", "sdk" — termos ausentes do léxico
+      // original, o que empurrava 39 skills para "não classificada" ou, pior,
+      // para departamentos aleatórios com confiança < 0.1.
+      'agent', 'agents', 'agentic', 'skill', 'skills', 'mcp', 'llm', 'llms',
+      'prompt', 'prompts', 'coding', 'code', 'developer', 'engineering',
+      'framework', 'sdk', 'cli', 'api', 'apis', 'runtime', 'plugin', 'plugins',
+      'typescript', 'javascript', 'python', 'rust', 'golang', 'compiler',
+      'debugging', 'refactoring', 'tdd', 'testing', 'lint', 'git', 'github',
+      'repo', 'orchestration', 'orquestracao', 'workflow', 'automation',
+      'automacao', 'claude', 'codex', 'cursor', 'copilot', 'anthropic',
+      'openai', 'gateway', 'webhook', 'http', 'client', 'server-side',
     ],
   },
   marketing: {
