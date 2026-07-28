@@ -9161,6 +9161,7 @@ export type Database = {
           created_at: string
           department: string | null
           department_confidence: number
+          department_source: string
           description: string
           id: string
           last_commit_at: string | null
@@ -9193,6 +9194,7 @@ export type Database = {
           created_at?: string
           department?: string | null
           department_confidence?: number
+          department_source?: string
           description?: string
           id?: string
           last_commit_at?: string | null
@@ -9225,6 +9227,7 @@ export type Database = {
           created_at?: string
           department?: string | null
           department_confidence?: number
+          department_source?: string
           description?: string
           id?: string
           last_commit_at?: string | null
