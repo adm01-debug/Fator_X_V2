@@ -17,7 +17,7 @@ import {
   tokenize,
   type Recommendation,
 } from '@/services/skillRecommenderService';
-import type { AgentSkillDefinition } from '@/services/skillsRegistryService';
+import { normalizeSkillIdList, type AgentSkillDefinition } from '@/services/skillsRegistryService';
 import {
   skillDraftSchema,
   DEFAULT_DRAFT,
