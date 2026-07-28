@@ -21,6 +21,8 @@ import {
   restoreTemplateSkillLink,
   bulkRestoreAllRemovals,
   retryFailedRestores,
+  type BulkRestoreAllResult,
+  type BulkRestoreFailure,
   groupRemovalsByTemplate,
   shouldConfirmBulkRestore,
   type CurationActorScope,
@@ -198,17 +200,21 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
   // Templates cujo lote falhou na última tentativa. Guardar aqui (e não só no
   // toast) permite oferecer um retry cirúrgico, sem reprocessar o que já foi
   // restaurado com sucesso.
-  const [templatesFalhos, setTemplatesFalhos] = useState<string[]>([]);
+  const [falhas, setFalhas] = useState<BulkRestoreFailure[]>([]);
+  const templatesFalhos = useMemo(() => falhas.map((f) => f.templateId), [falhas]);
 
   const aplicarResultado = useCallback(
-    ({ restored, failedTemplates }: { restored: number; failedTemplates: string[] }) => {
+    ({ restored, failures }: BulkRestoreAllResult) => {
       queryClient.invalidateQueries({ queryKey: ['recent_curations'] });
       queryClient.invalidateQueries({ queryKey: ['template_skill_links'] });
-      setTemplatesFalhos(failedTemplates);
-      if (failedTemplates.length > 0) {
+      setFalhas(failures);
+      if (failures.length > 0) {
+        const pendentes = failures.reduce((acc, f) => acc + f.skillCount, 0);
         toast({
           title: 'Restauração parcial',
-          description: `${restored} vínculo(s) restaurado(s); ${failedTemplates.length} template(s) falharam.`,
+          description: `${restored} vínculo(s) restaurado(s). Pendentes: ${pendentes} em ${failures
+            .map((f) => f.templateName)
+            .join(', ')} — ${failures[0].message}`,
           variant: 'destructive',
         });
         return;
@@ -452,7 +458,7 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
             </Button>
           )}
 
-          {templatesFalhos.length > 0 && (
+          {falhas.length > 0 && (
             <Button
               type="button"
               variant="destructive"
@@ -460,14 +466,15 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
               className="text-meta h-7 px-3"
               onClick={() => tentarNovamente.mutate()}
               disabled={tentarNovamente.isPending}
-              aria-label={`Tentar novamente ${templatesFalhos.length} template(s) que falharam`}
+              aria-label={`Tentar novamente ${falhas.length} template(s) que falharam`}
+              title={falhas.map((f) => `${f.templateName}: ${f.message}`).join('\n')}
             >
               {tentarNovamente.isPending ? (
                 <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" aria-hidden />
               ) : (
                 <RefreshCw className="mr-1.5 h-3.5 w-3.5" aria-hidden />
               )}
-              Tentar novamente ({templatesFalhos.length})
+              Tentar novamente ({falhas.length})
             </Button>
           )}
         </div>
