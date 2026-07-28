@@ -17,6 +17,8 @@ import { useQuery } from '@tanstack/react-query';
 import { listSkills, type AgentSkillDefinition } from '@/services/skillsRegistryService';
 import { toast } from 'sonner';
 import { ProgressiveSkillLoaderPanel } from '@/components/skills/ProgressiveSkillLoaderPanel';
+import { SkillAttributionBadge } from '@/components/skills/SkillAttributionBadge';
+
 import { SkillAutoRecommendationsPanel } from '@/components/skills/SkillAutoRecommendationsPanel';
 
 const CATEGORIES = [
@@ -146,6 +148,9 @@ function SkillCard({ skill }: { skill: AgentSkillDefinition }) {
         <span className="text-meta text-muted-foreground">v{skill.version}</span>
         <span className="text-meta text-muted-foreground">por {skill.author}</span>
       </div>
+
+      <SkillAttributionBadge skill={skill} />
+
 
       <div className="flex items-center justify-between mt-auto pt-2 border-t border-border/50">
         <div className="flex items-center gap-3 text-meta text-muted-foreground">
