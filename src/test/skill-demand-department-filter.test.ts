@@ -298,6 +298,7 @@ describe('normalizeConfidenceThreshold — piso, teto e quantização', () => {
       search: '',
       confidenceThreshold: 0.5,
       onlyNeedsReview: false,
+      source: 'all',
     } as const;
     const out = normalizeDemandPreferences({ confidenceThreshold: 0.3 }, ALLOWED, defaults);
     expect(out.confidenceThreshold).toBe(0.5);
