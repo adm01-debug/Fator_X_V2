@@ -17,6 +17,8 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { logger } from '@/lib/logger';
 import { fetchClassificationTimeline } from '@/services/skillClassificationTimelineService';
+import { normalizeConfidenceThreshold } from '@/lib/skills/skillDemand';
+
 import {
   EFFICACY_VERDICTS,
   EFFICACY_VERDICT_LABEL,
@@ -39,10 +41,21 @@ function pct(value: number | null): string {
   return value === null ? '—' : `${Math.round(value * 100)}%`;
 }
 
-export function SkillClassificationEfficacyCard() {
+export interface SkillClassificationEfficacyCardProps {
+  /** Limiar hoje em vigor no painel de demanda (para comparar com o sugerido). */
+  currentThreshold?: number;
+  /** Aplica o limiar sugerido nas preferências do painel. Ausente = card só lê. */
+  onApplyThreshold?: (value: number) => void;
+}
+
+export function SkillClassificationEfficacyCard({
+  currentThreshold,
+  onApplyThreshold,
+}: SkillClassificationEfficacyCardProps = {}) {
   const [decisoes, setDecisoes] = useState<ClassificationDecision[]>([]);
   const [loading, setLoading] = useState(true);
   const [filtro, setFiltro] = useState<EfficacyFilter>('all');
+
 
   const carregar = useCallback(async () => {
     setLoading(true);
@@ -62,6 +75,25 @@ export function SkillClassificationEfficacyCard() {
 
   const resumo = useMemo(() => summarizeEfficacy(decisoes), [decisoes]);
   const visiveis = useMemo(() => filterByVerdict(decisoes, filtro), [decisoes, filtro]);
+
+  /**
+   * O sugerido passa pelo mesmo normalizador do painel (quantização em 0,01 e
+   * clamp no piso/teto). Sem isso, aplicar poderia gravar um valor que o
+   * painel reescreveria logo em seguida — o botão pareceria não funcionar.
+   */
+  const sugerido = useMemo(
+    () =>
+      resumo.suggestedThreshold === null
+        ? null
+        : normalizeConfidenceThreshold(resumo.suggestedThreshold),
+    [resumo.suggestedThreshold],
+  );
+
+  const podeAplicar =
+    sugerido !== null &&
+    (currentThreshold === undefined ||
+      normalizeConfidenceThreshold(currentThreshold) !== sugerido);
+
 
   return (
     <Card>
@@ -111,15 +143,37 @@ export function SkillClassificationEfficacyCard() {
 
       <CardContent className="space-y-4">
         {resumo.suggestedThreshold !== null && (
-          <p className="text-body-sm text-muted-foreground">
-            O classificador acertou com confiança média de {pct(resumo.avgConfidenceWhenRight)}.
-            Um limiar de revisão em torno de{' '}
-            <span className="font-semibold text-foreground">
-              {resumo.suggestedThreshold.toFixed(2)}
-            </span>{' '}
-            reduziria confirmações redundantes sem esconder correções.
-          </p>
+          <div className="space-y-2 rounded-lg border border-border/60 bg-muted/30 p-3">
+            <p className="text-body-sm text-muted-foreground">
+              O classificador acertou com confiança média de {pct(resumo.avgConfidenceWhenRight)}.
+              Um limiar de revisão em torno de{' '}
+              <span className="font-semibold text-foreground">{sugerido?.toFixed(2)}</span>{' '}
+              reduziria confirmações redundantes sem esconder correções.
+            </p>
+            {onApplyThreshold && sugerido !== null && (
+              <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={!podeAplicar}
+                  onClick={() => {
+                    onApplyThreshold(sugerido);
+                    toast.success(`Limiar de revisão ajustado para ${sugerido.toFixed(2)}`);
+                  }}
+                >
+                  <Gauge className="mr-2 h-4 w-4" />
+                  Aplicar limiar sugerido
+                </Button>
+                <span className="text-caption text-muted-foreground">
+                  {podeAplicar
+                    ? `Atual: ${(currentThreshold ?? 0).toFixed(2)}`
+                    : 'Já é o limiar em vigor'}
+                </span>
+              </div>
+            )}
+          </div>
         )}
+
 
         <Select value={filtro} onValueChange={(v) => setFiltro(normalizeEfficacyFilter(v))}>
           <SelectTrigger className="w-[220px]" aria-label="Filtrar por veredito">

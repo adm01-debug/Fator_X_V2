@@ -8,7 +8,15 @@
  */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
-import { AlertTriangle, Download, Loader2, RefreshCw, TrendingDown, Wand2 } from 'lucide-react';
+import {
+  AlertTriangle,
+  Download,
+  HelpCircle,
+  Loader2,
+  RefreshCw,
+  TrendingDown,
+  Wand2,
+} from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -285,6 +293,28 @@ export function SkillDemandPanel() {
             <AlertTriangle className="h-4 w-4 mr-2" aria-hidden />
             Rever depto. ({pendentesRevisao})
           </Button>
+          {/* Fila própria: skills sem departamento nunca entram no selo "Rever
+              depto." (não há rótulo automático para duvidar) e o tier padrão
+              'zero' esconde as que têm demanda. Este atalho monta o recorte
+              completo em um clique. */}
+          <Button
+            variant={deptFilter === 'none' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() =>
+              atualizarPrefs(
+                deptFilter === 'none'
+                  ? { department: PREFS_PADRAO.department, tier: PREFS_PADRAO.tier }
+                  : { department: 'none', tier: 'all', onlyNeedsReview: false },
+              )
+            }
+            disabled={deptFilter !== 'none' && (porDepartamento.none ?? 0) === 0}
+            aria-pressed={deptFilter === 'none'}
+            title="Skills importadas que ficaram sem departamento — fora do selo de revisão por construção"
+          >
+            <HelpCircle className="h-4 w-4 mr-2" aria-hidden />
+            Sem depto. ({porDepartamento.none ?? 0})
+          </Button>
+
           <Button
             variant="ghost"
             size="sm"
@@ -374,7 +404,11 @@ export function SkillDemandPanel() {
 
     {/* Consequência de segunda ordem das decisões acima: sem medir a eficácia
         do classificador, cada ajuste de limiar seria chute. */}
-    <SkillClassificationEfficacyCard />
+    <SkillClassificationEfficacyCard
+      currentThreshold={confidenceThreshold}
+      onApplyThreshold={(v) => atualizarPrefs({ confidenceThreshold: v })}
+    />
+
 
 
     {/* Mesma família de problema (skill importada que o catálogo não expõe),

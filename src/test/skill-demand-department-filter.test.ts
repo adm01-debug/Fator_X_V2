@@ -147,6 +147,7 @@ describe('normalizeDemandPreferences — payloads hostis', () => {
     department: 'all',
     search: '',
     confidenceThreshold: DEMAND_THRESHOLD_FLOOR_FALLBACK,
+    onlyNeedsReview: false,
   } as const;
 
   it('preserva um payload válido integralmente', () => {
@@ -159,6 +160,7 @@ describe('normalizeDemandPreferences — payloads hostis', () => {
       department: 'transversal',
       search: 'pdf',
       confidenceThreshold: DEMAND_THRESHOLD_FLOOR_FALLBACK,
+      onlyNeedsReview: false,
     });
   });
 
@@ -210,6 +212,7 @@ describe('normalizeDemandPreferences — payloads hostis', () => {
     expect(Object.keys(out).sort()).toEqual([
       'confidenceThreshold',
       'department',
+      'onlyNeedsReview',
       'search',
       'tier',
     ]);
