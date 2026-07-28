@@ -120,3 +120,22 @@ export function recommendSkills(
     })
     .slice(0, limit);
 }
+
+/**
+ * Deriva os ids de skills recomendadas que ainda NÃO estão instaladas no agente.
+ * Pura e determinística: preserva a ordem de ranking, remove duplicatas e ids inválidos.
+ */
+export function computePendingSkillIds(
+  recommendations: ReadonlyArray<{ skill: { id: string } }>,
+  installedIds: ReadonlySet<string>,
+): string[] {
+  const seen = new Set<string>();
+  const pending: string[] = [];
+  for (const rec of recommendations ?? []) {
+    const id = typeof rec?.skill?.id === 'string' ? rec.skill.id.trim() : '';
+    if (!id || seen.has(id) || installedIds.has(id)) continue;
+    seen.add(id);
+    pending.push(id);
+  }
+  return pending;
+}
