@@ -1,12 +1,19 @@
 /**
  * SkillAutoRecommendationsPanel — Recomendações automáticas baseadas na missão
  * de um agente existente, com botão "Adicionar ao agente" por skill.
+ *
+ * Guarda de teto: aplicar sugestões em lote é o caminho mais rápido para
+ * empurrar um agente para além de `MAX_PROMPT_SKILLS` sem ninguém perceber —
+ * o insert sempre "dá certo", mas o compilador de prompt descarta o excedente
+ * em silêncio. Projetamos o impacto ANTES da escrita, avisamos o operador e
+ * registramos a trilha quando ele decide seguir mesmo assim.
  */
 import { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Sparkles, Bot, Loader2 } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Sparkles, Bot, Loader2, AlertTriangle, Scissors } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { SkillRecommendationsCard } from './SkillRecommendationsCard';
@@ -17,6 +24,14 @@ import {
   bulkInstallSkills,
   getInstalledSkills,
 } from '@/services/skillsRegistryService';
+import {
+  evaluateInstallImpact,
+  trimSelectionToCap,
+  type NamedSkillRef,
+} from '@/lib/skills/installGuard';
+import { buildInstallCapRecord, shouldAuditInstall } from '@/lib/skills/installCapAudit';
+import { audit } from '@/lib/auditService';
+import { logger } from '@/lib/logger';
 
 import { recommendSkills, computePendingSkillIds } from '@/services/skillRecommenderService';
 
