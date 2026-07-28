@@ -72,10 +72,28 @@ export const DEPARTMENT_SOURCE_LABEL: Record<DepartmentSource, string> = {
 
 
 /**
- * Piso de confianca abaixo do qual a classificacao automatica e tratada como
+ * Piso de confianca abaixo do qual um veredito de DOMINIO e tratado como
  * palpite. Alinhado ao limiar usado na fila de reclassificacao.
  */
 export const DEPARTMENT_REVIEW_THRESHOLD = 0.5;
+
+/**
+ * Piso proprio do tier de plataforma.
+ *
+ * O tier tem teto de confianca em 0.40 por construcao — ele infere "isto e
+ * ferramental de agentes", nunca "isto pertence ao departamento X" com a
+ * autoridade de um lexico de dominio. Julga-lo pela regua de 0.5 tornava a fila
+ * inescapavel: por mais evidencia acumulada, o item nunca saia de "rever".
+ * Uma regua fixa aplicada a escalas diferentes nao e rigor, e um bug.
+ */
+export const PLATFORM_REVIEW_THRESHOLD = 0.18;
+
+/** Piso de revisao aplicavel a uma procedencia especifica. */
+export function reviewThresholdFor(source: DepartmentSource): number {
+  return source === 'platform_heuristic'
+    ? PLATFORM_REVIEW_THRESHOLD
+    : DEPARTMENT_REVIEW_THRESHOLD;
+}
 
 /** Normaliza a procedencia vinda do banco, degradando para `unknown`. */
 export function normalizeDepartmentSource(value: unknown): DepartmentSource {
@@ -218,7 +236,7 @@ export function buildSkillDemandRows(
         Boolean(department) &&
         skill.is_meta_collection !== true &&
         source !== 'human' &&
-        confidence < DEPARTMENT_REVIEW_THRESHOLD,
+        confidence < reviewThresholdFor(source),
     });
   }
 
