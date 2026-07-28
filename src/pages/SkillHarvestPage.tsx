@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { RecentCurationsPanel } from '@/components/agents/RecentCurationsPanel';
+import { SkillDemandPanel } from '@/components/skills/SkillDemandPanel';
 
 import { rebuildTemplateSkillLinks } from '@/services/templateSkillLinkService';
 
@@ -212,6 +213,7 @@ export default function SkillHarvestPage() {
           <TabsTrigger value="coverage">Cobertura</TabsTrigger>
           <TabsTrigger value="runs">Histórico</TabsTrigger>
           <TabsTrigger value="curation">Curadoria recente</TabsTrigger>
+          <TabsTrigger value="demand">Demanda</TabsTrigger>
 
         </TabsList>
 
@@ -438,6 +440,11 @@ export default function SkillHarvestPage() {
         {/* ─── Curadoria manual recente */}
         <TabsContent value="curation">
           <RecentCurationsPanel />
+        </TabsContent>
+
+        {/* ─── Demanda por skill (detecção de catálogo ocioso) */}
+        <TabsContent value="demand">
+          <SkillDemandPanel />
         </TabsContent>
       </Tabs>
 
