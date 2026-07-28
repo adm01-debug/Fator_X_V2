@@ -166,12 +166,16 @@ export default function SkillHarvestPage() {
         },
         {
           maxBatches: MAX_HARVEST_BATCHES,
-          onBatch: (batch, index) => {
+          onBatch: (batch: HarvestBatchResult, index: number) => {
             found += batch.found;
             inserted += batch.inserted;
             rejected += batch.rejected;
             allErrors.push(...batch.errors);
-            const total = Object.values(batch.repoFileTotals).reduce((a, b) => Math.max(a, b), 0);
+            const total = Object.values(batch.repoFileTotals).reduce<number>(
+              (acc, n) => Math.max(acc, Number(n) || 0),
+              0,
+            );
+
             setHarvestProgress({
               batch: index + 1,
               processed: batch.nextFileOffset,
