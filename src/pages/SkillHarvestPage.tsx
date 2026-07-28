@@ -36,7 +36,7 @@ import {
 import {
   runHarvest, runHarvestAllBatches, listCandidates, listRuns, promoteCandidate, bulkUpdateStatus,
   updateCandidate, getDepartmentCoverage,
-  loadHarvestCheckpoint, saveHarvestCheckpoint, clearHarvestCheckpoint,
+  loadHarvestCheckpoint, saveHarvestCheckpoint, clearHarvestCheckpoint, purgeStaleLocalCheckpoints,
   type HarvestCandidate, type HarvestRun, type CandidateStatus, type HarvestBatchResult,
 } from '@/services/skillHarvestService';
 
