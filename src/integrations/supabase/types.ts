@@ -9409,6 +9409,87 @@ export type Database = {
         }
         Relationships: []
       }
+      skill_reclassification_reviews: {
+        Row: {
+          confidence: number
+          created_at: string
+          decision_reason: string
+          department_from: string | null
+          department_to: string
+          id: string
+          margin: number
+          matched_terms: string[]
+          rationale: string
+          requested_by: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          runner_up: string | null
+          skill_id: string
+          skill_name: string
+          skill_slug: string
+          source: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          confidence?: number
+          created_at?: string
+          decision_reason?: string
+          department_from?: string | null
+          department_to: string
+          id?: string
+          margin?: number
+          matched_terms?: string[]
+          rationale?: string
+          requested_by?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          runner_up?: string | null
+          skill_id: string
+          skill_name?: string
+          skill_slug?: string
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          confidence?: number
+          created_at?: string
+          decision_reason?: string
+          department_from?: string | null
+          department_to?: string
+          id?: string
+          margin?: number
+          matched_terms?: string[]
+          rationale?: string
+          requested_by?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          runner_up?: string | null
+          skill_id?: string
+          skill_name?: string
+          skill_slug?: string
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "skill_reclassification_reviews_skill_id_fkey"
+            columns: ["skill_id"]
+            isOneToOne: false
+            referencedRelation: "skill_registry"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "skill_reclassification_reviews_skill_id_fkey"
+            columns: ["skill_id"]
+            isOneToOne: false
+            referencedRelation: "skill_registry_safe"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       skill_registry: {
         Row: {
           author: string
@@ -14319,6 +14400,36 @@ export type Database = {
           p_decision: Database["public"]["Enums"]["change_decision"]
         }
         Returns: undefined
+      }
+      decide_skill_reclassification: {
+        Args: { _approve: boolean; _reason?: string; _review_id: string }
+        Returns: {
+          confidence: number
+          created_at: string
+          decision_reason: string
+          department_from: string | null
+          department_to: string
+          id: string
+          margin: number
+          matched_terms: string[]
+          rationale: string
+          requested_by: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          runner_up: string | null
+          skill_id: string
+          skill_name: string
+          skill_slug: string
+          source: string
+          status: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "skill_reclassification_reviews"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       decommission_asset: {
         Args: { p_asset_id: string; p_reason: string }
