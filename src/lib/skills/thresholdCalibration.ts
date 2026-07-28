@@ -142,6 +142,7 @@ export function parseThresholdCalibrations(
       // Só o booleano literal `true` conta como override; string "true" ou
       // 1 vindos de metadata livre não devem virar acusação de burla.
       overriddenInstability: meta.overridden_instability === true,
+      overrideReason: normalizeOverrideReason(meta.override_reason),
       at: coerceIsoDate(row.created_at),
     });
   }
