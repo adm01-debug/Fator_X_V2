@@ -955,12 +955,14 @@ export function runSkillbookSuite(): SimCase[] {
 // Suite 4 — Registry (100 cenários)
 // ─────────────────────────────────────────────────────────────────────────
 /**
- * Modelo puro da semântica ATUAL de `bulkInstallSkills`: monta uma linha por id
- * solicitado e delega ao banco. Como existe `UNIQUE (agent_id, skill_id)`, o
- * INSERT é atômico — qualquer colisão derruba o lote inteiro.
+ * Modelo puro da semântica ATUAL de `bulkInstallSkills` (pós-hardening):
+ * o lote é normalizado (dedupe + trim + limite) e enviado como UPSERT com
+ * `ignoreDuplicates` sobre a UNIQUE (agent_id, skill_id). Logo, colisões são
+ * ignoradas silenciosamente e as skills inéditas sempre são instaladas.
  */
 export interface BulkInstallOutcome {
   inserted: string[];
+  skipped: string[];
   failed: boolean;
   reason?: string;
 }
@@ -969,23 +971,14 @@ export function simulateCurrentBulkInstall(
   alreadyInstalled: readonly string[],
   requested: readonly string[],
 ): BulkInstallOutcome {
-  if (requested.length === 0) return { inserted: [], failed: false };
+  const normalized = normalizeSkillIdList(requested);
+  if (normalized.length === 0) return { inserted: [], skipped: [], failed: false };
   const installedSet = new Set(alreadyInstalled);
-  const collision = requested.find((id) => installedSet.has(id));
-  if (collision) {
-    return { inserted: [], failed: true, reason: `unique_violation em ${collision}` };
-  }
-  const seen = new Set<string>();
-  const dupInBatch = requested.find((id) => {
-    if (seen.has(id)) return true;
-    seen.add(id);
-    return false;
-  });
-  if (dupInBatch) {
-    return { inserted: [], failed: true, reason: `id duplicado no lote: ${dupInBatch}` };
-  }
-  return { inserted: [...requested], failed: false };
+  const inserted = normalized.filter((id) => !installedSet.has(id));
+  const skipped = normalized.filter((id) => installedSet.has(id));
+  return { inserted, skipped, failed: false };
 }
+
 
 export function runRegistrySuite(): SimCase[] {
   const cases: SimCase[] = [];
