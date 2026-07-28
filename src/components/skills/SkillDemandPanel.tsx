@@ -82,6 +82,11 @@ export function SkillDemandPanel() {
   const [rows, setRows] = useState<SkillDemandRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [reclassificarAberto, setReclassificarAberto] = useState(false);
+  /** Dispara o lote de IA assim que o diálogo abrir (atalho "Sem depto."). */
+  const [autoIa, setAutoIa] = useState(false);
+  /** Aguardando o recorte "Sem depto." ser aplicado para então abrir a IA. */
+  const [iaPendente, setIaPendente] = useState(false);
+
 
   const { filters: prefsBrutas, setFilters: setPrefs, clearAll } = useFilterPersistence<
     Record<string, unknown>
