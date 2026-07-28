@@ -20,6 +20,7 @@ import {
   mergeCurationFeeds,
   restoreTemplateSkillLink,
   bulkRestoreAllRemovals,
+  retryFailedRestores,
   groupRemovalsByTemplate,
   shouldConfirmBulkRestore,
   type CurationActorScope,
@@ -194,11 +195,16 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
     },
   });
 
-  const restaurarTodas = useMutation({
-    mutationFn: () => bulkRestoreAllRemovals(feedRef.current),
-    onSuccess: ({ restored, failedTemplates }) => {
+  // Templates cujo lote falhou na última tentativa. Guardar aqui (e não só no
+  // toast) permite oferecer um retry cirúrgico, sem reprocessar o que já foi
+  // restaurado com sucesso.
+  const [templatesFalhos, setTemplatesFalhos] = useState<string[]>([]);
+
+  const aplicarResultado = useCallback(
+    ({ restored, failedTemplates }: { restored: number; failedTemplates: string[] }) => {
       queryClient.invalidateQueries({ queryKey: ['recent_curations'] });
       queryClient.invalidateQueries({ queryKey: ['template_skill_links'] });
+      setTemplatesFalhos(failedTemplates);
       if (failedTemplates.length > 0) {
         toast({
           title: 'Restauração parcial',
@@ -212,18 +218,33 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
         description: `${restored} vínculo(s) voltaram a ser recomendados.`,
       });
     },
-    onError: (error: unknown) => {
-      toast({
-        title: 'Não foi possível restaurar em massa',
-        description: error instanceof Error ? error.message : 'Erro desconhecido.',
-        variant: 'destructive',
-      });
-    },
+    [queryClient],
+  );
+
+  const aoFalhar = useCallback((error: unknown) => {
+    toast({
+      title: 'Não foi possível restaurar em massa',
+      description: error instanceof Error ? error.message : 'Erro desconhecido.',
+      variant: 'destructive',
+    });
+  }, []);
+
+  const restaurarTodas = useMutation({
+    mutationFn: () => bulkRestoreAllRemovals(feedRef.current),
+    onSuccess: aplicarResultado,
+    onError: aoFalhar,
+  });
+
+  const tentarNovamente = useMutation({
+    mutationFn: () => retryFailedRestores(feedRef.current, templatesFalhos),
+    onSuccess: aplicarResultado,
+    onError: aoFalhar,
   });
 
   // Confirmação só para lotes grandes: pedir confirmação para 1 ou 2 itens
   // treina o curador a clicar "Sim" sem ler, e o diálogo perde a função.
   const [confirmarAberto, setConfirmarAberto] = useState(false);
+
 
 
 
@@ -428,6 +449,25 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
                 <Undo2 className="mr-1.5 h-3.5 w-3.5" aria-hidden />
               )}
               Restaurar todas ({removocoesVisiveis})
+            </Button>
+          )}
+
+          {templatesFalhos.length > 0 && (
+            <Button
+              type="button"
+              variant="destructive"
+              size="sm"
+              className="text-meta h-7 px-3"
+              onClick={() => tentarNovamente.mutate()}
+              disabled={tentarNovamente.isPending}
+              aria-label={`Tentar novamente ${templatesFalhos.length} template(s) que falharam`}
+            >
+              {tentarNovamente.isPending ? (
+                <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" aria-hidden />
+              ) : (
+                <RefreshCw className="mr-1.5 h-3.5 w-3.5" aria-hidden />
+              )}
+              Tentar novamente ({templatesFalhos.length})
             </Button>
           )}
         </div>
