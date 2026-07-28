@@ -18,6 +18,12 @@ import { listSkills, type AgentSkillDefinition } from '@/services/skillsRegistry
 import { toast } from 'sonner';
 import { ProgressiveSkillLoaderPanel } from '@/components/skills/ProgressiveSkillLoaderPanel';
 import { SkillAttributionBadge } from '@/components/skills/SkillAttributionBadge';
+import {
+  filterSkillsByLicense,
+  LICENSE_FILTERS,
+  type LicenseFilter,
+} from '@/lib/skills/attribution';
+
 
 import { SkillAutoRecommendationsPanel } from '@/components/skills/SkillAutoRecommendationsPanel';
 
