@@ -17,6 +17,7 @@ import { Progress } from '@/components/ui/progress';
 import {
   listHarvestCheckpoints,
   deleteHarvestCheckpointByKey,
+  deleteStaleHarvestCheckpoints,
   type HarvestCheckpointRow,
 } from '@/services/skillHarvestService';
 
@@ -44,6 +45,7 @@ export function HarvestCheckpointsCard({
   const [rows, setRows] = useState<HarvestCheckpointRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [removing, setRemoving] = useState<string | null>(null);
+  const [purging, setPurging] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -71,15 +73,53 @@ export function HarvestCheckpointsCard({
     }
   };
 
+  /** Estado derivado — nunca duplicado em useState/useEffect. */
+  const staleCount = rows.filter((r) => r.stale).length;
+
+  const handlePurgeStale = async () => {
+    setPurging(true);
+    try {
+      const removed = await deleteStaleHarvestCheckpoints();
+      setRows((prev) => prev.filter((r) => !r.stale));
+      toast.success(
+        removed === 1 ? '1 retomada expirada removida' : `${removed} retomadas expiradas removidas`,
+      );
+    } catch (e) {
+      toast.error('Não foi possível limpar as expiradas', {
+        description: e instanceof Error ? e.message : undefined,
+      });
+    } finally {
+      setPurging(false);
+    }
+  };
+
   if (!loading && rows.length === 0) return null;
 
   return (
     <Card className={className}>
       <CardHeader className="pb-3">
-        <CardTitle className="text-body flex items-center gap-2">
-          <History className="h-4 w-4 text-muted-foreground" />
-          Varreduras interrompidas
-        </CardTitle>
+        <div className="flex items-center justify-between gap-2">
+          <CardTitle className="text-body flex items-center gap-2">
+            <History className="h-4 w-4 text-muted-foreground" />
+            Varreduras interrompidas
+          </CardTitle>
+          {staleCount > 0 && (
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => void handlePurgeStale()}
+              disabled={purging}
+              aria-label={`Limpar ${staleCount} varreduras expiradas`}
+            >
+              {purging ? (
+                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+              ) : (
+                <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+              )}
+              Limpar expiradas ({staleCount})
+            </Button>
+          )}
+        </div>
       </CardHeader>
       <CardContent className="space-y-3">
         {loading ? (

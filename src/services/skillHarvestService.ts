@@ -423,6 +423,37 @@ export async function deleteHarvestCheckpointByKey(repoKey: string): Promise<voi
   }
 }
 
+/**
+ * Descarta em lote os checkpoints já vencidos (idade > TTL).
+ *
+ * Complementa — não substitui — o cron `purge_stale_harvest_checkpoints()`:
+ * o cron roda periodicamente, mas o curador que abre o painel e vê entradas
+ * "Expiradas" precisa de uma ação imediata para limpar o ruído sem clicar
+ * item por item. O corte usa o mesmo TTL do loader, garantindo que nenhuma
+ * retomada ainda utilizável seja removida.
+ *
+ * @param now Instante de referência (injetável para testes determinísticos).
+ * @returns Quantidade de checkpoints removidos.
+ */
+export async function deleteStaleHarvestCheckpoints(now = Date.now()): Promise<number> {
+  const cutoff = new Date(now - CHECKPOINT_TTL_MS).toISOString();
+  const { data, error } = await supabaseExternal
+    .from('skill_harvest_checkpoints')
+    .delete()
+    .lt('updated_at', cutoff)
+    .select('repo_key');
+  if (error) throw new Error(error.message);
+
+  const removed = (data ?? []) as Array<{ repo_key?: string }>;
+  if (typeof localStorage !== 'undefined') {
+    for (const row of removed) {
+      if (!row?.repo_key) continue;
+      try { localStorage.removeItem(CHECKPOINT_PREFIX + row.repo_key); } catch { /* noop */ }
+    }
+  }
+  return removed.length;
+}
+
 
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
