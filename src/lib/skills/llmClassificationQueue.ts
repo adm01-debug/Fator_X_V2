@@ -18,6 +18,8 @@
  * instantânea e determinística nos testes, sem timers reais.
  */
 
+import { logger } from '@/lib/logger';
+
 /** Estados possíveis de um item. Terminais: `concluido`, `falhou`, `cancelado`. */
 export type QueueItemStatus =
   | 'pendente'
