@@ -95,6 +95,7 @@ interface CandidateRow {
   category: string;
   department: string | null;
   department_confidence: number;
+  department_source: string;
   tags: string[];
   source_repo: string;
   source_url: string;
@@ -386,6 +387,7 @@ Deno.serve(async (req: Request) => {
             category,
             department: classification.department,
             department_confidence: classification.confidence,
+            department_source: classification.source,
             tags,
             source_repo: repo.full_name,
             source_url: `${repo.html_url}/blob/${repo.default_branch}/${path}`,

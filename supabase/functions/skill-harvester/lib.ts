@@ -188,6 +188,14 @@ function unquote(s: string): string {
 export interface Classification {
   department: SkillDepartment | null;
   confidence: number;
+  /**
+   * Procedência do veredito, persistida junto com o rótulo.
+   *
+   * Espelha os valores aceitos por `skill_harvest_candidates.department_source`.
+   * Sem este campo o staging guardava o rótulo sem dizer quem o produziu, e a
+   * promoção para o registro nascia como "sem origem conhecida".
+   */
+  source: 'unknown' | 'heuristic';
 }
 
 function hitRate(tokens: Set<string>, lexicon: Set<string>): number {
@@ -223,7 +231,14 @@ export function classifyDepartment(input: {
       best = dep;
     }
   }
-  return { department: bestScore > 0 ? best : null, confidence: Number(bestScore.toFixed(3)) };
+  // Score zero significa que nenhum léxico encostou no texto: não há rótulo,
+  // logo não há procedência a declarar.
+  const department = bestScore > 0 ? best : null;
+  return {
+    department,
+    confidence: Number(bestScore.toFixed(3)),
+    source: department ? 'heuristic' : 'unknown',
+  };
 }
 
 export function inferCategory(input: {
