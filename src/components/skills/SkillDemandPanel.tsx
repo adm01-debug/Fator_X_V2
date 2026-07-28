@@ -167,7 +167,7 @@ export function SkillDemandPanel() {
             ))}
           </div>
         ) : visiveis.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-8 text-center">
+          <p className="text-body-sm text-muted-foreground py-8 text-center">
             {rows.length === 0
               ? 'Nenhuma skill no catálogo ainda.'
               : 'Nenhuma skill nesse recorte — ajuste o filtro ou a busca.'}
@@ -181,22 +181,22 @@ export function SkillDemandPanel() {
                   className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-card/50 px-3 py-2"
                 >
                   <div className="min-w-0">
-                    <p className="text-sm font-medium truncate">{row.name}</p>
-                    <p className="text-xs text-muted-foreground truncate">
+                    <p className="text-body-sm font-medium truncate">{row.name}</p>
+                    <p className="text-meta text-muted-foreground truncate">
                       {row.slug}
                       {row.sourceRepo ? ` · ${row.sourceRepo}` : ''}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
                     {row.department && (
-                      <Badge variant="secondary" className="text-[11px]">
+                      <Badge variant="secondary" className="text-meta">
                         {departmentLabel(row.department as SkillDepartment)}
                       </Badge>
                     )}
-                    <Badge variant="outline" className="text-[11px]">
+                    <Badge variant="outline" className="text-meta">
                       Q{row.qualityScore}
                     </Badge>
-                    <Badge variant="outline" className={cn('text-[11px]', TIER_STYLE[row.tier])}>
+                    <Badge variant="outline" className={cn('text-meta', TIER_STYLE[row.tier])}>
                       {row.templateCount} template{row.templateCount === 1 ? '' : 's'}
                     </Badge>
                   </div>
