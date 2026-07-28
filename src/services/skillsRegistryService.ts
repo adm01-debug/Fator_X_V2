@@ -25,7 +25,14 @@ export interface AgentSkillDefinition {
   department?: string | null;
   /** Nota de qualidade 0..100 atribuída na coleta. */
   quality_score?: number;
+  /** Origem: `owner/repo` quando a skill foi portada de terceiros. */
+  source_repo?: string | null;
+  /** Origem: URL canônica do material de referência. */
+  source_url?: string | null;
+  /** Licença declarada da origem (SPDX quando reconhecida). */
+  source_license?: string | null;
 }
+
 
 // List available skills from registry
 export async function listSkills(options?: {
