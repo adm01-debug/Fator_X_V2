@@ -489,7 +489,22 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
               Tentar novamente ({templatesRetentaveis.length})
             </Button>
           )}
+
+          {falhas.length > 0 && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="text-meta h-7 px-3"
+              onClick={exportarFalhasCsv}
+              aria-label="Exportar relatório CSV das restaurações parciais"
+            >
+              <Download className="mr-1.5 h-3.5 w-3.5" aria-hidden />
+              Exportar CSV
+            </Button>
+          )}
         </div>
+
 
         {falhas.length > 0 && (
           <ul className="mt-2 space-y-1 rounded-md border border-destructive/40 bg-destructive/5 p-2">
