@@ -471,6 +471,9 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
     setForm(formToApply);
     setPromptCustomLocked(target.promptCustomLocked === true && mode === 'full');
     setSelectedVariant(mode === 'full' ? (target.selectedVariant ?? null) : null);
+    // Restauração parcial recupera só identidade: manter skills seria incoerente
+    // com o prompt/tipo descartados, então zeramos a seleção nesse modo.
+    setSelectedSkillIds(mode === 'full' ? (target.selectedSkillIds ?? []) : []);
     lastTypeForLockRef.current = formToApply.type;
     lastTypeRef.current = formToApply.type as QuickAgentType;
     const resume = computeResumeTarget(formToApply, STEPS);
