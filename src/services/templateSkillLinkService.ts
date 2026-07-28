@@ -613,6 +613,77 @@ export function buildRestoreFailuresFilename(date: Date = new Date()): string {
   return `restauracoes-parciais-${iso.toISOString().slice(0, 10)}.csv`;
 }
 
+/** Chave de sessão onde as falhas parciais sobrevivem a um F5. */
+export const RESTORE_FAILURES_STORAGE_KEY = 'nexus:curation:restore-failures';
+
+const FAILURE_KINDS: readonly RestoreFailureKind[] = ['permission', 'network', 'unknown'];
+
+/**
+ * Função pura: valida e normaliza falhas vindas de storage.
+ *
+ * O conteúdo de `sessionStorage` é entrada não confiável (outra aba, versão
+ * anterior do app, edição manual). Descartamos silenciosamente o que não
+ * satisfaz o contrato em vez de deixar a UI renderizar `undefined`.
+ */
+export function parseStoredRestoreFailures(raw: string | null): BulkRestoreFailure[] {
+  if (!raw) return [];
+  let dados: unknown;
+  try {
+    dados = JSON.parse(raw);
+  } catch {
+    return [];
+  }
+  if (!Array.isArray(dados)) return [];
+
+  const resultado: BulkRestoreFailure[] = [];
+  for (const item of dados) {
+    if (!item || typeof item !== 'object') continue;
+    const registro = item as Record<string, unknown>;
+    const templateId = typeof registro.templateId === 'string' ? registro.templateId.trim() : '';
+    if (!templateId) continue;
+    const kind = FAILURE_KINDS.includes(registro.kind as RestoreFailureKind)
+      ? (registro.kind as RestoreFailureKind)
+      : 'unknown';
+    const skillCount = Number(registro.skillCount);
+    resultado.push({
+      templateId,
+      templateName:
+        typeof registro.templateName === 'string' && registro.templateName.trim()
+          ? registro.templateName.trim()
+          : templateId,
+      skillCount: Number.isFinite(skillCount) && skillCount > 0 ? Math.floor(skillCount) : 0,
+      message: typeof registro.message === 'string' ? registro.message : '',
+      kind,
+    });
+  }
+  return resultado;
+}
+
+/** Lê as falhas persistidas; tolera storage indisponível (SSR, modo privado). */
+export function loadRestoreFailures(): BulkRestoreFailure[] {
+  try {
+    return parseStoredRestoreFailures(sessionStorage.getItem(RESTORE_FAILURES_STORAGE_KEY));
+  } catch {
+    return [];
+  }
+}
+
+/** Persiste (ou limpa) as falhas parciais da sessão atual. */
+export function saveRestoreFailures(failures: readonly BulkRestoreFailure[]): void {
+  try {
+    if (!failures || failures.length === 0) {
+      sessionStorage.removeItem(RESTORE_FAILURES_STORAGE_KEY);
+      return;
+    }
+    sessionStorage.setItem(RESTORE_FAILURES_STORAGE_KEY, JSON.stringify(failures));
+  } catch (error) {
+    logger.warn('Falha ao persistir restaurações parciais', {
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
+
+
 
 
 /**
