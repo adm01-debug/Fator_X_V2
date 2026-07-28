@@ -6,7 +6,7 @@ import { fromTable } from '@/lib/supabaseExtended';
 import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/lib/logger';
 
-export type FilterScope = 'agent_traces';
+export type FilterScope = 'agent_traces' | 'skills_marketplace';
 
 export async function getUserFilters<T = Record<string, unknown>>(
   scope: FilterScope,
