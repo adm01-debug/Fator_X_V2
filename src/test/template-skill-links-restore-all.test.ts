@@ -334,7 +334,7 @@ describe('parseStoredRestoreFailures', () => {
       JSON.stringify([{ templateId: ' t1 ', skillCount: '4', kind: 'hackeado' }]),
     );
     expect(parsed).toEqual([
-      { templateId: 't1', templateName: 't1', skillCount: 4, message: '', kind: 'unknown', failedAt: new Date().toISOString() },
+      { templateId: 't1', templateName: 't1', skillCount: 4, message: '', kind: 'unknown', failedAt: expect.any(String) },
     ]);
   });
 
