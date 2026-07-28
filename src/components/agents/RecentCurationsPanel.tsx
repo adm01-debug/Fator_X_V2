@@ -558,6 +558,11 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
                 <span className="text-muted-foreground">
                   {f.skillCount} vínculo(s) pendente(s) — {f.message}
                 </span>
+                {f.attempts > 1 && (
+                  <Badge variant="outline" className="text-meta">
+                    {f.attempts} tentativas
+                  </Badge>
+                )}
                 {f.failedAt && (
                   <time
                     dateTime={f.failedAt}

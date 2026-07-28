@@ -385,6 +385,8 @@ export interface BulkRestoreFailure {
   kind: RestoreFailureKind;
   /** Instante ISO em que a falha ocorreu — base para TTL e ordenação. */
   failedAt: string;
+  /** Tentativas acumuladas para este template (inclui reenvios automáticos). */
+  attempts: number;
 }
 
 /**
@@ -541,8 +543,10 @@ async function runRestorePlan(
     let ultimaMensagem = '';
     let ultimoTipo: RestoreFailureKind = 'unknown';
     let sucesso = false;
+    let tentativasFeitas = 0;
 
     for (let tentativa = 1; tentativa <= Math.max(1, maxAttempts); tentativa++) {
+      tentativasFeitas = tentativa;
       try {
         restored += await bulkRestoreTemplateSkillLinks(grupo.templateId, grupo.skillIds);
         sucesso = true;
@@ -570,6 +574,7 @@ async function runRestorePlan(
         message: ultimaMensagem,
         failedAt: new Date().toISOString(),
         kind: ultimoTipo,
+        attempts: tentativasFeitas || 1,
       });
     }
   }
@@ -602,6 +607,7 @@ export function buildRestoreFailuresCsv(failures: readonly BulkRestoreFailure[])
     'natureza',
     'mensagem',
     'ocorrido_em',
+    'tentativas',
   ];
   const linhas = (failures ?? [])
     .filter(Boolean)
@@ -613,6 +619,7 @@ export function buildRestoreFailuresCsv(failures: readonly BulkRestoreFailure[])
         csvField(RESTORE_FAILURE_LABEL[f.kind] ?? f.kind),
         csvField(f.message),
         csvField(f.failedAt ?? ''),
+        csvField(f.attempts ?? 1),
       ].join(','),
     );
   return `\uFEFF${[cabecalho.map(csvField).join(','), ...linhas].join('\r\n')}\r\n`;
@@ -651,6 +658,12 @@ function normalizeFailedAt(valor: unknown): string {
     if (!Number.isNaN(data.getTime())) return data.toISOString();
   }
   return new Date().toISOString();
+}
+
+/** Normaliza o contador de tentativas vindo de storage (mínimo 1). */
+function normalizeAttempts(valor: unknown): number {
+  const n = Number(valor);
+  return Number.isFinite(n) && n >= 1 ? Math.floor(n) : 1;
 }
 
 /** Função pura: descarta falhas mais antigas que o TTL. */
@@ -697,6 +710,7 @@ export function parseStoredRestoreFailures(raw: string | null): BulkRestoreFailu
       message: typeof registro.message === 'string' ? registro.message : '',
       kind,
       failedAt: normalizeFailedAt(registro.failedAt),
+      attempts: normalizeAttempts(registro.attempts),
     });
   }
   return resultado;
@@ -723,10 +737,12 @@ export function dedupeRestoreFailures(
     }
     const tNova = new Date(falha.failedAt).getTime();
     const tAtual = new Date(atual.failedAt).getTime();
+    // As tentativas são cumulativas: consolidar não pode apagar o histórico.
+    const tentativas = (atual.attempts || 0) + (falha.attempts || 0);
     // NaN em qualquer lado: preferimos a entrada com data válida.
-    if (Number.isNaN(tAtual) || (!Number.isNaN(tNova) && tNova >= tAtual)) {
-      maisRecente.set(falha.templateId, falha);
-    }
+    const vencedor =
+      Number.isNaN(tAtual) || (!Number.isNaN(tNova) && tNova >= tAtual) ? falha : atual;
+    maisRecente.set(falha.templateId, { ...vencedor, attempts: tentativas });
   }
   return [...maisRecente.values()].sort(
     (a, b) => (new Date(b.failedAt).getTime() || 0) - (new Date(a.failedAt).getTime() || 0),

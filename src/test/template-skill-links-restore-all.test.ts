@@ -227,6 +227,7 @@ describe('retryFailedRestores', () => {
         message: 'RLS negou',
         kind: 'permission',
         failedAt: expect.any(String),
+        attempts: 1,
       },
     ]);
 
@@ -277,9 +278,9 @@ describe('restoreBackoffDelay', () => {
 describe('summarizeRestoreFailures', () => {
   it('agrega vínculos pendentes por natureza', () => {
     const resumo = summarizeRestoreFailures([
-      { templateId: 't1', templateName: 't1', skillCount: 3, message: 'rls', kind: 'permission', failedAt: new Date().toISOString() },
-      { templateId: 't2', templateName: 't2', skillCount: 2, message: 'fetch', kind: 'network', failedAt: new Date().toISOString() },
-      { templateId: 't3', templateName: 't3', skillCount: 1, message: 'x', kind: 'network', failedAt: new Date().toISOString() },
+      { templateId: 't1', templateName: 't1', skillCount: 3, message: 'rls', kind: 'permission', failedAt: new Date().toISOString(), attempts: 1 },
+      { templateId: 't2', templateName: 't2', skillCount: 2, message: 'fetch', kind: 'network', failedAt: new Date().toISOString(), attempts: 1 },
+      { templateId: 't3', templateName: 't3', skillCount: 1, message: 'x', kind: 'network', failedAt: new Date().toISOString(), attempts: 1 },
     ]);
     expect(resumo).toEqual({ permission: 3, network: 3, unknown: 0 });
   });
@@ -297,7 +298,7 @@ describe('buildRestoreFailuresCsv', () => {
         templateName: 'Vendas, B2B',
         skillCount: 2,
         message: 'erro "grave"\nlinha 2',
-        kind: 'permission', failedAt: new Date().toISOString()
+        kind: 'permission', failedAt: new Date().toISOString(), attempts: 1
       },
     ]);
     expect(csv.startsWith('\uFEFF')).toBe(true);
@@ -336,7 +337,15 @@ describe('parseStoredRestoreFailures', () => {
       JSON.stringify([{ templateId: ' t1 ', skillCount: '4', kind: 'hackeado' }]),
     );
     expect(parsed).toEqual([
-      { templateId: 't1', templateName: 't1', skillCount: 4, message: '', kind: 'unknown', failedAt: expect.any(String) },
+      {
+        templateId: 't1',
+        templateName: 't1',
+        skillCount: 4,
+        message: '',
+        kind: 'unknown',
+        failedAt: expect.any(String),
+        attempts: 1,
+      },
     ]);
   });
 
@@ -349,6 +358,7 @@ describe('parseStoredRestoreFailures', () => {
         message: 'rls',
         kind: 'permission' as const,
         failedAt: new Date('2026-07-28T10:00:00.000Z').toISOString(),
+        attempts: 1,
       },
     ];
     expect(parseStoredRestoreFailures(JSON.stringify(original))).toEqual(original);
@@ -363,6 +373,7 @@ describe('pruneExpiredRestoreFailures', () => {
     message: 'fetch',
     kind: 'network' as const,
     failedAt,
+    attempts: 1,
   });
 
   it('mantém falhas dentro da janela de TTL', () => {
@@ -389,12 +400,13 @@ describe('dedupeRestoreFailures', () => {
     message: 'fetch',
     kind: 'network' as const,
     failedAt,
+    attempts: 1,
   });
 
   it('mantém apenas a ocorrência mais recente por template', () => {
     const antiga = falha('t1', '2026-07-28T10:00:00.000Z', 5);
     const nova = falha('t1', '2026-07-28T11:00:00.000Z', 2);
-    expect(dedupeRestoreFailures([antiga, nova])).toEqual([nova]);
+    expect(dedupeRestoreFailures([antiga, nova])).toEqual([{ ...nova, attempts: 2 }]);
   });
 
   it('ordena da falha mais nova para a mais antiga', () => {
@@ -406,7 +418,7 @@ describe('dedupeRestoreFailures', () => {
   it('prefere a entrada com data válida quando há lixo', () => {
     const invalida = falha('t1', 'não-é-data');
     const valida = falha('t1', '2026-07-28T09:00:00.000Z');
-    expect(dedupeRestoreFailures([invalida, valida])).toEqual([valida]);
+    expect(dedupeRestoreFailures([invalida, valida])).toEqual([{ ...valida, attempts: 2 }]);
   });
 
   it('ignora entradas sem templateId', () => {
@@ -422,6 +434,7 @@ describe('dismissRestoreFailure', () => {
     message: 'fetch',
     kind: 'network' as const,
     failedAt: '2026-07-28T10:00:00.000Z',
+    attempts: 1,
   });
 
   it('remove apenas o template indicado', () => {
