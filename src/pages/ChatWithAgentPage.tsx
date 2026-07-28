@@ -1,6 +1,8 @@
 /**
  * ChatWithAgentPage — interface tipo WhatsApp para conversar com agentes.
- * Persistência local por agente, streaming via llm-gateway, com:
+ * Persistência em nuvem (chat_threads/chat_messages, RLS por dono), com:
+ *  - histórico multi-dispositivo e sem teto de 50 mensagens
+ *  - migração única e idempotente do histórico legado em localStorage
  *  - cancel-on-switch (evita resposta cair no agente errado)
  *  - retry inline em falhas
  *  - agrupamento por dia
@@ -32,41 +34,24 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
-import { logger } from '@/lib/logger';
 import { buildEdgeUrl } from '@/lib/edgeUrl';
+import {
+  appendMessage,
+  clearThread,
+  deleteMessagesAfter,
+  fetchMessages,
+  fetchThreadPreviews,
+  getOrCreateThread,
+  markMessageFailed,
+  migrateLegacyLocalHistory,
+} from '@/services/chatThreadService';
 
-const STORAGE_PREFIX = 'nexus:chat:v1:';
-const MAX_STORED = 50;
 const TYPING_DELAY_MS = 400;
-
-function storageKey(agentId: string): string {
-  return `${STORAGE_PREFIX}${agentId}`;
-}
-
-function loadMessages(agentId: string): ChatMessage[] {
-  try {
-    const raw = localStorage.getItem(storageKey(agentId));
-    if (!raw) return [];
-    const parsed = JSON.parse(raw) as ChatMessage[];
-    return Array.isArray(parsed) ? parsed : [];
-  } catch (err) {
-    logger.warn('Falha ao ler histórico local do chat', err);
-    return [];
-  }
-}
-
-function saveMessages(agentId: string, msgs: ChatMessage[]): void {
-  try {
-    const trimmed = msgs.slice(-MAX_STORED);
-    localStorage.setItem(storageKey(agentId), JSON.stringify(trimmed));
-  } catch (err) {
-    logger.warn('Falha ao persistir histórico local do chat', err);
-  }
-}
 
 function newId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
+
 
 function sameDay(a: number, b: number): boolean {
   const da = new Date(a);
@@ -114,10 +99,13 @@ export default function ChatWithAgentPage() {
   const [showTyping, setShowTyping] = useState(false);
   const [atBottom, setAtBottom] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [threadId, setThreadId] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const activeIdRef = useRef<string | null>(activeId);
   activeIdRef.current = activeId;
+  /** Último id persistido da thread ativa — vira o `parent_id` da próxima mensagem. */
+  const lastPersistedIdRef = useRef<string | null>(null);
 
   const { text: streamText, isStreaming, stream, cancel } = useStreamingResponse();
 
@@ -137,28 +125,60 @@ export default function ChatWithAgentPage() {
     }
   }, [routeAgentId, activeId]);
 
-  // Ao trocar de agente: cancela stream em curso e recarrega histórico
+  // Ao trocar de agente: cancela stream em curso e recarrega histórico da nuvem.
+  // `cancelled` protege contra troca rápida de agente enquanto o fetch está no ar.
   useEffect(() => {
     if (!activeId) {
       setMessages([]);
+      setThreadId(null);
+      lastPersistedIdRef.current = null;
       return;
     }
     if (isStreaming) cancel();
-    setMessages(loadMessages(activeId));
+    setMessages([]);
+    setThreadId(null);
+    lastPersistedIdRef.current = null;
+
+    let cancelled = false;
+    void (async () => {
+      const thread = await getOrCreateThread(activeId);
+      if (cancelled || activeIdRef.current !== activeId) return;
+      if (!thread) {
+        toast.error('Não foi possível abrir a conversa.');
+        return;
+      }
+      setThreadId(thread.id);
+      const history = await fetchMessages(thread.id);
+      if (cancelled || activeIdRef.current !== activeId) return;
+      setMessages(history);
+      lastPersistedIdRef.current = history.length ? history[history.length - 1].id : null;
+    })();
+
+    return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeId]);
 
-  // Popula previews
+  // Migra histórico legado do localStorage e popula as prévias da lista lateral.
   useEffect(() => {
     if (!agents.length) return;
-    const map: Record<string, ConversationPreview> = {};
-    for (const a of agents) {
-      const msgs = loadMessages(a.id);
-      const last = msgs[msgs.length - 1];
-      if (last) map[a.id] = { lastMessage: last.content.slice(0, 80), lastAt: last.timestamp, unread: 0 };
-    }
-    setPreviews(map);
+    let cancelled = false;
+    void (async () => {
+      const imported = await migrateLegacyLocalHistory(agents.map((a) => a.id));
+      if (cancelled) return;
+      if (imported > 0) {
+        toast.success(`${imported} mensagens do histórico local migradas para a nuvem.`);
+      }
+      const previewMap = await fetchThreadPreviews();
+      if (cancelled) return;
+      const map: Record<string, ConversationPreview> = {};
+      for (const [agentId, p] of Object.entries(previewMap)) {
+        map[agentId] = { lastMessage: p.lastMessage, lastAt: p.lastAt, unread: 0 };
+      }
+      setPreviews(map);
+    })();
+    return () => { cancelled = true; };
   }, [agents]);
+
 
   // Auto scroll (só se usuário já está no fim)
   useEffect(() => {
@@ -210,7 +230,12 @@ export default function ChatWithAgentPage() {
     navigate(`/chat/${id}`);
   }, [navigate]);
 
-  const runStream = useCallback(async (agent: ChatAgentSummary, nextMsgs: ChatMessage[], userMsg: ChatMessage) => {
+  const runStream = useCallback(async (
+    agent: ChatAgentSummary,
+    activeThreadId: string,
+    nextMsgs: ChatMessage[],
+    userMsg: ChatMessage,
+  ) => {
     const payload = {
       model: agent.model ?? 'google/gemini-2.5-flash',
       messages: [
@@ -218,32 +243,52 @@ export default function ChatWithAgentPage() {
         ...nextMsgs.filter((m) => !m.failed).map((m) => ({ role: m.role, content: m.content })),
       ],
       agent_id: agent.id,
+      // O gateway só grava o ciclo de vida em `sessions`/`session_traces` quando
+      // recebe `session_id` (o `user_id` ele extrai do JWT). Sem isto, todo o
+      // tráfego de /chat ficava invisível para a observabilidade. A thread
+      // persistida é o identificador natural e estável desta conversa.
+      session_id: activeThreadId,
       temperature: 0.7,
       max_tokens: 1024,
     };
+
+    const startedAt = Date.now();
 
     await stream(buildEdgeUrl('llm-gateway'), payload, {
       onComplete: (fullText) => {
         // Descarta se o usuário trocou de agente durante o stream
         if (activeIdRef.current !== agent.id) return;
-        const assistantMsg: ChatMessage = { id: newId(), role: 'assistant', content: fullText, timestamp: Date.now() };
-        setMessages((prev) => {
-          const updated = [
-            ...prev.map((m) => m.id === userMsg.id ? { ...m, delivered: true, read: true, failed: false } : m),
-            assistantMsg,
-          ];
-          saveMessages(agent.id, updated);
-          setPreviews((p) => ({ ...p, [agent.id]: { lastMessage: fullText.slice(0, 80), lastAt: assistantMsg.timestamp, unread: 0 } }));
-          return updated;
-        });
+        const timestamp = Date.now();
+        const tempId = newId();
+        setMessages((prev) => [
+          ...prev.map((m) => m.id === userMsg.id ? { ...m, delivered: true, read: true, failed: false } : m),
+          { id: tempId, role: 'assistant', content: fullText, timestamp },
+        ]);
+        setPreviews((p) => ({
+          ...p,
+          [agent.id]: { lastMessage: fullText.slice(0, 80), lastAt: timestamp, unread: 0 },
+        }));
+
+        // Persiste fora do reducer: efeitos colaterais dentro de setState
+        // rodam duas vezes em StrictMode e duplicariam a linha no banco.
+        void (async () => {
+          const persistedId = await appendMessage({
+            threadId: activeThreadId,
+            parentId: lastPersistedIdRef.current,
+            role: 'assistant',
+            content: fullText,
+            model: agent.model ?? null,
+            latencyMs: timestamp - startedAt,
+          });
+          if (!persistedId) return;
+          lastPersistedIdRef.current = persistedId;
+          setMessages((prev) => prev.map((m) => m.id === tempId ? { ...m, id: persistedId } : m));
+        })();
       },
       onError: (err) => {
         toast.error(`Falha ao responder: ${err}`);
-        setMessages((prev) => {
-          const updated = prev.map((m) => m.id === userMsg.id ? { ...m, failed: true } : m);
-          saveMessages(agent.id, updated);
-          return updated;
-        });
+        setMessages((prev) => prev.map((m) => m.id === userMsg.id ? { ...m, failed: true } : m));
+        void markMessageFailed(userMsg.id, true);
       },
     });
   }, [stream]);
@@ -251,34 +296,63 @@ export default function ChatWithAgentPage() {
   const handleSend = useCallback(async (text: string) => {
     if (!activeAgent) return;
     if (!online) { toast.error('Sem conexão.'); return; }
-    const userMsg: ChatMessage = { id: newId(), role: 'user', content: text, timestamp: Date.now() };
-    const nextMsgs = [...messages, userMsg];
-    setMessages(nextMsgs);
-    saveMessages(activeAgent.id, nextMsgs);
-    setPreviews((p) => ({ ...p, [activeAgent.id]: { lastMessage: text.slice(0, 80), lastAt: userMsg.timestamp, unread: 0 } }));
-    await runStream(activeAgent, nextMsgs, userMsg);
-  }, [activeAgent, messages, online, runStream]);
+    if (!threadId) { toast.error('Conversa ainda carregando, tente novamente.'); return; }
+
+    const timestamp = Date.now();
+    const tempId = newId();
+    const optimistic: ChatMessage = { id: tempId, role: 'user', content: text, timestamp };
+    setMessages((prev) => [...prev, optimistic]);
+    setPreviews((p) => ({
+      ...p,
+      [activeAgent.id]: { lastMessage: text.slice(0, 80), lastAt: timestamp, unread: 0 },
+    }));
+
+    const persistedId = await appendMessage({
+      threadId,
+      parentId: lastPersistedIdRef.current,
+      role: 'user',
+      content: text,
+    });
+
+    // Troca o id otimista pelo id real para que o retry e o encadeamento
+    // de `parent_id` apontem para a linha que existe no banco.
+    const userMsg: ChatMessage = { ...optimistic, id: persistedId ?? tempId };
+    if (persistedId) {
+      lastPersistedIdRef.current = persistedId;
+      setMessages((prev) => prev.map((m) => m.id === tempId ? userMsg : m));
+    }
+
+    await runStream(activeAgent, threadId, [...messages, userMsg], userMsg);
+  }, [activeAgent, messages, online, runStream, threadId]);
 
   const handleRetry = useCallback(async (msgId: string) => {
-    if (!activeAgent || isStreaming) return;
+    if (!activeAgent || isStreaming || !threadId) return;
     const target = messages.find((m) => m.id === msgId);
     if (!target || target.role !== 'user') return;
-    // Remove todas as msgs após a target (respostas quebradas)
+
+    // Descarta o que veio depois da mensagem alvo (respostas quebradas),
+    // no estado local e no banco, antes de reexecutar o stream.
     const idx = messages.findIndex((m) => m.id === msgId);
     const upTo = messages.slice(0, idx + 1).map((m) => m.id === msgId ? { ...m, failed: false } : m);
     setMessages(upTo);
-    saveMessages(activeAgent.id, upTo);
-    await runStream(activeAgent, upTo, target);
-  }, [activeAgent, isStreaming, messages, runStream]);
+    lastPersistedIdRef.current = msgId;
 
-  const handleClear = useCallback(() => {
-    if (!activeAgent) return;
-    localStorage.removeItem(storageKey(activeAgent.id));
+    await deleteMessagesAfter(threadId, target.timestamp);
+    await markMessageFailed(msgId, false);
+    await runStream(activeAgent, threadId, upTo, { ...target, failed: false });
+  }, [activeAgent, isStreaming, messages, runStream, threadId]);
+
+  const handleClear = useCallback(async () => {
+    if (!activeAgent || !threadId) return;
     setMessages([]);
+    lastPersistedIdRef.current = null;
     setPreviews((p) => ({ ...p, [activeAgent.id]: { lastMessage: undefined, lastAt: undefined, unread: 0 } }));
     setConfirmClear(false);
+    await clearThread(threadId);
     toast.success('Conversa limpa.');
-  }, [activeAgent]);
+  }, [activeAgent, threadId]);
+
+
 
   const exportAs = useCallback((fmt: 'txt' | 'md' | 'json') => {
     if (!activeAgent) return;
