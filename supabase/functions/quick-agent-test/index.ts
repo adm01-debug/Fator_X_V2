@@ -3,10 +3,26 @@ import { z } from "https://esm.sh/zod@3.23.8";
 import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { appendSkillsToPrompt } from "../_shared/skills.ts";
 const BodySchema = z.object({
   system_prompt: z.string().min(10).max(20_000),
   user_message: z.string().min(1).max(4000),
   model: z.string().min(2).max(120).default('gpt-4o'),
+  /**
+   * Skills instaladas enviadas pelo cliente (já filtradas por RLS na leitura).
+   * São re-sanitizadas no servidor antes de entrar no prompt.
+   */
+  skills: z
+    .array(
+      z.object({
+        id: z.string().max(64).optional(),
+        name: z.string().min(1).max(200),
+        description: z.string().max(1000).optional(),
+        category: z.string().max(64).optional(),
+      }),
+    )
+    .max(100)
+    .optional(),
 });
 // Quick Agent Test — runs a single LLM call against Lovable AI Gateway
 // for the wizard's "test before save" feature.
