@@ -157,7 +157,18 @@ export function SkillClassificationEfficacyCard({
                   variant="outline"
                   disabled={!podeAplicar}
                   onClick={() => {
+                    const anterior =
+                      currentThreshold === undefined
+                        ? null
+                        : normalizeConfidenceThreshold(currentThreshold);
                     onApplyThreshold(sugerido);
+                    // Auditoria não bloqueia a UI: falha vira log, não erro visível.
+                    void audit.skillThresholdCalibrated({
+                      from: anterior,
+                      to: sugerido,
+                      sampleSize: resumo.total,
+                      accuracy: resumo.accuracy,
+                    });
                     toast.success(`Limiar de revisão ajustado para ${sugerido.toFixed(2)}`);
                   }}
                 >
