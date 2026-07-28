@@ -40,6 +40,30 @@ export function classifyDemand(templateCount: number): DemandTier {
   return 'alta';
 }
 
+/** Procedencias aceitas para a classificacao departamental (espelha o CHECK do banco). */
+export const DEPARTMENT_SOURCES = ['unknown', 'heuristic', 'llm', 'human', 'import'] as const;
+export type DepartmentSource = (typeof DEPARTMENT_SOURCES)[number];
+
+/**
+ * Piso de confianca abaixo do qual a classificacao automatica e tratada como
+ * palpite. Alinhado ao limiar usado na fila de reclassificacao.
+ */
+export const DEPARTMENT_REVIEW_THRESHOLD = 0.5;
+
+/** Normaliza a procedencia vinda do banco, degradando para `unknown`. */
+export function normalizeDepartmentSource(value: unknown): DepartmentSource {
+  return (DEPARTMENT_SOURCES as readonly string[]).includes(String(value))
+    ? (value as DepartmentSource)
+    : 'unknown';
+}
+
+/** Converte a confianca (numeric chega como string no PostgREST) para [0,1]. */
+export function normalizeDepartmentConfidence(value: unknown): number {
+  const n = typeof value === 'string' ? Number(value) : typeof value === 'number' ? value : NaN;
+  if (!Number.isFinite(n)) return 0;
+  return Math.min(1, Math.max(0, n));
+}
+
 /** Entrada mínima exigida de uma skill do Registry. */
 export interface DemandSkillInput {
   id: string;
@@ -50,6 +74,10 @@ export interface DemandSkillInput {
   source_repo?: string | null;
   description?: string | null;
   tags?: readonly string[] | null;
+  /** Confianca [0,1] da classificacao departamental persistida no Registry. */
+  department_confidence?: number | string | null;
+  /** Procedencia da classificacao: unknown | heuristic | llm | human | import. */
+  department_source?: string | null;
 }
 
 /** Vínculo ativo template ↔ skill. */
@@ -71,6 +99,15 @@ export interface SkillDemandRow {
   /** Texto e tags usados pelo classificador de departamento na reclassificação. */
   description: string;
   tags: string[];
+  /** Confianca normalizada [0,1]; 0 quando ausente ou invalida. */
+  departmentConfidence: number;
+  /** Procedencia normalizada da classificacao departamental. */
+  departmentSource: DepartmentSource;
+  /**
+   * Verdadeiro quando a classificacao veio de heuristica/LLM com baixa
+   * confianca — sinaliza revisao humana pendente antes de confiar no rotulo.
+   */
+  departmentNeedsReview: boolean;
 }
 
 /** Resumo agregado exibido no cabeçalho do painel. */
@@ -116,11 +153,15 @@ export function buildSkillDemandRows(
   for (const [id, skill] of catalog) {
     const templateCount = templatesBySkill.get(id)?.size ?? 0;
     const quality = Number.isFinite(skill.quality_score) ? Number(skill.quality_score) : 0;
+    const confidence = normalizeDepartmentConfidence(skill.department_confidence);
+    const source = normalizeDepartmentSource(skill.department_source);
+    const department =
+      typeof skill.department === 'string' && skill.department ? skill.department : null;
     rows.push({
       skillId: id,
       name: safeText(skill.name, safeText(skill.slug, id)),
       slug: safeText(skill.slug, id),
-      department: typeof skill.department === 'string' && skill.department ? skill.department : null,
+      department,
       qualityScore: quality,
       sourceRepo: typeof skill.source_repo === 'string' && skill.source_repo ? skill.source_repo : null,
       templateCount,
@@ -129,6 +170,12 @@ export function buildSkillDemandRows(
       tags: Array.isArray(skill.tags)
         ? skill.tags.filter((t): t is string => typeof t === 'string' && t.trim().length > 0)
         : [],
+      departmentConfidence: confidence,
+      departmentSource: source,
+      // Revisao humana ja feita ('human') nunca reabre; sem departamento nao
+      // ha o que revisar — o vazio ja aparece no filtro "sem departamento".
+      departmentNeedsReview:
+        Boolean(department) && source !== 'human' && confidence < DEPARTMENT_REVIEW_THRESHOLD,
     });
   }
 
