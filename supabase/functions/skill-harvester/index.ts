@@ -43,23 +43,30 @@ import {
   slugify,
   stripUnsafe,
 } from "./lib.ts";
-import { getRawFile, getTree, resolveMode, searchRepos, type GhRepo } from "./github.ts";
+import { getRawFile, getTree, ghGet, resolveMode, searchRepos, type GhRepo } from "./github.ts";
 
 installRuntimeAlerts();
+
+/** `owner/repo` — evita que uma string arbitrária vire caminho de API. */
+const REPO_SLUG_RE = /^[A-Za-z0-9._-]+\/[A-Za-z0-9._-]+$/;
 
 const RequestSchema = z.object({
   departments: z.array(z.enum(SKILL_DEPARTMENTS)).max(10).default([]),
   topics: z.array(z.string().min(2).max(60)).max(20).default([]),
   extraQueries: z.array(z.string().min(2).max(120)).max(20).default([]),
+  /** Monorepos alvo (`owner/repo`). Quando presente, a busca por queries é ignorada. */
+  repos: z.array(z.string().trim().regex(REPO_SLUG_RE, 'Formato esperado: owner/repo')).max(10).default([]),
+  /** Teto de SKILL.md lidos por repositório — monorepos como sales-skills/sales têm centenas. */
+  filesPerRepo: z.number().int().min(1).max(1000).default(8),
   maxRepos: z.number().int().min(1).max(200).default(40),
-  maxCandidates: z.number().int().min(1).max(500).default(120),
+  maxCandidates: z.number().int().min(1).max(1000).default(120),
   minStars: z.number().int().min(0).max(100000).default(3),
   dryRun: z.boolean().default(false),
 });
 
 const SKILL_FILE_RE = /(^|\/)(SKILL\.md|skill\.md)$/;
 const AGENT_JSON_RE = /(^|\/)(agent\.json|mcp\.json)$/;
-const MAX_FILES_PER_REPO = 8;
+
 
 interface CandidateRow {
   run_id: string;
