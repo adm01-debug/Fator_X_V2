@@ -20,6 +20,7 @@ import {
   parseStoredRestoreFailures,
   pruneExpiredRestoreFailures,
   dedupeRestoreFailures,
+  dismissRestoreFailure,
   summarizeRestoreFailures,
   BULK_RESTORE_CONFIRM_THRESHOLD,
   type CurationFeedDay,
@@ -410,5 +411,30 @@ describe('dedupeRestoreFailures', () => {
 
   it('ignora entradas sem templateId', () => {
     expect(dedupeRestoreFailures([falha('', '2026-07-28T09:00:00.000Z')])).toEqual([]);
+  });
+});
+
+describe('dismissRestoreFailure', () => {
+  const falha = (templateId: string) => ({
+    templateId,
+    templateName: templateId,
+    skillCount: 1,
+    message: 'fetch',
+    kind: 'network' as const,
+    failedAt: '2026-07-28T10:00:00.000Z',
+  });
+
+  it('remove apenas o template indicado', () => {
+    const lista = [falha('t1'), falha('t2')];
+    expect(dismissRestoreFailure(lista, 't1').map((f) => f.templateId)).toEqual(['t2']);
+  });
+
+  it('tolera espaços no id', () => {
+    expect(dismissRestoreFailure([falha('t1')], ' t1 ')).toEqual([]);
+  });
+
+  it('devolve a lista intacta para id vazio', () => {
+    const lista = [falha('t1')];
+    expect(dismissRestoreFailure(lista, '  ')).toEqual(lista);
   });
 });

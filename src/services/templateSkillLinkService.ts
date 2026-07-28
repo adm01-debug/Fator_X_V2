@@ -733,6 +733,21 @@ export function dedupeRestoreFailures(
   );
 }
 
+/**
+ * Função pura: remove a pendência de um template da lista.
+ *
+ * O curador pode ter resolvido o vínculo por outro caminho (edição manual,
+ * outra aba). Descartar é apenas visual — não toca no banco.
+ */
+export function dismissRestoreFailure(
+  failures: readonly BulkRestoreFailure[],
+  templateId: string,
+): BulkRestoreFailure[] {
+  const alvo = (templateId ?? '').trim();
+  if (!alvo) return [...(failures ?? [])];
+  return (failures ?? []).filter((f) => f?.templateId !== alvo);
+}
+
 /** Lê as falhas persistidas; tolera storage indisponível (SSR, modo privado). */
 export function loadRestoreFailures(): BulkRestoreFailure[] {
   try {

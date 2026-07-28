@@ -7,7 +7,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ChevronDown, Download, History, Link2, Loader2, RefreshCw, Sparkles, Undo2, Unlink, UserRound } from 'lucide-react';
+import { ChevronDown, Download, History, Link2, Loader2, RefreshCw, Sparkles, Undo2, Unlink, UserRound, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -29,6 +29,7 @@ import {
   buildRestoreFailuresCsv,
   buildRestoreFailuresFilename,
   dedupeRestoreFailures,
+  dismissRestoreFailure,
   loadRestoreFailures,
   saveRestoreFailures,
 
@@ -569,6 +570,17 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
                     })})
                   </time>
                 )}
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="ml-auto h-5 w-5 shrink-0"
+                  aria-label={`Descartar pendência de ${f.templateName}`}
+                  title="Descartar pendência (não altera o banco)"
+                  onClick={() => setFalhas((atual) => dismissRestoreFailure(atual, f.templateId))}
+                >
+                  <X className="h-3 w-3" aria-hidden />
+                </Button>
               </li>
             ))}
           </ul>
