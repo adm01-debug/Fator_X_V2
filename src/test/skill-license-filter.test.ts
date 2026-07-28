@@ -87,7 +87,7 @@ describe('matchesLicenseFilter — partição do catálogo', () => {
       const attribution = buildSkillAttribution(skill);
       if (hits[0] === 'copyleft') expect(attribution.copyleft).toBe(true);
       if (hits[0] === 'native') expect(attribution.isNative).toBe(true);
-      if (hits[0] === 'unlicensed') expect(attribution.license).toBeNull();
+      if (hits[0] === 'unlicensed') expect(attribution.licenseKnown).toBe(false);
       if (hits[0] === 'permissive') expect(attribution.licenseKnown).toBe(true);
     }
   });
@@ -96,7 +96,7 @@ describe('matchesLicenseFilter — partição do catálogo', () => {
     const skill = { source_repo: 'a/b', source_license: 'Licença Proprietária' };
     expect(matchesLicenseFilter(skill, 'permissive')).toBe(false);
     expect(matchesLicenseFilter(skill, 'copyleft')).toBe(false);
-    expect(matchesLicenseFilter(skill, 'unlicensed')).toBe(false);
+    expect(matchesLicenseFilter(skill, 'unlicensed')).toBe(true);
     expect(matchesLicenseFilter(skill, 'native')).toBe(false);
     // Item legítimo do catálogo: continua visível em "Todas".
     expect(matchesLicenseFilter(skill, 'all')).toBe(true);
