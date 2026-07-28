@@ -212,6 +212,35 @@ export function SkillClassificationEfficacyCard({
           </div>
         )}
 
+        {calibracoes.length > 0 && (
+          <div className="space-y-2 rounded-lg border border-border/60 p-3">
+            <p className="text-body-sm font-medium">Calibrações recentes</p>
+            <ul className="space-y-1">
+              {calibracoes.map((c) => (
+                <li key={c.auditId} className="flex flex-wrap items-center gap-2 text-meta">
+                  <Badge
+                    variant="outline"
+                    className={cn('text-meta', DIRECTION_STYLE[calibrationDirection(c)])}
+                  >
+                    {DIRECTION_LABEL[calibrationDirection(c)]}
+                  </Badge>
+                  <span className="text-muted-foreground">
+                    {c.from === null ? '—' : c.from.toFixed(2)} → {c.to.toFixed(2)}
+                  </span>
+                  <span className="text-muted-foreground">
+                    amostra {c.sampleSize} · acerto {pct(c.accuracy)}
+                  </span>
+                  {c.at && (
+                    <span className="ml-auto text-muted-foreground">
+                      {new Date(c.at).toLocaleDateString('pt-BR')}
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
 
         <Select value={filtro} onValueChange={(v) => setFiltro(normalizeEfficacyFilter(v))}>
           <SelectTrigger className="w-[220px]" aria-label="Filtrar por veredito">
