@@ -6,6 +6,8 @@ import {
   type SkillDraft,
 } from '@/lib/skillComposer/skillDraft';
 
+// Rascunho publicável: além dos campos de metadados, o schema agora exige
+// coerência semântica (output declarado + execução configurada).
 const validDraft: SkillDraft = {
   ...DEFAULT_DRAFT,
   name: 'Skill Teste',
@@ -14,7 +16,14 @@ const validDraft: SkillDraft = {
   category: 'tools',
   version: '1.0.0',
   tags: ['teste', 'demo'],
+  outputs: [{ id: 'o1', name: 'resultado', type: 'string', description: 'Resultado' }],
+  execution: {
+    ...DEFAULT_DRAFT.execution,
+    kind: 'http',
+    http: { url: 'https://api.exemplo.com/v1', method: 'POST', headers: [], bodyTemplate: '' },
+  },
 };
+
 
 describe('SkillComposer visual - schema', () => {
   it('aceita rascunho mínimo válido', () => {
