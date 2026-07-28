@@ -243,6 +243,11 @@ export default function ChatWithAgentPage() {
         ...nextMsgs.filter((m) => !m.failed).map((m) => ({ role: m.role, content: m.content })),
       ],
       agent_id: agent.id,
+      // O gateway só grava o ciclo de vida em `sessions`/`session_traces` quando
+      // recebe `session_id` (o `user_id` ele extrai do JWT). Sem isto, todo o
+      // tráfego de /chat ficava invisível para a observabilidade. A thread
+      // persistida é o identificador natural e estável desta conversa.
+      session_id: activeThreadId,
       temperature: 0.7,
       max_tokens: 1024,
     };
