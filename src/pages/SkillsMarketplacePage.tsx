@@ -147,6 +147,9 @@ function SkillCard({ skill }: { skill: AgentSkillDefinition }) {
         <span className="text-meta text-muted-foreground">por {skill.author}</span>
       </div>
 
+      <SkillAttributionBadge skill={skill} />
+
+
       <div className="flex items-center justify-between mt-auto pt-2 border-t border-border/50">
         <div className="flex items-center gap-3 text-meta text-muted-foreground">
           <span className="flex items-center gap-1">
