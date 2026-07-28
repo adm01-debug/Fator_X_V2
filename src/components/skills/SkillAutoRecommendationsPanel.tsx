@@ -6,20 +6,25 @@ import { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Sparkles, Bot } from 'lucide-react';
+import { Sparkles, Bot, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { SkillRecommendationsCard } from './SkillRecommendationsCard';
 import { useAgents } from '@/hooks/use-data';
 import {
   listSkills,
   installSkill,
+  bulkInstallSkills,
   getInstalledSkills,
 } from '@/services/skillsRegistryService';
+
 import { recommendSkills } from '@/services/skillRecommenderService';
 
 export function SkillAutoRecommendationsPanel() {
   const [agentId, setAgentId] = useState<string | undefined>(undefined);
   const [installingIds, setInstallingIds] = useState<Set<string>>(new Set());
+  const [installingAll, setInstallingAll] = useState(false);
+
   const queryClient = useQueryClient();
 
   const { data: agents } = useAgents();
@@ -81,6 +86,31 @@ export function SkillAutoRecommendationsPanel() {
     }
   };
 
+  /** Recomendações ainda não instaladas — base do botão "Adicionar todas". */
+  const pendingIds = useMemo(
+    () => recommendations.map((r) => r.skill.id).filter((id) => !installedIds.has(id)),
+    [recommendations, installedIds],
+  );
+
+  const handleInstallAll = async () => {
+    if (!agentId || pendingIds.length === 0) return;
+    setInstallingAll(true);
+    try {
+      const { installed: ok, skipped } = await bulkInstallSkills(agentId, pendingIds);
+      await queryClient.invalidateQueries({ queryKey: ['installed_skills', agentId] });
+      const parts: string[] = [];
+      if (ok.length > 0) parts.push(`${ok.length} adicionada(s)`);
+      if (skipped.length > 0) parts.push(`${skipped.length} já instalada(s)`);
+      toast.success('Sugestões aplicadas', { description: parts.join(' · ') });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Falha ao instalar';
+      toast.error('Erro ao adicionar skills', { description: msg });
+    } finally {
+      setInstallingAll(false);
+    }
+  };
+
+
   return (
     <Card className="border-nexus-amber/20">
       <CardHeader>
@@ -118,17 +148,37 @@ export function SkillAutoRecommendationsPanel() {
         </div>
 
         {agentId ? (
-          <SkillRecommendationsCard
-            title={`Sugestões para ${activeAgent?.name ?? 'este agente'}`}
-            description="Cada skill exibe o score, categoria e as palavras-chave que combinam com a missão."
-            recommendations={recommendations}
-            selectedIds={[]}
-            onSelect={() => {}}
-            onInstall={handleInstall}
-            installingIds={installingIds}
-            installedIds={installedIds}
-            installLabel="Adicionar ao agente"
-          />
+          <>
+            {pendingIds.length > 0 && (
+              <div className="flex justify-end">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleInstallAll}
+                  disabled={installingAll}
+                >
+                  {installingAll ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Sparkles className="h-4 w-4" />
+                  )}
+                  Adicionar todas ({pendingIds.length})
+                </Button>
+              </div>
+            )}
+            <SkillRecommendationsCard
+              title={`Sugestões para ${activeAgent?.name ?? 'este agente'}`}
+              description="Cada skill exibe o score, categoria e as palavras-chave que combinam com a missão."
+              recommendations={recommendations}
+              selectedIds={[]}
+              onSelect={() => {}}
+              onInstall={handleInstall}
+              installingIds={installingIds}
+              installedIds={installedIds}
+              installLabel="Adicionar ao agente"
+            />
+          </>
+
         ) : (
           <p className="text-body-sm text-muted-foreground">
             Escolha um agente acima para ver recomendações automáticas com justificativa.
