@@ -51,6 +51,28 @@ export async function listSkills(options?: {
   return { skills: (data ?? []) as unknown as AgentSkillDefinition[], total: count || 0 };
 }
 
+/**
+ * Busca skills por IDs (chunked para evitar URLs longas no PostgREST).
+ * Usado no preview/teste do wizard para injetar skills no prompt antes de salvar.
+ */
+export async function getSkillsByIds(ids: string[]): Promise<AgentSkillDefinition[]> {
+  const unique = Array.from(new Set(ids.filter((id) => typeof id === 'string' && id.length > 0)));
+  if (unique.length === 0) return [];
+
+  const CHUNK = 50;
+  const out: AgentSkillDefinition[] = [];
+  for (let i = 0; i < unique.length; i += CHUNK) {
+    const chunk = unique.slice(i, i + CHUNK);
+    const { data, error } = await supabaseExternal
+      .from('skill_registry')
+      .select('*')
+      .in('id', chunk);
+    if (error) throw error;
+    out.push(...((data ?? []) as unknown as AgentSkillDefinition[]));
+  }
+  return out;
+}
+
 // Install a skill for an agent
 export async function installSkill(agentId: string, skillId: string): Promise<void> {
   const { error } = await supabaseExternal.from('agent_installed_skills').insert({

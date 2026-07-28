@@ -27,7 +27,7 @@ const BodySchema = z.object({
 // Quick Agent Test — runs a single LLM call against Lovable AI Gateway
 // for the wizard's "test before save" feature.
 
-function jsonResponse(body: unknown, status = 200) {
+function jsonResponse(body: unknown, status = 200, corsHeaders: Record<string, string> = {}) {
   return new Response(JSON.stringify(body), {
     status,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -48,6 +48,7 @@ function mapModel(model: string): string {
 
 Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
+  const json = (body: unknown, status = 200) => jsonResponse(body, status, corsHeaders);
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   const identifier = getRateLimitIdentifier(req);
@@ -56,7 +57,7 @@ Deno.serve(async (req) => {
 
   try {
     if (req.method !== 'POST') {
-      return jsonResponse({ error: 'Method not allowed' }, 405);
+      return json({ error: 'Method not allowed' }, 405);
     }
 
     const apiKey = requireEnv('LOVABLE_API_KEY');
@@ -64,7 +65,7 @@ Deno.serve(async (req) => {
     const raw = await req.json().catch(() => null);
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) {
-      return jsonResponse({ error: 'Payload inválido', details: parsed.error.flatten().fieldErrors }, 400);
+      return json({ error: 'Payload inválido', details: parsed.error.flatten().fieldErrors }, 400);
     }
     const { system_prompt: rawSystemPrompt, user_message: userMessage, model, skills } = parsed.data;
     // Mesma seção determinística do preview/runtime — sem duplicar se já existir.
@@ -93,13 +94,13 @@ Deno.serve(async (req) => {
     const latencyMs = Date.now() - startedAt;
 
     if (upstream.status === 429) {
-      return jsonResponse(
+      return json(
         { error: 'Limite de requisições atingido. Aguarde alguns segundos e tente novamente.' },
         429,
       );
     }
     if (upstream.status === 402) {
-      return jsonResponse(
+      return json(
         { error: 'Sem créditos disponíveis. Adicione créditos em Configurações > Workspace > Uso.' },
         402,
       );
@@ -107,14 +108,14 @@ Deno.serve(async (req) => {
     if (!upstream.ok) {
       const text = await upstream.text();
       console.error('AI gateway error', upstream.status, text);
-      return jsonResponse({ error: `Erro do gateway (${upstream.status})` }, 502);
+      return json({ error: `Erro do gateway (${upstream.status})` }, 502);
     }
 
     const data = await upstream.json();
     const content = data?.choices?.[0]?.message?.content ?? '';
     const usage = data?.usage ?? {};
 
-    return jsonResponse({
+    return json({
       response: typeof content === 'string' ? content : JSON.stringify(content),
       latency_ms: latencyMs,
       input_tokens: Number(usage.prompt_tokens ?? 0),
@@ -125,7 +126,7 @@ Deno.serve(async (req) => {
     });
   } catch (e) {
     console.error('quick-agent-test error', e);
-    return jsonResponse(
+    return json(
       { error: e instanceof Error ? e.message : 'Erro inesperado' },
       500,
     );

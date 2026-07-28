@@ -913,7 +913,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
       case 3: {
         const detected = detectPromptVariant(form.type as QuickAgentType, form.prompt);
         const activeVariant = promptCustomLocked ? null : (selectedVariant ?? detected);
-        return <StepQuickPrompt form={form} errors={errors} onPromptManualEdit={updatePromptManual} onRestore={restorePromptFromType} onSafeReset={safeResetPromptAndPreview} onApplyVariant={applyPromptVariant} customLocked={promptCustomLocked} onUnlockCustom={() => { if (promptCustomLocked) pushLockEvent('unlocked-manual', 'botão "Destravar" no editor'); setPromptCustomLocked(false); setSelectedVariant(null); }} activeVariant={activeVariant} lockEvents={lockEvents} highlightField={hfFor(['prompt'])} checklistAutoUnlock={checklistAutoUnlock} onToggleChecklistAutoUnlock={setChecklistAutoUnlock} />;
+        return <StepQuickPrompt form={form} errors={errors} onPromptManualEdit={updatePromptManual} onRestore={restorePromptFromType} onSafeReset={safeResetPromptAndPreview} onApplyVariant={applyPromptVariant} customLocked={promptCustomLocked} onUnlockCustom={() => { if (promptCustomLocked) pushLockEvent('unlocked-manual', 'botão "Destravar" no editor'); setPromptCustomLocked(false); setSelectedVariant(null); }} activeVariant={activeVariant} lockEvents={lockEvents} highlightField={hfFor(['prompt'])} checklistAutoUnlock={checklistAutoUnlock} onToggleChecklistAutoUnlock={setChecklistAutoUnlock} skillIds={selectedSkillIds} />;
       }
       case 4: return <StepQuickSkills mission={form.mission} role={form.type} selectedIds={selectedSkillIds} onChange={setSelectedSkillIds} />;
       default: return null;

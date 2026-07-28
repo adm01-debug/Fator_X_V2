@@ -17,9 +17,12 @@ import { getModelPrice, USD_TO_BRL } from '@/lib/llmPricing';
 import { quickPromptSchema, type QuickAgentForm } from '@/lib/validations/quickAgentSchema';
 import { QUICK_AGENT_MOCK_INPUTS, type QuickAgentType } from '@/data/quickAgentTemplates';
 import { cn } from '@/lib/utils';
+import { getSkillsByIds } from '@/services/skillsRegistryService';
 
 interface Props {
   form: QuickAgentForm;
+  /** IDs das skills selecionadas no wizard — injetadas no prompt de teste. */
+  skillIds?: string[];
 }
 
 interface TestResult {
@@ -46,7 +49,7 @@ function formatLatency(ms: number): string {
   return `${(ms / 1000).toFixed(2)}s`;
 }
 
-export function QuickAgentTestPanel({ form }: Props) {
+export function QuickAgentTestPanel({ form, skillIds = [] }: Props) {
   const type = form.type as QuickAgentType;
   const mocks = QUICK_AGENT_MOCK_INPUTS[type] ?? [{ label: 'Mensagem', input: 'Olá!' }];
 
@@ -75,6 +78,27 @@ export function QuickAgentTestPanel({ form }: Props) {
 
   const canRun = promptValid && userInput.trim().length > 0 && !loading;
 
+  /**
+   * Resolve metadados das skills selecionadas. Falha suave: um erro aqui
+   * nunca deve impedir o teste do prompt.
+   */
+  const resolveSkills = async (): Promise<
+    Array<{ id: string; name: string; description?: string; category?: string }>
+  > => {
+    if (skillIds.length === 0) return [];
+    try {
+      const rows = await getSkillsByIds(skillIds);
+      return rows.slice(0, 100).map((s) => ({
+        id: s.id,
+        name: s.name,
+        description: s.description ?? undefined,
+        category: s.category ?? undefined,
+      }));
+    } catch {
+      return [];
+    }
+  };
+
   const runTest = async () => {
     if (!canRun) return;
     setLoading(true);
@@ -88,6 +112,7 @@ export function QuickAgentTestPanel({ form }: Props) {
             system_prompt: form.prompt,
             user_message: userInput.trim(),
             model: form.model,
+            skills: await resolveSkills(),
           },
         },
       );
