@@ -28,6 +28,7 @@ import {
   summarizeRestoreFailures,
   buildRestoreFailuresCsv,
   buildRestoreFailuresFilename,
+  dedupeRestoreFailures,
   loadRestoreFailures,
   saveRestoreFailures,
 
@@ -246,7 +247,7 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
     ({ restored, failures }: BulkRestoreAllResult) => {
       queryClient.invalidateQueries({ queryKey: ['recent_curations'] });
       queryClient.invalidateQueries({ queryKey: ['template_skill_links'] });
-      setFalhas(failures);
+      setFalhas(dedupeRestoreFailures(failures));
       if (failures.length > 0) {
         const pendentes = failures.reduce((acc, f) => acc + f.skillCount, 0);
         toast({
