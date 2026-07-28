@@ -374,7 +374,11 @@ export function SkillDemandPanel() {
 
     {/* Consequência de segunda ordem das decisões acima: sem medir a eficácia
         do classificador, cada ajuste de limiar seria chute. */}
-    <SkillClassificationEfficacyCard />
+    <SkillClassificationEfficacyCard
+      currentThreshold={confidenceThreshold}
+      onApplyThreshold={(v) => atualizarPrefs({ confidenceThreshold: v })}
+    />
+
 
 
     {/* Mesma família de problema (skill importada que o catálogo não expõe),
