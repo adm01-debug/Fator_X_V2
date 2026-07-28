@@ -63,6 +63,7 @@ const PREFS_PADRAO: DemandPreferences = {
   department: 'all',
   search: '',
   confidenceThreshold: MIN_RECLASSIFY_CONFIDENCE,
+  onlyNeedsReview: false,
 };
 
 export function SkillDemandPanel() {
@@ -83,7 +84,13 @@ export function SkillDemandPanel() {
    * corrompido ou de taxonomia antiga viraria um recorte vazio permanente.
    * Sanitizamos a cada render — barato e totalmente defensivo.
    */
-  const { tier: filter, department: deptFilter, search, confidenceThreshold } = useMemo(
+  const {
+    tier: filter,
+    department: deptFilter,
+    search,
+    confidenceThreshold,
+    onlyNeedsReview,
+  } = useMemo(
     () => normalizeDemandPreferences(prefsBrutas, DEPARTAMENTOS, PREFS_PADRAO),
     [prefsBrutas],
   );
@@ -117,10 +124,14 @@ export function SkillDemandPanel() {
 
   const resumo = useMemo(() => summarizeSkillDemand(rows), [rows]);
   const porDepartamento = useMemo(() => countByDepartment(rows), [rows]);
+  const pendentesRevisao = useMemo(() => countNeedsReview(rows), [rows]);
 
   const visiveis = useMemo(() => {
     const termo = search.trim().toLowerCase();
-    const porFaixa = filterByDepartment(filterByDemand(rows, filter), deptFilter);
+    const porFaixa = filterByNeedsReview(
+      filterByDepartment(filterByDemand(rows, filter), deptFilter),
+      onlyNeedsReview,
+    );
     if (!termo) return porFaixa;
     return porFaixa.filter(
       (row) =>
@@ -128,7 +139,7 @@ export function SkillDemandPanel() {
         row.slug.toLowerCase().includes(termo) ||
         (row.sourceRepo ?? '').toLowerCase().includes(termo),
     );
-  }, [rows, filter, deptFilter, search]);
+  }, [rows, filter, deptFilter, search, onlyNeedsReview]);
 
   /** O recorte visível é exatamente o universo oferecido à reclassificação. */
   const candidatos = useMemo<ReclassifyCandidate[]>(
@@ -260,13 +271,25 @@ export function SkillDemandPanel() {
             aria-label="Buscar skills"
           />
           <Button
+            variant={onlyNeedsReview ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => atualizarPrefs({ onlyNeedsReview: !onlyNeedsReview })}
+            disabled={!onlyNeedsReview && pendentesRevisao === 0}
+            aria-pressed={onlyNeedsReview}
+            title="Mostra apenas rótulos automáticos de baixa confiança, que ainda não passaram por curadoria humana"
+          >
+            <AlertTriangle className="h-4 w-4 mr-2" aria-hidden />
+            Rever depto. ({pendentesRevisao})
+          </Button>
+          <Button
             variant="ghost"
             size="sm"
             onClick={() => void clearAll()}
             disabled={
               filter === PREFS_PADRAO.tier &&
               deptFilter === PREFS_PADRAO.department &&
-              search === ''
+              search === '' &&
+              onlyNeedsReview === PREFS_PADRAO.onlyNeedsReview
             }
           >
             Limpar filtros
