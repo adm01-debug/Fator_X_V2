@@ -18,6 +18,7 @@ function calib(partial: Partial<ThresholdCalibration> & { to: number }): Thresho
     sampleSize: 10,
     accuracy: 0.8,
     overriddenInstability: false,
+    overrideReason: null,
     at: diasAtras(1),
     ...partial,
   };
