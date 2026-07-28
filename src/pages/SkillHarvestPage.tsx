@@ -589,7 +589,19 @@ export default function SkillHarvestPage() {
 
             </CardContent>
           </Card>
+
+          <HarvestCheckpointsCard
+            className="mt-4"
+            refreshToken={checkpointsToken}
+            onResume={(repos) => {
+              setReposInput(repos.join(', '));
+              toast.info('Repositórios carregados', {
+                description: 'Clique em varrer para continuar de onde parou.',
+              });
+            }}
+          />
         </TabsContent>
+
 
         {/* ─── Cobertura */}
         <TabsContent value="coverage">
