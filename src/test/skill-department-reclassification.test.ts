@@ -158,7 +158,7 @@ describe('buildReclassificationPlan — 300 catálogos simulados', () => {
     const plano = buildReclassificationPlan(gerarCatalogo(5, 20), 0);
     const csv = reclassificationToCsv(plano.proposals);
     expect(csv.startsWith('\uFEFF')).toBe(true);
-    expect(csv.split('\r\n')[0]).toBe('"slug","nome","de","para","confianca","termos"');
+    expect(csv.slice(1).split('\r\n')[0]).toBe('"slug","nome","de","para","confianca","termos"');
     expect(csv.split('\r\n').length).toBe(plano.proposals.length + 1);
     // Aspas internas são escapadas por duplicação
     const comAspas = reclassificationToCsv([
