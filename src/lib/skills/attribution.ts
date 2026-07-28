@@ -305,6 +305,21 @@ export function isLicenseFilter(value: unknown): value is LicenseFilter {
 }
 
 /**
+ * Converte qualquer valor persistido (Cloud, localStorage, querystring, mensagem
+ * de outra aba) num modo de filtro válido.
+ *
+ * Total por construção: `null`, objetos, números, JSON corrompido e valores de
+ * versões futuras do app degradam para `'all'`. Tolera espaços em volta e
+ * diferenças de caixa porque o payload pode ter sido editado à mão.
+ */
+export function normalizeLicenseFilter(value: unknown): LicenseFilter {
+  if (typeof value !== 'string') return 'all';
+  const candidate = value.trim().toLowerCase();
+  const match = LICENSE_FILTERS.find((f) => f.value === candidate);
+  return match ? match.value : 'all';
+}
+
+/**
  * Decide se uma skill passa pelo filtro de licença escolhido.
  * Pura e total: qualquer valor de filtro desconhecido é tratado como `all`,
  * de modo que a UI nunca "some" com o catálogo por causa de estado corrompido.
