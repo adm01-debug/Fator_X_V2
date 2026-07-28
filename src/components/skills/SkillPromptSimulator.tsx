@@ -104,11 +104,11 @@ export function SkillPromptSimulator() {
       <CardHeader className="space-y-3">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <CardTitle className="flex items-center gap-2 text-base">
+            <CardTitle className="flex items-center gap-2 text-body">
               <FlaskConical className="h-4 w-4 text-nexus-purple" aria-hidden />
               Simulador de Prompt Compilado
             </CardTitle>
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p className="mt-1 text-meta text-muted-foreground">
               Mesma compilação executada no runtime — sanitização, dedup, ordenação e teto de{' '}
               {MAX_PROMPT_SKILLS} skills.
             </p>
@@ -145,7 +145,7 @@ export function SkillPromptSimulator() {
               onCheckedChange={setForceOverflow}
               disabled={!context}
             />
-            <Label htmlFor="sim-overflow" className="text-xs">
+            <Label htmlFor="sim-overflow" className="text-meta">
               Forçar overflow (&gt; {MAX_PROMPT_SKILLS})
             </Label>
           </div>
@@ -157,7 +157,7 @@ export function SkillPromptSimulator() {
               onCheckedChange={setShowSanitization}
               disabled={!context}
             />
-            <Label htmlFor="sim-sanitize" className="text-xs">
+            <Label htmlFor="sim-sanitize" className="text-meta">
               Injetar skill suja (HTML)
             </Label>
           </div>
@@ -166,13 +166,13 @@ export function SkillPromptSimulator() {
 
       <CardContent className="space-y-4">
         {error ? (
-          <p className="rounded-lg border border-nexus-rose/40 bg-nexus-rose/10 p-3 text-sm">
+          <p className="rounded-lg border border-nexus-rose/40 bg-nexus-rose/10 p-3 text-body-sm">
             Não foi possível carregar o agente: {(error as Error).message}
           </p>
         ) : null}
 
         {agentId === '' ? (
-          <p className="rounded-lg border border-dashed border-border/60 p-6 text-center text-sm text-muted-foreground">
+          <p className="rounded-lg border border-dashed border-border/60 p-6 text-center text-body-sm text-muted-foreground">
             Selecione um agente para compilar e inspecionar o prompt final.
           </p>
         ) : null}
@@ -188,10 +188,10 @@ export function SkillPromptSimulator() {
             </TabsList>
 
             <TabsContent value="prompt" className="mt-4">
-              <pre className="max-h-96 overflow-auto whitespace-pre-wrap break-words rounded-lg border border-border/60 bg-muted/30 p-4 text-xs leading-relaxed">
+              <pre className="max-h-96 overflow-auto whitespace-pre-wrap break-words rounded-lg border border-border/60 bg-muted/30 p-4 text-meta leading-relaxed">
                 {result.compiled.text}
               </pre>
-              <p className="mt-2 text-[11px] text-muted-foreground">
+              <p className="mt-2 text-meta text-muted-foreground">
                 {result.compiled.stats.chars} caracteres · {result.compiled.stats.lines} linhas ·{' '}
                 {result.compiled.stats.estimatedTokens} tokens estimados
                 {result.compiled.unresolvedVariables.length > 0
@@ -201,7 +201,7 @@ export function SkillPromptSimulator() {
             </TabsContent>
 
             <TabsContent value="skills" className="mt-4">
-              <pre className="max-h-96 overflow-auto whitespace-pre-wrap break-words rounded-lg border border-border/60 bg-muted/30 p-4 text-xs leading-relaxed">
+              <pre className="max-h-96 overflow-auto whitespace-pre-wrap break-words rounded-lg border border-border/60 bg-muted/30 p-4 text-meta leading-relaxed">
                 {result.skillsSection || 'Nenhuma skill instalada — a seção não é gerada.'}
               </pre>
             </TabsContent>

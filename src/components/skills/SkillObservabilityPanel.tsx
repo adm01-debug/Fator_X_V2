@@ -41,11 +41,11 @@ export function SkillObservabilityPanel() {
     <Card className="border-border/60">
       <CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0">
         <div>
-          <CardTitle className="flex items-center gap-2 text-base">
+          <CardTitle className="flex items-center gap-2 text-body">
             <Radar className="h-4 w-4 text-nexus-cyan" aria-hidden />
             Observabilidade de Skills
           </CardTitle>
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p className="mt-1 text-meta text-muted-foreground">
             Ingestão, curadoria e estabilidade da classificação
             {data ? ` — janela de ${data.windowDays} dias` : ''}
           </p>
@@ -64,7 +64,7 @@ export function SkillObservabilityPanel() {
 
       <CardContent className="space-y-6">
         {error ? (
-          <p className="rounded-lg border border-nexus-rose/40 bg-nexus-rose/10 p-3 text-sm text-foreground">
+          <p className="rounded-lg border border-nexus-rose/40 bg-nexus-rose/10 p-3 text-body-sm text-foreground">
             Não foi possível carregar as métricas: {(error as Error).message}
           </p>
         ) : null}
@@ -82,7 +82,7 @@ export function SkillObservabilityPanel() {
             <SkillObservabilityAlerts alerts={data.alerts} />
 
             <section className="space-y-3">
-              <h3 className="flex items-center gap-2 text-sm font-medium text-foreground">
+              <h3 className="flex items-center gap-2 text-body-sm font-medium text-foreground">
                 <Activity className="h-4 w-4 text-nexus-cyan" aria-hidden /> Ingestão (Harvester)
               </h3>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -112,7 +112,7 @@ export function SkillObservabilityPanel() {
             </section>
 
             <section className="space-y-3">
-              <h3 className="flex items-center gap-2 text-sm font-medium text-foreground">
+              <h3 className="flex items-center gap-2 text-body-sm font-medium text-foreground">
                 <Inbox className="h-4 w-4 text-nexus-purple" aria-hidden /> Fila de classificação
               </h3>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -146,10 +146,10 @@ export function SkillObservabilityPanel() {
             </section>
 
             <section className="space-y-3">
-              <h3 className="flex items-center gap-2 text-sm font-medium text-foreground">
+              <h3 className="flex items-center gap-2 text-body-sm font-medium text-foreground">
                 <UserCheck className="h-4 w-4 text-nexus-emerald" aria-hidden /> Reclassificação
                 humana
-                <Badge variant="outline" className="ml-1 text-[11px]">
+                <Badge variant="outline" className="ml-1 text-meta">
                   {trend.text}
                 </Badge>
               </h3>

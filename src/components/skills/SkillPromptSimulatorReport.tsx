@@ -55,11 +55,11 @@ export function SkillPromptSimulatorReport({ result }: SkillPromptSimulatorRepor
         {(Object.keys(SANITIZATION_LABEL) as Array<keyof typeof SANITIZATION_LABEL>)
           .filter((kind) => d.sanitizationsByKind[kind] > 0)
           .map((kind) => (
-            <Badge key={kind} variant="outline" className="text-[11px]">
+            <Badge key={kind} variant="outline" className="text-meta">
               {SANITIZATION_LABEL[kind]}: {d.sanitizationsByKind[kind]}
             </Badge>
           ))}
-        <Badge variant="outline" className="text-[11px]">
+        <Badge variant="outline" className="text-meta">
           Tokens: {result.compiled.stats.estimatedTokens} ({result.baseTokens} base +{' '}
           {result.skillsTokens} skills)
         </Badge>
@@ -73,16 +73,16 @@ export function SkillPromptSimulatorReport({ result }: SkillPromptSimulatorRepor
               className="flex items-start justify-between gap-3 p-3"
             >
               <div className="min-w-0">
-                <p className="truncate text-sm font-medium text-foreground">
+                <p className="truncate text-body-sm font-medium text-foreground">
                   {skill.name || skill.originalName || '(sem nome)'}
                 </p>
                 {skill.description ? (
-                  <p className="truncate text-xs text-muted-foreground">{skill.description}</p>
+                  <p className="truncate text-meta text-muted-foreground">{skill.description}</p>
                 ) : null}
                 {skill.sanitizations.length > 0 ? (
                   <div className="mt-1 flex flex-wrap gap-1">
                     {skill.sanitizations.map((kind) => (
-                      <Badge key={kind} variant="secondary" className="text-[10px]">
+                      <Badge key={kind} variant="secondary" className="text-meta">
                         {SANITIZATION_LABEL[kind]}
                       </Badge>
                     ))}
@@ -91,7 +91,7 @@ export function SkillPromptSimulatorReport({ result }: SkillPromptSimulatorRepor
               </div>
               <Badge
                 variant="outline"
-                className={cn('shrink-0 text-[11px]', DISPOSITION_CLASS[skill.disposition])}
+                className={cn('shrink-0 text-meta', DISPOSITION_CLASS[skill.disposition])}
               >
                 {DISPOSITION_LABEL[skill.disposition]}
               </Badge>
@@ -120,9 +120,9 @@ const TONE: Record<NonNullable<TileProps['tone']>, string> = {
 function Tile({ label, value, hint, tone = 'default' }: TileProps) {
   return (
     <div className="rounded-lg border border-border/60 bg-card/40 p-3">
-      <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</p>
+      <p className="text-meta uppercase tracking-wide text-muted-foreground">{label}</p>
       <p className={cn('mt-1 text-xl font-semibold tabular-nums', TONE[tone])}>{value}</p>
-      {hint ? <p className="mt-0.5 text-[11px] text-muted-foreground">{hint}</p> : null}
+      {hint ? <p className="mt-0.5 text-meta text-muted-foreground">{hint}</p> : null}
     </div>
   );
 }
