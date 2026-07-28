@@ -14,6 +14,8 @@ import {
   isRetriableFailure,
   retryFailedRestores,
   shouldConfirmBulkRestore,
+  restoreBackoffDelay,
+  summarizeRestoreFailures,
   BULK_RESTORE_CONFIRM_THRESHOLD,
   type CurationFeedDay,
 } from '@/services/templateSkillLinkService';
@@ -251,5 +253,30 @@ describe('classifyRestoreFailure', () => {
     expect(isRetriableFailure('permission')).toBe(false);
     expect(isRetriableFailure('network')).toBe(true);
     expect(isRetriableFailure('unknown')).toBe(true);
+  });
+});
+
+describe('restoreBackoffDelay', () => {
+  it('cresce exponencialmente e sanitiza tentativa inválida', () => {
+    expect(restoreBackoffDelay(1, 200)).toBe(200);
+    expect(restoreBackoffDelay(2, 200)).toBe(400);
+    expect(restoreBackoffDelay(3, 200)).toBe(800);
+    expect(restoreBackoffDelay(0, 200)).toBe(200);
+    expect(restoreBackoffDelay(Number.NaN, 200)).toBe(200);
+  });
+});
+
+describe('summarizeRestoreFailures', () => {
+  it('agrega vínculos pendentes por natureza', () => {
+    const resumo = summarizeRestoreFailures([
+      { templateId: 't1', templateName: 't1', skillCount: 3, message: 'rls', kind: 'permission' },
+      { templateId: 't2', templateName: 't2', skillCount: 2, message: 'fetch', kind: 'network' },
+      { templateId: 't3', templateName: 't3', skillCount: 1, message: 'x', kind: 'network' },
+    ]);
+    expect(resumo).toEqual({ permission: 3, network: 3, unknown: 0 });
+  });
+
+  it('devolve zeros para lista vazia', () => {
+    expect(summarizeRestoreFailures([])).toEqual({ permission: 0, network: 0, unknown: 0 });
   });
 });
