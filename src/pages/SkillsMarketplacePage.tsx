@@ -147,8 +147,10 @@ export default function SkillsMarketplacePage() {
       {data && data.total > 0 && (
         <p className="text-meta text-muted-foreground text-center">
           {skills.length} de {data.total} skills
+          {license !== 'all' && ' (filtro de licença ativo)'}
         </p>
       )}
+
 
       <ProgressiveSkillLoaderPanel />
     </div>
