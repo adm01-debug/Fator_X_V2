@@ -84,9 +84,9 @@ describe('buildReclassificationPlan — 300 catálogos simulados', () => {
       const catalogo = gerarCatalogo(seed, 12);
       const plano = buildReclassificationPlan(catalogo);
 
-      // 1. Contabilidade fecha: avaliados = propostos + inalterados + baixa confiança
-      const { evaluated, proposed, unchanged, lowConfidence } = plano.summary;
-      expect(proposed + unchanged + lowConfidence).toBe(evaluated);
+      // 1. Contabilidade fecha: avaliados = todas as saídas possíveis
+      const { evaluated, proposed, unchanged, lowConfidence, ambiguous } = plano.summary;
+      expect(proposed + unchanged + lowConfidence + ambiguous).toBe(evaluated);
 
       // 2. Dedupe: avaliados = ids distintos
       const idsDistintos = new Set(catalogo.map((c) => c.skillId)).size;
@@ -101,12 +101,19 @@ describe('buildReclassificationPlan — 300 catálogos simulados', () => {
         expect(isDepartment(p.to)).toBe(true);
         // 5. Origem canônica ou nula
         if (p.from !== null) expect(isDepartment(p.from)).toBe(true);
-        // 6. Confiança acima do limiar
-        expect(p.confidence).toBeGreaterThanOrEqual(MIN_RECLASSIFY_CONFIDENCE);
-        // 7. Unicidade
+        // 6. Barra de confiança — mais alta quando sobrescreve curadoria
+        expect(p.confidence).toBeGreaterThanOrEqual(
+          p.from === null ? MIN_RECLASSIFY_CONFIDENCE : MIN_RECLASSIFY_CONFIDENCE_OVERRIDE,
+        );
+        // 7. Margem sobre o segundo colocado — nunca propõe empate
+        expect(p.margin).toBeGreaterThanOrEqual(
+          p.from === null ? MIN_RECLASSIFY_MARGIN : MIN_RECLASSIFY_MARGIN_OVERRIDE,
+        );
+        expect(p.runnerUp).not.toBe(p.to);
+        // 8. Unicidade
         expect(vistos.has(p.skillId)).toBe(false);
         vistos.add(p.skillId);
-        // 8. Ordenação decrescente por confiança
+        // 9. Ordenação decrescente por confiança
         expect(p.confidence).toBeLessThanOrEqual(anterior);
         anterior = p.confidence;
       }
