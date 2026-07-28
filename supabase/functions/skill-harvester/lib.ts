@@ -292,11 +292,30 @@ const META_REPO_PATTERNS: RegExp[] = [
   /\binterview[-_ ]questions\b/,
 ];
 
-const META_TAGS = new Set([
-  'awesome',
+/**
+ * Tópicos que, sozinhos, já provam que o repositório é uma coletânea.
+ * São rótulos que ninguém aplica a um projeto executável por acidente.
+ */
+const META_TAGS_FORTES = new Set([
   'awesome-list',
   'awesome-lists',
   'curated-list',
+  'roadmap',
+  'cheatsheet',
+  'cheatsheets',
+]);
+
+/**
+ * Tópicos que sugerem coletânea mas aparecem em projetos legítimos.
+ *
+ * Caso real que motivou a separação: `ruvnet-ruview` — sensoriamento de
+ * presença via WiFi, uma skill executável de verdade — carrega o tópico
+ * `awesome` entre outros 19. Pela regra antiga (qualquer tópico da lista
+ * bloqueia) ela seria rejeitada como "coletânea". Tópicos genéricos do GitHub
+ * como `list`, `resources` ou `learning` têm o mesmo problema.
+ */
+const META_TAGS_FRACAS = new Set([
+  'awesome',
   'list',
   'collection',
   'resources',
@@ -305,7 +324,6 @@ const META_TAGS = new Set([
   'course',
   'learning',
   'education',
-  'roadmap',
   'books',
 ]);
 
@@ -331,8 +349,18 @@ export function isMetaRepository(input: {
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '');
 
+  // O texto (nome, slug, descrição, início do README) é a evidência mais
+  // confiável: um projeto executável não se descreve como "curated list".
   if (META_REPO_PATTERNS.some((re) => re.test(haystack))) return true;
-  return (input.tags ?? []).some((t) => META_TAGS.has(t.toLowerCase()));
+
+  const tags = (input.tags ?? []).map((t) => t.toLowerCase().trim()).filter(Boolean);
+  if (tags.some((t) => META_TAGS_FORTES.has(t))) return true;
+
+  // Tópicos fracos exigem corroboração: dois deles, ou um deles somado a
+  // qualquer sinal textual. Um único `awesome` solto não condena o repositório
+  // — era assim que skills legítimas eram descartadas na coleta.
+  const fracas = new Set(tags.filter((t) => META_TAGS_FRACAS.has(t)));
+  return fracas.size >= 2;
 }
 
 // ─────────────────────────────────────────── qualidade

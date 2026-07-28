@@ -20,7 +20,7 @@ export async function fetchSkillDemand(): Promise<SkillDemandRow[]> {
   const [skillsResult, linksResult] = await Promise.all([
     supabaseExternal
       .from('skill_registry')
-      .select('id, name, slug, department, department_confidence, department_source, quality_score, source_repo, description, tags'),
+      .select('id, name, slug, department, department_confidence, department_source, quality_score, source_repo, description, tags, is_meta_collection'),
     supabaseExternal
       .from('template_skill_links')
       .select('skill_id, template_id')
