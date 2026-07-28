@@ -404,12 +404,12 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
     if (!draftDecided) return;
     if (!isDraftMeaningful(form) && !draftsStore.activeId) return;
     setDraftsStore((prev) => {
-      const { store } = upsertDraft(prev, { id: prev.activeId ?? undefined, form, promptCustomLocked, selectedVariant });
+      const { store } = upsertDraft(prev, { id: prev.activeId ?? undefined, form, promptCustomLocked, selectedVariant, selectedSkillIds });
       saveDrafts(store);
       return store;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form, draftDecided, promptCustomLocked, selectedVariant]);
+  }, [form, draftDecided, promptCustomLocked, selectedVariant, selectedSkillIds]);
 
   // Heuristic: when user changes the type after editing a meaningful draft,
   // offer to fork into a new draft (one per type).
@@ -471,6 +471,9 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
     setForm(formToApply);
     setPromptCustomLocked(target.promptCustomLocked === true && mode === 'full');
     setSelectedVariant(mode === 'full' ? (target.selectedVariant ?? null) : null);
+    // Restauração parcial recupera só identidade: manter skills seria incoerente
+    // com o prompt/tipo descartados, então zeramos a seleção nesse modo.
+    setSelectedSkillIds(mode === 'full' ? (target.selectedSkillIds ?? []) : []);
     lastTypeForLockRef.current = formToApply.type;
     lastTypeRef.current = formToApply.type as QuickAgentType;
     const resume = computeResumeTarget(formToApply, STEPS);
