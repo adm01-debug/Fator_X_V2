@@ -204,10 +204,9 @@ Deno.serve(async (req: Request) => {
     for (const repo of repos) {
       if (candidates.length >= body.maxCandidates) break;
 
-      const licenseSpdx = repo.license?.spdx_id && repo.license.spdx_id !== 'NOASSERTION'
+      const repoLicenseSpdx = repo.license?.spdx_id && repo.license.spdx_id !== 'NOASSERTION'
         ? repo.license.spdx_id
         : null;
-      const licenseOk = isLicenseAllowed(licenseSpdx);
 
       const tree = await getTree(repo.full_name, repo.default_branch);
       if (!tree.ok || !tree.data) continue;
@@ -216,7 +215,8 @@ Deno.serve(async (req: Request) => {
       const hasTests = paths.some((p) => /(^|\/)(tests?|__tests__|spec)\//i.test(p) || /\.(test|spec)\.[jt]sx?$/.test(p));
       const hasDocs = paths.some((p) => /(^|\/)(docs?|README\.md)/i.test(p));
 
-      const skillFiles = paths.filter((p) => SKILL_FILE_RE.test(p)).slice(0, MAX_FILES_PER_REPO);
+      const skillFiles = paths.filter((p) => SKILL_FILE_RE.test(p)).slice(0, body.filesPerRepo);
+
       const agentFiles = paths.filter((p) => AGENT_JSON_RE.test(p)).slice(0, 2);
 
       // Fallback: repositório inteiro vira 1 candidato quando não há SKILL.md
