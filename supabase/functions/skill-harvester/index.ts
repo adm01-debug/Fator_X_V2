@@ -232,6 +232,14 @@ Deno.serve(async (req: Request) => {
         const fmName = typeof fm.data.name === 'string' ? fm.data.name : '';
         const fmDesc = typeof fm.data.description === 'string' ? fm.data.description : '';
         const fmTags = Array.isArray(fm.data.tags) ? fm.data.tags : [];
+        // Monorepos de skills declaram a licença por arquivo; ela é mais
+        // específica que a do repositório e por isso tem precedência.
+        const fmLicense = typeof fm.data.license === 'string'
+          ? stripUnsafe(fm.data.license, 60).trim()
+          : '';
+        const licenseSpdx = (isLicenseAllowed(fmLicense) ? fmLicense : null) ?? repoLicenseSpdx;
+        const licenseOk = isLicenseAllowed(licenseSpdx);
+
 
         const name = stripUnsafe(fmName || deriveName(path, repo.full_name), 120);
         const description = stripUnsafe(fmDesc || repo.description || '', 1200);
