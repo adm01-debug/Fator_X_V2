@@ -55,7 +55,12 @@ const TIER_STYLE: Record<DemandTier, string> = {
 
 const DEPARTAMENTOS = [...SKILL_DEPARTMENTS];
 
-const PREFS_PADRAO: DemandPreferences = { tier: 'zero', department: 'all', search: '' };
+const PREFS_PADRAO: DemandPreferences = {
+  tier: 'zero',
+  department: 'all',
+  search: '',
+  confidenceThreshold: MIN_RECLASSIFY_CONFIDENCE,
+};
 
 export function SkillDemandPanel() {
   const [rows, setRows] = useState<SkillDemandRow[]>([]);
