@@ -278,9 +278,9 @@ describe('restoreBackoffDelay', () => {
 describe('summarizeRestoreFailures', () => {
   it('agrega vínculos pendentes por natureza', () => {
     const resumo = summarizeRestoreFailures([
-      { templateId: 't1', templateName: 't1', skillCount: 3, message: 'rls', kind: 'permission', failedAt: new Date().toISOString() },
-      { templateId: 't2', templateName: 't2', skillCount: 2, message: 'fetch', kind: 'network', failedAt: new Date().toISOString() },
-      { templateId: 't3', templateName: 't3', skillCount: 1, message: 'x', kind: 'network', failedAt: new Date().toISOString() },
+      { templateId: 't1', templateName: 't1', skillCount: 3, message: 'rls', kind: 'permission', failedAt: new Date().toISOString(), attempts: 1 },
+      { templateId: 't2', templateName: 't2', skillCount: 2, message: 'fetch', kind: 'network', failedAt: new Date().toISOString(), attempts: 1 },
+      { templateId: 't3', templateName: 't3', skillCount: 1, message: 'x', kind: 'network', failedAt: new Date().toISOString(), attempts: 1 },
     ]);
     expect(resumo).toEqual({ permission: 3, network: 3, unknown: 0 });
   });
@@ -298,7 +298,7 @@ describe('buildRestoreFailuresCsv', () => {
         templateName: 'Vendas, B2B',
         skillCount: 2,
         message: 'erro "grave"\nlinha 2',
-        kind: 'permission', failedAt: new Date().toISOString()
+        kind: 'permission', failedAt: new Date().toISOString(), attempts: 1
       },
     ]);
     expect(csv.startsWith('\uFEFF')).toBe(true);
