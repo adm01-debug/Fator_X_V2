@@ -44,6 +44,7 @@ export function HarvestCheckpointsCard({
   const [rows, setRows] = useState<HarvestCheckpointRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [removing, setRemoving] = useState<string | null>(null);
+  const [purging, setPurging] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
