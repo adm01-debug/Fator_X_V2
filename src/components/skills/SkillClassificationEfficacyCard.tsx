@@ -302,6 +302,15 @@ export function SkillClassificationEfficacyCard({
                   >
                     {DIRECTION_LABEL[calibrationDirection(c)]}
                   </Badge>
+                  {c.overriddenInstability && (
+                    <Badge
+                      variant="outline"
+                      className="text-meta border-amber-500/40 text-amber-600 dark:text-amber-400"
+                      title="Aplicado apesar do alerta de instabilidade"
+                    >
+                      sob alerta
+                    </Badge>
+                  )}
                   <span className="text-muted-foreground">
                     {c.from === null ? '—' : c.from.toFixed(2)} → {c.to.toFixed(2)}
                   </span>
