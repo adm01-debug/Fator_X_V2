@@ -65,6 +65,9 @@ export const harvestRequestSchema = z.object({
   extraQueries: z.array(z.string().trim().min(2).max(120)).max(20).default([]),
   repos: z.array(z.string().trim().regex(repoSlugRegex, 'Use o formato owner/repo')).max(10).default([]),
   filesPerRepo: z.number().int().min(1).max(1000).default(8),
+  /** Deslocamento na lista ordenada de SKILL.md — habilita varredura em lotes. */
+  fileOffset: z.number().int().min(0).max(100000).default(0),
+
   maxRepos: z.number().int().min(1).max(200).default(40),
   maxCandidates: z.number().int().min(1).max(1000).default(120),
   minStars: z.number().int().min(0).max(100000).default(3),
