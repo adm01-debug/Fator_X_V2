@@ -90,6 +90,8 @@ export default function SkillHarvestPage() {
   /** Lista livre de monorepos, um `owner/repo` por linha. */
   const [reposInput, setReposInput] = useState('');
   const [filesPerRepo, setFilesPerRepo] = useState(120);
+  /** Incrementa para forçar recarga do painel de varreduras interrompidas. */
+  const [checkpointsToken, setCheckpointsToken] = useState(0);
 
   /** Normaliza a caixa de texto: aceita URL completa ou `owner/repo`. */
   const parsedRepos = useMemo(
