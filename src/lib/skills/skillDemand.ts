@@ -173,6 +173,49 @@ export function normalizeDemandFilter(value: unknown): DemandFilter {
   return (DEMAND_TIERS as string[]).includes(normalized) ? (normalized as DemandFilter) : 'all';
 }
 
+/**
+ * Filtro por departamento. `all` mantém tudo; `none` isola as skills sem
+ * classificação (o maior bolsão de dívida do catálogo); qualquer outro valor
+ * é comparado ao campo `department` já normalizado em minúsculas.
+ */
+export type DepartmentFilter = 'all' | 'none' | (string & {});
+
+export function filterByDepartment(
+  rows: readonly SkillDemandRow[],
+  filter: DepartmentFilter,
+): SkillDemandRow[] {
+  if (filter === 'all') return [...rows];
+  if (filter === 'none') return rows.filter((row) => row.department === null);
+  const alvo = filter.trim().toLowerCase();
+  if (alvo.length === 0) return [...rows];
+  return rows.filter((row) => (row.department ?? '').toLowerCase() === alvo);
+}
+
+/**
+ * Normaliza um filtro de departamento contra a taxonomia permitida.
+ * Valores fora da lista degradam para `all` — nunca produzem recorte vazio
+ * inexplicável na UI.
+ */
+export function normalizeDepartmentFilter(
+  value: unknown,
+  allowed: readonly string[],
+): DepartmentFilter {
+  if (typeof value !== 'string') return 'all';
+  const normalized = value.trim().toLowerCase();
+  if (normalized === 'all' || normalized === 'none') return normalized;
+  return allowed.some((item) => item.toLowerCase() === normalized) ? normalized : 'all';
+}
+
+/** Contagem por departamento (chave `none` para as não classificadas). */
+export function countByDepartment(rows: readonly SkillDemandRow[]): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const row of rows) {
+    const key = row.department ? row.department.toLowerCase() : 'none';
+    out[key] = (out[key] ?? 0) + 1;
+  }
+  return out;
+}
+
 /** Exportação CSV (RFC 4180, com BOM) do recorte visível. */
 export function demandRowsToCsv(rows: readonly SkillDemandRow[]): string {
   const escape = (value: string | number | null) => {

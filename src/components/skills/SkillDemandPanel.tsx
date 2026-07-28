@@ -16,17 +16,25 @@ import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { departmentLabel, type SkillDepartment } from '@/config/skill-departments';
+import {
+  departmentLabel,
+  SKILL_DEPARTMENTS,
+  type SkillDepartment,
+} from '@/config/skill-departments';
 import { fetchSkillDemand } from '@/services/skillDemandService';
 import {
+  countByDepartment,
   DEMAND_TIERS,
   DEMAND_TIER_LABEL,
   demandRowsToCsv,
   filterByDemand,
+  filterByDepartment,
   normalizeDemandFilter,
+  normalizeDepartmentFilter,
   summarizeSkillDemand,
   type DemandFilter,
   type DemandTier,
+  type DepartmentFilter,
   type SkillDemandRow,
 } from '@/lib/skills/skillDemand';
 import { SkillReclassifyDialog } from '@/components/skills/SkillReclassifyDialog';
@@ -45,6 +53,7 @@ export function SkillDemandPanel() {
   const [rows, setRows] = useState<SkillDemandRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<DemandFilter>('zero');
+  const [deptFilter, setDeptFilter] = useState<DepartmentFilter>('all');
   const [search, setSearch] = useState('');
   const [reclassificarAberto, setReclassificarAberto] = useState(false);
 
@@ -65,10 +74,11 @@ export function SkillDemandPanel() {
   }, [carregar]);
 
   const resumo = useMemo(() => summarizeSkillDemand(rows), [rows]);
+  const porDepartamento = useMemo(() => countByDepartment(rows), [rows]);
 
   const visiveis = useMemo(() => {
     const termo = search.trim().toLowerCase();
-    const porFaixa = filterByDemand(rows, filter);
+    const porFaixa = filterByDepartment(filterByDemand(rows, filter), deptFilter);
     if (!termo) return porFaixa;
     return porFaixa.filter(
       (row) =>
@@ -76,7 +86,7 @@ export function SkillDemandPanel() {
         row.slug.toLowerCase().includes(termo) ||
         (row.sourceRepo ?? '').toLowerCase().includes(termo),
     );
-  }, [rows, filter, search]);
+  }, [rows, filter, deptFilter, search]);
 
   /** O recorte visível é exatamente o universo oferecido à reclassificação. */
   const candidatos = useMemo<ReclassifyCandidate[]>(
@@ -173,6 +183,27 @@ export function SkillDemandPanel() {
               {DEMAND_TIERS.map((tier) => (
                 <SelectItem key={tier} value={tier}>
                   {DEMAND_TIER_LABEL[tier]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
+            value={deptFilter}
+            onValueChange={(value) =>
+              setDeptFilter(normalizeDepartmentFilter(value, [...SKILL_DEPARTMENTS]))
+            }
+          >
+            <SelectTrigger className="w-[220px]" aria-label="Filtrar por departamento">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos os departamentos</SelectItem>
+              <SelectItem value="none">
+                Sem departamento ({porDepartamento.none ?? 0})
+              </SelectItem>
+              {SKILL_DEPARTMENTS.map((dept) => (
+                <SelectItem key={dept} value={dept}>
+                  {departmentLabel(dept)} ({porDepartamento[dept] ?? 0})
                 </SelectItem>
               ))}
             </SelectContent>
