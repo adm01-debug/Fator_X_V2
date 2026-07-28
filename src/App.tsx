@@ -83,6 +83,7 @@ const SkillsMarketplacePage = lazy(() => import("./pages/SkillsMarketplacePage")
 const SkillComposerPage = lazy(() => import("./pages/SkillComposerPage"));
 const SkillbookAuditPage = lazy(() => import("./pages/SkillbookAuditPage"));
 const SkillHarvestPage = lazy(() => import("./pages/SkillHarvestPage"));
+const SkillLibraryPage = lazy(() => import("./pages/SkillLibraryPage"));
 const AutomationCenterPage = lazy(() => import("./pages/AutomationCenterPage"));
 const AutomationsPage = lazy(() => import("./pages/AutomationsPage"));
 const RolesPage = lazy(() => import("./pages/RolesPage"));
