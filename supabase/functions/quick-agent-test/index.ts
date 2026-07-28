@@ -66,7 +66,9 @@ Deno.serve(async (req) => {
     if (!parsed.success) {
       return jsonResponse({ error: 'Payload inválido', details: parsed.error.flatten().fieldErrors }, 400);
     }
-    const { system_prompt: systemPrompt, user_message: userMessage, model } = parsed.data;
+    const { system_prompt: rawSystemPrompt, user_message: userMessage, model, skills } = parsed.data;
+    // Mesma seção determinística do preview/runtime — sem duplicar se já existir.
+    const systemPrompt = appendSkillsToPrompt(rawSystemPrompt, skills);
 
 
     const mapped = mapModel(model);
