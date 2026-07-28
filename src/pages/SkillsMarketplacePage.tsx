@@ -44,10 +44,29 @@ const CATEGORY_COLORS: Record<string, string> = {
   integrations: 'bg-primary/10 text-primary border-primary/20',
 };
 
+/** Formato persistido no escopo `skills_marketplace`. */
+interface MarketplaceFilters extends Record<string, unknown> {
+  category: string;
+  license: LicenseFilter;
+}
+
+const FILTER_DEFAULTS: MarketplaceFilters = { category: 'all', license: 'all' };
+
 export default function SkillsMarketplacePage() {
+  // A busca textual é efêmera de propósito: persistir um termo digitado faria a
+  // tela abrir "vazia" na próxima sessão sem explicação. Categoria e licença,
+  // ao contrário, são política de curadoria e devem sobreviver ao reload.
   const [search, setSearch] = useState('');
-  const [category, setCategory] = useState('all');
-  const [license, setLicense] = useState<LicenseFilter>('all');
+  const { filters, setFilters, syncStatus } = useFilterPersistence<MarketplaceFilters>({
+    scope: 'skills_marketplace',
+    defaults: FILTER_DEFAULTS,
+    storageKey: 'nexus.filters.skills_marketplace',
+  });
+
+  const category = typeof filters.category === 'string' ? filters.category : 'all';
+  // Normaliza na leitura: o payload vem de Cloud/localStorage/outra aba e pode
+  // estar corrompido ou vir de uma versão futura do app.
+  const license = normalizeLicenseFilter(filters.license);
 
   const { data, isLoading } = useQuery({
     queryKey: ['skills_marketplace', search, category],
@@ -62,6 +81,7 @@ export default function SkillsMarketplacePage() {
   // texto livre no banco (aliases como "mit"/"Apache License 2.0" convivem com
   // SPDX), então a normalização precisa acontecer antes da comparação.
   const skills = filterSkillsByLicense(data?.skills ?? [], license);
+
 
 
   return (
