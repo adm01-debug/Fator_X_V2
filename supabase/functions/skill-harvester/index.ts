@@ -461,6 +461,9 @@ Deno.serve(async (req: Request) => {
         rejected,
         github_mode: mode,
         duration_ms: durationMs,
+        file_offset: body.fileOffset,
+        next_file_offset: nextFileOffset,
+        truncated,
       },
     });
     if (auditErr) console.error('Falha ao registrar auditoria:', auditErr.message);
@@ -475,7 +478,13 @@ Deno.serve(async (req: Request) => {
       duration_ms: durationMs,
       errors: errors.slice(0, 10),
       dry_run: body.dryRun,
+      /** Paginação de monorepos: quando `truncated`, reenvie com `fileOffset = next_file_offset`. */
+      file_offset: body.fileOffset,
+      next_file_offset: nextFileOffset,
+      truncated,
+      repo_file_totals: repoFileTotals,
     });
+
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e);
     console.error('skill-harvester falhou:', message);
