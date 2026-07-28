@@ -8,7 +8,7 @@
  */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
-import { Download, Loader2, RefreshCw, TrendingDown, Wand2 } from 'lucide-react';
+import { AlertTriangle, Download, Loader2, RefreshCw, TrendingDown, Wand2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -30,6 +30,8 @@ import {
   demandRowsToCsv,
   filterByDemand,
   filterByDepartment,
+  filterByNeedsReview,
+  countNeedsReview,
   normalizeDemandFilter,
   normalizeDemandPreferences,
   normalizeDepartmentFilter,
