@@ -188,14 +188,20 @@ export function recommendSkills(
     };
   });
 
+  // Ordenação por bucket quantizado (centésimos): garante transitividade —
+  // um comparador com epsilon direto sobre floats quebra a relação de ordem
+  // e produz sequências com score fora de ordem decrescente.
+  const bucketOf = (score: number) => Math.round(score * 100);
   const ranked = scored
     .filter((r) => r.score > 0.01)
     .sort((a, b) => {
-      if (Math.abs(a.score - b.score) < 0.01) {
-        return (b.skill.install_count ?? 0) - (a.skill.install_count ?? 0);
-      }
-      return b.score - a.score;
+      const bucketDiff = bucketOf(b.score) - bucketOf(a.score);
+      if (bucketDiff !== 0) return bucketDiff;
+      const installDiff = (b.skill.install_count ?? 0) - (a.skill.install_count ?? 0);
+      if (installDiff !== 0) return installDiff;
+      return a.skill.id.localeCompare(b.skill.id);
     })
+
     .slice(0, limit);
 
   if (!options.fillBaseline || ranked.length >= limit) return ranked;
