@@ -18,7 +18,7 @@ import {
   getInstalledSkills,
 } from '@/services/skillsRegistryService';
 
-import { recommendSkills } from '@/services/skillRecommenderService';
+import { recommendSkills, computePendingSkillIds } from '@/services/skillRecommenderService';
 
 export function SkillAutoRecommendationsPanel() {
   const [agentId, setAgentId] = useState<string | undefined>(undefined);
@@ -88,7 +88,7 @@ export function SkillAutoRecommendationsPanel() {
 
   /** Recomendações ainda não instaladas — base do botão "Adicionar todas". */
   const pendingIds = useMemo(
-    () => recommendations.map((r) => r.skill.id).filter((id) => !installedIds.has(id)),
+    () => computePendingSkillIds(recommendations, installedIds),
     [recommendations, installedIds],
   );
 
