@@ -99,9 +99,15 @@ export function normalizeSkillIdList(ids: readonly unknown[]): string[] {
   return out;
 }
 
-export async function installSkill(agentId: string, skillId: string): Promise<void> {
-  await bulkInstallSkills(agentId, [skillId]);
+/**
+ * Instala uma única skill. Retorna `true` quando a linha foi realmente inserida
+ * e `false` quando a skill já estava instalada (no-op idempotente).
+ */
+export async function installSkill(agentId: string, skillId: string): Promise<boolean> {
+  const { installed } = await bulkInstallSkills(agentId, [skillId]);
+  return installed.length > 0;
 }
+
 
 /**
  * Instala skills em lote de forma **idempotente**.
