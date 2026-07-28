@@ -840,15 +840,21 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
       return;
     }
     const insertedId = (inserted as { id?: string } | null)?.id;
-    // Instala skills selecionadas em bulk (não bloqueia navegação em caso de erro)
+    // Instala skills selecionadas em bulk (idempotente; não bloqueia navegação em caso de erro)
     if (insertedId && selectedSkillIds.length > 0) {
       try {
-        await bulkInstallSkills(insertedId, selectedSkillIds);
+        const result = await bulkInstallSkills(insertedId, selectedSkillIds);
+        if (result.skipped.length > 0) {
+          toast.info(`${result.installed.length} skill(s) instalada(s)`, {
+            description: `${result.skipped.length} já estavam instaladas e foram ignoradas.`,
+          });
+        }
       } catch (skillErr) {
         const msg = skillErr instanceof Error ? skillErr.message : 'Falha ao instalar skills';
         toast.warning('Agente criado, mas falhou ao instalar skills', { description: msg });
       }
     }
+
     // If the user opted to bypass contradiction warnings, log a high-signal
     // audit entry so admins can review the rationale later.
     if (override) {
