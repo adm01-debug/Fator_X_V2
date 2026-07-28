@@ -240,8 +240,12 @@ export function SkillReclassificationReviewPanel({
                       </Badge>
                       <span className="text-muted-foreground">
                         confiança {pct(review.confidence)} · margem {pct(review.margin)}
+                        {review.confidenceThreshold !== null
+                          ? ` · limiar ${pct(review.confidenceThreshold)}`
+                          : ''}
                         {review.runnerUp ? ` · 2º ${departmentLabel(review.runnerUp)}` : ''}
                       </span>
+
                     </div>
 
                     {review.matchedTerms.length > 0 && (
