@@ -148,6 +148,7 @@ describe('normalizeDemandPreferences — payloads hostis', () => {
     search: '',
     confidenceThreshold: DEMAND_THRESHOLD_FLOOR_FALLBACK,
     onlyNeedsReview: false,
+    source: 'all',
   } as const;
 
   it('preserva um payload válido integralmente', () => {
@@ -161,6 +162,7 @@ describe('normalizeDemandPreferences — payloads hostis', () => {
       search: 'pdf',
       confidenceThreshold: DEMAND_THRESHOLD_FLOOR_FALLBACK,
       onlyNeedsReview: false,
+      source: 'all',
     });
   });
 
@@ -214,6 +216,7 @@ describe('normalizeDemandPreferences — payloads hostis', () => {
       'department',
       'onlyNeedsReview',
       'search',
+      'source',
       'tier',
     ]);
   });
@@ -298,6 +301,7 @@ describe('normalizeConfidenceThreshold — piso, teto e quantização', () => {
       search: '',
       confidenceThreshold: 0.5,
       onlyNeedsReview: false,
+      source: 'all',
     } as const;
     const out = normalizeDemandPreferences({ confidenceThreshold: 0.3 }, ALLOWED, defaults);
     expect(out.confidenceThreshold).toBe(0.5);

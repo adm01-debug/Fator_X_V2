@@ -10,8 +10,18 @@
 
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
 
-/** Origem da classificação de departamento gravada em `skill_registry`. */
-export type DepartmentSource = 'lexical' | 'llm' | 'human';
+/**
+ * Origem da classificação de departamento, agregada para leitura humana.
+ *
+ * O banco grava rótulos mais granulares (`lexical` legado, `heuristic`,
+ * `platform_heuristic`, `llm`, `human`, `unknown`). Agrupamos aqui porque o
+ * card de status responde a "quem decidiu isso?", não a "qual versão do motor
+ * decidiu". `heuristic` cobre o léxico determinístico (incluindo o rótulo
+ * legado `lexical`) e `platform` isola o tier de jargão de plataforma, que é
+ * deliberadamente de baixa confiança e vive na fila de revisão.
+ */
+export type DepartmentSource = 'heuristic' | 'platform' | 'llm' | 'human';
+
 
 export interface SkillLibraryOverview {
   /** Total de skills públicas no catálogo. */
@@ -61,7 +71,8 @@ export async function fetchSkillLibraryOverview(): Promise<SkillLibraryOverview>
     total,
     harvested,
     verified,
-    lexical,
+    heuristic,
+    platform,
     llm,
     human,
     unclassified,
@@ -71,12 +82,23 @@ export async function fetchSkillLibraryOverview(): Promise<SkillLibraryOverview>
     countSkills((q) => q),
     countSkills((q) => q.not('source_repo', 'is', null)),
     countSkills((q) => q.eq('is_verified', true)),
-    countSkills((q) => q.eq('department_source', 'lexical')),
+    // `lexical` é o rótulo legado do mesmo motor determinístico que hoje grava
+    // `heuristic`; contá-los separados mostraria zero num painel de governança
+    // e sugeriria que o léxico parou de funcionar.
+    countSkills((q) => q.in('department_source', ['lexical', 'heuristic'])),
+    countSkills((q) => q.eq('department_source', 'platform_heuristic')),
     countSkills((q) => q.eq('department_source', 'llm')),
     countSkills((q) => q.eq('department_source', 'human')),
     countSkills((q) => q.is('department', null)),
+    // Sem departamento NÃO é "rever": não existe rótulo do qual duvidar, e
+    // somar as duas filas em `curationHealth` contaria a mesma skill duas
+    // vezes, podendo derrubar a saúde abaixo do real (até negativa antes do
+    // clamp). O recorte espelha exatamente `departmentNeedsReview` do cliente.
     countSkills((q) =>
-      q.lt('department_confidence', REVIEW_CONFIDENCE_THRESHOLD).neq('department_source', 'human'),
+      q
+        .not('department', 'is', null)
+        .lt('department_confidence', REVIEW_CONFIDENCE_THRESHOLD)
+        .neq('department_source', 'human'),
     ),
     supabaseExternal
       .from('skill_registry')
@@ -100,7 +122,8 @@ export async function fetchSkillLibraryOverview(): Promise<SkillLibraryOverview>
     authored: Math.max(0, total - harvested),
     verified,
     installs,
-    bySource: { lexical, llm, human },
+    bySource: { heuristic, platform, llm, human },
+
     unclassified,
     needsReview,
   };

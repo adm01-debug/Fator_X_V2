@@ -40,9 +40,36 @@ export function classifyDemand(templateCount: number): DemandTier {
   return 'alta';
 }
 
-/** Procedencias aceitas para a classificacao departamental (espelha o CHECK do banco). */
-export const DEPARTMENT_SOURCES = ['unknown', 'heuristic', 'llm', 'human', 'import'] as const;
+/**
+ * Procedencias aceitas para a classificacao departamental (espelha o CHECK do banco).
+ *
+ * `lexical` é o rótulo legado do motor determinístico e `platform_heuristic` é
+ * o tier de jargão de plataforma. Ambos precisam estar aqui: qualquer valor
+ * fora da lista degrada para `unknown`, o que apagaria a procedência real na
+ * UI e faria uma decisão automática parecer "sem origem conhecida".
+ */
+export const DEPARTMENT_SOURCES = [
+  'unknown',
+  'heuristic',
+  'lexical',
+  'platform_heuristic',
+  'llm',
+  'human',
+  'import',
+] as const;
 export type DepartmentSource = (typeof DEPARTMENT_SOURCES)[number];
+
+/** Rótulos pt-BR das procedências, para filtros e legendas. */
+export const DEPARTMENT_SOURCE_LABEL: Record<DepartmentSource, string> = {
+  unknown: 'Sem origem',
+  heuristic: 'Léxico',
+  lexical: 'Léxico (legado)',
+  platform_heuristic: 'Plataforma',
+  llm: 'IA (LLM)',
+  human: 'Humano',
+  import: 'Importação',
+};
+
 
 /**
  * Piso de confianca abaixo do qual a classificacao automatica e tratada como
@@ -279,7 +306,49 @@ export interface DemandPreferences {
    * numa lista de trabalho estável entre sessões.
    */
   onlyNeedsReview: boolean;
+  /**
+   * Recorta por procedência da classificação (`all` mantém tudo).
+   *
+   * Motivo: "rever depto." mistura léxico fraco, palpite de plataforma e saída
+   * de LLM — três dívidas com tratamento diferente. Sem separar por origem, o
+   * curador não consegue auditar um lote específico (ex.: "todas as decisões
+   * que o tier de plataforma tomou") nem medir a qualidade por motor.
+   */
+  source: DepartmentSourceFilter;
 }
+
+/** Filtro por procedência; `all` preserva a ordem original. */
+export type DepartmentSourceFilter = 'all' | DepartmentSource;
+
+export function filterBySource(
+  rows: readonly SkillDemandRow[],
+  filter: DepartmentSourceFilter,
+): SkillDemandRow[] {
+  if (filter === 'all') return [...rows];
+  return rows.filter((row) => row.departmentSource === filter);
+}
+
+/** Normaliza o filtro de procedência; desconhecidos degradam para `all`. */
+export function normalizeSourceFilter(value: unknown): DepartmentSourceFilter {
+  if (typeof value !== 'string') return 'all';
+  const normalized = value.trim().toLowerCase();
+  if (normalized === 'all') return 'all';
+  return (DEPARTMENT_SOURCES as readonly string[]).includes(normalized)
+    ? (normalized as DepartmentSource)
+    : 'all';
+}
+
+/** Contagem por procedência sobre o conjunto bruto (todas as chaves presentes). */
+export function countBySource(
+  rows: readonly SkillDemandRow[],
+): Record<DepartmentSource, number> {
+  const out = Object.fromEntries(
+    DEPARTMENT_SOURCES.map((s) => [s, 0]),
+  ) as Record<DepartmentSource, number>;
+  for (const row of rows) out[row.departmentSource] += 1;
+  return out;
+}
+
 
 /**
  * Recorta as linhas que precisam de revisão departamental.
@@ -350,6 +419,7 @@ export function normalizeDemandPreferences(
     search: '',
     confidenceThreshold: DEMAND_THRESHOLD_FLOOR_FALLBACK,
     onlyNeedsReview: false,
+    source: 'all',
   },
 ): DemandPreferences {
   const piso = normalizeConfidenceThreshold(
@@ -373,9 +443,15 @@ export function normalizeDemandPreferences(
   // do catálogo sem que o curador tenha pedido nada.
   const onlyNeedsReview =
     typeof raw.onlyNeedsReview === 'boolean' ? raw.onlyNeedsReview : defaults.onlyNeedsReview ?? false;
+  // Procedência ausente (preferência gravada antes deste filtro existir) cai no
+  // default do chamador, não em 'unknown' — senão uma sessão antiga abriria o
+  // painel recortado em skills sem origem, que é quase o conjunto vazio.
+  const source =
+    raw.source === undefined ? defaults.source ?? 'all' : normalizeSourceFilter(raw.source);
 
-  return { tier, department, search, confidenceThreshold, onlyNeedsReview };
+  return { tier, department, search, confidenceThreshold, onlyNeedsReview, source };
 }
+
 
 
 /** Exportação CSV (RFC 4180, com BOM) do recorte visível. */
@@ -384,7 +460,19 @@ export function demandRowsToCsv(rows: readonly SkillDemandRow[]): string {
     const text = value === null ? '' : String(value);
     return `"${text.replace(/"/g, '""')}"`;
   };
-  const header = ['slug', 'nome', 'departamento', 'qualidade', 'templates', 'faixa', 'origem'];
+  // Colunas novas são ANEXADAS ao fim de propósito: planilhas e scripts do
+  // curador referenciam posições, e inserir no meio quebraria silenciosamente.
+  const header = [
+    'slug',
+    'nome',
+    'departamento',
+    'qualidade',
+    'templates',
+    'faixa',
+    'origem',
+    'classificacao',
+    'confianca',
+  ];
   const lines = [header.map(escape).join(',')];
   for (const row of rows) {
     lines.push(
@@ -396,8 +484,13 @@ export function demandRowsToCsv(rows: readonly SkillDemandRow[]): string {
         escape(row.templateCount),
         escape(DEMAND_TIER_LABEL[row.tier]),
         escape(row.sourceRepo),
+        escape(DEPARTMENT_SOURCE_LABEL[row.departmentSource]),
+        // Locale pt-BR: vírgula decimal. O CSV já é totalmente aspeado, então
+        // a vírgula não vaza como separador de campo.
+        escape(row.departmentConfidence.toFixed(2).replace('.', ',')),
       ].join(','),
     );
   }
+
   return '\uFEFF' + lines.join('\r\n');
 }

@@ -33,12 +33,18 @@ import {
 import { fetchSkillDemand } from '@/services/skillDemandService';
 import {
   countByDepartment,
+  countBySource,
   DEMAND_SEARCH_MAX,
   DEMAND_TIERS,
   DEMAND_TIER_LABEL,
+  DEPARTMENT_SOURCE_LABEL,
+  DEPARTMENT_SOURCES,
   demandRowsToCsv,
   filterByDemand,
   filterByDepartment,
+  filterBySource,
+  normalizeSourceFilter,
+
   filterByNeedsReview,
   countNeedsReview,
   normalizeDemandFilter,
@@ -77,7 +83,9 @@ const PREFS_PADRAO: DemandPreferences = {
   search: '',
   confidenceThreshold: MIN_RECLASSIFY_CONFIDENCE,
   onlyNeedsReview: false,
+  source: 'all',
 };
+
 
 export function SkillDemandPanel() {
   const [rows, setRows] = useState<SkillDemandRow[]>([]);
@@ -108,7 +116,9 @@ export function SkillDemandPanel() {
     search,
     confidenceThreshold,
     onlyNeedsReview,
+    source: sourceFilter,
   } = useMemo(
+
     () => normalizeDemandPreferences(prefsBrutas, DEPARTAMENTOS, PREFS_PADRAO),
     [prefsBrutas],
   );
@@ -155,12 +165,16 @@ export function SkillDemandPanel() {
   const resumo = useMemo(() => summarizeSkillDemand(rows), [rows]);
   const porDepartamento = useMemo(() => countByDepartment(rows), [rows]);
   const pendentesRevisao = useMemo(() => countNeedsReview(rows), [rows]);
+  const porOrigem = useMemo(() => countBySource(rows), [rows]);
 
   const visiveis = useMemo(() => {
     const termo = search.trim().toLowerCase();
-    const porFaixa = filterByNeedsReview(
-      filterByDepartment(filterByDemand(rows, filter), deptFilter),
-      onlyNeedsReview,
+    const porFaixa = filterBySource(
+      filterByNeedsReview(
+        filterByDepartment(filterByDemand(rows, filter), deptFilter),
+        onlyNeedsReview,
+      ),
+      sourceFilter,
     );
     if (!termo) return porFaixa;
     return porFaixa.filter(
@@ -169,7 +183,8 @@ export function SkillDemandPanel() {
         row.slug.toLowerCase().includes(termo) ||
         (row.sourceRepo ?? '').toLowerCase().includes(termo),
     );
-  }, [rows, filter, deptFilter, search, onlyNeedsReview]);
+  }, [rows, filter, deptFilter, search, onlyNeedsReview, sourceFilter]);
+
 
   /** O recorte visível é exatamente o universo oferecido à reclassificação. */
   const candidatos = useMemo<ReclassifyCandidate[]>(
@@ -292,6 +307,26 @@ export function SkillDemandPanel() {
               ))}
             </SelectContent>
           </Select>
+          {/* Procedência: separa léxico, tier de plataforma, IA e curadoria
+              humana. Opções com contagem zero continuam listadas (desabilitá-las
+              esconderia que a origem existe e nunca produziu nada). */}
+          <Select
+            value={sourceFilter}
+            onValueChange={(value) => atualizarPrefs({ source: normalizeSourceFilter(value) })}
+          >
+            <SelectTrigger className="w-[210px]" aria-label="Filtrar por origem da classificação">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todas as origens</SelectItem>
+              {DEPARTMENT_SOURCES.map((origem) => (
+                <SelectItem key={origem} value={origem}>
+                  {DEPARTMENT_SOURCE_LABEL[origem]} ({porOrigem[origem] ?? 0})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
           <Input
             className="flex-1 min-w-[220px]"
             placeholder="Buscar por nome, slug ou repositório de origem"
@@ -369,7 +404,9 @@ export function SkillDemandPanel() {
               filter === PREFS_PADRAO.tier &&
               deptFilter === PREFS_PADRAO.department &&
               search === '' &&
-              onlyNeedsReview === PREFS_PADRAO.onlyNeedsReview
+              onlyNeedsReview === PREFS_PADRAO.onlyNeedsReview &&
+              sourceFilter === PREFS_PADRAO.source
+
             }
           >
             Limpar filtros
@@ -414,7 +451,7 @@ export function SkillDemandPanel() {
                       <Badge
                         variant="outline"
                         className="text-meta border-nexus-amber/60 text-nexus-amber"
-                        title={`Classificacao ${row.departmentSource} com confianca ${row.departmentConfidence.toFixed(2)} — revise antes de confiar no rotulo`}
+                        title={`Classificação por ${DEPARTMENT_SOURCE_LABEL[row.departmentSource]} com confiança ${row.departmentConfidence.toFixed(2)} — revise antes de confiar no rótulo`}
                       >
                         Rever depto.
                       </Badge>

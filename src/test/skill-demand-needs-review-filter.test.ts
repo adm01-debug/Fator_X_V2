@@ -23,6 +23,7 @@ const PADRAO: DemandPreferences = {
   search: '',
   confidenceThreshold: 0.25,
   onlyNeedsReview: false,
+  source: 'all',
 };
 
 function rows() {
