@@ -94,6 +94,14 @@ export interface SkillReclassifyDialogProps {
   confidenceThreshold?: number;
   /** Notifica o dono das preferências para persistir a escolha. */
   onConfidenceThresholdChange?: (value: number) => void;
+  /**
+   * Dispara a classificação por IA assim que o diálogo abre com candidatos
+   * sem evidência léxica. Usado pelo atalho "Sugerir depto. com IA" da fila
+   * "Sem depto." — abrir o diálogo e pedir mais um clique seria fricção pura,
+   * já que aquele recorte existe justamente porque o léxico falhou.
+   * Nada é escrito: as propostas continuam nascendo DESMARCADAS.
+   */
+  autoRunLlm?: boolean;
   /** Chamado após aplicar com sucesso ao menos uma troca. */
   onApplied: () => void;
 }
@@ -104,8 +112,10 @@ export function SkillReclassifyDialog({
   candidates,
   confidenceThreshold,
   onConfidenceThresholdChange,
+  autoRunLlm = false,
   onApplied,
 }: SkillReclassifyDialogProps) {
+
   // Limiar ajustável pelo curador, persistido nas preferências. O piso é o
   // default do módulo: afrouxar abaixo dele reabriria a porta para trocas sem
   // evidência, que é exatamente o que o classificador existe para impedir.
