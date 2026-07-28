@@ -55,7 +55,7 @@ const DIRECTION_LABEL: Record<ReturnType<typeof calibrationDirection>, string> =
 
 const DIRECTION_STYLE: Record<ReturnType<typeof calibrationDirection>, string> = {
   aumentou: 'border-primary/40 text-primary',
-  reduziu: 'border-warning/40 text-warning',
+  reduziu: 'border-destructive/40 text-destructive',
   manteve: 'border-muted-foreground/40 text-muted-foreground',
 };
 
