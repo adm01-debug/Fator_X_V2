@@ -38,6 +38,12 @@ const STOP_WORDS = new Set([
   'is', 'be', 'are', 'was', 'were', 'in', 'on', 'at', 'for', 'with',
 ]);
 
+/**
+ * Siglas de 2 letras relevantes no domínio (IA, BI, TI...). Tokens de 2 caracteres
+ * são descartados por padrão como ruído, exceto quando fazem parte deste conjunto.
+ */
+const SHORT_TERMS = new Set(['ia', 'ai', 'bi', 'ti', 'qa', 'ux', 'ui', 'db', 'ml', 'nl', 'hr', 'rh', 'cs', 'go', 'js', 'ci', 'cd']);
+
 export function tokenize(text: string): Set<string> {
   const tokens = text
     .toLowerCase()
@@ -45,9 +51,14 @@ export function tokenize(text: string): Set<string> {
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-z0-9\s]/g, ' ')
     .split(/\s+/)
-    .filter((t) => t.length >= 3 && !STOP_WORDS.has(t));
+    .filter((t) => {
+      if (STOP_WORDS.has(t)) return false;
+      if (t.length >= 3) return true;
+      return t.length === 2 && SHORT_TERMS.has(t);
+    });
   return new Set(tokens);
 }
+
 
 /**
  * Sinônimos PT-BR ↔ EN e variações morfológicas.
@@ -177,14 +188,18 @@ export function recommendSkills(
     };
   });
 
+  // Ordenação estritamente decrescente por score bruto. Um comparador com
+  // epsilon (|a-b| < 0.01) quebra a transitividade e produzia sequências com
+  // score fora de ordem; o desempate só ocorre em igualdade exata.
   const ranked = scored
     .filter((r) => r.score > 0.01)
     .sort((a, b) => {
-      if (Math.abs(a.score - b.score) < 0.01) {
-        return (b.skill.install_count ?? 0) - (a.skill.install_count ?? 0);
-      }
-      return b.score - a.score;
+      if (b.score !== a.score) return b.score - a.score;
+      const installDiff = (b.skill.install_count ?? 0) - (a.skill.install_count ?? 0);
+      if (installDiff !== 0) return installDiff;
+      return a.skill.id.localeCompare(b.skill.id);
     })
+
     .slice(0, limit);
 
   if (!options.fillBaseline || ranked.length >= limit) return ranked;
