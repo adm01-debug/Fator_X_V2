@@ -308,6 +308,23 @@ export function SkillPromptSimulator() {
             <TabsContent value="diagnostico" className="mt-4">
               <SkillPromptSimulatorReport result={result} />
             </TabsContent>
+
+            <TabsContent value="diff" className="mt-4">
+              {loadingCompare ? <Skeleton className="h-64 w-full" /> : null}
+              {diff ? (
+                <SkillPromptDiffView
+                  diff={diff}
+                  leftLabel={compareContext?.name ?? 'Referência'}
+                  rightLabel={context?.name ?? 'Atual'}
+                />
+              ) : null}
+              {!loadingCompare && !diff ? (
+                <p className="rounded-lg border border-dashed border-border/60 p-6 text-center text-body-sm text-muted-foreground">
+                  Selecione um agente de comparação para ver o diff.
+                </p>
+              ) : null}
+            </TabsContent>
+
           </Tabs>
         ) : null}
       </CardContent>
