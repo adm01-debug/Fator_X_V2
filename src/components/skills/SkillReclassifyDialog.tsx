@@ -93,6 +93,7 @@ export function SkillReclassifyDialog({
   const plano = useMemo(() => buildReclassificationPlan(candidates), [candidates]);
   const [desmarcados, setDesmarcados] = useState<Set<string>>(new Set());
   const [aplicando, setAplicando] = useState(false);
+  const [enviando, setEnviando] = useState(false);
   const [falhas, setFalhas] = useState<ReclassifyFailure[]>([]);
 
   const [propostasIa, setPropostasIa] = useState<ReclassifyProposal[]>([]);
