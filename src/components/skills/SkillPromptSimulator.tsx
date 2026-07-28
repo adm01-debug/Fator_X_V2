@@ -32,7 +32,10 @@ import { diffPromptSimulations } from '@/lib/skills/promptDiff';
 import {
   buildPromptAuditArtifact,
   buildArtifactFilename,
+  buildPromptEvidenceRecord,
 } from '@/lib/skills/promptAuditArtifact';
+import { audit } from '@/lib/auditService';
+
 import {
   fetchAgentOptions,
   fetchAgentPromptContext,
