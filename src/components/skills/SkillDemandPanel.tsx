@@ -187,6 +187,27 @@ export function SkillDemandPanel() {
               ))}
             </SelectContent>
           </Select>
+          <Select
+            value={deptFilter}
+            onValueChange={(value) =>
+              setDeptFilter(normalizeDepartmentFilter(value, [...SKILL_DEPARTMENTS]))
+            }
+          >
+            <SelectTrigger className="w-[220px]" aria-label="Filtrar por departamento">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos os departamentos</SelectItem>
+              <SelectItem value="none">
+                Sem departamento ({porDepartamento.none ?? 0})
+              </SelectItem>
+              {SKILL_DEPARTMENTS.map((dept) => (
+                <SelectItem key={dept} value={dept}>
+                  {departmentLabel(dept)} ({porDepartamento[dept] ?? 0})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Input
             className="flex-1 min-w-[220px]"
             placeholder="Buscar por nome, slug ou repositório de origem"
