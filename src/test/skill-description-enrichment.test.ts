@@ -220,7 +220,7 @@ describe('proposalFromVerdict', () => {
     ).proposal;
     const naBorda = proposalFromVerdict(candidate(), verdict({ confidence: MIN_ENRICH_CONFIDENCE }))
       .proposal;
-    expect(ababaixoAuto(abaixo)).toBe(false);
+    expect(abaixo?.autoApply ?? false).toBe(false);
     expect(naBorda?.autoApply).toBe(true);
   });
 
@@ -243,10 +243,6 @@ describe('proposalFromVerdict', () => {
     expect(r.proposal?.slug).toBe('uuid-x');
   });
 });
-
-function ababaixoAuto(p: { autoApply: boolean } | null): boolean {
-  return p?.autoApply ?? false;
-}
 
 describe('particionamento autoApplicable / needsReview', () => {
   const propostas = [0.4, 0.6, 0.75, 0.8, 0.99].map(
