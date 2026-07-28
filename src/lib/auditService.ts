@@ -161,4 +161,32 @@ export const audit = {
           : {}),
       },
     }),
+
+  /**
+   * Instalação de skills que estoura (ou cruza) o teto do compilador.
+   *
+   * Grava apenas nomes e números — nunca conteúdo de skill. Serve para provar
+   * depois quem aceitou conscientemente a perda de competências no prompt.
+   */
+  skillInstallOverCap: (record: InstallCapAuditRecord) =>
+    logAudit({
+      action: 'skill.install_over_cap',
+      entity_type: 'agent',
+      entity_id: record.agentId,
+      metadata: {
+        agent_name: record.agentName,
+        slots_before: record.slotsBefore,
+        slots_after: record.slotsAfter,
+        cap: record.cap,
+        effective_adds: record.effectiveAdds,
+        redundant: record.redundant,
+        additional_dropped: record.additionalDropped,
+        total_dropped_after: record.totalDroppedAfter,
+        crosses_cap: record.crossesCap,
+        severity: record.severity,
+        acknowledged: record.acknowledged,
+        dropped_names: record.droppedNames,
+        dropped_names_truncated: record.droppedNamesTruncated,
+      },
+    }),
 };
