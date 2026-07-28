@@ -18,6 +18,8 @@ import {
   LOW_CONFIDENCE_THRESHOLD,
   MIN_PLATFORM_DENSITY,
   PLATFORM_TIER_CONFIDENCE,
+  PLATFORM_TIER_MAX_CONFIDENCE,
+  LOW_CONFIDENCE_THRESHOLD,
   PLATFORM_TIER_DEPARTMENT,
   PLATFORM_STOPWORDS,
 } from '@/services/skillDepartmentClassifier';
@@ -111,5 +113,110 @@ describe('tier de plataforma', () => {
         expect(r.needsReview).toBe(true);
       }
     }
+  });
+});
+
+/**
+ * Confiança graduada — a evidência que sustenta o veredito precisa aparecer no
+ * número. Enquanto todo item do tier valia 0.15 fixo, `gstack` (uma linha, zero
+ * tópicos) e `fastmcp` (MCP, Python, servidores, clientes, nove tópicos)
+ * empatavam na fila de revisão, e um curador que abre dez casos óbvios seguidos
+ * para de abrir o décimo primeiro — que era o ambíguo de verdade.
+ */
+describe('confiança graduada do tier de plataforma', () => {
+  const fraco = { name: 'gstack', description: 'Router for the gstack skill suite.' };
+  const forte = {
+    name: 'fastmcp',
+    description: 'The fast, Pythonic way to build MCP servers and clients.',
+    tags: ['agents', 'llms', 'mcp', 'mcp-clients', 'mcp-tools', 'model-context-protocol'],
+  };
+
+  it('evidência corroborada em dois campos supera o limiar e sai da fila', () => {
+    const r = classifyDepartment(forte);
+    expect(r.tier).toBe('platform');
+    expect(r.platformEvidence.fieldsWithSignal).toBe(2);
+    expect(r.confidence).toBeGreaterThanOrEqual(LOW_CONFIDENCE_THRESHOLD);
+    expect(r.needsReview).toBe(false);
+  });
+
+  it('evidência de campo único fica abaixo do limiar por teto explícito', () => {
+    const soTags = classifyDepartment({
+      name: 'zzz',
+      tags: ['agent', 'skill', 'llm', 'prompt', 'mcp', 'claude', 'codex', 'cursor'],
+    });
+    expect(soTags.platformEvidence.fieldsWithSignal).toBe(1);
+    expect(soTags.confidence).toBeLessThan(LOW_CONFIDENCE_THRESHOLD);
+    expect(soTags.needsReview).toBe(true);
+  });
+
+  it('o caso fraco permanece exatamente no piso', () => {
+    const r = classifyDepartment(fraco);
+    expect(r.platformEvidence).toEqual({ distinctTerms: 1, fieldsWithSignal: 1 });
+    expect(r.confidence).toBe(PLATFORM_TIER_CONFIDENCE);
+    expect(r.needsReview).toBe(true);
+  });
+
+  it('repetir o mesmo termo não compra confiança — só termos DISTINTOS contam', () => {
+    const repetido = classifyDepartment({
+      name: 'agent agent agent',
+      description: 'agent agent agent agent agent',
+      tags: ['agent', 'agent'],
+    });
+    expect(repetido.platformEvidence.distinctTerms).toBe(1);
+    expect(repetido.confidence).toBe(PLATFORM_TIER_CONFIDENCE);
+  });
+
+  it('a confiança nunca ultrapassa o teto, por mais jargão que haja', () => {
+    const saturado = classifyDepartment({
+      name: 'agent skill llm prompt mcp claude codex cursor copilot gemini',
+      description: 'openai anthropic chatgpt assistant model tool agentic prompting gpt',
+      tags: ['ai', 'agents', 'skills', 'llms', 'tools', 'prompts'],
+    });
+    expect(saturado.platformEvidence.distinctTerms).toBeGreaterThan(15);
+    expect(saturado.confidence).toBe(PLATFORM_TIER_MAX_CONFIDENCE);
+    // Teto abaixo de curadoria humana: o tier infere "isto é ferramental",
+    // nunca "isto é do departamento X" com a autoridade de uma pessoa.
+    expect(saturado.confidence).toBeLessThan(1);
+  });
+
+  it('monotonicidade: acrescentar evidência jamais reduz a confiança', () => {
+    const termos = ['agent', 'skill', 'llm', 'prompt', 'mcp', 'claude', 'codex'];
+    let anterior = 0;
+    for (let n = 1; n <= termos.length; n += 1) {
+      const r = classifyDepartment({
+        name: termos.slice(0, n).join(' '),
+        tags: ['agents'],
+      });
+      expect(r.tier).toBe('platform');
+      expect(r.confidence).toBeGreaterThanOrEqual(anterior);
+      anterior = r.confidence;
+    }
+  });
+
+  it('grade completa: 1..14 termos × 1..2 campos respeita piso, teto e limiar', () => {
+    const vocab = [
+      'agent', 'skill', 'llm', 'prompt', 'mcp', 'claude', 'codex',
+      'cursor', 'copilot', 'gemini', 'openai', 'anthropic', 'chatgpt', 'assistant',
+    ];
+    let cenarios = 0;
+    for (let n = 1; n <= vocab.length; n += 1) {
+      for (const doisCampos of [false, true]) {
+        const usados = vocab.slice(0, n);
+        const r = classifyDepartment(
+          doisCampos && usados.length > 1
+            ? { name: usados.slice(0, -1).join(' '), tags: [usados[usados.length - 1]] }
+            : { name: usados.join(' ') },
+        );
+        expect(r.tier).toBe('platform');
+        expect(r.confidence).toBeGreaterThanOrEqual(PLATFORM_TIER_CONFIDENCE);
+        expect(r.confidence).toBeLessThanOrEqual(PLATFORM_TIER_MAX_CONFIDENCE);
+        if (r.platformEvidence.fieldsWithSignal < 2) {
+          // Um campo só nunca conclui, independentemente do volume de jargão.
+          expect(r.needsReview).toBe(true);
+        }
+        cenarios += 1;
+      }
+    }
+    expect(cenarios).toBe(28);
   });
 });
