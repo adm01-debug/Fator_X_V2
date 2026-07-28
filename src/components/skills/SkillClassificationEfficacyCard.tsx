@@ -153,47 +153,62 @@ export function SkillClassificationEfficacyCard({
   );
 
   /**
-   * Aplicar é sempre a MESMA operação; o que muda com instabilidade é apenas
-   * a fricção antes dela. Extraído para não duplicar a auditoria em dois
-   * caminhos de UI (que fatalmente divergiriam).
+   * Aplicar é sempre a MESMA operação; o que muda com instabilidade é a
+   * fricção antes dela e a exigência de justificativa. Extraído para não
+   * duplicar a auditoria em dois caminhos de UI (que fatalmente divergiriam).
    */
-  const aplicarSugerido = useCallback(() => {
-    if (!onApplyThreshold || sugerido === null) return;
-    const anterior =
-      currentThreshold === undefined ? null : normalizeConfidenceThreshold(currentThreshold);
-    onApplyThreshold(sugerido);
-    // Auditoria não bloqueia a UI: falha vira log, não erro visível.
-    void audit
-      .skillThresholdCalibrated({
-        from: anterior,
-        to: sugerido,
-        sampleSize: resumo.total,
-        accuracy: resumo.accuracy,
-        // Marca a decisão tomada CONTRA o alerta: sem isso, a série ruidosa
-        // fica indistinguível de uma calibração saudável na trilha.
-        overriddenInstability: instabilidade.unstable,
-        instabilityReason: instabilidade.reason,
-        eventsInWindow: instabilidade.eventsInWindow,
-        reversals: instabilidade.reversals,
-      })
-      // Só recarrega depois da escrita: refetch antes traria a lista sem a
-      // linha nova e pareceria que nada foi gravado.
-      .then(() => carregar());
-    toast.success(`Limiar de revisão ajustado para ${sugerido.toFixed(2)}`);
-  }, [
-    onApplyThreshold,
-    sugerido,
-    currentThreshold,
-    resumo.total,
-    resumo.accuracy,
-    instabilidade,
-    carregar,
-  ]);
+  const aplicarSugerido = useCallback(
+    (motivo?: string) => {
+      if (!onApplyThreshold || sugerido === null) return;
+      const anterior =
+        currentThreshold === undefined ? null : normalizeConfidenceThreshold(currentThreshold);
+      // Justificativa só faz sentido quando houve override; fora disso não
+      // poluímos a metadata com texto sem contexto.
+      const razao = instabilidade.unstable ? normalizeOverrideReason(motivo) : null;
+      onApplyThreshold(sugerido);
+      // Auditoria não bloqueia a UI: falha vira log, não erro visível.
+      void audit
+        .skillThresholdCalibrated({
+          from: anterior,
+          to: sugerido,
+          sampleSize: resumo.total,
+          accuracy: resumo.accuracy,
+          // Marca a decisão tomada CONTRA o alerta: sem isso, a série ruidosa
+          // fica indistinguível de uma calibração saudável na trilha.
+          overriddenInstability: instabilidade.unstable,
+          instabilityReason: instabilidade.reason,
+          eventsInWindow: instabilidade.eventsInWindow,
+          reversals: instabilidade.reversals,
+          overrideReason: razao,
+        })
+        // Só recarrega depois da escrita: refetch antes traria a lista sem a
+        // linha nova e pareceria que nada foi gravado.
+        .then(() => carregar());
+      toast.success(`Limiar de revisão ajustado para ${sugerido.toFixed(2)}`);
+    },
+    [
+      onApplyThreshold,
+      sugerido,
+      currentThreshold,
+      resumo.total,
+      resumo.accuracy,
+      instabilidade,
+      carregar,
+    ],
+  );
+
+  const confirmarOverride = useCallback(() => {
+    if (!justificativaValida) return;
+    aplicarSugerido(justificativa);
+    setJustificativa('');
+    setOverrideOpen(false);
+  }, [aplicarSugerido, justificativa, justificativaValida]);
 
   const podeAplicar =
     sugerido !== null &&
     (currentThreshold === undefined ||
       normalizeConfidenceThreshold(currentThreshold) !== sugerido);
+
 
 
   return (
