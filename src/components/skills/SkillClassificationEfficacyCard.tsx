@@ -149,12 +149,26 @@ export function SkillClassificationEfficacyCard({
         to: sugerido,
         sampleSize: resumo.total,
         accuracy: resumo.accuracy,
+        // Marca a decisão tomada CONTRA o alerta: sem isso, a série ruidosa
+        // fica indistinguível de uma calibração saudável na trilha.
+        overriddenInstability: instabilidade.unstable,
+        instabilityReason: instabilidade.reason,
+        eventsInWindow: instabilidade.eventsInWindow,
+        reversals: instabilidade.reversals,
       })
       // Só recarrega depois da escrita: refetch antes traria a lista sem a
       // linha nova e pareceria que nada foi gravado.
       .then(() => carregar());
     toast.success(`Limiar de revisão ajustado para ${sugerido.toFixed(2)}`);
-  }, [onApplyThreshold, sugerido, currentThreshold, resumo.total, resumo.accuracy, carregar]);
+  }, [
+    onApplyThreshold,
+    sugerido,
+    currentThreshold,
+    resumo.total,
+    resumo.accuracy,
+    instabilidade,
+    carregar,
+  ]);
 
   const podeAplicar =
     sugerido !== null &&
