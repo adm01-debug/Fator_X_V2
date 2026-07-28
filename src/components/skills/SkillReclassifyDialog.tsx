@@ -5,10 +5,24 @@
  * diálogo só existe para que um curador confirme item a item. Nada é aplicado
  * sem seleção explícita, e o resultado (inclusive falhas parciais) fica
  * visível em vez de virar um toast genérico.
+ *
+ * Fallback LLM: as skills sem evidência léxica suficiente já não são um beco
+ * sem saída — podem ser enviadas em lote para classificação por IA. Essas
+ * propostas entram na lista DESMARCADAS por padrão: evidência léxica é
+ * verificável termo a termo, palpite de modelo não é, e as duas não podem
+ * receber o mesmo grau de confiança automática.
  */
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { AlertTriangle, ArrowRight, Download, Loader2, Wand2 } from 'lucide-react';
+import {
+  AlertTriangle,
+  ArrowRight,
+  Download,
+  Loader2,
+  Sparkles,
+  Wand2,
+  X,
+} from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -20,20 +34,45 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { departmentLabel } from '@/config/skill-departments';
 import {
   MAX_RECLASSIFY_BATCH,
   buildReclassificationPlan,
+  mergeLlmProposals,
   reclassificationToCsv,
   selectProposals,
   type ReclassifyCandidate,
+  type ReclassifyProposal,
 } from '@/lib/skills/departmentReclassification';
+import type { QueueSnapshot } from '@/lib/skills/llmClassificationQueue';
 import {
   applyReclassification,
+  runLlmFallbackQueue,
+  type LlmClassificationVerdict,
   type ReclassifyFailure,
 } from '@/services/skillReclassificationService';
 import { logger } from '@/lib/logger';
+
+const FAILURE_LABEL: Record<ReclassifyFailure['kind'], string> = {
+  permission: 'Sem permissão',
+  conflict: 'Conflito de estado',
+  network: 'Falha de rede',
+  unknown: 'Erro',
+};
+
+/** Rótulos das falhas por item da fila (`QueueWorkerError.kind`). */
+const QUEUE_ERROR_LABEL: Record<string, string> = {
+  creditos: 'Créditos de IA esgotados',
+  permissao: 'Sem permissão',
+  taxa: 'Limite de taxa',
+  invalido: 'Payload inválido',
+  rede: 'Falha de rede',
+  servidor: 'Erro no servidor',
+  contrato: 'Resposta inesperada',
+  erro: 'Erro',
+};
 
 const FAILURE_LABEL: Record<ReclassifyFailure['kind'], string> = {
   permission: 'Sem permissão',
