@@ -488,6 +488,18 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
 
         {falhas.length > 0 && (
           <ul className="mt-2 space-y-1 rounded-md border border-destructive/40 bg-destructive/5 p-2">
+            <li className="text-meta flex flex-wrap items-center gap-1.5 pb-1 text-muted-foreground">
+              {(
+                Object.entries(resumoFalhas) as Array<[keyof typeof RESTORE_FAILURE_LABEL, number]>
+              )
+                .filter(([, total]) => total > 0)
+                .map(([kind, total]) => (
+                  <span key={kind}>
+                    {RESTORE_FAILURE_LABEL[kind]}: {total} vínculo(s)
+                  </span>
+                ))}
+            </li>
+
             {falhas.map((f) => (
               <li key={f.templateId} className="text-meta flex flex-wrap items-center gap-1.5">
                 <Badge variant="destructive" className="text-meta">
