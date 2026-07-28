@@ -5,7 +5,7 @@ import { NavLink } from "@/components/NavLink";
 import {
   LayoutDashboard, Bot, BookOpen, Brain, Puzzle, FileText, GitBranch, Zap, Download,
   FlaskConical, Rocket, Activity, Database, Shield, Users, CreditCard, Settings,
-  Sparkles, PanelLeftClose, PanelLeft, LogOut, ServerCog, ChevronDown, Palette, Dna, Workflow, Package,
+  Sparkles, PanelLeftClose, PanelLeft, LogOut, ServerCog, ChevronDown, Palette, Dna, Workflow, Package, Library,
   ShieldCheck, CircleCheckBig, Crown, Route as RouteIcon, Languages,
 
   Mic, GitBranch as GitBranchIcon, KeyRound, Globe2, Monitor, Eye, Smartphone, TestTube2, MessageCircle,
@@ -64,6 +64,7 @@ const navSections = [
       { title: "Roteamento", url: "/routing", icon: RouteIcon },
       { title: "Fine-tuning", url: "/fine-tuning", icon: Dna },
       { title: "Smolagent", url: "/smolagent", icon: Workflow },
+      { title: "Biblioteca de Skills", url: "/skills/library", icon: Library },
       { title: "Skills Marketplace", url: "/skills", icon: Package },
       { title: "Skillbook · Auditoria", url: "/skills/audit", icon: BookOpen },
       { title: "Coleta de Skills", url: "/skills/harvest", icon: Download },

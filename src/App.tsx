@@ -83,6 +83,7 @@ const SkillsMarketplacePage = lazy(() => import("./pages/SkillsMarketplacePage")
 const SkillComposerPage = lazy(() => import("./pages/SkillComposerPage"));
 const SkillbookAuditPage = lazy(() => import("./pages/SkillbookAuditPage"));
 const SkillHarvestPage = lazy(() => import("./pages/SkillHarvestPage"));
+const SkillLibraryPage = lazy(() => import("./pages/SkillLibraryPage"));
 const AutomationCenterPage = lazy(() => import("./pages/AutomationCenterPage"));
 const AutomationsPage = lazy(() => import("./pages/AutomationsPage"));
 const RolesPage = lazy(() => import("./pages/RolesPage"));
@@ -300,6 +301,7 @@ const App = () => {
                       <Route path="/fine-tuning" element={<SafePage><FineTuningPage /></SafePage>} />
                       <Route path="/smolagent" element={<SafePage><SmolagentPage /></SafePage>} />
                       <Route path="/skills" element={<SafePage><SkillsMarketplacePage /></SafePage>} />
+                      <Route path="/skills/library" element={<SafePage><SkillLibraryPage /></SafePage>} />
                       <Route path="/skills/composer" element={<SafePage><SkillComposerPage /></SafePage>} />
                       <Route path="/skills/audit" element={<SafePage><SkillbookAuditPage /></SafePage>} />
                       <Route path="/skills/harvest" element={<SafePage><ProtectedRoute permission="team.roles"><SkillHarvestPage /></ProtectedRoute></SafePage>} />
