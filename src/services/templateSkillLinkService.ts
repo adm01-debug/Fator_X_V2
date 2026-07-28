@@ -243,6 +243,12 @@ export async function removeTemplateSkillLink(
   templateId: string,
   skillId: string,
 ): Promise<void> {
+  if (!templateId?.trim() || !skillId?.trim()) {
+    // Sem a guarda, ids vazios viram um filtro `= ''` que não casa com nada:
+    // a mutação "sucede" silenciosamente e a UI mente ao curador.
+    throw new Error('templateId e skillId são obrigatórios');
+  }
+
   const { error } = await supabaseExternal
     .from('template_skill_links')
     .update({ deleted_at: new Date().toISOString() })
@@ -256,23 +262,68 @@ export async function removeTemplateSkillLink(
   }
 }
 
+/**
+ * Normaliza uma lista de ids de skills: remove vazios, espaços e duplicatas,
+ * preservando a ordem de entrada (determinismo nos testes e nos logs).
+ *
+ * Função pura: exercitada pelos cenários de simulação.
+ */
+export function sanitizeSkillIds(skillIds: readonly string[]): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const raw of skillIds ?? []) {
+    const id = typeof raw === 'string' ? raw.trim() : '';
+    if (!id || seen.has(id)) continue;
+    seen.add(id);
+    out.push(id);
+  }
+  return out;
+}
+
 /** Desfaz uma remoção reversível, reativando o vínculo. */
 export async function restoreTemplateSkillLink(
   templateId: string,
   skillId: string,
 ): Promise<void> {
+  await bulkRestoreTemplateSkillLinks(templateId, [skillId]);
+}
+
+/**
+ * Reativa VÁRIOS vínculos de um template num único UPDATE.
+ *
+ * Por que em lote? Restaurar N remoções com N round-trips deixa a curadoria em
+ * estado parcial se um deles falhar. Um único `IN (...)` é atômico no servidor.
+ *
+ * @returns quantidade de ids efetivamente enviados (0 = no-op sem I/O).
+ */
+export async function bulkRestoreTemplateSkillLinks(
+  templateId: string,
+  skillIds: readonly string[],
+): Promise<number> {
+  if (!templateId?.trim()) throw new Error('templateId é obrigatório');
+
+  const ids = sanitizeSkillIds(skillIds);
+  if (ids.length === 0) return 0;
+
   const { error } = await supabaseExternal
     .from('template_skill_links')
     .update({ deleted_at: null, deleted_by: null })
     .eq('template_id', templateId)
-    .eq('skill_id', skillId)
+    .in('skill_id', ids)
     .not('deleted_at', 'is', null);
 
   if (error) {
-    logger.error('restoreTemplateSkillLink failed', { templateId, skillId, error: error.message });
+    logger.error('bulkRestoreTemplateSkillLinks failed', {
+      templateId,
+      count: ids.length,
+      error: error.message,
+    });
     throw new Error(error.message);
   }
+
+  return ids.length;
 }
+
 
 export interface RebuildResult {
   templates: number;
