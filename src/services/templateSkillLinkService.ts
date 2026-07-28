@@ -486,36 +486,94 @@ export function filterRemovalPlan(
   return groupRemovalsByTemplate(days).filter((g) => alvo.has(g.templateId));
 }
 
+/**
+ * Política de reenvio automático para falhas transitórias.
+ *
+ * Só falhas classificadas como `network` são reenviadas: RLS não muda entre
+ * tentativas e `unknown` pode ter efeito colateral desconhecido no servidor.
+ * O UPSERT de restauração é idempotente, então reenviar é seguro.
+ */
+export const RESTORE_MAX_ATTEMPTS = 3;
+export const RESTORE_BACKOFF_BASE_MS = 200;
+
+/** Função pura: atraso exponencial (200ms, 400ms, 800ms...) da tentativa n. */
+export function restoreBackoffDelay(
+  attempt: number,
+  baseMs: number = RESTORE_BACKOFF_BASE_MS,
+): number {
+  const n = Number.isFinite(attempt) && attempt > 0 ? Math.floor(attempt) : 1;
+  return baseMs * 2 ** (n - 1);
+}
+
+const dormir = (ms: number): Promise<void> =>
+  ms > 0 ? new Promise((resolve) => setTimeout(resolve, ms)) : Promise.resolve();
+
+/** Resumo agregado por natureza de falha — evita recontagem na UI. */
+export function summarizeRestoreFailures(
+  failures: readonly BulkRestoreFailure[],
+): Record<RestoreFailureKind, number> {
+  const resumo: Record<RestoreFailureKind, number> = {
+    permission: 0,
+    network: 0,
+    unknown: 0,
+  };
+  for (const falha of failures ?? []) {
+    if (!falha) continue;
+    resumo[falha.kind] = (resumo[falha.kind] ?? 0) + (falha.skillCount || 0);
+  }
+  return resumo;
+}
+
 /** Executa um plano já calculado, tolerando falha por template. */
 async function runRestorePlan(
   plano: ReadonlyArray<{ templateId: string; skillIds: string[] }>,
   nomes: ReadonlyMap<string, string> = new Map(),
+  maxAttempts: number = RESTORE_MAX_ATTEMPTS,
 ): Promise<BulkRestoreAllResult> {
   let restored = 0;
   const failures: BulkRestoreFailure[] = [];
 
   for (const grupo of plano) {
     if (grupo.skillIds.length === 0) continue;
-    try {
-      restored += await bulkRestoreTemplateSkillLinks(grupo.templateId, grupo.skillIds);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
+
+    let ultimaMensagem = '';
+    let ultimoTipo: RestoreFailureKind = 'unknown';
+    let sucesso = false;
+
+    for (let tentativa = 1; tentativa <= Math.max(1, maxAttempts); tentativa++) {
+      try {
+        restored += await bulkRestoreTemplateSkillLinks(grupo.templateId, grupo.skillIds);
+        sucesso = true;
+        break;
+      } catch (error) {
+        ultimaMensagem = error instanceof Error ? error.message : String(error);
+        ultimoTipo = classifyRestoreFailure(ultimaMensagem);
+        const podeReenviar = ultimoTipo === 'network' && tentativa < Math.max(1, maxAttempts);
+        logger.error('bulkRestoreAllRemovals attempt failed', {
+          templateId: grupo.templateId,
+          attempt: tentativa,
+          willRetry: podeReenviar,
+          error: ultimaMensagem,
+        });
+        if (!podeReenviar) break;
+        await dormir(restoreBackoffDelay(tentativa));
+      }
+    }
+
+    if (!sucesso) {
       failures.push({
         templateId: grupo.templateId,
         templateName: nomes.get(grupo.templateId) ?? grupo.templateId,
         skillCount: grupo.skillIds.length,
-        message,
-        kind: classifyRestoreFailure(message),
-      });
-      logger.error('bulkRestoreAllRemovals partial failure', {
-        templateId: grupo.templateId,
-        error: message,
+        message: ultimaMensagem,
+        kind: ultimoTipo,
       });
     }
   }
 
   return { restored, failedTemplates: failures.map((f) => f.templateId), failures };
 }
+
 
 /**
  * Restaura todas as remoções de um feed, um lote atômico por template.
