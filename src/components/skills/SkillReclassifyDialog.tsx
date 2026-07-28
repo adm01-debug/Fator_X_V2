@@ -202,6 +202,42 @@ export function SkillReclassifyDialog({
     URL.revokeObjectURL(url);
   }, [propostas]);
 
+  /**
+   * Enfileira as propostas selecionadas para revisão manual.
+   *
+   * Diferente de `aplicar`, este caminho não escreve no Registry: cria um
+   * registro auditável (antes/depois + evidência) que um administrador decide
+   * depois. Duplicatas não são erro — significam que a proposta já está na
+   * fila, e reportá-las como falha treinaria o curador a ignorar avisos.
+   */
+  const enviarParaRevisao = useCallback(async () => {
+    const lote = selectProposals(propostas, selecionados);
+    if (lote.length === 0) return;
+    setEnviando(true);
+    try {
+      const { queued, duplicates, failures } = await submitReclassificationReviews(lote);
+      if (queued > 0) {
+        toast.success(`${queued} proposta${queued === 1 ? '' : 's'} enviada${queued === 1 ? '' : 's'} para revisão.`);
+        onApplied();
+      }
+      if (duplicates.length > 0) {
+        toast.info(`${duplicates.length} já estavam na fila de revisão.`);
+      }
+      if (failures.length > 0) {
+        toast.error(`${failures.length} não puderam ser enfileiradas.`);
+      } else if (queued > 0) {
+        onOpenChange(false);
+      }
+    } catch (error) {
+      const mensagem =
+        error instanceof ReviewOperationError ? error.message : 'Não foi possível enviar para revisão.';
+      logger.error('submitReclassificationReviews failed', { error: (error as Error).message });
+      toast.error(mensagem);
+    } finally {
+      setEnviando(false);
+    }
+  }, [propostas, selecionados, onApplied, onOpenChange]);
+
   const aplicar = useCallback(async () => {
     const lote = selectProposals(propostas, selecionados);
     if (lote.length === 0) return;
