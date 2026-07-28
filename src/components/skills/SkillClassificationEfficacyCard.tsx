@@ -74,6 +74,25 @@ export function SkillClassificationEfficacyCard({
   const resumo = useMemo(() => summarizeEfficacy(decisoes), [decisoes]);
   const visiveis = useMemo(() => filterByVerdict(decisoes, filtro), [decisoes, filtro]);
 
+  /**
+   * O sugerido passa pelo mesmo normalizador do painel (quantização em 0,01 e
+   * clamp no piso/teto). Sem isso, aplicar poderia gravar um valor que o
+   * painel reescreveria logo em seguida — o botão pareceria não funcionar.
+   */
+  const sugerido = useMemo(
+    () =>
+      resumo.suggestedThreshold === null
+        ? null
+        : normalizeConfidenceThreshold(resumo.suggestedThreshold),
+    [resumo.suggestedThreshold],
+  );
+
+  const podeAplicar =
+    sugerido !== null &&
+    (currentThreshold === undefined ||
+      normalizeConfidenceThreshold(currentThreshold) !== sugerido);
+
+
   return (
     <Card>
       <CardHeader className="gap-2">
