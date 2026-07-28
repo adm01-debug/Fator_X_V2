@@ -37,9 +37,11 @@ import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Slider } from '@/components/ui/slider';
 import { departmentLabel } from '@/config/skill-departments';
 import {
   MAX_RECLASSIFY_BATCH,
+  MIN_RECLASSIFY_CONFIDENCE,
   buildReclassificationPlan,
   mergeLlmProposals,
   reclassificationToCsv,
@@ -95,7 +97,14 @@ export function SkillReclassifyDialog({
   candidates,
   onApplied,
 }: SkillReclassifyDialogProps) {
-  const plano = useMemo(() => buildReclassificationPlan(candidates), [candidates]);
+  // Limiar ajustável pelo curador. O piso é o default do módulo: afrouxar
+  // abaixo dele reabriria a porta para trocas sem evidência, que é exatamente
+  // o que o classificador existe para impedir. Só é possível ENDURECER.
+  const [limiar, setLimiar] = useState(MIN_RECLASSIFY_CONFIDENCE);
+  const plano = useMemo(
+    () => buildReclassificationPlan(candidates, { minConfidence: limiar }),
+    [candidates, limiar],
+  );
   const [desmarcados, setDesmarcados] = useState<Set<string>>(new Set());
   const [aplicando, setAplicando] = useState(false);
   const [enviando, setEnviando] = useState(false);
@@ -301,6 +310,31 @@ export function SkillReclassifyDialog({
             </Badge>
           )}
         </div>
+
+        <div className="rounded-lg border border-border bg-card/40 px-3 py-2 space-y-2">
+          <div className="flex items-center justify-between gap-3">
+            <label htmlFor="limiar-confianca" className="text-meta text-muted-foreground">
+              Confiança mínima para propor
+            </label>
+            <span className="text-body-sm font-medium tabular-nums">{limiar.toFixed(2)}</span>
+          </div>
+          <Slider
+            id="limiar-confianca"
+            value={[limiar]}
+            min={MIN_RECLASSIFY_CONFIDENCE}
+            max={0.95}
+            step={0.05}
+            disabled={aplicando || classificando || enviando}
+            onValueChange={(v) => setLimiar(v[0] ?? MIN_RECLASSIFY_CONFIDENCE)}
+            aria-label="Confiança mínima para propor reclassificação"
+          />
+          <p className="text-meta text-muted-foreground">
+            O piso é {MIN_RECLASSIFY_CONFIDENCE.toFixed(2)} e não pode ser afrouxado. Subir o limiar
+            reduz propostas e descarta as sugestões de IA já geradas neste recorte.
+          </p>
+        </div>
+
+
 
         {plano.llmCandidates.length > 0 && (
           <div className="rounded-lg border border-border bg-muted/30 p-3 space-y-2">
