@@ -14,9 +14,13 @@ import {
   MIN_RECLASSIFY_MARGIN,
   MIN_RECLASSIFY_MARGIN_OVERRIDE,
   buildReclassificationPlan,
+  mergeLlmProposals,
+  proposalFromLlmVerdict,
   reclassificationToCsv,
   selectProposals,
+  type LlmFallbackCandidate,
   type ReclassifyCandidate,
+  type ReclassifyProposal,
 } from '@/lib/skills/departmentReclassification';
 
 /** PRNG determinístico (mulberry32) — mesma semente, mesmos cenários. */
