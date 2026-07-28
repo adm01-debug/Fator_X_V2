@@ -323,6 +323,7 @@ Deno.serve(async (req) => {
     // Validação final no servidor. O modelo pode ignorar as regras do prompt;
     // estas checagens não são negociáveis com ele.
     if (texto.length < MIN_DESCRIPTION) return vazio('Descrição gerada curta demais.');
+    if (isPlaceholderDescription(texto)) return vazio('Descrição gerada é um marcador sem conteúdo.');
     if (isEcho(texto, nome, slug)) return vazio('Descrição apenas repete o nome da skill.');
 
     return json(
