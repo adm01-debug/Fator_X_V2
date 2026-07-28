@@ -14,9 +14,19 @@
  *  - `curated_by` / `curated_at` são preenchidos por trigger no banco, não
  *    pelo cliente — cliente não é fonte confiável de identidade.
  */
+import { supabase } from '@/integrations/supabase/client';
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import { logger } from '@/lib/logger';
-import type { ReclassifyProposal } from '@/lib/skills/departmentReclassification';
+import {
+  proposalFromLlmVerdict,
+  type LlmFallbackCandidate,
+  type ReclassifyProposal,
+} from '@/lib/skills/departmentReclassification';
+import {
+  QueueWorkerError,
+  runBatchQueue,
+  type QueueSnapshot,
+} from '@/lib/skills/llmClassificationQueue';
 
 export type ReclassifyFailureKind = 'permission' | 'conflict' | 'network' | 'unknown';
 
