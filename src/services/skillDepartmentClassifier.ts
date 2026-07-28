@@ -47,6 +47,31 @@ const LEXICON_SETS: Record<SkillDepartment, Set<string>> = Object.fromEntries(
   SKILL_DEPARTMENTS.map((d) => [d, new Set(DEPARTMENT_META[d].lexicon)]),
 ) as Record<SkillDepartment, Set<string>>;
 
+/**
+ * Vocabulário de PLATAFORMA — presente em praticamente toda skill do catálogo
+ * ("agent", "skill", "llm", "prompt", "claude"...). Termos assim têm frequência
+ * de documento próxima de 1: não discriminam departamento algum, apenas somam
+ * ruído. A simulação sobre as 142 skills reais mostrou que incluí-los no léxico
+ * de TI sequestrava skills de domínio legítimas (TradingAgents → TI,
+ * eCommerce Skills → TI). Removê-los antes da pontuação é o equivalente léxico
+ * de um filtro IDF: preserva o sinal de domínio e devolve agregadores puros ao
+ * balde `transversal`, que é onde eles pertencem.
+ */
+export const PLATFORM_STOPWORDS = new Set<string>([
+  'ai', 'ia', 'agent', 'agents', 'agentic', 'agente', 'agentes',
+  'skill', 'skills', 'habilidade', 'habilidades',
+  'llm', 'llms', 'gpt', 'prompt', 'prompts', 'prompting',
+  'claude', 'codex', 'cursor', 'copilot', 'anthropic', 'openai', 'gemini',
+  'mcp', 'chatgpt', 'assistant', 'assistente', 'model', 'modelos',
+  'tool', 'tools', 'ferramenta', 'ferramentas', 'usar', 'use', 'using',
+]);
+
+function dropStopwords(tokens: Set<string>): Set<string> {
+  const limpos = new Set<string>();
+  for (const t of tokens) if (!PLATFORM_STOPWORDS.has(t)) limpos.add(t);
+  return limpos;
+}
+
 function hitRate(tokens: Set<string>, lexicon: Set<string>): { rate: number; hits: string[] } {
   if (tokens.size === 0) return { rate: 0, hits: [] };
   const hits: string[] = [];
@@ -58,10 +83,13 @@ function hitRate(tokens: Set<string>, lexicon: Set<string>): { rate: number; hit
 
 export function classifyDepartment(input: ClassifierInput): DepartmentClassification {
   const primaryText = [input.name, input.description ?? ''].join(' ');
-  const primaryTokens = tokenize(primaryText);
-  const tagTokens = tokenize((input.tags ?? []).join(' '));
+  const primaryTokens = dropStopwords(tokenize(primaryText));
+  const tagTokens = dropStopwords(tokenize((input.tags ?? []).join(' ')));
   // Conteúdo bruto é truncado para limitar custo e ruído.
-  const contentTokens = input.content ? tokenize(input.content.slice(0, 4000)) : new Set<string>();
+  const contentTokens = input.content
+    ? dropStopwords(tokenize(input.content.slice(0, 4000)))
+    : new Set<string>();
+
 
   const ranking: Array<{ department: SkillDepartment; score: number }> = [];
   let bestHits: string[] = [];
