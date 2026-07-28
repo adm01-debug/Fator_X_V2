@@ -34,6 +34,8 @@ interface TestResult {
   model_used: string;
   cost_usd: number;
   cost_brl: number;
+  /** Quantas skills foram efetivamente enviadas para injeção no prompt. */
+  skills_injected: number;
 }
 
 function formatBrl(brl: number): string {
@@ -104,6 +106,7 @@ export function QuickAgentTestPanel({ form, skillIds = [] }: Props) {
     setLoading(true);
     setError(null);
     setResult(null);
+    const resolvedSkills = await resolveSkills();
     try {
       const { data, error: invokeError } = await supabaseExternal.functions.invoke(
         'quick-agent-test',
@@ -112,7 +115,7 @@ export function QuickAgentTestPanel({ form, skillIds = [] }: Props) {
             system_prompt: form.prompt,
             user_message: userInput.trim(),
             model: form.model,
-            skills: await resolveSkills(),
+            skills: resolvedSkills,
           },
         },
       );
@@ -136,6 +139,7 @@ export function QuickAgentTestPanel({ form, skillIds = [] }: Props) {
         model_used: String(payload.model_used ?? form.model),
         cost_usd: costUsd,
         cost_brl: costUsd * USD_TO_BRL,
+        skills_injected: resolvedSkills.length,
       };
       setResult(r);
       toast.success('Teste executado', { description: `${formatLatency(r.latency_ms)} · ${formatBrl(r.cost_brl)}` });
@@ -283,6 +287,14 @@ export function QuickAgentTestPanel({ form, skillIds = [] }: Props) {
             <div className="flex items-center justify-between gap-2">
               <p className="text-meta uppercase tracking-wider text-nexus-emerald font-semibold flex items-center gap-1.5">
                 <CheckCircle2 className="h-3 w-3" /> Resposta do agente
+                {result.skills_injected > 0 && (
+                  <span
+                    title="Skills instaladas injetadas no system prompt desta execução"
+                    className="ml-1 rounded-full border border-primary/30 bg-primary/10 px-1.5 py-px text-meta font-mono text-primary normal-case tracking-normal"
+                  >
+                    {result.skills_injected} skill{result.skills_injected > 1 ? 's' : ''} injetada{result.skills_injected > 1 ? 's' : ''}
+                  </span>
+                )}
               </p>
               <Button
                 type="button"
