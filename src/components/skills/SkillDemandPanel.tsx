@@ -14,6 +14,7 @@ import {
   HelpCircle,
   Loader2,
   RefreshCw,
+  Sparkles,
   TrendingDown,
   Wand2,
 } from 'lucide-react';
@@ -82,6 +83,11 @@ export function SkillDemandPanel() {
   const [rows, setRows] = useState<SkillDemandRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [reclassificarAberto, setReclassificarAberto] = useState(false);
+  /** Dispara o lote de IA assim que o diálogo abrir (atalho "Sem depto."). */
+  const [autoIa, setAutoIa] = useState(false);
+  /** Aguardando o recorte "Sem depto." ser aplicado para então abrir a IA. */
+  const [iaPendente, setIaPendente] = useState(false);
+
 
   const { filters: prefsBrutas, setFilters: setPrefs, clearAll } = useFilterPersistence<
     Record<string, unknown>
@@ -133,6 +139,18 @@ export function SkillDemandPanel() {
   useEffect(() => {
     void carregar();
   }, [carregar]);
+
+  /**
+   * Abre o diálogo com auto-disparo apenas DEPOIS que o recorte "Sem depto."
+   * está de fato em vigor — abrir antes classificaria o filtro anterior.
+   */
+  useEffect(() => {
+    if (!iaPendente || loading) return;
+    if (deptFilter !== 'none') return;
+    setIaPendente(false);
+    setAutoIa(true);
+    setReclassificarAberto(true);
+  }, [iaPendente, loading, deptFilter]);
 
   const resumo = useMemo(() => summarizeSkillDemand(rows), [rows]);
   const porDepartamento = useMemo(() => countByDepartment(rows), [rows]);
@@ -315,6 +333,34 @@ export function SkillDemandPanel() {
             Sem depto. ({porDepartamento.none ?? 0})
           </Button>
 
+          {/* Consequência direta da fila acima: skills sem departamento não têm
+              evidência léxica (por isso ficaram sem rótulo), então o único
+              caminho automático restante é o fallback LLM. O atalho troca o
+              recorte E abre o diálogo já disparando o lote — as propostas
+              continuam nascendo desmarcadas, nada é escrito sem curadoria. */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              if (deptFilter === 'none') {
+                setAutoIa(true);
+                setReclassificarAberto(true);
+                return;
+              }
+              // Troca o recorte primeiro: abrir agora usaria os candidatos do
+              // filtro ANTERIOR e gastaria créditos no lote errado.
+              atualizarPrefs({ department: 'none', tier: 'all', onlyNeedsReview: false });
+              setIaPendente(true);
+            }}
+            disabled={loading || (porDepartamento.none ?? 0) === 0}
+            title="Envia as skills sem departamento para classificação por IA em lote"
+          >
+            <Sparkles className="h-4 w-4 mr-2" aria-hidden />
+            Sugerir depto. com IA
+          </Button>
+
+
+
           <Button
             variant="ghost"
             size="sm"
@@ -389,7 +435,13 @@ export function SkillDemandPanel() {
 
       <SkillReclassifyDialog
         open={reclassificarAberto}
-        onOpenChange={setReclassificarAberto}
+        onOpenChange={(aberto) => {
+          setReclassificarAberto(aberto);
+          // Fechar encerra a intenção de auto-disparo; reabrir manualmente
+          // não pode gastar créditos sem o curador pedir.
+          if (!aberto) setAutoIa(false);
+        }}
+        autoRunLlm={autoIa}
         candidates={candidatos}
         confidenceThreshold={confidenceThreshold}
         onConfidenceThresholdChange={(v) => atualizarPrefs({ confidenceThreshold: v })}

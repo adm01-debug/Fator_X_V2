@@ -94,6 +94,14 @@ export interface SkillReclassifyDialogProps {
   confidenceThreshold?: number;
   /** Notifica o dono das preferências para persistir a escolha. */
   onConfidenceThresholdChange?: (value: number) => void;
+  /**
+   * Dispara a classificação por IA assim que o diálogo abre com candidatos
+   * sem evidência léxica. Usado pelo atalho "Sugerir depto. com IA" da fila
+   * "Sem depto." — abrir o diálogo e pedir mais um clique seria fricção pura,
+   * já que aquele recorte existe justamente porque o léxico falhou.
+   * Nada é escrito: as propostas continuam nascendo DESMARCADAS.
+   */
+  autoRunLlm?: boolean;
   /** Chamado após aplicar com sucesso ao menos uma troca. */
   onApplied: () => void;
 }
@@ -104,8 +112,10 @@ export function SkillReclassifyDialog({
   candidates,
   confidenceThreshold,
   onConfidenceThresholdChange,
+  autoRunLlm = false,
   onApplied,
 }: SkillReclassifyDialogProps) {
+
   // Limiar ajustável pelo curador, persistido nas preferências. O piso é o
   // default do módulo: afrouxar abaixo dele reabriria a porta para trocas sem
   // evidência, que é exatamente o que o classificador existe para impedir.
@@ -218,10 +228,35 @@ export function SkillReclassifyDialog({
     }
   }, [plano]);
 
+  /**
+   * Auto-disparo do lote de IA quando o diálogo é aberto pelo atalho da fila
+   * "Sem depto.".
+   *
+   * O marcador é por PLANO (identidade do objeto memoizado), não um booleano
+   * global: se o curador ajustar o limiar ou o recorte mudar, um novo plano
+   * nasce e merece um novo lote. Sem esse controle, o efeito re-dispararia a
+   * cada render e queimaria créditos em duplicidade.
+   */
+  const autoDisparadoRef = useRef<unknown>(null);
+  useEffect(() => {
+    if (!open || !autoRunLlm) return;
+    if (classificando) return;
+    if (autoDisparadoRef.current === plano) return;
+    if (plano.llmCandidates.length === 0) return;
+    autoDisparadoRef.current = plano;
+    void classificarComIa();
+  }, [open, autoRunLlm, plano, classificando, classificarComIa]);
+
+  // Fechar zera o marcador: reabrir é uma intenção nova do curador.
+  useEffect(() => {
+    if (!open) autoDisparadoRef.current = null;
+  }, [open]);
+
   const cancelarIa = useCallback(() => {
     abortRef.current?.abort();
     setClassificando(false);
   }, []);
+
 
   const exportar = useCallback(() => {
     const blob = new Blob([reclassificationToCsv(propostas)], {
