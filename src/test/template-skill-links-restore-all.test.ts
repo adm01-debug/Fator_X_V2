@@ -8,6 +8,8 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 import {
   groupRemovalsByTemplate,
   bulkRestoreAllRemovals,
+  shouldConfirmBulkRestore,
+  BULK_RESTORE_CONFIRM_THRESHOLD,
   type CurationFeedDay,
 } from '@/services/templateSkillLinkService';
 
@@ -125,5 +127,28 @@ describe('bulkRestoreAllRemovals', () => {
     ]);
 
     expect(resultado).toEqual({ restored: 1, failedTemplates: ['t1'] });
+  });
+});
+
+describe('shouldConfirmBulkRestore', () => {
+  it('não confirma lotes pequenos', () => {
+    expect(shouldConfirmBulkRestore(1)).toBe(false);
+    expect(shouldConfirmBulkRestore(BULK_RESTORE_CONFIRM_THRESHOLD - 1)).toBe(false);
+  });
+
+  it('confirma a partir do limiar', () => {
+    expect(shouldConfirmBulkRestore(BULK_RESTORE_CONFIRM_THRESHOLD)).toBe(true);
+    expect(shouldConfirmBulkRestore(999)).toBe(true);
+  });
+
+  it('trata zero, negativos e NaN como "sem confirmação"', () => {
+    expect(shouldConfirmBulkRestore(0)).toBe(false);
+    expect(shouldConfirmBulkRestore(-3)).toBe(false);
+    expect(shouldConfirmBulkRestore(Number.NaN)).toBe(false);
+  });
+
+  it('aceita limiar customizado', () => {
+    expect(shouldConfirmBulkRestore(2, 2)).toBe(true);
+    expect(shouldConfirmBulkRestore(2, 3)).toBe(false);
   });
 });
