@@ -155,11 +155,19 @@ export function compilePrompt(input: CompilePromptInput): CompiledPrompt {
   }
 
   const metaLine = `<!-- meta: tipo=${input.type} · modelo=${input.model} · data=${vars.date} -->`;
+  const skillsSection = buildSkillsSection(input.skills);
 
-  const text = [headerLines.join('\n'), interpolated.trim(), '', metaLine]
+  const text = [
+    headerLines.join('\n'),
+    interpolated.trim(),
+    skillsSection ? `\n${skillsSection}` : '',
+    '',
+    metaLine,
+  ]
     .filter((s) => s.length > 0)
     .join('\n')
     .trim();
+
 
   const words = text.split(/\s+/).filter(Boolean).length;
   const lines = text.split('\n').length;
