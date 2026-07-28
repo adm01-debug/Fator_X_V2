@@ -126,16 +126,22 @@ Deno.serve(async (req: Request) => {
 
     const mode = resolveMode();
 
-    // Monta as queries
+    // Monta as queries.
+    // Modo dirigido (`repos`): o curador aponta monorepos conhecidos e a busca
+    // por palavra-chave é suprimida — economiza a cota de search da API e evita
+    // trazer ruído quando o alvo já é conhecido.
+    const directMode = body.repos.length > 0;
     const departments: SkillDepartment[] =
       body.departments.length > 0 ? body.departments : [...SKILL_DEPARTMENTS];
-    const topics = body.topics.length > 0 ? body.topics : DEFAULT_TOPICS;
+    const topics = directMode ? [] : (body.topics.length > 0 ? body.topics : DEFAULT_TOPICS);
 
-    const queries: string[] = [
-      ...topics.map((t) => `topic:${t} stars:>=${body.minStars}`),
-      ...departments.flatMap((d) => DEPARTMENT_QUERIES[d].map((q) => `${q} in:name,description,readme stars:>=${body.minStars}`)),
-      ...body.extraQueries,
-    ];
+    const queries: string[] = directMode
+      ? body.repos.map((r) => `repo:${r}`)
+      : [
+          ...topics.map((t) => `topic:${t} stars:>=${body.minStars}`),
+          ...departments.flatMap((d) => DEPARTMENT_QUERIES[d].map((q) => `${q} in:name,description,readme stars:>=${body.minStars}`)),
+          ...body.extraQueries,
+        ];
 
     // Registra a run
     const { data: run, error: runErr } = await admin
@@ -160,21 +166,35 @@ Deno.serve(async (req: Request) => {
     const repos: GhRepo[] = [];
     const errors: string[] = [];
 
-    for (const q of queries) {
-      if (repos.length >= body.maxRepos) break;
-      const res = await searchRepos(q, Math.min(30, body.maxRepos));
-      if (!res.ok) {
-        errors.push(`[${res.status}] ${q}: ${(res.errorBody ?? '').slice(0, 160)}`);
-        if (res.retryAfterMs && res.retryAfterMs >= 20_000) break; // rate limit duro
-        continue;
+    if (directMode) {
+      for (const full of body.repos) {
+        if (seenRepos.has(full)) continue;
+        const res = await ghGet<GhRepo>(`repos/${full}`);
+        if (!res.ok || !res.data) {
+          errors.push(`[${res.status}] repos/${full}: ${(res.errorBody ?? '').slice(0, 160)}`);
+          continue;
+        }
+        seenRepos.add(full);
+        repos.push(res.data);
       }
-      for (const r of res.data?.items ?? []) {
-        if (seenRepos.has(r.full_name)) continue;
-        seenRepos.add(r.full_name);
-        repos.push(r);
+    } else {
+      for (const q of queries) {
         if (repos.length >= body.maxRepos) break;
+        const res = await searchRepos(q, Math.min(30, body.maxRepos));
+        if (!res.ok) {
+          errors.push(`[${res.status}] ${q}: ${(res.errorBody ?? '').slice(0, 160)}`);
+          if (res.retryAfterMs && res.retryAfterMs >= 20_000) break; // rate limit duro
+          continue;
+        }
+        for (const r of res.data?.items ?? []) {
+          if (seenRepos.has(r.full_name)) continue;
+          seenRepos.add(r.full_name);
+          repos.push(r);
+          if (repos.length >= body.maxRepos) break;
+        }
       }
     }
+
 
     // ─── Extração de candidatos
     const candidates: CandidateRow[] = [];
