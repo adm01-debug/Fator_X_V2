@@ -42,6 +42,8 @@ import {
 } from '@/lib/skills/skillDemand';
 import { useFilterPersistence } from '@/hooks/useFilterPersistence';
 import { SkillReclassifyDialog } from '@/components/skills/SkillReclassifyDialog';
+import { SkillClassificationEfficacyCard } from '@/components/skills/SkillClassificationEfficacyCard';
+
 import { SkillReclassificationReviewPanel } from '@/components/skills/SkillReclassificationReviewPanel';
 import { SkillDescriptionEnrichPanel } from '@/components/skills/SkillDescriptionEnrichPanel';
 import {
