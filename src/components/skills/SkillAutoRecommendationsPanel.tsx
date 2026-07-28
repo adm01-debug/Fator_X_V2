@@ -84,6 +84,31 @@ export function SkillAutoRecommendationsPanel() {
     }
   };
 
+  /** Recomendações ainda não instaladas — base do botão "Adicionar todas". */
+  const pendingIds = useMemo(
+    () => recommendations.map((r) => r.skill.id).filter((id) => !installedIds.has(id)),
+    [recommendations, installedIds],
+  );
+
+  const handleInstallAll = async () => {
+    if (!agentId || pendingIds.length === 0) return;
+    setInstallingAll(true);
+    try {
+      const { installed: ok, skipped } = await bulkInstallSkills(agentId, pendingIds);
+      await queryClient.invalidateQueries({ queryKey: ['installed_skills', agentId] });
+      const parts: string[] = [];
+      if (ok.length > 0) parts.push(`${ok.length} adicionada(s)`);
+      if (skipped.length > 0) parts.push(`${skipped.length} já instalada(s)`);
+      toast.success('Sugestões aplicadas', { description: parts.join(' · ') });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Falha ao instalar';
+      toast.error('Erro ao adicionar skills', { description: msg });
+    } finally {
+      setInstallingAll(false);
+    }
+  };
+
+
   return (
     <Card className="border-nexus-amber/20">
       <CardHeader>
