@@ -533,10 +533,22 @@ export default function SkillHarvestPage() {
                 )}
               </div>
 
-              <Button onClick={() => void handleHarvest()} disabled={harvesting} className="w-full sm:w-auto">
-                {harvesting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-                {harvesting ? 'Varrendo o GitHub…' : 'Executar varredura'}
-              </Button>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <Button onClick={() => void handleHarvest()} disabled={harvesting} className="w-full sm:w-auto">
+                  {harvesting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+                  {harvesting ? 'Varrendo o GitHub…' : 'Executar varredura'}
+                </Button>
+
+                {harvesting && (
+                  <Button
+                    variant="outline"
+                    className="w-full sm:w-auto"
+                    onClick={() => abortRef.current?.abort()}
+                  >
+                    Interromper
+                  </Button>
+                )}
+              </div>
 
               {harvestProgress && (
                 <div
