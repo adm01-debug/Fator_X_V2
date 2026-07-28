@@ -6,6 +6,7 @@ import { parseBody, z } from '../_shared/validation.ts';
 import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { appendSkillsToPrompt, loadAgentSkills } from "../_shared/skills.ts";
 const WorkflowRunSchema = z.object({
   workflow_id: z.string().uuid(),
   input: z.union([z.record(z.unknown()), z.string(), z.number(), z.boolean(), z.null(), z.array(z.unknown())]).optional(),
