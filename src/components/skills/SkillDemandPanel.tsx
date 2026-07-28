@@ -40,6 +40,7 @@ import {
 } from '@/lib/skills/skillDemand';
 import { useFilterPersistence } from '@/hooks/useFilterPersistence';
 import { SkillReclassifyDialog } from '@/components/skills/SkillReclassifyDialog';
+import { SkillReclassificationReviewPanel } from '@/components/skills/SkillReclassificationReviewPanel';
 import type { ReclassifyCandidate } from '@/lib/skills/departmentReclassification';
 import { logger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
