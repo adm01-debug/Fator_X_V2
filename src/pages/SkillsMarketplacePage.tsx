@@ -177,8 +177,12 @@ export default function SkillsMarketplacePage() {
         <p className="text-meta text-muted-foreground text-center">
           {skills.length} de {data.total} skills
           {license !== 'all' && ' (filtro de licença ativo)'}
+          {/* 'local' = a preferência ficou só neste navegador (offline ou sem
+              sessão). Avisar evita a surpresa de perder o filtro noutra máquina. */}
+          {syncStatus === 'local' && ' · preferência salva apenas neste dispositivo'}
         </p>
       )}
+
 
 
       <ProgressiveSkillLoaderPanel />
