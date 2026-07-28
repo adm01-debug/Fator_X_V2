@@ -28,6 +28,28 @@ import { classifyDepartment } from '@/services/skillDepartmentClassifier';
  */
 export const MIN_RECLASSIFY_CONFIDENCE = 0.25;
 
+/**
+ * Margem mínima entre o 1º e o 2º colocado do ranking.
+ *
+ * Por quê: a simulação com o catálogo real mostrou margem média de apenas
+ * 0.084 — o léxico tem colisões PT/EN legítimas ("stock" = ação/estoque,
+ * "documentação" pontua em executivo e ti). Confiança absoluta alta com
+ * segundo colocado colado é um empate, não uma decisão; propor a troca nesse
+ * caso troca um erro por outro. Exigir separação elimina a classe inteira de
+ * falsos positivos por ambiguidade léxica.
+ */
+export const MIN_RECLASSIFY_MARGIN = 0.08;
+
+/**
+ * Barra elevada para skills que JÁ possuem departamento.
+ *
+ * Sobrescrever curadoria existente (humana ou de harvest) é destrutivo; então
+ * uma reclassificação só vale a pena com evidência substancialmente mais forte
+ * do que a exigida para preencher um campo vazio.
+ */
+export const MIN_RECLASSIFY_CONFIDENCE_OVERRIDE = 0.35;
+export const MIN_RECLASSIFY_MARGIN_OVERRIDE = 0.12;
+
 /** Teto de itens aplicados numa única rodada (protege contra clique acidental). */
 export const MAX_RECLASSIFY_BATCH = 50;
 
