@@ -25,6 +25,8 @@ import {
   listSkills,
   getInstalledSkills,
   installSkill,
+  bulkInstallSkills,
+
   uninstallSkill,
   type AgentSkillDefinition,
 } from '@/services/skillsRegistryService';
