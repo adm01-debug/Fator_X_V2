@@ -159,12 +159,16 @@ export function SkillDemandPanel() {
   const resumo = useMemo(() => summarizeSkillDemand(rows), [rows]);
   const porDepartamento = useMemo(() => countByDepartment(rows), [rows]);
   const pendentesRevisao = useMemo(() => countNeedsReview(rows), [rows]);
+  const porOrigem = useMemo(() => countBySource(rows), [rows]);
 
   const visiveis = useMemo(() => {
     const termo = search.trim().toLowerCase();
-    const porFaixa = filterByNeedsReview(
-      filterByDepartment(filterByDemand(rows, filter), deptFilter),
-      onlyNeedsReview,
+    const porFaixa = filterBySource(
+      filterByNeedsReview(
+        filterByDepartment(filterByDemand(rows, filter), deptFilter),
+        onlyNeedsReview,
+      ),
+      sourceFilter,
     );
     if (!termo) return porFaixa;
     return porFaixa.filter(
@@ -173,7 +177,8 @@ export function SkillDemandPanel() {
         row.slug.toLowerCase().includes(termo) ||
         (row.sourceRepo ?? '').toLowerCase().includes(termo),
     );
-  }, [rows, filter, deptFilter, search, onlyNeedsReview]);
+  }, [rows, filter, deptFilter, search, onlyNeedsReview, sourceFilter]);
+
 
   /** O recorte visível é exatamente o universo oferecido à reclassificação. */
   const candidatos = useMemo<ReclassifyCandidate[]>(
