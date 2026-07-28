@@ -34,9 +34,9 @@ import {
   SKILL_DEPARTMENTS, DEPARTMENT_META, departmentLabel, type SkillDepartment,
 } from '@/config/skill-departments';
 import {
-  runHarvest, listCandidates, listRuns, promoteCandidate, bulkUpdateStatus,
+  runHarvest, runHarvestAllBatches, listCandidates, listRuns, promoteCandidate, bulkUpdateStatus,
   updateCandidate, getDepartmentCoverage,
-  type HarvestCandidate, type HarvestRun, type CandidateStatus,
+  type HarvestCandidate, type HarvestRun, type CandidateStatus, type HarvestBatchResult,
 } from '@/services/skillHarvestService';
 
 const STATUS_LABEL: Record<CandidateStatus, string> = {
@@ -49,13 +49,30 @@ const STATUS_LABEL: Record<CandidateStatus, string> = {
 
 const COVERAGE_TARGET = 5;
 
+/**
+ * Teto de invocações encadeadas por clique. Protege contra um monorepo
+ * absurdo consumir cota indefinidamente; o curador pode rodar de novo e a
+ * varredura continua a partir dos candidatos já gravados.
+ */
+const MAX_HARVEST_BATCHES = 12;
+
+/** Progresso da varredura em lotes exibido durante o modo dirigido. */
+interface HarvestProgress {
+  batch: number;
+  processed: number;
+  total: number;
+  inserted: number;
+}
+
 export default function SkillHarvestPage() {
   const [candidates, setCandidates] = useState<HarvestCandidate[]>([]);
   const [runs, setRuns] = useState<HarvestRun[]>([]);
   const [coverage, setCoverage] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const [harvesting, setHarvesting] = useState(false);
+  const [harvestProgress, setHarvestProgress] = useState<HarvestProgress | null>(null);
   const [rebuilding, setRebuilding] = useState(false);
+
 
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
@@ -108,24 +125,80 @@ export default function SkillHarvestPage() {
 
   const handleHarvest = async () => {
     setHarvesting(true);
+    setHarvestProgress(null);
     try {
       const directMode = parsedRepos.length > 0;
-      const result = await runHarvest({
-        departments: Array.from(pickedDepts),
-        minStars,
-        maxRepos,
-        repos: parsedRepos,
-        // Monorepos trazem centenas de SKILL.md; sem elevar os tetos a
-        // varredura pararia nos 8 primeiros arquivos.
-        filesPerRepo: directMode ? filesPerRepo : 8,
-        maxCandidates: directMode ? Math.min(1000, filesPerRepo * parsedRepos.length) : 120,
-      });
 
-      toast.success('Varredura concluída', {
-        description: `${result.found} candidatos encontrados, ${result.inserted} novos, ${result.rejected} rejeitados automaticamente.`,
+      if (!directMode) {
+        const result = await runHarvest({
+          departments: Array.from(pickedDepts),
+          minStars,
+          maxRepos,
+          filesPerRepo: 8,
+          maxCandidates: 120,
+        });
+        toast.success('Varredura concluída', {
+          description: `${result.found} candidatos encontrados, ${result.inserted} novos, ${result.rejected} rejeitados automaticamente.`,
+        });
+        if (result.errors.length > 0) {
+          toast.warning(`${result.errors.length} consulta(s) falharam`, { description: result.errors[0] });
+        }
+        await load();
+        return;
+      }
+
+      // Modo dirigido: monorepos com centenas de SKILL.md não cabem numa única
+      // invocação (limite de tempo da Edge Function). Encadeamos lotes e
+      // mostramos o progresso ao curador em vez de arriscar um timeout.
+      let found = 0;
+      let inserted = 0;
+      let rejected = 0;
+      const allErrors: string[] = [];
+
+      const batches = await runHarvestAllBatches(
+        {
+          departments: Array.from(pickedDepts),
+          minStars,
+          maxRepos,
+          repos: parsedRepos,
+          filesPerRepo,
+          maxCandidates: Math.min(1000, filesPerRepo * parsedRepos.length),
+        },
+        {
+          maxBatches: MAX_HARVEST_BATCHES,
+          onBatch: (batch: HarvestBatchResult, index: number) => {
+            found += batch.found;
+            inserted += batch.inserted;
+            rejected += batch.rejected;
+            allErrors.push(...batch.errors);
+            const total = Object.values(batch.repoFileTotals).reduce<number>(
+              (acc, n) => Math.max(acc, Number(n) || 0),
+              0,
+            );
+
+            setHarvestProgress({
+              batch: index + 1,
+              processed: batch.nextFileOffset,
+              total,
+              inserted,
+            });
+          },
+        },
+      );
+
+      const last = batches[batches.length - 1];
+      const incomplete = Boolean(last?.truncated);
+
+      toast.success(`Varredura concluída em ${batches.length} lote(s)`, {
+        description: `${found} candidatos encontrados, ${inserted} novos, ${rejected} rejeitados automaticamente.`,
       });
-      if (result.errors.length > 0) {
-        toast.warning(`${result.errors.length} consulta(s) falharam`, { description: result.errors[0] });
+      if (incomplete) {
+        toast.warning('Varredura parcial', {
+          description: `Teto de ${MAX_HARVEST_BATCHES} lotes atingido. Rode novamente para continuar de onde parou.`,
+        });
+      }
+      if (allErrors.length > 0) {
+        toast.warning(`${allErrors.length} consulta(s) falharam`, { description: allErrors[0] });
       }
       await load();
     } catch (e) {
@@ -134,8 +207,10 @@ export default function SkillHarvestPage() {
       });
     } finally {
       setHarvesting(false);
+      setHarvestProgress(null);
     }
   };
+
 
   /**
    * Recalcula os vínculos automáticos entre os templates de agentes e as
@@ -408,11 +483,15 @@ export default function SkillHarvestPage() {
                 </div>
                 {parsedRepos.length > 0 && (
                   <div className="space-y-1.5 pt-2">
-                    <Label htmlFor="filesPerRepo">Máximo de SKILL.md por repositório</Label>
+                    <Label htmlFor="filesPerRepo">SKILL.md por lote (por repositório)</Label>
                     <Input
                       id="filesPerRepo" type="number" min={1} max={1000} value={filesPerRepo}
                       onChange={(e) => setFilesPerRepo(Math.min(1000, Math.max(1, Number(e.target.value) || 1)))}
                     />
+                    <span className="text-meta text-muted-foreground">
+                      A varredura é encadeada automaticamente em até {MAX_HARVEST_BATCHES} lotes, então
+                      um monorepo com centenas de skills é coberto sem estourar o tempo de execução.
+                    </span>
                   </div>
                 )}
               </div>
@@ -421,6 +500,34 @@ export default function SkillHarvestPage() {
                 {harvesting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
                 {harvesting ? 'Varrendo o GitHub…' : 'Executar varredura'}
               </Button>
+
+              {harvestProgress && (
+                <div
+                  className="space-y-1.5 rounded-md border border-border/60 bg-muted/30 p-3"
+                  role="status"
+                  aria-live="polite"
+                >
+                  <div className="flex items-center justify-between text-meta text-muted-foreground">
+                    <span>
+                      Lote {harvestProgress.batch} de até {MAX_HARVEST_BATCHES} ·{' '}
+                      {harvestProgress.processed}
+                      {harvestProgress.total > 0 ? ` / ${harvestProgress.total}` : ''} arquivos lidos
+                    </span>
+                    <span>{harvestProgress.inserted} novos</span>
+                  </div>
+                  {harvestProgress.total > 0 && (
+                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-border">
+                      <div
+                        className="h-full rounded-full bg-primary transition-all duration-500"
+                        style={{
+                          width: `${Math.min(100, Math.round((harvestProgress.processed / harvestProgress.total) * 100))}%`,
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+
 
               <p className="text-meta text-muted-foreground">
                 Skills com licença bloqueada, segredos embutidos ou padrões de prompt-injection são

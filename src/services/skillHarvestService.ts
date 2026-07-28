@@ -94,25 +94,49 @@ function toCandidate(row: RawRow): HarvestCandidate {
   };
 }
 
-/** Dispara a varredura no GitHub (Edge Function server-side). */
-export async function runHarvest(params: {
+/** Resultado de um lote de varredura. */
+export interface HarvestBatchResult {
+  runId: string;
+  found: number;
+  inserted: number;
+  rejected: number;
+  errors: string[];
+  /** Deslocamento usado nesta chamada. */
+  fileOffset: number;
+  /** Onde o próximo lote deve começar. */
+  nextFileOffset: number;
+  /** Ainda restam arquivos por ler nos repositórios alvo. */
+  truncated: boolean;
+  /** Total de SKILL.md por repositório — permite mostrar progresso real. */
+  repoFileTotals: Record<string, number>;
+  durationMs: number;
+}
+
+export interface HarvestParams {
   departments?: SkillDepartment[];
   topics?: string[];
   /** Monorepos alvo (`owner/repo`). Quando informado, a busca por queries é ignorada. */
   repos?: string[];
   /** Teto de SKILL.md lidos por repositório (monorepos exigem valores altos). */
   filesPerRepo?: number;
+  /** Deslocamento na lista ordenada de SKILL.md — usado para varrer em lotes. */
+  fileOffset?: number;
   maxRepos?: number;
   maxCandidates?: number;
   minStars?: number;
   dryRun?: boolean;
-}): Promise<{ runId: string; found: number; inserted: number; rejected: number; errors: string[] }> {
+}
+
+/** Dispara UM lote da varredura no GitHub (Edge Function server-side). */
+export async function runHarvest(params: HarvestParams): Promise<HarvestBatchResult> {
+  const fileOffset = params.fileOffset ?? 0;
   const { data, error } = await supabase.functions.invoke('skill-harvester', {
     body: {
       departments: params.departments ?? [],
       topics: params.topics ?? [],
       repos: params.repos ?? [],
       filesPerRepo: params.filesPerRepo ?? 8,
+      fileOffset,
       maxRepos: params.maxRepos ?? 40,
       maxCandidates: params.maxCandidates ?? 120,
       minStars: params.minStars ?? 3,
@@ -135,15 +159,63 @@ export async function runHarvest(params: {
   const res = data as {
     run_id: string; candidates_found: number; candidates_inserted: number;
     candidates_auto_rejected: number; errors?: string[];
+    file_offset?: number; next_file_offset?: number; truncated?: boolean;
+    repo_file_totals?: Record<string, number>; duration_ms?: number;
   };
+
+  // O servidor pode devolver um offset menor que o enviado se nada foi lido.
+  // Forçar avanço estrito impede loop infinito no orquestrador de lotes.
+  const nextFileOffset = Math.max(Number(res.next_file_offset ?? fileOffset), fileOffset);
+
   return {
     runId: res.run_id,
     found: res.candidates_found ?? 0,
     inserted: res.candidates_inserted ?? 0,
     rejected: res.candidates_auto_rejected ?? 0,
     errors: res.errors ?? [],
+    fileOffset: Number(res.file_offset ?? fileOffset),
+    nextFileOffset,
+    truncated: Boolean(res.truncated) && nextFileOffset > fileOffset,
+    repoFileTotals: res.repo_file_totals ?? {},
+    durationMs: Number(res.duration_ms ?? 0),
   };
 }
+
+/**
+ * Varre um monorepo até o fim, encadeando lotes.
+ *
+ * Cada lote é uma invocação independente da Edge Function — nenhuma delas
+ * corre risco de estourar o limite de tempo da plataforma. O laço para quando
+ * o servidor sinaliza que não há mais arquivos, quando o offset deixa de
+ * avançar (proteção contra loop) ou quando o teto de lotes é atingido.
+ */
+export async function runHarvestAllBatches(
+  params: HarvestParams,
+  options: {
+    maxBatches?: number;
+    onBatch?: (batch: HarvestBatchResult, index: number) => void;
+    signal?: AbortSignal;
+  } = {},
+): Promise<HarvestBatchResult[]> {
+  const maxBatches = options.maxBatches ?? 20;
+  const batches: HarvestBatchResult[] = [];
+  let offset = params.fileOffset ?? 0;
+
+  for (let i = 0; i < maxBatches; i++) {
+    if (options.signal?.aborted) break;
+
+    const batch = await runHarvest({ ...params, fileOffset: offset });
+    batches.push(batch);
+    options.onBatch?.(batch, i);
+
+    if (!batch.truncated) break;
+    if (batch.nextFileOffset <= offset) break; // sem progresso — aborta
+    offset = batch.nextFileOffset;
+  }
+
+  return batches;
+}
+
 
 export async function listCandidates(filters: CandidateFilters = {}): Promise<HarvestCandidate[]> {
   let query = supabaseExternal
