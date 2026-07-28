@@ -110,7 +110,9 @@ export function SkillDemandPanel() {
     search,
     confidenceThreshold,
     onlyNeedsReview,
+    source: sourceFilter,
   } = useMemo(
+
     () => normalizeDemandPreferences(prefsBrutas, DEPARTAMENTOS, PREFS_PADRAO),
     [prefsBrutas],
   );
