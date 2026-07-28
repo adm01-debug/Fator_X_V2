@@ -267,6 +267,15 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
     [feed],
   );
 
+  const pedirRestauracaoEmMassa = useCallback(() => {
+    if (shouldConfirmBulkRestore(removocoesVisiveis)) {
+      setConfirmarAberto(true);
+      return;
+    }
+    restaurarTodas.mutate();
+  }, [removocoesVisiveis, restaurarTodas]);
+
+
   // Ref evita recriar a mutation a cada página carregada do feed infinito.
   const feedRef = useRef(feed);
   feedRef.current = feed;
