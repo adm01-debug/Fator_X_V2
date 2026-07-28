@@ -9541,6 +9541,8 @@ export type Database = {
           curated_at: string | null
           curated_by: string | null
           department: string | null
+          department_confidence: number
+          department_source: string
           description: string
           description_confidence: number | null
           description_generated_at: string | null
@@ -9572,6 +9574,8 @@ export type Database = {
           curated_at?: string | null
           curated_by?: string | null
           department?: string | null
+          department_confidence?: number
+          department_source?: string
           description?: string
           description_confidence?: number | null
           description_generated_at?: string | null
@@ -9603,6 +9607,8 @@ export type Database = {
           curated_at?: string | null
           curated_by?: string | null
           department?: string | null
+          department_confidence?: number
+          department_source?: string
           description?: string
           description_confidence?: number | null
           description_generated_at?: string | null
@@ -14360,6 +14366,8 @@ export type Database = {
           curated_at: string | null
           curated_by: string | null
           department: string | null
+          department_confidence: number
+          department_source: string
           description: string
           description_confidence: number | null
           description_generated_at: string | null
