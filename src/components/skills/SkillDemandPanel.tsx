@@ -285,6 +285,28 @@ export function SkillDemandPanel() {
             <AlertTriangle className="h-4 w-4 mr-2" aria-hidden />
             Rever depto. ({pendentesRevisao})
           </Button>
+          {/* Fila própria: skills sem departamento nunca entram no selo "Rever
+              depto." (não há rótulo automático para duvidar) e o tier padrão
+              'zero' esconde as que têm demanda. Este atalho monta o recorte
+              completo em um clique. */}
+          <Button
+            variant={deptFilter === 'none' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() =>
+              atualizarPrefs(
+                deptFilter === 'none'
+                  ? { department: PREFS_PADRAO.department, tier: PREFS_PADRAO.tier }
+                  : { department: 'none', tier: 'all', onlyNeedsReview: false },
+              )
+            }
+            disabled={deptFilter !== 'none' && (porDepartamento.none ?? 0) === 0}
+            aria-pressed={deptFilter === 'none'}
+            title="Skills importadas que ficaram sem departamento — fora do selo de revisão por construção"
+          >
+            <HelpCircle className="h-4 w-4 mr-2" aria-hidden />
+            Sem depto. ({porDepartamento.none ?? 0})
+          </Button>
+
           <Button
             variant="ghost"
             size="sm"
