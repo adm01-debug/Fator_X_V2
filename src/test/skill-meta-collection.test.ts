@@ -193,3 +193,74 @@ describe('detecção de coletânea na coleta', () => {
     expect(isMeta({ name: 'foo', tags: ['AWESOME', ' Resources '] })).toBe(true);
   });
 });
+
+/**
+ * Régua por procedência.
+ *
+ * O tier de plataforma tem teto de confiança em 0.40 por construção. Julgá-lo
+ * pelo piso de 0.5 usado para vereditos de domínio tornava a fila inescapável:
+ * nenhuma quantidade de evidência tirava o item de "rever". Régua fixa aplicada
+ * a escalas diferentes não é rigor — é um item preso para sempre.
+ */
+describe('piso de revisão por procedência', () => {
+  it('plataforma no teto sai da fila; domínio na mesma confiança permanece', () => {
+    const [plataforma] = buildSkillDemandRows(
+      [
+        skill({
+          id: 'fastmcp',
+          department_source: 'platform_heuristic',
+          department_confidence: 0.4,
+        }),
+      ],
+      [],
+    );
+    const [dominio] = buildSkillDemandRows(
+      [skill({ id: 'outra', department_source: 'heuristic', department_confidence: 0.4 })],
+      [],
+    );
+    expect(plataforma.departmentNeedsReview).toBe(false);
+    expect(dominio.departmentNeedsReview).toBe(true);
+  });
+
+  it('plataforma no piso continua pedindo revisão', () => {
+    const [row] = buildSkillDemandRows(
+      [
+        skill({
+          id: 'gstack',
+          department_source: 'platform_heuristic',
+          department_confidence: 0.15,
+        }),
+      ],
+      [],
+    );
+    expect(row.departmentNeedsReview).toBe(true);
+  });
+
+  it('curadoria humana nunca entra na fila, qualquer que seja a régua', () => {
+    for (const conf of [0, 0.15, 0.4, 1]) {
+      const [row] = buildSkillDemandRows(
+        [skill({ id: 'x', department_source: 'human', department_confidence: conf })],
+        [],
+      );
+      expect(row.departmentNeedsReview).toBe(false);
+    }
+  });
+
+  it('a régua correta é aplicada em toda a grade procedência × confiança', () => {
+    const ORIGENS = ['unknown', 'heuristic', 'platform_heuristic', 'llm', 'import'] as const;
+    const CONFIANCAS = [0, 0.15, 0.17, 0.18, 0.3, 0.4, 0.49, 0.5, 1];
+    let cenarios = 0;
+    for (const source of ORIGENS) {
+      for (const conf of CONFIANCAS) {
+        const [row] = buildSkillDemandRows(
+          [skill({ id: 'x', department_source: source, department_confidence: conf })],
+          [],
+        );
+        const piso = source === 'platform_heuristic' ? 0.18 : 0.5;
+        expect(row.departmentNeedsReview).toBe(conf < piso);
+        cenarios += 1;
+      }
+    }
+    expect(cenarios).toBe(45);
+  });
+});
