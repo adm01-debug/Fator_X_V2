@@ -38,6 +38,12 @@ const STOP_WORDS = new Set([
   'is', 'be', 'are', 'was', 'were', 'in', 'on', 'at', 'for', 'with',
 ]);
 
+/**
+ * Siglas de 2 letras relevantes no domínio (IA, BI, TI...). Tokens de 2 caracteres
+ * são descartados por padrão como ruído, exceto quando fazem parte deste conjunto.
+ */
+const SHORT_TERMS = new Set(['ia', 'ai', 'bi', 'ti', 'qa', 'ux', 'ui', 'db', 'ml', 'nl', 'hr', 'rh', 'cs', 'go', 'js', 'ci', 'cd']);
+
 export function tokenize(text: string): Set<string> {
   const tokens = text
     .toLowerCase()
@@ -45,9 +51,14 @@ export function tokenize(text: string): Set<string> {
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-z0-9\s]/g, ' ')
     .split(/\s+/)
-    .filter((t) => t.length >= 3 && !STOP_WORDS.has(t));
+    .filter((t) => {
+      if (STOP_WORDS.has(t)) return false;
+      if (t.length >= 3) return true;
+      return t.length === 2 && SHORT_TERMS.has(t);
+    });
   return new Set(tokens);
 }
+
 
 /**
  * Sinônimos PT-BR ↔ EN e variações morfológicas.
