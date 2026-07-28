@@ -210,9 +210,23 @@ export async function runBatchQueue<TIn, TOut>(
     };
   };
 
+  /**
+   * Notifica o observador ISOLANDO suas exceções.
+   *
+   * O observador é código de UI (um `setState`). Se ele lançar — um render
+   * quebrado, um componente desmontado — a exceção subiria pelo laço da fila e
+   * abortaria um lote já pago em créditos, perdendo todo o progresso parcial.
+   * Observabilidade é acessório: ela não pode derrubar o trabalho que observa.
+   */
   const emit = () => {
     if (!onSnapshot) return;
-    onSnapshot(snapshot());
+    try {
+      onSnapshot(snapshot());
+    } catch (error) {
+      logger.warn('llmClassificationQueue: onSnapshot lançou exceção', {
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
   };
 
   emit();
