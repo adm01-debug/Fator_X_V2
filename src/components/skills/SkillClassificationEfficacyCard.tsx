@@ -18,6 +18,11 @@ import { cn } from '@/lib/utils';
 import { logger } from '@/lib/logger';
 import { audit } from '@/lib/auditService';
 import { fetchClassificationTimeline } from '@/services/skillClassificationTimelineService';
+import { fetchThresholdCalibrations } from '@/services/thresholdCalibrationService';
+import {
+  calibrationDirection,
+  type ThresholdCalibration,
+} from '@/lib/skills/thresholdCalibration';
 import { normalizeConfidenceThreshold } from '@/lib/skills/skillDemand';
 
 import {
@@ -42,6 +47,18 @@ function pct(value: number | null): string {
   return value === null ? '—' : `${Math.round(value * 100)}%`;
 }
 
+const DIRECTION_LABEL: Record<ReturnType<typeof calibrationDirection>, string> = {
+  aumentou: 'mais rigoroso',
+  reduziu: 'mais permissivo',
+  manteve: 'sem variação',
+};
+
+const DIRECTION_STYLE: Record<ReturnType<typeof calibrationDirection>, string> = {
+  aumentou: 'border-primary/40 text-primary',
+  reduziu: 'border-destructive/40 text-destructive',
+  manteve: 'border-muted-foreground/40 text-muted-foreground',
+};
+
 export interface SkillClassificationEfficacyCardProps {
   /** Limiar hoje em vigor no painel de demanda (para comparar com o sugerido). */
   currentThreshold?: number;
@@ -54,6 +71,7 @@ export function SkillClassificationEfficacyCard({
   onApplyThreshold,
 }: SkillClassificationEfficacyCardProps = {}) {
   const [decisoes, setDecisoes] = useState<ClassificationDecision[]>([]);
+  const [calibracoes, setCalibracoes] = useState<ThresholdCalibration[]>([]);
   const [loading, setLoading] = useState(true);
   const [filtro, setFiltro] = useState<EfficacyFilter>('all');
 
@@ -61,10 +79,29 @@ export function SkillClassificationEfficacyCard({
   const carregar = useCallback(async () => {
     setLoading(true);
     try {
-      setDecisoes(await fetchClassificationTimeline());
-    } catch (error) {
-      logger.error('fetchClassificationTimeline failed', { error: (error as Error).message });
-      toast.error('Não foi possível carregar o histórico de classificação.');
+      // As duas leituras são independentes: uma falhar não pode zerar a outra.
+      const [timeline, calibs] = await Promise.allSettled([
+        fetchClassificationTimeline(),
+        fetchThresholdCalibrations(),
+      ]);
+
+      if (timeline.status === 'fulfilled') {
+        setDecisoes(timeline.value);
+      } else {
+        logger.error('fetchClassificationTimeline failed', {
+          error: (timeline.reason as Error)?.message,
+        });
+        toast.error('Não foi possível carregar o histórico de classificação.');
+      }
+
+      if (calibs.status === 'fulfilled') {
+        setCalibracoes(calibs.value);
+      } else {
+        // Falha aqui é diagnóstica, não impede o uso do card.
+        logger.warn('fetchThresholdCalibrations failed', {
+          error: (calibs.reason as Error)?.message,
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -73,6 +110,7 @@ export function SkillClassificationEfficacyCard({
   useEffect(() => {
     void carregar();
   }, [carregar]);
+
 
   const resumo = useMemo(() => summarizeEfficacy(decisoes), [decisoes]);
   const visiveis = useMemo(() => filterByVerdict(decisoes, filtro), [decisoes, filtro]);
@@ -164,12 +202,16 @@ export function SkillClassificationEfficacyCard({
                         : normalizeConfidenceThreshold(currentThreshold);
                     onApplyThreshold(sugerido);
                     // Auditoria não bloqueia a UI: falha vira log, não erro visível.
-                    void audit.skillThresholdCalibrated({
-                      from: anterior,
-                      to: sugerido,
-                      sampleSize: resumo.total,
-                      accuracy: resumo.accuracy,
-                    });
+                    void audit
+                      .skillThresholdCalibrated({
+                        from: anterior,
+                        to: sugerido,
+                        sampleSize: resumo.total,
+                        accuracy: resumo.accuracy,
+                      })
+                      // Só recarrega depois da escrita: refetch antes traria a
+                      // lista sem a linha nova e pareceria que nada foi gravado.
+                      .then(() => carregar());
                     toast.success(`Limiar de revisão ajustado para ${sugerido.toFixed(2)}`);
                   }}
                 >
@@ -183,6 +225,35 @@ export function SkillClassificationEfficacyCard({
                 </span>
               </div>
             )}
+          </div>
+        )}
+
+        {calibracoes.length > 0 && (
+          <div className="space-y-2 rounded-lg border border-border/60 p-3">
+            <p className="text-body-sm font-medium">Calibrações recentes</p>
+            <ul className="space-y-1">
+              {calibracoes.map((c) => (
+                <li key={c.auditId} className="flex flex-wrap items-center gap-2 text-meta">
+                  <Badge
+                    variant="outline"
+                    className={cn('text-meta', DIRECTION_STYLE[calibrationDirection(c)])}
+                  >
+                    {DIRECTION_LABEL[calibrationDirection(c)]}
+                  </Badge>
+                  <span className="text-muted-foreground">
+                    {c.from === null ? '—' : c.from.toFixed(2)} → {c.to.toFixed(2)}
+                  </span>
+                  <span className="text-muted-foreground">
+                    amostra {c.sampleSize} · acerto {pct(c.accuracy)}
+                  </span>
+                  {c.at && (
+                    <span className="ml-auto text-muted-foreground">
+                      {new Date(c.at).toLocaleDateString('pt-BR')}
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
           </div>
         )}
 
