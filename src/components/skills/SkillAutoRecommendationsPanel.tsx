@@ -107,15 +107,67 @@ export function SkillAutoRecommendationsPanel() {
     [recommendations, installedIds],
   );
 
-  const handleInstallAll = async () => {
-    if (!agentId || pendingIds.length === 0) return;
+  /** Refs nomeadas: a guarda conta por NOME normalizado, não por id. */
+  const installedRefs = useMemo<NamedSkillRef[]>(
+    () => (installed ?? []).map((s) => ({ id: s.id, name: s.name ?? '' })),
+    [installed],
+  );
+
+  const pendingRefs = useMemo<NamedSkillRef[]>(() => {
+    const porId = new Map(recommendations.map((r) => [r.skill.id, r.skill]));
+    return pendingIds.map((id) => ({ id, name: porId.get(id)?.name ?? '' }));
+  }, [recommendations, pendingIds]);
+
+  /** Projeção do impacto de "Adicionar todas" antes de qualquer escrita. */
+  const guard = useMemo(
+    () => evaluateInstallImpact({ installed: installedRefs, selected: pendingRefs }),
+    [installedRefs, pendingRefs],
+  );
+
+  const trimmed = useMemo(
+    () => trimSelectionToCap({ installed: installedRefs, selected: pendingRefs }),
+    [installedRefs, pendingRefs],
+  );
+
+  /**
+   * Aplica o lote. `refs` permite instalar tanto tudo quanto só o que cabe —
+   * a auditoria usa a mesma seleção efetivamente escrita, nunca a intenção
+   * original, senão a trilha registraria um estouro que não aconteceu.
+   */
+  const applyBatch = async (refs: readonly NamedSkillRef[], acknowledged: boolean) => {
+    if (!agentId || refs.length === 0) return;
     setInstallingAll(true);
     try {
-      const { installed: ok, skipped } = await bulkInstallSkills(agentId, pendingIds);
+      const ids = refs.map((r) => r.id);
+      const { installed: ok, skipped } = await bulkInstallSkills(agentId, ids);
       await queryClient.invalidateQueries({ queryKey: ['installed_skills', agentId] });
+
+      const record = buildInstallCapRecord({
+        agentId,
+        agentName: activeAgent?.name ?? '',
+        installed: installedRefs,
+        selected: refs,
+        guard: evaluateInstallImpact({ installed: installedRefs, selected: refs }),
+        acknowledged,
+      });
+      if (shouldAuditInstall(record)) {
+        // Falha de auditoria não pode desfazer nem mascarar a instalação
+        // bem-sucedida; registramos no logger e seguimos.
+        try {
+          await audit.skillInstallOverCap(record);
+        } catch (auditErr) {
+          logger.error('audit skill.install_over_cap failed', {
+            error: auditErr instanceof Error ? auditErr.message : String(auditErr),
+          });
+        }
+      }
+
       const parts: string[] = [];
       if (ok.length > 0) parts.push(`${ok.length} adicionada(s)`);
       if (skipped.length > 0) parts.push(`${skipped.length} já instalada(s)`);
+      if (record.additionalDropped > 0) {
+        parts.push(`${record.additionalDropped} serão descartada(s) no prompt`);
+      }
       toast.success('Sugestões aplicadas', { description: parts.join(' · ') });
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Falha ao instalar';
@@ -124,6 +176,10 @@ export function SkillAutoRecommendationsPanel() {
       setInstallingAll(false);
     }
   };
+
+  const handleInstallAll = () => void applyBatch(pendingRefs, guard.additionalDropped > 0);
+  const handleInstallTrimmed = () => void applyBatch(trimmed, false);
+
 
 
   return (
