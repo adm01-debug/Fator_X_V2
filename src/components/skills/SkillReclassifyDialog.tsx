@@ -248,7 +248,9 @@ export function SkillReclassifyDialog({
     if (lote.length === 0) return;
     setEnviando(true);
     try {
-      const { queued, duplicates, failures } = await submitReclassificationReviews(lote);
+      const { queued, duplicates, failures } = await submitReclassificationReviews(lote, {
+        confidenceThreshold: limiar,
+      });
       if (queued > 0) {
         toast.success(`${queued} proposta${queued === 1 ? '' : 's'} enviada${queued === 1 ? '' : 's'} para revisão.`);
         onApplied();
