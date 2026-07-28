@@ -11,6 +11,7 @@ type AuditAction =
   | 'member.invite' | 'member.remove' | 'member.role_change'
   | 'auth.login' | 'auth.logout' | 'auth.password_change'
   | 'skill.threshold_calibrate'
+  | 'skill.install_over_cap'
   | 'prompt.export_evidence';
 
 type AuditEntityType =
