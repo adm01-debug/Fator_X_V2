@@ -1,6 +1,9 @@
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Wrench, Pin, Sparkles } from 'lucide-react';
+import { Wrench, Pin, Sparkles, AlertTriangle } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { MAX_PROMPT_SKILLS } from '@/lib/skills/promptSimulation';
+import { evaluateInstallImpact, trimSelectionToCap, type NamedSkillRef } from '@/lib/skills/installGuard';
 import { SkillsPickerPanel } from '@/components/skills/SkillsPickerPanel';
 import { SkillRecommendationsCard } from '@/components/skills/SkillRecommendationsCard';
 import { Badge } from '@/components/ui/badge';
