@@ -307,6 +307,26 @@ export function SkillDemandPanel() {
               ))}
             </SelectContent>
           </Select>
+          {/* Procedência: separa léxico, tier de plataforma, IA e curadoria
+              humana. Opções com contagem zero continuam listadas (desabilitá-las
+              esconderia que a origem existe e nunca produziu nada). */}
+          <Select
+            value={sourceFilter}
+            onValueChange={(value) => atualizarPrefs({ source: normalizeSourceFilter(value) })}
+          >
+            <SelectTrigger className="w-[210px]" aria-label="Filtrar por origem da classificação">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todas as origens</SelectItem>
+              {DEPARTMENT_SOURCES.map((origem) => (
+                <SelectItem key={origem} value={origem}>
+                  {DEPARTMENT_SOURCE_LABEL[origem]} ({porOrigem[origem] ?? 0})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
           <Input
             className="flex-1 min-w-[220px]"
             placeholder="Buscar por nome, slug ou repositório de origem"
