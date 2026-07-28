@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { RecentCurationsPanel } from '@/components/agents/RecentCurationsPanel';
+import { SkillDemandPanel } from '@/components/skills/SkillDemandPanel';
 
 import { rebuildTemplateSkillLinks } from '@/services/templateSkillLinkService';
 
