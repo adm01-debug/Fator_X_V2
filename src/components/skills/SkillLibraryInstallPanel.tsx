@@ -37,6 +37,11 @@ import {
   trimSelectionToCap,
   type NamedSkillRef,
 } from '@/lib/skills/installGuard';
+import {
+  buildInstallCapRecord,
+  shouldAuditInstall,
+} from '@/lib/skills/installCapAudit';
+import { audit } from '@/lib/auditService';
 import { MAX_PROMPT_SKILLS } from '@/lib/skills/promptSimulation';
 
 export function SkillLibraryInstallPanel() {
@@ -106,6 +111,20 @@ export function SkillLibraryInstallPanel() {
   const install = useMutation({
     mutationFn: () => bulkInstallSkills(agentId, selected),
     onSuccess: ({ installed: ok, skipped }) => {
+      // Trilha de auditoria ANTES de limpar a seleção: se a operação estourou o
+      // teto, precisamos registrar quem aceitou conscientemente a perda.
+      const record = buildInstallCapRecord({
+        agentId,
+        agentName: (agents ?? []).find((a) => a.id === agentId)?.name ?? null,
+        installed: (installed ?? []).map((s) => ({ id: s.id, name: s.name ?? '' })),
+        selected: selectedRefs,
+        guard,
+        acknowledged: true,
+      });
+      if (shouldAuditInstall(record)) {
+        void audit.skillInstallOverCap(record);
+      }
+
       setSelected([]);
       invalidate();
       toast.success(

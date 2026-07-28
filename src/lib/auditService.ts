@@ -2,6 +2,7 @@ import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import { logger } from '@/lib/logger';
 import type { Json } from '@/integrations/supabase/types';
 import type { PromptEvidenceRecord } from '@/lib/skills/promptAuditArtifact';
+import type { InstallCapAuditRecord } from '@/lib/skills/installCapAudit';
 
 type AuditAction =
   | 'agent.create' | 'agent.update' | 'agent.delete' | 'agent.deploy' | 'agent.duplicate'
@@ -11,6 +12,7 @@ type AuditAction =
   | 'member.invite' | 'member.remove' | 'member.role_change'
   | 'auth.login' | 'auth.logout' | 'auth.password_change'
   | 'skill.threshold_calibrate'
+  | 'skill.install_over_cap'
   | 'prompt.export_evidence';
 
 type AuditEntityType =
@@ -157,6 +159,34 @@ export const audit = {
         ...(record.overflowedSkills.length > 0
           ? { overflowed_skills: record.overflowedSkills }
           : {}),
+      },
+    }),
+
+  /**
+   * Instalação de skills que estoura (ou cruza) o teto do compilador.
+   *
+   * Grava apenas nomes e números — nunca conteúdo de skill. Serve para provar
+   * depois quem aceitou conscientemente a perda de competências no prompt.
+   */
+  skillInstallOverCap: (record: InstallCapAuditRecord) =>
+    logAudit({
+      action: 'skill.install_over_cap',
+      entity_type: 'agent',
+      entity_id: record.agentId,
+      metadata: {
+        agent_name: record.agentName,
+        slots_before: record.slotsBefore,
+        slots_after: record.slotsAfter,
+        cap: record.cap,
+        effective_adds: record.effectiveAdds,
+        redundant: record.redundant,
+        additional_dropped: record.additionalDropped,
+        total_dropped_after: record.totalDroppedAfter,
+        crosses_cap: record.crossesCap,
+        severity: record.severity,
+        acknowledged: record.acknowledged,
+        dropped_names: record.droppedNames,
+        dropped_names_truncated: record.droppedNamesTruncated,
       },
     }),
 };
