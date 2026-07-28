@@ -28,6 +28,8 @@ import {
   summarizeRestoreFailures,
   buildRestoreFailuresCsv,
   buildRestoreFailuresFilename,
+  loadRestoreFailures,
+  saveRestoreFailures,
 
   groupRemovalsByTemplate,
   shouldConfirmBulkRestore,
@@ -206,9 +208,16 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
   // Templates cujo lote falhou na última tentativa. Guardar aqui (e não só no
   // toast) permite oferecer um retry cirúrgico, sem reprocessar o que já foi
   // restaurado com sucesso.
-  const [falhas, setFalhas] = useState<BulkRestoreFailure[]>([]);
+  // Hidrata do sessionStorage: um F5 no meio da curadoria não pode apagar a
+  // lista de pendências — é ela que orienta o retry e a escalada de RLS.
+  const [falhas, setFalhas] = useState<BulkRestoreFailure[]>(() => loadRestoreFailures());
   // Resumo por natureza: o curador decide escalar (RLS) ou reenviar (rede).
   const resumoFalhas = useMemo(() => summarizeRestoreFailures(falhas), [falhas]);
+
+  useEffect(() => {
+    saveRestoreFailures(falhas);
+  }, [falhas]);
+
 
   // Exporta o relatório sem tocar no backend: os dados já estão em memória.
   const exportarFalhasCsv = useCallback(() => {

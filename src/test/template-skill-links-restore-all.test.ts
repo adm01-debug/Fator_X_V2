@@ -17,6 +17,7 @@ import {
   restoreBackoffDelay,
   buildRestoreFailuresCsv,
   buildRestoreFailuresFilename,
+  parseStoredRestoreFailures,
   summarizeRestoreFailures,
   BULK_RESTORE_CONFIRM_THRESHOLD,
   type CurationFeedDay,
@@ -314,5 +315,30 @@ describe('buildRestoreFailuresFilename', () => {
     expect(buildRestoreFailuresFilename(new Date('inválida'))).toMatch(
       /^restauracoes-parciais-\d{4}-\d{2}-\d{2}\.csv$/,
     );
+  });
+});
+
+describe('parseStoredRestoreFailures', () => {
+  it('rejeita JSON inválido, não-array e itens sem templateId', () => {
+    expect(parseStoredRestoreFailures(null)).toEqual([]);
+    expect(parseStoredRestoreFailures('{{')).toEqual([]);
+    expect(parseStoredRestoreFailures('{"a":1}')).toEqual([]);
+    expect(parseStoredRestoreFailures('[{"templateId":"  "},null,3]')).toEqual([]);
+  });
+
+  it('normaliza campos ausentes ou corrompidos', () => {
+    const parsed = parseStoredRestoreFailures(
+      JSON.stringify([{ templateId: ' t1 ', skillCount: '4', kind: 'hackeado' }]),
+    );
+    expect(parsed).toEqual([
+      { templateId: 't1', templateName: 't1', skillCount: 4, message: '', kind: 'unknown' },
+    ]);
+  });
+
+  it('faz round-trip com falhas válidas', () => {
+    const original = [
+      { templateId: 't1', templateName: 'Vendas', skillCount: 2, message: 'rls', kind: 'permission' as const },
+    ];
+    expect(parseStoredRestoreFailures(JSON.stringify(original))).toEqual(original);
   });
 });
