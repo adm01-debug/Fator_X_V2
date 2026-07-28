@@ -281,6 +281,12 @@ export interface RebuildResult {
   templatesWithoutLinks: string[];
 }
 
+/** Linha escrita pelo rebuild — inclui a limpeza explícita do soft delete. */
+export type RebuildRow = Omit<TemplateSkillLink, 'id'> & {
+  deleted_at: null;
+  deleted_by: null;
+};
+
 /**
  * Recalcula e regrava TODOS os vínculos automáticos.
  *
