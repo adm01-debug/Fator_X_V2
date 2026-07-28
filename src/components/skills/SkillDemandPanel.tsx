@@ -83,7 +83,7 @@ export function SkillDemandPanel() {
    * corrompido ou de taxonomia antiga viraria um recorte vazio permanente.
    * Sanitizamos a cada render — barato e totalmente defensivo.
    */
-  const { tier: filter, department: deptFilter, search } = useMemo(
+  const { tier: filter, department: deptFilter, search, confidenceThreshold } = useMemo(
     () => normalizeDemandPreferences(prefsBrutas, DEPARTAMENTOS, PREFS_PADRAO),
     [prefsBrutas],
   );
