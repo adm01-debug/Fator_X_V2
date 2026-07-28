@@ -72,6 +72,10 @@ export interface ReclassifyProposal {
   from: SkillDepartment | null;
   to: SkillDepartment;
   confidence: number;
+  /** Distância para o segundo colocado — quanto maior, menos ambígua a troca. */
+  margin: number;
+  /** Departamento que ficou em segundo lugar (contexto para o curador). */
+  runnerUp: SkillDepartment | null;
   matchedTerms: string[];
 }
 
