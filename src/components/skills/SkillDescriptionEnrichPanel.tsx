@@ -70,6 +70,8 @@ export function SkillDescriptionEnrichPanel({
   const [propostas, setPropostas] = useState<DescriptionProposal[]>([]);
   const [recusadas, setRecusadas] = useState<RejectedProposal[]>([]);
   const [descartadas, setDescartadas] = useState<string[]>([]);
+  /** Resumo por causa raiz do último lote; `null` quando não houve falha. */
+  const [falhas, setFalhas] = useState<FailureSummary | null>(null);
 
   // Aborta a fila se o painel desmontar no meio: sem isso, os `setState` do
   // onSnapshot continuariam disparando contra um componente morto.
