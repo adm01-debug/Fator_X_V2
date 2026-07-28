@@ -176,18 +176,29 @@ export function SkillPromptSimulator() {
               {MAX_PROMPT_SKILLS} skills.
             </p>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-2"
-            onClick={() => void copiar()}
-            disabled={!result}
-          >
-            <Copy className="h-3.5 w-3.5" /> Copiar
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              onClick={() => void copiar()}
+              disabled={!result}
+            >
+              <Copy className="h-3.5 w-3.5" /> Copiar
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              onClick={exportar}
+              disabled={!result}
+            >
+              <Download className="h-3.5 w-3.5" /> Exportar evidência
+            </Button>
+          </div>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-3 sm:items-center">
+        <div className="grid gap-3 sm:grid-cols-2 sm:items-center">
           <Select value={agentId} onValueChange={setAgentId} disabled={loadingAgents}>
             <SelectTrigger aria-label="Selecionar agente">
               <SelectValue placeholder={loadingAgents ? 'Carregando…' : 'Selecione um agente'} />
@@ -198,6 +209,26 @@ export function SkillPromptSimulator() {
                   {a.name}
                 </SelectItem>
               ))}
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={compareId === '' ? '__none__' : compareId}
+            onValueChange={(v) => setCompareId(v === '__none__' ? '' : v)}
+            disabled={loadingAgents || agentId === ''}
+          >
+            <SelectTrigger aria-label="Comparar com outro agente">
+              <SelectValue placeholder="Comparar com… (opcional)" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__none__">Sem comparação</SelectItem>
+              {(agents ?? [])
+                .filter((a) => a.id !== agentId)
+                .map((a) => (
+                  <SelectItem key={a.id} value={a.id}>
+                    {a.name}
+                  </SelectItem>
+                ))}
             </SelectContent>
           </Select>
 
@@ -225,6 +256,7 @@ export function SkillPromptSimulator() {
             </Label>
           </div>
         </div>
+
       </CardHeader>
 
       <CardContent className="space-y-4">
