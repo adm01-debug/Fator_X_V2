@@ -383,6 +383,8 @@ export interface BulkRestoreFailure {
   message: string;
   /** Natureza classificada da falha (deriva de `message`). */
   kind: RestoreFailureKind;
+  /** Instante ISO em que a falha ocorreu — base para TTL e ordenação. */
+  failedAt: string;
 }
 
 /**
