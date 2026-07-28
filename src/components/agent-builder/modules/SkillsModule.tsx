@@ -25,6 +25,8 @@ import {
   listSkills,
   getInstalledSkills,
   installSkill,
+  bulkInstallSkills,
+
   uninstallSkill,
   type AgentSkillDefinition,
 } from '@/services/skillsRegistryService';
@@ -114,20 +116,53 @@ export function SkillsModule() {
     }
   };
 
+  /**
+   * Aplica um lote de skills em uma única chamada idempotente (UPSERT),
+   * evitando N toasts e N refreshes. Retorna resumo agregado.
+   */
+  const applyBatch = async (idsToAdd: string[], idsToRemove: string[]) => {
+    if (idsToAdd.length === 0 && idsToRemove.length === 0) return;
+    if (!agentId) return;
+    for (const id of [...idsToAdd, ...idsToRemove]) setBusy(id, true);
+    try {
+      let installedCount = 0;
+      let skippedCount = 0;
+      if (idsToAdd.length > 0) {
+        const res = await bulkInstallSkills(agentId, idsToAdd);
+        installedCount = res.installed.length;
+        skippedCount = res.skipped.length;
+      }
+      for (const id of idsToRemove) await uninstallSkill(agentId, id);
+      await refresh();
+
+      const parts: string[] = [];
+      if (installedCount > 0) parts.push(`${installedCount} adicionada(s)`);
+      if (skippedCount > 0) parts.push(`${skippedCount} já instalada(s)`);
+      if (idsToRemove.length > 0) parts.push(`${idsToRemove.length} removida(s)`);
+      if (parts.length > 0) toast.success('Skills atualizadas', { description: parts.join(' · ') });
+    } catch (error) {
+      logger.error('Falha ao aplicar lote de skills', { error, agentId });
+      toast.error('Não foi possível atualizar as skills');
+    } finally {
+      for (const id of [...idsToAdd, ...idsToRemove]) setBusy(id, false);
+    }
+  };
+
   /** Diferença entre a seleção do catálogo e o estado atual → instala/remove. */
   const handlePickerChange = async (nextIds: string[]) => {
     const nextSet = new Set(nextIds);
     const toAdd = nextIds.filter((id) => !installedSet.has(id));
     const toRemove = installedIds.filter((id) => !nextSet.has(id));
-    for (const id of toAdd) await handleInstall(id);
-    for (const id of toRemove) await handleUninstall(id);
+    await applyBatch(toAdd, toRemove);
   };
 
   const handleInstallAll = async () => {
-    for (const rec of recommendations) {
-      if (!installedSet.has(rec.skill.id)) await handleInstall(rec.skill.id);
-    }
+    const toAdd = recommendations
+      .map((rec) => rec.skill.id)
+      .filter((id) => !installedSet.has(id));
+    await applyBatch(toAdd, []);
   };
+
 
   if (!agentId) {
     return (
