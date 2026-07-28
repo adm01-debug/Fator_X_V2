@@ -92,6 +92,9 @@ export function parseThresholdCalibrations(
       to,
       sampleSize: sample === null || sample < 0 ? 0 : Math.floor(sample),
       accuracy: coerceRatio(meta.accuracy),
+      // Só o booleano literal `true` conta como override; string "true" ou
+      // 1 vindos de metadata livre não devem virar acusação de burla.
+      overriddenInstability: meta.overridden_instability === true,
       at: coerceIsoDate(row.created_at),
     });
   }
