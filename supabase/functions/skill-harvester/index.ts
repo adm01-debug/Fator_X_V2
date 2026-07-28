@@ -217,9 +217,17 @@ Deno.serve(async (req: Request) => {
     const candidates: CandidateRow[] = [];
     const hashes = new Set<string>();
     let rejected = 0;
+    /** Total de SKILL.md existentes por repositório — alimenta a paginação na UI. */
+    const repoFileTotals: Record<string, number> = {};
+    /** Verdadeiro quando paramos por orçamento de tempo, não por fim dos dados. */
+    let truncated = false;
+    let nextFileOffset = body.fileOffset;
+
+    const outOfTime = () => Date.now() - started > TIME_BUDGET_MS;
 
     for (const repo of repos) {
       if (candidates.length >= body.maxCandidates) break;
+      if (outOfTime()) { truncated = true; break; }
 
       const repoLicenseSpdx = repo.license?.spdx_id && repo.license.spdx_id !== 'NOASSERTION'
         ? repo.license.spdx_id
@@ -232,158 +240,196 @@ Deno.serve(async (req: Request) => {
       const hasTests = paths.some((p) => /(^|\/)(tests?|__tests__|spec)\//i.test(p) || /\.(test|spec)\.[jt]sx?$/.test(p));
       const hasDocs = paths.some((p) => /(^|\/)(docs?|README\.md)/i.test(p));
 
-      const skillFiles = paths.filter((p) => SKILL_FILE_RE.test(p)).slice(0, body.filesPerRepo);
+      // Ordenar é o que torna a paginação estável: sem isso, dois lotes
+      // consecutivos poderiam reler os mesmos arquivos e pular outros.
+      const allSkillFiles = paths.filter((p) => SKILL_FILE_RE.test(p)).sort();
+      repoFileTotals[repo.full_name] = allSkillFiles.length;
 
+      const skillFiles = allSkillFiles.slice(body.fileOffset, body.fileOffset + body.filesPerRepo);
       const agentFiles = paths.filter((p) => AGENT_JSON_RE.test(p)).slice(0, 2);
 
-      // Fallback: repositório inteiro vira 1 candidato quando não há SKILL.md
-      const targets = skillFiles.length > 0 ? skillFiles : ['README.md'];
+      // Fallback: repositório inteiro vira 1 candidato quando não há SKILL.md.
+      // Só vale para o primeiro lote — em lotes seguintes o README já foi lido.
+      const targets = allSkillFiles.length > 0
+        ? skillFiles
+        : (body.fileOffset === 0 ? ['README.md'] : []);
+      if (targets.length === 0) continue;
 
-      for (const path of targets) {
-        if (candidates.length >= body.maxCandidates) break;
-
-        const raw = await getRawFile(repo.full_name, repo.default_branch, path);
-        if (!raw || raw.trim().length < 80) continue;
-
-        const fm = parseFrontmatter(raw);
-        const fmName = typeof fm.data.name === 'string' ? fm.data.name : '';
-        const fmDesc = typeof fm.data.description === 'string' ? fm.data.description : '';
-        const fmTags = Array.isArray(fm.data.tags) ? fm.data.tags : [];
-        // Monorepos de skills declaram a licença por arquivo; ela é mais
-        // específica que a do repositório e por isso tem precedência.
-        const fmLicense = typeof fm.data.license === 'string'
-          ? stripUnsafe(fm.data.license, 60).trim()
-          : '';
-        const licenseSpdx = (isLicenseAllowed(fmLicense) ? fmLicense : null) ?? repoLicenseSpdx;
-        const licenseOk = isLicenseAllowed(licenseSpdx);
-
-
-        const name = stripUnsafe(fmName || deriveName(path, repo.full_name), 120);
-        const description = stripUnsafe(fmDesc || repo.description || '', 1200);
-        const tags = Array.from(
-          new Set([...(repo.topics ?? []), ...fmTags].map((t) => stripUnsafe(String(t), 40).toLowerCase()).filter(Boolean)),
-        ).slice(0, 20);
-
-        if (name.length < 2) continue;
-
-        const contentHash = await sha256Hex(normalizeForHash(`${repo.full_name}:${name}:${raw.slice(0, 4000)}`));
-        if (hashes.has(contentHash)) continue;
-        hashes.add(contentHash);
-
-        // Segurança de conteúdo
-        const risks = scanContentRisks(raw);
-
-        // MCP
-        let mcpUrl: string | null = null;
-        const skillConfig: Record<string, unknown> = {};
-        if (agentFiles.length > 0) {
-          const agentRaw = await getRawFile(repo.full_name, repo.default_branch, agentFiles[0]);
-          if (agentRaw) {
-            try {
-              const parsedAgent = JSON.parse(agentRaw) as Record<string, unknown>;
-              const servers = parsedAgent.servers;
-              if (Array.isArray(servers) && servers.length > 0) {
-                const first = servers[0] as { url?: string };
-                if (typeof first.url === 'string' && isMcpUrlAllowed(first.url)) mcpUrl = first.url;
-                else if (typeof first.url === 'string') risks.push('mcp:host_not_allowlisted');
-              }
-              skillConfig.agent_manifest = {
-                model: typeof parsedAgent.model === 'string' ? parsedAgent.model : null,
-                servers_count: Array.isArray(servers) ? servers.length : 0,
-              };
-            } catch {
-              risks.push('manifest:invalid_json');
+      // O manifesto do agente é do REPOSITÓRIO, não do arquivo. Buscá-lo uma
+      // única vez evita centenas de requisições idênticas num monorepo.
+      let repoMcpUrl: string | null = null;
+      const repoSkillConfig: Record<string, unknown> = {};
+      const repoManifestRisks: string[] = [];
+      if (agentFiles.length > 0) {
+        const agentRaw = await getRawFile(repo.full_name, repo.default_branch, agentFiles[0]);
+        if (agentRaw) {
+          try {
+            const parsedAgent = JSON.parse(agentRaw) as Record<string, unknown>;
+            const servers = parsedAgent.servers;
+            if (Array.isArray(servers) && servers.length > 0) {
+              const first = servers[0] as { url?: string };
+              if (typeof first.url === 'string' && isMcpUrlAllowed(first.url)) repoMcpUrl = first.url;
+              else if (typeof first.url === 'string') repoManifestRisks.push('mcp:host_not_allowlisted');
             }
+            repoSkillConfig.agent_manifest = {
+              model: typeof parsedAgent.model === 'string' ? parsedAgent.model : null,
+              servers_count: Array.isArray(servers) ? servers.length : 0,
+            };
+          } catch {
+            repoManifestRisks.push('manifest:invalid_json');
           }
         }
+      }
 
-        const fmCompleteness =
-          (fmName ? 0.5 : 0) + (fmDesc ? 0.3 : 0) + (fmTags.length > 0 ? 0.2 : 0);
+      // Leitura em janelas concorrentes: a latência de rede domina o tempo de
+      // parede, e o raw.githubusercontent não consome a cota da API REST.
+      let consumed = 0;
+      for (let i = 0; i < targets.length; i += RAW_CONCURRENCY) {
+        if (candidates.length >= body.maxCandidates) break;
+        if (outOfTime()) { truncated = true; break; }
 
-        // A classificação precisa vir ANTES da nota: a confiança departamental
-        // é um dos sinais de especificidade da fórmula de qualidade.
-        const classification = classifyDepartment({ name, description, tags, content: fm.body });
-        const category = inferCategory({ name, description, tags, hasMcpServer: Boolean(mcpUrl) });
-
-        // Coletâneas (awesome-lists, cursos, roadmaps) não são skills
-        // instaláveis — detectá-las aqui evita que a popularidade do
-        // repositório carregue a nota para cima.
-        const isMeta = isMetaRepository({
-          name,
-          slug: repo.full_name,
-          description,
-          tags,
-          content: fm.body,
-        });
-
-        const quality = computeQualityScore({
-          stars: repo.stargazers_count,
-          lastCommitAt: repo.pushed_at,
-          hasDocs,
-          hasTests,
-          licenseAllowed: licenseOk,
-          frontmatterCompleteness: fmCompleteness,
-          descriptionLength: description.length,
-          isMeta,
-          departmentConfidence: classification.confidence,
-        });
-
-        const reasons = [...risks];
-        if (!licenseSpdx) reasons.push('license:missing');
-        else if (!licenseOk) reasons.push(`license:blocked:${licenseSpdx}`);
-        if (quality < MIN_QUALITY_SCORE) reasons.push(`quality:below_threshold:${quality}`);
-        if (isMeta) reasons.push('meta:collection_repo');
-        if (classification.confidence < LOW_CONFIDENCE_THRESHOLD) reasons.push('department:low_confidence');
-
-        const blocking = reasons.some(
-          (r) => r.startsWith('secret:') || r.startsWith('prompt_injection:') || r.startsWith('shell:') ||
-                 r.startsWith('exfiltration:') || r.startsWith('license:') || r.startsWith('quality:') ||
-                 r.startsWith('meta:') || r.startsWith('department:'),
+        const window = targets.slice(i, i + RAW_CONCURRENCY);
+        const raws = await Promise.all(
+          window.map((p) =>
+            getRawFile(repo.full_name, repo.default_branch, p)
+              .then((raw) => ({ path: p, raw }))
+              .catch(() => ({ path: p, raw: null as string | null })),
+          ),
         );
-        if (blocking) rejected++;
 
+        for (const { path, raw } of raws) {
+          consumed++;
+          if (candidates.length >= body.maxCandidates) break;
+          if (!raw || raw.trim().length < 80) continue;
 
-        candidates.push({
-          run_id: runId,
-          name,
-          slug: slugify(`${repo.owner?.login ?? 'gh'}-${name}`),
-          description,
-          version: typeof fm.data.version === 'string' ? String(fm.data.version).slice(0, 20) : '1.0.0',
-          author: repo.owner?.login ?? repo.full_name.split('/')[0],
-          category,
-          department: classification.department,
-          department_confidence: classification.confidence,
-          tags,
-          source_repo: repo.full_name,
-          source_url: `${repo.html_url}/blob/${repo.default_branch}/${path}`,
-          source_path: path,
-          source_license: licenseSpdx,
-          source_commit: null,
-          stars: repo.stargazers_count,
-          last_commit_at: repo.pushed_at,
-          quality_score: quality,
-          content_hash: contentHash,
-          raw_content: stripUnsafe(raw, 20_000),
-          skill_config: skillConfig,
-          mcp_server_url: mcpUrl,
-          status: blocking ? 'auto_rejected' : 'pending',
-          rejection_reasons: reasons,
-        });
+          const fm = parseFrontmatter(raw);
+          const fmName = typeof fm.data.name === 'string' ? fm.data.name : '';
+          const fmDesc = typeof fm.data.description === 'string' ? fm.data.description : '';
+          const fmTags = Array.isArray(fm.data.tags) ? fm.data.tags : [];
+          // Monorepos de skills declaram a licença por arquivo; ela é mais
+          // específica que a do repositório e por isso tem precedência.
+          const fmLicense = typeof fm.data.license === 'string'
+            ? stripUnsafe(fm.data.license, 60).trim()
+            : '';
+          const licenseSpdx = (isLicenseAllowed(fmLicense) ? fmLicense : null) ?? repoLicenseSpdx;
+          const licenseOk = isLicenseAllowed(licenseSpdx);
+
+          const name = stripUnsafe(fmName || deriveName(path, repo.full_name), 120);
+          const description = stripUnsafe(fmDesc || repo.description || '', 1200);
+          const tags = Array.from(
+            new Set([...(repo.topics ?? []), ...fmTags].map((t) => stripUnsafe(String(t), 40).toLowerCase()).filter(Boolean)),
+          ).slice(0, 20);
+
+          if (name.length < 2) continue;
+
+          const contentHash = await sha256Hex(normalizeForHash(`${repo.full_name}:${name}:${raw.slice(0, 4000)}`));
+          if (hashes.has(contentHash)) continue;
+          hashes.add(contentHash);
+
+          // Segurança de conteúdo
+          const risks = [...scanContentRisks(raw), ...repoManifestRisks];
+          const mcpUrl = repoMcpUrl;
+          const skillConfig = { ...repoSkillConfig };
+
+          const fmCompleteness =
+            (fmName ? 0.5 : 0) + (fmDesc ? 0.3 : 0) + (fmTags.length > 0 ? 0.2 : 0);
+
+          // A classificação precisa vir ANTES da nota: a confiança departamental
+          // é um dos sinais de especificidade da fórmula de qualidade.
+          const classification = classifyDepartment({ name, description, tags, content: fm.body });
+          const category = inferCategory({ name, description, tags, hasMcpServer: Boolean(mcpUrl) });
+
+          // Coletâneas (awesome-lists, cursos, roadmaps) não são skills
+          // instaláveis — detectá-las aqui evita que a popularidade do
+          // repositório carregue a nota para cima.
+          const isMeta = isMetaRepository({
+            name,
+            slug: repo.full_name,
+            description,
+            tags,
+            content: fm.body,
+          });
+
+          const quality = computeQualityScore({
+            stars: repo.stargazers_count,
+            lastCommitAt: repo.pushed_at,
+            hasDocs,
+            hasTests,
+            licenseAllowed: licenseOk,
+            frontmatterCompleteness: fmCompleteness,
+            descriptionLength: description.length,
+            isMeta,
+            departmentConfidence: classification.confidence,
+          });
+
+          const reasons = [...risks];
+          if (!licenseSpdx) reasons.push('license:missing');
+          else if (!licenseOk) reasons.push(`license:blocked:${licenseSpdx}`);
+          if (quality < MIN_QUALITY_SCORE) reasons.push(`quality:below_threshold:${quality}`);
+          if (isMeta) reasons.push('meta:collection_repo');
+          if (classification.confidence < LOW_CONFIDENCE_THRESHOLD) reasons.push('department:low_confidence');
+
+          const blocking = reasons.some(
+            (r) => r.startsWith('secret:') || r.startsWith('prompt_injection:') || r.startsWith('shell:') ||
+                   r.startsWith('exfiltration:') || r.startsWith('license:') || r.startsWith('quality:') ||
+                   r.startsWith('meta:') || r.startsWith('department:'),
+          );
+          if (blocking) rejected++;
+
+          candidates.push({
+            run_id: runId,
+            name,
+            slug: slugify(`${repo.owner?.login ?? 'gh'}-${name}`),
+            description,
+            version: typeof fm.data.version === 'string' ? String(fm.data.version).slice(0, 20) : '1.0.0',
+            author: repo.owner?.login ?? repo.full_name.split('/')[0],
+            category,
+            department: classification.department,
+            department_confidence: classification.confidence,
+            tags,
+            source_repo: repo.full_name,
+            source_url: `${repo.html_url}/blob/${repo.default_branch}/${path}`,
+            source_path: path,
+            source_license: licenseSpdx,
+            source_commit: null,
+            stars: repo.stargazers_count,
+            last_commit_at: repo.pushed_at,
+            quality_score: quality,
+            content_hash: contentHash,
+            raw_content: stripUnsafe(raw, 20_000),
+            skill_config: skillConfig,
+            mcp_server_url: mcpUrl,
+            status: blocking ? 'auto_rejected' : 'pending',
+            rejection_reasons: reasons,
+          });
+        }
+      }
+
+      // O próximo lote começa onde este parou — inclusive quando o corte veio
+      // do orçamento de tempo no meio do repositório.
+      if (allSkillFiles.length > 0) {
+        nextFileOffset = Math.max(nextFileOffset, body.fileOffset + consumed);
+        if (body.fileOffset + consumed < allSkillFiles.length) truncated = true;
       }
     }
 
     let inserted = 0;
     if (!body.dryRun && candidates.length > 0) {
-      // upsert por content_hash — reexecuções não duplicam
-      const { data: ins, error: insErr } = await admin
-        .from('skill_harvest_candidates')
-        .upsert(candidates, { onConflict: 'content_hash', ignoreDuplicates: true })
-        .select('id');
-      if (insErr) {
-        console.error('Falha ao gravar candidatos:', insErr.message);
-        errors.push(`insert: ${insErr.message}`);
-      } else {
-        inserted = ins?.length ?? 0;
+      // Gravação em lotes: 800 linhas × 20KB de `raw_content` estouram o
+      // limite de payload de uma única requisição PostgREST.
+      for (let i = 0; i < candidates.length; i += UPSERT_CHUNK) {
+        const chunk = candidates.slice(i, i + UPSERT_CHUNK);
+        // upsert por content_hash — reexecuções não duplicam
+        const { data: ins, error: insErr } = await admin
+          .from('skill_harvest_candidates')
+          .upsert(chunk, { onConflict: 'content_hash', ignoreDuplicates: true })
+          .select('id');
+        if (insErr) {
+          console.error('Falha ao gravar candidatos:', insErr.message);
+          errors.push(`insert[${i}]: ${insErr.message}`);
+        } else {
+          inserted += ins?.length ?? 0;
+        }
       }
     }
 
@@ -402,6 +448,7 @@ Deno.serve(async (req: Request) => {
       })
       .eq('id', runId);
     if (updErr) console.error('Falha ao fechar run:', updErr.message);
+
 
     const { error: auditErr } = await admin.rpc('log_audit_entry', {
       p_action: 'skill_harvest_run',
