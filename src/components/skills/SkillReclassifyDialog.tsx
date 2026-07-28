@@ -87,6 +87,13 @@ export interface SkillReclassifyDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   candidates: readonly ReclassifyCandidate[];
+  /**
+   * Limiar persistido nas preferências do curador. Opcional para manter o
+   * componente utilizável isoladamente (testes, storybook), caindo no piso.
+   */
+  confidenceThreshold?: number;
+  /** Notifica o dono das preferências para persistir a escolha. */
+  onConfidenceThresholdChange?: (value: number) => void;
   /** Chamado após aplicar com sucesso ao menos uma troca. */
   onApplied: () => void;
 }
@@ -95,12 +102,23 @@ export function SkillReclassifyDialog({
   open,
   onOpenChange,
   candidates,
+  confidenceThreshold,
+  onConfidenceThresholdChange,
   onApplied,
 }: SkillReclassifyDialogProps) {
-  // Limiar ajustável pelo curador. O piso é o default do módulo: afrouxar
-  // abaixo dele reabriria a porta para trocas sem evidência, que é exatamente
-  // o que o classificador existe para impedir. Só é possível ENDURECER.
-  const [limiar, setLimiar] = useState(MIN_RECLASSIFY_CONFIDENCE);
+  // Limiar ajustável pelo curador, persistido nas preferências. O piso é o
+  // default do módulo: afrouxar abaixo dele reabriria a porta para trocas sem
+  // evidência, que é exatamente o que o classificador existe para impedir.
+  // Só é possível ENDURECER. Um valor persistido corrompido degrada para o piso.
+  const limiar = useMemo(() => {
+    const v = confidenceThreshold;
+    if (typeof v !== 'number' || !Number.isFinite(v)) return MIN_RECLASSIFY_CONFIDENCE;
+    return Math.min(Math.max(Math.round(v * 100) / 100, MIN_RECLASSIFY_CONFIDENCE), 0.95);
+  }, [confidenceThreshold]);
+  const setLimiar = useCallback(
+    (v: number) => onConfidenceThresholdChange?.(v),
+    [onConfidenceThresholdChange],
+  );
   const plano = useMemo(
     () => buildReclassificationPlan(candidates, { minConfidence: limiar }),
     [candidates, limiar],
