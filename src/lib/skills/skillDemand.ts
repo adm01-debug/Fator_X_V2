@@ -419,6 +419,7 @@ export function normalizeDemandPreferences(
     search: '',
     confidenceThreshold: DEMAND_THRESHOLD_FLOOR_FALLBACK,
     onlyNeedsReview: false,
+    source: 'all',
   },
 ): DemandPreferences {
   const piso = normalizeConfidenceThreshold(
@@ -442,9 +443,15 @@ export function normalizeDemandPreferences(
   // do catálogo sem que o curador tenha pedido nada.
   const onlyNeedsReview =
     typeof raw.onlyNeedsReview === 'boolean' ? raw.onlyNeedsReview : defaults.onlyNeedsReview ?? false;
+  // Procedência ausente (preferência gravada antes deste filtro existir) cai no
+  // default do chamador, não em 'unknown' — senão uma sessão antiga abriria o
+  // painel recortado em skills sem origem, que é quase o conjunto vazio.
+  const source =
+    raw.source === undefined ? defaults.source ?? 'all' : normalizeSourceFilter(raw.source);
 
-  return { tier, department, search, confidenceThreshold, onlyNeedsReview };
+  return { tier, department, search, confidenceThreshold, onlyNeedsReview, source };
 }
+
 
 
 /** Exportação CSV (RFC 4180, com BOM) do recorte visível. */
