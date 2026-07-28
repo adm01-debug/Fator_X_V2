@@ -592,6 +592,191 @@ export const CURATED_SKILLS: CuratedSkill[] = [
     tags: ['ti', 'skill', 'skills', 'runtime', 'selecao', 'agente', 'orquestracao'],
     qualityScore: 89,
   },
+
+  // ------------- ENGENHARIA DE PRODUÇÃO (porte de addyosmani/agent-skills) -------------
+  // Skills de engenharia "production-grade" portadas do repositório
+  // addyosmani/agent-skills (MIT). Reescritas em PT-BR, sem sobreposição com o
+  // bloco anterior (TDD, depuração, revisão, planejamento e git já cobertos acima).
+  {
+    slug: 'nexus-design-de-api-e-contratos',
+    name: 'Design de API e Contratos de Interface',
+    description:
+      'Projeta interfaces difíceis de usar errado: nomeia recursos, versiona contratos, define erros previsíveis e fronteiras entre módulos, tornando o caminho correto o mais fácil de seguir em REST, GraphQL ou props de componentes.',
+    department: 'ti',
+    category: 'knowledge',
+    tags: ['ti', 'api', 'rest', 'graphql', 'contrato', 'interface', 'arquitetura', 'backend'],
+    qualityScore: 93,
+  },
+  {
+    slug: 'nexus-teste-em-navegador-devtools',
+    name: 'Teste em Navegador Real com DevTools',
+    description:
+      'Valida comportamento em runtime real: inspeciona o DOM, captura erros de console, analisa requisições de rede e mede performance no navegador em vez de deduzir o resultado a partir do código estático.',
+    department: 'ti',
+    category: 'tools',
+    tags: ['ti', 'navegador', 'browser', 'devtools', 'teste', 'frontend', 'debug', 'console'],
+    qualityScore: 90,
+  },
+  {
+    slug: 'nexus-pipeline-ci-cd',
+    name: 'Pipeline de CI/CD e Portões de Qualidade',
+    description:
+      'Automatiza portões de qualidade no pipeline — lint, tipos, testes e build — aplicando o princípio shift-left para barrar o defeito o mais cedo possível e impedir que qualquer mudança chegue à produção sem verificação.',
+    department: 'ti',
+    category: 'workflows',
+    tags: ['ti', 'ci', 'cd', 'pipeline', 'deploy', 'automacao', 'devops', 'build'],
+    qualityScore: 94,
+  },
+  {
+    slug: 'nexus-simplificacao-de-codigo',
+    name: 'Simplificação de Código sem Mudar Comportamento',
+    description:
+      'Reduz complexidade preservando o comportamento exato: elimina indireção desnecessária, achata condicionais e nomeia intenções, validando cada mudança pelo critério de leitura por alguém que chega agora ao time.',
+    department: 'ti',
+    category: 'workflows',
+    tags: ['ti', 'refactor', 'simplificacao', 'legibilidade', 'qualidade', 'manutencao', 'codigo'],
+    qualityScore: 91,
+  },
+  {
+    slug: 'nexus-engenharia-de-contexto',
+    name: 'Engenharia de Contexto para Agentes',
+    description:
+      'Cura deliberadamente o que o agente enxerga: monta arquivos de regras, injeta apenas o contexto relevante à tarefa e poda histórico redundante, combatendo tanto a alucinação por falta quanto a perda de foco por excesso.',
+    department: 'ti',
+    category: 'knowledge',
+    tags: ['ti', 'contexto', 'agente', 'prompt', 'rag', 'janela', 'orquestracao'],
+    qualityScore: 93,
+  },
+  {
+    slug: 'nexus-depreciacao-e-migracao',
+    name: 'Depreciação e Migração Segura',
+    description:
+      'Trata código como passivo: define janela de depreciação, telemetria de uso residual, caminho de migração assistida e data de remoção, garantindo que nenhum consumidor seja desligado sem aviso e sem alternativa.',
+    department: 'ti',
+    category: 'workflows',
+    tags: ['ti', 'depreciacao', 'migracao', 'legado', 'sunset', 'versionamento', 'api'],
+    qualityScore: 89,
+  },
+  {
+    slug: 'nexus-adr-e-documentacao',
+    name: 'ADRs e Documentação de Decisões',
+    description:
+      'Registra o porquê, não só o quê: documenta contexto, restrições, alternativas descartadas e consequências de cada decisão arquitetural em ADRs curtos que orientam humanos e agentes no futuro.',
+    department: 'ti',
+    category: 'knowledge',
+    tags: ['ti', 'adr', 'documentacao', 'arquitetura', 'decisao', 'contexto', 'registro'],
+    qualityScore: 90,
+  },
+  {
+    slug: 'nexus-desenvolvimento-por-duvida',
+    name: 'Desenvolvimento Orientado à Dúvida',
+    description:
+      'Submete toda decisão não trivial a um revisor de contexto limpo, enviesado a refutar e não a aprovar, cruzando evidência ainda em voo — quando corrigir o rumo é barato — em vez de depurar depois.',
+    department: 'ti',
+    category: 'prompts',
+    tags: ['ti', 'duvida', 'revisao', 'adversarial', 'evidencia', 'qualidade', 'risco'],
+    qualityScore: 92,
+  },
+  {
+    slug: 'nexus-engenharia-de-ui-producao',
+    name: 'Engenharia de UI de Nível Produção',
+    description:
+      'Constrói interfaces acessíveis, responsivas e polidas com aderência real ao design system, foco em WCAG, estados de carregamento e erro, evitando a estética genérica de saída gerada por IA.',
+    department: 'ti',
+    category: 'knowledge',
+    tags: ['ti', 'ui', 'frontend', 'acessibilidade', 'wcag', 'design', 'responsivo', 'componente'],
+    qualityScore: 94,
+  },
+  {
+    slug: 'nexus-refinamento-de-ideias',
+    name: 'Refinamento Divergente-Convergente de Ideias',
+    description:
+      'Expande a ideia crua em variações, estressa premissas e só então converge para um conceito único acionável, com critério explícito de escolha e as opções descartadas registradas.',
+    department: 'ti',
+    category: 'prompts',
+    tags: ['ti', 'ideacao', 'brainstorm', 'divergente', 'convergente', 'produto', 'escopo'],
+    qualityScore: 88,
+  },
+  {
+    slug: 'nexus-implementacao-incremental',
+    name: 'Implementação em Fatias Verticais',
+    description:
+      'Entrega em fatias verticais finas: implementa uma parte, testa, verifica e só então expande, mantendo o sistema funcional e testável ao fim de cada incremento em vez de um único salto grande.',
+    department: 'ti',
+    category: 'workflows',
+    tags: ['ti', 'incremental', 'entrega', 'fatia', 'iteracao', 'plano', 'deploy'],
+    qualityScore: 92,
+  },
+  {
+    slug: 'nexus-entrevista-de-intencao',
+    name: 'Entrevista de Intenção do Solicitante',
+    description:
+      'Faz uma pergunta por vez até atingir alta confiança sobre a intenção real por trás do pedido, separando o que foi pedido do que resolve o problema, antes de existir plano, especificação ou código.',
+    department: 'ti',
+    category: 'prompts',
+    tags: ['ti', 'entrevista', 'requisitos', 'intencao', 'descoberta', 'escopo', 'produto'],
+    qualityScore: 91,
+  },
+  {
+    slug: 'nexus-observabilidade-instrumentacao',
+    name: 'Observabilidade e Instrumentação',
+    description:
+      'Instrumenta logs estruturados, métricas, tracing e alertas para que o comportamento em produção seja diagnosticável por evidência, respondendo o que o sistema está fazendo sem depender de reprodução local.',
+    department: 'ti',
+    category: 'tools',
+    tags: ['ti', 'observabilidade', 'logs', 'metricas', 'tracing', 'alerta', 'monitoramento', 'sre'],
+    qualityScore: 94,
+  },
+  {
+    slug: 'nexus-otimizacao-de-performance',
+    name: 'Otimização de Performance Guiada por Medição',
+    description:
+      'Proíbe otimizar por intuição: estabelece baseline, perfila o gargalo real, aplica uma mudança por vez e comprova o ganho com medição comparável, revertendo o que não se pagar.',
+    department: 'ti',
+    category: 'workflows',
+    tags: ['ti', 'performance', 'profiling', 'latencia', 'benchmark', 'otimizacao', 'medicao'],
+    qualityScore: 93,
+  },
+  {
+    slug: 'nexus-hardening-de-seguranca',
+    name: 'Hardening de Segurança Aplicada',
+    description:
+      'Revisa superfícies de ataque de forma sistemática: validação de entrada, autenticação e autorização por requisição, gestão de segredos, dependências e mensagens de erro que não vazam detalhes internos.',
+    department: 'ti',
+    category: 'knowledge',
+    tags: ['ti', 'seguranca', 'hardening', 'autorizacao', 'segredos', 'validacao', 'owasp', 'rls'],
+    qualityScore: 96,
+  },
+  {
+    slug: 'nexus-checklist-de-lancamento',
+    name: 'Checklist de Lançamento e Rollout',
+    description:
+      'Conduz o lançamento com rollout progressivo, feature flags, plano de rollback ensaiado, monitoramento pós-deploy e critérios objetivos de aborto definidos antes de publicar a mudança.',
+    department: 'ti',
+    category: 'workflows',
+    tags: ['ti', 'lancamento', 'rollout', 'flag', 'rollback', 'deploy', 'producao', 'monitoramento'],
+    qualityScore: 93,
+  },
+  {
+    slug: 'nexus-desenvolvimento-orientado-a-fonte',
+    name: 'Desenvolvimento Orientado à Fonte Primária',
+    description:
+      'Exige consulta à fonte primária — código da dependência, documentação oficial ou especificação — antes de afirmar comportamento de biblioteca, substituindo memória do modelo por evidência citável.',
+    department: 'ti',
+    category: 'workflows',
+    tags: ['ti', 'fonte', 'documentacao', 'dependencia', 'evidencia', 'pesquisa', 'biblioteca'],
+    qualityScore: 91,
+  },
+  {
+    slug: 'nexus-spec-driven-development',
+    name: 'Desenvolvimento Orientado a Especificação',
+    description:
+      'Escreve a especificação executável antes do código: comportamento esperado, casos de borda e critérios de aceite verificáveis, que passam a servir de contrato para implementação e revisão.',
+    department: 'ti',
+    category: 'workflows',
+    tags: ['ti', 'especificacao', 'spec', 'requisitos', 'aceite', 'contrato', 'qualidade'],
+    qualityScore: 92,
+  },
 ];
 
 
