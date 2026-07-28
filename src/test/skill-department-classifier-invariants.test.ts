@@ -26,7 +26,7 @@
  * reclassificações erradas com aparência de progresso.
  */
 import { describe, expect, it } from 'vitest';
-import { DEPARTMENT_META, SKILL_DEPARTMENTS } from '@/config/skill-departments';
+import { DEPARTMENT_META, DOMAIN_DEPARTMENTS, FALLBACK_DEPARTMENT, SKILL_DEPARTMENTS } from '@/config/skill-departments';
 import { classifyDepartment, LOW_CONFIDENCE_THRESHOLD } from '@/services/skillDepartmentClassifier';
 
 /** PRNG determinístico — a suíte não pode variar entre execuções. */
@@ -96,13 +96,30 @@ describe('classificador de departamento — invariantes', () => {
     expect(testes).toBeGreaterThanOrEqual(60 * SKILL_DEPARTMENTS.length);
   });
 
-  it('não acumula termos transversais: boilerplate puro não classifica em lugar nenhum', () => {
-    // Se algum dia alguém enfiar "agent" ou "awesome" num léxico, este teste cai.
+  it('não acumula termos transversais: boilerplate puro nunca vira departamento de negócio', () => {
+    // Se algum dia alguém enfiar "agent" ou "awesome" num léxico de domínio,
+    // este teste cai. O balde `transversal` é o único destino aceitável.
     for (const ruido of RUIDO_TRANSVERSAL) {
       const r = classifyDepartment({ name: ruido, description: ruido, tags: [ruido] });
-      expect(r.confidence, `"${ruido}" virou sinal de departamento`).toBeLessThan(
+      if (r.department === FALLBACK_DEPARTMENT) continue;
+      expect(r.department, `"${ruido}" virou sinal de departamento`).toBeNull();
+      expect(r.confidence, `"${ruido}" pontuou em domínio`).toBeLessThan(
         LOW_CONFIDENCE_THRESHOLD,
       );
+    }
+  });
+
+  it('transversal jamais compete com um departamento de negócio com sinal', () => {
+    for (const ruido of RUIDO_TRANSVERSAL) {
+      for (const dep of DOMAIN_DEPARTMENTS) {
+        const forte = DEPARTMENT_META[dep].lexicon.slice(0, 6).join(' ');
+        const r = classifyDepartment({
+          name: `${ruido} ${forte}`,
+          description: forte,
+          tags: DEPARTMENT_META[dep].lexicon.slice(0, 4),
+        });
+        expect(r.department, `${dep} perdeu para transversal por causa de "${ruido}"`).toBe(dep);
+      }
     }
   });
 

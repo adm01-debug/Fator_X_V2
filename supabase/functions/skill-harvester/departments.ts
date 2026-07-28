@@ -16,6 +16,7 @@ export const SKILL_DEPARTMENTS = [
   'pos_venda',
   'dados',
   'executivo',
+  'transversal',
 ] as const;
 
 export type SkillDepartment = (typeof SKILL_DEPARTMENTS)[number];
@@ -98,6 +99,13 @@ export const DEPARTMENT_LEXICON: Record<SkillDepartment, string[]> = {
     'roadmap', 'meta', 'goal', 'governanca', 'governance', 'briefing', 'resumo',
     'summary', 'decisao', 'decision', 'competitivo', 'competitive', 'benchmark',
     'mercado', 'market', 'swot', 'investidor', 'investor', 'pitch',
+  ],
+  transversal: [
+    'awesome', 'list', 'lists', 'curated', 'collection', 'collections',
+    'cheatsheet', 'handbook', 'catalog', 'catalogo', 'directory', 'index',
+    'compendium', 'bookmarks', 'links', 'showcase', 'hacktoberfest',
+    'starter', 'boilerplate', 'repositorio', 'repository', 'agregador',
+    'meta', 'generico', 'generic', 'misc', 'geral',
   ],
 };
 
