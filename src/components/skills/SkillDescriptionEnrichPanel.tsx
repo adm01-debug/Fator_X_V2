@@ -332,8 +332,21 @@ export function SkillDescriptionEnrichPanel({
                 </li>
               ))}
             </ul>
+            {falhas.retryableSkillIds.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => void retentarRetentaveis()}
+                disabled={gerando || gravando}
+              >
+                <RefreshCw className="mr-2 h-4 w-4" aria-hidden="true" />
+                Retentar {falhas.retryableSkillIds.length} retentáve
+                {falhas.retryableSkillIds.length === 1 ? 'l' : 'is'}
+              </Button>
+            )}
           </div>
         )}
+
 
 
 
