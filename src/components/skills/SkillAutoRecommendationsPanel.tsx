@@ -118,17 +118,37 @@ export function SkillAutoRecommendationsPanel() {
         </div>
 
         {agentId ? (
-          <SkillRecommendationsCard
-            title={`Sugestões para ${activeAgent?.name ?? 'este agente'}`}
-            description="Cada skill exibe o score, categoria e as palavras-chave que combinam com a missão."
-            recommendations={recommendations}
-            selectedIds={[]}
-            onSelect={() => {}}
-            onInstall={handleInstall}
-            installingIds={installingIds}
-            installedIds={installedIds}
-            installLabel="Adicionar ao agente"
-          />
+          <>
+            {pendingIds.length > 0 && (
+              <div className="flex justify-end">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleInstallAll}
+                  disabled={installingAll}
+                >
+                  {installingAll ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Sparkles className="h-4 w-4" />
+                  )}
+                  Adicionar todas ({pendingIds.length})
+                </Button>
+              </div>
+            )}
+            <SkillRecommendationsCard
+              title={`Sugestões para ${activeAgent?.name ?? 'este agente'}`}
+              description="Cada skill exibe o score, categoria e as palavras-chave que combinam com a missão."
+              recommendations={recommendations}
+              selectedIds={[]}
+              onSelect={() => {}}
+              onInstall={handleInstall}
+              installingIds={installingIds}
+              installedIds={installedIds}
+              installLabel="Adicionar ao agente"
+            />
+          </>
+
         ) : (
           <p className="text-body-sm text-muted-foreground">
             Escolha um agente acima para ver recomendações automáticas com justificativa.
