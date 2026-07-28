@@ -5,7 +5,7 @@
  * A varredura roda server-side; aqui o admin aprova, rejeita, reclassifica
  * e promove candidatos para o registry.
  */
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import {
   Download, RefreshCw, Loader2, CheckCircle2, XCircle, Star,
