@@ -10,6 +10,9 @@ import { SKILL_DEPARTMENTS, isDepartment } from '@/config/skill-departments';
 import {
   MAX_RECLASSIFY_BATCH,
   MIN_RECLASSIFY_CONFIDENCE,
+  MIN_RECLASSIFY_CONFIDENCE_OVERRIDE,
+  MIN_RECLASSIFY_MARGIN,
+  MIN_RECLASSIFY_MARGIN_OVERRIDE,
   buildReclassificationPlan,
   reclassificationToCsv,
   selectProposals,
@@ -165,11 +168,11 @@ describe('buildReclassificationPlan — 300 catálogos simulados', () => {
     const plano = buildReclassificationPlan(gerarCatalogo(5, 20), 0);
     const csv = reclassificationToCsv(plano.proposals);
     expect(csv.startsWith('\uFEFF')).toBe(true);
-    expect(csv.slice(1).split('\r\n')[0]).toBe('"slug","nome","de","para","confianca","termos"');
+    expect(csv.slice(1).split('\r\n')[0]).toBe('"slug","nome","de","para","confianca","margem","segundo","termos"');
     expect(csv.split('\r\n').length).toBe(plano.proposals.length + 1);
     // Aspas internas são escapadas por duplicação
     const comAspas = reclassificationToCsv([
-      { skillId: 'a', name: 'diz "olá"', slug: 'a', from: null, to: 'ti', confidence: 1, matchedTerms: [] },
+      { skillId: 'a', name: 'diz "olá"', slug: 'a', from: null, to: 'ti', confidence: 1, margin: 1, runnerUp: null, matchedTerms: [] },
     ]);
     expect(comAspas).toContain('"diz ""olá"""');
   });
