@@ -89,11 +89,21 @@ export function fold(value: string): string {
     .trim();
 }
 
+/**
+ * A lista acima é escrita como um humano digita ("n/a", "..."), mas a
+ * comparação acontece sobre o texto normalizado. Sem dobrar a lista também,
+ * entradas com pontuação nunca casariam — "N/A" vira "n a" e passaria batido.
+ */
+const FOLDED_PLACEHOLDERS = new Set([...PLACEHOLDERS].map(fold));
+
 /** `true` quando o texto atual é vazio ou um marcador sem informação. */
 export function isDescriptionEmpty(description: string | null | undefined): boolean {
   const t = (description ?? '').trim();
   if (t.length === 0) return true;
-  return PLACEHOLDERS.has(fold(t));
+  const dobrado = fold(t);
+  // Só pontuação ("--", "...") some no fold: nada resta, logo nada informa.
+  if (dobrado.length === 0) return true;
+  return FOLDED_PLACEHOLDERS.has(dobrado);
 }
 
 export type IneligibleReason =
