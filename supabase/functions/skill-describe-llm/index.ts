@@ -96,6 +96,29 @@ function fold(value: string): string {
 }
 
 /**
+ * Espelho de `PLACEHOLDERS` em src/lib/skills/descriptionEnrichment.ts.
+ * Escrito na forma crua e dobrado abaixo — comparar cru contra texto normalizado
+ * faz "N/A" e "..." nunca casarem (o fold remove a pontuação).
+ * Paridade coberta por src/test/skill-description-parity.test.ts.
+ */
+const PLACEHOLDERS = [
+  'todo', 'tbd', 'n/a', 'na', 'sem descricao', 'sem descrição', 'no description',
+  'no description provided', 'description', 'descricao', 'descrição', 'wip',
+  '-', '--', '...',
+];
+const FOLDED_PLACEHOLDERS = new Set(PLACEHOLDERS.map(fold));
+
+/** `true` quando o texto é vazio ou um marcador que não informa nada. */
+export function isPlaceholderDescription(description: string | null | undefined): boolean {
+  const t = (description ?? '').trim();
+  if (t.length === 0) return true;
+  const dobrado = fold(t);
+  if (dobrado.length === 0) return true;
+  return FOLDED_PLACEHOLDERS.has(dobrado);
+}
+
+
+/**
  * Rejeita descrições que não acrescentam informação.
  *
  * O modo de falha real observado em geração a partir de slug: devolver o
