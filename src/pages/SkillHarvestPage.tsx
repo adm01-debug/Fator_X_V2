@@ -26,7 +26,10 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { repoSlugRegex } from '@/lib/validations/skillImport';
+
 import {
   SKILL_DEPARTMENTS, DEPARTMENT_META, departmentLabel, type SkillDepartment,
 } from '@/config/skill-departments';
