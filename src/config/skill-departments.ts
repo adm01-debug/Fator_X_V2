@@ -102,6 +102,15 @@ export const DEPARTMENT_META: Record<SkillDepartment, DepartmentMeta> = {
       'incident', 'oncall', 'backup', 'restore', 'network', 'rede', 'firewall',
       'seguranca', 'security', 'vulnerability', 'patch', 'inventario', 'inventory',
       'helpdesk', 'troubleshooting', 'sysadmin', 'cloud', 'aws', 'azure', 'gcp',
+      // Vocabulário de engenharia de software (inglês) — o catálogo importado
+      // do GitHub é majoritariamente anglófono e não pontuava em nenhum
+      // departamento. Termos genéricos de plataforma ("agent", "skill", "llm")
+      // ficam FORA daqui: veja PLATFORM_STOPWORDS no classificador.
+      'developer', 'engineering', 'framework', 'sdk', 'cli', 'api', 'apis',
+      'runtime', 'plugin', 'plugins', 'typescript', 'javascript', 'python',
+      'rust', 'golang', 'compiler', 'debugging', 'refactoring', 'tdd',
+      'testing', 'lint', 'git', 'github', 'repo', 'webhook', 'http',
+      'kernel', 'binary', 'concurrency', 'scaffolding',
     ],
   },
   marketing: {
