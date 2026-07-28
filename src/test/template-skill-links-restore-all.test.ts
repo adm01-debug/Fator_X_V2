@@ -19,6 +19,7 @@ import {
   buildRestoreFailuresFilename,
   parseStoredRestoreFailures,
   pruneExpiredRestoreFailures,
+  dedupeRestoreFailures,
   summarizeRestoreFailures,
   BULK_RESTORE_CONFIRM_THRESHOLD,
   type CurationFeedDay,
@@ -376,5 +377,38 @@ describe('pruneExpiredRestoreFailures', () => {
 
   it('descarta registros com data inválida', () => {
     expect(pruneExpiredRestoreFailures([base('não-é-data')], Date.now())).toEqual([]);
+  });
+});
+
+describe('dedupeRestoreFailures', () => {
+  const falha = (templateId: string, failedAt: string, skillCount = 1) => ({
+    templateId,
+    templateName: templateId,
+    skillCount,
+    message: 'fetch',
+    kind: 'network' as const,
+    failedAt,
+  });
+
+  it('mantém apenas a ocorrência mais recente por template', () => {
+    const antiga = falha('t1', '2026-07-28T10:00:00.000Z', 5);
+    const nova = falha('t1', '2026-07-28T11:00:00.000Z', 2);
+    expect(dedupeRestoreFailures([antiga, nova])).toEqual([nova]);
+  });
+
+  it('ordena da falha mais nova para a mais antiga', () => {
+    const a = falha('t1', '2026-07-28T09:00:00.000Z');
+    const b = falha('t2', '2026-07-28T12:00:00.000Z');
+    expect(dedupeRestoreFailures([a, b]).map((f) => f.templateId)).toEqual(['t2', 't1']);
+  });
+
+  it('prefere a entrada com data válida quando há lixo', () => {
+    const invalida = falha('t1', 'não-é-data');
+    const valida = falha('t1', '2026-07-28T09:00:00.000Z');
+    expect(dedupeRestoreFailures([invalida, valida])).toEqual([valida]);
+  });
+
+  it('ignora entradas sem templateId', () => {
+    expect(dedupeRestoreFailures([falha('', '2026-07-28T09:00:00.000Z')])).toEqual([]);
   });
 });
