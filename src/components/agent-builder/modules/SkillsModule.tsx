@@ -29,6 +29,7 @@ import {
 
   uninstallSkill,
   type AgentSkillDefinition,
+  computeSkillSelectionDiff,
 } from '@/services/skillsRegistryService';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import { logger } from '@/lib/logger';
