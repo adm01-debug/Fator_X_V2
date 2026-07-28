@@ -40,9 +40,36 @@ export function classifyDemand(templateCount: number): DemandTier {
   return 'alta';
 }
 
-/** Procedencias aceitas para a classificacao departamental (espelha o CHECK do banco). */
-export const DEPARTMENT_SOURCES = ['unknown', 'heuristic', 'llm', 'human', 'import'] as const;
+/**
+ * Procedencias aceitas para a classificacao departamental (espelha o CHECK do banco).
+ *
+ * `lexical` é o rótulo legado do motor determinístico e `platform_heuristic` é
+ * o tier de jargão de plataforma. Ambos precisam estar aqui: qualquer valor
+ * fora da lista degrada para `unknown`, o que apagaria a procedência real na
+ * UI e faria uma decisão automática parecer "sem origem conhecida".
+ */
+export const DEPARTMENT_SOURCES = [
+  'unknown',
+  'heuristic',
+  'lexical',
+  'platform_heuristic',
+  'llm',
+  'human',
+  'import',
+] as const;
 export type DepartmentSource = (typeof DEPARTMENT_SOURCES)[number];
+
+/** Rótulos pt-BR das procedências, para filtros e legendas. */
+export const DEPARTMENT_SOURCE_LABEL: Record<DepartmentSource, string> = {
+  unknown: 'Sem origem',
+  heuristic: 'Léxico',
+  lexical: 'Léxico (legado)',
+  platform_heuristic: 'Plataforma',
+  llm: 'IA (LLM)',
+  human: 'Humano',
+  import: 'Importação',
+};
+
 
 /**
  * Piso de confianca abaixo do qual a classificacao automatica e tratada como
