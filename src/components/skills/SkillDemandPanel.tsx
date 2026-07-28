@@ -315,6 +315,34 @@ export function SkillDemandPanel() {
             Sem depto. ({porDepartamento.none ?? 0})
           </Button>
 
+          {/* Consequência direta da fila acima: skills sem departamento não têm
+              evidência léxica (por isso ficaram sem rótulo), então o único
+              caminho automático restante é o fallback LLM. O atalho troca o
+              recorte E abre o diálogo já disparando o lote — as propostas
+              continuam nascendo desmarcadas, nada é escrito sem curadoria. */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              if (deptFilter === 'none') {
+                setAutoIa(true);
+                setReclassificarAberto(true);
+                return;
+              }
+              // Troca o recorte primeiro: abrir agora usaria os candidatos do
+              // filtro ANTERIOR e gastaria créditos no lote errado.
+              atualizarPrefs({ department: 'none', tier: 'all', onlyNeedsReview: false });
+              setIaPendente(true);
+            }}
+            disabled={loading || (porDepartamento.none ?? 0) === 0}
+            title="Envia as skills sem departamento para classificação por IA em lote"
+          >
+            <Sparkles className="h-4 w-4 mr-2" aria-hidden />
+            Sugerir depto. com IA
+          </Button>
+
+
+
           <Button
             variant="ghost"
             size="sm"
