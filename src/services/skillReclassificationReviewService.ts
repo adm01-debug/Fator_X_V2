@@ -37,6 +37,13 @@ export interface ReclassificationReview {
   to: SkillDepartment;
   confidence: number;
   margin: number;
+  /**
+   * Limiar exigido pelo curador quando a proposta foi criada. `null` para
+   * propostas anteriores à coluna. Sem isso, uma proposta de 0,60 aprovada
+   * ontem é indistinguível de uma que seria rejeitada hoje sob limiar 0,80 —
+   * e a auditoria não consegue reconstruir o critério vigente.
+   */
+  confidenceThreshold: number | null;
   runnerUp: SkillDepartment | null;
   matchedTerms: string[];
   source: ProposalSource;
@@ -116,6 +123,7 @@ interface ReviewRow {
   department_to: string;
   confidence: number | string | null;
   margin: number | string | null;
+  confidence_threshold?: number | string | null;
   runner_up: string | null;
   matched_terms: string[] | null;
   source: string | null;
@@ -131,6 +139,22 @@ interface ReviewRow {
 function toNumber(value: number | string | null): number {
   const n = typeof value === 'string' ? Number(value) : (value ?? 0);
   return Number.isFinite(n) ? n : 0;
+}
+
+/**
+ * Normaliza o limiar persistido.
+ *
+ * Diferente de `toNumber`, aqui `null` é informação legítima (proposta antiga,
+ * anterior à coluna) e NÃO pode virar 0: exibir "limiar 0,00" sugeriria que o
+ * curador aceitou qualquer coisa, o oposto do que aconteceu. Valores fora de
+ * [0,1] também viram `null` — dado corrompido é pior que dado ausente numa
+ * trilha de auditoria.
+ */
+export function toThreshold(value: number | string | null | undefined): number | null {
+  if (value === null || value === undefined) return null;
+  const n = typeof value === 'string' ? Number(value) : value;
+  if (!Number.isFinite(n) || n < 0 || n > 1) return null;
+  return n;
 }
 
 function toStatus(value: string | null): ReviewStatus {
@@ -157,6 +181,7 @@ export function mapReviewRow(row: ReviewRow): ReclassificationReview | null {
     to: row.department_to,
     confidence: toNumber(row.confidence),
     margin: toNumber(row.margin),
+    confidenceThreshold: toThreshold(row.confidence_threshold),
     runnerUp: runnerUp !== null && isDepartment(runnerUp) ? runnerUp : null,
     matchedTerms: Array.isArray(row.matched_terms) ? row.matched_terms.filter(Boolean) : [],
     source: row.source === 'ia' ? 'ia' : 'lexico',
@@ -171,7 +196,7 @@ export function mapReviewRow(row: ReviewRow): ReclassificationReview | null {
 }
 
 const SELECT_COLUMNS =
-  'id, skill_id, skill_slug, skill_name, department_from, department_to, confidence, margin, runner_up, matched_terms, source, rationale, status, decision_reason, requested_by, reviewed_by, reviewed_at, created_at';
+  'id, skill_id, skill_slug, skill_name, department_from, department_to, confidence, confidence_threshold, margin, runner_up, matched_terms, source, rationale, status, decision_reason, requested_by, reviewed_by, reviewed_at, created_at';
 
 export interface FetchReviewsOptions {
   status?: ReviewStatus | 'todos';
@@ -219,7 +244,13 @@ export interface SubmitReviewsResult {
  */
 export async function submitReclassificationReviews(
   proposals: readonly ReclassifyProposal[],
+  options: { confidenceThreshold?: number } = {},
 ): Promise<SubmitReviewsResult> {
+  // Quantizado em 4 casas para casar com numeric(5,4): mandar 0.7300000000001
+  // faria o Postgres arredondar silenciosamente e o valor lido divergiria do
+  // enviado — ruído gratuito numa trilha de auditoria.
+  const limiar = toThreshold(options.confidenceThreshold);
+  const limiarPersistido = limiar === null ? null : Number(limiar.toFixed(4));
   const { data: auth } = await supabase.auth.getUser();
   const userId = auth?.user?.id ?? null;
   if (!userId) {
@@ -242,6 +273,7 @@ export async function submitReclassificationReviews(
       department_from: p.from,
       department_to: p.to,
       confidence: Number(p.confidence.toFixed(4)),
+      confidence_threshold: limiarPersistido,
       margin: Number(p.margin.toFixed(4)),
       runner_up: p.runnerUp,
       matched_terms: p.matchedTerms ?? [],
