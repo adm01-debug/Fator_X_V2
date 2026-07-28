@@ -77,7 +77,21 @@ export function SkillClassificationEfficacyCard({
   const [calibracoes, setCalibracoes] = useState<ThresholdCalibration[]>([]);
   const [loading, setLoading] = useState(true);
   const [filtro, setFiltro] = useState<EfficacyFilter>('all');
+  const [filtroCalib, setFiltroCalib] = useState<CalibrationTimelineFilter>('all');
+  const [overrideOpen, setOverrideOpen] = useState(false);
+  const [justificativa, setJustificativa] = useState('');
   const instabilidade = useMemo(() => detectCalibrationInstability(calibracoes), [calibracoes]);
+  const totalSobAlerta = useMemo(
+    () => calibracoes.filter((c) => c.overriddenInstability).length,
+    [calibracoes],
+  );
+  const calibracoesVisiveis = useMemo(
+    () => filterCalibrations(calibracoes, filtroCalib),
+    [calibracoes, filtroCalib],
+  );
+  const justificativaValida = isOverrideReasonValid(justificativa);
+
+
 
 
   const carregar = useCallback(async () => {
