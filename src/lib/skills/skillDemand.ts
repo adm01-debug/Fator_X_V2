@@ -460,7 +460,19 @@ export function demandRowsToCsv(rows: readonly SkillDemandRow[]): string {
     const text = value === null ? '' : String(value);
     return `"${text.replace(/"/g, '""')}"`;
   };
-  const header = ['slug', 'nome', 'departamento', 'qualidade', 'templates', 'faixa', 'origem'];
+  // Colunas novas são ANEXADAS ao fim de propósito: planilhas e scripts do
+  // curador referenciam posições, e inserir no meio quebraria silenciosamente.
+  const header = [
+    'slug',
+    'nome',
+    'departamento',
+    'qualidade',
+    'templates',
+    'faixa',
+    'origem',
+    'classificacao',
+    'confianca',
+  ];
   const lines = [header.map(escape).join(',')];
   for (const row of rows) {
     lines.push(
@@ -472,8 +484,13 @@ export function demandRowsToCsv(rows: readonly SkillDemandRow[]): string {
         escape(row.templateCount),
         escape(DEMAND_TIER_LABEL[row.tier]),
         escape(row.sourceRepo),
+        escape(DEPARTMENT_SOURCE_LABEL[row.departmentSource]),
+        // Locale pt-BR: vírgula decimal. O CSV já é totalmente aspeado, então
+        // a vírgula não vaza como separador de campo.
+        escape(row.departmentConfidence.toFixed(2).replace('.', ',')),
       ].join(','),
     );
   }
+
   return '\uFEFF' + lines.join('\r\n');
 }
