@@ -58,6 +58,7 @@ function syntheticSkills(count: number): PromptSkill[] {
 
 export function SkillPromptSimulator() {
   const [agentId, setAgentId] = useState<string>('');
+  const [compareId, setCompareId] = useState<string>('');
   const [forceOverflow, setForceOverflow] = useState(false);
   const [showSanitization, setShowSanitization] = useState(false);
 
@@ -71,6 +72,16 @@ export function SkillPromptSimulator() {
     queryKey: ['agent_prompt_context', agentId],
     queryFn: () => fetchAgentPromptContext(agentId),
     enabled: agentId !== '',
+    staleTime: 60_000,
+  });
+
+  // O lado de comparação é sempre compilado SEM os toggles de estresse: os
+  // toggles existem para inspecionar o agente principal, e aplicá-los aos dois
+  // lados tornaria o diff sistematicamente vazio na parte sintética.
+  const { data: compareContext, isLoading: loadingCompare } = useQuery({
+    queryKey: ['agent_prompt_context', compareId],
+    queryFn: () => fetchAgentPromptContext(compareId),
+    enabled: compareId !== '',
     staleTime: 60_000,
   });
 
@@ -95,6 +106,24 @@ export function SkillPromptSimulator() {
     });
   }, [context, forceOverflow, showSanitization]);
 
+  const compareResult = useMemo(() => {
+    if (!compareContext) return null;
+    return simulatePrompt({
+      name: compareContext.name,
+      emoji: compareContext.emoji,
+      mission: compareContext.mission,
+      type: compareContext.persona,
+      model: compareContext.model,
+      prompt: compareContext.systemPrompt,
+      skills: compareContext.skills,
+    });
+  }, [compareContext]);
+
+  const diff = useMemo(
+    () => (compareResult && result ? diffPromptSimulations(compareResult, result) : null),
+    [compareResult, result],
+  );
+
   const copiar = async () => {
     if (!result) return;
     try {
@@ -104,6 +133,34 @@ export function SkillPromptSimulator() {
       toast.error('Não foi possível copiar o prompt');
     }
   };
+
+  /** Exporta o artefato markdown de evidência (download local, sem backend). */
+  const exportar = () => {
+    if (!result || !context) return;
+    const meta = {
+      agentId: context.id,
+      agentName: context.name,
+      model: context.model,
+      persona: context.persona,
+      forcedOverflow: forceOverflow,
+      injectedDirtySkill: showSanitization,
+    };
+    try {
+      const blob = new Blob([buildPromptAuditArtifact(result, meta)], {
+        type: 'text/markdown;charset=utf-8',
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = buildArtifactFilename(meta);
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success('Evidência de auditoria exportada');
+    } catch {
+      toast.error('Não foi possível gerar o artefato');
+    }
+  };
+
 
   return (
     <Card className="border-border/60">
