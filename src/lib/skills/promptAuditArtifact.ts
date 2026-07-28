@@ -120,3 +120,94 @@ export function buildPromptAuditArtifact(
 
   return linhas.join('\n');
 }
+
+/* ------------------------------------------------------------------ *
+ * Evidência persistível (trilha de auditoria)
+ * ------------------------------------------------------------------ */
+
+/**
+ * Checksum FNV-1a de 32 bits em hex.
+ *
+ * Escolha deliberada: o artefato em si NÃO vai para a trilha (pode conter o
+ * prompt inteiro, com dados sensíveis do negócio). O que vai é a impressão
+ * digital — suficiente para provar meses depois que o arquivo apresentado em
+ * uma revisão é exatamente o que foi exportado, sem armazenar o conteúdo.
+ * Não é criptográfico e não pretende ser: o adversário aqui é a confusão
+ * operacional, não um falsificador.
+ */
+export function artifactChecksum(content: string): string {
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < content.length; i += 1) {
+    hash ^= content.charCodeAt(i);
+    // Multiplicação FNV pelo primo 16777619 em aritmética de 32 bits.
+    hash = Math.imul(hash, 0x01000193) >>> 0;
+  }
+  return hash.toString(16).padStart(8, '0');
+}
+
+export interface PromptEvidenceRecord {
+  agentId: string;
+  agentName: string;
+  model: string;
+  persona: string;
+  generatedAt: string;
+  filename: string;
+  checksum: string;
+  /** Tamanho do artefato em caracteres — detecta truncamento no download. */
+  artifactChars: number;
+  forcedOverflow: boolean;
+  injectedDirtySkill: boolean;
+  skillsReceived: number;
+  skillsInjected: number;
+  skillsOverflow: number;
+  skillsDuplicates: number;
+  skillsDiscarded: number;
+  skillsSanitized: number;
+  estimatedTokens: number;
+  unresolvedVariables: number;
+  /** Nomes cortados pelo teto: é o dado que mais dói perder na investigação. */
+  overflowedSkills: string[];
+}
+
+/** Limite defensivo: a trilha não deve virar depósito de listas gigantes. */
+const MAX_OVERFLOW_NAMES = 25;
+
+/**
+ * Deriva o registro de evidência a partir do artefato já materializado.
+ *
+ * Recebe o markdown pronto (em vez de recriá-lo) para garantir que o checksum
+ * gravado corresponda byte a byte ao arquivo entregue ao usuário.
+ */
+export function buildPromptEvidenceRecord(
+  result: PromptSimulationResult,
+  meta: PromptArtifactMeta,
+  artifact: string,
+): PromptEvidenceRecord {
+  const d = result.diagnostics;
+  const overflowed = result.skills
+    .filter((s) => s.disposition === 'overflow')
+    .map((s) => s.name || s.originalName)
+    .filter((n) => n.trim() !== '');
+
+  return {
+    agentId: meta.agentId,
+    agentName: meta.agentName,
+    model: meta.model,
+    persona: meta.persona,
+    generatedAt: meta.generatedAt ?? new Date().toISOString(),
+    filename: buildArtifactFilename(meta),
+    checksum: artifactChecksum(artifact),
+    artifactChars: artifact.length,
+    forcedOverflow: meta.forcedOverflow ?? false,
+    injectedDirtySkill: meta.injectedDirtySkill ?? false,
+    skillsReceived: d.received,
+    skillsInjected: d.injected,
+    skillsOverflow: d.overflow,
+    skillsDuplicates: d.duplicates,
+    skillsDiscarded: d.discarded,
+    skillsSanitized: d.sanitized,
+    estimatedTokens: result.compiled.stats.estimatedTokens,
+    unresolvedVariables: result.compiled.unresolvedVariables.length,
+    overflowedSkills: overflowed.slice(0, MAX_OVERFLOW_NAMES),
+  };
+}
