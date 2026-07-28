@@ -252,6 +252,7 @@ export function buildReclassificationPlan(
       margin: margem,
       runnerUp: resultado.ranking[1]?.department ?? null,
       matchedTerms: resultado.matchedTerms.slice(0, 6),
+      source: 'lexico',
     });
   }
 
@@ -261,9 +262,15 @@ export function buildReclassificationPlan(
     return a.slug.localeCompare(b.slug);
   });
 
+  // Ordem estável para a fila: slug. Confiança léxica aqui é ruído (todas são
+  // baixas por definição), e uma ordem estável mantém o painel previsível
+  // entre execuções.
+  llmCandidates.sort((a, b) => a.slug.localeCompare(b.slug));
+
   return {
     proposals,
     summary: { evaluated, proposed: proposals.length, unchanged, lowConfidence, ambiguous },
+    llmCandidates,
   };
 }
 
