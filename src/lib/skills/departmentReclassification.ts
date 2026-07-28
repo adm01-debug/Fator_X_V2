@@ -63,6 +63,13 @@ export interface ReclassifyCandidate {
   department?: string | null;
 }
 
+/**
+ * Origem da proposta. O curador precisa saber o que está aprovando: uma
+ * correspondência léxica é auditável termo a termo; um palpite de LLM não é.
+ * Sem essa marca, as duas viram a mesma linha na tela e no CSV.
+ */
+export type ProposalSource = 'lexico' | 'ia';
+
 /** Uma troca proposta, pronta para exibição e aplicação. */
 export interface ReclassifyProposal {
   skillId: string;
@@ -77,6 +84,28 @@ export interface ReclassifyProposal {
   /** Departamento que ficou em segundo lugar (contexto para o curador). */
   runnerUp: SkillDepartment | null;
   matchedTerms: string[];
+  /** Ausente = `lexico` (propostas anteriores ao fallback LLM). */
+  source?: ProposalSource;
+  /** Justificativa em linguagem natural — só existe em propostas de IA. */
+  rationale?: string;
+}
+
+/**
+ * Skill que o classificador determinístico NÃO conseguiu resolver.
+ *
+ * Antes estas skills eram apenas contadas em `summary.lowConfidence` e
+ * descartadas — um beco sem saída na UI. Agora carregam o texto original para
+ * que o fallback LLM possa ser acionado sobre exatamente este recorte.
+ */
+export interface LlmFallbackCandidate {
+  skillId: string;
+  name: string;
+  slug: string;
+  description: string;
+  tags: string[];
+  from: SkillDepartment | null;
+  /** Confiança léxica obtida (baixa por definição) — contexto para o curador. */
+  lexicalConfidence: number;
 }
 
 export interface ReclassifyPlanSummary {
