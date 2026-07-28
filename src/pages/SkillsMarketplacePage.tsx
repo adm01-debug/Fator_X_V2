@@ -17,6 +17,8 @@ import { useQuery } from '@tanstack/react-query';
 import { listSkills, type AgentSkillDefinition } from '@/services/skillsRegistryService';
 import { toast } from 'sonner';
 import { ProgressiveSkillLoaderPanel } from '@/components/skills/ProgressiveSkillLoaderPanel';
+import { SkillAttributionBadge } from '@/components/skills/SkillAttributionBadge';
+
 import { SkillAutoRecommendationsPanel } from '@/components/skills/SkillAutoRecommendationsPanel';
 
 const CATEGORIES = [
