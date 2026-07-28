@@ -5,7 +5,7 @@
  * A varredura roda server-side; aqui o admin aprova, rejeita, reclassifica
  * e promove candidatos para o registry.
  */
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import {
   Download, RefreshCw, Loader2, CheckCircle2, XCircle, Star,
@@ -36,6 +36,7 @@ import {
 import {
   runHarvest, runHarvestAllBatches, listCandidates, listRuns, promoteCandidate, bulkUpdateStatus,
   updateCandidate, getDepartmentCoverage,
+  loadHarvestCheckpoint, saveHarvestCheckpoint, clearHarvestCheckpoint,
   type HarvestCandidate, type HarvestRun, type CandidateStatus, type HarvestBatchResult,
 } from '@/services/skillHarvestService';
 
@@ -71,6 +72,8 @@ export default function SkillHarvestPage() {
   const [loading, setLoading] = useState(true);
   const [harvesting, setHarvesting] = useState(false);
   const [harvestProgress, setHarvestProgress] = useState<HarvestProgress | null>(null);
+  /** Permite ao curador interromper o encadeamento sem perder o já coletado. */
+  const abortRef = useRef<AbortController | null>(null);
   const [rebuilding, setRebuilding] = useState(false);
 
 
@@ -124,6 +127,8 @@ export default function SkillHarvestPage() {
   useEffect(() => { void load(); }, [load]);
 
   const handleHarvest = async () => {
+    const controller = new AbortController();
+    abortRef.current = controller;
     setHarvesting(true);
     setHarvestProgress(null);
     try {
@@ -155,6 +160,15 @@ export default function SkillHarvestPage() {
       let rejected = 0;
       const allErrors: string[] = [];
 
+      // Retoma do último ponto conhecido em vez de reprocessar tudo — as
+      // leituras já feitas consomem cota da API do GitHub sem gerar nada novo.
+      const checkpoint = loadHarvestCheckpoint(parsedRepos);
+      if (checkpoint) {
+        toast.info('Retomando varredura', {
+          description: `Continuando a partir do arquivo ${checkpoint.offset}.`,
+        });
+      }
+
       const batches = await runHarvestAllBatches(
         {
           departments: Array.from(pickedDepts),
@@ -162,10 +176,12 @@ export default function SkillHarvestPage() {
           maxRepos,
           repos: parsedRepos,
           filesPerRepo,
+          fileOffset: checkpoint?.offset ?? 0,
           maxCandidates: Math.min(1000, filesPerRepo * parsedRepos.length),
         },
         {
           maxBatches: MAX_HARVEST_BATCHES,
+          signal: controller.signal,
           onBatch: (batch: HarvestBatchResult, index: number) => {
             found += batch.found;
             inserted += batch.inserted;
@@ -183,18 +199,38 @@ export default function SkillHarvestPage() {
               inserted,
             });
           },
+          onBatchError: (error, attempt, willRetry) => {
+            allErrors.push(error.message);
+            if (willRetry) {
+              toast.warning(`Lote falhou (tentativa ${attempt}) — retentando`, {
+                description: error.message.slice(0, 160),
+              });
+            }
+          },
+          onCheckpoint: (offset, total) => saveHarvestCheckpoint(parsedRepos, offset, total),
         },
       );
 
       const last = batches[batches.length - 1];
-      const incomplete = Boolean(last?.truncated);
+      const incomplete = Boolean(last?.truncated) || controller.signal.aborted;
 
-      toast.success(`Varredura concluída em ${batches.length} lote(s)`, {
-        description: `${found} candidatos encontrados, ${inserted} novos, ${rejected} rejeitados automaticamente.`,
-      });
-      if (incomplete) {
+      // Sem pendências: o checkpoint deixa de valer e precisa sair do storage,
+      // senão a próxima varredura do mesmo repo começaria no fim da lista.
+      if (!incomplete) clearHarvestCheckpoint(parsedRepos);
+      else if (last) saveHarvestCheckpoint(parsedRepos, last.nextFileOffset);
+
+      if (controller.signal.aborted) {
+        toast.info('Varredura interrompida', {
+          description: `${inserted} novos candidatos gravados. O progresso foi salvo — rode de novo para continuar.`,
+        });
+      } else {
+        toast.success(`Varredura concluída em ${batches.length} lote(s)`, {
+          description: `${found} candidatos encontrados, ${inserted} novos, ${rejected} rejeitados automaticamente.`,
+        });
+      }
+      if (incomplete && !controller.signal.aborted) {
         toast.warning('Varredura parcial', {
-          description: `Teto de ${MAX_HARVEST_BATCHES} lotes atingido. Rode novamente para continuar de onde parou.`,
+          description: 'Progresso salvo. Rode novamente para continuar exatamente de onde parou.',
         });
       }
       if (allErrors.length > 0) {
@@ -206,6 +242,7 @@ export default function SkillHarvestPage() {
         description: e instanceof Error ? e.message : undefined,
       });
     } finally {
+      abortRef.current = null;
       setHarvesting(false);
       setHarvestProgress(null);
     }
@@ -496,10 +533,22 @@ export default function SkillHarvestPage() {
                 )}
               </div>
 
-              <Button onClick={() => void handleHarvest()} disabled={harvesting} className="w-full sm:w-auto">
-                {harvesting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-                {harvesting ? 'Varrendo o GitHub…' : 'Executar varredura'}
-              </Button>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <Button onClick={() => void handleHarvest()} disabled={harvesting} className="w-full sm:w-auto">
+                  {harvesting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+                  {harvesting ? 'Varrendo o GitHub…' : 'Executar varredura'}
+                </Button>
+
+                {harvesting && (
+                  <Button
+                    variant="outline"
+                    className="w-full sm:w-auto"
+                    onClick={() => abortRef.current?.abort()}
+                  >
+                    Interromper
+                  </Button>
+                )}
+              </div>
 
               {harvestProgress && (
                 <div
