@@ -47,6 +47,18 @@ function pct(value: number | null): string {
   return value === null ? '—' : `${Math.round(value * 100)}%`;
 }
 
+const DIRECTION_LABEL: Record<ReturnType<typeof calibrationDirection>, string> = {
+  aumentou: 'mais rigoroso',
+  reduziu: 'mais permissivo',
+  manteve: 'sem variação',
+};
+
+const DIRECTION_STYLE: Record<ReturnType<typeof calibrationDirection>, string> = {
+  aumentou: 'border-primary/40 text-primary',
+  reduziu: 'border-warning/40 text-warning',
+  manteve: 'border-muted-foreground/40 text-muted-foreground',
+};
+
 export interface SkillClassificationEfficacyCardProps {
   /** Limiar hoje em vigor no painel de demanda (para comparar com o sugerido). */
   currentThreshold?: number;
