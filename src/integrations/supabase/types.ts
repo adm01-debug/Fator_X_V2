@@ -9500,6 +9500,10 @@ export type Database = {
           curated_by: string | null
           department: string | null
           description: string
+          description_confidence: number | null
+          description_generated_at: string | null
+          description_model: string | null
+          description_source: string | null
           id: string
           install_count: number
           is_public: boolean
@@ -9527,6 +9531,10 @@ export type Database = {
           curated_by?: string | null
           department?: string | null
           description?: string
+          description_confidence?: number | null
+          description_generated_at?: string | null
+          description_model?: string | null
+          description_source?: string | null
           id?: string
           install_count?: number
           is_public?: boolean
@@ -9554,6 +9562,10 @@ export type Database = {
           curated_by?: string | null
           department?: string | null
           description?: string
+          description_confidence?: number | null
+          description_generated_at?: string | null
+          description_model?: string | null
+          description_source?: string | null
           id?: string
           install_count?: number
           is_public?: boolean
@@ -14289,6 +14301,52 @@ export type Database = {
       activate_ir_playbook: {
         Args: { p_playbook_id: string }
         Returns: undefined
+      }
+      apply_skill_description: {
+        Args: {
+          _confidence: number
+          _description: string
+          _min_confidence?: number
+          _model?: string
+          _skill_id: string
+        }
+        Returns: {
+          author: string
+          category: string
+          created_at: string
+          created_by: string | null
+          curated_at: string | null
+          curated_by: string | null
+          department: string | null
+          description: string
+          description_confidence: number | null
+          description_generated_at: string | null
+          description_model: string | null
+          description_source: string | null
+          id: string
+          install_count: number
+          is_public: boolean
+          is_verified: boolean
+          mcp_server_url: string | null
+          name: string
+          quality_score: number
+          rating: number
+          skill_config: Json
+          slug: string
+          source_commit: string | null
+          source_license: string | null
+          source_repo: string | null
+          source_url: string | null
+          tags: string[] | null
+          updated_at: string
+          version: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "skill_registry"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       assess_vendor: {
         Args: {

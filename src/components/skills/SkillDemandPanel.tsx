@@ -323,6 +323,10 @@ export function SkillDemandPanel() {
     {/* Fila de aprovação: fica logo abaixo porque é a consequência direta de
         "Enviar para revisão" — esconder em outra tela quebraria o fluxo. */}
     <SkillReclassificationReviewPanel onApproved={() => void carregar()} />
+
+    {/* Mesma família de problema (skill importada que o catálogo não expõe),
+        então mora ao lado da demanda em vez de virar mais uma tela. */}
+    <SkillDescriptionEnrichPanel onApplied={() => void carregar()} />
     </div>
   );
 }
