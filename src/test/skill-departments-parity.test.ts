@@ -30,6 +30,28 @@ const MIRROR_PATH = resolve(
 const mirrorSource = readFileSync(MIRROR_PATH, 'utf8');
 
 /**
+ * Segundo espelho: a Edge Function `skill-classify-llm` valida o veredito do
+ * modelo contra a lista de departamentos. Ela não copia o léxico (quem
+ * classifica é o LLM), mas a LISTA precisa ser idêntica — se divergir, o
+ * servidor descarta como "alucinação" um departamento que a UI considera
+ * válido, e a skill fica presa em baixa confiança para sempre.
+ */
+const CLASSIFIER_MIRROR_PATH = resolve(
+  process.cwd(),
+  'supabase/functions/skill-classify-llm/departments.ts',
+);
+
+const classifierSource = readFileSync(CLASSIFIER_MIRROR_PATH, 'utf8');
+
+function extractClassifierDepartments(): string[] {
+  const bloco = classifierSource.match(
+    /export const SKILL_DEPARTMENTS = \[([\s\S]*?)\] as const;/m,
+  );
+  if (!bloco) return [];
+  return Array.from(bloco[1].matchAll(/'([^']+)'/g)).map((m) => m[1]);
+}
+
+/**
  * Extrai o léxico de um departamento do texto-fonte do espelho Deno.
  * O espelho declara `DEPARTMENT_LEXICON: Record<SkillDepartment, string[]>`,
  * ou seja, `dept: [ ...termos ]` — sem a chave `lexicon:` do frontend.
@@ -45,6 +67,20 @@ describe('paridade taxonomia frontend x espelho Deno', () => {
   it('o espelho declara exatamente os mesmos departamentos', () => {
     for (const dept of SKILL_DEPARTMENTS) {
       expect(mirrorSource, `departamento ${dept} ausente no espelho`).toContain(`${dept}:`);
+    }
+  });
+
+  it('o espelho do classificador LLM lista os mesmos departamentos, na mesma ordem', () => {
+    expect(extractClassifierDepartments()).toEqual([...SKILL_DEPARTMENTS]);
+  });
+
+  it('todo departamento tem uma dica semântica no prompt do classificador', () => {
+    // Uma dica faltando não quebra nada de imediato: o modelo simplesmente
+    // nunca escolhe aquele balde, e o desvio some no meio dos resultados.
+    for (const dept of SKILL_DEPARTMENTS) {
+      expect(classifierSource, `dica ausente para ${dept}`).toMatch(
+        new RegExp(`\\n\\s*${dept}:\\s*\\n?\\s*'`),
+      );
     }
   });
 
