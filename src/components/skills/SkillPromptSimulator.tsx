@@ -280,7 +280,11 @@ export function SkillPromptSimulator() {
               <TabsTrigger value="prompt">Prompt final</TabsTrigger>
               <TabsTrigger value="skills">Seção de skills</TabsTrigger>
               <TabsTrigger value="diagnostico">Diagnóstico</TabsTrigger>
+              <TabsTrigger value="diff" disabled={compareId === ''}>
+                Comparar
+              </TabsTrigger>
             </TabsList>
+
 
             <TabsContent value="prompt" className="mt-4">
               <pre className="max-h-96 overflow-auto whitespace-pre-wrap break-words rounded-lg border border-border/60 bg-muted/30 p-4 text-meta leading-relaxed">
