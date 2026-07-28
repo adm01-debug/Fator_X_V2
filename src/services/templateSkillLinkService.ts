@@ -702,16 +702,50 @@ export function parseStoredRestoreFailures(raw: string | null): BulkRestoreFailu
   return resultado;
 }
 
+/**
+ * Função pura: consolida falhas repetidas do mesmo template.
+ *
+ * Um retry que falha de novo gera uma segunda entrada para o mesmo
+ * `templateId`. Mostrar as duas engana o curador sobre o volume pendente:
+ * o estado real é apenas a ocorrência mais recente. A saída sai ordenada
+ * da falha mais nova para a mais antiga.
+ */
+export function dedupeRestoreFailures(
+  failures: readonly BulkRestoreFailure[],
+): BulkRestoreFailure[] {
+  const maisRecente = new Map<string, BulkRestoreFailure>();
+  for (const falha of failures ?? []) {
+    if (!falha?.templateId) continue;
+    const atual = maisRecente.get(falha.templateId);
+    if (!atual) {
+      maisRecente.set(falha.templateId, falha);
+      continue;
+    }
+    const tNova = new Date(falha.failedAt).getTime();
+    const tAtual = new Date(atual.failedAt).getTime();
+    // NaN em qualquer lado: preferimos a entrada com data válida.
+    if (Number.isNaN(tAtual) || (!Number.isNaN(tNova) && tNova >= tAtual)) {
+      maisRecente.set(falha.templateId, falha);
+    }
+  }
+  return [...maisRecente.values()].sort(
+    (a, b) => (new Date(b.failedAt).getTime() || 0) - (new Date(a.failedAt).getTime() || 0),
+  );
+}
+
 /** Lê as falhas persistidas; tolera storage indisponível (SSR, modo privado). */
 export function loadRestoreFailures(): BulkRestoreFailure[] {
   try {
-    return pruneExpiredRestoreFailures(
-      parseStoredRestoreFailures(sessionStorage.getItem(RESTORE_FAILURES_STORAGE_KEY)),
+    return dedupeRestoreFailures(
+      pruneExpiredRestoreFailures(
+        parseStoredRestoreFailures(sessionStorage.getItem(RESTORE_FAILURES_STORAGE_KEY)),
+      ),
     );
   } catch {
     return [];
   }
 }
+
 
 /** Persiste (ou limpa) as falhas parciais da sessão atual. */
 export function saveRestoreFailures(failures: readonly BulkRestoreFailure[]): void {
