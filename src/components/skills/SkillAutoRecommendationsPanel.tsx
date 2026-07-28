@@ -18,7 +18,7 @@ import {
   getInstalledSkills,
 } from '@/services/skillsRegistryService';
 
-import { recommendSkills } from '@/services/skillRecommenderService';
+import { recommendSkills, computePendingSkillIds } from '@/services/skillRecommenderService';
 
 export function SkillAutoRecommendationsPanel() {
   const [agentId, setAgentId] = useState<string | undefined>(undefined);
