@@ -46,6 +46,9 @@ export interface DepartmentClassification {
   tier: ClassificationTier;
   /** Fração de tokens de plataforma no texto primário + tags (0..1). */
   platformDensity: number;
+  /** Evidência que sustenta a confiança do tier de plataforma. */
+  platformEvidence: { distinctTerms: number; fieldsWithSignal: number };
+
   /** Veredito determinístico porém fraco: exige confirmação humana. */
   needsReview: boolean;
 }
@@ -111,21 +114,87 @@ export const MIN_PLATFORM_DENSITY = 0.08;
 export const PLATFORM_TIER_DEPARTMENT: SkillDepartment = 'ti';
 
 /**
- * Confiança nominal do tier de plataforma. Deliberadamente abaixo do limiar de
- * alta confiança: o veredito é determinístico, mas indireto (inferido pela
- * ausência de domínio + densidade de jargão), então nasce marcado para revisão.
+ * Confiança BASE do tier de plataforma — o piso, atribuído a um veredito
+ * apoiado em um único termo de jargão. Deliberadamente abaixo de
+ * `LOW_CONFIDENCE_THRESHOLD`: o veredito é determinístico, mas indireto
+ * (inferido pela ausência de domínio), então nasce marcado para revisão.
  */
 export const PLATFORM_TIER_CONFIDENCE = 0.15;
 
-function platformDensityOf(input: ClassifierInput): number {
-  const brutos = tokenize(
-    [input.name, input.description ?? '', (input.tags ?? []).join(' ')].join(' '),
-  );
-  if (brutos.size === 0) return 0;
+/** Ganho de confiança por termo de plataforma DISTINTO além do primeiro. */
+export const PLATFORM_EVIDENCE_STEP = 0.03;
+
+/**
+ * Teto do tier de plataforma. Nunca alcança a confiança de um veredito de
+ * domínio nem a de curadoria humana: por mais jargão que haja, a inferência
+ * continua sendo "isto é ferramental", não "isto é do departamento X".
+ */
+export const PLATFORM_TIER_MAX_CONFIDENCE = 0.4;
+
+/**
+ * Teto aplicado quando TODA a evidência vem de um único campo. Fica um passo
+ * abaixo do limiar de revisão de propósito: vinte tópicos de jargão colados em
+ * um repositório sem descrição são um metadado inflado, não corroboração.
+ * Exigir dois campos independentes é o que separa evidência de repetição.
+ */
+export const PLATFORM_SINGLE_FIELD_CAP = 0.17;
+
+interface PlatformEvidence {
+  density: number;
+  /** Termos de plataforma distintos em todo o texto. */
+  distinctTerms: number;
+  /** Campos independentes (nome+descrição, tags) com ao menos um sinal. */
+  fieldsWithSignal: number;
+  confidence: number;
+}
+
+function platformSignals(text: string): Set<string> {
+  const encontrados = new Set<string>();
+  for (const t of tokenize(text)) if (PLATFORM_STOPWORDS.has(t)) encontrados.add(t);
+  return encontrados;
+}
+
+/**
+ * Mede o jargão de plataforma em duas dimensões independentes.
+ *
+ * A densidade decide SE o tier dispara; a contagem de termos distintos e de
+ * campos corroborantes decide QUÃO confiável é o veredito. Antes disso, todo
+ * item do tier recebia 0.15 fixo — `gstack` ("Router for the gstack skill
+ * suite", zero tópicos) empatava com `fastmcp` (MCP, Python, servidores,
+ * clientes, nove tópicos). Um empate assim fabrica trabalho de curadoria:
+ * o caso óbvio e o caso genuinamente ambíguo chegam na mesma fila.
+ */
+function platformEvidenceOf(input: ClassifierInput): PlatformEvidence {
+  const primario = [input.name, input.description ?? ''].join(' ');
+  const tagsTexto = (input.tags ?? []).join(' ');
+  const brutos = tokenize([primario, tagsTexto].join(' '));
+  if (brutos.size === 0) {
+    return { density: 0, distinctTerms: 0, fieldsWithSignal: 0, confidence: 0 };
+  }
+
+  const sinaisPrimario = platformSignals(primario);
+  const sinaisTags = platformSignals(tagsTexto);
+  const distintos = new Set([...sinaisPrimario, ...sinaisTags]);
+
   let plataforma = 0;
   for (const t of brutos) if (PLATFORM_STOPWORDS.has(t)) plataforma += 1;
-  return plataforma / brutos.size;
+  const density = plataforma / brutos.size;
+
+  const fieldsWithSignal = (sinaisPrimario.size > 0 ? 1 : 0) + (sinaisTags.size > 0 ? 1 : 0);
+
+  let confidence =
+    PLATFORM_TIER_CONFIDENCE + PLATFORM_EVIDENCE_STEP * Math.max(0, distintos.size - 1);
+  confidence = Math.min(confidence, PLATFORM_TIER_MAX_CONFIDENCE);
+  if (fieldsWithSignal < 2) confidence = Math.min(confidence, PLATFORM_SINGLE_FIELD_CAP);
+
+  return {
+    density,
+    distinctTerms: distintos.size,
+    fieldsWithSignal,
+    confidence: Number(confidence.toFixed(3)),
+  };
 }
+
 
 export function classifyDepartment(input: ClassifierInput): DepartmentClassification {
   const primaryText = [input.name, input.description ?? ''].join(' ');
@@ -179,7 +248,8 @@ export function classifyDepartment(input: ClassifierInput): DepartmentClassifica
     tier = 'transversal';
   }
 
-  const platformDensity = Number(platformDensityOf(input).toFixed(3));
+  const evidenciaPlataforma = platformEvidenceOf(input);
+  const platformDensity = Number(evidenciaPlataforma.density.toFixed(3));
 
   /**
    * Tier de plataforma — último recurso ANTES do vazio. Só entra quando nem
@@ -194,7 +264,7 @@ export function classifyDepartment(input: ClassifierInput): DepartmentClassifica
     platformDensity >= MIN_PLATFORM_DENSITY
   ) {
     resolved = PLATFORM_TIER_DEPARTMENT;
-    confidence = PLATFORM_TIER_CONFIDENCE;
+    confidence = evidenciaPlataforma.confidence;
     tier = 'platform';
     matched = Array.from(new Set([...bestHits, 'plataforma-de-agentes'])).slice(0, 12);
   } else if (resolved === null) {
@@ -212,8 +282,16 @@ export function classifyDepartment(input: ClassifierInput): DepartmentClassifica
       tier !== 'transversal' && tier !== 'platform' && confidence < LOW_CONFIDENCE_THRESHOLD,
     tier,
     platformDensity,
-    needsReview: tier === 'platform' || (tier === 'domain' && confidence < LOW_CONFIDENCE_THRESHOLD),
+    platformEvidence: {
+      distinctTerms: evidenciaPlataforma.distinctTerms,
+      fieldsWithSignal: evidenciaPlataforma.fieldsWithSignal,
+    },
+    // Só o tier de plataforma FRACO precisa de humano. Evidência corroborada em
+    // campos independentes já é conclusiva o bastante para não ocupar a fila.
+    needsReview:
+      (tier === 'platform' || tier === 'domain') && confidence < LOW_CONFIDENCE_THRESHOLD,
   };
+
 }
 
 
