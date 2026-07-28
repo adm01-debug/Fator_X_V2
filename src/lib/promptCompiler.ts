@@ -13,6 +13,14 @@
  *   {{datetime}}              → data + hora ISO
  */
 
+/** Skill instalada, na forma mínima necessária para compor o prompt. */
+export interface PromptSkill {
+  id?: string;
+  name: string;
+  description?: string;
+  category?: string;
+}
+
 export interface CompilePromptInput {
   name: string;
   emoji: string;
@@ -21,7 +29,66 @@ export interface CompilePromptInput {
   type: string;
   model: string;
   prompt: string;
+  /** Skills instaladas — injetadas como seção determinística no prompt final. */
+  skills?: PromptSkill[];
 }
+
+/** Limite defensivo: evita estourar contexto com centenas de skills. */
+export const MAX_PROMPT_SKILLS = 25;
+
+/** Normaliza texto vindo do registry (pode ter HTML/quebras) para uma linha segura. */
+function sanitizeSkillText(value: string, maxLen: number): string {
+  const flat = value
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return flat.length > maxLen ? `${flat.slice(0, maxLen - 1).trimEnd()}…` : flat;
+}
+
+/**
+ * Constrói a seção "Skills disponíveis" de forma determinística:
+ * dedup por id (fallback: nome normalizado), ordem alfabética estável,
+ * cap em MAX_PROMPT_SKILLS e sanitização de cada campo.
+ */
+export function buildSkillsSection(skills: PromptSkill[] | undefined): string {
+  if (!skills || skills.length === 0) return '';
+
+  const seen = new Set<string>();
+  const clean: Array<{ name: string; description: string; category: string }> = [];
+
+  for (const skill of skills) {
+    if (!skill) continue;
+    const name = sanitizeSkillText(skill.name ?? '', 80);
+    if (!name) continue;
+    const key = (skill.id ?? name.toLowerCase()).trim();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    clean.push({
+      name,
+      description: sanitizeSkillText(skill.description ?? '', 160),
+      category: sanitizeSkillText(skill.category ?? '', 32),
+    });
+  }
+
+  if (clean.length === 0) return '';
+
+  clean.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+  const shown = clean.slice(0, MAX_PROMPT_SKILLS);
+  const overflow = clean.length - shown.length;
+
+  const lines = shown.map((s) => {
+    const cat = s.category ? ` _(${s.category})_` : '';
+    const desc = s.description ? ` — ${s.description}` : '';
+    return `- **${s.name}**${cat}${desc}`;
+  });
+
+  if (overflow > 0) {
+    lines.push(`- _(+${overflow} skill${overflow === 1 ? '' : 's'} adicionais não listadas)_`);
+  }
+
+  return ['## Skills disponíveis', '', ...lines].join('\n');
+}
+
 
 export interface CompiledPrompt {
   text: string;
