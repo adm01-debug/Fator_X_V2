@@ -124,10 +124,14 @@ export function summarizeQueueFailures<T>(
   let totalFailed = 0;
 
   for (const item of items as QueueItemState<T>[]) {
-    if (!item || item.status !== 'erro') continue;
+    // Estados terminais NÃO bem-sucedidos. `cancelado` entra aqui porque, do
+    // ponto de vista do curador, é trabalho que não foi feito — omiti-lo faria
+    // a soma do resumo não bater com o total do lote.
+    if (!item || (item.status !== 'falhou' && item.status !== 'cancelado')) continue;
     totalFailed += 1;
 
-    const category = toFailureCategory(item.errorKind);
+    const category =
+      item.status === 'cancelado' ? 'cancelado' : toFailureCategory(item.errorKind);
     const advice = CATEGORY_ADVICE[category];
     let bucket = mapa.get(category);
     if (!bucket) {
