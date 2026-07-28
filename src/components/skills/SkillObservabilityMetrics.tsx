@@ -27,9 +27,9 @@ export function ObservabilityMetric({
 }: ObservabilityMetricProps) {
   return (
     <div className={cn('rounded-lg border border-border/60 bg-card/40 p-3', className)}>
-      <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</p>
+      <p className="text-meta uppercase tracking-wide text-muted-foreground">{label}</p>
       <p className={cn('mt-1 text-xl font-semibold tabular-nums', TONE_CLASS[tone])}>{value}</p>
-      {hint ? <p className="mt-0.5 text-[11px] text-muted-foreground">{hint}</p> : null}
+      {hint ? <p className="mt-0.5 text-meta text-muted-foreground">{hint}</p> : null}
     </div>
   );
 }

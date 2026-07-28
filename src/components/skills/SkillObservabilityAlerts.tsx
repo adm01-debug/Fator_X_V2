@@ -22,8 +22,8 @@ export function SkillObservabilityAlerts({ alerts, className }: SkillObservabili
       >
         <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-nexus-emerald" aria-hidden />
         <div>
-          <p className="text-sm font-medium text-foreground">Nenhum alerta ativo</p>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-body-sm font-medium text-foreground">Nenhum alerta ativo</p>
+          <p className="text-meta text-muted-foreground">
             Ingestão, fila de curadoria e calibração de limiar dentro dos limites monitorados.
           </p>
         </div>
@@ -54,8 +54,8 @@ export function SkillObservabilityAlerts({ alerts, className }: SkillObservabili
               aria-hidden
             />
             <div className="min-w-0">
-              <p className="text-sm font-medium text-foreground">{alert.title}</p>
-              <p className="text-xs text-muted-foreground">{alert.detail}</p>
+              <p className="text-body-sm font-medium text-foreground">{alert.title}</p>
+              <p className="text-meta text-muted-foreground">{alert.detail}</p>
             </div>
           </li>
         );

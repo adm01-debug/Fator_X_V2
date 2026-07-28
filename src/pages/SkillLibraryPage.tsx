@@ -14,6 +14,7 @@ import { SkillPipelineFlow } from '@/components/skills/SkillPipelineFlow';
 import { SkillClassificationStatusCard } from '@/components/skills/SkillClassificationStatusCard';
 import { SkillLibraryInstallPanel } from '@/components/skills/SkillLibraryInstallPanel';
 import { SkillObservabilityPanel } from '@/components/skills/SkillObservabilityPanel';
+import { SkillPromptSimulator } from '@/components/skills/SkillPromptSimulator';
 import { fetchSkillLibraryOverview } from '@/services/skillLibraryService';
 
 const STAT_ICONS = [Library, GitBranch, BadgeCheck, Download] as const;
@@ -93,6 +94,8 @@ export default function SkillLibraryPage() {
       <SkillPipelineFlow overview={overview} isLoading={isLoading} />
 
       <SkillObservabilityPanel />
+
+      <SkillPromptSimulator />
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
