@@ -37,6 +37,7 @@ import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Slider } from '@/components/ui/slider';
 import { departmentLabel } from '@/config/skill-departments';
 import {
   MAX_RECLASSIFY_BATCH,
