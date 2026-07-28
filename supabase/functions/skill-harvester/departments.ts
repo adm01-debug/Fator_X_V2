@@ -54,6 +54,12 @@ export const DEPARTMENT_LEXICON: Record<SkillDepartment, string[]> = {
     'incident', 'oncall', 'backup', 'restore', 'network', 'rede', 'firewall',
     'seguranca', 'security', 'vulnerability', 'patch', 'inventario', 'inventory',
     'helpdesk', 'troubleshooting', 'sysadmin', 'cloud', 'aws', 'azure', 'gcp',
+    // Espelho de src/config/skill-departments.ts — mantenha idêntico.
+    'developer', 'engineering', 'framework', 'sdk', 'cli', 'api', 'apis',
+    'runtime', 'plugin', 'plugins', 'typescript', 'javascript', 'python',
+    'rust', 'golang', 'compiler', 'debugging', 'refactoring', 'tdd',
+    'testing', 'lint', 'git', 'github', 'repo', 'webhook', 'http',
+    'kernel', 'binary', 'concurrency', 'scaffolding', 'boilerplate',
   ],
   marketing: [
     'marketing', 'campanha', 'campaign', 'ads', 'anuncio', 'trafego', 'traffic',
