@@ -39,6 +39,7 @@ import {
   fetchReclassificationReviews,
   mapReviewRow,
   submitReclassificationReviews,
+  toThreshold,
 } from '@/services/skillReclassificationReviewService';
 import type { ReclassifyProposal } from '@/lib/skills/departmentReclassification';
 
@@ -307,5 +308,45 @@ describe('fetchReclassificationReviews — leitura da fila', () => {
       error: { code: '42501', message: 'permission denied' },
     });
     await expect(fetchReclassificationReviews()).rejects.toMatchObject({ kind: 'permission' });
+  });
+});
+
+// ============================================================================
+// Limiar de confiança na trilha de auditoria
+//
+// Por que estas invariantes: o limiar é a única forma de reconstruir o critério
+// vigente quando a proposta foi criada. Um valor errado aqui é pior que campo
+// vazio — sugere um rigor que não existiu.
+// ============================================================================
+describe('toThreshold', () => {
+  it('preserva null para propostas anteriores à coluna', () => {
+    expect(toThreshold(null)).toBeNull();
+    expect(toThreshold(undefined)).toBeNull();
+  });
+
+  it('nunca converte ausência em zero (0,00 sugeriria rigor nenhum)', () => {
+    expect(toThreshold(null)).not.toBe(0);
+  });
+
+  it('aceita numeric vindo como string do PostgREST', () => {
+    expect(toThreshold('0.7300')).toBeCloseTo(0.73, 6);
+  });
+
+  it('aceita as bordas legítimas 0 e 1', () => {
+    expect(toThreshold(0)).toBe(0);
+    expect(toThreshold(1)).toBe(1);
+  });
+
+  it('descarta valores fora de [0,1] — dado corrompido vira ausente', () => {
+    expect(toThreshold(1.5)).toBeNull();
+    expect(toThreshold(-0.1)).toBeNull();
+    expect(toThreshold(100)).toBeNull();
+  });
+
+  it('descarta NaN/Infinity e texto não numérico', () => {
+    expect(toThreshold(Number.NaN)).toBeNull();
+    expect(toThreshold(Number.POSITIVE_INFINITY)).toBeNull();
+    expect(toThreshold('abc')).toBeNull();
+    expect(toThreshold('')).toBeNull();
   });
 });
