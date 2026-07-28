@@ -372,12 +372,45 @@ export function shouldConfirmBulkRestore(
   return count >= threshold;
 }
 
+/** Falha de um lote individual dentro de uma restauração em massa. */
+export interface BulkRestoreFailure {
+  templateId: string;
+  /** Nome amigável do template (cai para o id quando desconhecido). */
+  templateName: string;
+  /** Quantos vínculos ficaram sem restaurar neste lote. */
+  skillCount: number;
+  /** Mensagem crua do backend — o curador precisa distinguir RLS de rede. */
+  message: string;
+}
+
 /** Resultado agregado de uma restauração em massa multi-template. */
 export interface BulkRestoreAllResult {
   /** Vínculos efetivamente enviados para restauração. */
   restored: number;
   /** Templates cujo lote falhou (a restauração é parcial, não atômica entre templates). */
   failedTemplates: string[];
+  /** Detalhe por falha: motivo e volume, para relatar sem reconsultar o banco. */
+  failures: BulkRestoreFailure[];
+}
+
+/**
+ * Extrai o nome amigável de cada template a partir do próprio feed.
+ *
+ * Função pura: evita um join extra só para rotular erro. O feed já carrega
+ * `templateName`; quando ausente, o id é o rótulo honesto.
+ */
+export function buildTemplateNameMap(
+  days: readonly CurationFeedDay[],
+): Map<string, string> {
+  const mapa = new Map<string, string>();
+  for (const dia of days ?? []) {
+    for (const entrada of dia?.entries ?? []) {
+      const id = entrada.templateId?.trim();
+      if (!id || mapa.has(id)) continue;
+      mapa.set(id, entrada.templateName?.trim() || id);
+    }
+  }
+  return mapa;
 }
 
 /**
@@ -401,24 +434,31 @@ export function filterRemovalPlan(
 /** Executa um plano já calculado, tolerando falha por template. */
 async function runRestorePlan(
   plano: ReadonlyArray<{ templateId: string; skillIds: string[] }>,
+  nomes: ReadonlyMap<string, string> = new Map(),
 ): Promise<BulkRestoreAllResult> {
   let restored = 0;
-  const failedTemplates: string[] = [];
+  const failures: BulkRestoreFailure[] = [];
 
   for (const grupo of plano) {
     if (grupo.skillIds.length === 0) continue;
     try {
       restored += await bulkRestoreTemplateSkillLinks(grupo.templateId, grupo.skillIds);
     } catch (error) {
-      failedTemplates.push(grupo.templateId);
+      const message = error instanceof Error ? error.message : String(error);
+      failures.push({
+        templateId: grupo.templateId,
+        templateName: nomes.get(grupo.templateId) ?? grupo.templateId,
+        skillCount: grupo.skillIds.length,
+        message,
+      });
       logger.error('bulkRestoreAllRemovals partial failure', {
         templateId: grupo.templateId,
-        error: error instanceof Error ? error.message : String(error),
+        error: message,
       });
     }
   }
 
-  return { restored, failedTemplates };
+  return { restored, failedTemplates: failures.map((f) => f.templateId), failures };
 }
 
 /**
@@ -431,7 +471,7 @@ async function runRestorePlan(
 export async function bulkRestoreAllRemovals(
   days: readonly CurationFeedDay[],
 ): Promise<BulkRestoreAllResult> {
-  return runRestorePlan(groupRemovalsByTemplate(days));
+  return runRestorePlan(groupRemovalsByTemplate(days), buildTemplateNameMap(days));
 }
 
 /** Reprocessa apenas os templates que falharam numa restauração parcial. */
@@ -439,7 +479,7 @@ export async function retryFailedRestores(
   days: readonly CurationFeedDay[],
   templateIds: readonly string[],
 ): Promise<BulkRestoreAllResult> {
-  return runRestorePlan(filterRemovalPlan(days, templateIds));
+  return runRestorePlan(filterRemovalPlan(days, templateIds), buildTemplateNameMap(days));
 }
 
 
