@@ -20,9 +20,12 @@ import { ProgressiveSkillLoaderPanel } from '@/components/skills/ProgressiveSkil
 import { SkillAttributionBadge } from '@/components/skills/SkillAttributionBadge';
 import {
   filterSkillsByLicense,
+  normalizeLicenseFilter,
   LICENSE_FILTERS,
   type LicenseFilter,
 } from '@/lib/skills/attribution';
+import { useFilterPersistence } from '@/hooks/useFilterPersistence';
+
 
 
 import { SkillAutoRecommendationsPanel } from '@/components/skills/SkillAutoRecommendationsPanel';
@@ -44,10 +47,29 @@ const CATEGORY_COLORS: Record<string, string> = {
   integrations: 'bg-primary/10 text-primary border-primary/20',
 };
 
+/** Formato persistido no escopo `skills_marketplace`. */
+interface MarketplaceFilters extends Record<string, unknown> {
+  category: string;
+  license: LicenseFilter;
+}
+
+const FILTER_DEFAULTS: MarketplaceFilters = { category: 'all', license: 'all' };
+
 export default function SkillsMarketplacePage() {
+  // A busca textual é efêmera de propósito: persistir um termo digitado faria a
+  // tela abrir "vazia" na próxima sessão sem explicação. Categoria e licença,
+  // ao contrário, são política de curadoria e devem sobreviver ao reload.
   const [search, setSearch] = useState('');
-  const [category, setCategory] = useState('all');
-  const [license, setLicense] = useState<LicenseFilter>('all');
+  const { filters, setFilters, syncStatus } = useFilterPersistence<MarketplaceFilters>({
+    scope: 'skills_marketplace',
+    defaults: FILTER_DEFAULTS,
+    storageKey: 'nexus.filters.skills_marketplace',
+  });
+
+  const category = typeof filters.category === 'string' ? filters.category : 'all';
+  // Normaliza na leitura: o payload vem de Cloud/localStorage/outra aba e pode
+  // estar corrompido ou vir de uma versão futura do app.
+  const license = normalizeLicenseFilter(filters.license);
 
   const { data, isLoading } = useQuery({
     queryKey: ['skills_marketplace', search, category],
@@ -62,6 +84,7 @@ export default function SkillsMarketplacePage() {
   // texto livre no banco (aliases como "mit"/"Apache License 2.0" convivem com
   // SPDX), então a normalização precisa acontecer antes da comparação.
   const skills = filterSkillsByLicense(data?.skills ?? [], license);
+
 
 
   return (
@@ -96,7 +119,10 @@ export default function SkillsMarketplacePage() {
             className="pl-9 bg-secondary/50"
           />
         </div>
-        <Select value={category} onValueChange={setCategory}>
+        <Select
+          value={category}
+          onValueChange={(value) => setFilters((prev) => ({ ...prev, category: value }))}
+        >
           <SelectTrigger className="w-[180px] bg-secondary/50">
             <SelectValue />
           </SelectTrigger>
@@ -108,7 +134,9 @@ export default function SkillsMarketplacePage() {
         </Select>
         <Select
           value={license}
-          onValueChange={(value) => setLicense(value as LicenseFilter)}
+          onValueChange={(value) =>
+            setFilters((prev) => ({ ...prev, license: normalizeLicenseFilter(value) }))
+          }
         >
           <SelectTrigger className="w-[210px] bg-secondary/50" aria-label="Filtrar por licença">
             <SelectValue />
@@ -122,6 +150,7 @@ export default function SkillsMarketplacePage() {
           </SelectContent>
         </Select>
       </div>
+
 
       {isLoading ? (
         <CardGridSkeleton count={9} cols={3} />
@@ -148,8 +177,12 @@ export default function SkillsMarketplacePage() {
         <p className="text-meta text-muted-foreground text-center">
           {skills.length} de {data.total} skills
           {license !== 'all' && ' (filtro de licença ativo)'}
+          {/* 'local' = a preferência ficou só neste navegador (offline ou sem
+              sessão). Avisar evita a surpresa de perder o filtro noutra máquina. */}
+          {syncStatus === 'local' && ' · preferência salva apenas neste dispositivo'}
         </p>
       )}
+
 
 
       <ProgressiveSkillLoaderPanel />
