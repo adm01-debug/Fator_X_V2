@@ -274,6 +274,8 @@ export function summarizeEfficacy(
   return {
     total: lista.length,
     byVerdict,
+    byOrigin,
+
     accuracy: denominador === 0 ? null : Math.round((byVerdict.confirmado / denominador) * 1000) / 1000,
     avgConfidenceWhenRight,
     avgConfidenceWhenWrong: media(confiancaErro),
