@@ -447,6 +447,15 @@ export function SkillDemandPanel() {
                         {departmentLabel(row.department as SkillDepartment)}
                       </Badge>
                     )}
+                    {row.isMetaCollection && (
+                      <Badge
+                        variant="outline"
+                        className="text-meta border-nexus-slate/60 text-muted-foreground"
+                        title="Coletânea (lista curada, curso ou roadmap): não é uma skill instalável, por isso não entra na fila de revisão de departamento"
+                      >
+                        Coletânea
+                      </Badge>
+                    )}
                     {row.departmentNeedsReview && (
                       <Badge
                         variant="outline"
@@ -456,6 +465,7 @@ export function SkillDemandPanel() {
                         Rever depto.
                       </Badge>
                     )}
+
                     <Badge variant="outline" className="text-meta">
                       Q{row.qualityScore}
                     </Badge>
