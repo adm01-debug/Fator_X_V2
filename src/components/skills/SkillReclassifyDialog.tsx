@@ -344,10 +344,16 @@ export function SkillReclassifyDialog({
           <DialogTitle className="flex items-center gap-2">
             <Wand2 className="h-4 w-4" aria-hidden />
             Reclassificar departamento
+            {/* Origem do lote: o curador precisa saber que a IA já rodou
+                sozinha (e consumiu créditos) antes de interpretar a tela. */}
+            <Badge variant="outline" className="text-meta font-normal">
+              {autoRunLlm ? 'lote automático (fila sem depto.)' : 'lote manual'}
+            </Badge>
           </DialogTitle>
           <DialogDescription>
-            Propostas geradas pelo classificador determinístico. Só entram trocas com evidência
-            léxica forte e vantagem clara sobre o segundo departamento mais provável.
+            {autoRunLlm
+              ? 'Aberto pelo atalho da fila "Sem depto.": a classificação por IA é disparada automaticamente, mas nada é gravado sem sua marcação explícita.'
+              : 'Propostas geradas pelo classificador determinístico. Só entram trocas com evidência léxica forte e vantagem clara sobre o segundo departamento mais provável.'}
           </DialogDescription>
         </DialogHeader>
 
