@@ -31,8 +31,55 @@ export interface ThresholdCalibration {
    * Linhas legadas (sem o campo) valem `false` — ausência não é override.
    */
   overriddenInstability: boolean;
+  /**
+   * Justificativa textual exigida quando houve override. `null` para linhas
+   * legadas ou quando o texto veio vazio/ilegível.
+   */
+  overrideReason: string | null;
   /** ISO válido, ou `null` quando a data veio corrompida. */
   at: string | null;
+}
+
+/** Mínimo de caracteres úteis para uma justificativa ser aceita. */
+export const OVERRIDE_REASON_MIN = 12;
+/** Teto de armazenamento — metadata de auditoria não é campo de texto livre. */
+export const OVERRIDE_REASON_MAX = 280;
+
+/**
+ * Normaliza a justificativa de override.
+ *
+ * Remove caracteres de controle (colagem de logs), colapsa espaços e trunca no
+ * teto. Devolve `null` quando não sobra texto — assim o chamador nunca grava
+ * string vazia em `metadata.override_reason`, o que faria a auditoria parecer
+ * justificada sem estar.
+ */
+export function normalizeOverrideReason(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  // eslint-disable-next-line no-control-regex
+  const limpo = value.replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim();
+  if (limpo === '') return null;
+  return limpo.length > OVERRIDE_REASON_MAX ? limpo.slice(0, OVERRIDE_REASON_MAX).trim() : limpo;
+}
+
+/** `true` quando a justificativa tem substância suficiente para ser aceita. */
+export function isOverrideReasonValid(value: unknown): boolean {
+  const norm = normalizeOverrideReason(value);
+  return norm !== null && norm.length >= OVERRIDE_REASON_MIN;
+}
+
+/** Filtro de governança da linha do tempo de calibrações. */
+export type CalibrationTimelineFilter = 'all' | 'overridden';
+
+export function normalizeCalibrationFilter(value: unknown): CalibrationTimelineFilter {
+  return value === 'overridden' ? 'overridden' : 'all';
+}
+
+/** Aplica o filtro sem mutar a lista original. */
+export function filterCalibrations(
+  items: readonly ThresholdCalibration[],
+  filter: CalibrationTimelineFilter,
+): ThresholdCalibration[] {
+  return filter === 'overridden' ? items.filter((i) => i.overriddenInstability) : [...items];
 }
 
 /** Aceita number ou string numérica; devolve `null` para o resto. */
