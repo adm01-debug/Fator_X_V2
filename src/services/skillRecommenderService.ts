@@ -125,14 +125,25 @@ function categoryFit(missionTokens: Set<string>, category: string): number {
   return Math.min(1, hits / 2); // 2 hits = fit máximo
 }
 
+export interface RecommendOptions {
+  /**
+   * Preenche o resultado com skills de baseline (mais instaladas/verificadas)
+   * quando o ranking semântico devolve menos que `limit`. Desligado por padrão
+   * para preservar determinismo em fluxos que exigem apenas matches reais.
+   */
+  fillBaseline?: boolean;
+}
+
 export function recommendSkills(
   input: RecommendationInput,
   registry: AgentSkillDefinition[],
   limit = 5,
+  options: RecommendOptions = {},
 ): Recommendation[] {
   const missionText = [input.mission, input.role ?? '', (input.tools ?? []).join(' ')].join(' ');
-  const missionTokens = tokenize(missionText);
-  if (missionTokens.size === 0 || registry.length === 0) return [];
+  const rawTokens = tokenize(missionText);
+  if (rawTokens.size === 0 || registry.length === 0) return [];
+  const missionTokens = expandTokens(rawTokens);
 
   const scored: Recommendation[] = registry.map((skill) => {
     const skillTokens = tokenize(
@@ -144,8 +155,12 @@ export function recommendSkills(
     const weightedCategory = 0.4 * catScore;
     const score = weightedKeyword + weightedCategory;
 
+    // Tokens literais da missão têm prioridade na explicação; sinônimos entram depois.
     const matched: string[] = [];
-    for (const t of missionTokens) if (skillTokens.has(t)) matched.push(t);
+    for (const t of rawTokens) if (skillTokens.has(t)) matched.push(t);
+    for (const t of missionTokens) {
+      if (!rawTokens.has(t) && skillTokens.has(t)) matched.push(t);
+    }
 
     const reason = matched.length > 0
       ? `Alinhada com "${matched.slice(0, 3).join('", "')}" da missão`
@@ -162,7 +177,7 @@ export function recommendSkills(
     };
   });
 
-  return scored
+  const ranked = scored
     .filter((r) => r.score > 0.01)
     .sort((a, b) => {
       if (Math.abs(a.score - b.score) < 0.01) {
@@ -171,7 +186,31 @@ export function recommendSkills(
       return b.score - a.score;
     })
     .slice(0, limit);
+
+  if (!options.fillBaseline || ranked.length >= limit) return ranked;
+
+  const chosen = new Set(ranked.map((r) => r.skill.id));
+  const baseline = registry
+    .filter((s) => !chosen.has(s.id))
+    .sort((a, b) => {
+      const verified = Number(b.is_verified) - Number(a.is_verified);
+      if (verified !== 0) return verified;
+      const installs = (b.install_count ?? 0) - (a.install_count ?? 0);
+      if (installs !== 0) return installs;
+      return (b.rating ?? 0) - (a.rating ?? 0);
+    })
+    .slice(0, limit - ranked.length)
+    .map<Recommendation>((skill) => ({
+      skill,
+      score: 0,
+      reason: 'Baseline recomendada: skill verificada e popular no marketplace',
+      matchedKeywords: [],
+      breakdown: { keyword: 0, category: 0, weightedKeyword: 0, weightedCategory: 0 },
+    }));
+
+  return [...ranked, ...baseline];
 }
+
 
 /**
  * Deriva os ids de skills recomendadas que ainda NÃO estão instaladas no agente.
