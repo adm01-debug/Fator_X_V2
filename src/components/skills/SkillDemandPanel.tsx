@@ -42,7 +42,10 @@ import { useFilterPersistence } from '@/hooks/useFilterPersistence';
 import { SkillReclassifyDialog } from '@/components/skills/SkillReclassifyDialog';
 import { SkillReclassificationReviewPanel } from '@/components/skills/SkillReclassificationReviewPanel';
 import { SkillDescriptionEnrichPanel } from '@/components/skills/SkillDescriptionEnrichPanel';
-import type { ReclassifyCandidate } from '@/lib/skills/departmentReclassification';
+import {
+  MIN_RECLASSIFY_CONFIDENCE,
+  type ReclassifyCandidate,
+} from '@/lib/skills/departmentReclassification';
 import { logger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
 
