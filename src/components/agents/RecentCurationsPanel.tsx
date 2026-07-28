@@ -26,6 +26,8 @@ import {
   RESTORE_FAILURE_LABEL,
   isRetriableFailure,
   summarizeRestoreFailures,
+  buildRestoreFailuresCsv,
+  buildRestoreFailuresFilename,
 
   groupRemovalsByTemplate,
   shouldConfirmBulkRestore,
