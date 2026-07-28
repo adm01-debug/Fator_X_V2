@@ -243,7 +243,7 @@ export function reclassificationToCsv(proposals: readonly ReclassifyProposal[]):
   const escape = (value: string | number | null) =>
     `"${(value === null ? '' : String(value)).replace(/"/g, '""')}"`;
   const linhas = [
-    ['slug', 'nome', 'de', 'para', 'confianca', 'termos'].map(escape).join(','),
+    ['slug', 'nome', 'de', 'para', 'confianca', 'margem', 'segundo', 'termos'].map(escape).join(','),
   ];
   for (const p of proposals) {
     linhas.push(
@@ -253,6 +253,8 @@ export function reclassificationToCsv(proposals: readonly ReclassifyProposal[]):
         escape(p.from ?? 'não classificado'),
         escape(p.to),
         escape(p.confidence),
+        escape(p.margin),
+        escape(p.runnerUp),
         escape(p.matchedTerms.join(' ')),
       ].join(','),
     );
