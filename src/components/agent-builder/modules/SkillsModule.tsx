@@ -150,11 +150,10 @@ export function SkillsModule() {
 
   /** Diferença entre a seleção do catálogo e o estado atual → instala/remove. */
   const handlePickerChange = async (nextIds: string[]) => {
-    const nextSet = new Set(nextIds);
-    const toAdd = nextIds.filter((id) => !installedSet.has(id));
-    const toRemove = installedIds.filter((id) => !nextSet.has(id));
+    const { toAdd, toRemove } = computeSkillSelectionDiff(installedIds, nextIds);
     await applyBatch(toAdd, toRemove);
   };
+
 
   const handleInstallAll = async () => {
     const toAdd = recommendations
