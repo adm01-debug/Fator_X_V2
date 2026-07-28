@@ -64,8 +64,10 @@ export function SkillAutoRecommendationsPanel() {
     if (!agentId) return;
     setInstallingIds((prev) => new Set(prev).add(skillId));
     try {
-      await installSkill(agentId, skillId);
-      toast.success('Skill adicionada ao agente');
+      const inserted = await installSkill(agentId, skillId);
+      if (inserted) toast.success('Skill adicionada ao agente');
+      else toast.info('Skill já estava instalada neste agente');
+
       await queryClient.invalidateQueries({ queryKey: ['installed_skills', agentId] });
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Falha ao instalar';
