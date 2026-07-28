@@ -13,6 +13,7 @@ import { Plus, GitBranch, Library, BadgeCheck, Download } from 'lucide-react';
 import { SkillPipelineFlow } from '@/components/skills/SkillPipelineFlow';
 import { SkillClassificationStatusCard } from '@/components/skills/SkillClassificationStatusCard';
 import { SkillLibraryInstallPanel } from '@/components/skills/SkillLibraryInstallPanel';
+import { SkillObservabilityPanel } from '@/components/skills/SkillObservabilityPanel';
 import { fetchSkillLibraryOverview } from '@/services/skillLibraryService';
 
 const STAT_ICONS = [Library, GitBranch, BadgeCheck, Download] as const;
@@ -90,6 +91,8 @@ export default function SkillLibraryPage() {
       </div>
 
       <SkillPipelineFlow overview={overview} isLoading={isLoading} />
+
+      <SkillObservabilityPanel />
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
