@@ -279,7 +279,22 @@ export function SkillClassificationEfficacyCard({
 
         {calibracoes.length > 0 && (
           <div className="space-y-2 rounded-lg border border-border/60 p-3">
-            <p className="text-body-sm font-medium">Calibrações recentes</p>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className="text-body-sm font-medium">Calibrações recentes</p>
+              {/* Governança revisa exceções, não a série inteira: o filtro
+                  isola justamente as decisões tomadas contra o alerta. */}
+              <Button
+                size="sm"
+                variant={filtroCalib === 'overridden' ? 'secondary' : 'ghost'}
+                onClick={() =>
+                  setFiltroCalib((atual) => (atual === 'overridden' ? 'all' : 'overridden'))
+                }
+                disabled={totalSobAlerta === 0 && filtroCalib === 'all'}
+              >
+                <AlertTriangle className="mr-2 h-3.5 w-3.5" />
+                Somente sob alerta ({totalSobAlerta})
+              </Button>
+            </div>
             {instabilidade.unstable && (
               <div className="flex items-start gap-2 rounded-md border border-warning/40 bg-warning/10 p-2 text-meta text-warning-foreground">
                 <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warning" />
@@ -293,38 +308,51 @@ export function SkillClassificationEfficacyCard({
               </div>
             )}
 
-            <ul className="space-y-1">
-              {calibracoes.map((c) => (
-                <li key={c.auditId} className="flex flex-wrap items-center gap-2 text-meta">
-                  <Badge
-                    variant="outline"
-                    className={cn('text-meta', DIRECTION_STYLE[calibrationDirection(c)])}
-                  >
-                    {DIRECTION_LABEL[calibrationDirection(c)]}
-                  </Badge>
-                  {c.overriddenInstability && (
+            {calibracoesVisiveis.length === 0 ? (
+              <p className="text-meta text-muted-foreground">
+                Nenhuma calibração aplicada sob alerta de instabilidade.
+              </p>
+            ) : (
+              <ul className="space-y-1">
+                {calibracoesVisiveis.map((c) => (
+                  <li key={c.auditId} className="flex flex-wrap items-center gap-2 text-meta">
                     <Badge
                       variant="outline"
-                      className="text-meta border-amber-500/40 text-amber-600 dark:text-amber-400"
-                      title="Aplicado apesar do alerta de instabilidade"
+                      className={cn('text-meta', DIRECTION_STYLE[calibrationDirection(c)])}
                     >
-                      sob alerta
+                      {DIRECTION_LABEL[calibrationDirection(c)]}
                     </Badge>
-                  )}
-                  <span className="text-muted-foreground">
-                    {c.from === null ? '—' : c.from.toFixed(2)} → {c.to.toFixed(2)}
-                  </span>
-                  <span className="text-muted-foreground">
-                    amostra {c.sampleSize} · acerto {pct(c.accuracy)}
-                  </span>
-                  {c.at && (
-                    <span className="ml-auto text-muted-foreground">
-                      {new Date(c.at).toLocaleDateString('pt-BR')}
+                    {c.overriddenInstability && (
+                      <Badge
+                        variant="outline"
+                        className="text-meta border-amber-500/40 text-amber-600 dark:text-amber-400"
+                        title="Aplicado apesar do alerta de instabilidade"
+                      >
+                        sob alerta
+                      </Badge>
+                    )}
+                    <span className="text-muted-foreground">
+                      {c.from === null ? '—' : c.from.toFixed(2)} → {c.to.toFixed(2)}
                     </span>
-                  )}
-                </li>
-              ))}
-            </ul>
+                    <span className="text-muted-foreground">
+                      amostra {c.sampleSize} · acerto {pct(c.accuracy)}
+                    </span>
+                    {c.at && (
+                      <span className="ml-auto text-muted-foreground">
+                        {new Date(c.at).toLocaleDateString('pt-BR')}
+                      </span>
+                    )}
+                    {c.overriddenInstability && (
+                      <p className="w-full text-meta text-muted-foreground">
+                        {c.overrideReason
+                          ? `Justificativa: ${c.overrideReason}`
+                          : 'Sem justificativa registrada (decisão anterior à exigência).'}
+                      </p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         )}
 
