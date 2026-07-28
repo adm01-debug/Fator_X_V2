@@ -24,9 +24,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Copy, FlaskConical } from 'lucide-react';
+import { Copy, Download, FlaskConical } from 'lucide-react';
 import { SkillPromptSimulatorReport } from '@/components/skills/SkillPromptSimulatorReport';
+import { SkillPromptDiffView } from '@/components/skills/SkillPromptDiffView';
 import { simulatePrompt, MAX_PROMPT_SKILLS } from '@/lib/skills/promptSimulation';
+import { diffPromptSimulations } from '@/lib/skills/promptDiff';
+import {
+  buildPromptAuditArtifact,
+  buildArtifactFilename,
+} from '@/lib/skills/promptAuditArtifact';
 import {
   fetchAgentOptions,
   fetchAgentPromptContext,
