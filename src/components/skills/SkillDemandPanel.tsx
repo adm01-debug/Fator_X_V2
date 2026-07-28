@@ -310,7 +310,7 @@ export function SkillDemandPanel() {
                     {row.departmentNeedsReview && (
                       <Badge
                         variant="outline"
-                        className="text-meta border-warning/60 text-warning"
+                        className="text-meta border-nexus-amber/60 text-nexus-amber"
                         title={`Classificacao ${row.departmentSource} com confianca ${row.departmentConfidence.toFixed(2)} — revise antes de confiar no rotulo`}
                       >
                         Rever depto.
