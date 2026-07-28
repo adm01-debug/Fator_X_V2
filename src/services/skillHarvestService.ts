@@ -98,6 +98,10 @@ function toCandidate(row: RawRow): HarvestCandidate {
 export async function runHarvest(params: {
   departments?: SkillDepartment[];
   topics?: string[];
+  /** Monorepos alvo (`owner/repo`). Quando informado, a busca por queries é ignorada. */
+  repos?: string[];
+  /** Teto de SKILL.md lidos por repositório (monorepos exigem valores altos). */
+  filesPerRepo?: number;
   maxRepos?: number;
   maxCandidates?: number;
   minStars?: number;
@@ -107,12 +111,15 @@ export async function runHarvest(params: {
     body: {
       departments: params.departments ?? [],
       topics: params.topics ?? [],
+      repos: params.repos ?? [],
+      filesPerRepo: params.filesPerRepo ?? 8,
       maxRepos: params.maxRepos ?? 40,
       maxCandidates: params.maxCandidates ?? 120,
       minStars: params.minStars ?? 3,
       dryRun: params.dryRun ?? false,
     },
   });
+
 
   if (error) {
     // O SDK mascara o corpo real; extraia antes de propagar.
