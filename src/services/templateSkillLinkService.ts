@@ -381,20 +381,32 @@ export interface BulkRestoreAllResult {
 }
 
 /**
- * Restaura todas as remoções de um feed, um lote atômico por template.
+ * Filtra o plano de restauração para um subconjunto de templates.
  *
- * Não abortamos no primeiro erro: RLS pode negar um template específico e
- * ainda assim faz sentido restaurar os demais. O chamador recebe a lista de
- * falhas para informar o curador com honestidade.
+ * Função pura: o retry de uma restauração parcial precisa reprocessar
+ * exatamente os templates que falharam, sem tocar nos que já deram certo
+ * (reenviar um UPSERT idempotente é seguro, mas polui a auditoria).
  */
-export async function bulkRestoreAllRemovals(
+export function filterRemovalPlan(
   days: readonly CurationFeedDay[],
+  templateIds: readonly string[],
+): Array<{ templateId: string; skillIds: string[] }> {
+  const alvo = new Set(
+    (templateIds ?? []).map((id) => (typeof id === 'string' ? id.trim() : '')).filter(Boolean),
+  );
+  if (alvo.size === 0) return [];
+  return groupRemovalsByTemplate(days).filter((g) => alvo.has(g.templateId));
+}
+
+/** Executa um plano já calculado, tolerando falha por template. */
+async function runRestorePlan(
+  plano: ReadonlyArray<{ templateId: string; skillIds: string[] }>,
 ): Promise<BulkRestoreAllResult> {
-  const grupos = groupRemovalsByTemplate(days);
   let restored = 0;
   const failedTemplates: string[] = [];
 
-  for (const grupo of grupos) {
+  for (const grupo of plano) {
+    if (grupo.skillIds.length === 0) continue;
     try {
       restored += await bulkRestoreTemplateSkillLinks(grupo.templateId, grupo.skillIds);
     } catch (error) {
@@ -405,6 +417,31 @@ export async function bulkRestoreAllRemovals(
       });
     }
   }
+
+  return { restored, failedTemplates };
+}
+
+/**
+ * Restaura todas as remoções de um feed, um lote atômico por template.
+ *
+ * Não abortamos no primeiro erro: RLS pode negar um template específico e
+ * ainda assim faz sentido restaurar os demais. O chamador recebe a lista de
+ * falhas para informar o curador com honestidade.
+ */
+export async function bulkRestoreAllRemovals(
+  days: readonly CurationFeedDay[],
+): Promise<BulkRestoreAllResult> {
+  return runRestorePlan(groupRemovalsByTemplate(days));
+}
+
+/** Reprocessa apenas os templates que falharam numa restauração parcial. */
+export async function retryFailedRestores(
+  days: readonly CurationFeedDay[],
+  templateIds: readonly string[],
+): Promise<BulkRestoreAllResult> {
+  return runRestorePlan(filterRemovalPlan(days, templateIds));
+}
+
 
   return { restored, failedTemplates };
 }
