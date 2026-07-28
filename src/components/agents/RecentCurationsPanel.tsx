@@ -25,6 +25,8 @@ import {
   type BulkRestoreFailure,
   RESTORE_FAILURE_LABEL,
   isRetriableFailure,
+  summarizeRestoreFailures,
+
   groupRemovalsByTemplate,
   shouldConfirmBulkRestore,
   type CurationActorScope,
