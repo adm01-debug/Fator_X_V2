@@ -34,9 +34,9 @@ import {
   SKILL_DEPARTMENTS, DEPARTMENT_META, departmentLabel, type SkillDepartment,
 } from '@/config/skill-departments';
 import {
-  runHarvest, listCandidates, listRuns, promoteCandidate, bulkUpdateStatus,
+  runHarvest, runHarvestAllBatches, listCandidates, listRuns, promoteCandidate, bulkUpdateStatus,
   updateCandidate, getDepartmentCoverage,
-  type HarvestCandidate, type HarvestRun, type CandidateStatus,
+  type HarvestCandidate, type HarvestRun, type CandidateStatus, type HarvestBatchResult,
 } from '@/services/skillHarvestService';
 
 const STATUS_LABEL: Record<CandidateStatus, string> = {
@@ -49,13 +49,30 @@ const STATUS_LABEL: Record<CandidateStatus, string> = {
 
 const COVERAGE_TARGET = 5;
 
+/**
+ * Teto de invocações encadeadas por clique. Protege contra um monorepo
+ * absurdo consumir cota indefinidamente; o curador pode rodar de novo e a
+ * varredura continua a partir dos candidatos já gravados.
+ */
+const MAX_HARVEST_BATCHES = 12;
+
+/** Progresso da varredura em lotes exibido durante o modo dirigido. */
+interface HarvestProgress {
+  batch: number;
+  processed: number;
+  total: number;
+  inserted: number;
+}
+
 export default function SkillHarvestPage() {
   const [candidates, setCandidates] = useState<HarvestCandidate[]>([]);
   const [runs, setRuns] = useState<HarvestRun[]>([]);
   const [coverage, setCoverage] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const [harvesting, setHarvesting] = useState(false);
+  const [harvestProgress, setHarvestProgress] = useState<HarvestProgress | null>(null);
   const [rebuilding, setRebuilding] = useState(false);
+
 
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
