@@ -407,9 +407,23 @@ export function SkillReclassifyDialog({
             <Button
               variant="ghost"
               onClick={() => onOpenChange(false)}
-              disabled={aplicando || classificando}
+              disabled={aplicando || classificando || enviando}
             >
               Cancelar
+            </Button>
+            {/* Caminho auditável: em vez de escrever direto, enfileira a
+                proposta com evidência para decisão de um administrador. */}
+            <Button
+              variant="secondary"
+              onClick={() => void enviarParaRevisao()}
+              disabled={aplicando || classificando || enviando || selecionados.length === 0}
+            >
+              {enviando ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <ClipboardCheck className="h-4 w-4 mr-2" />
+              )}
+              Enviar para revisão
             </Button>
             <Button
               onClick={() => void aplicar()}
