@@ -42,7 +42,10 @@ import { useFilterPersistence } from '@/hooks/useFilterPersistence';
 import { SkillReclassifyDialog } from '@/components/skills/SkillReclassifyDialog';
 import { SkillReclassificationReviewPanel } from '@/components/skills/SkillReclassificationReviewPanel';
 import { SkillDescriptionEnrichPanel } from '@/components/skills/SkillDescriptionEnrichPanel';
-import type { ReclassifyCandidate } from '@/lib/skills/departmentReclassification';
+import {
+  MIN_RECLASSIFY_CONFIDENCE,
+  type ReclassifyCandidate,
+} from '@/lib/skills/departmentReclassification';
 import { logger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
 
@@ -55,7 +58,12 @@ const TIER_STYLE: Record<DemandTier, string> = {
 
 const DEPARTAMENTOS = [...SKILL_DEPARTMENTS];
 
-const PREFS_PADRAO: DemandPreferences = { tier: 'zero', department: 'all', search: '' };
+const PREFS_PADRAO: DemandPreferences = {
+  tier: 'zero',
+  department: 'all',
+  search: '',
+  confidenceThreshold: MIN_RECLASSIFY_CONFIDENCE,
+};
 
 export function SkillDemandPanel() {
   const [rows, setRows] = useState<SkillDemandRow[]>([]);
@@ -75,7 +83,7 @@ export function SkillDemandPanel() {
    * corrompido ou de taxonomia antiga viraria um recorte vazio permanente.
    * Sanitizamos a cada render — barato e totalmente defensivo.
    */
-  const { tier: filter, department: deptFilter, search } = useMemo(
+  const { tier: filter, department: deptFilter, search, confidenceThreshold } = useMemo(
     () => normalizeDemandPreferences(prefsBrutas, DEPARTAMENTOS, PREFS_PADRAO),
     [prefsBrutas],
   );
@@ -317,8 +325,11 @@ export function SkillDemandPanel() {
         open={reclassificarAberto}
         onOpenChange={setReclassificarAberto}
         candidates={candidatos}
+        confidenceThreshold={confidenceThreshold}
+        onConfidenceThresholdChange={(v) => atualizarPrefs({ confidenceThreshold: v })}
         onApplied={() => void carregar()}
       />
+
     </Card>
 
     {/* Fila de aprovação: fica logo abaixo porque é a consequência direta de

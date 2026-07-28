@@ -18,6 +18,9 @@ import {
   DEMAND_SEARCH_MAX,
   DEMAND_TIERS,
   normalizeDemandPreferences,
+  normalizeConfidenceThreshold,
+  DEMAND_THRESHOLD_FLOOR_FALLBACK,
+  DEMAND_THRESHOLD_MAX,
   type DemandLinkInput,
   type DemandSkillInput,
 } from '@/lib/skills/skillDemand';
@@ -139,14 +142,24 @@ describe('filterByDepartment — invariantes sobre 400 skills', () => {
  * plausível vindo de localStorage/nuvem.
  */
 describe('normalizeDemandPreferences — payloads hostis', () => {
-  const PADRAO = { tier: 'zero', department: 'all', search: '' } as const;
+  const PADRAO = {
+    tier: 'zero',
+    department: 'all',
+    search: '',
+    confidenceThreshold: DEMAND_THRESHOLD_FLOOR_FALLBACK,
+  } as const;
 
   it('preserva um payload válido integralmente', () => {
     const out = normalizeDemandPreferences(
       { tier: 'baixa', department: 'transversal', search: 'pdf' },
       ALLOWED,
     );
-    expect(out).toEqual({ tier: 'baixa', department: 'transversal', search: 'pdf' });
+    expect(out).toEqual({
+      tier: 'baixa',
+      department: 'transversal',
+      search: 'pdf',
+      confidenceThreshold: DEMAND_THRESHOLD_FLOOR_FALLBACK,
+    });
   });
 
   it('degrada não-objetos e arrays para o default sem lançar', () => {
@@ -194,7 +207,12 @@ describe('normalizeDemandPreferences — payloads hostis', () => {
       { tier: 'zero', department: 'all', search: '', token: 'segredo', __proto__: { x: 1 } },
       ALLOWED,
     );
-    expect(Object.keys(out).sort()).toEqual(['department', 'search', 'tier']);
+    expect(Object.keys(out).sort()).toEqual([
+      'confidenceThreshold',
+      'department',
+      'search',
+      'tier',
+    ]);
   });
 
   it('o resultado sempre produz um recorte aplicável sobre linhas reais', () => {
@@ -207,5 +225,77 @@ describe('normalizeDemandPreferences — payloads hostis', () => {
       const p = normalizeDemandPreferences(amostra, ALLOWED);
       expect(() => filterByDepartment(filterByDemand(rows, p.tier), p.department)).not.toThrow();
     }
+  });
+});
+
+/**
+ * Limiar de confiança persistido. Cenários derivados de falhas plausíveis:
+ * payload de versão anterior (campo ausente), ruído de ponto flutuante gravado
+ * por um slider, e tentativa deliberada de afrouxar o piso editando o storage.
+ */
+describe('normalizeConfidenceThreshold — piso, teto e quantização', () => {
+  const PISO = DEMAND_THRESHOLD_FLOOR_FALLBACK;
+
+  it('valores ausentes ou não numéricos caem no piso', () => {
+    for (const hostil of [undefined, null, 'alto', {}, [], NaN, Infinity, -Infinity]) {
+      expect(normalizeConfidenceThreshold(hostil)).toBe(PISO);
+    }
+  });
+
+  it('nunca permite afrouxar abaixo do piso, mesmo editando o storage', () => {
+    for (const tentativa of [-5, 0, 0.01, PISO - 0.0001]) {
+      expect(normalizeConfidenceThreshold(tentativa)).toBe(PISO);
+    }
+  });
+
+  it('prende no teto e nunca ultrapassa 0,95', () => {
+    for (const alto of [0.96, 1, 42]) {
+      expect(normalizeConfidenceThreshold(alto)).toBe(DEMAND_THRESHOLD_MAX);
+    }
+  });
+
+  it('quantiza em passos de 0,01 (o slider não fica "entre" passos)', () => {
+    expect(normalizeConfidenceThreshold(0.30000000000000004)).toBe(0.3);
+    expect(normalizeConfidenceThreshold(0.7349)).toBe(0.73);
+    expect(normalizeConfidenceThreshold(0.7351)).toBe(0.74);
+  });
+
+  it('é idempotente em toda a faixa útil', () => {
+    for (let v = 0; v <= 1.0001; v += 0.005) {
+      const uma = normalizeConfidenceThreshold(v);
+      expect(normalizeConfidenceThreshold(uma)).toBe(uma);
+      expect(uma).toBeGreaterThanOrEqual(PISO);
+      expect(uma).toBeLessThanOrEqual(DEMAND_THRESHOLD_MAX);
+    }
+  });
+
+  it('um piso injetado mais duro vira o novo mínimo', () => {
+    expect(normalizeConfidenceThreshold(0.3, 0.6)).toBe(0.6);
+    expect(normalizeConfidenceThreshold(0.8, 0.6)).toBe(0.8);
+    // Piso inválido não pode desligar a proteção.
+    expect(normalizeConfidenceThreshold(0.1, NaN)).toBe(DEMAND_THRESHOLD_FLOOR_FALLBACK);
+    // Piso absurdo é preso no teto em vez de tornar tudo inválido.
+    expect(normalizeConfidenceThreshold(0.5, 99)).toBe(DEMAND_THRESHOLD_MAX);
+  });
+
+  it('preferências antigas sem o campo ganham o piso, e o valor válido sobrevive', () => {
+    expect(normalizeDemandPreferences({ tier: 'zero' }, ALLOWED).confidenceThreshold).toBe(PISO);
+    expect(
+      normalizeDemandPreferences({ confidenceThreshold: 0.82 }, ALLOWED).confidenceThreshold,
+    ).toBe(0.82);
+    expect(
+      normalizeDemandPreferences({ confidenceThreshold: 0.05 }, ALLOWED).confidenceThreshold,
+    ).toBe(PISO);
+  });
+
+  it('o piso vem dos defaults do chamador quando fornecido', () => {
+    const defaults = {
+      tier: 'zero',
+      department: 'all',
+      search: '',
+      confidenceThreshold: 0.5,
+    } as const;
+    const out = normalizeDemandPreferences({ confidenceThreshold: 0.3 }, ALLOWED, defaults);
+    expect(out.confidenceThreshold).toBe(0.5);
   });
 });

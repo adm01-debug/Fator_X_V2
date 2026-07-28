@@ -221,10 +221,39 @@ export interface DemandPreferences {
   tier: DemandFilter;
   department: DepartmentFilter;
   search: string;
+  /** Limiar de confiança escolhido pelo curador na reclassificação. */
+  confidenceThreshold: number;
 }
 
 /** Teto de busca persistida — evita gravar payload arbitrário na nuvem. */
 export const DEMAND_SEARCH_MAX = 120;
+
+/**
+ * Fronteiras do limiar persistido. O piso NÃO é constante do módulo aqui de
+ * propósito: quem conhece o piso real é `departmentReclassification`, e importá-lo
+ * criaria acoplamento circular. O chamador injeta o piso; se não injetar, usamos
+ * o valor conservador 0.25 (mesmo default do motor).
+ */
+export const DEMAND_THRESHOLD_FLOOR_FALLBACK = 0.25;
+export const DEMAND_THRESHOLD_MAX = 0.95;
+
+/**
+ * Normaliza o limiar: descarta não-números, quantiza em passos de 0,01 (o
+ * slider da UI opera nessa granularidade — sem isso um valor com ruído de ponto
+ * flutuante voltaria do storage e o slider ficaria "entre" passos) e prende ao
+ * intervalo [piso, teto]. Nunca é possível afrouxar abaixo do piso.
+ */
+export function normalizeConfidenceThreshold(
+  value: unknown,
+  floor: number = DEMAND_THRESHOLD_FLOOR_FALLBACK,
+): number {
+  const piso = Number.isFinite(floor)
+    ? Math.min(Math.max(floor as number, 0), DEMAND_THRESHOLD_MAX)
+    : DEMAND_THRESHOLD_FLOOR_FALLBACK;
+  if (typeof value !== 'number' || !Number.isFinite(value)) return piso;
+  const quantizado = Math.round(value * 100) / 100;
+  return Math.min(Math.max(quantizado, piso), DEMAND_THRESHOLD_MAX);
+}
 
 /**
  * Sanitiza preferências vindas de storage/nuvem. A camada de persistência faz
@@ -236,10 +265,19 @@ export const DEMAND_SEARCH_MAX = 120;
 export function normalizeDemandPreferences(
   value: unknown,
   allowedDepartments: readonly string[],
-  defaults: DemandPreferences = { tier: 'zero', department: 'all', search: '' },
+  defaults: DemandPreferences = {
+    tier: 'zero',
+    department: 'all',
+    search: '',
+    confidenceThreshold: DEMAND_THRESHOLD_FLOOR_FALLBACK,
+  },
 ): DemandPreferences {
+  const piso = normalizeConfidenceThreshold(
+    defaults.confidenceThreshold,
+    DEMAND_THRESHOLD_FLOOR_FALLBACK,
+  );
   const raw = (value ?? {}) as Partial<Record<keyof DemandPreferences, unknown>>;
-  if (typeof raw !== 'object' || Array.isArray(value)) return { ...defaults };
+  if (typeof raw !== 'object' || Array.isArray(value)) return { ...defaults, confidenceThreshold: piso };
 
   const tier =
     typeof raw.tier === 'string' ? normalizeDemandFilter(raw.tier) : defaults.tier;
@@ -249,9 +287,11 @@ export function normalizeDemandPreferences(
       : defaults.department;
   const search =
     typeof raw.search === 'string' ? raw.search.slice(0, DEMAND_SEARCH_MAX) : '';
+  const confidenceThreshold = normalizeConfidenceThreshold(raw.confidenceThreshold, piso);
 
-  return { tier, department, search };
+  return { tier, department, search, confidenceThreshold };
 }
+
 
 /** Exportação CSV (RFC 4180, com BOM) do recorte visível. */
 export function demandRowsToCsv(rows: readonly SkillDemandRow[]): string {
