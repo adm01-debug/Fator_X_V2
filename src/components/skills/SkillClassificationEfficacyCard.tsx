@@ -15,7 +15,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { AlertTriangle, Gauge, Loader2, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
 import { logger } from '@/lib/logger';
 import { audit } from '@/lib/auditService';
 import { fetchClassificationTimeline } from '@/services/skillClassificationTimelineService';
