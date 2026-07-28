@@ -439,6 +439,11 @@ export default function SkillHarvestPage() {
         <TabsContent value="curation">
           <RecentCurationsPanel />
         </TabsContent>
+
+        {/* ─── Demanda por skill (detecção de catálogo ocioso) */}
+        <TabsContent value="demand">
+          <SkillDemandPanel />
+        </TabsContent>
       </Tabs>
 
     </div>
