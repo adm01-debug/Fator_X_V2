@@ -8,6 +8,7 @@ import {
   appendSkillsToPrompt,
   loadAgentSkills,
   MAX_PROMPT_SKILLS,
+  countInjectedSkills,
 } from '../../supabase/functions/_shared/skills';
 import { compilePrompt } from '@/lib/promptCompiler';
 
