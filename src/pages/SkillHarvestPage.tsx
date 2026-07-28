@@ -72,6 +72,8 @@ export default function SkillHarvestPage() {
   const [loading, setLoading] = useState(true);
   const [harvesting, setHarvesting] = useState(false);
   const [harvestProgress, setHarvestProgress] = useState<HarvestProgress | null>(null);
+  /** Permite ao curador interromper o encadeamento sem perder o já coletado. */
+  const abortRef = useRef<AbortController | null>(null);
   const [rebuilding, setRebuilding] = useState(false);
 
 
