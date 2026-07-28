@@ -14,6 +14,7 @@ import {
   HelpCircle,
   Loader2,
   RefreshCw,
+  Sparkles,
   TrendingDown,
   Wand2,
 } from 'lucide-react';
@@ -138,6 +139,18 @@ export function SkillDemandPanel() {
   useEffect(() => {
     void carregar();
   }, [carregar]);
+
+  /**
+   * Abre o diálogo com auto-disparo apenas DEPOIS que o recorte "Sem depto."
+   * está de fato em vigor — abrir antes classificaria o filtro anterior.
+   */
+  useEffect(() => {
+    if (!iaPendente || loading) return;
+    if (deptFilter !== 'none') return;
+    setIaPendente(false);
+    setAutoIa(true);
+    setReclassificarAberto(true);
+  }, [iaPendente, loading, deptFilter]);
 
   const resumo = useMemo(() => summarizeSkillDemand(rows), [rows]);
   const porDepartamento = useMemo(() => countByDepartment(rows), [rows]);
@@ -422,7 +435,13 @@ export function SkillDemandPanel() {
 
       <SkillReclassifyDialog
         open={reclassificarAberto}
-        onOpenChange={setReclassificarAberto}
+        onOpenChange={(aberto) => {
+          setReclassificarAberto(aberto);
+          // Fechar encerra a intenção de auto-disparo; reabrir manualmente
+          // não pode gastar créditos sem o curador pedir.
+          if (!aberto) setAutoIa(false);
+        }}
+        autoRunLlm={autoIa}
         candidates={candidatos}
         confidenceThreshold={confidenceThreshold}
         onConfidenceThresholdChange={(v) => atualizarPrefs({ confidenceThreshold: v })}
