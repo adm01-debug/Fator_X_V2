@@ -290,9 +290,10 @@ export const LICENSE_FILTERS: ReadonlyArray<{
   },
   {
     value: 'unlicensed',
-    label: 'Sem licença declarada',
-    hint: 'Origem externa sem licença: risco jurídico, revisar antes de usar.',
+    label: 'Licença indefinida',
+    hint: 'Origem externa sem licença reconhecida (ausente ou texto livre): revisar antes do uso comercial.',
   },
+
 ] as const;
 
 /** `true` quando o valor é um modo de filtro válido. */
