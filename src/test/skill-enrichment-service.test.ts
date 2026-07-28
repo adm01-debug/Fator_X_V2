@@ -49,7 +49,7 @@ describe('toEnrichQueueError — decisão de retry por status', () => {
 
   it('429 sem Retry-After ou com header lixo cai no backoff da fila (null)', () => {
     for (const header of [undefined, 'depois', '-5', 'NaN', '']) {
-      const headers = header === undefined ? {} : { 'Retry-After': header };
+      const headers: Record<string, string> = header === undefined ? {} : { 'Retry-After': header };
       const e = toEnrichQueueError(erroHttp(429, headers), 'fallback');
       expect(e.retryable, `header ${String(header)}`).toBe(true);
       expect(e.retryAfterMs).toBeNull();
