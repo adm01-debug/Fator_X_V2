@@ -15,6 +15,8 @@ function normalizeVariant(v: DbRow): PromptVariantId | null {
     : null;
 }
 
+export const MAX_DRAFT_SKILL_IDS = 100;
+
 /** Sanitiza IDs de skills vindos do localStorage (dados não confiáveis). */
 function normalizeSkillIds(v: unknown): string[] {
   if (!Array.isArray(v)) return [];
@@ -30,8 +32,6 @@ function normalizeSkillIds(v: unknown): string[] {
   }
   return out;
 }
-
-export const MAX_DRAFT_SKILL_IDS = 100;
 
 export interface DraftRestoreCheck {
   canRestore: boolean;
