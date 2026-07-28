@@ -1,6 +1,9 @@
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Wrench, Pin, Sparkles } from 'lucide-react';
+import { Wrench, Pin, Sparkles, AlertTriangle } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { MAX_PROMPT_SKILLS } from '@/lib/skills/promptSimulation';
+import { evaluateInstallImpact, trimSelectionToCap, type NamedSkillRef } from '@/lib/skills/installGuard';
 import { SkillsPickerPanel } from '@/components/skills/SkillsPickerPanel';
 import { SkillRecommendationsCard } from '@/components/skills/SkillRecommendationsCard';
 import { Badge } from '@/components/ui/badge';
@@ -58,6 +61,28 @@ export function StepQuickSkills({ mission, role, selectedIds, onChange }: StepQu
   const recommendedIds = recommendations.map((r) => r.skill.id);
   const inheritedIds = inherited.map((l) => l.skillId);
 
+  // Guarda de teto: o compilador só injeta MAX_PROMPT_SKILLS nomes distintos.
+  // Projetamos a ocupação já na seleção para o operador não descobrir a perda
+  // depois que o agente estiver rodando pior sem explicação aparente.
+  const selectedRefs: NamedSkillRef[] = useMemo(() => {
+    const porId = new Map((allSkills?.skills ?? []).map((s) => [s.id, s.name] as const));
+    return selectedIds
+      .filter((id) => porId.has(id))
+      .map((id) => ({ id, name: porId.get(id) ?? '' }));
+  }, [selectedIds, allSkills]);
+
+  const capGuard = useMemo(
+    () => (selectedRefs.length > 0 ? evaluateInstallImpact({ installed: [], selected: selectedRefs }) : null),
+    [selectedRefs],
+  );
+
+  const handleTrimToCap = () => {
+    const cabem = trimSelectionToCap({ installed: [], selected: selectedRefs });
+    const mantidos = new Set(cabem.map((s) => s.id));
+    onChange(selectedIds.filter((id) => mantidos.has(id)));
+  };
+
+
   const handleSelect = (id: string) => {
     if (selectedIds.includes(id)) onChange(selectedIds.filter((x) => x !== id));
     else onChange([...selectedIds, id]);
@@ -86,6 +111,38 @@ export function StepQuickSkills({ mission, role, selectedIds, onChange }: StepQu
           </p>
         </div>
       </div>
+
+      {capGuard && capGuard.effectiveAdds > 0 && capGuard.headroomAfter <= 5 && (
+        <div
+          className={cn(
+            'rounded-xl border p-3 text-body-sm flex items-start gap-2',
+            capGuard.additionalDropped > 0
+              ? 'border-destructive/40 bg-destructive/10 text-destructive'
+              : 'border-warning/40 bg-warning/10 text-foreground',
+          )}
+          role="status"
+        >
+          <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" />
+          <div className="space-y-1">
+            <p className="font-medium">
+              {capGuard.projectedSlots}/{MAX_PROMPT_SKILLS} slots do prompt
+            </p>
+            <p className="text-muted-foreground">{capGuard.message}</p>
+            {capGuard.additionalDropped > 0 && (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={handleTrimToCap}
+              >
+                Manter só o que cabe
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
+
+
 
       {inherited.length > 0 && (
         <section className="rounded-xl border border-nexus-purple/30 bg-nexus-purple/5 p-4 space-y-3">
