@@ -1,12 +1,19 @@
 /**
  * SkillAutoRecommendationsPanel — Recomendações automáticas baseadas na missão
  * de um agente existente, com botão "Adicionar ao agente" por skill.
+ *
+ * Guarda de teto: aplicar sugestões em lote é o caminho mais rápido para
+ * empurrar um agente para além de `MAX_PROMPT_SKILLS` sem ninguém perceber —
+ * o insert sempre "dá certo", mas o compilador de prompt descarta o excedente
+ * em silêncio. Projetamos o impacto ANTES da escrita, avisamos o operador e
+ * registramos a trilha quando ele decide seguir mesmo assim.
  */
 import { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Sparkles, Bot, Loader2 } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Sparkles, Bot, Loader2, AlertTriangle, Scissors } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { SkillRecommendationsCard } from './SkillRecommendationsCard';
@@ -17,6 +24,14 @@ import {
   bulkInstallSkills,
   getInstalledSkills,
 } from '@/services/skillsRegistryService';
+import {
+  evaluateInstallImpact,
+  trimSelectionToCap,
+  type NamedSkillRef,
+} from '@/lib/skills/installGuard';
+import { buildInstallCapRecord, shouldAuditInstall } from '@/lib/skills/installCapAudit';
+import { audit } from '@/lib/auditService';
+import { logger } from '@/lib/logger';
 
 import { recommendSkills, computePendingSkillIds } from '@/services/skillRecommenderService';
 
@@ -92,15 +107,67 @@ export function SkillAutoRecommendationsPanel() {
     [recommendations, installedIds],
   );
 
-  const handleInstallAll = async () => {
-    if (!agentId || pendingIds.length === 0) return;
+  /** Refs nomeadas: a guarda conta por NOME normalizado, não por id. */
+  const installedRefs = useMemo<NamedSkillRef[]>(
+    () => (installed ?? []).map((s) => ({ id: s.id, name: s.name ?? '' })),
+    [installed],
+  );
+
+  const pendingRefs = useMemo<NamedSkillRef[]>(() => {
+    const porId = new Map(recommendations.map((r) => [r.skill.id, r.skill]));
+    return pendingIds.map((id) => ({ id, name: porId.get(id)?.name ?? '' }));
+  }, [recommendations, pendingIds]);
+
+  /** Projeção do impacto de "Adicionar todas" antes de qualquer escrita. */
+  const guard = useMemo(
+    () => evaluateInstallImpact({ installed: installedRefs, selected: pendingRefs }),
+    [installedRefs, pendingRefs],
+  );
+
+  const trimmed = useMemo(
+    () => trimSelectionToCap({ installed: installedRefs, selected: pendingRefs }),
+    [installedRefs, pendingRefs],
+  );
+
+  /**
+   * Aplica o lote. `refs` permite instalar tanto tudo quanto só o que cabe —
+   * a auditoria usa a mesma seleção efetivamente escrita, nunca a intenção
+   * original, senão a trilha registraria um estouro que não aconteceu.
+   */
+  const applyBatch = async (refs: readonly NamedSkillRef[], acknowledged: boolean) => {
+    if (!agentId || refs.length === 0) return;
     setInstallingAll(true);
     try {
-      const { installed: ok, skipped } = await bulkInstallSkills(agentId, pendingIds);
+      const ids = refs.map((r) => r.id);
+      const { installed: ok, skipped } = await bulkInstallSkills(agentId, ids);
       await queryClient.invalidateQueries({ queryKey: ['installed_skills', agentId] });
+
+      const record = buildInstallCapRecord({
+        agentId,
+        agentName: activeAgent?.name ?? '',
+        installed: installedRefs,
+        selected: refs,
+        guard: evaluateInstallImpact({ installed: installedRefs, selected: refs }),
+        acknowledged,
+      });
+      if (shouldAuditInstall(record)) {
+        // Falha de auditoria não pode desfazer nem mascarar a instalação
+        // bem-sucedida; registramos no logger e seguimos.
+        try {
+          await audit.skillInstallOverCap(record);
+        } catch (auditErr) {
+          logger.error('audit skill.install_over_cap failed', {
+            error: auditErr instanceof Error ? auditErr.message : String(auditErr),
+          });
+        }
+      }
+
       const parts: string[] = [];
       if (ok.length > 0) parts.push(`${ok.length} adicionada(s)`);
       if (skipped.length > 0) parts.push(`${skipped.length} já instalada(s)`);
+      if (record.additionalDropped > 0) {
+        parts.push(`${record.additionalDropped} serão descartada(s) no prompt`);
+      }
       toast.success('Sugestões aplicadas', { description: parts.join(' · ') });
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Falha ao instalar';
@@ -109,6 +176,10 @@ export function SkillAutoRecommendationsPanel() {
       setInstallingAll(false);
     }
   };
+
+  const handleInstallAll = () => void applyBatch(pendingRefs, guard.additionalDropped > 0);
+  const handleInstallTrimmed = () => void applyBatch(trimmed, false);
+
 
 
   return (
@@ -150,22 +221,51 @@ export function SkillAutoRecommendationsPanel() {
         {agentId ? (
           <>
             {pendingIds.length > 0 && (
-              <div className="flex justify-end">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={handleInstallAll}
-                  disabled={installingAll}
-                >
-                  {installingAll ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Sparkles className="h-4 w-4" />
+              <div className="space-y-3">
+                {guard.additionalDropped > 0 && (
+                  <Alert variant="destructive">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertDescription>{guard.message}</AlertDescription>
+                  </Alert>
+                )}
+                {guard.additionalDropped === 0 && guard.verdict === 'atencao' && (
+                  <Alert>
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertDescription>{guard.message}</AlertDescription>
+                  </Alert>
+                )}
+                <div className="flex flex-wrap justify-end gap-2">
+                  {guard.additionalDropped > 0 && trimmed.length > 0 && (
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={handleInstallTrimmed}
+                      disabled={installingAll}
+                      className="gap-1"
+                    >
+                      <Scissors className="h-4 w-4" />
+                      Instalar só o que cabe ({trimmed.length})
+                    </Button>
                   )}
-                  Adicionar todas ({pendingIds.length})
-                </Button>
+                  <Button
+                    size="sm"
+                    variant={guard.additionalDropped > 0 ? 'ghost' : 'outline'}
+                    onClick={handleInstallAll}
+                    disabled={installingAll}
+                  >
+                    {installingAll ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Sparkles className="h-4 w-4" />
+                    )}
+                    {guard.additionalDropped > 0
+                      ? `Adicionar mesmo assim (${pendingIds.length})`
+                      : `Adicionar todas (${pendingIds.length})`}
+                  </Button>
+                </div>
               </div>
             )}
+
             <SkillRecommendationsCard
               title={`Sugestões para ${activeAgent?.name ?? 'este agente'}`}
               description="Cada skill exibe o score, categoria e as palavras-chave que combinam com a missão."
