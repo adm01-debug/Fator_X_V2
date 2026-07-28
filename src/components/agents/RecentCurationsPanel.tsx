@@ -208,6 +208,22 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
   // Resumo por natureza: o curador decide escalar (RLS) ou reenviar (rede).
   const resumoFalhas = useMemo(() => summarizeRestoreFailures(falhas), [falhas]);
 
+  // Exporta o relatório sem tocar no backend: os dados já estão em memória.
+  const exportarFalhasCsv = useCallback(() => {
+    const blob = new Blob([buildRestoreFailuresCsv(falhas)], {
+      type: 'text/csv;charset=utf-8;',
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = buildRestoreFailuresFilename();
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }, [falhas]);
+
+
   // Reprocessar um lote negado por RLS só repete o erro: o retry fica restrito
   // às falhas transitórias, e as de permissão ficam visíveis para escalar.
   const templatesRetentaveis = useMemo(
