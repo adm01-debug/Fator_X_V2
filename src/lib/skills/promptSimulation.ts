@@ -141,15 +141,12 @@ const EMPTY_KINDS: Record<SanitizationKind, number> = {
 /**
  * Simula a compilação completa.
  *
- * `maxSkills` é injetável apenas para testes e para o slider da UI — o valor
- * de produção é sempre MAX_PROMPT_SKILLS, e o resultado deixa isso explícito
- * em `diagnostics.overflowed`.
+ * O teto é sempre MAX_PROMPT_SKILLS — deliberadamente NÃO configurável: o
+ * texto final vem do compilador real, e um teto divergente faria o simulador
+ * mentir justamente sobre o corte que pretende auditar. Para experimentar
+ * overflow, adicione skills sintéticas à entrada.
  */
-export function simulatePrompt(
-  input: CompilePromptInput,
-  options?: { maxSkills?: number },
-): PromptSimulationResult {
-  const maxSkills = Math.max(1, Math.floor(options?.maxSkills ?? MAX_PROMPT_SKILLS));
+export function simulatePrompt(input: CompilePromptInput): PromptSimulationResult {
   const entrada = input.skills ?? [];
 
   const seen = new Set<string>();
@@ -192,7 +189,7 @@ export function simulatePrompt(
   sobreviventes.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
 
   const skills = sobreviventes.map((s, index) => {
-    if (index >= maxSkills) return { ...s, disposition: 'overflow' as const, line: null };
+    if (index >= MAX_PROMPT_SKILLS) return { ...s, disposition: 'overflow' as const, line: null };
     const cat = s.category ? ` _(${s.category})_` : '';
     const desc = s.description ? ` — ${s.description}` : '';
     return { ...s, line: `- **${s.name}**${cat}${desc}` };
@@ -204,10 +201,7 @@ export function simulatePrompt(
   // O texto final vem do compilador REAL, nunca de uma reimplementação: se as
   // duas divergirem, o simulador estaria mentindo justamente sobre o que
   // pretende auditar.
-  const compiled = compilePrompt({
-    ...input,
-    skills: entrada.slice(0, /* sem recorte */ entrada.length) as PromptSkill[],
-  });
+  const compiled = compilePrompt(input);
 
   const marcador = '## Skills disponíveis';
   const pos = compiled.text.indexOf(marcador);
