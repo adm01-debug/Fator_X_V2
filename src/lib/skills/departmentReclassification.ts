@@ -216,6 +216,18 @@ export function buildReclassificationPlan(
 
     if (!resultado.department || resultado.confidence < confMin) {
       lowConfidence += 1;
+      // Materializa o recorte para o fallback LLM em vez de só contá-lo.
+      // Guardamos o texto original: reconstituí-lo depois exigiria uma segunda
+      // consulta ao registry e abriria janela para divergência.
+      llmCandidates.push({
+        skillId,
+        name,
+        slug,
+        description: text(candidate.description),
+        tags: safeTags(candidate.tags),
+        from,
+        lexicalConfidence: resultado.confidence,
+      });
       continue;
     }
     if (resultado.department === from) {
