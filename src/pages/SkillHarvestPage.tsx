@@ -225,6 +225,8 @@ export default function SkillHarvestPage() {
       // senão a próxima varredura do mesmo repo começaria no fim da lista.
       if (!incomplete) await clearHarvestCheckpoint(parsedRepos);
       else if (last) await saveHarvestCheckpoint(parsedRepos, last.nextFileOffset);
+      setCheckpointsToken((n) => n + 1);
+
 
       if (controller.signal.aborted) {
         toast.info('Varredura interrompida', {
