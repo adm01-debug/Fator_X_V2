@@ -15,6 +15,24 @@ function normalizeVariant(v: DbRow): PromptVariantId | null {
     : null;
 }
 
+/** Sanitiza IDs de skills vindos do localStorage (dados não confiáveis). */
+function normalizeSkillIds(v: unknown): string[] {
+  if (!Array.isArray(v)) return [];
+  const out: string[] = [];
+  const seen = new Set<string>();
+  for (const item of v) {
+    if (typeof item !== 'string') continue;
+    const id = item.trim();
+    if (!id || id.length > 64 || seen.has(id)) continue;
+    seen.add(id);
+    out.push(id);
+    if (out.length >= MAX_DRAFT_SKILL_IDS) break;
+  }
+  return out;
+}
+
+export const MAX_DRAFT_SKILL_IDS = 100;
+
 export interface DraftRestoreCheck {
   canRestore: boolean;
   reason?: string;
@@ -134,6 +152,12 @@ export interface DraftEntry {
    * always falling back to the auto-detected first match.
    */
   selectedVariant?: PromptVariantId | null;
+  /**
+   * IDs das skills escolhidas no passo "Skills". Persistidos junto ao rascunho
+   * para que a seleção sobreviva a refresh/retomada — sem isso o usuário perdia
+   * silenciosamente as skills e o agente era criado sem nenhuma instalada.
+   */
+  selectedSkillIds?: string[];
 }
 
 export interface DraftsStoreV2 {
@@ -174,6 +198,7 @@ export function loadDrafts(): DraftsStoreV2 {
             createdAt: typeof d.createdAt === 'string' ? d.createdAt : (typeof d.savedAt === 'string' ? d.savedAt : new Date().toISOString()),
             promptCustomLocked: d.promptCustomLocked === true,
             selectedVariant: normalizeVariant(d.selectedVariant),
+            selectedSkillIds: normalizeSkillIds(d.selectedSkillIds),
           })),
         };
       }
@@ -225,7 +250,13 @@ export function renameDraft(
 }
 export function upsertDraft(
   store: DraftsStoreV2,
-  draft: { id?: string; form: QuickAgentForm; promptCustomLocked?: boolean; selectedVariant?: PromptVariantId | null },
+  draft: {
+    id?: string;
+    form: QuickAgentForm;
+    promptCustomLocked?: boolean;
+    selectedVariant?: PromptVariantId | null;
+    selectedSkillIds?: string[];
+  },
 ): { store: DraftsStoreV2; id: string } {
   const now = new Date().toISOString();
   const id = draft.id ?? genId();
@@ -240,6 +271,9 @@ export function upsertDraft(
             savedAt: now,
             promptCustomLocked: draft.promptCustomLocked ?? d.promptCustomLocked ?? false,
             selectedVariant: draft.selectedVariant !== undefined ? draft.selectedVariant : d.selectedVariant ?? null,
+            selectedSkillIds: draft.selectedSkillIds !== undefined
+              ? normalizeSkillIds(draft.selectedSkillIds)
+              : d.selectedSkillIds ?? [],
           }
         : d,
     );
@@ -251,6 +285,7 @@ export function upsertDraft(
       createdAt: now,
       promptCustomLocked: draft.promptCustomLocked ?? false,
       selectedVariant: draft.selectedVariant ?? null,
+      selectedSkillIds: normalizeSkillIds(draft.selectedSkillIds),
     };
     drafts = [entry, ...store.drafts];
   }
