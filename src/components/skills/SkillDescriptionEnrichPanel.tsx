@@ -97,62 +97,102 @@ export function SkillDescriptionEnrichPanel({
     void carregar();
   }, [carregar]);
 
+  /**
+   * Executa a fila sobre `alvo`. O parâmetro existe para o retry direcionado:
+   * reprocessar o lote inteiro depois de um 429 parcial gastaria chamadas (e
+   * créditos) nas skills que já tinham sido resolvidas com sucesso.
+   */
+  const executar = useCallback(
+    async (alvo: readonly EnrichCandidate[]) => {
+      if (alvo.length === 0) return;
+      const controller = new AbortController();
+      abortRef.current = controller;
+      setGerando(true);
+      setFalhas(null);
+      setProgresso({ concluidos: 0, total: alvo.length });
+
+      try {
+        const resultado = await runDescriptionEnrichQueue({
+          candidates: [...alvo],
+          signal: controller.signal,
+          onSnapshot: (snapshot) => {
+            // Isolamento: um erro de render aqui não pode derrubar a fila.
+            try {
+              setProgresso({
+                concluidos: snapshot.items.filter(
+                  (i) => i.status !== 'pendente' && i.status !== 'executando',
+                ).length,
+                total: alvo.length,
+              });
+            } catch {
+              /* progresso é cosmético */
+            }
+          },
+        });
+
+        // Merge por skillId: num retry parcial as propostas boas da rodada
+        // anterior continuam válidas e não podem sumir da tela.
+        const novos = new Set(alvo.map((c) => c.skillId));
+        setPropostas((atual) => [
+          ...atual.filter((p) => !novos.has(p.skillId)),
+          ...resultado.proposals,
+        ]);
+        const recusasRodada = [...resultado.rejections, ...resultado.skipped];
+        setRecusadas((atual) => [
+          ...atual.filter((r) => !novos.has(r.skillId)),
+          ...recusasRodada,
+        ]);
+        setDescartadas(resultado.skipped.map((s) => s.slug));
+
+        // Resumo por causa raiz: "N falharam" não diz se retentar adianta.
+        const resumo = summarizeQueueFailures(resultado.snapshot);
+        setFalhas(resumo.totalFailed > 0 ? resumo : null);
+
+        if (resumo.totalFailed > 0 && resumo.retryPointless) {
+          toast.error(`Lote bloqueado: ${formatFailureSummary(resumo)}.`);
+        } else if (resultado.proposals.length === 0) {
+          toast.info('Nenhuma descrição defensável foi gerada nesta rodada.');
+        } else {
+          toast.success(
+            `${resultado.proposals.length} descriç${resultado.proposals.length === 1 ? 'ão gerada' : 'ões geradas'}.`,
+          );
+        }
+      } catch (error) {
+        logger.error('SkillDescriptionEnrichPanel: falha na geração', {
+          message: error instanceof Error ? error.message : String(error),
+        });
+        toast.error('Falha ao gerar descrições.');
+      } finally {
+        setGerando(false);
+        abortRef.current = null;
+      }
+    },
+    [],
+  );
+
   const gerar = useCallback(async () => {
-    if (candidatos.length === 0) return;
-    const controller = new AbortController();
-    abortRef.current = controller;
-    setGerando(true);
     setPropostas([]);
     setRecusadas([]);
     setDescartadas([]);
-    setFalhas(null);
-    setProgresso({ concluidos: 0, total: candidatos.length });
+    await executar(candidatos);
+  }, [candidatos, executar]);
 
-    try {
-      const resultado = await runDescriptionEnrichQueue({
-        candidates: candidatos,
-        signal: controller.signal,
-        onSnapshot: (snapshot) => {
-          // Isolamento: um erro de render aqui não pode derrubar a fila.
-          try {
-            setProgresso({
-              concluidos: snapshot.items.filter((i) => i.status !== 'pendente' && i.status !== 'executando')
-                .length,
-              total: candidatos.length,
-            });
-          } catch {
-            /* progresso é cosmético */
-          }
-        },
-      });
-
-      setPropostas(resultado.proposals);
-      setRecusadas([...resultado.rejections, ...resultado.skipped]);
-      setDescartadas(resultado.skipped.map((s) => s.slug));
-
-      // Resumo por causa raiz: "N falharam" não diz se retentar adianta.
-      const resumo = summarizeQueueFailures(resultado.snapshot);
-      setFalhas(resumo.totalFailed > 0 ? resumo : null);
-
-      if (resumo.totalFailed > 0 && resumo.retryPointless) {
-        toast.error(`Lote bloqueado: ${formatFailureSummary(resumo)}.`);
-      } else if (resultado.proposals.length === 0) {
-        toast.info('Nenhuma descrição defensável foi gerada nesta rodada.');
-      } else {
-        toast.success(
-          `${resultado.proposals.length} descriç${resultado.proposals.length === 1 ? 'ão gerada' : 'ões geradas'}.`,
-        );
-      }
-    } catch (error) {
-      logger.error('SkillDescriptionEnrichPanel: falha na geração', {
-        message: error instanceof Error ? error.message : String(error),
-      });
-      toast.error('Falha ao gerar descrições.');
-    } finally {
-      setGerando(false);
-      abortRef.current = null;
+  /**
+   * Retenta APENAS o subconjunto cuja causa raiz se beneficia de nova tentativa.
+   * Um 402 no meio do lote não deve arrastar consigo os 429 que se resolvem
+   * sozinhos — e vice-versa: insistir no 402 é desperdício garantido.
+   */
+  const retentarRetentaveis = useCallback(async () => {
+    const ids = new Set(falhas?.retryableSkillIds ?? []);
+    if (ids.size === 0) return;
+    const alvo = candidatos.filter((c) => ids.has(c.skillId));
+    if (alvo.length === 0) {
+      toast.info('As skills retentáveis não estão mais na lista atual.');
+      return;
     }
-  }, [candidatos]);
+    await executar(alvo);
+  }, [candidatos, executar, falhas]);
+
 
   const automaticas = useMemo(() => autoApplicable(propostas), [propostas]);
   const revisaveis = useMemo(() => needsReview(propostas), [propostas]);
