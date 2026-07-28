@@ -33,12 +33,18 @@ import {
 import { fetchSkillDemand } from '@/services/skillDemandService';
 import {
   countByDepartment,
+  countBySource,
   DEMAND_SEARCH_MAX,
   DEMAND_TIERS,
   DEMAND_TIER_LABEL,
+  DEPARTMENT_SOURCE_LABEL,
+  DEPARTMENT_SOURCES,
   demandRowsToCsv,
   filterByDemand,
   filterByDepartment,
+  filterBySource,
+  normalizeSourceFilter,
+
   filterByNeedsReview,
   countNeedsReview,
   normalizeDemandFilter,
