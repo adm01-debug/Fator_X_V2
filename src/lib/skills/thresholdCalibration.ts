@@ -231,3 +231,56 @@ export function detectCalibrationInstability(
   };
 }
 
+
+/** Prazo de revisão de um override antes de virar pendência de governança. */
+export const OVERRIDE_REVIEW_DEADLINE_DAYS = 30;
+
+export interface StaleOverrideReport {
+  /** Overrides datados que passaram do prazo sem calibração posterior. */
+  stale: ThresholdCalibration[];
+  /** Idade em dias do override vencido mais antigo; 0 quando não há vencidos. */
+  oldestDays: number;
+}
+
+/**
+ * Aponta overrides de instabilidade que envelheceram sem revisão.
+ *
+ * "Revisão" aqui é qualquer calibração posterior ao override: se o curador
+ * voltou a mexer no limiar depois, a decisão excepcional já foi reavaliada na
+ * prática. Só sobra o que foi aplicado sob alerta e nunca mais tocado.
+ *
+ * Overrides sem data são ignorados — sem timestamp não há prazo a contar, e
+ * tratá-los como vencidos criaria alarme permanente e irreparável.
+ */
+export function findStaleOverrides(
+  items: readonly ThresholdCalibration[],
+  options?: { now?: Date; deadlineDays?: number },
+): StaleOverrideReport {
+  const agora = options?.now?.getTime() ?? Date.now();
+  const prazo = Math.max(options?.deadlineDays ?? OVERRIDE_REVIEW_DEADLINE_DAYS, 1);
+  const limiteMs = prazo * 24 * 60 * 60 * 1000;
+
+  const datados = items
+    .map((item) => ({ item, ts: item.at === null ? NaN : Date.parse(item.at) }))
+    .filter((e) => !Number.isNaN(e.ts));
+
+  const maisRecente = datados.reduce((max, e) => (e.ts > max ? e.ts : max), Number.NEGATIVE_INFINITY);
+
+  const stale = datados
+    .filter(({ item, ts }) => {
+      if (!item.overriddenInstability) return false;
+      // Houve calibração posterior → considerado revisado.
+      if (ts < maisRecente) return false;
+      return agora - ts >= limiteMs;
+    })
+    .map((e) => e.item);
+
+  const oldestDays =
+    stale.length === 0
+      ? 0
+      : Math.floor(
+          Math.max(...stale.map((i) => agora - Date.parse(i.at as string))) / (24 * 60 * 60 * 1000),
+        );
+
+  return { stale, oldestDays };
+}
