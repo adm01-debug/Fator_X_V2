@@ -29,9 +29,13 @@ const MIRROR_PATH = resolve(
 
 const mirrorSource = readFileSync(MIRROR_PATH, 'utf8');
 
-/** Extrai o léxico de um departamento do texto-fonte do espelho Deno. */
+/**
+ * Extrai o léxico de um departamento do texto-fonte do espelho Deno.
+ * O espelho declara `DEPARTMENT_LEXICON: Record<SkillDepartment, string[]>`,
+ * ou seja, `dept: [ ...termos ]` — sem a chave `lexicon:` do frontend.
+ */
 function extractMirrorLexicon(dept: SkillDepartment): string[] {
-  const blocoRe = new RegExp(`${dept}:\\s*\\{[\\s\\S]*?lexicon:\\s*\\[([\\s\\S]*?)\\]`, 'm');
+  const blocoRe = new RegExp(`\\n\\s*${dept}:\\s*\\[([\\s\\S]*?)\\n\\s*\\]`, 'm');
   const match = mirrorSource.match(blocoRe);
   if (!match) return [];
   return Array.from(match[1].matchAll(/'([^']+)'/g)).map((m) => m[1]);
