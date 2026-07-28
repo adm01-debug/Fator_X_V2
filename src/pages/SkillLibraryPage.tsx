@@ -16,6 +16,7 @@ import { SkillLibraryInstallPanel } from '@/components/skills/SkillLibraryInstal
 import { SkillObservabilityPanel } from '@/components/skills/SkillObservabilityPanel';
 import { SkillPromptSimulator } from '@/components/skills/SkillPromptSimulator';
 import { SkillOverflowAlertCard } from '@/components/skills/SkillOverflowAlertCard';
+import { SkillPromptEvidenceLedgerCard } from '@/components/skills/SkillPromptEvidenceLedgerCard';
 import { fetchSkillLibraryOverview } from '@/services/skillLibraryService';
 
 const STAT_ICONS = [Library, GitBranch, BadgeCheck, Download] as const;
