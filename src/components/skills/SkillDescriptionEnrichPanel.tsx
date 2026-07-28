@@ -16,7 +16,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { Check, Download, Loader2, PenLine, RefreshCw, X } from 'lucide-react';
+import { AlertTriangle, Check, Download, Loader2, PenLine, RefreshCw, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -44,6 +44,11 @@ import {
   fetchEnrichCandidates,
   runDescriptionEnrichQueue,
 } from '@/services/skillEnrichmentService';
+import {
+  formatFailureSummary,
+  summarizeQueueFailures,
+  type FailureSummary,
+} from '@/lib/skills/queueFailureSummary';
 import { logger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
 
@@ -65,6 +70,8 @@ export function SkillDescriptionEnrichPanel({
   const [propostas, setPropostas] = useState<DescriptionProposal[]>([]);
   const [recusadas, setRecusadas] = useState<RejectedProposal[]>([]);
   const [descartadas, setDescartadas] = useState<string[]>([]);
+  /** Resumo por causa raiz do último lote; `null` quando não houve falha. */
+  const [falhas, setFalhas] = useState<FailureSummary | null>(null);
 
   // Aborta a fila se o painel desmontar no meio: sem isso, os `setState` do
   // onSnapshot continuariam disparando contra um componente morto.
@@ -98,6 +105,7 @@ export function SkillDescriptionEnrichPanel({
     setPropostas([]);
     setRecusadas([]);
     setDescartadas([]);
+    setFalhas(null);
     setProgresso({ concluidos: 0, total: candidatos.length });
 
     try {
@@ -122,7 +130,13 @@ export function SkillDescriptionEnrichPanel({
       setRecusadas([...resultado.rejections, ...resultado.skipped]);
       setDescartadas(resultado.skipped.map((s) => s.slug));
 
-      if (resultado.proposals.length === 0) {
+      // Resumo por causa raiz: "N falharam" não diz se retentar adianta.
+      const resumo = summarizeQueueFailures(resultado.snapshot);
+      setFalhas(resumo.totalFailed > 0 ? resumo : null);
+
+      if (resumo.totalFailed > 0 && resumo.retryPointless) {
+        toast.error(`Lote bloqueado: ${formatFailureSummary(resumo)}.`);
+      } else if (resultado.proposals.length === 0) {
         toast.info('Nenhuma descrição defensável foi gerada nesta rodada.');
       } else {
         toast.success(
@@ -241,6 +255,47 @@ export function SkillDescriptionEnrichPanel({
             </p>
           </div>
         )}
+
+        {falhas && !gerando && (
+          <div
+            className={cn(
+              'space-y-2 rounded-md border p-3',
+              falhas.retryPointless
+                ? 'border-destructive/40 bg-destructive/5'
+                : 'border-border bg-muted/40',
+            )}
+            role="status"
+            aria-live="polite"
+          >
+            <div className="flex flex-wrap items-center gap-2">
+              <AlertTriangle
+                className={cn(
+                  'h-4 w-4 shrink-0',
+                  falhas.retryPointless ? 'text-destructive' : 'text-muted-foreground',
+                )}
+                aria-hidden="true"
+              />
+              <p className="text-body-sm font-medium">
+                {falhas.totalFailed} não {falhas.totalFailed === 1 ? 'processada' : 'processadas'}
+              </p>
+              {falhas.retryPointless && (
+                <Badge variant="destructive">Retentar não resolve</Badge>
+              )}
+            </div>
+            <ul className="space-y-1">
+              {falhas.buckets.map((b) => (
+                <li key={b.category} className="text-meta text-muted-foreground">
+                  <span className="font-medium text-foreground">
+                    {b.count}× {b.label}
+                  </span>{' '}
+                  — {b.hint}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+
 
         {propostas.length > 0 && (
           <div className="space-y-3">
