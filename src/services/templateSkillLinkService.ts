@@ -443,8 +443,6 @@ export async function retryFailedRestores(
 }
 
 
-  return { restored, failedTemplates };
-}
 
 
 export interface RebuildResult {
