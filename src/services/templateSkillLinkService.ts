@@ -304,7 +304,11 @@ export async function rebuildTemplateSkillLinks(
 
   const registry = (registryRows ?? []) as unknown as AgentSkillDefinition[];
   const templatesWithoutLinks: string[] = [];
-  const rows: Omit<TemplateSkillLink, 'id'>[] = [];
+  // `deleted_at`/`deleted_by` fazem parte do payload de reconstrução: sem eles,
+  // um vínculo automático que já havia sido soft-deletado sobreviveria ao
+  // DELETE (que filtra `deleted_at IS NULL`) e o UPSERT o reescreveria mantendo
+  // `deleted_at` preenchido — o vínculo recalculado ficaria invisível na UI.
+  const rows: RebuildRow[] = [];
 
   for (const template of AGENT_TEMPLATES) {
     const links = linkSkillsToTemplate(template, registry, limitPerTemplate);
