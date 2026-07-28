@@ -86,9 +86,11 @@ export function SkillsModule() {
     if (!agentId) return;
     setBusy(skillId, true);
     try {
-      await installSkill(agentId, skillId);
+      const inserted = await installSkill(agentId, skillId);
       await refresh();
-      toast.success('Skill adicionada ao agente');
+      if (inserted) toast.success('Skill adicionada ao agente');
+      else toast.info('Skill já estava instalada');
+
     } catch (error) {
       logger.error('Falha ao instalar skill', { error, skillId, agentId });
       toast.error('Não foi possível adicionar a skill');
