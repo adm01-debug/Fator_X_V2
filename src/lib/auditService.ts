@@ -1,6 +1,7 @@
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import { logger } from '@/lib/logger';
 import type { Json } from '@/integrations/supabase/types';
+import type { PromptEvidenceRecord } from '@/lib/skills/promptAuditArtifact';
 
 type AuditAction =
   | 'agent.create' | 'agent.update' | 'agent.delete' | 'agent.deploy' | 'agent.duplicate'
@@ -9,7 +10,8 @@ type AuditAction =
   | 'secret.create' | 'secret.update' | 'secret.delete'
   | 'member.invite' | 'member.remove' | 'member.role_change'
   | 'auth.login' | 'auth.logout' | 'auth.password_change'
-  | 'skill.threshold_calibrate';
+  | 'skill.threshold_calibrate'
+  | 'prompt.export_evidence';
 
 type AuditEntityType =
   | 'agent'
@@ -118,6 +120,43 @@ export const audit = {
         events_in_window: params.eventsInWindow ?? 0,
         reversals: params.reversals ?? 0,
         ...(params.overrideReason ? { override_reason: params.overrideReason } : {}),
+      },
+    }),
+
+  /**
+   * Exportação de evidência do prompt compilado.
+   *
+   * Grava apenas a impressão digital do artefato e o diagnóstico numérico —
+   * nunca o prompt em si, que pode conter conteúdo sensível do negócio. Isso
+   * permite provar depois QUE arquivo foi apresentado numa revisão sem
+   * transformar a trilha em cópia paralela dos prompts.
+   */
+  promptEvidenceExported: (record: PromptEvidenceRecord) =>
+    logAudit({
+      action: 'prompt.export_evidence',
+      entity_type: 'agent',
+      entity_id: record.agentId,
+      metadata: {
+        agent_name: record.agentName,
+        model: record.model,
+        persona: record.persona,
+        filename: record.filename,
+        checksum: record.checksum,
+        artifact_chars: record.artifactChars,
+        generated_at: record.generatedAt,
+        forced_overflow: record.forcedOverflow,
+        injected_dirty_skill: record.injectedDirtySkill,
+        skills_received: record.skillsReceived,
+        skills_injected: record.skillsInjected,
+        skills_overflow: record.skillsOverflow,
+        skills_duplicates: record.skillsDuplicates,
+        skills_discarded: record.skillsDiscarded,
+        skills_sanitized: record.skillsSanitized,
+        estimated_tokens: record.estimatedTokens,
+        unresolved_variables: record.unresolvedVariables,
+        ...(record.overflowedSkills.length > 0
+          ? { overflowed_skills: record.overflowedSkills }
+          : {}),
       },
     }),
 };
