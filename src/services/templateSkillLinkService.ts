@@ -334,6 +334,8 @@ export async function rebuildTemplateSkillLinks(
           new Set([...link.affinities, ...link.matchedKeywords]),
         ).slice(0, 8),
         origin: 'auto',
+        deleted_at: null,
+        deleted_by: null,
       });
     }
   }
