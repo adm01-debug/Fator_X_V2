@@ -14,6 +14,7 @@ import {
 import { PageHeader } from '@/components/shared/PageHeader';
 import { RecentCurationsPanel } from '@/components/agents/RecentCurationsPanel';
 import { SkillDemandPanel } from '@/components/skills/SkillDemandPanel';
+import { HarvestCheckpointsCard } from '@/components/skills/HarvestCheckpointsCard';
 
 import { rebuildTemplateSkillLinks } from '@/services/templateSkillLinkService';
 
