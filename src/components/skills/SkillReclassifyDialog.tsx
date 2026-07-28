@@ -95,7 +95,14 @@ export function SkillReclassifyDialog({
   candidates,
   onApplied,
 }: SkillReclassifyDialogProps) {
-  const plano = useMemo(() => buildReclassificationPlan(candidates), [candidates]);
+  // Limiar ajustável pelo curador. O piso é o default do módulo: afrouxar
+  // abaixo dele reabriria a porta para trocas sem evidência, que é exatamente
+  // o que o classificador existe para impedir. Só é possível ENDURECER.
+  const [limiar, setLimiar] = useState(MIN_RECLASSIFY_CONFIDENCE);
+  const plano = useMemo(
+    () => buildReclassificationPlan(candidates, { minConfidence: limiar }),
+    [candidates, limiar],
+  );
   const [desmarcados, setDesmarcados] = useState<Set<string>>(new Set());
   const [aplicando, setAplicando] = useState(false);
   const [enviando, setEnviando] = useState(false);
