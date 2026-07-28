@@ -8,9 +8,17 @@ type AuditAction =
   | 'prompt.create' | 'prompt.activate'
   | 'secret.create' | 'secret.update' | 'secret.delete'
   | 'member.invite' | 'member.remove' | 'member.role_change'
-  | 'auth.login' | 'auth.logout' | 'auth.password_change';
+  | 'auth.login' | 'auth.logout' | 'auth.password_change'
+  | 'skill.threshold_calibrate';
 
-type AuditEntityType = 'agent' | 'knowledge_base' | 'prompt_version' | 'workspace_secret' | 'workspace_member' | 'auth';
+type AuditEntityType =
+  | 'agent'
+  | 'knowledge_base'
+  | 'prompt_version'
+  | 'workspace_secret'
+  | 'workspace_member'
+  | 'auth'
+  | 'skill_classifier';
 
 interface AuditEntry {
   action: AuditAction;
@@ -68,4 +76,28 @@ export const audit = {
     logAudit({ action: 'member.invite', entity_type: 'workspace_member', metadata: { email } }),
   memberRemoved: (memberId: string) =>
     logAudit({ action: 'member.remove', entity_type: 'workspace_member', entity_id: memberId }),
+
+  /**
+   * Calibração do limiar de revisão departamental.
+   *
+   * Registrada porque o limiar muda quais skills entram na fila de curadoria:
+   * sem trilha, uma queda de volume de revisões viraria mistério operacional.
+   */
+  skillThresholdCalibrated: (params: {
+    from: number | null;
+    to: number;
+    sampleSize: number;
+    accuracy: number | null;
+  }) =>
+    logAudit({
+      action: 'skill.threshold_calibrate',
+      entity_type: 'skill_classifier',
+      metadata: {
+        from: params.from,
+        to: params.to,
+        sample_size: params.sampleSize,
+        accuracy: params.accuracy,
+        origin: 'efficacy_card_suggestion',
+      },
+    }),
 };

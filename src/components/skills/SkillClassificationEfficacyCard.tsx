@@ -16,6 +16,7 @@ import { Gauge, Loader2, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { logger } from '@/lib/logger';
+import { audit } from '@/lib/auditService';
 import { fetchClassificationTimeline } from '@/services/skillClassificationTimelineService';
 import { normalizeConfidenceThreshold } from '@/lib/skills/skillDemand';
 
@@ -157,7 +158,18 @@ export function SkillClassificationEfficacyCard({
                   variant="outline"
                   disabled={!podeAplicar}
                   onClick={() => {
+                    const anterior =
+                      currentThreshold === undefined
+                        ? null
+                        : normalizeConfidenceThreshold(currentThreshold);
                     onApplyThreshold(sugerido);
+                    // Auditoria não bloqueia a UI: falha vira log, não erro visível.
+                    void audit.skillThresholdCalibrated({
+                      from: anterior,
+                      to: sugerido,
+                      sampleSize: resumo.total,
+                      accuracy: resumo.accuracy,
+                    });
                     toast.success(`Limiar de revisão ajustado para ${sugerido.toFixed(2)}`);
                   }}
                 >
