@@ -88,6 +88,15 @@ export const audit = {
     to: number;
     sampleSize: number;
     accuracy: number | null;
+    /**
+     * `true` quando o curador confirmou a aplicação APESAR do detector de
+     * instabilidade ter alertado. Sem essa marca, uma sequência de calibrações
+     * ruidosas fica indistinguível de uma série saudável na trilha.
+     */
+    overriddenInstability?: boolean;
+    instabilityReason?: 'volume' | 'oscilacao' | 'estavel';
+    eventsInWindow?: number;
+    reversals?: number;
   }) =>
     logAudit({
       action: 'skill.threshold_calibrate',
@@ -98,6 +107,10 @@ export const audit = {
         sample_size: params.sampleSize,
         accuracy: params.accuracy,
         origin: 'efficacy_card_suggestion',
+        overridden_instability: params.overriddenInstability ?? false,
+        instability_reason: params.instabilityReason ?? 'estavel',
+        events_in_window: params.eventsInWindow ?? 0,
+        reversals: params.reversals ?? 0,
       },
     }),
 };
