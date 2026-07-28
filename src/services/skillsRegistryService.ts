@@ -159,13 +159,34 @@ export async function getInstalledSkills(agentId: string): Promise<AgentSkillDef
 
 // Uninstall a skill
 export async function uninstallSkill(agentId: string, skillId: string): Promise<void> {
-  const { error } = await supabaseExternal
+  await bulkUninstallSkills(agentId, [skillId]);
+}
+
+/**
+ * Remove skills em lote em uma única round-trip (`DELETE ... WHERE skill_id IN (...)`),
+ * evitando N chamadas sequenciais e estados parcialmente aplicados.
+ * Retorna os ids efetivamente removidos (sanitizados e deduplicados).
+ */
+export async function bulkUninstallSkills(
+  agentId: string,
+  skillIds: readonly string[],
+): Promise<string[]> {
+  const requested = normalizeSkillIdList(skillIds as unknown[]);
+  if (requested.length === 0) return [];
+
+  const { data, error } = await supabaseExternal
     .from('agent_installed_skills')
     .delete()
     .eq('agent_id', agentId)
-    .eq('skill_id', skillId);
+    .in('skill_id', requested)
+    .select('skill_id');
   if (error) throw error;
+
+  return (data ?? [])
+    .map((r) => (r as { skill_id: string }).skill_id)
+    .filter((id): id is string => typeof id === 'string');
 }
+
 
 // Publish a skill to the registry
 export async function publishSkill(skill: Omit<AgentSkillDefinition, 'id' | 'install_count' | 'rating' | 'created_at'>): Promise<AgentSkillDefinition> {
