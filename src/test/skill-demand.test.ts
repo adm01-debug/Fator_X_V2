@@ -69,7 +69,8 @@ describe('classifyDemand', () => {
     for (const value of [-1, -999, Number.NaN, Number.POSITIVE_INFINITY * 0, 0.4]) {
       expect(classifyDemand(value)).toBe('zero');
     }
-    expect(classifyDemand(Number.POSITIVE_INFINITY)).toBe('alta');
+    // Infinito não é um valor de contagem legítimo: degrada para zero.
+    expect(classifyDemand(Number.POSITIVE_INFINITY)).toBe('zero');
   });
 });
 
