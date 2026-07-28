@@ -275,7 +275,7 @@ export function SkillDescriptionEnrichPanel({
                 )}
                 aria-hidden="true"
               />
-              <p className="text-sm font-medium">
+              <p className="text-body-sm font-medium">
                 {falhas.totalFailed} não {falhas.totalFailed === 1 ? 'processada' : 'processadas'}
               </p>
               {falhas.retryPointless && (
