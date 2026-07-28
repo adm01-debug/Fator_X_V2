@@ -106,6 +106,21 @@ export default function SkillsMarketplacePage() {
             ))}
           </SelectContent>
         </Select>
+        <Select
+          value={license}
+          onValueChange={(value) => setLicense(value as LicenseFilter)}
+        >
+          <SelectTrigger className="w-[210px] bg-secondary/50" aria-label="Filtrar por licença">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {LICENSE_FILTERS.map(f => (
+              <SelectItem key={f.value} value={f.value} title={f.hint}>
+                {f.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {isLoading ? (
@@ -114,8 +129,13 @@ export default function SkillsMarketplacePage() {
         <EmptyState
           icon={Package}
           title="Nenhuma skill encontrada"
-          description="Tente outro termo de busca ou categoria."
+          description={
+            license === 'all'
+              ? 'Tente outro termo de busca ou categoria.'
+              : 'Nenhuma skill nesta faixa de licença. Tente "Todas as licenças".'
+          }
         />
+
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {skills.map((skill) => (
