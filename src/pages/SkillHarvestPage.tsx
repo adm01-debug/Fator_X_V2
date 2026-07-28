@@ -483,11 +483,15 @@ export default function SkillHarvestPage() {
                 </div>
                 {parsedRepos.length > 0 && (
                   <div className="space-y-1.5 pt-2">
-                    <Label htmlFor="filesPerRepo">Máximo de SKILL.md por repositório</Label>
+                    <Label htmlFor="filesPerRepo">SKILL.md por lote (por repositório)</Label>
                     <Input
                       id="filesPerRepo" type="number" min={1} max={1000} value={filesPerRepo}
                       onChange={(e) => setFilesPerRepo(Math.min(1000, Math.max(1, Number(e.target.value) || 1)))}
                     />
+                    <span className="text-meta text-muted-foreground">
+                      A varredura é encadeada automaticamente em até {MAX_HARVEST_BATCHES} lotes, então
+                      um monorepo com centenas de skills é coberto sem estourar o tempo de execução.
+                    </span>
                   </div>
                 )}
               </div>
@@ -496,6 +500,34 @@ export default function SkillHarvestPage() {
                 {harvesting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
                 {harvesting ? 'Varrendo o GitHub…' : 'Executar varredura'}
               </Button>
+
+              {harvestProgress && (
+                <div
+                  className="space-y-1.5 rounded-md border border-border/60 bg-muted/30 p-3"
+                  role="status"
+                  aria-live="polite"
+                >
+                  <div className="flex items-center justify-between text-meta text-muted-foreground">
+                    <span>
+                      Lote {harvestProgress.batch} de até {MAX_HARVEST_BATCHES} ·{' '}
+                      {harvestProgress.processed}
+                      {harvestProgress.total > 0 ? ` / ${harvestProgress.total}` : ''} arquivos lidos
+                    </span>
+                    <span>{harvestProgress.inserted} novos</span>
+                  </div>
+                  {harvestProgress.total > 0 && (
+                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-border">
+                      <div
+                        className="h-full rounded-full bg-primary transition-all duration-500"
+                        style={{
+                          width: `${Math.min(100, Math.round((harvestProgress.processed / harvestProgress.total) * 100))}%`,
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+
 
               <p className="text-meta text-muted-foreground">
                 Skills com licença bloqueada, segredos embutidos ou padrões de prompt-injection são
