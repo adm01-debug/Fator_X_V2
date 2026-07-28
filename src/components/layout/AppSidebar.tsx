@@ -64,6 +64,7 @@ const navSections = [
       { title: "Roteamento", url: "/routing", icon: RouteIcon },
       { title: "Fine-tuning", url: "/fine-tuning", icon: Dna },
       { title: "Smolagent", url: "/smolagent", icon: Workflow },
+      { title: "Biblioteca de Skills", url: "/skills/library", icon: Library },
       { title: "Skills Marketplace", url: "/skills", icon: Package },
       { title: "Skillbook · Auditoria", url: "/skills/audit", icon: BookOpen },
       { title: "Coleta de Skills", url: "/skills/harvest", icon: Download },
