@@ -253,9 +253,80 @@ export function SkillReclassifyDialog({
           <Badge variant="outline">{plano.summary.unchanged} já corretas</Badge>
           <Badge variant="outline">{plano.summary.ambiguous} ambíguas</Badge>
           <Badge variant="outline">{plano.summary.lowConfidence} sem evidência</Badge>
+          {propostasIa.length > 0 && (
+            <Badge variant="outline" className="border-accent/50 text-accent-foreground">
+              {propostasIa.length} sugestões de IA
+            </Badge>
+          )}
         </div>
 
-        {plano.proposals.length === 0 ? (
+        {plano.llmCandidates.length > 0 && (
+          <div className="rounded-lg border border-border bg-muted/30 p-3 space-y-2">
+            <div className="flex items-start justify-between gap-3">
+              <p className="text-meta text-muted-foreground">
+                <span className="text-foreground font-medium">
+                  {plano.llmCandidates.length} skill
+                  {plano.llmCandidates.length === 1 ? '' : 's'} sem evidência léxica.
+                </span>{' '}
+                A IA pode sugerir um departamento — as sugestões entram desmarcadas e continuam
+                exigindo sua aprovação.
+              </p>
+              {classificando ? (
+                <Button variant="outline" size="sm" onClick={cancelarIa} className="shrink-0">
+                  <X className="h-4 w-4 mr-2" />
+                  Cancelar
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => void classificarComIa()}
+                  disabled={aplicando}
+                  className="shrink-0"
+                >
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Classificar com IA
+                </Button>
+              )}
+            </div>
+
+            {fila && (
+              <div className="space-y-1">
+                <Progress
+                  value={fila.total > 0 ? (fila.done / fila.total) * 100 : 0}
+                  aria-label="Progresso da classificação por IA"
+                />
+                <p className="text-meta text-muted-foreground">
+                  {fila.done} de {fila.total} processadas
+                  {(() => {
+                    const retry = fila.items.filter((i) => i.status === 'aguardando_retry').length;
+                    return retry > 0 ? ` · ${retry} aguardando nova tentativa` : '';
+                  })()}
+                </p>
+                {(() => {
+                  // Agrupa as falhas por causa. Listar 40 linhas de "limite de
+                  // taxa" esconderia o único "créditos esgotados" no meio.
+                  const porCausa = new Map<string, number>();
+                  for (const item of fila.items) {
+                    if (item.status !== 'falhou') continue;
+                    const chave = item.errorKind ?? 'erro';
+                    porCausa.set(chave, (porCausa.get(chave) ?? 0) + 1);
+                  }
+                  if (porCausa.size === 0) return null;
+                  return (
+                    <p className="text-meta text-destructive">
+                      {[...porCausa.entries()]
+                        .map(([causa, n]) => `${QUEUE_ERROR_LABEL[causa] ?? causa}: ${n}`)
+                        .join(' · ')}
+                    </p>
+                  );
+                })()}
+              </div>
+            )}
+          </div>
+        )}
+
+        {propostas.length === 0 ? (
           <p className="text-body-sm text-muted-foreground py-8 text-center">
             Nenhuma troca segura a propor neste recorte. Enriqueça as tags e a descrição das skills
             para dar mais sinal ao classificador.
@@ -263,7 +334,7 @@ export function SkillReclassifyDialog({
         ) : (
           <ScrollArea className="max-h-[320px] pr-3">
             <ul className="space-y-2">
-              {plano.proposals.map((p) => (
+              {propostas.map((p) => (
                 <li
                   key={p.skillId}
                   className="flex items-start gap-3 rounded-lg border border-border bg-card/50 px-3 py-2"
@@ -275,18 +346,35 @@ export function SkillReclassifyDialog({
                     className="mt-1"
                   />
                   <div className="min-w-0 flex-1">
-                    <p className="text-body-sm font-medium truncate">{p.name}</p>
+                    <p className="text-body-sm font-medium truncate flex items-center gap-2">
+                      <span className="truncate">{p.name}</span>
+                      {p.source === 'ia' && (
+                        <Badge
+                          variant="outline"
+                          className="shrink-0 border-accent/50 text-accent-foreground gap-1"
+                        >
+                          <Sparkles className="h-3 w-3" aria-hidden />
+                          IA
+                        </Badge>
+                      )}
+                    </p>
                     <p className="text-meta text-muted-foreground flex items-center gap-1 flex-wrap">
                       <span>{departmentLabel(p.from)}</span>
                       <ArrowRight className="h-3 w-3" aria-hidden />
                       <span className="text-primary">{departmentLabel(p.to)}</span>
                       <span>
-                        · confiança {p.confidence} · margem {p.margin}
+                        · confiança {p.confidence}
+                        {p.source === 'ia' ? '' : ` · margem ${p.margin}`}
                       </span>
                     </p>
                     {p.matchedTerms.length > 0 && (
                       <p className="text-meta text-muted-foreground truncate">
                         termos: {p.matchedTerms.join(', ')}
+                      </p>
+                    )}
+                    {p.rationale && (
+                      <p className="text-meta text-muted-foreground italic truncate">
+                        {p.rationale}
                       </p>
                     )}
                   </div>
