@@ -63,6 +63,13 @@ export interface ReclassifyCandidate {
   department?: string | null;
 }
 
+/**
+ * Origem da proposta. O curador precisa saber o que está aprovando: uma
+ * correspondência léxica é auditável termo a termo; um palpite de LLM não é.
+ * Sem essa marca, as duas viram a mesma linha na tela e no CSV.
+ */
+export type ProposalSource = 'lexico' | 'ia';
+
 /** Uma troca proposta, pronta para exibição e aplicação. */
 export interface ReclassifyProposal {
   skillId: string;
@@ -77,6 +84,28 @@ export interface ReclassifyProposal {
   /** Departamento que ficou em segundo lugar (contexto para o curador). */
   runnerUp: SkillDepartment | null;
   matchedTerms: string[];
+  /** Ausente = `lexico` (propostas anteriores ao fallback LLM). */
+  source?: ProposalSource;
+  /** Justificativa em linguagem natural — só existe em propostas de IA. */
+  rationale?: string;
+}
+
+/**
+ * Skill que o classificador determinístico NÃO conseguiu resolver.
+ *
+ * Antes estas skills eram apenas contadas em `summary.lowConfidence` e
+ * descartadas — um beco sem saída na UI. Agora carregam o texto original para
+ * que o fallback LLM possa ser acionado sobre exatamente este recorte.
+ */
+export interface LlmFallbackCandidate {
+  skillId: string;
+  name: string;
+  slug: string;
+  description: string;
+  tags: string[];
+  from: SkillDepartment | null;
+  /** Confiança léxica obtida (baixa por definição) — contexto para o curador. */
+  lexicalConfidence: number;
 }
 
 export interface ReclassifyPlanSummary {
@@ -95,6 +124,8 @@ export interface ReclassifyPlanSummary {
 export interface ReclassifyPlan {
   proposals: ReclassifyProposal[];
   summary: ReclassifyPlanSummary;
+  /** Recorte elegível ao fallback LLM (o balde `lowConfidence`, materializado). */
+  llmCandidates: LlmFallbackCandidate[];
 }
 
 function text(value: unknown): string {
@@ -155,6 +186,7 @@ export function buildReclassificationPlan(
 
   const vistos = new Set<string>();
   const proposals: ReclassifyProposal[] = [];
+  const llmCandidates: LlmFallbackCandidate[] = [];
   let evaluated = 0;
   let unchanged = 0;
   let lowConfidence = 0;
@@ -184,6 +216,18 @@ export function buildReclassificationPlan(
 
     if (!resultado.department || resultado.confidence < confMin) {
       lowConfidence += 1;
+      // Materializa o recorte para o fallback LLM em vez de só contá-lo.
+      // Guardamos o texto original: reconstituí-lo depois exigiria uma segunda
+      // consulta ao registry e abriria janela para divergência.
+      llmCandidates.push({
+        skillId,
+        name,
+        slug,
+        description: text(candidate.description),
+        tags: safeTags(candidate.tags),
+        from,
+        lexicalConfidence: resultado.confidence,
+      });
       continue;
     }
     if (resultado.department === from) {
@@ -208,6 +252,7 @@ export function buildReclassificationPlan(
       margin: margem,
       runnerUp: resultado.ranking[1]?.department ?? null,
       matchedTerms: resultado.matchedTerms.slice(0, 6),
+      source: 'lexico',
     });
   }
 
@@ -217,25 +262,102 @@ export function buildReclassificationPlan(
     return a.slug.localeCompare(b.slug);
   });
 
+  // Ordem estável para a fila: slug. Confiança léxica aqui é ruído (todas são
+  // baixas por definição), e uma ordem estável mantém o painel previsível
+  // entre execuções.
+  llmCandidates.sort((a, b) => a.slug.localeCompare(b.slug));
+
   return {
     proposals,
     summary: { evaluated, proposed: proposals.length, unchanged, lowConfidence, ambiguous },
+    llmCandidates,
   };
 }
 
 /**
- * Restringe o plano aos ids selecionados na UI, preservando a ordem do plano e
- * respeitando o teto de lote. Ids desconhecidos são ignorados.
+ * Restringe a lista de propostas aos ids selecionados na UI, preservando a
+ * ordem original e respeitando o teto de lote. Ids desconhecidos são ignorados.
+ *
+ * Aceita o plano OU uma lista já fundida com as propostas de IA — depois do
+ * fallback LLM a fonte da verdade da tela deixa de ser `plan.proposals`.
  */
 export function selectProposals(
-  plan: ReclassifyPlan,
+  source: ReclassifyPlan | readonly ReclassifyProposal[],
   selectedIds: readonly string[] | null | undefined,
   maxBatch: number = MAX_RECLASSIFY_BATCH,
 ): ReclassifyProposal[] {
+  const lista = Array.isArray(source) ? source : (source as ReclassifyPlan).proposals;
   const teto = Number.isFinite(maxBatch) ? Math.max(0, Math.floor(maxBatch)) : MAX_RECLASSIFY_BATCH;
   const alvo = new Set((selectedIds ?? []).filter((id) => typeof id === 'string' && id.length > 0));
   if (alvo.size === 0) return [];
-  return plan.proposals.filter((p) => alvo.has(p.skillId)).slice(0, teto);
+  return lista.filter((p) => alvo.has(p.skillId)).slice(0, teto);
+}
+
+/**
+ * Converte um veredito do LLM em proposta revisável.
+ *
+ * Retorna `null` — em vez de lançar — quando o veredito é inútil: departamento
+ * fora da taxonomia, confiança abaixo da barra, ou troca no-op. A fila trata
+ * `null` como "sem proposta", que é diferente de "falhou": o LLM respondeu,
+ * apenas não achou nada defensável.
+ *
+ * `margin` é 0 e `matchedTerms` é vazio de propósito: não existe segundo
+ * colocado nem evidência léxica aqui. Preencher esses campos com valores
+ * inventados faria uma proposta de IA parecer tão auditável quanto uma léxica.
+ */
+export function proposalFromLlmVerdict(
+  candidate: LlmFallbackCandidate,
+  verdict: { department: string | null; confidence: number; rationale?: string | null },
+  minConfidence: number = MIN_RECLASSIFY_CONFIDENCE,
+): ReclassifyProposal | null {
+  const dep = text(verdict.department);
+  if (!isDepartment(dep)) return null;
+  if (dep === candidate.from) return null;
+
+  const confianca = clamp01(verdict.confidence, 0);
+  if (confianca < clamp01(minConfidence, MIN_RECLASSIFY_CONFIDENCE)) return null;
+
+  return {
+    skillId: candidate.skillId,
+    name: candidate.name,
+    slug: candidate.slug,
+    from: candidate.from,
+    to: dep,
+    confidence: Number(confianca.toFixed(3)),
+    margin: 0,
+    runnerUp: null,
+    matchedTerms: [],
+    source: 'ia',
+    rationale: text(verdict.rationale) || undefined,
+  };
+}
+
+/**
+ * Funde as propostas do LLM ao plano léxico.
+ *
+ * Uma proposta léxica SEMPRE vence a de IA para o mesmo `skillId` — evidência
+ * verificável tem precedência sobre palpite. Na prática a colisão não deveria
+ * ocorrer (os baldes são disjuntos por construção), mas depender disso seria
+ * confiar que nenhum limiar mude no futuro.
+ */
+export function mergeLlmProposals(
+  plan: ReclassifyPlan,
+  llmProposals: readonly ReclassifyProposal[],
+): ReclassifyProposal[] {
+  const jaPropostos = new Set(plan.proposals.map((p) => p.skillId));
+  const extras: ReclassifyProposal[] = [];
+  const vistos = new Set<string>();
+  for (const p of llmProposals) {
+    if (!p || jaPropostos.has(p.skillId) || vistos.has(p.skillId)) continue;
+    vistos.add(p.skillId);
+    extras.push(p);
+  }
+  extras.sort((a, b) => {
+    if (a.confidence > b.confidence) return -1;
+    if (a.confidence < b.confidence) return 1;
+    return a.slug.localeCompare(b.slug);
+  });
+  return [...plan.proposals, ...extras];
 }
 
 /** Exportação CSV (RFC 4180, com BOM) do plano — trilha de auditoria offline. */
@@ -243,7 +365,9 @@ export function reclassificationToCsv(proposals: readonly ReclassifyProposal[]):
   const escape = (value: string | number | null) =>
     `"${(value === null ? '' : String(value)).replace(/"/g, '""')}"`;
   const linhas = [
-    ['slug', 'nome', 'de', 'para', 'confianca', 'margem', 'segundo', 'termos'].map(escape).join(','),
+    ['slug', 'nome', 'de', 'para', 'confianca', 'margem', 'segundo', 'termos', 'origem', 'justificativa']
+      .map(escape)
+      .join(','),
   ];
   for (const p of proposals) {
     linhas.push(
@@ -256,6 +380,8 @@ export function reclassificationToCsv(proposals: readonly ReclassifyProposal[]):
         escape(p.margin),
         escape(p.runnerUp),
         escape(p.matchedTerms.join(' ')),
+        escape(p.source ?? 'lexico'),
+        escape(p.rationale ?? ''),
       ].join(','),
     );
   }

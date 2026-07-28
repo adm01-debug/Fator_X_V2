@@ -14,9 +14,13 @@ import {
   MIN_RECLASSIFY_MARGIN,
   MIN_RECLASSIFY_MARGIN_OVERRIDE,
   buildReclassificationPlan,
+  mergeLlmProposals,
+  proposalFromLlmVerdict,
   reclassificationToCsv,
   selectProposals,
+  type LlmFallbackCandidate,
   type ReclassifyCandidate,
+  type ReclassifyProposal,
 } from '@/lib/skills/departmentReclassification';
 
 /** PRNG determinístico (mulberry32) — mesma semente, mesmos cenários. */
@@ -168,12 +172,159 @@ describe('buildReclassificationPlan — 300 catálogos simulados', () => {
     const plano = buildReclassificationPlan(gerarCatalogo(5, 20), 0);
     const csv = reclassificationToCsv(plano.proposals);
     expect(csv.startsWith('\uFEFF')).toBe(true);
-    expect(csv.slice(1).split('\r\n')[0]).toBe('"slug","nome","de","para","confianca","margem","segundo","termos"');
+    expect(csv.slice(1).split('\r\n')[0]).toBe(
+      '"slug","nome","de","para","confianca","margem","segundo","termos","origem","justificativa"',
+    );
     expect(csv.split('\r\n').length).toBe(plano.proposals.length + 1);
     // Aspas internas são escapadas por duplicação
     const comAspas = reclassificationToCsv([
       { skillId: 'a', name: 'diz "olá"', slug: 'a', from: null, to: 'ti', confidence: 1, margin: 1, runnerUp: null, matchedTerms: [] },
     ]);
     expect(comAspas).toContain('"diz ""olá"""');
+  });
+
+  it('llmCandidates materializa exatamente o balde de baixa confiança', () => {
+    for (let seed = 1; seed <= 120; seed += 1) {
+      // Limiar impossível: tudo cai em lowConfidence, nada vira proposta.
+      const plano = buildReclassificationPlan(gerarCatalogo(seed, 12), {
+        minConfidence: 1.1,
+        minConfidenceOverride: 1.1,
+        minMargin: 0,
+        minMarginOverride: 0,
+      });
+      expect(plano.proposals).toEqual([]);
+      expect(plano.llmCandidates.length).toBe(plano.summary.lowConfidence);
+      // Ordem estável por slug — o painel não pode embaralhar entre execuções.
+      const slugs = plano.llmCandidates.map((c) => c.slug);
+      expect(slugs).toEqual([...slugs].sort((a, b) => a.localeCompare(b)));
+      // Nenhum candidato pode aparecer também como proposta.
+      const propostos = new Set(plano.proposals.map((p) => p.skillId));
+      for (const c of plano.llmCandidates) expect(propostos.has(c.skillId)).toBe(false);
+    }
+  });
+
+  it('llmCandidates e proposals são baldes disjuntos sob limiares reais', () => {
+    for (let seed = 200; seed <= 320; seed += 1) {
+      const plano = buildReclassificationPlan(gerarCatalogo(seed, 15));
+      const ids = new Set<string>();
+      for (const p of plano.proposals) ids.add(p.skillId);
+      for (const c of plano.llmCandidates) {
+        expect(ids.has(c.skillId)).toBe(false);
+        expect(c.lexicalConfidence).toBeGreaterThanOrEqual(0);
+        expect(c.lexicalConfidence).toBeLessThanOrEqual(1);
+      }
+      expect(plano.summary.evaluated).toBe(
+        plano.summary.proposed +
+          plano.summary.unchanged +
+          plano.summary.lowConfidence +
+          plano.summary.ambiguous,
+      );
+    }
+  });
+
+  const candidato: LlmFallbackCandidate = {
+    skillId: 'sk-1',
+    name: 'Skill genérica',
+    slug: 'skill-generica',
+    description: 'texto vago',
+    tags: [],
+    from: null,
+    lexicalConfidence: 0.1,
+  };
+
+  it('proposalFromLlmVerdict rejeita vereditos indefensáveis', () => {
+    // Departamento fora da taxonomia (alucinação).
+    expect(proposalFromLlmVerdict(candidato, { department: 'vendas_b2b', confidence: 0.99 })).toBeNull();
+    expect(proposalFromLlmVerdict(candidato, { department: 'indefinido', confidence: 0.99 })).toBeNull();
+    expect(proposalFromLlmVerdict(candidato, { department: null, confidence: 0.99 })).toBeNull();
+    // Confiança abaixo do limiar mínimo.
+    expect(proposalFromLlmVerdict(candidato, { department: 'ti', confidence: 0 })).toBeNull();
+    expect(
+      proposalFromLlmVerdict(candidato, { department: 'ti', confidence: Number.NaN }),
+    ).toBeNull();
+    // Troca no-op: já está no departamento proposto.
+    expect(
+      proposalFromLlmVerdict({ ...candidato, from: 'ti' }, { department: 'ti', confidence: 1 }),
+    ).toBeNull();
+  });
+
+  it('proposalFromLlmVerdict marca origem e não inventa evidência léxica', () => {
+    const proposta = proposalFromLlmVerdict(candidato, {
+      department: 'dados',
+      confidence: 0.87,
+      rationale: '  Trata de ETL e métricas.  ',
+    });
+    expect(proposta).not.toBeNull();
+    expect(proposta?.source).toBe('ia');
+    expect(proposta?.to).toBe('dados');
+    expect(proposta?.rationale).toBe('Trata de ETL e métricas.');
+    // Sem segundo colocado e sem termos: uma proposta de IA não pode se
+    // disfarçar de proposta auditável.
+    expect(proposta?.margin).toBe(0);
+    expect(proposta?.matchedTerms).toEqual([]);
+    expect(proposta?.runnerUp).toBeNull();
+    expect(isDepartment(proposta?.to ?? '')).toBe(true);
+  });
+
+  it('mergeLlmProposals dá precedência ao léxico e deduplica', () => {
+    const plano = buildReclassificationPlan(gerarCatalogo(7, 20));
+    const alvo = plano.proposals[0];
+    expect(alvo).toBeDefined();
+
+    const conflitante: ReclassifyProposal = {
+      skillId: alvo.skillId,
+      name: alvo.name,
+      slug: alvo.slug,
+      from: alvo.from,
+      to: alvo.to === 'ti' ? 'rh' : 'ti',
+      confidence: 1,
+      margin: 0,
+      runnerUp: null,
+      matchedTerms: [],
+      source: 'ia',
+    };
+    const novo: ReclassifyProposal = { ...conflitante, skillId: 'novo-1', slug: 'novo-1' };
+
+    const fundido = mergeLlmProposals(plano, [conflitante, novo, novo]);
+    // O léxico venceu: o skillId em conflito mantém o destino original.
+    expect(fundido.filter((p) => p.skillId === alvo.skillId)).toHaveLength(1);
+    expect(fundido.find((p) => p.skillId === alvo.skillId)?.to).toBe(alvo.to);
+    // Duplicata de IA colapsada em uma linha.
+    expect(fundido.filter((p) => p.skillId === 'novo-1')).toHaveLength(1);
+    expect(fundido.length).toBe(plano.proposals.length + 1);
+  });
+
+  it('selectProposals aceita lista fundida, não só o plano', () => {
+    const plano = buildReclassificationPlan(gerarCatalogo(9, 20));
+    const extra: ReclassifyProposal = {
+      skillId: 'ia-1',
+      name: 'IA',
+      slug: 'ia-1',
+      from: null,
+      to: 'dados',
+      confidence: 0.9,
+      margin: 0,
+      runnerUp: null,
+      matchedTerms: [],
+      source: 'ia',
+    };
+    const fundido = mergeLlmProposals(plano, [extra]);
+    expect(selectProposals(fundido, ['ia-1'])).toHaveLength(1);
+    // O plano puro não conhece a proposta de IA.
+    expect(selectProposals(plano, ['ia-1'])).toEqual([]);
+    expect(selectProposals(fundido, ['ia-1'], 0)).toEqual([]);
+  });
+
+  it('CSV registra a origem de cada linha', () => {
+    const plano = buildReclassificationPlan(gerarCatalogo(11, 10), 0);
+    const csv = reclassificationToCsv(plano.proposals);
+    for (const linha of csv.slice(1).split('\r\n').slice(1)) {
+      expect(linha).toContain('"lexico"');
+    }
+    // Propostas legadas (sem `source`) não quebram a exportação.
+    const legado = reclassificationToCsv([
+      { skillId: 'x', name: 'x', slug: 'x', from: null, to: 'ti', confidence: 1, margin: 1, runnerUp: null, matchedTerms: [] },
+    ]);
+    expect(legado).toContain('"lexico"');
   });
 });
