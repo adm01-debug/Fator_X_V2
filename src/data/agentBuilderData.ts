@@ -6,6 +6,7 @@ export const TABS = [
   { id: 'memory',         label: 'Memória',            icon: '💾', order: 3 },
   { id: 'rag',            label: 'RAG & Conhecimento', icon: '📚', order: 4 },
   { id: 'tools',          label: 'Ferramentas & MCP',  icon: '🔧', order: 5 },
+  { id: 'skills',         label: 'Skills',             icon: '🧩', order: 5.5 },
   { id: 'prompt',         label: 'Prompts & Versões',  icon: '✍️', order: 6 },
   { id: 'orchestration',  label: 'Orquestração',       icon: '🎼', order: 7 },
   { id: 'orchestrator',   label: 'Visual Orchestrator',icon: '🎨', order: 7.5 },

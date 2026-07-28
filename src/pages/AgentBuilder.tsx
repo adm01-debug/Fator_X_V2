@@ -12,6 +12,7 @@ const BrainModule = lazy(() => import('@/components/agent-builder/modules/BrainM
 const MemoryModule = lazy(() => import('@/components/agent-builder/modules/MemoryModule').then(m => ({ default: m.MemoryModule })));
 const RAGModule = lazy(() => import('@/components/agent-builder/modules/RAGModule').then(m => ({ default: m.RAGModule })));
 const ToolsModule = lazy(() => import('@/components/agent-builder/modules/ToolsModule').then(m => ({ default: m.ToolsModule })));
+const SkillsModule = lazy(() => import('@/components/agent-builder/modules/SkillsModule').then(m => ({ default: m.SkillsModule })));
 const PromptModule = lazy(() => import('@/components/agent-builder/modules/PromptModule').then(m => ({ default: m.PromptModule })));
 const OrchestrationModule = lazy(() => import('@/components/agent-builder/modules/OrchestrationModule').then(m => ({ default: m.OrchestrationModule })));
 const OrchestratorModule = lazy(() => import('@/components/agent-builder/modules/OrchestratorModule').then(m => ({ default: m.OrchestratorModule })));
@@ -46,6 +47,7 @@ const MODULE_MAP: Record<string, React.LazyExoticComponent<React.ComponentType>>
   memory: MemoryModule,
   rag: RAGModule,
   tools: ToolsModule,
+  skills: SkillsModule,
   prompt: PromptModule,
   orchestration: OrchestrationModule,
   orchestrator: OrchestratorModule,
