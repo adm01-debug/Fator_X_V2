@@ -399,20 +399,22 @@ export function SkillReclassifyDialog({
         )}
 
         <DialogFooter className="gap-2 sm:justify-between">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={exportar}
-            disabled={plano.proposals.length === 0}
-          >
+          <Button variant="outline" size="sm" onClick={exportar} disabled={propostas.length === 0}>
             <Download className="h-4 w-4 mr-2" />
             Exportar plano
           </Button>
           <div className="flex gap-2">
-            <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={aplicando}>
+            <Button
+              variant="ghost"
+              onClick={() => onOpenChange(false)}
+              disabled={aplicando || classificando}
+            >
               Cancelar
             </Button>
-            <Button onClick={() => void aplicar()} disabled={aplicando || selecionados.length === 0}>
+            <Button
+              onClick={() => void aplicar()}
+              disabled={aplicando || classificando || selecionados.length === 0}
+            >
               {aplicando && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               Aplicar {Math.min(selecionados.length, MAX_RECLASSIFY_BATCH)}
               {excedeLote ? ` de ${selecionados.length}` : ''}
