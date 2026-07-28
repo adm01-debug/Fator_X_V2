@@ -145,6 +145,7 @@ export function SkillDemandPanel() {
   }, [visiveis]);
 
   return (
+    <div className="space-y-6">
     <Card>
       <CardHeader className="gap-2">
         <div className="flex flex-wrap items-start justify-between gap-3">
