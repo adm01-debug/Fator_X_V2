@@ -2,6 +2,7 @@ import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import { logger } from '@/lib/logger';
 import type { Json } from '@/integrations/supabase/types';
 import type { PromptEvidenceRecord } from '@/lib/skills/promptAuditArtifact';
+import type { InstallCapAuditRecord } from '@/lib/skills/installCapAudit';
 
 type AuditAction =
   | 'agent.create' | 'agent.update' | 'agent.delete' | 'agent.deploy' | 'agent.duplicate'
