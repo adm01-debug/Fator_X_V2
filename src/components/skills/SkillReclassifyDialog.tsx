@@ -40,6 +40,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { departmentLabel } from '@/config/skill-departments';
 import {
   MAX_RECLASSIFY_BATCH,
+  MIN_RECLASSIFY_CONFIDENCE,
   buildReclassificationPlan,
   mergeLlmProposals,
   reclassificationToCsv,
