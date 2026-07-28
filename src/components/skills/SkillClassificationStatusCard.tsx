@@ -19,8 +19,13 @@ interface SkillClassificationStatusCardProps {
 const SOURCE_META = [
   { key: 'human', label: 'Humano', hint: 'confiança 1.0', bar: 'bg-nexus-emerald' },
   { key: 'llm', label: 'LLM', hint: 'fila em lote', bar: 'bg-nexus-purple' },
-  { key: 'lexical', label: 'Léxico', hint: 'determinístico', bar: 'bg-nexus-cyan' },
+  { key: 'heuristic', label: 'Léxico', hint: 'determinístico', bar: 'bg-nexus-cyan' },
+  // Tier de plataforma: jargão de ferramental sem sinal de domínio. Aparece
+  // separado do léxico porque nasce abaixo do limiar de revisão — misturá-lo
+  // inflaria a fatia "determinística" com palpites.
+  { key: 'platform', label: 'Plataforma', hint: 'palpite, requer revisão', bar: 'bg-nexus-amber' },
 ] as const;
+
 
 export function SkillClassificationStatusCard({
   overview,
