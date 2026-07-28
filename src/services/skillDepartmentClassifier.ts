@@ -245,7 +245,8 @@ export function classifyDepartment(input: ClassifierInput): DepartmentClassifica
     tier = 'transversal';
   }
 
-  const platformDensity = Number(platformDensityOf(input).toFixed(3));
+  const evidenciaPlataforma = platformEvidenceOf(input);
+  const platformDensity = Number(evidenciaPlataforma.density.toFixed(3));
 
   /**
    * Tier de plataforma — último recurso ANTES do vazio. Só entra quando nem
@@ -260,7 +261,7 @@ export function classifyDepartment(input: ClassifierInput): DepartmentClassifica
     platformDensity >= MIN_PLATFORM_DENSITY
   ) {
     resolved = PLATFORM_TIER_DEPARTMENT;
-    confidence = PLATFORM_TIER_CONFIDENCE;
+    confidence = evidenciaPlataforma.confidence;
     tier = 'platform';
     matched = Array.from(new Set([...bestHits, 'plataforma-de-agentes'])).slice(0, 12);
   } else if (resolved === null) {
@@ -278,8 +279,16 @@ export function classifyDepartment(input: ClassifierInput): DepartmentClassifica
       tier !== 'transversal' && tier !== 'platform' && confidence < LOW_CONFIDENCE_THRESHOLD,
     tier,
     platformDensity,
-    needsReview: tier === 'platform' || (tier === 'domain' && confidence < LOW_CONFIDENCE_THRESHOLD),
+    platformEvidence: {
+      distinctTerms: evidenciaPlataforma.distinctTerms,
+      fieldsWithSignal: evidenciaPlataforma.fieldsWithSignal,
+    },
+    // Só o tier de plataforma FRACO precisa de humano. Evidência corroborada em
+    // campos independentes já é conclusiva o bastante para não ocupar a fila.
+    needsReview:
+      (tier === 'platform' || tier === 'domain') && confidence < LOW_CONFIDENCE_THRESHOLD,
   };
+
 }
 
 
