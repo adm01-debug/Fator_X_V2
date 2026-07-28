@@ -16,7 +16,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { Check, Download, Loader2, PenLine, RefreshCw, X } from 'lucide-react';
+import { AlertTriangle, Check, Download, Loader2, PenLine, RefreshCw, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
