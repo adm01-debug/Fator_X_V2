@@ -43,23 +43,30 @@ import {
   slugify,
   stripUnsafe,
 } from "./lib.ts";
-import { getRawFile, getTree, resolveMode, searchRepos, type GhRepo } from "./github.ts";
+import { getRawFile, getTree, ghGet, resolveMode, searchRepos, type GhRepo } from "./github.ts";
 
 installRuntimeAlerts();
+
+/** `owner/repo` — evita que uma string arbitrária vire caminho de API. */
+const REPO_SLUG_RE = /^[A-Za-z0-9._-]+\/[A-Za-z0-9._-]+$/;
 
 const RequestSchema = z.object({
   departments: z.array(z.enum(SKILL_DEPARTMENTS)).max(10).default([]),
   topics: z.array(z.string().min(2).max(60)).max(20).default([]),
   extraQueries: z.array(z.string().min(2).max(120)).max(20).default([]),
+  /** Monorepos alvo (`owner/repo`). Quando presente, a busca por queries é ignorada. */
+  repos: z.array(z.string().trim().regex(REPO_SLUG_RE, 'Formato esperado: owner/repo')).max(10).default([]),
+  /** Teto de SKILL.md lidos por repositório — monorepos como sales-skills/sales têm centenas. */
+  filesPerRepo: z.number().int().min(1).max(1000).default(8),
   maxRepos: z.number().int().min(1).max(200).default(40),
-  maxCandidates: z.number().int().min(1).max(500).default(120),
+  maxCandidates: z.number().int().min(1).max(1000).default(120),
   minStars: z.number().int().min(0).max(100000).default(3),
   dryRun: z.boolean().default(false),
 });
 
 const SKILL_FILE_RE = /(^|\/)(SKILL\.md|skill\.md)$/;
 const AGENT_JSON_RE = /(^|\/)(agent\.json|mcp\.json)$/;
-const MAX_FILES_PER_REPO = 8;
+
 
 interface CandidateRow {
   run_id: string;
@@ -119,16 +126,22 @@ Deno.serve(async (req: Request) => {
 
     const mode = resolveMode();
 
-    // Monta as queries
+    // Monta as queries.
+    // Modo dirigido (`repos`): o curador aponta monorepos conhecidos e a busca
+    // por palavra-chave é suprimida — economiza a cota de search da API e evita
+    // trazer ruído quando o alvo já é conhecido.
+    const directMode = body.repos.length > 0;
     const departments: SkillDepartment[] =
       body.departments.length > 0 ? body.departments : [...SKILL_DEPARTMENTS];
-    const topics = body.topics.length > 0 ? body.topics : DEFAULT_TOPICS;
+    const topics = directMode ? [] : (body.topics.length > 0 ? body.topics : DEFAULT_TOPICS);
 
-    const queries: string[] = [
-      ...topics.map((t) => `topic:${t} stars:>=${body.minStars}`),
-      ...departments.flatMap((d) => DEPARTMENT_QUERIES[d].map((q) => `${q} in:name,description,readme stars:>=${body.minStars}`)),
-      ...body.extraQueries,
-    ];
+    const queries: string[] = directMode
+      ? body.repos.map((r) => `repo:${r}`)
+      : [
+          ...topics.map((t) => `topic:${t} stars:>=${body.minStars}`),
+          ...departments.flatMap((d) => DEPARTMENT_QUERIES[d].map((q) => `${q} in:name,description,readme stars:>=${body.minStars}`)),
+          ...body.extraQueries,
+        ];
 
     // Registra a run
     const { data: run, error: runErr } = await admin
@@ -153,21 +166,35 @@ Deno.serve(async (req: Request) => {
     const repos: GhRepo[] = [];
     const errors: string[] = [];
 
-    for (const q of queries) {
-      if (repos.length >= body.maxRepos) break;
-      const res = await searchRepos(q, Math.min(30, body.maxRepos));
-      if (!res.ok) {
-        errors.push(`[${res.status}] ${q}: ${(res.errorBody ?? '').slice(0, 160)}`);
-        if (res.retryAfterMs && res.retryAfterMs >= 20_000) break; // rate limit duro
-        continue;
+    if (directMode) {
+      for (const full of body.repos) {
+        if (seenRepos.has(full)) continue;
+        const res = await ghGet<GhRepo>(`repos/${full}`);
+        if (!res.ok || !res.data) {
+          errors.push(`[${res.status}] repos/${full}: ${(res.errorBody ?? '').slice(0, 160)}`);
+          continue;
+        }
+        seenRepos.add(full);
+        repos.push(res.data);
       }
-      for (const r of res.data?.items ?? []) {
-        if (seenRepos.has(r.full_name)) continue;
-        seenRepos.add(r.full_name);
-        repos.push(r);
+    } else {
+      for (const q of queries) {
         if (repos.length >= body.maxRepos) break;
+        const res = await searchRepos(q, Math.min(30, body.maxRepos));
+        if (!res.ok) {
+          errors.push(`[${res.status}] ${q}: ${(res.errorBody ?? '').slice(0, 160)}`);
+          if (res.retryAfterMs && res.retryAfterMs >= 20_000) break; // rate limit duro
+          continue;
+        }
+        for (const r of res.data?.items ?? []) {
+          if (seenRepos.has(r.full_name)) continue;
+          seenRepos.add(r.full_name);
+          repos.push(r);
+          if (repos.length >= body.maxRepos) break;
+        }
       }
     }
+
 
     // ─── Extração de candidatos
     const candidates: CandidateRow[] = [];
@@ -177,10 +204,9 @@ Deno.serve(async (req: Request) => {
     for (const repo of repos) {
       if (candidates.length >= body.maxCandidates) break;
 
-      const licenseSpdx = repo.license?.spdx_id && repo.license.spdx_id !== 'NOASSERTION'
+      const repoLicenseSpdx = repo.license?.spdx_id && repo.license.spdx_id !== 'NOASSERTION'
         ? repo.license.spdx_id
         : null;
-      const licenseOk = isLicenseAllowed(licenseSpdx);
 
       const tree = await getTree(repo.full_name, repo.default_branch);
       if (!tree.ok || !tree.data) continue;
@@ -189,7 +215,8 @@ Deno.serve(async (req: Request) => {
       const hasTests = paths.some((p) => /(^|\/)(tests?|__tests__|spec)\//i.test(p) || /\.(test|spec)\.[jt]sx?$/.test(p));
       const hasDocs = paths.some((p) => /(^|\/)(docs?|README\.md)/i.test(p));
 
-      const skillFiles = paths.filter((p) => SKILL_FILE_RE.test(p)).slice(0, MAX_FILES_PER_REPO);
+      const skillFiles = paths.filter((p) => SKILL_FILE_RE.test(p)).slice(0, body.filesPerRepo);
+
       const agentFiles = paths.filter((p) => AGENT_JSON_RE.test(p)).slice(0, 2);
 
       // Fallback: repositório inteiro vira 1 candidato quando não há SKILL.md
@@ -205,6 +232,14 @@ Deno.serve(async (req: Request) => {
         const fmName = typeof fm.data.name === 'string' ? fm.data.name : '';
         const fmDesc = typeof fm.data.description === 'string' ? fm.data.description : '';
         const fmTags = Array.isArray(fm.data.tags) ? fm.data.tags : [];
+        // Monorepos de skills declaram a licença por arquivo; ela é mais
+        // específica que a do repositório e por isso tem precedência.
+        const fmLicense = typeof fm.data.license === 'string'
+          ? stripUnsafe(fm.data.license, 60).trim()
+          : '';
+        const licenseSpdx = (isLicenseAllowed(fmLicense) ? fmLicense : null) ?? repoLicenseSpdx;
+        const licenseOk = isLicenseAllowed(licenseSpdx);
+
 
         const name = stripUnsafe(fmName || deriveName(path, repo.full_name), 120);
         const description = stripUnsafe(fmDesc || repo.description || '', 1200);

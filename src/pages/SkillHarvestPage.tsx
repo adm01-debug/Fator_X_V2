@@ -26,7 +26,10 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { repoSlugRegex } from '@/lib/validations/skillImport';
+
 import {
   SKILL_DEPARTMENTS, DEPARTMENT_META, departmentLabel, type SkillDepartment,
 } from '@/config/skill-departments';
@@ -63,6 +66,23 @@ export default function SkillHarvestPage() {
   const [pickedDepts, setPickedDepts] = useState<Set<SkillDepartment>>(new Set());
   const [minStars, setMinStars] = useState(3);
   const [maxRepos, setMaxRepos] = useState(40);
+  /** Lista livre de monorepos, um `owner/repo` por linha. */
+  const [reposInput, setReposInput] = useState('');
+  const [filesPerRepo, setFilesPerRepo] = useState(120);
+
+  /** Normaliza a caixa de texto: aceita URL completa ou `owner/repo`. */
+  const parsedRepos = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          reposInput
+            .split(/[\n,\s]+/)
+            .map((raw) => raw.trim().replace(/^https?:\/\/github\.com\//i, '').replace(/\.git$/i, '').replace(/\/+$/, ''))
+            .filter((s) => repoSlugRegex.test(s)),
+        ),
+      ).slice(0, 10),
+    [reposInput],
+  );
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -89,11 +109,18 @@ export default function SkillHarvestPage() {
   const handleHarvest = async () => {
     setHarvesting(true);
     try {
+      const directMode = parsedRepos.length > 0;
       const result = await runHarvest({
         departments: Array.from(pickedDepts),
         minStars,
         maxRepos,
+        repos: parsedRepos,
+        // Monorepos trazem centenas de SKILL.md; sem elevar os tetos a
+        // varredura pararia nos 8 primeiros arquivos.
+        filesPerRepo: directMode ? filesPerRepo : 8,
+        maxCandidates: directMode ? Math.min(1000, filesPerRepo * parsedRepos.length) : 120,
       });
+
       toast.success('Varredura concluída', {
         description: `${result.found} candidatos encontrados, ${result.inserted} novos, ${result.rejected} rejeitados automaticamente.`,
       });
@@ -354,6 +381,42 @@ export default function SkillHarvestPage() {
                 </div>
               </div>
 
+              <div className="space-y-1.5 rounded-lg border border-border/60 p-4">
+                <Label htmlFor="repos">Monorepos dirigidos (opcional)</Label>
+                <Textarea
+                  id="repos"
+                  rows={3}
+                  placeholder={'sales-skills/sales\nhttps://github.com/owner/repo'}
+                  value={reposInput}
+                  onChange={(e) => setReposInput(e.target.value)}
+                  className="font-mono text-body-sm"
+                />
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setReposInput('sales-skills/sales')}
+                  >
+                    sales-skills/sales
+                  </Button>
+                  <span className="text-meta text-muted-foreground">
+                    {parsedRepos.length > 0
+                      ? `${parsedRepos.length} repositório(s) válido(s) — a busca por palavra-chave será ignorada.`
+                      : 'Vazio = varredura normal por tópicos e departamentos.'}
+                  </span>
+                </div>
+                {parsedRepos.length > 0 && (
+                  <div className="space-y-1.5 pt-2">
+                    <Label htmlFor="filesPerRepo">Máximo de SKILL.md por repositório</Label>
+                    <Input
+                      id="filesPerRepo" type="number" min={1} max={1000} value={filesPerRepo}
+                      onChange={(e) => setFilesPerRepo(Math.min(1000, Math.max(1, Number(e.target.value) || 1)))}
+                    />
+                  </div>
+                )}
+              </div>
+
               <Button onClick={() => void handleHarvest()} disabled={harvesting} className="w-full sm:w-auto">
                 {harvesting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
                 {harvesting ? 'Varrendo o GitHub…' : 'Executar varredura'}
@@ -363,6 +426,7 @@ export default function SkillHarvestPage() {
                 Skills com licença bloqueada, segredos embutidos ou padrões de prompt-injection são
                 rejeitadas automaticamente e nunca chegam ao registry.
               </p>
+
             </CardContent>
           </Card>
         </TabsContent>
