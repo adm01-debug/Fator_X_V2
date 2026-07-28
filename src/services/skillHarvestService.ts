@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/lib/logger';
 import { stripHtml } from '@/lib/sanitize';
 import type { SkillDepartment } from '@/config/skill-departments';
+import { normalizeDepartmentSource, type DepartmentSource } from '@/lib/skills/skillDemand';
 
 export type CandidateStatus = 'pending' | 'approved' | 'rejected' | 'auto_rejected' | 'promoted';
 
@@ -23,6 +24,14 @@ export interface HarvestCandidate {
   category: string;
   department: string | null;
   department_confidence: number;
+  /**
+   * Quem decidiu o departamento deste candidato.
+   *
+   * Precisa viajar junto com o rótulo até a promoção: sem isso, o veredito do
+   * léxico calculado na coleta morre no staging e a skill renasce no registro
+   * como "sem origem conhecida", caindo para sempre na fila de revisão.
+   */
+  department_source: DepartmentSource;
   tags: string[];
   source_repo: string;
   source_url: string;
@@ -76,6 +85,7 @@ function toCandidate(row: RawRow): HarvestCandidate {
     category: String(row.category ?? 'tools'),
     department: row.department ? String(row.department) : null,
     department_confidence: Number(row.department_confidence ?? 0),
+    department_source: normalizeDepartmentSource(row.department_source),
     tags: Array.isArray(row.tags) ? (row.tags as string[]) : [],
     source_repo: String(row.source_repo ?? ''),
     source_url: String(row.source_url ?? ''),
@@ -600,15 +610,31 @@ export async function getDepartmentCoverage(): Promise<Record<string, number>> {
   return counts;
 }
 
+/**
+ * Aplica uma correção de curadoria ao candidato.
+ *
+ * Trocar o departamento à mão é a evidência mais forte que existe — mais forte
+ * que qualquer heurística —, então a procedência vira `human` com confiança
+ * plena. Sem isso a correção do curador seria promovida com a confiança baixa
+ * do palpite que ele acabou de corrigir, e a skill voltaria para a fila de
+ * revisão que ele já resolveu.
+ */
 export async function updateCandidate(
   id: string,
   patch: { status?: CandidateStatus; department?: string | null; tags?: string[]; category?: string },
 ): Promise<void> {
   const { data: userData } = await supabase.auth.getUser();
+  // `'department' in patch` e não `patch.department`: definir explicitamente
+  // como `null` (remover o rótulo) também é uma decisão humana.
+  const proveniencia =
+    'department' in patch
+      ? { department_source: 'human' as const, department_confidence: 1 }
+      : {};
   const { error } = await supabaseExternal
     .from('skill_harvest_candidates')
     .update({
       ...patch,
+      ...proveniencia,
       reviewed_by: userData.user?.id ?? null,
       reviewed_at: new Date().toISOString(),
     })
@@ -650,6 +676,10 @@ export async function promoteCandidate(candidate: HarvestCandidate): Promise<str
     author: candidate.author,
     category: candidate.category,
     department: candidate.department,
+    // Confiança e procedência acompanham o rótulo. Descartá-las aqui era o que
+    // fazia toda skill promovida nascer 'unknown'/0.0 no registro.
+    department_confidence: candidate.department_confidence,
+    department_source: candidate.department_source,
     tags: candidate.tags,
     skill_config: {
       ...candidate.skill_config,
