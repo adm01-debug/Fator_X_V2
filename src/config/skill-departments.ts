@@ -110,7 +110,7 @@ export const DEPARTMENT_META: Record<SkillDepartment, DepartmentMeta> = {
       'runtime', 'plugin', 'plugins', 'typescript', 'javascript', 'python',
       'rust', 'golang', 'compiler', 'debugging', 'refactoring', 'tdd',
       'testing', 'lint', 'git', 'github', 'repo', 'webhook', 'http',
-      'kernel', 'binary', 'concurrency', 'scaffolding',
+      'kernel', 'binary', 'concurrency', 'scaffolding', 'crawler', 'scraper', 'scraping',
     ],
   },
   marketing: {

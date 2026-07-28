@@ -26,6 +26,16 @@ export const LOW_CONFIDENCE_THRESHOLD = 0.18;
  */
 export const MIN_TRANSVERSAL_SCORE = 0.2;
 
+/**
+ * Camada de decisão que produziu o veredito:
+ *  - `domain`: um departamento de negócio venceu por léxico próprio;
+ *  - `transversal`: nenhum domínio pontuou, mas há sinal de agregador;
+ *  - `platform`: o texto é dominado por vocabulário de plataforma de agentes
+ *    (o mesmo que o filtro IDF descarta) — evidência positiva de tooling/TI;
+ *  - `none`: sem evidência suficiente, permanece não classificada.
+ */
+export type ClassificationTier = 'domain' | 'transversal' | 'platform' | 'none';
+
 export interface DepartmentClassification {
   department: SkillDepartment | null;
   confidence: number;
@@ -33,7 +43,13 @@ export interface DepartmentClassification {
   /** Ranking completo, do maior para o menor score. */
   ranking: Array<{ department: SkillDepartment; score: number }>;
   needsLlmFallback: boolean;
+  tier: ClassificationTier;
+  /** Fração de tokens de plataforma no texto primário + tags (0..1). */
+  platformDensity: number;
+  /** Veredito determinístico porém fraco: exige confirmação humana. */
+  needsReview: boolean;
 }
+
 
 export interface ClassifierInput {
   name: string;
@@ -81,6 +97,36 @@ function hitRate(tokens: Set<string>, lexicon: Set<string>): { rate: number; hit
   return { rate: Math.min(1, rate), hits };
 }
 
+/**
+ * Densidade mínima de vocabulário de plataforma para acionar o tier `platform`.
+ * Calibrada por simulação sobre as 142 skills reais: 0.08 é o menor valor que
+ * resgata os casos de sinal-zero cujo texto é curto (paperclip, gstack, scroll
+ * world, agency agents) sem alterar o veredito de NENHUMA skill de domínio já
+ * classificada — o tier só é consultado quando a confiança de domínio já ficou
+ * abaixo de LOW_CONFIDENCE_THRESHOLD.
+ */
+export const MIN_PLATFORM_DENSITY = 0.08;
+
+/** Departamento atribuído pelo tier de plataforma (tooling de agentes = TI). */
+export const PLATFORM_TIER_DEPARTMENT: SkillDepartment = 'ti';
+
+/**
+ * Confiança nominal do tier de plataforma. Deliberadamente abaixo do limiar de
+ * alta confiança: o veredito é determinístico, mas indireto (inferido pela
+ * ausência de domínio + densidade de jargão), então nasce marcado para revisão.
+ */
+export const PLATFORM_TIER_CONFIDENCE = 0.15;
+
+function platformDensityOf(input: ClassifierInput): number {
+  const brutos = tokenize(
+    [input.name, input.description ?? '', (input.tags ?? []).join(' ')].join(' '),
+  );
+  if (brutos.size === 0) return 0;
+  let plataforma = 0;
+  for (const t of brutos) if (PLATFORM_STOPWORDS.has(t)) plataforma += 1;
+  return plataforma / brutos.size;
+}
+
 export function classifyDepartment(input: ClassifierInput): DepartmentClassification {
   const primaryText = [input.name, input.description ?? ''].join(' ');
   const primaryTokens = dropStopwords(tokenize(primaryText));
@@ -124,11 +170,35 @@ export function classifyDepartment(input: ClassifierInput): DepartmentClassifica
   let confidence = Number(bestScore.toFixed(3));
   let resolved: SkillDepartment | null = confidence > 0 ? best : null;
   let matched = resolved ? bestHits : [];
+  let tier: ClassificationTier = resolved === null ? 'none' : 'domain';
 
   if (confidence < LOW_CONFIDENCE_THRESHOLD && fallbackScore >= MIN_TRANSVERSAL_SCORE) {
     resolved = FALLBACK_DEPARTMENT;
     confidence = Number(fallbackScore.toFixed(3));
     matched = Array.from(new Set([...fp.hits, ...ft.hits, ...fc.hits])).slice(0, 12);
+    tier = 'transversal';
+  }
+
+  const platformDensity = Number(platformDensityOf(input).toFixed(3));
+
+  /**
+   * Tier de plataforma — último recurso ANTES do vazio. Só entra quando nem
+   * domínio nem agregador produziram evidência utilizável. As stopwords, que
+   * são ruído para discriminar domínio, viram aqui o próprio sinal: um texto
+   * saturado de "agent/skill/llm/mcp" descreve ferramental de agentes, e
+   * ferramental é TI. Nunca sobrescreve um veredito de domínio ou transversal.
+   */
+  if (
+    tier !== 'transversal' &&
+    confidence < LOW_CONFIDENCE_THRESHOLD &&
+    platformDensity >= MIN_PLATFORM_DENSITY
+  ) {
+    resolved = PLATFORM_TIER_DEPARTMENT;
+    confidence = PLATFORM_TIER_CONFIDENCE;
+    tier = 'platform';
+    matched = Array.from(new Set([...bestHits, 'plataforma-de-agentes'])).slice(0, 12);
+  } else if (resolved === null) {
+    tier = 'none';
   }
 
   return {
@@ -137,10 +207,15 @@ export function classifyDepartment(input: ClassifierInput): DepartmentClassifica
     matchedTerms: matched,
     ranking,
     // Um agregador resolvido não precisa de LLM: a ausência de domínio é o fato.
+    // O tier de plataforma também é conclusivo — vai para revisão, não para LLM.
     needsLlmFallback:
-      resolved !== FALLBACK_DEPARTMENT && confidence < LOW_CONFIDENCE_THRESHOLD,
+      tier !== 'transversal' && tier !== 'platform' && confidence < LOW_CONFIDENCE_THRESHOLD,
+    tier,
+    platformDensity,
+    needsReview: tier === 'platform' || (tier === 'domain' && confidence < LOW_CONFIDENCE_THRESHOLD),
   };
 }
+
 
 /**
  * Mapeia sinais do repositório para uma das 5 categorias do registry.
