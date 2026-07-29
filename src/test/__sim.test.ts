@@ -8,7 +8,7 @@ function mk(i: number, plat: boolean, verdict: 'confirmado'|'corrigido', conf: n
     from: 'ti' as never, to: 'vendas' as never,
     confidence: conf, margin: 0.1, origin: 'lexico',
     previousSource: (plat ? 'platform_heuristic' : 'heuristic') as never,
-    previousConfidence: conf, registryTouched: true,
+    previousConfidence: conf, registryTouched: true, scale: (plat ? 'plataforma' : 'dominio') as never,
     verdict, decidedAt: new Date(1700000000000 + i * 1000).toISOString(),
     decidedAtMs: 1700000000000 + i * 1000, reason: '',
   };
