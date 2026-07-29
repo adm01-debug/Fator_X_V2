@@ -550,7 +550,7 @@ export function SkillClassificationEfficacyCard({
                     {c.overriddenInstability && (
                       <Badge
                         variant="outline"
-                        className="text-meta border-amber-500/40 text-amber-600 dark:text-amber-400"
+                        className="text-meta border-nexus-amber/40 text-nexus-amber"
                         title="Aplicado apesar do alerta de instabilidade"
                       >
                         sob alerta
