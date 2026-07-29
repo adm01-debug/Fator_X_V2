@@ -380,6 +380,13 @@ export const INGESTION_FAILURE_ALERT = 0.25;
 export const HUMAN_CORRECTION_ALERT = 0.4;
 /** Amostra mínima para acusar o classificador — evita alarme com 2 decisões. */
 export const HUMAN_CORRECTION_MIN_SAMPLE = 10;
+/**
+ * Idade, em dias, a partir da qual uma calibração deixa de ser evidência
+ * corrente. Não é um limite de segurança: é o ponto em que o léxico já mudou
+ * o bastante para que o limiar em vigor não represente mais a amostra que o
+ * justificou.
+ */
+export const CALIBRATION_STALE_DAYS = 45;
 
 export interface ObservabilityAlertsResult {
   alerts: ObservabilityAlert[];
@@ -390,7 +397,10 @@ export interface ObservabilityAlertsResult {
   instability: CalibrationInstability;
   /** Veredito completo, uma entrada por régua. */
   instabilityByScale: Record<CalibrationScale, CalibrationInstability>;
+  /** Postura de governança consolidada por régua (mesma fonte dos alertas). */
+  governance: CalibrationGovernanceDigest;
 }
+
 
 /**
  * Deriva alertas acionáveis. Cada regra tem amostra mínima própria: alertar
