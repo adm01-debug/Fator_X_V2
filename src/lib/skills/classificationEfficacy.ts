@@ -139,6 +139,8 @@ export interface ClassificationDecision {
   previousConfidence: number;
   /** `false` quando a decisão não tocou o Registry (rejeição sem depto). */
   registryTouched: boolean;
+  /** Régua sob a qual a confiança anterior deve ser lida. */
+  scale: ConfidenceScale;
   verdict: EfficacyVerdict;
   decidedAt: string | null;
   /** Epoch em ms; `null` quando a data é inválida ou ausente. */
@@ -146,12 +148,29 @@ export interface ClassificationDecision {
   reason: string;
 }
 
+/** Métricas de uma única régua de confiança. */
+export interface ScaleEfficacy {
+  scale: ConfidenceScale;
+  total: number;
+  confirmado: number;
+  corrigido: number;
+  /** `confirmado / (confirmado + corrigido)`; `null` sem denominador. */
+  accuracy: number | null;
+  avgConfidenceWhenRight: number | null;
+  avgConfidenceWhenWrong: number | null;
+  /** Sugestão já clampada ao piso/teto DESTA régua; `null` sem amostra. */
+  suggestedThreshold: number | null;
+  /** Tamanho da amostra que sustenta a sugestão. */
+  sampleSize: number;
+}
+
 export interface EfficacySummary {
   total: number;
   byVerdict: Record<EfficacyVerdict, number>;
   /**
-   * Acerto do classificador entre as decisões que julgaram um rótulo existente:
+   * Acerto agregado entre as decisões que julgaram um rótulo existente:
    * `confirmado / (confirmado + corrigido)`. `null` sem denominador.
+   * Serve como panorama; para calibrar limiar use `byScale`.
    */
   accuracy: number | null;
   /** Confiança média que o classificador tinha nos rótulos CONFIRMADOS. */
@@ -159,13 +178,17 @@ export interface EfficacySummary {
   /** Confiança média que o classificador tinha nos rótulos CORRIGIDOS. */
   avgConfidenceWhenWrong: number | null;
   /**
-   * Sugestão de calibração: quando o classificador acerta com confiança abaixo
-   * do limiar vigente, o limiar está caro demais. `null` quando não há sinal.
+   * Sugestão de calibração do limiar de DOMÍNIO — deliberadamente cega ao tier
+   * de plataforma. É este valor que o painel aplica, e o slider que ele move
+   * governa apenas a régua de domínio.
    */
   suggestedThreshold: number | null;
+  /** Métricas isoladas por régua, sem mistura de escalas. */
+  byScale: Record<ConfidenceScale, ScaleEfficacy>;
   /** Taxa de aprovação por origem da proposta (léxico vs IA). */
   byOrigin: Record<ProposalOrigin, { total: number; approved: number }>;
 }
+
 
 function text(value: unknown): string {
   return typeof value === 'string' ? value.trim() : '';
