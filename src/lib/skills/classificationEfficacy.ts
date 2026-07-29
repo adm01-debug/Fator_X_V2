@@ -265,6 +265,8 @@ export function parseClassificationDecisions(
       typeof meta.registry_touched === 'boolean'
         ? meta.registry_touched
         : approved || from !== null;
+    const previousSource = decisionSource(meta.previous_department_source);
+
 
     const decision: ClassificationDecision = {
       auditId: text(row.id) || reviewId,
