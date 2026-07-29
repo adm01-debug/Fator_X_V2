@@ -48,8 +48,12 @@ import { normalizeConfidenceThreshold } from '@/lib/skills/skillDemand';
 
 
 import {
+  CONFIDENCE_SCALES,
+  CONFIDENCE_SCALE_LABEL,
   EFFICACY_VERDICTS,
   EFFICACY_VERDICT_LABEL,
+  MIN_SUGGESTION_SAMPLE,
+  SCALE_CEILING,
   filterByVerdict,
   normalizeEfficacyFilter,
   summarizeEfficacy,
@@ -57,6 +61,7 @@ import {
   type EfficacyFilter,
   type EfficacyVerdict,
 } from '@/lib/skills/classificationEfficacy';
+
 
 const VERDICT_STYLE: Record<EfficacyVerdict, string> = {
   corrigido: 'border-destructive/40 text-destructive',
