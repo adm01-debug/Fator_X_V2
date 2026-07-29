@@ -16,6 +16,7 @@ const AGORA = new Date('2026-07-28T12:00:00.000Z');
 function calib(over: Partial<ThresholdCalibration> = {}): ThresholdCalibration {
   return {
     auditId: Math.random().toString(36).slice(2),
+    scale: 'dominio',
     from: 0.5,
     to: 0.6,
     sampleSize: 30,

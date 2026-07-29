@@ -93,6 +93,14 @@ export const audit = {
     sampleSize: number;
     accuracy: number | null;
     /**
+     * Régua de confiança governada por este limiar. Domínio e plataforma têm
+     * tetos distintos (0,95 vs 0,40); sem essa marca, um 0,18 de plataforma e
+     * um 0,18 de domínio ficam indistinguíveis na trilha e a leitura histórica
+     * passa a comparar números que não vivem na mesma escala.
+     */
+    scale?: 'dominio' | 'plataforma';
+
+    /**
      * `true` quando o curador confirmou a aplicação APESAR do detector de
      * instabilidade ter alertado. Sem essa marca, uma sequência de calibrações
      * ruidosas fica indistinguível de uma série saudável na trilha.
@@ -116,6 +124,8 @@ export const audit = {
         to: params.to,
         sample_size: params.sampleSize,
         accuracy: params.accuracy,
+        scale: params.scale ?? 'dominio',
+
         origin: 'efficacy_card_suggestion',
         overridden_instability: params.overriddenInstability ?? false,
         instability_reason: params.instabilityReason ?? 'estavel',

@@ -35,8 +35,10 @@ import {
   OVERRIDE_REASON_MIN,
   OVERRIDE_REVIEW_DEADLINE_DAYS,
   calibrationDirection,
+  CALIBRATION_SCALE_LABEL,
   detectCalibrationInstability,
   filterCalibrations,
+  filterCalibrationsByScale,
   findStaleOverrides,
   isOverrideReasonValid,
   normalizeOverrideReason,
@@ -104,7 +106,20 @@ export function SkillClassificationEfficacyCard({
   const [filtroCalib, setFiltroCalib] = useState<CalibrationTimelineFilter>('all');
   const [overrideOpen, setOverrideOpen] = useState(false);
   const [justificativa, setJustificativa] = useState('');
-  const instabilidade = useMemo(() => detectCalibrationInstability(calibracoes), [calibracoes]);
+  /**
+   * O slider governa APENAS a régua de domínio; instabilidade e overrides
+   * vencidos precisam ser lidos na mesma escala. Misturar calibrações de
+   * plataforma (teto 0,40) inflaria inversões e amplitude com variações que
+   * nunca competiram com o limiar em questão.
+   */
+  const calibracoesDominio = useMemo(
+    () => filterCalibrationsByScale(calibracoes, 'dominio'),
+    [calibracoes],
+  );
+  const instabilidade = useMemo(
+    () => detectCalibrationInstability(calibracoesDominio),
+    [calibracoesDominio],
+  );
   const totalSobAlerta = useMemo(
     () => calibracoes.filter((c) => c.overriddenInstability).length,
     [calibracoes],
@@ -114,7 +129,10 @@ export function SkillClassificationEfficacyCard({
     [calibracoes, filtroCalib],
   );
   // Override sem revisão posterior vira pendência de governança após o prazo.
-  const overridesVencidos = useMemo(() => findStaleOverrides(calibracoes), [calibracoes]);
+  const overridesVencidos = useMemo(
+    () => findStaleOverrides(calibracoesDominio),
+    [calibracoesDominio],
+  );
   const justificativaValida = isOverrideReasonValid(justificativa);
 
   /**
@@ -221,8 +239,12 @@ export function SkillClassificationEfficacyCard({
         .skillThresholdCalibrated({
           from: anterior,
           to: sugerido,
-          sampleSize: resumo.total,
-          accuracy: resumo.accuracy,
+          scale: 'dominio',
+          // Amostra e acurácia da régua efetivamente calibrada — usar o
+          // agregado gravaria na trilha um denominador que inclui decisões de
+          // plataforma que jamais influenciaram esta sugestão.
+          sampleSize: resumo.byScale.dominio.sampleSize,
+          accuracy: resumo.byScale.dominio.accuracy,
           // Marca a decisão tomada CONTRA o alerta: sem isso, a série ruidosa
           // fica indistinguível de uma calibração saudável na trilha.
           overriddenInstability: instabilidade.unstable,
@@ -240,8 +262,8 @@ export function SkillClassificationEfficacyCard({
       onApplyThreshold,
       sugerido,
       currentThreshold,
-      resumo.total,
-      resumo.accuracy,
+      resumo.byScale.dominio.sampleSize,
+      resumo.byScale.dominio.accuracy,
       instabilidade,
       carregar,
     ],
@@ -496,6 +518,13 @@ export function SkillClassificationEfficacyCard({
                       className={cn('text-meta', DIRECTION_STYLE[calibrationDirection(c)])}
                     >
                       {DIRECTION_LABEL[calibrationDirection(c)]}
+                    </Badge>
+                    <Badge
+                      variant="outline"
+                      className="text-meta text-muted-foreground"
+                      title="Régua de confiança governada por esta calibração"
+                    >
+                      {CALIBRATION_SCALE_LABEL[c.scale]}
                     </Badge>
                     {c.overriddenInstability && (
                       <Badge

@@ -11,6 +11,26 @@
 
 export const THRESHOLD_CALIBRATION_ACTION = 'skill.threshold_calibrate' as const;
 
+/**
+ * Régua de confiança de uma calibração.
+ *
+ * Espelha `ConfidenceScale` de `classificationEfficacy`, mas é declarada aqui
+ * para não acoplar o parser de auditoria ao motor de eficácia: este módulo lê
+ * linhas históricas e precisa continuar compilando mesmo que o motor mude.
+ */
+export type CalibrationScale = 'dominio' | 'plataforma';
+
+export const CALIBRATION_SCALE_LABEL: Record<CalibrationScale, string> = {
+  dominio: 'Domínio',
+  plataforma: 'Plataforma',
+};
+
+/** Legado (sem `scale`) é sempre domínio — era a única régua governada. */
+export function coerceCalibrationScale(value: unknown): CalibrationScale {
+  return value === 'plataforma' ? 'plataforma' : 'dominio';
+}
+
+
 export interface ThresholdCalibrationRowInput {
   id?: unknown;
   action?: unknown;
@@ -36,8 +56,15 @@ export interface ThresholdCalibration {
    * legadas ou quando o texto veio vazio/ilegível.
    */
   overrideReason: string | null;
+  /**
+   * Régua de confiança da calibração. Linhas legadas (gravadas antes da
+   * segmentação de escalas) valem `dominio`: era a única régua que o slider
+   * governava, então assumir isso preserva a leitura histórica correta.
+   */
+  scale: CalibrationScale;
   /** ISO válido, ou `null` quando a data veio corrompida. */
   at: string | null;
+
 }
 
 /** Mínimo de caracteres úteis para uma justificativa ser aceita. */
@@ -72,6 +99,27 @@ export type CalibrationTimelineFilter = 'all' | 'overridden';
 
 export function normalizeCalibrationFilter(value: unknown): CalibrationTimelineFilter {
   return value === 'overridden' ? 'overridden' : 'all';
+}
+
+/** Filtro por régua; `all` preserva ambas. */
+export type CalibrationScaleFilter = CalibrationScale | 'all';
+
+export function normalizeCalibrationScaleFilter(value: unknown): CalibrationScaleFilter {
+  return value === 'dominio' || value === 'plataforma' ? value : 'all';
+}
+
+/**
+ * Separa as calibrações por régua.
+ *
+ * Necessário porque comparar um limiar de plataforma (teto 0,40) com um de
+ * domínio (teto 0,95) na mesma série produz "quedas" e "saltos" que nunca
+ * existiram — a leitura de tendência só é válida dentro de uma escala.
+ */
+export function filterCalibrationsByScale(
+  items: readonly ThresholdCalibration[],
+  filter: CalibrationScaleFilter,
+): ThresholdCalibration[] {
+  return filter === 'all' ? [...items] : items.filter((i) => i.scale === filter);
 }
 
 /** Aplica o filtro sem mutar a lista original. */
@@ -143,6 +191,7 @@ export function parseThresholdCalibrations(
       // 1 vindos de metadata livre não devem virar acusação de burla.
       overriddenInstability: meta.overridden_instability === true,
       overrideReason: normalizeOverrideReason(meta.override_reason),
+      scale: coerceCalibrationScale(meta.scale),
       at: coerceIsoDate(row.created_at),
     });
   }

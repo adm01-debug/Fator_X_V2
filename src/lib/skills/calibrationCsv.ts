@@ -5,7 +5,11 @@
  * precisa de teste: o consumidor é um comitê de governança abrindo o arquivo
  * no Excel pt-BR, não um parser tolerante.
  */
-import { calibrationDirection, type ThresholdCalibration } from './thresholdCalibration';
+import {
+  CALIBRATION_SCALE_LABEL,
+  calibrationDirection,
+  type ThresholdCalibration,
+} from './thresholdCalibration';
 
 /** Excel pt-BR interpreta `;` como separador; `,` quebraria as colunas. */
 const DELIMITER = ';';
@@ -14,6 +18,7 @@ const BOM = '\uFEFF';
 
 export const CALIBRATION_CSV_HEADERS = [
   'data',
+  'regua',
   'de',
   'para',
   'direcao',
@@ -57,6 +62,7 @@ export function buildCalibrationCsv(items: readonly ThresholdCalibration[]): str
     linhas.push(
       [
         escapeCell(formatDate(item.at)),
+        escapeCell(CALIBRATION_SCALE_LABEL[item.scale]),
         escapeCell(formatRatio(item.from)),
         escapeCell(formatRatio(item.to)),
         escapeCell(calibrationDirection(item)),
