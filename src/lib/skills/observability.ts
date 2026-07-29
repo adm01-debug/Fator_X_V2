@@ -481,7 +481,50 @@ export function deriveObservabilityAlerts(input: AlertInputs): ObservabilityAler
     });
   }
 
-  return { alerts, instability: instabilityByScale.dominio, instabilityByScale };
+  /**
+   * Sinais vindos do digest de governança. Instabilidade e override vencido já
+   * foram emitidos acima a partir das mesmas fontes — repetir aqui produziria
+   * alerta duplicado. Restam os dois sintomas que só o digest enxerga:
+   * calibração envelhecida e régua nunca calibrada.
+   */
+  const governance = summarizeCalibrationGovernance(input.calibrations, { now: agora });
+
+  for (const escala of escalas) {
+    const postura = governance.byScale[escala];
+    if (postura.daysSinceLast === null) continue;
+    if (postura.daysSinceLast < CALIBRATION_STALE_DAYS) continue;
+    alerts.push({
+      id: `calibracao-envelhecida-${escala}`,
+      level: 'atencao',
+      title: `Calibração envelhecida (${CALIBRATION_SCALE_LABEL[escala]})`,
+      detail: `Último ajuste há ${postura.daysSinceLast} dia(s); acima do limite de ${CALIBRATION_STALE_DAYS} dias para evidência corrente.`,
+    });
+  }
+
+  /**
+   * Régua sem nenhuma calibração datada só vira alerta quando a OUTRA régua já
+   * tem histórico. Numa instalação nova as duas estão vazias por definição, e
+   * alarmar nesse estado ensinaria o curador a ignorar o painel no primeiro dia.
+   */
+  const algumaCalibrada = escalas.some((s) => governance.byScale[s].lastAt !== null);
+  if (algumaCalibrada) {
+    for (const escala of escalas) {
+      if (governance.byScale[escala].lastAt !== null) continue;
+      alerts.push({
+        id: `calibracao-ausente-${escala}`,
+        level: 'atencao',
+        title: `Régua nunca calibrada (${CALIBRATION_SCALE_LABEL[escala]})`,
+        detail: `Nenhum ajuste datado nessa régua; o limiar em uso é o padrão de fábrica, sem evidência local.`,
+      });
+    }
+  }
+
+  return {
+    alerts,
+    instability: instabilityByScale.dominio,
+    instabilityByScale,
+    governance,
+  };
 }
 
 /** Formata 0..1 como percentual pt-BR; `—` quando não há sinal. */
