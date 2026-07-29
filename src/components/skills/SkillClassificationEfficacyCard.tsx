@@ -471,7 +471,46 @@ export function SkillClassificationEfficacyCard({
           </div>
         )}
 
+        {/* Postura de governança por régua — leitura de uma olhada, antes da
+            série detalhada. Domínio e plataforma aparecem lado a lado porque
+            um veredito agregado esconderia a régua saudável atrás da crítica. */}
         {calibracoes.length > 0 && (
+          <div className="grid gap-2 sm:grid-cols-2">
+            {(['dominio', 'plataforma'] as const).map((regua) => {
+              const p = governanca.byScale[regua];
+              const tom: Record<CalibrationPostureStatus, string> = {
+                'sem-dados': 'border-border/60 text-muted-foreground',
+                saudavel: 'border-nexus-emerald/40 text-nexus-emerald',
+                atencao: 'border-nexus-amber/40 text-nexus-amber',
+                critico: 'border-destructive/40 text-destructive',
+              };
+              return (
+                <div
+                  key={regua}
+                  className={cn('rounded-lg border p-3 space-y-1', tom[p.status])}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-body-sm font-medium text-foreground">
+                      {p.scaleLabel}
+                    </span>
+                    <Badge variant="outline" className={cn('text-caption', tom[p.status])}>
+                      {CALIBRATION_POSTURE_LABEL[p.status]}
+                    </Badge>
+                  </div>
+                  <p className="text-caption text-muted-foreground">{p.headline}</p>
+                  <p className="text-caption text-muted-foreground">
+                    {p.total} calibração(ões)
+                    {p.daysSinceLast !== null && ` · última há ${p.daysSinceLast}d`}
+                    {p.overrides > 0 && ` · ${p.overrides} sob alerta`}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {calibracoes.length > 0 && (
+
           <div className="space-y-2 rounded-lg border border-border/60 p-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p className="text-body-sm font-medium">Calibrações recentes</p>
