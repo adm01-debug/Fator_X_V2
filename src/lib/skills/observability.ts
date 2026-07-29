@@ -12,9 +12,11 @@
  */
 
 import {
-  detectCalibrationInstability,
-  findStaleOverrides,
+  CALIBRATION_SCALE_LABEL,
+  detectCalibrationInstabilityByScale,
+  findStaleOverridesByScale,
   type CalibrationInstability,
+  type CalibrationScale,
   type ThresholdCalibration,
 } from '@/lib/skills/thresholdCalibration';
 import type { ClassificationDecision } from '@/lib/skills/classificationEfficacy';
@@ -381,7 +383,13 @@ export const HUMAN_CORRECTION_MIN_SAMPLE = 10;
 
 export interface ObservabilityAlertsResult {
   alerts: ObservabilityAlert[];
+  /**
+   * Veredito da régua de domínio — mantido no topo por compatibilidade com os
+   * consumidores existentes, que só governam esse slider.
+   */
   instability: CalibrationInstability;
+  /** Veredito completo, uma entrada por régua. */
+  instabilityByScale: Record<CalibrationScale, CalibrationInstability>;
 }
 
 /**
@@ -393,25 +401,38 @@ export function deriveObservabilityAlerts(input: AlertInputs): ObservabilityAler
   const agora = input.now ?? new Date();
   const alerts: ObservabilityAlert[] = [];
 
-  const instability = detectCalibrationInstability(input.calibrations, { now: agora });
-  if (instability.unstable) {
+  /**
+   * Instabilidade e overrides são avaliados POR RÉGUA. Domínio (teto 0,95) e
+   * plataforma (teto 0,40) são sliders independentes: somar seus eventos
+   * produzia alerta de "limiar instável" a partir de atividade rotineira da
+   * outra escala, e uma calibração recente de plataforma zerava indevidamente
+   * o alerta de override vencido do domínio.
+   */
+  const instabilityByScale = detectCalibrationInstabilityByScale(input.calibrations, { now: agora });
+  const staleByScale = findStaleOverridesByScale(input.calibrations, { now: agora });
+  const escalas: readonly CalibrationScale[] = ['dominio', 'plataforma'];
+
+  for (const escala of escalas) {
+    const instab = instabilityByScale[escala];
+    if (!instab.unstable) continue;
     alerts.push({
-      id: 'calibracao-instavel',
+      id: `calibracao-instavel-${escala}`,
       level: 'critico',
-      title: 'Limiar de revisão instável',
+      title: `Limiar de revisão instável (${CALIBRATION_SCALE_LABEL[escala]})`,
       detail:
-        instability.reason === 'volume'
-          ? `${instability.eventsInWindow} calibrações nos últimos 7 dias — amostra ainda pequena para calibrar de novo.`
-          : `${instability.reversals} inversões de sentido nos últimos 7 dias (amplitude ${(instability.spread * 100).toFixed(0)} p.p.).`,
+        instab.reason === 'volume'
+          ? `${instab.eventsInWindow} calibrações nos últimos 7 dias — amostra ainda pequena para calibrar de novo.`
+          : `${instab.reversals} inversões de sentido nos últimos 7 dias (amplitude ${(instab.spread * 100).toFixed(0)} p.p.).`,
     });
   }
 
-  const { stale, oldestDays } = findStaleOverrides(input.calibrations, { now: agora });
-  if (stale.length > 0) {
+  for (const escala of escalas) {
+    const { stale, oldestDays } = staleByScale[escala];
+    if (stale.length === 0) continue;
     alerts.push({
-      id: 'override-vencido',
+      id: `override-vencido-${escala}`,
       level: 'atencao',
-      title: 'Override de instabilidade sem revisão',
+      title: `Override de instabilidade sem revisão (${CALIBRATION_SCALE_LABEL[escala]})`,
       detail: `${stale.length} override(s) aplicados sob alerta há ${oldestDays} dia(s) sem reavaliação.`,
     });
   }
@@ -446,7 +467,7 @@ export function deriveObservabilityAlerts(input: AlertInputs): ObservabilityAler
     });
   }
 
-  return { alerts, instability };
+  return { alerts, instability: instabilityByScale.dominio, instabilityByScale };
 }
 
 /** Formata 0..1 como percentual pt-BR; `—` quando não há sinal. */

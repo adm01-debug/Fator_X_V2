@@ -183,7 +183,7 @@ describe('deriveObservabilityAlerts', () => {
     }));
     const r = deriveObservabilityAlerts({ ...base, calibrations });
     expect(r.instability.unstable).toBe(true);
-    expect(r.alerts.some((a) => a.id === 'calibracao-instavel')).toBe(true);
+    expect(r.alerts.some((a) => a.id === 'calibracao-instavel-dominio')).toBe(true);
   });
 });
 

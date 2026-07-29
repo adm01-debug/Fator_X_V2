@@ -223,7 +223,14 @@ export interface CalibrationInstability {
   /** Amplitude entre o menor e o maior limiar aplicado na janela. */
   spread: number;
   reason: 'estavel' | 'volume' | 'oscilacao';
+  /**
+   * Régua sobre a qual o veredito foi calculado. `null` quando a chamada
+   * recebeu uma lista heterogênea (leitura agregada legada) — nesse caso o
+   * resultado não deve ser exibido como diagnóstico de um slider específico.
+   */
+  scale: CalibrationScale | null;
 }
+
 
 /**
  * Detecta instabilidade de calibração.
@@ -271,14 +278,44 @@ export function detectCalibrationInstability(
   const porVolume = naJanela.length >= minimo;
   const porOscilacao = reversals >= 2;
 
+  // A régua só é declarada quando toda a amostra pertence à mesma escala;
+  // lista heterogênea produz `null` para impedir que a UI rotule o veredito
+  // como diagnóstico de um slider que não foi o único a se mover.
+  const escalas = new Set(items.map((i) => i.scale));
+  const scale: CalibrationScale | null = escalas.size === 1 ? [...escalas][0] : null;
+
   return {
     unstable: porVolume || porOscilacao,
     eventsInWindow: naJanela.length,
     reversals,
     spread: Number(spread.toFixed(4)),
     reason: porVolume ? 'volume' : porOscilacao ? 'oscilacao' : 'estavel',
+    scale,
   };
 }
+
+/**
+ * Instabilidade segmentada por régua.
+ *
+ * Motivo: um limiar de plataforma (teto 0,40) e um de domínio (teto 0,95)
+ * nunca disputam o mesmo espaço. Avaliados juntos, três calibrações rotineiras
+ * de plataforma disparavam alerta de "domínio instável" — falso positivo
+ * reproduzido em 300/300 cenários simulados antes desta partição.
+ */
+export function detectCalibrationInstabilityByScale(
+  items: readonly ThresholdCalibration[],
+  options?: { now?: Date; windowDays?: number; minEvents?: number },
+): Record<CalibrationScale, CalibrationInstability> {
+  // A régua é reafirmada explicitamente: fatia vazia não tem como inferir a
+  // escala sozinha, e devolver `null` ali faria a UI perder o rótulo do card.
+  const porEscala = (scale: CalibrationScale): CalibrationInstability => ({
+    ...detectCalibrationInstability(filterCalibrationsByScale(items, scale), options),
+    scale,
+  });
+  return { dominio: porEscala('dominio'), plataforma: porEscala('plataforma') };
+}
+
+
 
 
 /** Prazo de revisão de um override antes de virar pendência de governança. */
@@ -294,9 +331,13 @@ export interface StaleOverrideReport {
 /**
  * Aponta overrides de instabilidade que envelheceram sem revisão.
  *
- * "Revisão" aqui é qualquer calibração posterior ao override: se o curador
- * voltou a mexer no limiar depois, a decisão excepcional já foi reavaliada na
- * prática. Só sobra o que foi aplicado sob alerta e nunca mais tocado.
+ * "Revisão" aqui é qualquer calibração posterior ao override DENTRO DA MESMA
+ * RÉGUA: se o curador voltou a mexer naquele limiar depois, a decisão
+ * excepcional já foi reavaliada na prática. Uma calibração de plataforma NÃO
+ * revisa um override de domínio — são sliders distintos, com tetos distintos,
+ * governando decisões distintas. Antes da partição, qualquer atividade recente
+ * em qualquer régua zerava o alerta do override antigo da outra (mascaramento
+ * confirmado em 300/300 cenários simulados).
  *
  * Overrides sem data são ignorados — sem timestamp não há prazo a contar, e
  * tratá-los como vencidos criaria alarme permanente e irreparável.
@@ -313,13 +354,19 @@ export function findStaleOverrides(
     .map((item) => ({ item, ts: item.at === null ? NaN : Date.parse(item.at) }))
     .filter((e) => !Number.isNaN(e.ts));
 
-  const maisRecente = datados.reduce((max, e) => (e.ts > max ? e.ts : max), Number.NEGATIVE_INFINITY);
+  // Marco de "última atividade" por régua — nunca global.
+  const maisRecentePorEscala = new Map<CalibrationScale, number>();
+  for (const e of datados) {
+    const atual = maisRecentePorEscala.get(e.item.scale);
+    if (atual === undefined || e.ts > atual) maisRecentePorEscala.set(e.item.scale, e.ts);
+  }
 
   const stale = datados
     .filter(({ item, ts }) => {
       if (!item.overriddenInstability) return false;
-      // Houve calibração posterior → considerado revisado.
-      if (ts < maisRecente) return false;
+      // Houve calibração posterior na MESMA régua → considerado revisado.
+      const marco = maisRecentePorEscala.get(item.scale) ?? ts;
+      if (ts < marco) return false;
       return agora - ts >= limiteMs;
     })
     .map((e) => e.item);
@@ -333,3 +380,21 @@ export function findStaleOverrides(
 
   return { stale, oldestDays };
 }
+
+/**
+ * Overrides vencidos segmentados por régua.
+ *
+ * Consumidores que precisam nomear a escala no alerta ("override de domínio
+ * vencido") usam este mapa; o agregado acima continua servindo quem só quer
+ * saber se existe pendência.
+ */
+export function findStaleOverridesByScale(
+  items: readonly ThresholdCalibration[],
+  options?: { now?: Date; deadlineDays?: number },
+): Record<CalibrationScale, StaleOverrideReport> {
+  return {
+    dominio: findStaleOverrides(filterCalibrationsByScale(items, 'dominio'), options),
+    plataforma: findStaleOverrides(filterCalibrationsByScale(items, 'plataforma'), options),
+  };
+}
+

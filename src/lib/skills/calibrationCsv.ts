@@ -8,6 +8,7 @@
 import {
   CALIBRATION_SCALE_LABEL,
   calibrationDirection,
+  type CalibrationScaleFilter,
   type ThresholdCalibration,
 } from './thresholdCalibration';
 
@@ -78,10 +79,23 @@ export function buildCalibrationCsv(items: readonly ThresholdCalibration[]): str
   return BOM + linhas.join('\r\n');
 }
 
-/** Nome de arquivo determinístico e ordenável. */
-export function calibrationCsvFilename(scope: 'all' | 'overridden', now: Date = new Date()): string {
+/**
+ * Nome de arquivo determinístico e ordenável.
+ *
+ * A régua entra no nome porque o comitê arquiva as evidências lado a lado: sem
+ * ela, exportar "domínio" e depois "plataforma" no mesmo dia gerava dois
+ * arquivos homônimos, e o segundo download sobrescrevia silenciosamente o
+ * primeiro na pasta do revisor — perda de evidência sem qualquer aviso.
+ */
+export function calibrationCsvFilename(
+  scope: 'all' | 'overridden',
+  now: Date = new Date(),
+  scale: CalibrationScaleFilter = 'all',
+): string {
   const dia = Number.isNaN(now.getTime())
     ? 'sem-data'
     : now.toISOString().slice(0, 10);
-  return `calibracoes-${scope === 'overridden' ? 'sob-alerta' : 'todas'}-${dia}.csv`;
+  const escopo = scope === 'overridden' ? 'sob-alerta' : 'todas';
+  const regua = scale === 'all' ? 'todas-reguas' : scale;
+  return `calibracoes-${escopo}-${regua}-${dia}.csv`;
 }
