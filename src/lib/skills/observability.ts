@@ -19,6 +19,10 @@ import {
   type CalibrationScale,
   type ThresholdCalibration,
 } from '@/lib/skills/thresholdCalibration';
+import {
+  summarizeCalibrationGovernance,
+  type CalibrationGovernanceDigest,
+} from '@/lib/skills/calibrationGovernance';
 import type { ClassificationDecision } from '@/lib/skills/classificationEfficacy';
 
 const DIA_MS = 24 * 60 * 60 * 1000;
