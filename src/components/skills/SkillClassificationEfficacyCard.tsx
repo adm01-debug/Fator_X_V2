@@ -303,14 +303,47 @@ export function SkillClassificationEfficacyCard({
       </CardHeader>
 
       <CardContent className="space-y-4">
+        {/* Duas réguas, dois números. O tier de plataforma tem teto estrutural
+            de 0,40 — exibi-lo sob a média de domínio faria o curador ler como
+            "classificador inseguro" o que é, na verdade, um limite de projeto. */}
+        <div className="grid gap-2 sm:grid-cols-2">
+          {CONFIDENCE_SCALES.map((escala) => {
+            const m = resumo.byScale[escala];
+            return (
+              <div
+                key={escala}
+                className="rounded-lg border border-border/60 bg-muted/20 p-3 space-y-1"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-body-sm font-semibold text-foreground">
+                    Régua: {CONFIDENCE_SCALE_LABEL[escala]}
+                  </span>
+                  <Badge variant="outline">{m.total} decisões</Badge>
+                </div>
+                <p className="text-caption text-muted-foreground">
+                  Acerto {pct(m.accuracy)} · confirmou a {pct(m.avgConfidenceWhenRight)} · errou a{' '}
+                  {pct(m.avgConfidenceWhenWrong)}
+                </p>
+                <p className="text-caption text-muted-foreground">
+                  {m.suggestedThreshold === null
+                    ? `Amostra insuficiente (${m.sampleSize}/${MIN_SUGGESTION_SAMPLE} confirmações) para sugerir limiar.`
+                    : `Limiar sugerido ${m.suggestedThreshold.toFixed(2)} (teto da régua ${SCALE_CEILING[escala].toFixed(2)}).`}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+
         {resumo.suggestedThreshold !== null && (
           <div className="space-y-2 rounded-lg border border-border/60 bg-muted/30 p-3">
             <p className="text-body-sm text-muted-foreground">
-              O classificador acertou com confiança média de {pct(resumo.avgConfidenceWhenRight)}.
-              Um limiar de revisão em torno de{' '}
+              Na régua de domínio o classificador acertou com confiança média de{' '}
+              {pct(resumo.byScale.dominio.avgConfidenceWhenRight)}. Um limiar de revisão em torno de{' '}
               <span className="font-semibold text-foreground">{sugerido?.toFixed(2)}</span>{' '}
-              reduziria confirmações redundantes sem esconder correções.
+              reduziria confirmações redundantes sem esconder correções. O tier de plataforma tem
+              régua própria e não influencia este número.
             </p>
+
             {onApplyThreshold && sugerido !== null && (
               <div className="flex flex-wrap items-center gap-2">
                 {instabilidade.unstable ? (
