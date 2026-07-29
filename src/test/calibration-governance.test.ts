@@ -170,9 +170,12 @@ describe('matriz de simulação (centenas de cenários)', () => {
               expect(alvo.status).toBe(overridden ? 'atencao' : 'sem-dados');
             } else {
               expect(alvo.daysSinceLast).toBeGreaterThanOrEqual(0);
-              if (overridden && idade + volume - 1 >= 30) {
+              // Só a calibração mais recente da régua conta como pendência:
+              // as anteriores foram revisadas na prática pela seguinte.
+              if (overridden && idade >= 30) {
                 expect(alvo.status).toBe('critico');
               }
+
               if (!overridden && !alvo.instability.unstable) {
                 expect(alvo.status).toBe('saudavel');
               }
