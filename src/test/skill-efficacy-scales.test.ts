@@ -319,13 +319,11 @@ describe('acurácia por régua', () => {
 describe('robustez', () => {
   it('decisões legadas sem campo scale são reclassificadas pela procedência', () => {
     // Cache de sessão anterior à segmentação: o objeto não tem `scale`.
-    const legado = {
-      ...confirmada('plataforma', 0.22),
-    } as ClassificationDecision & { scale?: ConfidenceScale };
-    delete legado.scale;
+    const { scale: _descartado, ...semEscala } = confirmada('plataforma', 0.22);
+    const legado = semEscala as unknown as ClassificationDecision;
 
     const r = summarizeEfficacy([
-      legado as ClassificationDecision,
+      legado,
       confirmada('plataforma', 0.22),
       confirmada('plataforma', 0.22),
     ]);
