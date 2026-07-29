@@ -11,6 +11,26 @@
 
 export const THRESHOLD_CALIBRATION_ACTION = 'skill.threshold_calibrate' as const;
 
+/**
+ * Régua de confiança de uma calibração.
+ *
+ * Espelha `ConfidenceScale` de `classificationEfficacy`, mas é declarada aqui
+ * para não acoplar o parser de auditoria ao motor de eficácia: este módulo lê
+ * linhas históricas e precisa continuar compilando mesmo que o motor mude.
+ */
+export type CalibrationScale = 'dominio' | 'plataforma';
+
+export const CALIBRATION_SCALE_LABEL: Record<CalibrationScale, string> = {
+  dominio: 'Domínio',
+  plataforma: 'Plataforma',
+};
+
+/** Legado (sem `scale`) é sempre domínio — era a única régua governada. */
+export function coerceCalibrationScale(value: unknown): CalibrationScale {
+  return value === 'plataforma' ? 'plataforma' : 'dominio';
+}
+
+
 export interface ThresholdCalibrationRowInput {
   id?: unknown;
   action?: unknown;
