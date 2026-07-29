@@ -34,11 +34,56 @@ export const RECLASSIFICATION_AUDIT_ACTIONS = [
 ] as const;
 
 /** Procedência anterior registrada no momento da decisão. */
-export const DECISION_SOURCES = ['unknown', 'heuristic', 'llm', 'human', 'import'] as const;
+export const DECISION_SOURCES = [
+  'unknown',
+  'heuristic',
+  'platform_heuristic',
+  'llm',
+  'human',
+  'import',
+] as const;
 export type DecisionSource = (typeof DECISION_SOURCES)[number];
+
+/**
+ * Escala de confiança sob a qual a decisão foi tomada.
+ *
+ * Existe porque o tier de plataforma tem teto estrutural de
+ * `PLATFORM_TIER_MAX_CONFIDENCE` (0,40) — ele nunca afirma "pertence ao
+ * departamento X" com autoridade de léxico de domínio. Misturar as duas
+ * escalas na mesma média produz um número que não descreve nenhuma das duas:
+ * a sugestão de limiar de domínio afunda proporcionalmente à quantidade de
+ * itens de plataforma na amostra, e adotá-la despejaria na fila exatamente os
+ * palpites que o limiar existia para reter.
+ */
+export type ConfidenceScale = 'dominio' | 'plataforma';
+
+export const CONFIDENCE_SCALES = ['dominio', 'plataforma'] as const;
+
+export const CONFIDENCE_SCALE_LABEL: Record<ConfidenceScale, string> = {
+  dominio: 'Domínio',
+  plataforma: 'Plataforma',
+};
+
+/** Teto estrutural de cada escala — nenhuma sugestão pode ultrapassá-lo. */
+export const SCALE_CEILING: Record<ConfidenceScale, number> = {
+  dominio: 0.95,
+  plataforma: PLATFORM_TIER_MAX_CONFIDENCE,
+};
+
+/** Piso de cada escala; espelha `reviewThresholdFor` em `skillDemand`. */
+export const SCALE_FLOOR: Record<ConfidenceScale, number> = {
+  dominio: 0.05,
+  plataforma: 0.05,
+};
+
+/** A qual régua uma procedência pertence. */
+export function scaleOf(source: DecisionSource): ConfidenceScale {
+  return source === 'platform_heuristic' ? 'plataforma' : 'dominio';
+}
 
 /** Origem da proposta que foi decidida. */
 export type ProposalOrigin = 'lexico' | 'ia';
+
 
 /**
  * Veredito sobre o classificador, derivado do par (decisão, estado anterior).
