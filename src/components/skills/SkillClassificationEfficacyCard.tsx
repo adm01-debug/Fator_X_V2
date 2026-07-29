@@ -519,6 +519,13 @@ export function SkillClassificationEfficacyCard({
                     >
                       {DIRECTION_LABEL[calibrationDirection(c)]}
                     </Badge>
+                    <Badge
+                      variant="outline"
+                      className="text-meta text-muted-foreground"
+                      title="Régua de confiança governada por esta calibração"
+                    >
+                      {CALIBRATION_SCALE_LABEL[c.scale]}
+                    </Badge>
                     {c.overriddenInstability && (
                       <Badge
                         variant="outline"
