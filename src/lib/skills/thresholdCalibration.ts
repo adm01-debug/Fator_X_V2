@@ -36,8 +36,15 @@ export interface ThresholdCalibration {
    * legadas ou quando o texto veio vazio/ilegível.
    */
   overrideReason: string | null;
+  /**
+   * Régua de confiança da calibração. Linhas legadas (gravadas antes da
+   * segmentação de escalas) valem `dominio`: era a única régua que o slider
+   * governava, então assumir isso preserva a leitura histórica correta.
+   */
+  scale: CalibrationScale;
   /** ISO válido, ou `null` quando a data veio corrompida. */
   at: string | null;
+
 }
 
 /** Mínimo de caracteres úteis para uma justificativa ser aceita. */
