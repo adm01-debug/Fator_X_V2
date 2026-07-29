@@ -142,7 +142,12 @@ export const DEPARTMENT_QUERIES: Record<SkillDepartment, string[]> = {
   pos_venda: ['customer support agent skill', 'customer success ai agent', 'helpdesk agent llm'],
   dados: ['data analyst agent skill', 'sql ai agent', 'bi agent llm', 'analytics agent'],
   executivo: ['executive assistant agent skill', 'strategy ai agent', 'okr agent llm'],
+  // `transversal` é o balde de agregadores: não existe query semente que
+  // "procure agregadores" sem arrastar o catálogo inteiro. A lista vazia é
+  // deliberada — o rótulo é atribuído na classificação, nunca na coleta.
+  transversal: [],
 };
+
 
 /** Tópicos GitHub padrão da varredura. */
 export const DEFAULT_TOPICS = [
