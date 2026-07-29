@@ -124,6 +124,8 @@ export const audit = {
         to: params.to,
         sample_size: params.sampleSize,
         accuracy: params.accuracy,
+        scale: params.scale ?? 'dominio',
+
         origin: 'efficacy_card_suggestion',
         overridden_instability: params.overriddenInstability ?? false,
         instability_reason: params.instabilityReason ?? 'estavel',
