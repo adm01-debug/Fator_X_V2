@@ -26,6 +26,8 @@
  *     como "classificador péssimo" em vez de "sem dados".
  */
 import { isDepartment, type SkillDepartment } from '@/config/skill-departments';
+import { PLATFORM_TIER_MAX_CONFIDENCE } from '@/services/skillDepartmentClassifier';
+
 
 /** Ações de auditoria emitidas por `decide_skill_reclassification`. */
 export const RECLASSIFICATION_AUDIT_ACTIONS = [
@@ -34,11 +36,56 @@ export const RECLASSIFICATION_AUDIT_ACTIONS = [
 ] as const;
 
 /** Procedência anterior registrada no momento da decisão. */
-export const DECISION_SOURCES = ['unknown', 'heuristic', 'llm', 'human', 'import'] as const;
+export const DECISION_SOURCES = [
+  'unknown',
+  'heuristic',
+  'platform_heuristic',
+  'llm',
+  'human',
+  'import',
+] as const;
 export type DecisionSource = (typeof DECISION_SOURCES)[number];
+
+/**
+ * Escala de confiança sob a qual a decisão foi tomada.
+ *
+ * Existe porque o tier de plataforma tem teto estrutural de
+ * `PLATFORM_TIER_MAX_CONFIDENCE` (0,40) — ele nunca afirma "pertence ao
+ * departamento X" com autoridade de léxico de domínio. Misturar as duas
+ * escalas na mesma média produz um número que não descreve nenhuma das duas:
+ * a sugestão de limiar de domínio afunda proporcionalmente à quantidade de
+ * itens de plataforma na amostra, e adotá-la despejaria na fila exatamente os
+ * palpites que o limiar existia para reter.
+ */
+export type ConfidenceScale = 'dominio' | 'plataforma';
+
+export const CONFIDENCE_SCALES = ['dominio', 'plataforma'] as const;
+
+export const CONFIDENCE_SCALE_LABEL: Record<ConfidenceScale, string> = {
+  dominio: 'Domínio',
+  plataforma: 'Plataforma',
+};
+
+/** Teto estrutural de cada escala — nenhuma sugestão pode ultrapassá-lo. */
+export const SCALE_CEILING: Record<ConfidenceScale, number> = {
+  dominio: 0.95,
+  plataforma: PLATFORM_TIER_MAX_CONFIDENCE,
+};
+
+/** Piso de cada escala; espelha `reviewThresholdFor` em `skillDemand`. */
+export const SCALE_FLOOR: Record<ConfidenceScale, number> = {
+  dominio: 0.05,
+  plataforma: 0.05,
+};
+
+/** A qual régua uma procedência pertence. */
+export function scaleOf(source: DecisionSource): ConfidenceScale {
+  return source === 'platform_heuristic' ? 'plataforma' : 'dominio';
+}
 
 /** Origem da proposta que foi decidida. */
 export type ProposalOrigin = 'lexico' | 'ia';
+
 
 /**
  * Veredito sobre o classificador, derivado do par (decisão, estado anterior).
@@ -92,6 +139,8 @@ export interface ClassificationDecision {
   previousConfidence: number;
   /** `false` quando a decisão não tocou o Registry (rejeição sem depto). */
   registryTouched: boolean;
+  /** Régua sob a qual a confiança anterior deve ser lida. */
+  scale: ConfidenceScale;
   verdict: EfficacyVerdict;
   decidedAt: string | null;
   /** Epoch em ms; `null` quando a data é inválida ou ausente. */
@@ -99,12 +148,29 @@ export interface ClassificationDecision {
   reason: string;
 }
 
+/** Métricas de uma única régua de confiança. */
+export interface ScaleEfficacy {
+  scale: ConfidenceScale;
+  total: number;
+  confirmado: number;
+  corrigido: number;
+  /** `confirmado / (confirmado + corrigido)`; `null` sem denominador. */
+  accuracy: number | null;
+  avgConfidenceWhenRight: number | null;
+  avgConfidenceWhenWrong: number | null;
+  /** Sugestão já clampada ao piso/teto DESTA régua; `null` sem amostra. */
+  suggestedThreshold: number | null;
+  /** Tamanho da amostra que sustenta a sugestão. */
+  sampleSize: number;
+}
+
 export interface EfficacySummary {
   total: number;
   byVerdict: Record<EfficacyVerdict, number>;
   /**
-   * Acerto do classificador entre as decisões que julgaram um rótulo existente:
+   * Acerto agregado entre as decisões que julgaram um rótulo existente:
    * `confirmado / (confirmado + corrigido)`. `null` sem denominador.
+   * Serve como panorama; para calibrar limiar use `byScale`.
    */
   accuracy: number | null;
   /** Confiança média que o classificador tinha nos rótulos CONFIRMADOS. */
@@ -112,13 +178,17 @@ export interface EfficacySummary {
   /** Confiança média que o classificador tinha nos rótulos CORRIGIDOS. */
   avgConfidenceWhenWrong: number | null;
   /**
-   * Sugestão de calibração: quando o classificador acerta com confiança abaixo
-   * do limiar vigente, o limiar está caro demais. `null` quando não há sinal.
+   * Sugestão de calibração do limiar de DOMÍNIO — deliberadamente cega ao tier
+   * de plataforma. É este valor que o painel aplica, e o slider que ele move
+   * governa apenas a régua de domínio.
    */
   suggestedThreshold: number | null;
+  /** Métricas isoladas por régua, sem mistura de escalas. */
+  byScale: Record<ConfidenceScale, ScaleEfficacy>;
   /** Taxa de aprovação por origem da proposta (léxico vs IA). */
   byOrigin: Record<ProposalOrigin, { total: number; approved: number }>;
 }
+
 
 function text(value: unknown): string {
   return typeof value === 'string' ? value.trim() : '';
@@ -195,6 +265,8 @@ export function parseClassificationDecisions(
       typeof meta.registry_touched === 'boolean'
         ? meta.registry_touched
         : approved || from !== null;
+    const previousSource = decisionSource(meta.previous_department_source);
+
 
     const decision: ClassificationDecision = {
       auditId: text(row.id) || reviewId,
@@ -207,10 +279,12 @@ export function parseClassificationDecisions(
       confidence: clamp01(meta.confidence),
       margin: clamp01(meta.margin),
       origin: origin(meta.source),
-      previousSource: decisionSource(meta.previous_department_source),
+      previousSource: previousSource,
       previousConfidence: clamp01(meta.previous_department_confidence),
       registryTouched,
+      scale: scaleOf(previousSource),
       verdict: deriveVerdict({ approved, from, registryTouched }),
+
       decidedAt: text(row.created_at) || null,
       decidedAtMs: epoch(row.created_at),
       reason: text(meta.decision_reason).slice(0, 1000),
@@ -240,7 +314,49 @@ function media(values: number[]): number | null {
   return Math.round((soma / values.length) * 1000) / 1000;
 }
 
-/** Agrega os vereditos em métricas de calibração. */
+/** Amostra mínima para transformar observação em sugestão de política. */
+export const MIN_SUGGESTION_SAMPLE = 3;
+
+/**
+ * Deriva a sugestão de limiar de UMA régua.
+ *
+ * Regras deliberadas:
+ *  - Exige `MIN_SUGGESTION_SAMPLE` confirmações. Abaixo disso, "sugestão" é
+ *    eco de amostra enviesada disfarçado de recomendação.
+ *  - Clampa no teto DA PRÓPRIA régua. Sugerir 0,62 para o tier de plataforma
+ *    seria propor um limiar que nenhum item daquele tier pode alcançar —
+ *    política que congela a fila para sempre.
+ */
+function sugerir(scale: ConfidenceScale, acertos: number[]): number | null {
+  if (acertos.length < MIN_SUGGESTION_SAMPLE) return null;
+  const m = media(acertos);
+  if (m === null) return null;
+  const limitado = Math.min(SCALE_CEILING[scale], Math.max(SCALE_FLOOR[scale], m));
+  return Math.round(limitado * 100) / 100;
+}
+
+function metricaDeEscala(
+  scale: ConfidenceScale,
+  acertos: number[],
+  erros: number[],
+  total: number,
+): ScaleEfficacy {
+  const denominador = acertos.length + erros.length;
+  return {
+    scale,
+    total,
+    confirmado: acertos.length,
+    corrigido: erros.length,
+    accuracy:
+      denominador === 0 ? null : Math.round((acertos.length / denominador) * 1000) / 1000,
+    avgConfidenceWhenRight: media(acertos),
+    avgConfidenceWhenWrong: media(erros),
+    suggestedThreshold: sugerir(scale, acertos),
+    sampleSize: acertos.length,
+  };
+}
+
+/** Agrega os vereditos em métricas de calibração, sem misturar réguas. */
 export function summarizeEfficacy(
   decisions: readonly ClassificationDecision[] | null | undefined,
 ): EfficacySummary {
@@ -254,39 +370,60 @@ export function summarizeEfficacy(
     lexico: { total: 0, approved: 0 },
     ia: { total: 0, approved: 0 },
   };
-  const confiancaAcerto: number[] = [];
-  const confiancaErro: number[] = [];
+  const acertos: Record<ConfidenceScale, number[]> = { dominio: [], plataforma: [] };
+  const erros: Record<ConfidenceScale, number[]> = { dominio: [], plataforma: [] };
+  const totalPorEscala: Record<ConfidenceScale, number> = { dominio: 0, plataforma: 0 };
 
   const lista = decisions ?? [];
   for (const d of lista) {
+    // Decisões antigas (pré-segmentação) não trazem `scale`; derivamos da
+    // procedência para que o histórico não caia numa régua arbitrária.
+    const escala: ConfidenceScale =
+      d.scale === 'plataforma' || d.scale === 'dominio' ? d.scale : scaleOf(d.previousSource);
+
     byVerdict[d.verdict] += 1;
     byOrigin[d.origin].total += 1;
+    totalPorEscala[escala] += 1;
     if (d.approved) byOrigin[d.origin].approved += 1;
     // A confiança relevante para calibrar é a do rótulo JULGADO, não a da
     // proposta: é ela que decide se o selo "Rever depto." aparece.
-    if (d.verdict === 'confirmado') confiancaAcerto.push(d.previousConfidence);
-    if (d.verdict === 'corrigido') confiancaErro.push(d.previousConfidence);
+    if (d.verdict === 'confirmado') acertos[escala].push(d.previousConfidence);
+    if (d.verdict === 'corrigido') erros[escala].push(d.previousConfidence);
   }
 
-  const denominador = byVerdict.confirmado + byVerdict.corrigido;
-  const avgConfidenceWhenRight = media(confiancaAcerto);
+  const byScale: Record<ConfidenceScale, ScaleEfficacy> = {
+    dominio: metricaDeEscala('dominio', acertos.dominio, erros.dominio, totalPorEscala.dominio),
+    plataforma: metricaDeEscala(
+      'plataforma',
+      acertos.plataforma,
+      erros.plataforma,
+      totalPorEscala.plataforma,
+    ),
+  };
+
+  const todosAcertos = [...acertos.dominio, ...acertos.plataforma];
+  const todosErros = [...erros.dominio, ...erros.plataforma];
+  const denominador = todosAcertos.length + todosErros.length;
 
   return {
     total: lista.length,
     byVerdict,
     byOrigin,
-
-    accuracy: denominador === 0 ? null : Math.round((byVerdict.confirmado / denominador) * 1000) / 1000,
-    avgConfidenceWhenRight,
-    avgConfidenceWhenWrong: media(confiancaErro),
-    // Só sugerimos afrouxar quando há evidência dos DOIS lados; caso contrário
-    // a "sugestão" seria eco de uma amostra enviesada.
-    suggestedThreshold:
-      confiancaAcerto.length >= 3 && avgConfidenceWhenRight !== null
-        ? Math.round(Math.min(0.95, Math.max(0.05, avgConfidenceWhenRight)) * 100) / 100
-        : null,
+    byScale,
+    accuracy:
+      denominador === 0
+        ? null
+        : Math.round((todosAcertos.length / denominador) * 1000) / 1000,
+    avgConfidenceWhenRight: media(todosAcertos),
+    avgConfidenceWhenWrong: media(todosErros),
+    // O slider do painel governa APENAS a régua de domínio. Expor aqui uma
+    // média que inclui plataforma faria o botão "aplicar" derrubar o limiar de
+    // domínio na proporção de itens de plataforma na amostra — um bug que se
+    // apresenta como recomendação fundamentada.
+    suggestedThreshold: byScale.dominio.suggestedThreshold,
   };
 }
+
 
 /** Filtro por veredito para a timeline; `all` preserva a ordem. */
 export type EfficacyFilter = EfficacyVerdict | 'all';

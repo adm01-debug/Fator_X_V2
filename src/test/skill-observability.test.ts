@@ -35,6 +35,8 @@ function decision(over: Partial<ClassificationDecision>): ClassificationDecision
     previousSource: 'heuristic',
     previousConfidence: 0.5,
     registryTouched: true,
+    scale: 'dominio',
+
     verdict: 'confirmado',
     decidedAt: diasAtras(1),
     decidedAtMs: NOW.getTime() - 86_400_000,
