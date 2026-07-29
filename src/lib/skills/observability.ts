@@ -19,6 +19,10 @@ import {
   type CalibrationScale,
   type ThresholdCalibration,
 } from '@/lib/skills/thresholdCalibration';
+import {
+  summarizeCalibrationGovernance,
+  type CalibrationGovernanceDigest,
+} from '@/lib/skills/calibrationGovernance';
 import type { ClassificationDecision } from '@/lib/skills/classificationEfficacy';
 
 const DIA_MS = 24 * 60 * 60 * 1000;
@@ -380,6 +384,13 @@ export const INGESTION_FAILURE_ALERT = 0.25;
 export const HUMAN_CORRECTION_ALERT = 0.4;
 /** Amostra mínima para acusar o classificador — evita alarme com 2 decisões. */
 export const HUMAN_CORRECTION_MIN_SAMPLE = 10;
+/**
+ * Idade, em dias, a partir da qual uma calibração deixa de ser evidência
+ * corrente. Não é um limite de segurança: é o ponto em que o léxico já mudou
+ * o bastante para que o limiar em vigor não represente mais a amostra que o
+ * justificou.
+ */
+export const CALIBRATION_STALE_DAYS = 45;
 
 export interface ObservabilityAlertsResult {
   alerts: ObservabilityAlert[];
@@ -390,7 +401,10 @@ export interface ObservabilityAlertsResult {
   instability: CalibrationInstability;
   /** Veredito completo, uma entrada por régua. */
   instabilityByScale: Record<CalibrationScale, CalibrationInstability>;
+  /** Postura de governança consolidada por régua (mesma fonte dos alertas). */
+  governance: CalibrationGovernanceDigest;
 }
+
 
 /**
  * Deriva alertas acionáveis. Cada regra tem amostra mínima própria: alertar
@@ -467,7 +481,50 @@ export function deriveObservabilityAlerts(input: AlertInputs): ObservabilityAler
     });
   }
 
-  return { alerts, instability: instabilityByScale.dominio, instabilityByScale };
+  /**
+   * Sinais vindos do digest de governança. Instabilidade e override vencido já
+   * foram emitidos acima a partir das mesmas fontes — repetir aqui produziria
+   * alerta duplicado. Restam os dois sintomas que só o digest enxerga:
+   * calibração envelhecida e régua nunca calibrada.
+   */
+  const governance = summarizeCalibrationGovernance(input.calibrations, { now: agora });
+
+  for (const escala of escalas) {
+    const postura = governance.byScale[escala];
+    if (postura.daysSinceLast === null) continue;
+    if (postura.daysSinceLast < CALIBRATION_STALE_DAYS) continue;
+    alerts.push({
+      id: `calibracao-envelhecida-${escala}`,
+      level: 'atencao',
+      title: `Calibração envelhecida (${CALIBRATION_SCALE_LABEL[escala]})`,
+      detail: `Último ajuste há ${postura.daysSinceLast} dia(s); acima do limite de ${CALIBRATION_STALE_DAYS} dias para evidência corrente.`,
+    });
+  }
+
+  /**
+   * Régua sem nenhuma calibração datada só vira alerta quando a OUTRA régua já
+   * tem histórico. Numa instalação nova as duas estão vazias por definição, e
+   * alarmar nesse estado ensinaria o curador a ignorar o painel no primeiro dia.
+   */
+  const algumaCalibrada = escalas.some((s) => governance.byScale[s].lastAt !== null);
+  if (algumaCalibrada) {
+    for (const escala of escalas) {
+      if (governance.byScale[escala].lastAt !== null) continue;
+      alerts.push({
+        id: `calibracao-ausente-${escala}`,
+        level: 'atencao',
+        title: `Régua nunca calibrada (${CALIBRATION_SCALE_LABEL[escala]})`,
+        detail: `Nenhum ajuste datado nessa régua; o limiar em uso é o padrão de fábrica, sem evidência local.`,
+      });
+    }
+  }
+
+  return {
+    alerts,
+    instability: instabilityByScale.dominio,
+    instabilityByScale,
+    governance,
+  };
 }
 
 /** Formata 0..1 como percentual pt-BR; `—` quando não há sinal. */
