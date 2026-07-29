@@ -48,6 +48,12 @@ import {
   type ThresholdCalibration,
 } from '@/lib/skills/thresholdCalibration';
 import { buildCalibrationCsv, calibrationCsvFilename } from '@/lib/skills/calibrationCsv';
+import {
+  CALIBRATION_POSTURE_LABEL,
+  summarizeCalibrationGovernance,
+  type CalibrationPostureStatus,
+} from '@/lib/skills/calibrationGovernance';
+
 import { normalizeConfidenceThreshold } from '@/lib/skills/skillDemand';
 
 
