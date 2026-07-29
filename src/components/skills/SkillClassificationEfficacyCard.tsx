@@ -43,6 +43,8 @@ import {
   isOverrideReasonValid,
   normalizeOverrideReason,
   type CalibrationTimelineFilter,
+  type CalibrationScaleFilter,
+
   type ThresholdCalibration,
 } from '@/lib/skills/thresholdCalibration';
 import { buildCalibrationCsv, calibrationCsvFilename } from '@/lib/skills/calibrationCsv';
@@ -104,6 +106,8 @@ export function SkillClassificationEfficacyCard({
   const [loading, setLoading] = useState(true);
   const [filtro, setFiltro] = useState<EfficacyFilter>('all');
   const [filtroCalib, setFiltroCalib] = useState<CalibrationTimelineFilter>('all');
+  /** Régua exibida na linha do tempo; 'all' preserva o comportamento anterior. */
+  const [filtroRegua, setFiltroRegua] = useState<CalibrationScaleFilter>('all');
   const [overrideOpen, setOverrideOpen] = useState(false);
   const [justificativa, setJustificativa] = useState('');
   /**
@@ -121,12 +125,17 @@ export function SkillClassificationEfficacyCard({
     [calibracoesDominio],
   );
   const totalSobAlerta = useMemo(
-    () => calibracoes.filter((c) => c.overriddenInstability).length,
-    [calibracoes],
+    () =>
+      filterCalibrationsByScale(calibracoes, filtroRegua).filter((c) => c.overriddenInstability)
+        .length,
+    [calibracoes, filtroRegua],
   );
   const calibracoesVisiveis = useMemo(
-    () => filterCalibrations(calibracoes, filtroCalib),
-    [calibracoes, filtroCalib],
+    // Régua primeiro, depois governança: inverter a ordem produziria a mesma
+    // lista, mas a contagem exibida no botão "sob alerta" ficaria fora de
+    // sincronia com a fatia realmente visível.
+    () => filterCalibrations(filterCalibrationsByScale(calibracoes, filtroRegua), filtroCalib),
+    [calibracoes, filtroCalib, filtroRegua],
   );
   // Override sem revisão posterior vira pendência de governança após o prazo.
   const overridesVencidos = useMemo(
@@ -151,7 +160,7 @@ export function SkillClassificationEfficacyCard({
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = calibrationCsvFilename(filtroCalib);
+      link.download = calibrationCsvFilename(filtroCalib, new Date(), filtroRegua);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -162,7 +171,7 @@ export function SkillClassificationEfficacyCard({
       logger.error('calibration csv export failed', { error: (error as Error)?.message });
       toast.error('Falha ao gerar o CSV.');
     }
-  }, [calibracoesVisiveis, filtroCalib]);
+  }, [calibracoesVisiveis, filtroCalib, filtroRegua]);
 
 
 
@@ -455,6 +464,18 @@ export function SkillClassificationEfficacyCard({
               <div className="flex flex-wrap items-center gap-2">
                 {/* Governança revisa exceções, não a série inteira: o filtro
                     isola justamente as decisões tomadas contra o alerta. */}
+                {/* Seletor de régua: comparar limiares de escalas distintas na
+                    mesma série produz "quedas" que nunca existiram. */}
+                {(['all', 'dominio', 'plataforma'] as const).map((regua) => (
+                  <Button
+                    key={regua}
+                    size="sm"
+                    variant={filtroRegua === regua ? 'secondary' : 'ghost'}
+                    onClick={() => setFiltroRegua(regua)}
+                  >
+                    {regua === 'all' ? 'Todas as réguas' : CALIBRATION_SCALE_LABEL[regua]}
+                  </Button>
+                ))}
                 <Button
                   size="sm"
                   variant={filtroCalib === 'overridden' ? 'secondary' : 'ghost'}
