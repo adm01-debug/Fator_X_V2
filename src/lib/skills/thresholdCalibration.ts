@@ -101,6 +101,27 @@ export function normalizeCalibrationFilter(value: unknown): CalibrationTimelineF
   return value === 'overridden' ? 'overridden' : 'all';
 }
 
+/** Filtro por régua; `all` preserva ambas. */
+export type CalibrationScaleFilter = CalibrationScale | 'all';
+
+export function normalizeCalibrationScaleFilter(value: unknown): CalibrationScaleFilter {
+  return value === 'dominio' || value === 'plataforma' ? value : 'all';
+}
+
+/**
+ * Separa as calibrações por régua.
+ *
+ * Necessário porque comparar um limiar de plataforma (teto 0,40) com um de
+ * domínio (teto 0,95) na mesma série produz "quedas" e "saltos" que nunca
+ * existiram — a leitura de tendência só é válida dentro de uma escala.
+ */
+export function filterCalibrationsByScale(
+  items: readonly ThresholdCalibration[],
+  filter: CalibrationScaleFilter,
+): ThresholdCalibration[] {
+  return filter === 'all' ? [...items] : items.filter((i) => i.scale === filter);
+}
+
 /** Aplica o filtro sem mutar a lista original. */
 export function filterCalibrations(
   items: readonly ThresholdCalibration[],
