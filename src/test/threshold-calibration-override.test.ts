@@ -12,6 +12,7 @@ import {
 
 function calib(partial: Partial<ThresholdCalibration> & { auditId: string }): ThresholdCalibration {
   return {
+    scale: 'dominio',
     from: 0.4,
     to: 0.6,
     sampleSize: 10,

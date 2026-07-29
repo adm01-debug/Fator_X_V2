@@ -170,6 +170,7 @@ export function parseThresholdCalibrations(
       // 1 vindos de metadata livre não devem virar acusação de burla.
       overriddenInstability: meta.overridden_instability === true,
       overrideReason: normalizeOverrideReason(meta.override_reason),
+      scale: coerceCalibrationScale(meta.scale),
       at: coerceIsoDate(row.created_at),
     });
   }

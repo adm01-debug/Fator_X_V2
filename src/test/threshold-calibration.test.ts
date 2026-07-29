@@ -89,7 +89,7 @@ describe('parseThresholdCalibrations', () => {
 
 describe('calibrationDirection', () => {
   it('classifica aumento, redução e estabilidade', () => {
-    const base = { auditId: 'x', sampleSize: 1, accuracy: null, overriddenInstability: false, overrideReason: null, at: null };
+    const base = { auditId: 'x', scale: 'dominio' as const, sampleSize: 1, accuracy: null, overriddenInstability: false, overrideReason: null, at: null };
     expect(calibrationDirection({ ...base, from: 0.4, to: 0.6 })).toBe('aumentou');
     expect(calibrationDirection({ ...base, from: 0.6, to: 0.4 })).toBe('reduziu');
     expect(calibrationDirection({ ...base, from: 0.5, to: 0.5 })).toBe('manteve');
@@ -97,7 +97,7 @@ describe('calibrationDirection', () => {
 
   it('trata origem desconhecida como sem variação', () => {
     expect(
-      calibrationDirection({ auditId: 'x', from: null, to: 0.9, sampleSize: 0, accuracy: null, overriddenInstability: false, overrideReason: null, at: null }),
+      calibrationDirection({ auditId: 'x', scale: 'dominio', from: null, to: 0.9, sampleSize: 0, accuracy: null, overriddenInstability: false, overrideReason: null, at: null }),
     ).toBe('manteve');
   });
 });

@@ -172,6 +172,7 @@ describe('deriveObservabilityAlerts', () => {
   it('alerta instabilidade de calibração por volume', () => {
     const calibrations: ThresholdCalibration[] = [0, 1, 2].map((i) => ({
       auditId: `c${i}`,
+      scale: 'dominio' as const,
       from: 0.5,
       to: 0.6,
       sampleSize: 10,

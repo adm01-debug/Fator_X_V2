@@ -14,6 +14,7 @@ function diasAtras(dias: number): string {
 function calib(partial: Partial<ThresholdCalibration> & { to: number }): ThresholdCalibration {
   return {
     auditId: Math.random().toString(36).slice(2),
+    scale: 'dominio',
     from: null,
     sampleSize: 10,
     accuracy: 0.8,
