@@ -184,6 +184,17 @@ function unquote(s: string): string {
 }
 
 // ─────────────────────────────────────────── classificação
+//
+// ESPELHO DETERMINÍSTICO de `src/services/skillDepartmentClassifier.ts`.
+//
+// Por que a paridade importa: o harvester grava `department`,
+// `department_confidence` e `department_source` no staging, e a promoção
+// copia esses valores para `skill_registry` sem recalcular. Se as duas
+// implementações usarem escalas diferentes, a mesma skill nasce com uma
+// confiança no staging e outra quando o cliente reclassifica — a fila de
+// revisão passa a oscilar sem que nada tenha mudado no dado. Qualquer
+// alteração aqui exige a alteração espelhada no TS (e vice-versa); a suíte
+// `src/test/skill-classifier-parity.test.ts` falha se divergirem.
 
 export interface Classification {
   department: SkillDepartment | null;
@@ -195,7 +206,42 @@ export interface Classification {
    * Sem este campo o staging guardava o rótulo sem dizer quem o produziu, e a
    * promoção para o registro nascia como "sem origem conhecida".
    */
-  source: 'unknown' | 'heuristic';
+  source: 'unknown' | 'heuristic' | 'platform_heuristic';
+  /** Camada que produziu o veredito — mesma taxonomia do classificador do app. */
+  tier: 'domain' | 'transversal' | 'platform' | 'none';
+  /** true quando o veredito é determinístico porém fraco demais para confiar. */
+  needsReview: boolean;
+}
+
+/** Balde de agregadores — não é um domínio de negócio, compete fora da disputa. */
+const FALLBACK_DEPARTMENT = 'transversal' as SkillDepartment;
+const DOMAIN_DEPARTMENTS = SKILL_DEPARTMENTS.filter(
+  (d) => d !== FALLBACK_DEPARTMENT,
+) as SkillDepartment[];
+
+/** Jargão de plataforma: frequência de documento ~1, poder discriminativo ~0. */
+export const PLATFORM_STOPWORDS = new Set<string>([
+  'ai', 'ia', 'agent', 'agents', 'agentic', 'agente', 'agentes',
+  'skill', 'skills', 'habilidade', 'habilidades',
+  'llm', 'llms', 'gpt', 'prompt', 'prompts', 'prompting',
+  'claude', 'codex', 'cursor', 'copilot', 'anthropic', 'openai', 'gemini',
+  'mcp', 'chatgpt', 'assistant', 'assistente', 'model', 'modelos',
+  'tool', 'tools', 'ferramenta', 'ferramentas', 'usar', 'use', 'using',
+]);
+
+export const LOW_CONFIDENCE_THRESHOLD = 0.18;
+export const MIN_TRANSVERSAL_SCORE = 0.2;
+export const MIN_PLATFORM_DENSITY = 0.08;
+export const PLATFORM_TIER_DEPARTMENT = 'ti' as SkillDepartment;
+export const PLATFORM_TIER_CONFIDENCE = 0.15;
+export const PLATFORM_EVIDENCE_STEP = 0.03;
+export const PLATFORM_TIER_MAX_CONFIDENCE = 0.4;
+export const PLATFORM_SINGLE_FIELD_CAP = 0.17;
+
+function dropStopwords(tokens: Set<string>): Set<string> {
+  const limpos = new Set<string>();
+  for (const t of tokens) if (!PLATFORM_STOPWORDS.has(t)) limpos.add(t);
+  return limpos;
 }
 
 function hitRate(tokens: Set<string>, lexicon: Set<string>): number {
@@ -209,7 +255,43 @@ const LEX_SETS = Object.fromEntries(
   SKILL_DEPARTMENTS.map((d) => [d, new Set(DEPARTMENT_LEXICON[d])]),
 ) as Record<SkillDepartment, Set<string>>;
 
-export const LOW_CONFIDENCE_THRESHOLD = 0.18;
+function platformSignals(text: string): Set<string> {
+  const encontrados = new Set<string>();
+  for (const t of tokenize(text)) if (PLATFORM_STOPWORDS.has(t)) encontrados.add(t);
+  return encontrados;
+}
+
+/**
+ * Densidade de jargão + corroboração entre campos independentes.
+ * A densidade decide SE o tier dispara; os termos distintos e os campos com
+ * sinal decidem QUÃO confiável é o veredito.
+ */
+function platformEvidenceOf(input: { name: string; description?: string; tags?: string[] }): {
+  density: number;
+  confidence: number;
+} {
+  const primario = `${input.name} ${input.description ?? ''}`;
+  const tagsTexto = (input.tags ?? []).join(' ');
+  const brutos = tokenize(`${primario} ${tagsTexto}`);
+  if (brutos.size === 0) return { density: 0, confidence: 0 };
+
+  const sinaisPrimario = platformSignals(primario);
+  const sinaisTags = platformSignals(tagsTexto);
+  const distintos = new Set([...sinaisPrimario, ...sinaisTags]);
+
+  let plataforma = 0;
+  for (const t of brutos) if (PLATFORM_STOPWORDS.has(t)) plataforma += 1;
+  const density = plataforma / brutos.size;
+
+  const fieldsWithSignal = (sinaisPrimario.size > 0 ? 1 : 0) + (sinaisTags.size > 0 ? 1 : 0);
+
+  let confidence =
+    PLATFORM_TIER_CONFIDENCE + PLATFORM_EVIDENCE_STEP * Math.max(0, distintos.size - 1);
+  confidence = Math.min(confidence, PLATFORM_TIER_MAX_CONFIDENCE);
+  if (fieldsWithSignal < 2) confidence = Math.min(confidence, PLATFORM_SINGLE_FIELD_CAP);
+
+  return { density, confidence: Number(confidence.toFixed(3)) };
+}
 
 export function classifyDepartment(input: {
   name: string;
@@ -217,29 +299,68 @@ export function classifyDepartment(input: {
   tags?: string[];
   content?: string;
 }): Classification {
-  const primary = tokenize(`${input.name} ${input.description ?? ''}`);
-  const tagT = tokenize((input.tags ?? []).join(' '));
-  const contentT = input.content ? tokenize(input.content.slice(0, 4000)) : new Set<string>();
+  const primary = dropStopwords(tokenize(`${input.name} ${input.description ?? ''}`));
+  const tagT = dropStopwords(tokenize((input.tags ?? []).join(' ')));
+  const contentT = input.content
+    ? dropStopwords(tokenize(input.content.slice(0, 4000)))
+    : new Set<string>();
+
+  const scoreDe = (dep: SkillDepartment) => {
+    const lex = LEX_SETS[dep];
+    return 0.55 * hitRate(primary, lex) + 0.3 * hitRate(tagT, lex) + 0.15 * hitRate(contentT, lex);
+  };
 
   let best: SkillDepartment | null = null;
   let bestScore = 0;
-  for (const dep of SKILL_DEPARTMENTS) {
-    const lex = LEX_SETS[dep];
-    const score = 0.55 * hitRate(primary, lex) + 0.3 * hitRate(tagT, lex) + 0.15 * hitRate(contentT, lex);
+  for (const dep of DOMAIN_DEPARTMENTS) {
+    const score = scoreDe(dep);
     if (score > bestScore) {
       bestScore = score;
       best = dep;
     }
   }
-  // Score zero significa que nenhum léxico encostou no texto: não há rótulo,
-  // logo não há procedência a declarar.
-  const department = bestScore > 0 ? best : null;
+
+  const fallbackScore = scoreDe(FALLBACK_DEPARTMENT);
+
+  let confidence = Number(bestScore.toFixed(3));
+  let department: SkillDepartment | null = confidence > 0 ? best : null;
+  let tier: Classification['tier'] = department === null ? 'none' : 'domain';
+
+  // Agregador só vence quando nenhum domínio real produziu sinal utilizável.
+  if (confidence < LOW_CONFIDENCE_THRESHOLD && fallbackScore >= MIN_TRANSVERSAL_SCORE) {
+    department = FALLBACK_DEPARTMENT;
+    confidence = Number(fallbackScore.toFixed(3));
+    tier = 'transversal';
+  }
+
+  // Último recurso antes do vazio: texto saturado de jargão descreve
+  // ferramental de agentes, e ferramental é TI.
+  const plataforma = platformEvidenceOf(input);
+  const density = Number(plataforma.density.toFixed(3));
+  if (
+    tier !== 'transversal' &&
+    confidence < LOW_CONFIDENCE_THRESHOLD &&
+    density >= MIN_PLATFORM_DENSITY
+  ) {
+    department = PLATFORM_TIER_DEPARTMENT;
+    confidence = plataforma.confidence;
+    tier = 'platform';
+  } else if (department === null) {
+    tier = 'none';
+  }
+
+  const source: Classification['source'] =
+    tier === 'platform' ? 'platform_heuristic' : department ? 'heuristic' : 'unknown';
+
   return {
     department,
-    confidence: Number(bestScore.toFixed(3)),
-    source: department ? 'heuristic' : 'unknown',
+    confidence,
+    source,
+    tier,
+    needsReview: (tier === 'platform' || tier === 'domain') && confidence < LOW_CONFIDENCE_THRESHOLD,
   };
 }
+
 
 export function inferCategory(input: {
   name: string;
