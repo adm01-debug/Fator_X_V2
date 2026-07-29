@@ -151,6 +151,14 @@ export function SkillClassificationEfficacyCard({
   const justificativaValida = isOverrideReasonValid(justificativa);
 
   /**
+   * Diagnóstico consolidado por régua. Calculado num único lugar para que o
+   * selo exibido no topo nunca discorde dos alertas listados abaixo — antes,
+   * cada bloco recombinava instabilidade e overrides à sua maneira.
+   */
+  const governanca = useMemo(() => summarizeCalibrationGovernance(calibracoes), [calibracoes]);
+
+
+  /**
    * Exporta a lista já filtrada — o comitê leva exatamente o que está vendo,
    * sem reprocessar filtro fora da tela.
    */
