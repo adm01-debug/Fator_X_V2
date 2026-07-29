@@ -26,6 +26,8 @@
  *     como "classificador péssimo" em vez de "sem dados".
  */
 import { isDepartment, type SkillDepartment } from '@/config/skill-departments';
+import { PLATFORM_TIER_MAX_CONFIDENCE } from '@/services/skillDepartmentClassifier';
+
 
 /** Ações de auditoria emitidas por `decide_skill_reclassification`. */
 export const RECLASSIFICATION_AUDIT_ACTIONS = [
