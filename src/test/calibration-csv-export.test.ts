@@ -71,14 +71,26 @@ describe('buildCalibrationCsv', () => {
     expect(() => buildCalibrationCsv([calib({ at: 'nao-e-data' })])).not.toThrow();
   });
 
-  it('gera nome de arquivo ordenável por escopo', () => {
-    expect(calibrationCsvFilename('overridden', AGORA)).toBe('calibracoes-sob-alerta-2026-07-28.csv');
-    expect(calibrationCsvFilename('all', AGORA)).toBe('calibracoes-todas-2026-07-28.csv');
+  it('gera nome de arquivo ordenável por escopo e régua', () => {
+    // A régua entra no nome para evitar sobrescrita silenciosa entre
+    // exportações de escalas diferentes feitas no mesmo dia.
+    expect(calibrationCsvFilename('overridden', AGORA)).toBe(
+      'calibracoes-sob-alerta-todas-reguas-2026-07-28.csv',
+    );
+    expect(calibrationCsvFilename('all', AGORA)).toBe(
+      'calibracoes-todas-todas-reguas-2026-07-28.csv',
+    );
+    expect(calibrationCsvFilename('all', AGORA, 'dominio')).toBe(
+      'calibracoes-todas-dominio-2026-07-28.csv',
+    );
   });
 
   it('tolera Date inválida no nome do arquivo', () => {
-    expect(calibrationCsvFilename('all', new Date('x'))).toBe('calibracoes-todas-sem-data.csv');
+    expect(calibrationCsvFilename('all', new Date('x'))).toBe(
+      'calibracoes-todas-todas-reguas-sem-data.csv',
+    );
   });
+
 });
 
 describe('findStaleOverrides', () => {
