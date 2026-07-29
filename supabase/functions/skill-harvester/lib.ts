@@ -12,11 +12,31 @@ import {
 
 // ─────────────────────────────────────────── tokenização
 
+/**
+ * ATENÇÃO — espelho exato de `STOP_WORDS` em `src/services/skillRecommenderService.ts`.
+ *
+ * A lista daqui era maior ("use", "using", "from", "has"...) e o filtro de
+ * tamanho era mais permissivo (todo token com 2+ caracteres passava). O
+ * resultado não era um veredito diferente, era um DENOMINADOR diferente: o
+ * score normaliza por √(tokens), então dois conjuntos de tokens distintos
+ * produzem confianças distintas para o mesmo texto. Uma skill nascia com 0.55
+ * na coleta e virava 0.389 na reclassificação — sem que nada no dado tivesse
+ * mudado. Qualquer divergência aqui reabre esse buraco.
+ */
 const STOP_WORDS = new Set([
-  'a','o','as','os','de','da','do','das','dos','para','com','em','e','ou','que',
-  'um','uma','uns','umas','no','na','nos','nas','ao','por','sobre','the','and',
-  'or','to','of','is','be','are','was','were','in','on','at','for','with','this',
-  'that','you','your','can','will','use','using','from','has','have',
+  'a', 'o', 'as', 'os', 'de', 'da', 'do', 'das', 'dos', 'para', 'com', 'em',
+  'e', 'ou', 'que', 'um', 'uma', 'uns', 'umas', 'no', 'na', 'nos', 'nas',
+  'ao', 'à', 'às', 'aos', 'por', 'sobre', 'the', 'and', 'or', 'to', 'of',
+  'is', 'be', 'are', 'was', 'were', 'in', 'on', 'at', 'for', 'with',
+]);
+
+/**
+ * Siglas de 2 letras que carregam domínio (IA, BI, TI...). Tokens de 2
+ * caracteres são ruído por padrão — exceto estes.
+ */
+const SHORT_TERMS = new Set([
+  'ia', 'ai', 'bi', 'ti', 'qa', 'ux', 'ui', 'db', 'ml', 'nl', 'hr', 'rh',
+  'cs', 'go', 'js', 'ci', 'cd',
 ]);
 
 export function tokenize(text: string): Set<string> {
@@ -27,9 +47,14 @@ export function tokenize(text: string): Set<string> {
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/[^a-z0-9\s]/g, ' ')
       .split(/\s+/)
-      .filter((t) => t.length >= 2 && !STOP_WORDS.has(t)),
+      .filter((t) => {
+        if (STOP_WORDS.has(t)) return false;
+        if (t.length >= 3) return true;
+        return t.length === 2 && SHORT_TERMS.has(t);
+      }),
   );
 }
+
 
 // ─────────────────────────────────────────── sanitização
 
