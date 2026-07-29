@@ -43,7 +43,7 @@ function inputsBase(calibrations: readonly ThresholdCalibration[]) {
   return {
     ingestion: summarizeIngestion([], { now: NOW }),
     queue: summarizeQueue([], { now: NOW }),
-    human: summarizeHumanReclassification([], { now: NOW }),
+    human: summarizeHumanReclassification([]),
     calibrations,
     now: NOW,
   };
