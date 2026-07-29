@@ -277,10 +277,12 @@ export function parseClassificationDecisions(
       confidence: clamp01(meta.confidence),
       margin: clamp01(meta.margin),
       origin: origin(meta.source),
-      previousSource: decisionSource(meta.previous_department_source),
+      previousSource: previousSource,
       previousConfidence: clamp01(meta.previous_department_confidence),
       registryTouched,
+      scale: scaleOf(previousSource),
       verdict: deriveVerdict({ approved, from, registryTouched }),
+
       decidedAt: text(row.created_at) || null,
       decidedAtMs: epoch(row.created_at),
       reason: text(meta.decision_reason).slice(0, 1000),
