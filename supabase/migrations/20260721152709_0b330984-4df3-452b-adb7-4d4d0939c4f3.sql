@@ -14,9 +14,9 @@ CREATE TABLE IF NOT EXISTS public.openclaw_deployments (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_openclaw_deployments_agent ON public.openclaw_deployments(agent_id);
-CREATE INDEX idx_openclaw_deployments_workspace ON public.openclaw_deployments(workspace_id);
-CREATE INDEX idx_openclaw_deployments_status ON public.openclaw_deployments(status);
+CREATE INDEX IF NOT EXISTS idx_openclaw_deployments_agent ON public.openclaw_deployments(agent_id);
+CREATE INDEX IF NOT EXISTS idx_openclaw_deployments_workspace ON public.openclaw_deployments(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_openclaw_deployments_status ON public.openclaw_deployments(status);
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.openclaw_deployments TO authenticated;
 GRANT ALL ON public.openclaw_deployments TO service_role;

@@ -88,12 +88,12 @@ CREATE POLICY "spans service only" ON public.spans
 -- conter a chave de partição). Consequência real e aceita: dois rastros com o
 -- mesmo trace_id em MESES diferentes deixam de colidir. Só afeta um rastro que
 -- nasça exatamente na virada do mês.
-CREATE UNIQUE INDEX idx_traces_trace_id ON public.traces (trace_id, created_at);
-CREATE INDEX idx_traces_created ON public.traces USING brin (created_at);
-CREATE INDEX idx_traces_agent   ON public.traces (agent_id, created_at DESC) WHERE agent_id IS NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_traces_trace_id ON public.traces (trace_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_traces_created ON public.traces USING brin (created_at);
+CREATE INDEX IF NOT EXISTS idx_traces_agent   ON public.traces (agent_id, created_at DESC) WHERE agent_id IS NOT NULL;
 
-CREATE INDEX idx_spans_trace   ON public.spans (trace_id, start_time);
-CREATE INDEX idx_spans_created ON public.spans USING brin (created_at);
+CREATE INDEX IF NOT EXISTS idx_spans_trace   ON public.spans (trace_id, start_time);
+CREATE INDEX IF NOT EXISTS idx_spans_created ON public.spans USING brin (created_at);
 
 -- ═══════════════════════════════════════════════════════════════
 -- 3. ensure_monthly_partitions passa a ler o catálogo

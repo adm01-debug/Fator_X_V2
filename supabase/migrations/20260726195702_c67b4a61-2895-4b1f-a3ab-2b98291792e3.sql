@@ -15,9 +15,9 @@ CREATE TABLE IF NOT EXISTS public.crm_companies (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deleted_at TIMESTAMPTZ
 );
-CREATE UNIQUE INDEX crm_companies_ws_external_ref_key ON public.crm_companies (workspace_id, external_ref) WHERE external_ref IS NOT NULL;
-CREATE INDEX crm_companies_workspace_idx ON public.crm_companies (workspace_id) WHERE deleted_at IS NULL;
-CREATE INDEX crm_companies_domain_idx ON public.crm_companies (workspace_id, domain);
+CREATE UNIQUE INDEX IF NOT EXISTS crm_companies_ws_external_ref_key ON public.crm_companies (workspace_id, external_ref) WHERE external_ref IS NOT NULL;
+CREATE INDEX IF NOT EXISTS crm_companies_workspace_idx ON public.crm_companies (workspace_id) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS crm_companies_domain_idx ON public.crm_companies (workspace_id, domain);
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.crm_companies TO authenticated;
 GRANT ALL ON public.crm_companies TO service_role;
@@ -41,10 +41,10 @@ CREATE TABLE IF NOT EXISTS public.crm_contacts (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deleted_at TIMESTAMPTZ
 );
-CREATE UNIQUE INDEX crm_contacts_ws_external_ref_key ON public.crm_contacts (workspace_id, external_ref) WHERE external_ref IS NOT NULL;
-CREATE INDEX crm_contacts_workspace_idx ON public.crm_contacts (workspace_id) WHERE deleted_at IS NULL;
-CREATE INDEX crm_contacts_company_idx ON public.crm_contacts (company_id);
-CREATE INDEX crm_contacts_email_idx ON public.crm_contacts (workspace_id, email);
+CREATE UNIQUE INDEX IF NOT EXISTS crm_contacts_ws_external_ref_key ON public.crm_contacts (workspace_id, external_ref) WHERE external_ref IS NOT NULL;
+CREATE INDEX IF NOT EXISTS crm_contacts_workspace_idx ON public.crm_contacts (workspace_id) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS crm_contacts_company_idx ON public.crm_contacts (company_id);
+CREATE INDEX IF NOT EXISTS crm_contacts_email_idx ON public.crm_contacts (workspace_id, email);
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.crm_contacts TO authenticated;
 GRANT ALL ON public.crm_contacts TO service_role;
@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS public.crm_pipelines (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deleted_at TIMESTAMPTZ
 );
-CREATE INDEX crm_pipelines_workspace_idx ON public.crm_pipelines (workspace_id) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS crm_pipelines_workspace_idx ON public.crm_pipelines (workspace_id) WHERE deleted_at IS NULL;
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.crm_pipelines TO authenticated;
 GRANT ALL ON public.crm_pipelines TO service_role;
@@ -86,8 +86,8 @@ CREATE TABLE IF NOT EXISTS public.crm_stages (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deleted_at TIMESTAMPTZ
 );
-CREATE INDEX crm_stages_pipeline_idx ON public.crm_stages (pipeline_id, position);
-CREATE INDEX crm_stages_workspace_idx ON public.crm_stages (workspace_id) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS crm_stages_pipeline_idx ON public.crm_stages (pipeline_id, position);
+CREATE INDEX IF NOT EXISTS crm_stages_workspace_idx ON public.crm_stages (workspace_id) WHERE deleted_at IS NULL;
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.crm_stages TO authenticated;
 GRANT ALL ON public.crm_stages TO service_role;
@@ -118,13 +118,13 @@ CREATE TABLE IF NOT EXISTS public.crm_deals (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deleted_at TIMESTAMPTZ
 );
-CREATE UNIQUE INDEX crm_deals_ws_external_ref_key ON public.crm_deals (workspace_id, external_ref) WHERE external_ref IS NOT NULL;
-CREATE INDEX crm_deals_workspace_idx ON public.crm_deals (workspace_id, status) WHERE deleted_at IS NULL;
-CREATE INDEX crm_deals_stage_idx ON public.crm_deals (stage_id);
-CREATE INDEX crm_deals_pipeline_idx ON public.crm_deals (pipeline_id);
-CREATE INDEX crm_deals_company_idx ON public.crm_deals (company_id);
-CREATE INDEX crm_deals_contact_idx ON public.crm_deals (contact_id);
-CREATE INDEX crm_deals_last_activity_idx ON public.crm_deals (workspace_id, last_activity_at);
+CREATE UNIQUE INDEX IF NOT EXISTS crm_deals_ws_external_ref_key ON public.crm_deals (workspace_id, external_ref) WHERE external_ref IS NOT NULL;
+CREATE INDEX IF NOT EXISTS crm_deals_workspace_idx ON public.crm_deals (workspace_id, status) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS crm_deals_stage_idx ON public.crm_deals (stage_id);
+CREATE INDEX IF NOT EXISTS crm_deals_pipeline_idx ON public.crm_deals (pipeline_id);
+CREATE INDEX IF NOT EXISTS crm_deals_company_idx ON public.crm_deals (company_id);
+CREATE INDEX IF NOT EXISTS crm_deals_contact_idx ON public.crm_deals (contact_id);
+CREATE INDEX IF NOT EXISTS crm_deals_last_activity_idx ON public.crm_deals (workspace_id, last_activity_at);
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.crm_deals TO authenticated;
 GRANT ALL ON public.crm_deals TO service_role;
@@ -150,10 +150,10 @@ CREATE TABLE IF NOT EXISTS public.crm_activities (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deleted_at TIMESTAMPTZ
 );
-CREATE INDEX crm_activities_workspace_idx ON public.crm_activities (workspace_id, occurred_at DESC);
-CREATE INDEX crm_activities_deal_idx ON public.crm_activities (deal_id, occurred_at DESC);
-CREATE INDEX crm_activities_contact_idx ON public.crm_activities (contact_id);
-CREATE INDEX crm_activities_company_idx ON public.crm_activities (company_id);
+CREATE INDEX IF NOT EXISTS crm_activities_workspace_idx ON public.crm_activities (workspace_id, occurred_at DESC);
+CREATE INDEX IF NOT EXISTS crm_activities_deal_idx ON public.crm_activities (deal_id, occurred_at DESC);
+CREATE INDEX IF NOT EXISTS crm_activities_contact_idx ON public.crm_activities (contact_id);
+CREATE INDEX IF NOT EXISTS crm_activities_company_idx ON public.crm_activities (company_id);
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.crm_activities TO authenticated;
 GRANT ALL ON public.crm_activities TO service_role;

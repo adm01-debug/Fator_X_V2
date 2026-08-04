@@ -47,8 +47,8 @@ CREATE POLICY "icp_delete_own_workspace" ON public.crm_icp_profiles
   FOR DELETE TO authenticated
   USING (workspace_id IN (SELECT workspace_id FROM public.workspace_members WHERE user_id = (SELECT auth.uid())));
 
-CREATE INDEX idx_crm_icp_workspace ON public.crm_icp_profiles (workspace_id) WHERE deleted_at IS NULL;
-CREATE UNIQUE INDEX idx_crm_icp_one_default ON public.crm_icp_profiles (workspace_id) WHERE is_default AND deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_crm_icp_workspace ON public.crm_icp_profiles (workspace_id) WHERE deleted_at IS NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_crm_icp_one_default ON public.crm_icp_profiles (workspace_id) WHERE is_default AND deleted_at IS NULL;
 
 CREATE TRIGGER trg_crm_icp_updated_at
   BEFORE UPDATE ON public.crm_icp_profiles

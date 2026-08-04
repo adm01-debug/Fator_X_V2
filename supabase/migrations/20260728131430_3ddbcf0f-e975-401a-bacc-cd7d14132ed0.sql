@@ -76,19 +76,19 @@ CREATE POLICY "Usuários gerenciam mensagens das próprias conversas"
 
 -- ---------- Índices ----------
 -- Listagem da sidebar: threads do usuário para um agente, mais recentes primeiro.
-CREATE INDEX idx_chat_threads_user_agent
+CREATE INDEX IF NOT EXISTS idx_chat_threads_user_agent
   ON public.chat_threads (user_id, agent_id, last_message_at DESC)
   WHERE is_archived = false;
 
 -- Suporte ao EXISTS da política de mensagens (index-only scan).
-CREATE INDEX idx_chat_threads_id_user ON public.chat_threads (id, user_id);
+CREATE INDEX IF NOT EXISTS idx_chat_threads_id_user ON public.chat_threads (id, user_id);
 
 -- Carregamento cronológico de uma thread.
-CREATE INDEX idx_chat_messages_thread_created
+CREATE INDEX IF NOT EXISTS idx_chat_messages_thread_created
   ON public.chat_messages (thread_id, created_at);
 
 -- Travessia de ramificações (filhos de uma mensagem).
-CREATE INDEX idx_chat_messages_parent
+CREATE INDEX IF NOT EXISTS idx_chat_messages_parent
   ON public.chat_messages (parent_id)
   WHERE parent_id IS NOT NULL;
 

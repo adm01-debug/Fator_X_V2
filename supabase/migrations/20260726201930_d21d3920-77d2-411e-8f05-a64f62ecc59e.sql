@@ -26,8 +26,8 @@ CREATE POLICY "crm_cadences_member_access" ON public.crm_cadences FOR ALL TO aut
   USING (workspace_id IN (SELECT public.get_user_workspace_ids((SELECT auth.uid()))))
   WITH CHECK (workspace_id IN (SELECT public.get_user_workspace_ids((SELECT auth.uid()))));
 
-CREATE INDEX idx_crm_cadences_workspace ON public.crm_cadences (workspace_id) WHERE deleted_at IS NULL;
-CREATE INDEX idx_crm_cadences_trigger ON public.crm_cadences (workspace_id, trigger_tier)
+CREATE INDEX IF NOT EXISTS idx_crm_cadences_workspace ON public.crm_cadences (workspace_id) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_crm_cadences_trigger ON public.crm_cadences (workspace_id, trigger_tier)
   WHERE is_active AND deleted_at IS NULL;
 
 CREATE TRIGGER trg_crm_cadences_updated_at
@@ -59,8 +59,8 @@ CREATE POLICY "crm_cadence_steps_member_access" ON public.crm_cadence_steps FOR 
   USING (workspace_id IN (SELECT public.get_user_workspace_ids((SELECT auth.uid()))))
   WITH CHECK (workspace_id IN (SELECT public.get_user_workspace_ids((SELECT auth.uid()))));
 
-CREATE INDEX idx_crm_cadence_steps_cadence ON public.crm_cadence_steps (cadence_id, position);
-CREATE INDEX idx_crm_cadence_steps_workspace ON public.crm_cadence_steps (workspace_id);
+CREATE INDEX IF NOT EXISTS idx_crm_cadence_steps_cadence ON public.crm_cadence_steps (cadence_id, position);
+CREATE INDEX IF NOT EXISTS idx_crm_cadence_steps_workspace ON public.crm_cadence_steps (workspace_id);
 
 CREATE TRIGGER trg_crm_cadence_steps_updated_at
   BEFORE UPDATE ON public.crm_cadence_steps
@@ -95,18 +95,18 @@ CREATE POLICY "crm_cadence_enrollments_member_access" ON public.crm_cadence_enro
   WITH CHECK (workspace_id IN (SELECT public.get_user_workspace_ids((SELECT auth.uid()))));
 
 -- Um negócio só pode ter UMA inscrição ativa por cadência; históricas são livres.
-CREATE UNIQUE INDEX idx_crm_enrollments_unique_active
+CREATE UNIQUE INDEX IF NOT EXISTS idx_crm_enrollments_unique_active
   ON public.crm_cadence_enrollments (cadence_id, deal_id)
   WHERE status = 'active';
 
 -- Fila do runner: varredura por (status, next_run_at) é o caminho quente.
-CREATE INDEX idx_crm_enrollments_due
+CREATE INDEX IF NOT EXISTS idx_crm_enrollments_due
   ON public.crm_cadence_enrollments (next_run_at)
   WHERE status = 'active';
 
-CREATE INDEX idx_crm_enrollments_workspace ON public.crm_cadence_enrollments (workspace_id, status);
-CREATE INDEX idx_crm_enrollments_deal ON public.crm_cadence_enrollments (deal_id);
-CREATE INDEX idx_crm_enrollments_contact ON public.crm_cadence_enrollments (contact_id);
+CREATE INDEX IF NOT EXISTS idx_crm_enrollments_workspace ON public.crm_cadence_enrollments (workspace_id, status);
+CREATE INDEX IF NOT EXISTS idx_crm_enrollments_deal ON public.crm_cadence_enrollments (deal_id);
+CREATE INDEX IF NOT EXISTS idx_crm_enrollments_contact ON public.crm_cadence_enrollments (contact_id);
 
 CREATE TRIGGER trg_crm_cadence_enrollments_updated_at
   BEFORE UPDATE ON public.crm_cadence_enrollments

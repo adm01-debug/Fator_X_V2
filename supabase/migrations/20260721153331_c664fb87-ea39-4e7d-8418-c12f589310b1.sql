@@ -22,8 +22,8 @@ CREATE TABLE IF NOT EXISTS public.openclaw_whatsapp_instances (
   UNIQUE (workspace_id, instance_name)
 );
 
-CREATE INDEX idx_openclaw_whatsapp_workspace ON public.openclaw_whatsapp_instances(workspace_id);
-CREATE INDEX idx_openclaw_whatsapp_status ON public.openclaw_whatsapp_instances(status);
+CREATE INDEX IF NOT EXISTS idx_openclaw_whatsapp_workspace ON public.openclaw_whatsapp_instances(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_openclaw_whatsapp_status ON public.openclaw_whatsapp_instances(status);
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.openclaw_whatsapp_instances TO authenticated;
 GRANT ALL ON public.openclaw_whatsapp_instances TO service_role;
@@ -71,9 +71,9 @@ CREATE TABLE IF NOT EXISTS public.openclaw_whatsapp_messages (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_openclaw_whatsapp_msgs_workspace ON public.openclaw_whatsapp_messages(workspace_id, created_at DESC);
-CREATE INDEX idx_openclaw_whatsapp_msgs_phone ON public.openclaw_whatsapp_messages(workspace_id, remote_phone, created_at DESC);
-CREATE UNIQUE INDEX idx_openclaw_whatsapp_msgs_external ON public.openclaw_whatsapp_messages(instance_id, external_message_id) WHERE external_message_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_openclaw_whatsapp_msgs_workspace ON public.openclaw_whatsapp_messages(workspace_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_openclaw_whatsapp_msgs_phone ON public.openclaw_whatsapp_messages(workspace_id, remote_phone, created_at DESC);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_openclaw_whatsapp_msgs_external ON public.openclaw_whatsapp_messages(instance_id, external_message_id) WHERE external_message_id IS NOT NULL;
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.openclaw_whatsapp_messages TO authenticated;
 GRANT ALL ON public.openclaw_whatsapp_messages TO service_role;

@@ -46,13 +46,13 @@ CREATE TABLE IF NOT EXISTS public.skill_reclassification_reviews (
 
 -- Só UMA pendência por skill: duas propostas concorrentes gerariam decisões
 -- contraditórias sobre o mesmo registro.
-CREATE UNIQUE INDEX idx_skill_reclass_one_pending
+CREATE UNIQUE INDEX IF NOT EXISTS idx_skill_reclass_one_pending
   ON public.skill_reclassification_reviews (skill_id)
   WHERE status = 'pendente';
 
-CREATE INDEX idx_skill_reclass_status_created
+CREATE INDEX IF NOT EXISTS idx_skill_reclass_status_created
   ON public.skill_reclassification_reviews (status, created_at DESC);
-CREATE INDEX idx_skill_reclass_skill
+CREATE INDEX IF NOT EXISTS idx_skill_reclass_skill
   ON public.skill_reclassification_reviews (skill_id, created_at DESC);
 
 GRANT SELECT, INSERT, UPDATE ON public.skill_reclassification_reviews TO authenticated;
