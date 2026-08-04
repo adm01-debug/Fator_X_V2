@@ -280,13 +280,17 @@ BEGIN
     PERFORM 1 FROM pg_proc WHERE proname = 'lgpd_send_review_reminders';
     PERFORM 1 FROM pg_proc WHERE proname = 'lgpd_check_sar_deadlines';
 
-    -- Confirma que os cron jobs foram criados
-    IF NOT EXISTS (
-        SELECT 1 FROM cron.job
-        WHERE jobname IN ('lgpd-retention-daily','lgpd-review-reminders',
-                         'lgpd-sar-deadline-check','lgpd-cleanup-auth-attempts')
-    ) THEN
-        RAISE NOTICE 'WARNING: pg_cron jobs may not be available in this Supabase plan';
+    -- Confirma que os cron jobs foram criados (só verifica se pg_cron disponível)
+    IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+        IF NOT EXISTS (
+            SELECT 1 FROM cron.job
+            WHERE jobname IN ('lgpd-retention-daily','lgpd-review-reminders',
+                             'lgpd-sar-deadline-check','lgpd-cleanup-auth-attempts')
+        ) THEN
+            RAISE NOTICE 'WARNING: pg_cron jobs may not be available in this Supabase plan';
+        END IF;
+    ELSE
+        RAISE NOTICE 'INFO: pg_cron not available — skipping cron job verification';
     END IF;
 
     RAISE NOTICE 'ETAPAS 32-35 OK: 3 LGPD functions + 4 pg_cron jobs';
