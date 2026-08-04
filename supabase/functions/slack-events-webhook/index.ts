@@ -8,6 +8,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.50.0";
 import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
 import { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse } from "../_shared/mod.ts";
 import { verifySlackSignature, slackApiCall, isDuplicateEvent } from "../_shared/slack.ts";
+import { SlackEventsWebhookContracts } from "../_shared/contracts.ts";
 
 interface SlackEventEnvelope {
   type: "url_verification" | "event_callback";
@@ -62,12 +63,28 @@ Deno.serve(async (req) => {
     return errorResponse(req, verification.reason ?? "Invalid signature", 401);
   }
 
-  let envelope: SlackEventEnvelope;
+  let rawEnvelope: unknown;
   try {
-    envelope = JSON.parse(verification.body!) as SlackEventEnvelope;
+    rawEnvelope = JSON.parse(verification.body!);
   } catch {
     return errorResponse(req, "Invalid JSON", 400);
   }
+
+  const slackValidation = SlackEventsWebhookContracts.v1.safeParse(rawEnvelope);
+  if (!slackValidation.success) {
+    const corsHeaders = getCorsHeaders(req);
+    return new Response(JSON.stringify({
+      error: 'Validation failed',
+      code: 'VALIDATION_ERROR',
+      message: 'The request payload is invalid.',
+      fields: slackValidation.error.issues.map(i => ({
+        field: i.path.join('.') || '(root)',
+        message: i.message,
+        code: i.code,
+      })),
+    }), { status: 422, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+  }
+  const envelope: SlackEventEnvelope = slackValidation.data as SlackEventEnvelope;
 
   if (envelope.type === "url_verification") {
     return new Response(envelope.challenge ?? "", {
