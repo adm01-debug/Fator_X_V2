@@ -76,7 +76,7 @@ CREATE POLICY "cred_vault_member_read"
 CREATE POLICY "cred_vault_service_role"
     ON public.credential_vault
     FOR ALL
-    USING (auth.jwt_role() = 'service_role');
+    USING (current_setting('request.jwt.claim.role', true) = 'service_role');
 
 -- ── PASSO 2: credential_audit_logs ──────────────────────────────
 -- credential_audit_logs precisa do workspace_id para filtrar corretamente
@@ -140,7 +140,7 @@ CREATE POLICY "cred_audit_member_read"
 CREATE POLICY "cred_audit_service_role"
     ON public.credential_audit_logs
     FOR ALL
-    USING (auth.jwt_role() = 'service_role');
+    USING (current_setting('request.jwt.claim.role', true) = 'service_role');
 
 COMMIT;
 

@@ -40,7 +40,7 @@ CREATE POLICY "agent_skills_workspace_read" ON public.agent_skills
         workspace_id IN (
             SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid()
         )
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 CREATE POLICY "agent_skills_workspace_insert" ON public.agent_skills
@@ -50,7 +50,7 @@ CREATE POLICY "agent_skills_workspace_insert" ON public.agent_skills
             WHERE user_id = auth.uid()
               AND role IN ('owner', 'admin', 'member')
         )
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 CREATE POLICY "agent_skills_workspace_update" ON public.agent_skills
@@ -60,7 +60,7 @@ CREATE POLICY "agent_skills_workspace_update" ON public.agent_skills
             WHERE user_id = auth.uid()
               AND role IN ('owner', 'admin', 'member')
         )
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 CREATE POLICY "agent_skills_workspace_delete" ON public.agent_skills
@@ -70,7 +70,7 @@ CREATE POLICY "agent_skills_workspace_delete" ON public.agent_skills
             WHERE user_id = auth.uid()
               AND role IN ('owner', 'admin')
         )
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 -- PASSO 2: skill_registry ────────────────────────────────────────
@@ -102,7 +102,7 @@ CREATE POLICY "skill_registry_workspace_insert" ON public.skill_registry
             WHERE user_id = auth.uid()
               AND role IN ('owner', 'admin')
         ) AND workspace_id IS NOT NULL)
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 CREATE POLICY "skill_registry_workspace_update" ON public.skill_registry
@@ -112,7 +112,7 @@ CREATE POLICY "skill_registry_workspace_update" ON public.skill_registry
             WHERE user_id = auth.uid()
               AND role IN ('owner', 'admin')
         ) AND workspace_id IS NOT NULL)
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 -- Only owner/workspace admins de uma skill custom podem deletar
@@ -123,7 +123,7 @@ CREATE POLICY "skill_registry_workspace_delete" ON public.skill_registry
             WHERE user_id = auth.uid()
               AND role = 'owner'
         ) AND workspace_id IS NOT NULL)
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 -- PASSO 3: agent_installed_skills ────────────────────────────────
@@ -153,7 +153,7 @@ CREATE POLICY "agent_installed_skills_workspace_read" ON public.agent_installed_
         workspace_id IN (
             SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid()
         )
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 CREATE POLICY "agent_installed_skills_workspace_insert" ON public.agent_installed_skills
@@ -163,7 +163,7 @@ CREATE POLICY "agent_installed_skills_workspace_insert" ON public.agent_installe
             WHERE user_id = auth.uid()
               AND role IN ('owner', 'admin', 'member')
         )
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 CREATE POLICY "agent_installed_skills_workspace_update" ON public.agent_installed_skills
@@ -173,7 +173,7 @@ CREATE POLICY "agent_installed_skills_workspace_update" ON public.agent_installe
             WHERE user_id = auth.uid()
               AND role IN ('owner', 'admin', 'member')
         )
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 CREATE POLICY "agent_installed_skills_workspace_delete" ON public.agent_installed_skills
@@ -183,7 +183,7 @@ CREATE POLICY "agent_installed_skills_workspace_delete" ON public.agent_installe
             WHERE user_id = auth.uid()
               AND role IN ('owner', 'admin')
         )
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 COMMIT;

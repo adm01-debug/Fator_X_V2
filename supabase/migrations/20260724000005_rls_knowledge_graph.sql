@@ -48,7 +48,7 @@ CREATE POLICY "knowledge_entities_workspace_all" ON public.knowledge_entities
             WHERE user_id = auth.uid()
               AND role IN ('owner', 'admin', 'member')
         )
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 -- Entidades globais (workspace_id IS NULL): público para leitura
@@ -88,7 +88,7 @@ CREATE POLICY "knowledge_relations_workspace_all" ON public.knowledge_relations
             SELECT workspace_id FROM public.workspace_members
             WHERE user_id = auth.uid()
         )
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 -- PASSO 3: agent_memories_v2 ─────────────────────────────────────
@@ -125,7 +125,7 @@ CREATE POLICY "agent_memories_v2_workspace_read" ON public.agent_memories_v2
             SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid()
         )
         OR workspace_id IS NULL  -- memórias globais de sistema
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 -- Inserção: agentes ou service_role
@@ -135,7 +135,7 @@ CREATE POLICY "agent_memories_v2_workspace_insert" ON public.agent_memories_v2
             SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid()
         ) AND workspace_id IS NOT NULL)
         OR workspace_id IS NULL
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 -- Update/Delete: membros do workspace ou service_role
@@ -145,7 +145,7 @@ CREATE POLICY "agent_memories_v2_workspace_update" ON public.agent_memories_v2
             SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid()
         )
         OR workspace_id IS NULL
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 CREATE POLICY "agent_memories_v2_workspace_delete" ON public.agent_memories_v2
@@ -156,7 +156,7 @@ CREATE POLICY "agent_memories_v2_workspace_delete" ON public.agent_memories_v2
               AND role IN ('owner', 'admin')
         )
         OR workspace_id IS NULL
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 -- PASSO 4: entity_resolution_logs ────────────────────────────────
@@ -184,7 +184,7 @@ CREATE POLICY "entity_resolution_logs_workspace_all" ON public.entity_resolution
         workspace_id IN (
             SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid()
         )
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 COMMIT;

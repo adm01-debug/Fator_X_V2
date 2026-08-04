@@ -54,7 +54,7 @@ DROP POLICY IF EXISTS "Users can insert own audit logs" ON public.audit_log;
 
 -- service_role: INSERT (Edge Functions e cron jobs insertam via service_role)
 CREATE POLICY "audit_log_service_insert" ON public.audit_log
-    FOR INSERT WITH CHECK (auth.jwt_role() = 'service_role');
+    FOR INSERT WITH CHECK (current_setting('request.jwt.claim.role', true) = 'service_role');
 
 -- Admins + owners do workspace leem logs do workspace
 CREATE POLICY "audit_log_workspace_read" ON public.audit_log
@@ -71,7 +71,7 @@ CREATE POLICY "audit_log_workspace_read" ON public.audit_log
             -- Own logs são sempre visíveis
             user_id = auth.uid()
         )
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 -- UPDATE/DELETE: apenas service_role (para operações de migração legítimas)

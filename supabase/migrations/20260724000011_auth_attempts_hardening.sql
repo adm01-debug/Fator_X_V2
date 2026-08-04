@@ -39,12 +39,12 @@ ALTER TABLE public.account_lockouts ENABLE ROW LEVEL SECURITY;
 
 -- service_role insere (Edge Functions)
 CREATE POLICY "lockouts_service_insert" ON public.account_lockouts
-    FOR INSERT WITH CHECK (auth.jwt_role() = 'service_role');
+    FOR INSERT WITH CHECK (current_setting('request.jwt.claim.role', true) = 'service_role');
 
 -- service_role + admins leem (para monitorar)
 CREATE POLICY "lockouts_admin_read" ON public.account_lockouts
     FOR SELECT USING (
-        auth.jwt_role() = 'service_role'
+        current_setting('request.jwt.claim.role', true) = 'service_role'
         OR EXISTS (
             SELECT 1 FROM public.user_roles
             WHERE user_id = auth.uid()
@@ -54,7 +54,7 @@ CREATE POLICY "lockouts_admin_read" ON public.account_lockouts
 
 -- service_role + admins deletam (para unlock manual)
 CREATE POLICY "lockouts_admin_delete" ON public.account_lockouts
-    FOR DELETE USING (auth.jwt_role() = 'service_role'
+    FOR DELETE USING (current_setting('request.jwt.claim.role', true) = 'service_role'
         OR EXISTS (
             SELECT 1 FROM public.user_roles
             WHERE user_id = auth.uid()
@@ -80,7 +80,7 @@ CREATE INDEX IF NOT EXISTS idx_ip_rate_limits_ip ON public.ip_rate_limits(ip_add
 ALTER TABLE public.ip_rate_limits ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "ip_rate_service" ON public.ip_rate_limits
-    FOR ALL USING (auth.jwt_role() = 'service_role');
+    FOR ALL USING (current_setting('request.jwt.claim.role', true) = 'service_role');
 
 -- PASSO 3: Ampliar auth_attempts com campos para captcha
 DO $$

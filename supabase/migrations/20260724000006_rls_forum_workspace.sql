@@ -37,7 +37,7 @@ CREATE POLICY "help_centers_workspace_read" ON public.help_centers
             SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid()
         )
         OR is_published = true
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 CREATE POLICY "help_centers_workspace_write" ON public.help_centers
@@ -47,7 +47,7 @@ CREATE POLICY "help_centers_workspace_write" ON public.help_centers
             WHERE user_id = auth.uid()
               AND role IN ('owner', 'admin')
         )
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 -- PASSO 2: forum_threads ────────────────────────────────────────
@@ -94,7 +94,7 @@ CREATE POLICY "forum_threads_workspace_read" ON public.forum_threads
                 WHERE wm.user_id = auth.uid()
             )
         )
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 -- INSERT: workspace-scoped (membro) + published
@@ -108,7 +108,7 @@ CREATE POLICY "forum_threads_workspace_insert" ON public.forum_threads
                   AND hc.workspace_id IS NOT NULL
             )
         )
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 -- UPDATE: autor da thread ou admin do workspace
@@ -128,7 +128,7 @@ CREATE POLICY "forum_threads_workspace_update" ON public.forum_threads
                   AND wm.role IN ('owner', 'admin')
             )
         )
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 -- DELETE: admin do workspace
@@ -141,7 +141,7 @@ CREATE POLICY "forum_threads_workspace_delete" ON public.forum_threads
               AND wm.role IN ('owner', 'admin')
         )
         OR created_by = auth.uid()
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 -- PASSO 3: forum_posts ──────────────────────────────────────────
@@ -188,7 +188,7 @@ CREATE POLICY "forum_posts_workspace_read" ON public.forum_posts
                 WHERE wm.user_id = auth.uid()
             )
         )
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 CREATE POLICY "forum_posts_workspace_insert" ON public.forum_posts
@@ -202,19 +202,19 @@ CREATE POLICY "forum_posts_workspace_insert" ON public.forum_posts
                   AND hc.workspace_id IS NOT NULL
             )
         )
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 CREATE POLICY "forum_posts_workspace_update" ON public.forum_posts
     FOR UPDATE USING (
         created_by = auth.uid()
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 CREATE POLICY "forum_posts_workspace_delete" ON public.forum_posts
     FOR DELETE USING (
         created_by = auth.uid()
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 COMMIT;

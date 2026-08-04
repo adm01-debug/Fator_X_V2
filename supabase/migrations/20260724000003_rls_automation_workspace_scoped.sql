@@ -269,13 +269,13 @@ BEGIN
     EXECUTE format(
         'CREATE POLICY %I ON public.%I FOR ALL USING (' ||
         'workspace_id IN (SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() AND role IN (''owner'',''admin''))' ||
-        ' OR auth.jwt_role() = %L)',
+        ' OR current_setting('request.jwt.claim.role', true) = %L)',
         p_table_name || '_admin_workspace', p_table_name, 'service_role'
     );
     EXECUTE format(
         'CREATE POLICY %I ON public.%I FOR SELECT USING (' ||
         'workspace_id IN (SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid())' ||
-        ' OR auth.jwt_role() = %L)',
+        ' OR current_setting('request.jwt.claim.role', true) = %L)',
         p_table_name || '_member_read', p_table_name, 'service_role'
     );
 END;
@@ -299,7 +299,7 @@ CREATE POLICY "notif_tpl_public_read" ON public.notification_templates
 CREATE POLICY "notif_tpl_workspace_write" ON public.notification_templates
     FOR ALL USING (workspace_id IN (SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() AND role IN ('owner','admin')));
 CREATE POLICY "notif_tpl_service_role" ON public.notification_templates
-    FOR ALL USING (auth.jwt_role() = 'service_role');
+    FOR ALL USING (current_setting('request.jwt.claim.role', true) = 'service_role');
 
 -- automation_templates: marketplace público para leitura
 DROP POLICY IF EXISTS "auto_tpl_all" ON public.automation_templates;
@@ -309,7 +309,7 @@ CREATE POLICY "auto_tpl_public_read" ON public.automation_templates
 CREATE POLICY "auto_tpl_workspace_write" ON public.automation_templates
     FOR ALL USING (workspace_id IN (SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() AND role IN ('owner','admin')));
 CREATE POLICY "auto_tpl_service_role" ON public.automation_templates
-    FOR ALL USING (auth.jwt_role() = 'service_role');
+    FOR ALL USING (current_setting('request.jwt.claim.role', true) = 'service_role');
 
 -- connector_registry: marketplace global
 DROP POLICY IF EXISTS "conn_reg_all" ON public.connector_registry;
@@ -318,7 +318,7 @@ CREATE POLICY "conn_reg_public_read" ON public.connector_registry
 CREATE POLICY "conn_reg_workspace_write" ON public.connector_registry
     FOR ALL USING (workspace_id IN (SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() AND role IN ('owner','admin')));
 CREATE POLICY "conn_reg_service_role" ON public.connector_registry
-    FOR ALL USING (auth.jwt_role() = 'service_role');
+    FOR ALL USING (current_setting('request.jwt.claim.role', true) = 'service_role');
 
 -- notifications: membro do workspace ou NULL (broadcast)
 DROP POLICY IF EXISTS "notif_all" ON public.notifications;
@@ -327,7 +327,7 @@ CREATE POLICY "notif_workspace_read" ON public.notifications
 CREATE POLICY "notif_workspace_write" ON public.notifications
     FOR ALL USING (workspace_id IN (SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() AND role IN ('owner','admin')));
 CREATE POLICY "notif_service_role" ON public.notifications
-    FOR ALL USING (auth.jwt_role() = 'service_role');
+    FOR ALL USING (current_setting('request.jwt.claim.role', true) = 'service_role');
 
 -- installed_templates: workspace
 DROP POLICY IF EXISTS "installed_tpl_all" ON public.installed_templates;
@@ -336,7 +336,7 @@ CREATE POLICY "installed_tpl_workspace_read" ON public.installed_templates
 CREATE POLICY "installed_tpl_workspace_write" ON public.installed_templates
     FOR ALL USING (workspace_id IN (SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() AND role IN ('owner','admin')));
 CREATE POLICY "installed_tpl_service_role" ON public.installed_templates
-    FOR ALL USING (auth.jwt_role() = 'service_role');
+    FOR ALL USING (current_setting('request.jwt.claim.role', true) = 'service_role');
 
 -- task_queues: workspace ou NULL (sistema)
 DROP POLICY IF EXISTS "task_queues_all" ON public.task_queues;
@@ -346,7 +346,7 @@ CREATE POLICY "task_queues_workspace_read" ON public.task_queues
 CREATE POLICY "task_queues_workspace_write" ON public.task_queues
     FOR ALL USING (workspace_id IN (SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() AND role IN ('owner','admin')));
 CREATE POLICY "task_queues_service_role" ON public.task_queues
-    FOR ALL USING (auth.jwt_role() = 'service_role');
+    FOR ALL USING (current_setting('request.jwt.claim.role', true) = 'service_role');
 
 -- queue_items: workspace
 DROP POLICY IF EXISTS "queue_items_all" ON public.queue_items;
@@ -356,14 +356,14 @@ CREATE POLICY "queue_items_workspace_read" ON public.queue_items
 CREATE POLICY "queue_items_workspace_write" ON public.queue_items
     FOR ALL USING (workspace_id IN (SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() AND role IN ('owner','admin')));
 CREATE POLICY "queue_items_service_role" ON public.queue_items
-    FOR ALL USING (auth.jwt_role() = 'service_role');
+    FOR ALL USING (current_setting('request.jwt.claim.role', true) = 'service_role');
 
 -- dead_letter_queue: serviço — service_role + ops Read por admin
 DROP POLICY IF EXISTS "dlq_all" ON public.dead_letter_queue;
 CREATE POLICY "dlq_admin_read" ON public.dead_letter_queue
     FOR SELECT USING (workspace_id IN (SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() AND role IN ('owner','admin')));
 CREATE POLICY "dlq_service_role" ON public.dead_letter_queue
-    FOR ALL USING (auth.jwt_role() = 'service_role');
+    FOR ALL USING (current_setting('request.jwt.claim.role', true) = 'service_role');
 
 COMMIT;
 
