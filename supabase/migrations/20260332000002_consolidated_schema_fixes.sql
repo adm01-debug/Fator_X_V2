@@ -329,6 +329,9 @@ END $$;
 -- ===========================================================
 -- 10. KNOWLEDGE_BASES / VECTOR_INDEXES / CHUNKS
 -- ===========================================================
+-- pgvector is pre-installed by Supabase in the extensions schema;
+-- ensure the extension is registered so extensions.vector type resolves.
+CREATE EXTENSION IF NOT EXISTS vector WITH SCHEMA extensions;
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='knowledge_bases' AND column_name='name') THEN
@@ -373,7 +376,7 @@ END $$;
 
 ALTER TABLE public.chunks
   ADD COLUMN IF NOT EXISTS embedding_status TEXT DEFAULT 'pending',
-  ADD COLUMN IF NOT EXISTS embedding vector(1536),
+  ADD COLUMN IF NOT EXISTS embedding extensions.vector(1536),
   ADD COLUMN IF NOT EXISTS content TEXT,
   ADD COLUMN IF NOT EXISTS chunk_index INTEGER,
   ADD COLUMN IF NOT EXISTS token_count INTEGER,

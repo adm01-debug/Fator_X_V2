@@ -1,4 +1,6 @@
 -- ═══ ETAPA 5: Hybrid Search (BM25 + Semantic) ═══
+-- pgvector is pre-installed by Supabase in the extensions schema.
+CREATE EXTENSION IF NOT EXISTS vector WITH SCHEMA extensions;
 
 -- Add tsvector column for BM25 full-text search
 ALTER TABLE public.chunks ADD COLUMN IF NOT EXISTS search_vector tsvector;
@@ -26,7 +28,7 @@ CREATE INDEX IF NOT EXISTS idx_chunks_search_vector ON public.chunks USING GIN (
 -- Hybrid Search function: combines BM25 (full-text) + semantic (pgvector) with RRF
 CREATE OR REPLACE FUNCTION public.hybrid_search(
   query_text TEXT,
-  query_embedding vector(1536),
+  query_embedding extensions.vector(1536),
   match_count INT DEFAULT 10,
   bm25_weight FLOAT DEFAULT 0.3,
   semantic_weight FLOAT DEFAULT 0.7,

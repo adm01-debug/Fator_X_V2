@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS public.agent_memories_v2 (
     agent_id UUID, -- Optional if global
     memory_type TEXT NOT NULL, -- episodic (events), semantic (facts), procedural (how-to)
     content TEXT NOT NULL,
-    embedding vector(1536),
+    embedding extensions.vector(1536),
     importance_score FLOAT DEFAULT 1.0,
     context_tier TEXT DEFAULT 'L1', -- L0 (Hot), L1 (Warm), L2 (Cold)
     decay_rate FLOAT DEFAULT 0.05,
