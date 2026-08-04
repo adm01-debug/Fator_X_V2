@@ -41,6 +41,9 @@ SELECT
 FROM public.workspace_members wm;
 
 -- 2. SKILL REGISTRY: Create safe view hiding mcp_server_url
+-- Ensure updated_at exists (skill_registry was created without it in 20260405200001)
+ALTER TABLE public.skill_registry ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
+
 CREATE OR REPLACE VIEW public.skill_registry_safe
 WITH (security_invoker = true)
 AS

@@ -1,5 +1,6 @@
 
 -- Re-add the colleague visibility policy (needed for the directory view to work)
+DROP POLICY IF EXISTS "Members can view workspace colleagues" ON public.workspace_members;
 CREATE POLICY "Members can view workspace colleagues"
 ON public.workspace_members
 FOR SELECT

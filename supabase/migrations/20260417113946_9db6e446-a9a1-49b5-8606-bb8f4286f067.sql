@@ -22,6 +22,8 @@ GRANT SELECT ON public.workspace_members_safe TO authenticated;
 
 -- Re-adiciona policy para membros verem linhas dos colegas no mesmo workspace
 -- (a coluna email permanece bloqueada via REVOKE column-level; a view mascara)
+DROP POLICY IF EXISTS "Members can view workspace colleagues" ON public.workspace_members;
+DROP POLICY IF EXISTS "Members can view colleagues via workspace" ON public.workspace_members;
 CREATE POLICY "Members can view workspace colleagues"
 ON public.workspace_members
 FOR SELECT
