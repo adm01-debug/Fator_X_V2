@@ -92,18 +92,20 @@ FOR EACH ROW EXECUTE FUNCTION public.trg_openclaw_whatsapp_autoreply();
 -- ============================================================
 DO $$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'openclaw_whatsapp_retention_90d') THEN
-    PERFORM cron.schedule(
-      'openclaw_whatsapp_retention_90d',
-      '17 3 * * *',
-      $cron$DELETE FROM public.openclaw_whatsapp_messages WHERE created_at < now() - interval '90 days';$cron$
-    );
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'openclaw_events_retention_30d') THEN
-    PERFORM cron.schedule(
-      'openclaw_events_retention_30d',
-      '22 3 * * *',
-      $cron$DELETE FROM public.openclaw_events WHERE created_at < now() - interval '30 days';$cron$
-    );
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+    IF NOT EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'openclaw_whatsapp_retention_90d') THEN
+      PERFORM cron.schedule(
+        'openclaw_whatsapp_retention_90d',
+        '17 3 * * *',
+        $cron$DELETE FROM public.openclaw_whatsapp_messages WHERE created_at < now() - interval '90 days';$cron$
+      );
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'openclaw_events_retention_30d') THEN
+      PERFORM cron.schedule(
+        'openclaw_events_retention_30d',
+        '22 3 * * *',
+        $cron$DELETE FROM public.openclaw_events WHERE created_at < now() - interval '30 days';$cron$
+      );
+    END IF;
   END IF;
 END $$;

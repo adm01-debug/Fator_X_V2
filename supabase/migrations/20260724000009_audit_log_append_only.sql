@@ -188,16 +188,16 @@ DO $$
 BEGIN
     -- Confirma que os triggers append-only existem
     IF NOT EXISTS (
-        SELECT 1 FROM pg_triggers
-        WHERE tablename = 'audit_log'
+        SELECT 1 FROM pg_trigger
+        WHERE tgrelid = 'public.audit_log'::regclass
           AND tgname = 'prevent_audit_log_update'
     ) THEN
         RAISE EXCEPTION 'Trigger prevent_audit_log_update não existe!';
     END IF;
 
     IF NOT EXISTS (
-        SELECT 1 FROM pg_triggers
-        WHERE tablename = 'audit_log'
+        SELECT 1 FROM pg_trigger
+        WHERE tgrelid = 'public.audit_log'::regclass
           AND tgname = 'prevent_audit_log_delete'
     ) THEN
         RAISE EXCEPTION 'Trigger prevent_audit_log_delete não existe!';
