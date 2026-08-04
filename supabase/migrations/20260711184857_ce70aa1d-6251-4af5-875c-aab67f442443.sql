@@ -2,7 +2,7 @@
 -- Convert agent_daily_metrics view to materialized view for O(1) reads
 -- Refresh every 15 min via pg_cron; concurrent refresh keeps dashboard online.
 
-DROP MATERIALIZED VIEW IF EXISTS public.agent_daily_metrics;
+DROP VIEW IF EXISTS public.agent_daily_metrics;
 
 CREATE MATERIALIZED VIEW public.agent_daily_metrics AS
 SELECT
