@@ -32,5 +32,5 @@ export default defineConfig({
     },
   },
   // Baselines committed under e2e/__screenshots__/
-  snapshotPathTemplate: 'e2e/__screenshots__/{testFilePath}/{arg}-{projectName}{ext}',
+  snapshotPathTemplate: 'e2e/__screenshots__/{testFilePath}/{arg}{ext}',
 });

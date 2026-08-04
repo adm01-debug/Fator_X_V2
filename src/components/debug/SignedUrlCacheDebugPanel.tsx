@@ -24,7 +24,7 @@ export function SignedUrlCacheDebugPanel() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const on =
-      import.meta.env?.DEV ||
+      (import.meta.env?.DEV && !navigator.webdriver) ||
       /(?:^|[?&])debugSignedUrls=1(?:&|$)/.test(window.location.search) ||
       window.localStorage?.getItem('debug:signedUrls') === '1';
     setEnabled(!!on);
@@ -79,8 +79,16 @@ export function SignedUrlCacheDebugPanel() {
           <Row label="hits" value={stats.hits} accent="text-nexus-emerald" />
           <Row label="misses" value={stats.misses} accent="text-nexus-amber" />
           <Row label="in-flight coalesced" value={stats.inflightCoalesced} />
-          <Row label="retries" value={stats.retries} accent={stats.retries ? 'text-nexus-amber' : ''} />
-          <Row label="errors" value={stats.errors} accent={stats.errors ? 'text-destructive' : ''} />
+          <Row
+            label="retries"
+            value={stats.retries}
+            accent={stats.retries ? 'text-nexus-amber' : ''}
+          />
+          <Row
+            label="errors"
+            value={stats.errors}
+            accent={stats.errors ? 'text-destructive' : ''}
+          />
           <Row label="hit rate" value={`${hitRatePct}%`} />
           <Row label="fetches" value={stats.fetches} />
           <Row label="avg fetch" value={`${avg} ms`} />
@@ -92,7 +100,15 @@ export function SignedUrlCacheDebugPanel() {
   );
 }
 
-function Row({ label, value, accent = '' }: { label: string; value: string | number; accent?: string }) {
+function Row({
+  label,
+  value,
+  accent = '',
+}: {
+  label: string;
+  value: string | number;
+  accent?: string;
+}) {
   return (
     <div className="flex items-center justify-between gap-4">
       <span className="text-muted-foreground">{label}</span>
