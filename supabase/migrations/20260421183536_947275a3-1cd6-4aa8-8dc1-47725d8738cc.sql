@@ -4,10 +4,28 @@
 -- ═══════════════════════════════════════════════════════════════
 
 -- 1) Adicionar novos agentes do catálogo (squads completas) para cada usuário existente
-DO $$
-DECLARE
-  u RECORD;
-  agent_catalog JSONB := '[
+INSERT INTO agents (user_id, workspace_id, name, mission, persona, avatar_emoji, model, reasoning, status, version, tags, config)
+SELECT
+  u.user_id,
+  u.workspace_id,
+  (t.item->>'name'),
+  (t.item->>'mission'),
+  (t.item->>'persona'),
+  (t.item->>'emoji'),
+  (t.item->>'model'),
+  (t.item->>'reasoning'),
+  ((t.item->>'status'))::agent_status,
+  floor(random() * 5 + 1)::int,
+  ARRAY(SELECT jsonb_array_elements_text(t.item->'tags')),
+  jsonb_build_object(
+    'temperature', round((random() * 0.7 + 0.2)::numeric, 2),
+    'max_tokens', (ARRAY[2048, 4096, 8192])[floor(random()*3+1)],
+    'rag_enabled', random() > 0.3,
+    'memory_enabled', random() > 0.4,
+    'tools', jsonb_build_array('web_search', 'database_query', 'email_send')
+  )
+FROM (SELECT DISTINCT user_id, workspace_id FROM agents) u
+CROSS JOIN jsonb_array_elements('[
     {"name":"Nexus Supervisor","mission":"Orquestrador geral — roteia tarefas entre squads e mantém contexto corporativo","persona":"coordinator","emoji":"🧠","model":"claude-sonnet-4.6","reasoning":"plan_execute","status":"production","tags":["core","supervisor","orchestrator"]},
     {"name":"Oracle Multi-LLM","mission":"Conselho de modelos (Claude Opus + GPT-5 + Gemini) para decisões críticas","persona":"analyst","emoji":"🔮","model":"claude-opus-4.6","reasoning":"reflection","status":"production","tags":["core","oracle","council"]},
     {"name":"Cérebro Corporativo","mission":"Memória semântica e episódica da empresa com RAG agentic","persona":"specialist","emoji":"🧬","model":"gemini-2.5-pro","reasoning":"react","status":"monitoring","tags":["core","memory","rag"]},
@@ -23,37 +41,11 @@ DECLARE
     {"name":"SecOps Sentinel","mission":"Monitora logs, detecta intrusões, responde a incidentes","persona":"autonomous","emoji":"🛡️","model":"claude-opus-4.6","reasoning":"reflection","status":"monitoring","tags":["it","security"]},
     {"name":"Marketing Strategist","mission":"Planeja campanhas, gera copy e analisa performance","persona":"creative","emoji":"📣","model":"gpt-5","reasoning":"cot","status":"staging","tags":["marketing","copy"]},
     {"name":"Chief of Staff","mission":"Sumariza reuniões, prioriza inbox executivo, prepara briefings","persona":"coordinator","emoji":"🎩","model":"claude-opus-4.6","reasoning":"plan_execute","status":"production","tags":["executive","productivity"]}
-  ]'::JSONB;
-  agent_def JSONB;
-BEGIN
-  FOR u IN SELECT DISTINCT user_id, workspace_id FROM agents LOOP
-    FOR agent_def IN SELECT value FROM jsonb_array_elements(agent_catalog) LOOP
-      INSERT INTO agents (user_id, workspace_id, name, mission, persona, avatar_emoji, model, reasoning, status, version, tags, config)
-      SELECT
-        u.user_id,
-        u.workspace_id,
-        agent_def->>'name',
-        agent_def->>'mission',
-        agent_def->>'persona',
-        agent_def->>'emoji',
-        agent_def->>'model',
-        agent_def->>'reasoning',
-        (agent_def->>'status')::agent_status,
-        floor(random() * 5 + 1)::int,
-        ARRAY(SELECT jsonb_array_elements_text(agent_def->'tags')),
-        jsonb_build_object(
-          'temperature', round((random() * 0.7 + 0.2)::numeric, 2),
-          'max_tokens', (ARRAY[2048, 4096, 8192])[floor(random()*3+1)],
-          'rag_enabled', random() > 0.3,
-          'memory_enabled', random() > 0.4,
-          'tools', jsonb_build_array('web_search', 'database_query', 'email_send')
-        )
-      WHERE NOT EXISTS (
-        SELECT 1 FROM agents WHERE user_id = u.user_id AND name = agent_def->>'name'
-      );
-    END LOOP;
-  END LOOP;
-END $$;
+  ]'::jsonb) AS t(item)
+WHERE NOT EXISTS (
+  SELECT 1 FROM agents a2 WHERE a2.user_id = u.user_id AND a2.name = (t.item->>'name')
+)
+ON CONFLICT DO NOTHING;
 
 -- 2) Versões: 3-5 versões por agente
 INSERT INTO agent_versions (agent_id, version, name, model, persona, mission, config, change_summary, created_by, created_at)
