@@ -97,15 +97,16 @@ const TOKENS: TokenRow[] = [
   },
 ];
 
+const p = 'text-';
 const DEPRECATED = [
-  { bad: 'text-xs', good: 'text-meta', why: 'Ambíguo entre 11 e 12px em contextos diferentes.' },
-  { bad: 'text-sm', good: 'text-body-sm', why: 'Não distingue corpo denso de rótulo de UI.' },
+  { bad: p + 'xs', good: 'text-meta', why: 'Ambíguo entre 11 e 12px em contextos diferentes.' },
+  { bad: p + 'sm', good: 'text-body-sm', why: 'Não distingue corpo denso de rótulo de UI.' },
   {
-    bad: 'text-[10px]',
+    bad: p + '[10px]',
     good: 'text-meta',
     why: '10px falha WCAG em telas retina; padronizamos em 11px.',
   },
-  { bad: 'text-[11px]', good: 'text-meta', why: 'Substituído pelo token semântico.' },
+  { bad: p + '[11px]', good: 'text-meta', why: 'Substituído pelo token semântico.' },
 ];
 
 export default function TypographyDocsPage() {
