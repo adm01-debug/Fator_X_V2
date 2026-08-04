@@ -193,7 +193,7 @@ export default function AuthPage() {
                   <span className="w-full border-t border-border/40" />
                 </div>
                 <div className="relative flex justify-center text-meta uppercase tracking-wider">
-                  <span className="bg-background px-3 text-muted-foreground/60">ou com e-mail</span>
+                  <span className="bg-background px-3 text-muted-foreground/80">ou com e-mail</span>
                 </div>
               </div>
             </div>
