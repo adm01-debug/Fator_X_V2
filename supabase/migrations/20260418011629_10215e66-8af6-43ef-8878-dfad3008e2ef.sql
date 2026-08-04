@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS pg_cron;
+
 -- ═══ Cost Baselines ═══
 CREATE TABLE IF NOT EXISTS public.cost_baselines (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -212,16 +214,12 @@ END;
 $$;
 
 -- ═══ Cron jobs ═══
--- Daily baseline recomputation at 3 AM
-SELECT cron.schedule(
-  'cost-baselines-daily',
-  '0 3 * * *',
-  $$ SELECT public.compute_cost_baselines(); $$
-);
-
--- Anomaly detection every 15 minutes
-SELECT cron.schedule(
-  'cost-anomalies-15min',
-  '*/15 * * * *',
-  $$ SELECT public.detect_cost_anomalies(); $$
-);
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+    -- Daily baseline recomputation at 3 AM
+    PERFORM cron.schedule('cost-baselines-daily', '0 3 * * *', $c$ SELECT public.compute_cost_baselines(); $c$);
+    -- Anomaly detection every 15 minutes
+    PERFORM cron.schedule('cost-anomalies-15min', '*/15 * * * *', $c$ SELECT public.detect_cost_anomalies(); $c$);
+  END IF;
+END $$;

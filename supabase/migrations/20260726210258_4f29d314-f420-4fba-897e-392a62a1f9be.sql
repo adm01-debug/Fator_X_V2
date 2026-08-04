@@ -122,7 +122,7 @@ GRANT ALL ON public.cron_schedule_executions TO service_role;
 ALTER TABLE public.cron_schedule_executions ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "cron_executions service only" ON public.cron_schedule_executions
   FOR ALL TO service_role USING (true) WITH CHECK (true);
-CREATE INDEX idx_cron_exec_schedule ON public.cron_schedule_executions (schedule_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_cron_exec_schedule ON public.cron_schedule_executions (schedule_id, created_at DESC);
 
 -- ─── 3. Telemetria (traces/spans) ──────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.traces (
