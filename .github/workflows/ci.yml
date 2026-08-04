@@ -163,7 +163,7 @@ jobs:
           deno-version: v2.x
       - name: Run edge function contract tests
         run: |
-          deno test --allow-net --allow-env --no-check \
+          deno test --allow-net --allow-env --allow-read --no-check \
             supabase/functions/_shared/edge-contract_test.ts
 
   build:
