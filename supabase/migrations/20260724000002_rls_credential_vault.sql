@@ -29,7 +29,7 @@ END;
 $$;
 
 -- Index para performance de RLS
-CREATE INDEX CONCURRENTLY IF NOT EXISTS
+CREATE INDEX IF NOT EXISTS
     idx_credential_vault_workspace ON public.credential_vault(workspace_id)
     WHERE workspace_id IS NOT NULL;
 
@@ -105,7 +105,7 @@ BEGIN
 END;
 $$;
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS
+CREATE INDEX IF NOT EXISTS
     idx_cred_audit_logs_workspace ON public.credential_audit_logs(workspace_id);
 
 -- Drop da policy insegura
