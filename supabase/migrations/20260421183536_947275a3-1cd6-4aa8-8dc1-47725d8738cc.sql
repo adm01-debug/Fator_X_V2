@@ -7,7 +7,7 @@
 DO $$
 DECLARE
   u RECORD;
-  new_agents JSONB := '[
+  agent_catalog JSONB := '[
     {"name":"Nexus Supervisor","mission":"Orquestrador geral — roteia tarefas entre squads e mantém contexto corporativo","persona":"coordinator","emoji":"🧠","model":"claude-sonnet-4.6","reasoning":"plan_execute","status":"production","tags":["core","supervisor","orchestrator"]},
     {"name":"Oracle Multi-LLM","mission":"Conselho de modelos (Claude Opus + GPT-5 + Gemini) para decisões críticas","persona":"analyst","emoji":"🔮","model":"claude-opus-4.6","reasoning":"reflection","status":"production","tags":["core","oracle","council"]},
     {"name":"Cérebro Corporativo","mission":"Memória semântica e episódica da empresa com RAG agentic","persona":"specialist","emoji":"🧬","model":"gemini-2.5-pro","reasoning":"react","status":"monitoring","tags":["core","memory","rag"]},
@@ -27,7 +27,7 @@ DECLARE
   agent_def JSONB;
 BEGIN
   FOR u IN SELECT DISTINCT user_id, workspace_id FROM agents LOOP
-    FOR agent_def IN SELECT * FROM jsonb_array_elements(new_agents) LOOP
+    FOR agent_def IN SELECT value FROM jsonb_array_elements(agent_catalog) LOOP
       INSERT INTO agents (user_id, workspace_id, name, mission, persona, avatar_emoji, model, reasoning, status, version, tags, config)
       SELECT
         u.user_id,
