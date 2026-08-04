@@ -14,7 +14,7 @@ test.describe('Auth Page', () => {
   test('renders login form with all required elements', async ({ page }) => {
     await expect(page.getByRole('heading', { name: 'Fator X' })).toBeVisible();
     await expect(page.getByLabel('E-mail')).toBeVisible();
-    await expect(page.getByLabel('Senha')).toBeVisible();
+    await expect(page.getByLabel('Senha', { exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: /entrar/i })).toBeVisible();
   });
 
@@ -26,7 +26,7 @@ test.describe('Auth Page', () => {
 
   test('shows email validation error for invalid email', async ({ page }) => {
     await page.getByLabel('E-mail').fill('invalid-email');
-    await page.getByLabel('Senha').fill('password123');
+    await page.getByLabel('Senha', { exact: true }).fill('password123');
     await page.getByRole('button', { name: /entrar/i }).click();
     await expect(page.getByText('E-mail inválido')).toBeVisible();
   });
@@ -40,7 +40,7 @@ test.describe('Auth Page', () => {
 
   test('shows password strength indicator on signup', async ({ page }) => {
     await page.getByRole('button', { name: /criar conta/i }).click();
-    await page.getByLabel('Senha').fill('Abc12345');
+    await page.getByLabel('Senha', { exact: true }).fill('Abc12345');
     await expect(page.getByText('Mínimo 8 caracteres')).toBeVisible();
     await expect(page.getByText('Letra maiúscula')).toBeVisible();
     await expect(page.getByText('Letra minúscula')).toBeVisible();
@@ -54,7 +54,7 @@ test.describe('Auth Page', () => {
   });
 
   test('password visibility toggle works', async ({ page }) => {
-    const passwordInput = page.getByLabel('Senha');
+    const passwordInput = page.getByLabel('Senha', { exact: true });
     await passwordInput.fill('mypassword');
     await expect(passwordInput).toHaveAttribute('type', 'password');
     await page.getByLabel('Mostrar senha').click();

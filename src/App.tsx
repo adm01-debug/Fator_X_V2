@@ -407,6 +407,14 @@ const App = () => {
                       }
                     />
                     <Route
+                      path="/agent-builder"
+                      element={
+                        <SafePage>
+                          <AgentBuilder />
+                        </SafePage>
+                      }
+                    />
+                    <Route
                       path="/brain"
                       element={
                         <SafePage>
