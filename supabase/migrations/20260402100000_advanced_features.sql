@@ -153,13 +153,25 @@ CREATE TABLE IF NOT EXISTS public.audit_log (
 
 -- Make audit_log append-only via RLS
 ALTER TABLE public.audit_log ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "Audit log read only for workspace" ON public.audit_log;
-CREATE POLICY "Audit log read only for workspace" ON public.audit_log FOR SELECT TO authenticated
-  USING (workspace_id IN (SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid()));
 DROP POLICY IF EXISTS "Audit log insert for authenticated" ON public.audit_log;
 CREATE POLICY "Audit log insert for authenticated" ON public.audit_log FOR INSERT TO authenticated
   WITH CHECK (true);
 -- No UPDATE or DELETE policies = append-only
+-- Audit log read policy: only create if workspace_members.workspace_id column exists
+-- (workspace_members is created in a later migration; guard prevents SQLSTATE 42703)
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'workspace_members'
+      AND column_name = 'workspace_id'
+  ) THEN
+    DROP POLICY IF EXISTS "Audit log read only for workspace" ON public.audit_log;
+    CREATE POLICY "Audit log read only for workspace" ON public.audit_log FOR SELECT TO authenticated
+      USING (workspace_id IN (SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid()));
+  END IF;
+END $$;
 
 -- Auto-audit trigger for sensitive tables
 CREATE OR REPLACE FUNCTION public.audit_trigger_fn()

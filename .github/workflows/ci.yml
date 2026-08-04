@@ -13,9 +13,10 @@ jobs:
   security-audit:
     name: Security Audit
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -30,9 +31,10 @@ jobs:
   lint-and-typecheck:
     name: Lint & Typecheck
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -61,7 +63,7 @@ jobs:
             }
             console.log('✅ Nenhuma nova violação de nexus-design ou no-explicit-any.');
           "
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: eslint-guardrails-report
@@ -77,8 +79,8 @@ jobs:
     # manteve a suíte global sem rodar por várias iterações.
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -98,7 +100,7 @@ jobs:
           fi
           exit $STATUS
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-results
@@ -109,7 +111,8 @@ jobs:
     name: E2E Tests
     runs-on: ubuntu-latest
     needs: unit-tests
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && secrets.VITE_SUPABASE_URL != ''
+    timeout-minutes: 30
     env:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
@@ -117,8 +120,8 @@ jobs:
       VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
       VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -134,14 +137,14 @@ jobs:
           else
             echo "Auth E2E ran with synthetic users."
           fi
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-report
           path: playwright-report/
       - name: Upload visual diff artifacts
         if: failure()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: visual-regression-diffs
           path: |
@@ -153,11 +156,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: lint-and-typecheck
     if: github.event_name == 'pull_request'
+    timeout-minutes: 10
     env:
       VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
       VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v4
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
@@ -174,9 +178,13 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     needs: unit-tests
+    timeout-minutes: 15
+    env:
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -184,13 +192,9 @@ jobs:
       - run: npm run build
       - name: Generate Audit PDF
         run: npm run docs:pdf
-
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
       - name: Bundle size budget
         run: npm run check:bundle
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: bundle-report
@@ -206,8 +210,8 @@ jobs:
       matrix:
         profile: [desktop, mobile]
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -224,7 +228,7 @@ jobs:
             npx @lhci/cli@0.15.x autorun
           fi
         continue-on-error: true
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: lighthouse-report-${{ matrix.profile }}
@@ -234,13 +238,14 @@ jobs:
     name: Load Test (k6 — llm-gateway)
     runs-on: ubuntu-latest
     needs: build
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && secrets.VITE_SUPABASE_URL != ''
+    timeout-minutes: 20
     env:
       SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
       SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v4
       - name: Install k6
         uses: grafana/setup-k6-action@v1
       - name: Smoke test (always)
@@ -254,7 +259,7 @@ jobs:
           if [ -z "${SUPABASE_SERVICE_ROLE_KEY}" ]; then
             echo "::warning::SUPABASE_SERVICE_ROLE_KEY not set — k6 ran in skip mode. Add the secret for real load coverage."
           fi
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: k6-summary
