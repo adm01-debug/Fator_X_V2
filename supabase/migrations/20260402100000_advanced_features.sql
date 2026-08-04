@@ -157,11 +157,18 @@ DROP POLICY IF EXISTS "Audit log insert for authenticated" ON public.audit_log;
 CREATE POLICY "Audit log insert for authenticated" ON public.audit_log FOR INSERT TO authenticated
   WITH CHECK (true);
 -- No UPDATE or DELETE policies = append-only
--- Audit log read policy: only create if workspace_members.workspace_id column exists
--- (workspace_members is created in a later migration; guard prevents SQLSTATE 42703)
+-- Audit log read policy: only create if BOTH audit_log.workspace_id AND
+-- workspace_members.workspace_id columns exist. audit_log may be created by an
+-- earlier migration without workspace_id (CREATE TABLE IF NOT EXISTS skips the
+-- column add), so we guard on both to prevent SQLSTATE 42703.
 DO $$
 BEGIN
   IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'audit_log'
+      AND column_name = 'workspace_id'
+  ) AND EXISTS (
     SELECT 1 FROM information_schema.columns
     WHERE table_schema = 'public'
       AND table_name = 'workspace_members'
