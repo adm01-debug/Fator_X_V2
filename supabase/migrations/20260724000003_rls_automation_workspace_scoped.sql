@@ -31,7 +31,7 @@ BEGIN
     END IF;
 END;
 $$;
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_cron_schedules_workspace ON public.cron_schedules(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_cron_schedules_workspace ON public.cron_schedules(workspace_id);
 
 -- PASSO 2: cron_schedule_executions (derivado de cron_schedules)
 DO $$
@@ -47,7 +47,7 @@ BEGIN
     END IF;
 END;
 $$;
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_cron_exec_workspace ON public.cron_schedule_executions(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_cron_exec_workspace ON public.cron_schedule_executions(workspace_id);
 
 -- PASSO 3: webhook_endpoints
 DO $$
@@ -65,7 +65,7 @@ BEGIN
     END IF;
 END;
 $$;
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_webhook_endpoints_workspace ON public.webhook_endpoints(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_webhook_endpoints_workspace ON public.webhook_endpoints(workspace_id);
 
 -- PASSO 4: webhook_events (derivado de webhook_endpoints)
 DO $$
@@ -81,7 +81,7 @@ BEGIN
     END IF;
 END;
 $$;
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_webhook_events_workspace ON public.webhook_events(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_webhook_events_workspace ON public.webhook_events(workspace_id);
 
 -- PASSO 5: dead_letter_queue (sistema — workspace_id opcional, sistema é NULL)
 DO $$
@@ -112,7 +112,7 @@ BEGIN
     END IF;
 END;
 $$;
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_notifications_workspace ON public.notifications(workspace_id)
+CREATE INDEX IF NOT EXISTS idx_notifications_workspace ON public.notifications(workspace_id)
     WHERE workspace_id IS NOT NULL;
 
 -- PASSO 7: notification_templates (workspace-scoped para edição, público para leitura)
@@ -154,7 +154,7 @@ BEGIN
     END IF;
 END;
 $$;
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_installed_templates_workspace ON public.installed_templates(workspace_id)
+CREATE INDEX IF NOT EXISTS idx_installed_templates_workspace ON public.installed_templates(workspace_id)
     WHERE workspace_id IS NOT NULL;
 
 -- PASSO 10: execution_history
@@ -173,7 +173,7 @@ BEGIN
     END IF;
 END;
 $$;
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_exec_history_workspace ON public.execution_history(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_exec_history_workspace ON public.execution_history(workspace_id);
 
 -- PASSO 11: connector_registry (marketplace global — público para todos)
 DO $$
@@ -203,7 +203,7 @@ BEGIN
     END IF;
 END;
 $$;
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_connector_instances_workspace ON public.connector_instances(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_connector_instances_workspace ON public.connector_instances(workspace_id);
 
 -- PASSO 13: task_queues
 DO $$
@@ -216,7 +216,7 @@ BEGIN
     END IF;
 END;
 $$;
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_task_queues_workspace ON public.task_queues(workspace_id)
+CREATE INDEX IF NOT EXISTS idx_task_queues_workspace ON public.task_queues(workspace_id)
     WHERE workspace_id IS NOT NULL;
 
 -- PASSO 14: queue_items (derivado de task_queues)
@@ -233,7 +233,7 @@ BEGIN
     END IF;
 END;
 $$;
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_queue_items_workspace ON public.queue_items(workspace_id)
+CREATE INDEX IF NOT EXISTS idx_queue_items_workspace ON public.queue_items(workspace_id)
     WHERE workspace_id IS NOT NULL;
 
 -- PASSO 15: batch_jobs
@@ -252,7 +252,7 @@ BEGIN
     END IF;
 END;
 $$;
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_batch_jobs_workspace ON public.batch_jobs(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_batch_jobs_workspace ON public.batch_jobs(workspace_id);
 
 -- ═══════════════════════════════════════════════════════════════
 -- PASSO 16: Substituir todas as policies inseguras por workspace-scoped

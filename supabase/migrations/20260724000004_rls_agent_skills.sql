@@ -29,7 +29,7 @@ BEGIN
     END IF;
 END;
 $$;
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_agent_skills_workspace ON public.agent_skills(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_agent_skills_workspace ON public.agent_skills(workspace_id);
 
 -- DROP policies existentes (se houver) e substituir
 DROP POLICY IF EXISTS "agent_skills_all" ON public.agent_skills;
@@ -85,7 +85,7 @@ BEGIN
     END IF;
 END;
 $$;
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_skill_registry_workspace ON public.skill_registry(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_skill_registry_workspace ON public.skill_registry(workspace_id);
 
 DROP POLICY IF EXISTS "skill_registry_all" ON public.skill_registry;
 DROP POLICY IF EXISTS "skill_registry_select" ON public.skill_registry;
@@ -143,7 +143,7 @@ BEGIN
     END IF;
 END;
 $$;
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_agent_installed_skills_workspace ON public.agent_installed_skills(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_agent_installed_skills_workspace ON public.agent_installed_skills(workspace_id);
 
 DROP POLICY IF EXISTS "agent_installed_skills_all" ON public.agent_installed_skills;
 DROP POLICY IF EXISTS "Users can update installed skills" ON public.agent_installed_skills;

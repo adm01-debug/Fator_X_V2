@@ -33,9 +33,9 @@ BEGIN
     -- Se nenhuma forma de derivar: mantém NULL (marcadas como globais)
 END;
 $$;
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_knowledge_entities_workspace ON public.knowledge_entities(workspace_id)
+CREATE INDEX IF NOT EXISTS idx_knowledge_entities_workspace ON public.knowledge_entities(workspace_id)
     WHERE workspace_id IS NOT NULL;
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_knowledge_entities_name ON public.knowledge_entities(name);
+CREATE INDEX IF NOT EXISTS idx_knowledge_entities_name ON public.knowledge_entities(name);
 
 -- Drop policies inseguras
 DROP POLICY IF EXISTS "Allow authenticated read on knowledge entities" ON public.knowledge_entities;
@@ -77,7 +77,7 @@ BEGIN
     END IF;
 END;
 $$;
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_knowledge_relations_workspace ON public.knowledge_relations(workspace_id)
+CREATE INDEX IF NOT EXISTS idx_knowledge_relations_workspace ON public.knowledge_relations(workspace_id)
     WHERE workspace_id IS NOT NULL;
 
 DROP POLICY IF EXISTS "Allow authenticated read on knowledge relations" ON public.knowledge_relations;
@@ -109,11 +109,11 @@ BEGIN
     END IF;
 END;
 $$;
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_agent_memories_v2_workspace ON public.agent_memories_v2(workspace_id)
+CREATE INDEX IF NOT EXISTS idx_agent_memories_v2_workspace ON public.agent_memories_v2(workspace_id)
     WHERE workspace_id IS NOT NULL;
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_agent_memories_v2_agent ON public.agent_memories_v2(agent_id, context_tier)
+CREATE INDEX IF NOT EXISTS idx_agent_memories_v2_agent ON public.agent_memories_v2(agent_id, context_tier)
     WHERE agent_id IS NOT NULL;
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_agent_memories_v2_tier_decay ON public.agent_memories_v2(context_tier, last_accessed_at)
+CREATE INDEX IF NOT EXISTS idx_agent_memories_v2_tier_decay ON public.agent_memories_v2(context_tier, last_accessed_at)
     WHERE workspace_id IS NOT NULL;
 
 DROP POLICY IF EXISTS "Allow authenticated read on agent memories" ON public.agent_memories_v2;
@@ -174,7 +174,7 @@ BEGIN
     END IF;
 END;
 $$;
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_entity_resolution_logs_workspace ON public.entity_resolution_logs(workspace_id)
+CREATE INDEX IF NOT EXISTS idx_entity_resolution_logs_workspace ON public.entity_resolution_logs(workspace_id)
     WHERE workspace_id IS NOT NULL;
 
 DROP POLICY IF EXISTS "Allow authenticated read on resolution logs" ON public.entity_resolution_logs;

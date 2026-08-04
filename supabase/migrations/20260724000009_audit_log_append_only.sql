@@ -46,7 +46,7 @@ BEGIN
     END IF;
 END;
 $$;
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_audit_log_workspace ON public.audit_log(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_audit_log_workspace ON public.audit_log(workspace_id);
 
 -- PASSO 3: Refinar policies — service_role faz INSERT, membros leem
 -- Drop policies existentes
@@ -176,7 +176,7 @@ END;
 $$;
 
 -- PASSO 6: Index para Retention Policy (LGPD — retenção de 5 anos)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_audit_log_created_at_retention
+CREATE INDEX IF NOT EXISTS idx_audit_log_created_at_retention
     ON public.audit_log(created_at DESC);
 
 COMMIT;

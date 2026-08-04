@@ -22,7 +22,7 @@ BEGIN
     END IF;
 END;
 $$;
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_help_centers_workspace ON public.help_centers(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_help_centers_workspace ON public.help_centers(workspace_id);
 
 -- Redefine policy de help_centers (a existente já é razoável, mas refinamos)
 DROP POLICY IF EXISTS "Public read published help centers" ON public.help_centers;
@@ -66,7 +66,7 @@ BEGIN
     END IF;
 END;
 $$;
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_forum_threads_workspace ON public.forum_threads(workspace_id)
+CREATE INDEX IF NOT EXISTS idx_forum_threads_workspace ON public.forum_threads(workspace_id)
     WHERE workspace_id IS NOT NULL;
 
 -- Drop policies inseguras
@@ -160,7 +160,7 @@ BEGIN
     END IF;
 END;
 $$;
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_forum_posts_workspace ON public.forum_posts(workspace_id)
+CREATE INDEX IF NOT EXISTS idx_forum_posts_workspace ON public.forum_posts(workspace_id)
     WHERE workspace_id IS NOT NULL;
 
 DROP POLICY IF EXISTS "Public read forum posts" ON public.forum_posts;
