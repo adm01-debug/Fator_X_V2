@@ -53,10 +53,12 @@ CREATE INDEX IF NOT EXISTS idx_audit_log_workspace ON public.audit_log(workspace
 DROP POLICY IF EXISTS "Users can insert own audit logs" ON public.audit_log;
 
 -- service_role: INSERT (Edge Functions e cron jobs insertam via service_role)
+DROP POLICY IF EXISTS "audit_log_service_insert" ON public.audit_log;
 CREATE POLICY "audit_log_service_insert" ON public.audit_log
     FOR INSERT WITH CHECK (current_setting('request.jwt.claim.role', true) = 'service_role');
 
 -- Admins + owners do workspace leem logs do workspace
+DROP POLICY IF EXISTS "audit_log_workspace_read" ON public.audit_log;
 CREATE POLICY "audit_log_workspace_read" ON public.audit_log
     FOR SELECT USING (
         (
