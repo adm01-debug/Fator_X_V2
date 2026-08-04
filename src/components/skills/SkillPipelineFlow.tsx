@@ -114,8 +114,8 @@ export function SkillPipelineFlow({ overview, isLoading }: SkillPipelineFlowProp
       <CardContent className="p-5 sm:p-6">
         <div className="mb-4 flex items-center justify-between gap-3">
           <div>
-            <h2 className="text-base font-semibold tracking-tight">Pipeline da biblioteca</h2>
-            <p className="text-sm text-muted-foreground">
+            <h2 className="text-body font-semibold tracking-tight">Pipeline da biblioteca</h2>
+            <p className="text-body-sm text-muted-foreground">
               Da ingestão à injeção no prompt do agente
             </p>
           </div>
@@ -134,16 +134,18 @@ export function SkillPipelineFlow({ overview, isLoading }: SkillPipelineFlowProp
                     to={node.to}
                     className={cn(
                       'group rounded-xl border p-4 transition-all duration-200',
-                      'hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                      'hover:-translate-y-0.5 hover:shadow-nexus-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                       node.accent,
                     )}
                   >
                     <div className="flex items-center gap-2">
                       <node.icon className="h-4 w-4 shrink-0" />
-                      <span className="text-sm font-semibold text-foreground">{node.title}</span>
+                      <span className="text-body-sm font-semibold text-foreground">
+                        {node.title}
+                      </span>
                     </div>
-                    <p className="mt-1 text-xs text-muted-foreground">{node.caption}</p>
-                    <p className="mt-2 text-sm font-medium tabular-nums">{node.metric}</p>
+                    <p className="mt-1 text-meta text-muted-foreground">{node.caption}</p>
+                    <p className="mt-2 text-body-sm font-medium tabular-nums">{node.metric}</p>
                   </Link>
                 ))}
               </div>

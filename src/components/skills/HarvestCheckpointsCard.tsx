@@ -56,7 +56,9 @@ export function HarvestCheckpointsCard({
     }
   }, []);
 
-  useEffect(() => { void load(); }, [load, refreshToken]);
+  useEffect(() => {
+    void load();
+  }, [load, refreshToken]);
 
   const handleDelete = async (repoKey: string) => {
     setRemoving(repoKey);
@@ -131,23 +133,20 @@ export function HarvestCheckpointsCard({
           rows.map((row) => {
             const pct = row.total > 0 ? Math.min(100, (row.offset / row.total) * 100) : 0;
             return (
-              <div
-                key={row.repoKey}
-                className="rounded-lg border border-border/60 p-3 space-y-2"
-              >
+              <div key={row.repoKey} className="rounded-lg border border-border/60 p-3 space-y-2">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <p className="text-sm font-medium truncate">
+                    <p className="text-body-sm font-medium truncate">
                       {row.repos.join(', ') || row.repoKey}
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-meta text-muted-foreground">
                       Arquivo {row.offset}
                       {row.total > 0 ? ` de ${row.total}` : ''} · {row.insertedTotal} candidatos ·{' '}
                       {formatAge(row.ageHours)}
                     </p>
                   </div>
                   {row.stale && (
-                    <Badge variant="outline" className="shrink-0 text-xs">
+                    <Badge variant="outline" className="shrink-0 text-meta">
                       Expirado
                     </Badge>
                   )}

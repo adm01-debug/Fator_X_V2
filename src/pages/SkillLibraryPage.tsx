@@ -23,7 +23,11 @@ import { fetchSkillLibraryOverview } from '@/services/skillLibraryService';
 const STAT_ICONS = [Library, GitBranch, BadgeCheck, Download] as const;
 
 export default function SkillLibraryPage() {
-  const { data: overview, isLoading, error } = useQuery({
+  const {
+    data: overview,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['skill_library_overview'],
     queryFn: fetchSkillLibraryOverview,
     staleTime: 60_000,
@@ -59,13 +63,13 @@ export default function SkillLibraryPage() {
 
       <InfoHint title="Como a biblioteca funciona">
         Toda skill entra por um dos três caminhos de ingestão, é registrada no catálogo canônico,
-        passa por curadoria de departamento (léxico → LLM → revisão humana) e só então é injetada
-        no prompt do agente pelo carregador progressivo.
+        passa por curadoria de departamento (léxico → LLM → revisão humana) e só então é injetada no
+        prompt do agente pelo carregador progressivo.
       </InfoHint>
 
       {error && (
         <Card className="border-destructive/40 bg-destructive/5">
-          <CardContent className="p-4 text-sm text-destructive">
+          <CardContent className="p-4 text-body-sm text-destructive">
             Não foi possível carregar as métricas da biblioteca. Tente novamente em instantes.
           </CardContent>
         </Card>
@@ -75,11 +79,11 @@ export default function SkillLibraryPage() {
         {stats.map((stat, index) => {
           const Icon = STAT_ICONS[index];
           return (
-            <Card key={stat.label} className="transition-shadow hover:shadow-lg">
+            <Card key={stat.label} className="transition-shadow hover:shadow-nexus-lg">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Icon className="h-4 w-4" />
-                  <span className="text-xs">{stat.label}</span>
+                  <span className="text-meta">{stat.label}</span>
                 </div>
                 {isLoading || typeof stat.value !== 'number' ? (
                   <Skeleton className="mt-2 h-7 w-20" />
@@ -105,7 +109,6 @@ export default function SkillLibraryPage() {
       <SkillPromptEvidenceLedgerCard />
 
       <SkillInstallCapLedgerCard />
-
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">

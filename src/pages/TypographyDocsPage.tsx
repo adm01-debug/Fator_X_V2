@@ -18,24 +18,94 @@ interface TokenRow {
 }
 
 const TOKENS: TokenRow[] = [
-  { token: 'text-meta',      size: '11px', lineHeight: '1.4',  usage: 'Labels, timestamps, badges, meta em tabelas',      example: 'CRIADO EM · 12/04/2026' },
-  { token: 'text-caption',   size: '12px', lineHeight: '1.45', usage: 'Legendas, hints de formulário, footnotes',          example: 'Máximo 280 caracteres' },
-  { token: 'text-body-sm',   size: '13px', lineHeight: '1.55', usage: 'Corpo de tabelas, listas densas, células',          example: 'Cliente Aurora — R$ 12.400,00' },
-  { token: 'text-body',      size: '14px', lineHeight: '1.6',  usage: 'Texto padrão de parágrafo em dialogs e cards',      example: 'Este agente processa 1.2k requisições/dia.' },
-  { token: 'text-ui',        size: '14px', lineHeight: '1.5',  usage: 'Rótulos de botões, inputs, menus (peso 500)',       example: 'Salvar alterações' },
-  { token: 'text-title-sm',  size: '16px', lineHeight: '1.4',  usage: 'Títulos de cards e seções secundárias',              example: 'Uso por modelo' },
-  { token: 'text-title',     size: '20px', lineHeight: '1.3',  usage: 'Títulos de cards principais e headers de dialog',    example: 'Configuração do agente' },
-  { token: 'text-title-lg',  size: '24px', lineHeight: '1.25', usage: 'Títulos de sub-página / seção destaque',              example: 'Trilhas de execução' },
-  { token: 'text-hero',      size: '32px', lineHeight: '1.15', usage: 'KPIs grandes, números principais do dashboard',      example: '1.284' },
-  { token: 'text-hero-lg',   size: '40px', lineHeight: '1.1',  usage: 'Hero de página (PageHeader com gradiente)',           example: 'Fator X' },
-  { token: 'text-numeric',   size: '—',    lineHeight: '—',    usage: 'Modificador — tabular-nums para colunas numéricas',   example: '$0.0421' },
+  {
+    token: 'text-meta',
+    size: '11px',
+    lineHeight: '1.4',
+    usage: 'Labels, timestamps, badges, meta em tabelas',
+    example: 'CRIADO EM · 12/04/2026',
+  },
+  {
+    token: 'text-caption',
+    size: '12px',
+    lineHeight: '1.45',
+    usage: 'Legendas, hints de formulário, footnotes',
+    example: 'Máximo 280 caracteres',
+  },
+  {
+    token: 'text-body-sm',
+    size: '13px',
+    lineHeight: '1.55',
+    usage: 'Corpo de tabelas, listas densas, células',
+    example: 'Cliente Aurora — R$ 12.400,00',
+  },
+  {
+    token: 'text-body',
+    size: '14px',
+    lineHeight: '1.6',
+    usage: 'Texto padrão de parágrafo em dialogs e cards',
+    example: 'Este agente processa 1.2k requisições/dia.',
+  },
+  {
+    token: 'text-ui',
+    size: '14px',
+    lineHeight: '1.5',
+    usage: 'Rótulos de botões, inputs, menus (peso 500)',
+    example: 'Salvar alterações',
+  },
+  {
+    token: 'text-title-sm',
+    size: '16px',
+    lineHeight: '1.4',
+    usage: 'Títulos de cards e seções secundárias',
+    example: 'Uso por modelo',
+  },
+  {
+    token: 'text-title',
+    size: '20px',
+    lineHeight: '1.3',
+    usage: 'Títulos de cards principais e headers de dialog',
+    example: 'Configuração do agente',
+  },
+  {
+    token: 'text-title-lg',
+    size: '24px',
+    lineHeight: '1.25',
+    usage: 'Títulos de sub-página / seção destaque',
+    example: 'Trilhas de execução',
+  },
+  {
+    token: 'text-hero',
+    size: '32px',
+    lineHeight: '1.15',
+    usage: 'KPIs grandes, números principais do dashboard',
+    example: '1.284',
+  },
+  {
+    token: 'text-hero-lg',
+    size: '40px',
+    lineHeight: '1.1',
+    usage: 'Hero de página (PageHeader com gradiente)',
+    example: 'Fator X',
+  },
+  {
+    token: 'text-numeric',
+    size: '—',
+    lineHeight: '—',
+    usage: 'Modificador — tabular-nums para colunas numéricas',
+    example: '$0.0421',
+  },
 ];
 
 const DEPRECATED = [
-  { bad: 'text-xs',       good: 'text-meta',      why: 'Ambíguo entre 11 e 12px em contextos diferentes.' },
-  { bad: 'text-sm',       good: 'text-body-sm',   why: 'Não distingue corpo denso de rótulo de UI.' },
-  { bad: 'text-[10px]',   good: 'text-meta',      why: '10px falha WCAG em telas retina; padronizamos em 11px.' },
-  { bad: 'text-[11px]',   good: 'text-meta',      why: 'Substituído pelo token semântico.' },
+  { bad: 'text-xs', good: 'text-meta', why: 'Ambíguo entre 11 e 12px em contextos diferentes.' },
+  { bad: 'text-sm', good: 'text-body-sm', why: 'Não distingue corpo denso de rótulo de UI.' },
+  {
+    bad: 'text-[10px]',
+    good: 'text-meta',
+    why: '10px falha WCAG em telas retina; padronizamos em 11px.',
+  },
+  { bad: 'text-[11px]', good: 'text-meta', why: 'Substituído pelo token semântico.' },
 ];
 
 export default function TypographyDocsPage() {
@@ -53,21 +123,39 @@ export default function TypographyDocsPage() {
             <table className="w-full text-body-sm text-numeric">
               <thead className="bg-secondary/50 border-b border-border">
                 <tr>
-                  <th className="text-left p-3 text-meta uppercase tracking-wide text-muted-foreground">Token</th>
-                  <th className="text-left p-3 text-meta uppercase tracking-wide text-muted-foreground">Tamanho</th>
-                  <th className="text-left p-3 text-meta uppercase tracking-wide text-muted-foreground">Line-height</th>
-                  <th className="text-left p-3 text-meta uppercase tracking-wide text-muted-foreground">Uso recomendado</th>
-                  <th className="text-left p-3 text-meta uppercase tracking-wide text-muted-foreground">Exemplo</th>
+                  <th className="text-left p-3 text-meta uppercase tracking-wide text-muted-foreground">
+                    Token
+                  </th>
+                  <th className="text-left p-3 text-meta uppercase tracking-wide text-muted-foreground">
+                    Tamanho
+                  </th>
+                  <th className="text-left p-3 text-meta uppercase tracking-wide text-muted-foreground">
+                    Line-height
+                  </th>
+                  <th className="text-left p-3 text-meta uppercase tracking-wide text-muted-foreground">
+                    Uso recomendado
+                  </th>
+                  <th className="text-left p-3 text-meta uppercase tracking-wide text-muted-foreground">
+                    Exemplo
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {TOKENS.map((t) => (
                   <tr key={t.token} className="border-t border-border/40 hover:bg-secondary/20">
-                    <td className="p-3"><code className="text-meta font-mono text-primary">{t.token}</code></td>
+                    <td className="p-3">
+                      <code className="text-meta font-mono text-primary">{t.token}</code>
+                    </td>
                     <td className="p-3">{t.size}</td>
                     <td className="p-3">{t.lineHeight}</td>
                     <td className="p-3 text-muted-foreground">{t.usage}</td>
-                    <td className="p-3"><span className={t.token === 'text-numeric' ? 'text-body text-numeric' : t.token}>{t.example}</span></td>
+                    <td className="p-3">
+                      <span
+                        className={t.token === 'text-numeric' ? 'text-body text-numeric' : t.token}
+                      >
+                        {t.example}
+                      </span>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -81,7 +169,9 @@ export default function TypographyDocsPage() {
         <CardContent className="p-6 space-y-4">
           <div className="flex items-center gap-2">
             <h2 className="text-title-sm font-heading">Tokens bloqueados</h2>
-            <Badge variant="destructive" className="text-meta">ESLint enforce</Badge>
+            <Badge variant="destructive" className="text-meta">
+              ESLint enforce
+            </Badge>
           </div>
           <p className="text-body-sm text-muted-foreground">
             O ESLint bloqueia estes tokens em novos commits. Use sempre a coluna “Substituir por”.
@@ -90,16 +180,26 @@ export default function TypographyDocsPage() {
             <table className="w-full text-body-sm">
               <thead className="bg-secondary/50 border-b border-border">
                 <tr>
-                  <th className="text-left p-3 text-meta uppercase tracking-wide text-muted-foreground">❌ Não use</th>
-                  <th className="text-left p-3 text-meta uppercase tracking-wide text-muted-foreground">✅ Substituir por</th>
-                  <th className="text-left p-3 text-meta uppercase tracking-wide text-muted-foreground">Motivo</th>
+                  <th className="text-left p-3 text-meta uppercase tracking-wide text-muted-foreground">
+                    ❌ Não use
+                  </th>
+                  <th className="text-left p-3 text-meta uppercase tracking-wide text-muted-foreground">
+                    ✅ Substituir por
+                  </th>
+                  <th className="text-left p-3 text-meta uppercase tracking-wide text-muted-foreground">
+                    Motivo
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {DEPRECATED.map((d) => (
                   <tr key={d.bad} className="border-t border-border/40">
-                    <td className="p-3"><code className="text-meta font-mono text-destructive">{d.bad}</code></td>
-                    <td className="p-3"><code className="text-meta font-mono text-primary">{d.good}</code></td>
+                    <td className="p-3">
+                      <code className="text-meta font-mono text-destructive">{d.bad}</code>
+                    </td>
+                    <td className="p-3">
+                      <code className="text-meta font-mono text-primary">{d.good}</code>
+                    </td>
                     <td className="p-3 text-muted-foreground">{d.why}</td>
                   </tr>
                 ))}
@@ -124,7 +224,9 @@ export default function TypographyDocsPage() {
           </div>
 
           <div className="space-y-2">
-            <p className="text-meta uppercase tracking-wide text-muted-foreground">Linha de tabela</p>
+            <p className="text-meta uppercase tracking-wide text-muted-foreground">
+              Linha de tabela
+            </p>
             <div className="p-3 rounded-lg border border-border bg-card">
               <div className="flex items-center justify-between">
                 <span className="text-body-sm">Agente Aurora</span>

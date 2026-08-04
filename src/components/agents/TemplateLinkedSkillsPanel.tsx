@@ -36,7 +36,6 @@ import {
 } from '@/services/templateSkillLinkService';
 import { supabase } from '@/integrations/supabase/client';
 
-
 export interface TemplateLinkedSkillsPanelProps {
   template: AgentTemplate;
   selectedIds: string[];
@@ -65,8 +64,6 @@ export function TemplateLinkedSkillsPanel({
     staleTime: 5 * 60_000,
     retry: false,
   });
-
-
 
   // 1ª fonte: vínculos persistidos (curadoria + recálculo por um clique).
   const persisted = useQuery({
@@ -213,10 +210,9 @@ export function TemplateLinkedSkillsPanel({
                 {(() => {
                   const trilha = formatCurationTrail(l, currentUser.data);
                   return trilha ? (
-                    <span className="block text-[10px] text-muted-foreground/70">{trilha}</span>
+                    <span className="block text-meta text-muted-foreground/70">{trilha}</span>
                   ) : null;
                 })()}
-
               </label>
               {allowCuration && (
                 <Button
@@ -239,7 +235,10 @@ export function TemplateLinkedSkillsPanel({
       {allowCuration && availableSkills.length > 0 && (
         <div className="flex items-center gap-2">
           <Select value={pendingSkillId} onValueChange={setPendingSkillId} disabled={isMutating}>
-            <SelectTrigger className="h-9 flex-1 text-meta" aria-label="Escolher skill para vincular">
+            <SelectTrigger
+              className="h-9 flex-1 text-meta"
+              aria-label="Escolher skill para vincular"
+            >
               <SelectValue placeholder="Adicionar skill manualmente…" />
             </SelectTrigger>
             <SelectContent className="max-h-64">

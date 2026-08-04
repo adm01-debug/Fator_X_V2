@@ -55,10 +55,7 @@ export function SkillPromptEvidenceLedgerCard() {
 
   const entries = useMemo(() => data ?? [], [data]);
   const resumo = useMemo(() => summarizeEvidenceLedger(entries), [entries]);
-  const verificacao = useMemo(
-    () => verifyArtifactContent(conteudo, entries),
-    [conteudo, entries],
-  );
+  const verificacao = useMemo(() => verifyArtifactContent(conteudo, entries), [conteudo, entries]);
 
   const StatusIcon = STATUS_ICON[verificacao.status];
 
@@ -70,8 +67,8 @@ export function SkillPromptEvidenceLedgerCard() {
           Evidências de prompt exportadas
         </CardTitle>
         <p className="text-meta text-muted-foreground">
-          A trilha guarda apenas a impressão digital do artefato — nunca o prompt. Cole o
-          arquivo abaixo para confirmar que ele corresponde a uma exportação registrada.
+          A trilha guarda apenas a impressão digital do artefato — nunca o prompt. Cole o arquivo
+          abaixo para confirmar que ele corresponde a uma exportação registrada.
         </p>
       </CardHeader>
 
@@ -99,7 +96,7 @@ export function SkillPromptEvidenceLedgerCard() {
               ].map((item) => (
                 <div key={item.label} className="rounded-lg border border-border/60 p-3">
                   <p className="text-meta text-muted-foreground">{item.label}</p>
-                  <p className="mt-1 text-lg font-semibold tabular-nums">{item.value}</p>
+                  <p className="mt-1 text-title-sm font-semibold tabular-nums">{item.value}</p>
                 </div>
               ))}
             </div>
@@ -113,8 +110,8 @@ export function SkillPromptEvidenceLedgerCard() {
             {resumo.duplicates.length > 0 && (
               <Alert>
                 <AlertDescription className="text-meta">
-                  {resumo.duplicates.length} artefato(s) exportado(s) mais de uma vez com
-                  conteúdo idêntico — nada mudou entre as revisões.
+                  {resumo.duplicates.length} artefato(s) exportado(s) mais de uma vez com conteúdo
+                  idêntico — nada mudou entre as revisões.
                 </AlertDescription>
               </Alert>
             )}
@@ -128,7 +125,7 @@ export function SkillPromptEvidenceLedgerCard() {
                 value={conteudo}
                 onChange={(e) => setConteudo(e.target.value)}
                 placeholder="Cole aqui o conteúdo integral do arquivo .md exportado…"
-                className="min-h-[120px] font-mono text-xs"
+                className="min-h-[120px] font-mono text-meta"
               />
               <div className="flex flex-wrap items-center gap-2">
                 <StatusIcon className={`h-4 w-4 ${STATUS_TONE[verificacao.status]}`} aria-hidden />
@@ -136,7 +133,7 @@ export function SkillPromptEvidenceLedgerCard() {
                   {VERIFICATION_LABEL[verificacao.status]}
                 </span>
                 {verificacao.checksum !== '' && (
-                  <Badge variant="outline" className="font-mono text-[11px]">
+                  <Badge variant="outline" className="font-mono text-meta">
                     {verificacao.checksum}
                   </Badge>
                 )}
@@ -163,8 +160,7 @@ export function SkillPromptEvidenceLedgerCard() {
 
             {entries.length === 0 ? (
               <p className="text-meta text-muted-foreground">
-                Nenhuma evidência exportada ainda. Use o simulador de prompt para gerar a
-                primeira.
+                Nenhuma evidência exportada ainda. Use o simulador de prompt para gerar a primeira.
               </p>
             ) : (
               <ul className="space-y-2">
@@ -174,7 +170,7 @@ export function SkillPromptEvidenceLedgerCard() {
                     className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border/60 p-3"
                   >
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-medium">{e.agentName}</p>
+                      <p className="truncate text-body-sm font-medium">{e.agentName}</p>
                       <p className="truncate text-meta text-muted-foreground">
                         {e.filename} · {formatDate(e.createdAt)}
                       </p>
@@ -184,7 +180,7 @@ export function SkillPromptEvidenceLedgerCard() {
                       {e.skillsOverflow > 0 && (
                         <Badge variant="destructive">{e.skillsOverflow} cortadas</Badge>
                       )}
-                      <Badge variant="outline" className="font-mono text-[11px]">
+                      <Badge variant="outline" className="font-mono text-meta">
                         {e.checksum}
                       </Badge>
                     </div>

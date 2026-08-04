@@ -36,7 +36,7 @@ export function SkillInstallCapLedgerCard() {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="flex items-center gap-2 text-body">
           <Scissors className="h-4 w-4 text-muted-foreground" />
           Trilha de estouro do teto
         </CardTitle>
@@ -65,7 +65,7 @@ export function SkillInstallCapLedgerCard() {
             </AlertDescription>
           </Alert>
         ) : resumo.total === 0 ? (
-          <div className="flex items-center gap-2 rounded-md border border-border/60 bg-muted/30 p-4 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2 rounded-md border border-border/60 bg-muted/30 p-4 text-body-sm text-muted-foreground">
             <ShieldCheck className="h-4 w-4 text-nexus-green" />
             Nenhuma instalação estourou o teto até agora — os agentes estão íntegros.
           </div>
@@ -79,7 +79,7 @@ export function SkillInstallCapLedgerCard() {
                 { label: 'Sem reconhecimento', value: resumo.unacknowledged },
               ].map((m) => (
                 <div key={m.label} className="rounded-md border border-border/60 p-3">
-                  <p className="text-xs text-muted-foreground">{m.label}</p>
+                  <p className="text-meta text-muted-foreground">{m.label}</p>
                   <p className="mt-1 text-xl font-semibold tabular-nums tracking-tight">
                     {m.value.toLocaleString('pt-BR')}
                   </p>
@@ -89,7 +89,7 @@ export function SkillInstallCapLedgerCard() {
 
             {resumo.degradedAgents.length > 0 && (
               <div className="space-y-2">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                <p className="text-meta font-medium uppercase tracking-wide text-muted-foreground">
                   Agentes acima do teto
                 </p>
                 {resumo.degradedAgents.slice(0, MAX_LISTED).map((a) => (
@@ -98,25 +98,25 @@ export function SkillInstallCapLedgerCard() {
                     className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-nexus-amber/40 bg-nexus-amber/5 p-3"
                   >
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-medium">{a.agentName}</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="truncate text-body-sm font-medium">{a.agentName}</p>
+                      <p className="text-meta text-muted-foreground">
                         {a.slotsAfter} slots · última operação {formatDate(a.lastAt)}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
                       {a.hasUnacknowledged && (
-                        <Badge variant="outline" className="gap-1 text-[11px]">
+                        <Badge variant="outline" className="gap-1 text-meta">
                           <AlertTriangle className="h-3 w-3" /> sem reconhecimento
                         </Badge>
                       )}
-                      <Badge variant="destructive" className="text-[11px]">
+                      <Badge variant="destructive" className="text-meta">
                         {a.droppedNow} descartada(s)
                       </Badge>
                     </div>
                   </div>
                 ))}
                 {resumo.degradedAgents.length > MAX_LISTED && (
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-meta text-muted-foreground">
                     +{resumo.degradedAgents.length - MAX_LISTED} agente(s) não listado(s).
                   </p>
                 )}
@@ -125,12 +125,12 @@ export function SkillInstallCapLedgerCard() {
 
             {resumo.topDropped.length > 0 && (
               <div className="space-y-2">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                <p className="text-meta font-medium uppercase tracking-wide text-muted-foreground">
                   Skills mais descartadas
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {resumo.topDropped.map((s) => (
-                    <Badge key={s.name} variant="secondary" className="text-[11px]">
+                    <Badge key={s.name} variant="secondary" className="text-meta">
                       {s.name} · {s.count}×
                     </Badge>
                   ))}
@@ -138,9 +138,9 @@ export function SkillInstallCapLedgerCard() {
               </div>
             )}
 
-            <p className="text-xs text-muted-foreground">
-              {resumo.crossings} operação(ões) cruzaram o teto pela primeira vez ·{' '}
-              {resumo.agents} agente(s) na trilha · último registro em {formatDate(resumo.lastAt)}.
+            <p className="text-meta text-muted-foreground">
+              {resumo.crossings} operação(ões) cruzaram o teto pela primeira vez · {resumo.agents}{' '}
+              agente(s) na trilha · último registro em {formatDate(resumo.lastAt)}.
             </p>
           </>
         )}

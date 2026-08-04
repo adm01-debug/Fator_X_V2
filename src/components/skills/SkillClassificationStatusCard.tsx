@@ -26,7 +26,6 @@ const SOURCE_META = [
   { key: 'platform', label: 'Plataforma', hint: 'palpite, requer revisão', bar: 'bg-nexus-amber' },
 ] as const;
 
-
 export function SkillClassificationStatusCard({
   overview,
   isLoading,
@@ -38,7 +37,7 @@ export function SkillClassificationStatusCard({
     <Card>
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-3">
-          <CardTitle className="text-base">Status de classificação</CardTitle>
+          <CardTitle className="text-body">Status de classificação</CardTitle>
           {health !== null && (
             <Badge
               variant="outline"
@@ -68,10 +67,10 @@ export function SkillClassificationStatusCard({
               const pct = Math.round(share(value, overview.total));
               return (
                 <div key={meta.key} className="space-y-1.5">
-                  <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center justify-between text-body-sm">
                     <span className="font-medium">
                       {meta.label}{' '}
-                      <span className="text-xs font-normal text-muted-foreground">
+                      <span className="text-meta font-normal text-muted-foreground">
                         · {meta.hint}
                       </span>
                     </span>
@@ -100,21 +99,21 @@ export function SkillClassificationStatusCard({
 
             <div className="grid grid-cols-2 gap-3 pt-1">
               <div className="rounded-lg border border-border bg-muted/30 p-3">
-                <p className="text-xs text-muted-foreground">Sem departamento</p>
-                <p className="text-lg font-semibold tabular-nums">
+                <p className="text-meta text-muted-foreground">Sem departamento</p>
+                <p className="text-title-sm font-semibold tabular-nums">
                   {overview.unclassified.toLocaleString('pt-BR')}
                 </p>
               </div>
               <div className="rounded-lg border border-border bg-muted/30 p-3">
-                <p className="text-xs text-muted-foreground">Rever depto.</p>
-                <p className="text-lg font-semibold tabular-nums">
+                <p className="text-meta text-muted-foreground">Rever depto.</p>
+                <p className="text-title-sm font-semibold tabular-nums">
                   {overview.needsReview.toLocaleString('pt-BR')}
                 </p>
               </div>
             </div>
 
             {pending > 0 && (
-              <div className="flex items-start gap-2 rounded-lg border border-nexus-amber/30 bg-nexus-amber/5 p-3 text-sm">
+              <div className="flex items-start gap-2 rounded-lg border border-nexus-amber/30 bg-nexus-amber/5 p-3 text-body-sm">
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-nexus-amber" />
                 <p className="text-muted-foreground">
                   {pending.toLocaleString('pt-BR')} skills aguardam curadoria de departamento.

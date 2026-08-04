@@ -37,10 +37,7 @@ import {
   trimSelectionToCap,
   type NamedSkillRef,
 } from '@/lib/skills/installGuard';
-import {
-  buildInstallCapRecord,
-  shouldAuditInstall,
-} from '@/lib/skills/installCapAudit';
+import { buildInstallCapRecord, shouldAuditInstall } from '@/lib/skills/installCapAudit';
 import { audit } from '@/lib/auditService';
 import { MAX_PROMPT_SKILLS } from '@/lib/skills/promptSimulation';
 
@@ -62,10 +59,7 @@ export function SkillLibraryInstallPanel() {
     enabled: agentId.length > 0,
   });
 
-  const installedIds = useMemo(
-    () => new Set((installed ?? []).map((s) => s.id)),
-    [installed],
-  );
+  const installedIds = useMemo(() => new Set((installed ?? []).map((s) => s.id)), [installed]);
 
   /**
    * Guarda de teto: o runtime compila no máximo MAX_PROMPT_SKILLS skills. Sem
@@ -142,8 +136,7 @@ export function SkillLibraryInstallPanel() {
       invalidate();
       toast.success(`${removed.length} skill(s) removida(s)`);
     },
-    onError: (e: unknown) =>
-      toast.error(e instanceof Error ? e.message : 'Falha ao remover skill'),
+    onError: (e: unknown) => toast.error(e instanceof Error ? e.message : 'Falha ao remover skill'),
   });
 
   const toggle = (id: string) =>
@@ -154,7 +147,7 @@ export function SkillLibraryInstallPanel() {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-base">Instalar em um agente</CardTitle>
+        <CardTitle className="text-body">Instalar em um agente</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex flex-col gap-3 sm:flex-row">
@@ -202,8 +195,8 @@ export function SkillLibraryInstallPanel() {
                         aria-label={`Selecionar ${skill.name}`}
                       />
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium">{skill.name}</p>
-                        <p className="truncate text-xs text-muted-foreground">
+                        <p className="truncate text-body-sm font-medium">{skill.name}</p>
+                        <p className="truncate text-meta text-muted-foreground">
                           {skill.description || 'Sem descrição'}
                         </p>
                       </div>
@@ -249,8 +242,8 @@ export function SkillLibraryInstallPanel() {
                 }
               />
               <div className="min-w-0 flex-1 space-y-2">
-                <p className="text-sm">{guard.message}</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-body-sm">{guard.message}</p>
+                <p className="text-meta text-muted-foreground">
                   {guard.currentSlots} → {guard.projectedSlots} de {MAX_PROMPT_SKILLS} slots
                   {guard.redundant.length > 0
                     ? ` · ${guard.redundant.length} selecionada(s) sem efeito (duplicada/sem nome)`
@@ -267,7 +260,7 @@ export function SkillLibraryInstallPanel() {
         )}
 
         <div className="flex items-center justify-between gap-3">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-body-sm text-muted-foreground">
             {agentId
               ? `${selected.length} selecionada(s) · ${installedIds.size} já instalada(s)`
               : 'Selecione um agente para habilitar a instalação'}
