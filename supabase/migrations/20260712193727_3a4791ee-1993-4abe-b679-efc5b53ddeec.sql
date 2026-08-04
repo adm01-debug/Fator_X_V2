@@ -1,7 +1,7 @@
 
 CREATE TABLE IF NOT EXISTS public.mcp_servers (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  owner_id UUID NOT NULL DEFAULT auth.uid() REFERENCES auth.users(id) ON DELETE CASCADE,
+  owner_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   url TEXT NOT NULL,
   transport TEXT NOT NULL DEFAULT 'streamable-http' CHECK (transport IN ('streamable-http','sse','stdio')),
@@ -15,11 +15,19 @@ CREATE TABLE IF NOT EXISTS public.mcp_servers (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- Ensure owner_id exists when table was created by an earlier migration without it
+ALTER TABLE public.mcp_servers
+  ADD COLUMN IF NOT EXISTS owner_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  ADD COLUMN IF NOT EXISTS tools JSONB NOT NULL DEFAULT '[]'::jsonb,
+  ADD COLUMN IF NOT EXISTS resources JSONB NOT NULL DEFAULT '[]'::jsonb,
+  ADD COLUMN IF NOT EXISTS last_connected TIMESTAMPTZ;
+
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.mcp_servers TO authenticated;
 GRANT ALL ON public.mcp_servers TO service_role;
 
 ALTER TABLE public.mcp_servers ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Owners manage their MCP servers" ON public.mcp_servers;
 CREATE POLICY "Owners manage their MCP servers"
   ON public.mcp_servers FOR ALL
   TO authenticated
