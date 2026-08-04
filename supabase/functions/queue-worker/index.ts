@@ -1,8 +1,15 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import { handleCorsPreflight, getCorsHeaders, checkRateLimit } from "../_shared/mod.ts";
-import { fetchWithTimeout } from "../_shared/retry.ts";
-import { z } from "https://esm.sh/zod@3.23.8";
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
+import {
+  handleCorsPreflight,
+  getCorsHeaders,
+  checkRateLimit,
+  createRateLimitResponse,
+  getRateLimitIdentifier,
+  RATE_LIMITS,
+} from '../_shared/mod.ts';
+import { fetchWithTimeout } from '../_shared/retry.ts';
+import { z } from 'https://esm.sh/zod@3.23.8';
 
 const BodySchema = z.object({
   queue_id: z.string().uuid().optional(),
@@ -14,38 +21,60 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
   const corsHeaders = getCorsHeaders(req);
 
-  const rateLimitResult = await checkRateLimit(req, { preset: "standard" });
-  if (rateLimitResult) return rateLimitResult;
+  const identifier = getRateLimitIdentifier(req);
+  const rateLimit = await checkRateLimit(identifier, RATE_LIMITS.standard);
+  if (!rateLimit.allowed) return createRateLimitResponse(rateLimit, corsHeaders);
 
   try {
     const rawBody = await req.json().catch(() => ({}));
     const parsed = BodySchema.safeParse(rawBody);
     if (!parsed.success) {
-      return new Response(JSON.stringify({ error: 'Payload inválido', details: parsed.error.flatten().fieldErrors }), {
-        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      const fieldErrors = parsed.error.flatten().fieldErrors;
+      const fields = Object.entries(fieldErrors).flatMap(([field, msgs]) =>
+        (msgs ?? []).map((msg) => ({ field, message: msg, code: 'invalid_value' })),
+      );
+      return new Response(
+        JSON.stringify({
+          error: 'Validation failed',
+          code: 'VALIDATION_ERROR',
+          message: 'Payload inválido',
+          fields,
+        }),
+        {
+          status: 422,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        },
+      );
     }
     const queueId = parsed.data.queue_id;
     const workerId = parsed.data.worker_id ?? `worker-${crypto.randomUUID().slice(0, 8)}`;
     const batchSize = parsed.data.batch_size ?? 5;
 
-
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
     );
 
     // Get queue config
     let queues: Array<Record<string, unknown>> = [];
     if (queueId) {
-      const { data } = await supabase.from('task_queues').select('*').eq('id', queueId).eq('is_paused', false);
+      const { data } = await supabase
+        .from('task_queues')
+        .select('*')
+        .eq('id', queueId)
+        .eq('is_paused', false);
       queues = data ?? [];
     } else {
       const { data } = await supabase.from('task_queues').select('*').eq('is_paused', false);
       queues = data ?? [];
     }
 
-    const results: Array<{ queue: string; items_processed: number; successes: number; failures: number }> = [];
+    const results: Array<{
+      queue: string;
+      items_processed: number;
+      successes: number;
+      failures: number;
+    }> = [];
 
     for (const queue of queues) {
       // Check concurrency
@@ -84,13 +113,17 @@ serve(async (req) => {
       for (const item of items) {
         // Lock item
         const lockUntil = new Date(now.getTime() + ((item.timeout_ms as number) ?? 30000));
-        await supabase.from('queue_items').update({
-          status: 'processing',
-          started_at: now.toISOString(),
-          attempt: ((item.attempt as number) ?? 0) + 1,
-          locked_by: workerId,
-          locked_until: lockUntil.toISOString(),
-        }).eq('id', item.id).eq('status', 'pending');
+        await supabase
+          .from('queue_items')
+          .update({
+            status: 'processing',
+            started_at: now.toISOString(),
+            attempt: ((item.attempt as number) ?? 0) + 1,
+            locked_by: workerId,
+            locked_until: lockUntil.toISOString(),
+          })
+          .eq('id', item.id)
+          .eq('status', 'pending');
 
         // Process item (dispatch to target if specified in payload)
         const _startTime = Date.now();
@@ -111,22 +144,28 @@ serve(async (req) => {
             if (!resp.ok) throw new Error(`Function ${targetFn} returned ${resp.status}`);
             const result = await resp.json();
 
-            await supabase.from('queue_items').update({
-              status: 'completed',
-              result,
-              completed_at: new Date().toISOString(),
-              locked_by: null,
-              locked_until: null,
-            }).eq('id', item.id);
+            await supabase
+              .from('queue_items')
+              .update({
+                status: 'completed',
+                result,
+                completed_at: new Date().toISOString(),
+                locked_by: null,
+                locked_until: null,
+              })
+              .eq('id', item.id);
             successes++;
           } else {
             // No target function — mark as completed (processed by consumer later)
-            await supabase.from('queue_items').update({
-              status: 'completed',
-              completed_at: new Date().toISOString(),
-              locked_by: null,
-              locked_until: null,
-            }).eq('id', item.id);
+            await supabase
+              .from('queue_items')
+              .update({
+                status: 'completed',
+                completed_at: new Date().toISOString(),
+                locked_by: null,
+                locked_until: null,
+              })
+              .eq('id', item.id);
             successes++;
           }
         } catch (e) {
@@ -135,13 +174,16 @@ serve(async (req) => {
           const maxRetries = (item.max_retries as number) ?? 3;
           const shouldRetry = attempt < maxRetries;
 
-          await supabase.from('queue_items').update({
-            status: shouldRetry ? 'pending' : 'dead_letter',
-            error: errorMsg,
-            locked_by: null,
-            locked_until: null,
-            completed_at: shouldRetry ? null : new Date().toISOString(),
-          }).eq('id', item.id);
+          await supabase
+            .from('queue_items')
+            .update({
+              status: shouldRetry ? 'pending' : 'dead_letter',
+              error: errorMsg,
+              locked_by: null,
+              locked_until: null,
+              completed_at: shouldRetry ? null : new Date().toISOString(),
+            })
+            .eq('id', item.id);
 
           failures++;
         }
@@ -149,12 +191,15 @@ serve(async (req) => {
 
       // Update queue stats
       if (items.length > 0) {
-        await supabase.from('task_queues').update({
-          processed_count: ((queue.processed_count as number) ?? 0) + successes,
-          failed_count: ((queue.failed_count as number) ?? 0) + failures,
-          current_size: Math.max(0, ((queue.current_size as number) ?? 0) - successes - failures),
-          updated_at: new Date().toISOString(),
-        }).eq('id', queue.id);
+        await supabase
+          .from('task_queues')
+          .update({
+            processed_count: ((queue.processed_count as number) ?? 0) + successes,
+            failed_count: ((queue.failed_count as number) ?? 0) + failures,
+            current_size: Math.max(0, ((queue.current_size as number) ?? 0) - successes - failures),
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', queue.id);
       }
 
       results.push({
@@ -172,13 +217,12 @@ serve(async (req) => {
         results,
         processed_at: new Date().toISOString(),
       }),
-      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
     );
-
   } catch (error) {
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : 'Internal error' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
     );
   }
 });

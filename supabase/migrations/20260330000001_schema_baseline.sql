@@ -14,8 +14,9 @@
 -- Referenced as FK target by evaluation_runs (20260331110311) and altered by
 -- fix_stub_schemas (20260332000001) which adds all real columns.
 CREATE TABLE IF NOT EXISTS public.agents (
-  id          UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  id           UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID,
+  user_id      UUID,
   is_template  BOOLEAN DEFAULT false,
   created_at   TIMESTAMPTZ DEFAULT NOW(),
   updated_at   TIMESTAMPTZ DEFAULT NOW()

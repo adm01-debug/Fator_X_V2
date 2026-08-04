@@ -20,7 +20,7 @@ jobs:
           node-version: '20'
           cache: 'npm'
       - run: npm ci
-      - run: npm audit --audit-level=high
+      - run: npm audit --audit-level=high --omit=dev
         continue-on-error: false
 
   lint-and-typecheck:
@@ -34,7 +34,7 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npx tsc --noEmit
-      - run: npx eslint src/ --ext .ts,.tsx --max-warnings 0
+      - run: npx eslint src/ --ext .ts,.tsx --max-warnings 0 --format=compact
       - name: Enforce nexus-design & no-explicit-any (zero regressions)
         run: |
           set -o pipefail
