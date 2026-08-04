@@ -154,24 +154,27 @@ DO $$
 DECLARE
   v_jid bigint;
 BEGIN
-  SELECT jobid INTO v_jid FROM cron.job WHERE jobname = 'smoke-test-wal-every-6h';
-  IF v_jid IS NOT NULL THEN PERFORM cron.unschedule(v_jid); END IF;
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+    SELECT jobid INTO v_jid FROM cron.job WHERE jobname = 'smoke-test-wal-every-6h';
+    IF v_jid IS NOT NULL THEN PERFORM cron.unschedule(v_jid); END IF;
 
-  SELECT jobid INTO v_jid FROM cron.job WHERE jobname = 'smoke-test-conn-every-6h';
-  IF v_jid IS NOT NULL THEN PERFORM cron.unschedule(v_jid); END IF;
-END $$;
+    SELECT jobid INTO v_jid FROM cron.job WHERE jobname = 'smoke-test-conn-every-6h';
+    IF v_jid IS NOT NULL THEN PERFORM cron.unschedule(v_jid); END IF;
 
-SELECT cron.schedule(
-  'smoke-test-wal-every-6h',
-  '13 */6 * * *',
-  $$SELECT internal.smoke_test_wal_growth();$$
-);
+    PERFORM cron.schedule(
+      'smoke-test-wal-every-6h',
+      '13 */6 * * *',
+      'SELECT internal.smoke_test_wal_growth();'
+    );
 
-SELECT cron.schedule(
-  'smoke-test-conn-every-6h',
-  '19 */6 * * *',
-  $$SELECT internal.smoke_test_connections_saturation();$$
-);
+    PERFORM cron.schedule(
+      'smoke-test-conn-every-6h',
+      '19 */6 * * *',
+      'SELECT internal.smoke_test_connections_saturation();'
+    );
+  END IF;
+END;
+$$;
 
 -- ============================================================
 -- 4. RPC pública para painel SLO (admin-only)

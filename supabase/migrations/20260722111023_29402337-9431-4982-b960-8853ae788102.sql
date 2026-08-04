@@ -167,8 +167,14 @@ $$;
 REVOKE ALL ON FUNCTION internal.cleanup_slack_ephemeral() FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION internal.cleanup_slack_ephemeral() TO service_role;
 
-SELECT cron.schedule(
-  'slack-ephemeral-cleanup',
-  '0 4 * * *',
-  $$ SELECT internal.cleanup_slack_ephemeral(); $$
-);
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+    PERFORM cron.schedule(
+      'slack-ephemeral-cleanup',
+      '0 4 * * *',
+      'SELECT internal.cleanup_slack_ephemeral();'
+    );
+  END IF;
+END;
+$$;

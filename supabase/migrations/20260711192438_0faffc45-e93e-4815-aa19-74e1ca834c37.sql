@@ -63,11 +63,17 @@ GRANT EXECUTE ON FUNCTION internal.ensure_monthly_partitions() TO service_role;
 SELECT * FROM internal.ensure_monthly_partitions();
 
 -- Agenda mensal (dia 25, 03:00 UTC — ~5 dias de folga antes da virada).
-SELECT cron.unschedule('ensure-monthly-partitions')
-WHERE EXISTS (SELECT 1 FROM cron.job WHERE jobname='ensure-monthly-partitions');
-
-SELECT cron.schedule(
-  'ensure-monthly-partitions',
-  '0 3 25 * *',
-  $cron$SELECT internal.ensure_monthly_partitions();$cron$
-);
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+    IF EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'ensure-monthly-partitions') THEN
+      PERFORM cron.unschedule('ensure-monthly-partitions');
+    END IF;
+    PERFORM cron.schedule(
+      'ensure-monthly-partitions',
+      '0 3 25 * *',
+      'SELECT internal.ensure_monthly_partitions();'
+    );
+  END IF;
+END;
+$$;

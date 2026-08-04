@@ -116,7 +116,7 @@ CREATE POLICY "forum_threads_workspace_update" ON public.forum_threads
     FOR UPDATE USING (
         (
             -- Autor da thread
-            created_by = auth.uid()
+            author_id = auth.uid()
         )
         OR
         (
@@ -140,7 +140,7 @@ CREATE POLICY "forum_threads_workspace_delete" ON public.forum_threads
             WHERE wm.user_id = auth.uid()
               AND wm.role IN ('owner', 'admin')
         )
-        OR created_by = auth.uid()
+        OR author_id = auth.uid()
         OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
@@ -207,13 +207,13 @@ CREATE POLICY "forum_posts_workspace_insert" ON public.forum_posts
 
 CREATE POLICY "forum_posts_workspace_update" ON public.forum_posts
     FOR UPDATE USING (
-        created_by = auth.uid()
+        author_id = auth.uid()
         OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 CREATE POLICY "forum_posts_workspace_delete" ON public.forum_posts
     FOR DELETE USING (
-        created_by = auth.uid()
+        author_id = auth.uid()
         OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 

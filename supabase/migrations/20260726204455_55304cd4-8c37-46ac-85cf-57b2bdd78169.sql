@@ -22,9 +22,16 @@ $$;
 
 REVOKE ALL ON FUNCTION internal.purge_crm_cadence_runs(integer) FROM PUBLIC, anon, authenticated;
 
-SELECT cron.schedule(
-  'purge-crm-cadence-runs-daily',
-  '17 4 * * *',
-  $$SELECT internal.purge_crm_cadence_runs(90)$$
-)
-WHERE NOT EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'purge-crm-cadence-runs-daily');
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+    IF NOT EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'purge-crm-cadence-runs-daily') THEN
+      PERFORM cron.schedule(
+        'purge-crm-cadence-runs-daily',
+        '17 4 * * *',
+        'SELECT internal.purge_crm_cadence_runs(90)'
+      );
+    END IF;
+  END IF;
+END;
+$$;
