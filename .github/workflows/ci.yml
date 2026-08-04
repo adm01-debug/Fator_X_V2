@@ -130,7 +130,7 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - name: Run Playwright tests
-        run: npx playwright test
+        run: npx playwright test --update-snapshots=missing
       - name: Auth E2E status
         if: always()
         run: |

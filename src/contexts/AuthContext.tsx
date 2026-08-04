@@ -1,8 +1,8 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { syncExternalAuth } from "@/integrations/supabase/externalClient";
-import { logger } from "@/lib/logger";
-import type { User, Session } from "@supabase/supabase-js";
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { supabase, isSupabaseConfigured } from '@/integrations/supabase/client';
+import { syncExternalAuth } from '@/integrations/supabase/externalClient';
+import { logger } from '@/lib/logger';
+import type { User, Session } from '@supabase/supabase-js';
 
 interface AuthContextType {
   user: User | null;
@@ -23,7 +23,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    if (!isSupabaseConfigured) {
+      setLoading(false);
+      return;
+    }
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
@@ -31,13 +38,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       syncExternalAuth();
     });
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      // Sync access token to external DB client on initial load
-      syncExternalAuth();
-      setLoading(false);
-    });
+    supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        // Sync access token to external DB client on initial load
+        syncExternalAuth();
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
 
     return () => subscription.unsubscribe();
   }, []);
@@ -56,20 +68,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { isUserLockedOut } = await import('@/lib/supabaseExtended');
     const locked = await isUserLockedOut(email);
     if (locked) {
-      return { error: new Error("Muitas tentativas falhas. Sua conta está temporariamente bloqueada por 15 minutos.") };
+      return {
+        error: new Error(
+          'Muitas tentativas falhas. Sua conta está temporariamente bloqueada por 15 minutos.',
+        ),
+      };
     }
 
     const { error, data } = await supabase.auth.signInWithPassword({ email, password });
-    
+
     // Log attempt (successful or failed)
     await supabase.from('auth_attempts').insert({
       email,
       success: !error,
-      ip_address: null // Client-side can't reliably get IP without service
+      ip_address: null, // Client-side can't reliably get IP without service
     });
 
     if (error) return { error: error as Error | null };
-    
+
     // Check if MFA is required for this user (Admin role)
     if (data.user) {
       const { data: roleData } = await supabase
@@ -77,12 +93,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .select('role_key')
         .eq('user_id', data.user.id)
         .maybeSingle();
-      
+
       if (roleData?.role_key === 'workspace_admin') {
         const { data: mfaData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
         if (mfaData?.currentLevel !== 'aal2') {
           // This is a prompt/flag for the UI to redirect to MFA setup or verification
-          logger.warn("MFA AAL2 required for admin user", { userId: data.user.id });
+          logger.warn('MFA AAL2 required for admin user', { userId: data.user.id });
         }
       }
     }
@@ -107,7 +123,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, signUp, signIn, signOut, resetPassword, updatePassword }}>
+    <AuthContext.Provider
+      value={{ user, session, loading, signUp, signIn, signOut, resetPassword, updatePassword }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -117,14 +135,13 @@ const FALLBACK_AUTH: AuthContextType = {
   user: null,
   session: null,
   loading: true,
-  signUp: async () => ({ error: new Error("AuthProvider not mounted") }),
-  signIn: async () => ({ error: new Error("AuthProvider not mounted") }),
+  signUp: async () => ({ error: new Error('AuthProvider not mounted') }),
+  signIn: async () => ({ error: new Error('AuthProvider not mounted') }),
   signOut: async () => {},
-  resetPassword: async () => ({ error: new Error("AuthProvider not mounted") }),
-  updatePassword: async () => ({ error: new Error("AuthProvider not mounted") }),
+  resetPassword: async () => ({ error: new Error('AuthProvider not mounted') }),
+  updatePassword: async () => ({ error: new Error('AuthProvider not mounted') }),
 };
 
- 
 export function useAuth() {
   const ctx = useContext(AuthContext);
   // Return a safe fallback instead of throwing — prevents blank screens
