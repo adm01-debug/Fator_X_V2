@@ -5,7 +5,7 @@
 -- RLS por dono e suporte nativo a ramificação (parent_id).
 -- ============================================================
 
-CREATE TABLE public.chat_threads (
+CREATE TABLE IF NOT EXISTS public.chat_threads (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID NOT NULL,
   workspace_id UUID,
@@ -21,7 +21,7 @@ CREATE TABLE public.chat_threads (
 COMMENT ON TABLE public.chat_threads IS
   'Conversas do AgentTalk. Um agente pode ter N threads por usuário.';
 
-CREATE TABLE public.chat_messages (
+CREATE TABLE IF NOT EXISTS public.chat_messages (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   thread_id UUID NOT NULL REFERENCES public.chat_threads(id) ON DELETE CASCADE,
   -- Ramificação: aponta para a mensagem imediatamente anterior no caminho.

@@ -1,4 +1,4 @@
-CREATE TABLE public.skill_harvest_checkpoints (
+CREATE TABLE IF NOT EXISTS public.skill_harvest_checkpoints (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID NOT NULL DEFAULT auth.uid(),
   -- Chave canônica do conjunto de repositórios (slugs minúsculos, ordenados, unidos por '|').

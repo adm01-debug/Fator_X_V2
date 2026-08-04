@@ -1,5 +1,5 @@
 
-CREATE TABLE public.oracle_history (
+CREATE TABLE IF NOT EXISTS public.oracle_history (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID NOT NULL,
   query TEXT NOT NULL,

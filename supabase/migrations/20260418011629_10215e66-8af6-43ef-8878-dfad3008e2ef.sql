@@ -1,5 +1,5 @@
 -- ═══ Cost Baselines ═══
-CREATE TABLE public.cost_baselines (
+CREATE TABLE IF NOT EXISTS public.cost_baselines (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   scope TEXT NOT NULL CHECK (scope IN ('workspace','agent','model')),
@@ -20,7 +20,7 @@ CREATE POLICY "members view baselines" ON public.cost_baselines FOR SELECT TO au
   USING (workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())));
 
 -- ═══ Cost Alerts ═══
-CREATE TABLE public.cost_alerts (
+CREATE TABLE IF NOT EXISTS public.cost_alerts (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   scope TEXT NOT NULL CHECK (scope IN ('workspace','agent','model')),

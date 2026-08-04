@@ -49,7 +49,7 @@ BEGIN
         WHERE n.nspname='public' AND c.relname=v_partition_name
       ) THEN
         EXECUTE format(
-          'CREATE TABLE public.%I PARTITION OF public.%I FOR VALUES FROM (%L) TO (%L)',
+          'CREATE TABLE IF NOT EXISTS public.%I PARTITION OF public.%I FOR VALUES FROM (%L) TO (%L)',
           v_partition_name, v_parent, v_month_start, v_month_end
         );
 

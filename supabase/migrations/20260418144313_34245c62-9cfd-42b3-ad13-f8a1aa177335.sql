@@ -6,7 +6,7 @@ CREATE TYPE public.ir_phase AS ENUM ('detect','contain','eradicate','recover','p
 CREATE TYPE public.ir_tabletop_outcome AS ENUM ('pass','partial','fail','scheduled');
 
 -- ir_playbooks
-CREATE TABLE public.ir_playbooks (
+CREATE TABLE IF NOT EXISTS public.ir_playbooks (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
@@ -26,7 +26,7 @@ CREATE INDEX idx_ir_playbooks_workspace ON public.ir_playbooks(workspace_id);
 CREATE INDEX idx_ir_playbooks_status ON public.ir_playbooks(workspace_id, status);
 
 -- ir_playbook_steps
-CREATE TABLE public.ir_playbook_steps (
+CREATE TABLE IF NOT EXISTS public.ir_playbook_steps (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   playbook_id UUID NOT NULL REFERENCES public.ir_playbooks(id) ON DELETE CASCADE,
   step_order INTEGER NOT NULL DEFAULT 0,
@@ -41,7 +41,7 @@ CREATE TABLE public.ir_playbook_steps (
 CREATE INDEX idx_ir_playbook_steps_playbook ON public.ir_playbook_steps(playbook_id, step_order);
 
 -- ir_tabletop_exercises
-CREATE TABLE public.ir_tabletop_exercises (
+CREATE TABLE IF NOT EXISTS public.ir_tabletop_exercises (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   playbook_id UUID NOT NULL REFERENCES public.ir_playbooks(id) ON DELETE CASCADE,
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,

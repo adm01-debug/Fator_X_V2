@@ -1,5 +1,5 @@
 -- Tabela de configuração dos checks
-CREATE TABLE public.synthetic_checks (
+CREATE TABLE IF NOT EXISTS public.synthetic_checks (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
@@ -18,7 +18,7 @@ CREATE INDEX idx_synthetic_checks_workspace ON public.synthetic_checks(workspace
 CREATE INDEX idx_synthetic_checks_due ON public.synthetic_checks(enabled, last_run_at) WHERE enabled = true;
 
 -- Tabela de resultados
-CREATE TABLE public.synthetic_results (
+CREATE TABLE IF NOT EXISTS public.synthetic_results (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   check_id UUID NOT NULL REFERENCES public.synthetic_checks(id) ON DELETE CASCADE,
   ran_at TIMESTAMPTZ NOT NULL DEFAULT now(),

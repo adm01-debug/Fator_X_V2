@@ -1,6 +1,6 @@
 -- ═══ CRM CORE (Fase 1 — Sales Automation) ═══
 
-CREATE TABLE public.crm_companies (
+CREATE TABLE IF NOT EXISTS public.crm_companies (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL,
   name TEXT NOT NULL,
@@ -26,7 +26,7 @@ CREATE POLICY "crm_companies_member_access" ON public.crm_companies FOR ALL TO a
   USING (workspace_id IN (SELECT get_user_workspace_ids((SELECT auth.uid()))))
   WITH CHECK (workspace_id IN (SELECT get_user_workspace_ids((SELECT auth.uid()))));
 
-CREATE TABLE public.crm_contacts (
+CREATE TABLE IF NOT EXISTS public.crm_contacts (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL,
   company_id UUID REFERENCES public.crm_companies(id) ON DELETE SET NULL,
@@ -53,7 +53,7 @@ CREATE POLICY "crm_contacts_member_access" ON public.crm_contacts FOR ALL TO aut
   USING (workspace_id IN (SELECT get_user_workspace_ids((SELECT auth.uid()))))
   WITH CHECK (workspace_id IN (SELECT get_user_workspace_ids((SELECT auth.uid()))));
 
-CREATE TABLE public.crm_pipelines (
+CREATE TABLE IF NOT EXISTS public.crm_pipelines (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL,
   name TEXT NOT NULL,
@@ -72,7 +72,7 @@ CREATE POLICY "crm_pipelines_member_access" ON public.crm_pipelines FOR ALL TO a
   USING (workspace_id IN (SELECT get_user_workspace_ids((SELECT auth.uid()))))
   WITH CHECK (workspace_id IN (SELECT get_user_workspace_ids((SELECT auth.uid()))));
 
-CREATE TABLE public.crm_stages (
+CREATE TABLE IF NOT EXISTS public.crm_stages (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL,
   pipeline_id UUID NOT NULL REFERENCES public.crm_pipelines(id) ON DELETE CASCADE,
@@ -96,7 +96,7 @@ CREATE POLICY "crm_stages_member_access" ON public.crm_stages FOR ALL TO authent
   USING (workspace_id IN (SELECT get_user_workspace_ids((SELECT auth.uid()))))
   WITH CHECK (workspace_id IN (SELECT get_user_workspace_ids((SELECT auth.uid()))));
 
-CREATE TABLE public.crm_deals (
+CREATE TABLE IF NOT EXISTS public.crm_deals (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL,
   pipeline_id UUID REFERENCES public.crm_pipelines(id) ON DELETE SET NULL,
@@ -133,7 +133,7 @@ CREATE POLICY "crm_deals_member_access" ON public.crm_deals FOR ALL TO authentic
   USING (workspace_id IN (SELECT get_user_workspace_ids((SELECT auth.uid()))))
   WITH CHECK (workspace_id IN (SELECT get_user_workspace_ids((SELECT auth.uid()))));
 
-CREATE TABLE public.crm_activities (
+CREATE TABLE IF NOT EXISTS public.crm_activities (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL,
   deal_id UUID REFERENCES public.crm_deals(id) ON DELETE CASCADE,

@@ -1,4 +1,4 @@
-CREATE TABLE public.code_executions (
+CREATE TABLE IF NOT EXISTS public.code_executions (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID NOT NULL,
   workspace_id UUID,

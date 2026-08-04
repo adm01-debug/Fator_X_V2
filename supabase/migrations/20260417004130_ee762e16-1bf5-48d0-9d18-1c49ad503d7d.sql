@@ -1,5 +1,5 @@
 -- Tabela de experimentos A/B de prompts
-CREATE TABLE public.prompt_experiments (
+CREATE TABLE IF NOT EXISTS public.prompt_experiments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL,
   agent_id UUID NOT NULL,
@@ -49,7 +49,7 @@ CREATE TRIGGER trg_prompt_experiments_updated_at
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
 -- Tabela de runs do experimento
-CREATE TABLE public.prompt_experiment_runs (
+CREATE TABLE IF NOT EXISTS public.prompt_experiment_runs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   experiment_id UUID NOT NULL REFERENCES public.prompt_experiments(id) ON DELETE CASCADE,
   variant TEXT NOT NULL CHECK (variant IN ('a','b')),

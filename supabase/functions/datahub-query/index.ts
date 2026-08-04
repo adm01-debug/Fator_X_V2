@@ -20,6 +20,15 @@ function sseEvent(event: string, data: any) {
 }
 
 
+/* ── Connection registry ──────────────────────────────── */
+
+const CONNECTION_REGISTRY: Record<string, { urlEnv: string; keyEnv: string }> = {
+  bancodadosclientes: { urlEnv: 'SUPABASE_URL_BANCODADOSCLIENTES', keyEnv: 'SUPABASE_ANON_KEY_BANCODADOSCLIENTES' },
+  'supabase-fuchsia-kite': { urlEnv: 'SUPABASE_URL_FUCHSIAKITE', keyEnv: 'SUPABASE_ANON_KEY_FUCHSIAKITE' },
+  gestao_time_promo: { urlEnv: 'SUPABASE_URL_GESTAO', keyEnv: 'SUPABASE_ANON_KEY_GESTAO' },
+  backupgiftstore: { urlEnv: 'SUPABASE_URL_BACKUP', keyEnv: 'SUPABASE_ANON_KEY_BACKUP' },
+};
+
 function getExternalClient(connectionId: string) {
   const reg = CONNECTION_REGISTRY[connectionId];
   if (!reg) throw new Error(`Unknown connection: ${connectionId}`);

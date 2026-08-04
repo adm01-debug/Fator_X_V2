@@ -1,34 +1,25 @@
-# 🚀 Pull Request Template
+## Descrição
+<!-- Descreva as mudanças implementadas -->
 
-## 📝 Descrição
-Forneça um resumo claro e conciso das alterações propostas.
+## Tipo de Mudança
+- [ ] 🐛 Bug fix
+- [ ] ✨ Nova feature
+- [ ] 🔧 Refatoração
+- [ ] 📝 Documentação
+- [ ] 🔒 Segurança
+- [ ] ⚡ Performance
 
-## 🎯 Tipo de Alteração
-- [ ] ✨ New Feature (Nova funcionalidade)
-- [ ] 🐛 Bug Fix (Correção de erro)
-- [ ] ♻️ Refactoring (Refatoração de código existente)
-- [ ] 📝 Documentation (Documentação)
-- [ ] 🧪 Tests (Adição ou melhoria de testes)
-- [ ] 🚀 Performance (Melhoria de desempenho)
-- [ ] 🔒 Security (Segurança)
+## Checklist
+- [ ] Código compila sem erros (`tsc --noEmit`)
+- [ ] Testes passando (`vitest run`)
+- [ ] Sem `console.log` em código de produção
+- [ ] Sem `as any` (usar tipos adequados)
+- [ ] RLS policies criadas/atualizadas (se alterou tabelas)
+- [ ] Edge Functions com validação de input (Zod)
+- [ ] Documentação atualizada (se necessário)
 
-## 🧪 Como foi testado?
-- [ ] ✅ Unit Tests (`npm run test`)
-- [ ] ✅ Integration Tests
-- [ ] ✅ E2E Tests (`npm run test:e2e`)
-- [ ] ✅ Linting (`npm run lint`)
-- [ ] ✅ Build Check (`npm run build`)
+## Screenshots
+<!-- Se aplicável, adicione screenshots -->
 
-## 📋 Checklist
-- [ ] O código segue os padrões de estilo do projeto.
-- [ ] Não há `console.log` remanescentes (exceto via `logger`).
-- [ ] Não foram adicionados novos `any` ou `as any`.
-- [ ] A cobertura de testes foi mantida ou aumentada (Threshold 80%).
-- [ ] Novas migrations possuem script de `DOWN` comentado.
-- [ ] Documentação atualizada (se necessário).
-
-## 📸 Screenshots (se aplicável)
-_Adicione prints se houver mudanças na UI._
-
----
-*Nexus Agents Studio CI/CD Enforced*
+## Testes
+<!-- Como testar esta mudança? -->

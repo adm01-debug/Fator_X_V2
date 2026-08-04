@@ -1,6 +1,6 @@
 
 -- Create agent_memories table for the Memory Engine
-CREATE TABLE public.agent_memories (
+CREATE TABLE IF NOT EXISTS public.agent_memories (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID REFERENCES public.workspaces(id) ON DELETE CASCADE,
   memory_type TEXT NOT NULL DEFAULT 'semantic',
@@ -19,7 +19,7 @@ CREATE POLICY "Users can manage memories in their workspace"
   WITH CHECK (workspace_id IN (SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid()));
 
 -- Create model_pricing table for billing
-CREATE TABLE public.model_pricing (
+CREATE TABLE IF NOT EXISTS public.model_pricing (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   model_pattern TEXT NOT NULL,
   input_cost_per_1k NUMERIC NOT NULL DEFAULT 0,

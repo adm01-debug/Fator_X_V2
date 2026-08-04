@@ -22,7 +22,7 @@ END;
 $$;
 
 -- ─── 1. Filas de trabalho ──────────────────────────────────────────────
-CREATE TABLE public.task_queues (
+CREATE TABLE IF NOT EXISTS public.task_queues (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   name TEXT NOT NULL,
   description TEXT,
@@ -46,7 +46,7 @@ CREATE INDEX idx_task_queues_active ON public.task_queues (is_paused) WHERE is_p
 CREATE TRIGGER trg_task_queues_updated BEFORE UPDATE ON public.task_queues
   FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
 
-CREATE TABLE public.queue_items (
+CREATE TABLE IF NOT EXISTS public.queue_items (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   queue_id UUID NOT NULL REFERENCES public.task_queues(id) ON DELETE CASCADE,
   status TEXT NOT NULL DEFAULT 'pending'
@@ -78,7 +78,7 @@ CREATE TRIGGER trg_queue_items_updated BEFORE UPDATE ON public.queue_items
   FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
 
 -- ─── 2. Agendamentos ───────────────────────────────────────────────────
-CREATE TABLE public.cron_schedules (
+CREATE TABLE IF NOT EXISTS public.cron_schedules (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   name TEXT NOT NULL,
   status TEXT NOT NULL DEFAULT 'active'
@@ -109,7 +109,7 @@ CREATE INDEX idx_cron_schedules_due ON public.cron_schedules (next_run_at)
 CREATE TRIGGER trg_cron_schedules_updated BEFORE UPDATE ON public.cron_schedules
   FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
 
-CREATE TABLE public.cron_schedule_executions (
+CREATE TABLE IF NOT EXISTS public.cron_schedule_executions (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   schedule_id UUID NOT NULL REFERENCES public.cron_schedules(id) ON DELETE CASCADE,
   status TEXT NOT NULL CHECK (status IN ('success','failed','skipped')),
@@ -125,7 +125,7 @@ CREATE POLICY "cron_executions service only" ON public.cron_schedule_executions
 CREATE INDEX idx_cron_exec_schedule ON public.cron_schedule_executions (schedule_id, created_at DESC);
 
 -- ─── 3. Telemetria (traces/spans) ──────────────────────────────────────
-CREATE TABLE public.traces (
+CREATE TABLE IF NOT EXISTS public.traces (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   trace_id TEXT NOT NULL,
   root_name TEXT NOT NULL,
@@ -147,7 +147,7 @@ CREATE POLICY "traces service only" ON public.traces
 CREATE UNIQUE INDEX idx_traces_trace_id ON public.traces (trace_id);
 CREATE INDEX idx_traces_created ON public.traces USING BRIN (created_at);
 
-CREATE TABLE public.spans (
+CREATE TABLE IF NOT EXISTS public.spans (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   span_id TEXT NOT NULL,
   trace_id TEXT NOT NULL,
@@ -173,7 +173,7 @@ CREATE INDEX idx_spans_trace ON public.spans (trace_id, start_time);
 CREATE INDEX idx_spans_created ON public.spans USING BRIN (created_at);
 
 -- ─── 4. Notificações ───────────────────────────────────────────────────
-CREATE TABLE public.notification_templates (
+CREATE TABLE IF NOT EXISTS public.notification_templates (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   name TEXT NOT NULL,
   channel TEXT NOT NULL CHECK (channel IN ('email','whatsapp','slack','webhook','sms')),
@@ -190,7 +190,7 @@ CREATE POLICY "notification_templates service only" ON public.notification_templ
 CREATE TRIGGER trg_notification_templates_updated BEFORE UPDATE ON public.notification_templates
   FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
 
-CREATE TABLE public.notifications (
+CREATE TABLE IF NOT EXISTS public.notifications (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   channel TEXT NOT NULL CHECK (channel IN ('email','whatsapp','slack','webhook','sms')),
   priority TEXT NOT NULL DEFAULT 'normal' CHECK (priority IN ('low','normal','high','urgent')),
@@ -215,7 +215,7 @@ CREATE POLICY "notifications service only" ON public.notifications
 CREATE INDEX idx_notifications_status ON public.notifications (status, created_at DESC);
 
 -- ─── 5. Webhooks de entrada e roteamento ───────────────────────────────
-CREATE TABLE public.agent_routing_config (
+CREATE TABLE IF NOT EXISTS public.agent_routing_config (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL,
   source TEXT NOT NULL CHECK (source IN ('bitrix24','whatsapp','slack','email','api')),
@@ -237,7 +237,7 @@ CREATE POLICY "routing readable by workspace admins" ON public.agent_routing_con
 CREATE POLICY "routing service write" ON public.agent_routing_config
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 
-CREATE TABLE public.bitrix24_webhook_events (
+CREATE TABLE IF NOT EXISTS public.bitrix24_webhook_events (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID,
   event_type TEXT NOT NULL,
@@ -272,7 +272,7 @@ CREATE UNIQUE INDEX idx_bitrix_dedupe
   WHERE bitrix_event_id IS NOT NULL;
 CREATE INDEX idx_bitrix_received ON public.bitrix24_webhook_events (received_at DESC);
 
-CREATE TABLE public.whatsapp_webhook_events (
+CREATE TABLE IF NOT EXISTS public.whatsapp_webhook_events (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID,
   event_type TEXT NOT NULL,
@@ -311,7 +311,7 @@ CREATE UNIQUE INDEX idx_whatsapp_dedupe
   WHERE message_id IS NOT NULL;
 CREATE INDEX idx_whatsapp_received ON public.whatsapp_webhook_events (received_at DESC);
 
-CREATE TABLE public.webhook_delivery_logs (
+CREATE TABLE IF NOT EXISTS public.webhook_delivery_logs (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   webhook_endpoint_id UUID NOT NULL REFERENCES public.webhook_endpoints(id) ON DELETE CASCADE,
   event TEXT NOT NULL,
@@ -332,7 +332,7 @@ CREATE POLICY "delivery logs service only" ON public.webhook_delivery_logs
 CREATE INDEX idx_delivery_logs_endpoint ON public.webhook_delivery_logs (webhook_endpoint_id, created_at DESC);
 
 -- ─── 6. Segurança e avaliação ──────────────────────────────────────────
-CREATE TABLE public.security_events (
+CREATE TABLE IF NOT EXISTS public.security_events (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   event_type TEXT NOT NULL,
   severity TEXT NOT NULL DEFAULT 'info' CHECK (severity IN ('info','low','medium','high','critical')),
@@ -355,7 +355,7 @@ CREATE INDEX idx_security_events_ws ON public.security_events (workspace_id, cre
 CREATE INDEX idx_security_events_severity ON public.security_events (severity, created_at DESC)
   WHERE severity IN ('high','critical');
 
-CREATE TABLE public.eval_runs (
+CREATE TABLE IF NOT EXISTS public.eval_runs (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID,
   agent_id UUID,

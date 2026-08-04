@@ -36,7 +36,7 @@ ON CONFLICT (parent_table) DO UPDATE
 DROP TABLE IF EXISTS public.spans;
 DROP TABLE IF EXISTS public.traces;
 
-CREATE TABLE public.traces (
+CREATE TABLE IF NOT EXISTS public.traces (
   id           uuid NOT NULL DEFAULT gen_random_uuid(),
   trace_id     text NOT NULL,
   root_name    text,
@@ -54,7 +54,7 @@ CREATE TABLE public.traces (
   PRIMARY KEY (id, created_at)
 ) PARTITION BY RANGE (created_at);
 
-CREATE TABLE public.spans (
+CREATE TABLE IF NOT EXISTS public.spans (
   id             uuid NOT NULL DEFAULT gen_random_uuid(),
   span_id        text NOT NULL,
   trace_id       text NOT NULL,
@@ -125,7 +125,7 @@ BEGIN
         WHERE n.nspname='public' AND c.relname=v_partition_name
       ) THEN
         EXECUTE format(
-          'CREATE TABLE public.%I PARTITION OF public.%I FOR VALUES FROM (%L) TO (%L)',
+          'CREATE TABLE IF NOT EXISTS public.%I PARTITION OF public.%I FOR VALUES FROM (%L) TO (%L)',
           v_partition_name, f.parent_table, v_month_start, v_month_end
         );
         EXECUTE format(

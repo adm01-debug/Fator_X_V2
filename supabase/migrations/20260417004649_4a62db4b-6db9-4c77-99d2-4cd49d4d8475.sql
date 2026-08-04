@@ -1,5 +1,5 @@
 
-CREATE TABLE public.voice_sessions (
+CREATE TABLE IF NOT EXISTS public.voice_sessions (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID NOT NULL,
   workspace_id UUID REFERENCES public.workspaces(id) ON DELETE SET NULL,

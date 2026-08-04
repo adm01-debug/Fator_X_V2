@@ -1,6 +1,6 @@
 
 -- Tabela de rastreio de ingestão de documentos
-CREATE TABLE public.document_ingestions (
+CREATE TABLE IF NOT EXISTS public.document_ingestions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   document_id UUID REFERENCES public.documents(id) ON DELETE SET NULL,
   collection_id UUID REFERENCES public.collections(id) ON DELETE SET NULL,

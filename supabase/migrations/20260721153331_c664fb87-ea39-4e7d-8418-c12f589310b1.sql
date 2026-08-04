@@ -8,7 +8,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_webhook_events_source_event
   WHERE external_event_id IS NOT NULL;
 
 -- 2) openclaw_whatsapp_instances
-CREATE TABLE public.openclaw_whatsapp_instances (
+CREATE TABLE IF NOT EXISTS public.openclaw_whatsapp_instances (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL,
   instance_name TEXT NOT NULL,
@@ -55,7 +55,7 @@ BEFORE UPDATE ON public.openclaw_whatsapp_instances
 FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
 -- 3) openclaw_whatsapp_messages
-CREATE TABLE public.openclaw_whatsapp_messages (
+CREATE TABLE IF NOT EXISTS public.openclaw_whatsapp_messages (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL,
   instance_id UUID REFERENCES public.openclaw_whatsapp_instances(id) ON DELETE CASCADE,

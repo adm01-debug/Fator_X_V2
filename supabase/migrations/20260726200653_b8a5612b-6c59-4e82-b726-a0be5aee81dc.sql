@@ -1,4 +1,4 @@
-CREATE TABLE public.crm_icp_profiles (
+CREATE TABLE IF NOT EXISTS public.crm_icp_profiles (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL,
   name TEXT NOT NULL,

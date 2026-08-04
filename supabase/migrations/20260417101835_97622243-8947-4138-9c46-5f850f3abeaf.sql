@@ -1,5 +1,5 @@
 -- Tabela: agent_graphs
-CREATE TABLE public.agent_graphs (
+CREATE TABLE IF NOT EXISTS public.agent_graphs (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   created_by UUID NOT NULL,
@@ -33,7 +33,7 @@ CREATE TRIGGER trg_agent_graphs_updated BEFORE UPDATE ON public.agent_graphs
 CREATE INDEX idx_agent_graphs_workspace ON public.agent_graphs(workspace_id);
 
 -- Tabela: graph_executions
-CREATE TABLE public.graph_executions (
+CREATE TABLE IF NOT EXISTS public.graph_executions (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   graph_id UUID NOT NULL REFERENCES public.agent_graphs(id) ON DELETE CASCADE,
   user_id UUID NOT NULL,

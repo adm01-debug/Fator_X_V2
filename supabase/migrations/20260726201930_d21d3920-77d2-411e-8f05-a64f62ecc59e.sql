@@ -2,7 +2,7 @@
 -- Fase 4 — Cadências de vendas
 -- ═══════════════════════════════════════════════════════════════
 
-CREATE TABLE public.crm_cadences (
+CREATE TABLE IF NOT EXISTS public.crm_cadences (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL,
   name TEXT NOT NULL,
@@ -36,7 +36,7 @@ CREATE TRIGGER trg_crm_cadences_updated_at
 
 -- ───────────────────────────────────────────────────────────────
 
-CREATE TABLE public.crm_cadence_steps (
+CREATE TABLE IF NOT EXISTS public.crm_cadence_steps (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL,
   cadence_id UUID NOT NULL REFERENCES public.crm_cadences(id) ON DELETE CASCADE,
@@ -68,7 +68,7 @@ CREATE TRIGGER trg_crm_cadence_steps_updated_at
 
 -- ───────────────────────────────────────────────────────────────
 
-CREATE TABLE public.crm_cadence_enrollments (
+CREATE TABLE IF NOT EXISTS public.crm_cadence_enrollments (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL,
   cadence_id UUID NOT NULL REFERENCES public.crm_cadences(id) ON DELETE CASCADE,

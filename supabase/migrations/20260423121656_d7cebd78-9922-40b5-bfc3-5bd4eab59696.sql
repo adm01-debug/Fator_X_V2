@@ -2,7 +2,7 @@
 -- Cada usuário pode salvar combinações nomeadas de copyPrompt/copyTools/copyModel
 -- e marcar uma como padrão para aplicar com um clique ao abrir o diálogo.
 
-CREATE TABLE public.restore_field_presets (
+CREATE TABLE IF NOT EXISTS public.restore_field_presets (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID NOT NULL,
   name TEXT NOT NULL,

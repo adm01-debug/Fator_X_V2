@@ -1,7 +1,7 @@
 
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
-CREATE TABLE public.notebook_notes (
+CREATE TABLE IF NOT EXISTS public.notebook_notes (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   collection_id UUID NOT NULL REFERENCES public.collections(id) ON DELETE CASCADE,
@@ -38,7 +38,7 @@ CREATE TRIGGER update_notebook_notes_updated_at
   BEFORE UPDATE ON public.notebook_notes
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
-CREATE TABLE public.knowledge_links (
+CREATE TABLE IF NOT EXISTS public.knowledge_links (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   source_type TEXT NOT NULL CHECK (source_type IN ('note','document','entity','chunk')),

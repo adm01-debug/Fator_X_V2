@@ -1,0 +1,1 @@
+-- Fator X V2 schema baseline - completo via stubs Dashboard\n-- 2026-08-01\n-- Estado: 193 tabelas, 14 views, 163+ stubs aplicados via Dashboard

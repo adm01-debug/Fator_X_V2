@@ -1,4 +1,4 @@
-CREATE TABLE public.template_skill_links (
+CREATE TABLE IF NOT EXISTS public.template_skill_links (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   template_id TEXT NOT NULL,
   skill_id UUID NOT NULL REFERENCES public.skill_registry(id) ON DELETE CASCADE,

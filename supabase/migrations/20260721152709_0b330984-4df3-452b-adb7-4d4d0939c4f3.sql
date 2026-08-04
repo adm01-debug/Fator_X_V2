@@ -1,5 +1,5 @@
 
-CREATE TABLE public.openclaw_deployments (
+CREATE TABLE IF NOT EXISTS public.openclaw_deployments (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   agent_id UUID NOT NULL REFERENCES public.agents(id) ON DELETE CASCADE,
   workspace_id UUID NOT NULL,

@@ -43,11 +43,14 @@ CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
--- Add workspace_id to agents
+-- Add workspace_id to agents (only if agents table exists — part of schema base pre-squash)
 DO $$
 BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.columns 
+  IF EXISTS (
+    SELECT 1 FROM information_schema.tables
+    WHERE table_schema = 'public' AND table_name = 'agents'
+  ) AND NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
     WHERE table_schema = 'public' AND table_name = 'agents' AND column_name = 'workspace_id'
   ) THEN
     ALTER TABLE public.agents ADD COLUMN workspace_id UUID REFERENCES public.workspaces(id);

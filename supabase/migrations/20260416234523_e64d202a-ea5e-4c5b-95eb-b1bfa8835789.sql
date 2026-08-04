@@ -1,5 +1,5 @@
 -- A/B Testing for agents
-CREATE TABLE public.agent_experiments (
+CREATE TABLE IF NOT EXISTS public.agent_experiments (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   agent_id UUID NOT NULL REFERENCES public.agents(id) ON DELETE CASCADE,
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
@@ -21,7 +21,7 @@ CREATE INDEX idx_agent_experiments_agent ON public.agent_experiments(agent_id);
 CREATE INDEX idx_agent_experiments_workspace ON public.agent_experiments(workspace_id);
 CREATE INDEX idx_agent_experiments_status ON public.agent_experiments(status);
 
-CREATE TABLE public.agent_experiment_runs (
+CREATE TABLE IF NOT EXISTS public.agent_experiment_runs (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   experiment_id UUID NOT NULL REFERENCES public.agent_experiments(id) ON DELETE CASCADE,
   variant TEXT NOT NULL CHECK (variant IN ('a','b')),

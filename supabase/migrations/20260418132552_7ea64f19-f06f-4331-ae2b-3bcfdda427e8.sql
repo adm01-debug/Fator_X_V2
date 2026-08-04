@@ -1,6 +1,6 @@
 
 -- Pentest engagements
-CREATE TABLE public.pentest_engagements (
+CREATE TABLE IF NOT EXISTS public.pentest_engagements (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
@@ -23,7 +23,7 @@ CREATE TABLE public.pentest_engagements (
 CREATE INDEX idx_pentest_engagements_workspace ON public.pentest_engagements(workspace_id, status);
 
 -- Pentest findings
-CREATE TABLE public.pentest_findings (
+CREATE TABLE IF NOT EXISTS public.pentest_findings (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   engagement_id UUID NOT NULL REFERENCES public.pentest_engagements(id) ON DELETE CASCADE,
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,

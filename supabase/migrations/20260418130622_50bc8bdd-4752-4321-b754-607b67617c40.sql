@@ -1,5 +1,5 @@
 -- Managed secrets registry (metadata only — never stores secret values)
-CREATE TABLE public.managed_secrets (
+CREATE TABLE IF NOT EXISTS public.managed_secrets (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
@@ -41,7 +41,7 @@ CREATE POLICY "Workspace admins can delete managed secrets"
   USING (public.is_workspace_admin(auth.uid(), workspace_id));
 
 -- Rotation events history
-CREATE TABLE public.secret_rotation_events (
+CREATE TABLE IF NOT EXISTS public.secret_rotation_events (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   secret_id UUID NOT NULL REFERENCES public.managed_secrets(id) ON DELETE CASCADE,
   rotated_by UUID NOT NULL,

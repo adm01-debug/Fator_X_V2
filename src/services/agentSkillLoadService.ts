@@ -32,35 +32,57 @@ function normalizeName(name: string): string {
 }
 
 export async function fetchAgentSkillLoads(): Promise<AgentSkillLoad[]> {
-  const [agentsRes, installedRes] = await Promise.all([
-    supabaseExternal.from('agents').select('id, name').limit(500),
+  const { data: agentsData, error: agentsError } = await supabaseExternal
+    .from('agents')
+    .select('id, name')
+    .limit(500);
+
+  if (agentsError) {
+    logger.error('fetchAgentSkillLoads agents failed', { error: agentsError.message });
+    throw new Error(agentsError.message);
+  }
+
+  // Fetch installed skills and skill registry names in parallel
+  const [installedRes, skillsRes] = await Promise.all([
     supabaseExternal
       .from('agent_installed_skills')
-      .select('agent_id, skill_registry:skill_id (name)')
+      .select('agent_id, skill_id')
       .limit(ROW_LIMIT),
+    supabaseExternal
+      .from('skill_registry')
+      .select('id, name')
+      .limit(10000),
   ]);
 
-  if (agentsRes.error) {
-    logger.error('fetchAgentSkillLoads agents failed', { error: agentsRes.error.message });
-    throw new Error(agentsRes.error.message);
-  }
   if (installedRes.error) {
     logger.error('fetchAgentSkillLoads installed failed', { error: installedRes.error.message });
     throw new Error(installedRes.error.message);
   }
+  if (skillsRes.error) {
+    logger.error('fetchAgentSkillLoads skills failed', { error: skillsRes.error.message });
+    throw new Error(skillsRes.error.message);
+  }
+
+  // Build skill name lookup from the skills result
+  const skillNames = new Map<string, string>();
+  for (const s of (skillsRes.data ?? []) as { id: string; name: string }[]) {
+    skillNames.set(s.id, s.name ?? '');
+  }
 
   // Set por agente: dedup por nome normalizado, ignorando nomes vazios.
   const porAgente = new Map<string, Set<string>>();
-  for (const row of (installedRes.data ?? []) as unknown as LoadRow[]) {
+  for (const row of (installedRes.data ?? []) as { agent_id: string | null; skill_id: string | null }[]) {
     const agentId = row?.agent_id ? String(row.agent_id) : '';
-    const nome = normalizeName(String(row?.skill_registry?.name ?? ''));
-    if (agentId === '' || nome === '') continue;
+    const skillId = row?.skill_id ? String(row.skill_id) : '';
+    if (agentId === '' || skillId === '') continue;
+    const nome = normalizeName(skillNames.get(skillId) ?? '');
+    if (nome === '') continue;
     const set = porAgente.get(agentId) ?? new Set<string>();
     set.add(nome);
     porAgente.set(agentId, set);
   }
 
-  return (agentsRes.data ?? []).map((a) => ({
+  return (agentsData ?? []).map((a) => ({
     agentId: String(a.id),
     agentName: String(a.name ?? 'Sem nome'),
     installed: porAgente.get(String(a.id))?.size ?? 0,

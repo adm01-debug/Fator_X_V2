@@ -15,8 +15,8 @@
  *   </AccessControl>
  */
 
+import { forwardRef, type ReactNode } from 'react';
 import { toast } from "sonner";
-import type { ReactNode } from 'react';
 
 import { useRBAC } from '@/hooks/useRBAC';
 import type { PermissionKey } from '@/services/rbacService';
@@ -34,20 +34,15 @@ interface AccessControlProps {
   showLoading?: boolean;
 }
 
-export function AccessControl({
-  permission,
-  mode = 'any',
-  children,
-  fallback = null,
-  showLoading = false,
-}: AccessControlProps) {
+export const AccessControl = forwardRef<HTMLDivElement, AccessControlProps>(function AccessControl(
+  { permission, mode = 'any', children, fallback = null, showLoading = false },
+  ref
+) {
   const { can, loading } = useRBAC();
 
   if (loading) {
     if (showLoading) {
-      return (
-        <div className="animate-pulse bg-card rounded-lg h-8 w-24" />
-      );
+      return <div ref={ref} className="animate-pulse bg-card rounded-lg h-8 w-24" />;
     }
     return null;
   }
@@ -57,7 +52,7 @@ export function AccessControl({
   }
 
   return <>{fallback}</>;
-}
+});
 
 /**
  * Hook version for programmatic checks in event handlers.

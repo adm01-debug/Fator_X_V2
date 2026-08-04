@@ -1,5 +1,5 @@
 
-CREATE TABLE public.notebook_note_templates (
+CREATE TABLE IF NOT EXISTS public.notebook_note_templates (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL,
   collection_id UUID NULL REFERENCES public.collections(id) ON DELETE CASCADE,
@@ -48,7 +48,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS ux_notes_daily_per_notebook
   ON public.notebook_notes(collection_id, note_date)
   WHERE is_daily = TRUE AND note_date IS NOT NULL;
 
-CREATE TABLE public.notebook_note_versions (
+CREATE TABLE IF NOT EXISTS public.notebook_note_versions (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   note_id UUID NOT NULL REFERENCES public.notebook_notes(id) ON DELETE CASCADE,
   workspace_id UUID NOT NULL,

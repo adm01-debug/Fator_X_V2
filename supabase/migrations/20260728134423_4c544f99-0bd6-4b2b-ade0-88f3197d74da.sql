@@ -6,7 +6,7 @@
 -- "quem trocou este departamento, com base em qual evidência, e quando" — que
 -- é exatamente a pergunta que aparece quando uma classificação de IA erra.
 
-CREATE TABLE public.skill_reclassification_reviews (
+CREATE TABLE IF NOT EXISTS public.skill_reclassification_reviews (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   skill_id UUID NOT NULL REFERENCES public.skill_registry(id) ON DELETE CASCADE,
   skill_slug TEXT NOT NULL DEFAULT '',

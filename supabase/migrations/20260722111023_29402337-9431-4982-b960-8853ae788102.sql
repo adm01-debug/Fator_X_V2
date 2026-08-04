@@ -4,7 +4,7 @@
 -- ============================================================
 
 -- 1) slack_workspace_config
-CREATE TABLE public.slack_workspace_config (
+CREATE TABLE IF NOT EXISTS public.slack_workspace_config (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   slack_team_id TEXT NOT NULL,
@@ -48,7 +48,7 @@ CREATE POLICY "Workspace members view slack config"
 CREATE INDEX idx_slack_workspace_config_workspace ON public.slack_workspace_config(workspace_id);
 
 -- 2) slack_channel_routes
-CREATE TABLE public.slack_channel_routes (
+CREATE TABLE IF NOT EXISTS public.slack_channel_routes (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   category TEXT NOT NULL CHECK (category IN (
@@ -83,7 +83,7 @@ CREATE INDEX idx_slack_channel_routes_workspace_category
   WHERE enabled = true;
 
 -- 3) slack_event_dedupe
-CREATE TABLE public.slack_event_dedupe (
+CREATE TABLE IF NOT EXISTS public.slack_event_dedupe (
   event_id TEXT NOT NULL PRIMARY KEY,
   event_type TEXT NOT NULL,
   team_id TEXT NOT NULL,
@@ -111,7 +111,7 @@ CREATE POLICY "Admins inspect slack event dedupe"
 CREATE INDEX idx_slack_event_dedupe_expires ON public.slack_event_dedupe(expires_at);
 
 -- 4) slack_user_cache
-CREATE TABLE public.slack_user_cache (
+CREATE TABLE IF NOT EXISTS public.slack_user_cache (
   slack_user_id TEXT NOT NULL PRIMARY KEY,
   team_id TEXT NOT NULL,
   display_name TEXT,

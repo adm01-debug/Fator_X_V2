@@ -7481,7 +7481,8 @@ export type Database = {
           id: string
           metadata: Json
           priority: string
-          recipient_address: string
+          recipient_address: string | null
+          recipient_id: string | null
           sent_at: string | null
           source_type: string
           status: string
@@ -7491,15 +7492,16 @@ export type Database = {
           workspace_id: string | null
         }
         Insert: {
-          body: string
-          channel: string
+          body?: string
+          channel?: string
           created_at?: string
           error?: string | null
           failed_at?: string | null
           id?: string
           metadata?: Json
           priority?: string
-          recipient_address: string
+          recipient_address?: string | null
+          recipient_id?: string | null
           sent_at?: string | null
           source_type?: string
           status?: string
@@ -7517,7 +7519,8 @@ export type Database = {
           id?: string
           metadata?: Json
           priority?: string
-          recipient_address?: string
+          recipient_address?: string | null
+          recipient_id?: string | null
           sent_at?: string | null
           source_type?: string
           status?: string

@@ -1,5 +1,5 @@
 
-CREATE TABLE public.user_research_configs (
+CREATE TABLE IF NOT EXISTS public.user_research_configs (
   user_id UUID NOT NULL PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   config JSONB NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
