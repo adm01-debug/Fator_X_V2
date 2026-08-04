@@ -13,8 +13,21 @@
  */
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { handleCorsPreflight, getCorsHeaders } from '../_shared/cors.ts';
-import { verifyHmacSignature, constantTimeEqual } from '../_shared/security.ts';
+import { verifyHmacSignature } from '../_shared/security.ts';
 import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier } from '../_shared/rate-limiter.ts';
+import { OpenclawWebhookContracts } from '../_shared/contracts.ts';
+
+/** Format Zod validation issues into the unified 422 body. */
+function formatZodError(issues: { path: (string | number)[]; message: string; code: string }[]): {
+  error: string; code: string; message: string; fields: { field: string; message: string; code: string }[];
+} {
+  return {
+    error: 'Validation failed',
+    code: 'VALIDATION_ERROR',
+    message: 'The request payload is invalid.',
+    fields: issues.map(i => ({ field: i.path.join('.') || '(root)', message: i.message, code: i.code })),
+  };
+}
 
 const WEBHOOK_LIMIT = { windowMs: 60_000, maxRequests: 300, name: 'openclaw-webhook' };
 
@@ -77,28 +90,18 @@ Deno.serve(async (req) => {
     return json(401, { error: 'invalid_signature' });
   }
 
-  let payload: {
-    event_id?: string;
-    type?: string;
-    workspace_id?: string;
-    instance_name?: string;
-    data?: Record<string, unknown>;
-  };
+  let rawPayload: unknown;
   try {
-    payload = JSON.parse(rawBody);
+    rawPayload = JSON.parse(rawBody);
   } catch {
     return json(400, { error: 'invalid_json' });
   }
 
-  const { event_id, type, workspace_id, instance_name, data } = payload;
-  if (!event_id || !type || !workspace_id) {
-    return json(400, { error: 'missing_required_fields' });
+  const validation = OpenclawWebhookContracts.v2.safeParse(rawPayload);
+  if (!validation.success) {
+    return json(422, formatZodError(validation.error.issues));
   }
-
-  // Guard extra contra falsificação de tipos primitivos
-  if (typeof event_id !== 'string' || !constantTimeEqual(event_id.slice(0, 3), event_id.slice(0, 3))) {
-    return json(400, { error: 'invalid_event_id' });
-  }
+  const { event_id, type, workspace_id, instance_name, data } = validation.data;
 
   const supabase = supabaseAudit;
 
