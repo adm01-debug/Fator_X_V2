@@ -68,11 +68,10 @@ BEGIN
            error_message = SQLERRM
      WHERE id = run_id;
 
-    INSERT INTO public.security_alerts (severity, category, title, description, metadata)
+    INSERT INTO public.security_alerts (severity, category, message, metadata)
     VALUES (
       'high', 'retention_job',
-      'Falha na retenção de traces (90d)',
-      format('prune_traces_retention falhou: %s', SQLERRM),
+      format('Falha na retenção de traces (90d): %s', SQLERRM),
       jsonb_build_object('run_id', run_id, 'days', _days)
     );
     RAISE;
@@ -112,11 +111,10 @@ BEGIN
        WHERE category = 'retention_job_watchdog'
          AND created_at > now() - interval '1 hour'
     ) THEN
-      INSERT INTO public.security_alerts (severity, category, title, description, metadata)
+      INSERT INTO public.security_alerts (severity, category, message, metadata)
       VALUES (
         'high', 'retention_job_watchdog',
-        'Retenção de traces atrasada (>26h sem sucesso)',
-        format('Última execução bem-sucedida: %s. Último status: %s.',
+        format('Retenção de traces atrasada (>26h sem sucesso). Última execução: %s. Último status: %s.',
                COALESCE(last_success::text, 'nunca'),
                COALESCE(last_run.status, 'nenhum')),
         jsonb_build_object(
@@ -134,24 +132,24 @@ $$;
 REVOKE ALL ON FUNCTION public.check_retention_job_health() FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.check_retention_job_health() TO service_role;
 
-DO $$
+DO $outer$
 DECLARE j RECORD;
 BEGIN
-  FOR j IN SELECT jobid FROM cron.job
-    WHERE jobname IN ('traces-retention-90d','retention-traces-watchdog')
-  LOOP
-    PERFORM cron.unschedule(j.jobid);
-  END LOOP;
-END $$;
-
-SELECT cron.schedule(
-  'traces-retention-90d',
-  '15 3 * * *',
-  $$SELECT public.run_prune_traces_retention_monitored(90);$$
-);
-
-SELECT cron.schedule(
-  'retention-traces-watchdog',
-  '5 * * * *',
-  $$SELECT public.check_retention_job_health();$$
-);
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+    FOR j IN SELECT jobid FROM cron.job
+      WHERE jobname IN ('traces-retention-90d','retention-traces-watchdog')
+    LOOP
+      PERFORM cron.unschedule(j.jobid);
+    END LOOP;
+    PERFORM cron.schedule(
+      'traces-retention-90d',
+      '15 3 * * *',
+      $$SELECT public.run_prune_traces_retention_monitored(90);$$
+    );
+    PERFORM cron.schedule(
+      'retention-traces-watchdog',
+      '5 * * * *',
+      $$SELECT public.check_retention_job_health();$$
+    );
+  END IF;
+END $outer$;

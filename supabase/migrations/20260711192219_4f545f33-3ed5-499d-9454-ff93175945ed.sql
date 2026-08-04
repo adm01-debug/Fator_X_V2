@@ -1,42 +1,62 @@
 -- WAVE 4 — Autovacuum tuning (aplicado em partições folha + tabelas simples).
 
 -- Partições folha de agent_traces (partitioned)
-ALTER TABLE public.agent_traces_v2_2026_05 SET (
-  autovacuum_vacuum_scale_factor = 0.02,
-  autovacuum_analyze_scale_factor = 0.01,
-  autovacuum_vacuum_cost_limit = 2000,
-  autovacuum_vacuum_insert_scale_factor = 0.05,
-  fillfactor = 95
-);
+DO $$ BEGIN
+  IF to_regclass('public.agent_traces_v2_2026_05') IS NOT NULL THEN
+    ALTER TABLE public.agent_traces_v2_2026_05 SET (
+      autovacuum_vacuum_scale_factor = 0.02,
+      autovacuum_analyze_scale_factor = 0.01,
+      autovacuum_vacuum_cost_limit = 2000,
+      autovacuum_vacuum_insert_scale_factor = 0.05,
+      fillfactor = 95
+    );
+  END IF;
+END $$;
 
 -- Partições folha de audit_log_v2
-ALTER TABLE public.audit_log_v2_2026_06 SET (
-  autovacuum_vacuum_scale_factor = 0.05,
-  autovacuum_analyze_scale_factor = 0.01,
-  autovacuum_vacuum_insert_scale_factor = 0.05,
-  fillfactor = 100
-);
+DO $$ BEGIN
+  IF to_regclass('public.audit_log_v2_2026_06') IS NOT NULL THEN
+    ALTER TABLE public.audit_log_v2_2026_06 SET (
+      autovacuum_vacuum_scale_factor = 0.05,
+      autovacuum_analyze_scale_factor = 0.01,
+      autovacuum_vacuum_insert_scale_factor = 0.05,
+      fillfactor = 100
+    );
+  END IF;
+END $$;
 -- audit_log_v2_2026_05 já existe como tabela simples (não é partição)
-ALTER TABLE public.audit_log_v2_2026_05 SET (
-  autovacuum_vacuum_scale_factor = 0.05,
-  autovacuum_analyze_scale_factor = 0.01,
-  autovacuum_vacuum_insert_scale_factor = 0.05,
-  fillfactor = 100
-);
+DO $$ BEGIN
+  IF to_regclass('public.audit_log_v2_2026_05') IS NOT NULL THEN
+    ALTER TABLE public.audit_log_v2_2026_05 SET (
+      autovacuum_vacuum_scale_factor = 0.05,
+      autovacuum_analyze_scale_factor = 0.01,
+      autovacuum_vacuum_insert_scale_factor = 0.05,
+      fillfactor = 100
+    );
+  END IF;
+END $$;
 
 -- Partições folha de trace_events_v2
-ALTER TABLE public.trace_events_v2_2026_05 SET (
-  autovacuum_vacuum_scale_factor = 0.05,
-  autovacuum_analyze_scale_factor = 0.01,
-  autovacuum_vacuum_insert_scale_factor = 0.05,
-  fillfactor = 100
-);
-ALTER TABLE public.trace_events_v2_2026_06 SET (
-  autovacuum_vacuum_scale_factor = 0.05,
-  autovacuum_analyze_scale_factor = 0.01,
-  autovacuum_vacuum_insert_scale_factor = 0.05,
-  fillfactor = 100
-);
+DO $$ BEGIN
+  IF to_regclass('public.trace_events_v2_2026_05') IS NOT NULL THEN
+    ALTER TABLE public.trace_events_v2_2026_05 SET (
+      autovacuum_vacuum_scale_factor = 0.05,
+      autovacuum_analyze_scale_factor = 0.01,
+      autovacuum_vacuum_insert_scale_factor = 0.05,
+      fillfactor = 100
+    );
+  END IF;
+END $$;
+DO $$ BEGIN
+  IF to_regclass('public.trace_events_v2_2026_06') IS NOT NULL THEN
+    ALTER TABLE public.trace_events_v2_2026_06 SET (
+      autovacuum_vacuum_scale_factor = 0.05,
+      autovacuum_analyze_scale_factor = 0.01,
+      autovacuum_vacuum_insert_scale_factor = 0.05,
+      fillfactor = 100
+    );
+  END IF;
+END $$;
 
 -- Tabelas simples (relkind='r')
 ALTER TABLE public.audit_events SET (

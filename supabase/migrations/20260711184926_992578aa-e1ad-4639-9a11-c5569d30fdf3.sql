@@ -6,6 +6,8 @@ GRANT USAGE ON SCHEMA internal TO service_role;
 -- Recreate MV inside internal schema
 DROP MATERIALIZED VIEW IF EXISTS public.agent_daily_metrics;
 
+DROP MATERIALIZED VIEW IF EXISTS internal.agent_daily_metrics;
+
 CREATE MATERIALIZED VIEW internal.agent_daily_metrics AS
 SELECT
   agent_id,
@@ -20,9 +22,9 @@ FROM public.agent_traces
 WHERE created_at > (now() - interval '90 days')
 GROUP BY agent_id, date_trunc('day', created_at);
 
-CREATE UNIQUE INDEX agent_daily_metrics_pk
+CREATE UNIQUE INDEX IF NOT EXISTS agent_daily_metrics_pk
   ON internal.agent_daily_metrics (agent_id, day);
-CREATE INDEX agent_daily_metrics_day_idx
+CREATE INDEX IF NOT EXISTS agent_daily_metrics_day_idx
   ON internal.agent_daily_metrics (day DESC);
 
 GRANT SELECT ON internal.agent_daily_metrics TO service_role;

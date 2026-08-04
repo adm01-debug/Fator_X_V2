@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS public.audit_events (
 ALTER TABLE public.audit_events ENABLE ROW LEVEL SECURITY;
 
 -- Política: Apenas administradores podem ver logs
+DROP POLICY IF EXISTS "Admins can view workspace audit logs" ON public.audit_events;
 CREATE POLICY "Admins can view workspace audit logs"
 ON public.audit_events
 FOR SELECT
@@ -30,19 +31,31 @@ USING (
 );
 
 -- Política: Sistema pode inserir (sem restrição de UID para permitir chamadas de backend/edge)
+DROP POLICY IF EXISTS "System can insert audit logs" ON public.audit_events;
 CREATE POLICY "System can insert audit logs"
 ON public.audit_events
 FOR INSERT
 WITH CHECK (true);
 
 -- 2. Índices de Performance
-CREATE INDEX IF NOT EXISTS idx_agent_traces_v2_2026_05_agent_created ON public.agent_traces_v2_2026_05(agent_id, created_at DESC);
+DO $$
+BEGIN
+  IF to_regclass('public.agent_traces_v2_2026_05') IS NOT NULL THEN
+    CREATE INDEX IF NOT EXISTS idx_agent_traces_v2_2026_05_agent_created ON public.agent_traces_v2_2026_05(agent_id, created_at DESC);
+  END IF;
+END $$;
 CREATE INDEX IF NOT EXISTS idx_usage_records_workspace_created ON public.usage_records(workspace_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_audit_events_workspace_event ON public.audit_events(workspace_id, event_type);
 
 -- 3. Restrições de Integridade
-ALTER TABLE public.budgets ADD CONSTRAINT budget_limit_positive CHECK (limit_usd > 0);
-ALTER TABLE public.agent_usage ADD CONSTRAINT requests_non_negative CHECK (requests >= 0);
+DO $$ BEGIN
+  ALTER TABLE public.budgets ADD CONSTRAINT budget_limit_positive CHECK (limit_usd > 0);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+DO $$ BEGIN
+  ALTER TABLE public.agent_usage ADD CONSTRAINT requests_non_negative CHECK (requests >= 0);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- 4. Função de Agregação de Custos
 CREATE OR REPLACE FUNCTION public.get_workspace_daily_usage_v2(p_workspace_id UUID, p_days INTEGER DEFAULT 30)
