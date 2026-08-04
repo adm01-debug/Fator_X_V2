@@ -38,10 +38,12 @@ CREATE INDEX IF NOT EXISTS idx_lockouts_ip ON public.account_lockouts(ip_address
 ALTER TABLE public.account_lockouts ENABLE ROW LEVEL SECURITY;
 
 -- service_role insere (Edge Functions)
+DROP POLICY IF EXISTS "lockouts_service_insert" ON public.account_lockouts;
 CREATE POLICY "lockouts_service_insert" ON public.account_lockouts
     FOR INSERT WITH CHECK (current_setting('request.jwt.claim.role', true) = 'service_role');
 
 -- service_role + admins leem (para monitorar)
+DROP POLICY IF EXISTS "lockouts_admin_read" ON public.account_lockouts;
 CREATE POLICY "lockouts_admin_read" ON public.account_lockouts
     FOR SELECT USING (
         current_setting('request.jwt.claim.role', true) = 'service_role'
@@ -53,6 +55,7 @@ CREATE POLICY "lockouts_admin_read" ON public.account_lockouts
     );
 
 -- service_role + admins deletam (para unlock manual)
+DROP POLICY IF EXISTS "lockouts_admin_delete" ON public.account_lockouts;
 CREATE POLICY "lockouts_admin_delete" ON public.account_lockouts
     FOR DELETE USING (current_setting('request.jwt.claim.role', true) = 'service_role'
         OR EXISTS (
@@ -75,10 +78,11 @@ CREATE TABLE IF NOT EXISTS public.ip_rate_limits (
     created_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX IF NOT EXISTS idx_ip_rate_limits_ip ON public.ip_rate_limits(ip_address, action);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_ip_rate_limits_ip ON public.ip_rate_limits(ip_address, action);
 
 ALTER TABLE public.ip_rate_limits ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "ip_rate_service" ON public.ip_rate_limits;
 CREATE POLICY "ip_rate_service" ON public.ip_rate_limits
     FOR ALL USING (current_setting('request.jwt.claim.role', true) = 'service_role');
 
@@ -217,8 +221,8 @@ $$;
 -- PASSO 5: Função para registrar tentativa de login
 CREATE OR REPLACE FUNCTION public.record_auth_attempt(
     p_email TEXT,
-    p_ip_address TEXT DEFAULT NULL,
     p_success BOOLEAN,
+    p_ip_address TEXT DEFAULT NULL,
     p_requires_captcha BOOLEAN DEFAULT false,
     p_captcha_token TEXT DEFAULT NULL,
     p_lockout_id UUID DEFAULT NULL
