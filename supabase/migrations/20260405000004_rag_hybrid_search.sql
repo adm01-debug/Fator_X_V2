@@ -13,7 +13,7 @@ ALTER TABLE public.chunks
   ADD COLUMN IF NOT EXISTS parent_chunk_id UUID REFERENCES public.chunks(id),
   ADD COLUMN IF NOT EXISTS chunk_level TEXT DEFAULT 'child',  -- 'parent' or 'child'
   ADD COLUMN IF NOT EXISTS token_count INTEGER DEFAULT 0,
-  ADD COLUMN IF NOT EXISTS embedding vector(1024),
+  ADD COLUMN IF NOT EXISTS embedding extensions.vector(1024),
   ADD COLUMN IF NOT EXISTS bm25_tsvector tsvector;
 
 -- Create GIN index for BM25 full-text search
@@ -43,7 +43,7 @@ CREATE TRIGGER trg_chunks_bm25
 
 -- Hybrid search function with RRF (Reciprocal Rank Fusion)
 CREATE OR REPLACE FUNCTION public.hybrid_search(
-  p_query_embedding vector(1024),
+  p_query_embedding extensions.vector(1024),
   p_query_text TEXT,
   p_collection_ids UUID[] DEFAULT NULL,
   p_top_k INTEGER DEFAULT 10,
