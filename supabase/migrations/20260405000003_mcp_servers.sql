@@ -40,6 +40,15 @@ CREATE POLICY "Service role manages MCP servers"
   ON public.mcp_servers FOR ALL
   USING (auth.role() = 'service_role');
 
+-- Ensure columns exist regardless of which earlier migration created the table.
+ALTER TABLE public.mcp_servers
+  ADD COLUMN IF NOT EXISTS url TEXT,
+  ADD COLUMN IF NOT EXISTS auth_type TEXT DEFAULT 'none',
+  ADD COLUMN IF NOT EXISTS auth_config JSONB DEFAULT '{}',
+  ADD COLUMN IF NOT EXISTS tools_discovered JSONB DEFAULT '[]',
+  ADD COLUMN IF NOT EXISTS resources_discovered JSONB DEFAULT '[]',
+  ADD COLUMN IF NOT EXISTS error TEXT;
+
 -- Seed: 5 popular MCP servers (pre-configured, inactive by default)
 INSERT INTO public.mcp_servers (name, url, transport, status, tools_discovered, is_active) VALUES
   ('GitHub', 'https://api.github.com/mcp', 'streamable-http', 'disconnected', '[]', false),
