@@ -188,17 +188,17 @@ DECLARE
 BEGIN
   -- Try to get workspace_id from the row
   IF TG_OP = 'DELETE' THEN
-    ws_id := COALESCE((OLD::jsonb)->>'workspace_id', NULL)::UUID;
+    ws_id := COALESCE((to_jsonb(OLD))->>'workspace_id', NULL)::UUID;
   ELSE
-    ws_id := COALESCE((NEW::jsonb)->>'workspace_id', NULL)::UUID;
+    ws_id := COALESCE((to_jsonb(NEW))->>'workspace_id', NULL)::UUID;
   END IF;
-  
+
   INSERT INTO public.audit_log (workspace_id, user_id, action, resource_type, resource_id, old_value, new_value)
   VALUES (
     ws_id, auth.uid(),
     TG_OP || '.' || TG_TABLE_NAME,
     TG_TABLE_NAME,
-    CASE TG_OP WHEN 'DELETE' THEN (OLD::jsonb)->>'id' ELSE (NEW::jsonb)->>'id' END,
+    CASE TG_OP WHEN 'DELETE' THEN (to_jsonb(OLD))->>'id' ELSE (to_jsonb(NEW))->>'id' END,
     CASE TG_OP WHEN 'INSERT' THEN NULL ELSE to_jsonb(OLD) END,
     CASE TG_OP WHEN 'DELETE' THEN NULL ELSE to_jsonb(NEW) END
   );
