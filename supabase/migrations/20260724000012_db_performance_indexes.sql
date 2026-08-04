@@ -35,10 +35,21 @@ CREATE INDEX IF NOT EXISTS
 -- INDEX 3: deploy_connections(api_key_hash) WHERE status = 'active'
 -- Impact: validateApiKey() — full scan + in-memory iteration em cada webhook
 -- Permite lookup direto por hash em vez de table scan
-CREATE INDEX IF NOT EXISTS
-    idx_deploy_connections_key_hash
-    ON public.deploy_connections(api_key_hash)
-    WHERE status = 'active';
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'deploy_connections'
+          AND column_name = 'api_key_hash'
+    ) THEN
+        CREATE INDEX IF NOT EXISTS
+            idx_deploy_connections_key_hash
+            ON public.deploy_connections(api_key_hash)
+            WHERE status = 'active';
+    END IF;
+END;
+$$;
 
 -- INDEX 4: workspace_secrets(workspace_id, key_name)
 -- Impact: TODA RAG embed/rerank + LLM call fetcha secrets por workspace
