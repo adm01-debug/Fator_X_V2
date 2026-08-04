@@ -17,14 +17,15 @@
 
 import { assert } from 'https://deno.land/std@0.224.0/assert/mod.ts';
 
+// Use || (not ??) so empty-string secrets from CI fall through to the fallback.
 const SUPABASE_URL =
-  Deno.env.get('VITE_SUPABASE_URL') ??
-  Deno.env.get('SUPABASE_URL') ??
-  'https://fqdohnmgmtaycfwsioik.supabase.co';
+  Deno.env.get('VITE_SUPABASE_URL') ||
+  Deno.env.get('SUPABASE_URL') ||
+  'https://qdlnzopxrlsoljcrcmzv.supabase.co';
 const ANON =
-  Deno.env.get('VITE_SUPABASE_PUBLISHABLE_KEY') ??
-  Deno.env.get('SUPABASE_ANON_KEY') ??
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZxZG9obm1nbXRheWNmd3Npb2lrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1MDMzNjAsImV4cCI6MjA5NDA3OTM2MH0.yj2LQHGB0uE4pOams3Uf4taYTMdMJDAJtWCZsaRwVVM';
+  Deno.env.get('VITE_SUPABASE_PUBLISHABLE_KEY') ||
+  Deno.env.get('SUPABASE_ANON_KEY') ||
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFkbG56b3B4cmxzb2xqY3JjbXp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0MDAwMDAsImV4cCI6MjA5Mzk3NjAwMH0.placeholder';
 
 const ORIGIN = 'https://app.promobrindes.com.br';
 

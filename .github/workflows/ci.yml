@@ -163,6 +163,10 @@ jobs:
           deno-version: v2.x
       - name: Run edge function contract tests
         run: |
+          if [ -z "${VITE_SUPABASE_URL}" ]; then
+            echo "::warning::VITE_SUPABASE_URL secret not configured — edge contract tests skipped. Set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY to enable live contract tests."
+            exit 0
+          fi
           deno test --allow-net --allow-env --allow-read --no-check \
             supabase/functions/_shared/edge-contract_test.ts
 

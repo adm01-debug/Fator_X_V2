@@ -36,12 +36,21 @@ BEGIN
 END $$;
 
 -- Fix 3: Harden workspace_members INSERT policy
-DROP POLICY IF EXISTS "Owners can add workspace members" ON public.workspace_members;
-CREATE POLICY "Owners can add workspace members"
-ON public.workspace_members FOR INSERT
-TO authenticated
-WITH CHECK (
-  workspace_id IN (
-    SELECT ws.id FROM workspaces ws WHERE ws.owner_id = auth.uid()
-  )
-);
+-- Table added by a later migration, guard required.
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.tables
+    WHERE table_schema = 'public' AND table_name = 'workspace_members'
+  ) THEN
+    DROP POLICY IF EXISTS "Owners can add workspace members" ON public.workspace_members;
+    CREATE POLICY "Owners can add workspace members"
+    ON public.workspace_members FOR INSERT
+    TO authenticated
+    WITH CHECK (
+      workspace_id IN (
+        SELECT ws.id FROM workspaces ws WHERE ws.owner_id = auth.uid()
+      )
+    );
+  END IF;
+END $$;
