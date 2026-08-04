@@ -28,6 +28,7 @@ CREATE POLICY "Owners manage their MCP servers"
 
 CREATE INDEX IF NOT EXISTS mcp_servers_owner_idx ON public.mcp_servers(owner_id);
 
+DROP TRIGGER IF EXISTS update_mcp_servers_updated_at ON public.mcp_servers;
 CREATE TRIGGER update_mcp_servers_updated_at
   BEFORE UPDATE ON public.mcp_servers
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
