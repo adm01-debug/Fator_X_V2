@@ -42,7 +42,7 @@ GRANT ALL ON public.task_queues TO service_role;
 ALTER TABLE public.task_queues ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "task_queues service only" ON public.task_queues
   FOR ALL TO service_role USING (true) WITH CHECK (true);
-CREATE INDEX idx_task_queues_active ON public.task_queues (is_paused) WHERE is_paused = false;
+CREATE INDEX IF NOT EXISTS idx_task_queues_active ON public.task_queues (is_paused) WHERE is_paused = false;
 CREATE TRIGGER trg_task_queues_updated BEFORE UPDATE ON public.task_queues
   FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
 
@@ -71,9 +71,9 @@ CREATE POLICY "queue_items service only" ON public.queue_items
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 -- O worker busca por (queue_id, status) e ordena por priority OU created_at.
 -- Índices compostos cobrem exatamente esses dois planos de leitura.
-CREATE INDEX idx_queue_items_pending_prio ON public.queue_items (queue_id, priority DESC, created_at)
+CREATE INDEX IF NOT EXISTS idx_queue_items_pending_prio ON public.queue_items (queue_id, priority DESC, created_at)
   WHERE status = 'pending';
-CREATE INDEX idx_queue_items_status ON public.queue_items (queue_id, status);
+CREATE INDEX IF NOT EXISTS idx_queue_items_status ON public.queue_items (queue_id, status);
 CREATE TRIGGER trg_queue_items_updated BEFORE UPDATE ON public.queue_items
   FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
 
@@ -104,7 +104,7 @@ GRANT ALL ON public.cron_schedules TO service_role;
 ALTER TABLE public.cron_schedules ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "cron_schedules service only" ON public.cron_schedules
   FOR ALL TO service_role USING (true) WITH CHECK (true);
-CREATE INDEX idx_cron_schedules_due ON public.cron_schedules (next_run_at)
+CREATE INDEX IF NOT EXISTS idx_cron_schedules_due ON public.cron_schedules (next_run_at)
   WHERE status = 'active';
 CREATE TRIGGER trg_cron_schedules_updated BEFORE UPDATE ON public.cron_schedules
   FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
@@ -144,8 +144,8 @@ GRANT ALL ON public.traces TO service_role;
 ALTER TABLE public.traces ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "traces service only" ON public.traces
   FOR ALL TO service_role USING (true) WITH CHECK (true);
-CREATE UNIQUE INDEX idx_traces_trace_id ON public.traces (trace_id);
-CREATE INDEX idx_traces_created ON public.traces USING BRIN (created_at);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_traces_trace_id ON public.traces (trace_id);
+CREATE INDEX IF NOT EXISTS idx_traces_created ON public.traces USING BRIN (created_at);
 
 CREATE TABLE IF NOT EXISTS public.spans (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -169,8 +169,8 @@ CREATE POLICY "spans service only" ON public.spans
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 -- Sem FK para traces: spans podem chegar antes do trace raiz (exportação
 -- assíncrona) e uma FK transformaria perda de telemetria em erro de escrita.
-CREATE INDEX idx_spans_trace ON public.spans (trace_id, start_time);
-CREATE INDEX idx_spans_created ON public.spans USING BRIN (created_at);
+CREATE INDEX IF NOT EXISTS idx_spans_trace ON public.spans (trace_id, start_time);
+CREATE INDEX IF NOT EXISTS idx_spans_created ON public.spans USING BRIN (created_at);
 
 -- ─── 4. Notificações ───────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.notification_templates (
@@ -212,7 +212,7 @@ GRANT ALL ON public.notifications TO service_role;
 ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "notifications service only" ON public.notifications
   FOR ALL TO service_role USING (true) WITH CHECK (true);
-CREATE INDEX idx_notifications_status ON public.notifications (status, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_notifications_status ON public.notifications (status, created_at DESC);
 
 -- ─── 5. Webhooks de entrada e roteamento ───────────────────────────────
 CREATE TABLE IF NOT EXISTS public.agent_routing_config (
@@ -267,10 +267,10 @@ CREATE POLICY "bitrix events service write" ON public.bitrix24_webhook_events
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 -- Deduplicação: o handler consulta (workspace_id, event_type, bitrix_event_id)
 -- antes de inserir. O índice único fecha a corrida entre entregas simultâneas.
-CREATE UNIQUE INDEX idx_bitrix_dedupe
+CREATE UNIQUE INDEX IF NOT EXISTS idx_bitrix_dedupe
   ON public.bitrix24_webhook_events (workspace_id, event_type, bitrix_event_id)
   WHERE bitrix_event_id IS NOT NULL;
-CREATE INDEX idx_bitrix_received ON public.bitrix24_webhook_events (received_at DESC);
+CREATE INDEX IF NOT EXISTS idx_bitrix_received ON public.bitrix24_webhook_events (received_at DESC);
 
 CREATE TABLE IF NOT EXISTS public.whatsapp_webhook_events (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -306,10 +306,10 @@ CREATE POLICY "whatsapp events readable by members" ON public.whatsapp_webhook_e
 CREATE POLICY "whatsapp events service write" ON public.whatsapp_webhook_events
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 -- O writer trata 23505 como duplicata benigna: este índice é a fonte desse 23505.
-CREATE UNIQUE INDEX idx_whatsapp_dedupe
+CREATE UNIQUE INDEX IF NOT EXISTS idx_whatsapp_dedupe
   ON public.whatsapp_webhook_events (provider, message_id)
   WHERE message_id IS NOT NULL;
-CREATE INDEX idx_whatsapp_received ON public.whatsapp_webhook_events (received_at DESC);
+CREATE INDEX IF NOT EXISTS idx_whatsapp_received ON public.whatsapp_webhook_events (received_at DESC);
 
 CREATE TABLE IF NOT EXISTS public.webhook_delivery_logs (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -329,7 +329,7 @@ GRANT ALL ON public.webhook_delivery_logs TO service_role;
 ALTER TABLE public.webhook_delivery_logs ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "delivery logs service only" ON public.webhook_delivery_logs
   FOR ALL TO service_role USING (true) WITH CHECK (true);
-CREATE INDEX idx_delivery_logs_endpoint ON public.webhook_delivery_logs (webhook_endpoint_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_delivery_logs_endpoint ON public.webhook_delivery_logs (webhook_endpoint_id, created_at DESC);
 
 -- ─── 6. Segurança e avaliação ──────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.security_events (
@@ -351,8 +351,8 @@ CREATE POLICY "security events readable by workspace admins" ON public.security_
   USING (workspace_id IS NOT NULL AND public.is_workspace_admin(auth.uid(), workspace_id));
 CREATE POLICY "security events service write" ON public.security_events
   FOR ALL TO service_role USING (true) WITH CHECK (true);
-CREATE INDEX idx_security_events_ws ON public.security_events (workspace_id, created_at DESC);
-CREATE INDEX idx_security_events_severity ON public.security_events (severity, created_at DESC)
+CREATE INDEX IF NOT EXISTS idx_security_events_ws ON public.security_events (workspace_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_security_events_severity ON public.security_events (severity, created_at DESC)
   WHERE severity IN ('high','critical');
 
 CREATE TABLE IF NOT EXISTS public.eval_runs (
@@ -377,4 +377,4 @@ CREATE POLICY "eval runs readable by members" ON public.eval_runs
   ));
 CREATE POLICY "eval runs service write" ON public.eval_runs
   FOR ALL TO service_role USING (true) WITH CHECK (true);
-CREATE INDEX idx_eval_runs_agent ON public.eval_runs (agent_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_eval_runs_agent ON public.eval_runs (agent_id, created_at DESC);
