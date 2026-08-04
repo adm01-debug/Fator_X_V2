@@ -269,13 +269,13 @@ BEGIN
     EXECUTE format(
         'CREATE POLICY %I ON public.%I FOR ALL USING (' ||
         'workspace_id IN (SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() AND role IN (''owner'',''admin''))' ||
-        ' OR current_setting('request.jwt.claim.role', true) = %L)',
+        ' OR current_setting(''request.jwt.claim.role'', true) = %L)',
         p_table_name || '_admin_workspace', p_table_name, 'service_role'
     );
     EXECUTE format(
         'CREATE POLICY %I ON public.%I FOR SELECT USING (' ||
         'workspace_id IN (SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid())' ||
-        ' OR current_setting('request.jwt.claim.role', true) = %L)',
+        ' OR current_setting(''request.jwt.claim.role'', true) = %L)',
         p_table_name || '_member_read', p_table_name, 'service_role'
     );
 END;
