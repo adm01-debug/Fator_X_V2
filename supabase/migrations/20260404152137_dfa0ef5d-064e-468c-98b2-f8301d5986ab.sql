@@ -12,7 +12,18 @@ CREATE INDEX IF NOT EXISTS idx_agents_workspace ON public.agents(workspace_id);
 CREATE INDEX IF NOT EXISTS idx_workflows_workspace ON public.workflows(workspace_id);
 CREATE INDEX IF NOT EXISTS idx_sessions_agent ON public.sessions(agent_id);
 CREATE INDEX IF NOT EXISTS idx_sessions_user ON public.sessions(user_id, started_at DESC);
-CREATE INDEX IF NOT EXISTS idx_prompt_versions_agent ON public.prompt_versions(agent_id, version DESC);
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'prompt_versions' AND column_name = 'version'
+  ) AND NOT EXISTS (
+    SELECT 1 FROM pg_indexes
+    WHERE schemaname = 'public' AND tablename = 'prompt_versions' AND indexname = 'idx_prompt_versions_agent'
+  ) THEN
+    CREATE INDEX idx_prompt_versions_agent ON public.prompt_versions(agent_id, version DESC);
+  END IF;
+END $$;
 CREATE INDEX IF NOT EXISTS idx_workflow_runs_workflow ON public.workflow_runs(workflow_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_deploy_connections_agent ON public.deploy_connections(agent_id);
 CREATE INDEX IF NOT EXISTS idx_oracle_history_user ON public.oracle_history(user_id, created_at DESC);
