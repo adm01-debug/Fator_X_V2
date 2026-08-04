@@ -1,15 +1,29 @@
 // Agent Conversational Builder — chat-to-agent via Lovable AI
-import { corsHeaders } from "https://esm.sh/@supabase/supabase-js@2.95.0/cors";
-import { z } from "https://esm.sh/zod@3.23.8";
-import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS } from "../_shared/mod.ts";
+import { getCorsHeaders, handleCorsPreflight } from '../_shared/mod.ts';
+import { z } from 'https://esm.sh/zod@3.23.8';
+import {
+  checkRateLimit,
+  createRateLimitResponse,
+  getRateLimitIdentifier,
+  RATE_LIMITS,
+} from '../_shared/mod.ts';
 
-const BuilderBodySchema = z.object({
-  messages: z.array(z.object({
-    role: z.enum(['system', 'user', 'assistant', 'tool']),
-    content: z.union([z.string(), z.array(z.record(z.unknown())), z.null()]).optional(),
-  }).passthrough()).min(1).max(100),
-  currentAgent: z.record(z.unknown()).nullable().optional(),
-}).passthrough();
+const BuilderBodySchema = z
+  .object({
+    messages: z
+      .array(
+        z
+          .object({
+            role: z.enum(['system', 'user', 'assistant', 'tool']),
+            content: z.union([z.string(), z.array(z.record(z.unknown())), z.null()]).optional(),
+          })
+          .passthrough(),
+      )
+      .min(1)
+      .max(100),
+    currentAgent: z.record(z.unknown()).nullable().optional(),
+  })
+  .passthrough();
 
 const SYSTEM_PROMPT = `Você é um assistente especializado em ajudar usuários a configurar agentes de IA na plataforma Fator X.
 
@@ -33,65 +47,69 @@ REGRAS:
 6. Seja conciso: respostas de 1-3 frases.`;
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return handleCorsPreflight(req);
+  const corsHeaders = getCorsHeaders(req);
 
   const identifier = getRateLimitIdentifier(req);
   const rateResult = checkRateLimit(identifier, RATE_LIMITS.standard);
   if (!rateResult.allowed) return createRateLimitResponse(rateResult, corsHeaders);
 
   try {
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY missing");
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY missing');
 
     const rawBody = await req.json().catch(() => null);
     const parsedBody = BuilderBodySchema.safeParse(rawBody);
     if (!parsedBody.success) {
-      return new Response(JSON.stringify({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      return new Response(
+        JSON.stringify({
+          error: 'Payload inválido',
+          details: parsedBody.error.flatten().fieldErrors,
+        }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
     }
     const { messages, currentAgent } = parsedBody.data;
 
     const contextMsg = currentAgent
       ? `\n\nESTADO ATUAL DO AGENTE:\n${JSON.stringify(currentAgent, null, 2)}`
-      : "";
+      : '';
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      method: 'POST',
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT + contextMsg },
-          ...messages,
-        ],
+        model: 'google/gemini-2.5-flash',
+        messages: [{ role: 'system', content: SYSTEM_PROMPT + contextMsg }, ...messages],
         stream: true,
         tools: [
           {
-            type: "function",
+            type: 'function',
             function: {
-              name: "patch_agent",
-              description: "Aplica mudanças aos campos do agente em construção.",
+              name: 'patch_agent',
+              description: 'Aplica mudanças aos campos do agente em construção.',
               parameters: {
-                type: "object",
+                type: 'object',
                 properties: {
                   patch: {
-                    type: "object",
-                    description: "Campos a atualizar no agente.",
+                    type: 'object',
+                    description: 'Campos a atualizar no agente.',
                     properties: {
-                      name: { type: "string" },
-                      avatar_emoji: { type: "string" },
-                      mission: { type: "string" },
-                      persona: { type: "string" },
-                      model: { type: "string" },
-                      system_prompt: { type: "string" },
-                      reasoning: { type: "string", enum: ["low", "medium", "high"] },
+                      name: { type: 'string' },
+                      avatar_emoji: { type: 'string' },
+                      mission: { type: 'string' },
+                      persona: { type: 'string' },
+                      model: { type: 'string' },
+                      system_prompt: { type: 'string' },
+                      reasoning: { type: 'string', enum: ['low', 'medium', 'high'] },
                     },
                   },
-                  done: { type: "boolean", description: "true se o agente está pronto." },
+                  done: { type: 'boolean', description: 'true se o agente está pronto.' },
                 },
-                required: ["patch"],
+                required: ['patch'],
               },
             },
           },
@@ -101,25 +119,26 @@ Deno.serve(async (req) => {
 
     if (!response.ok) {
       const status = response.status;
-      const errMsg = status === 429
-        ? "Limite de requisições atingido. Tente novamente em instantes."
-        : status === 402
-        ? "Créditos esgotados. Adicione créditos no workspace."
-        : `Gateway error ${status}`;
+      const errMsg =
+        status === 429
+          ? 'Limite de requisições atingido. Tente novamente em instantes.'
+          : status === 402
+            ? 'Créditos esgotados. Adicione créditos no workspace.'
+            : `Gateway error ${status}`;
       return new Response(JSON.stringify({ error: errMsg }), {
         status,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
     return new Response(response.body, {
-      headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
+      headers: { ...corsHeaders, 'Content-Type': 'text/event-stream' },
     });
   } catch (e) {
-    console.error("conversational-builder error:", e);
+    console.error('conversational-builder error:', e);
     return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      JSON.stringify({ error: e instanceof Error ? e.message : 'Unknown error' }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
     );
   }
 });

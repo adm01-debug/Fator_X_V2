@@ -41,7 +41,6 @@ export interface ResolvedTemplateSkillLink extends TemplateSkillLink {
   skill: AgentSkillDefinition | null;
 }
 
-
 /**
  * Lê os vínculos persistidos de um template, do mais forte para o mais fraco.
  */
@@ -103,7 +102,6 @@ export interface DisplayTemplateSkillLink {
   curatedAt?: string | null;
 }
 
-
 /**
  * Mescla vínculos persistidos com o cálculo local (fallback), garantindo:
  * 1. Curadoria manual sempre no topo e nunca descartada pelo limite;
@@ -117,7 +115,8 @@ export function mergeDisplayLinks(
   computedFallback: DisplayTemplateSkillLink[],
   limit = MAX_LINKS_PER_TEMPLATE,
 ): DisplayTemplateSkillLink[] {
-  const safeLimit = Number.isFinite(limit) && limit > 0 ? Math.floor(limit) : MAX_LINKS_PER_TEMPLATE;
+  const safeLimit =
+    Number.isFinite(limit) && limit > 0 ? Math.floor(limit) : MAX_LINKS_PER_TEMPLATE;
 
   // Só usamos o fallback quando não há NADA persistido — evita misturar um
   // recálculo local desatualizado com a curadoria salva pelo admin.
@@ -133,9 +132,7 @@ export function mergeDisplayLinks(
     (link.origin === 'manual' ? manual : auto).push(link);
   }
 
-  const sortedAuto = [...auto].sort(
-    (a, b) => Number(b.isStrongMatch) - Number(a.isStrongMatch),
-  );
+  const sortedAuto = [...auto].sort((a, b) => Number(b.isStrongMatch) - Number(a.isStrongMatch));
 
   // Manuais nunca são cortados: o limite se aplica ao restante.
   return [...manual, ...sortedAuto.slice(0, Math.max(0, safeLimit - manual.length))];
@@ -196,7 +193,6 @@ export function formatCurationTrail(
   return null;
 }
 
-
 /**
  * Cria (ou promove) um vínculo manual entre um template e uma skill.
  * Requer admin de workspace — a RLS rejeita os demais.
@@ -227,7 +223,11 @@ export async function addManualTemplateSkillLink(
   );
 
   if (error) {
-    logger.error('addManualTemplateSkillLink failed', { templateId, skillId, error: error.message });
+    logger.error('addManualTemplateSkillLink failed', {
+      templateId,
+      skillId,
+      error: error.message,
+    });
     throw new Error(error.message);
   }
 }
@@ -239,10 +239,7 @@ export async function addManualTemplateSkillLink(
  * permite auditar quem desvinculou o quê e oferecer "desfazer" no feed. As
  * leituras filtram `deleted_at IS NULL`, então o efeito prático é o mesmo.
  */
-export async function removeTemplateSkillLink(
-  templateId: string,
-  skillId: string,
-): Promise<void> {
+export async function removeTemplateSkillLink(templateId: string, skillId: string): Promise<void> {
   if (!templateId?.trim() || !skillId?.trim()) {
     // Sem a guarda, ids vazios viram um filtro `= ''` que não casa com nada:
     // a mutação "sucede" silenciosamente e a UI mente ao curador.
@@ -281,10 +278,7 @@ export function sanitizeSkillIds(skillIds: readonly string[]): string[] {
 }
 
 /** Desfaz uma remoção reversível, reativando o vínculo. */
-export async function restoreTemplateSkillLink(
-  templateId: string,
-  skillId: string,
-): Promise<void> {
+export async function restoreTemplateSkillLink(templateId: string, skillId: string): Promise<void> {
   await bulkRestoreTemplateSkillLinks(templateId, [skillId]);
 }
 
@@ -458,9 +452,7 @@ export interface BulkRestoreAllResult {
  * Função pura: evita um join extra só para rotular erro. O feed já carrega
  * `templateName`; quando ausente, o id é o rótulo honesto.
  */
-export function buildTemplateNameMap(
-  days: readonly CurationFeedDay[],
-): Map<string, string> {
+export function buildTemplateNameMap(days: readonly CurationFeedDay[]): Map<string, string> {
   const mapa = new Map<string, string>();
   for (const dia of days ?? []) {
     for (const entrada of dia?.entries ?? []) {
@@ -777,7 +769,6 @@ export function loadRestoreFailures(): BulkRestoreFailure[] {
   }
 }
 
-
 /** Persiste (ou limpa) as falhas parciais da sessão atual. */
 export function saveRestoreFailures(failures: readonly BulkRestoreFailure[]): void {
   try {
@@ -792,9 +783,6 @@ export function saveRestoreFailures(failures: readonly BulkRestoreFailure[]): vo
     });
   }
 }
-
-
-
 
 /**
  * Restaura todas as remoções de um feed, um lote atômico por template.
@@ -816,9 +804,6 @@ export async function retryFailedRestores(
 ): Promise<BulkRestoreAllResult> {
   return runRestorePlan(filterRemovalPlan(days, templateIds), buildTemplateNameMap(days));
 }
-
-
-
 
 export interface RebuildResult {
   templates: number;
@@ -876,9 +861,10 @@ export async function rebuildTemplateSkillLinks(
         reason: link.reason,
         is_strong_match: link.isStrongMatch,
         department_match: link.departmentMatch,
-        matched_keywords: Array.from(
-          new Set([...link.affinities, ...link.matchedKeywords]),
-        ).slice(0, 8),
+        matched_keywords: Array.from(new Set([...link.affinities, ...link.matchedKeywords])).slice(
+          0,
+          8,
+        ),
         origin: 'auto',
         deleted_at: null,
         deleted_by: null,
@@ -948,7 +934,8 @@ export function aggregateTemplateSkillLinks(
   byTemplate: Array<{ templateId: string; links: DisplayTemplateSkillLink[] }>,
   limit = MAX_LINKS_PER_TEMPLATE,
 ): AggregatedSkillLink[] {
-  const safeLimit = Number.isFinite(limit) && limit > 0 ? Math.floor(limit) : MAX_LINKS_PER_TEMPLATE;
+  const safeLimit =
+    Number.isFinite(limit) && limit > 0 ? Math.floor(limit) : MAX_LINKS_PER_TEMPLATE;
   const acc = new Map<string, AggregatedSkillLink & { order: number }>();
   let order = 0;
 
@@ -962,8 +949,6 @@ export function aggregateTemplateSkillLinks(
       if (!link?.skillId || seenInGroup.has(link.skillId)) continue;
       seenInGroup.add(link.skillId);
       const existing = acc.get(link.skillId);
-
-
 
       if (!existing) {
         acc.set(link.skillId, {
@@ -1136,7 +1121,9 @@ export function buildCurationFeed(
 
     const removido = Boolean(row.deleted_at);
     // Numa remoção, o carimbo relevante é o da própria remoção.
-    const at = removido ? row.deleted_at ?? row.updated_at ?? null : row.updated_at ?? row.created_at ?? null;
+    const at = removido
+      ? (row.deleted_at ?? row.updated_at ?? null)
+      : (row.updated_at ?? row.created_at ?? null);
     const data = at ? new Date(at) : null;
     const dataValida = data && !Number.isNaN(data.getTime()) ? data : null;
 
@@ -1156,8 +1143,8 @@ export function buildCurationFeed(
             });
 
     const actorId = removido
-      ? row.deleted_by ?? row.updated_by ?? null
-      : row.updated_by ?? row.created_by ?? null;
+      ? (row.deleted_by ?? row.updated_by ?? null)
+      : (row.updated_by ?? row.created_by ?? null);
 
     const entry: CurationFeedEntry = {
       kind: removido ? 'unlinked' : 'linked',
@@ -1167,7 +1154,11 @@ export function buildCurationFeed(
       skillName: row.skill?.name?.trim() || row.skill_id,
       reason: row.reason || 'Curadoria manual',
       actorId,
-      actorLabel: actorId ? (actorId === currentUserId ? 'você' : `admin ${actorId.slice(0, 8)}`) : null,
+      actorLabel: actorId
+        ? actorId === currentUserId
+          ? 'você'
+          : `admin ${actorId.slice(0, 8)}`
+        : null,
       at,
       timeLabel: dataValida.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
     };
@@ -1258,9 +1249,6 @@ export function resolveTemplateFilter(
   return knownIds.includes(alvo) ? alvo : null;
 }
 
-
-
-
 /**
  * Cursor = carimbo `updated_at` da última linha da página.
  *
@@ -1280,9 +1268,7 @@ export function resolveNextCursor(rows: RecentCurationRow[], limit: number): str
  *
  * Função pura: é o alvo da simulação de cenários de paginação.
  */
-export function mergeCurationFeeds(
-  paginas: CurationFeedDay[][],
-): CurationFeedDay[] {
+export function mergeCurationFeeds(paginas: CurationFeedDay[][]): CurationFeedDay[] {
   const dias = new Map<string, CurationFeedDay>();
   const vistos = new Set<string>();
 
@@ -1319,7 +1305,6 @@ export async function fetchRecentCurationsPage(
   cursor?: string | null,
   escopo: CurationActorScope = 'everyone',
   templateId?: string | null,
-
 ): Promise<CurationFeedPage> {
   let query = supabaseExternal
     .from('template_skill_links')
@@ -1345,11 +1330,11 @@ export async function fetchRecentCurationsPage(
 
   // Template: allowlist resolvida antes da consulta; `eq` usa o índice
   // idx_tsl_template quando a seletividade compensa.
-  const alvoTemplate = resolveTemplateFilter(templateId, AGENT_TEMPLATES.map((t) => t.id));
+  const alvoTemplate = resolveTemplateFilter(
+    templateId,
+    AGENT_TEMPLATES.map((t) => t.id),
+  );
   if (alvoTemplate) query = query.eq('template_id', alvoTemplate);
-
-
-
 
   const { data, error } = await query.order('updated_at', { ascending: false }).limit(limit);
 
@@ -1375,7 +1360,6 @@ export async function fetchRecentCurations(
   const { days } = await fetchRecentCurationsPage(limit, currentUserId, filtro);
   return days;
 }
-
 
 /* ------------------------------------------------------------------ *
  * Exportação CSV do feed de curadoria
@@ -1410,6 +1394,7 @@ export const CURATION_CSV_HEADER = [
 export function escapeCsvField(value: unknown): string {
   const bruto = value === null || value === undefined ? '' : String(value);
   // Sanitiza caracteres de controle que não sejam CR/LF (podem corromper o arquivo).
+  // eslint-disable-next-line no-control-regex
   const limpo = bruto.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '');
   const perigoso = /^[=+\-@\t\r]/.test(limpo);
   const texto = perigoso ? `'${limpo}` : limpo;

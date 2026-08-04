@@ -16,11 +16,6 @@ import type { AgentSkillLoad } from '@/lib/skills/promptOverflowAlert';
 /** Teto de leitura: o mesmo do simulador, para o recorte ser comparável. */
 const ROW_LIMIT = 5000;
 
-interface LoadRow {
-  agent_id?: string | null;
-  skill_registry?: { name?: string | null } | null;
-}
-
 /** Normalização idêntica à do compilador (case/acentos/espaços). */
 function normalizeName(name: string): string {
   return name
@@ -44,14 +39,8 @@ export async function fetchAgentSkillLoads(): Promise<AgentSkillLoad[]> {
 
   // Fetch installed skills and skill registry names in parallel
   const [installedRes, skillsRes] = await Promise.all([
-    supabaseExternal
-      .from('agent_installed_skills')
-      .select('agent_id, skill_id')
-      .limit(ROW_LIMIT),
-    supabaseExternal
-      .from('skill_registry')
-      .select('id, name')
-      .limit(10000),
+    supabaseExternal.from('agent_installed_skills').select('agent_id, skill_id').limit(ROW_LIMIT),
+    supabaseExternal.from('skill_registry').select('id, name').limit(10000),
   ]);
 
   if (installedRes.error) {
@@ -71,7 +60,10 @@ export async function fetchAgentSkillLoads(): Promise<AgentSkillLoad[]> {
 
   // Set por agente: dedup por nome normalizado, ignorando nomes vazios.
   const porAgente = new Map<string, Set<string>>();
-  for (const row of (installedRes.data ?? []) as { agent_id: string | null; skill_id: string | null }[]) {
+  for (const row of (installedRes.data ?? []) as {
+    agent_id: string | null;
+    skill_id: string | null;
+  }[]) {
     const agentId = row?.agent_id ? String(row.agent_id) : '';
     const skillId = row?.skill_id ? String(row.skill_id) : '';
     if (agentId === '' || skillId === '') continue;

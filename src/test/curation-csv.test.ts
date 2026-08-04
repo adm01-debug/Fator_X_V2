@@ -98,14 +98,11 @@ describe('escapeCsvField — estrutura RFC 4180', () => {
 });
 
 describe('escapeCsvField — injeção de fórmula', () => {
-  it.each(['=', '+', '-', '@', '\t', '\r'])(
-    'neutraliza prefixo perigoso %j',
-    (prefixo) => {
-      const saida = escapeCsvField(`${prefixo}cmd|'/c calc'!A1`);
-      const valor = saida.startsWith('"') ? saida.slice(1, -1).replace(/""/g, '"') : saida;
-      expect(valor.startsWith("'")).toBe(true);
-    },
-  );
+  it.each(['=', '+', '-', '@', '\t', '\r'])('neutraliza prefixo perigoso %j', (prefixo) => {
+    const saida = escapeCsvField(`${prefixo}cmd|'/c calc'!A1`);
+    const valor = saida.startsWith('"') ? saida.slice(1, -1).replace(/""/g, '"') : saida;
+    expect(valor.startsWith("'")).toBe(true);
+  });
 
   it('não prefixa valores inofensivos que apenas contêm = no meio', () => {
     expect(escapeCsvField('a=b')).toBe('a=b');
@@ -148,9 +145,7 @@ describe('buildCurationCsv', () => {
   });
 
   it('mantém campos ausentes como vazios sem deslocar colunas', () => {
-    const csv = parseCsv(
-      buildCurationCsv([day([entry({ timeLabel: null, actorLabel: null })])]),
-    );
+    const csv = parseCsv(buildCurationCsv([day([entry({ timeLabel: null, actorLabel: null })])]));
     expect(csv[1][1]).toBe('');
     expect(csv[1][8]).toBe('');
     expect(csv[1]).toHaveLength(CURATION_CSV_HEADER.length);
@@ -231,6 +226,7 @@ describe('buildCurationCsv — fuzzing de integridade estrutural', () => {
     for (let seed = 1; seed <= 200; seed++) {
       const motivo = ruidoAleatorio(seed);
       const csv = parseCsv(buildCurationCsv([day([entry({ reason: motivo })])]));
+      // eslint-disable-next-line no-control-regex
       const esperado = motivo.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '');
       const obtido = csv[1][7];
       expect(obtido === esperado || obtido === `'${esperado}`).toBe(true);
@@ -246,6 +242,8 @@ describe('buildCurationCsvFilename', () => {
   });
 
   it('não quebra com data inválida', () => {
-    expect(buildCurationCsvFilename(new Date('x'))).toMatch(/^curadoria-\d{4}-\d{2}-\d{2}-\d{4}\.csv$/);
+    expect(buildCurationCsvFilename(new Date('x'))).toMatch(
+      /^curadoria-\d{4}-\d{2}-\d{2}-\d{4}\.csv$/,
+    );
   });
 });
