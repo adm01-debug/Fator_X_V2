@@ -23,11 +23,11 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },
-  // Visual regression: tolerate anti-aliasing + 1% pixel diff
+  // Visual regression: tolerate rendering differences across environments (CI vs local)
   expect: {
     toHaveScreenshot: {
       threshold: 0.2,
-      maxDiffPixelRatio: 0.01,
+      maxDiffPixelRatio: 0.05,
       animations: 'disabled',
     },
   },

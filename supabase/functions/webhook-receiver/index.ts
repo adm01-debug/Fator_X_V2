@@ -10,6 +10,7 @@ import {
   jsonResponse,
   errorResponse,
   parseBody,
+  constantTimeEqual,
 } from '../_shared/mod.ts';
 import { WebhookReceiverContracts } from '../_shared/contracts.ts';
 import { verifyHmac } from '../_shared/webhookSignature.ts';
@@ -130,7 +131,7 @@ serve(async (req) => {
     } else if (webhook.auth_type === 'bearer') {
       const authHeader = headers['authorization'] || '';
       const token = authHeader.replace('Bearer ', '');
-      if (!token || token !== webhook.secret) {
+      if (!token || !webhook.secret || !constantTimeEqual(token, webhook.secret)) {
         await logEvent(
           supabase,
           webhook.id,
@@ -146,7 +147,7 @@ serve(async (req) => {
       }
     } else if (webhook.auth_type === 'api_key') {
       const apiKey = headers['x-api-key'] || url.searchParams.get('api_key') || '';
-      if (!apiKey || apiKey !== webhook.secret) {
+      if (!apiKey || !webhook.secret || !constantTimeEqual(apiKey, webhook.secret)) {
         await logEvent(
           supabase,
           webhook.id,
@@ -189,32 +190,27 @@ serve(async (req) => {
         : undefined) ||
       null;
 
-    if (externalEventId) {
-      const { data: existing } = await supabase
-        .from('webhook_events')
-        .select('id')
-        .eq('webhook_id', webhook.id)
-        .eq('external_event_id', externalEventId)
-        .maybeSingle();
-      if (existing) {
+    // Log event (atomic dedup via INSERT + ON CONFLICT to avoid race condition)
+    const startTime = Date.now();
+    const { error: insertError } = await supabase.from('webhook_events').insert({
+      webhook_id: webhook.id,
+      method: req.method,
+      headers,
+      query_params: queryParams,
+      body,
+      source_ip: sourceIp,
+      status: 'processed',
+      response_code: 200,
+      external_event_id: externalEventId,
+    });
+
+    if (insertError) {
+      // Postgres unique_violation (23505) = duplicate event → return deduped
+      if ((insertError as { code?: string }).code === '23505') {
         return jsonResponse(req, { success: true, deduped: true, webhook_id: webhook.id });
       }
+      throw new Error(insertError.message);
     }
-
-    // Log event
-    const startTime = Date.now();
-    await logEvent(
-      supabase,
-      webhook.id,
-      req.method,
-      headers,
-      queryParams,
-      body,
-      sourceIp,
-      'processed',
-      200,
-      externalEventId,
-    );
 
     // Update counter
     await supabase.rpc('increment_webhook_counter', { webhook_uuid: webhook.id });

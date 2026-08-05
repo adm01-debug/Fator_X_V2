@@ -32,6 +32,13 @@ const ALLOWED_HEADERS = [
   'x-supabase-client-platform-version',
   'x-supabase-client-runtime',
   'x-supabase-client-runtime-version',
+  // Webhook signature headers for all supported providers
+  'x-openclaw-signature',
+  'x-openclaw-timestamp',
+  'x-hub-signature-256',
+  'x-hub-signature',
+  'x-signature',
+  'x-twilio-signature',
 ].join(', ');
 const ALLOWED_METHODS = 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
 const MAX_AGE = '86400';

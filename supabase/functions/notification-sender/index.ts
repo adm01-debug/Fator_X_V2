@@ -251,11 +251,31 @@ async function sendSlack(
   }
 }
 
+// Private IP ranges and link-local addresses that must never be reached (SSRF prevention)
+const PRIVATE_IP_PATTERN =
+  /^(https?:\/\/)(localhost|127\.|10\.|172\.(1[6-9]|2\d|3[01])\.|192\.168\.|169\.254\.|::1|fc00:|fe80:)/i;
+
+function isValidWebhookUrl(raw: string): boolean {
+  try {
+    const u = new URL(raw);
+    if (u.protocol !== 'https:') return false;
+    if (PRIVATE_IP_PATTERN.test(raw)) return false;
+    // Reject bare IP addresses (allows only hostnames)
+    if (/^(\d{1,3}\.){3}\d{1,3}$/.test(u.hostname)) return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 async function sendWebhook(
   message: string,
   url: string,
   metadata?: Record<string, unknown>,
 ): Promise<{ success: boolean; error?: string }> {
+  if (!isValidWebhookUrl(url)) {
+    return { success: false, error: 'Invalid or disallowed webhook URL' };
+  }
   try {
     const { withRetry, fetchWithTimeout } = await import('../_shared/retry.ts');
     const resp = await withRetry(
