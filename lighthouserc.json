@@ -1,8 +1,9 @@
 {
   "ci": {
     "collect": {
-      "staticDistDir": "./dist",
-      "url": ["http://localhost/index.html", "http://localhost/auth"],
+      "startServerCommand": "npm run preview -- --port 4173",
+      "startServerReadyPattern": "localhost:4173",
+      "url": ["http://localhost:4173/", "http://localhost:4173/auth"],
       "numberOfRuns": 3,
       "settings": {
         "preset": "desktop",
