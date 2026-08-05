@@ -10,10 +10,10 @@ import {
   jsonResponse,
   errorResponse,
   parseBody,
+  constantTimeEqual,
 } from '../_shared/mod.ts';
 import { WebhookReceiverContracts } from '../_shared/contracts.ts';
 import { verifyHmac } from '../_shared/webhookSignature.ts';
-import { constantTimeEqual } from '../_shared/mod.ts';
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
