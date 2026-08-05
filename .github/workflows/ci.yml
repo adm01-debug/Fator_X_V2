@@ -129,6 +129,8 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npx playwright install --with-deps chromium
+      - name: Refresh visual baselines for CI environment
+        run: npx playwright test e2e/visual.spec.ts --update-snapshots
       - name: Run Playwright tests
         run: npx playwright test
       - name: Auth E2E status
