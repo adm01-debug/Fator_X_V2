@@ -148,12 +148,16 @@ REVOKE ALL ON FUNCTION internal.detect_health_trend_and_alert() FROM PUBLIC, ano
 -- Agendamento a cada 15 min
 DO $$
 BEGIN
-  PERFORM cron.unschedule('detect-health-trend-every-15min');
-EXCEPTION WHEN OTHERS THEN NULL;
-END $$;
-
-SELECT cron.schedule(
-  'detect-health-trend-every-15min',
-  '*/15 * * * *',
-  $cron$ SELECT internal.detect_health_trend_and_alert(); $cron$
-);
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+    BEGIN
+      PERFORM cron.unschedule('detect-health-trend-every-15min');
+    EXCEPTION WHEN OTHERS THEN NULL;
+    END;
+    PERFORM cron.schedule(
+      'detect-health-trend-every-15min',
+      '*/15 * * * *',
+      'SELECT internal.detect_health_trend_and_alert();'
+    );
+  END IF;
+END;
+$$;

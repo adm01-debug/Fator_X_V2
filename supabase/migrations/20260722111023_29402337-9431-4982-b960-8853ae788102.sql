@@ -45,7 +45,7 @@ CREATE POLICY "Workspace members view slack config"
     )
   );
 
-CREATE INDEX idx_slack_workspace_config_workspace ON public.slack_workspace_config(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_slack_workspace_config_workspace ON public.slack_workspace_config(workspace_id);
 
 -- 2) slack_channel_routes
 CREATE TABLE IF NOT EXISTS public.slack_channel_routes (
@@ -78,7 +78,7 @@ CREATE POLICY "Workspace admins manage slack routes"
   USING (public.is_workspace_admin(auth.uid(), workspace_id))
   WITH CHECK (public.is_workspace_admin(auth.uid(), workspace_id));
 
-CREATE INDEX idx_slack_channel_routes_workspace_category
+CREATE INDEX IF NOT EXISTS idx_slack_channel_routes_workspace_category
   ON public.slack_channel_routes(workspace_id, category)
   WHERE enabled = true;
 
@@ -108,7 +108,7 @@ CREATE POLICY "Admins inspect slack event dedupe"
     )
   );
 
-CREATE INDEX idx_slack_event_dedupe_expires ON public.slack_event_dedupe(expires_at);
+CREATE INDEX IF NOT EXISTS idx_slack_event_dedupe_expires ON public.slack_event_dedupe(expires_at);
 
 -- 4) slack_user_cache
 CREATE TABLE IF NOT EXISTS public.slack_user_cache (
@@ -139,8 +139,8 @@ CREATE POLICY "Admins inspect slack user cache"
     )
   );
 
-CREATE INDEX idx_slack_user_cache_team ON public.slack_user_cache(team_id);
-CREATE INDEX idx_slack_user_cache_expires ON public.slack_user_cache(expires_at);
+CREATE INDEX IF NOT EXISTS idx_slack_user_cache_team ON public.slack_user_cache(team_id);
+CREATE INDEX IF NOT EXISTS idx_slack_user_cache_expires ON public.slack_user_cache(expires_at);
 
 -- Triggers updated_at
 CREATE TRIGGER trg_slack_workspace_config_updated_at
@@ -167,8 +167,14 @@ $$;
 REVOKE ALL ON FUNCTION internal.cleanup_slack_ephemeral() FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION internal.cleanup_slack_ephemeral() TO service_role;
 
-SELECT cron.schedule(
-  'slack-ephemeral-cleanup',
-  '0 4 * * *',
-  $$ SELECT internal.cleanup_slack_ephemeral(); $$
-);
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+    PERFORM cron.schedule(
+      'slack-ephemeral-cleanup',
+      '0 4 * * *',
+      'SELECT internal.cleanup_slack_ephemeral();'
+    );
+  END IF;
+END;
+$$;

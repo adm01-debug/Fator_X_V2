@@ -125,12 +125,16 @@ REVOKE ALL ON FUNCTION internal.smoke_test_health_alerts() FROM PUBLIC, anon, au
 -- Agendamento a cada 6h em minuto deslocado (evita colidir com detector em */15)
 DO $$
 BEGIN
-  PERFORM cron.unschedule('smoke-test-health-alerts-every-6h');
-EXCEPTION WHEN OTHERS THEN NULL;
-END $$;
-
-SELECT cron.schedule(
-  'smoke-test-health-alerts-every-6h',
-  '7 */6 * * *',
-  $cron$ SELECT internal.smoke_test_health_alerts(); $cron$
-);
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+    BEGIN
+      PERFORM cron.unschedule('smoke-test-health-alerts-every-6h');
+    EXCEPTION WHEN OTHERS THEN NULL;
+    END;
+    PERFORM cron.schedule(
+      'smoke-test-health-alerts-every-6h',
+      '7 */6 * * *',
+      'SELECT internal.smoke_test_health_alerts();'
+    );
+  END IF;
+END;
+$$;

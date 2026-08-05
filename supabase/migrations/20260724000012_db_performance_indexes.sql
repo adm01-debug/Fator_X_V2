@@ -20,14 +20,14 @@ BEGIN;
 -- Impact: validWorkspaceMembership() em TODA Edge Function autenticada
 --         + RLS subqueries em todas as tabelas workspace-scoped
 -- CONCURRENTLY para não bloquear reads em produção
-CREATE INDEX CONCURRENTLY IF NOT EXISTS
+CREATE INDEX IF NOT EXISTS
     idx_workspace_members_user_workspace
     ON public.workspace_members(user_id, workspace_id);
 
 -- INDEX 2: agent_traces(user_id, created_at DESC) WHERE latency_ms IS NOT NULL
 -- Impact: get_slo_summary(), SLO dashboard, hourly aggregation view
 -- Partial index = só indexa traces com latência (reduz size 60-80%)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS
+CREATE INDEX IF NOT EXISTS
     idx_agent_traces_user_created_latency
     ON public.agent_traces(user_id, created_at DESC)
     WHERE latency_ms IS NOT NULL;
@@ -35,14 +35,25 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS
 -- INDEX 3: deploy_connections(api_key_hash) WHERE status = 'active'
 -- Impact: validateApiKey() — full scan + in-memory iteration em cada webhook
 -- Permite lookup direto por hash em vez de table scan
-CREATE INDEX CONCURRENTLY IF NOT EXISTS
-    idx_deploy_connections_key_hash
-    ON public.deploy_connections(api_key_hash)
-    WHERE status = 'active';
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'deploy_connections'
+          AND column_name = 'api_key_hash'
+    ) THEN
+        CREATE INDEX IF NOT EXISTS
+            idx_deploy_connections_key_hash
+            ON public.deploy_connections(api_key_hash)
+            WHERE status = 'active';
+    END IF;
+END;
+$$;
 
 -- INDEX 4: workspace_secrets(workspace_id, key_name)
 -- Impact: TODA RAG embed/rerank + LLM call fetcha secrets por workspace
-CREATE INDEX CONCURRENTLY IF NOT EXISTS
+CREATE INDEX IF NOT EXISTS
     idx_workspace_secrets_workspace_name
     ON public.workspace_secrets(workspace_id, key_name);
 
@@ -52,116 +63,127 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS
 
 -- INDEX 5: agents(workspace_id, status)
 -- Impact: dashboard lista agentes por workspace + status filter
-CREATE INDEX CONCURRENTLY IF NOT EXISTS
+CREATE INDEX IF NOT EXISTS
     idx_agents_workspace_status
     ON public.agents(workspace_id, status);
 
 -- INDEX 6: agents(user_id)
 -- Impact: RLS subquery em agents_policy
-CREATE INDEX CONCURRENTLY IF NOT EXISTS
+CREATE INDEX IF NOT EXISTS
     idx_agents_user_id
     ON public.agents(user_id);
 
 -- INDEX 7: idempotency_keys(expires_at) WHERE expires_at IS NOT NULL
 -- Impact: cleanup cron (DELETE scans entire table sem isso)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS
+CREATE INDEX IF NOT EXISTS
     idx_idempotency_keys_expires
     ON public.idempotency_keys(expires_at)
     WHERE expires_at IS NOT NULL;
 
 -- INDEX 8: usage_records(workspace_id, created_at DESC)
 -- Impact: budget triggers, cost calculator, dashboard de custos
-CREATE INDEX CONCURRENTLY IF NOT EXISTS
+CREATE INDEX IF NOT EXISTS
     idx_usage_records_workspace_created
     ON public.usage_records(workspace_id, created_at DESC);
 
 -- INDEX 9: audit_log(workspace_id, created_at DESC)
 -- Impact: compliance queries, LGPD data subject requests
-CREATE INDEX CONCURRENTLY IF NOT EXISTS
+CREATE INDEX IF NOT EXISTS
     idx_audit_log_workspace_created
     ON public.audit_log(workspace_id, created_at DESC);
 
 -- INDEX 10: alerts(workspace_id, created_at DESC) WHERE is_resolved = false
 -- Impact: check_budget_alert trigger (subquery sem index = slow trigger)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS
+CREATE INDEX IF NOT EXISTS
     idx_alerts_workspace_unresolved
     ON public.alerts(workspace_id, created_at DESC)
     WHERE is_resolved = false;
 
 -- ═══════════════════════════════════════════════════════════════
 -- TIER 3 — MEDIUM: RLS acceleration + specific query paths
+-- Each index is guarded: only created if the table exists
 -- ═══════════════════════════════════════════════════════════════
 
--- INDEX 11: notebooks(workspace_id, created_at DESC)
--- Impact: notebook listing por workspace
-CREATE INDEX CONCURRENTLY IF NOT EXISTS
-    idx_notebooks_workspace_created
-    ON public.notebooks(workspace_id, created_at DESC);
+DO $$
+BEGIN
+    -- INDEX 11: notebooks
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='notebooks') THEN
+        CREATE INDEX IF NOT EXISTS idx_notebooks_workspace_created
+            ON public.notebooks(workspace_id, created_at DESC);
+    END IF;
 
--- INDEX 12: notebook_notes(collection_id, created_at DESC)
--- Impact: podcast generation, notes listing
-CREATE INDEX CONCURRENTLY IF NOT EXISTS
-    idx_notebook_notes_collection_created
-    ON public.notebook_notes(collection_id, created_at DESC);
+    -- INDEX 12: notebook_notes
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='notebook_notes')
+       AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='notebook_notes' AND column_name='collection_id') THEN
+        CREATE INDEX IF NOT EXISTS idx_notebook_notes_collection_created
+            ON public.notebook_notes(collection_id, created_at DESC);
+    END IF;
 
--- INDEX 13: document_ingestions(collection_id, status) WHERE status = 'ready'
--- Impact: podcast generation (ingestions ready)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS
-    idx_doc_ingestions_collection_status
-    ON public.document_ingestions(collection_id, status)
-    WHERE status = 'ready';
+    -- INDEX 13: document_ingestions
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='document_ingestions')
+       AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='document_ingestions' AND column_name='collection_id') THEN
+        CREATE INDEX IF NOT EXISTS idx_doc_ingestions_collection_status
+            ON public.document_ingestions(collection_id, status)
+            WHERE status = 'ready';
+    END IF;
 
--- INDEX 14: notebook_podcasts 2 indexes
--- 14a: cache lookup (notebook_id, content_hash) WHERE status = 'ready'
-CREATE INDEX CONCURRENTLY IF NOT EXISTS
-    idx_notebook_podcasts_cache
-    ON public.notebook_podcasts(notebook_id, content_hash)
-    WHERE status = 'ready';
+    -- INDEX 14: notebook_podcasts
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='notebook_podcasts') THEN
+        IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='notebook_podcasts' AND column_name='content_hash') THEN
+            CREATE INDEX IF NOT EXISTS idx_notebook_podcasts_cache
+                ON public.notebook_podcasts(notebook_id, content_hash)
+                WHERE status = 'ready';
+        END IF;
+        CREATE INDEX IF NOT EXISTS idx_notebook_podcasts_generating
+            ON public.notebook_podcasts(notebook_id, created_at DESC)
+            WHERE status IN ('queued', 'generating');
+    END IF;
 
--- 14b: rate limit (notebook_id) WHERE status IN ('queued','generating')
-CREATE INDEX CONCURRENTLY IF NOT EXISTS
-    idx_notebook_podcasts_generating
-    ON public.notebook_podcasts(notebook_id, created_at DESC)
-    WHERE status IN ('queued', 'generating');
+    -- INDEX 15: workflows
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='workflows') THEN
+        CREATE INDEX IF NOT EXISTS idx_workflows_workspace_id
+            ON public.workflows(workspace_id);
+    END IF;
 
--- INDEX 15: workflows(workspace_id)
--- Impact: RLS subquery em workflow_runs
-CREATE INDEX CONCURRENTLY IF NOT EXISTS
-    idx_workflows_workspace_id
-    ON public.workflows(workspace_id);
+    -- INDEX 16: workflow_executions
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='workflow_executions')
+       AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='workflow_executions' AND column_name='started_at') THEN
+        CREATE INDEX IF NOT EXISTS idx_workflow_executions_user_running
+            ON public.workflow_executions(user_id, started_at DESC)
+            WHERE status IN ('running', 'paused');
+    END IF;
 
--- INDEX 16: workflow_executions(user_id, started_at DESC) WHERE status IN ('running','paused')
--- Impact: workflow status polling, engine state queries
-CREATE INDEX CONCURRENTLY IF NOT EXISTS
-    idx_workflow_executions_user_running
-    ON public.workflow_executions(user_id, started_at DESC)
-    WHERE status IN ('running', 'paused');
+    -- INDEX 17: mcp_servers
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='mcp_servers')
+       AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='mcp_servers' AND column_name='is_active') THEN
+        CREATE INDEX IF NOT EXISTS idx_mcp_servers_workspace_active
+            ON public.mcp_servers(workspace_id)
+            WHERE is_active = true;
+    END IF;
 
--- INDEX 17: mcp_servers(workspace_id) WHERE is_active = true
--- Impact: MCP server listing por workspace ativo
-CREATE INDEX CONCURRENTLY IF NOT EXISTS
-    idx_mcp_servers_workspace_active
-    ON public.mcp_servers(workspace_id)
-    WHERE is_active = true;
+    -- INDEX 18: dr_drills
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='dr_drills')
+       AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='dr_drills' AND column_name='scheduled_at') THEN
+        CREATE INDEX IF NOT EXISTS idx_dr_drills_workspace_scheduled
+            ON public.dr_drills(workspace_id, scheduled_at DESC)
+            WHERE status = 'scheduled';
+    END IF;
 
--- INDEX 18: dr_drills(workspace_id, scheduled_at) WHERE status = 'scheduled'
--- Impact: DR drill scheduling e listagem
-CREATE INDEX CONCURRENTLY IF NOT EXISTS
-    idx_dr_drills_workspace_scheduled
-    ON public.dr_drills(workspace_id, scheduled_at DESC)
-    WHERE status = 'scheduled';
+    -- INDEX 19: consent_records
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='consent_records')
+       AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='consent_records' AND column_name='consent_type') THEN
+        CREATE INDEX IF NOT EXISTS idx_consent_records_user_type
+            ON public.consent_records(user_id, consent_type);
+    END IF;
 
--- INDEX 19: consent_records(user_id, consent_type)
--- Impact: consent lookup rápido para LGPD
-CREATE INDEX CONCURRENTLY IF NOT EXISTS
-    idx_consent_records_user_type
-    ON public.consent_records(user_id, consent_type);
-
--- INDEX 20: data_subject_requests(workspace_id, status, deadline_at)
--- Impact: SAR list + overdue detection
-CREATE INDEX CONCURRENTLY IF NOT EXISTS
-    idx_dsr_workspace_status_deadline
-    ON public.data_subject_requests(workspace_id, status, deadline_at);
+    -- INDEX 20: data_subject_requests
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='data_subject_requests')
+       AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='data_subject_requests' AND column_name='deadline_at') THEN
+        CREATE INDEX IF NOT EXISTS idx_dsr_workspace_status_deadline
+            ON public.data_subject_requests(workspace_id, status, deadline_at);
+    END IF;
+END;
+$$;
 
 -- ═══════════════════════════════════════════════════════════════
 -- CHECK CONSTRAINTS — data integrity

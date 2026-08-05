@@ -61,6 +61,9 @@ FOR DELETE TO authenticated
 USING (workspace_id IN (SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid()));
 
 -- 4. Chunks index for notebook filtering
+-- Ensure metadata column exists (never explicitly added in prior migrations)
+ALTER TABLE public.chunks ADD COLUMN IF NOT EXISTS metadata JSONB;
+
 CREATE INDEX IF NOT EXISTS chunks_notebook_idx
   ON public.chunks ((metadata->>'collection_id'))
   WHERE metadata ? 'collection_id';

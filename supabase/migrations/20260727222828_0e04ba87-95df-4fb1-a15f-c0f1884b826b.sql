@@ -76,11 +76,17 @@ $$;
 
 REVOKE ALL ON FUNCTION public.run_purge_template_skill_links_monitored(integer) FROM PUBLIC, anon, authenticated;
 
-SELECT cron.unschedule('purge-template-skill-links-daily')
-WHERE EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'purge-template-skill-links-daily');
-
-SELECT cron.schedule(
-  'purge-template-skill-links-daily',
-  '20 3 * * *',
-  $$SELECT public.run_purge_template_skill_links_monitored(90);$$
-);
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+    IF EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'purge-template-skill-links-daily') THEN
+      PERFORM cron.unschedule('purge-template-skill-links-daily');
+    END IF;
+    PERFORM cron.schedule(
+      'purge-template-skill-links-daily',
+      '20 3 * * *',
+      'SELECT public.run_purge_template_skill_links_monitored(90);'
+    );
+  END IF;
+END;
+$$;

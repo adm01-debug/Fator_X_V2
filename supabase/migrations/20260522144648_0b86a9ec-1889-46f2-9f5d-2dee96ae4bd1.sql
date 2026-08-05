@@ -1,6 +1,14 @@
 -- 1. Extension Isolation
 CREATE SCHEMA IF NOT EXISTS extensions;
-ALTER EXTENSION "vector" SET SCHEMA extensions;
+DO $$
+DECLARE current_schema text;
+BEGIN
+  SELECT extnamespace::regnamespace::text INTO current_schema
+  FROM pg_extension WHERE extname = 'vector';
+  IF current_schema IS NOT NULL AND current_schema != 'extensions' THEN
+    ALTER EXTENSION "vector" SET SCHEMA extensions;
+  END IF;
+END $$;
 
 -- 2. Security Definer Search Path Hardening (Using OID for precision)
 DO $$ 

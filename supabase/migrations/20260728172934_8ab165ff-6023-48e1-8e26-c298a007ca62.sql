@@ -30,7 +30,7 @@ CREATE POLICY "Curadores gerenciam os proprios checkpoints"
 
 -- Retomada consulta sempre pelo par (dono, chave); o índice único já cobre,
 -- mas a limpeza por idade precisa de acesso ordenado por updated_at.
-CREATE INDEX idx_skill_harvest_checkpoints_stale
+CREATE INDEX IF NOT EXISTS idx_skill_harvest_checkpoints_stale
   ON public.skill_harvest_checkpoints (updated_at DESC);
 
 CREATE TRIGGER update_skill_harvest_checkpoints_updated_at

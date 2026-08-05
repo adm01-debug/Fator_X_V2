@@ -132,11 +132,17 @@ REVOKE EXECUTE ON FUNCTION internal.detect_slo_breach_and_alert() FROM PUBLIC, a
 GRANT EXECUTE ON FUNCTION internal.detect_slo_breach_and_alert() TO service_role;
 
 -- Schedule
-SELECT cron.unschedule('detect-slo-breach-every-15min')
-WHERE EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'detect-slo-breach-every-15min');
-
-SELECT cron.schedule(
-  'detect-slo-breach-every-15min',
-  '3,18,33,48 * * * *',
-  $$SELECT internal.detect_slo_breach_and_alert();$$
-);
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+    IF EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'detect-slo-breach-every-15min') THEN
+      PERFORM cron.unschedule('detect-slo-breach-every-15min');
+    END IF;
+    PERFORM cron.schedule(
+      'detect-slo-breach-every-15min',
+      '3,18,33,48 * * * *',
+      'SELECT internal.detect_slo_breach_and_alert();'
+    );
+  END IF;
+END;
+$$;

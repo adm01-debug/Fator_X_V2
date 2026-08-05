@@ -254,33 +254,20 @@ $$;
 -- CRON JOBS (via pg_cron) — 4 jobs principais
 -- ═══════════════════════════════════════════════════════════════
 
--- Job 1: Retenção de dados — roda todo dia às 3h da manhã
-SELECT cron.schedule(
-    'lgpd-retention-daily',
-    '0 3 * * *',
-    'SELECT public.lgpd_apply_retention_policies()'
-);
-
--- Job 2: Revisão de registros LGPD — toda segunda-feira às 9h
-SELECT cron.schedule(
-    'lgpd-review-reminders',
-    '0 9 * * 1',
-    'SELECT public.lgpd_send_review_reminders()'
-);
-
--- Job 3: Verificação de SAR deadlines — a cada 4 horas
-SELECT cron.schedule(
-    'lgpd-sar-deadline-check',
-    '0 */4 * * *',
-    'SELECT public.lgpd_check_sar_deadlines()'
-);
-
--- Job 4: Cleanup de auth_attempts — todo dia às 2h (LGPD: retenção máx 90d)
-SELECT cron.schedule(
-    'lgpd-cleanup-auth-attempts',
-    '0 2 * * *',
-    'SELECT public.cleanup_auth_attempts()'
-);
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+    -- Job 1: Retenção de dados — roda todo dia às 3h da manhã
+    PERFORM cron.schedule('lgpd-retention-daily', '0 3 * * *', 'SELECT public.lgpd_apply_retention_policies()');
+    -- Job 2: Revisão de registros LGPD — toda segunda-feira às 9h
+    PERFORM cron.schedule('lgpd-review-reminders', '0 9 * * 1', 'SELECT public.lgpd_send_review_reminders()');
+    -- Job 3: Verificação de SAR deadlines — a cada 4 horas
+    PERFORM cron.schedule('lgpd-sar-deadline-check', '0 */4 * * *', 'SELECT public.lgpd_check_sar_deadlines()');
+    -- Job 4: Cleanup de auth_attempts — todo dia às 2h (LGPD: retenção máx 90d)
+    PERFORM cron.schedule('lgpd-cleanup-auth-attempts', '0 2 * * *', 'SELECT public.cleanup_auth_attempts()');
+  END IF;
+END;
+$$;
 
 COMMIT;
 
@@ -293,13 +280,17 @@ BEGIN
     PERFORM 1 FROM pg_proc WHERE proname = 'lgpd_send_review_reminders';
     PERFORM 1 FROM pg_proc WHERE proname = 'lgpd_check_sar_deadlines';
 
-    -- Confirma que os cron jobs foram criados
-    IF NOT EXISTS (
-        SELECT 1 FROM cron.job
-        WHERE jobname IN ('lgpd-retention-daily','lgpd-review-reminders',
-                         'lgpd-sar-deadline-check','lgpd-cleanup-auth-attempts')
-    ) THEN
-        RAISE NOTICE 'WARNING: pg_cron jobs may not be available in this Supabase plan';
+    -- Confirma que os cron jobs foram criados (só verifica se pg_cron disponível)
+    IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+        IF NOT EXISTS (
+            SELECT 1 FROM cron.job
+            WHERE jobname IN ('lgpd-retention-daily','lgpd-review-reminders',
+                             'lgpd-sar-deadline-check','lgpd-cleanup-auth-attempts')
+        ) THEN
+            RAISE NOTICE 'WARNING: pg_cron jobs may not be available in this Supabase plan';
+        END IF;
+    ELSE
+        RAISE NOTICE 'INFO: pg_cron not available — skipping cron job verification';
     END IF;
 
     RAISE NOTICE 'ETAPAS 32-35 OK: 3 LGPD functions + 4 pg_cron jobs';

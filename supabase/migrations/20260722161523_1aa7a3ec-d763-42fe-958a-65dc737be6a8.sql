@@ -19,8 +19,8 @@ CREATE TABLE IF NOT EXISTS public.document_ingestions (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_doc_ingestions_user ON public.document_ingestions(user_id, created_at DESC);
-CREATE INDEX idx_doc_ingestions_collection ON public.document_ingestions(collection_id);
+CREATE INDEX IF NOT EXISTS idx_doc_ingestions_user ON public.document_ingestions(user_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_doc_ingestions_collection ON public.document_ingestions(collection_id);
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.document_ingestions TO authenticated;
 GRANT ALL ON public.document_ingestions TO service_role;

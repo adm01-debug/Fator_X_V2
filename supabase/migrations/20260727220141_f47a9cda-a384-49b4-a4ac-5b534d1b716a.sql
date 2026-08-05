@@ -26,9 +26,9 @@ ON public.template_skill_links FOR ALL TO authenticated
 USING (public.is_workspace_admin((SELECT auth.uid())))
 WITH CHECK (public.is_workspace_admin((SELECT auth.uid())));
 
-CREATE INDEX idx_tsl_template ON public.template_skill_links (template_id);
-CREATE INDEX idx_tsl_skill ON public.template_skill_links (skill_id);
-CREATE INDEX idx_tsl_strong ON public.template_skill_links (template_id, is_strong_match, score DESC);
+CREATE INDEX IF NOT EXISTS idx_tsl_template ON public.template_skill_links (template_id);
+CREATE INDEX IF NOT EXISTS idx_tsl_skill ON public.template_skill_links (skill_id);
+CREATE INDEX IF NOT EXISTS idx_tsl_strong ON public.template_skill_links (template_id, is_strong_match, score DESC);
 
 CREATE TRIGGER update_template_skill_links_updated_at
 BEFORE UPDATE ON public.template_skill_links

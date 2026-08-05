@@ -8,6 +8,7 @@ BEGIN
     WHERE table_schema = 'public' AND table_name = 'workspace_secrets'
   ) THEN
     DROP POLICY IF EXISTS "Members can view workspace secrets" ON public.workspace_secrets;
+    DROP POLICY IF EXISTS "Owners can view workspace secrets" ON public.workspace_secrets;
     CREATE POLICY "Owners can view workspace secrets"
     ON public.workspace_secrets FOR SELECT
     TO authenticated

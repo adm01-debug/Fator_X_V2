@@ -14,8 +14,8 @@ CREATE TABLE IF NOT EXISTS public.notebook_note_templates (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
-CREATE INDEX idx_note_templates_ws ON public.notebook_note_templates(workspace_id);
-CREATE INDEX idx_note_templates_col ON public.notebook_note_templates(collection_id);
+CREATE INDEX IF NOT EXISTS idx_note_templates_ws ON public.notebook_note_templates(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_note_templates_col ON public.notebook_note_templates(collection_id);
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.notebook_note_templates TO authenticated;
 GRANT ALL ON public.notebook_note_templates TO service_role;
@@ -60,8 +60,8 @@ CREATE TABLE IF NOT EXISTS public.notebook_note_versions (
   created_by UUID NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
-CREATE INDEX idx_note_versions_note ON public.notebook_note_versions(note_id, version_number DESC);
-CREATE INDEX idx_note_versions_ws ON public.notebook_note_versions(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_note_versions_note ON public.notebook_note_versions(note_id, version_number DESC);
+CREATE INDEX IF NOT EXISTS idx_note_versions_ws ON public.notebook_note_versions(workspace_id);
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.notebook_note_versions TO authenticated;
 GRANT ALL ON public.notebook_note_versions TO service_role;

@@ -62,6 +62,14 @@ CREATE TABLE IF NOT EXISTS public.workflow_handoffs (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- Ensure columns exist even if table was created by an earlier stub migration
+ALTER TABLE public.workflow_executions
+  ADD COLUMN IF NOT EXISTS user_id UUID,
+  ADD COLUMN IF NOT EXISTS total_cost_usd NUMERIC(10, 6) DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS total_tokens INTEGER DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS total_duration_ms INTEGER DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS completed_at TIMESTAMPTZ;
+
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_workflow_executions_workflow_id ON public.workflow_executions(workflow_id);
 CREATE INDEX IF NOT EXISTS idx_workflow_executions_user_id ON public.workflow_executions(user_id);
@@ -76,10 +84,12 @@ ALTER TABLE public.workflow_executions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.workflow_checkpoints ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.workflow_handoffs ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can manage own workflow executions" ON public.workflow_executions;
 CREATE POLICY "Users can manage own workflow executions"
   ON public.workflow_executions FOR ALL
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can view checkpoints of own executions" ON public.workflow_checkpoints;
 CREATE POLICY "Users can view checkpoints of own executions"
   ON public.workflow_checkpoints FOR ALL
   USING (
@@ -90,6 +100,7 @@ CREATE POLICY "Users can view checkpoints of own executions"
     )
   );
 
+DROP POLICY IF EXISTS "Users can view handoffs of own executions" ON public.workflow_handoffs;
 CREATE POLICY "Users can view handoffs of own executions"
   ON public.workflow_handoffs FOR ALL
   USING (

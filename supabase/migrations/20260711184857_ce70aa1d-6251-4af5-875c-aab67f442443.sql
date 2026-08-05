@@ -19,10 +19,10 @@ WHERE created_at > (now() - interval '90 days')
 GROUP BY agent_id, date_trunc('day', created_at);
 
 -- Unique index enables REFRESH CONCURRENTLY (no read lock)
-CREATE UNIQUE INDEX agent_daily_metrics_pk
+CREATE UNIQUE INDEX IF NOT EXISTS agent_daily_metrics_pk
   ON public.agent_daily_metrics (agent_id, day);
 
-CREATE INDEX agent_daily_metrics_day_idx
+CREATE INDEX IF NOT EXISTS agent_daily_metrics_day_idx
   ON public.agent_daily_metrics (day DESC);
 
 GRANT SELECT ON public.agent_daily_metrics TO authenticated, service_role;

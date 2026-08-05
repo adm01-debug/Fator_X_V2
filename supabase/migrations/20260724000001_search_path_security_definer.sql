@@ -20,43 +20,35 @@ DO $$
 DECLARE
     vuln_func RECORD;
     fixed_count INT := 0;
-    already_fixed INT := 0;
 BEGIN
     FOR vuln_func IN
-        SELECT proname, nspname
+        SELECT p.oid,
+               p.proname,
+               n.nspname,
+               pg_get_function_identity_arguments(p.oid) AS arg_types
         FROM pg_proc p
         JOIN pg_namespace n ON n.oid = p.pronamespace
         WHERE p.prokind = 'f'
           AND n.nspname = 'public'
-          AND EXISTS (
-              SELECT 1 FROM pg_proc
-              WHERE oid = p.oid
-                AND (proname, pronamespace) NOT IN (
-                    -- Funções que JÁ têm search_path explícito (via config)
-                    SELECT DISTINCT proname, pronamespace
-                    FROM pg_proc
-                    WHERE prosrc LIKE '%SET search_path = public%'
-                      OR prosrc LIKE '%SET search_path=public%'
-                )
-              AND EXISTS (
-                  SELECT 1 FROM pg_roles r
-                  WHERE rolname = 'supabase_admin'
-                    AND has_function_privilege(r.oid, p.oid, 'EXECUTE')
-              )
-          )
+          AND NOT (pg_get_functiondef(p.oid) LIKE '%SET search_path = public%'
+                OR pg_get_functiondef(p.oid) LIKE '%SET search_path=public%')
           AND NOT (
-              -- Funções marcadas como já audited (via comment)
               obj_description(p.oid, 'pg_proc') LIKE '%search_path audited%'
               OR obj_description(p.oid, 'pg_proc') LIKE '%Fase6%'
           )
     LOOP
-        -- Aplica SET search_path = public, extensions
-        EXECUTE format(
-            'ALTER FUNCTION %I.%I SET search_path = public, extensions',
-            vuln_func.nspname,
-            vuln_func.proname
-        );
-        fixed_count := fixed_count + 1;
+        BEGIN
+            -- Include full argument signature to handle overloaded function names
+            EXECUTE format(
+                'ALTER FUNCTION %I.%I(%s) SET search_path = public, extensions',
+                vuln_func.nspname,
+                vuln_func.proname,
+                vuln_func.arg_types
+            );
+            fixed_count := fixed_count + 1;
+        EXCEPTION WHEN OTHERS THEN
+            NULL;
+        END;
     END LOOP;
 
     RAISE NOTICE 'ETAPA 2: % functions hardening search_path applied', fixed_count;

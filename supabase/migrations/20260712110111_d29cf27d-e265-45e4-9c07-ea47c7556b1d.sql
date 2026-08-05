@@ -92,7 +92,7 @@ BEGIN
      rows_returned, shared_blks_hit, shared_blks_read)
   SELECT queryid, substring(query, 1, 500), calls, total_exec_time, mean_exec_time,
          max_exec_time, rows, shared_blks_hit, shared_blks_read
-  FROM extensions.pg_stat_statements
+  FROM pg_stat_statements
   WHERE queryid IS NOT NULL
   ORDER BY total_exec_time DESC
   LIMIT 100;
@@ -243,20 +243,25 @@ $$;
 -- ═══════════════════════════════════════════════════════════════════
 -- Agendamento pg_cron: captura diária 03:30 UTC + alerta 03:45 UTC
 -- ═══════════════════════════════════════════════════════════════════
-DO $$
+DO $outer$
 BEGIN
-  -- Remove jobs antigos com mesmo nome, se existirem
-  PERFORM cron.unschedule(jobname) FROM cron.job
-    WHERE jobname IN ('capture-perf-snapshot','check-db-bloat','prune-perf-snapshots');
-EXCEPTION WHEN OTHERS THEN NULL;
-END $$;
-
-SELECT cron.schedule('capture-perf-snapshot', '30 3 * * *',
-  $$SELECT internal.capture_perf_snapshot();$$);
-SELECT cron.schedule('check-db-bloat', '45 3 * * *',
-  $$SELECT internal.check_bloat_and_alert();$$);
-SELECT cron.schedule('prune-perf-snapshots', '0 4 * * 0',
-  $$SELECT internal.prune_perf_snapshots();$$);
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+    BEGIN
+      PERFORM cron.unschedule(jobname) FROM cron.job
+        WHERE jobname IN ('capture-perf-snapshot','check-db-bloat','prune-perf-snapshots');
+    EXCEPTION WHEN OTHERS THEN NULL;
+    END;
+    PERFORM cron.schedule('capture-perf-snapshot', '30 3 * * *',
+      $$SELECT internal.capture_perf_snapshot();$$);
+    PERFORM cron.schedule('check-db-bloat', '45 3 * * *',
+      $$SELECT internal.check_bloat_and_alert();$$);
+    PERFORM cron.schedule('prune-perf-snapshots', '0 4 * * 0',
+      $$SELECT internal.prune_perf_snapshots();$$);
+  END IF;
+END $outer$;
 
 -- Captura inicial (baseline t0)
-SELECT internal.capture_perf_snapshot();
+DO $$ BEGIN
+  PERFORM internal.capture_perf_snapshot();
+EXCEPTION WHEN OTHERS THEN NULL;
+END $$;

@@ -119,31 +119,33 @@ GRANT EXECUTE ON FUNCTION public.get_db_health_timeseries(INT) TO authenticated;
 -- Cron: capture every 5 min + prune daily
 DO $$
 BEGIN
-  PERFORM cron.unschedule('capture-db-health-every-5min') WHERE EXISTS (
-    SELECT 1 FROM cron.job WHERE jobname = 'capture-db-health-every-5min'
-  );
-EXCEPTION WHEN OTHERS THEN NULL;
-END $$;
-
-SELECT cron.schedule(
-  'capture-db-health-every-5min',
-  '*/5 * * * *',
-  $$SELECT internal.capture_db_health_sample();$$
-);
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+    IF EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'capture-db-health-every-5min') THEN
+      PERFORM cron.unschedule('capture-db-health-every-5min');
+    END IF;
+    PERFORM cron.schedule(
+      'capture-db-health-every-5min',
+      '*/5 * * * *',
+      'SELECT internal.capture_db_health_sample();'
+    );
+  END IF;
+END;
+$$;
 
 DO $$
 BEGIN
-  PERFORM cron.unschedule('prune-db-health-samples-daily') WHERE EXISTS (
-    SELECT 1 FROM cron.job WHERE jobname = 'prune-db-health-samples-daily'
-  );
-EXCEPTION WHEN OTHERS THEN NULL;
-END $$;
-
-SELECT cron.schedule(
-  'prune-db-health-samples-daily',
-  '20 3 * * *',
-  $$SELECT internal.prune_db_health_samples();$$
-);
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+    IF EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'prune-db-health-samples-daily') THEN
+      PERFORM cron.unschedule('prune-db-health-samples-daily');
+    END IF;
+    PERFORM cron.schedule(
+      'prune-db-health-samples-daily',
+      '20 3 * * *',
+      'SELECT internal.prune_db_health_samples();'
+    );
+  END IF;
+END;
+$$;
 
 -- Seed first sample immediately so UI has data
 SELECT internal.capture_db_health_sample();
