@@ -77,12 +77,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const { error, data } = await supabase.auth.signInWithPassword({ email, password });
 
-    // Log attempt (successful or failed)
-    await supabase.from('auth_attempts').insert({
-      email,
-      success: !error,
-      ip_address: null, // Client-side can't reliably get IP without service
-    });
+    // Log attempt (successful or failed) — best-effort; never block sign-in
+    await supabase
+      .from('auth_attempts')
+      .insert({
+        email,
+        success: !error,
+        ip_address: null,
+      })
+      .catch(() => undefined);
 
     if (error) return { error: error as Error | null };
 

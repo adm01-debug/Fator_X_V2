@@ -88,14 +88,16 @@ Deno.serve(async (req) => {
   const signature = req.headers.get('x-openclaw-signature') ?? '';
   if (!signature) return json(401, { error: 'missing_signature' });
 
-  // Replay protection: header x-openclaw-timestamp (unix ms), janela ±5min
-  const tsHeader = req.headers.get('x-openclaw-timestamp') ?? '';
+  // Replay protection: x-openclaw-timestamp (unix ms) is MANDATORY, window ±5min.
+  // Omitting the timestamp header is rejected to prevent replay attacks.
+  const tsHeader = req.headers.get('x-openclaw-timestamp');
+  if (!tsHeader) {
+    return json(401, { error: 'missing_timestamp' });
+  }
   const REPLAY_WINDOW_MS = 5 * 60 * 1000;
-  if (tsHeader) {
-    const ts = Number(tsHeader);
-    if (!Number.isFinite(ts) || Math.abs(Date.now() - ts) > REPLAY_WINDOW_MS) {
-      return json(401, { error: 'stale_or_invalid_timestamp' });
-    }
+  const ts = Number(tsHeader);
+  if (!Number.isFinite(ts) || Math.abs(Date.now() - ts) > REPLAY_WINDOW_MS) {
+    return json(401, { error: 'stale_or_invalid_timestamp' });
   }
 
   const supabaseAudit = createClient(
@@ -105,7 +107,7 @@ Deno.serve(async (req) => {
   );
 
   // Assinatura cobre timestamp+body para prevenir replay com body reutilizado
-  const signedPayload = tsHeader ? `${tsHeader}.${rawBody}` : rawBody;
+  const signedPayload = `${tsHeader}.${rawBody}`;
   const valid = await verifyHmacSignature(signedPayload, signature, secret);
   if (!valid) {
     await emitEvent(supabaseAudit, 'hmac_invalid', 'warn', { ip: getRateLimitIdentifier(req) });

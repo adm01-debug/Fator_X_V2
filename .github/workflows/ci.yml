@@ -130,7 +130,7 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - name: Run Playwright tests
-        run: npx playwright test --update-snapshots=all
+        run: npx playwright test
       - name: Auth E2E status
         if: always()
         run: |
@@ -229,7 +229,6 @@ jobs:
           else
             npx @lhci/cli@0.15.x autorun
           fi
-        continue-on-error: true
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -11,32 +11,29 @@
  * provider), then delete the user in afterAll. No OTP, no inbox,
  * no OAuth dependency.
  */
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import type { Page } from "@playwright/test";
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import type { Page } from '@playwright/test';
 
 const SERVICE_KEY =
-  process.env.SUPABASE_SERVICE_ROLE_KEY ??
-  process.env.EXTERNAL_SUPABASE_SERVICE_ROLE_KEY ??
-  "";
+  process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.EXTERNAL_SUPABASE_SERVICE_ROLE_KEY ?? '';
 
 const SUPABASE_URL =
   process.env.SUPABASE_URL ??
   process.env.EXTERNAL_SUPABASE_URL ??
   process.env.VITE_SUPABASE_URL ??
-  "";
+  '';
 
 const ANON_KEY =
   process.env.SUPABASE_ANON_KEY ??
   process.env.SUPABASE_PUBLISHABLE_KEY ??
   process.env.EXTERNAL_SUPABASE_ANON_KEY ??
   process.env.VITE_SUPABASE_PUBLISHABLE_KEY ??
-  "";
+  '';
 
-export const AUTH_E2E_ENABLED =
-  Boolean(SERVICE_KEY) && Boolean(SUPABASE_URL) && Boolean(ANON_KEY);
+export const AUTH_E2E_ENABLED = Boolean(SERVICE_KEY) && Boolean(SUPABASE_URL) && Boolean(ANON_KEY);
 
 export const AUTH_E2E_SKIP_REASON =
-  "Auth E2E tests skipped — set SUPABASE_SERVICE_ROLE_KEY (and SUPABASE_URL, SUPABASE_ANON_KEY) to enable.";
+  'Auth E2E tests skipped — set SUPABASE_SERVICE_ROLE_KEY (and SUPABASE_URL, SUPABASE_ANON_KEY) to enable.';
 
 export interface E2EUser {
   id: string;
@@ -46,7 +43,7 @@ export interface E2EUser {
 
 function getServiceClient(): SupabaseClient {
   if (!AUTH_E2E_ENABLED) {
-    throw new Error("Service client requested but Auth E2E tests are not enabled.");
+    throw new Error('Service client requested but Auth E2E tests are not enabled.');
   }
   return createClient(SUPABASE_URL, SERVICE_KEY, {
     auth: { persistSession: false, autoRefreshToken: false },
@@ -58,7 +55,7 @@ function getServiceClient(): SupabaseClient {
  * Uses the @e2e-tests.invalid TLD so synthetic users are easy to
  * identify and clean up in case afterAll hooks fail.
  */
-export async function createE2EUser(prefix = "auth"): Promise<E2EUser> {
+export async function createE2EUser(prefix = 'auth'): Promise<E2EUser> {
   const service = getServiceClient();
   const email = `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@e2e-tests.invalid`;
   const password = `E2E!${Math.random().toString(36).slice(2)}Aa1`;
@@ -70,7 +67,7 @@ export async function createE2EUser(prefix = "auth"): Promise<E2EUser> {
   });
 
   if (error || !data.user) {
-    throw new Error(`createE2EUser failed: ${error?.message ?? "no user returned"}`);
+    throw new Error(`createE2EUser failed: ${error?.message ?? 'no user returned'}`);
   }
 
   return { id: data.user.id, email, password };
@@ -90,7 +87,7 @@ export async function deleteE2EUser(userId: string | undefined): Promise<void> {
  * Assumes the page is already on /auth.
  */
 export async function loginViaUI(page: Page, email: string, password: string): Promise<void> {
-  await page.getByLabel("E-mail").fill(email);
-  await page.getByLabel("Senha").fill(password);
-  await page.getByRole("button", { name: /entrar/i }).click();
+  await page.getByLabel('E-mail').fill(email);
+  await page.getByLabel('Senha', { exact: true }).fill(password);
+  await page.getByRole('button', { name: /entrar/i }).click();
 }
