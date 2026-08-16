@@ -11,7 +11,7 @@
 
 **O sistema está construído e desabitado.**
 
-O código é de qualidade acima da média — 6.222 testes passam, `tsc --noEmit` sai limpo, não há um único método stub em 166 services. Mas o backend de dados nunca foi entregue: **210 das 215 tabelas de produção estão vazias**, 98 das 119 RPCs que o frontend chama não existem, e nenhum dos 11 jobs agendados foi criado. O que existe é um frontend completo e 86 edge functions ligadas a um banco que nunca recebeu dado.
+O código é de qualidade acima da média — 6.222 testes passam, `tsc --noEmit` sai limpo, não há um único método stub em 166 services. Mas o backend de dados nunca foi entregue: **210 das 215 tabelas de produção estão vazias**, 106 das 119 RPCs que o frontend declara não existem, e nenhum dos 11 jobs agendados foi criado. O que existe é um frontend completo e 86 edge functions ligadas a um banco que nunca recebeu dado.
 
 Isso não é um sistema "quase pronto com pendências". É um sistema onde a camada de apresentação e a de aplicação foram concluídas e a camada de dados parou no meio — e onde a documentação afirma o contrário.
 
@@ -34,6 +34,8 @@ Isso não é um sistema "quase pronto com pendências". É um sistema onde a cam
 | Integrações com terceiros              |         3 |         17 |           6 |        6 |      32 |
 | **Total**                              |   **390** |    **180** |      **47** |   **39** | **656** |
 | **%**                                  | **59,5%** |  **27,4%** |    **7,2%** | **5,9%** |    100% |
+
+> ⚠️ **Limitação desta tabela — leia antes de usar o percentual.** As linhas **não são comensuráveis**: as três primeiras contam _arquivos e funções_, as três seguintes contam _funcionalidades_, e a última conta _integrações_. Além disso, **há dupla contagem**: a integração Slack, por exemplo, aparece uma vez em "Integrações", sete vezes em "Edge Functions" e novamente nos componentes de UI. Cada linha é válida no seu próprio denominador; **a linha de total não é uma medida de "% do sistema pronto"** e não deve ser citada como tal. Use as linhas individuais.
 
 ### 2.2 Pela regra de ouro — _pronto = em produção com uso real_
 
@@ -67,17 +69,23 @@ O próprio repositório admite, por escrito, em `supabase/migrations/20260330000
 
 ### 3.1 O descompasso, medido nos dois sentidos
 
-| Objeto               | Declarado no repo | Vivo em produção |                  Drift |
-| -------------------- | ----------------: | ---------------: | ---------------------: |
-| Tabelas (migrations) |              215+ |              215 |      stubs sem colunas |
-| Tabelas (`types.ts`) |               276 |              215 |       **61 fantasmas** |
-| RPCs (`types.ts`)    |               119 |               21 |       **98 fantasmas** |
-| Views                |                16 |               14 |                      2 |
-| RLS ligado           |       222 tabelas |           **39** | **183 não executadas** |
-| Policies             |               384 |               58 |     326 não executadas |
-| Triggers             |               124 |            **2** |     122 não executados |
-| Jobs `pg_cron`       |                11 |            **0** |      11 não executados |
-| Migrations           |      326 arquivos |    318 aplicadas |    **8 nunca rodaram** |
+Drift calculado por **diferença de conjuntos** (nome a nome), não por subtração de totais — ver §15 para a correção que isto exigiu.
+
+| Objeto               |             Declarado no repo | Vivo em produção |           Declarado que não existe | Vivo que não é declarado |
+| -------------------- | ----------------------------: | ---------------: | ---------------------------------: | -----------------------: |
+| Tabelas (migrations) |                          215+ |              215 |                  stubs sem colunas |                        — |
+| Tabelas (`types.ts`) | 276 (196 base + 80 partições) |              215 | **97** (17 base + as 80 partições) |                   **36** |
+| RPCs (`types.ts`)    |                           119 |               21 |                            **106** |                    **8** |
+| Views                |                            16 |               14 |                                  — |                        — |
+| RLS ligado           |                   222 tabelas |           **39** |             **183 não executadas** |                        — |
+| Policies             |       384 (pares tabela+nome) |               58 |                 326 não executadas |                        — |
+| Triggers             |                124 statements |            **2** |                 122 não executados |                        — |
+| Jobs `pg_cron`       |                            11 |            **0** |                  11 não executados |                        — |
+| Migrations           |                  326 arquivos |    318 aplicadas |                **8 nunca rodaram** |                        — |
+
+**Produção não tem nenhuma partição** (`relispartition` = 0, `relkind='p'` = 0), enquanto `types.ts` declara 80 tabelas particionadas de traces/spans/audit. Todo o esquema de particionamento existe apenas no arquivo de tipos.
+
+**O drift corre nos dois sentidos:** além do que é declarado e não existe, há **36 tabelas e 8 RPCs vivos em produção que `types.ts` não declara** — o TypeScript não os enxerga. Só **179 das 215** tabelas e **13 das 21** RPCs estão em ambos os lados.
 
 ### 3.2 As 8 migrations não aplicadas — identificadas
 
@@ -92,9 +100,18 @@ O próprio repositório admite, por escrito, em `supabase/migrations/20260330000
 | `20260513000001` | `drop_legacy_hybrid_search.sql`          | Remover sobrecarga ambígua         |
 | `20260804000001` | `missing_fk_indexes.sql` (156 l.)        | 16 índices de FK                   |
 
-**Causa-raiz de duas delas, provada:** `20260332000001` e `20260332000002` têm **data impossível no nome** — mês 03, **dia 32**. São os únicos 2 arquivos entre 326 com data inválida. O parser de migrations as ignora silenciosamente. E são justamente as duas maiores.
+**Não há uma causa-raiz única.** Testei duas hipóteses e ambas explicam só parte:
 
-**Causa-raiz das demais:** `.github/workflows/ci.yml` **não tem `supabase db push`**. Nenhuma migration escrita à mão tem caminho automatizado até o banco. Das 326, 288 têm nome-UUID (geradas pelo Lovable _após_ aplicar) e 38 têm nome descritivo (escritas no git) — e **todos os objetos fantasma vêm da segunda classe**.
+| Hipótese                                                                                  | Veredito                                                                                                                                                                                                                                                                                                                |
+| ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| _"Data inválida no nome"_ — `20260332000001/2` têm mês 03, **dia 32**                     | **Plausível, não provada.** São de fato os únicos 2 arquivos entre 326 com data impossível, e ambos estão sem aplicar. Mas é correlação: não executei o parser do Supabase CLI para confirmar que ele os rejeita. Explica no máximo 2 dos 8                                                                             |
+| _"Migration escrita à mão não tem caminho até o banco"_ — o CI não tem `supabase db push` | **Refutada como explicação.** É verdade que o CI não faz push, e as 8 são todas descritivas (hand-written). Mas **30 das 38 migrations descritivas FORAM aplicadas** — inclusive a série `20260724000001-13` e a `20260805000001`, posterior a uma das não aplicadas. Aplicação manual acontece; é apenas inconsistente |
+
+**Causa concreta de uma delas, essa sim documentada:** `20260804000001_missing_fk_indexes.sql` usa `CREATE INDEX CONCURRENTLY`, e o próprio cabeçalho do arquivo avisa que isso _"cannot run inside an explicit transaction"_. O runner de migrations envolve cada arquivo em transação — logo essa migration **falha ao ser aplicada**, não é "esquecida".
+
+**Pista que aponta para outro projeto:** o cabeçalho de `20260420000002` afirma que _"20260420000001 was already applied"_. O banco diz que **não foi**. Ou o autor se enganou, ou aplicou no projeto errado — o que é verossímil dado que há 4 project IDs circulando no repositório (§4.6).
+
+Distribuição de nomes, para contexto: das 326 migrations, 288 têm nome-UUID (geradas pelo Lovable _depois_ de aplicar) e 38 têm nome descritivo (escritas no git). As 8 não aplicadas estão todas na segunda classe — mas, como visto, a maioria dessa classe foi aplicada.
 
 ### 3.3 Consequências ainda vivas em produção
 
@@ -114,7 +131,9 @@ O próprio repositório admite, por escrito, em `supabase/migrations/20260330000
 
 ### 🔴 1. Execução de SQL arbitrário exposta ao público
 
-`public.exec_sql(query text)` existe em produção: `SECURITY DEFINER`, owner `postgres`, e **`anon` tem `EXECUTE`**. O ramo final da função (`EXECUTE query; RETURN '[]'`) aceita qualquer comando, inclusive DDL. Quem possui a chave anônima do frontend — que é pública por natureza — executa SQL como superusuário e ignora todo o RLS.
+`public.exec_sql(query text)` existe em produção: `SECURITY DEFINER`, owner `postgres`, e **`anon` tem `EXECUTE`** (`has_function_privilege` = true). O ramo final da função (`EXECUTE query; RETURN '[]'`) aceita qualquer comando, inclusive DDL. Uma chamada bem-sucedida executa SQL com os privilégios do owner e ignora todo o RLS.
+
+> **Limite desta verificação:** confirmei a exposição na **camada de privilégio do banco**. Não exercitei o caminho HTTP — não emiti requisição a `/rest/v1/rpc/exec_sql` com a chave anônima, porque isso seria executar um exploit contra produção. A configuração do PostgREST (schemas expostos) não é legível via SQL. Portanto: _"`anon` tem EXECUTE sobre uma função `SECURITY DEFINER` que roda SQL arbitrário"_ é **medido**; _"logo é explorável pela internet"_ é **inferência forte, não testada**. Trate como crítico até que alguém confirme o contrário — o custo de estar errado é assimétrico.
 
 **Nuance importante:** **nenhuma migration do repositório cria essa função** (0 ocorrências em 326 arquivos). Ela nasceu fora do versionamento — o gateway MCP de operação faz _bootstrap_ dela. É ferramenta de administração que ficou ligada em produção com grant público.
 
@@ -199,12 +218,12 @@ Procurei ativamente. Estes são os casos onde o sistema **mostra número inventa
 
 `tsc --noEmit` sai limpo e **6.222 testes passam — isso eu executei**. Mas:
 
-| Achado                                                                      | Medição                                                                 |
-| --------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| Testes que protegem lógica real                                             | **~2.794 de 6.222 (44,9%)**                                             |
-| Um único arquivo produz                                                     | **3.272 testes = 52,6% da suíte** (`regression-ui-invariants.test.tsx`) |
-| Destes, produto cartesiano `6 arquivos × 17 cores × 10 shades × 3 prefixos` | **3.060** asserções de ausência de string que o ESLint já reprova       |
-| Testes escritos e **nunca executados** por nenhum pipeline                  | **126** (RLS: 8; `tests/e2e`: 4; Deno: 114)                             |
+| Achado                                                                                                                                                                     | Medição                                                                 |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| Testes que protegem lógica real — **estimativa, não medição** (envolve juízo sobre o que "protege"; os 3.060 do produto cartesiano são objetivos, o resto é classificação) | **~2.794 de 6.222 (44,9%)**                                             |
+| Um único arquivo produz                                                                                                                                                    | **3.272 testes = 52,6% da suíte** (`regression-ui-invariants.test.tsx`) |
+| Destes, produto cartesiano `6 arquivos × 17 cores × 10 shades × 3 prefixos`                                                                                                | **3.060** asserções de ausência de string que o ESLint já reprova       |
+| Testes escritos e **nunca executados** por nenhum pipeline                                                                                                                 | **126** (RLS: 8; `tests/e2e`: 4; Deno: 114)                             |
 
 **Por que `tsc` passar não significa nada aqui:** `types.ts` **é** o contrato do TypeScript, e ele declara 276 tabelas e 119 RPCs. O compilador valida contra a ficção, não contra o banco. As 98 RPCs inexistentes são chamadas com tipo perfeitamente válido.
 
@@ -324,7 +343,7 @@ Declarado, não escondido.
 - **294 das 326 migrations** não foram lidas linha a linha — foram inventariadas por objeto (altitude declarada, conforme regra de fatiamento).
 - **145 dos 189 arquivos de `src/test/`** foram cobertos por amostragem (~30 lidos integralmente).
 - **60 dos 86 `index.ts` de edge functions** não foram lidos integralmente; suas colunas vêm de busca mecânica reproduzível e estão marcadas como tal no documento de detalhe.
-- **Recontagem de cobertura (executada, não auto-relatada):** cruzei os nomes de arquivo citados nas 11 saídas contra a árvore real do repositório. **966 de 1.718 arquivos de código (56%) têm evidência citada nominalmente.** Os 752 restantes foram cobertos por varredura mecânica ou altitude declarada — não por citação individual. Concentração dos não-citados: `supabase/migrations` (292, altitude por desenho), `src/test` (140, amostragem declarada), `src/components/shared` (30), `src/components/ui` (28), `src/lib` (23). **Isto é uma lacuna real. Esta auditoria não tem cobertura nominal de 100%.**
+- **Recontagem de cobertura (executada, e depois corrigida — ver §15):** cruzei os nomes de arquivo citados nas 11 saídas contra a árvore real. O primeiro cálculo deu 966 de 1.718 (56%), mas o método casava por _basename_, e 116 desses casamentos vieram de nomes ambíguos — sobretudo `index.ts`, que se repete nas 86 edge functions. **A cobertura nominal confiável é de 850 de 1.718 arquivos (49,5%).** Os 868 restantes foram cobertos por varredura mecânica ou altitude declarada — não por citação individual. Concentração dos não-citados: `supabase/migrations` (292, altitude por desenho), `src/test` (140, amostragem declarada), `src/components/shared` (30), `src/components/ui` (28), `src/lib` (23). **Menos da metade do código tem evidência nominal. Esta auditoria não tem cobertura de 100%, e o critério de pronto que ela mesma adota não foi atingido nesse item.**
 - **Projetos Supabase externos** (Datahub) e **workers Cloudflare** de `agent.json`: sem acesso.
 - **Env vars de produção das edge functions:** sem acesso. Não é possível afirmar quais segredos estão de fato configurados.
 - **RLS por persona:** com o banco vazio, não é possível distinguir "nunca usado" de "bloqueado por policy".
@@ -389,3 +408,60 @@ As tabelas de evidência completas, com `arquivo:linha` por funcionalidade, est�
 Todo documento anterior foi tratado como hipótese. Vários não sobreviveram ao teste — os números afirmados em `FUNCIONALIDADES-DO-SISTEMA.md` (V6, "10/10 production-ready") divergem do medido em quase todas as linhas. **Não corrigi nenhum desses arquivos** — a regra desta auditoria é não editar artefato de outra trilha. As divergências estão registradas no documento de detalhe de intenções.
 
 **Recomendação:** `.lovable/memory/index.md` é o arquivo que todo agente lê primeiro, e ele instrui "Audit via RPC `log_audit_entry()`" — uma RPC que não existe. Enquanto não for corrigido, todo agente que trabalhar neste repositório vai repetir o mesmo erro.
+
+---
+
+## 15. Auto-validação — onde esta auditoria falhou
+
+Passei a auditoria pelo mesmo crivo que apliquei ao sistema, procurando erro em vez de confirmação. Encontrei quatro defeitos no meu próprio trabalho. Registro-os aqui em vez de apagá-los, porque quem for decidir com base neste documento precisa saber o que foi corrigido.
+
+### 15.1 Erro de método: drift calculado por subtração de totais
+
+**O que eu fiz de errado.** Na primeira versão da §3.1 escrevi "61 tabelas fantasma" e "98 RPCs fantasma". Cheguei nesses números subtraindo cardinalidades — `276 − 215` e `119 − 21`. Isso pressupõe que tudo que existe em produção está declarado, o que é falso.
+
+**O que a diferença de conjuntos revelou:**
+
+|         | Declarado | Vivo | Em ambos | Declarado que não existe | Vivo não declarado |
+| ------- | --------: | ---: | -------: | -----------------------: | -----------------: |
+| Tabelas |       276 |  215 |  **179** |          ~~61~~ → **97** |         0 → **36** |
+| RPCs    |       119 |   21 |   **13** |         ~~98~~ → **106** |          0 → **8** |
+
+Descobri também que **80 das 276 "tabelas" declaradas são partições** (`spans_2026_04`, `traces_2027_03`…) e que **produção não tem nenhuma partição**. O esquema de particionamento inteiro existe só no arquivo de tipos.
+
+O erro subestimou o problema nas duas direções. A conclusão de fundo não muda; os números, sim.
+
+### 15.2 Afirmação superdimensionada: "causa-raiz provada"
+
+Escrevi que a data inválida (`dia 32`) era a **causa-raiz provada** de duas migrations não aplicadas, e que a ausência de `supabase db push` explicava as demais. Testei as duas hipóteses:
+
+- A da data é **correlação, não prova** — eu não executei o parser do Supabase CLI para confirmar a rejeição.
+- A do `db push` está **refutada como explicação**: **30 das 38 migrations escritas à mão foram aplicadas**, inclusive uma posterior a outra que ficou pendente. Aplicação manual acontece; é só inconsistente.
+
+Em compensação, achei uma causa concreta que havia me escapado: `20260804000001` usa `CREATE INDEX CONCURRENTLY` e **falha** dentro da transação do runner — o próprio cabeçalho do arquivo avisa. Ela não foi esquecida; ela quebra.
+
+### 15.3 Recontagem de cobertura inflada pelo próprio método
+
+Declarei 56% de cobertura nominal (966/1.718). O método casava por _basename_, e `index.ts` se repete nas 86 edge functions — qualquer menção a um `index.ts` marcava 86 arquivos como cobertos. Refiz descartando os 11 basenames ambíguos: **116 casamentos eram não confiáveis**.
+
+**Cobertura nominal real: 850 de 1.718 (49,5%).** Menos da metade. O critério de pronto que este documento adota — "100% dos arquivos inventariados, verificado por recontagem" — **não foi atingido**, e o número que eu havia publicado escondia isso.
+
+### 15.4 Agregado sem sentido estatístico na §2.1
+
+A linha "Total: 390 de 656 (59,5%)" soma inventários incomensuráveis — arquivos, funções e funcionalidades — e contém dupla contagem (Slack aparece como 1 integração, 7 edge functions e vários componentes). O percentual não mede "% do sistema pronto". Mantive a tabela pelas linhas individuais, que são válidas, e marquei o total como não citável.
+
+Some-se a isso que os lotes de componentes A e B produziram distribuições muito diferentes (11% vs 65% de ✅) sobre material comparável — sinal de que os critérios de classificação não foram normalizados entre agentes. **Trate qualquer número por dimensão como bom; qualquer agregado entre dimensões como ruim.**
+
+### 15.5 O que resistiu ao ataque
+
+Reverifiquei por método independente e **se mantém**:
+
+- `types.ts` declara 276/16/119 (recontado por parser diferente)
+- Nenhuma migration dropa `log_audit_entry` — a função foi criada por migration aplicada e está ausente do banco, o que **fortalece** a tese de drift
+- 222 tabelas distintas com `ENABLE RLS` declarado; 384 pares (tabela, policy); 124 statements de trigger
+- 86 edge functions (`_shared` não tem `index.ts`, não é function)
+- 39 RLS ligado / 176 desligado; 5 tabelas com dado; 0 partições; 0 cron; 2 usuários
+- Todos os achados de segurança da §4, com a ressalva de escopo agora explícita no item 1
+
+### 15.6 Correções que já constavam da primeira entrega
+
+Registradas antes desta auto-validação, e mantidas: a medição inicial de RLS (68/179, viciada por `JOIN`) corrigida para 39/176; a suposta ausência de `exec_sql`; e duas alegações sobre `workspace_secrets` que não se confirmaram — a tabela está protegida.
