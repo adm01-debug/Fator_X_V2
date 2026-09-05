@@ -264,6 +264,11 @@ INSERT INTO public.roles (id, name, key, description, level, color, icon, is_sys
   ('00000000-0000-0000-0000-000000000003', 'Viewer', 'viewer', 'Visualizador apenas', 10, '#10b981', 'eye', true, true)
 ON CONFLICT (key) DO NOTHING;
 
+-- Reconciliação 2026-09-05: em bancos onde `roles` pré-existe como stub sem
+-- UNIQUE(key) (criado fora desta migration), o ON CONFLICT acima falha com
+-- "there is no unique or exclusion constraint". Este índice fecha o pré-requisito.
+CREATE UNIQUE INDEX IF NOT EXISTS roles_key_unique ON public.roles(key);
+
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'agent_skills') THEN
