@@ -132,7 +132,10 @@ describe('entradas hostis', () => {
     expect(buildSkillDemandRows([{ id: '' }], [])).toEqual([]);
     const rows = buildSkillDemandRows(
       [{ id: 'a' }, { id: 'a', name: 'duplicada' }],
-      [{ skill_id: 'a', template_id: 't1' }, { skill_id: 'a', template_id: 't1' }],
+      [
+        { skill_id: 'a', template_id: 't1' },
+        { skill_id: 'a', template_id: 't1' },
+      ],
     );
     expect(rows).toHaveLength(1);
     expect(rows[0].templateCount).toBe(1);
@@ -148,8 +151,22 @@ describe('entradas hostis', () => {
 describe('normalizeDemandFilter', () => {
   it('é total e idempotente', () => {
     const entradas: unknown[] = [
-      'all', 'zero', 'ZERO', ' baixa ', 'media', 'alta', 'inexistente', '', null, undefined,
-      42, {}, [], Symbol.iterator.toString(), '__proto__', 'x'.repeat(5000),
+      'all',
+      'zero',
+      'ZERO',
+      ' baixa ',
+      'media',
+      'alta',
+      'inexistente',
+      '',
+      null,
+      undefined,
+      42,
+      {},
+      [],
+      Symbol.iterator.toString(),
+      '__proto__',
+      'x'.repeat(5000),
     ];
     for (const entrada of entradas) {
       const primeiro = normalizeDemandFilter(entrada);

@@ -90,13 +90,17 @@ describe('buildCalibrationCsv', () => {
       'calibracoes-todas-todas-reguas-sem-data.csv',
     );
   });
-
 });
 
 describe('findStaleOverrides', () => {
   it('não acusa override recente', () => {
     const r = findStaleOverrides(
-      [calib({ overriddenInstability: true, at: new Date(AGORA.getTime() - 5 * DIA).toISOString() })],
+      [
+        calib({
+          overriddenInstability: true,
+          at: new Date(AGORA.getTime() - 5 * DIA).toISOString(),
+        }),
+      ],
       { now: AGORA },
     );
     expect(r.stale).toHaveLength(0);
@@ -132,7 +136,9 @@ describe('findStaleOverrides', () => {
   });
 
   it('ignora overrides sem data para não gerar alarme perpétuo', () => {
-    const r = findStaleOverrides([calib({ overriddenInstability: true, at: null })], { now: AGORA });
+    const r = findStaleOverrides([calib({ overriddenInstability: true, at: null })], {
+      now: AGORA,
+    });
     expect(r.stale).toHaveLength(0);
   });
 

@@ -18,12 +18,12 @@ O diagrama completo (com todos os nos e arestas) esta no arquivo `.mmd` acima.
 
 ## 1. Ingestao
 
-| Caminho | Codigo | Observacoes |
-|---|---|---|
-| Harvester GitHub | `supabase/functions/skill-harvester`, `src/services/skillHarvestService.ts` | Modo dirigido, paginacao estavel, leitura de licenca |
-| Checkpoints | `skill_harvest_checkpoints`, `src/components/skills/HarvestCheckpointsCard.tsx` | Retomada de sessao, expurgo por `pg_cron` |
-| Composer | `src/pages/SkillComposerPage.tsx`, `QuickCreateWizard.tsx` | Validacao Zod, templates parametrizados |
-| Marketplace/Templates | `openclaw_agent_templates`, `src/services/templateSkillRegistry.ts` | Instalacao em lote |
+| Caminho               | Codigo                                                                          | Observacoes                                          |
+| --------------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| Harvester GitHub      | `supabase/functions/skill-harvester`, `src/services/skillHarvestService.ts`     | Modo dirigido, paginacao estavel, leitura de licenca |
+| Checkpoints           | `skill_harvest_checkpoints`, `src/components/skills/HarvestCheckpointsCard.tsx` | Retomada de sessao, expurgo por `pg_cron`            |
+| Composer              | `src/pages/SkillComposerPage.tsx`, `QuickCreateWizard.tsx`                      | Validacao Zod, templates parametrizados              |
+| Marketplace/Templates | `openclaw_agent_templates`, `src/services/templateSkillRegistry.ts`             | Instalacao em lote                                   |
 
 Toda entrada converge em UPSERT idempotente sobre `skill_registry`.
 

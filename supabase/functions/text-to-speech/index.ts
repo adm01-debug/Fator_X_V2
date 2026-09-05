@@ -1,11 +1,17 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import {
-  handleCorsPreflight, errorResponse, getCorsHeaders,
+  handleCorsPreflight,
+  errorResponse,
+  getCorsHeaders,
   authenticateRequest,
-  checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS,
-  parseBody, z,
-} from "../_shared/mod.ts";
-import { withRetry } from "../_shared/retry.ts";
+  checkRateLimit,
+  createRateLimitResponse,
+  getRateLimitIdentifier,
+  RATE_LIMITS,
+  parseBody,
+  z,
+} from '../_shared/mod.ts';
+import { withRetry } from '../_shared/retry.ts';
 
 const TTS_MODELS: Record<string, string> = {
   pt: 'facebook/mms-tts-por',
@@ -43,15 +49,19 @@ serve(async (req) => {
     const timeout = setTimeout(() => controller.abort(), TTS_TIMEOUT_MS);
 
     try {
-      const resp = await withRetry(() => fetch(`https://router.huggingface.co/hf-inference/models/${model}`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${hfToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ inputs: text }),
-        signal: controller.signal,
-      }), { attempts: 2, baseMs: 400, capMs: 3000, signal: controller.signal });
+      const resp = await withRetry(
+        () =>
+          fetch(`https://router.huggingface.co/hf-inference/models/${model}`, {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${hfToken}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ inputs: text }),
+            signal: controller.signal,
+          }),
+        { attempts: 2, baseMs: 400, capMs: 3000, signal: controller.signal },
+      );
       clearTimeout(timeout);
 
       if (!resp.ok) {
@@ -72,7 +82,6 @@ serve(async (req) => {
     } finally {
       clearTimeout(timeout);
     }
-
   } catch (error: unknown) {
     return errorResponse(req, error instanceof Error ? error.message : 'Internal error', 500);
   }

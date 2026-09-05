@@ -1,29 +1,29 @@
-import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useWorkspaceId } from "@/hooks/use-data";
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useWorkspaceId } from '@/hooks/use-data';
 import {
   listIpWhitelist,
   listAllowedCountries,
   addAllowedCountry,
   deleteAllowedCountry,
   listAccessBlockedLog,
-} from "@/services/accessControlService";
+} from '@/services/accessControlService';
 import {
   listFreezeWindows,
   createFreezeWindow,
   deleteFreezeWindow,
-} from "@/services/freezeWindowService";
-import { PageHeader } from "@/components/shared/PageHeader";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+} from '@/services/freezeWindowService';
+import { PageHeader } from '@/components/shared/PageHeader';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
   Dialog,
   DialogContent,
@@ -31,13 +31,25 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Snowflake, Globe2, Plus, Trash2, ShieldAlert, Info, Network, ShieldCheck, ShieldOff, ArrowUpRight, Ban } from "lucide-react";
-import { toast } from "sonner";
-import { format, formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { Link } from "react-router-dom";
+} from '@/components/ui/dialog';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Snowflake,
+  Globe2,
+  Plus,
+  Trash2,
+  ShieldAlert,
+  Info,
+  Network,
+  ShieldCheck,
+  ShieldOff,
+  ArrowUpRight,
+  Ban,
+} from 'lucide-react';
+import { toast } from 'sonner';
+import { format, formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { Link } from 'react-router-dom';
 import type { DbRow } from '@/types/dbRow';
 
 type FreezeWindow = {
@@ -76,18 +88,18 @@ export type BlockedEntry = {
 };
 
 const COMMON_COUNTRIES: Array<{ code: string; name: string }> = [
-  { code: "BR", name: "Brasil" },
-  { code: "US", name: "Estados Unidos" },
-  { code: "PT", name: "Portugal" },
-  { code: "GB", name: "Reino Unido" },
-  { code: "DE", name: "Alemanha" },
-  { code: "FR", name: "França" },
-  { code: "ES", name: "Espanha" },
-  { code: "MX", name: "México" },
-  { code: "AR", name: "Argentina" },
-  { code: "CA", name: "Canadá" },
-  { code: "JP", name: "Japão" },
-  { code: "AU", name: "Austrália" },
+  { code: 'BR', name: 'Brasil' },
+  { code: 'US', name: 'Estados Unidos' },
+  { code: 'PT', name: 'Portugal' },
+  { code: 'GB', name: 'Reino Unido' },
+  { code: 'DE', name: 'Alemanha' },
+  { code: 'FR', name: 'França' },
+  { code: 'ES', name: 'Espanha' },
+  { code: 'MX', name: 'México' },
+  { code: 'AR', name: 'Argentina' },
+  { code: 'CA', name: 'Canadá' },
+  { code: 'JP', name: 'Japão' },
+  { code: 'AU', name: 'Austrália' },
 ];
 
 const isActive = (w: FreezeWindow) => {
@@ -100,44 +112,42 @@ export default function GovernancePage() {
   const qc = useQueryClient();
 
   const freezeQuery = useQuery({
-    queryKey: ["governance", "freeze", workspaceId],
+    queryKey: ['governance', 'freeze', workspaceId],
     enabled: !!workspaceId,
     queryFn: async () => listFreezeWindows(workspaceId!),
   });
 
   const geoQuery = useQuery({
-    queryKey: ["governance", "geo", workspaceId],
+    queryKey: ['governance', 'geo', workspaceId],
     enabled: !!workspaceId,
     queryFn: async () => listAllowedCountries(workspaceId!),
   });
 
   const ipQuery = useQuery({
-    queryKey: ["governance", "ip_whitelist", workspaceId],
+    queryKey: ['governance', 'ip_whitelist', workspaceId],
     enabled: !!workspaceId,
     queryFn: async () => listIpWhitelist(workspaceId!),
   });
 
   const blockedQuery = useQuery({
-    queryKey: ["governance", "access_blocked", workspaceId],
+    queryKey: ['governance', 'access_blocked', workspaceId],
     enabled: !!workspaceId,
     refetchInterval: 30_000,
     queryFn: async () => listAccessBlockedLog(workspaceId!),
   });
 
-
-
   const [freezeOpen, setFreezeOpen] = useState(false);
-  const [fName, setFName] = useState("");
-  const [fReason, setFReason] = useState("");
-  const [fStart, setFStart] = useState("");
-  const [fEnd, setFEnd] = useState("");
+  const [fName, setFName] = useState('');
+  const [fReason, setFReason] = useState('');
+  const [fStart, setFStart] = useState('');
+  const [fEnd, setFEnd] = useState('');
   const [fEmergency, setFEmergency] = useState(true);
 
   const createFreeze = useMutation({
     mutationFn: async () => {
-      if (!workspaceId) throw new Error("Workspace ausente");
+      if (!workspaceId) throw new Error('Workspace ausente');
       if (!fName.trim() || !fStart || !fEnd) {
-        throw new Error("Nome, início e fim são obrigatórios");
+        throw new Error('Nome, início e fim são obrigatórios');
       }
       await createFreezeWindow(workspaceId, {
         name: fName.trim(),
@@ -148,14 +158,14 @@ export default function GovernancePage() {
       });
     },
     onSuccess: () => {
-      toast.success("Janela de congelamento criada");
+      toast.success('Janela de congelamento criada');
       setFreezeOpen(false);
-      setFName("");
-      setFReason("");
-      setFStart("");
-      setFEnd("");
+      setFName('');
+      setFReason('');
+      setFStart('');
+      setFEnd('');
       setFEmergency(true);
-      qc.invalidateQueries({ queryKey: ["governance", "freeze"] });
+      qc.invalidateQueries({ queryKey: ['governance', 'freeze'] });
     },
     onError: (e) => toast.error((e as Error).message),
   });
@@ -163,47 +173,47 @@ export default function GovernancePage() {
   const deleteFreeze = useMutation({
     mutationFn: async (id: string) => deleteFreezeWindow(id),
     onSuccess: () => {
-      toast.success("Janela removida");
-      qc.invalidateQueries({ queryKey: ["governance", "freeze"] });
+      toast.success('Janela removida');
+      qc.invalidateQueries({ queryKey: ['governance', 'freeze'] });
     },
     onError: (e) => toast.error((e as Error).message),
   });
 
   const toggleCountry = useMutation({
     mutationFn: async (opts: DbRow) => {
-      if (!workspaceId) throw new Error("Workspace ausente");
+      if (!workspaceId) throw new Error('Workspace ausente');
       if (opts.enabled) {
         await addAllowedCountry(workspaceId, opts.code as string, opts.name as string | undefined);
       } else {
         const { data: existing } = await supabase
-          .from("geo_allowed_countries")
-          .select("id")
-          .eq("workspace_id", workspaceId)
-          .eq("country_code", opts.code as string)
+          .from('geo_allowed_countries')
+          .select('id')
+          .eq('workspace_id', workspaceId)
+          .eq('country_code', opts.code as string)
           .maybeSingle();
         if (existing) await deleteAllowedCountry(existing.id);
       }
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["governance", "geo"] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['governance', 'geo'] }),
     onError: (e) => toast.error((e as Error).message),
   });
 
-  const [customCode, setCustomCode] = useState("");
-  const [customName, setCustomName] = useState("");
+  const [customCode, setCustomCode] = useState('');
+  const [customName, setCustomName] = useState('');
   const addCustomCountry = useMutation({
     mutationFn: async () => {
       const code = customCode.trim().toUpperCase();
       if (!/^[A-Z]{2}$/.test(code)) {
-        throw new Error("Código ISO 3166-1 alpha-2 (2 letras)");
+        throw new Error('Código ISO 3166-1 alpha-2 (2 letras)');
       }
-      if (!workspaceId) throw new Error("Workspace ausente");
+      if (!workspaceId) throw new Error('Workspace ausente');
       await addAllowedCountry(workspaceId, code, customName.trim() || undefined);
     },
     onSuccess: () => {
-      toast.success("País adicionado");
-      setCustomCode("");
-      setCustomName("");
-      qc.invalidateQueries({ queryKey: ["governance", "geo"] });
+      toast.success('País adicionado');
+      setCustomCode('');
+      setCustomName('');
+      qc.invalidateQueries({ queryKey: ['governance', 'geo'] });
     },
     onError: (e) => toast.error((e as Error).message),
   });
@@ -215,7 +225,7 @@ export default function GovernancePage() {
   const activeFreeze = freezes.find(isActive);
   const enabledCodes = new Set(countries.map((c) => c.country_code));
   const activeIps = ipEntries.filter((i) => i.is_active);
-  const cidrCount = ipEntries.filter((i) => i.ip_address.includes("/")).length;
+  const cidrCount = ipEntries.filter((i) => i.ip_address.includes('/')).length;
   const ipProtectionOn = activeIps.length > 0;
   const geoProtectionOn = countries.length > 0;
   const last24hBlocks = blocked.filter(
@@ -234,11 +244,11 @@ export default function GovernancePage() {
           <ShieldAlert className="h-4 w-4 text-nexus-amber" />
           <AlertTitle>Janela de congelamento ativa</AlertTitle>
           <AlertDescription>
-            <b>{activeFreeze.name}</b> — encerra em{" "}
-            {format(new Date(activeFreeze.ends_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}.{" "}
+            <b>{activeFreeze.name}</b> — encerra em{' '}
+            {format(new Date(activeFreeze.ends_at), 'dd/MM/yyyy HH:mm', { locale: ptBR })}.{' '}
             {activeFreeze.allow_emergency
-              ? "Deploys emergenciais permitidos com aprovação."
-              : "Deploys totalmente bloqueados."}
+              ? 'Deploys emergenciais permitidos com aprovação.'
+              : 'Deploys totalmente bloqueados.'}
           </AlertDescription>
         </Alert>
       )}
@@ -246,7 +256,9 @@ export default function GovernancePage() {
       {last24hBlocks > 0 && (
         <Alert className="border-destructive/40 bg-destructive/5">
           <Ban className="h-4 w-4 text-destructive" />
-          <AlertTitle>{last24hBlocks} tentativa(s) de acesso bloqueada(s) nas últimas 24h</AlertTitle>
+          <AlertTitle>
+            {last24hBlocks} tentativa(s) de acesso bloqueada(s) nas últimas 24h
+          </AlertTitle>
           <AlertDescription>
             Consulte a aba <b>IP Whitelist</b> para detalhes e ajuste de políticas.
           </AlertDescription>
@@ -255,7 +267,7 @@ export default function GovernancePage() {
 
       {/* Status geral de proteção */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className={ipProtectionOn ? "border-nexus-emerald/40" : "border-muted"}>
+        <Card className={ipProtectionOn ? 'border-nexus-emerald/40' : 'border-muted'}>
           <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
             <CardTitle className="text-body-sm text-muted-foreground flex items-center gap-2">
               <Network className="h-4 w-4" /> Proteção por IP
@@ -274,7 +286,8 @@ export default function GovernancePage() {
             <div className="text-2xl font-bold">
               {activeIps.length}
               <span className="text-body-sm font-normal text-muted-foreground">
-                {" "}/ {ipEntries.length} regras
+                {' '}
+                / {ipEntries.length} regras
               </span>
             </div>
             <p className="text-meta text-muted-foreground mt-1">
@@ -283,7 +296,7 @@ export default function GovernancePage() {
           </CardContent>
         </Card>
 
-        <Card className={geoProtectionOn ? "border-nexus-emerald/40" : "border-muted"}>
+        <Card className={geoProtectionOn ? 'border-nexus-emerald/40' : 'border-muted'}>
           <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
             <CardTitle className="text-body-sm text-muted-foreground flex items-center gap-2">
               <Globe2 className="h-4 w-4" /> Restrição geográfica
@@ -304,14 +317,14 @@ export default function GovernancePage() {
           </CardContent>
         </Card>
 
-        <Card className={last24hBlocks > 0 ? "border-destructive/40" : "border-muted"}>
+        <Card className={last24hBlocks > 0 ? 'border-destructive/40' : 'border-muted'}>
           <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
             <CardTitle className="text-body-sm text-muted-foreground flex items-center gap-2">
               <Ban className="h-4 w-4" /> Bloqueios (24h)
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className={`text-2xl font-bold ${last24hBlocks > 0 ? "text-destructive" : ""}`}>
+            <div className={`text-2xl font-bold ${last24hBlocks > 0 ? 'text-destructive' : ''}`}>
               {last24hBlocks}
             </div>
             <p className="text-meta text-muted-foreground mt-1">
@@ -336,7 +349,6 @@ export default function GovernancePage() {
             IP Whitelist
           </TabsTrigger>
         </TabsList>
-
 
         <TabsContent value="freeze" className="space-y-4">
           <div className="flex justify-end">
@@ -404,10 +416,7 @@ export default function GovernancePage() {
                   <Button variant="outline" onClick={() => setFreezeOpen(false)}>
                     Cancelar
                   </Button>
-                  <Button
-                    onClick={() => createFreeze.mutate()}
-                    disabled={createFreeze.isPending}
-                  >
+                  <Button onClick={() => createFreeze.mutate()} disabled={createFreeze.isPending}>
                     Criar janela
                   </Button>
                 </DialogFooter>
@@ -422,7 +431,8 @@ export default function GovernancePage() {
               <Info className="h-4 w-4" />
               <AlertTitle>Nenhuma janela configurada</AlertTitle>
               <AlertDescription>
-                Crie janelas para bloquear deploys durante períodos críticos (releases, feriados, campanhas).
+                Crie janelas para bloquear deploys durante períodos críticos (releases, feriados,
+                campanhas).
               </AlertDescription>
             </Alert>
           ) : (
@@ -438,9 +448,7 @@ export default function GovernancePage() {
                             Ativa
                           </Badge>
                         )}
-                        {w.allow_emergency && (
-                          <Badge variant="outline">Emergência OK</Badge>
-                        )}
+                        {w.allow_emergency && <Badge variant="outline">Emergência OK</Badge>}
                         <Button
                           size="icon"
                           variant="ghost"
@@ -454,8 +462,8 @@ export default function GovernancePage() {
                   <CardContent className="text-body-sm space-y-1">
                     {w.reason && <p className="text-muted-foreground">{w.reason}</p>}
                     <div className="text-meta text-muted-foreground">
-                      {format(new Date(w.starts_at), "dd/MM/yyyy HH:mm", { locale: ptBR })} →{" "}
-                      {format(new Date(w.ends_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}
+                      {format(new Date(w.starts_at), 'dd/MM/yyyy HH:mm', { locale: ptBR })} →{' '}
+                      {format(new Date(w.ends_at), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
                     </div>
                   </CardContent>
                 </Card>
@@ -469,8 +477,8 @@ export default function GovernancePage() {
             <Info className="h-4 w-4" />
             <AlertTitle>Whitelist geográfica</AlertTitle>
             <AlertDescription>
-              Se nenhum país estiver selecionado, todas as origens são permitidas.
-              Ao adicionar países, apenas requisições vindas deles serão aceitas.
+              Se nenhum país estiver selecionado, todas as origens são permitidas. Ao adicionar
+              países, apenas requisições vindas deles serão aceitas.
             </AlertDescription>
           </Alert>
 
@@ -488,9 +496,7 @@ export default function GovernancePage() {
                       toggleCountry.mutate({ code: c.code, name: c.name, enabled: !enabled })
                     }
                     className={`p-3 rounded-lg border text-left transition-colors ${
-                      enabled
-                        ? "bg-primary/10 border-primary/40"
-                        : "bg-card hover:bg-accent/30"
+                      enabled ? 'bg-primary/10 border-primary/40' : 'bg-card hover:bg-accent/30'
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -542,9 +548,7 @@ export default function GovernancePage() {
           {countries.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-body">
-                  Países permitidos ({countries.length})
-                </CardTitle>
+                <CardTitle className="text-body">Países permitidos ({countries.length})</CardTitle>
               </CardHeader>
               <CardContent className="flex flex-wrap gap-2">
                 {countries.map((c) => (
@@ -560,7 +564,7 @@ export default function GovernancePage() {
                       })
                     }
                   >
-                    {c.country_code} — {c.country_name ?? "—"}
+                    {c.country_code} — {c.country_name ?? '—'}
                     <Trash2 className="h-3 w-3 ml-2" />
                   </Badge>
                 ))}
@@ -577,7 +581,7 @@ export default function GovernancePage() {
               <AlertDescription>
                 {ipProtectionOn
                   ? `${activeIps.length} regra(s) ativas restringem o acesso administrativo. Requisições fora dos IPs/CIDRs cadastrados são bloqueadas e registradas abaixo.`
-                  : "Nenhuma regra ativa — o acesso administrativo está aberto a qualquer origem. Configure IPs confiáveis para elevar a postura de segurança."}
+                  : 'Nenhuma regra ativa — o acesso administrativo está aberto a qualquer origem. Configure IPs confiáveis para elevar a postura de segurança.'}
               </AlertDescription>
             </Alert>
             <Button asChild variant="outline">
@@ -614,11 +618,15 @@ export default function GovernancePage() {
                           <code className="text-meta font-mono font-semibold">
                             {entry.ip_address}
                           </code>
-                          {entry.ip_address.includes("/") && (
-                            <Badge variant="outline" className="text-meta px-1">CIDR</Badge>
+                          {entry.ip_address.includes('/') && (
+                            <Badge variant="outline" className="text-meta px-1">
+                              CIDR
+                            </Badge>
                           )}
                           {!entry.is_active && (
-                            <Badge variant="secondary" className="text-meta">Inativo</Badge>
+                            <Badge variant="secondary" className="text-meta">
+                              Inativo
+                            </Badge>
                           )}
                         </div>
                         {entry.label && (
@@ -658,7 +666,7 @@ export default function GovernancePage() {
                     >
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <code className="text-meta font-mono">{b.ip_address ?? "—"}</code>
+                          <code className="text-meta font-mono">{b.ip_address ?? '—'}</code>
                           {b.country_code && (
                             <Badge variant="outline" className="text-meta px-1">
                               {b.country_code}
@@ -683,7 +691,6 @@ export default function GovernancePage() {
           </div>
         </TabsContent>
       </Tabs>
-
     </div>
   );
 }

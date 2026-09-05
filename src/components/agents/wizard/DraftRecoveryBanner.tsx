@@ -1,13 +1,25 @@
- 
 import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Check, FileClock, FolderOpen, Layers, Minus, Pencil, RotateCcw, SkipForward, Sparkles, Trash2, X, Zap } from 'lucide-react';
+import {
+  Check,
+  FileClock,
+  FolderOpen,
+  Layers,
+  Minus,
+  Pencil,
+  RotateCcw,
+  SkipForward,
+  Sparkles,
+  Trash2,
+  X,
+  Zap,
+} from 'lucide-react';
 import { quickIdentitySchema } from '@/lib/validations/quickAgentSchema';
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
 import { cn } from '@/lib/utils';
-import { handleKeyboardClick } from "@/lib/a11y";
+import { handleKeyboardClick } from '@/lib/a11y';
 
 function discardCopy(name: string) {
   const label = name.trim() ? `"${name.trim()}"` : 'sem nome ainda';
@@ -57,7 +69,13 @@ interface NameEditorProps {
   onConfirm: (newName: string) => void;
 }
 
-function NameLabelOrEditor({ draft, isEditing, onStartEdit, onCancel, onConfirm }: NameEditorProps) {
+function NameLabelOrEditor({
+  draft,
+  isEditing,
+  onStartEdit,
+  onCancel,
+  onConfirm,
+}: NameEditorProps) {
   const [value, setValue] = useState(draft.summary.name);
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -79,13 +97,23 @@ function NameLabelOrEditor({ draft, isEditing, onStartEdit, onCancel, onConfirm 
 
   const submit = () => {
     const err = validateDraftName(value);
-    if (err) { setError(err); return; }
+    if (err) {
+      setError(err);
+      return;
+    }
     onConfirm(value.trim());
   };
 
   const onKey = (e: ReactKeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') { e.preventDefault(); submit(); }
-    if (e.key === 'Escape') { e.preventDefault(); skipNextBlurRef.current = true; onCancel(); }
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      submit();
+    }
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      skipNextBlurRef.current = true;
+      onCancel();
+    }
   };
 
   // Auto-save on blur when the value is valid and actually changed.
@@ -93,21 +121,39 @@ function NameLabelOrEditor({ draft, isEditing, onStartEdit, onCancel, onConfirm 
   // - Unchanged → just close the editor without firing a useless save.
   // - Valid + changed → commit, same as pressing Enter.
   const handleBlur = () => {
-    if (skipNextBlurRef.current) { skipNextBlurRef.current = false; return; }
+    if (skipNextBlurRef.current) {
+      skipNextBlurRef.current = false;
+      return;
+    }
     const trimmed = value.trim();
-    if (trimmed === draft.summary.name.trim()) { onCancel(); return; }
-    if (validateDraftName(value)) { onCancel(); return; }
+    if (trimmed === draft.summary.name.trim()) {
+      onCancel();
+      return;
+    }
+    if (validateDraftName(value)) {
+      onCancel();
+      return;
+    }
     onConfirm(trimmed);
   };
 
   if (isEditing) {
     return (
-      <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className="flex flex-col gap-1 flex-1 min-w-0" onClick={(e) => e.stopPropagation()}>
+      <div
+        role="button"
+        tabIndex={0}
+        onKeyDown={handleKeyboardClick}
+        className="flex flex-col gap-1 flex-1 min-w-0"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex items-center gap-1.5">
           <Input
             ref={inputRef}
             value={value}
-            onChange={(e) => { setValue(e.target.value); if (error) setError(null); }}
+            onChange={(e) => {
+              setValue(e.target.value);
+              if (error) setError(null);
+            }}
             onKeyDown={onKey}
             onBlur={handleBlur}
             maxLength={60}
@@ -119,7 +165,9 @@ function NameLabelOrEditor({ draft, isEditing, onStartEdit, onCancel, onConfirm 
             type="button"
             // onMouseDown fires before blur — set the skip flag so the blur
             // handler doesn't race the click handler.
-            onMouseDown={() => { skipNextBlurRef.current = true; }}
+            onMouseDown={() => {
+              skipNextBlurRef.current = true;
+            }}
             onClick={submit}
             className="h-7 w-7 rounded-md flex items-center justify-center text-nexus-emerald hover:bg-nexus-emerald/10 shrink-0"
             aria-label="Confirmar novo nome"
@@ -129,7 +177,9 @@ function NameLabelOrEditor({ draft, isEditing, onStartEdit, onCancel, onConfirm 
           </button>
           <button
             type="button"
-            onMouseDown={() => { skipNextBlurRef.current = true; }}
+            onMouseDown={() => {
+              skipNextBlurRef.current = true;
+            }}
             onClick={onCancel}
             className="h-7 w-7 rounded-md flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 shrink-0"
             aria-label="Cancelar renomear"
@@ -149,7 +199,10 @@ function NameLabelOrEditor({ draft, isEditing, onStartEdit, onCancel, onConfirm 
       <span className="text-body-sm font-medium text-foreground truncate">{display}</span>
       <button
         type="button"
-        onClick={(e) => { e.stopPropagation(); onStartEdit(); }}
+        onClick={(e) => {
+          e.stopPropagation();
+          onStartEdit();
+        }}
         className="opacity-60 hover:opacity-100 hover:text-primary transition shrink-0 p-1 rounded-md hover:bg-primary/10"
         aria-label="Renomear rascunho"
         title="Renomear"
@@ -191,11 +244,7 @@ function RestoreModeSelector({ mode, onChange, summary }: RestoreModeSelectorPro
 
   return (
     <div className="rounded-lg border border-border/40 bg-background/30 p-2 space-y-2">
-      <div
-        role="radiogroup"
-        aria-label="Modo de restauração"
-        className="grid grid-cols-2 gap-1.5"
-      >
+      <div role="radiogroup" aria-label="Modo de restauração" className="grid grid-cols-2 gap-1.5">
         <button
           type="button"
           role="radio"
@@ -216,10 +265,12 @@ function RestoreModeSelector({ mode, onChange, summary }: RestoreModeSelectorPro
             aria-hidden
           />
           <div className="min-w-0 flex-1">
-            <p className={cn(
-              'text-meta font-semibold leading-tight',
-              mode === 'full' ? 'text-foreground' : 'text-muted-foreground',
-            )}>
+            <p
+              className={cn(
+                'text-meta font-semibold leading-tight',
+                mode === 'full' ? 'text-foreground' : 'text-muted-foreground',
+              )}
+            >
               Restaurar completo
             </p>
             <p className="text-meta text-muted-foreground mt-0.5 leading-tight">
@@ -238,15 +289,16 @@ function RestoreModeSelector({ mode, onChange, summary }: RestoreModeSelectorPro
             allFilled
               ? 'Todos os campos estão preenchidos — não há nada para pular'
               : noneFilled
-              ? 'Nenhum campo foi preenchido ainda — comece pelo modo completo'
-              : undefined
+                ? 'Nenhum campo foi preenchido ainda — comece pelo modo completo'
+                : undefined
           }
           className={cn(
             'flex items-start gap-2 rounded-md border px-2.5 py-2 text-left transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
             mode === 'partial' && !partialDisabled
               ? 'border-primary/50 bg-primary/10'
               : 'border-border/50 bg-background/40 hover:border-border hover:bg-background/60',
-            partialDisabled && 'opacity-50 cursor-not-allowed hover:border-border/50 hover:bg-background/40',
+            partialDisabled &&
+              'opacity-50 cursor-not-allowed hover:border-border/50 hover:bg-background/40',
           )}
         >
           <Zap
@@ -257,10 +309,14 @@ function RestoreModeSelector({ mode, onChange, summary }: RestoreModeSelectorPro
             aria-hidden
           />
           <div className="min-w-0 flex-1">
-            <p className={cn(
-              'text-meta font-semibold leading-tight',
-              mode === 'partial' && !partialDisabled ? 'text-foreground' : 'text-muted-foreground',
-            )}>
+            <p
+              className={cn(
+                'text-meta font-semibold leading-tight',
+                mode === 'partial' && !partialDisabled
+                  ? 'text-foreground'
+                  : 'text-muted-foreground',
+              )}
+            >
               Restaurar parcial
             </p>
             <p className="text-meta text-muted-foreground mt-0.5 leading-tight">
@@ -284,7 +340,10 @@ function RestoreModeSelector({ mode, onChange, summary }: RestoreModeSelectorPro
               </p>
             </div>
             <div className="flex items-start gap-1.5">
-              <SkipForward className="h-3 w-3 text-muted-foreground/70 mt-0.5 shrink-0" aria-hidden />
+              <SkipForward
+                className="h-3 w-3 text-muted-foreground/70 mt-0.5 shrink-0"
+                aria-hidden
+              />
               <p className="text-muted-foreground">
                 <span className="text-foreground font-medium">Vai pular:</span>{' '}
                 <span className="italic">nada — todas as etapas serão carregadas</span>
@@ -297,18 +356,22 @@ function RestoreModeSelector({ mode, onChange, summary }: RestoreModeSelectorPro
               <Sparkles className="h-3 w-3 text-nexus-amber mt-0.5 shrink-0" aria-hidden />
               <p className="text-muted-foreground">
                 <span className="text-foreground font-medium">Vai destacar:</span>{' '}
-                {missing.length > 0
-                  ? <span className="text-nexus-amber">{missing.join(', ')}</span>
-                  : 'nada — rascunho está completo'}
+                {missing.length > 0 ? (
+                  <span className="text-nexus-amber">{missing.join(', ')}</span>
+                ) : (
+                  'nada — rascunho está completo'
+                )}
               </p>
             </div>
             <div className="flex items-start gap-1.5">
               <SkipForward className="h-3 w-3 text-nexus-emerald mt-0.5 shrink-0" aria-hidden />
               <p className="text-muted-foreground">
                 <span className="text-foreground font-medium">Vai carregar:</span>{' '}
-                {filled.length > 0
-                  ? <span className="text-nexus-emerald">{filled.join(', ')}</span>
-                  : 'nada — nenhum campo preenchido'}
+                {filled.length > 0 ? (
+                  <span className="text-nexus-emerald">{filled.join(', ')}</span>
+                ) : (
+                  'nada — nenhum campo preenchido'
+                )}
               </p>
             </div>
           </>
@@ -317,7 +380,6 @@ function RestoreModeSelector({ mode, onChange, summary }: RestoreModeSelectorPro
     </div>
   );
 }
-
 
 function formatRelative(iso: string): string {
   const then = new Date(iso).getTime();
@@ -337,8 +399,11 @@ function formatAbsolute(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
   return d.toLocaleString('pt-BR', {
-    day: '2-digit', month: '2-digit', year: 'numeric',
-    hour: '2-digit', minute: '2-digit',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   });
 }
 
@@ -365,9 +430,13 @@ function DraftPreviewLine({ entry }: { entry: DraftBannerEntry }) {
     >
       <div className="flex items-center gap-1.5 flex-wrap">
         <span className="text-muted-foreground/70 uppercase tracking-wider text-meta">Prévia</span>
-        <span className="text-foreground font-medium truncate max-w-[220px]" title={name}>{name}</span>
+        <span className="text-foreground font-medium truncate max-w-[220px]" title={name}>
+          {name}
+        </span>
         <span className="text-muted-foreground/50">·</span>
-        <span className="font-mono tabular-nums" title="Salvo em">{absolute}</span>
+        <span className="font-mono tabular-nums" title="Salvo em">
+          {absolute}
+        </span>
       </div>
       <div className="flex items-center gap-1 flex-wrap">
         <span className="text-muted-foreground/70">Preenchidos:</span>
@@ -414,15 +483,16 @@ function completionOf(summary: DraftSummary): { done: number; total: number; pct
   return { done, total, pct: Math.round((done / total) * 100) };
 }
 
-function CompletionMeter({ summary, compact = false }: { summary: DraftSummary; compact?: boolean }) {
+function CompletionMeter({
+  summary,
+  compact = false,
+}: {
+  summary: DraftSummary;
+  compact?: boolean;
+}) {
   const { done, total, pct } = completionOf(summary);
   // Cor sinaliza maturidade do rascunho: vermelho < 50%, âmbar < 100%, verde = 100%.
-  const tone =
-    pct === 100
-      ? 'bg-nexus-emerald'
-      : pct >= 50
-      ? 'bg-nexus-amber'
-      : 'bg-destructive';
+  const tone = pct === 100 ? 'bg-nexus-emerald' : pct >= 50 ? 'bg-nexus-amber' : 'bg-destructive';
   const toneText =
     pct === 100 ? 'text-nexus-emerald' : pct >= 50 ? 'text-nexus-amber' : 'text-destructive';
   return (
@@ -437,9 +507,7 @@ function CompletionMeter({ summary, compact = false }: { summary: DraftSummary; 
           style={{ width: `${pct}%` }}
         />
       </div>
-      <span className={`text-meta font-mono tabular-nums shrink-0 ${toneText}`}>
-        {pct}%
-      </span>
+      <span className={`text-meta font-mono tabular-nums shrink-0 ${toneText}`}>{pct}%</span>
     </div>
   );
 }
@@ -506,7 +574,8 @@ export function DraftRecoveryBanner({
               Rascunho encontrado
             </h3>
             <p className="text-meta text-muted-foreground mt-0.5">
-              Você começou um agente {formatRelative(only.savedAt)}. Renomeie ou continue de onde parou.
+              Você começou um agente {formatRelative(only.savedAt)}. Renomeie ou continue de onde
+              parou.
             </p>
             <div className="mt-2">
               <NameLabelOrEditor
@@ -566,10 +635,11 @@ export function DraftRecoveryBanner({
             onClick={() => onRestore(only.id, restoreMode)}
             title={
               blocked
-                ? (only.restoreBlockedReason ?? 'Rascunho incompleto — vamos pular direto ao primeiro campo pendente')
+                ? (only.restoreBlockedReason ??
+                  'Rascunho incompleto — vamos pular direto ao primeiro campo pendente')
                 : restoreMode === 'partial'
-                ? 'Restaurar só os campos preenchidos e destacar os pendentes'
-                : 'Restaurar tudo do rascunho e continuar do primeiro campo pendente'
+                  ? 'Restaurar só os campos preenchidos e destacar os pendentes'
+                  : 'Restaurar tudo do rascunho e continuar do primeiro campo pendente'
             }
             className="gap-1.5 nexus-gradient-bg text-primary-foreground"
           >
@@ -620,7 +690,9 @@ export function DraftRecoveryBanner({
           return (
             <div
               key={d.id}
-              ref={(el) => { itemsRef.current[d.id] = el; }}
+              ref={(el) => {
+                itemsRef.current[d.id] = el;
+              }}
               role="radio"
               aria-checked={checked}
               tabIndex={checked ? 0 : -1}
@@ -685,7 +757,12 @@ export function DraftRecoveryBanner({
                 </div>
               </div>
 
-              <span role="button" tabIndex={0} onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+              <span
+                role="button"
+                tabIndex={0}
+                onClick={(e) => e.stopPropagation()}
+                onKeyDown={(e) => e.stopPropagation()}
+              >
                 <ConfirmDialog
                   trigger={
                     <button
@@ -713,7 +790,11 @@ export function DraftRecoveryBanner({
         return (
           <>
             <DraftPreviewLine entry={selected} />
-            <RestoreModeSelector mode={restoreMode} onChange={setRestoreMode} summary={selected.summary} />
+            <RestoreModeSelector
+              mode={restoreMode}
+              onChange={setRestoreMode}
+              summary={selected.summary}
+            />
           </>
         );
       })()}
@@ -721,7 +802,11 @@ export function DraftRecoveryBanner({
       <div className="flex items-center justify-between gap-2 pt-1">
         <ConfirmDialog
           trigger={
-            <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground hover:text-destructive">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-1.5 text-muted-foreground hover:text-destructive"
+            >
               <X className="h-3.5 w-3.5" /> Descartar todos
             </Button>
           }
@@ -740,10 +825,11 @@ export function DraftRecoveryBanner({
               disabled={!selectedId}
               title={
                 blocked
-                  ? (selected?.restoreBlockedReason ?? 'Rascunho incompleto — vamos pular direto ao primeiro campo pendente')
+                  ? (selected?.restoreBlockedReason ??
+                    'Rascunho incompleto — vamos pular direto ao primeiro campo pendente')
                   : restoreMode === 'partial'
-                  ? 'Restaurar só os campos preenchidos do rascunho selecionado'
-                  : 'Restaurar tudo do rascunho selecionado'
+                    ? 'Restaurar só os campos preenchidos do rascunho selecionado'
+                    : 'Restaurar tudo do rascunho selecionado'
               }
               className="gap-1.5 nexus-gradient-bg text-primary-foreground"
             >

@@ -124,6 +124,11 @@ describe('countInjectedSkills', () => {
     expect(countInjectedSkills(many)).toBe(MAX_PROMPT_SKILLS);
   });
   it('ignora skills sem nome válido', () => {
-    expect(countInjectedSkills([{ id: 'x', name: '   ' }, { id: 'y', name: 'Ok' }])).toBe(1);
+    expect(
+      countInjectedSkills([
+        { id: 'x', name: '   ' },
+        { id: 'y', name: 'Ok' },
+      ]),
+    ).toBe(1);
   });
 });

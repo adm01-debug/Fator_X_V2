@@ -3,16 +3,21 @@
  * Suporta: disc_analysis, eq_analysis, bias_analysis, full_pipeline, notify, webhook
  */
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.0';
-import { fetchWithTimeout } from "../_shared/retry.ts";
-import { z } from "https://esm.sh/zod@3.23.8";
-import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
+import { fetchWithTimeout } from '../_shared/retry.ts';
+import { z } from 'https://esm.sh/zod@3.23.8';
+import {
+  checkRateLimit,
+  createRateLimitResponse,
+  getRateLimitIdentifier,
+  RATE_LIMITS,
+  requireEnv,
+} from '../_shared/mod.ts';
 
-import { getCorsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from '../_shared/cors.ts';
 const BodySchema = z.object({
   rule_id: z.string().uuid(),
   payload: z.record(z.unknown()).optional(),
 });
-
 
 Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
@@ -39,9 +44,9 @@ Deno.serve(async (req) => {
 
     const rawBody = await req.json().catch(() => null);
     const parsed = BodySchema.safeParse(rawBody);
-    if (!parsed.success) return json({ error: 'Payload inválido', details: parsed.error.flatten().fieldErrors }, 400);
+    if (!parsed.success)
+      return json({ error: 'Payload inválido', details: parsed.error.flatten().fieldErrors }, 400);
     const body = parsed.data;
-
 
     const { data: rule, error: ruleErr } = await admin
       .from('automation_rules')
@@ -51,8 +56,11 @@ Deno.serve(async (req) => {
     if (ruleErr || !rule) return json({ error: 'rule not found' }, 404);
     if (!rule.is_active) {
       await admin.from('automation_logs').insert({
-        rule_id: rule.id, workspace_id: rule.workspace_id, status: 'skipped',
-        trigger_payload: body.payload ?? null, error_message: 'rule inactive',
+        rule_id: rule.id,
+        workspace_id: rule.workspace_id,
+        status: 'skipped',
+        trigger_payload: body.payload ?? null,
+        error_message: 'rule inactive',
         duration_ms: Date.now() - startedAt,
       });
       return json({ status: 'skipped', reason: 'rule inactive' });
@@ -61,7 +69,13 @@ Deno.serve(async (req) => {
     let result: Record<string, unknown> = {};
     switch (rule.action_type) {
       case 'disc_analysis':
-        result = { type: 'disc', dominance: 0.4, influence: 0.3, steadiness: 0.2, conscientiousness: 0.1 };
+        result = {
+          type: 'disc',
+          dominance: 0.4,
+          influence: 0.3,
+          steadiness: 0.2,
+          conscientiousness: 0.1,
+        };
         break;
       case 'eq_analysis':
         result = { type: 'eq', self_awareness: 0.7, empathy: 0.65, social_skills: 0.7 };
@@ -93,14 +107,20 @@ Deno.serve(async (req) => {
     }
 
     await admin.from('automation_logs').insert({
-      rule_id: rule.id, workspace_id: rule.workspace_id, status: 'success',
-      trigger_payload: body.payload ?? null, result,
+      rule_id: rule.id,
+      workspace_id: rule.workspace_id,
+      status: 'success',
+      trigger_payload: body.payload ?? null,
+      result,
       duration_ms: Date.now() - startedAt,
     });
-    await admin.from('automation_rules').update({
-      run_count: (rule.run_count ?? 0) + 1,
-      last_run_at: new Date().toISOString(),
-    }).eq('id', rule.id);
+    await admin
+      .from('automation_rules')
+      .update({
+        run_count: (rule.run_count ?? 0) + 1,
+        last_run_at: new Date().toISOString(),
+      })
+      .eq('id', rule.id);
 
     return json({ status: 'success', result });
   } catch (e) {

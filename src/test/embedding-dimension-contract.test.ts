@@ -49,10 +49,9 @@ describe('contrato de dimensão de embeddings', () => {
   it('nenhum consumidor usa o nome de campo errado (`dimensions`)', () => {
     for (const fn of ['rag-embed-backfill', 'semantic-search']) {
       const src = readFn(fn);
-      expect(
-        src,
-        `${fn} usa "dimensions" (plural); o embedder espera "dimension"`,
-      ).not.toMatch(/\bdimensions\s*:/);
+      expect(src, `${fn} usa "dimensions" (plural); o embedder espera "dimension"`).not.toMatch(
+        /\bdimensions\s*:/,
+      );
     }
   });
 

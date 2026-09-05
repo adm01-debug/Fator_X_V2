@@ -47,9 +47,7 @@ export function CrmSummaryCards({ summary, isLoading }: CrmSummaryCardsProps) {
               <span className="text-body-sm text-muted-foreground">{item.label}</span>
               <item.icon className="h-4 w-4 text-primary" aria-hidden="true" />
             </div>
-            <p className="text-2xl font-semibold tracking-tight">
-              {isLoading ? '—' : item.value}
-            </p>
+            <p className="text-2xl font-semibold tracking-tight">{isLoading ? '—' : item.value}</p>
             <p className="text-body-sm text-muted-foreground">{item.hint}</p>
           </CardContent>
         </Card>

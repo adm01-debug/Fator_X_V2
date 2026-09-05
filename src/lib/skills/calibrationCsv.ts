@@ -92,9 +92,7 @@ export function calibrationCsvFilename(
   now: Date = new Date(),
   scale: CalibrationScaleFilter = 'all',
 ): string {
-  const dia = Number.isNaN(now.getTime())
-    ? 'sem-data'
-    : now.toISOString().slice(0, 10);
+  const dia = Number.isNaN(now.getTime()) ? 'sem-data' : now.toISOString().slice(0, 10);
   const escopo = scope === 'overridden' ? 'sob-alerta' : 'todas';
   const regua = scale === 'all' ? 'todas-reguas' : scale;
   return `calibracoes-${escopo}-${regua}-${dia}.csv`;

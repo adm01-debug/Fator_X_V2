@@ -28,7 +28,6 @@
 import { isDepartment, type SkillDepartment } from '@/config/skill-departments';
 import { PLATFORM_TIER_MAX_CONFIDENCE } from '@/services/skillDepartmentClassifier';
 
-
 /** Ações de auditoria emitidas por `decide_skill_reclassification`. */
 export const RECLASSIFICATION_AUDIT_ACTIONS = [
   'skill_reclassification.approved',
@@ -86,7 +85,6 @@ export function scaleOf(source: DecisionSource): ConfidenceScale {
 /** Origem da proposta que foi decidida. */
 export type ProposalOrigin = 'lexico' | 'ia';
 
-
 /**
  * Veredito sobre o classificador, derivado do par (decisão, estado anterior).
  *
@@ -97,12 +95,7 @@ export type ProposalOrigin = 'lexico' | 'ia';
  */
 export type EfficacyVerdict = 'corrigido' | 'preenchido' | 'confirmado' | 'descartado';
 
-export const EFFICACY_VERDICTS = [
-  'corrigido',
-  'preenchido',
-  'confirmado',
-  'descartado',
-] as const;
+export const EFFICACY_VERDICTS = ['corrigido', 'preenchido', 'confirmado', 'descartado'] as const;
 
 export const EFFICACY_VERDICT_LABEL: Record<EfficacyVerdict, string> = {
   corrigido: 'Corrigido',
@@ -189,7 +182,6 @@ export interface EfficacySummary {
   byOrigin: Record<ProposalOrigin, { total: number; approved: number }>;
 }
 
-
 function text(value: unknown): string {
   return typeof value === 'string' ? value.trim() : '';
 }
@@ -267,7 +259,6 @@ export function parseClassificationDecisions(
         : approved || from !== null;
     const previousSource = decisionSource(meta.previous_department_source);
 
-
     const decision: ClassificationDecision = {
       auditId: text(row.id) || reviewId,
       reviewId,
@@ -292,10 +283,7 @@ export function parseClassificationDecisions(
 
     // Dedupe: a decisão mais recente prevalece; sem data, a primeira vista.
     const anterior = porRevisao.get(reviewId);
-    if (
-      !anterior ||
-      (decision.decidedAtMs ?? -Infinity) > (anterior.decidedAtMs ?? -Infinity)
-    ) {
+    if (!anterior || (decision.decidedAtMs ?? -Infinity) > (anterior.decidedAtMs ?? -Infinity)) {
       porRevisao.set(reviewId, decision);
     }
   }
@@ -347,8 +335,7 @@ function metricaDeEscala(
     total,
     confirmado: acertos.length,
     corrigido: erros.length,
-    accuracy:
-      denominador === 0 ? null : Math.round((acertos.length / denominador) * 1000) / 1000,
+    accuracy: denominador === 0 ? null : Math.round((acertos.length / denominador) * 1000) / 1000,
     avgConfidenceWhenRight: media(acertos),
     avgConfidenceWhenWrong: media(erros),
     suggestedThreshold: sugerir(scale, acertos),
@@ -411,9 +398,7 @@ export function summarizeEfficacy(
     byOrigin,
     byScale,
     accuracy:
-      denominador === 0
-        ? null
-        : Math.round((todosAcertos.length / denominador) * 1000) / 1000,
+      denominador === 0 ? null : Math.round((todosAcertos.length / denominador) * 1000) / 1000,
     avgConfidenceWhenRight: media(todosAcertos),
     avgConfidenceWhenWrong: media(todosErros),
     // O slider do painel governa APENAS a régua de domínio. Expor aqui uma
@@ -423,7 +408,6 @@ export function summarizeEfficacy(
     suggestedThreshold: byScale.dominio.suggestedThreshold,
   };
 }
-
 
 /** Filtro por veredito para a timeline; `all` preserva a ordem. */
 export type EfficacyFilter = EfficacyVerdict | 'all';

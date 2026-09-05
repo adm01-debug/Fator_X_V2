@@ -22,10 +22,7 @@ import {
   type SkillDepartment,
 } from '@/config/skill-departments';
 
-const MIRROR_PATH = resolve(
-  process.cwd(),
-  'supabase/functions/skill-harvester/departments.ts',
-);
+const MIRROR_PATH = resolve(process.cwd(), 'supabase/functions/skill-harvester/departments.ts');
 
 const mirrorSource = readFileSync(MIRROR_PATH, 'utf8');
 

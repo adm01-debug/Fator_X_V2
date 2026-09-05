@@ -18,12 +18,7 @@
  */
 
 // CORS
-export {
-  getCorsHeaders,
-  handleCorsPreflight,
-  jsonResponse,
-  errorResponse,
-} from "./cors.ts";
+export { getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse } from './cors.ts';
 
 // Auth
 export {
@@ -36,7 +31,7 @@ export {
   type AuthResult,
   type AuthError,
   type AuthResponse,
-} from "./auth.ts";
+} from './auth.ts';
 
 // Rate Limiting
 export {
@@ -48,7 +43,7 @@ export {
   RATE_LIMITS,
   type RateLimitConfig,
   type RateLimitResult,
-} from "./rate-limiter.ts";
+} from './rate-limiter.ts';
 
 // Validation
 export {
@@ -58,10 +53,10 @@ export {
   z,
   MAX_BODY_SIZE,
   type ParseResult,
-} from "./validation.ts";
+} from './validation.ts';
 
 // Safe JSON (LLM output parsing)
-export { safeJsonParse, parseJsonStrict } from "./json.ts";
+export { safeJsonParse, parseJsonStrict } from './json.ts';
 
 // Security (NEW)
 export {
@@ -72,7 +67,7 @@ export {
   redactPIIFromObject,
   getClientIp,
   KNOWN_WEBHOOK_CIDRS,
-} from "./security.ts";
+} from './security.ts';
 
 // Retry / backoff / jitter (P0 audit fix)
 export {
@@ -82,7 +77,7 @@ export {
   computeDelay,
   RetryError,
   type RetryOptions,
-} from "./retry.ts";
+} from './retry.ts';
 
 // Environment validation (P0 audit — Etapa 13)
 export {
@@ -98,39 +93,24 @@ export {
   requireEnvCached,
   clearEnvCache,
   MISSING_ENV_PREFIX,
-} from "./requireEnv.ts";
+} from './requireEnv.ts';
 
 // Webhook Sender with HMAC + retry (P0 audit — Etapa 16)
-export {
-  deliverWebhook,
-  deliverWebhookWithLogging,
-} from "./webhookSender.ts";
+export { deliverWebhook, deliverWebhookWithLogging } from './webhookSender.ts';
 // hmacSha256Hex vive em webhookSignature.ts; o barril apontava para o módulo
 // errado e derrubava o boot de qualquer função que importasse "mod.ts".
-export { hmacSha256Hex } from "./webhookSignature.ts";
+export { hmacSha256Hex } from './webhookSignature.ts';
 export type {
   WebhookPayload,
   WebhookDeliveryResult,
   WebhookSenderOptions,
-} from "./webhookSender.ts";
+} from './webhookSender.ts';
 
 // Observability (ETAPAS 46-48)
-export {
-  runWithObservability,
-  tracedFetch,
-  estimateLlmCost,
-  logLlmMetrics,
-} from "./otel-edge.ts";
-export type {
-  TraceContext,
-  ObservabilityOptions,
-} from "./otel-edge.ts";
+export { runWithObservability, tracedFetch, estimateLlmCost, logLlmMetrics } from './otel-edge.ts';
+export type { TraceContext, ObservabilityOptions } from './otel-edge.ts';
 
 // Runtime alerts — captura ReferenceError/TypeError e dispara alerta.
-export {
-  withRuntimeAlert,
-  reportRuntimeError,
-  isFatalCodeError,
-} from "./runtimeAlerts.ts";
-export { installRuntimeAlerts } from "./runtimeAlerts.ts";
-export type { RuntimeErrorContext } from "./runtimeAlerts.ts";
+export { withRuntimeAlert, reportRuntimeError, isFatalCodeError } from './runtimeAlerts.ts';
+export { installRuntimeAlerts } from './runtimeAlerts.ts';
+export type { RuntimeErrorContext } from './runtimeAlerts.ts';

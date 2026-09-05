@@ -1,86 +1,134 @@
 // Tradução com cache (translation memory) via Lovable AI
-import { fetchWithTimeout } from "../_shared/retry.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
-import { z } from "https://esm.sh/zod@3.23.8";
-import { checkRateLimit, createRateLimitResponse, getCorsHeaders, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
+import { fetchWithTimeout } from '../_shared/retry.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
+import { z } from 'https://esm.sh/zod@3.23.8';
+import {
+  checkRateLimit,
+  createRateLimitResponse,
+  getCorsHeaders,
+  getRateLimitIdentifier,
+  RATE_LIMITS,
+  requireEnv,
+} from '../_shared/mod.ts';
 const InputSchema = z.object({
   article_id: z.string().uuid(),
   target_language: z.string().min(2).max(10),
 });
 
 async function sha256(s: string): Promise<string> {
-  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return Array.from(new Uint8Array(buf))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
 }
 
 Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   const identifier = getRateLimitIdentifier(req);
   const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
   if (!rate.allowed) return createRateLimitResponse(rate, corsHeaders);
 
   try {
-    const auth = req.headers.get("Authorization");
-    if (!auth) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    const auth = req.headers.get('Authorization');
+    if (!auth)
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
 
     const raw = await req.json().catch(() => null);
     const parsed = InputSchema.safeParse(raw);
-    if (!parsed.success) return new Response(JSON.stringify({ error: "Payload inválido", details: parsed.error.flatten() }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    if (!parsed.success)
+      return new Response(
+        JSON.stringify({ error: 'Payload inválido', details: parsed.error.flatten() }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
     const { article_id, target_language } = parsed.data;
 
+    const supabase = createClient(
+      requireEnv('SUPABASE_URL'),
+      requireEnv('SUPABASE_SERVICE_ROLE_KEY'),
+    );
+    const lovableKey = requireEnv('LOVABLE_API_KEY');
 
-    const supabase = createClient(requireEnv("SUPABASE_URL"), requireEnv("SUPABASE_SERVICE_ROLE_KEY"));
-    const lovableKey = requireEnv("LOVABLE_API_KEY");
-
-    const { data: article } = await supabase.from("kb_articles").select("*").eq("id", article_id).maybeSingle();
-    if (!article) return new Response(JSON.stringify({ error: "Article not found" }), { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    const { data: article } = await supabase
+      .from('kb_articles')
+      .select('*')
+      .eq('id', article_id)
+      .maybeSingle();
+    if (!article)
+      return new Response(JSON.stringify({ error: 'Article not found' }), {
+        status: 404,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
 
     const sourceText = JSON.stringify({ title: article.title, content: article.content_json });
     const hash = await sha256(sourceText);
 
     // Translation memory cache check
-    const { data: cached } = await supabase.from("kb_translations")
-      .select("*")
-      .eq("article_id", article_id)
-      .eq("target_language", target_language)
-      .eq("source_hash", hash)
+    const { data: cached } = await supabase
+      .from('kb_translations')
+      .select('*')
+      .eq('article_id', article_id)
+      .eq('target_language', target_language)
+      .eq('source_hash', hash)
       .maybeSingle();
     if (cached) {
-      return new Response(JSON.stringify({ cached: true, translation: cached }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ cached: true, translation: cached }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
-    const r = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: { "Authorization": `Bearer ${lovableKey}`, "Content-Type": "application/json" },
+    const r = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${lovableKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: 'google/gemini-2.5-flash',
         messages: [
-          { role: "system", content: `Você é tradutor profissional. Traduza para ${target_language} mantendo a estrutura JSON do TipTap. Responda APENAS com JSON: {"title": "...", "content": <tiptap json>}` },
-          { role: "user", content: `Traduzir de ${article.language} para ${target_language}:\n\n${sourceText}` },
+          {
+            role: 'system',
+            content: `Você é tradutor profissional. Traduza para ${target_language} mantendo a estrutura JSON do TipTap. Responda APENAS com JSON: {"title": "...", "content": <tiptap json>}`,
+          },
+          {
+            role: 'user',
+            content: `Traduzir de ${article.language} para ${target_language}:\n\n${sourceText}`,
+          },
         ],
       }),
     });
     if (!r.ok) throw new Error(`AI gateway error: ${r.status}`);
     const j = await r.json();
-    const aiRaw = j.choices?.[0]?.message?.content ?? "{}";
-    const cleaned = aiRaw.replace(/```json\n?/g, "").replace(/```/g, "").trim();
+    const aiRaw = j.choices?.[0]?.message?.content ?? '{}';
+    const cleaned = aiRaw
+      .replace(/```json\n?/g, '')
+      .replace(/```/g, '')
+      .trim();
     const aiParsed = JSON.parse(cleaned);
 
-    const { data: inserted, error } = await supabase.from("kb_translations").insert({
-      article_id,
-      source_language: article.language,
-      target_language,
-      source_hash: hash,
-      translated_title: aiParsed.title ?? article.title,
-      translated_content_json: aiParsed.content ?? {},
-      translation_method: "ai",
-    }).select().single();
+    const { data: inserted, error } = await supabase
+      .from('kb_translations')
+      .insert({
+        article_id,
+        source_language: article.language,
+        target_language,
+        source_hash: hash,
+        translated_title: aiParsed.title ?? article.title,
+        translated_content_json: aiParsed.content ?? {},
+        translation_method: 'ai',
+      })
+      .select()
+      .single();
     if (error) throw error;
 
-    return new Response(JSON.stringify({ cached: false, translation: inserted }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ cached: false, translation: inserted }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   } catch (err) {
-    return new Response(JSON.stringify({ error: err instanceof Error ? err.message : "Erro" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ error: err instanceof Error ? err.message : 'Erro' }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
 });

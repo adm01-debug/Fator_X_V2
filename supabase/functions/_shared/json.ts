@@ -13,17 +13,14 @@ function extractJsonCandidate(raw: string): string {
   const fence = text.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
   if (fence) text = fence[1].trim();
 
-  const firstObj = text.indexOf("{");
-  const firstArr = text.indexOf("[");
-  const start = firstObj === -1
-    ? firstArr
-    : firstArr === -1
-    ? firstObj
-    : Math.min(firstObj, firstArr);
+  const firstObj = text.indexOf('{');
+  const firstArr = text.indexOf('[');
+  const start =
+    firstObj === -1 ? firstArr : firstArr === -1 ? firstObj : Math.min(firstObj, firstArr);
   if (start === -1) return text;
 
   const open = text[start];
-  const close = open === "{" ? "}" : "]";
+  const close = open === '{' ? '}' : ']';
   let depth = 0;
   let inString = false;
   let escaped = false;
@@ -32,7 +29,7 @@ function extractJsonCandidate(raw: string): string {
     const char = text[i];
     if (inString) {
       if (escaped) escaped = false;
-      else if (char === "\\") escaped = true;
+      else if (char === '\\') escaped = true;
       else if (char === '"') inString = false;
       continue;
     }
@@ -52,8 +49,8 @@ function extractJsonCandidate(raw: string): string {
  */
 export function safeJsonParse<T = unknown>(raw: unknown, fallback: T): T {
   if (raw === null || raw === undefined) return fallback;
-  if (typeof raw === "object") return raw as T;
-  if (typeof raw !== "string") return fallback;
+  if (typeof raw === 'object') return raw as T;
+  if (typeof raw !== 'string') return fallback;
 
   try {
     return JSON.parse(extractJsonCandidate(raw)) as T;
@@ -66,7 +63,7 @@ export function safeJsonParse<T = unknown>(raw: unknown, fallback: T): T {
  * Igual a `safeJsonParse`, mas lança quando o conteúdo é inválido.
  * Use quando o JSON é contratual e seguir sem ele produziria dado corrompido.
  */
-export function parseJsonStrict<T = unknown>(raw: string, context = "resposta"): T {
+export function parseJsonStrict<T = unknown>(raw: string, context = 'resposta'): T {
   try {
     return JSON.parse(extractJsonCandidate(raw)) as T;
   } catch (error) {

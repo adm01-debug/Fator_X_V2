@@ -4,11 +4,11 @@
  * de confirmar a criação de v{N+1}. O texto editado é injetado como
  * `customSummary` em RestoreOptions.
  */
-import { useEffect, useMemo } from "react";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { RotateCcw, FileText, Wrench, Cpu, Sparkles } from "lucide-react";
-import type { RestoreDiff } from "./restoreDiffHelpers";
+import { useEffect, useMemo } from 'react';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { RotateCcw, FileText, Wrench, Cpu, Sparkles } from 'lucide-react';
+import type { RestoreDiff } from './restoreDiffHelpers';
 
 interface Props {
   sourceVersion: number;
@@ -24,17 +24,16 @@ interface Props {
   disabled?: boolean;
 }
 
- 
 export function buildAutoSummary(
   sourceVersion: number,
   options: { copyPrompt: boolean; copyTools: boolean; copyModel: boolean },
 ): string {
   const parts: string[] = [];
-  if (options.copyPrompt) parts.push("prompt");
-  if (options.copyTools) parts.push("ferramentas");
-  if (options.copyModel) parts.push("modelo");
+  if (options.copyPrompt) parts.push('prompt');
+  if (options.copyTools) parts.push('ferramentas');
+  if (options.copyModel) parts.push('modelo');
   return parts.length > 0
-    ? `Restaurado de v${sourceVersion} (${parts.join(" + ")})`
+    ? `Restaurado de v${sourceVersion} (${parts.join(' + ')})`
     : `Restaurado de v${sourceVersion} (sem alterações)`;
 }
 
@@ -76,7 +75,7 @@ export function RestoreChangelogEditor({
           </span>
         </div>
         <span className="text-meta font-mono text-muted-foreground">
-          {totalChanges} {totalChanges === 1 ? "alteração" : "alterações"}
+          {totalChanges} {totalChanges === 1 ? 'alteração' : 'alterações'}
         </span>
       </div>
 
@@ -115,7 +114,12 @@ export function RestoreChangelogEditor({
             htmlFor="restore-summary-editor"
             className="text-meta uppercase tracking-wider text-muted-foreground"
           >
-            Descrição (editável){edited && <span className="text-primary normal-case ml-1.5 tracking-normal">· personalizado</span>}
+            Descrição (editável)
+            {edited && (
+              <span className="text-primary normal-case ml-1.5 tracking-normal">
+                · personalizado
+              </span>
+            )}
           </label>
           {edited && (
             <Button
@@ -176,25 +180,29 @@ function ChangelogStat({
       className={`rounded-md border px-2 py-1.5 text-meta transition-colors ${
         active
           ? count > 0
-            ? "border-primary/40 bg-primary/10 text-foreground"
-            : "border-border bg-background/40 text-muted-foreground"
-          : "border-border/50 bg-background/20 text-muted-foreground/60"
+            ? 'border-primary/40 bg-primary/10 text-foreground'
+            : 'border-border bg-background/40 text-muted-foreground'
+          : 'border-border/50 bg-background/20 text-muted-foreground/60'
       }`}
     >
       <div className="flex items-center gap-1 mb-0.5">
-        <span className={active && count > 0 ? "text-primary" : ""}>{icon}</span>
+        <span className={active && count > 0 ? 'text-primary' : ''}>{icon}</span>
         <span className="font-semibold uppercase tracking-wider">{label}</span>
       </div>
       <div className="flex items-baseline gap-1">
-        <span className="text-body-sm font-mono font-bold text-foreground">{active ? count : "—"}</span>
-        {active && extra && <span className="font-mono text-[9px] text-muted-foreground">{extra}</span>}
+        <span className="text-body-sm font-mono font-bold text-foreground">
+          {active ? count : '—'}
+        </span>
+        {active && extra && (
+          <span className="font-mono text-[9px] text-muted-foreground">{extra}</span>
+        )}
         {active && delta !== undefined && delta !== 0 && (
           <span
             className={`font-mono text-[9px] ${
-              delta > 0 ? "text-nexus-emerald" : "text-nexus-amber"
+              delta > 0 ? 'text-nexus-emerald' : 'text-nexus-amber'
             }`}
           >
-            {delta > 0 ? "+" : ""}
+            {delta > 0 ? '+' : ''}
             {delta}c
           </span>
         )}

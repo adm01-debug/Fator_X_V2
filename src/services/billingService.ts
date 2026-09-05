@@ -53,7 +53,9 @@ import { supabaseExternal } from '@/integrations/supabase/externalClient';
 
 // ═══ Usage ═══
 
-export async function getUsageSummary(period: 'day' | 'week' | 'month' = 'week'): Promise<UsageSummary> {
+export async function getUsageSummary(
+  period: 'day' | 'week' | 'month' = 'week',
+): Promise<UsageSummary> {
   const now = new Date();
   const periodMs = period === 'day' ? 86400000 : period === 'week' ? 604800000 : 2592000000;
   const since = new Date(now.getTime() - periodMs).toISOString();
@@ -68,10 +70,14 @@ export async function getUsageSummary(period: 'day' | 'week' | 'month' = 'week')
     .gte('created_at', since)
     .order('created_at', { ascending: true });
 
-
   if (error) throw error;
 
-  type UsageRow = { cost_usd: number | null; record_type: string | null; tokens: number | null; created_at: string };
+  type UsageRow = {
+    cost_usd: number | null;
+    record_type: string | null;
+    tokens: number | null;
+    created_at: string;
+  };
   const records = (data || []) as UsageRow[];
   const totalCost = records.reduce((s, r) => s + Number(r.cost_usd || 0), 0);
   const totalTokens = records.reduce((s, r) => s + Number(r.tokens || 0), 0);

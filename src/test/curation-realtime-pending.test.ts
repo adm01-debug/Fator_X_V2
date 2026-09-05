@@ -8,7 +8,10 @@ import {
 } from '@/hooks/useCurationRealtime';
 import type { CurationFeedFilter } from '@/services/templateSkillLinkService';
 
-function evt(over: Partial<CurationRealtimeEvent['new']> = {}, tipo: CurationRealtimeEvent['eventType'] = 'INSERT'): CurationRealtimeEvent {
+function evt(
+  over: Partial<CurationRealtimeEvent['new']> = {},
+  tipo: CurationRealtimeEvent['eventType'] = 'INSERT',
+): CurationRealtimeEvent {
   return {
     eventType: tipo,
     new: { origin: 'manual', deleted_at: null, template_id: 't1', skill_id: 's1', ...over },

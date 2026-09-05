@@ -19,9 +19,6 @@ vi.mock('@/integrations/supabase/client', async () => {
 
 const db = getSharedSupabaseMock('freeze-window', { id: 'user-1' });
 
-
-
-
 import {
   listFreezeWindows,
   createFreezeWindow,

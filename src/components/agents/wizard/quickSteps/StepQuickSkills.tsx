@@ -3,7 +3,11 @@ import { useQuery } from '@tanstack/react-query';
 import { Wrench, Pin, Sparkles, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MAX_PROMPT_SKILLS } from '@/lib/skills/promptSimulation';
-import { evaluateInstallImpact, trimSelectionToCap, type NamedSkillRef } from '@/lib/skills/installGuard';
+import {
+  evaluateInstallImpact,
+  trimSelectionToCap,
+  type NamedSkillRef,
+} from '@/lib/skills/installGuard';
 import { SkillsPickerPanel } from '@/components/skills/SkillsPickerPanel';
 import { SkillRecommendationsCard } from '@/components/skills/SkillRecommendationsCard';
 import { Badge } from '@/components/ui/badge';
@@ -51,11 +55,7 @@ export function StepQuickSkills({ mission, role, selectedIds, onChange }: StepQu
 
   const recommendations = useMemo(() => {
     if (!allSkills?.skills) return [];
-    return recommendSkills(
-      { mission: debouncedMission, role },
-      allSkills.skills,
-      5,
-    );
+    return recommendSkills({ mission: debouncedMission, role }, allSkills.skills, 5);
   }, [debouncedMission, role, allSkills]);
 
   const recommendedIds = recommendations.map((r) => r.skill.id);
@@ -72,7 +72,10 @@ export function StepQuickSkills({ mission, role, selectedIds, onChange }: StepQu
   }, [selectedIds, allSkills]);
 
   const capGuard = useMemo(
-    () => (selectedRefs.length > 0 ? evaluateInstallImpact({ installed: [], selected: selectedRefs }) : null),
+    () =>
+      selectedRefs.length > 0
+        ? evaluateInstallImpact({ installed: [], selected: selectedRefs })
+        : null,
     [selectedRefs],
   );
 
@@ -81,7 +84,6 @@ export function StepQuickSkills({ mission, role, selectedIds, onChange }: StepQu
     const mantidos = new Set(cabem.map((s) => s.id));
     onChange(selectedIds.filter((id) => mantidos.has(id)));
   };
-
 
   const handleSelect = (id: string) => {
     if (selectedIds.includes(id)) onChange(selectedIds.filter((x) => x !== id));
@@ -129,20 +131,13 @@ export function StepQuickSkills({ mission, role, selectedIds, onChange }: StepQu
             </p>
             <p className="text-muted-foreground">{capGuard.message}</p>
             {capGuard.additionalDropped > 0 && (
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                onClick={handleTrimToCap}
-              >
+              <Button type="button" size="sm" variant="outline" onClick={handleTrimToCap}>
                 Manter só o que cabe
               </Button>
             )}
           </div>
         </div>
       )}
-
-
 
       {inherited.length > 0 && (
         <section className="rounded-xl border border-nexus-purple/30 bg-nexus-purple/5 p-4 space-y-3">
@@ -171,9 +166,14 @@ export function StepQuickSkills({ mission, role, selectedIds, onChange }: StepQu
                   aria-label={`Instalar skill ${l.skillName}`}
                   className="mt-0.5"
                 />
-                <label htmlFor={`inherited-${l.skillId}`} className="flex-1 cursor-pointer space-y-0.5">
+                <label
+                  htmlFor={`inherited-${l.skillId}`}
+                  className="flex-1 cursor-pointer space-y-0.5"
+                >
                   <span className="flex flex-wrap items-center gap-2">
-                    <span className="text-body-sm font-semibold text-foreground">{l.skillName}</span>
+                    <span className="text-body-sm font-semibold text-foreground">
+                      {l.skillName}
+                    </span>
                     {l.origin === 'manual' && (
                       <Badge
                         variant="outline"

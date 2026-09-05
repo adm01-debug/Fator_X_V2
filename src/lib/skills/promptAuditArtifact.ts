@@ -88,12 +88,16 @@ export function buildPromptAuditArtifact(
   ];
 
   if (result.compiled.unresolvedVariables.length > 0) {
-    linhas.push(
-      `- ⚠️ Variáveis não resolvidas: ${result.compiled.unresolvedVariables.join(', ')}`,
-    );
+    linhas.push(`- ⚠️ Variáveis não resolvidas: ${result.compiled.unresolvedVariables.join(', ')}`);
   }
 
-  linhas.push('', '## Skills', '', '| Skill | Destino | Sanitização | Categoria |', '| --- | --- | --- | --- |');
+  linhas.push(
+    '',
+    '## Skills',
+    '',
+    '| Skill | Destino | Sanitização | Categoria |',
+    '| --- | --- | --- | --- |',
+  );
 
   if (result.skills.length === 0) {
     linhas.push('| _(nenhuma skill instalada)_ | — | — | — |');

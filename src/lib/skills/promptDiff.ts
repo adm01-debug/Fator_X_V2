@@ -18,12 +18,7 @@ import type { PromptSimulationResult, SkillDisposition } from '@/lib/skills/prom
 
 /** Como uma skill mudou entre os dois lados. */
 export type SkillChangeKind =
-  | 'adicionada'
-  | 'removida'
-  | 'entrou_no_prompt'
-  | 'saiu_do_prompt'
-  | 'alterada'
-  | 'inalterada';
+  'adicionada' | 'removida' | 'entrou_no_prompt' | 'saiu_do_prompt' | 'alterada' | 'inalterada';
 
 export const SKILL_CHANGE_LABEL: Record<SkillChangeKind, string> = {
   adicionada: 'Adicionada',
@@ -85,7 +80,10 @@ function skillKey(id: string | null, name: string): string {
 }
 
 function indexSkills(result: PromptSimulationResult) {
-  const map = new Map<string, { name: string; disposition: SkillDisposition; line: string | null }>();
+  const map = new Map<
+    string,
+    { name: string; disposition: SkillDisposition; line: string | null }
+  >();
   for (const s of result.skills) {
     // Descartadas não têm identidade utilizável — o compilador as ignora e o
     // diff também deve ignorar, senão elas colidiriam todas na chave vazia.
@@ -160,8 +158,7 @@ export function diffPromptSimulations(
   };
 
   const identical =
-    before.compiled.text === after.compiled.text &&
-    skills.every((s) => s.kind === 'inalterada');
+    before.compiled.text === after.compiled.text && skills.every((s) => s.kind === 'inalterada');
 
   return {
     lines,

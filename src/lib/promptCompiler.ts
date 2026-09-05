@@ -89,7 +89,6 @@ export function buildSkillsSection(skills: PromptSkill[] | undefined): string {
   return ['## Skills disponíveis', '', ...lines].join('\n');
 }
 
-
 export interface CompiledPrompt {
   text: string;
   detectedVariables: string[];
@@ -167,7 +166,6 @@ export function compilePrompt(input: CompilePromptInput): CompiledPrompt {
     .filter((s) => s.length > 0)
     .join('\n')
     .trim();
-
 
   const words = text.split(/\s+/).filter(Boolean).length;
   const lines = text.split('\n').length;

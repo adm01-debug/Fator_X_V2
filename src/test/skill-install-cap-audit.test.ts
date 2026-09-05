@@ -70,7 +70,10 @@ describe('projectDroppedNames', () => {
   });
   it('ignora duplicatas por nome normalizado', () => {
     const installed = [{ id: 'a', name: 'Análise' }];
-    const selected = [{ id: 'b', name: 'analise' }, { id: 'c', name: '' }];
+    const selected = [
+      { id: 'b', name: 'analise' },
+      { id: 'c', name: '' },
+    ];
     expect(projectDroppedNames(installed, selected)).toEqual([]);
   });
   it('lista vazia quando cabe tudo', () => {
@@ -84,13 +87,22 @@ describe('projectDroppedNames', () => {
 describe('buildInstallCapRecord — robustez', () => {
   it('nome ausente vira rótulo neutro', () => {
     const guard = evaluateInstallImpact({ installed: [], selected: refs(1) });
-    const r = buildInstallCapRecord({ agentId: 'a', agentName: '  ', installed: [], selected: refs(1), guard });
+    const r = buildInstallCapRecord({
+      agentId: 'a',
+      agentName: '  ',
+      installed: [],
+      selected: refs(1),
+      guard,
+    });
     expect(r.agentName).toBe('sem nome');
     expect(r.acknowledged).toBe(false);
   });
   it('conta redundantes sem inflar slots', () => {
     const installed = [{ id: 'a', name: 'Copy' }];
-    const selected = [{ id: 'b', name: 'copy' }, { id: 'c', name: 'Novo' }];
+    const selected = [
+      { id: 'b', name: 'copy' },
+      { id: 'c', name: 'Novo' },
+    ];
     const guard = evaluateInstallImpact({ installed, selected });
     const r = buildInstallCapRecord({ agentId: 'a', installed, selected, guard });
     expect(r.redundant).toBe(1);

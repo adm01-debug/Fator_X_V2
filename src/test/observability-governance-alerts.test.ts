@@ -15,10 +15,7 @@ import {
   summarizeHumanReclassification,
   CALIBRATION_STALE_DAYS,
 } from '@/lib/skills/observability';
-import type {
-  CalibrationScale,
-  ThresholdCalibration,
-} from '@/lib/skills/thresholdCalibration';
+import type { CalibrationScale, ThresholdCalibration } from '@/lib/skills/thresholdCalibration';
 
 const NOW = new Date('2026-07-28T12:00:00.000Z');
 const diasAtras = (d: number) => new Date(NOW.getTime() - d * 86_400_000).toISOString();

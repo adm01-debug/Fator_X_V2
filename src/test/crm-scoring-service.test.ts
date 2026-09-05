@@ -158,14 +158,30 @@ describe('scoreLead — porte fora da faixa', () => {
 
 describe('scoreLead — engajamento', () => {
   it('satura em 5 atividades', () => {
-    const a = scoreLead({ recentActivityCount: 5, lastActivityAt: NOW.toISOString() }, profile, NOW);
-    const b = scoreLead({ recentActivityCount: 50, lastActivityAt: NOW.toISOString() }, profile, NOW);
+    const a = scoreLead(
+      { recentActivityCount: 5, lastActivityAt: NOW.toISOString() },
+      profile,
+      NOW,
+    );
+    const b = scoreLead(
+      { recentActivityCount: 50, lastActivityAt: NOW.toISOString() },
+      profile,
+      NOW,
+    );
     expect(a.score).toBe(b.score);
   });
 
   it('decai com o tempo desde o último toque', () => {
-    const recente = scoreLead({ recentActivityCount: 3, lastActivityAt: '2026-07-25T12:00:00Z' }, profile, NOW);
-    const antigo = scoreLead({ recentActivityCount: 3, lastActivityAt: '2026-06-01T12:00:00Z' }, profile, NOW);
+    const recente = scoreLead(
+      { recentActivityCount: 3, lastActivityAt: '2026-07-25T12:00:00Z' },
+      profile,
+      NOW,
+    );
+    const antigo = scoreLead(
+      { recentActivityCount: 3, lastActivityAt: '2026-06-01T12:00:00Z' },
+      profile,
+      NOW,
+    );
     expect(recente.score).toBeGreaterThan(antigo.score);
   });
 
@@ -175,7 +191,11 @@ describe('scoreLead — engajamento', () => {
   });
 
   it('data futura não infla o score acima do teto', () => {
-    const r = scoreLead({ recentActivityCount: 5, lastActivityAt: '2027-01-01T00:00:00Z' }, profile, NOW);
+    const r = scoreLead(
+      { recentActivityCount: 5, lastActivityAt: '2027-01-01T00:00:00Z' },
+      profile,
+      NOW,
+    );
     expect(r.criteria.find((c) => c.key === 'engagement')!.match).toBeLessThanOrEqual(1);
   });
 });
@@ -245,7 +265,9 @@ describe('classificação em tiers', () => {
 describe('persistência', () => {
   it('listIcpProfiles escopa por workspace e converte NUMERIC string', async () => {
     db.setTableResult('crm_icp_profiles', {
-      data: [{ ...profile, weight_industry: '40', qualified_threshold: '65', min_company_size: '10' }],
+      data: [
+        { ...profile, weight_industry: '40', qualified_threshold: '65', min_company_size: '10' },
+      ],
       error: null,
     });
 
@@ -271,7 +293,9 @@ describe('persistência', () => {
 
   it('erro de escrita propaga em vez de falhar em silêncio', async () => {
     db.setResult({ data: null, error: { message: 'permission denied' } });
-    await expect(persistDealScore('deal-1', profile, scoreLead({}, profile, NOW))).rejects.toMatchObject({
+    await expect(
+      persistDealScore('deal-1', profile, scoreLead({}, profile, NOW)),
+    ).rejects.toMatchObject({
       message: 'permission denied',
     });
   });
@@ -279,8 +303,12 @@ describe('persistência', () => {
 
 describe('DEFAULT_ICP_INPUT', () => {
   it('limiares são coerentes com a constraint do banco', () => {
-    expect(DEFAULT_ICP_INPUT.hot_threshold).toBeGreaterThanOrEqual(DEFAULT_ICP_INPUT.qualified_threshold);
-    expect(DEFAULT_ICP_INPUT.min_company_size).toBeLessThanOrEqual(DEFAULT_ICP_INPUT.max_company_size);
+    expect(DEFAULT_ICP_INPUT.hot_threshold).toBeGreaterThanOrEqual(
+      DEFAULT_ICP_INPUT.qualified_threshold,
+    );
+    expect(DEFAULT_ICP_INPUT.min_company_size).toBeLessThanOrEqual(
+      DEFAULT_ICP_INPUT.max_company_size,
+    );
   });
 });
 
@@ -300,7 +328,9 @@ describe('rescoreOpenDeals', () => {
       error: null,
     });
     db.setTableResult('crm_companies', {
-      data: overrides.companies ?? [{ id: 'c1', industry: 'Tecnologia da Informação', size_band: '51-200' }],
+      data: overrides.companies ?? [
+        { id: 'c1', industry: 'Tecnologia da Informação', size_band: '51-200' },
+      ],
       error: null,
     });
     db.setTableResult('crm_contacts', {
@@ -351,8 +381,22 @@ describe('rescoreOpenDeals', () => {
     const { rescoreOpenDeals } = await import('@/services/crmScoringService');
     setupTables({
       deals: [
-        { id: 'd1', title: 'A', workspace_id: 'ws-alpha', company_id: null, contact_id: null, score_reason: null },
-        { id: 'd2', title: 'B', workspace_id: 'ws-alpha', company_id: null, contact_id: null, score_reason: 'lixo' },
+        {
+          id: 'd1',
+          title: 'A',
+          workspace_id: 'ws-alpha',
+          company_id: null,
+          contact_id: null,
+          score_reason: null,
+        },
+        {
+          id: 'd2',
+          title: 'B',
+          workspace_id: 'ws-alpha',
+          company_id: null,
+          contact_id: null,
+          score_reason: 'lixo',
+        },
       ],
     });
 
@@ -365,7 +409,14 @@ describe('rescoreOpenDeals', () => {
     const { rescoreOpenDeals } = await import('@/services/crmScoringService');
     setupTables({
       deals: [
-        { id: 'd9', title: 'Órfão', workspace_id: 'ws-alpha', company_id: null, contact_id: null, score_reason: {} },
+        {
+          id: 'd9',
+          title: 'Órfão',
+          workspace_id: 'ws-alpha',
+          company_id: null,
+          contact_id: null,
+          score_reason: {},
+        },
       ],
       activities: [],
     });

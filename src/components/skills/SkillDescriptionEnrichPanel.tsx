@@ -19,13 +19,7 @@ import { toast } from 'sonner';
 import { AlertTriangle, Check, Download, Loader2, PenLine, RefreshCw, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -102,73 +96,67 @@ export function SkillDescriptionEnrichPanel({
    * reprocessar o lote inteiro depois de um 429 parcial gastaria chamadas (e
    * créditos) nas skills que já tinham sido resolvidas com sucesso.
    */
-  const executar = useCallback(
-    async (alvo: readonly EnrichCandidate[]) => {
-      if (alvo.length === 0) return;
-      const controller = new AbortController();
-      abortRef.current = controller;
-      setGerando(true);
-      setFalhas(null);
-      setProgresso({ concluidos: 0, total: alvo.length });
+  const executar = useCallback(async (alvo: readonly EnrichCandidate[]) => {
+    if (alvo.length === 0) return;
+    const controller = new AbortController();
+    abortRef.current = controller;
+    setGerando(true);
+    setFalhas(null);
+    setProgresso({ concluidos: 0, total: alvo.length });
 
-      try {
-        const resultado = await runDescriptionEnrichQueue({
-          candidates: [...alvo],
-          signal: controller.signal,
-          onSnapshot: (snapshot) => {
-            // Isolamento: um erro de render aqui não pode derrubar a fila.
-            try {
-              setProgresso({
-                concluidos: snapshot.items.filter(
-                  (i) => i.status !== 'pendente' && i.status !== 'executando',
-                ).length,
-                total: alvo.length,
-              });
-            } catch {
-              /* progresso é cosmético */
-            }
-          },
-        });
+    try {
+      const resultado = await runDescriptionEnrichQueue({
+        candidates: [...alvo],
+        signal: controller.signal,
+        onSnapshot: (snapshot) => {
+          // Isolamento: um erro de render aqui não pode derrubar a fila.
+          try {
+            setProgresso({
+              concluidos: snapshot.items.filter(
+                (i) => i.status !== 'pendente' && i.status !== 'executando',
+              ).length,
+              total: alvo.length,
+            });
+          } catch {
+            /* progresso é cosmético */
+          }
+        },
+      });
 
-        // Merge por skillId: num retry parcial as propostas boas da rodada
-        // anterior continuam válidas e não podem sumir da tela.
-        const novos = new Set(alvo.map((c) => c.skillId));
-        setPropostas((atual) => [
-          ...atual.filter((p) => !novos.has(p.skillId)),
-          ...resultado.proposals,
-        ]);
-        const recusasRodada = [...resultado.rejections, ...resultado.skipped];
-        setRecusadas((atual) => [
-          ...atual.filter((r) => !novos.has(r.skillId)),
-          ...recusasRodada,
-        ]);
-        setDescartadas(resultado.skipped.map((s) => s.slug));
+      // Merge por skillId: num retry parcial as propostas boas da rodada
+      // anterior continuam válidas e não podem sumir da tela.
+      const novos = new Set(alvo.map((c) => c.skillId));
+      setPropostas((atual) => [
+        ...atual.filter((p) => !novos.has(p.skillId)),
+        ...resultado.proposals,
+      ]);
+      const recusasRodada = [...resultado.rejections, ...resultado.skipped];
+      setRecusadas((atual) => [...atual.filter((r) => !novos.has(r.skillId)), ...recusasRodada]);
+      setDescartadas(resultado.skipped.map((s) => s.slug));
 
-        // Resumo por causa raiz: "N falharam" não diz se retentar adianta.
-        const resumo = summarizeQueueFailures(resultado.snapshot);
-        setFalhas(resumo.totalFailed > 0 ? resumo : null);
+      // Resumo por causa raiz: "N falharam" não diz se retentar adianta.
+      const resumo = summarizeQueueFailures(resultado.snapshot);
+      setFalhas(resumo.totalFailed > 0 ? resumo : null);
 
-        if (resumo.totalFailed > 0 && resumo.retryPointless) {
-          toast.error(`Lote bloqueado: ${formatFailureSummary(resumo)}.`);
-        } else if (resultado.proposals.length === 0) {
-          toast.info('Nenhuma descrição defensável foi gerada nesta rodada.');
-        } else {
-          toast.success(
-            `${resultado.proposals.length} descriç${resultado.proposals.length === 1 ? 'ão gerada' : 'ões geradas'}.`,
-          );
-        }
-      } catch (error) {
-        logger.error('SkillDescriptionEnrichPanel: falha na geração', {
-          message: error instanceof Error ? error.message : String(error),
-        });
-        toast.error('Falha ao gerar descrições.');
-      } finally {
-        setGerando(false);
-        abortRef.current = null;
+      if (resumo.totalFailed > 0 && resumo.retryPointless) {
+        toast.error(`Lote bloqueado: ${formatFailureSummary(resumo)}.`);
+      } else if (resultado.proposals.length === 0) {
+        toast.info('Nenhuma descrição defensável foi gerada nesta rodada.');
+      } else {
+        toast.success(
+          `${resultado.proposals.length} descriç${resultado.proposals.length === 1 ? 'ão gerada' : 'ões geradas'}.`,
+        );
       }
-    },
-    [],
-  );
+    } catch (error) {
+      logger.error('SkillDescriptionEnrichPanel: falha na geração', {
+        message: error instanceof Error ? error.message : String(error),
+      });
+      toast.error('Falha ao gerar descrições.');
+    } finally {
+      setGerando(false);
+      abortRef.current = null;
+    }
+  }, []);
 
   const gerar = useCallback(async () => {
     setPropostas([]);
@@ -193,7 +181,6 @@ export function SkillDescriptionEnrichPanel({
     await executar(alvo);
   }, [candidatos, executar, falhas]);
 
-
   const automaticas = useMemo(() => autoApplicable(propostas), [propostas]);
   const revisaveis = useMemo(() => needsReview(propostas), [propostas]);
 
@@ -207,7 +194,9 @@ export function SkillDescriptionEnrichPanel({
           const aplicados = new Set(applied.map((p) => p.skillId));
           setPropostas((atual) => atual.filter((p) => !aplicados.has(p.skillId)));
           setCandidatos((atual) => atual.filter((c) => !aplicados.has(c.skillId)));
-          toast.success(`${applied.length} descriç${applied.length === 1 ? 'ão gravada' : 'ões gravadas'}.`);
+          toast.success(
+            `${applied.length} descriç${applied.length === 1 ? 'ão gravada' : 'ões gravadas'}.`,
+          );
           onApplied?.();
         }
         if (failures.length > 0) {
@@ -245,8 +234,8 @@ export function SkillDescriptionEnrichPanel({
             Descrições ausentes
           </CardTitle>
           <CardDescription>
-            Skills importadas sem descrição não aparecem na busca nem no recomendador. A
-            geração usa nome, tags e repositório de origem; só grava automaticamente acima de{' '}
+            Skills importadas sem descrição não aparecem na busca nem no recomendador. A geração usa
+            nome, tags e repositório de origem; só grava automaticamente acima de{' '}
             {Math.round(MIN_ENRICH_CONFIDENCE * 100)}% de confiança.
           </CardDescription>
         </div>
@@ -260,7 +249,11 @@ export function SkillDescriptionEnrichPanel({
           >
             <RefreshCw className={cn('h-4 w-4', carregando && 'animate-spin')} aria-hidden="true" />
           </Button>
-          <Button size="sm" onClick={() => void gerar()} disabled={gerando || candidatos.length === 0}>
+          <Button
+            size="sm"
+            onClick={() => void gerar()}
+            disabled={gerando || candidatos.length === 0}
+          >
             {gerando ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
             ) : (
@@ -318,9 +311,7 @@ export function SkillDescriptionEnrichPanel({
               <p className="text-body-sm font-medium">
                 {falhas.totalFailed} não {falhas.totalFailed === 1 ? 'processada' : 'processadas'}
               </p>
-              {falhas.retryPointless && (
-                <Badge variant="destructive">Retentar não resolve</Badge>
-              )}
+              {falhas.retryPointless && <Badge variant="destructive">Retentar não resolve</Badge>}
             </div>
             <ul className="space-y-1">
               {falhas.buckets.map((b) => (
@@ -346,9 +337,6 @@ export function SkillDescriptionEnrichPanel({
             )}
           </div>
         )}
-
-
-
 
         {propostas.length > 0 && (
           <div className="space-y-3">

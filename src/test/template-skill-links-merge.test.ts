@@ -121,10 +121,7 @@ describe('formatCurationTrail — simulação de cenários', () => {
 
   it('nunca atribui autoria a vínculos automáticos', () => {
     expect(
-      formatCurationTrail(
-        { origin: 'auto', curatedBy: ME, curatedAt: '2026-07-01T10:00:00Z' },
-        ME,
-      ),
+      formatCurationTrail({ origin: 'auto', curatedBy: ME, curatedAt: '2026-07-01T10:00:00Z' }, ME),
     ).toBeNull();
   });
 
@@ -151,15 +148,20 @@ describe('formatCurationTrail — simulação de cenários', () => {
       'Curado por você',
     );
     expect(
-      formatCurationTrail({ origin: 'manual', curatedBy: null, curatedAt: '2026-07-01T10:00:00Z' }, ME),
+      formatCurationTrail(
+        { origin: 'manual', curatedBy: null, curatedAt: '2026-07-01T10:00:00Z' },
+        ME,
+      ),
     ).toBe('Curado em 01/07/2026');
-    expect(formatCurationTrail({ origin: 'manual', curatedBy: null, curatedAt: null }, ME)).toBeNull();
+    expect(
+      formatCurationTrail({ origin: 'manual', curatedBy: null, curatedAt: null }, ME),
+    ).toBeNull();
   });
 
   it('ignora datas inválidas sem lançar exceção', () => {
-    expect(formatCurationTrail({ origin: 'manual', curatedBy: ME, curatedAt: 'nao-e-data' }, ME)).toBe(
-      'Curado por você',
-    );
+    expect(
+      formatCurationTrail({ origin: 'manual', curatedBy: ME, curatedAt: 'nao-e-data' }, ME),
+    ).toBe('Curado por você');
   });
 
   it('mantém invariantes em 500 cenários aleatórios determinísticos', () => {
@@ -173,7 +175,11 @@ describe('formatCurationTrail — simulação de cenários', () => {
       const origin = rand() > 0.5 ? 'manual' : 'auto';
       const curatedBy = rand() > 0.3 ? (rand() > 0.5 ? ME : OUTRO) : null;
       const curatedAt =
-        rand() > 0.3 ? new Date(Date.UTC(2026, Math.floor(rand() * 12), 1 + Math.floor(rand() * 28))).toISOString() : null;
+        rand() > 0.3
+          ? new Date(
+              Date.UTC(2026, Math.floor(rand() * 12), 1 + Math.floor(rand() * 28)),
+            ).toISOString()
+          : null;
 
       const out = formatCurationTrail({ origin, curatedBy, curatedAt }, ME);
 

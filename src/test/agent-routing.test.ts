@@ -44,7 +44,6 @@ import {
 
 const db = getSharedSupabaseMock('agent-routing');
 
-
 const buildRow = (overrides: Partial<AgentRoutingRow>): AgentRoutingRow => ({
   id: 'r-1',
   workspace_id: 'ws-1',

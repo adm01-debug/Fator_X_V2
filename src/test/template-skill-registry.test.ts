@@ -43,13 +43,19 @@ describe('templateSkillRegistry', () => {
   });
 
   it('recomenda por objetivo em linguagem natural', () => {
-    const recs = recommendTemplates({ objective: 'controlar ruptura e lote de estoque na expedição' }, 5);
+    const recs = recommendTemplates(
+      { objective: 'controlar ruptura e lote de estoque na expedição' },
+      5,
+    );
     expect(recs.length).toBeGreaterThan(0);
     expect(recs.some((r) => r.template.id === 'spec_expedicao_estoque')).toBe(true);
   });
 
   it('recomenda marketing de performance para objetivo de tráfego pago', () => {
-    const recs = recommendTemplates({ objective: 'melhorar roas das campanhas de trafego pago' }, 5);
+    const recs = recommendTemplates(
+      { objective: 'melhorar roas das campanhas de trafego pago' },
+      5,
+    );
     expect(recs.some((r) => r.template.id === 'spec_marketing_performance')).toBe(true);
   });
 
@@ -58,7 +64,10 @@ describe('templateSkillRegistry', () => {
   });
 
   it('respeita o limite solicitado', () => {
-    const recs = recommendTemplates({ objective: 'suporte de rede e servidor', departmentId: 'ti' }, 2);
+    const recs = recommendTemplates(
+      { objective: 'suporte de rede e servidor', departmentId: 'ti' },
+      2,
+    );
     expect(recs.length).toBeLessThanOrEqual(2);
   });
 });

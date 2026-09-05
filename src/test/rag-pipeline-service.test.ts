@@ -44,7 +44,10 @@ describe('ragPipelineService — invokers', () => {
     fns.setFunctionResult('rag-embed-v2', { data: { embeddings: [[0.1]] } });
     await embedTexts(['olá']);
 
-    const [name, opts] = fns.calls.invoke.mock.calls[0] as [string, { body: Record<string, unknown> }];
+    const [name, opts] = fns.calls.invoke.mock.calls[0] as [
+      string,
+      { body: Record<string, unknown> },
+    ];
     expect(name).toBe('rag-embed-v2');
     expect(opts.body).toEqual({
       texts: ['olá'],
@@ -68,14 +71,19 @@ describe('ragPipelineService — invokers', () => {
     await expect(embedTexts(['t'])).rejects.toThrow('Embed error: embed fail');
 
     fns.setFunctionResult('rag-rerank-v2', { data: null, error: { message: 'rerank fail' } });
-    await expect(rerankDocuments('q', [{ id: '1', content: 'c' }])).rejects.toThrow('Rerank error: rerank fail');
+    await expect(rerankDocuments('q', [{ id: '1', content: 'c' }])).rejects.toThrow(
+      'Rerank error: rerank fail',
+    );
   });
 
   it('invokeRagRerank v1 aplica top_k padrão e devolve {} sem corpo', async () => {
     fns.setFunctionResult('rag-rerank', { data: null, error: null });
     await expect(invokeRagRerank({ query: 'q', chunks: [{ content: 'x' }] })).resolves.toEqual({});
 
-    const [name, opts] = fns.calls.invoke.mock.calls[0] as [string, { body: Record<string, unknown> }];
+    const [name, opts] = fns.calls.invoke.mock.calls[0] as [
+      string,
+      { body: Record<string, unknown> },
+    ];
     expect(name).toBe('rag-rerank');
     expect(opts.body).toMatchObject({ top_k: 5 });
   });
@@ -129,7 +137,8 @@ describe('ragPipelineService — orquestração searchAndRerank', () => {
     await searchAndRerank('q', 'kb-1');
 
     const rerankCall = fns.calls.invoke.mock.calls.find((c) => c[0] === 'rag-rerank-v2');
-    const docs = (rerankCall![1] as { body: { documents: Array<{ score: number }> } }).body.documents;
+    const docs = (rerankCall![1] as { body: { documents: Array<{ score: number }> } }).body
+      .documents;
     expect(docs[0].score).toBe(0);
     expect(Number.isNaN(docs[0].score)).toBe(false);
   });
@@ -149,7 +158,10 @@ describe('ragPipelineService — orquestração searchAndRerank', () => {
     wireInvoke({ embeddings: [[0.1]] });
     db.setRpcResult('match_documents', { data: [] });
 
-    await expect(searchAndRerank('q', 'kb-1')).resolves.toEqual({ results: [], total_candidates: 0 });
+    await expect(searchAndRerank('q', 'kb-1')).resolves.toEqual({
+      results: [],
+      total_candidates: 0,
+    });
     const rerankCalls = fns.calls.invoke.mock.calls.filter((c) => c[0] === 'rag-rerank-v2');
     expect(rerankCalls).toHaveLength(0);
   });

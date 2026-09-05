@@ -15,10 +15,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import {
-  type PromptSectionKey,
-  type QuickAgentForm,
-} from '@/lib/validations/quickAgentSchema';
+import { type PromptSectionKey, type QuickAgentForm } from '@/lib/validations/quickAgentSchema';
 import { detectPromptContradictions } from '@/lib/validations/promptContradictions';
 import { locateSections, insertSectionAt } from '@/lib/promptSectionLocator';
 import { CompiledPromptPreview } from './CompiledPromptPreview';
@@ -86,11 +83,27 @@ interface Props {
   onToggleChecklistAutoUnlock?: (next: boolean) => void;
 }
 
-export function StepQuickPrompt({ form, errors, onPromptManualEdit, onRestore, onSafeReset, onApplyVariant, customLocked, onUnlockCustom, activeVariant, lockEvents, highlightField, checklistAutoUnlock, onToggleChecklistAutoUnlock, skillIds = [] }: Props) {
+export function StepQuickPrompt({
+  form,
+  errors,
+  onPromptManualEdit,
+  onRestore,
+  onSafeReset,
+  onApplyVariant,
+  customLocked,
+  onUnlockCustom,
+  activeVariant,
+  lockEvents,
+  highlightField,
+  checklistAutoUnlock,
+  onToggleChecklistAutoUnlock,
+  skillIds = [],
+}: Props) {
   // Active variant template + label — drives the checklist's per-section snippets
   // and the "Completar com X" CTA in real time.
   const activeVariantPrompt = activeVariant
-    ? QUICK_AGENT_TEMPLATES[form.type as QuickAgentType]?.promptVariants[activeVariant]?.prompt ?? null
+    ? (QUICK_AGENT_TEMPLATES[form.type as QuickAgentType]?.promptVariants[activeVariant]?.prompt ??
+      null)
     : null;
   const activeVariantLabel = activeVariant ? PROMPT_VARIANT_META[activeVariant].label : null;
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -169,7 +182,11 @@ export function StepQuickPrompt({ form, errors, onPromptManualEdit, onRestore, o
       el.focus({ preventScroll: true });
       const lineHeight = parseFloat(getComputedStyle(el).lineHeight || '0') || 16;
       el.scrollTop = Math.max(0, idx * lineHeight - el.clientHeight / 3);
-      try { el.setSelectionRange(start, end); } catch { /* ignore */ }
+      try {
+        el.setSelectionRange(start, end);
+      } catch {
+        /* ignore */
+      }
       el.scrollIntoView({ block: 'center', behavior: 'smooth' });
     });
   };
@@ -231,14 +248,21 @@ export function StepQuickPrompt({ form, errors, onPromptManualEdit, onRestore, o
       el.focus({ preventScroll: true });
       const lineHeight = parseFloat(getComputedStyle(el).lineHeight || '0') || 16;
       el.scrollTop = Math.max(0, linesUpTo * lineHeight - el.clientHeight / 3);
-      try { el.setSelectionRange(start, end); } catch { /* ignore */ }
+      try {
+        el.setSelectionRange(start, end);
+      } catch {
+        /* ignore */
+      }
       el.scrollIntoView({ block: 'center', behavior: 'smooth' });
     });
   };
 
-  useEffect(() => () => {
-    if (sectionPulseRef.current) window.clearTimeout(sectionPulseRef.current);
-  }, []);
+  useEffect(
+    () => () => {
+      if (sectionPulseRef.current) window.clearTimeout(sectionPulseRef.current);
+    },
+    [],
+  );
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const raw = e.target.value;
@@ -294,7 +318,8 @@ export function StepQuickPrompt({ form, errors, onPromptManualEdit, onRestore, o
   useEffect(() => {
     if (!customLocked) return;
     const handler = (e: KeyboardEvent) => {
-      const isUnlock = (e.metaKey || e.ctrlKey) && !e.shiftKey && !e.altKey && (e.key === 'u' || e.key === 'U');
+      const isUnlock =
+        (e.metaKey || e.ctrlKey) && !e.shiftKey && !e.altKey && (e.key === 'u' || e.key === 'U');
       if (!isUnlock) return;
       const target = e.target as HTMLElement | null;
       const tag = target?.tagName;
@@ -320,8 +345,12 @@ export function StepQuickPrompt({ form, errors, onPromptManualEdit, onRestore, o
     <div className="space-y-4">
       <div className="flex items-end justify-between gap-3 flex-wrap">
         <div>
-          <h2 className="text-title-sm font-heading font-semibold text-foreground">System Prompt</h2>
-          <p className="text-body-sm text-muted-foreground">Instruções de comportamento do agente.</p>
+          <h2 className="text-title-sm font-heading font-semibold text-foreground">
+            System Prompt
+          </h2>
+          <p className="text-body-sm text-muted-foreground">
+            Instruções de comportamento do agente.
+          </p>
         </div>
         <div className="flex items-center gap-1.5">
           <Button type="button" variant="ghost" size="sm" onClick={onRestore} className="gap-1.5">
@@ -344,8 +373,9 @@ export function StepQuickPrompt({ form, errors, onPromptManualEdit, onRestore, o
                 <AlertDialogDescription asChild>
                   <div className="space-y-2 text-body-sm text-muted-foreground">
                     <p>
-                      Esta ação volta o <strong>system prompt</strong> e o <strong>preview do agente</strong>{' '}
-                      para o template base do tipo selecionado, em um estado conhecido e validado.
+                      Esta ação volta o <strong>system prompt</strong> e o{' '}
+                      <strong>preview do agente</strong> para o template base do tipo selecionado,
+                      em um estado conhecido e validado.
                     </p>
                     <ul className="list-disc pl-5 space-y-1 text-meta">
                       <li>Substitui o prompt atual pelo template padrão (sanitizado).</li>
@@ -354,7 +384,8 @@ export function StepQuickPrompt({ form, errors, onPromptManualEdit, onRestore, o
                       <li>Mantém nome, missão, descrição e modelo intactos.</li>
                     </ul>
                     <p className="text-meta text-destructive">
-                      Suas edições atuais no prompt serão perdidas — considere salvar uma versão antes.
+                      Suas edições atuais no prompt serão perdidas — considere salvar uma versão
+                      antes.
                     </p>
                   </div>
                 </AlertDialogDescription>
@@ -389,10 +420,14 @@ export function StepQuickPrompt({ form, errors, onPromptManualEdit, onRestore, o
 
       <div
         className={`nexus-card space-y-3 transition-shadow ${
-          pulsedSection ? 'ring-2 ring-nexus-amber/60 shadow-[0_0_0_4px_hsl(var(--nexus-amber)/0.15)]' : ''
+          pulsedSection
+            ? 'ring-2 ring-nexus-amber/60 shadow-[0_0_0_4px_hsl(var(--nexus-amber)/0.15)]'
+            : ''
         }`}
       >
-        <Label htmlFor="qa-prompt" className="sr-only">System prompt</Label>
+        <Label htmlFor="qa-prompt" className="sr-only">
+          System prompt
+        </Label>
         {pulsedSection && (
           <div
             role="status"
@@ -400,7 +435,9 @@ export function StepQuickPrompt({ form, errors, onPromptManualEdit, onRestore, o
             className="text-meta text-nexus-amber bg-nexus-amber/10 border border-nexus-amber/30 rounded-md px-2.5 py-1 flex items-center justify-between gap-2"
           >
             <span>
-              📍 Ancorado em <strong>## {pulsedSection.charAt(0).toUpperCase() + pulsedSection.slice(1)}</strong> — corrija e clique para sair.
+              📍 Ancorado em{' '}
+              <strong>## {pulsedSection.charAt(0).toUpperCase() + pulsedSection.slice(1)}</strong> —
+              corrija e clique para sair.
             </span>
           </div>
         )}
@@ -409,7 +446,9 @@ export function StepQuickPrompt({ form, errors, onPromptManualEdit, onRestore, o
             locations={locations}
             totalLines={totalLines}
             activeKey={pulsedSection}
-            onJump={(loc) => jumpToSection(loc.key, loc.status === 'missing' ? `## ${loc.label}\n- ` : undefined)}
+            onJump={(loc) =>
+              jumpToSection(loc.key, loc.status === 'missing' ? `## ${loc.label}\n- ` : undefined)
+            }
           />
           <PromptHighlightOverlay
             prompt={form.prompt}
@@ -430,7 +469,12 @@ export function StepQuickPrompt({ form, errors, onPromptManualEdit, onRestore, o
             aria-invalid={!!errors.prompt}
             aria-describedby="qa-prompt-feedback"
             placeholder="## Persona&#10;...&#10;&#10;## Escopo&#10;...&#10;&#10;## Formato&#10;...&#10;&#10;## Regras&#10;..."
-            style={{ paddingLeft: EDITOR_PADDING_LEFT, position: 'relative', zIndex: 2, background: 'transparent' }}
+            style={{
+              paddingLeft: EDITOR_PADDING_LEFT,
+              position: 'relative',
+              zIndex: 2,
+              background: 'transparent',
+            }}
             className={`bg-secondary/50 border-border/50 font-mono text-meta leading-relaxed resize-none ${
               errors.prompt ? 'border-destructive' : ''
             } ${promptPulsing ? FIELD_HIGHLIGHT_CLS : ''} ${
@@ -472,7 +516,11 @@ export function StepQuickPrompt({ form, errors, onPromptManualEdit, onRestore, o
           </div>
         )}
         <div id="qa-prompt-feedback">
-          <PromptValidationFeedback prompt={form.prompt} onApplyFix={handleApplyFix} onJumpToLine={jumpToLine} />
+          <PromptValidationFeedback
+            prompt={form.prompt}
+            onApplyFix={handleApplyFix}
+            onJumpToLine={jumpToLine}
+          />
         </div>
       </div>
 
@@ -485,7 +533,11 @@ export function StepQuickPrompt({ form, errors, onPromptManualEdit, onRestore, o
         onToggleAutoUnlock={onToggleChecklistAutoUnlock}
         onInsert={(snippet, key) => {
           if (key) {
-            const { prompt: nextPrompt, insertedRange } = insertSectionAt(form.prompt, key, snippet);
+            const { prompt: nextPrompt, insertedRange } = insertSectionAt(
+              form.prompt,
+              key,
+              snippet,
+            );
             handleManualEdit(nextPrompt, 'checklist');
             // Place the caret at the start of the body (just after the
             // heading line) so the user can immediately start typing inside
@@ -495,7 +547,11 @@ export function StepQuickPrompt({ form, errors, onPromptManualEdit, onRestore, o
               const el = textareaRef.current;
               if (!el) return;
               el.focus({ preventScroll: true });
-              try { el.setSelectionRange(bodyStart, bodyStart); } catch { /* ignore */ }
+              try {
+                el.setSelectionRange(bodyStart, bodyStart);
+              } catch {
+                /* ignore */
+              }
               const linesUpTo = nextPrompt.slice(0, bodyStart).split('\n').length - 1;
               const lh = parseFloat(getComputedStyle(el).lineHeight || '0') || 16;
               el.scrollTop = Math.max(0, linesUpTo * lh - el.clientHeight / 3);
@@ -527,7 +583,11 @@ export function StepQuickPrompt({ form, errors, onPromptManualEdit, onRestore, o
               const el = textareaRef.current;
               if (!el) return;
               el.focus({ preventScroll: true });
-              try { el.setSelectionRange(bodyStart, bodyStart); } catch { /* ignore */ }
+              try {
+                el.setSelectionRange(bodyStart, bodyStart);
+              } catch {
+                /* ignore */
+              }
               const linesUpTo = working.slice(0, bodyStart).split('\n').length - 1;
               const lh = parseFloat(getComputedStyle(el).lineHeight || '0') || 16;
               el.scrollTop = Math.max(0, linesUpTo * lh - el.clientHeight / 3);
@@ -548,7 +608,11 @@ export function StepQuickPrompt({ form, errors, onPromptManualEdit, onRestore, o
       <AgentLivePreviewCard form={form} />
 
       {/* Pre-flight review summary — quick "ready to create?" snapshot */}
-      <PreflightReviewSummary form={form} onJumpToSection={jumpToSection} onJumpToLine={jumpToLine} />
+      <PreflightReviewSummary
+        form={form}
+        onJumpToSection={jumpToSection}
+        onJumpToLine={jumpToLine}
+      />
 
       {/* Consolidated prompt preview — final text the LLM will receive (open by default on the last step) */}
       <CompiledPromptPreview

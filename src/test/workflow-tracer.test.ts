@@ -36,7 +36,6 @@ vi.mock('@/lib/supabaseExtended', async () => {
   };
 });
 
-
 vi.mock('@/lib/logger', () => ({
   logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
 }));
@@ -52,11 +51,8 @@ vi.mock('@/lib/tracing', async () => {
     // Wrap withTrace to also push the resulting trace into capturedTraces
     withTrace: async <T>(
       name: string,
-      fn: (
-        addSpan: (s: DbRow) => void,
-        ctx: import('@/lib/tracing').TraceContext
-      ) => Promise<T>,
-      options: import('@/lib/tracing').TraceOptions = {}
+      fn: (addSpan: (s: DbRow) => void, ctx: import('@/lib/tracing').TraceContext) => Promise<T>,
+      options: import('@/lib/tracing').TraceOptions = {},
     ) => {
       const ctx = actual.startTrace({ ...options, rootName: name });
       try {
@@ -124,12 +120,21 @@ describe('executeWorkflow — tracer instrumentation', () => {
       }
       // each fallback llm-gateway call succeeds
       return {
-        data: { content: `step output ${calls}`, cost_usd: 0.01, input_tokens: 100, output_tokens: 50 },
+        data: {
+          content: `step output ${calls}`,
+          cost_usd: 0.01,
+          input_tokens: 100,
+          output_tokens: 50,
+        },
         error: null,
       };
     });
 
-    const result = await executeWorkflow('wf-4', 'FallbackFlow', ['parser', 'enricher', 'reporter']);
+    const result = await executeWorkflow('wf-4', 'FallbackFlow', [
+      'parser',
+      'enricher',
+      'reporter',
+    ]);
 
     const trace = capturedTraces[0] as { spans: Array<{ name: string; kind: string }> };
     const stepSpans = trace.spans.filter((s) => s.name.startsWith('workflow.step.'));

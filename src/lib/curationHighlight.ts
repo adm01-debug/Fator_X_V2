@@ -70,10 +70,7 @@ export function beginHighlight(
  * exatamente o mesmo mapa, para que o tick periódico não force re-render do
  * painel inteiro a cada segundo.
  */
-export function pruneHighlights(
-  mapa: CurationHighlightMap,
-  agora: number,
-): CurationHighlightMap {
+export function pruneHighlights(mapa: CurationHighlightMap, agora: number): CurationHighlightMap {
   if (mapa.size === 0) return mapa;
   if (!Number.isFinite(agora)) return mapa;
 
@@ -94,11 +91,7 @@ export function pruneHighlights(
 }
 
 /** Um destaque vale enquanto sua expiração for estritamente futura. */
-export function isHighlighted(
-  mapa: CurationHighlightMap,
-  chave: string,
-  agora: number,
-): boolean {
+export function isHighlighted(mapa: CurationHighlightMap, chave: string, agora: number): boolean {
   const expiraEm = mapa.get(chave);
   if (expiraEm === undefined) return false;
   if (!Number.isFinite(agora)) return false;

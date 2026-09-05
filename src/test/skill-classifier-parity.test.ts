@@ -20,11 +20,7 @@
  * regra. Falha aqui = drift; corrija AMBOS os arquivos.
  */
 import { describe, expect, it } from 'vitest';
-import {
-  DEPARTMENT_META,
-  DOMAIN_DEPARTMENTS,
-  SKILL_DEPARTMENTS,
-} from '@/config/skill-departments';
+import { DEPARTMENT_META, DOMAIN_DEPARTMENTS, SKILL_DEPARTMENTS } from '@/config/skill-departments';
 import { classifyDepartment as classifyApp } from '@/services/skillDepartmentClassifier';
 import {
   classifyDepartment as classifyDeno,
@@ -49,19 +45,45 @@ function makeRng(seed: number) {
   };
 }
 
-const RUIDO_PLATAFORMA = [
-  'agent', 'skills', 'claude', 'mcp', 'llm', 'prompt', 'openai', 'tools',
+const RUIDO_PLATAFORMA = ['agent', 'skills', 'claude', 'mcp', 'llm', 'prompt', 'openai', 'tools'];
+const RUIDO_NEUTRO = [
+  'awesome',
+  'list',
+  'curated',
+  'collection',
+  'open',
+  'source',
+  'hacktoberfest',
 ];
-const RUIDO_NEUTRO = ['awesome', 'list', 'curated', 'collection', 'open', 'source', 'hacktoberfest'];
 
 /** Casos reais que motivaram cada regra do classificador. */
 const CASOS_REAIS: Caso[] = [
   { name: 'gstack', description: 'Router for the gstack skill suite', tags: [] },
-  { name: 'fastmcp', description: 'Fast MCP servers and clients in Python', tags: ['mcp', 'python', 'llm', 'agent', 'tools'] },
-  { name: 'TradingAgents', description: 'Multi-agent LLM financial trading framework', tags: ['trading', 'finance', 'llm'] },
-  { name: 'eCommerce Skills', description: 'Skills for online store operations, catalog and checkout', tags: ['ecommerce', 'vendas'] },
-  { name: 'awesome-claude-skills', description: 'A curated list of awesome Claude skills', tags: ['awesome', 'list', 'claude'] },
-  { name: 'obsidian-wiki', description: 'Knowledge base agent for Obsidian vaults', tags: ['obsidian', 'knowledge'] },
+  {
+    name: 'fastmcp',
+    description: 'Fast MCP servers and clients in Python',
+    tags: ['mcp', 'python', 'llm', 'agent', 'tools'],
+  },
+  {
+    name: 'TradingAgents',
+    description: 'Multi-agent LLM financial trading framework',
+    tags: ['trading', 'finance', 'llm'],
+  },
+  {
+    name: 'eCommerce Skills',
+    description: 'Skills for online store operations, catalog and checkout',
+    tags: ['ecommerce', 'vendas'],
+  },
+  {
+    name: 'awesome-claude-skills',
+    description: 'A curated list of awesome Claude skills',
+    tags: ['awesome', 'list', 'claude'],
+  },
+  {
+    name: 'obsidian-wiki',
+    description: 'Knowledge base agent for Obsidian vaults',
+    tags: ['obsidian', 'knowledge'],
+  },
   { name: 'RuView', description: 'Code review companion', tags: [] },
   { name: '', description: '', tags: [] },
   { name: '   ', tags: [] },
@@ -139,10 +161,7 @@ describe('paridade classificador app ↔ harvester (Deno)', () => {
     for (const ruido of RUIDO_PLATAFORMA) {
       const r = classifyDeno({ name: ruido, description: ruido, tags: [ruido] });
       if (r.department === null) continue;
-      expect(
-        r.tier,
-        `"${ruido}" virou domínio no harvester`,
-      ).not.toBe('domain');
+      expect(r.tier, `"${ruido}" virou domínio no harvester`).not.toBe('domain');
     }
   });
 

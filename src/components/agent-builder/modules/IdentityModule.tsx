@@ -10,44 +10,96 @@ import { Sparkles, Info, CheckCircle2 } from 'lucide-react';
 import type { AgentPersona } from '@/types/agentTypes';
 
 const AVATAR_EMOJIS = [
-  '🤖', '⚡', '🧠', '🎯', '🛡️', '🔮', '🦾', '🚀', '💎', '🌟',
-  '🔥', '🧬', '🎨', '📊', '🔍', '🦅', '🐉', '🌐', '👁️', '⚙️',
+  '🤖',
+  '⚡',
+  '🧠',
+  '🎯',
+  '🛡️',
+  '🔮',
+  '🦾',
+  '🚀',
+  '💎',
+  '🌟',
+  '🔥',
+  '🧬',
+  '🎨',
+  '📊',
+  '🔍',
+  '🦅',
+  '🐉',
+  '🌐',
+  '👁️',
+  '⚙️',
 ];
 
 const PERSONA_ITEMS = [
-  { id: 'assistant' as AgentPersona, icon: '🤖', title: 'Assistente', description: 'Responde perguntas e executa tarefas sob demanda' },
-  { id: 'specialist' as AgentPersona, icon: '🎓', title: 'Especialista', description: 'Domínio profundo em área específica' },
-  { id: 'coordinator' as AgentPersona, icon: '🎯', title: 'Coordenador', description: 'Orquestra outros agentes e workflows' },
-  { id: 'analyst' as AgentPersona, icon: '📊', title: 'Analista', description: 'Processa dados, gera insights e relatórios' },
-  { id: 'creative' as AgentPersona, icon: '🎨', title: 'Criativo', description: 'Gera conteúdo, copy, design, ideias' },
-  { id: 'autonomous' as AgentPersona, icon: '⚡', title: 'Autônomo', description: 'Opera proativamente com mínima supervisão' },
+  {
+    id: 'assistant' as AgentPersona,
+    icon: '🤖',
+    title: 'Assistente',
+    description: 'Responde perguntas e executa tarefas sob demanda',
+  },
+  {
+    id: 'specialist' as AgentPersona,
+    icon: '🎓',
+    title: 'Especialista',
+    description: 'Domínio profundo em área específica',
+  },
+  {
+    id: 'coordinator' as AgentPersona,
+    icon: '🎯',
+    title: 'Coordenador',
+    description: 'Orquestra outros agentes e workflows',
+  },
+  {
+    id: 'analyst' as AgentPersona,
+    icon: '📊',
+    title: 'Analista',
+    description: 'Processa dados, gera insights e relatórios',
+  },
+  {
+    id: 'creative' as AgentPersona,
+    icon: '🎨',
+    title: 'Criativo',
+    description: 'Gera conteúdo, copy, design, ideias',
+  },
+  {
+    id: 'autonomous' as AgentPersona,
+    icon: '⚡',
+    title: 'Autônomo',
+    description: 'Opera proativamente com mínima supervisão',
+  },
 ];
 
 export function IdentityModule() {
   const agent = useAgentBuilderStore((s) => s.agent);
   const updateAgent = useAgentBuilderStore((s) => s.updateAgent);
 
-  const radarData = useMemo(() => [
-    { subject: 'Formalidade', A: agent.formality, fullMark: 100 },
-    { subject: 'Proatividade', A: agent.proactivity, fullMark: 100 },
-    { subject: 'Criatividade', A: agent.creativity, fullMark: 100 },
-    { subject: 'Verbosidade', A: agent.verbosity, fullMark: 100 },
-  ], [agent.formality, agent.proactivity, agent.creativity, agent.verbosity]);
+  const radarData = useMemo(
+    () => [
+      { subject: 'Formalidade', A: agent.formality, fullMark: 100 },
+      { subject: 'Proatividade', A: agent.proactivity, fullMark: 100 },
+      { subject: 'Criatividade', A: agent.creativity, fullMark: 100 },
+      { subject: 'Verbosidade', A: agent.verbosity, fullMark: 100 },
+    ],
+    [agent.formality, agent.proactivity, agent.creativity, agent.verbosity],
+  );
 
   const personaPreview = useMemo(() => {
-    let msg = "Olá! ";
-    if (agent.formality > 70) msg = "Saudações. ";
-    else if (agent.formality < 30) msg = "E aí! ";
+    let msg = 'Olá! ';
+    if (agent.formality > 70) msg = 'Saudações. ';
+    else if (agent.formality < 30) msg = 'E aí! ';
 
-    if (agent.creativity > 70) msg += "Estou pronto para cocriar algo incrível hoje. ";
-    else msg += "Como posso auxiliar em suas tarefas atuais? ";
+    if (agent.creativity > 70) msg += 'Estou pronto para cocriar algo incrível hoje. ';
+    else msg += 'Como posso auxiliar em suas tarefas atuais? ';
 
     if (agent.verbosity > 70) {
-      msg += "Analisei os parâmetros da nossa interação e estou à disposição para aprofundar qualquer tópico que você julgar necessário para o sucesso da nossa missão.";
+      msg +=
+        'Analisei os parâmetros da nossa interação e estou à disposição para aprofundar qualquer tópico que você julgar necessário para o sucesso da nossa missão.';
     } else if (agent.verbosity < 30) {
-      msg += "Pronto.";
+      msg += 'Pronto.';
     } else {
-      msg += "Estou à disposição.";
+      msg += 'Estou à disposição.';
     }
 
     return msg;
@@ -57,14 +109,21 @@ export function IdentityModule() {
     <div className="space-y-8">
       {/* Seção A — Nome, Missão & Avatar */}
       <section>
-        <SectionTitle icon="🧬" title="Nome, Missão & Avatar" subtitle="Defina a identidade fundamental do seu agente" />
+        <SectionTitle
+          icon="🧬"
+          title="Nome, Missão & Avatar"
+          subtitle="Defina a identidade fundamental do seu agente"
+        />
         <div className="space-y-4">
           <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg flex items-start gap-3">
             <Sparkles className="h-4 w-4 text-primary shrink-0 mt-0.5" />
             <div>
-              <p className="text-meta font-bold text-primary uppercase">Sugestão de Preenchimento</p>
+              <p className="text-meta font-bold text-primary uppercase">
+                Sugestão de Preenchimento
+              </p>
               <p className="text-meta text-muted-foreground leading-relaxed mt-0.5">
-                Utilize o <strong>IA Builder</strong> no cabeçalho para gerar nome, missão e prompt a partir de uma ideia simples.
+                Utilize o <strong>IA Builder</strong> no cabeçalho para gerar nome, missão e prompt
+                a partir de uma ideia simples.
               </p>
             </div>
           </div>
@@ -83,7 +142,7 @@ export function IdentityModule() {
             hint="Uma frase clara que define o propósito principal"
           />
           <div className="space-y-1.5">
-            { }
+            {}
             <label className="text-meta font-medium text-foreground">Avatar</label>
             <div className="flex flex-wrap gap-2">
               {AVATAR_EMOJIS.map((emoji) => (
@@ -95,7 +154,7 @@ export function IdentityModule() {
                     'w-10 h-10 rounded-lg text-xl flex items-center justify-center transition-all duration-200 border',
                     agent.avatar_emoji === emoji
                       ? 'border-primary bg-primary/10 scale-110 shadow-[0_0_12px_hsl(var(--primary)/0.3)]'
-                      : 'border-border bg-muted/30 hover:bg-muted/60 hover:scale-105'
+                      : 'border-border bg-muted/30 hover:bg-muted/60 hover:scale-105',
                   )}
                 >
                   {emoji}
@@ -108,7 +167,11 @@ export function IdentityModule() {
 
       {/* Seção B — Arquétipo / Persona */}
       <section>
-        <SectionTitle icon="🎭" title="Arquétipo / Persona" subtitle="Selecione o papel principal do agente" />
+        <SectionTitle
+          icon="🎭"
+          title="Arquétipo / Persona"
+          subtitle="Selecione o papel principal do agente"
+        />
         <SelectionGrid
           items={PERSONA_ITEMS}
           value={agent.persona}
@@ -119,35 +182,43 @@ export function IdentityModule() {
 
       {/* Seção C — Personalidade */}
       <section>
-        <SectionTitle icon="🎚️" title="Personalidade" subtitle="Ajuste o comportamento e tom do agente" />
+        <SectionTitle
+          icon="🎚️"
+          title="Personalidade"
+          subtitle="Ajuste o comportamento e tom do agente"
+        />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           <div className="space-y-6">
             <SliderField
               label="Formalidade"
               value={agent.formality}
               onChange={(v) => updateAgent({ formality: v })}
-              min={0} max={100}
+              min={0}
+              max={100}
               description="0 = Casual → 100 = Muito formal"
             />
             <SliderField
               label="Proatividade"
               value={agent.proactivity}
               onChange={(v) => updateAgent({ proactivity: v })}
-              min={0} max={100}
+              min={0}
+              max={100}
               description="0 = Reativo → 100 = Muito proativo"
             />
             <SliderField
               label="Criatividade"
               value={agent.creativity}
               onChange={(v) => updateAgent({ creativity: v })}
-              min={0} max={100}
+              min={0}
+              max={100}
               description="0 = Conservador → 100 = Muito criativo"
             />
             <SliderField
               label="Verbosidade"
               value={agent.verbosity}
               onChange={(v) => updateAgent({ verbosity: v })}
-              min={0} max={100}
+              min={0}
+              max={100}
               description="0 = Conciso → 100 = Detalhado"
             />
           </div>
@@ -159,7 +230,10 @@ export function IdentityModule() {
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
                 <PolarGrid stroke="hsl(var(--border))" />
-                <PolarAngleAxis dataKey="subject" tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
+                <PolarAngleAxis
+                  dataKey="subject"
+                  tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
+                />
                 <Radar
                   name="DNA"
                   dataKey="A"
@@ -195,39 +269,81 @@ export function IdentityModule() {
 
       {/* Seção D — Escopo & Validação */}
       <section>
-        <SectionTitle icon="📐" title="Escopo de Atuação" subtitle="Defina os limites do que o agente pode e não pode fazer" />
+        <SectionTitle
+          icon="📐"
+          title="Escopo de Atuação"
+          subtitle="Defina os limites do que o agente pode e não pode fazer"
+        />
         <div className="space-y-4">
           <TextAreaField
             label="Escopo"
             value={agent.scope}
             onChange={(v) => updateAgent({ scope: v })}
-            placeholder={"O agente PODE:\n- Responder dúvidas sobre produtos\n- Consultar estoque\n\nO agente NÃO PODE:\n- Alterar preços\n- Aprovar descontos acima de 10%"}
+            placeholder={
+              'O agente PODE:\n- Responder dúvidas sobre produtos\n- Consultar estoque\n\nO agente NÃO PODE:\n- Alterar preços\n- Aprovar descontos acima de 10%'
+            }
             rows={6}
             hint="Defina limites claros. O que pode e NÃO pode fazer."
             maxLength={2000}
           />
-          
+
           <div className="p-4 rounded-xl border border-nexus-emerald/20 bg-nexus-emerald/5">
             <div className="flex items-center gap-2 mb-3">
               <CheckCircle2 className="h-4 w-4 text-nexus-emerald" />
-              <h4 className="text-meta font-bold text-foreground uppercase tracking-tight">Validação de Identidade</h4>
+              <h4 className="text-meta font-bold text-foreground uppercase tracking-tight">
+                Validação de Identidade
+              </h4>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="flex items-center gap-2 text-meta">
-                <div className={cn("h-1.5 w-1.5 rounded-full", agent.name ? "bg-nexus-emerald" : "bg-muted")} />
-                <span className={cn(agent.name ? "text-foreground" : "text-muted-foreground")}>Nome configurado</span>
+                <div
+                  className={cn(
+                    'h-1.5 w-1.5 rounded-full',
+                    agent.name ? 'bg-nexus-emerald' : 'bg-muted',
+                  )}
+                />
+                <span className={cn(agent.name ? 'text-foreground' : 'text-muted-foreground')}>
+                  Nome configurado
+                </span>
               </div>
               <div className="flex items-center gap-2 text-meta">
-                <div className={cn("h-1.5 w-1.5 rounded-full", agent.mission ? "bg-nexus-emerald" : "bg-muted")} />
-                <span className={cn(agent.mission ? "text-foreground" : "text-muted-foreground")}>Missão definida</span>
+                <div
+                  className={cn(
+                    'h-1.5 w-1.5 rounded-full',
+                    agent.mission ? 'bg-nexus-emerald' : 'bg-muted',
+                  )}
+                />
+                <span className={cn(agent.mission ? 'text-foreground' : 'text-muted-foreground')}>
+                  Missão definida
+                </span>
               </div>
               <div className="flex items-center gap-2 text-meta">
-                <div className={cn("h-1.5 w-1.5 rounded-full", agent.scope.length > 50 ? "bg-nexus-emerald" : "bg-muted")} />
-                <span className={cn(agent.scope.length > 50 ? "text-foreground" : "text-muted-foreground")}>Escopo detalhado</span>
+                <div
+                  className={cn(
+                    'h-1.5 w-1.5 rounded-full',
+                    agent.scope.length > 50 ? 'bg-nexus-emerald' : 'bg-muted',
+                  )}
+                />
+                <span
+                  className={cn(
+                    agent.scope.length > 50 ? 'text-foreground' : 'text-muted-foreground',
+                  )}
+                >
+                  Escopo detalhado
+                </span>
               </div>
               <div className="flex items-center gap-2 text-meta">
-                <div className={cn("h-1.5 w-1.5 rounded-full", agent.avatar_emoji ? "bg-nexus-emerald" : "bg-muted")} />
-                <span className={cn(agent.avatar_emoji ? "text-foreground" : "text-muted-foreground")}>Avatar selecionado</span>
+                <div
+                  className={cn(
+                    'h-1.5 w-1.5 rounded-full',
+                    agent.avatar_emoji ? 'bg-nexus-emerald' : 'bg-muted',
+                  )}
+                />
+                <span
+                  className={cn(agent.avatar_emoji ? 'text-foreground' : 'text-muted-foreground')}
+                >
+                  Avatar selecionado
+                </span>
               </div>
             </div>
           </div>

@@ -237,7 +237,11 @@ describe('decideReclassificationReview — decisão autoritativa no servidor', (
     });
 
     const motivo = 'x'.repeat(MAX_DECISION_REASON + 500);
-    const r = await decideReclassificationReview({ reviewId: 'r-1', approve: true, reason: motivo });
+    const r = await decideReclassificationReview({
+      reviewId: 'r-1',
+      approve: true,
+      reason: motivo,
+    });
 
     const [nome, args] = db.calls.rpc.mock.calls[0] as [string, Record<string, unknown>];
     expect(nome).toBe('decide_skill_reclassification');
@@ -272,7 +276,11 @@ describe('decideReclassificationReview — decisão autoritativa no servidor', (
       data: [linha({ status: 'rejeitado', reviewed_at: '2026-07-28T11:00:00Z' })],
       error: null,
     });
-    const r = await decideReclassificationReview({ reviewId: 'r-1', approve: false, reason: 'não' });
+    const r = await decideReclassificationReview({
+      reviewId: 'r-1',
+      approve: false,
+      reason: 'não',
+    });
     expect(r.status).toBe('rejeitado');
   });
 });

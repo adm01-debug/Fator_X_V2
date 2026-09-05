@@ -19,7 +19,6 @@ import {
   MIN_PLATFORM_DENSITY,
   PLATFORM_TIER_CONFIDENCE,
   PLATFORM_TIER_MAX_CONFIDENCE,
-
   PLATFORM_TIER_DEPARTMENT,
   PLATFORM_STOPWORDS,
 } from '@/services/skillDepartmentClassifier';
@@ -82,9 +81,32 @@ describe('tier de plataforma', () => {
   });
 
   it('varre o espaço de densidade: o tier só dispara acima do limiar', () => {
-    const ruido = ['alfa', 'beta', 'gama', 'delta', 'epsilon', 'zeta', 'eta', 'teta',
-      'iota', 'kapa', 'lambda', 'mi', 'ni', 'csi', 'omicron', 'pi', 'ro', 'sigma',
-      'tau', 'ipsilon', 'fi', 'qui', 'psi', 'omega'];
+    const ruido = [
+      'alfa',
+      'beta',
+      'gama',
+      'delta',
+      'epsilon',
+      'zeta',
+      'eta',
+      'teta',
+      'iota',
+      'kapa',
+      'lambda',
+      'mi',
+      'ni',
+      'csi',
+      'omicron',
+      'pi',
+      'ro',
+      'sigma',
+      'tau',
+      'ipsilon',
+      'fi',
+      'qui',
+      'psi',
+      'omega',
+    ];
     for (let plataforma = 0; plataforma <= 6; plataforma += 1) {
       const tokensPlataforma = Array.from(PLATFORM_STOPWORDS).slice(0, plataforma);
       const texto = [...tokensPlataforma, ...ruido].join(' ');
@@ -195,8 +217,20 @@ describe('confiança graduada do tier de plataforma', () => {
 
   it('grade completa: 1..14 termos × 1..2 campos respeita piso, teto e limiar', () => {
     const vocab = [
-      'agent', 'skill', 'llm', 'prompt', 'mcp', 'claude', 'codex',
-      'cursor', 'copilot', 'gemini', 'openai', 'anthropic', 'chatgpt', 'assistant',
+      'agent',
+      'skill',
+      'llm',
+      'prompt',
+      'mcp',
+      'claude',
+      'codex',
+      'cursor',
+      'copilot',
+      'gemini',
+      'openai',
+      'anthropic',
+      'chatgpt',
+      'assistant',
     ];
     let cenarios = 0;
     for (let n = 1; n <= vocab.length; n += 1) {

@@ -4,13 +4,30 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { History, Search, Eye } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { listExecutions, getExecutionStats, type ExecutionRecord } from '@/services/executionHistoryService';
+import {
+  listExecutions,
+  getExecutionStats,
+  type ExecutionRecord,
+} from '@/services/executionHistoryService';
 import { useToast } from '@/hooks/use-toast';
 import { ExecutionTimelineDialog } from './ExecutionTimelineDialog';
 
-
-const STATUS_COLORS: Record<string, string> = { running: 'bg-nexus-blue/20 text-nexus-blue', success: 'bg-nexus-emerald/20 text-nexus-emerald', failed: 'bg-destructive/20 text-destructive', cancelled: 'bg-muted text-muted-foreground', timeout: 'bg-nexus-orange/20 text-nexus-orange', waiting: 'bg-nexus-amber/20 text-nexus-amber' };
-const TYPE_ICONS: Record<string, string> = { workflow: '🔄', agent: '🤖', automation: '⚡', webhook: '🔗', schedule: '⏰', manual: '👤' };
+const STATUS_COLORS: Record<string, string> = {
+  running: 'bg-nexus-blue/20 text-nexus-blue',
+  success: 'bg-nexus-emerald/20 text-nexus-emerald',
+  failed: 'bg-destructive/20 text-destructive',
+  cancelled: 'bg-muted text-muted-foreground',
+  timeout: 'bg-nexus-orange/20 text-nexus-orange',
+  waiting: 'bg-nexus-amber/20 text-nexus-amber',
+};
+const TYPE_ICONS: Record<string, string> = {
+  workflow: '🔄',
+  agent: '🤖',
+  automation: '⚡',
+  webhook: '🔗',
+  schedule: '⏰',
+  manual: '👤',
+};
 
 export function ExecutionHistoryPanel() {
   const [executions, setExecutions] = useState<ExecutionRecord[]>([]);
@@ -22,15 +39,16 @@ export function ExecutionHistoryPanel() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const { toast } = useToast();
 
-
   useEffect(() => {
-    Promise.all([
-      listExecutions(search ? { search } : undefined, 50),
-      getExecutionStats(24),
-    ]).then(([{ data, total: t }, s]) => { setExecutions(data); setTotal(t); setStats(s); })
+    Promise.all([listExecutions(search ? { search } : undefined, 50), getExecutionStats(24)])
+      .then(([{ data, total: t }, s]) => {
+        setExecutions(data);
+        setTotal(t);
+        setStats(s);
+      })
       .catch(() => toast({ title: 'Erro', variant: 'destructive' }))
       .finally(() => setLoading(false));
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   }, [search]);
 
   return (
@@ -40,12 +58,22 @@ export function ExecutionHistoryPanel() {
           { label: 'Total (24h)', value: stats?.total ?? 0, color: 'hsl(var(--nexus-blue))' },
           { label: 'Sucesso', value: stats?.success ?? 0, color: 'hsl(var(--nexus-emerald))' },
           { label: 'Falhas', value: stats?.failed ?? 0, color: 'hsl(var(--nexus-red))' },
-          { label: 'Taxa Sucesso', value: `${(stats?.success_rate ?? 0).toFixed(1)}%`, color: 'hsl(var(--nexus-purple))' },
-          { label: 'Custo (BRL)', value: `R$ ${(stats?.total_cost_brl ?? 0).toFixed(2)}`, color: 'hsl(var(--nexus-yellow))' },
+          {
+            label: 'Taxa Sucesso',
+            value: `${(stats?.success_rate ?? 0).toFixed(1)}%`,
+            color: 'hsl(var(--nexus-purple))',
+          },
+          {
+            label: 'Custo (BRL)',
+            value: `R$ ${(stats?.total_cost_brl ?? 0).toFixed(2)}`,
+            color: 'hsl(var(--nexus-yellow))',
+          },
         ].map((s, i) => (
           <Card key={i} className="bg-card border-border">
             <CardContent className="p-3 text-center">
-              <p className="text-xl font-bold" style={{ color: s.color }}>{s.value}</p>
+              <p className="text-xl font-bold" style={{ color: s.color }}>
+                {s.value}
+              </p>
               <p className="text-meta text-muted-foreground">{s.label}</p>
             </CardContent>
           </Card>
@@ -53,33 +81,58 @@ export function ExecutionHistoryPanel() {
       </div>
 
       <div className="relative">
-        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-        <Input placeholder="Buscar execuções..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10 bg-background border-border" />
+        <Search
+          size={16}
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+        />
+        <Input
+          placeholder="Buscar execuções..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="pl-10 bg-background border-border"
+        />
       </div>
 
       {loading ? (
         <div className="text-center py-12 text-muted-foreground">Carregando histórico...</div>
       ) : executions.length === 0 ? (
-        <Card className="bg-card border-border"><CardContent className="py-12 text-center text-muted-foreground"><History size={48} className="mx-auto mb-4 opacity-30" /><p>Nenhuma execução registrada.</p></CardContent></Card>
+        <Card className="bg-card border-border">
+          <CardContent className="py-12 text-center text-muted-foreground">
+            <History size={48} className="mx-auto mb-4 opacity-30" />
+            <p>Nenhuma execução registrada.</p>
+          </CardContent>
+        </Card>
       ) : (
         <div className="space-y-2">
           {executions.map((e) => (
-            <Card key={e.id} className="bg-card border-border hover:border-primary/40 transition-colors">
+            <Card
+              key={e.id}
+              className="bg-card border-border hover:border-primary/40 transition-colors"
+            >
               <CardContent className="p-3 flex items-center gap-3">
                 <span className="text-title-sm">{TYPE_ICONS[e.execution_type] ?? '⚡'}</span>
                 <div className="flex-1 min-w-0">
                   <p className="text-body-sm font-medium truncate">{e.source_name}</p>
-                  <p className="text-meta text-muted-foreground">{e.trigger} • {e.steps.length} steps • {e.tokens_used} tokens</p>
+                  <p className="text-meta text-muted-foreground">
+                    {e.trigger} • {e.steps.length} steps • {e.tokens_used} tokens
+                  </p>
                 </div>
                 <div className="text-right shrink-0">
-                  <Badge className={STATUS_COLORS[e.status] ?? 'bg-muted text-muted-foreground'}>{e.status}</Badge>
-                  <p className="text-meta text-muted-foreground mt-1">{e.duration_ms ? `${(e.duration_ms / 1000).toFixed(1)}s` : '...'}</p>
+                  <Badge className={STATUS_COLORS[e.status] ?? 'bg-muted text-muted-foreground'}>
+                    {e.status}
+                  </Badge>
+                  <p className="text-meta text-muted-foreground mt-1">
+                    {e.duration_ms ? `${(e.duration_ms / 1000).toFixed(1)}s` : '...'}
+                  </p>
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
                   className="gap-1 shrink-0"
-                  onClick={() => { setSelectedId(e.id); setDialogOpen(true); }}
+                  onClick={() => {
+                    setSelectedId(e.id);
+                    setDialogOpen(true);
+                  }}
                 >
                   <Eye size={14} />
                   <span className="hidden sm:inline">Timeline</span>
@@ -87,7 +140,9 @@ export function ExecutionHistoryPanel() {
               </CardContent>
             </Card>
           ))}
-          <p className="text-meta text-muted-foreground text-center">Mostrando {executions.length} de {total} execuções</p>
+          <p className="text-meta text-muted-foreground text-center">
+            Mostrando {executions.length} de {total} execuções
+          </p>
         </div>
       )}
 
@@ -98,5 +153,4 @@ export function ExecutionHistoryPanel() {
       />
     </div>
   );
-
 }

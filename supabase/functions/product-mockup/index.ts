@@ -1,12 +1,14 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import { handleCorsPreflight, jsonResponse } from "../_shared/mod.ts";
-import { fetchWithTimeout } from "../_shared/retry.ts";
-import { z } from "https://esm.sh/zod@3.23.8";
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
+import { handleCorsPreflight, jsonResponse } from '../_shared/mod.ts';
+import { fetchWithTimeout } from '../_shared/retry.ts';
+import { z } from 'https://esm.sh/zod@3.23.8';
 
-const MockupBodySchema = z.object({
-  action: z.string().min(1).max(80),
-}).passthrough();
+const MockupBodySchema = z
+  .object({
+    action: z.string().min(1).max(80),
+  })
+  .passthrough();
 
 // CORS handled by _shared/cors.ts — dynamic origin whitelist
 
@@ -43,16 +45,23 @@ serve(async (req) => {
     const authHeader = req.headers.get('Authorization')!;
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseKey, { global: { headers: { Authorization: authHeader } } });
+    const supabase = createClient(supabaseUrl, supabaseKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
 
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return jsonResponse({ error: 'Unauthorized' }, 401);
 
     const hfToken = Deno.env.get('HF_API_TOKEN');
     const rawBody = await req.json().catch(() => null);
     const parsedBody = MockupBodySchema.safeParse(rawBody);
     if (!parsedBody.success) {
-      return jsonResponse({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }, 400);
+      return jsonResponse(
+        { error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors },
+        400,
+      );
     }
     const body = parsedBody.data as Record<string, unknown> & { action: string };
     const { action } = body;
@@ -60,7 +69,8 @@ serve(async (req) => {
     // ═══ ACTION: generate_mockup — Full product mockup pipeline (#51) ═══
     if (action === 'generate_mockup') {
       const { product_image_base64, logo_base64, background_prompt, product_name } = body;
-      if (!product_image_base64) return jsonResponse({ error: 'product_image_base64 required' }, 400);
+      if (!product_image_base64)
+        return jsonResponse({ error: 'product_image_base64 required' }, 400);
 
       const steps: Array<{ step: string; status: string; details?: string }> = [];
 
@@ -68,36 +78,56 @@ serve(async (req) => {
       let cleanProductBase64 = product_image_base64;
       if (hfToken) {
         try {
-          const imgBytes = Uint8Array.from(atob(product_image_base64), c => c.charCodeAt(0));
-          const bgResp = await fetchWithTimeout(`https://router.huggingface.co/hf-inference/models/briaai/RMBG-2.0`, {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${hfToken}` },
-            body: imgBytes,
-          });
+          const imgBytes = Uint8Array.from(atob(product_image_base64), (c) => c.charCodeAt(0));
+          const bgResp = await fetchWithTimeout(
+            `https://router.huggingface.co/hf-inference/models/briaai/RMBG-2.0`,
+            {
+              method: 'POST',
+              headers: { Authorization: `Bearer ${hfToken}` },
+              body: imgBytes,
+            },
+          );
           if (bgResp.ok) {
             const resultBuffer = await bgResp.arrayBuffer();
             cleanProductBase64 = btoa(String.fromCharCode(...new Uint8Array(resultBuffer)));
-            steps.push({ step: 'background_removal', status: 'ok', details: 'RMBG-2.0 via Inference API' });
+            steps.push({
+              step: 'background_removal',
+              status: 'ok',
+              details: 'RMBG-2.0 via Inference API',
+            });
           } else {
-            steps.push({ step: 'background_removal', status: 'skipped', details: `API returned ${bgResp.status}` });
+            steps.push({
+              step: 'background_removal',
+              status: 'skipped',
+              details: `API returned ${bgResp.status}`,
+            });
           }
         } catch (e) {
-          steps.push({ step: 'background_removal', status: 'error', details: (e as Error).message });
+          steps.push({
+            step: 'background_removal',
+            status: 'error',
+            details: (e as Error).message,
+          });
         }
       }
 
       // Step 2: Generate new background with product description
-      const bgPrompt = background_prompt || `Professional product photography of ${product_name || 'a promotional product'}, studio lighting, white gradient background, commercial quality, 4k`;
+      const bgPrompt =
+        background_prompt ||
+        `Professional product photography of ${product_name || 'a promotional product'}, studio lighting, white gradient background, commercial quality, 4k`;
       const _finalImageBase64: string = cleanProductBase64;
 
       if (hfToken) {
         try {
-          const genResp = await fetchWithTimeout('https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hfToken}` },
-            body: JSON.stringify({ inputs: bgPrompt }),
-            signal: AbortSignal.timeout(SPACE_TIMEOUT),
-          });
+          const genResp = await fetchWithTimeout(
+            'https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell',
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${hfToken}` },
+              body: JSON.stringify({ inputs: bgPrompt }),
+              signal: AbortSignal.timeout(SPACE_TIMEOUT),
+            },
+          );
           if (genResp.ok) {
             const bgBuffer = await genResp.arrayBuffer();
             const bgBase64 = btoa(String.fromCharCode(...new Uint8Array(bgBuffer)));
@@ -115,7 +145,11 @@ serve(async (req) => {
             });
           }
         } catch (e) {
-          steps.push({ step: 'background_generation', status: 'error', details: (e as Error).message });
+          steps.push({
+            step: 'background_generation',
+            status: 'error',
+            details: (e as Error).message,
+          });
         }
       }
 
@@ -134,13 +168,16 @@ serve(async (req) => {
       // Use HF Inference API with upscaling model
       if (hfToken) {
         try {
-          const imgBytes = Uint8Array.from(atob(image_base64), c => c.charCodeAt(0));
+          const imgBytes = Uint8Array.from(atob(image_base64), (c) => c.charCodeAt(0));
           // Try ESRGAN super-resolution model
-          const upResp = await fetchWithTimeout('https://router.huggingface.co/hf-inference/models/caidas/swin2SR-classical-sr-x2-64', {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${hfToken}` },
-            body: imgBytes,
-          });
+          const upResp = await fetchWithTimeout(
+            'https://router.huggingface.co/hf-inference/models/caidas/swin2SR-classical-sr-x2-64',
+            {
+              method: 'POST',
+              headers: { Authorization: `Bearer ${hfToken}` },
+              body: imgBytes,
+            },
+          );
           if (upResp.ok) {
             const resultBuffer = await upResp.arrayBuffer();
             const resultBase64 = btoa(String.fromCharCode(...new Uint8Array(resultBuffer)));
@@ -151,13 +188,19 @@ serve(async (req) => {
               cost_usd: 0,
             });
           }
-        } catch { /* fallback below */ }
+        } catch {
+          /* fallback below */
+        }
       }
 
-      return jsonResponse({
-        error: 'Upscaling failed. Model may require GPU endpoint.',
-        suggestion: 'Use HF Space jasperai/Flux.1-dev-Controlnet-Upscaler for production upscaling',
-      }, 502);
+      return jsonResponse(
+        {
+          error: 'Upscaling failed. Model may require GPU endpoint.',
+          suggestion:
+            'Use HF Space jasperai/Flux.1-dev-Controlnet-Upscaler for production upscaling',
+        },
+        502,
+      );
     }
 
     // ═══ ACTION: inpaint — Edit specific region of image (#53) ═══
@@ -171,12 +214,15 @@ serve(async (req) => {
       if (hfToken) {
         try {
           // For now, generate a new image based on the prompt (simplified inpainting)
-          const genResp = await fetchWithTimeout('https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hfToken}` },
-            body: JSON.stringify({ inputs: inpPrompt }),
-            signal: AbortSignal.timeout(SPACE_TIMEOUT),
-          });
+          const genResp = await fetchWithTimeout(
+            'https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell',
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${hfToken}` },
+              body: JSON.stringify({ inputs: inpPrompt }),
+              signal: AbortSignal.timeout(SPACE_TIMEOUT),
+            },
+          );
           if (genResp.ok) {
             const resultBuffer = await genResp.arrayBuffer();
             const resultBase64 = btoa(String.fromCharCode(...new Uint8Array(resultBuffer)));
@@ -188,7 +234,9 @@ serve(async (req) => {
               cost_usd: 0,
             });
           }
-        } catch { /* fallback */ }
+        } catch {
+          /* fallback */
+        }
       }
 
       return jsonResponse({ error: 'Inpainting requires GPU endpoint' }, 502);
@@ -201,33 +249,39 @@ serve(async (req) => {
 
       if (hfToken) {
         try {
-          const imgBytes = Uint8Array.from(atob(segImg), c => c.charCodeAt(0));
+          const imgBytes = Uint8Array.from(atob(segImg), (c) => c.charCodeAt(0));
           // Use image segmentation model
-          const segResp = await fetchWithTimeout('https://router.huggingface.co/hf-inference/models/facebook/detr-resnet-50-panoptic', {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${hfToken}` },
-            body: imgBytes,
-          });
+          const segResp = await fetchWithTimeout(
+            'https://router.huggingface.co/hf-inference/models/facebook/detr-resnet-50-panoptic',
+            {
+              method: 'POST',
+              headers: { Authorization: `Bearer ${hfToken}` },
+              body: imgBytes,
+            },
+          );
           if (segResp.ok) {
             const segments = await segResp.json();
             return jsonResponse({
-              segments: Array.isArray(segments) ? segments.map((s: Record<string, unknown>) => ({
-                label: s.label,
-                score: Math.round((s.score as number) * 1000) / 1000,
-              })) : segments,
+              segments: Array.isArray(segments)
+                ? segments.map((s: Record<string, unknown>) => ({
+                    label: s.label,
+                    score: Math.round((s.score as number) * 1000) / 1000,
+                  }))
+                : segments,
               model: 'facebook/detr-resnet-50-panoptic',
               note: 'For pixel-level masks, use SAM 2 via HF Space or Inference Endpoint',
               cost_usd: 0,
             });
           }
-        } catch { /* fallback */ }
+        } catch {
+          /* fallback */
+        }
       }
 
       return jsonResponse({ error: 'Segmentation failed' }, 502);
     }
 
     return jsonResponse({ error: `Unknown action: ${action}` }, 400);
-
   } catch (error: unknown) {
     return jsonResponse({ error: error instanceof Error ? error.message : 'Internal error' }, 500);
   }

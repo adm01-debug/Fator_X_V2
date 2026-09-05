@@ -15,15 +15,21 @@
  * Used by: src/services/ragPipelineService.ts
  * ═══════════════════════════════════════════════════════════════
  */
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { fetchWithTimeout } from "../_shared/retry.ts";
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { fetchWithTimeout } from '../_shared/retry.ts';
 import {
-  handleCorsPreflight, jsonResponse, errorResponse,
+  handleCorsPreflight,
+  jsonResponse,
+  errorResponse,
   authenticateRequest,
-  checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS,
-  parseBody, z,
-} from "../_shared/mod.ts";
-import { CANONICAL_DIM, HF_MODEL_MAP, hasExactDimension, hashEmbed } from "./embedder.ts";
+  checkRateLimit,
+  createRateLimitResponse,
+  getRateLimitIdentifier,
+  RATE_LIMITS,
+  parseBody,
+  z,
+} from '../_shared/mod.ts';
+import { CANONICAL_DIM, HF_MODEL_MAP, hasExactDimension, hashEmbed } from './embedder.ts';
 
 // ═══ Input Schema ═══
 // CANONICAL_DIM, HF_MODEL_MAP, hasExactDimension e hashEmbed vivem em
@@ -33,17 +39,23 @@ const EmbedInput = z.object({
   texts: z.array(z.string().min(1).max(8000)).min(1).max(100),
   provider: z.string().default('qwen3-embedding-8b'),
   dimension: z.number().int().positive().max(4096).default(CANONICAL_DIM),
-  task: z.enum(['retrieval.passage', 'retrieval.query', 'classification', 'clustering']).default('retrieval.passage'),
+  task: z
+    .enum(['retrieval.passage', 'retrieval.query', 'classification', 'clustering'])
+    .default('retrieval.passage'),
 });
 
 // ═══ HF Embedding ═══
-async function embedWithHF(texts: string[], model: string, hfKey: string): Promise<number[][] | null> {
+async function embedWithHF(
+  texts: string[],
+  model: string,
+  hfKey: string,
+): Promise<number[][] | null> {
   try {
     const url = `https://api-inference.huggingface.co/pipeline/feature-extraction/${model}`;
     const resp = await fetchWithTimeout(url, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${hfKey}`,
+        Authorization: `Bearer ${hfKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ inputs: texts, options: { wait_for_model: true } }),
@@ -64,12 +76,16 @@ async function embedWithHF(texts: string[], model: string, hfKey: string): Promi
 }
 
 // ═══ OpenAI Embedding ═══
-async function embedWithOpenAI(texts: string[], openaiKey: string, dimension: number): Promise<number[][] | null> {
+async function embedWithOpenAI(
+  texts: string[],
+  openaiKey: string,
+  dimension: number,
+): Promise<number[][] | null> {
   try {
     const resp = await fetchWithTimeout('https://api.openai.com/v1/embeddings', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openaiKey}`,
+        Authorization: `Bearer ${openaiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -80,7 +96,7 @@ async function embedWithOpenAI(texts: string[], openaiKey: string, dimension: nu
     });
     if (!resp.ok) return null;
     const data = await resp.json();
-    return (data.data as Array<{ embedding: number[] }>).map(d => d.embedding);
+    return (data.data as Array<{ embedding: number[] }>).map((d) => d.embedding);
   } catch {
     return null;
   }
@@ -143,7 +159,9 @@ serve(async (req) => {
         // Dimensão nativa != pedida. Truncar seria tentador, mas só é válido em
         // modelos Matryoshka e exigiria renormalizar; adivinhar aqui produziria
         // vetores silenciosamente ruins. Descartamos e caímos para o próximo.
-        rejected.push(`hf:${HF_MODEL_MAP[provider]} devolveu dim=${hf[0]?.length}, esperado ${dimension}`);
+        rejected.push(
+          `hf:${HF_MODEL_MAP[provider]} devolveu dim=${hf[0]?.length}, esperado ${dimension}`,
+        );
       }
     }
 
@@ -161,7 +179,7 @@ serve(async (req) => {
     // Deterministic fallback
     const degraded = embeddings === null;
     if (!embeddings) {
-      embeddings = texts.map(t => hashEmbed(t, dimension));
+      embeddings = texts.map((t) => hashEmbed(t, dimension));
       usedProvider = 'fallback_hash';
     }
 

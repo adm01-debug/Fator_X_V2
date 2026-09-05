@@ -12,10 +12,7 @@ import {
   CALIBRATION_POSTURE_LABEL,
   type CalibrationPostureStatus,
 } from '@/lib/skills/calibrationGovernance';
-import type {
-  CalibrationScale,
-  ThresholdCalibration,
-} from '@/lib/skills/thresholdCalibration';
+import type { CalibrationScale, ThresholdCalibration } from '@/lib/skills/thresholdCalibration';
 
 const NOW = new Date('2026-07-29T12:00:00.000Z');
 const DAY = 24 * 60 * 60 * 1000;
@@ -80,10 +77,9 @@ describe('summarizeCalibrationGovernance — estados base', () => {
 
 describe('isolamento entre réguas', () => {
   it('override vencido de plataforma não contamina domínio', () => {
-    const d = summarizeCalibrationGovernance(
-      [calib('plataforma', 60, true), calib('dominio', 5)],
-      { now: NOW },
-    );
+    const d = summarizeCalibrationGovernance([calib('plataforma', 60, true), calib('dominio', 5)], {
+      now: NOW,
+    });
     expect(d.byScale.plataforma.status).toBe('critico');
     expect(d.byScale.dominio.status).toBe('saudavel');
     expect(d.scalesNeedingAction).toEqual(['plataforma']);

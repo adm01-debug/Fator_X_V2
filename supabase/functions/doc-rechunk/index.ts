@@ -20,15 +20,22 @@
  *     chunk_strategy?: 'fixed'|'paragraph'|'sentence' (default keeps existing),
  *   }
  */
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
 import {
-  handleCorsPreflight, jsonResponse, errorResponse, getCorsHeaders,
+  handleCorsPreflight,
+  jsonResponse,
+  errorResponse,
+  getCorsHeaders,
   authenticateRequest,
-  checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS,
-  parseBody, z,
-} from "../_shared/mod.ts";
-import { chunkText, normalizeChunkOptions } from "../_shared/chunker.ts";
+  checkRateLimit,
+  createRateLimitResponse,
+  getRateLimitIdentifier,
+  RATE_LIMITS,
+  parseBody,
+  z,
+} from '../_shared/mod.ts';
+import { chunkText, normalizeChunkOptions } from '../_shared/chunker.ts';
 
 const Input = z.object({
   document_id: z.string().uuid(),
@@ -61,7 +68,8 @@ serve(async (req) => {
     // Ownership check via workspace membership
     const { data: doc, error: docErr } = await supabase
       .from('documents')
-      .select(`
+      .select(
+        `
         id, title, chunk_size, chunk_overlap, chunk_strategy, chunk_version,
         parsed_text, source_url, mime_type, collection_id, metadata,
         collections!inner (
@@ -71,14 +79,16 @@ serve(async (req) => {
             workspace_members:workspaces!inner ( id )
           )
         )
-      `)
+      `,
+      )
       .eq('id', body.document_id)
       .maybeSingle();
 
     if (docErr || !doc) return errorResponse(req, 'Documento não encontrado', 404);
 
     // Verify user has access to the workspace
-    const wsId = (doc as { collections?: { knowledge_bases?: { workspace_id?: string } } }).collections?.knowledge_bases?.workspace_id;
+    const wsId = (doc as { collections?: { knowledge_bases?: { workspace_id?: string } } })
+      .collections?.knowledge_bases?.workspace_id;
     if (!wsId) return errorResponse(req, 'Documento sem workspace', 403);
 
     const { data: membership } = await supabase
@@ -133,8 +143,7 @@ serve(async (req) => {
       return errorResponse(req, 'Rechunk gerou zero blocos — cheque estratégia/tamanho', 422);
     }
 
-    const notebookName =
-      ((doc as { collections?: { name?: string } }).collections?.name ?? null);
+    const notebookName = (doc as { collections?: { name?: string } }).collections?.name ?? null;
     const meta = (doc.metadata ?? {}) as Record<string, unknown>;
 
     const rows = newChunks.map((content, i) => ({
@@ -180,27 +189,40 @@ serve(async (req) => {
       .eq('id', doc.id);
 
     // Audit event (best-effort)
-    await supabase.from('audit_events').insert({
-      user_id: user.id,
-      workspace_id: wsId,
-      event_type: 'document.rechunk',
-      resource_type: 'document',
-      resource_id: doc.id,
-      action: 'rechunk',
-      metadata: {
-        from: { size: doc.chunk_size, overlap: doc.chunk_overlap, strategy: doc.chunk_strategy, version: doc.chunk_version },
-        to: { ...nextOpts, version: nextVersion },
-        chunks_created: rows.length,
-      },
-      // Auditoria é best-effort para não derrubar o rechunk, mas a falha
-      // precisa deixar rastro: um registro de auditoria perdido em silêncio
-      // é um buraco na trilha de conformidade que ninguém detecta.
-    }).then(() => {}, (e) => console.warn(`[audit] falha ao registrar document.rechunk: ${e?.message ?? e}`));
+    await supabase
+      .from('audit_events')
+      .insert({
+        user_id: user.id,
+        workspace_id: wsId,
+        event_type: 'document.rechunk',
+        resource_type: 'document',
+        resource_id: doc.id,
+        action: 'rechunk',
+        metadata: {
+          from: {
+            size: doc.chunk_size,
+            overlap: doc.chunk_overlap,
+            strategy: doc.chunk_strategy,
+            version: doc.chunk_version,
+          },
+          to: { ...nextOpts, version: nextVersion },
+          chunks_created: rows.length,
+        },
+        // Auditoria é best-effort para não derrubar o rechunk, mas a falha
+        // precisa deixar rastro: um registro de auditoria perdido em silêncio
+        // é um buraco na trilha de conformidade que ninguém detecta.
+      })
+      .then(
+        () => {},
+        (e) => console.warn(`[audit] falha ao registrar document.rechunk: ${e?.message ?? e}`),
+      );
 
     // Fire embeddings in background
-    supabase.functions.invoke('rag-embed-backfill', {
-      body: { document_id: doc.id },
-    }).catch(() => {});
+    supabase.functions
+      .invoke('rag-embed-backfill', {
+        body: { document_id: doc.id },
+      })
+      .catch(() => {});
 
     return jsonResponse({
       status: 'ok',

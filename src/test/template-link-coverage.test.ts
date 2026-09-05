@@ -53,8 +53,14 @@ describe('cobertura de vínculos template ↔ skill', () => {
 
   it('é determinístico entre execuções', () => {
     for (const template of AGENT_TEMPLATES) {
-      const a = linkSkillsToTemplate(template, CATALOG, MAX_LINKS).map((l) => [l.skill.id, l.score]);
-      const b = linkSkillsToTemplate(template, CATALOG, MAX_LINKS).map((l) => [l.skill.id, l.score]);
+      const a = linkSkillsToTemplate(template, CATALOG, MAX_LINKS).map((l) => [
+        l.skill.id,
+        l.score,
+      ]);
+      const b = linkSkillsToTemplate(template, CATALOG, MAX_LINKS).map((l) => [
+        l.skill.id,
+        l.score,
+      ]);
       expect(a).toEqual(b);
     }
   });

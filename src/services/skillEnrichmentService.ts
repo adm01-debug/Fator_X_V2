@@ -71,10 +71,14 @@ export async function fetchEnrichCandidates(limit = 200): Promise<EnrichCandidat
       description: row.description ?? '',
       category: row.category ?? '',
       department: row.department ?? null,
-      tags: Array.isArray(row.tags) ? row.tags.filter((t): t is string => typeof t === 'string') : [],
+      tags: Array.isArray(row.tags)
+        ? row.tags.filter((t): t is string => typeof t === 'string')
+        : [],
       sourceRepo: row.source_repo ?? null,
       sourceUrl: row.source_url ?? null,
-      descriptionSource: isDescriptionSource(row.description_source) ? row.description_source : null,
+      descriptionSource: isDescriptionSource(row.description_source)
+        ? row.description_source
+        : null,
     })),
   );
 }
@@ -107,7 +111,8 @@ export function toEnrichQueueError(error: unknown, fallback: string): QueueWorke
   const status = edgeStatus(error);
   const mensagem = error instanceof Error ? error.message : fallback;
 
-  if (status === 402) return new QueueWorkerError('Créditos de IA esgotados.', false, null, 'creditos');
+  if (status === 402)
+    return new QueueWorkerError('Créditos de IA esgotados.', false, null, 'creditos');
   if (status === 401 || status === 403) {
     return new QueueWorkerError('Sem permissão para gerar descrições.', false, null, 'permissao');
   }

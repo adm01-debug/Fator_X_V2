@@ -138,7 +138,14 @@ export async function updateCadence(id: string, patch: Partial<CrmCadence>): Pro
 
 export async function upsertCadenceStep(
   cadenceId: string,
-  step: { id?: string; position: number; channel: CadenceChannel; delay_hours: number; subject?: string | null; body: string },
+  step: {
+    id?: string;
+    position: number;
+    channel: CadenceChannel;
+    delay_hours: number;
+    subject?: string | null;
+    body: string;
+  },
 ): Promise<void> {
   const wsId = await getWorkspaceId();
   const payload = {
@@ -235,29 +242,34 @@ export async function enrollDealsByTier(cadenceId: string, tier: LeadTier): Prom
       .select('id, opted_out')
       .in('id', contactIds);
     if (error) throw error;
-    for (const contact of (contacts ?? []) as unknown as Array<{ id: string; opted_out: boolean }>) {
+    for (const contact of (contacts ?? []) as unknown as Array<{
+      id: string;
+      opted_out: boolean;
+    }>) {
       if (contact.opted_out) optedOut.add(contact.id);
     }
   }
 
   let skippedOptedOut = 0;
   let skippedAlreadyActive = 0;
-  const rows = eligible.filter((deal) => {
-    if (alreadyActive.has(deal.id)) {
-      skippedAlreadyActive++;
-      return false;
-    }
-    if (deal.contact_id && optedOut.has(deal.contact_id)) {
-      skippedOptedOut++;
-      return false;
-    }
-    return true;
-  }).map((deal) => ({
-    workspace_id: wsId,
-    cadence_id: cadenceId,
-    deal_id: deal.id,
-    contact_id: deal.contact_id,
-  }));
+  const rows = eligible
+    .filter((deal) => {
+      if (alreadyActive.has(deal.id)) {
+        skippedAlreadyActive++;
+        return false;
+      }
+      if (deal.contact_id && optedOut.has(deal.contact_id)) {
+        skippedOptedOut++;
+        return false;
+      }
+      return true;
+    })
+    .map((deal) => ({
+      workspace_id: wsId,
+      cadence_id: cadenceId,
+      deal_id: deal.id,
+      contact_id: deal.contact_id,
+    }));
 
   if (rows.length > 0) {
     const { error } = await fromTable('crm_cadence_enrollments').insert(rows);
@@ -321,17 +333,25 @@ export interface RunnerSummary {
 }
 
 /** Dispara o runner sob demanda. `dryRun` prevê o lote sem enviar nada. */
-export async function runCadences(options: { dryRun?: boolean; batchSize?: number } = {}): Promise<RunnerSummary> {
+export async function runCadences(
+  options: { dryRun?: boolean; batchSize?: number } = {},
+): Promise<RunnerSummary> {
   const wsId = await getWorkspaceId();
   const { data, error } = await supabase.functions.invoke('crm-cadence-runner', {
-    body: { workspace_id: wsId, dry_run: options.dryRun ?? false, batch_size: options.batchSize ?? 50 },
+    body: {
+      workspace_id: wsId,
+      dry_run: options.dryRun ?? false,
+      batch_size: options.batchSize ?? 50,
+    },
   });
   if (error) {
     logger.error('crm-cadence-runner falhou', error);
     throw error;
   }
   const summary = (data as { summary?: RunnerSummary } | null)?.summary;
-  return summary ?? { claimed: 0, sent: 0, completed: 0, stopped: 0, failed: 0, skipped: 0, capped: 0 };
+  return (
+    summary ?? { claimed: 0, sent: 0, completed: 0, stopped: 0, failed: 0, skipped: 0, capped: 0 }
+  );
 }
 
 /** Uma rodada do runner, gravada pela Edge Function (somente leitura no cliente). */

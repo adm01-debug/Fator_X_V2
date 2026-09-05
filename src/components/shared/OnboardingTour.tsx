@@ -1,10 +1,20 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- a11y: row/card click mirrors a primary action available elsewhere ; intentional interaction on semantic element ; decorative wrapper / click-through container; tracked for dedicated a11y pass */
-import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import { X, ArrowRight, Bot, Sparkles, Keyboard, Rocket, Brain, Shield, GitBranch } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useUIStore } from "@/stores/uiStore";
-import { handleKeyboardClick } from "@/lib/a11y";
+import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  X,
+  ArrowRight,
+  Bot,
+  Sparkles,
+  Keyboard,
+  Rocket,
+  Brain,
+  Shield,
+  GitBranch,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useUIStore } from '@/stores/uiStore';
+import { handleKeyboardClick } from '@/lib/a11y';
 
 interface TourStep {
   title: string;
@@ -16,47 +26,54 @@ interface TourStep {
 
 const TOUR_STEPS: TourStep[] = [
   {
-    title: "Bem-vindo ao Fator X! 🚀",
-    description: "Sua plataforma completa para criar, configurar, avaliar e operar agentes de IA com governança total.",
+    title: 'Bem-vindo ao Fator X! 🚀',
+    description:
+      'Sua plataforma completa para criar, configurar, avaliar e operar agentes de IA com governança total.',
     icon: Rocket,
-    tip: "Você pode reabrir este tour a qualquer momento em Configurações.",
+    tip: 'Você pode reabrir este tour a qualquer momento em Configurações.',
   },
   {
-    title: "Crie seus Agentes",
-    description: "Configure agentes com modelo de IA, persona, ferramentas, memória e knowledge base — tudo no Agent Builder guiado.",
+    title: 'Crie seus Agentes',
+    description:
+      'Configure agentes com modelo de IA, persona, ferramentas, memória e knowledge base — tudo no Agent Builder guiado.',
     icon: Bot,
-    action: { label: "Criar agente", path: "/agents/new" },
-    tip: "Use ⌘K para buscar qualquer agente rapidamente.",
+    action: { label: 'Criar agente', path: '/agents/new' },
+    tip: 'Use ⌘K para buscar qualquer agente rapidamente.',
   },
   {
-    title: "Super Cérebro",
-    description: "Memória centralizada da empresa: consulte, extraia entidades, monitore saúde do conhecimento e descubra especialistas.",
+    title: 'Super Cérebro',
+    description:
+      'Memória centralizada da empresa: consulte, extraia entidades, monitore saúde do conhecimento e descubra especialistas.',
     icon: Brain,
-    action: { label: "Explorar", path: "/brain" },
+    action: { label: 'Explorar', path: '/brain' },
   },
   {
-    title: "Oráculo Multi-IA",
-    description: "Consulte múltiplos modelos simultaneamente e obtenha consenso inteligente para respostas mais confiáveis.",
+    title: 'Oráculo Multi-IA',
+    description:
+      'Consulte múltiplos modelos simultaneamente e obtenha consenso inteligente para respostas mais confiáveis.',
     icon: Sparkles,
-    action: { label: "Abrir Oráculo", path: "/oracle" },
+    action: { label: 'Abrir Oráculo', path: '/oracle' },
   },
   {
-    title: "Workflows Visuais",
-    description: "Monte pipelines multi-agente com drag & drop. Conecte agentes em cadeia para tarefas complexas.",
+    title: 'Workflows Visuais',
+    description:
+      'Monte pipelines multi-agente com drag & drop. Conecte agentes em cadeia para tarefas complexas.',
     icon: GitBranch,
-    action: { label: "Ver Workflows", path: "/workflows" },
+    action: { label: 'Ver Workflows', path: '/workflows' },
   },
   {
-    title: "Segurança & Guardrails",
-    description: "Configure políticas de conteúdo, limites de custo e aprovação humana (HITL) antes de publicar em produção.",
+    title: 'Segurança & Guardrails',
+    description:
+      'Configure políticas de conteúdo, limites de custo e aprovação humana (HITL) antes de publicar em produção.',
     icon: Shield,
-    action: { label: "Configurar", path: "/security" },
+    action: { label: 'Configurar', path: '/security' },
   },
   {
-    title: "Atalhos de Teclado",
-    description: "Use ⌘K para busca, G para Dashboard, A para Agentes, Shift+N para novo agente, e ? para todos os atalhos.",
+    title: 'Atalhos de Teclado',
+    description:
+      'Use ⌘K para busca, G para Dashboard, A para Agentes, Shift+N para novo agente, e ? para todos os atalhos.',
     icon: Keyboard,
-    tip: "Essas dicas aparecem em cada página relevante!",
+    tip: 'Essas dicas aparecem em cada página relevante!',
   },
 ];
 
@@ -65,8 +82,8 @@ export function OnboardingTour() {
   const [step, setStep] = useState(0);
   const navigate = useNavigate();
 
-  const onboardingComplete = useUIStore(s => s.onboardingComplete);
-  const setOnboardingComplete = useUIStore(s => s.setOnboardingComplete);
+  const onboardingComplete = useUIStore((s) => s.onboardingComplete);
+  const setOnboardingComplete = useUIStore((s) => s.setOnboardingComplete);
 
   useEffect(() => {
     if (!onboardingComplete) {
@@ -106,11 +123,14 @@ export function OnboardingTour() {
   const progress = ((step + 1) / TOUR_STEPS.length) * 100;
 
   return (
-    <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
+    <div
+      role="button"
+      tabIndex={0}
+      onKeyDown={handleKeyboardClick}
       className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-4"
       onClick={dismiss}
     >
-      { }
+      {}
       <div
         className="w-full max-w-md rounded-2xl border border-primary/20 bg-background/95 backdrop-blur-xl shadow-nexus-2xl shadow-primary/10 overflow-hidden animate-fade-in-up"
         onClick={(e) => e.stopPropagation()}
@@ -145,8 +165,12 @@ export function OnboardingTour() {
             </div>
           </div>
 
-          <h3 className="text-title-sm font-heading font-bold text-foreground mb-2">{current.title}</h3>
-          <p id="tour-description" className="text-body-sm text-muted-foreground leading-relaxed">{current.description}</p>
+          <h3 className="text-title-sm font-heading font-bold text-foreground mb-2">
+            {current.title}
+          </h3>
+          <p id="tour-description" className="text-body-sm text-muted-foreground leading-relaxed">
+            {current.description}
+          </p>
 
           {current.tip && (
             <p className="text-meta text-primary/70 mt-2 flex items-center gap-1">
@@ -162,7 +186,11 @@ export function OnboardingTour() {
                   key={i}
                   onClick={() => setStep(i)}
                   className={`rounded-full transition-all duration-300 ${
-                    i === step ? "h-2 w-6 bg-primary" : i < step ? "h-2 w-2 bg-primary/40" : "h-2 w-2 bg-secondary"
+                    i === step
+                      ? 'h-2 w-6 bg-primary'
+                      : i < step
+                        ? 'h-2 w-2 bg-primary/40'
+                        : 'h-2 w-2 bg-secondary'
                   }`}
                   aria-label={`Ir para passo ${i + 1}`}
                 />
@@ -195,7 +223,7 @@ export function OnboardingTour() {
                 className="gap-1.5 text-meta nexus-gradient-bg text-primary-foreground hover:opacity-90"
                 onClick={next}
               >
-                {isLast ? "Começar!" : "Próximo"}
+                {isLast ? 'Começar!' : 'Próximo'}
                 {!isLast && <ArrowRight className="h-3 w-3" />}
               </Button>
             </div>

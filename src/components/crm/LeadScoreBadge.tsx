@@ -36,7 +36,8 @@ function parseReason(raw: unknown): ParsedReason {
   const obj = raw as Record<string, unknown>;
   const tier = obj.tier;
   return {
-    tier: tier === 'hot' || tier === 'qualified' || tier === 'nurture' || tier === 'cold' ? tier : null,
+    tier:
+      tier === 'hot' || tier === 'qualified' || tier === 'nurture' || tier === 'cold' ? tier : null,
     criteria: Array.isArray(obj.criteria)
       ? (obj.criteria as Array<Record<string, unknown>>)
           .filter((c) => typeof c?.label === 'string')
@@ -46,7 +47,9 @@ function parseReason(raw: unknown): ParsedReason {
             reason: typeof c.reason === 'string' ? c.reason : '',
           }))
       : [],
-    missing: Array.isArray(obj.missing_signals) ? (obj.missing_signals as unknown[]).map(String) : [],
+    missing: Array.isArray(obj.missing_signals)
+      ? (obj.missing_signals as unknown[]).map(String)
+      : [],
   };
 }
 
@@ -65,7 +68,11 @@ export function LeadScoreBadge({ score, scoreReason, className }: LeadScoreBadge
   const badge = (
     <Badge
       variant="outline"
-      className={cn('tabular-nums font-medium', tier ? TIER_STYLES[tier] : TIER_STYLES.cold, className)}
+      className={cn(
+        'tabular-nums font-medium',
+        tier ? TIER_STYLES[tier] : TIER_STYLES.cold,
+        className,
+      )}
     >
       {score.toFixed(0)}
       {tier && <span className="ml-1.5 font-normal">{TIER_LABELS[tier]}</span>}
@@ -78,7 +85,11 @@ export function LeadScoreBadge({ score, scoreReason, className }: LeadScoreBadge
     <Tooltip>
       <TooltipTrigger asChild>
         {/* botão em vez de span: o tooltip precisa ser alcançável por teclado */}
-        <button type="button" className="cursor-default rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label={`Detalhes do score ${score.toFixed(0)}`}>
+        <button
+          type="button"
+          className="cursor-default rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label={`Detalhes do score ${score.toFixed(0)}`}
+        >
           {badge}
         </button>
       </TooltipTrigger>

@@ -19,10 +19,10 @@
  * Uso:
  *   serve(withRuntimeAlert("minha-funcao", async (req) => { ... }));
  */
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
 
 /** Erros que indicam bug de código, não entrada inválida do usuário. */
-const FATAL_ERROR_NAMES = new Set(["ReferenceError", "TypeError", "SyntaxError"]);
+const FATAL_ERROR_NAMES = new Set(['ReferenceError', 'TypeError', 'SyntaxError']);
 
 export interface RuntimeErrorContext {
   functionName: string;
@@ -33,8 +33,8 @@ export interface RuntimeErrorContext {
 let _client: ReturnType<typeof createClient> | null = null;
 function admin() {
   if (_client) return _client;
-  const url = Deno.env.get("SUPABASE_URL");
-  const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  const url = Deno.env.get('SUPABASE_URL');
+  const key = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
   if (!url || !key) return null;
   _client = createClient(url, key);
   return _client;
@@ -47,12 +47,12 @@ export function isFatalCodeError(err: unknown): boolean {
 }
 
 async function dispatchSlack(text: string): Promise<void> {
-  const webhook = Deno.env.get("SLACK_ALERT_WEBHOOK_URL");
+  const webhook = Deno.env.get('SLACK_ALERT_WEBHOOK_URL');
   if (!webhook) return;
   try {
     await fetch(webhook, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text }),
       signal: AbortSignal.timeout(5000),
     });
@@ -69,23 +69,21 @@ async function dispatchSlack(text: string): Promise<void> {
  */
 export async function reportRuntimeError(err: unknown, ctx: RuntimeErrorContext): Promise<void> {
   const fatal = isFatalCodeError(err);
-  const name = err instanceof Error ? err.name : "UnknownError";
+  const name = err instanceof Error ? err.name : 'UnknownError';
   const message = err instanceof Error ? err.message : String(err);
   // Stack truncado: o suficiente para localizar o arquivo, sem inflar a linha.
   const stack = err instanceof Error && err.stack ? err.stack.slice(0, 2000) : null;
 
-  console.error(
-    `[runtime-error]${fatal ? " FATAL" : ""} ${ctx.functionName}: ${name}: ${message}`,
-  );
+  console.error(`[runtime-error]${fatal ? ' FATAL' : ''} ${ctx.functionName}: ${name}: ${message}`);
 
   const client = admin();
   if (client) {
     try {
-      await client.from("openclaw_events").insert({
+      await client.from('openclaw_events').insert({
         workspace_id: ctx.workspaceId ?? null,
-        kind: fatal ? "runtime.fatal_error" : "runtime.error",
-        level: fatal ? "error" : "warn",
-        source: "other",
+        kind: fatal ? 'runtime.fatal_error' : 'runtime.error',
+        level: fatal ? 'error' : 'warn',
+        source: 'other',
         payload: {
           function: ctx.functionName,
           route: ctx.route ?? null,
@@ -142,20 +140,25 @@ export function withRuntimeAlert(
  * compartilhados ganhe a rede de proteção sem alteração de código. Idempotente.
  */
 let _installed = false;
-export function installRuntimeAlerts(functionName = Deno.env.get("SB_FUNCTION_NAME") ?? "unknown"): void {
+export function installRuntimeAlerts(
+  functionName = Deno.env.get('SB_FUNCTION_NAME') ?? 'unknown',
+): void {
   if (_installed) return;
   _installed = true;
   try {
-    globalThis.addEventListener("error", (ev) => {
-      const err = (ev as ErrorEvent).error ?? new Error((ev as ErrorEvent).message ?? "erro desconhecido");
+    globalThis.addEventListener('error', (ev) => {
+      const err =
+        (ev as ErrorEvent).error ?? new Error((ev as ErrorEvent).message ?? 'erro desconhecido');
       void reportRuntimeError(err, { functionName });
     });
-    globalThis.addEventListener("unhandledrejection", (ev) => {
+    globalThis.addEventListener('unhandledrejection', (ev) => {
       const reason = (ev as PromiseRejectionEvent).reason;
       void reportRuntimeError(reason, { functionName });
     });
   } catch (e) {
-    console.warn(`[runtimeAlerts] não foi possível instalar listeners: ${(e as Error)?.message ?? e}`);
+    console.warn(
+      `[runtimeAlerts] não foi possível instalar listeners: ${(e as Error)?.message ?? e}`,
+    );
   }
 }
 

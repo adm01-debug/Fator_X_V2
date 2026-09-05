@@ -99,7 +99,6 @@ describe('datahubService — guard de sessão e envelope', () => {
   });
 });
 
-
 describe('datahubService exports', () => {
   it('module exports the documented public surface', async () => {
     const mod = await import('@/services/datahubService');

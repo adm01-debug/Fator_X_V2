@@ -1,13 +1,30 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import {
-  getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse,
+  getCorsHeaders,
+  handleCorsPreflight,
+  jsonResponse,
+  errorResponse,
   authenticateRequest,
-  checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS,
-  parseBody, z,
-} from "../_shared/mod.ts";
+  checkRateLimit,
+  createRateLimitResponse,
+  getRateLimitIdentifier,
+  RATE_LIMITS,
+  parseBody,
+  z,
+} from '../_shared/mod.ts';
 
 const LGPDInput = z.object({
-  action: z.enum(['export_data', 'delete_data', 'request_deletion', 'list_consents', 'list_deletion_requests', 'consent_grant', 'consent_revoke', 'revoke_consent', 'anonymize']),
+  action: z.enum([
+    'export_data',
+    'delete_data',
+    'request_deletion',
+    'list_consents',
+    'list_deletion_requests',
+    'consent_grant',
+    'consent_revoke',
+    'revoke_consent',
+    'anonymize',
+  ]),
   target_user_id: z.string().uuid().optional(),
   scope: z.enum(['all', 'memories', 'sessions', 'traces', 'evaluations']).default('all'),
   consent_id: z.string().uuid().optional(),
@@ -85,13 +102,15 @@ serve(async (req) => {
         const deleted: Record<string, number> = {};
         if (scope === 'all' || scope === 'memories') {
           const { count: memCount } = await supabaseAdmin
-            .from('agent_memories').delete({ count: 'exact' })
+            .from('agent_memories')
+            .delete({ count: 'exact' })
             .eq('workspace_id', workspaceId);
           deleted.memories = memCount ?? 0;
         }
         if (scope === 'all' || scope === 'sessions') {
           const { count: sessCount } = await supabaseAdmin
-            .from('sessions').delete({ count: 'exact' })
+            .from('sessions')
+            .delete({ count: 'exact' })
             .eq('user_id', targetId);
           deleted.sessions = sessCount ?? 0;
         }
@@ -112,7 +131,8 @@ serve(async (req) => {
         break; // fallthrough to delete_data
 
       case 'list_consents': {
-        const { data } = await supabaseAdmin.from('consent_records')
+        const { data } = await supabaseAdmin
+          .from('consent_records')
           .select('*')
           .eq('user_id', targetId)
           .order('created_at', { ascending: false });
@@ -120,7 +140,8 @@ serve(async (req) => {
       }
 
       case 'list_deletion_requests': {
-        const { data } = await supabaseAdmin.from('data_deletion_requests')
+        const { data } = await supabaseAdmin
+          .from('data_deletion_requests')
           .select('*')
           .eq('user_id', targetId)
           .order('requested_at', { ascending: false });
@@ -130,20 +151,24 @@ serve(async (req) => {
       case 'revoke_consent':
       case 'consent_revoke': {
         if (!consent_id) return errorResponse(req, 'consent_id required', 400);
-        await supabaseAdmin.from('consent_records')
+        await supabaseAdmin
+          .from('consent_records')
           .update({ status: 'revoked', revoked_at: new Date().toISOString() })
           .eq('id', consent_id);
         return jsonResponse(req, { action, consent_id, status: 'revoked' });
       }
 
       case 'consent_grant': {
-        await supabaseAdmin.from('consent_records').upsert({
-          user_id: targetId,
-          purpose: purpose || 'general',
-          legal_basis: legal_basis || 'consent',
-          status: 'granted',
-          granted_at: new Date().toISOString(),
-        }, { onConflict: 'user_id,purpose' });
+        await supabaseAdmin.from('consent_records').upsert(
+          {
+            user_id: targetId,
+            purpose: purpose || 'general',
+            legal_basis: legal_basis || 'consent',
+            status: 'granted',
+            granted_at: new Date().toISOString(),
+          },
+          { onConflict: 'user_id,purpose' },
+        );
         return jsonResponse(req, { action, status: 'granted' });
       }
 
@@ -155,7 +180,6 @@ serve(async (req) => {
       default:
         return errorResponse(req, 'Unknown action', 400);
     }
-
   } catch (error: unknown) {
     console.error('[lgpd-manager]', error);
     return errorResponse(req, 'Erro interno no gerenciador LGPD.', 500);

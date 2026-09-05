@@ -131,7 +131,10 @@ describe('buildPromptEvidenceRecord', () => {
     const { evidence } = record(sujas);
     expect(evidence.skillsReceived).toBe(4);
     expect(
-      evidence.skillsInjected + evidence.skillsOverflow + evidence.skillsDuplicates + evidence.skillsDiscarded,
+      evidence.skillsInjected +
+        evidence.skillsOverflow +
+        evidence.skillsDuplicates +
+        evidence.skillsDiscarded,
     ).toBe(evidence.skillsReceived);
     expect(evidence.skillsSanitized).toBeGreaterThan(0);
   });

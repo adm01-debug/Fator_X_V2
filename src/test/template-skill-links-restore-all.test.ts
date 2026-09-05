@@ -52,11 +52,7 @@ function chain(error: { message: string } | null) {
   };
 }
 
-function entry(
-  templateId: string,
-  skillId: string,
-  kind: 'linked' | 'unlinked' = 'unlinked',
-) {
+function entry(templateId: string, skillId: string, kind: 'linked' | 'unlinked' = 'unlinked') {
   return {
     kind,
     templateId,
@@ -90,9 +86,7 @@ describe('groupRemovalsByTemplate', () => {
 
   it('deduplica a mesma skill repetida em dias diferentes', () => {
     const feed = [day([entry('t1', 's1')]), day([entry('t1', 's1'), entry('t1', 's2')])];
-    expect(groupRemovalsByTemplate(feed)).toEqual([
-      { templateId: 't1', skillIds: ['s1', 's2'] },
-    ]);
+    expect(groupRemovalsByTemplate(feed)).toEqual([{ templateId: 't1', skillIds: ['s1', 's2'] }]);
   });
 
   it('descarta ids vazios ou só com espaços', () => {
@@ -135,9 +129,7 @@ describe('bulkRestoreAllRemovals', () => {
       return chain(call === 1 ? { message: 'permission denied' } : null);
     });
 
-    const resultado = await bulkRestoreAllRemovals([
-      day([entry('t1', 's1'), entry('t2', 's2')]),
-    ]);
+    const resultado = await bulkRestoreAllRemovals([day([entry('t1', 's1'), entry('t2', 's2')])]);
 
     expect(resultado.restored).toBe(1);
     expect(resultado.failedTemplates).toEqual(['t1']);
@@ -230,7 +222,6 @@ describe('retryFailedRestores', () => {
         attempts: 1,
       },
     ]);
-
   });
 });
 
@@ -278,9 +269,33 @@ describe('restoreBackoffDelay', () => {
 describe('summarizeRestoreFailures', () => {
   it('agrega vínculos pendentes por natureza', () => {
     const resumo = summarizeRestoreFailures([
-      { templateId: 't1', templateName: 't1', skillCount: 3, message: 'rls', kind: 'permission', failedAt: new Date().toISOString(), attempts: 1 },
-      { templateId: 't2', templateName: 't2', skillCount: 2, message: 'fetch', kind: 'network', failedAt: new Date().toISOString(), attempts: 1 },
-      { templateId: 't3', templateName: 't3', skillCount: 1, message: 'x', kind: 'network', failedAt: new Date().toISOString(), attempts: 1 },
+      {
+        templateId: 't1',
+        templateName: 't1',
+        skillCount: 3,
+        message: 'rls',
+        kind: 'permission',
+        failedAt: new Date().toISOString(),
+        attempts: 1,
+      },
+      {
+        templateId: 't2',
+        templateName: 't2',
+        skillCount: 2,
+        message: 'fetch',
+        kind: 'network',
+        failedAt: new Date().toISOString(),
+        attempts: 1,
+      },
+      {
+        templateId: 't3',
+        templateName: 't3',
+        skillCount: 1,
+        message: 'x',
+        kind: 'network',
+        failedAt: new Date().toISOString(),
+        attempts: 1,
+      },
     ]);
     expect(resumo).toEqual({ permission: 3, network: 3, unknown: 0 });
   });
@@ -298,7 +313,9 @@ describe('buildRestoreFailuresCsv', () => {
         templateName: 'Vendas, B2B',
         skillCount: 2,
         message: 'erro "grave"\nlinha 2',
-        kind: 'permission', failedAt: new Date().toISOString(), attempts: 1
+        kind: 'permission',
+        failedAt: new Date().toISOString(),
+        attempts: 1,
       },
     ]);
     expect(csv.startsWith('\uFEFF')).toBe(true);

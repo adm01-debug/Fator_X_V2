@@ -54,20 +54,12 @@ describe('buildCurationFeed — cenários determinísticos', () => {
   });
 
   it('rotula o dia anterior como "Ontem"', () => {
-    const feed = buildCurationFeed(
-      [row({ updated_at: '2026-07-26T10:00:00-03:00' })],
-      UID,
-      NOW,
-    );
+    const feed = buildCurationFeed([row({ updated_at: '2026-07-26T10:00:00-03:00' })], UID, NOW);
     expect(feed[0].dayLabel).toBe('Ontem');
   });
 
   it('usa data absoluta para dias mais antigos', () => {
-    const feed = buildCurationFeed(
-      [row({ updated_at: '2026-07-01T10:00:00-03:00' })],
-      UID,
-      NOW,
-    );
+    const feed = buildCurationFeed([row({ updated_at: '2026-07-01T10:00:00-03:00' })], UID, NOW);
     expect(feed[0].dayLabel).toMatch(/^\d{2}\/\d{2}\/\d{4}$/);
   });
 
@@ -80,7 +72,6 @@ describe('buildCurationFeed — cenários determinísticos', () => {
     const feed = buildCurationFeed([row({ updated_at: noite.toISOString() })], UID, NOW);
     expect(feed[0].dayLabel).toBe('Hoje');
   });
-
 
   it('deduplica template+skill mantendo o registro mais recente', () => {
     const feed = buildCurationFeed(
@@ -97,17 +88,16 @@ describe('buildCurationFeed — cenários determinísticos', () => {
   });
 
   it('mantém vínculos da mesma skill em templates distintos', () => {
-    const feed = buildCurationFeed(
-      [row(), row({ template_id: 'onboarding' })],
-      UID,
-      NOW,
-    );
+    const feed = buildCurationFeed([row(), row({ template_id: 'onboarding' })], UID, NOW);
     expect(feed.flatMap((d) => d.entries)).toHaveLength(2);
   });
 
   it('descarta linhas sem data utilizável', () => {
     const feed = buildCurationFeed(
-      [row({ updated_at: null, created_at: null }), row({ updated_at: 'não-é-data', created_at: null, skill_id: 'skill-b' })],
+      [
+        row({ updated_at: null, created_at: null }),
+        row({ updated_at: 'não-é-data', created_at: null, skill_id: 'skill-b' }),
+      ],
       UID,
       NOW,
     );
@@ -173,7 +163,9 @@ describe('buildCurationFeed — 500 cenários aleatórios', () => {
       for (let i = 0; i < total; i++) {
         const diasAtras = Math.floor(random() * 10);
         const quebrada = random() < 0.15;
-        const d = new Date(NOW.getTime() - diasAtras * 86_400_000 - Math.floor(random() * 8) * 3_600_000);
+        const d = new Date(
+          NOW.getTime() - diasAtras * 86_400_000 - Math.floor(random() * 8) * 3_600_000,
+        );
         rows.push(
           row({
             template_id: templateIds[Math.floor(random() * templateIds.length)],
@@ -425,12 +417,9 @@ describe('resolveTemplateFilter — allowlist contra o catálogo', () => {
     for (const id of IDS) expect(resolveTemplateFilter(id, IDS)).toBe(id);
   });
 
-  it.each([undefined, null, '', '   ', 'all', ' all '])(
-    'trata %p como "sem filtro"',
-    (entrada) => {
-      expect(resolveTemplateFilter(entrada as string | null | undefined, IDS)).toBeNull();
-    },
-  );
+  it.each([undefined, null, '', '   ', 'all', ' all '])('trata %p como "sem filtro"', (entrada) => {
+    expect(resolveTemplateFilter(entrada as string | null | undefined, IDS)).toBeNull();
+  });
 
   it('rejeita ids desconhecidos em vez de consultar às cegas', () => {
     expect(resolveTemplateFilter('template-inexistente', IDS)).toBeNull();

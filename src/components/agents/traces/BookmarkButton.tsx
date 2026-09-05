@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Bookmark, BookmarkCheck, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -26,6 +26,7 @@ export function BookmarkButton({
   const [open, setOpen] = useState(false);
   const [note, setNote] = useState('');
   const [existing, setExisting] = useState<TraceBookmark | undefined>(undefined);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Re-read state whenever the popover opens or the target changes.
   useEffect(() => {
@@ -34,6 +35,11 @@ export function BookmarkButton({
     setExisting(found);
     setNote(found?.note ?? '');
   }, [sessionId, traceId, open]);
+
+  // Focus the note field when the popover opens (replaces autoFocus for a11y).
+  useEffect(() => {
+    if (open) textareaRef.current?.focus();
+  }, [open]);
 
   const isMarked = !!existing;
 
@@ -95,6 +101,7 @@ export function BookmarkButton({
           </p>
         </div>
         <Textarea
+          ref={textareaRef}
           value={note}
           onChange={(e) => setNote(e.target.value)}
           placeholder="Anotação opcional (ex: erro de timeout aqui, validar prompt, etc.)"

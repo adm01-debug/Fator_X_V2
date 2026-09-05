@@ -54,7 +54,10 @@ export async function createApiKey(name: string, scopes: string[] = ['read', 'ex
 }
 
 export async function revokeApiKey(id: string) {
-  const { error } = await supabaseExternal.from('api_keys').update({ is_active: false }).eq('id', id);
+  const { error } = await supabaseExternal
+    .from('api_keys')
+    .update({ is_active: false })
+    .eq('id', id);
   if (error) throw error;
 }
 
@@ -198,15 +201,28 @@ export async function deleteGuardrailPolicy(id: string) {
 }
 
 export async function installGuardrailPreset(
-  preset: { id: string; name: string; type: string; config: Record<string, unknown>; severity?: string; tags?: string[] },
+  preset: {
+    id: string;
+    name: string;
+    type: string;
+    config: Record<string, unknown>;
+    severity?: string;
+    tags?: string[];
+  },
   workspaceId: string | null,
 ) {
   const { error } = await supabaseExternal.from('guardrail_policies').insert({
     name: preset.name,
-    type: preset.type as 'content_filter' | 'pii_detection' | 'prompt_injection' | 'toxicity' | 'custom',
+    type: preset.type as
+      'content_filter' | 'pii_detection' | 'prompt_injection' | 'toxicity' | 'custom',
     workspace_id: workspaceId,
     is_enabled: true,
-    config: { ...preset.config, preset_id: preset.id, severity: preset.severity, tags: preset.tags },
+    config: {
+      ...preset.config,
+      preset_id: preset.id,
+      severity: preset.severity,
+      tags: preset.tags,
+    },
   });
   if (error) {
     logger.error('installGuardrailPreset failed', { error: error.message, preset: preset.id });
@@ -323,9 +339,7 @@ export async function getSecurityPosture() {
   // Anti-Jailbreak — verify guardrail policy exists for injection
   try {
     const guardrails = await listGuardrailPolicies();
-    const injectionPolicy = guardrails.find(
-      (g) => g.type === 'prompt_injection' && g.is_enabled,
-    );
+    const injectionPolicy = guardrails.find((g) => g.type === 'prompt_injection' && g.is_enabled);
     checks.push({
       id: 'jailbreak',
       title: 'Anti-Jailbreak',

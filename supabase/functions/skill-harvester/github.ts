@@ -96,8 +96,12 @@ export async function ghGet<T>(path: string, maxAttempts = 4): Promise<GhRespons
 
       if (waitMs >= 20_000) {
         return {
-          ok: false, status: res.status, data: null, errorBody: lastBody,
-          rateRemaining: remaining, retryAfterMs: waitMs,
+          ok: false,
+          status: res.status,
+          data: null,
+          errorBody: lastBody,
+          rateRemaining: remaining,
+          retryAfterMs: waitMs,
         };
       }
       attempt++;
@@ -106,10 +110,24 @@ export async function ghGet<T>(path: string, maxAttempts = 4): Promise<GhRespons
     }
 
     // 404/422/etc — não adianta repetir
-    return { ok: false, status: res.status, data: null, errorBody: lastBody, rateRemaining: remaining, retryAfterMs: null };
+    return {
+      ok: false,
+      status: res.status,
+      data: null,
+      errorBody: lastBody,
+      rateRemaining: remaining,
+      retryAfterMs: null,
+    };
   }
 
-  return { ok: false, status: lastStatus, data: null, errorBody: lastBody, rateRemaining: null, retryAfterMs: null };
+  return {
+    ok: false,
+    status: lastStatus,
+    data: null,
+    errorBody: lastBody,
+    rateRemaining: null,
+    retryAfterMs: null,
+  };
 }
 
 /** Busca de repositórios. */
@@ -125,21 +143,40 @@ export interface GhRepo {
   owner?: { login: string };
 }
 
-export async function searchRepos(q: string, perPage: number): Promise<GhResponse<{ items: GhRepo[] }>> {
-  const params = new URLSearchParams({ q, sort: 'stars', order: 'desc', per_page: String(perPage) });
+export async function searchRepos(
+  q: string,
+  perPage: number,
+): Promise<GhResponse<{ items: GhRepo[] }>> {
+  const params = new URLSearchParams({
+    q,
+    sort: 'stars',
+    order: 'desc',
+    per_page: String(perPage),
+  });
   return await ghGet<{ items: GhRepo[] }>(`search/repositories?${params}`);
 }
 
-export interface GhTreeEntry { path: string; type: string; sha: string }
+export interface GhTreeEntry {
+  path: string;
+  type: string;
+  sha: string;
+}
 
-export async function getTree(repo: string, branch: string): Promise<GhResponse<{ tree: GhTreeEntry[]; truncated: boolean }>> {
+export async function getTree(
+  repo: string,
+  branch: string,
+): Promise<GhResponse<{ tree: GhTreeEntry[]; truncated: boolean }>> {
   return await ghGet<{ tree: GhTreeEntry[]; truncated: boolean }>(
     `repos/${repo}/git/trees/${encodeURIComponent(branch)}?recursive=1`,
   );
 }
 
 /** Busca conteúdo bruto de um arquivo (via raw.githubusercontent para economizar API). */
-export async function getRawFile(repo: string, branch: string, path: string): Promise<string | null> {
+export async function getRawFile(
+  repo: string,
+  branch: string,
+  path: string,
+): Promise<string | null> {
   try {
     const url = `https://raw.githubusercontent.com/${repo}/${branch}/${path.split('/').map(encodeURIComponent).join('/')}`;
     const res = await fetch(url, { headers: { 'User-Agent': 'nexus-skill-harvester' } });

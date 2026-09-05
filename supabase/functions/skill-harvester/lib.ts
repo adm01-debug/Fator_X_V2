@@ -8,7 +8,7 @@ import {
   SKILL_DEPARTMENTS,
   isLicenseAllowed,
   type SkillDepartment,
-} from "./departments.ts";
+} from './departments.ts';
 
 // ─────────────────────────────────────────── tokenização
 
@@ -24,10 +24,50 @@ import {
  * mudado. Qualquer divergência aqui reabre esse buraco.
  */
 const STOP_WORDS = new Set([
-  'a', 'o', 'as', 'os', 'de', 'da', 'do', 'das', 'dos', 'para', 'com', 'em',
-  'e', 'ou', 'que', 'um', 'uma', 'uns', 'umas', 'no', 'na', 'nos', 'nas',
-  'ao', 'à', 'às', 'aos', 'por', 'sobre', 'the', 'and', 'or', 'to', 'of',
-  'is', 'be', 'are', 'was', 'were', 'in', 'on', 'at', 'for', 'with',
+  'a',
+  'o',
+  'as',
+  'os',
+  'de',
+  'da',
+  'do',
+  'das',
+  'dos',
+  'para',
+  'com',
+  'em',
+  'e',
+  'ou',
+  'que',
+  'um',
+  'uma',
+  'uns',
+  'umas',
+  'no',
+  'na',
+  'nos',
+  'nas',
+  'ao',
+  'à',
+  'às',
+  'aos',
+  'por',
+  'sobre',
+  'the',
+  'and',
+  'or',
+  'to',
+  'of',
+  'is',
+  'be',
+  'are',
+  'was',
+  'were',
+  'in',
+  'on',
+  'at',
+  'for',
+  'with',
 ]);
 
 /**
@@ -35,8 +75,23 @@ const STOP_WORDS = new Set([
  * caracteres são ruído por padrão — exceto estes.
  */
 const SHORT_TERMS = new Set([
-  'ia', 'ai', 'bi', 'ti', 'qa', 'ux', 'ui', 'db', 'ml', 'nl', 'hr', 'rh',
-  'cs', 'go', 'js', 'ci', 'cd',
+  'ia',
+  'ai',
+  'bi',
+  'ti',
+  'qa',
+  'ux',
+  'ui',
+  'db',
+  'ml',
+  'nl',
+  'hr',
+  'rh',
+  'cs',
+  'go',
+  'js',
+  'ci',
+  'cd',
 ]);
 
 export function tokenize(text: string): Set<string> {
@@ -54,7 +109,6 @@ export function tokenize(text: string): Set<string> {
       }),
   );
 }
-
 
 // ─────────────────────────────────────────── sanitização
 
@@ -78,14 +132,26 @@ export function stripUnsafe(input: string, maxLen = 4000): string {
 // ─────────────────────────────────────────── segurança de conteúdo
 
 const INJECTION_PATTERNS: Array<{ re: RegExp; label: string }> = [
-  { re: /ignore\s+(all\s+)?(previous|prior|above)\s+instructions?/i, label: 'prompt_injection:ignore_instructions' },
+  {
+    re: /ignore\s+(all\s+)?(previous|prior|above)\s+instructions?/i,
+    label: 'prompt_injection:ignore_instructions',
+  },
   { re: /disregard\s+(all\s+)?(previous|prior)\s+/i, label: 'prompt_injection:disregard' },
   { re: /ignore\s+as\s+instru[cç][oõ]es\s+anteriores/i, label: 'prompt_injection:pt_ignore' },
-  { re: /you\s+are\s+now\s+(in\s+)?(dan|developer\s+mode|jailbreak)/i, label: 'prompt_injection:jailbreak' },
-  { re: /reveal\s+(your\s+)?(system\s+prompt|instructions)/i, label: 'prompt_injection:reveal_prompt' },
+  {
+    re: /you\s+are\s+now\s+(in\s+)?(dan|developer\s+mode|jailbreak)/i,
+    label: 'prompt_injection:jailbreak',
+  },
+  {
+    re: /reveal\s+(your\s+)?(system\s+prompt|instructions)/i,
+    label: 'prompt_injection:reveal_prompt',
+  },
   { re: /\bcurl\b[^\n]{0,120}\|\s*(ba)?sh\b/i, label: 'shell:pipe_to_shell' },
   { re: /\brm\s+-rf\s+\/(?!\w)/i, label: 'shell:rm_rf_root' },
-  { re: /\bprocess\.env\b[\s\S]{0,80}\b(fetch|axios|request)\b/i, label: 'exfiltration:env_to_network' },
+  {
+    re: /\bprocess\.env\b[\s\S]{0,80}\b(fetch|axios|request)\b/i,
+    label: 'exfiltration:env_to_network',
+  },
   { re: /\bexfiltrat(e|ion)\b/i, label: 'exfiltration:explicit' },
 ];
 
@@ -246,12 +312,43 @@ const DOMAIN_DEPARTMENTS = SKILL_DEPARTMENTS.filter(
 
 /** Jargão de plataforma: frequência de documento ~1, poder discriminativo ~0. */
 export const PLATFORM_STOPWORDS = new Set<string>([
-  'ai', 'ia', 'agent', 'agents', 'agentic', 'agente', 'agentes',
-  'skill', 'skills', 'habilidade', 'habilidades',
-  'llm', 'llms', 'gpt', 'prompt', 'prompts', 'prompting',
-  'claude', 'codex', 'cursor', 'copilot', 'anthropic', 'openai', 'gemini',
-  'mcp', 'chatgpt', 'assistant', 'assistente', 'model', 'modelos',
-  'tool', 'tools', 'ferramenta', 'ferramentas', 'usar', 'use', 'using',
+  'ai',
+  'ia',
+  'agent',
+  'agents',
+  'agentic',
+  'agente',
+  'agentes',
+  'skill',
+  'skills',
+  'habilidade',
+  'habilidades',
+  'llm',
+  'llms',
+  'gpt',
+  'prompt',
+  'prompts',
+  'prompting',
+  'claude',
+  'codex',
+  'cursor',
+  'copilot',
+  'anthropic',
+  'openai',
+  'gemini',
+  'mcp',
+  'chatgpt',
+  'assistant',
+  'assistente',
+  'model',
+  'modelos',
+  'tool',
+  'tools',
+  'ferramenta',
+  'ferramentas',
+  'usar',
+  'use',
+  'using',
 ]);
 
 export const LOW_CONFIDENCE_THRESHOLD = 0.18;
@@ -382,10 +479,10 @@ export function classifyDepartment(input: {
     confidence,
     source,
     tier,
-    needsReview: (tier === 'platform' || tier === 'domain') && confidence < LOW_CONFIDENCE_THRESHOLD,
+    needsReview:
+      (tier === 'platform' || tier === 'domain') && confidence < LOW_CONFIDENCE_THRESHOLD,
   };
 }
-
 
 export function inferCategory(input: {
   name: string;
@@ -398,8 +495,10 @@ export function inferCategory(input: {
   const has = (...w: string[]) => w.some((x) => t.has(x));
   if (has('workflow', 'workflows', 'automation', 'automacao', 'orchestration')) return 'workflows';
   if (has('prompt', 'prompts', 'persona', 'template', 'templates', 'instruction')) return 'prompts';
-  if (has('knowledge', 'conhecimento', 'rag', 'docs', 'documentation', 'wiki', 'guide')) return 'knowledge';
-  if (has('integration', 'integracao', 'connector', 'conector', 'webhook', 'sdk', 'mcp')) return 'integrations';
+  if (has('knowledge', 'conhecimento', 'rag', 'docs', 'documentation', 'wiki', 'guide'))
+    return 'knowledge';
+  if (has('integration', 'integracao', 'connector', 'conector', 'webhook', 'sdk', 'mcp'))
+    return 'integrations';
   return 'tools';
 }
 
@@ -565,8 +664,6 @@ export function computeQualityScore(s: QualitySignals): number {
 export const META_PENALTY = -45;
 
 export const MIN_QUALITY_SCORE = 35;
-
-
 
 // ─────────────────────────────────────────── utilitários
 

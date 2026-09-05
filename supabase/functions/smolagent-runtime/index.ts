@@ -1,15 +1,17 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import { requireEnv, getCorsHeaders, handleCorsPreflight } from "../_shared/mod.ts";
-import { z } from "https://esm.sh/zod@3.23.8";
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
+import { requireEnv, getCorsHeaders, handleCorsPreflight } from '../_shared/mod.ts';
+import { z } from 'https://esm.sh/zod@3.23.8';
 
-const SmolagentBodySchema = z.object({
-  action: z.string().min(1).max(120),
-  stream: z.boolean().optional(),
-}).passthrough();
+const SmolagentBodySchema = z
+  .object({
+    action: z.string().min(1).max(120),
+    stream: z.boolean().optional(),
+  })
+  .passthrough();
 
 // jsonHeaders is set per-request inside the handler (dynamic CORS)
-let jsonHeaders: Record<string, string> = { "Content-Type": "application/json" };
+let jsonHeaders: Record<string, string> = { 'Content-Type': 'application/json' };
 
 function jsonResponse(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), { status, headers: jsonHeaders });
@@ -75,16 +77,32 @@ function buildToolRegistry(ctx: AgentContext): AgentTool[] {
     // ── Fator X Edge Functions ──
     {
       name: 'query_database',
-      description: 'Query the Promo Brindes database (companies, contacts, cooperatives, products). Supports natural language questions about business data.',
+      description:
+        'Query the Promo Brindes database (companies, contacts, cooperatives, products). Supports natural language questions about business data.',
       parameters: {
-        question: { type: 'string', description: 'Natural language question about the data', required: true },
-        entity: { type: 'string', description: 'Entity type: empresa, contato, cooperativa, produto, conversa_whatsapp' },
+        question: {
+          type: 'string',
+          description: 'Natural language question about the data',
+          required: true,
+        },
+        entity: {
+          type: 'string',
+          description: 'Entity type: empresa, contato, cooperativa, produto, conversa_whatsapp',
+        },
       },
       execute: async (params) => {
         const resp = await safeFetch(`${ctx.supabaseUrl}/functions/v1/datahub-query`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': ctx.authHeader, 'apikey': ctx.supabaseKey },
-          body: JSON.stringify({ action: 'natural_language_query', question: params.question, connection_id: 'bancodadosclientes' }),
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: ctx.authHeader,
+            apikey: ctx.supabaseKey,
+          },
+          body: JSON.stringify({
+            action: 'natural_language_query',
+            question: params.question,
+            connection_id: 'bancodadosclientes',
+          }),
         });
         const result = await resp.json();
         return JSON.stringify(result);
@@ -94,14 +112,27 @@ function buildToolRegistry(ctx: AgentContext): AgentTool[] {
       name: 'search_entities',
       description: 'Search for specific records in the database by name or keyword.',
       parameters: {
-        entity: { type: 'string', description: 'Entity type: empresa, contato, cooperativa, produto', required: true },
+        entity: {
+          type: 'string',
+          description: 'Entity type: empresa, contato, cooperativa, produto',
+          required: true,
+        },
         search: { type: 'string', description: 'Search term', required: true },
       },
       execute: async (params) => {
         const resp = await safeFetch(`${ctx.supabaseUrl}/functions/v1/datahub-query`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': ctx.authHeader, 'apikey': ctx.supabaseKey },
-          body: JSON.stringify({ action: 'query_entity', entity: params.entity, search: params.search, page_size: 10 }),
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: ctx.authHeader,
+            apikey: ctx.supabaseKey,
+          },
+          body: JSON.stringify({
+            action: 'query_entity',
+            entity: params.entity,
+            search: params.search,
+            page_size: 10,
+          }),
         });
         const result = await resp.json();
         return JSON.stringify({ total: result.total, data: (result.data || []).slice(0, 5) });
@@ -109,16 +140,27 @@ function buildToolRegistry(ctx: AgentContext): AgentTool[] {
     },
     {
       name: 'analyze_image',
-      description: 'Analyze a product image: classify product type, detect dominant color, check NSFW, detect objects.',
+      description:
+        'Analyze a product image: classify product type, detect dominant color, check NSFW, detect objects.',
       parameters: {
         image_url: { type: 'string', description: 'URL of the image to analyze', required: true },
-        analysis_type: { type: 'string', description: 'Type: classify, detect_color, detect_objects, check_nsfw, full_analysis' },
+        analysis_type: {
+          type: 'string',
+          description: 'Type: classify, detect_color, detect_objects, check_nsfw, full_analysis',
+        },
       },
       execute: async (params) => {
         const resp = await safeFetch(`${ctx.supabaseUrl}/functions/v1/image-analysis`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': ctx.authHeader, 'apikey': ctx.supabaseKey },
-          body: JSON.stringify({ action: params.analysis_type || 'full_analysis', image_url: params.image_url }),
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: ctx.authHeader,
+            apikey: ctx.supabaseKey,
+          },
+          body: JSON.stringify({
+            action: params.analysis_type || 'full_analysis',
+            image_url: params.image_url,
+          }),
         });
         return JSON.stringify(await resp.json());
       },
@@ -132,7 +174,11 @@ function buildToolRegistry(ctx: AgentContext): AgentTool[] {
       execute: async (params) => {
         const resp = await safeFetch(`${ctx.supabaseUrl}/functions/v1/audio-transcribe`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': ctx.authHeader, 'apikey': ctx.supabaseKey },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: ctx.authHeader,
+            apikey: ctx.supabaseKey,
+          },
           body: JSON.stringify({ action: 'transcribe', audio_url: params.audio_url }),
         });
         return JSON.stringify(await resp.json());
@@ -140,10 +186,18 @@ function buildToolRegistry(ctx: AgentContext): AgentTool[] {
     },
     {
       name: 'generate_mockup',
-      description: 'Generate a professional product mockup. Removes background and creates studio-quality photo.',
+      description:
+        'Generate a professional product mockup. Removes background and creates studio-quality photo.',
       parameters: {
-        product_image_url: { type: 'string', description: 'URL of the product photo', required: true },
-        background_prompt: { type: 'string', description: 'Description of desired background scene' },
+        product_image_url: {
+          type: 'string',
+          description: 'URL of the product photo',
+          required: true,
+        },
+        background_prompt: {
+          type: 'string',
+          description: 'Description of desired background scene',
+        },
         product_name: { type: 'string', description: 'Name of the product for better generation' },
       },
       execute: async (params) => {
@@ -154,7 +208,11 @@ function buildToolRegistry(ctx: AgentContext): AgentTool[] {
 
         const resp = await safeFetch(`${ctx.supabaseUrl}/functions/v1/product-mockup`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': ctx.authHeader, 'apikey': ctx.supabaseKey },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: ctx.authHeader,
+            apikey: ctx.supabaseKey,
+          },
           body: JSON.stringify({
             action: 'generate_mockup',
             product_image_base64: base64,
@@ -174,7 +232,11 @@ function buildToolRegistry(ctx: AgentContext): AgentTool[] {
       execute: async (params) => {
         const resp = await safeFetch(`${ctx.supabaseUrl}/functions/v1/doc-ocr`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': ctx.authHeader, 'apikey': ctx.supabaseKey },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: ctx.authHeader,
+            apikey: ctx.supabaseKey,
+          },
           body: JSON.stringify({ action: 'extract_text', image_url: params.image_url }),
         });
         return JSON.stringify(await resp.json());
@@ -190,8 +252,16 @@ function buildToolRegistry(ctx: AgentContext): AgentTool[] {
       execute: async (params) => {
         const resp = await safeFetch(`${ctx.supabaseUrl}/functions/v1/text-to-speech`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': ctx.authHeader, 'apikey': ctx.supabaseKey },
-          body: JSON.stringify({ text: params.text, language: params.language || 'pt', return_format: 'base64' }),
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: ctx.authHeader,
+            apikey: ctx.supabaseKey,
+          },
+          body: JSON.stringify({
+            text: params.text,
+            language: params.language || 'pt',
+            return_format: 'base64',
+          }),
         });
         const result = await resp.json();
         return JSON.stringify({ status: 'ok', audio_length: result.audio_base64?.length || 0 });
@@ -201,18 +271,29 @@ function buildToolRegistry(ctx: AgentContext): AgentTool[] {
     // ── HuggingFace Direct Tools ──
     {
       name: 'classify_text',
-      description: 'Classify text into categories using zero-shot classification. Works in Portuguese.',
+      description:
+        'Classify text into categories using zero-shot classification. Works in Portuguese.',
       parameters: {
         text: { type: 'string', description: 'Text to classify', required: true },
-        categories: { type: 'string', description: 'Comma-separated list of possible categories', required: true },
+        categories: {
+          type: 'string',
+          description: 'Comma-separated list of possible categories',
+          required: true,
+        },
       },
       execute: async (params) => {
-        const labels = (params.categories as string).split(',').map(s => s.trim());
-        const resp = await safeFetch('https://router.huggingface.co/hf-inference/models/joeddav/xlm-roberta-large-xnli', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ctx.hfToken}` },
-          body: JSON.stringify({ inputs: (params.text as string).substring(0, 500), parameters: { candidate_labels: labels } }),
-        });
+        const labels = (params.categories as string).split(',').map((s) => s.trim());
+        const resp = await safeFetch(
+          'https://router.huggingface.co/hf-inference/models/joeddav/xlm-roberta-large-xnli',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${ctx.hfToken}` },
+            body: JSON.stringify({
+              inputs: (params.text as string).substring(0, 500),
+              parameters: { candidate_labels: labels },
+            }),
+          },
+        );
         return JSON.stringify(await resp.json());
       },
     },
@@ -223,11 +304,14 @@ function buildToolRegistry(ctx: AgentContext): AgentTool[] {
         text: { type: 'string', description: 'Text to analyze', required: true },
       },
       execute: async (params) => {
-        const resp = await safeFetch('https://router.huggingface.co/hf-inference/models/cardiffnlp/twitter-roberta-base-sentiment-latest', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ctx.hfToken}` },
-          body: JSON.stringify({ inputs: (params.text as string).substring(0, 512) }),
-        });
+        const resp = await safeFetch(
+          'https://router.huggingface.co/hf-inference/models/cardiffnlp/twitter-roberta-base-sentiment-latest',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${ctx.hfToken}` },
+            body: JSON.stringify({ inputs: (params.text as string).substring(0, 512) }),
+          },
+        );
         return JSON.stringify(await resp.json());
       },
     },
@@ -238,28 +322,42 @@ function buildToolRegistry(ctx: AgentContext): AgentTool[] {
         text: { type: 'string', description: 'Text to extract entities from', required: true },
       },
       execute: async (params) => {
-        const resp = await safeFetch('https://router.huggingface.co/hf-inference/models/dslim/bert-base-NER', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ctx.hfToken}` },
-          body: JSON.stringify({ inputs: (params.text as string).substring(0, 1000) }),
-        });
+        const resp = await safeFetch(
+          'https://router.huggingface.co/hf-inference/models/dslim/bert-base-NER',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${ctx.hfToken}` },
+            body: JSON.stringify({ inputs: (params.text as string).substring(0, 1000) }),
+          },
+        );
         return JSON.stringify(await resp.json());
       },
     },
     {
       name: 'translate',
-      description: 'Translate text between languages. Supports 200+ languages including Portuguese, English, Spanish.',
+      description:
+        'Translate text between languages. Supports 200+ languages including Portuguese, English, Spanish.',
       parameters: {
         text: { type: 'string', description: 'Text to translate', required: true },
-        source_lang: { type: 'string', description: 'Source language code (e.g., por_Latn, eng_Latn)', required: true },
+        source_lang: {
+          type: 'string',
+          description: 'Source language code (e.g., por_Latn, eng_Latn)',
+          required: true,
+        },
         target_lang: { type: 'string', description: 'Target language code', required: true },
       },
       execute: async (params) => {
-        const resp = await safeFetch('https://router.huggingface.co/hf-inference/models/facebook/nllb-200-distilled-600M', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ctx.hfToken}` },
-          body: JSON.stringify({ inputs: (params.text as string).substring(0, 2000), parameters: { src_lang: params.source_lang, tgt_lang: params.target_lang } }),
-        });
+        const resp = await safeFetch(
+          'https://router.huggingface.co/hf-inference/models/facebook/nllb-200-distilled-600M',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${ctx.hfToken}` },
+            body: JSON.stringify({
+              inputs: (params.text as string).substring(0, 2000),
+              parameters: { src_lang: params.source_lang, tgt_lang: params.target_lang },
+            }),
+          },
+        );
         return JSON.stringify(await resp.json());
       },
     },
@@ -271,34 +369,48 @@ function buildToolRegistry(ctx: AgentContext): AgentTool[] {
       },
       execute: async (params) => {
         // Use DuckDuckGo HTML search (no API key needed)
-        const resp = await safeFetch(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(params.query as string)}`, {
-          headers: { 'User-Agent': 'FatorX-Agent/1.0' },
-        });
+        const resp = await safeFetch(
+          `https://html.duckduckgo.com/html/?q=${encodeURIComponent(params.query as string)}`,
+          {
+            headers: { 'User-Agent': 'FatorX-Agent/1.0' },
+          },
+        );
         const html = await resp.text();
         // Extract snippets from HTML (simplified)
-        const snippets = html.match(/<a class="result__snippet"[^>]*>(.*?)<\/a>/g)?.slice(0, 3)
-          .map(s => s.replace(/<[^>]+>/g, '').trim()) || ['No results found'];
+        const snippets = html
+          .match(/<a class="result__snippet"[^>]*>(.*?)<\/a>/g)
+          ?.slice(0, 3)
+          .map((s) => s.replace(/<[^>]+>/g, '').trim()) || ['No results found'];
         return JSON.stringify({ results: snippets });
       },
     },
     {
       name: 'ask_llm',
-      description: 'Ask a question to a powerful LLM for reasoning, analysis, or text generation. Use this for complex thinking tasks.',
+      description:
+        'Ask a question to a powerful LLM for reasoning, analysis, or text generation. Use this for complex thinking tasks.',
       parameters: {
         question: { type: 'string', description: 'Question or prompt for the LLM', required: true },
-        system_prompt: { type: 'string', description: 'Optional system prompt to guide the response' },
+        system_prompt: {
+          type: 'string',
+          description: 'Optional system prompt to guide the response',
+        },
       },
       execute: async (params) => {
         const resp = await safeFetch(`${ctx.supabaseUrl}/functions/v1/llm-gateway`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': ctx.authHeader, 'apikey': ctx.supabaseKey },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: ctx.authHeader,
+            apikey: ctx.supabaseKey,
+          },
           body: JSON.stringify({
             model: 'huggingface/Qwen/Qwen3-30B-A3B',
             messages: [
               ...(params.system_prompt ? [{ role: 'system', content: params.system_prompt }] : []),
               { role: 'user', content: params.question },
             ],
-            temperature: 0.3, max_tokens: 1000,
+            temperature: 0.3,
+            max_tokens: 1000,
           }),
         });
         const result = await resp.json();
@@ -342,18 +454,20 @@ async function runAgent(
   ctx: AgentContext,
   model: string,
   maxSteps: number,
-  onEvent?: (event: { type: string; data: Record<string, unknown> }) => void
+  onEvent?: (event: { type: string; data: Record<string, unknown> }) => void,
 ): Promise<{ answer: string; steps: AgentStep[]; totalTokens: number; totalCost: number }> {
   const steps: AgentStep[] = [];
   let totalTokens = 0;
   let totalCost = 0;
 
-  const toolDescriptions = tools.map(t => {
-    const paramStr = Object.entries(t.parameters)
-      .map(([k, v]) => `  - ${k} (${v.type}${v.required ? ', required' : ''}): ${v.description}`)
-      .join('\n');
-    return `${t.name}: ${t.description}\n  Parameters:\n${paramStr}`;
-  }).join('\n\n');
+  const toolDescriptions = tools
+    .map((t) => {
+      const paramStr = Object.entries(t.parameters)
+        .map(([k, v]) => `  - ${k} (${v.type}${v.required ? ', required' : ''}): ${v.description}`)
+        .join('\n');
+      return `${t.name}: ${t.description}\n  Parameters:\n${paramStr}`;
+    })
+    .join('\n\n');
 
   const systemPrompt = REACT_SYSTEM_PROMPT.replace('{TOOLS}', toolDescriptions);
 
@@ -365,11 +479,18 @@ async function runAgent(
   onEvent?.({ type: 'RUN_STARTED', data: { task, model, max_steps: maxSteps } });
 
   for (let step = 0; step < maxSteps; step++) {
-    onEvent?.({ type: 'STATE_DELTA', data: { delta: { current_step: step + 1, status: 'thinking' } } });
-    
+    onEvent?.({
+      type: 'STATE_DELTA',
+      data: { delta: { current_step: step + 1, status: 'thinking' } },
+    });
+
     const llmResp = await fetch(`${ctx.supabaseUrl}/functions/v1/llm-gateway`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': ctx.authHeader, 'apikey': ctx.supabaseKey },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: ctx.authHeader,
+        apikey: ctx.supabaseKey,
+      },
       body: JSON.stringify({
         model,
         messages,
@@ -387,7 +508,7 @@ async function runAgent(
 
     let response = '';
     const reader = llmResp.body?.getReader();
-    if (!reader) throw new Error("No reader available from LLM Gateway");
+    if (!reader) throw new Error('No reader available from LLM Gateway');
     const _decoder = new TextEncoder();
     const textDecoder = new TextDecoder();
 
@@ -395,14 +516,14 @@ async function runAgent(
       const { done, value } = await reader.read();
       if (done) break;
       const chunk = textDecoder.decode(value);
-      const lines = chunk.split('\n').filter(l => l.startsWith('data: '));
-      
+      const lines = chunk.split('\n').filter((l) => l.startsWith('data: '));
+
       for (const line of lines) {
         const raw = line.slice(6);
         if (raw === '[DONE]') continue;
         try {
           const parsed = JSON.parse(raw);
-          const token = parsed.token || parsed.choices?.[0]?.delta?.content || "";
+          const token = parsed.token || parsed.choices?.[0]?.delta?.content || '';
           if (token) {
             response += token;
             onEvent?.({ type: 'TEXT_MESSAGE_CONTENT', data: { token } });
@@ -412,7 +533,7 @@ async function runAgent(
         }
       }
     }
-    
+
     // totalTokens and totalCost estimation (since we are streaming internally)
     totalTokens += response.length / 4; // Rough estimate
     totalCost += 0.0001; // Base cost increment
@@ -449,9 +570,12 @@ async function runAgent(
       }
 
       onEvent?.({ type: 'TOOL_CALL_START', data: { name: toolName, args: toolInput } });
-      onEvent?.({ type: 'STATE_DELTA', data: { delta: { status: 'acting', current_tool: toolName } } });
+      onEvent?.({
+        type: 'STATE_DELTA',
+        data: { delta: { status: 'acting', current_tool: toolName } },
+      });
 
-      const tool = tools.find(t => t.name === toolName);
+      const tool = tools.find((t) => t.name === toolName);
       let observation: string;
 
       if (tool) {
@@ -464,7 +588,7 @@ async function runAgent(
           observation = `Error executing ${toolName}: ${(e as Error).message}`;
         }
       } else {
-        observation = `Tool "${toolName}" not found. Available tools: ${tools.map(t => t.name).join(', ')}`;
+        observation = `Tool "${toolName}" not found. Available tools: ${tools.map((t) => t.name).join(', ')}`;
       }
 
       onEvent?.({ type: 'TOOL_CALL_END', data: { name: toolName, result: observation } });
@@ -487,10 +611,13 @@ async function runAgent(
         const taskMsg = messages[1];
         const oldMessages = messages.slice(2, -6);
         const summary = oldMessages
-          .filter(m => m.role === 'user' && m.content.startsWith('Observation:'))
-          .map(m => m.content.substring(0, 150))
+          .filter((m) => m.role === 'user' && m.content.startsWith('Observation:'))
+          .map((m) => m.content.substring(0, 150))
           .join(' | ');
-        const contextMsg = { role: 'user', content: `[Previous steps summary: ${summary.substring(0, 500)}]` };
+        const contextMsg = {
+          role: 'user',
+          content: `[Previous steps summary: ${summary.substring(0, 500)}]`,
+        };
         const recentMessages = messages.slice(-6);
         messages.length = 0;
         messages.push(systemPromptMsg, taskMsg, contextMsg, ...recentMessages);
@@ -512,12 +639,17 @@ async function runAgent(
       }
 
       messages.push({ role: 'assistant', content: response });
-      messages.push({ role: 'user', content: 'Observation: Your response did not contain a valid Action. Please use the exact format: Action: tool_name\nAction Input: {"param": "value"}' });
+      messages.push({
+        role: 'user',
+        content:
+          'Observation: Your response did not contain a valid Action. Please use the exact format: Action: tool_name\nAction Input: {"param": "value"}',
+      });
     }
   }
 
   const lastStep = steps[steps.length - 1];
-  const finalAnswer = lastStep?.observation || 'Agent reached maximum steps without a final answer.';
+  const finalAnswer =
+    lastStep?.observation || 'Agent reached maximum steps without a final answer.';
   onEvent?.({ type: 'RUN_FINISHED', data: { answer: finalAnswer, error: 'Max steps reached' } });
   return {
     answer: finalAnswer,
@@ -527,20 +659,23 @@ async function runAgent(
   };
 }
 
-
 // ═══ MAIN HANDLER ═══
 
 serve(async (req) => {
-  jsonHeaders = { ...getCorsHeaders(req), "Content-Type": "application/json" };
+  jsonHeaders = { ...getCorsHeaders(req), 'Content-Type': 'application/json' };
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
 
   try {
     const authHeader = req.headers.get('Authorization')!;
     const supabaseUrl = requireEnv('SUPABASE_URL');
     const supabaseKey = requireEnv('SUPABASE_ANON_KEY');
-    const supabase = createClient(supabaseUrl, supabaseKey, { global: { headers: { Authorization: authHeader } } });
+    const supabase = createClient(supabaseUrl, supabaseKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
 
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return jsonResponse({ error: 'Unauthorized' }, 401);
 
     const hfToken = requireEnv('HF_API_TOKEN');
@@ -548,7 +683,10 @@ serve(async (req) => {
     const rawBody = await req.json().catch(() => null);
     const parsedBody = SmolagentBodySchema.safeParse(rawBody);
     if (!parsedBody.success) {
-      return jsonResponse({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }, 400);
+      return jsonResponse(
+        { error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors },
+        400,
+      );
     }
     const body = parsedBody.data as Record<string, unknown> & { action: string; stream?: boolean };
     const { action, stream } = body;
@@ -561,7 +699,9 @@ serve(async (req) => {
       const stream = new ReadableStream({
         async start(controller) {
           const emit = (event: { type: string; data: Record<string, unknown> }) => {
-            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ ...event.data, type: event.type })}\n\n`));
+            controller.enqueue(
+              encoder.encode(`data: ${JSON.stringify({ ...event.data, type: event.type })}\n\n`),
+            );
           };
 
           try {
@@ -578,14 +718,14 @@ serve(async (req) => {
             await runAgent(task, allTools, ctx, model, maxSteps, (event) => {
               emit(event);
             });
-            
+
             controller.enqueue(encoder.encode('data: [DONE]\n\n'));
             controller.close();
           } catch (e) {
             emit({ type: 'RUN_ERROR', data: { error: (e as Error).message } });
             controller.close();
           }
-        }
+        },
       });
 
       return new Response(stream, {
@@ -593,16 +733,15 @@ serve(async (req) => {
           ...getCorsHeaders(req),
           'Content-Type': 'text/event-stream',
           'Cache-Control': 'no-cache',
-          'Connection': 'keep-alive',
+          Connection: 'keep-alive',
         },
       });
     }
 
-
     // ═══ ACTION: list_tools ═══
     if (action === 'list_tools') {
       return jsonResponse({
-        tools: allTools.map(t => ({
+        tools: allTools.map((t) => ({
           name: t.name,
           description: t.description,
           parameters: t.parameters,
@@ -624,24 +763,38 @@ serve(async (req) => {
       const totalMs = Date.now() - startTime;
 
       // Store agent run in traces
-      const { data: member } = await supabase.from('workspace_members').select('workspace_id').eq('user_id', user.id).limit(1).single();
+      const { data: member } = await supabase
+        .from('workspace_members')
+        .select('workspace_id')
+        .eq('user_id', user.id)
+        .limit(1)
+        .single();
       if (member?.workspace_id) {
-        await supabase.from('agent_traces').insert({
-          agent_id: agent_id || '00000000-0000-0000-0000-000000000000',
-          user_id: user.id,
-          workspace_id: member.workspace_id,
-          event: 'smolagent_run',
-          level: 'info',
-          input: { task, model, max_steps: maxSteps },
-          output: { answer: result.answer.substring(0, 2000), steps_count: result.steps.length },
-          metadata: {
-            runtime: 'smolagent-runtime',
-            total_tokens: result.totalTokens,
-            total_cost_usd: result.totalCost,
-            latency_ms: totalMs,
-            tools_used: [...new Set(result.steps.map(s => s.action).filter(a => a !== 'final_answer' && a !== 'none'))],
-          },
-        }).catch(() => {});
+        await supabase
+          .from('agent_traces')
+          .insert({
+            agent_id: agent_id || '00000000-0000-0000-0000-000000000000',
+            user_id: user.id,
+            workspace_id: member.workspace_id,
+            event: 'smolagent_run',
+            level: 'info',
+            input: { task, model, max_steps: maxSteps },
+            output: { answer: result.answer.substring(0, 2000), steps_count: result.steps.length },
+            metadata: {
+              runtime: 'smolagent-runtime',
+              total_tokens: result.totalTokens,
+              total_cost_usd: result.totalCost,
+              latency_ms: totalMs,
+              tools_used: [
+                ...new Set(
+                  result.steps
+                    .map((s) => s.action)
+                    .filter((a) => a !== 'final_answer' && a !== 'none'),
+                ),
+              ],
+            },
+          })
+          .catch(() => {});
       }
 
       return jsonResponse({
@@ -663,11 +816,14 @@ serve(async (req) => {
       if (!task) return jsonResponse({ error: 'task required' }, 400);
 
       const selectedTools = tool_names
-        ? allTools.filter(t => (tool_names as string[]).includes(t.name))
+        ? allTools.filter((t) => (tool_names as string[]).includes(t.name))
         : allTools;
 
       if (selectedTools.length === 0) {
-        return jsonResponse({ error: 'No valid tools selected', available: allTools.map(t => t.name) }, 400);
+        return jsonResponse(
+          { error: 'No valid tools selected', available: allTools.map((t) => t.name) },
+          400,
+        );
       }
 
       const model = reqModel || 'huggingface/Qwen/Qwen3-30B-A3B';
@@ -684,12 +840,11 @@ serve(async (req) => {
         total_cost_usd: Math.round(result.totalCost * 1000000) / 1000000,
         latency_ms: Date.now() - startTime,
         model,
-        tools_used: selectedTools.map(t => t.name),
+        tools_used: selectedTools.map((t) => t.name),
       });
     }
 
     return jsonResponse({ error: `Unknown action: ${action}` }, 400);
-
   } catch (error: unknown) {
     return jsonResponse({ error: error instanceof Error ? error.message : 'Internal error' }, 500);
   }

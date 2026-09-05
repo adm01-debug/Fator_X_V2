@@ -15,10 +15,10 @@
  *   const PORT = requireEnv.number('PORT', 3000);
  */
 
-export const MISSING_ENV_PREFIX = "[ENV-MISSING]";
+export const MISSING_ENV_PREFIX = '[ENV-MISSING]';
 
 function isDeno(): boolean {
-  return typeof Deno !== "undefined";
+  return typeof Deno !== 'undefined';
 }
 
 function getEnv(key: string): string | undefined {
@@ -26,7 +26,7 @@ function getEnv(key: string): string | undefined {
     return Deno.env.get(key);
   }
   // Fallback para testes / SSR
-  return typeof process !== "undefined"
+  return typeof process !== 'undefined'
     ? (process.env as Record<string, string | undefined>)?.[key]
     : undefined;
 }
@@ -37,11 +37,11 @@ function getEnv(key: string): string | undefined {
  */
 export function requireEnv(key: string): string {
   const value = getEnv(key);
-  if (value === undefined || value === "") {
+  if (value === undefined || value === '') {
     const error = new Error(
       `${MISSING_ENV_PREFIX} Required environment variable "${key}" is not set. ` +
-      `Edge Function cannot start without this variable. ` +
-      `Set it via: supabase secrets set ${key}=<value>`
+        `Edge Function cannot start without this variable. ` +
+        `Set it via: supabase secrets set ${key}=<value>`,
     );
     // Gera stack trace no logs para debugging
     console.error(`[ENV-FATAL] ${error.message}`);
@@ -56,7 +56,7 @@ export function requireEnv(key: string): string {
  */
 export function requireEnvDefault(key: string, defaultValue: string): string {
   const value = getEnv(key);
-  return value !== undefined && value !== "" ? value : defaultValue;
+  return value !== undefined && value !== '' ? value : defaultValue;
 }
 
 /**
@@ -65,16 +65,16 @@ export function requireEnvDefault(key: string, defaultValue: string): string {
  */
 export function requireEnvNumber(key: string, defaultValue?: number): number {
   const raw = getEnv(key);
-  if (raw === undefined || raw === "") {
+  if (raw === undefined || raw === '') {
     if (defaultValue !== undefined) return defaultValue;
     throw new Error(
-      `${MISSING_ENV_PREFIX} Required environment variable "${key}" (number) is not set.`
+      `${MISSING_ENV_PREFIX} Required environment variable "${key}" (number) is not set.`,
     );
   }
   const parsed = Number(raw);
   if (!Number.isFinite(parsed)) {
     throw new Error(
-      `${MISSING_ENV_PREFIX} Environment variable "${key}" must be a valid number, got: "${raw}"`
+      `${MISSING_ENV_PREFIX} Environment variable "${key}" must be a valid number, got: "${raw}"`,
     );
   }
   return parsed;
@@ -86,8 +86,8 @@ export function requireEnvNumber(key: string, defaultValue?: number): number {
  */
 export function requireEnvBool(key: string, defaultValue = false): boolean {
   const raw = getEnv(key);
-  if (raw === undefined || raw === "") return defaultValue;
-  return ["true", "1", "yes", "on"].includes(raw.toLowerCase());
+  if (raw === undefined || raw === '') return defaultValue;
+  return ['true', '1', 'yes', 'on'].includes(raw.toLowerCase());
 }
 
 /**
@@ -97,12 +97,12 @@ export function requireEnvBool(key: string, defaultValue = false): boolean {
  */
 export function requireEnvJson<T>(key: string, defaultValue: T): T {
   const raw = getEnv(key);
-  if (raw === undefined || raw === "") return defaultValue;
+  if (raw === undefined || raw === '') return defaultValue;
   try {
     return JSON.parse(raw) as T;
   } catch {
     throw new Error(
-      `${MISSING_ENV_PREFIX} Environment variable "${key}" must be valid JSON. Got: "${raw.substring(0, 100)}"`
+      `${MISSING_ENV_PREFIX} Environment variable "${key}" must be valid JSON. Got: "${raw.substring(0, 100)}"`,
     );
   }
 }
@@ -118,7 +118,7 @@ export function requireEnvUrl(key: string): string {
     return value;
   } catch {
     throw new Error(
-      `${MISSING_ENV_PREFIX} Environment variable "${key}" must be a valid URL, got: "${value}"`
+      `${MISSING_ENV_PREFIX} Environment variable "${key}" must be a valid URL, got: "${value}"`,
     );
   }
 }
@@ -140,7 +140,7 @@ export function requireEnvGroup(keys: string[]): Record<string, string> {
   }
   if (missing.length > 0) {
     throw new Error(
-      `${MISSING_ENV_PREFIX} Missing required environment variables: ${missing.map(k => `"${k}"`).join(", ")}`
+      `${MISSING_ENV_PREFIX} Missing required environment variables: ${missing.map((k) => `"${k}"`).join(', ')}`,
     );
   }
   return result;
@@ -152,7 +152,7 @@ export function requireEnvGroup(keys: string[]): Record<string, string> {
  */
 export function optionalEnv(key: string): string | undefined {
   const value = getEnv(key);
-  return value !== "" ? value : undefined;
+  return value !== '' ? value : undefined;
 }
 
 /**
@@ -167,7 +167,7 @@ export function validateRequiredEnv(keys: string[]): void {
   }
   if (missing.length > 0) {
     throw new Error(
-      `${MISSING_ENV_PREFIX} Edge Function startup failed. Missing env vars: ${missing.join(", ")}`
+      `${MISSING_ENV_PREFIX} Edge Function startup failed. Missing env vars: ${missing.join(', ')}`,
     );
   }
 }

@@ -202,9 +202,7 @@ const EMPTY_SUMMARY: InstallCapSummary = {
  * números inflados (10 instalações que descartam 1 skill cada não significam
  * 10 skills perdidas se todas descreveram o mesmo slot).
  */
-export function summarizeInstallCapLedger(
-  entries: readonly InstallCapEntry[],
-): InstallCapSummary {
+export function summarizeInstallCapLedger(entries: readonly InstallCapEntry[]): InstallCapSummary {
   if (!entries || entries.length === 0) return EMPTY_SUMMARY;
 
   let degrading = 0;
@@ -240,7 +238,8 @@ export function summarizeInstallCapLedger(
       continue;
     }
     atual.events += 1;
-    atual.hasUnacknowledged = atual.hasUnacknowledged || (!e.acknowledged && e.totalDroppedAfter > 0);
+    atual.hasUnacknowledged =
+      atual.hasUnacknowledged || (!e.acknowledged && e.totalDroppedAfter > 0);
     // Entradas sem data não podem sobrescrever um estado datado.
     if (e.createdAt !== '' && e.createdAt > atual.lastAt) {
       atual.lastAt = e.createdAt;

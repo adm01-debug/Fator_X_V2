@@ -125,7 +125,9 @@ export function summarizeCalibrationGovernance(
 ): CalibrationGovernanceDigest {
   const agoraDate = options?.now;
   const agora =
-    agoraDate !== undefined && !Number.isNaN(agoraDate.getTime()) ? agoraDate.getTime() : Date.now();
+    agoraDate !== undefined && !Number.isNaN(agoraDate.getTime())
+      ? agoraDate.getTime()
+      : Date.now();
 
   const instabilidades = detectCalibrationInstabilityByScale(items, {
     now: options?.now,

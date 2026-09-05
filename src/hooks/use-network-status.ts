@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 const OFFLINE_TITLE = 'Sem conexão com a internet';
-const OFFLINE_DESCRIPTION =
-  'Verifique sua conexão. O sistema entrará em modo de segurança.';
+const OFFLINE_DESCRIPTION = 'Verifique sua conexão. O sistema entrará em modo de segurança.';
 
 function showOfflineToast() {
   toast.error(OFFLINE_TITLE, {

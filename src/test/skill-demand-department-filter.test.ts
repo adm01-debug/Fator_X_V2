@@ -44,7 +44,8 @@ function buildCatalog(size: number): { skills: DemandSkillInput[]; links: Demand
       tags: [`tag-${i % 7}`],
     });
     // Demanda variável de 0 a 7 templates, cobrindo todas as faixas.
-    for (let t = 0; t < i % 8; t += 1) links.push({ skill_id: `skill-${i}`, template_id: `tpl-${t}` });
+    for (let t = 0; t < i % 8; t += 1)
+      links.push({ skill_id: `skill-${i}`, template_id: `tpl-${t}` });
   }
   return { skills, links };
 }

@@ -59,7 +59,13 @@ export function useAgentWorkflows(agentId?: string) {
   });
 
   const createWorkflow = useMutation({
-    mutationFn: async (input: { name: string; description?: string; workspace_id: string; nodes?: DbRow[]; edges?: DbRow[] }) => {
+    mutationFn: async (input: {
+      name: string;
+      description?: string;
+      workspace_id: string;
+      nodes?: DbRow[];
+      edges?: DbRow[];
+    }) => {
       const { data: u } = await supabase.auth.getUser();
       if (!u.user) throw new Error('Não autenticado');
       const { data, error } = await supabase
@@ -86,9 +92,19 @@ export function useAgentWorkflows(agentId?: string) {
   });
 
   const updateWorkflow = useMutation({
-    mutationFn: async (input: { id: string; nodes?: DbRow[]; edges?: DbRow[]; name?: string; description?: string; status?: string }) => {
+    mutationFn: async (input: {
+      id: string;
+      nodes?: DbRow[];
+      edges?: DbRow[];
+      name?: string;
+      description?: string;
+      status?: string;
+    }) => {
       const { id, ...patch } = input;
-      const { error } = await supabase.from('agent_workflows').update(patch as never).eq('id', id);
+      const { error } = await supabase
+        .from('agent_workflows')
+        .update(patch as never)
+        .eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {

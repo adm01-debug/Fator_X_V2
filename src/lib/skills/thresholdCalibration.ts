@@ -30,7 +30,6 @@ export function coerceCalibrationScale(value: unknown): CalibrationScale {
   return value === 'plataforma' ? 'plataforma' : 'dominio';
 }
 
-
 export interface ThresholdCalibrationRowInput {
   id?: unknown;
   action?: unknown;
@@ -64,7 +63,6 @@ export interface ThresholdCalibration {
   scale: CalibrationScale;
   /** ISO válido, ou `null` quando a data veio corrompida. */
   at: string | null;
-
 }
 
 /** Mínimo de caracteres úteis para uma justificativa ser aceita. */
@@ -82,8 +80,11 @@ export const OVERRIDE_REASON_MAX = 280;
  */
 export function normalizeOverrideReason(value: unknown): string | null {
   if (typeof value !== 'string') return null;
-  // eslint-disable-next-line no-control-regex
-  const limpo = value.replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim();
+  const limpo = value
+    // eslint-disable-next-line no-control-regex
+    .replace(/[\u0000-\u001f\u007f]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
   if (limpo === '') return null;
   return limpo.length > OVERRIDE_REASON_MAX ? limpo.slice(0, OVERRIDE_REASON_MAX).trim() : limpo;
 }
@@ -231,7 +232,6 @@ export interface CalibrationInstability {
   scale: CalibrationScale | null;
 }
 
-
 /**
  * Detecta instabilidade de calibração.
  *
@@ -315,9 +315,6 @@ export function detectCalibrationInstabilityByScale(
   return { dominio: porEscala('dominio'), plataforma: porEscala('plataforma') };
 }
 
-
-
-
 /** Prazo de revisão de um override antes de virar pendência de governança. */
 export const OVERRIDE_REVIEW_DEADLINE_DAYS = 30;
 
@@ -397,4 +394,3 @@ export function findStaleOverridesByScale(
     plataforma: findStaleOverrides(filterCalibrationsByScale(items, 'plataforma'), options),
   };
 }
-

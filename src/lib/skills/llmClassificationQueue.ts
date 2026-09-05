@@ -22,18 +22,9 @@ import { logger } from '@/lib/logger';
 
 /** Estados possíveis de um item. Terminais: `concluido`, `falhou`, `cancelado`. */
 export type QueueItemStatus =
-  | 'pendente'
-  | 'executando'
-  | 'aguardando_retry'
-  | 'concluido'
-  | 'falhou'
-  | 'cancelado';
+  'pendente' | 'executando' | 'aguardando_retry' | 'concluido' | 'falhou' | 'cancelado';
 
-export const TERMINAL_STATUSES: readonly QueueItemStatus[] = [
-  'concluido',
-  'falhou',
-  'cancelado',
-];
+export const TERMINAL_STATUSES: readonly QueueItemStatus[] = ['concluido', 'falhou', 'cancelado'];
 
 export function isTerminal(status: QueueItemStatus): boolean {
   return TERMINAL_STATUSES.includes(status);

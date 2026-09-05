@@ -38,7 +38,6 @@ vi.mock('@/lib/logger', () => ({
 
 const db = getSharedSupabaseMock('crm-service');
 
-
 import {
   listDeals,
   listStages,
@@ -72,9 +71,7 @@ describe('isolamento multi-tenant', () => {
     await listCompanies();
     await listStages();
 
-    const workspaceFilters = db.calls.eq.mock.calls.filter(
-      ([column]) => column === 'workspace_id',
-    );
+    const workspaceFilters = db.calls.eq.mock.calls.filter(([column]) => column === 'workspace_id');
     // Uma chamada por listagem — nenhuma leitura pode escapar do escopo.
     expect(workspaceFilters.length).toBeGreaterThanOrEqual(3);
     expect(workspaceFilters.every(([, value]) => value === 'ws-alpha')).toBe(true);
@@ -173,7 +170,9 @@ describe('summarizeDeals', () => {
   });
 
   it('estágio desconhecido não quebra o forecast', () => {
-    const orfao: CrmDeal[] = [{ id: 'x', status: 'open', amount: 900, stage_id: 'inexistente' } as CrmDeal];
+    const orfao: CrmDeal[] = [
+      { id: 'x', status: 'open', amount: 900, stage_id: 'inexistente' } as CrmDeal,
+    ];
     const s = summarizeDeals(orfao, stages);
     expect(Number.isFinite(s.weightedForecast)).toBe(true);
     expect(s.openAmount).toBe(900);

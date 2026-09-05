@@ -106,10 +106,7 @@ export function isDescriptionEmpty(description: string | null | undefined): bool
   return FOLDED_PLACEHOLDERS.has(dobrado);
 }
 
-export type IneligibleReason =
-  | 'nao_importada'
-  | 'ja_descrita'
-  | 'descricao_humana';
+export type IneligibleReason = 'nao_importada' | 'ja_descrita' | 'descricao_humana';
 
 /**
  * Decide se a skill pode receber uma descrição gerada.
@@ -153,12 +150,7 @@ export function hasEnoughSignal(candidate: EnrichCandidate): boolean {
 // ============================================================================
 
 export type RejectionReason =
-  | 'vazia'
-  | 'curta'
-  | 'longa'
-  | 'eco'
-  | 'confianca_baixa'
-  | 'insuficiente';
+  'vazia' | 'curta' | 'longa' | 'eco' | 'confianca_baixa' | 'insuficiente';
 
 export const REJECTION_LABEL: Record<RejectionReason, string> = {
   vazia: 'O modelo não produziu texto.',
@@ -174,8 +166,26 @@ export const REJECTION_LABEL: Record<RejectionReason, string> = {
  * nova ao comparar o texto com o nome da skill.
  */
 const STOPWORDS = new Set([
-  'skill', 'para', 'de', 'do', 'da', 'com', 'que', 'uma', 'um', 'o', 'a', 'e',
-  'em', 'no', 'na', 'ferramenta', 'permite', 'usada', 'usado', 'agente',
+  'skill',
+  'para',
+  'de',
+  'do',
+  'da',
+  'com',
+  'que',
+  'uma',
+  'um',
+  'o',
+  'a',
+  'e',
+  'em',
+  'no',
+  'na',
+  'ferramenta',
+  'permite',
+  'usada',
+  'usado',
+  'agente',
 ]);
 
 /** Mínimo de palavras informativas além do nome/slug. */
@@ -196,9 +206,7 @@ export function isEcho(description: string, name: string, slug: string): boolean
   const alvos = [fold(name), fold(slug)].filter((t) => t.length >= 3);
   if (alvos.length === 0) return false;
   const nomeTokens = new Set(alvos.flatMap((t) => t.split(' ')));
-  const novas = d
-    .split(' ')
-    .filter((w) => w.length > 2 && !nomeTokens.has(w) && !STOPWORDS.has(w));
+  const novas = d.split(' ').filter((w) => w.length > 2 && !nomeTokens.has(w) && !STOPWORDS.has(w));
   return novas.length < MIN_NOVEL_WORDS;
 }
 
@@ -277,16 +285,12 @@ export function proposalFromVerdict(
 }
 
 /** Propostas que podem ser gravadas sem revisão humana. */
-export function autoApplicable(
-  proposals: readonly DescriptionProposal[],
-): DescriptionProposal[] {
+export function autoApplicable(proposals: readonly DescriptionProposal[]): DescriptionProposal[] {
   return proposals.filter((p) => p.autoApply && p.confidence >= MIN_ENRICH_CONFIDENCE);
 }
 
 /** Propostas que precisam de olho humano antes de virar catálogo. */
-export function needsReview(
-  proposals: readonly DescriptionProposal[],
-): DescriptionProposal[] {
+export function needsReview(proposals: readonly DescriptionProposal[]): DescriptionProposal[] {
   return proposals.filter((p) => !p.autoApply || p.confidence < MIN_ENRICH_CONFIDENCE);
 }
 

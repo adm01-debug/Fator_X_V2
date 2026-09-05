@@ -27,4 +27,3 @@ export function handleKeyboardClick<T extends HTMLElement = HTMLElement>(
   e.preventDefault();
   e.currentTarget.click();
 }
-

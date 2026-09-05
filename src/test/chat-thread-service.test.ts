@@ -49,9 +49,27 @@ describe('chatThreadService — ordenação do histórico', () => {
     // mais recentes; a UI precisa do inverso.
     db.setTableResult('chat_messages', {
       data: [
-        { id: 'm3', role: 'assistant', content: 'terceira', failed: false, created_at: '2026-01-01T00:00:03Z' },
-        { id: 'm2', role: 'user', content: 'segunda', failed: false, created_at: '2026-01-01T00:00:02Z' },
-        { id: 'm1', role: 'user', content: 'primeira', failed: false, created_at: '2026-01-01T00:00:01Z' },
+        {
+          id: 'm3',
+          role: 'assistant',
+          content: 'terceira',
+          failed: false,
+          created_at: '2026-01-01T00:00:03Z',
+        },
+        {
+          id: 'm2',
+          role: 'user',
+          content: 'segunda',
+          failed: false,
+          created_at: '2026-01-01T00:00:02Z',
+        },
+        {
+          id: 'm1',
+          role: 'user',
+          content: 'primeira',
+          failed: false,
+          created_at: '2026-01-01T00:00:01Z',
+        },
       ],
       error: null,
     });
@@ -64,7 +82,15 @@ describe('chatThreadService — ordenação do histórico', () => {
 
   it('mapeia papéis desconhecidos para assistant, já que a bolha só renderiza dois papéis', async () => {
     db.setTableResult('chat_messages', {
-      data: [{ id: 's1', role: 'system', content: 'ctx', failed: false, created_at: '2026-01-01T00:00:01Z' }],
+      data: [
+        {
+          id: 's1',
+          role: 'system',
+          content: 'ctx',
+          failed: false,
+          created_at: '2026-01-01T00:00:01Z',
+        },
+      ],
       error: null,
     });
 
@@ -106,9 +132,10 @@ describe('chatThreadService — migração do histórico legado', () => {
 
   it('não reimporta quando a flag de migração já está marcada', async () => {
     localStorage.setItem(LEGACY_FLAG, '1');
-    localStorage.setItem('nexus:chat:v1:a-1', JSON.stringify([
-      { id: '1', role: 'user', content: 'oi', timestamp: 1 },
-    ]));
+    localStorage.setItem(
+      'nexus:chat:v1:a-1',
+      JSON.stringify([{ id: '1', role: 'user', content: 'oi', timestamp: 1 }]),
+    );
 
     const imported = await migrateLegacyLocalHistory(['a-1']);
 
@@ -117,9 +144,10 @@ describe('chatThreadService — migração do histórico legado', () => {
   });
 
   it('não reimporta em thread que já tem mensagens — protege contra duplicação multi-dispositivo', async () => {
-    localStorage.setItem('nexus:chat:v1:a-1', JSON.stringify([
-      { id: '1', role: 'user', content: 'oi', timestamp: 1 },
-    ]));
+    localStorage.setItem(
+      'nexus:chat:v1:a-1',
+      JSON.stringify([{ id: '1', role: 'user', content: 'oi', timestamp: 1 }]),
+    );
     db.setTableResult('chat_threads', {
       data: {
         id: 't-1',

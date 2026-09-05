@@ -19,7 +19,6 @@ import {
   MAX_PROMPT_SKILLS,
   type CompiledPrompt,
   type CompilePromptInput,
-
 } from '@/lib/promptCompiler';
 
 export { MAX_PROMPT_SKILLS };
@@ -205,7 +204,13 @@ export function simulatePrompt(input: CompilePromptInput): PromptSimulationResul
 
   const marcador = '## Skills disponíveis';
   const pos = compiled.text.indexOf(marcador);
-  const skillsSection = pos === -1 ? '' : compiled.text.slice(pos).replace(/\n<!-- meta:[\s\S]*$/, '').trim();
+  const skillsSection =
+    pos === -1
+      ? ''
+      : compiled.text
+          .slice(pos)
+          .replace(/\n<!-- meta:[\s\S]*$/, '')
+          .trim();
 
   const sanitizationsByKind = { ...EMPTY_KINDS };
   let sanitized = 0;

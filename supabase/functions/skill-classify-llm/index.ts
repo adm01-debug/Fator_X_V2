@@ -64,6 +64,7 @@ function sanitize(value: string, maxLen: number): string {
   const flat = value
     .replace(/<[^>]*>/g, ' ')
     // deno-lint-ignore no-control-regex
+    // eslint-disable-next-line no-control-regex
     .replace(/[\u0000-\u001f\u007f]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
@@ -138,11 +139,7 @@ Deno.serve(async (req) => {
 
     const parsed = InputSchema.safeParse(await req.json().catch(() => null));
     if (!parsed.success) {
-      return json(
-        { error: 'Payload inválido', details: parsed.error.flatten() },
-        400,
-        corsHeaders,
-      );
+      return json({ error: 'Payload inválido', details: parsed.error.flatten() }, 400, corsHeaders);
     }
     const skill = parsed.data;
 
@@ -157,7 +154,12 @@ Deno.serve(async (req) => {
     // aqui só produziria um palpite caro sobre um slug.
     if (nome.length === 0 && descricao.length === 0 && tags.length === 0) {
       return json(
-        { skill_id: skill.skill_id, department: null, confidence: 0, rationale: 'Sem texto para classificar.' },
+        {
+          skill_id: skill.skill_id,
+          department: null,
+          confidence: 0,
+          rationale: 'Sem texto para classificar.',
+        },
         200,
         corsHeaders,
       );
@@ -210,7 +212,10 @@ Deno.serve(async (req) => {
     const payload = await resposta.json();
     const call = payload?.choices?.[0]?.message?.tool_calls?.[0];
     if (!call?.function?.arguments) {
-      console.error('skill-classify-llm: resposta sem tool_call', JSON.stringify(payload).slice(0, 500));
+      console.error(
+        'skill-classify-llm: resposta sem tool_call',
+        JSON.stringify(payload).slice(0, 500),
+      );
       return json({ error: 'Resposta do modelo em formato inesperado.' }, 502, corsHeaders);
     }
 
@@ -234,8 +239,7 @@ Deno.serve(async (req) => {
         skill_id: skill.skill_id,
         department: dep,
         confidence: dep ? Number(conf.toFixed(3)) : 0,
-        rationale:
-          typeof veredito.rationale === 'string' ? sanitize(veredito.rationale, 240) : '',
+        rationale: typeof veredito.rationale === 'string' ? sanitize(veredito.rationale, 240) : '',
       },
       200,
       corsHeaders,

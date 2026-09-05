@@ -1,5 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Loader2, Play, Copy, RotateCw, Zap, Wallet, Hash, AlertCircle, CheckCircle2 } from 'lucide-react';
+import {
+  Loader2,
+  Play,
+  Copy,
+  RotateCw,
+  Zap,
+  Wallet,
+  Hash,
+  AlertCircle,
+  CheckCircle2,
+} from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -68,7 +78,10 @@ export function QuickAgentTestPanel({ form, skillIds = [] }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type]);
 
-  const promptValidation = useMemo(() => quickPromptSchema.safeParse({ prompt: form.prompt }), [form.prompt]);
+  const promptValidation = useMemo(
+    () => quickPromptSchema.safeParse({ prompt: form.prompt }),
+    [form.prompt],
+  );
   const promptValid = promptValidation.success;
 
   const estimate = useCostEstimate({
@@ -147,7 +160,9 @@ export function QuickAgentTestPanel({ form, skillIds = [] }: Props) {
             : resolvedSkills.length,
       };
       setResult(r);
-      toast.success('Teste executado', { description: `${formatLatency(r.latency_ms)} · ${formatBrl(r.cost_brl)}` });
+      toast.success('Teste executado', {
+        description: `${formatLatency(r.latency_ms)} · ${formatBrl(r.cost_brl)}`,
+      });
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'Erro inesperado';
       setError(msg);
@@ -221,7 +236,9 @@ export function QuickAgentTestPanel({ form, skillIds = [] }: Props) {
       {!promptValid && (
         <div className="flex items-start gap-2 text-meta text-nexus-amber bg-nexus-amber/5 border border-nexus-amber/30 rounded-md p-2">
           <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
-          <span>Complete o system prompt (incluindo as 4 seções obrigatórias) antes de testar.</span>
+          <span>
+            Complete o system prompt (incluindo as 4 seções obrigatórias) antes de testar.
+          </span>
         </div>
       )}
 
@@ -297,7 +314,8 @@ export function QuickAgentTestPanel({ form, skillIds = [] }: Props) {
                     title="Skills instaladas injetadas no system prompt desta execução"
                     className="ml-1 rounded-full border border-primary/30 bg-primary/10 px-1.5 py-px text-meta font-mono text-primary normal-case tracking-normal"
                   >
-                    {result.skills_injected} skill{result.skills_injected > 1 ? 's' : ''} injetada{result.skills_injected > 1 ? 's' : ''}
+                    {result.skills_injected} skill{result.skills_injected > 1 ? 's' : ''} injetada
+                    {result.skills_injected > 1 ? 's' : ''}
                   </span>
                 )}
               </p>
@@ -312,7 +330,9 @@ export function QuickAgentTestPanel({ form, skillIds = [] }: Props) {
               </Button>
             </div>
             <pre className="whitespace-pre-wrap break-words text-meta text-foreground font-sans leading-relaxed max-h-64 overflow-y-auto">
-              {result.response || <span className="text-muted-foreground italic">(resposta vazia)</span>}
+              {result.response || (
+                <span className="text-muted-foreground italic">(resposta vazia)</span>
+              )}
             </pre>
             <p className="text-meta font-mono text-muted-foreground/70 pt-1 border-t border-nexus-emerald/15">
               servido por: {result.model_used}
@@ -337,8 +357,8 @@ function MetricCard({ icon, label, value, hint, tone }: MetricCardProps) {
     tone === 'primary'
       ? 'border-primary/30 bg-primary/5 text-primary'
       : tone === 'emerald'
-      ? 'border-nexus-emerald/30 bg-nexus-emerald/5 text-nexus-emerald'
-      : 'border-border bg-secondary/40 text-foreground';
+        ? 'border-nexus-emerald/30 bg-nexus-emerald/5 text-nexus-emerald'
+        : 'border-border bg-secondary/40 text-foreground';
   return (
     <div className={cn('rounded-lg border p-2.5', toneClass)}>
       <div className="flex items-center gap-1.5 text-meta uppercase tracking-wider opacity-80">

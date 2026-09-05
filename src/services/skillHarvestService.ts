@@ -71,7 +71,9 @@ export interface CandidateFilters {
   limit?: number;
 }
 
-interface RawRow { [key: string]: unknown }
+interface RawRow {
+  [key: string]: unknown;
+}
 
 function toCandidate(row: RawRow): HarvestCandidate {
   return {
@@ -98,7 +100,9 @@ function toCandidate(row: RawRow): HarvestCandidate {
     skill_config: (row.skill_config as Record<string, unknown>) ?? {},
     mcp_server_url: row.mcp_server_url ? String(row.mcp_server_url) : null,
     status: (row.status as CandidateStatus) ?? 'pending',
-    rejection_reasons: Array.isArray(row.rejection_reasons) ? (row.rejection_reasons as string[]) : [],
+    rejection_reasons: Array.isArray(row.rejection_reasons)
+      ? (row.rejection_reasons as string[])
+      : [],
     promoted_skill_id: row.promoted_skill_id ? String(row.promoted_skill_id) : null,
     created_at: String(row.created_at ?? new Date().toISOString()),
   };
@@ -154,23 +158,32 @@ export async function runHarvest(params: HarvestParams): Promise<HarvestBatchRes
     },
   });
 
-
   if (error) {
     // O SDK mascara o corpo real; extraia antes de propagar.
     let details = error.message;
     const ctx = (error as { context?: { text?: () => Promise<string> } }).context;
     if (ctx?.text) {
-      try { details = await ctx.text(); } catch { /* mantém message */ }
+      try {
+        details = await ctx.text();
+      } catch {
+        /* mantém message */
+      }
     }
     logger.error('skill-harvester falhou', { details });
     throw new Error(details);
   }
 
   const res = data as {
-    run_id: string; candidates_found: number; candidates_inserted: number;
-    candidates_auto_rejected: number; errors?: string[];
-    file_offset?: number; next_file_offset?: number; truncated?: boolean;
-    repo_file_totals?: Record<string, number>; duration_ms?: number;
+    run_id: string;
+    candidates_found: number;
+    candidates_inserted: number;
+    candidates_auto_rejected: number;
+    errors?: string[];
+    file_offset?: number;
+    next_file_offset?: number;
+    truncated?: boolean;
+    repo_file_totals?: Record<string, number>;
+    duration_ms?: number;
   };
 
   // O servidor pode devolver um offset menor que o enviado se nada foi lido.
@@ -214,7 +227,11 @@ const CHECKPOINT_TTL_MS = 24 * 60 * 60 * 1000;
  * `a,b` e `b,a` gerem checkpoints distintos para a mesma varredura.
  */
 export function harvestRepoKey(repos: string[]): string {
-  return [...repos].map((r) => r.trim().toLowerCase()).filter(Boolean).sort().join('|');
+  return [...repos]
+    .map((r) => r.trim().toLowerCase())
+    .filter(Boolean)
+    .sort()
+    .join('|');
 }
 
 /** Chave usada no armazenamento local (fallback offline). */
@@ -244,12 +261,18 @@ function writeLocalCheckpoint(repos: string[], offset: number, total: number): v
   try {
     const payload: HarvestCheckpoint = { offset, total, savedAt: new Date().toISOString() };
     localStorage.setItem(harvestCheckpointKey(repos), JSON.stringify(payload));
-  } catch { /* cota cheia — o progresso em memória segue válido */ }
+  } catch {
+    /* cota cheia — o progresso em memória segue válido */
+  }
 }
 
 function dropLocalCheckpoint(repos: string[]): void {
   if (repos.length === 0 || typeof localStorage === 'undefined') return;
-  try { localStorage.removeItem(harvestCheckpointKey(repos)); } catch { /* noop */ }
+  try {
+    localStorage.removeItem(harvestCheckpointKey(repos));
+  } catch {
+    /* noop */
+  }
 }
 
 /**
@@ -277,18 +300,24 @@ export function purgeStaleLocalCheckpoints(now = Date.now()): number {
         const parsed = JSON.parse(localStorage.getItem(key) ?? '') as Partial<HarvestCheckpoint>;
         const age = now - new Date(String(parsed.savedAt ?? '')).getTime();
         expired = !Number.isFinite(age) || age > CHECKPOINT_TTL_MS;
-      } catch { /* JSON corrompido — mantém expired = true */ }
+      } catch {
+        /* JSON corrompido — mantém expired = true */
+      }
       if (expired) stale.push(key);
     }
     for (const key of stale) {
-      try { localStorage.removeItem(key); removed += 1; } catch { /* noop */ }
+      try {
+        localStorage.removeItem(key);
+        removed += 1;
+      } catch {
+        /* noop */
+      }
     }
   } catch {
     return removed; // storage bloqueado (modo privado) — nada a fazer
   }
   return removed;
 }
-
 
 /**
  * Lê o checkpoint do banco (retomada em qualquer dispositivo) e cai para o
@@ -329,21 +358,23 @@ export async function loadHarvestCheckpoint(repos: string[]): Promise<HarvestChe
 }
 
 /** Grava o avanço no banco e no armazenamento local (best-effort em ambos). */
-export async function saveHarvestCheckpoint(repos: string[], offset: number, total = 0): Promise<void> {
+export async function saveHarvestCheckpoint(
+  repos: string[],
+  offset: number,
+  total = 0,
+): Promise<void> {
   if (repos.length === 0) return;
   writeLocalCheckpoint(repos, offset, total);
   try {
-    const { error } = await supabaseExternal
-      .from('skill_harvest_checkpoints')
-      .upsert(
-        {
-          repo_key: harvestRepoKey(repos),
-          repos,
-          file_offset: offset,
-          total_files: total,
-        },
-        { onConflict: 'user_id,repo_key' },
-      );
+    const { error } = await supabaseExternal.from('skill_harvest_checkpoints').upsert(
+      {
+        repo_key: harvestRepoKey(repos),
+        repos,
+        file_offset: offset,
+        total_files: total,
+      },
+      { onConflict: 'user_id,repo_key' },
+    );
     if (error) throw new Error(error.message);
   } catch (e) {
     // Falha de rede não pode derrubar a varredura: o local já guardou o avanço.
@@ -429,7 +460,11 @@ export async function deleteHarvestCheckpointByKey(repoKey: string): Promise<voi
     .eq('repo_key', repoKey);
   if (error) throw new Error(error.message);
   if (typeof localStorage !== 'undefined') {
-    try { localStorage.removeItem(CHECKPOINT_PREFIX + repoKey); } catch { /* noop */ }
+    try {
+      localStorage.removeItem(CHECKPOINT_PREFIX + repoKey);
+    } catch {
+      /* noop */
+    }
   }
 }
 
@@ -458,13 +493,15 @@ export async function deleteStaleHarvestCheckpoints(now = Date.now()): Promise<n
   if (typeof localStorage !== 'undefined') {
     for (const row of removed) {
       if (!row?.repo_key) continue;
-      try { localStorage.removeItem(CHECKPOINT_PREFIX + row.repo_key); } catch { /* noop */ }
+      try {
+        localStorage.removeItem(CHECKPOINT_PREFIX + row.repo_key);
+      } catch {
+        /* noop */
+      }
     }
   }
   return removed.length;
 }
-
-
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -511,7 +548,10 @@ export async function runHarvestAllBatches(
         const willRetry = attempt < retries && !options.signal?.aborted;
         options.onBatchError?.(err, attempt + 1, willRetry);
         logger.warn('Lote de harvest falhou', {
-          attempt: attempt + 1, offset, willRetry, error: err.message,
+          attempt: attempt + 1,
+          offset,
+          willRetry,
+          error: err.message,
         });
         if (!willRetry) break;
         // Backoff exponencial com teto — evita martelar a API do GitHub.
@@ -539,7 +579,6 @@ export async function runHarvestAllBatches(
   return batches;
 }
 
-
 export async function listCandidates(filters: CandidateFilters = {}): Promise<HarvestCandidate[]> {
   let query = supabaseExternal
     .from('skill_harvest_candidates')
@@ -548,11 +587,15 @@ export async function listCandidates(filters: CandidateFilters = {}): Promise<Ha
     .limit(filters.limit ?? 100);
 
   if (filters.status && filters.status !== 'all') query = query.eq('status', filters.status);
-  if (filters.department && filters.department !== 'all') query = query.eq('department', filters.department);
-  if (typeof filters.minQuality === 'number') query = query.gte('quality_score', filters.minQuality);
+  if (filters.department && filters.department !== 'all')
+    query = query.eq('department', filters.department);
+  if (typeof filters.minQuality === 'number')
+    query = query.gte('quality_score', filters.minQuality);
   if (filters.search?.trim()) {
     const term = filters.search.trim().replace(/[%,]/g, '');
-    query = query.or(`name.ilike.%${term}%,description.ilike.%${term}%,source_repo.ilike.%${term}%`);
+    query = query.or(
+      `name.ilike.%${term}%,description.ilike.%${term}%,source_repo.ilike.%${term}%`,
+    );
   }
 
   const { data, error } = await query;
@@ -621,15 +664,18 @@ export async function getDepartmentCoverage(): Promise<Record<string, number>> {
  */
 export async function updateCandidate(
   id: string,
-  patch: { status?: CandidateStatus; department?: string | null; tags?: string[]; category?: string },
+  patch: {
+    status?: CandidateStatus;
+    department?: string | null;
+    tags?: string[];
+    category?: string;
+  },
 ): Promise<void> {
   const { data: userData } = await supabase.auth.getUser();
   // `'department' in patch` e não `patch.department`: definir explicitamente
   // como `null` (remover o rótulo) também é uma decisão humana.
   const proveniencia =
-    'department' in patch
-      ? { department_source: 'human' as const, department_confidence: 1 }
-      : {};
+    'department' in patch ? { department_source: 'human' as const, department_confidence: 1 } : {};
   const { error } = await supabaseExternal
     .from('skill_harvest_candidates')
     .update({
@@ -650,7 +696,11 @@ export async function bulkUpdateStatus(ids: string[], status: CandidateStatus): 
   const { data: userData } = await supabase.auth.getUser();
   const { error } = await supabaseExternal
     .from('skill_harvest_candidates')
-    .update({ status, reviewed_by: userData.user?.id ?? null, reviewed_at: new Date().toISOString() })
+    .update({
+      status,
+      reviewed_by: userData.user?.id ?? null,
+      reviewed_at: new Date().toISOString(),
+    })
     .in('id', ids);
   if (error) {
     logger.error('Falha na atualização em lote', { count: ids.length, error: error.message });
@@ -720,7 +770,8 @@ export async function promoteCandidate(candidate: HarvestCandidate): Promise<str
     .eq('id', candidate.id);
 
   // A skill já existe; falhar aqui deixaria o staging inconsistente, então alertamos.
-  if (linkErr) logger.error('Skill promovida mas staging não atualizado', { skillId, error: linkErr.message });
+  if (linkErr)
+    logger.error('Skill promovida mas staging não atualizado', { skillId, error: linkErr.message });
 
   return skillId;
 }

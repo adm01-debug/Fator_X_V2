@@ -145,7 +145,9 @@ function matchIndustry(signals: LeadSignals, profile: IcpProfile) {
   });
   return {
     match: hit ? 1 : 0,
-    reason: hit ? `Setor "${signals.industry}" está no ICP` : `Setor "${signals.industry}" fora do ICP`,
+    reason: hit
+      ? `Setor "${signals.industry}" está no ICP`
+      : `Setor "${signals.industry}" fora do ICP`,
     missing: false,
   };
 }
@@ -183,7 +185,9 @@ function matchJobTitle(signals: LeadSignals, profile: IcpProfile) {
   const hit = profile.target_job_titles.some((t) => lead.includes(normalizeTerm(t)));
   return {
     match: hit ? 1 : 0,
-    reason: hit ? `Cargo "${signals.jobTitle}" é decisor-alvo` : `Cargo "${signals.jobTitle}" fora do ICP`,
+    reason: hit
+      ? `Cargo "${signals.jobTitle}" é decisor-alvo`
+      : `Cargo "${signals.jobTitle}" fora do ICP`,
     missing: false,
   };
 }
@@ -227,7 +231,11 @@ const LABELS: Record<ScoreCriterion['key'], string> = {
  * Função pura e determinística — `now` é injetável para tornar o decaimento
  * de engajamento testável sem congelar o relógio global.
  */
-export function scoreLead(signals: LeadSignals, profile: IcpProfile, now: Date = new Date()): ScoreResult {
+export function scoreLead(
+  signals: LeadSignals,
+  profile: IcpProfile,
+  now: Date = new Date(),
+): ScoreResult {
   const weights = normalizeWeights(profile);
 
   const raw = {
@@ -314,12 +322,18 @@ function normalizeProfile(row: Record<string, unknown>): IcpProfile {
     max_company_size: nullableNum(row.max_company_size),
     qualified_threshold: num(row.qualified_threshold, 70),
     hot_threshold: num(row.hot_threshold, 85),
-    target_industries: Array.isArray(row.target_industries) ? (row.target_industries as string[]) : [],
-    target_job_titles: Array.isArray(row.target_job_titles) ? (row.target_job_titles as string[]) : [],
+    target_industries: Array.isArray(row.target_industries)
+      ? (row.target_industries as string[])
+      : [],
+    target_job_titles: Array.isArray(row.target_job_titles)
+      ? (row.target_job_titles as string[])
+      : [],
   };
 }
 
-export async function createIcpProfile(input: Partial<IcpProfile> & { name: string }): Promise<IcpProfile> {
+export async function createIcpProfile(
+  input: Partial<IcpProfile> & { name: string },
+): Promise<IcpProfile> {
   const wsId = await getWorkspaceId();
   const { data, error } = await fromTable('crm_icp_profiles')
     .insert({ ...DEFAULT_ICP_INPUT, ...input, workspace_id: wsId })
@@ -356,7 +370,11 @@ export async function ensureDefaultIcpProfile(): Promise<IcpProfile> {
  * Persiste o score de um negócio. Grava também `score_reason` e `scored_at`
  * para que a UI consiga explicar o número sem recalcular.
  */
-export async function persistDealScore(dealId: string, profile: IcpProfile, result: ScoreResult): Promise<void> {
+export async function persistDealScore(
+  dealId: string,
+  profile: IcpProfile,
+  result: ScoreResult,
+): Promise<void> {
   const wsId = await getWorkspaceId();
   const { error } = await fromTable('crm_deals')
     .update({
@@ -401,7 +419,9 @@ export interface RescoreOutcome {
 function previousTier(scoreReason: unknown): LeadTier | null {
   if (!scoreReason || typeof scoreReason !== 'object') return null;
   const tier = (scoreReason as { tier?: unknown }).tier;
-  return tier === 'hot' || tier === 'qualified' || tier === 'nurture' || tier === 'cold' ? tier : null;
+  return tier === 'hot' || tier === 'qualified' || tier === 'nurture' || tier === 'cold'
+    ? tier
+    : null;
 }
 
 const ENGAGEMENT_WINDOW_DAYS = 30;
@@ -421,7 +441,10 @@ const RESCORE_CHUNK = 100;
  * porque são `NOT NULL` sem default e o caminho de INSERT do upsert os valida
  * mesmo quando a linha já existe.
  */
-export async function rescoreOpenDeals(profile: IcpProfile, now: Date = new Date()): Promise<RescoreOutcome> {
+export async function rescoreOpenDeals(
+  profile: IcpProfile,
+  now: Date = new Date(),
+): Promise<RescoreOutcome> {
   const wsId = await getWorkspaceId();
   const since = new Date(now.getTime() - ENGAGEMENT_WINDOW_DAYS * 86_400_000).toISOString();
 
@@ -450,7 +473,8 @@ export async function rescoreOpenDeals(profile: IcpProfile, now: Date = new Date
       .limit(10000),
   ]);
 
-  const firstError = dealsRes.error ?? companiesRes.error ?? contactsRes.error ?? activitiesRes.error;
+  const firstError =
+    dealsRes.error ?? companiesRes.error ?? contactsRes.error ?? activitiesRes.error;
   if (firstError) {
     logger.error('rescoreOpenDeals read failed', { error: firstError.message });
     throw firstError;
@@ -467,20 +491,31 @@ export async function rescoreOpenDeals(profile: IcpProfile, now: Date = new Date
   const deals = (dealsRes.data ?? []) as unknown as DealRow[];
 
   const companyById = new Map(
-    ((companiesRes.data ?? []) as unknown as Array<{ id: string; industry: string | null; size_band: string | null }>)
-      .map((c) => [c.id, c]),
+    (
+      (companiesRes.data ?? []) as unknown as Array<{
+        id: string;
+        industry: string | null;
+        size_band: string | null;
+      }>
+    ).map((c) => [c.id, c]),
   );
   const contactById = new Map(
-    ((contactsRes.data ?? []) as unknown as Array<{ id: string; job_title: string | null }>).map((c) => [c.id, c]),
+    ((contactsRes.data ?? []) as unknown as Array<{ id: string; job_title: string | null }>).map(
+      (c) => [c.id, c],
+    ),
   );
 
   const activityCount = new Map<string, number>();
   const lastActivity = new Map<string, string>();
-  for (const raw of (activitiesRes.data ?? []) as unknown as Array<{ deal_id: string | null; occurred_at: string | null }>) {
+  for (const raw of (activitiesRes.data ?? []) as unknown as Array<{
+    deal_id: string | null;
+    occurred_at: string | null;
+  }>) {
     if (!raw.deal_id) continue;
     activityCount.set(raw.deal_id, (activityCount.get(raw.deal_id) ?? 0) + 1);
     const current = lastActivity.get(raw.deal_id);
-    if (raw.occurred_at && (!current || raw.occurred_at > current)) lastActivity.set(raw.deal_id, raw.occurred_at);
+    if (raw.occurred_at && (!current || raw.occurred_at > current))
+      lastActivity.set(raw.deal_id, raw.occurred_at);
   }
 
   const scoredAt = now.toISOString();
@@ -533,6 +568,10 @@ export async function rescoreOpenDeals(profile: IcpProfile, now: Date = new Date
     updated += chunk.length;
   }
 
-  logger.info('rescoreOpenDeals completed', { evaluated: deals.length, updated, tierChanges: tierChanges.length });
+  logger.info('rescoreOpenDeals completed', {
+    evaluated: deals.length,
+    updated,
+    tierChanges: tierChanges.length,
+  });
   return { evaluated: deals.length, updated, tierChanges, skipped: deals.length - updated };
 }

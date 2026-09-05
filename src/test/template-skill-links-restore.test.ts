@@ -31,8 +31,7 @@ vi.mock('@/integrations/supabase/externalClient', () => ({
             return chain;
           },
           is: () => Promise.resolve({ error: null }),
-          not: () =>
-            Promise.resolve({ error: failNext ? { message: 'permission denied' } : null }),
+          not: () => Promise.resolve({ error: failNext ? { message: 'permission denied' } : null }),
         };
         return chain;
       },
@@ -97,9 +96,7 @@ describe('bulkRestoreTemplateSkillLinks', () => {
 
   it('propaga erro do banco', async () => {
     failNext = true;
-    await expect(bulkRestoreTemplateSkillLinks('tpl', ['s1'])).rejects.toThrow(
-      'permission denied',
-    );
+    await expect(bulkRestoreTemplateSkillLinks('tpl', ['s1'])).rejects.toThrow('permission denied');
   });
 
   it('restoreTemplateSkillLink delega ao lote', async () => {

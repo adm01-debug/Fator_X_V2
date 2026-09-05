@@ -29,10 +29,34 @@ const PADRAO: DemandPreferences = {
 function rows() {
   return buildSkillDemandRows(
     [
-      { id: 'a', slug: 'a', department: 'ti', department_source: 'heuristic', department_confidence: 0.1 },
-      { id: 'b', slug: 'b', department: 'ti', department_source: 'human', department_confidence: 1 },
-      { id: 'c', slug: 'c', department: 'vendas', department_source: 'llm', department_confidence: 0.2 },
-      { id: 'd', slug: 'd', department: null, department_source: 'heuristic', department_confidence: 0 },
+      {
+        id: 'a',
+        slug: 'a',
+        department: 'ti',
+        department_source: 'heuristic',
+        department_confidence: 0.1,
+      },
+      {
+        id: 'b',
+        slug: 'b',
+        department: 'ti',
+        department_source: 'human',
+        department_confidence: 1,
+      },
+      {
+        id: 'c',
+        slug: 'c',
+        department: 'vendas',
+        department_source: 'llm',
+        department_confidence: 0.2,
+      },
+      {
+        id: 'd',
+        slug: 'd',
+        department: null,
+        department_source: 'heuristic',
+        department_confidence: 0,
+      },
     ],
     [],
   );

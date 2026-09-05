@@ -6,8 +6,14 @@
  */
 import { useState, type ReactNode } from 'react';
 import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -15,17 +21,21 @@ import { AlertTriangle } from 'lucide-react';
 
 const BYPASS_KEY = 'nexus.traces.clearFilters.skipConfirm';
 
- 
 export function shouldSkipClearConfirm(): boolean {
-  try { return sessionStorage.getItem(BYPASS_KEY) === '1'; } catch { return false; }
+  try {
+    return sessionStorage.getItem(BYPASS_KEY) === '1';
+  } catch {
+    return false;
+  }
 }
 
- 
 export function setSkipClearConfirm(skip: boolean) {
   try {
     if (skip) sessionStorage.setItem(BYPASS_KEY, '1');
     else sessionStorage.removeItem(BYPASS_KEY);
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
 }
 
 interface Props {
@@ -42,8 +52,13 @@ export function ClearFiltersConfirm({ trigger, activeFilters, onConfirm }: Props
   if (shouldSkipClearConfirm()) {
     return (
       <span
-        onClick={(e) => { e.stopPropagation(); onConfirm(); }}
-        onKeyDown={(e) => { if (e.key === 'Enter') onConfirm(); }}
+        onClick={(e) => {
+          e.stopPropagation();
+          onConfirm();
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') onConfirm();
+        }}
         role="button"
         tabIndex={-1}
         className="contents"
@@ -65,8 +80,8 @@ export function ClearFiltersConfirm({ trigger, activeFilters, onConfirm }: Props
           <AlertDialogDescription asChild>
             <div className="space-y-3">
               <p>
-                Os seguintes filtros voltarão ao padrão e suas preferências sincronizadas
-                na sua conta também serão removidas:
+                Os seguintes filtros voltarão ao padrão e suas preferências sincronizadas na sua
+                conta também serão removidas:
               </p>
               {activeFilters.length === 0 ? (
                 <p className="text-meta italic">Nenhum filtro ativo no momento.</p>
@@ -80,7 +95,7 @@ export function ClearFiltersConfirm({ trigger, activeFilters, onConfirm }: Props
                   ))}
                 </ul>
               )}
-              { }
+              {}
               <label className="flex items-center gap-2 text-meta cursor-pointer">
                 <Checkbox checked={skip} onCheckedChange={(v) => setSkip(v === true)} />
                 <span>Não perguntar novamente nesta sessão</span>

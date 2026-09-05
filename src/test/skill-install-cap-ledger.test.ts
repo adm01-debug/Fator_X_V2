@@ -7,7 +7,9 @@ import {
 } from '@/lib/skills/installCapLedger';
 import { MAX_PROMPT_SKILLS } from '@/lib/skills/promptSimulation';
 
-function row(over: Partial<RawInstallCapRow> & { metadata?: Record<string, unknown> } = {}): RawInstallCapRow {
+function row(
+  over: Partial<RawInstallCapRow> & { metadata?: Record<string, unknown> } = {},
+): RawInstallCapRow {
   return {
     id: 'e1',
     created_at: '2026-07-01T10:00:00.000Z',
@@ -92,7 +94,9 @@ describe('parseInstallCapRows — robustez', () => {
   });
 
   it('aceita booleanos serializados como string', () => {
-    const [e] = parseInstallCapRows([row({ metadata: { acknowledged: 'true', crosses_cap: 'true' } })]);
+    const [e] = parseInstallCapRows([
+      row({ metadata: { acknowledged: 'true', crosses_cap: 'true' } }),
+    ]);
     expect(e.acknowledged).toBe(true);
     expect(e.crossesCap).toBe(true);
   });
@@ -108,8 +112,16 @@ describe('summarizeInstallCapLedger — agregação', () => {
 
   it('usa a entrada mais recente por agente, sem somar eventos', () => {
     const entries = parseInstallCapRows([
-      row({ id: 'a', created_at: '2026-07-01T10:00:00.000Z', metadata: { total_dropped_after: 5 } }),
-      row({ id: 'b', created_at: '2026-07-02T10:00:00.000Z', metadata: { total_dropped_after: 1 } }),
+      row({
+        id: 'a',
+        created_at: '2026-07-01T10:00:00.000Z',
+        metadata: { total_dropped_after: 5 },
+      }),
+      row({
+        id: 'b',
+        created_at: '2026-07-02T10:00:00.000Z',
+        metadata: { total_dropped_after: 1 },
+      }),
     ]);
     const r = summarizeInstallCapLedger(entries);
     expect(r.total).toBe(2);
@@ -120,7 +132,11 @@ describe('summarizeInstallCapLedger — agregação', () => {
 
   it('entrada sem data não sobrescreve estado datado', () => {
     const entries = parseInstallCapRows([
-      row({ id: 'a', created_at: '2026-07-02T10:00:00.000Z', metadata: { total_dropped_after: 3 } }),
+      row({
+        id: 'a',
+        created_at: '2026-07-02T10:00:00.000Z',
+        metadata: { total_dropped_after: 3 },
+      }),
       row({ id: 'b', created_at: 'inválida', metadata: { total_dropped_after: 99 } }),
     ]);
     expect(summarizeInstallCapLedger(entries).droppedSkillsNow).toBe(3);
@@ -128,8 +144,16 @@ describe('summarizeInstallCapLedger — agregação', () => {
 
   it('agente que voltou ao teto sai da lista de degradados', () => {
     const entries = parseInstallCapRows([
-      row({ id: 'a', created_at: '2026-07-01T10:00:00.000Z', metadata: { total_dropped_after: 4 } }),
-      row({ id: 'b', created_at: '2026-07-05T10:00:00.000Z', metadata: { total_dropped_after: 0 } }),
+      row({
+        id: 'a',
+        created_at: '2026-07-01T10:00:00.000Z',
+        metadata: { total_dropped_after: 4 },
+      }),
+      row({
+        id: 'b',
+        created_at: '2026-07-05T10:00:00.000Z',
+        metadata: { total_dropped_after: 0 },
+      }),
     ]);
     const r = summarizeInstallCapLedger(entries);
     expect(r.degradedAgents).toHaveLength(0);
@@ -139,8 +163,16 @@ describe('summarizeInstallCapLedger — agregação', () => {
   it('conta apenas não reconhecidos com descarte real', () => {
     const entries = parseInstallCapRows([
       row({ id: 'a', metadata: { acknowledged: false, total_dropped_after: 2 } }),
-      row({ id: 'b', entity_id: 'agent-2', metadata: { acknowledged: true, total_dropped_after: 2 } }),
-      row({ id: 'c', entity_id: 'agent-3', metadata: { acknowledged: false, total_dropped_after: 0 } }),
+      row({
+        id: 'b',
+        entity_id: 'agent-2',
+        metadata: { acknowledged: true, total_dropped_after: 2 },
+      }),
+      row({
+        id: 'c',
+        entity_id: 'agent-3',
+        metadata: { acknowledged: false, total_dropped_after: 0 },
+      }),
     ]);
     expect(summarizeInstallCapLedger(entries).unacknowledged).toBe(1);
   });

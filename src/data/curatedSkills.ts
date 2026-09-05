@@ -724,7 +724,16 @@ export const CURATED_SKILLS: CuratedSkill[] = [
       'Instrumenta logs estruturados, métricas, tracing e alertas para que o comportamento em produção seja diagnosticável por evidência, respondendo o que o sistema está fazendo sem depender de reprodução local.',
     department: 'ti',
     category: 'tools',
-    tags: ['ti', 'observabilidade', 'logs', 'metricas', 'tracing', 'alerta', 'monitoramento', 'sre'],
+    tags: [
+      'ti',
+      'observabilidade',
+      'logs',
+      'metricas',
+      'tracing',
+      'alerta',
+      'monitoramento',
+      'sre',
+    ],
     qualityScore: 94,
   },
   {
@@ -754,7 +763,16 @@ export const CURATED_SKILLS: CuratedSkill[] = [
       'Conduz o lançamento com rollout progressivo, feature flags, plano de rollback ensaiado, monitoramento pós-deploy e critérios objetivos de aborto definidos antes de publicar a mudança.',
     department: 'ti',
     category: 'workflows',
-    tags: ['ti', 'lancamento', 'rollout', 'flag', 'rollback', 'deploy', 'producao', 'monitoramento'],
+    tags: [
+      'ti',
+      'lancamento',
+      'rollout',
+      'flag',
+      'rollback',
+      'deploy',
+      'producao',
+      'monitoramento',
+    ],
     qualityScore: 93,
   },
   {
@@ -778,7 +796,6 @@ export const CURATED_SKILLS: CuratedSkill[] = [
     qualityScore: 92,
   },
 ];
-
 
 /** Quantidade de skills curadas por departamento. */
 export function curatedCoverage(): Record<string, number> {

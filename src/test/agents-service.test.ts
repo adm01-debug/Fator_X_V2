@@ -154,7 +154,11 @@ describe('agentsService', () => {
       expect(failures[0].message).toBe('HTTP 502 do provedor');
       // sem metadata útil, cai para o nome do evento
       expect(failures[2].message).toBe('slow_response');
-      expect(failures[1]).toMatchObject({ source: 'alert', category: 'critical', is_resolved: false });
+      expect(failures[1]).toMatchObject({
+        source: 'alert',
+        category: 'critical',
+        is_resolved: false,
+      });
       // o filtro por níveis relevantes precisa existir — era impossível de testar antes
       expect(db.calls.in).toHaveBeenCalledWith('level', ['error', 'critical', 'warning']);
     });

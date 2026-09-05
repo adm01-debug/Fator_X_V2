@@ -11,7 +11,13 @@
 import { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Sparkles, Bot, Loader2, AlertTriangle, Scissors } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -58,10 +64,7 @@ export function SkillAutoRecommendationsPanel() {
     staleTime: 30_000,
   });
 
-  const installedIds = useMemo(
-    () => new Set((installed ?? []).map((s) => s.id)),
-    [installed],
-  );
+  const installedIds = useMemo(() => new Set((installed ?? []).map((s) => s.id)), [installed]);
 
   const recommendations = useMemo(() => {
     if (!registry?.skills || !activeAgent) return [];
@@ -180,8 +183,6 @@ export function SkillAutoRecommendationsPanel() {
   const handleInstallAll = () => void applyBatch(pendingRefs, guard.additionalDropped > 0);
   const handleInstallTrimmed = () => void applyBatch(trimmed, false);
 
-
-
   return (
     <Card className="border-nexus-amber/20">
       <CardHeader>
@@ -278,7 +279,6 @@ export function SkillAutoRecommendationsPanel() {
               installLabel="Adicionar ao agente"
             />
           </>
-
         ) : (
           <p className="text-body-sm text-muted-foreground">
             Escolha um agente acima para ver recomendações automáticas com justificativa.

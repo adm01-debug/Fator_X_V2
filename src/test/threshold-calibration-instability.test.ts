@@ -28,7 +28,12 @@ function calib(partial: Partial<ThresholdCalibration> & { to: number }): Thresho
 describe('detectCalibrationInstability', () => {
   it('lista vazia é estável', () => {
     const r = detectCalibrationInstability([], { now: NOW });
-    expect(r).toMatchObject({ unstable: false, eventsInWindow: 0, reversals: 0, reason: 'estavel' });
+    expect(r).toMatchObject({
+      unstable: false,
+      eventsInWindow: 0,
+      reversals: 0,
+      reason: 'estavel',
+    });
   });
 
   it('duas calibrações na janela ainda são estáveis', () => {
@@ -142,12 +147,11 @@ describe('detectCalibrationInstability', () => {
   });
 
   it('janela e mínimo são configuráveis, com piso defensivo', () => {
-    const itens = [
-      calib({ to: 0.5, at: diasAtras(0.1) }),
-      calib({ to: 0.6, at: diasAtras(0.2) }),
-    ];
+    const itens = [calib({ to: 0.5, at: diasAtras(0.1) }), calib({ to: 0.6, at: diasAtras(0.2) })];
     expect(detectCalibrationInstability(itens, { now: NOW, minEvents: 0 }).unstable).toBe(true);
-    expect(detectCalibrationInstability(itens, { now: NOW, windowDays: -5 }).eventsInWindow).toBe(2);
+    expect(detectCalibrationInstability(itens, { now: NOW, windowDays: -5 }).eventsInWindow).toBe(
+      2,
+    );
   });
 
   it('amplitude reflete apenas os limiares dentro da janela', () => {
@@ -169,7 +173,10 @@ describe('detectCalibrationInstability', () => {
       calib({ from: 0.45, to: 0.62, at: diasAtras(1) }),
     ];
     const direto = detectCalibrationInstability(itens, { now: NOW, minEvents: 99 });
-    const invertido = detectCalibrationInstability([...itens].reverse(), { now: NOW, minEvents: 99 });
+    const invertido = detectCalibrationInstability([...itens].reverse(), {
+      now: NOW,
+      minEvents: 99,
+    });
     expect(invertido).toEqual(direto);
   });
 });

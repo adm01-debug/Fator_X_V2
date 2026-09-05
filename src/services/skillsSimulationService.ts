@@ -12,17 +12,9 @@
  * Cada cenário produz um `SimCase` com esperado × obtido × status, para alimentar
  * `docs/SIMULACAO-SKILLS-10-10.md` e as ondas de correção.
  */
-import {
-  recommendSkills,
-  tokenize,
-  type Recommendation,
-} from '@/services/skillRecommenderService';
+import { recommendSkills, tokenize, type Recommendation } from '@/services/skillRecommenderService';
 import { normalizeSkillIdList, type AgentSkillDefinition } from '@/services/skillsRegistryService';
-import {
-  skillDraftSchema,
-  DEFAULT_DRAFT,
-  type SkillDraft,
-} from '@/lib/skillComposer/skillDraft';
+import { skillDraftSchema, DEFAULT_DRAFT, type SkillDraft } from '@/lib/skillComposer/skillDraft';
 import {
   buildConfidenceSeries,
   filterByPeriod,
@@ -111,9 +103,25 @@ function ok(
 const CATEGORIES = ['tools', 'knowledge', 'prompts', 'workflows', 'integrations'] as const;
 
 const SKILL_WORDS = [
-  'slack', 'webhook', 'relatorio', 'planilha', 'crm', 'email', 'resumo',
-  'traducao', 'pesquisa', 'documento', 'pdf', 'faturamento', 'cobranca',
-  'atendimento', 'triagem', 'classificacao', 'agenda', 'reuniao', 'notificacao',
+  'slack',
+  'webhook',
+  'relatorio',
+  'planilha',
+  'crm',
+  'email',
+  'resumo',
+  'traducao',
+  'pesquisa',
+  'documento',
+  'pdf',
+  'faturamento',
+  'cobranca',
+  'atendimento',
+  'triagem',
+  'classificacao',
+  'agenda',
+  'reuniao',
+  'notificacao',
 ];
 
 const MISSION_TEMPLATES = [
@@ -291,9 +299,19 @@ export function runRecommenderSuite(): SimCase[] {
 
   // Acentuação: missão acentuada deve casar com skill sem acento
   const accentCatalog: AgentSkillDefinition[] = [
-    { ...makeSkill(0, makeRng(1)), id: 'acc-1', name: 'Automacao de cobranca', description: 'Automacao de cobranca recorrente para clientes', tags: ['cobranca'] },
+    {
+      ...makeSkill(0, makeRng(1)),
+      id: 'acc-1',
+      name: 'Automacao de cobranca',
+      description: 'Automacao de cobranca recorrente para clientes',
+      tags: ['cobranca'],
+    },
   ];
-  const accentRecs = recommendSkills({ mission: 'Preciso de automação de cobrança' }, accentCatalog, 5);
+  const accentRecs = recommendSkills(
+    { mission: 'Preciso de automação de cobrança' },
+    accentCatalog,
+    5,
+  );
   cases.push(
     ok(
       `REC-${++n}`,
@@ -398,9 +416,7 @@ function validDraft(overrides: Partial<SkillDraft> = {}): SkillDraft {
         validation: { pattern: '', enumValues: [] },
       },
     ],
-    outputs: [
-      { id: 'o1', name: 'resumo', type: 'string', description: 'Resumo final' },
-    ],
+    outputs: [{ id: 'o1', name: 'resumo', type: 'string', description: 'Resumo final' }],
     prompt: {
       systemMessage: 'Você é um assistente de atas.',
       template: 'Resuma: {{transcricao}}',
@@ -623,7 +639,11 @@ const DRAFT_MUTATIONS: DraftMutation[] = [
     build: () =>
       validDraft({
         category: 'knowledge',
-        execution: { ...DEFAULT_DRAFT.execution, kind: 'http', http: { url: 'https://x.com', method: 'POST', headers: [], bodyTemplate: '' } },
+        execution: {
+          ...DEFAULT_DRAFT.execution,
+          kind: 'http',
+          http: { url: 'https://x.com', method: 'POST', headers: [], bodyTemplate: '' },
+        },
       }),
   },
   {
@@ -642,7 +662,11 @@ const DRAFT_MUTATIONS: DraftMutation[] = [
     build: () => {
       const base = validDraft().inputs[0];
       return validDraft({
-        inputs: Array.from({ length: 21 }, (_, i) => ({ ...base, id: `i${i}`, name: `campo_${i}` })),
+        inputs: Array.from({ length: 21 }, (_, i) => ({
+          ...base,
+          id: `i${i}`,
+          name: `campo_${i}`,
+        })),
       });
     },
   },
@@ -727,11 +751,7 @@ export function runComposerSuite(): SimCase[] {
 // ─────────────────────────────────────────────────────────────────────────
 // Suite 3 — Skillbook Audit (150 cenários)
 // ─────────────────────────────────────────────────────────────────────────
-function makeLearned(
-  index: number,
-  createdAt: string,
-  confidence: number,
-): LearnedSkillEntry {
+function makeLearned(index: number, createdAt: string, confidence: number): LearnedSkillEntry {
   return {
     id: `learned-${index}`,
     agent_id: `agent-${index % 5}`,
@@ -763,11 +783,7 @@ export function runSkillbookSuite(): SimCase[] {
     const size = [0, 1, 10, 120][i % 4];
     // Distribui entradas em até 200 dias no passado, com buracos de datas.
     const learned = Array.from({ length: size }, (_, k) =>
-      makeLearned(
-        k,
-        new Date(now - Math.floor(rng() * 200) * 24 * 3600_000).toISOString(),
-        rng(),
-      ),
+      makeLearned(k, new Date(now - Math.floor(rng() * 200) * 24 * 3600_000).toISOString(), rng()),
     );
 
     const series = buildConfidenceSeries(learned, period);
@@ -979,7 +995,6 @@ export function simulateCurrentBulkInstall(
   return { inserted, skipped, failed: false };
 }
 
-
 export function runRegistrySuite(): SimCase[] {
   const cases: SimCase[] = [];
   const rng = makeRng(161803);
@@ -1051,11 +1066,41 @@ export function runRegistrySuite(): SimCase[] {
     expectInserted: number;
     gapKey: string;
   }> = [
-    { name: 'Lote vazio é no-op', installed: [], requested: [], expectInserted: 0, gapKey: 'reg-lote-vazio' },
-    { name: 'Reinstalar skill já instalada é no-op', installed: ['s1'], requested: ['s1'], expectInserted: 0, gapKey: 'reg-reinstalar' },
-    { name: 'Lote com id repetido instala uma vez', installed: [], requested: ['s1', 's1'], expectInserted: 1, gapKey: 'reg-lote-nao-deduplicado' },
-    { name: 'Lote misto instala apenas o inédito', installed: ['s1'], requested: ['s1', 's2'], expectInserted: 1, gapKey: 'reg-bulk-nao-idempotente' },
-    { name: 'Lote 100% inédito instala tudo', installed: [], requested: ['s1', 's2', 's3'], expectInserted: 3, gapKey: 'reg-bulk-nao-idempotente' },
+    {
+      name: 'Lote vazio é no-op',
+      installed: [],
+      requested: [],
+      expectInserted: 0,
+      gapKey: 'reg-lote-vazio',
+    },
+    {
+      name: 'Reinstalar skill já instalada é no-op',
+      installed: ['s1'],
+      requested: ['s1'],
+      expectInserted: 0,
+      gapKey: 'reg-reinstalar',
+    },
+    {
+      name: 'Lote com id repetido instala uma vez',
+      installed: [],
+      requested: ['s1', 's1'],
+      expectInserted: 1,
+      gapKey: 'reg-lote-nao-deduplicado',
+    },
+    {
+      name: 'Lote misto instala apenas o inédito',
+      installed: ['s1'],
+      requested: ['s1', 's2'],
+      expectInserted: 1,
+      gapKey: 'reg-bulk-nao-idempotente',
+    },
+    {
+      name: 'Lote 100% inédito instala tudo',
+      installed: [],
+      requested: ['s1', 's2', 's3'],
+      expectInserted: 3,
+      gapKey: 'reg-bulk-nao-idempotente',
+    },
   ];
   for (const d of directed) {
     for (let rep = 0; rep < 5; rep++) {

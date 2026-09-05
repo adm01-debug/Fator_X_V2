@@ -14,7 +14,13 @@ import { handleCorsPreflight, getCorsHeaders } from '../_shared/cors.ts';
 import { constantTimeEqual } from '../_shared/security.ts';
 import { repairAlternation, type ChatTurn } from '../_shared/alternation.ts';
 import { withRetry, fetchWithTimeout } from '../_shared/retry.ts';
-import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from '../_shared/mod.ts';
+import {
+  checkRateLimit,
+  createRateLimitResponse,
+  getRateLimitIdentifier,
+  RATE_LIMITS,
+  requireEnv,
+} from '../_shared/mod.ts';
 import { z } from 'https://esm.sh/zod@3.23.8';
 
 const BodySchema = z.object({ message_id: z.string().uuid() });
@@ -56,13 +62,23 @@ Deno.serve(async (req) => {
     { auth: { persistSession: false } },
   );
 
-  const emit = async (kind: string, level: 'info'|'warn'|'error', payload: Record<string, unknown>, workspaceId?: string) => {
+  const emit = async (
+    kind: string,
+    level: 'info' | 'warn' | 'error',
+    payload: Record<string, unknown>,
+    workspaceId?: string,
+  ) => {
     try {
       await supabase.from('openclaw_events').insert({
         workspace_id: workspaceId ?? null,
-        kind, level, source: 'router', payload,
+        kind,
+        level,
+        source: 'router',
+        payload,
       });
-    } catch { /* observability best-effort */ }
+    } catch {
+      /* observability best-effort */
+    }
   };
 
   const { data: msg, error: msgErr } = await supabase
@@ -114,98 +130,166 @@ Deno.serve(async (req) => {
     .update({ handled_by: instance.agent_id, status: 'routing' })
     .eq('id', msg.id)
     .is('handled_by', null);
-  if (lockErr) await emit('router_lock_failed', 'warn', { message_id: msg.id, err: lockErr.message }, msg.workspace_id as string);
+  if (lockErr)
+    await emit(
+      'router_lock_failed',
+      'warn',
+      { message_id: msg.id, err: lockErr.message },
+      msg.workspace_id as string,
+    );
 
   // Invoca o proxy internamente (chat)
   const proxyUrl = `${requireEnv('SUPABASE_URL')}/functions/v1/openclaw-proxy`;
   let replyText = '';
   try {
-    const r = await withRetry(() => fetchWithTimeout(proxyUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${requireEnv('SUPABASE_SERVICE_ROLE_KEY')}`,
+    const r = await withRetry(
+      () =>
+        fetchWithTimeout(proxyUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${requireEnv('SUPABASE_SERVICE_ROLE_KEY')}`,
+          },
+          body: JSON.stringify({
+            action: 'chat',
+            payload: {
+              agent_id: instance.agent_id,
+              message: msg.body ?? '',
+              context: { history: context, remote_phone: msg.remote_phone },
+            },
+          }),
+          timeoutMs: 45_000,
+        }),
+      {
+        attempts: 3,
+        baseMs: 400,
+        capMs: 4_000,
+        onRetry: (info) =>
+          emit(
+            'router_chat_retry',
+            'warn',
+            { attempt: info.attempt, delay_ms: info.delayMs, status: info.res?.status },
+            msg.workspace_id as string,
+          ),
       },
-      body: JSON.stringify({
-        action: 'chat',
-        payload: {
-          agent_id: instance.agent_id,
-          message: msg.body ?? '',
-          context: { history: context, remote_phone: msg.remote_phone },
-        },
-      }),
-      timeoutMs: 45_000,
-    }), {
-      attempts: 3, baseMs: 400, capMs: 4_000,
-      onRetry: (info) => emit('router_chat_retry', 'warn', { attempt: info.attempt, delay_ms: info.delayMs, status: info.res?.status }, msg.workspace_id as string),
-    });
+    );
     const j = await r.json().catch(() => ({}));
     replyText = String(j?.data?.reply ?? j?.reply ?? '').trim();
     if (!r.ok || !replyText) {
-      await emit('router_chat_failed', 'error', { status: r.status, body: j }, msg.workspace_id as string);
-      await supabase.from('openclaw_whatsapp_messages')
-        .update({ status: 'failed' }).eq('id', msg.id);
+      await emit(
+        'router_chat_failed',
+        'error',
+        { status: r.status, body: j },
+        msg.workspace_id as string,
+      );
+      await supabase
+        .from('openclaw_whatsapp_messages')
+        .update({ status: 'failed' })
+        .eq('id', msg.id);
       return json(502, { error: 'chat_failed' });
     }
   } catch (e) {
-    await emit('router_chat_exception', 'error', { err: e instanceof Error ? e.message : String(e) }, msg.workspace_id as string);
+    await emit(
+      'router_chat_exception',
+      'error',
+      { err: e instanceof Error ? e.message : String(e) },
+      msg.workspace_id as string,
+    );
     return json(502, { error: 'chat_exception' });
   }
 
   // Persiste outbound
-  const { data: outbound } = await supabase.from('openclaw_whatsapp_messages').insert({
-    workspace_id: msg.workspace_id,
-    instance_id: msg.instance_id,
-    agent_id: instance.agent_id,
-    remote_phone: msg.remote_phone,
-    direction: 'outbound',
-    body: replyText,
-    status: 'sending',
-    metadata: { reply_to: msg.id },
-  }).select('id').maybeSingle();
+  const { data: outbound } = await supabase
+    .from('openclaw_whatsapp_messages')
+    .insert({
+      workspace_id: msg.workspace_id,
+      instance_id: msg.instance_id,
+      agent_id: instance.agent_id,
+      remote_phone: msg.remote_phone,
+      direction: 'outbound',
+      body: replyText,
+      status: 'sending',
+      metadata: { reply_to: msg.id },
+    })
+    .select('id')
+    .maybeSingle();
 
   // Envia via proxy
   try {
-    const r = await withRetry(() => fetchWithTimeout(proxyUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${requireEnv('SUPABASE_SERVICE_ROLE_KEY')}`,
-        // Idempotency-Key permite ao proxy deduplicar retries — quando o
-        // upstream OpenClaw suportar, evita envios duplicados.
-        'Idempotency-Key': `wa-send-${outbound?.id ?? msg.id}`,
+    const r = await withRetry(
+      () =>
+        fetchWithTimeout(proxyUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${requireEnv('SUPABASE_SERVICE_ROLE_KEY')}`,
+            // Idempotency-Key permite ao proxy deduplicar retries — quando o
+            // upstream OpenClaw suportar, evita envios duplicados.
+            'Idempotency-Key': `wa-send-${outbound?.id ?? msg.id}`,
+          },
+          body: JSON.stringify({
+            action: 'whatsapp.send',
+            payload: {
+              instance_name: instance.instance_name,
+              to: msg.remote_phone,
+              body: replyText,
+              idempotency_key: `wa-send-${outbound?.id ?? msg.id}`,
+            },
+          }),
+          timeoutMs: 30_000,
+        }),
+      {
+        // Mutation: 2 tentativas (a segunda protegida por idempotency-key).
+        attempts: 2,
+        baseMs: 500,
+        capMs: 3_000,
+        onRetry: (info) =>
+          emit(
+            'router_send_retry',
+            'warn',
+            { attempt: info.attempt, delay_ms: info.delayMs, status: info.res?.status },
+            msg.workspace_id as string,
+          ),
       },
-      body: JSON.stringify({
-        action: 'whatsapp.send',
-        payload: {
-          instance_name: instance.instance_name,
-          to: msg.remote_phone,
-          body: replyText,
-          idempotency_key: `wa-send-${outbound?.id ?? msg.id}`,
-        },
-      }),
-      timeoutMs: 30_000,
-    }), {
-      // Mutation: 2 tentativas (a segunda protegida por idempotency-key).
-      attempts: 2, baseMs: 500, capMs: 3_000,
-      onRetry: (info) => emit('router_send_retry', 'warn', { attempt: info.attempt, delay_ms: info.delayMs, status: info.res?.status }, msg.workspace_id as string),
-    });
+    );
     const j = await r.json().catch(() => ({}));
     if (!r.ok) {
-      await emit('router_send_failed', 'error', { status: r.status, body: j }, msg.workspace_id as string);
-      if (outbound?.id) await supabase.from('openclaw_whatsapp_messages')
-        .update({ status: 'failed' }).eq('id', outbound.id);
+      await emit(
+        'router_send_failed',
+        'error',
+        { status: r.status, body: j },
+        msg.workspace_id as string,
+      );
+      if (outbound?.id)
+        await supabase
+          .from('openclaw_whatsapp_messages')
+          .update({ status: 'failed' })
+          .eq('id', outbound.id);
       return json(502, { error: 'send_failed' });
     }
-    if (outbound?.id) await supabase.from('openclaw_whatsapp_messages')
-      .update({ status: 'sent', external_message_id: j?.data?.message_id ?? null })
-      .eq('id', outbound.id);
-    await supabase.from('openclaw_whatsapp_messages')
-      .update({ status: 'answered' }).eq('id', msg.id);
-    await emit('router_replied', 'info', { message_id: msg.id, reply_id: outbound?.id }, msg.workspace_id as string);
+    if (outbound?.id)
+      await supabase
+        .from('openclaw_whatsapp_messages')
+        .update({ status: 'sent', external_message_id: j?.data?.message_id ?? null })
+        .eq('id', outbound.id);
+    await supabase
+      .from('openclaw_whatsapp_messages')
+      .update({ status: 'answered' })
+      .eq('id', msg.id);
+    await emit(
+      'router_replied',
+      'info',
+      { message_id: msg.id, reply_id: outbound?.id },
+      msg.workspace_id as string,
+    );
     return json(200, { ok: true, reply_id: outbound?.id });
   } catch (e) {
-    await emit('router_send_exception', 'error', { err: e instanceof Error ? e.message : String(e) }, msg.workspace_id as string);
+    await emit(
+      'router_send_exception',
+      'error',
+      { err: e instanceof Error ? e.message : String(e) },
+      msg.workspace_id as string,
+    );
     return json(502, { error: 'send_exception' });
   }
 });

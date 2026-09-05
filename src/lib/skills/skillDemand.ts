@@ -70,7 +70,6 @@ export const DEPARTMENT_SOURCE_LABEL: Record<DepartmentSource, string> = {
   import: 'Importação',
 };
 
-
 /**
  * Piso de confianca abaixo do qual um veredito de DOMINIO e tratado como
  * palpite. Alinhado ao limiar usado na fila de reclassificacao.
@@ -90,9 +89,7 @@ export const PLATFORM_REVIEW_THRESHOLD = 0.18;
 
 /** Piso de revisao aplicavel a uma procedencia especifica. */
 export function reviewThresholdFor(source: DepartmentSource): number {
-  return source === 'platform_heuristic'
-    ? PLATFORM_REVIEW_THRESHOLD
-    : DEPARTMENT_REVIEW_THRESHOLD;
+  return source === 'platform_heuristic' ? PLATFORM_REVIEW_THRESHOLD : DEPARTMENT_REVIEW_THRESHOLD;
 }
 
 /** Normaliza a procedencia vinda do banco, degradando para `unknown`. */
@@ -196,7 +193,8 @@ export function buildSkillDemandRows(
 
   const templatesBySkill = new Map<string, Set<string>>();
   for (const link of links ?? []) {
-    if (!link || typeof link.skill_id !== 'string' || typeof link.template_id !== 'string') continue;
+    if (!link || typeof link.skill_id !== 'string' || typeof link.template_id !== 'string')
+      continue;
     if (!catalog.has(link.skill_id)) continue;
     const bucket = templatesBySkill.get(link.skill_id) ?? new Set<string>();
     bucket.add(link.template_id);
@@ -217,7 +215,8 @@ export function buildSkillDemandRows(
       slug: safeText(skill.slug, id),
       department,
       qualityScore: quality,
-      sourceRepo: typeof skill.source_repo === 'string' && skill.source_repo ? skill.source_repo : null,
+      sourceRepo:
+        typeof skill.source_repo === 'string' && skill.source_repo ? skill.source_repo : null,
       templateCount,
       tier: classifyDemand(templateCount),
       description: typeof skill.description === 'string' ? skill.description : '',
@@ -373,16 +372,14 @@ export function normalizeSourceFilter(value: unknown): DepartmentSourceFilter {
 }
 
 /** Contagem por procedência sobre o conjunto bruto (todas as chaves presentes). */
-export function countBySource(
-  rows: readonly SkillDemandRow[],
-): Record<DepartmentSource, number> {
-  const out = Object.fromEntries(
-    DEPARTMENT_SOURCES.map((s) => [s, 0]),
-  ) as Record<DepartmentSource, number>;
+export function countBySource(rows: readonly SkillDemandRow[]): Record<DepartmentSource, number> {
+  const out = Object.fromEntries(DEPARTMENT_SOURCES.map((s) => [s, 0])) as Record<
+    DepartmentSource,
+    number
+  >;
   for (const row of rows) out[row.departmentSource] += 1;
   return out;
 }
-
 
 /**
  * Recorta as linhas que precisam de revisão departamental.
@@ -461,32 +458,31 @@ export function normalizeDemandPreferences(
     DEMAND_THRESHOLD_FLOOR_FALLBACK,
   );
   const raw = (value ?? {}) as Partial<Record<keyof DemandPreferences, unknown>>;
-  if (typeof raw !== 'object' || Array.isArray(value)) return { ...defaults, confidenceThreshold: piso };
+  if (typeof raw !== 'object' || Array.isArray(value))
+    return { ...defaults, confidenceThreshold: piso };
 
-  const tier =
-    typeof raw.tier === 'string' ? normalizeDemandFilter(raw.tier) : defaults.tier;
+  const tier = typeof raw.tier === 'string' ? normalizeDemandFilter(raw.tier) : defaults.tier;
   const department =
     typeof raw.department === 'string'
       ? normalizeDepartmentFilter(raw.department, allowedDepartments)
       : defaults.department;
-  const search =
-    typeof raw.search === 'string' ? raw.search.slice(0, DEMAND_SEARCH_MAX) : '';
+  const search = typeof raw.search === 'string' ? raw.search.slice(0, DEMAND_SEARCH_MAX) : '';
   const confidenceThreshold = normalizeConfidenceThreshold(raw.confidenceThreshold, piso);
   // Aceita apenas boolean literal. Um `"false"` vindo de storage legado é
   // truthy em JS e ligaria o recorte silenciosamente, escondendo a maior parte
   // do catálogo sem que o curador tenha pedido nada.
   const onlyNeedsReview =
-    typeof raw.onlyNeedsReview === 'boolean' ? raw.onlyNeedsReview : defaults.onlyNeedsReview ?? false;
+    typeof raw.onlyNeedsReview === 'boolean'
+      ? raw.onlyNeedsReview
+      : (defaults.onlyNeedsReview ?? false);
   // Procedência ausente (preferência gravada antes deste filtro existir) cai no
   // default do chamador, não em 'unknown' — senão uma sessão antiga abriria o
   // painel recortado em skills sem origem, que é quase o conjunto vazio.
   const source =
-    raw.source === undefined ? defaults.source ?? 'all' : normalizeSourceFilter(raw.source);
+    raw.source === undefined ? (defaults.source ?? 'all') : normalizeSourceFilter(raw.source);
 
   return { tier, department, search, confidenceThreshold, onlyNeedsReview, source };
 }
-
-
 
 /** Exportação CSV (RFC 4180, com BOM) do recorte visível. */
 export function demandRowsToCsv(rows: readonly SkillDemandRow[]): string {

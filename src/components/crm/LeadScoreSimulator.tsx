@@ -11,7 +11,13 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
-import { scoreLead, TIER_LABELS, type IcpProfile, type LeadSignals, type LeadTier } from '@/services/crmScoringService';
+import {
+  scoreLead,
+  TIER_LABELS,
+  type IcpProfile,
+  type LeadSignals,
+  type LeadTier,
+} from '@/services/crmScoringService';
 
 const TIER_STYLES: Record<LeadTier, string> = {
   hot: 'bg-nexus-success/15 text-nexus-success border-nexus-success/30',
@@ -101,7 +107,8 @@ export function LeadScoreSimulator({ profile }: LeadScoreSimulatorProps) {
 
         {result.missingSignals.length > 0 && (
           <p className="text-caption text-nexus-warning">
-            Sinais ausentes: {result.missingSignals.join(', ')} — enriquecimento aumentaria a confiança do score.
+            Sinais ausentes: {result.missingSignals.join(', ')} — enriquecimento aumentaria a
+            confiança do score.
           </p>
         )}
       </CardContent>

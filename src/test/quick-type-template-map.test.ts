@@ -85,7 +85,9 @@ describe('aggregateTemplateSkillLinks — invariantes', () => {
   });
 
   it('respeita o limite e trata limites inválidos', () => {
-    const groups = [{ templateId: 't', links: Array.from({ length: 20 }, (_, i) => link(`s${i}`)) }];
+    const groups = [
+      { templateId: 't', links: Array.from({ length: 20 }, (_, i) => link(`s${i}`)) },
+    ];
     expect(aggregateTemplateSkillLinks(groups, 3)).toHaveLength(3);
     expect(aggregateTemplateSkillLinks(groups, 0)).toHaveLength(MAX_LINKS_PER_TEMPLATE);
     expect(aggregateTemplateSkillLinks(groups, -5)).toHaveLength(MAX_LINKS_PER_TEMPLATE);
@@ -114,11 +116,7 @@ describe('aggregateTemplateSkillLinks — invariantes', () => {
       const groups = Array.from({ length: templates }, (_, ti) => ({
         templateId: `t${ti}`,
         links: Array.from({ length: Math.floor(rand() * 7) }, () =>
-          link(
-            `s${Math.floor(rand() * 10)}`,
-            rand() > 0.75 ? 'manual' : 'auto',
-            rand() > 0.5,
-          ),
+          link(`s${Math.floor(rand() * 10)}`, rand() > 0.75 ? 'manual' : 'auto', rand() > 0.5),
         ),
       }));
 

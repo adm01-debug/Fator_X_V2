@@ -6,10 +6,25 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
 import {
-  Sparkles, Loader2, ChevronDown, ChevronUp, Settings2, Cpu, Brain, ChevronRight, XCircle, ShieldCheck, RotateCcw, AlertTriangle
+  Sparkles,
+  Loader2,
+  ChevronDown,
+  ChevronUp,
+  Settings2,
+  Cpu,
+  Brain,
+  ChevronRight,
+  XCircle,
+  ShieldCheck,
+  RotateCcw,
+  AlertTriangle,
 } from 'lucide-react';
 import { useOracleStore, ORACLE_MODES, ORACLE_PRESETS } from '@/stores/oracleStore';
 import { PresetSelector } from './PresetSelector';
@@ -43,13 +58,13 @@ export function OracleInputArea() {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   }, [store.isRunning, store.query]);
 
   return (
     <Card className="p-8 bg-card border-border rounded-3xl shadow-nexus-sm relative overflow-hidden group">
       <div className="absolute top-0 right-0 w-48 h-48 bg-primary/[0.02] rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700" />
-      
+
       {/* Mode & Preset selector */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 relative">
         <div className="flex items-center gap-3">
@@ -68,10 +83,16 @@ export function OracleInputArea() {
             )}
           </button>
           <div className="flex gap-2">
-            <Badge variant="outline" className="h-7 rounded-lg bg-primary/5 text-primary border-primary/20 text-meta font-bold uppercase">
+            <Badge
+              variant="outline"
+              className="h-7 rounded-lg bg-primary/5 text-primary border-primary/20 text-meta font-bold uppercase"
+            >
               {modeConfig.icon} {modeConfig.label}
             </Badge>
-            <Badge variant="outline" className="h-7 rounded-lg bg-muted/50 text-muted-foreground border-border/50 text-meta font-bold uppercase">
+            <Badge
+              variant="outline"
+              className="h-7 rounded-lg bg-muted/50 text-muted-foreground border-border/50 text-meta font-bold uppercase"
+            >
               {currentPreset?.members.length || 3} Especialistas
             </Badge>
           </div>
@@ -121,7 +142,9 @@ export function OracleInputArea() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label className="text-meta font-extrabold text-muted-foreground uppercase tracking-wider">Seleção do Presidente</Label>
+                <Label className="text-meta font-extrabold text-muted-foreground uppercase tracking-wider">
+                  Seleção do Presidente
+                </Label>
                 <Select
                   value={store.chairmanSelection}
                   onValueChange={(v) => store.setChairmanSelection(v as 'auto' | 'manual')}
@@ -130,8 +153,12 @@ export function OracleInputArea() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">
-                    <SelectItem value="auto" className="text-meta font-medium italic">🤖 Automática (por domínio)</SelectItem>
-                    <SelectItem value="manual" className="text-meta font-medium">✋ Manual (fixo)</SelectItem>
+                    <SelectItem value="auto" className="text-meta font-medium italic">
+                      🤖 Automática (por domínio)
+                    </SelectItem>
+                    <SelectItem value="manual" className="text-meta font-medium">
+                      ✋ Manual (fixo)
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -155,7 +182,9 @@ export function OracleInputArea() {
                   <Brain className="h-4 w-4 text-primary" />
                 </div>
                 <div>
-                  <Label className="text-meta font-bold text-foreground">💭 Modo Raciocínio (Thinking)</Label>
+                  <Label className="text-meta font-bold text-foreground">
+                    💭 Modo Raciocínio (Thinking)
+                  </Label>
                   <p className="text-meta text-muted-foreground">
                     Exibe a cadeia de pensamento completa de cada membro do conselho
                   </p>
@@ -187,9 +216,13 @@ export function OracleInputArea() {
         <div className="mt-4 px-2 flex items-center justify-between animate-in fade-in slide-in-from-top-1">
           <div className="flex items-center gap-2">
             <Loader2 className="h-3 w-3 animate-spin text-primary" />
-            <span className="text-meta font-bold text-primary uppercase tracking-widest">{store.stageLabel}</span>
+            <span className="text-meta font-bold text-primary uppercase tracking-widest">
+              {store.stageLabel}
+            </span>
           </div>
-          <span className="text-meta text-muted-foreground uppercase font-bold">Pressione ESC para cancelar</span>
+          <span className="text-meta text-muted-foreground uppercase font-bold">
+            Pressione ESC para cancelar
+          </span>
         </div>
       )}
 
@@ -199,9 +232,9 @@ export function OracleInputArea() {
             <AlertTriangle className="h-4 w-4 text-destructive" />
             <p className="text-meta text-destructive font-medium">{store.error}</p>
           </div>
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            variant="ghost"
+            size="sm"
             className="h-8 text-meta font-bold uppercase gap-1.5 text-destructive hover:bg-destructive/10"
             onClick={() => store.submitQuery()}
           >
@@ -215,9 +248,13 @@ export function OracleInputArea() {
         <div className="mt-4 px-2 flex items-center justify-between animate-in fade-in slide-in-from-top-1">
           <div className="flex items-center gap-2">
             <Loader2 className="h-3 w-3 animate-spin text-primary" />
-            <span className="text-meta font-bold text-primary uppercase tracking-widest">{store.stageLabel}</span>
+            <span className="text-meta font-bold text-primary uppercase tracking-widest">
+              {store.stageLabel}
+            </span>
           </div>
-          <span className="text-meta text-muted-foreground uppercase font-bold">Pressione ESC para cancelar</span>
+          <span className="text-meta text-muted-foreground uppercase font-bold">
+            Pressione ESC para cancelar
+          </span>
         </div>
       )}
 
@@ -227,9 +264,9 @@ export function OracleInputArea() {
             <AlertTriangle className="h-4 w-4 text-destructive" />
             <p className="text-meta text-destructive font-medium">{store.error}</p>
           </div>
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            variant="ghost"
+            size="sm"
             className="h-8 text-meta font-bold uppercase gap-1.5 text-destructive hover:bg-destructive/10"
             onClick={() => store.submitQuery()}
           >
@@ -261,7 +298,11 @@ export function OracleInputArea() {
             ) : (
               <Sparkles className="h-5 w-5 group-hover:rotate-12 transition-transform" />
             )}
-            {store.isRunning ? (store.isReplaying ? 'Rodando Replay...' : 'Conselho em Sessão...') : 'CONVOCAR CONSELHO'}
+            {store.isRunning
+              ? store.isReplaying
+                ? 'Rodando Replay...'
+                : 'Conselho em Sessão...'
+              : 'CONVOCAR CONSELHO'}
           </Button>
           {store.isRunning && !store.isReplaying && (
             <Button

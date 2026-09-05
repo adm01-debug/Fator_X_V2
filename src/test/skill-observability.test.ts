@@ -47,9 +47,30 @@ function decision(over: Partial<ClassificationDecision>): ClassificationDecision
 
 describe('summarizeIngestion', () => {
   const runs: HarvestRunInput[] = [
-    { id: '1', status: 'completed', candidates_found: 10, candidates_accepted: 4, duration_ms: 2000, created_at: diasAtras(1) },
-    { id: '2', status: 'failed', candidates_found: 0, candidates_accepted: 0, duration_ms: 500, created_at: diasAtras(2) },
-    { id: '3', status: 'completed', candidates_found: 10, candidates_accepted: 6, duration_ms: 4000, created_at: diasAtras(40) },
+    {
+      id: '1',
+      status: 'completed',
+      candidates_found: 10,
+      candidates_accepted: 4,
+      duration_ms: 2000,
+      created_at: diasAtras(1),
+    },
+    {
+      id: '2',
+      status: 'failed',
+      candidates_found: 0,
+      candidates_accepted: 0,
+      duration_ms: 500,
+      created_at: diasAtras(2),
+    },
+    {
+      id: '3',
+      status: 'completed',
+      candidates_found: 10,
+      candidates_accepted: 6,
+      duration_ms: 4000,
+      created_at: diasAtras(40),
+    },
   ];
 
   it('ignora execuções fora da janela', () => {
@@ -149,14 +170,12 @@ describe('deriveObservabilityAlerts', () => {
   it('alerta fila parada e ingestão falhando', () => {
     const r = deriveObservabilityAlerts({
       ...base,
-      ingestion: summarizeIngestion(
-        [{ id: '1', status: 'failed', created_at: diasAtras(1) }],
-        { now: NOW },
-      ),
-      queue: summarizeQueue(
-        [{ id: 'a', status: 'pendente', created_at: diasAtras(20) }],
-        { now: NOW },
-      ),
+      ingestion: summarizeIngestion([{ id: '1', status: 'failed', created_at: diasAtras(1) }], {
+        now: NOW,
+      }),
+      queue: summarizeQueue([{ id: 'a', status: 'pendente', created_at: diasAtras(20) }], {
+        now: NOW,
+      }),
     });
     expect(r.alerts.map((a) => a.id).sort()).toEqual(['fila-parada', 'ingestao-falhando']);
   });

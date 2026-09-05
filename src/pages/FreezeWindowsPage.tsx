@@ -3,11 +3,11 @@
  * Impede mudanças no workspace durante períodos críticos (Black Friday, fechamento fiscal, etc.),
  * exceto quando marcadas como permissivas a operações emergenciais.
  */
-import { useMemo, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { format, isAfter, isBefore } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { useMemo, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { format, isAfter, isBefore } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import {
   Snowflake,
   Plus,
@@ -16,20 +16,25 @@ import {
   ShieldAlert,
   ShieldCheck,
   Info,
-} from "lucide-react";
+} from 'lucide-react';
 
-import { listFreezeWindows, createFreezeWindow, updateFreezeWindow, deleteFreezeWindow } from "@/services/freezeWindowService";
-import { useWorkspaceId } from "@/hooks/use-data";
-import { PageHeader } from "@/components/shared/PageHeader";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  listFreezeWindows,
+  createFreezeWindow,
+  updateFreezeWindow,
+  deleteFreezeWindow,
+} from '@/services/freezeWindowService';
+import { useWorkspaceId } from '@/hooks/use-data';
+import { PageHeader } from '@/components/shared/PageHeader';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
   Dialog,
   DialogContent,
@@ -37,7 +42,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 
 type FreezeWindow = {
   id: string;
@@ -51,20 +56,20 @@ type FreezeWindow = {
   created_at: string;
 };
 
-type Status = "active" | "scheduled" | "expired";
+type Status = 'active' | 'scheduled' | 'expired';
 
 function statusOf(w: FreezeWindow, now: Date): Status {
   const start = new Date(w.starts_at);
   const end = new Date(w.ends_at);
-  if (isBefore(now, start)) return "scheduled";
-  if (isAfter(now, end)) return "expired";
-  return "active";
+  if (isBefore(now, start)) return 'scheduled';
+  if (isAfter(now, end)) return 'expired';
+  return 'active';
 }
 
 function toLocalInput(iso: string): string {
   // yyyy-MM-ddTHH:mm in local time for <input type="datetime-local">
   const d = new Date(iso);
-  const pad = (n: number) => String(n).padStart(2, "0");
+  const pad = (n: number) => String(n).padStart(2, '0');
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
@@ -72,14 +77,14 @@ export default function FreezeWindowsPage() {
   const { data: workspaceId } = useWorkspaceId();
   const qc = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [name, setName] = useState("");
-  const [reason, setReason] = useState("");
-  const [startsAt, setStartsAt] = useState("");
-  const [endsAt, setEndsAt] = useState("");
+  const [name, setName] = useState('');
+  const [reason, setReason] = useState('');
+  const [startsAt, setStartsAt] = useState('');
+  const [endsAt, setEndsAt] = useState('');
   const [allowEmergency, setAllowEmergency] = useState(true);
 
   const { data: windows, isLoading } = useQuery({
-    queryKey: ["freeze_windows", workspaceId],
+    queryKey: ['freeze_windows', workspaceId],
     enabled: !!workspaceId,
     queryFn: async () => listFreezeWindows(workspaceId!),
   });
@@ -89,29 +94,29 @@ export default function FreezeWindowsPage() {
 
   const stats = useMemo(() => {
     const list = windows ?? [];
-    const active = list.filter((w) => statusOf(w, now) === "active").length;
-    const scheduled = list.filter((w) => statusOf(w, now) === "scheduled").length;
-    const expired = list.filter((w) => statusOf(w, now) === "expired").length;
+    const active = list.filter((w) => statusOf(w, now) === 'active').length;
+    const scheduled = list.filter((w) => statusOf(w, now) === 'scheduled').length;
+    const expired = list.filter((w) => statusOf(w, now) === 'expired').length;
     return { total: list.length, active, scheduled, expired };
   }, [windows, now]);
 
   const resetForm = () => {
-    setName("");
-    setReason("");
-    setStartsAt("");
-    setEndsAt("");
+    setName('');
+    setReason('');
+    setStartsAt('');
+    setEndsAt('');
     setAllowEmergency(true);
   };
 
   const create = useMutation({
     mutationFn: async () => {
-      if (!workspaceId) throw new Error("Workspace não carregado");
-      if (!name.trim()) throw new Error("Nome é obrigatório");
-      if (!startsAt || !endsAt) throw new Error("Defina início e fim");
+      if (!workspaceId) throw new Error('Workspace não carregado');
+      if (!name.trim()) throw new Error('Nome é obrigatório');
+      if (!startsAt || !endsAt) throw new Error('Defina início e fim');
       const startIso = new Date(startsAt).toISOString();
       const endIso = new Date(endsAt).toISOString();
       if (new Date(endIso) <= new Date(startIso)) {
-        throw new Error("O fim precisa ser posterior ao início");
+        throw new Error('O fim precisa ser posterior ao início');
       }
       await createFreezeWindow(workspaceId, {
         name: name.trim(),
@@ -122,8 +127,8 @@ export default function FreezeWindowsPage() {
       });
     },
     onSuccess: () => {
-      toast.success("Janela de congelamento criada");
-      qc.invalidateQueries({ queryKey: ["freeze_windows"] });
+      toast.success('Janela de congelamento criada');
+      qc.invalidateQueries({ queryKey: ['freeze_windows'] });
       setDialogOpen(false);
       resetForm();
     },
@@ -134,15 +139,15 @@ export default function FreezeWindowsPage() {
     mutationFn: async ({ id, allow }: { id: string; allow: boolean }) => {
       await updateFreezeWindow(id, { allow_emergency: allow });
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["freeze_windows"] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['freeze_windows'] }),
     onError: (e: Error) => toast.error(e.message),
   });
 
   const remove = useMutation({
     mutationFn: async (id: string) => deleteFreezeWindow(id),
     onSuccess: () => {
-      toast.success("Janela removida");
-      qc.invalidateQueries({ queryKey: ["freeze_windows"] });
+      toast.success('Janela removida');
+      qc.invalidateQueries({ queryKey: ['freeze_windows'] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -161,8 +166,8 @@ export default function FreezeWindowsPage() {
           <ShieldAlert className="size-4 text-nexus-amber" />
           <AlertTitle>Congelamento em vigor</AlertTitle>
           <AlertDescription>
-            {stats.active} janela{stats.active > 1 ? "s" : ""} ativa
-            {stats.active > 1 ? "s" : ""} agora — mudanças em produção serão rejeitadas até o
+            {stats.active} janela{stats.active > 1 ? 's' : ''} ativa
+            {stats.active > 1 ? 's' : ''} agora — mudanças em produção serão rejeitadas até o
             término.
           </AlertDescription>
         </Alert>
@@ -173,8 +178,8 @@ export default function FreezeWindowsPage() {
           <Info className="size-4" />
           <AlertTitle>Nenhuma janela configurada</AlertTitle>
           <AlertDescription>
-            Cadastre períodos críticos (ex.: Black Friday, fechamento fiscal, feriados) para
-            impedir mudanças arriscadas.
+            Cadastre períodos críticos (ex.: Black Friday, fechamento fiscal, feriados) para impedir
+            mudanças arriscadas.
           </AlertDescription>
         </Alert>
       )}
@@ -287,7 +292,7 @@ export default function FreezeWindowsPage() {
                   Cancelar
                 </Button>
                 <Button onClick={() => create.mutate()} disabled={create.isPending}>
-                  {create.isPending ? "Criando..." : "Criar janela"}
+                  {create.isPending ? 'Criando...' : 'Criar janela'}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -310,17 +315,17 @@ export default function FreezeWindowsPage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-semibold">{w.name}</span>
-                    {status === "active" && (
+                    {status === 'active' && (
                       <Badge className="bg-nexus-amber/15 text-nexus-amber border-nexus-amber/30">
                         <ShieldAlert className="size-3 mr-1" /> Congelamento ativo
                       </Badge>
                     )}
-                    {status === "scheduled" && (
+                    {status === 'scheduled' && (
                       <Badge variant="outline">
                         <CalendarClock className="size-3 mr-1" /> Agendada
                       </Badge>
                     )}
-                    {status === "expired" && <Badge variant="secondary">Expirada</Badge>}
+                    {status === 'expired' && <Badge variant="secondary">Expirada</Badge>}
                     {w.allow_emergency ? (
                       <Badge variant="outline" className="text-meta">
                         <ShieldCheck className="size-3 mr-1" /> Emergência permitida
@@ -333,11 +338,13 @@ export default function FreezeWindowsPage() {
                   </div>
                   <p className="text-meta text-muted-foreground mt-1">
                     {format(new Date(w.starts_at), "dd 'de' MMM yyyy, HH:mm", { locale: ptBR })}
-                    {" → "}
+                    {' → '}
                     {format(new Date(w.ends_at), "dd 'de' MMM yyyy, HH:mm", { locale: ptBR })}
                   </p>
                   {w.reason && (
-                    <p className="text-body-sm text-muted-foreground mt-1 line-clamp-2">{w.reason}</p>
+                    <p className="text-body-sm text-muted-foreground mt-1 line-clamp-2">
+                      {w.reason}
+                    </p>
                   )}
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
@@ -345,9 +352,7 @@ export default function FreezeWindowsPage() {
                     <span className="text-meta text-muted-foreground">Emergência</span>
                     <Switch
                       checked={w.allow_emergency}
-                      onCheckedChange={(v) =>
-                        toggleEmergency.mutate({ id: w.id, allow: v })
-                      }
+                      onCheckedChange={(v) => toggleEmergency.mutate({ id: w.id, allow: v })}
                     />
                   </div>
                   <Button

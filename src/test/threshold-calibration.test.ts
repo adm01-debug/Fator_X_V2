@@ -26,7 +26,13 @@ function row(overrides: Partial<ThresholdCalibrationRowInput> = {}): ThresholdCa
 describe('parseThresholdCalibrations', () => {
   it('converte uma linha completa', () => {
     const [item] = parseThresholdCalibrations([row()]);
-    expect(item).toMatchObject({ auditId: 'a1', from: 0.5, to: 0.7, sampleSize: 12, accuracy: 0.8 });
+    expect(item).toMatchObject({
+      auditId: 'a1',
+      from: 0.5,
+      to: 0.7,
+      sampleSize: 12,
+      accuracy: 0.8,
+    });
     expect(item.at).toBe('2026-07-20T10:00:00.000Z');
   });
 
@@ -89,7 +95,15 @@ describe('parseThresholdCalibrations', () => {
 
 describe('calibrationDirection', () => {
   it('classifica aumento, redução e estabilidade', () => {
-    const base = { auditId: 'x', scale: 'dominio' as const, sampleSize: 1, accuracy: null, overriddenInstability: false, overrideReason: null, at: null };
+    const base = {
+      auditId: 'x',
+      scale: 'dominio' as const,
+      sampleSize: 1,
+      accuracy: null,
+      overriddenInstability: false,
+      overrideReason: null,
+      at: null,
+    };
     expect(calibrationDirection({ ...base, from: 0.4, to: 0.6 })).toBe('aumentou');
     expect(calibrationDirection({ ...base, from: 0.6, to: 0.4 })).toBe('reduziu');
     expect(calibrationDirection({ ...base, from: 0.5, to: 0.5 })).toBe('manteve');
@@ -97,7 +111,17 @@ describe('calibrationDirection', () => {
 
   it('trata origem desconhecida como sem variação', () => {
     expect(
-      calibrationDirection({ auditId: 'x', scale: 'dominio', from: null, to: 0.9, sampleSize: 0, accuracy: null, overriddenInstability: false, overrideReason: null, at: null }),
+      calibrationDirection({
+        auditId: 'x',
+        scale: 'dominio',
+        from: null,
+        to: 0.9,
+        sampleSize: 0,
+        accuracy: null,
+        overriddenInstability: false,
+        overrideReason: null,
+        at: null,
+      }),
     ).toBe('manteve');
   });
 });

@@ -152,9 +152,9 @@ describe('hasEnoughSignal', () => {
 describe('isEcho', () => {
   it('rejeita paráfrase do nome/slug', () => {
     expect(isEcho('Skill para pdf extract.', 'PDF Extract', 'pdf-extract')).toBe(true);
-    expect(isEcho('Uma ferramenta de PDF Extract usada pelo agente.', 'PDF Extract', 'pdf-extract')).toBe(
-      true,
-    );
+    expect(
+      isEcho('Uma ferramenta de PDF Extract usada pelo agente.', 'PDF Extract', 'pdf-extract'),
+    ).toBe(true);
   });
 
   it('aceita texto com informação nova suficiente', () => {
@@ -199,7 +199,10 @@ describe('proposalFromVerdict', () => {
   });
 
   it('recusa abaixo do piso de sugestão', () => {
-    const r = proposalFromVerdict(candidate(), verdict({ confidence: MIN_SUGGEST_CONFIDENCE - 0.01 }));
+    const r = proposalFromVerdict(
+      candidate(),
+      verdict({ confidence: MIN_SUGGEST_CONFIDENCE - 0.01 }),
+    );
     expect(r.rejection?.reason).toBe('confianca_baixa');
   });
 
@@ -218,8 +221,10 @@ describe('proposalFromVerdict', () => {
       candidate(),
       verdict({ confidence: MIN_ENRICH_CONFIDENCE - 0.001 }),
     ).proposal;
-    const naBorda = proposalFromVerdict(candidate(), verdict({ confidence: MIN_ENRICH_CONFIDENCE }))
-      .proposal;
+    const naBorda = proposalFromVerdict(
+      candidate(),
+      verdict({ confidence: MIN_ENRICH_CONFIDENCE }),
+    ).proposal;
     expect(abaixo?.autoApply ?? false).toBe(false);
     expect(naBorda?.autoApply).toBe(true);
   });
@@ -265,7 +270,8 @@ describe('proposalsToCsv', () => {
     const p = proposalFromVerdict(
       candidate({ name: 'Skill "Alfa"' }),
       verdict({
-        description: 'Descrição com "aspas" e vírgulas, várias delas, para testar o escape correto.',
+        description:
+          'Descrição com "aspas" e vírgulas, várias delas, para testar o escape correto.',
       }),
     ).proposal!;
     const csv = proposalsToCsv([p]);

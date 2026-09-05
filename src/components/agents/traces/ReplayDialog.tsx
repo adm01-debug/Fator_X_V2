@@ -1,10 +1,39 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Pause, Play, RotateCcw, SkipBack, SkipForward, Info, AlertTriangle, XCircle, Download, BookmarkCheck, ArrowLeftRight, GitCompare, Search, ChevronUp, ChevronDown, X } from 'lucide-react';
+import {
+  Pause,
+  Play,
+  RotateCcw,
+  SkipBack,
+  SkipForward,
+  Info,
+  AlertTriangle,
+  XCircle,
+  Download,
+  BookmarkCheck,
+  ArrowLeftRight,
+  GitCompare,
+  Search,
+  ChevronUp,
+  ChevronDown,
+  X,
+} from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useDebounce } from '@/hooks/use-debounce';
 import type { ExecutionGroup, TraceLevel } from '@/services/agentTracesService';
@@ -43,7 +72,13 @@ const LEVEL_ICON: Record<TraceLevel, JSX.Element> = {
 const SPEEDS = [0.5, 1, 1.5, 2, 4] as const;
 const DEFAULT_SPEED = 1;
 
-export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, onStepChange }: Props) {
+export function ReplayDialog({
+  open,
+  onOpenChange,
+  execution,
+  initialStep = 0,
+  onStepChange,
+}: Props) {
   const [step, setStep] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
@@ -67,9 +102,10 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
   const jumpBookmark = (dir: 1 | -1) => {
     if (bookmarks.length === 0) return;
     const indexes = bookmarks.map((b) => b.stepIndex).sort((a, b) => a - b);
-    const target = dir === 1
-      ? (indexes.find((i) => i > step) ?? indexes[0])
-      : ([...indexes].reverse().find((i) => i < step) ?? indexes[indexes.length - 1]);
+    const target =
+      dir === 1
+        ? (indexes.find((i) => i > step) ?? indexes[0])
+        : ([...indexes].reverse().find((i) => i < step) ?? indexes[indexes.length - 1]);
     setStep(target);
     setPlaying(false);
   };
@@ -80,7 +116,11 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
   const [pickB, setPickB] = useState<string | null>(null);
   const [compareOpen, setCompareOpen] = useState(false);
   // Reset picks whenever the user opens a different execution.
-  useEffect(() => { setPickA(null); setPickB(null); setCompareOpen(false); }, [sessionId]);
+  useEffect(() => {
+    setPickA(null);
+    setPickB(null);
+    setCompareOpen(false);
+  }, [sessionId]);
 
   const indexA = pickA ? traces.findIndex((t) => t.id === pickA) : -1;
   const indexB = pickB ? traces.findIndex((t) => t.id === pickB) : -1;
@@ -101,7 +141,10 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
       if (pickA === id) setPickA(null);
     }
   };
-  const swapPicks = () => { setPickA(pickB); setPickB(pickA); };
+  const swapPicks = () => {
+    setPickA(pickB);
+    setPickB(pickA);
+  };
   const canCompare = !!(pickA && pickB && pickA !== pickB);
 
   // ── Busca dentro do replay ────────────────────────────────────────────
@@ -113,16 +156,30 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
   const debouncedQuery = useDebounce(query, 150);
   const searchInputRef = useRef<HTMLInputElement>(null);
   // Reset busca ao trocar de execução — comportamento esperado de "novo contexto".
-  useEffect(() => { setQuery(''); }, [sessionId]);
+  useEffect(() => {
+    setQuery('');
+  }, [sessionId]);
 
   /** Pré-stringifica o conteúdo buscável de cada trace UMA vez por execução. */
   const haystacks = useMemo(() => {
     return traces.map((t) => {
       const parts: string[] = [t.event, t.level];
-      try { parts.push(typeof t.input === 'string' ? t.input : JSON.stringify(t.input ?? '')); } catch { /* ignore */ }
-      try { parts.push(typeof t.output === 'string' ? t.output : JSON.stringify(t.output ?? '')); } catch { /* ignore */ }
+      try {
+        parts.push(typeof t.input === 'string' ? t.input : JSON.stringify(t.input ?? ''));
+      } catch {
+        /* ignore */
+      }
+      try {
+        parts.push(typeof t.output === 'string' ? t.output : JSON.stringify(t.output ?? ''));
+      } catch {
+        /* ignore */
+      }
       if (t.metadata) {
-        try { parts.push(JSON.stringify(t.metadata)); } catch { /* ignore */ }
+        try {
+          parts.push(JSON.stringify(t.metadata));
+        } catch {
+          /* ignore */
+        }
       }
       return parts.join(' \u0001 ').toLowerCase();
     });
@@ -145,7 +202,7 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
     const idx = matchIndexes.indexOf(step);
     if (idx >= 0) return idx + 1;
     const next = matchIndexes.findIndex((i) => i >= step);
-    return (next === -1 ? matchIndexes.length : next + 1);
+    return next === -1 ? matchIndexes.length : next + 1;
   }, [matchIndexes, step]);
   const stepMatches = matchIndexes.includes(step);
 
@@ -159,7 +216,8 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
     if (dir === 1) {
       target = matchIndexes.find((i) => i > step) ?? matchIndexes[0];
     } else {
-      target = [...matchIndexes].reverse().find((i) => i < step) ?? matchIndexes[matchIndexes.length - 1];
+      target =
+        [...matchIndexes].reverse().find((i) => i < step) ?? matchIndexes[matchIndexes.length - 1];
     }
     setStep(target);
     setPlaying(false);
@@ -176,7 +234,9 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
   }, [debouncedQuery]);
 
   const accumulated = useMemo(() => {
-    let ms = 0, tokens = 0, cost = 0;
+    let ms = 0,
+      tokens = 0,
+      cost = 0;
     for (let i = 0; i <= step && i < traces.length; i++) {
       ms += traces[i].latency_ms ?? 0;
       tokens += traces[i].tokens_used ?? 0;
@@ -223,11 +283,16 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
     const delay = Math.max(200, Math.min(2000, baseDelay)) / speed;
     timerRef.current = window.setTimeout(() => {
       setStep((s) => {
-        if (s + 1 >= total) { setPlaying(false); return s; }
+        if (s + 1 >= total) {
+          setPlaying(false);
+          return s;
+        }
         return s + 1;
       });
     }, delay);
-    return () => { if (timerRef.current) window.clearTimeout(timerRef.current); };
+    return () => {
+      if (timerRef.current) window.clearTimeout(timerRef.current);
+    };
   }, [playing, step, speed, current, total]);
 
   // Keyboard shortcuts while the dialog is open: ←/→ or j/k step, space toggles play,
@@ -246,11 +311,23 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
         if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
         if (tgt.isContentEditable) return;
         const role = tgt.getAttribute('role');
-        if (role === 'combobox' || role === 'listbox' || role === 'option' ||
-            role === 'searchbox' || role === 'textbox' || role === 'menuitem') return;
+        if (
+          role === 'combobox' ||
+          role === 'listbox' ||
+          role === 'option' ||
+          role === 'searchbox' ||
+          role === 'textbox' ||
+          role === 'menuitem'
+        )
+          return;
         // Sobe até 4 níveis procurando containers Radix abertos (popover/listbox).
         // Garante que setas dentro de um Select aberto não pulem o passo.
-        if (tgt.closest('[role="listbox"],[role="dialog"][data-state="open"][data-radix-popper-content-wrapper],[data-radix-select-content],[data-radix-popover-content]')) return;
+        if (
+          tgt.closest(
+            '[role="listbox"],[role="dialog"][data-state="open"][data-radix-popper-content-wrapper],[data-radix-select-content],[data-radix-popover-content]',
+          )
+        )
+          return;
         if (tgt.closest('[data-no-shortcuts="true"]')) return;
       }
       if (e.key === 'ArrowRight' || e.key === 'l' || e.key === 'j') {
@@ -294,14 +371,14 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
         // onde `+` exige Shift sem que precisemos checar o modificador.
         e.preventDefault();
         setSpeed((s) => {
-          const i = SPEEDS.indexOf(s as typeof SPEEDS[number]);
+          const i = SPEEDS.indexOf(s as (typeof SPEEDS)[number]);
           if (i === -1) return DEFAULT_SPEED;
           return SPEEDS[Math.min(SPEEDS.length - 1, i + 1)];
         });
       } else if (e.key === '-' || e.key === '_' || (e.key === 'ArrowDown' && e.shiftKey)) {
         e.preventDefault();
         setSpeed((s) => {
-          const i = SPEEDS.indexOf(s as typeof SPEEDS[number]);
+          const i = SPEEDS.indexOf(s as (typeof SPEEDS)[number]);
           if (i === -1) return DEFAULT_SPEED;
           return SPEEDS[Math.max(0, i - 1)];
         });
@@ -354,7 +431,9 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
     };
     try {
       downloadJSON(JSON.stringify(payload, null, 2), `execution-${safeId}-${ts}.json`);
-      toast.success('Execução exportada', { description: `${execution.traces.length} eventos salvos como JSON.` });
+      toast.success('Execução exportada', {
+        description: `${execution.traces.length} eventos salvos como JSON.`,
+      });
     } catch (err) {
       toast.error('Falha ao exportar', { description: String(err) });
     }
@@ -371,9 +450,12 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
               </DialogTitle>
               <DialogDescription>
                 <span className="font-mono text-meta">
-                  {execution.session_id.startsWith('auto-') ? '∅ sem session_id' : execution.session_id}
+                  {execution.session_id.startsWith('auto-')
+                    ? '∅ sem session_id'
+                    : execution.session_id}
                 </span>
-                {' · '}{total} eventos · {execution.total_ms}ms total
+                {' · '}
+                {total} eventos · {execution.total_ms}ms total
               </DialogDescription>
             </div>
             <Button
@@ -391,16 +473,46 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
 
         {/* Controls */}
         <div className="flex items-center gap-2 border-y border-border/40 py-3">
-          <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => setStep((s) => Math.max(0, s - 1))} aria-label="Passo anterior" title="Passo anterior (← ou h)">
+          <Button
+            size="icon"
+            variant="outline"
+            className="h-8 w-8"
+            onClick={() => setStep((s) => Math.max(0, s - 1))}
+            aria-label="Passo anterior"
+            title="Passo anterior (← ou h)"
+          >
             <SkipBack className="h-3.5 w-3.5" />
           </Button>
-          <Button size="icon" className="h-8 w-8" onClick={() => setPlaying((p) => !p)} aria-label={playing ? 'Pausar' : 'Reproduzir'} title={`${playing ? 'Pausar' : 'Reproduzir'} (Espaço)`}>
+          <Button
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => setPlaying((p) => !p)}
+            aria-label={playing ? 'Pausar' : 'Reproduzir'}
+            title={`${playing ? 'Pausar' : 'Reproduzir'} (Espaço)`}
+          >
             {playing ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
           </Button>
-          <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => setStep((s) => Math.min(total - 1, s + 1))} aria-label="Próximo passo" title="Próximo passo (→ ou l)">
+          <Button
+            size="icon"
+            variant="outline"
+            className="h-8 w-8"
+            onClick={() => setStep((s) => Math.min(total - 1, s + 1))}
+            aria-label="Próximo passo"
+            title="Próximo passo (→ ou l)"
+          >
             <SkipForward className="h-3.5 w-3.5" />
           </Button>
-          <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => { setStep(0); setPlaying(false); }} aria-label="Reiniciar" title="Reiniciar (R)">
+          <Button
+            size="icon"
+            variant="outline"
+            className="h-8 w-8"
+            onClick={() => {
+              setStep(0);
+              setPlaying(false);
+            }}
+            aria-label="Reiniciar"
+            title="Reiniciar (R)"
+          >
             <RotateCcw className="h-3.5 w-3.5" />
           </Button>
 
@@ -418,7 +530,10 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
                 <BookmarkCheck className="h-3.5 w-3.5" />
                 <span className="sr-only">Anterior</span>
               </Button>
-              <Badge variant="outline" className="text-meta gap-1 text-nexus-amber border-nexus-amber/40">
+              <Badge
+                variant="outline"
+                className="text-meta gap-1 text-nexus-amber border-nexus-amber/40"
+              >
                 <BookmarkCheck className="h-3 w-3" /> {bookmarks.length}
               </Badge>
               <Button
@@ -443,9 +558,11 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
             className="h-8 px-2 gap-1.5 text-meta"
             disabled={!canCompare}
             onClick={() => setCompareOpen(true)}
-            title={canCompare
-              ? `Comparar passo #${indexA + 1} (A) com #${indexB + 1} (B)`
-              : 'Selecione dois passos como A e B para comparar'}
+            title={
+              canCompare
+                ? `Comparar passo #${indexA + 1} (A) com #${indexB + 1} (B)`
+                : 'Selecione dois passos como A e B para comparar'
+            }
           >
             <GitCompare className="h-3.5 w-3.5" />
             Comparar
@@ -460,7 +577,10 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
               size="icon"
               variant="ghost"
               className="h-8 w-8 text-muted-foreground"
-              onClick={() => { setPickA(null); setPickB(null); }}
+              onClick={() => {
+                setPickA(null);
+                setPickB(null);
+              }}
               title="Limpar seleção A/B"
               aria-label="Limpar seleção A/B"
             >
@@ -471,10 +591,14 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
           <div className="ml-2 flex items-center gap-2">
             <span className="text-meta uppercase text-muted-foreground">Velocidade</span>
             <Select value={String(speed)} onValueChange={(v) => setSpeed(Number(v))}>
-              <SelectTrigger className="h-8 w-[80px] text-meta"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="h-8 w-[80px] text-meta">
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 {SPEEDS.map((s) => (
-                  <SelectItem key={s} value={String(s)}>{s}x</SelectItem>
+                  <SelectItem key={s} value={String(s)}>
+                    {s}x
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -491,30 +615,53 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
               Passo <span className="font-semibold">{step + 1}</span>
               <span className="text-primary/60"> / {total}</span>
             </span>
-            <div className="hidden md:flex items-center gap-1 text-meta text-muted-foreground" aria-label="Atalhos de teclado disponíveis">
-              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">←</kbd>
-              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">→</kbd>
+            <div
+              className="hidden md:flex items-center gap-1 text-meta text-muted-foreground"
+              aria-label="Atalhos de teclado disponíveis"
+            >
+              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">
+                ←
+              </kbd>
+              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">
+                →
+              </kbd>
               <span className="opacity-60">passo</span>
               <span className="opacity-30 mx-0.5">·</span>
-              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">Espaço</kbd>
+              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">
+                Espaço
+              </kbd>
               <span className="opacity-60">play</span>
               <span className="opacity-30 mx-0.5">·</span>
-              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">Home</kbd>
-              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">End</kbd>
+              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">
+                Home
+              </kbd>
+              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">
+                End
+              </kbd>
               <span className="opacity-30 mx-0.5">·</span>
-              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">R</kbd>
+              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">
+                R
+              </kbd>
               <span className="opacity-60">reset</span>
               <span className="opacity-30 mx-0.5">·</span>
-              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">/</kbd>
+              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">
+                /
+              </kbd>
               <span className="opacity-60">buscar</span>
               <span className="opacity-30 mx-0.5">·</span>
-              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">−</kbd>
-              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">+</kbd>
+              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">
+                −
+              </kbd>
+              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">
+                +
+              </kbd>
               <span className="opacity-60">
                 velocidade <span className="font-mono text-primary/80">({speed}x)</span>
               </span>
               <span className="opacity-30 mx-0.5">·</span>
-              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">0</kbd>
+              <kbd className="px-1.5 py-0.5 rounded border border-border/60 bg-muted/60 font-mono text-meta">
+                0
+              </kbd>
               <span className="opacity-60">reset</span>
             </div>
           </div>
@@ -527,7 +674,10 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
             min={0}
             max={Math.max(0, total - 1)}
             step={1}
-            onValueChange={(v) => { setStep(v[0]); setPlaying(false); }}
+            onValueChange={(v) => {
+              setStep(v[0]);
+              setPlaying(false);
+            }}
             aria-label="Progresso do replay"
           />
           {bookmarks.length > 0 && total > 1 && (
@@ -538,11 +688,18 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
                   <button
                     key={b.traceId}
                     type="button"
-                    onClick={() => { setStep(b.stepIndex); setPlaying(false); }}
+                    onClick={() => {
+                      setStep(b.stepIndex);
+                      setPlaying(false);
+                    }}
                     className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 w-2 h-3.5 rounded-sm bg-nexus-amber border border-nexus-amber/80 shadow-nexus-sm pointer-events-auto hover:scale-125 transition-transform"
                     style={{ left }}
                     aria-label={`Ir para marcador no passo ${b.stepIndex + 1}`}
-                    title={b.note ? `#${b.stepIndex + 1}: ${b.note}` : `Marcador no passo ${b.stepIndex + 1}`}
+                    title={
+                      b.note
+                        ? `#${b.stepIndex + 1}: ${b.note}`
+                        : `Marcador no passo ${b.stepIndex + 1}`
+                    }
                   />
                 );
               })}
@@ -558,7 +715,10 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
                   <button
                     key={`m-${idx}`}
                     type="button"
-                    onClick={() => { setStep(idx); setPlaying(false); }}
+                    onClick={() => {
+                      setStep(idx);
+                      setPlaying(false);
+                    }}
                     className="absolute -translate-x-1/2 top-0 w-1 h-1.5 rounded-sm bg-primary pointer-events-auto hover:scale-150 transition-transform"
                     style={{ left }}
                     aria-label={`Ir para resultado no passo ${idx + 1}`}
@@ -575,7 +735,10 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
             atalho global "/" foca o input, "n"/"N" navega quando focado fora. */}
         <div className="flex items-center gap-2 px-1">
           <div className="relative flex-1">
-            <Search className="h-3.5 w-3.5 text-muted-foreground absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none" aria-hidden />
+            <Search
+              className="h-3.5 w-3.5 text-muted-foreground absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none"
+              aria-hidden
+            />
             <Input
               ref={searchInputRef}
               value={query}
@@ -603,8 +766,8 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
                   matchIndexes.length === 0
                     ? 'bg-destructive/10 text-destructive border border-destructive/30'
                     : stepMatches
-                    ? 'bg-primary/10 text-primary border border-primary/30'
-                    : 'bg-secondary/60 text-muted-foreground border border-border/40',
+                      ? 'bg-primary/10 text-primary border border-primary/30'
+                      : 'bg-secondary/60 text-muted-foreground border border-border/40',
                 )}
                 aria-live="polite"
               >
@@ -638,7 +801,10 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
                 size="icon"
                 variant="ghost"
                 className="h-8 w-8 text-muted-foreground"
-                onClick={() => { setQuery(''); searchInputRef.current?.focus(); }}
+                onClick={() => {
+                  setQuery('');
+                  searchInputRef.current?.focus();
+                }}
                 aria-label="Limpar busca"
                 title="Limpar busca (Esc)"
               >
@@ -652,17 +818,21 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
         <div aria-live="polite" className="space-y-3">
           {current && (
             <>
-              <div className={cn(
-                'flex items-center gap-2 p-3 rounded-md border bg-muted/30',
-                currentBookmark ? 'border-nexus-amber/40 bg-nexus-amber/5' : 'border-border/40',
-                // Reforço visual quando o passo casa com a busca ativa — ring
-                // sutil em primary para não competir com o amber dos bookmarks.
-                stepMatches && 'ring-2 ring-primary/40 ring-offset-1 ring-offset-background',
-              )}>
+              <div
+                className={cn(
+                  'flex items-center gap-2 p-3 rounded-md border bg-muted/30',
+                  currentBookmark ? 'border-nexus-amber/40 bg-nexus-amber/5' : 'border-border/40',
+                  // Reforço visual quando o passo casa com a busca ativa — ring
+                  // sutil em primary para não competir com o amber dos bookmarks.
+                  stepMatches && 'ring-2 ring-primary/40 ring-offset-1 ring-offset-background',
+                )}
+              >
                 {LEVEL_ICON[current.level]}
                 <div className="min-w-0 flex-1">
                   <p className="text-body-sm font-medium text-foreground truncate flex items-center gap-1.5">
-                    {currentBookmark && <BookmarkCheck className="h-3.5 w-3.5 text-nexus-amber shrink-0" />}
+                    {currentBookmark && (
+                      <BookmarkCheck className="h-3.5 w-3.5 text-nexus-amber shrink-0" />
+                    )}
                     {current.event}
                   </p>
                   <p className="text-meta font-mono text-muted-foreground">
@@ -681,7 +851,8 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
                     variant={currentIsA ? 'default' : 'outline'}
                     className={cn(
                       'h-7 px-2 text-meta font-mono',
-                      currentIsA && 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+                      currentIsA &&
+                        'bg-destructive text-destructive-foreground hover:bg-destructive/90',
                     )}
                     onClick={() => toggleSlot('A')}
                     title={currentIsA ? 'Remover este passo do slot A' : 'Marcar este passo como A'}
@@ -710,7 +881,9 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
                   stepIndex={step}
                   onChange={setBookmarks}
                 />
-                <Badge variant="outline" className="text-meta">{current.level}</Badge>
+                <Badge variant="outline" className="text-meta">
+                  {current.level}
+                </Badge>
               </div>
 
               <div className="grid grid-cols-2 gap-2">
@@ -747,7 +920,11 @@ export function ReplayDialog({ open, onOpenChange, execution, initialStep = 0, o
 
 function Pane({ title, data }: { title: string; data: unknown }) {
   let body = '';
-  try { body = typeof data === 'string' ? data : JSON.stringify(data ?? {}, null, 2); } catch { body = String(data); }
+  try {
+    body = typeof data === 'string' ? data : JSON.stringify(data ?? {}, null, 2);
+  } catch {
+    body = String(data);
+  }
   return (
     <div>
       <p className="text-meta uppercase font-semibold text-muted-foreground mb-1">{title}</p>

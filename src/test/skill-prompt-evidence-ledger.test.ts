@@ -15,7 +15,10 @@ import {
 } from '@/lib/skills/promptEvidenceLedger';
 import { artifactChecksum } from '@/lib/skills/promptAuditArtifact';
 
-function row(overrides: Partial<Record<string, unknown>> = {}, meta: Record<string, unknown> = {}): RawEvidenceRow {
+function row(
+  overrides: Partial<Record<string, unknown>> = {},
+  meta: Record<string, unknown> = {},
+): RawEvidenceRow {
   return {
     id: 'r1',
     created_at: '2026-07-01T10:00:00.000Z',
@@ -67,13 +70,16 @@ describe('parseEvidenceRows — robustez', () => {
 
   it('não produz NaN a partir de contagens corrompidas', () => {
     const out = parseEvidenceRows([
-      row({}, {
-        artifact_chars: 'muitos',
-        skills_injected: -5,
-        skills_overflow: 3.9,
-        estimated_tokens: null,
-        unresolved_variables: undefined,
-      }),
+      row(
+        {},
+        {
+          artifact_chars: 'muitos',
+          skills_injected: -5,
+          skills_overflow: 3.9,
+          estimated_tokens: null,
+          unresolved_variables: undefined,
+        },
+      ),
     ]);
     expect(out[0].artifactChars).toBe(0);
     expect(out[0].skillsInjected).toBe(0);
@@ -132,7 +138,13 @@ describe('parseEvidenceRows — robustez', () => {
 describe('summarizeEvidenceLedger', () => {
   it('resume zero entradas sem quebrar', () => {
     const s = summarizeEvidenceLedger([]);
-    expect(s).toMatchObject({ total: 0, agents: 0, withOverflow: 0, synthetic: 0, lastExportAt: null });
+    expect(s).toMatchObject({
+      total: 0,
+      agents: 0,
+      withOverflow: 0,
+      synthetic: 0,
+      lastExportAt: null,
+    });
     expect(s.duplicates).toEqual([]);
   });
 
@@ -222,8 +234,14 @@ describe('verifyArtifactContent', () => {
 
   it('retorna todas as exportações do mesmo artefato', () => {
     const multiplas = parseEvidenceRows([
-      row({ id: 'a', created_at: '2026-05-01T00:00:00.000Z' }, { checksum, artifact_chars: conteudo.length }),
-      row({ id: 'b', created_at: '2026-06-01T00:00:00.000Z' }, { checksum, artifact_chars: conteudo.length }),
+      row(
+        { id: 'a', created_at: '2026-05-01T00:00:00.000Z' },
+        { checksum, artifact_chars: conteudo.length },
+      ),
+      row(
+        { id: 'b', created_at: '2026-06-01T00:00:00.000Z' },
+        { checksum, artifact_chars: conteudo.length },
+      ),
     ]);
     const r = verifyArtifactContent(conteudo, multiplas);
     expect(r.status).toBe('autentico');
@@ -234,9 +252,11 @@ describe('verifyArtifactContent', () => {
   it('nunca casa por acaso em varredura de 400 conteúdos distintos', () => {
     const corpus = Array.from({ length: 400 }, (_, i) => `# artefato ${i}\ncorpo ${i}\n`);
     const entradas = parseEvidenceRows(
-      corpus.slice(0, 200).map((c, i) =>
-        row({ id: `e-${i}` }, { checksum: artifactChecksum(c), artifact_chars: c.length }),
-      ),
+      corpus
+        .slice(0, 200)
+        .map((c, i) =>
+          row({ id: `e-${i}` }, { checksum: artifactChecksum(c), artifact_chars: c.length }),
+        ),
     );
     let autenticos = 0;
     let desconhecidos = 0;

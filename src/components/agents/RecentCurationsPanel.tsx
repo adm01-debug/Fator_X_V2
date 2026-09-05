@@ -7,7 +7,19 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ChevronDown, Download, History, Link2, Loader2, RefreshCw, Sparkles, Undo2, Unlink, UserRound, X } from 'lucide-react';
+import {
+  ChevronDown,
+  Download,
+  History,
+  Link2,
+  Loader2,
+  RefreshCw,
+  Sparkles,
+  Undo2,
+  Unlink,
+  UserRound,
+  X,
+} from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -32,7 +44,6 @@ import {
   dismissRestoreFailure,
   loadRestoreFailures,
   saveRestoreFailures,
-
   groupRemovalsByTemplate,
   shouldConfirmBulkRestore,
   type CurationActorScope,
@@ -79,8 +90,6 @@ import {
 import { cn } from '@/lib/utils';
 import { logger } from '@/lib/logger';
 
-
-
 const FILTROS: Array<{ value: CurationFeedFilter; label: string }> = [
   { value: 'all', label: 'Tudo' },
   { value: 'linked', label: 'Vínculos' },
@@ -96,9 +105,6 @@ const ESCOPOS: Array<{ value: CurationActorScope; label: string }> = [
 const TEMPLATES_ORDENADOS = [...AGENT_TEMPLATES].sort((a, b) =>
   a.name.localeCompare(b.name, 'pt-BR'),
 );
-
-
-
 
 export interface RecentCurationsPanelProps {
   /** Quantos registros buscar (o feed agrupa por dia depois). */
@@ -129,9 +135,7 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
   // Contamos os três recortes em paralelo: com uma contagem única, alternar de
   // aba obrigava a zerar tudo e o curador perdia o rastro do que havia chegado
   // no recorte que ele não estava olhando.
-  const [pendentes, setPendentes] = useState<CurationPendingByFilter>(
-    EMPTY_PENDING_BY_FILTER,
-  );
+  const [pendentes, setPendentes] = useState<CurationPendingByFilter>(EMPTY_PENDING_BY_FILTER);
 
   const registrarPendente = useCallback((evento: CurationRealtimeEvent) => {
     setPendentes((atual) => applyCurationPendingEventByFilter(atual, evento));
@@ -150,7 +154,6 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
 
   const pendentesDoFiltro = pendentes[filtro];
   const rotuloPendentes = formatPendingLabel(pendentesDoFiltro.size);
-
 
   // Destaque das linhas que acabaram de entrar. Sinal de transição, não estado:
   // expira sozinho para não passar a mentir sobre o que ainda é "novo".
@@ -184,12 +187,6 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
     queryClient.invalidateQueries({ queryKey: ['template_skill_links'] });
   };
 
-
-
-
-
-
-
   const desfazer = useMutation({
     mutationFn: ({ templateId, skillId }: { templateId: string; skillId: string }) =>
       restoreTemplateSkillLink(templateId, skillId),
@@ -220,7 +217,6 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
     saveRestoreFailures(falhas);
   }, [falhas]);
 
-
   // Exporta o relatório sem tocar no backend: os dados já estão em memória.
   const exportarFalhasCsv = useCallback(() => {
     const blob = new Blob([buildRestoreFailuresCsv(falhas)], {
@@ -235,7 +231,6 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   }, [falhas]);
-
 
   // Reprocessar um lote negado por RLS só repete o erro: o retry fica restrito
   // às falhas transitórias, e as de permissão ficam visíveis para escalar.
@@ -292,17 +287,7 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
   // treina o curador a clicar "Sim" sem ler, e o diálogo perde a função.
   const [confirmarAberto, setConfirmarAberto] = useState(false);
 
-
-
-
-
-  const {
-    data,
-    isLoading,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfiniteQuery({
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: ['recent_curations', limit, currentUserId, filtro, escopo, templateId],
     queryFn: ({ pageParam }) =>
       fetchRecentCurationsPage(
@@ -314,7 +299,6 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
         templateId,
       ),
 
-
     initialPageParam: null as string | null,
     getNextPageParam: (ultima) => ultima.nextCursor,
     staleTime: 30_000,
@@ -323,10 +307,7 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
 
   // As páginas são mescladas fora do render loop: a dedup por (template, skill)
   // é O(n) e não deve rodar a cada re-render por hover/estado local.
-  const feed = useMemo(
-    () => mergeCurationFeeds((data?.pages ?? []).map((p) => p.days)),
-    [data],
-  );
+  const feed = useMemo(() => mergeCurationFeeds((data?.pages ?? []).map((p) => p.days)), [data]);
 
   // O plano de restauração é derivado do que está na tela — nunca reconsultado
   // — para que o botão prometa exatamente o que o curador está vendo.
@@ -342,7 +323,6 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
     }
     restaurarTodas.mutate();
   }, [removocoesVisiveis, restaurarTodas]);
-
 
   // Ref evita recriar a mutation a cada página carregada do feed infinito.
   const feedRef = useRef(feed);
@@ -385,9 +365,6 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
       });
     }
   };
-
-
-
 
   return (
     <Card className={className}>
@@ -434,7 +411,6 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
                 </ToggleGroupItem>
               );
             })}
-
           </ToggleGroup>
 
           <ToggleGroup
@@ -534,13 +510,10 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
           )}
         </div>
 
-
         {falhas.length > 0 && (
           <ul className="mt-2 space-y-1 rounded-md border border-destructive/40 bg-destructive/5 p-2">
             <li className="text-meta flex flex-wrap items-center gap-1.5 pb-1 text-muted-foreground">
-              {(
-                Object.entries(resumoFalhas) as Array<[keyof typeof RESTORE_FAILURE_LABEL, number]>
-              )
+              {(Object.entries(resumoFalhas) as Array<[keyof typeof RESTORE_FAILURE_LABEL, number]>)
                 .filter(([, total]) => total > 0)
                 .map(([kind, total]) => (
                   <span key={kind}>
@@ -569,10 +542,12 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
                     className="text-muted-foreground/70"
                     title={new Date(f.failedAt).toLocaleString('pt-BR')}
                   >
-                    ({new Date(f.failedAt).toLocaleTimeString('pt-BR', {
+                    (
+                    {new Date(f.failedAt).toLocaleTimeString('pt-BR', {
                       hour: '2-digit',
                       minute: '2-digit',
-                    })})
+                    })}
+                    )
                   </time>
                 )}
                 <Button
@@ -606,10 +581,7 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
             </Button>
           </div>
         )}
-
-
       </CardHeader>
-
 
       <CardContent className="space-y-6">
         {isLoading ? (
@@ -647,80 +619,80 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
                     agora,
                   );
                   return (
-                  <li
-                    key={`${entrada.templateId}-${entrada.skillId}`}
-                    className={cn(
-                      'rounded-md border p-3 transition-colors hover:border-primary/40',
-                      novo
-                        ? 'border-primary/60 bg-primary/5 ring-1 ring-primary/30'
-                        : 'border-border/60 bg-card/40',
-                    )}
-                    // Anunciado ao leitor de tela: o realce é a única pista de
-                    // que a linha acabou de chegar, e cor sozinha não acessível.
-                    aria-label={novo ? 'Novidade recém-chegada' : undefined}
-                  >
-                    {novo && (
-                      <span className="sr-only">
-                        Atualizado nos últimos {Math.round(CURATION_HIGHLIGHT_TTL_MS / 1000)}{' '}
-                        segundos.
-                      </span>
-                    )}
-
-                    <div className="flex flex-wrap items-center gap-2">
-                      <Badge
-                        variant={entrada.kind === 'unlinked' ? 'outline' : 'secondary'}
-                        className="font-normal"
-                      >
-                        {entrada.kind === 'unlinked' ? (
-                          <Unlink className="mr-1 h-3 w-3" aria-hidden />
-                        ) : (
-                          <Link2 className="mr-1 h-3 w-3" aria-hidden />
-                        )}
-                        {entrada.templateName}
-                      </Badge>
-                      <span className="text-muted-foreground" aria-hidden>
-                        →
-                      </span>
-                      <span
-                        className={
-                          entrada.kind === 'unlinked'
-                            ? 'text-body-sm font-medium text-muted-foreground line-through'
-                            : 'text-body-sm font-medium text-foreground'
-                        }
-                      >
-                        {entrada.skillName}
-                      </span>
-
-                      {entrada.kind === 'unlinked' && (
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="ml-auto h-7 px-2 text-meta"
-                          disabled={desfazer.isPending}
-                          onClick={() =>
-                            desfazer.mutate({
-                              templateId: entrada.templateId,
-                              skillId: entrada.skillId,
-                            })
-                          }
-                        >
-                          <Undo2 className="mr-1 h-3 w-3" aria-hidden />
-                          Desfazer
-                        </Button>
+                    <li
+                      key={`${entrada.templateId}-${entrada.skillId}`}
+                      className={cn(
+                        'rounded-md border p-3 transition-colors hover:border-primary/40',
+                        novo
+                          ? 'border-primary/60 bg-primary/5 ring-1 ring-primary/30'
+                          : 'border-border/60 bg-card/40',
                       )}
-                    </div>
-
-                    <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-meta text-muted-foreground">
-                      {entrada.actorLabel && (
-                        <span className="inline-flex items-center gap-1">
-                          <UserRound className="h-3 w-3" aria-hidden />
-                          {entrada.actorLabel}
+                      // Anunciado ao leitor de tela: o realce é a única pista de
+                      // que a linha acabou de chegar, e cor sozinha não acessível.
+                      aria-label={novo ? 'Novidade recém-chegada' : undefined}
+                    >
+                      {novo && (
+                        <span className="sr-only">
+                          Atualizado nos últimos {Math.round(CURATION_HIGHLIGHT_TTL_MS / 1000)}{' '}
+                          segundos.
                         </span>
                       )}
-                      {entrada.timeLabel && <span>{entrada.timeLabel}</span>}
-                      <span className="truncate">{entrada.reason}</span>
-                    </div>
-                  </li>
+
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Badge
+                          variant={entrada.kind === 'unlinked' ? 'outline' : 'secondary'}
+                          className="font-normal"
+                        >
+                          {entrada.kind === 'unlinked' ? (
+                            <Unlink className="mr-1 h-3 w-3" aria-hidden />
+                          ) : (
+                            <Link2 className="mr-1 h-3 w-3" aria-hidden />
+                          )}
+                          {entrada.templateName}
+                        </Badge>
+                        <span className="text-muted-foreground" aria-hidden>
+                          →
+                        </span>
+                        <span
+                          className={
+                            entrada.kind === 'unlinked'
+                              ? 'text-body-sm font-medium text-muted-foreground line-through'
+                              : 'text-body-sm font-medium text-foreground'
+                          }
+                        >
+                          {entrada.skillName}
+                        </span>
+
+                        {entrada.kind === 'unlinked' && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="ml-auto h-7 px-2 text-meta"
+                            disabled={desfazer.isPending}
+                            onClick={() =>
+                              desfazer.mutate({
+                                templateId: entrada.templateId,
+                                skillId: entrada.skillId,
+                              })
+                            }
+                          >
+                            <Undo2 className="mr-1 h-3 w-3" aria-hidden />
+                            Desfazer
+                          </Button>
+                        )}
+                      </div>
+
+                      <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-meta text-muted-foreground">
+                        {entrada.actorLabel && (
+                          <span className="inline-flex items-center gap-1">
+                            <UserRound className="h-3 w-3" aria-hidden />
+                            {entrada.actorLabel}
+                          </span>
+                        )}
+                        {entrada.timeLabel && <span>{entrada.timeLabel}</span>}
+                        <span className="truncate">{entrada.reason}</span>
+                      </div>
+                    </li>
                   );
                 })}
               </ul>
@@ -754,8 +726,8 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
             <AlertDialogTitle>Restaurar {removocoesVisiveis} vínculos?</AlertDialogTitle>
             <AlertDialogDescription>
               Todas as remoções visíveis no recorte atual voltarão a ser recomendadas nos
-              respectivos templates. A ação vale apenas para o que está carregado na tela e pode
-              ser desfeita removendo os vínculos novamente.
+              respectivos templates. A ação vale apenas para o que está carregado na tela e pode ser
+              desfeita removendo os vínculos novamente.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -772,7 +744,5 @@ export function RecentCurationsPanel({ limit = 30, className }: RecentCurationsP
         </AlertDialogContent>
       </AlertDialog>
     </Card>
-
-
   );
 }

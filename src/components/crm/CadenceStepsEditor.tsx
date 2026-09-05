@@ -65,7 +65,8 @@ export function CadenceStepsEditor({ cadenceId }: CadenceStepsEditorProps) {
         position: nextPosition,
         channel,
         // Atraso inválido vira o padrão de 24h em vez de estourar o CHECK do banco.
-        delay_hours: Number.isFinite(parsedDelay) && parsedDelay >= 0 ? Math.floor(parsedDelay) : 24,
+        delay_hours:
+          Number.isFinite(parsedDelay) && parsedDelay >= 0 ? Math.floor(parsedDelay) : 24,
         subject: subject.trim() || null,
         body: body.trim(),
       });
@@ -163,7 +164,11 @@ export function CadenceStepsEditor({ cadenceId }: CadenceStepsEditorProps) {
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="cadence-subject">Assunto (opcional)</Label>
-          <Input id="cadence-subject" value={subject} onChange={(e) => setSubject(e.target.value)} />
+          <Input
+            id="cadence-subject"
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+          />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="cadence-body">Mensagem</Label>

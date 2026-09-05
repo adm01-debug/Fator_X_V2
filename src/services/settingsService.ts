@@ -38,7 +38,9 @@ export interface Environment {
  * Returns workspace secrets with masked values (RPC handles masking).
  */
 export async function listMaskedSecrets(workspaceId: string): Promise<MaskedSecret[]> {
-  const { data, error } = await supabaseExternal.rpc('get_masked_secrets', { p_workspace_id: workspaceId });
+  const { data, error } = await supabaseExternal.rpc('get_masked_secrets', {
+    p_workspace_id: workspaceId,
+  });
   if (error) {
     logger.error('Failed to list masked secrets', { workspaceId, error: error.message });
     throw error;
@@ -61,7 +63,10 @@ export async function createWorkspaceSecret(params: {
     key_value: params.keyValue,
   } as never);
   if (error) {
-    logger.error('Failed to create workspace secret', { keyName: params.keyName, error: error.message });
+    logger.error('Failed to create workspace secret', {
+      keyName: params.keyName,
+      error: error.message,
+    });
     throw error;
   }
 }
@@ -145,10 +150,7 @@ export async function createEnvironment(workspaceId: string, name: string): Prom
  * Deletes an environment by id.
  */
 export async function deleteEnvironment(id: string): Promise<void> {
-  const { error } = await supabaseExternal
-    .from('environments')
-    .delete()
-    .eq('id', id);
+  const { error } = await supabaseExternal.from('environments').delete().eq('id', id);
   if (error) {
     logger.error('Failed to delete environment', { id, error: error.message });
     throw error;

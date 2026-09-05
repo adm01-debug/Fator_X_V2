@@ -73,13 +73,7 @@ describe('overflow no teto de 25', () => {
 
   it('as cortadas são as últimas na ordem alfabética', () => {
     const overflow = r.skills.filter((s) => s.disposition === 'overflow').map((s) => s.name);
-    expect(overflow).toEqual([
-      'Skill 25',
-      'Skill 26',
-      'Skill 27',
-      'Skill 28',
-      'Skill 29',
-    ]);
+    expect(overflow).toEqual(['Skill 25', 'Skill 26', 'Skill 27', 'Skill 28', 'Skill 29']);
     for (const nome of overflow) expect(r.skillsSection).not.toContain(nome);
   });
 
@@ -136,11 +130,7 @@ describe('dedup e descarte', () => {
   it('marca duplicadas por id e entradas sem nome', () => {
     const r = simulatePrompt({
       ...base,
-      skills: [
-        { id: '1', name: 'Única' },
-        { id: '1', name: 'Repetida' },
-        { name: '   ' },
-      ],
+      skills: [{ id: '1', name: 'Única' }, { id: '1', name: 'Repetida' }, { name: '   ' }],
     });
     expect(r.diagnostics.duplicates).toBe(1);
     expect(r.diagnostics.discarded).toBe(1);

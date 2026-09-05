@@ -22,9 +22,21 @@ function extrairPlaceholdersDaEdge(): string[] {
 }
 
 const PLACEHOLDERS_FRONT = [
-  'todo', 'tbd', 'n/a', 'na', 'sem descricao', 'sem descrição', 'no description',
-  'no description provided', 'description', 'descricao', 'descrição', 'wip',
-  '-', '--', '...',
+  'todo',
+  'tbd',
+  'n/a',
+  'na',
+  'sem descricao',
+  'sem descrição',
+  'no description',
+  'no description provided',
+  'description',
+  'descricao',
+  'descrição',
+  'wip',
+  '-',
+  '--',
+  '...',
 ];
 
 describe('paridade de placeholders frontend ↔ Edge Function', () => {

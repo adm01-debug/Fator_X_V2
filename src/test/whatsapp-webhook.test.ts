@@ -167,7 +167,6 @@ describe('whatsappWebhookService — CRUD de rotas', () => {
   });
 });
 
-
 // ════════════════════════════════════════════════════════════════
 // Tests for the Edge Function helper LOGIC (provider detection,
 // normalization, HMAC pattern). Replicated inline because the Edge

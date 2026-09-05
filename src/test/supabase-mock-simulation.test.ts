@@ -14,7 +14,19 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { createSupabaseMock } from './utils/supabaseMock';
 
 const VERBS = ['select', 'insert', 'update', 'upsert', 'delete'] as const;
-const FILTERS = ['eq', 'neq', 'gt', 'lte', 'like', 'ilike', 'in', 'is', 'not', 'or', 'contains'] as const;
+const FILTERS = [
+  'eq',
+  'neq',
+  'gt',
+  'lte',
+  'like',
+  'ilike',
+  'in',
+  'is',
+  'not',
+  'or',
+  'contains',
+] as const;
 const MODIFIERS = ['order', 'limit', 'range', 'returns', 'throwOnError'] as const;
 const TERMINATORS = ['await', 'single', 'maybeSingle'] as const;
 
@@ -91,13 +103,19 @@ describe('createSupabaseMock — simulação combinatória', () => {
     db.setTableResult('workspaces', { data: null, error: { message: 'denied' } });
     const from = db.client.from as (t: string) => Record<string, unknown>;
 
-    const agents = (await from('agents').select as (s: string) => Promise<{ data: unknown }>)('*');
+    const agents = ((await from('agents').select) as (s: string) => Promise<{ data: unknown }>)(
+      '*',
+    );
     expect((await agents).data).toEqual([{ id: 'a1' }]);
 
-    const ws = await (from('workspaces').select as (s: string) => Promise<{ error: { message: string } | null }>)('*');
+    const ws = await (
+      from('workspaces').select as (s: string) => Promise<{ error: { message: string } | null }>
+    )('*');
     expect(ws.error?.message).toBe('denied');
 
-    const other = await (from('outra_tabela').select as (s: string) => Promise<{ data: unknown }>)('*');
+    const other = await (from('outra_tabela').select as (s: string) => Promise<{ data: unknown }>)(
+      '*',
+    );
     expect(other.data).toEqual([]);
   });
 
@@ -160,7 +178,9 @@ describe('createSupabaseMock — simulação combinatória', () => {
     expect(db.calls.from).toHaveBeenCalledTimes(0);
     const after = await (from('agents').select as (s: string) => Promise<{ data: unknown }>)('*');
     expect(after.data).toBeNull();
-    const auth = db.client.auth as { getUser: () => Promise<{ data: { user: { id: string } | null } }> };
+    const auth = db.client.auth as {
+      getUser: () => Promise<{ data: { user: { id: string } | null } }>;
+    };
     expect((await auth.getUser()).data.user?.id).toBe('test-user-id');
   });
 });

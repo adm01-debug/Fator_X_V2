@@ -14,7 +14,9 @@ import {
   type AuditRowInput,
 } from '@/lib/skills/classificationEfficacy';
 
-function row(over: Partial<AuditRowInput> & { meta?: Record<string, unknown> } = {}): AuditRowInput {
+function row(
+  over: Partial<AuditRowInput> & { meta?: Record<string, unknown> } = {},
+): AuditRowInput {
   const { meta, ...rest } = over;
   return {
     id: 'audit-1',
@@ -48,15 +50,21 @@ describe('deriveVerdict', () => {
   });
 
   it('rejeitar com departamento vigente = confirmação do rótulo automático', () => {
-    expect(deriveVerdict({ approved: false, from: 'ti', registryTouched: true })).toBe('confirmado');
+    expect(deriveVerdict({ approved: false, from: 'ti', registryTouched: true })).toBe(
+      'confirmado',
+    );
   });
 
   it('rejeitar sem departamento não confirma nada', () => {
-    expect(deriveVerdict({ approved: false, from: null, registryTouched: false })).toBe('descartado');
+    expect(deriveVerdict({ approved: false, from: null, registryTouched: false })).toBe(
+      'descartado',
+    );
   });
 
   it('rejeição que não tocou o Registry não vira confirmação', () => {
-    expect(deriveVerdict({ approved: false, from: 'ti', registryTouched: false })).toBe('descartado');
+    expect(deriveVerdict({ approved: false, from: 'ti', registryTouched: false })).toBe(
+      'descartado',
+    );
   });
 });
 
@@ -67,7 +75,9 @@ describe('parseClassificationDecisions', () => {
 
   it('descarta linhas sem review_id — sem chave não há auditoria', () => {
     expect(parseClassificationDecisions([row({ meta: { review_id: '' } })])).toHaveLength(0);
-    expect(parseClassificationDecisions([{ action: 'skill_reclassification.approved' }])).toHaveLength(0);
+    expect(
+      parseClassificationDecisions([{ action: 'skill_reclassification.approved' }]),
+    ).toHaveLength(0);
   });
 
   it('entradas hostis não lançam', () => {
@@ -206,7 +216,9 @@ describe('summarizeEfficacy', () => {
   });
 
   it('origem desconhecida degrada para léxico em vez de sumir da contagem', () => {
-    const s = summarizeEfficacy(parseClassificationDecisions([row({ meta: { source: 'oráculo' } })]));
+    const s = summarizeEfficacy(
+      parseClassificationDecisions([row({ meta: { source: 'oráculo' } })]),
+    );
     expect(s.byOrigin.lexico.total).toBe(1);
   });
 });

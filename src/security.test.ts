@@ -5,8 +5,8 @@ import type { DbRow } from '@/types/dbRow';
 
 vi.mock('./integrations/supabase/externalClient', () => ({
   supabaseExternal: {
-    from: vi.fn()
-  }
+    from: vi.fn(),
+  },
 }));
 
 describe('Security Service', () => {
@@ -19,9 +19,9 @@ describe('Security Service', () => {
     (supabaseExternal.from as unknown as { mockReturnValue: (v: DbRow) => void }).mockReturnValue({
       select: vi.fn().mockReturnValue({
         order: vi.fn().mockReturnValue({
-          limit: vi.fn().mockResolvedValue({ data: mockData, error: null })
-        })
-      })
+          limit: vi.fn().mockResolvedValue({ data: mockData, error: null }),
+        }),
+      }),
     });
 
     const alerts = await getSecurityAlerts();
@@ -32,8 +32,8 @@ describe('Security Service', () => {
   it('resolves security alerts correctly', async () => {
     (supabaseExternal.from as unknown as { mockReturnValue: (v: DbRow) => void }).mockReturnValue({
       update: vi.fn().mockReturnValue({
-        eq: vi.fn().mockResolvedValue({ error: null })
-      })
+        eq: vi.fn().mockResolvedValue({ error: null }),
+      }),
     });
 
     await resolveSecurityAlert('123');

@@ -94,5 +94,7 @@ export function isGenericCatalogSkill(input: {
     .toLowerCase();
   if (GENERIC_PATTERNS.some((re) => re.test(haystack))) return true;
   const tags = (input.tags ?? []).map((t) => t.toLowerCase());
-  return tags.includes('awesome') || tags.includes('awesome-list') || tags.includes('awesome-lists');
+  return (
+    tags.includes('awesome') || tags.includes('awesome-list') || tags.includes('awesome-lists')
+  );
 }

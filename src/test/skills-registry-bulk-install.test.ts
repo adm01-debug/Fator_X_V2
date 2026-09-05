@@ -4,7 +4,10 @@ import { simulateCurrentBulkInstall } from '@/services/skillsSimulationService';
 
 describe('normalizeSkillIdList', () => {
   it('remove duplicatas, vazios e não-strings', () => {
-    expect(normalizeSkillIdList(['a', 'a', ' b ', '', '   ', 42, null, undefined])).toEqual(['a', 'b']);
+    expect(normalizeSkillIdList(['a', 'a', ' b ', '', '   ', 42, null, undefined])).toEqual([
+      'a',
+      'b',
+    ]);
   });
   it('aplica limite máximo', () => {
     const many = Array.from({ length: MAX_BULK_INSTALL + 30 }, (_, i) => `s${i}`);
@@ -17,7 +20,11 @@ describe('normalizeSkillIdList', () => {
 
 describe('bulk install — semântica idempotente', () => {
   it('reinstalar skill já instalada não falha e não duplica', () => {
-    expect(simulateCurrentBulkInstall(['s1'], ['s1'])).toEqual({ inserted: [], skipped: ['s1'], failed: false });
+    expect(simulateCurrentBulkInstall(['s1'], ['s1'])).toEqual({
+      inserted: [],
+      skipped: ['s1'],
+      failed: false,
+    });
   });
   it('colisão parcial não bloqueia as inéditas', () => {
     const r = simulateCurrentBulkInstall(['s1'], ['s1', 's2']);

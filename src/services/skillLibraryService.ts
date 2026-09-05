@@ -22,7 +22,6 @@ import { supabaseExternal } from '@/integrations/supabase/externalClient';
  */
 export type DepartmentSource = 'heuristic' | 'platform' | 'llm' | 'human';
 
-
 export interface SkillLibraryOverview {
   /** Total de skills públicas no catálogo. */
   total: number;

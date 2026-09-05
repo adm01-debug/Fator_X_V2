@@ -1,16 +1,37 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { fetchWithTimeout } from "../_shared/retry.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import { getCorsHeaders, handleCorsPreflight, requireEnv, checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS } from "../_shared/mod.ts";
-import { z } from "https://esm.sh/zod@3.23.8";
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { fetchWithTimeout } from '../_shared/retry.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
+import {
+  getCorsHeaders,
+  handleCorsPreflight,
+  requireEnv,
+  checkRateLimit,
+  createRateLimitResponse,
+  getRateLimitIdentifier,
+  RATE_LIMITS,
+} from '../_shared/mod.ts';
+import { z } from 'https://esm.sh/zod@3.23.8';
 
-const DatahubBodySchema = z.object({
-  action: z.enum([
-    'test_connections','list_entities','query','list_columns','count',
-    'search','fetch','fetch_related','get_stats','custom_query','schema',
-  ]).or(z.string().min(1).max(80)),
-  streaming: z.boolean().optional(),
-}).passthrough();
+const DatahubBodySchema = z
+  .object({
+    action: z
+      .enum([
+        'test_connections',
+        'list_entities',
+        'query',
+        'list_columns',
+        'count',
+        'search',
+        'fetch',
+        'fetch_related',
+        'get_stats',
+        'custom_query',
+        'schema',
+      ])
+      .or(z.string().min(1).max(80)),
+    streaming: z.boolean().optional(),
+  })
+  .passthrough();
 
 const encoder = new TextEncoder();
 
@@ -19,12 +40,17 @@ function sseEvent(event: string, data: any) {
   return encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
 }
 
-
 /* ── Connection registry ──────────────────────────────── */
 
 const CONNECTION_REGISTRY: Record<string, { urlEnv: string; keyEnv: string }> = {
-  bancodadosclientes: { urlEnv: 'SUPABASE_URL_BANCODADOSCLIENTES', keyEnv: 'SUPABASE_ANON_KEY_BANCODADOSCLIENTES' },
-  'supabase-fuchsia-kite': { urlEnv: 'SUPABASE_URL_FUCHSIAKITE', keyEnv: 'SUPABASE_ANON_KEY_FUCHSIAKITE' },
+  bancodadosclientes: {
+    urlEnv: 'SUPABASE_URL_BANCODADOSCLIENTES',
+    keyEnv: 'SUPABASE_ANON_KEY_BANCODADOSCLIENTES',
+  },
+  'supabase-fuchsia-kite': {
+    urlEnv: 'SUPABASE_URL_FUCHSIAKITE',
+    keyEnv: 'SUPABASE_ANON_KEY_FUCHSIAKITE',
+  },
   gestao_time_promo: { urlEnv: 'SUPABASE_URL_GESTAO', keyEnv: 'SUPABASE_ANON_KEY_GESTAO' },
   backupgiftstore: { urlEnv: 'SUPABASE_URL_BACKUP', keyEnv: 'SUPABASE_ANON_KEY_BACKUP' },
 };
@@ -34,7 +60,10 @@ function getExternalClient(connectionId: string) {
   if (!reg) throw new Error(`Unknown connection: ${connectionId}`);
   const url = Deno.env.get(reg.urlEnv);
   const key = Deno.env.get(reg.keyEnv);
-  if (!url || !key) throw new Error(`Missing env vars for connection "${connectionId}": ${reg.urlEnv} / ${reg.keyEnv}`);
+  if (!url || !key)
+    throw new Error(
+      `Missing env vars for connection "${connectionId}": ${reg.urlEnv} / ${reg.keyEnv}`,
+    );
   return createClient(url, key);
 }
 
@@ -43,10 +72,22 @@ function getExternalClient(connectionId: string) {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
 const ENTITY_MAPPINGS: Record<string, any> = {
   cliente: {
-    primary: { connection: 'bancodadosclientes', table: 'companies', id_column: 'id', display_column: 'razao_social', filter: "is_customer = true AND status = 'ativo' AND razao_social IS NOT NULL AND razao_social != ''" },
+    primary: {
+      connection: 'bancodadosclientes',
+      table: 'companies',
+      id_column: 'id',
+      display_column: 'razao_social',
+      filter:
+        "is_customer = true AND status = 'ativo' AND razao_social IS NOT NULL AND razao_social != ''",
+    },
     secondary: [
       { table: 'customers', join_col: 'company_id', fields: ['vendedor_id', 'vendedor_nome'] },
-      { table: 'company_addresses', join_col: 'company_id', fields: ['cidade', 'estado', 'cep'], extra_filter: "is_primary = true" },
+      {
+        table: 'company_addresses',
+        join_col: 'company_id',
+        fields: ['cidade', 'estado', 'cep'],
+        extra_filter: 'is_primary = true',
+      },
       { table: 'company_phones', join_col: 'company_id', fields: ['phone'] },
       { table: 'company_emails', join_col: 'company_id', fields: ['email'] },
     ],
@@ -55,29 +96,66 @@ const ENTITY_MAPPINGS: Record<string, any> = {
     exclude_self: true,
   },
   fornecedor: {
-    primary: { connection: 'bancodadosclientes', table: 'companies', id_column: 'id', display_column: 'razao_social', filter: "is_supplier = true AND status = 'ativo'" },
+    primary: {
+      connection: 'bancodadosclientes',
+      table: 'companies',
+      id_column: 'id',
+      display_column: 'razao_social',
+      filter: "is_supplier = true AND status = 'ativo'",
+    },
     secondary: [
-      { table: 'suppliers', join_col: 'company_id', fields: ['homologado', 'score_geral', 'data_homologacao'] },
-      { table: 'company_addresses', join_col: 'company_id', fields: ['cidade', 'estado'], extra_filter: "is_primary = true" },
+      {
+        table: 'suppliers',
+        join_col: 'company_id',
+        fields: ['homologado', 'score_geral', 'data_homologacao'],
+      },
+      {
+        table: 'company_addresses',
+        join_col: 'company_id',
+        fields: ['cidade', 'estado'],
+        extra_filter: 'is_primary = true',
+      },
     ],
     cross_db: [{ connection: 'supabase-fuchsia-kite', table: 'suppliers', match_by: 'cnpj_raiz' }],
   },
   transportadora: {
-    primary: { connection: 'bancodadosclientes', table: 'companies', id_column: 'id', display_column: 'razao_social', filter: "is_carrier = true AND status = 'ativo'" },
+    primary: {
+      connection: 'bancodadosclientes',
+      table: 'companies',
+      id_column: 'id',
+      display_column: 'razao_social',
+      filter: "is_carrier = true AND status = 'ativo'",
+    },
     secondary: [
       { table: 'carriers', join_col: 'company_id', fields: ['score_geral', 'cobertura_estados'] },
-      { table: 'company_addresses', join_col: 'company_id', fields: ['cidade', 'estado'], extra_filter: "is_primary = true" },
+      {
+        table: 'company_addresses',
+        join_col: 'company_id',
+        fields: ['cidade', 'estado'],
+        extra_filter: 'is_primary = true',
+      },
     ],
   },
   produto: {
-    primary: { connection: 'supabase-fuchsia-kite', table: 'products', id_column: 'id', display_column: 'name' },
+    primary: {
+      connection: 'supabase-fuchsia-kite',
+      table: 'products',
+      id_column: 'id',
+      display_column: 'name',
+    },
     secondary: [
       { table: 'product_variants', join_col: 'product_id', fields: ['sku', 'color_name'] },
       { table: 'product_images', join_col: 'product_id', fields: ['url', 'type'], limit: 5 },
     ],
   },
   colaborador: {
-    primary: { connection: 'gestao_time_promo', table: 'colaboradores', id_column: 'id', display_column: 'nome_completo', filter: "status = 'ativo'" },
+    primary: {
+      connection: 'gestao_time_promo',
+      table: 'colaboradores',
+      id_column: 'id',
+      display_column: 'nome_completo',
+      filter: "status = 'ativo'",
+    },
     secondary: [
       { table: 'departamentos', join_col: 'id', join_source: 'departamento_id', fields: ['nome'] },
       { table: 'cargos', join_col: 'id', join_source: 'cargo_id', fields: ['nome', 'nivel'] },
@@ -86,9 +164,19 @@ const ENTITY_MAPPINGS: Record<string, any> = {
     cross_db: [{ connection: 'bancodadosclientes', table: 'users', match_by: 'email' }],
   },
   conversa_whatsapp: {
-    primary: { connection: 'backupgiftstore', table: 'contacts', id_column: 'id', display_column: 'name' },
+    primary: {
+      connection: 'backupgiftstore',
+      table: 'contacts',
+      id_column: 'id',
+      display_column: 'name',
+    },
     secondary: [
-      { table: 'messages', join_col: 'contact_id', fields: ['body', 'type', 'timestamp'], limit: 50 },
+      {
+        table: 'messages',
+        join_col: 'contact_id',
+        fields: ['body', 'type', 'timestamp'],
+        limit: 50,
+      },
     ],
     cross_db: [{ connection: 'bancodadosclientes', table: 'company_phones', match_by: 'phone' }],
   },
@@ -134,12 +222,24 @@ function applyDynamicFilters(query: any, filters: Array<Record<string, unknown>>
         else if (val === 'false') query = query.eq(col, false);
         else query = query.eq(col, val);
         break;
-      case 'neq': query = query.neq(col, val); break;
-      case 'ilike': query = query.ilike(col, val); break;
-      case 'gt': query = query.gt(col, val); break;
-      case 'lt': query = query.lt(col, val); break;
-      case 'gte': query = query.gte(col, val); break;
-      case 'lte': query = query.lte(col, val); break;
+      case 'neq':
+        query = query.neq(col, val);
+        break;
+      case 'ilike':
+        query = query.ilike(col, val);
+        break;
+      case 'gt':
+        query = query.gt(col, val);
+        break;
+      case 'lt':
+        query = query.lt(col, val);
+        break;
+      case 'gte':
+        query = query.gte(col, val);
+        break;
+      case 'lte':
+        query = query.lte(col, val);
+        break;
     }
   }
   return query;
@@ -152,22 +252,44 @@ serve(async (req) => {
 
   try {
     const authHeader = req.headers.get('Authorization') ?? '';
-    if (!authHeader) return new Response(JSON.stringify({ error: 'Missing Authorization header' }), { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    if (!authHeader)
+      return new Response(JSON.stringify({ error: 'Missing Authorization header' }), {
+        status: 401,
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      });
 
     const supabaseUrl = requireEnv('SUPABASE_URL');
     const supabaseKey = requireEnv('SUPABASE_ANON_KEY');
-    if (!supabaseUrl || !supabaseKey) return new Response(JSON.stringify({ error: 'Missing SUPABASE_URL or SUPABASE_ANON_KEY env vars' }), { status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    if (!supabaseUrl || !supabaseKey)
+      return new Response(
+        JSON.stringify({ error: 'Missing SUPABASE_URL or SUPABASE_ANON_KEY env vars' }),
+        { status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
+      );
 
-    const supabase = createClient(supabaseUrl, supabaseKey, { global: { headers: { Authorization: authHeader } } });
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    const supabase = createClient(supabaseUrl, supabaseKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user)
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      });
     const rateCheck = await checkRateLimit(getRateLimitIdentifier(req, user.id), RATE_LIMITS.heavy);
     if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, getCorsHeaders(req));
 
     const rawBody = await req.json().catch(() => null);
     const parsedBody = DatahubBodySchema.safeParse(rawBody);
     if (!parsedBody.success) {
-      return new Response(JSON.stringify({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      return new Response(
+        JSON.stringify({
+          error: 'Payload inválido',
+          details: parsedBody.error.flatten().fieldErrors,
+        }),
+        { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
+      );
     }
     const body = parsedBody.data as Record<string, unknown> & { action: string };
     const { action } = body;
@@ -175,53 +297,63 @@ serve(async (req) => {
     // ═══ ACTION: test_connections (Optimized with Streaming) ═══
     if (action === 'test_connections') {
       const isStreaming = body.streaming === true;
-      
+
       if (isStreaming) {
         const stream = new ReadableStream({
           async start(controller) {
             controller.enqueue(sseEvent('start', { timestamp: new Date().toISOString() }));
-            
+
             for (const [connId] of Object.entries(CONNECTION_REGISTRY)) {
               try {
                 const client = getExternalClient(connId);
-                const testTable = connId === 'bancodadosclientes' ? 'companies'
-                  : connId === 'supabase-fuchsia-kite' ? 'products'
-                  : connId === 'gestao_time_promo' ? 'colaboradores'
-                  : 'contacts';
-                
+                const testTable =
+                  connId === 'bancodadosclientes'
+                    ? 'companies'
+                    : connId === 'supabase-fuchsia-kite'
+                      ? 'products'
+                      : connId === 'gestao_time_promo'
+                        ? 'colaboradores'
+                        : 'contacts';
+
                 const startTime = performance.now();
-                const { count, error } = await client.from(testTable).select('id', { count: 'exact', head: true });
+                const { count, error } = await client
+                  .from(testTable)
+                  .select('id', { count: 'exact', head: true });
                 const latency = Math.round(performance.now() - startTime);
-                
+
                 if (error) throw new Error(error.message);
-                
-                controller.enqueue(sseEvent('connection', { 
-                  id: connId, 
-                  status: 'connected', 
-                  count: count ?? 0,
-                  latency_ms: latency
-                }));
+
+                controller.enqueue(
+                  sseEvent('connection', {
+                    id: connId,
+                    status: 'connected',
+                    count: count ?? 0,
+                    latency_ms: latency,
+                  }),
+                );
               } catch (e: unknown) {
-                controller.enqueue(sseEvent('connection', { 
-                  id: connId, 
-                  status: 'error', 
-                  error: e instanceof Error ? e.message : 'Unknown' 
-                }));
+                controller.enqueue(
+                  sseEvent('connection', {
+                    id: connId,
+                    status: 'error',
+                    error: e instanceof Error ? e.message : 'Unknown',
+                  }),
+                );
               }
             }
-            
+
             controller.enqueue(sseEvent('done', { timestamp: new Date().toISOString() }));
             controller.close();
-          }
+          },
         });
-        
-        return new Response(stream, { 
-          headers: { 
-            ...getCorsHeaders(req), 
+
+        return new Response(stream, {
+          headers: {
+            ...getCorsHeaders(req),
             'Content-Type': 'text/event-stream',
             'Cache-Control': 'no-cache',
-            'Connection': 'keep-alive'
-          } 
+            Connection: 'keep-alive',
+          },
         });
       }
 
@@ -230,20 +362,27 @@ serve(async (req) => {
       for (const [connId] of Object.entries(CONNECTION_REGISTRY)) {
         try {
           const client = getExternalClient(connId);
-          const testTable = connId === 'bancodadosclientes' ? 'companies'
-            : connId === 'supabase-fuchsia-kite' ? 'products'
-            : connId === 'gestao_time_promo' ? 'colaboradores'
-            : 'contacts';
-          const { count, error } = await client.from(testTable).select('id', { count: 'exact', head: true });
+          const testTable =
+            connId === 'bancodadosclientes'
+              ? 'companies'
+              : connId === 'supabase-fuchsia-kite'
+                ? 'products'
+                : connId === 'gestao_time_promo'
+                  ? 'colaboradores'
+                  : 'contacts';
+          const { count, error } = await client
+            .from(testTable)
+            .select('id', { count: 'exact', head: true });
           if (error) throw new Error(error.message);
           results[connId] = { status: 'connected', count: count ?? 0 };
         } catch (e: unknown) {
           results[connId] = { status: 'error', error: e instanceof Error ? e.message : 'Unknown' };
         }
       }
-      return new Response(JSON.stringify({ connections: results }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ connections: results }), {
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      });
     }
-
 
     // ═══ ACTION: list_entities (Optimized with Streaming) ═══
     if (action === 'list_entities') {
@@ -252,41 +391,48 @@ serve(async (req) => {
       if (isStreaming) {
         const stream = new ReadableStream({
           async start(controller) {
-            controller.enqueue(sseEvent('start', { total_entities: Object.keys(ENTITY_MAPPINGS).length }));
-            
+            controller.enqueue(
+              sseEvent('start', { total_entities: Object.keys(ENTITY_MAPPINGS).length }),
+            );
+
             for (const [entityId, mapping] of Object.entries(ENTITY_MAPPINGS)) {
               try {
                 const client = getExternalClient(mapping.primary.connection);
-                let query = client.from(mapping.primary.table).select('id', { count: 'exact', head: true });
-                if (mapping.primary.filter) query = applyStaticFilter(query, mapping.primary.filter);
-                
+                let query = client
+                  .from(mapping.primary.table)
+                  .select('id', { count: 'exact', head: true });
+                if (mapping.primary.filter)
+                  query = applyStaticFilter(query, mapping.primary.filter);
+
                 const startTime = performance.now();
                 const { count, error } = await query;
                 const latency = Math.round(performance.now() - startTime);
-                
+
                 if (error) throw new Error(error.message);
-                
-                controller.enqueue(sseEvent('entity_count', { 
-                  id: entityId, 
-                  count: count ?? 0,
-                  latency_ms: latency
-                }));
+
+                controller.enqueue(
+                  sseEvent('entity_count', {
+                    id: entityId,
+                    count: count ?? 0,
+                    latency_ms: latency,
+                  }),
+                );
               } catch {
                 controller.enqueue(sseEvent('entity_count', { id: entityId, count: -1 }));
               }
             }
-            
+
             controller.enqueue(sseEvent('done', { timestamp: new Date().toISOString() }));
             controller.close();
-          }
+          },
         });
 
-        return new Response(stream, { 
-          headers: { 
-            ...getCorsHeaders(req), 
+        return new Response(stream, {
+          headers: {
+            ...getCorsHeaders(req),
             'Content-Type': 'text/event-stream',
-            'Cache-Control': 'no-cache'
-          } 
+            'Cache-Control': 'no-cache',
+          },
         });
       }
 
@@ -294,7 +440,9 @@ serve(async (req) => {
       for (const [entityId, mapping] of Object.entries(ENTITY_MAPPINGS)) {
         try {
           const client = getExternalClient(mapping.primary.connection);
-          let query = client.from(mapping.primary.table).select('id', { count: 'exact', head: true });
+          let query = client
+            .from(mapping.primary.table)
+            .select('id', { count: 'exact', head: true });
           if (mapping.primary.filter) query = applyStaticFilter(query, mapping.primary.filter);
           const { count } = await query;
           counts[entityId] = count ?? 0;
@@ -302,9 +450,10 @@ serve(async (req) => {
           counts[entityId] = -1;
         }
       }
-      return new Response(JSON.stringify({ entities: counts }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ entities: counts }), {
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      });
     }
-
 
     // ═══ ACTION: query_entity ═══
     if (action === 'query_entity') {
@@ -321,14 +470,22 @@ serve(async (req) => {
       } = body;
 
       const mapping = ENTITY_MAPPINGS[entity];
-      if (!mapping) return new Response(JSON.stringify({ error: `Unknown entity: ${entity}` }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      if (!mapping)
+        return new Response(JSON.stringify({ error: `Unknown entity: ${entity}` }), {
+          status: 400,
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        });
 
       const client = getExternalClient(mapping.primary.connection);
       const prim = mapping.primary;
 
       // ─── Single record with enrichment ───
       if (record_id) {
-        const { data: record, error } = await client.from(prim.table).select('*').eq(prim.id_column, record_id).single();
+        const { data: record, error } = await client
+          .from(prim.table)
+          .select('*')
+          .eq(prim.id_column, record_id)
+          .single();
         if (error) throw new Error(error.message);
 
         if (mapping.sensitive_fields) {
@@ -344,12 +501,17 @@ serve(async (req) => {
             try {
               const joinCol = sec.join_col;
               const joinVal = sec.join_source ? record[sec.join_source] : record_id;
-              let sq = client.from(sec.table).select(sec.fields ? sec.fields.join(',') : '*').eq(joinCol, joinVal);
+              let sq = client
+                .from(sec.table)
+                .select(sec.fields ? sec.fields.join(',') : '*')
+                .eq(joinCol, joinVal);
               if (sec.extra_filter) sq = applyStaticFilter(sq, sec.extra_filter);
               if (sec.limit) sq = sq.limit(sec.limit);
               const { data: secData } = await sq;
               enriched[sec.table] = secData ?? [];
-            } catch { enriched[sec.table] = []; }
+            } catch {
+              enriched[sec.table] = [];
+            }
           }
         }
 
@@ -370,10 +532,16 @@ serve(async (req) => {
                 matchValue = record.phone;
               }
               if (matchValue) {
-                const { data: crossResult } = await crossClient.from(cross.table).select('*').eq(cross.match_by, matchValue).limit(5);
+                const { data: crossResult } = await crossClient
+                  .from(cross.table)
+                  .select('*')
+                  .eq(cross.match_by, matchValue)
+                  .limit(5);
                 crossData[`${cross.connection}.${cross.table}`] = crossResult ?? [];
               }
-            } catch { crossData[`${cross.connection}.${cross.table}`] = []; }
+            } catch {
+              crossData[`${cross.connection}.${cross.table}`] = [];
+            }
           }
         }
 
@@ -388,17 +556,30 @@ serve(async (req) => {
               .filter((t: string) => t.length > 3)
               .join('. ');
             if (recentMessages.length > 10) {
-              const sentResp = await fetchWithTimeout('https://router.huggingface.co/hf-inference/models/cardiffnlp/twitter-roberta-base-sentiment-latest', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hfToken}` },
-                body: JSON.stringify({ inputs: recentMessages.substring(0, 512) }),
-              });
+              const sentResp = await fetchWithTimeout(
+                'https://router.huggingface.co/hf-inference/models/cardiffnlp/twitter-roberta-base-sentiment-latest',
+                {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${hfToken}`,
+                  },
+                  body: JSON.stringify({ inputs: recentMessages.substring(0, 512) }),
+                },
+              );
               if (sentResp.ok) {
                 const sentResult = await sentResp.json();
                 const labels = Array.isArray(sentResult?.[0]) ? sentResult[0] : sentResult;
                 if (Array.isArray(labels)) {
-                  const sorted = [...labels].sort((a: Record<string, unknown>, b: Record<string, unknown>) => (b.score as number) - (a.score as number));
-                  const labelMap: Record<string, string> = { positive: 'positivo', negative: 'negativo', neutral: 'neutro' };
+                  const sorted = [...labels].sort(
+                    (a: Record<string, unknown>, b: Record<string, unknown>) =>
+                      (b.score as number) - (a.score as number),
+                  );
+                  const labelMap: Record<string, string> = {
+                    positive: 'positivo',
+                    negative: 'negativo',
+                    neutral: 'neutro',
+                  };
                   sentiment = {
                     dominant: labelMap[sorted[0]?.label as string] || sorted[0]?.label,
                     score: Math.round((sorted[0]?.score as number) * 100) / 100,
@@ -412,10 +593,20 @@ serve(async (req) => {
                 }
               }
             }
-          } catch { /* sentiment is optional, ignore errors */ }
+          } catch {
+            /* sentiment is optional, ignore errors */
+          }
         }
 
-        return new Response(JSON.stringify({ record, enriched, cross_db: crossData, ...(sentiment ? { sentiment } : {}) }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+        return new Response(
+          JSON.stringify({
+            record,
+            enriched,
+            cross_db: crossData,
+            ...(sentiment ? { sentiment } : {}),
+          }),
+          { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
+        );
       }
 
       // ─── List query ───
@@ -458,30 +649,43 @@ serve(async (req) => {
         }
       }
 
-      return new Response(JSON.stringify({
-        data: data ?? [],
-        total: count ?? 0,
-        page,
-        page_size,
-        total_pages: Math.ceil((count ?? 0) / page_size),
-      }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      return new Response(
+        JSON.stringify({
+          data: data ?? [],
+          total: count ?? 0,
+          page,
+          page_size,
+          total_pages: Math.ceil((count ?? 0) / page_size),
+        }),
+        { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
+      );
     }
 
     // ═══ ACTION: update_field ═══
     if (action === 'update_field') {
       const { entity, record_id: updateId, field, value } = body;
       const mapping = ENTITY_MAPPINGS[entity];
-      if (!mapping) return new Response(JSON.stringify({ error: `Unknown entity: ${entity}` }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      if (!mapping)
+        return new Response(JSON.stringify({ error: `Unknown entity: ${entity}` }), {
+          status: 400,
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        });
 
       // Block sensitive fields
       if (mapping.sensitive_fields?.includes(field)) {
-        return new Response(JSON.stringify({ error: 'Cannot edit sensitive/LGPD-protected fields' }), { status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+        return new Response(
+          JSON.stringify({ error: 'Cannot edit sensitive/LGPD-protected fields' }),
+          { status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
+        );
       }
 
       // Block id and system columns
       const blockedCols = new Set(['id', 'created_at', 'search_vector']);
       if (blockedCols.has(field)) {
-        return new Response(JSON.stringify({ error: `Column "${field}" cannot be edited` }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+        return new Response(JSON.stringify({ error: `Column "${field}" cannot be edited` }), {
+          status: 400,
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        });
       }
 
       const client = getExternalClient(mapping.primary.connection);
@@ -511,32 +715,52 @@ serve(async (req) => {
           .select('*')
           .single();
         if (updateError2) throw new Error(updateError2.message);
-        return new Response(JSON.stringify({ success: true, record: updated2 }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+        return new Response(JSON.stringify({ success: true, record: updated2 }), {
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        });
       }
 
-      return new Response(JSON.stringify({ success: true, record: updated }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ success: true, record: updated }), {
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      });
     }
 
     // ═══ ACTION: batch_update ═══
     if (action === 'batch_update') {
       const { entity, record_ids, field, value } = body;
       if (!entity || !Array.isArray(record_ids) || !record_ids.length || !field) {
-        return new Response(JSON.stringify({ error: 'Missing required: entity, record_ids[], field, value' }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+        return new Response(
+          JSON.stringify({ error: 'Missing required: entity, record_ids[], field, value' }),
+          { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
+        );
       }
       if (record_ids.length > 100) {
-        return new Response(JSON.stringify({ error: 'Max 100 records per batch' }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+        return new Response(JSON.stringify({ error: 'Max 100 records per batch' }), {
+          status: 400,
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        });
       }
 
       const mapping = ENTITY_MAPPINGS[entity];
-      if (!mapping) return new Response(JSON.stringify({ error: `Unknown entity: ${entity}` }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      if (!mapping)
+        return new Response(JSON.stringify({ error: `Unknown entity: ${entity}` }), {
+          status: 400,
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        });
 
       if (mapping.sensitive_fields?.includes(field)) {
-        return new Response(JSON.stringify({ error: 'Cannot edit sensitive/LGPD-protected fields' }), { status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+        return new Response(
+          JSON.stringify({ error: 'Cannot edit sensitive/LGPD-protected fields' }),
+          { status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
+        );
       }
 
       const blockedCols = new Set(['id', 'created_at', 'search_vector']);
       if (blockedCols.has(field)) {
-        return new Response(JSON.stringify({ error: `Column "${field}" cannot be edited` }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+        return new Response(JSON.stringify({ error: `Column "${field}" cannot be edited` }), {
+          status: 400,
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        });
       }
 
       const client = getExternalClient(mapping.primary.connection);
@@ -566,21 +790,38 @@ serve(async (req) => {
           .in(prim.id_column, record_ids)
           .select('*');
         if (updateError2) throw new Error(updateError2.message);
-        return new Response(JSON.stringify({ success: true, updated_count: updated2?.length ?? 0, records: updated2 }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+        return new Response(
+          JSON.stringify({
+            success: true,
+            updated_count: updated2?.length ?? 0,
+            records: updated2,
+          }),
+          { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
+        );
       }
 
-      return new Response(JSON.stringify({ success: true, updated_count: updated?.length ?? 0, records: updated }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      return new Response(
+        JSON.stringify({ success: true, updated_count: updated?.length ?? 0, records: updated }),
+        { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
+      );
     }
 
     // ═══ ACTION: create_record ═══
     if (action === 'create_record') {
       const { entity, data: recordData } = body;
       if (!entity || !recordData || typeof recordData !== 'object') {
-        return new Response(JSON.stringify({ error: 'Missing required: entity, data' }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+        return new Response(JSON.stringify({ error: 'Missing required: entity, data' }), {
+          status: 400,
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        });
       }
 
       const mapping = ENTITY_MAPPINGS[entity];
-      if (!mapping) return new Response(JSON.stringify({ error: `Unknown entity: ${entity}` }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      if (!mapping)
+        return new Response(JSON.stringify({ error: `Unknown entity: ${entity}` }), {
+          status: 400,
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        });
 
       // Block sensitive fields from being set
       if (mapping.sensitive_fields) {
@@ -606,18 +847,27 @@ serve(async (req) => {
 
       if (createError) throw new Error(createError.message);
 
-      return new Response(JSON.stringify({ success: true, record: created }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ success: true, record: created }), {
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      });
     }
 
     // ═══ ACTION: delete_record ═══
     if (action === 'delete_record') {
       const { entity, record_id: deleteId } = body;
       if (!entity || !deleteId) {
-        return new Response(JSON.stringify({ error: 'Missing required: entity, record_id' }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+        return new Response(JSON.stringify({ error: 'Missing required: entity, record_id' }), {
+          status: 400,
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        });
       }
 
       const mapping = ENTITY_MAPPINGS[entity];
-      if (!mapping) return new Response(JSON.stringify({ error: `Unknown entity: ${entity}` }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      if (!mapping)
+        return new Response(JSON.stringify({ error: `Unknown entity: ${entity}` }), {
+          status: 400,
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        });
 
       const client = getExternalClient(mapping.primary.connection);
       const prim = mapping.primary;
@@ -629,16 +879,26 @@ serve(async (req) => {
 
       if (deleteError) throw new Error(deleteError.message);
 
-      return new Response(JSON.stringify({ success: true }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ success: true }), {
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      });
     }
 
     // ═══ ACTION: summarize_conversation — Summarize WhatsApp conversation ═══
     if (action === 'summarize_conversation') {
       const { entity, record_id: sumId } = body;
-      if (!entity || !sumId) return new Response(JSON.stringify({ error: 'entity and record_id required' }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      if (!entity || !sumId)
+        return new Response(JSON.stringify({ error: 'entity and record_id required' }), {
+          status: 400,
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        });
 
       const mapping = ENTITY_MAPPINGS[entity];
-      if (!mapping) return new Response(JSON.stringify({ error: `Unknown entity: ${entity}` }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      if (!mapping)
+        return new Response(JSON.stringify({ error: `Unknown entity: ${entity}` }), {
+          status: 400,
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        });
 
       const client = getExternalClient(mapping.primary.connection);
 
@@ -647,7 +907,12 @@ serve(async (req) => {
       if (mapping.secondary) {
         for (const sec of mapping.secondary) {
           if (sec.table === 'messages' || sec.table.includes('message')) {
-            const { data } = await client.from(sec.table).select('body, from_me, timestamp').eq(sec.join_col, sumId).order('timestamp', { ascending: true }).limit(50);
+            const { data } = await client
+              .from(sec.table)
+              .select('body, from_me, timestamp')
+              .eq(sec.join_col, sumId)
+              .order('timestamp', { ascending: true })
+              .limit(50);
             messages = data || [];
             break;
           }
@@ -655,23 +920,37 @@ serve(async (req) => {
       }
 
       if (messages.length === 0) {
-        return new Response(JSON.stringify({ summary: 'Nenhuma mensagem encontrada.', message_count: 0 }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+        return new Response(
+          JSON.stringify({ summary: 'Nenhuma mensagem encontrada.', message_count: 0 }),
+          { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
+        );
       }
 
       // Build conversation text
       const convoText = messages
-        .map((m: Record<string, unknown>) => `${m.from_me ? 'Agente' : 'Cliente'}: ${String(m.body || '').substring(0, 300)}`)
+        .map(
+          (m: Record<string, unknown>) =>
+            `${m.from_me ? 'Agente' : 'Cliente'}: ${String(m.body || '').substring(0, 300)}`,
+        )
         .join('\n');
 
       // Summarize using HF LLM via Gateway
       const gatewayUrl = `${supabaseUrl}/functions/v1/llm-gateway`;
       const sumResp = await fetchWithTimeout(gatewayUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': authHeader, 'apikey': supabaseKey },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: authHeader,
+          apikey: supabaseKey,
+        },
         body: JSON.stringify({
           model: 'huggingface/mistralai/Mistral-Small-24B-Instruct-2501',
           messages: [
-            { role: 'system', content: 'Resuma esta conversa em 3-5 frases em português. Destaque: assunto principal, decisões tomadas, próximos passos, e tom geral (positivo/negativo/neutro).' },
+            {
+              role: 'system',
+              content:
+                'Resuma esta conversa em 3-5 frases em português. Destaque: assunto principal, decisões tomadas, próximos passos, e tom geral (positivo/negativo/neutro).',
+            },
             { role: 'user', content: convoText.substring(0, 4000) },
           ],
           temperature: 0.3,
@@ -680,19 +959,26 @@ serve(async (req) => {
       });
       const sumResult = await sumResp.json();
 
-      return new Response(JSON.stringify({
-        summary: sumResult.content || 'Não foi possível gerar resumo.',
-        message_count: messages.length,
-        model: 'mistralai/Mistral-Small-24B-Instruct-2501',
-        tokens: sumResult.tokens,
-        cost_usd: sumResult.cost_usd || 0,
-      }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      return new Response(
+        JSON.stringify({
+          summary: sumResult.content || 'Não foi possível gerar resumo.',
+          message_count: messages.length,
+          model: 'mistralai/Mistral-Small-24B-Instruct-2501',
+          tokens: sumResult.tokens,
+          cost_usd: sumResult.cost_usd || 0,
+        }),
+        { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
+      );
     }
 
     // ═══ ACTION: natural_language_query — Text-to-SQL (#28) ═══
     if (action === 'natural_language_query') {
       const { question, connection_id, max_rows } = body;
-      if (!question) return new Response(JSON.stringify({ error: 'question required' }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      if (!question)
+        return new Response(JSON.stringify({ error: 'question required' }), {
+          status: 400,
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        });
 
       const connId = connection_id || 'bancodadosclientes';
       const _client = getExternalClient(connId);
@@ -701,26 +987,37 @@ serve(async (req) => {
       const schemaHints: string[] = [];
       for (const [_entityName, mapping] of Object.entries(ENTITY_MAPPINGS)) {
         if (mapping.primary.connection === connId) {
-          const cols = mapping.primary.display_column ? [mapping.primary.id_column, mapping.primary.display_column] : [mapping.primary.id_column];
+          const cols = mapping.primary.display_column
+            ? [mapping.primary.id_column, mapping.primary.display_column]
+            : [mapping.primary.id_column];
           schemaHints.push(`${mapping.primary.table} (${cols.join(', ')})`);
         }
       }
 
-      const schemaContext = schemaHints.length > 0
-        ? `Tabelas disponíveis: ${schemaHints.join('; ')}`
-        : `Conexão: ${connId} (PostgreSQL)`;
+      const schemaContext =
+        schemaHints.length > 0
+          ? `Tabelas disponíveis: ${schemaHints.join('; ')}`
+          : `Conexão: ${connId} (PostgreSQL)`;
 
       // Generate SQL via LLM
       const sqlResp = await fetchWithTimeout(`${supabaseUrl}/functions/v1/llm-gateway`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': authHeader, 'apikey': supabaseKey },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: authHeader,
+          apikey: supabaseKey,
+        },
         body: JSON.stringify({
           model: 'huggingface/Qwen/Qwen3-30B-A3B',
           messages: [
-            { role: 'system', content: `Você é um especialista em PostgreSQL. Gere APENAS o SQL (sem explicação, sem markdown, sem backticks) para responder a pergunta do usuário.\n\n${schemaContext}\n\nRegras:\n- SELECT apenas, nunca INSERT/UPDATE/DELETE\n- LIMIT ${max_rows || 25} sempre\n- Use ILIKE para buscas de texto\n- Retorne apenas o SQL puro` },
+            {
+              role: 'system',
+              content: `Você é um especialista em PostgreSQL. Gere APENAS o SQL (sem explicação, sem markdown, sem backticks) para responder a pergunta do usuário.\n\n${schemaContext}\n\nRegras:\n- SELECT apenas, nunca INSERT/UPDATE/DELETE\n- LIMIT ${max_rows || 25} sempre\n- Use ILIKE para buscas de texto\n- Retorne apenas o SQL puro`,
+            },
             { role: 'user', content: question },
           ],
-          temperature: 0.1, max_tokens: 500,
+          temperature: 0.1,
+          max_tokens: 500,
         }),
       });
       const sqlResult = await sqlResp.json();
@@ -730,38 +1027,59 @@ serve(async (req) => {
       const sqlUpper = generatedSql.toUpperCase();
       // Must start with SELECT
       if (!sqlUpper.startsWith('SELECT')) {
-        return new Response(JSON.stringify({ error: 'Generated query is not a SELECT statement', sql: generatedSql }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+        return new Response(
+          JSON.stringify({ error: 'Generated query is not a SELECT statement', sql: generatedSql }),
+          { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
+        );
       }
       // Block dangerous statements (even if preceded by SELECT)
-      const SQL_BLOCKLIST = /\b(DROP|DELETE|UPDATE|INSERT|ALTER|CREATE|GRANT|REVOKE|TRUNCATE|EXEC|EXECUTE|COPY|LOAD|INTO\s+OUTFILE|pg_shadow|pg_authid|pg_roles|information_schema\.role|pg_catalog\.pg_shadow|pg_user|current_setting|set_config)\b/i;
+      const SQL_BLOCKLIST =
+        /\b(DROP|DELETE|UPDATE|INSERT|ALTER|CREATE|GRANT|REVOKE|TRUNCATE|EXEC|EXECUTE|COPY|LOAD|INTO\s+OUTFILE|pg_shadow|pg_authid|pg_roles|information_schema\.role|pg_catalog\.pg_shadow|pg_user|current_setting|set_config)\b/i;
       if (SQL_BLOCKLIST.test(generatedSql)) {
-        return new Response(JSON.stringify({ error: 'Generated SQL contains blocked keywords', sql: generatedSql }), { status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+        return new Response(
+          JSON.stringify({ error: 'Generated SQL contains blocked keywords', sql: generatedSql }),
+          { status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
+        );
       }
       // Block multiple statements (semicolon followed by non-whitespace)
       if (/;[\s]*\S/.test(generatedSql)) {
-        return new Response(JSON.stringify({ error: 'Multiple SQL statements not allowed', sql: generatedSql }), { status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+        return new Response(
+          JSON.stringify({ error: 'Multiple SQL statements not allowed', sql: generatedSql }),
+          { status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
+        );
       }
 
       // Return SQL for manual execution (NEVER execute directly)
-      return new Response(JSON.stringify({
-        sql: generatedSql,
-        question,
-        connection: connId,
-        schema_context: schemaContext,
-        status: 'sql_generated',
-        note: 'SQL gerado para revisão. Execute via Supabase dashboard com read-only role.',
-        model: 'Qwen/Qwen3-30B-A3B',
-        cost_usd: sqlResult.cost_usd || 0,
-      }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      return new Response(
+        JSON.stringify({
+          sql: generatedSql,
+          question,
+          connection: connId,
+          schema_context: schemaContext,
+          status: 'sql_generated',
+          note: 'SQL gerado para revisão. Execute via Supabase dashboard com read-only role.',
+          model: 'Qwen/Qwen3-30B-A3B',
+          cost_usd: sqlResult.cost_usd || 0,
+        }),
+        { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
+      );
     }
 
     // ═══ ACTION: table_qa — Perguntas sobre tabelas (#37) ═══
     if (action === 'table_qa') {
       const { question: tqQuestion, entity: tqEntity, record_id: _tqRecordId } = body;
-      if (!tqQuestion || !tqEntity) return new Response(JSON.stringify({ error: 'question and entity required' }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      if (!tqQuestion || !tqEntity)
+        return new Response(JSON.stringify({ error: 'question and entity required' }), {
+          status: 400,
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        });
 
       const mapping = ENTITY_MAPPINGS[tqEntity];
-      if (!mapping) return new Response(JSON.stringify({ error: `Unknown entity: ${tqEntity}` }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      if (!mapping)
+        return new Response(JSON.stringify({ error: `Unknown entity: ${tqEntity}` }), {
+          status: 400,
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+        });
 
       const client2 = getExternalClient(mapping.primary.connection);
 
@@ -771,39 +1089,59 @@ serve(async (req) => {
       const { data: sampleData } = await query2;
 
       if (!sampleData || sampleData.length === 0) {
-        return new Response(JSON.stringify({ answer: 'Nenhum dado encontrado para esta entidade.' }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+        return new Response(
+          JSON.stringify({ answer: 'Nenhum dado encontrado para esta entidade.' }),
+          { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
+        );
       }
 
       // Build table context as CSV-like for the LLM
       const columns = Object.keys(sampleData[0]);
       const tableContext = [
         columns.join(' | '),
-        ...sampleData.map((row: Record<string, unknown>) => columns.map(c => String(row[c] ?? '')).join(' | ')),
+        ...sampleData.map((row: Record<string, unknown>) =>
+          columns.map((c) => String(row[c] ?? '')).join(' | '),
+        ),
       ].join('\n');
 
       // Ask LLM to answer based on table
       const tqResp = await fetchWithTimeout(`${supabaseUrl}/functions/v1/llm-gateway`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': authHeader, 'apikey': supabaseKey },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: authHeader,
+          apikey: supabaseKey,
+        },
         body: JSON.stringify({
           model: 'huggingface/Qwen/Qwen3-30B-A3B',
           messages: [
-            { role: 'system', content: 'Você responde perguntas baseado APENAS nos dados da tabela fornecida. Responda em português, de forma concisa e precisa. Se a resposta não está nos dados, diga isso.' },
-            { role: 'user', content: `Tabela (${mapping.primary.table}, ${sampleData.length} registros):\n${tableContext}\n\nPergunta: ${tqQuestion}` },
+            {
+              role: 'system',
+              content:
+                'Você responde perguntas baseado APENAS nos dados da tabela fornecida. Responda em português, de forma concisa e precisa. Se a resposta não está nos dados, diga isso.',
+            },
+            {
+              role: 'user',
+              content: `Tabela (${mapping.primary.table}, ${sampleData.length} registros):\n${tableContext}\n\nPergunta: ${tqQuestion}`,
+            },
           ],
-          temperature: 0.1, max_tokens: 500,
+          temperature: 0.1,
+          max_tokens: 500,
         }),
       });
       const tqResult = await tqResp.json();
 
-      return new Response(JSON.stringify({
-        answer: tqResult.content || 'Não foi possível responder.',
-        question: tqQuestion,
-        entity: tqEntity,
-        rows_analyzed: sampleData.length,
-        model: 'Qwen/Qwen3-30B-A3B',
-        cost_usd: tqResult.cost_usd || 0,
-      }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      return new Response(
+        JSON.stringify({
+          answer: tqResult.content || 'Não foi possível responder.',
+          question: tqQuestion,
+          entity: tqEntity,
+          rows_analyzed: sampleData.length,
+          model: 'Qwen/Qwen3-30B-A3B',
+          cost_usd: tqResult.cost_usd || 0,
+        }),
+        { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
+      );
     }
 
     // ═══ ACTION: list_rls_policies ═══
@@ -817,12 +1155,22 @@ serve(async (req) => {
         ? [filterConn].filter((c) => c in CONNECTION_REGISTRY)
         : Object.keys(CONNECTION_REGISTRY);
 
-      const result: Record<string, {
-        ok: boolean;
-        policies?: Array<{ table: string; name: string; cmd: string; roles: string[]; using?: string; with_check?: string }>;
-        error?: string;
-        count?: number;
-      }> = {};
+      const result: Record<
+        string,
+        {
+          ok: boolean;
+          policies?: Array<{
+            table: string;
+            name: string;
+            cmd: string;
+            roles: string[];
+            using?: string;
+            with_check?: string;
+          }>;
+          error?: string;
+          count?: number;
+        }
+      > = {};
 
       const sql = `
         SELECT tablename AS table,
@@ -849,24 +1197,29 @@ serve(async (req) => {
             };
             continue;
           }
-          const policies = Array.isArray(data) ? data.map((row: Record<string, unknown>) => ({
-            table: String(row.table ?? row.tablename ?? ''),
-            name: String(row.name ?? row.policyname ?? ''),
-            cmd: String(row.cmd ?? '*'),
-            roles: Array.isArray(row.roles) ? row.roles as string[] : [],
-            using: row.using_expr ? String(row.using_expr) : undefined,
-            with_check: row.with_check ? String(row.with_check) : undefined,
-          })) : [];
+          const policies = Array.isArray(data)
+            ? data.map((row: Record<string, unknown>) => ({
+                table: String(row.table ?? row.tablename ?? ''),
+                name: String(row.name ?? row.policyname ?? ''),
+                cmd: String(row.cmd ?? '*'),
+                roles: Array.isArray(row.roles) ? (row.roles as string[]) : [],
+                using: row.using_expr ? String(row.using_expr) : undefined,
+                with_check: row.with_check ? String(row.with_check) : undefined,
+              }))
+            : [];
           result[connId] = { ok: true, policies, count: policies.length };
         } catch (e: unknown) {
           result[connId] = { ok: false, error: e instanceof Error ? e.message : String(e) };
         }
       }
 
-      return new Response(JSON.stringify({
-        timestamp: new Date().toISOString(),
-        connections: result,
-      }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      return new Response(
+        JSON.stringify({
+          timestamp: new Date().toISOString(),
+          connections: result,
+        }),
+        { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
+      );
     }
 
     // ═══ ACTION: health_check — Ping a specific project ═══
@@ -882,20 +1235,38 @@ serve(async (req) => {
       const connId = project_ref ? PROJECT_REF_MAP[project_ref] : null;
 
       if (!connId || !CONNECTION_REGISTRY[connId]) {
-        return new Response(JSON.stringify({ reachable: false, error: `Unknown project ref: ${project_ref}` }), { status: 200, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+        return new Response(
+          JSON.stringify({ reachable: false, error: `Unknown project ref: ${project_ref}` }),
+          { status: 200, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
+        );
       }
 
       try {
         const client = getExternalClient(connId);
-        const testTable = connId === 'bancodadosclientes' ? 'companies'
-          : connId === 'supabase-fuchsia-kite' ? 'products'
-          : connId === 'gestao_time_promo' ? 'colaboradores'
-          : 'contacts';
-        const { count, error: testError } = await client.from(testTable).select('id', { count: 'exact', head: true });
+        const testTable =
+          connId === 'bancodadosclientes'
+            ? 'companies'
+            : connId === 'supabase-fuchsia-kite'
+              ? 'products'
+              : connId === 'gestao_time_promo'
+                ? 'colaboradores'
+                : 'contacts';
+        const { count, error: testError } = await client
+          .from(testTable)
+          .select('id', { count: 'exact', head: true });
         if (testError) throw new Error(testError.message);
-        return new Response(JSON.stringify({ reachable: true, table_count: 1, total_rows: count ?? 0 }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+        return new Response(
+          JSON.stringify({ reachable: true, table_count: 1, total_rows: count ?? 0 }),
+          { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
+        );
       } catch (e: unknown) {
-        return new Response(JSON.stringify({ reachable: false, error: e instanceof Error ? e.message : 'Unknown error' }), { status: 200, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+        return new Response(
+          JSON.stringify({
+            reachable: false,
+            error: e instanceof Error ? e.message : 'Unknown error',
+          }),
+          { status: 200, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
+        );
       }
     }
 
@@ -917,7 +1288,9 @@ serve(async (req) => {
           }
         }
       }
-      return new Response(JSON.stringify({ tables }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ tables }), {
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      });
     }
 
     // ═══ ACTION: stats — Aggregate stats ═══
@@ -929,21 +1302,57 @@ serve(async (req) => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           const client = getExternalClient((mapping as any).primary.connection);
           // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
-          let q = client.from((mapping as any).primary.table).select('id', { count: 'exact', head: true });
+          let q = client
+            .from((mapping as any).primary.table)
+            .select('id', { count: 'exact', head: true });
           // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
-          if ((mapping as any).primary.filter) q = applyStaticFilter(q, (mapping as any).primary.filter);
+          if ((mapping as any).primary.filter)
+            q = applyStaticFilter(q, (mapping as any).primary.filter);
           const { count } = await q;
           totalRecords += count ?? 0;
           // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           tableSet.add((mapping as any).primary.table);
-        } catch { /* skip */ }
+        } catch {
+          /* skip */
+        }
       }
-      return new Response(JSON.stringify({ databases: Object.keys(CONNECTION_REGISTRY).length, tables: tableSet.size, records: totalRecords }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+      return new Response(
+        JSON.stringify({
+          databases: Object.keys(CONNECTION_REGISTRY).length,
+          tables: tableSet.size,
+          records: totalRecords,
+        }),
+        { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
+      );
     }
 
-    return new Response(JSON.stringify({ error: 'Invalid action', available: ['test_connections','list_entities','query_entity','update_field','batch_update','create_record','delete_record','summarize_conversation','natural_language_query','table_qa','list_rls_policies','health_check','list_tables','stats'] }), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    return new Response(
+      JSON.stringify({
+        error: 'Invalid action',
+        available: [
+          'test_connections',
+          'list_entities',
+          'query_entity',
+          'update_field',
+          'batch_update',
+          'create_record',
+          'delete_record',
+          'summarize_conversation',
+          'natural_language_query',
+          'table_qa',
+          'list_rls_policies',
+          'health_check',
+          'list_tables',
+          'stats',
+        ],
+      }),
+      { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
+    );
   } catch (error: unknown) {
     console.error('datahub-query error:', error);
-    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : 'Internal error' }), { status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    return new Response(
+      JSON.stringify({ error: error instanceof Error ? error.message : 'Internal error' }),
+      { status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
+    );
   }
 });

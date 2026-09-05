@@ -155,8 +155,7 @@ describe('mergeCurationFeeds — 500 cenários aleatórios de paginação', () =
 
       // Ordena como o banco faria (updated_at desc) antes de fatiar em páginas.
       linhas.sort(
-        (a, b) =>
-          new Date(b.updated_at ?? 0).getTime() - new Date(a.updated_at ?? 0).getTime(),
+        (a, b) => new Date(b.updated_at ?? 0).getTime() - new Date(a.updated_at ?? 0).getTime(),
       );
 
       const pageSize = 1 + Math.floor(rand() * 8);

@@ -16,7 +16,7 @@
  */
 
 import { forwardRef, type ReactNode } from 'react';
-import { toast } from "sonner";
+import { toast } from 'sonner';
 
 import { useRBAC } from '@/hooks/useRBAC';
 import type { PermissionKey } from '@/services/rbacService';
@@ -36,7 +36,7 @@ interface AccessControlProps {
 
 export const AccessControl = forwardRef<HTMLDivElement, AccessControlProps>(function AccessControl(
   { permission, mode = 'any', children, fallback = null, showLoading = false },
-  ref
+  ref,
 ) {
   const { can, loading } = useRBAC();
 
@@ -63,26 +63,28 @@ export const AccessControl = forwardRef<HTMLDivElement, AccessControlProps>(func
  *     await deleteAgent(id);
  *   });
  */
- 
+
 export function useAccessGuard() {
   const { can } = useRBAC();
 
-
-  return { 
-    guardAction: (permission: PermissionKey | PermissionKey[], action: () => void | Promise<void>, onDenied?: () => void) => {
+  return {
+    guardAction: (
+      permission: PermissionKey | PermissionKey[],
+      action: () => void | Promise<void>,
+      onDenied?: () => void,
+    ) => {
       return async () => {
         if (can(permission)) {
           await action();
         } else {
-          toast.error("Acesso Negado", { 
-            description: "Você não tem permissão para realizar esta ação.",
-            icon: "🔒"
+          toast.error('Acesso Negado', {
+            description: 'Você não tem permissão para realizar esta ação.',
+            icon: '🔒',
           });
           onDenied?.();
         }
       };
-    }, 
-    can 
+    },
+    can,
   };
 }
-

@@ -52,11 +52,7 @@ export function useRetryAction<TArgs extends unknown[], TResult>(
 
       try {
         const result = options.serviceName
-          ? await executeWithCircuitBreaker(
-              options.serviceName,
-              () => action(...args),
-              policy,
-            )
+          ? await executeWithCircuitBreaker(options.serviceName, () => action(...args), policy)
           : await executeWithRetry(() => action(...args), policy, opName);
 
         setLastResult(result as RetryResult<TResult>);

@@ -1,5 +1,14 @@
 import { useMemo, useState } from 'react';
-import { Rocket, AlertTriangle, CheckCircle2, GitMerge, Lightbulb, Copy, Check, ChevronDown } from 'lucide-react';
+import {
+  Rocket,
+  AlertTriangle,
+  CheckCircle2,
+  GitMerge,
+  Lightbulb,
+  Copy,
+  Check,
+  ChevronDown,
+} from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { compilePrompt } from '@/lib/promptCompiler';
@@ -32,7 +41,6 @@ export interface ReviewData {
   hasContradictions: boolean;
 }
 
- 
 export function useReviewData(form: QuickAgentForm): ReviewData {
   return useMemo(() => {
     const sections = detectPromptSections(form.prompt);
@@ -66,7 +74,12 @@ interface SummaryProps {
   onJumpToLine?: (line: number) => void;
 }
 
-export function PreflightReviewSummary({ form, compact = false, onJumpToSection, onJumpToLine }: SummaryProps) {
+export function PreflightReviewSummary({
+  form,
+  compact = false,
+  onJumpToSection,
+  onJumpToLine,
+}: SummaryProps) {
   const {
     sectionReports,
     thinSections,
@@ -95,7 +108,9 @@ export function PreflightReviewSummary({ form, compact = false, onJumpToSection,
           <div
             className={cn(
               'h-8 w-8 rounded-lg flex items-center justify-center shrink-0',
-              allGood ? 'bg-nexus-emerald/15 text-nexus-emerald' : 'bg-nexus-amber/15 text-nexus-amber',
+              allGood
+                ? 'bg-nexus-emerald/15 text-nexus-emerald'
+                : 'bg-nexus-amber/15 text-nexus-amber',
             )}
           >
             {allGood ? <Rocket className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}
@@ -137,20 +152,25 @@ export function PreflightReviewSummary({ form, compact = false, onJumpToSection,
                   isOk
                     ? 'border-nexus-emerald/30 bg-nexus-emerald/10 text-nexus-emerald'
                     : 'border-nexus-amber/40 bg-nexus-amber/10 text-nexus-amber',
-                  canJump && 'hover:bg-nexus-amber/20 hover:border-nexus-amber/60 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-nexus-amber/50',
+                  canJump &&
+                    'hover:bg-nexus-amber/20 hover:border-nexus-amber/60 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-nexus-amber/50',
                 )}
                 title={
                   isOk
                     ? `${r.wordCount} palavras`
                     : canJump
-                    ? `${isThin ? r.thinReason : 'Heading ausente'} — clique para ir até a seção`
-                    : isThin
-                    ? `${r.thinReason} (${r.wordCount} palavras)`
-                    : 'Heading ausente'
+                      ? `${isThin ? r.thinReason : 'Heading ausente'} — clique para ir até a seção`
+                      : isThin
+                        ? `${r.thinReason} (${r.wordCount} palavras)`
+                        : 'Heading ausente'
                 }
                 aria-label={canJump ? `Ir para a seção ${r.label} no editor` : undefined}
               >
-                {isOk ? <CheckCircle2 className="h-2.5 w-2.5" /> : <AlertTriangle className="h-2.5 w-2.5" />}
+                {isOk ? (
+                  <CheckCircle2 className="h-2.5 w-2.5" />
+                ) : (
+                  <AlertTriangle className="h-2.5 w-2.5" />
+                )}
                 {r.label}
                 {isThin && <span className="font-mono opacity-80">·{r.wordCount}p</span>}
               </Tag>
@@ -165,7 +185,9 @@ export function PreflightReviewSummary({ form, compact = false, onJumpToSection,
           Variáveis ({compiled.detectedVariables.length})
         </p>
         {compiled.detectedVariables.length === 0 ? (
-          <p className="text-meta text-muted-foreground/70 italic">Nenhuma variável detectada no prompt.</p>
+          <p className="text-meta text-muted-foreground/70 italic">
+            Nenhuma variável detectada no prompt.
+          </p>
         ) : (
           <div className="flex flex-wrap gap-1.5">
             {compiled.detectedVariables.map((v) => {
@@ -179,7 +201,11 @@ export function PreflightReviewSummary({ form, compact = false, onJumpToSection,
                       ? 'border-nexus-amber/40 bg-nexus-amber/10 text-nexus-amber'
                       : 'border-nexus-emerald/30 bg-nexus-emerald/10 text-nexus-emerald',
                   )}
-                  title={unresolved ? 'Sem valor — ficará literal no prompt salvo' : 'Substituída ao salvar'}
+                  title={
+                    unresolved
+                      ? 'Sem valor — ficará literal no prompt salvo'
+                      : 'Substituída ao salvar'
+                  }
                 >
                   {unresolved ? '⚠' : '✓'} {`{{${v}}}`}
                 </span>
@@ -223,13 +249,12 @@ export function PreflightReviewSummary({ form, compact = false, onJumpToSection,
             </p>
           )}
           {hasContradictions && (
-            <p>
-              ⚠ {contradictions.length} conflito(s) entre regras — resolva antes de criar.
-            </p>
+            <p>⚠ {contradictions.length} conflito(s) entre regras — resolva antes de criar.</p>
           )}
           {hasUnresolved && (
             <p>
-              {compiled.unresolvedVariables.length} variável(eis) sem valor permanecerão literais no prompt salvo.
+              {compiled.unresolvedVariables.length} variável(eis) sem valor permanecerão literais no
+              prompt salvo.
             </p>
           )}
         </div>
@@ -289,7 +314,9 @@ function ConflictCard({
             linha {c.lineA} ↔ {c.lineB}
           </button>
         ) : (
-          <span className="text-muted-foreground">linha {c.lineA} ↔ {c.lineB}</span>
+          <span className="text-muted-foreground">
+            linha {c.lineA} ↔ {c.lineB}
+          </span>
         )}
       </div>
       <p className="text-meta text-nexus-amber/90 leading-snug">{c.reason}</p>
@@ -306,9 +333,7 @@ function ConflictCard({
       >
         <Lightbulb className="h-3 w-3" />
         {expanded ? 'Ocultar sugestões' : `Ver ${suggestions.length} sugestões de reescrita`}
-        <ChevronDown
-          className={cn('h-3 w-3 transition-transform', expanded && 'rotate-180')}
-        />
+        <ChevronDown className={cn('h-3 w-3 transition-transform', expanded && 'rotate-180')} />
       </button>
 
       {expanded && (
@@ -323,9 +348,7 @@ function ConflictCard({
                 <div className="flex items-start justify-between gap-2">
                   <div className="space-y-0.5 flex-1 min-w-0">
                     <p className="text-meta font-medium text-foreground">{s.title}</p>
-                    <p className="text-meta text-muted-foreground leading-snug">
-                      {s.rationale}
-                    </p>
+                    <p className="text-meta text-muted-foreground leading-snug">{s.rationale}</p>
                   </div>
                   <button
                     type="button"

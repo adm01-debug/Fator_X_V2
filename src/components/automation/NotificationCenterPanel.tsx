@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -34,14 +34,32 @@ import { useToast } from '@/hooks/use-toast';
 import { MultiChannelComposer } from './MultiChannelComposer';
 
 const CHANNEL_ICONS: Record<string, typeof Bell> = {
-  email: Mail, whatsapp: MessageSquare, slack: Hash, push: Smartphone, sms: Send, in_app: Bell, webhook: Globe,
+  email: Mail,
+  whatsapp: MessageSquare,
+  slack: Hash,
+  push: Smartphone,
+  sms: Send,
+  in_app: Bell,
+  webhook: Globe,
 };
 const STATUS_COLORS: Record<string, string> = {
-  pending: 'text-nexus-amber', sent: 'text-nexus-blue', delivered: 'text-nexus-emerald',
-  read: 'text-nexus-teal', failed: 'text-destructive', cancelled: 'text-muted-foreground',
+  pending: 'text-nexus-amber',
+  sent: 'text-nexus-blue',
+  delivered: 'text-nexus-emerald',
+  read: 'text-nexus-teal',
+  failed: 'text-destructive',
+  cancelled: 'text-muted-foreground',
 };
 
-const CHANNELS: NotificationChannel[] = ['email', 'whatsapp', 'slack', 'push', 'sms', 'in_app', 'webhook'];
+const CHANNELS: NotificationChannel[] = [
+  'email',
+  'whatsapp',
+  'slack',
+  'push',
+  'sms',
+  'in_app',
+  'webhook',
+];
 
 export function NotificationCenterPanel() {
   const [notifications, setNotifications] = useState<NotificationPayload[]>([]);
@@ -52,10 +70,12 @@ export function NotificationCenterPanel() {
   const [testChannel, setTestChannel] = useState<NotificationChannel>('email');
   const [testRecipient, setTestRecipient] = useState('');
   const [testSubject, setTestSubject] = useState('Teste — Nexus');
-  const [testMessage, setTestMessage] = useState('Este é um envio de teste a partir do Centro de Automação do Nexus.');
+  const [testMessage, setTestMessage] = useState(
+    'Este é um envio de teste a partir do Centro de Automação do Nexus.',
+  );
   const { toast } = useToast();
 
-  const loadAll = async () => {
+  const loadAll = useCallback(async () => {
     try {
       const [n, s] = await Promise.all([listNotifications({}, 50), getNotificationStats()]);
       setNotifications(n);
@@ -65,11 +85,11 @@ export function NotificationCenterPanel() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
 
   useEffect(() => {
     loadAll();
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   }, []);
 
   const handleSendTest = async () => {
@@ -110,13 +130,23 @@ export function NotificationCenterPanel() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 flex-1">
           {[
             { label: 'Enviadas', value: stats?.total_sent ?? 0, color: 'hsl(var(--nexus-blue))' },
-            { label: 'Entregues', value: stats?.total_delivered ?? 0, color: 'hsl(var(--nexus-emerald))' },
+            {
+              label: 'Entregues',
+              value: stats?.total_delivered ?? 0,
+              color: 'hsl(var(--nexus-emerald))',
+            },
             { label: 'Lidas', value: stats?.total_read ?? 0, color: 'hsl(var(--nexus-purple))' },
-            { label: 'Taxa Entrega', value: `${(stats?.delivery_rate ?? 0).toFixed(1)}%`, color: 'hsl(var(--nexus-yellow))' },
+            {
+              label: 'Taxa Entrega',
+              value: `${(stats?.delivery_rate ?? 0).toFixed(1)}%`,
+              color: 'hsl(var(--nexus-yellow))',
+            },
           ].map((s, i) => (
             <Card key={i} className="bg-card border-border">
               <CardContent className="p-4 text-center">
-                <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
+                <p className="text-2xl font-bold" style={{ color: s.color }}>
+                  {s.value}
+                </p>
                 <p className="text-meta text-muted-foreground">{s.label}</p>
               </CardContent>
             </Card>
@@ -145,13 +175,18 @@ export function NotificationCenterPanel() {
             <div className="space-y-4 py-2">
               <div className="space-y-2">
                 <Label htmlFor="test-channel">Canal</Label>
-                <Select value={testChannel} onValueChange={(v) => setTestChannel(v as NotificationChannel)}>
+                <Select
+                  value={testChannel}
+                  onValueChange={(v) => setTestChannel(v as NotificationChannel)}
+                >
                   <SelectTrigger id="test-channel" className="bg-background border-border">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-card border-border">
                     {CHANNELS.map((c) => (
-                      <SelectItem key={c} value={c}>{c}</SelectItem>
+                      <SelectItem key={c} value={c}>
+                        {c}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -164,10 +199,13 @@ export function NotificationCenterPanel() {
                   value={testRecipient}
                   onChange={(e) => setTestRecipient(e.target.value)}
                   placeholder={
-                    testChannel === 'email' ? 'usuario@empresa.com' :
-                    testChannel === 'whatsapp' || testChannel === 'sms' ? '+5511999999999' :
-                    testChannel === 'slack' ? '#canal ou @user' :
-                    'identificador'
+                    testChannel === 'email'
+                      ? 'usuario@empresa.com'
+                      : testChannel === 'whatsapp' || testChannel === 'sms'
+                        ? '+5511999999999'
+                        : testChannel === 'slack'
+                          ? '#canal ou @user'
+                          : 'identificador'
                   }
                   className="bg-background border-border"
                 />
@@ -209,7 +247,11 @@ export function NotificationCenterPanel() {
                 disabled={sending}
                 className="bg-primary hover:bg-primary/90 text-foreground gap-1.5"
               >
-                {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                {sending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
                 Enviar
               </Button>
             </DialogFooter>
@@ -218,7 +260,11 @@ export function NotificationCenterPanel() {
       </div>
 
       <Card className="bg-card border-border">
-        <CardHeader className="pb-3"><CardTitle className="text-body-sm text-muted-foreground">Presets de Notificação — Promo Brindes</CardTitle></CardHeader>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-body-sm text-muted-foreground">
+            Presets de Notificação — Promo Brindes
+          </CardTitle>
+        </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {Object.entries(NOTIFICATION_PRESETS).map(([key, preset]) => {
@@ -227,12 +273,20 @@ export function NotificationCenterPanel() {
                 <div key={key} className="p-3 rounded-lg bg-background border border-border">
                   <div className="flex items-center gap-2 mb-1">
                     <Icon size={14} className="text-primary" />
-                    <p className="font-medium text-body-sm">{preset.subject.replace(/\{\{.*?\}\}/g, '...')}</p>
+                    <p className="font-medium text-body-sm">
+                      {preset.subject.replace(/\{\{.*?\}\}/g, '...')}
+                    </p>
                   </div>
-                  <p className="text-meta text-muted-foreground line-clamp-2">{preset.body.replace(/\{\{.*?\}\}/g, '...')}</p>
+                  <p className="text-meta text-muted-foreground line-clamp-2">
+                    {preset.body.replace(/\{\{.*?\}\}/g, '...')}
+                  </p>
                   <div className="flex gap-2 mt-2">
-                    <Badge variant="outline" className="text-meta border-border">{preset.channel}</Badge>
-                    <Badge variant="outline" className="text-meta border-border">{preset.category}</Badge>
+                    <Badge variant="outline" className="text-meta border-border">
+                      {preset.channel}
+                    </Badge>
+                    <Badge variant="outline" className="text-meta border-border">
+                      {preset.category}
+                    </Badge>
                   </div>
                 </div>
               );
@@ -244,7 +298,12 @@ export function NotificationCenterPanel() {
       {loading ? (
         <div className="text-center py-12 text-muted-foreground">Carregando notificações...</div>
       ) : notifications.length === 0 ? (
-        <Card className="bg-card border-border"><CardContent className="py-12 text-center text-muted-foreground"><Bell size={48} className="mx-auto mb-4 opacity-30" /><p>Nenhuma notificação enviada.</p></CardContent></Card>
+        <Card className="bg-card border-border">
+          <CardContent className="py-12 text-center text-muted-foreground">
+            <Bell size={48} className="mx-auto mb-4 opacity-30" />
+            <p>Nenhuma notificação enviada.</p>
+          </CardContent>
+        </Card>
       ) : (
         <div className="space-y-2">
           {notifications.slice(0, 20).map((n) => {
@@ -255,11 +314,19 @@ export function NotificationCenterPanel() {
                   <Icon size={16} className="text-primary shrink-0" />
                   <div className="flex-1 min-w-0">
                     <p className="text-body-sm font-medium truncate">{n.subject}</p>
-                    <p className="text-meta text-muted-foreground truncate">{n.recipient_address}</p>
+                    <p className="text-meta text-muted-foreground truncate">
+                      {n.recipient_address}
+                    </p>
                   </div>
                   <div className="text-right shrink-0">
-                    <span className={`text-meta ${STATUS_COLORS[n.status] ?? 'text-muted-foreground'}`}>{n.status}</span>
-                    <p className="text-meta text-muted-foreground">{n.sent_at ? new Date(n.sent_at).toLocaleString('pt-BR') : '—'}</p>
+                    <span
+                      className={`text-meta ${STATUS_COLORS[n.status] ?? 'text-muted-foreground'}`}
+                    >
+                      {n.status}
+                    </span>
+                    <p className="text-meta text-muted-foreground">
+                      {n.sent_at ? new Date(n.sent_at).toLocaleString('pt-BR') : '—'}
+                    </p>
                   </div>
                 </CardContent>
               </Card>

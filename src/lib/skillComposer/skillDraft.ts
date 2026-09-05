@@ -20,12 +20,14 @@ export const skillInputSchema = z.object({
   required: z.boolean(),
   description: z.string().trim().max(200, 'Máx 200 caracteres').default(''),
   defaultValue: z.string().trim().max(200).optional().default(''),
-  validation: z.object({
-    min: z.number().optional(),
-    max: z.number().optional(),
-    pattern: z.string().trim().max(200).optional().default(''),
-    enumValues: z.array(z.string().trim().min(1).max(40)).max(20).default([]),
-  }).default({ pattern: '', enumValues: [] }),
+  validation: z
+    .object({
+      min: z.number().optional(),
+      max: z.number().optional(),
+      pattern: z.string().trim().max(200).optional().default(''),
+      enumValues: z.array(z.string().trim().min(1).max(40)).max(20).default([]),
+    })
+    .default({ pattern: '', enumValues: [] }),
 });
 export type SkillInput = z.infer<typeof skillInputSchema>;
 
@@ -51,13 +53,7 @@ export const skillPromptSchema = z.object({
 export type SkillPrompt = z.infer<typeof skillPromptSchema>;
 
 // --------- Execution (por categoria) ---------
-export const executionKindSchema = z.enum([
-  'http',
-  'llm',
-  'workflow',
-  'rag',
-  'integration',
-]);
+export const executionKindSchema = z.enum(['http', 'llm', 'workflow', 'rag', 'integration']);
 export type SkillExecutionKind = z.infer<typeof executionKindSchema>;
 
 export const httpHeaderSchema = z.object({
@@ -75,31 +71,46 @@ export type WorkflowStep = z.infer<typeof workflowStepSchema>;
 
 export const skillExecutionSchema = z.object({
   kind: executionKindSchema,
-  http: z.object({
-    url: z.string().trim().max(500).default(''),
-    method: z.enum(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']).default('POST'),
-    headers: z.array(httpHeaderSchema).max(20).default([]),
-    bodyTemplate: z.string().trim().max(2000).default(''),
-  }).default({ url: '', method: 'POST', headers: [], bodyTemplate: '' }),
-  llm: z.object({
-    provider: z.enum(['lovable-ai', 'openai', 'anthropic', 'google']).default('lovable-ai'),
-    model: z.string().trim().max(80).default('google/gemini-2.5-flash'),
-    temperature: z.number().min(0).max(2).default(0.7),
-    maxTokens: z.number().int().min(1).max(32000).default(2000),
-  }).default({ provider: 'lovable-ai', model: 'google/gemini-2.5-flash', temperature: 0.7, maxTokens: 2000 }),
-  workflow: z.object({
-    steps: z.array(workflowStepSchema).max(20).default([]),
-  }).default({ steps: [] }),
-  rag: z.object({
-    collection: z.string().trim().max(120).default(''),
-    topK: z.number().int().min(1).max(50).default(5),
-    minScore: z.number().min(0).max(1).default(0.6),
-  }).default({ collection: '', topK: 5, minScore: 0.6 }),
-  integration: z.object({
-    provider: z.string().trim().max(60).default('slack'),
-    event: z.string().trim().max(60).default('message'),
-    authType: z.enum(['oauth2', 'apikey', 'basic']).default('oauth2'),
-  }).default({ provider: 'slack', event: 'message', authType: 'oauth2' }),
+  http: z
+    .object({
+      url: z.string().trim().max(500).default(''),
+      method: z.enum(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']).default('POST'),
+      headers: z.array(httpHeaderSchema).max(20).default([]),
+      bodyTemplate: z.string().trim().max(2000).default(''),
+    })
+    .default({ url: '', method: 'POST', headers: [], bodyTemplate: '' }),
+  llm: z
+    .object({
+      provider: z.enum(['lovable-ai', 'openai', 'anthropic', 'google']).default('lovable-ai'),
+      model: z.string().trim().max(80).default('google/gemini-2.5-flash'),
+      temperature: z.number().min(0).max(2).default(0.7),
+      maxTokens: z.number().int().min(1).max(32000).default(2000),
+    })
+    .default({
+      provider: 'lovable-ai',
+      model: 'google/gemini-2.5-flash',
+      temperature: 0.7,
+      maxTokens: 2000,
+    }),
+  workflow: z
+    .object({
+      steps: z.array(workflowStepSchema).max(20).default([]),
+    })
+    .default({ steps: [] }),
+  rag: z
+    .object({
+      collection: z.string().trim().max(120).default(''),
+      topK: z.number().int().min(1).max(50).default(5),
+      minScore: z.number().min(0).max(1).default(0.6),
+    })
+    .default({ collection: '', topK: 5, minScore: 0.6 }),
+  integration: z
+    .object({
+      provider: z.string().trim().max(60).default('slack'),
+      event: z.string().trim().max(60).default('message'),
+      authType: z.enum(['oauth2', 'apikey', 'basic']).default('oauth2'),
+    })
+    .default({ provider: 'slack', event: 'message', authType: 'oauth2' }),
 });
 export type SkillExecution = z.infer<typeof skillExecutionSchema>;
 
@@ -122,7 +133,10 @@ const skillDraftBaseSchema = z.object({
     .regex(/^[a-z0-9-]+$/, 'Apenas minúsculas, números e hífen'),
   description: z.string().trim().min(20, 'Mínimo 20 caracteres').max(500, 'Máximo 500 caracteres'),
   category: skillCategorySchema,
-  version: z.string().trim().regex(/^\d+\.\d+\.\d+$/, 'Formato: X.Y.Z (ex: 1.0.0)'),
+  version: z
+    .string()
+    .trim()
+    .regex(/^\d+\.\d+\.\d+$/, 'Formato: X.Y.Z (ex: 1.0.0)'),
   tags: z.array(z.string().trim().min(1).max(24)).max(8, 'Máximo 8 tags'),
   inputs: z.array(skillInputSchema).max(20, 'Máximo 20 inputs'),
   outputs: z.array(skillOutputSchema).max(20, 'Máximo 20 outputs'),
@@ -151,7 +165,10 @@ export function looksLikeHardcodedSecret(value: string): boolean {
   return false;
 }
 
-function isExecutionSectionConfigured(execution: SkillExecution, kind: SkillExecutionKind): boolean {
+function isExecutionSectionConfigured(
+  execution: SkillExecution,
+  kind: SkillExecutionKind,
+): boolean {
   switch (kind) {
     case 'http':
       return execution.http.url.trim().length > 0 || execution.http.headers.length > 0;
@@ -241,7 +258,11 @@ export const skillDraftSchema = skillDraftBaseSchema.superRefine((draft, ctx) =>
 
   // 4. Placeholders do prompt precisam existir como inputs declarados
   const declared = new Set(draft.inputs.map((i) => i.name.trim().toLowerCase()));
-  const templates = [draft.prompt.template, draft.prompt.systemMessage, draft.execution.http.bodyTemplate];
+  const templates = [
+    draft.prompt.template,
+    draft.prompt.systemMessage,
+    draft.execution.http.bodyTemplate,
+  ];
   const usedPlaceholders = new Set<string>();
   for (const tpl of templates) {
     for (const ph of extractPlaceholders(tpl)) {
@@ -288,7 +309,11 @@ export const skillDraftSchema = skillDraftBaseSchema.superRefine((draft, ctx) =>
   if (kind === 'http') {
     const url = draft.execution.http.url.trim();
     if (!url) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['execution', 'http', 'url'], message: 'URL obrigatória' });
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['execution', 'http', 'url'],
+        message: 'URL obrigatória',
+      });
     } else if (!/^https:\/\//i.test(url)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -350,7 +375,6 @@ export const skillDraftSchema = skillDraftBaseSchema.superRefine((draft, ctx) =>
 });
 export type SkillDraft = z.infer<typeof skillDraftBaseSchema>;
 
-
 // Mapa: categoria da skill → tipo de execução padrão
 export const CATEGORY_TO_EXECUTION_KIND: Record<
   z.infer<typeof skillCategorySchema>,
@@ -411,7 +435,12 @@ export const DEFAULT_DRAFT: SkillDraft = {
   execution: {
     kind: 'http',
     http: { url: '', method: 'POST', headers: [], bodyTemplate: '' },
-    llm: { provider: 'lovable-ai', model: 'google/gemini-2.5-flash', temperature: 0.7, maxTokens: 2000 },
+    llm: {
+      provider: 'lovable-ai',
+      model: 'google/gemini-2.5-flash',
+      temperature: 0.7,
+      maxTokens: 2000,
+    },
     workflow: { steps: [] },
     rag: { collection: '', topK: 5, minScore: 0.6 },
     integration: { provider: 'slack', event: 'message', authType: 'oauth2' },

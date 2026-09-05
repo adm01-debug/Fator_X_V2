@@ -250,7 +250,10 @@ export async function fetchThreadPreviews(): Promise<
     const { data: messages, error: msgError } = await supabaseExternal
       .from('chat_messages')
       .select('thread_id, content, created_at')
-      .in('thread_id', threads.map((t) => t.id))
+      .in(
+        'thread_id',
+        threads.map((t) => t.id),
+      )
       .order('created_at', { ascending: false })
       .limit(500);
 

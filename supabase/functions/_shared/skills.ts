@@ -27,6 +27,7 @@ function sanitizeSkillText(value: string, maxLen: number): string {
     // Remove tags e caracteres de controle que poderiam quebrar a estrutura.
     .replace(/<[^>]*>/g, ' ')
     // deno-lint-ignore no-control-regex
+    // eslint-disable-next-line no-control-regex
     .replace(/[\u0000-\u001f\u007f]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
@@ -88,6 +89,7 @@ export function appendSkillsToPrompt(systemPrompt: string, skills?: RuntimeSkill
  */
 export async function loadAgentSkills(
   // deno-lint-ignore no-explicit-any -- cliente Supabase tipado dinamicamente na borda.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   supa: any,
   agentId: string,
 ): Promise<RuntimeSkill[]> {
@@ -115,7 +117,5 @@ export async function loadAgentSkills(
 export function countInjectedSkills(skills?: RuntimeSkill[] | null): number {
   const section = buildSkillsSection(skills);
   if (!section) return 0;
-  return section
-    .split('\n')
-    .filter((line) => line.startsWith('- **')).length;
+  return section.split('\n').filter((line) => line.startsWith('- **')).length;
 }

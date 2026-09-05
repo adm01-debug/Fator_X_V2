@@ -21,7 +21,7 @@ export function AuditLogSection() {
 
     if (format === 'csv') {
       const headers = ['Data', 'Ação', 'Tipo', 'Entity ID', 'Metadata'];
-      const rows = logs.map((l) => [
+      const rows = logs.map((l: Record<string, unknown>) => [
         new Date(l.created_at as string).toISOString(),
         l.action,
         l.entity_type,
@@ -70,7 +70,7 @@ export function AuditLogSection() {
         <p className="text-meta text-muted-foreground py-4 text-center">Nenhum evento registrado</p>
       ) : (
         <div className="space-y-1 max-h-[300px] overflow-y-auto">
-          {logs.map((log, i: number) => (
+          {logs.map((log: Record<string, unknown>, i: number) => (
             <div key={(log.id as string) || i}
               className="flex items-center gap-3 py-2 px-2 rounded hover:bg-secondary/30 text-meta">
               <span className="text-muted-foreground w-[130px] shrink-0 font-mono text-meta">{new Date(log.created_at as string).toLocaleString('pt-BR')}</span>

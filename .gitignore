@@ -42,3 +42,5 @@ eslint-report.json
 # Playwright test artifacts (generated at runtime, not source)
 test-results/
 playwright-report/
+tsconfig.app.tsbuildinfo
+tsconfig.node.tsbuildinfo

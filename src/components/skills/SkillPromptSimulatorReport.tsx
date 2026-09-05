@@ -30,7 +30,11 @@ export function SkillPromptSimulatorReport({ result }: SkillPromptSimulatorRepor
   return (
     <div className="space-y-4">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Tile label="Recebidas" value={d.received} hint={`teto de ${MAX_PROMPT_SKILLS} no prompt`} />
+        <Tile
+          label="Recebidas"
+          value={d.received}
+          hint={`teto de ${MAX_PROMPT_SKILLS} no prompt`}
+        />
         <Tile
           label="No prompt"
           value={d.injected}

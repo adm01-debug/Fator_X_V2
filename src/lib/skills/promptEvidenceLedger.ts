@@ -185,9 +185,7 @@ export interface EvidenceLedgerSummary {
   duplicates: DuplicateChecksum[];
 }
 
-export function summarizeEvidenceLedger(
-  entries: readonly EvidenceEntry[],
-): EvidenceLedgerSummary {
+export function summarizeEvidenceLedger(entries: readonly EvidenceEntry[]): EvidenceLedgerSummary {
   const agentes = new Set<string>();
   const porChecksum = new Map<string, { count: number; agentName: string }>();
   let withOverflow = 0;
@@ -285,8 +283,7 @@ export function verifyArtifactContent(
   // `artifact_chars` 0 significa registro antigo/sem tamanho: não usar como
   // prova de divergência, senão evidências legítimas viram suspeitas.
   const comTamanho = matches.filter((m) => m.artifactChars > 0);
-  const bateTamanho =
-    comTamanho.length === 0 || comTamanho.some((m) => m.artifactChars === chars);
+  const bateTamanho = comTamanho.length === 0 || comTamanho.some((m) => m.artifactChars === chars);
 
   return {
     status: bateTamanho ? 'autentico' : 'divergente',

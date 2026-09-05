@@ -19,10 +19,7 @@ vi.mock('@/lib/logger', () => ({
   logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
 }));
 
-import {
-  purgeStaleLocalCheckpoints,
-  harvestCheckpointKey,
-} from '@/services/skillHarvestService';
+import { purgeStaleLocalCheckpoints, harvestCheckpointKey } from '@/services/skillHarvestService';
 
 const NOW = new Date('2026-07-28T12:00:00.000Z').getTime();
 const HOUR = 60 * 60 * 1000;
@@ -65,11 +62,7 @@ describe('purgeStaleLocalCheckpoints', () => {
   });
 
   it('remove todas as entradas vencidas sem pular índices', () => {
-    const stale = [
-      seed(['org/a'], 30),
-      seed(['org/b'], 40),
-      seed(['org/c'], 50),
-    ];
+    const stale = [seed(['org/a'], 30), seed(['org/b'], 40), seed(['org/c'], 50)];
     const fresh = seed(['org/d'], 2);
 
     expect(purgeStaleLocalCheckpoints(NOW)).toBe(3);

@@ -26,7 +26,6 @@ import {
   getInstalledSkills,
   installSkill,
   bulkInstallSkills,
-
   uninstallSkill,
   type AgentSkillDefinition,
   computeSkillSelectionDiff,
@@ -94,7 +93,6 @@ export function SkillsModule() {
       await refresh();
       if (inserted) toast.success('Skill adicionada ao agente');
       else toast.info('Skill já estava instalada');
-
     } catch (error) {
       logger.error('Falha ao instalar skill', { error, skillId, agentId });
       toast.error('Não foi possível adicionar a skill');
@@ -156,14 +154,10 @@ export function SkillsModule() {
     await applyBatch(toAdd, toRemove);
   };
 
-
   const handleInstallAll = async () => {
-    const toAdd = recommendations
-      .map((rec) => rec.skill.id)
-      .filter((id) => !installedSet.has(id));
+    const toAdd = recommendations.map((rec) => rec.skill.id).filter((id) => !installedSet.has(id));
     await applyBatch(toAdd, []);
   };
-
 
   if (!agentId) {
     return (
@@ -234,8 +228,12 @@ export function SkillsModule() {
                   className="flex items-center justify-between gap-3 rounded-lg border border-border/60 bg-secondary/30 px-3 py-2"
                 >
                   <div className="min-w-0">
-                    <p className="text-body-sm font-medium text-foreground truncate">{skill.name}</p>
-                    <p className="text-meta text-muted-foreground line-clamp-1">{skill.description}</p>
+                    <p className="text-body-sm font-medium text-foreground truncate">
+                      {skill.name}
+                    </p>
+                    <p className="text-meta text-muted-foreground line-clamp-1">
+                      {skill.description}
+                    </p>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
                     <Badge variant="outline" className="text-meta">

@@ -79,6 +79,7 @@ function sanitize(value: string, maxLen: number): string {
   const flat = value
     .replace(/<[^>]*>/g, ' ')
     // deno-lint-ignore no-control-regex
+    // eslint-disable-next-line no-control-regex
     .replace(/[\u0000-\u001f\u007f]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
@@ -102,9 +103,21 @@ function fold(value: string): string {
  * Paridade coberta por src/test/skill-description-parity.test.ts.
  */
 const PLACEHOLDERS = [
-  'todo', 'tbd', 'n/a', 'na', 'sem descricao', 'sem descrição', 'no description',
-  'no description provided', 'description', 'descricao', 'descrição', 'wip',
-  '-', '--', '...',
+  'todo',
+  'tbd',
+  'n/a',
+  'na',
+  'sem descricao',
+  'sem descrição',
+  'no description',
+  'no description provided',
+  'description',
+  'descricao',
+  'descrição',
+  'wip',
+  '-',
+  '--',
+  '...',
 ];
 const FOLDED_PLACEHOLDERS = new Set(PLACEHOLDERS.map(fold));
 
@@ -116,7 +129,6 @@ export function isPlaceholderDescription(description: string | null | undefined)
   if (dobrado.length === 0) return true;
   return FOLDED_PLACEHOLDERS.has(dobrado);
 }
-
 
 /**
  * Rejeita descrições que não acrescentam informação.
@@ -132,13 +144,29 @@ export function isEcho(description: string, name: string, slug: string): boolean
   if (alvos.length === 0) return false;
   // Palavras da descrição que não pertencem ao nome/slug nem são muleta.
   const MULETAS = new Set([
-    'skill', 'para', 'de', 'do', 'da', 'com', 'que', 'uma', 'um', 'o', 'a', 'e',
-    'em', 'no', 'na', 'ferramenta', 'permite', 'usada', 'usado', 'agente',
+    'skill',
+    'para',
+    'de',
+    'do',
+    'da',
+    'com',
+    'que',
+    'uma',
+    'um',
+    'o',
+    'a',
+    'e',
+    'em',
+    'no',
+    'na',
+    'ferramenta',
+    'permite',
+    'usada',
+    'usado',
+    'agente',
   ]);
   const nomeTokens = new Set(alvos.flatMap((t) => t.split(' ')));
-  const novas = d
-    .split(' ')
-    .filter((w) => w.length > 2 && !nomeTokens.has(w) && !MULETAS.has(w));
+  const novas = d.split(' ').filter((w) => w.length > 2 && !nomeTokens.has(w) && !MULETAS.has(w));
   return novas.length < 5;
 }
 
@@ -232,7 +260,14 @@ Deno.serve(async (req) => {
 
     const vazio = (motivo: string) =>
       json(
-        { skill_id: skill.skill_id, description: '', confidence: 0, model: MODEL, sufficient: false, rationale: motivo },
+        {
+          skill_id: skill.skill_id,
+          description: '',
+          confidence: 0,
+          model: MODEL,
+          sufficient: false,
+          rationale: motivo,
+        },
         200,
         corsHeaders,
       );
@@ -295,7 +330,10 @@ Deno.serve(async (req) => {
     const payload = await resposta.json();
     const call = payload?.choices?.[0]?.message?.tool_calls?.[0];
     if (!call?.function?.arguments) {
-      console.error('skill-describe-llm: resposta sem tool_call', JSON.stringify(payload).slice(0, 500));
+      console.error(
+        'skill-describe-llm: resposta sem tool_call',
+        JSON.stringify(payload).slice(0, 500),
+      );
       return json({ error: 'Resposta do modelo em formato inesperado.' }, 502, corsHeaders);
     }
 
@@ -311,10 +349,14 @@ Deno.serve(async (req) => {
       return json({ error: 'Argumentos do modelo não são JSON válido.' }, 502, corsHeaders);
     }
 
-    const rationale = typeof veredito.rationale === 'string' ? sanitize(veredito.rationale, 240) : '';
+    const rationale =
+      typeof veredito.rationale === 'string' ? sanitize(veredito.rationale, 240) : '';
     if (veredito.suficiente === false) return vazio(rationale || 'Material insuficiente.');
 
-    const texto = typeof veredito.description === 'string' ? sanitize(veredito.description, MAX_DESCRIPTION) : '';
+    const texto =
+      typeof veredito.description === 'string'
+        ? sanitize(veredito.description, MAX_DESCRIPTION)
+        : '';
     const conf =
       typeof veredito.confidence === 'number' && Number.isFinite(veredito.confidence)
         ? Math.min(1, Math.max(0, veredito.confidence))
@@ -323,7 +365,8 @@ Deno.serve(async (req) => {
     // Validação final no servidor. O modelo pode ignorar as regras do prompt;
     // estas checagens não são negociáveis com ele.
     if (texto.length < MIN_DESCRIPTION) return vazio('Descrição gerada curta demais.');
-    if (isPlaceholderDescription(texto)) return vazio('Descrição gerada é um marcador sem conteúdo.');
+    if (isPlaceholderDescription(texto))
+      return vazio('Descrição gerada é um marcador sem conteúdo.');
     if (isEcho(texto, nome, slug)) return vazio('Descrição apenas repete o nome da skill.');
 
     return json(
@@ -340,6 +383,10 @@ Deno.serve(async (req) => {
     );
   } catch (err) {
     console.error('skill-describe-llm falhou:', err);
-    return json({ error: err instanceof Error ? err.message : 'Erro inesperado' }, 500, corsHeaders);
+    return json(
+      { error: err instanceof Error ? err.message : 'Erro inesperado' },
+      500,
+      corsHeaders,
+    );
   }
 });

@@ -53,7 +53,16 @@ const DEPARTMENT_KEYWORDS: Record<string, string[]> = {
   financeiro: ['financeiro', 'custo', 'fluxo', 'caixa', 'cobranca', 'contabil', 'imposto'],
   juridico: ['juridico', 'contrato', 'compliance', 'lgpd', 'clausula', 'risco'],
   ia: ['automacao', 'workflow', 'integracao', 'agente', 'pipeline'],
-  suprimentos: ['estoque', 'compras', 'fornecedor', 'logistica', 'expedicao', 'lote', 'ruptura', 'inventario'],
+  suprimentos: [
+    'estoque',
+    'compras',
+    'fornecedor',
+    'logistica',
+    'expedicao',
+    'lote',
+    'ruptura',
+    'inventario',
+  ],
   gestao: ['gestao', 'processo', 'qualidade', 'auditoria', 'indicador'],
   pessoas: ['cultura', 'clima', 'bem', 'estar', 'coach', 'motivacao'],
   producao: ['producao', 'maquina', 'laser', 'dtf', 'operacao', 'fabrica'],
@@ -174,7 +183,11 @@ export function recommendTemplates(
   if (catalog.length === 0) return [];
 
   const objective = input.objective.trim();
-  const missionText = [objective, department?.label ?? '', getDepartmentKeywords(department?.id).join(' ')]
+  const missionText = [
+    objective,
+    department?.label ?? '',
+    getDepartmentKeywords(department?.id).join(' '),
+  ]
     .join(' ')
     .trim();
 
@@ -185,17 +198,18 @@ export function recommendTemplates(
 
   // Com departamento selecionado, garante retorno útil mesmo quando o objetivo
   // não gera interseção de tokens: completa com os templates do departamento.
-  const results = recommendations.length > 0
-    ? recommendations
-    : catalog.slice(0, limit).map<Recommendation>((skill) => ({
-        skill,
-        score: 0,
-        reason: department
-          ? `Template do departamento ${department.label}`
-          : 'Template disponível na galeria',
-        matchedKeywords: [],
-        breakdown: { keyword: 0, category: 0, weightedKeyword: 0, weightedCategory: 0 },
-      }));
+  const results =
+    recommendations.length > 0
+      ? recommendations
+      : catalog.slice(0, limit).map<Recommendation>((skill) => ({
+          skill,
+          score: 0,
+          reason: department
+            ? `Template do departamento ${department.label}`
+            : 'Template disponível na galeria',
+          matchedKeywords: [],
+          breakdown: { keyword: 0, category: 0, weightedKeyword: 0, weightedCategory: 0 },
+        }));
 
   return results.flatMap<TemplateRecommendation>((rec) => {
     const template = index.get(rec.skill.id);
@@ -244,7 +258,13 @@ export function buildTemplateSignals(template: AgentTemplate): string[] {
         ...bridged,
         ...bridgedLexicon,
       ]
-        .map((s) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim())
+        .map((s) =>
+          s
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .trim(),
+        )
         .filter((s) => s.length >= 3),
     ),
   );
@@ -291,9 +311,12 @@ export function linkSkillsToTemplate(
   const linked = installable.map<LinkedSkill>((skill) => {
     const base = byId.get(skill.id);
     const haystack = new Set(
-      [skill.slug, ...(skill.tags ?? []), skill.category]
-        .filter(Boolean)
-        .map((s) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')),
+      [skill.slug, ...(skill.tags ?? []), skill.category].filter(Boolean).map((s) =>
+        s
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, ''),
+      ),
     );
     const affinities = signals.filter((sig) => haystack.has(sig));
     const departmentMatch = isDepartmentCompatible(departmentId, skill.department ?? null);
@@ -309,7 +332,7 @@ export function linkSkillsToTemplate(
       ? `Mesmo departamento (${skill.department})`
       : affinities.length > 0
         ? `Afinidade com ${affinities.slice(0, 3).join(', ')}`
-        : base?.reason ?? 'Similaridade com a missão do template';
+        : (base?.reason ?? 'Similaridade com a missão do template');
 
     return {
       skill,
@@ -339,4 +362,3 @@ export function linkSkillsToTemplate(
     })
     .slice(0, limit);
 }
-

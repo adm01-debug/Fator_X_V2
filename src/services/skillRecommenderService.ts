@@ -32,17 +32,75 @@ export interface Recommendation {
 }
 
 const STOP_WORDS = new Set([
-  'a', 'o', 'as', 'os', 'de', 'da', 'do', 'das', 'dos', 'para', 'com', 'em',
-  'e', 'ou', 'que', 'um', 'uma', 'uns', 'umas', 'no', 'na', 'nos', 'nas',
-  'ao', 'à', 'às', 'aos', 'por', 'sobre', 'the', 'and', 'or', 'to', 'of',
-  'is', 'be', 'are', 'was', 'were', 'in', 'on', 'at', 'for', 'with',
+  'a',
+  'o',
+  'as',
+  'os',
+  'de',
+  'da',
+  'do',
+  'das',
+  'dos',
+  'para',
+  'com',
+  'em',
+  'e',
+  'ou',
+  'que',
+  'um',
+  'uma',
+  'uns',
+  'umas',
+  'no',
+  'na',
+  'nos',
+  'nas',
+  'ao',
+  'à',
+  'às',
+  'aos',
+  'por',
+  'sobre',
+  'the',
+  'and',
+  'or',
+  'to',
+  'of',
+  'is',
+  'be',
+  'are',
+  'was',
+  'were',
+  'in',
+  'on',
+  'at',
+  'for',
+  'with',
 ]);
 
 /**
  * Siglas de 2 letras relevantes no domínio (IA, BI, TI...). Tokens de 2 caracteres
  * são descartados por padrão como ruído, exceto quando fazem parte deste conjunto.
  */
-const SHORT_TERMS = new Set(['ia', 'ai', 'bi', 'ti', 'qa', 'ux', 'ui', 'db', 'ml', 'nl', 'hr', 'rh', 'cs', 'go', 'js', 'ci', 'cd']);
+const SHORT_TERMS = new Set([
+  'ia',
+  'ai',
+  'bi',
+  'ti',
+  'qa',
+  'ux',
+  'ui',
+  'db',
+  'ml',
+  'nl',
+  'hr',
+  'rh',
+  'cs',
+  'go',
+  'js',
+  'ci',
+  'cd',
+]);
 
 export function tokenize(text: string): Set<string> {
   const tokens = text
@@ -58,7 +116,6 @@ export function tokenize(text: string): Set<string> {
     });
   return new Set(tokens);
 }
-
 
 /**
  * Sinônimos PT-BR ↔ EN e variações morfológicas.
@@ -119,7 +176,6 @@ function jaccard(a: Set<string>, b: Set<string>): number {
   return union > 0 ? intersection / union : 0;
 }
 
-
 const CATEGORY_HINTS: Record<string, string[]> = {
   tools: ['api', 'ferramenta', 'integracao', 'webhook', 'chamada', 'call'],
   knowledge: ['conhecimento', 'documento', 'rag', 'base', 'pdf', 'arquivo'],
@@ -173,11 +229,12 @@ export function recommendSkills(
       if (!rawTokens.has(t) && skillTokens.has(t)) matched.push(t);
     }
 
-    const reason = matched.length > 0
-      ? `Alinhada com "${matched.slice(0, 3).join('", "')}" da missão`
-      : catScore > 0
-        ? `Categoria "${skill.category}" combina com o contexto do agente`
-        : 'Skill popular no marketplace';
+    const reason =
+      matched.length > 0
+        ? `Alinhada com "${matched.slice(0, 3).join('", "')}" da missão`
+        : catScore > 0
+          ? `Categoria "${skill.category}" combina com o contexto do agente`
+          : 'Skill popular no marketplace';
 
     return {
       skill,
@@ -225,7 +282,6 @@ export function recommendSkills(
 
   return [...ranked, ...baseline];
 }
-
 
 /**
  * Deriva os ids de skills recomendadas que ainda NÃO estão instaladas no agente.

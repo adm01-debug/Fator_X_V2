@@ -152,7 +152,9 @@ describe('summarizeQueueFailures — decisão de retry', () => {
   });
 
   it('id vazio é contado mas não vira alvo de retry', () => {
-    const r = summarizeQueueFailures(snap([item('', 'falhou', 'rede'), item('ok', 'falhou', 'rede')]));
+    const r = summarizeQueueFailures(
+      snap([item('', 'falhou', 'rede'), item('ok', 'falhou', 'rede')]),
+    );
     expect(r.totalFailed).toBe(2);
     expect(r.buckets[0].count).toBe(2);
     // Retentar um id vazio reprocessaria o alvo errado.
@@ -169,10 +171,7 @@ describe('summarizeQueueFailures — decisão de retry', () => {
 
   it('guarda a primeira mensagem crua como amostra, sem sobrescrever', () => {
     const r = summarizeQueueFailures(
-      snap([
-        item('a', 'falhou', 'rede', 'primeira'),
-        item('b', 'falhou', 'rede', 'segunda'),
-      ]),
+      snap([item('a', 'falhou', 'rede', 'primeira'), item('b', 'falhou', 'rede', 'segunda')]),
     );
     expect(r.buckets[0].sample).toBe('primeira');
   });

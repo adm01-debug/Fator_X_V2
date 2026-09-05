@@ -26,7 +26,10 @@ import {
   type QueueSummary,
   type ReviewQueueRowInput,
 } from '@/lib/skills/observability';
-import type { CalibrationInstability, ThresholdCalibration } from '@/lib/skills/thresholdCalibration';
+import type {
+  CalibrationInstability,
+  ThresholdCalibration,
+} from '@/lib/skills/thresholdCalibration';
 
 /** Janela padrão do painel, em dias. */
 export const OBSERVABILITY_WINDOW_DAYS = 14;
@@ -48,7 +51,9 @@ export interface SkillObservabilitySnapshot {
 async function fetchHarvestRuns(windowDays: number): Promise<HarvestRunInput[]> {
   const desde = new Date(Date.now() - windowDays * 24 * 60 * 60 * 1000).toISOString();
   const { data, error } = await fromTable('skill_harvest_runs')
-    .select('id, status, repos_scanned, candidates_found, candidates_accepted, duration_ms, created_at')
+    .select(
+      'id, status, repos_scanned, candidates_found, candidates_accepted, duration_ms, created_at',
+    )
     .gte('created_at', desde)
     .order('created_at', { ascending: false })
     .limit(ROW_LIMIT);
@@ -83,7 +88,10 @@ async function fetchReviewQueue(): Promise<ReviewQueueRowInput[]> {
 export async function fetchSkillObservability(options?: {
   windowDays?: number;
 }): Promise<SkillObservabilitySnapshot> {
-  const windowDays = Math.min(Math.max(Math.floor(options?.windowDays ?? OBSERVABILITY_WINDOW_DAYS), 1), 90);
+  const windowDays = Math.min(
+    Math.max(Math.floor(options?.windowDays ?? OBSERVABILITY_WINDOW_DAYS), 1),
+    90,
+  );
   const now = new Date();
 
   const [runs, reviews, decisions, calibrations] = await Promise.all([

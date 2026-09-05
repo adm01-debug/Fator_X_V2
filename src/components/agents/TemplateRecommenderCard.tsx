@@ -51,7 +51,8 @@ export function TemplateRecommenderCard({ onUseTemplate, isBusy }: TemplateRecom
           <div>
             <CardTitle className="text-title-sm">Recomendação automática</CardTitle>
             <CardDescription className="text-meta">
-              Descreva seu objetivo e escolha o departamento para receber os blueprints mais aderentes.
+              Descreva seu objetivo e escolha o departamento para receber os blueprints mais
+              aderentes.
             </CardDescription>
           </div>
         </div>
@@ -69,7 +70,10 @@ export function TemplateRecommenderCard({ onUseTemplate, isBusy }: TemplateRecom
             />
           </div>
           <Select value={departmentId} onValueChange={setDepartmentId}>
-            <SelectTrigger className="w-full sm:w-[260px] bg-secondary/50" aria-label="Departamento">
+            <SelectTrigger
+              className="w-full sm:w-[260px] bg-secondary/50"
+              aria-label="Departamento"
+            >
               <SelectValue placeholder="Departamento" />
             </SelectTrigger>
             <SelectContent>

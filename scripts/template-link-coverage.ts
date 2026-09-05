@@ -84,11 +84,13 @@ for (const [templateId, rows] of first) {
   if (rows.length === 0) gaps.push(`G1 sem vínculos: ${templateId}`);
   else if (rows.length < MAX_LINKS_PER_TEMPLATE)
     gaps.push(`G2 parcial (${rows.length}/${MAX_LINKS_PER_TEMPLATE}): ${templateId}`);
-  if (rows.length > 0 && !rows.some((r) => r.strong)) gaps.push(`G3 sem strong match: ${templateId}`);
+  if (rows.length > 0 && !rows.some((r) => r.strong))
+    gaps.push(`G3 sem strong match: ${templateId}`);
   if (new Set(ids).size !== ids.length) gaps.push(`G6 duplicatas: ${templateId}`);
 
   const sig = JSON.stringify(rows);
-  if (sig !== JSON.stringify(second.get(templateId))) gaps.push(`G5 não-determinístico: ${templateId}`);
+  if (sig !== JSON.stringify(second.get(templateId)))
+    gaps.push(`G5 não-determinístico: ${templateId}`);
 }
 
 const orphans = skills.filter((s) => !seenSkills.has(s.id));
@@ -130,6 +132,7 @@ WHERE public.template_skill_links.origin = 'auto';`);
   for (const g of gaps.slice(0, 40)) console.log('  - ' + g);
   if (orphans.length) {
     console.log('Órfãs (amostra):');
-    for (const o of orphans.slice(0, 15)) console.log(`  · ${o.slug} [${o.department ?? 'sem depto'}]`);
+    for (const o of orphans.slice(0, 15))
+      console.log(`  · ${o.slug} [${o.department ?? 'sem depto'}]`);
   }
 }

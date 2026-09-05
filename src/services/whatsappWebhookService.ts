@@ -9,17 +9,29 @@ import { logger } from '@/lib/logger';
 import { getWorkspaceId } from '@/lib/agentService';
 
 export const WHATSAPP_EVENT_TYPES = [
-  { id: 'message.text', label: 'Mensagem de texto', description: 'Texto plano enviado pelo cliente' },
-  { id: 'message.image', label: 'Imagem', description: 'Imagem (jpeg, png, webp) enviada pelo cliente' },
+  {
+    id: 'message.text',
+    label: 'Mensagem de texto',
+    description: 'Texto plano enviado pelo cliente',
+  },
+  {
+    id: 'message.image',
+    label: 'Imagem',
+    description: 'Imagem (jpeg, png, webp) enviada pelo cliente',
+  },
   { id: 'message.audio', label: 'Áudio / voz', description: 'Mensagem de voz ou arquivo de áudio' },
-  { id: 'message.document', label: 'Documento', description: 'Anexo de documento (PDF, planilha, etc)' },
+  {
+    id: 'message.document',
+    label: 'Documento',
+    description: 'Anexo de documento (PDF, planilha, etc)',
+  },
   { id: 'message.video', label: 'Vídeo', description: 'Vídeo enviado pelo cliente' },
   { id: 'message.location', label: 'Localização', description: 'Localização compartilhada' },
   { id: 'status.delivered', label: 'Entregue', description: 'Confirmação de entrega' },
   { id: 'status.read', label: 'Lido', description: 'Confirmação de leitura' },
 ] as const;
 
-export type WhatsAppEventType = typeof WHATSAPP_EVENT_TYPES[number]['id'];
+export type WhatsAppEventType = (typeof WHATSAPP_EVENT_TYPES)[number]['id'];
 
 export const WHATSAPP_PROVIDERS = [
   { id: 'twilio', label: 'Twilio', tokenEnv: 'WHATSAPP_TWILIO_AUTH_TOKEN' },
@@ -79,16 +91,18 @@ export async function upsertWhatsAppRoute(
   isEnabled: boolean = true,
 ): Promise<void> {
   const wsId = await getWorkspaceId();
-  const { error } = await fromTable('agent_routing_config')
-    .upsert({
+  const { error } = await fromTable('agent_routing_config').upsert(
+    {
       workspace_id: wsId,
       source: 'whatsapp',
       event_type: eventType,
       agent_id: agentId,
       is_enabled: isEnabled,
-    }, {
+    },
+    {
       onConflict: 'workspace_id,source,event_type',
-    });
+    },
+  );
   if (error) {
     logger.error('upsertWhatsAppRoute failed', { error: error.message, eventType });
     throw error;
@@ -96,9 +110,7 @@ export async function upsertWhatsAppRoute(
 }
 
 export async function deleteWhatsAppRoute(id: string): Promise<void> {
-  const { error } = await fromTable('agent_routing_config')
-    .delete()
-    .eq('id', id);
+  const { error } = await fromTable('agent_routing_config').delete().eq('id', id);
   if (error) {
     logger.error('deleteWhatsAppRoute failed', { error: error.message });
     throw error;

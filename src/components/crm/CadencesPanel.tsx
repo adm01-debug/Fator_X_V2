@@ -299,12 +299,11 @@ export function CadencesPanel() {
                         )}
                       </div>
                     ))}
-                    {!enrollmentsQuery.isLoading &&
-                      (enrollmentsQuery.data ?? []).length === 0 && (
-                        <p className="text-body-sm text-muted-foreground">
-                          Nenhuma inscrição nesta cadência.
-                        </p>
-                      )}
+                    {!enrollmentsQuery.isLoading && (enrollmentsQuery.data ?? []).length === 0 && (
+                      <p className="text-body-sm text-muted-foreground">
+                        Nenhuma inscrição nesta cadência.
+                      </p>
+                    )}
                   </CardContent>
                 </Card>
               </>

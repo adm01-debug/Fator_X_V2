@@ -53,7 +53,6 @@ export interface DepartmentClassification {
   needsReview: boolean;
 }
 
-
 export interface ClassifierInput {
   name: string;
   description?: string;
@@ -77,12 +76,43 @@ const LEXICON_SETS: Record<SkillDepartment, Set<string>> = Object.fromEntries(
  * balde `transversal`, que é onde eles pertencem.
  */
 export const PLATFORM_STOPWORDS = new Set<string>([
-  'ai', 'ia', 'agent', 'agents', 'agentic', 'agente', 'agentes',
-  'skill', 'skills', 'habilidade', 'habilidades',
-  'llm', 'llms', 'gpt', 'prompt', 'prompts', 'prompting',
-  'claude', 'codex', 'cursor', 'copilot', 'anthropic', 'openai', 'gemini',
-  'mcp', 'chatgpt', 'assistant', 'assistente', 'model', 'modelos',
-  'tool', 'tools', 'ferramenta', 'ferramentas', 'usar', 'use', 'using',
+  'ai',
+  'ia',
+  'agent',
+  'agents',
+  'agentic',
+  'agente',
+  'agentes',
+  'skill',
+  'skills',
+  'habilidade',
+  'habilidades',
+  'llm',
+  'llms',
+  'gpt',
+  'prompt',
+  'prompts',
+  'prompting',
+  'claude',
+  'codex',
+  'cursor',
+  'copilot',
+  'anthropic',
+  'openai',
+  'gemini',
+  'mcp',
+  'chatgpt',
+  'assistant',
+  'assistente',
+  'model',
+  'modelos',
+  'tool',
+  'tools',
+  'ferramenta',
+  'ferramentas',
+  'usar',
+  'use',
+  'using',
 ]);
 
 function dropStopwords(tokens: Set<string>): Set<string> {
@@ -195,7 +225,6 @@ function platformEvidenceOf(input: ClassifierInput): PlatformEvidence {
   };
 }
 
-
 export function classifyDepartment(input: ClassifierInput): DepartmentClassification {
   const primaryText = [input.name, input.description ?? ''].join(' ');
   const primaryTokens = dropStopwords(tokenize(primaryText));
@@ -204,7 +233,6 @@ export function classifyDepartment(input: ClassifierInput): DepartmentClassifica
   const contentTokens = input.content
     ? dropStopwords(tokenize(input.content.slice(0, 4000)))
     : new Set<string>();
-
 
   const ranking: Array<{ department: SkillDepartment; score: number }> = [];
   let bestHits: string[] = [];
@@ -291,9 +319,7 @@ export function classifyDepartment(input: ClassifierInput): DepartmentClassifica
     needsReview:
       (tier === 'platform' || tier === 'domain') && confidence < LOW_CONFIDENCE_THRESHOLD,
   };
-
 }
-
 
 /**
  * Mapeia sinais do repositório para uma das 5 categorias do registry.
@@ -306,16 +332,23 @@ export function inferCategory(input: {
   hasWorkflow?: boolean;
 }): 'tools' | 'knowledge' | 'prompts' | 'workflows' | 'integrations' {
   if (input.hasMcpServer) return 'integrations';
-  const tokens = tokenize([input.name, input.description ?? '', (input.tags ?? []).join(' ')].join(' '));
+  const tokens = tokenize(
+    [input.name, input.description ?? '', (input.tags ?? []).join(' ')].join(' '),
+  );
   const has = (...words: string[]) => words.some((w) => tokens.has(w));
 
-  if (input.hasWorkflow || has('workflow', 'workflows', 'automation', 'automacao', 'pipeline', 'orchestration')) {
+  if (
+    input.hasWorkflow ||
+    has('workflow', 'workflows', 'automation', 'automacao', 'pipeline', 'orchestration')
+  ) {
     return 'workflows';
   }
   if (has('prompt', 'prompts', 'persona', 'template', 'templates', 'system', 'instruction')) {
     return 'prompts';
   }
-  if (has('knowledge', 'conhecimento', 'rag', 'docs', 'documentation', 'wiki', 'reference', 'guide')) {
+  if (
+    has('knowledge', 'conhecimento', 'rag', 'docs', 'documentation', 'wiki', 'reference', 'guide')
+  ) {
     return 'knowledge';
   }
   if (has('integration', 'integracao', 'connector', 'conector', 'api', 'webhook', 'sdk', 'mcp')) {

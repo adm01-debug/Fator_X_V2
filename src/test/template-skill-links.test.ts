@@ -31,7 +31,6 @@ const registry: AgentSkillDefinition[] = CURATED_SKILLS.map((s, i) => ({
   quality_score: s.qualityScore,
 }));
 
-
 /** Coletânea sintética: deve ser penalizada e nunca virar vínculo forte. */
 const genericSkill: AgentSkillDefinition = {
   id: '00000000-0000-4000-8000-000000000001',

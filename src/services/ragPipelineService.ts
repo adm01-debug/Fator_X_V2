@@ -14,7 +14,11 @@ import { supabase } from '@/integrations/supabase/client';
  */
 export const EMBEDDING_DIM = 1536;
 
-export async function embedTexts(texts: string[], provider = 'qwen3-embedding-8b', dimension = EMBEDDING_DIM) {
+export async function embedTexts(
+  texts: string[],
+  provider = 'qwen3-embedding-8b',
+  dimension = EMBEDDING_DIM,
+) {
   const { data, error } = await supabase.functions.invoke('rag-embed-v2', {
     body: { texts, provider, dimension, task: 'retrieval.passage' },
   });
@@ -28,7 +32,7 @@ export async function embedTexts(texts: string[], provider = 'qwen3-embedding-8b
 export async function rerankDocuments(
   query: string,
   documents: Array<{ id: string; content: string; score?: number }>,
-  topK = 5
+  topK = 5,
 ) {
   const { data, error } = await supabase.functions.invoke('rag-rerank-v2', {
     body: { query, documents, top_k: topK, model: 'qwen3-reranker-8b' },
@@ -46,7 +50,12 @@ export async function searchAndRerank(query: string, knowledgeBaseId: string, to
   const firstEmbed = Array.isArray(queryEmbedding) ? queryEmbedding[0] : null;
   if (!firstEmbed) throw new Error('Failed to embed query');
 
-  const { data: candidates, error } = await (supabaseExternal.rpc as (fn: string, params: Record<string, unknown>) => ReturnType<typeof supabaseExternal.rpc>)('match_documents', {
+  const { data: candidates, error } = await (
+    supabaseExternal.rpc as (
+      fn: string,
+      params: Record<string, unknown>,
+    ) => ReturnType<typeof supabaseExternal.rpc>
+  )('match_documents', {
     query_embedding: firstEmbed,
     match_threshold: 0.5,
     match_count: 50,
@@ -57,16 +66,18 @@ export async function searchAndRerank(query: string, knowledgeBaseId: string, to
     throw new Error(`Search error: ${error.message}`);
   }
 
-  const candidatesArr = Array.isArray(candidates) ? (candidates as Array<Record<string, unknown>>) : [];
+  const candidatesArr = Array.isArray(candidates)
+    ? (candidates as Array<Record<string, unknown>>)
+    : [];
   if (candidatesArr.length) {
     return rerankDocuments(
       query,
-      candidatesArr.map(c => ({
+      candidatesArr.map((c) => ({
         id: String(c.id),
         content: String(c.content),
         score: Number(c.similarity || 0),
       })),
-      topK
+      topK,
     );
   }
   return { results: [], total_candidates: 0 };
@@ -95,9 +106,7 @@ export interface RagRerankV1Result {
  * so operators can compare rerank quality without going through the
  * full embed → vector-search pipeline.
  */
-export async function invokeRagRerank(
-  input: RagRerankV1Input
-): Promise<RagRerankV1Result> {
+export async function invokeRagRerank(input: RagRerankV1Input): Promise<RagRerankV1Result> {
   const { data, error } = await supabase.functions.invoke('rag-rerank', {
     body: {
       query: input.query,

@@ -1,7 +1,9 @@
 ## Descrição
+
 <!-- Descreva as mudanças implementadas -->
 
 ## Tipo de Mudança
+
 - [ ] 🐛 Bug fix
 - [ ] ✨ Nova feature
 - [ ] 🔧 Refatoração
@@ -10,6 +12,7 @@
 - [ ] ⚡ Performance
 
 ## Checklist
+
 - [ ] Código compila sem erros (`tsc --noEmit`)
 - [ ] Testes passando (`vitest run`)
 - [ ] Sem `console.log` em código de produção
@@ -19,7 +22,9 @@
 - [ ] Documentação atualizada (se necessário)
 
 ## Screenshots
+
 <!-- Se aplicável, adicione screenshots -->
 
 ## Testes
+
 <!-- Como testar esta mudança? -->

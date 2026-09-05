@@ -17,13 +17,7 @@ export type DealStatus = 'open' | 'won' | 'lost';
 export type CompanySizeBand = 'micro' | 'small' | 'medium' | 'large' | 'enterprise';
 
 export type ActivityType =
-  | 'note'
-  | 'email'
-  | 'call'
-  | 'message'
-  | 'stage_change'
-  | 'task'
-  | 'system';
+  'note' | 'email' | 'call' | 'message' | 'stage_change' | 'task' | 'system';
 
 export interface CrmCompany {
   id: string;
@@ -528,7 +522,11 @@ export async function syncFromBitrix24(
     logger.error('crm-bitrix-sync falhou', error);
     throw error;
   }
-  const summary = (data as { summary?: Record<string, { inserted: number; updated: number; failed: number }> } | null)?.summary;
+  const summary = (
+    data as {
+      summary?: Record<string, { inserted: number; updated: number; failed: number }>;
+    } | null
+  )?.summary;
   return summary ?? {};
 }
 
@@ -539,7 +537,9 @@ export interface EnrichOutcome {
 }
 
 /** Dispara o enriquecimento cascata (domínio → país → setor) das empresas com lacunas. */
-export async function enrichCompanies(options: { limit?: number; useLlm?: boolean } = {}): Promise<EnrichOutcome> {
+export async function enrichCompanies(
+  options: { limit?: number; useLlm?: boolean } = {},
+): Promise<EnrichOutcome> {
   const wsId = await getWorkspaceId();
   const { data, error } = await supabase.functions.invoke('crm-enrich', {
     body: { workspace_id: wsId, limit: options.limit ?? 50, use_llm: options.useLlm ?? true },

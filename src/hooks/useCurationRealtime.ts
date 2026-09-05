@@ -43,8 +43,8 @@ export function shouldRefreshCurationFeed(
   evento: CurationRealtimeEvent,
   filtro: CurationFeedFilter,
 ): boolean {
-  const lados = [evento.new, evento.old].filter(
-    (lado): lado is CurationRealtimeRow => Boolean(lado),
+  const lados = [evento.new, evento.old].filter((lado): lado is CurationRealtimeRow =>
+    Boolean(lado),
   );
   if (lados.length === 0) return false;
 
@@ -112,9 +112,7 @@ export function formatPendingLabel(total: number): string | null {
 export const CURATION_FILTERS: readonly CurationFeedFilter[] = ['all', 'linked', 'unlinked'];
 
 /** Contagem de novidades pendentes por recorte, avaliada em paralelo. */
-export type CurationPendingByFilter = Readonly<
-  Record<CurationFeedFilter, ReadonlySet<string>>
->;
+export type CurationPendingByFilter = Readonly<Record<CurationFeedFilter, ReadonlySet<string>>>;
 
 const CONJUNTO_VAZIO: ReadonlySet<string> = new Set();
 
@@ -175,7 +173,6 @@ export function formatPendingBadge(total: number): string | null {
   if (!Number.isFinite(total) || total <= 0) return null;
   return total >= CURATION_PENDING_CAP ? '99+' : String(total);
 }
-
 
 /**
  * Assina as mudanças da tabela e reage apenas aos eventos relevantes.

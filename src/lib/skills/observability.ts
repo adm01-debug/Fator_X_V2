@@ -228,7 +228,8 @@ export function summarizeQueue(
 
     if (status === 'pendente') {
       pending += 1;
-      const origem = typeof row?.source === 'string' && row.source.toLowerCase() === 'ia' ? 'ia' : 'lexico';
+      const origem =
+        typeof row?.source === 'string' && row.source.toLowerCase() === 'ia' ? 'ia' : 'lexico';
       pendingByOrigin[origem] += 1;
 
       const conf = typeof row?.confidence === 'string' ? Number(row.confidence) : row?.confidence;
@@ -331,7 +332,9 @@ export function summarizeHumanReclassification(
   // A timeline chega do mais recente para o mais antigo; ordenamos por data
   // para que "metade antiga" e "metade recente" sejam de fato temporais.
   const datadas = decisions
-    .filter((d) => d.decidedAtMs !== null && (d.verdict === 'corrigido' || d.verdict === 'confirmado'))
+    .filter(
+      (d) => d.decidedAtMs !== null && (d.verdict === 'corrigido' || d.verdict === 'confirmado'),
+    )
     .sort((a, b) => (a.decidedAtMs as number) - (b.decidedAtMs as number));
 
   let trend: HumanReclassificationSummary['trend'] = 'indefinido';
@@ -341,8 +344,7 @@ export function summarizeHumanReclassification(
     const depois = correctionRate(datadas.slice(meio));
     if (antes !== null && depois !== null) {
       const delta = depois - antes;
-      trend =
-        Math.abs(delta) < TREND_MIN_DELTA ? 'estavel' : delta < 0 ? 'melhorando' : 'piorando';
+      trend = Math.abs(delta) < TREND_MIN_DELTA ? 'estavel' : delta < 0 ? 'melhorando' : 'piorando';
     }
   }
 
@@ -405,7 +407,6 @@ export interface ObservabilityAlertsResult {
   governance: CalibrationGovernanceDigest;
 }
 
-
 /**
  * Deriva alertas acionáveis. Cada regra tem amostra mínima própria: alertar
  * com base em dois eventos gera ruído que o curador aprende a ignorar — e um
@@ -422,7 +423,9 @@ export function deriveObservabilityAlerts(input: AlertInputs): ObservabilityAler
    * outra escala, e uma calibração recente de plataforma zerava indevidamente
    * o alerta de override vencido do domínio.
    */
-  const instabilityByScale = detectCalibrationInstabilityByScale(input.calibrations, { now: agora });
+  const instabilityByScale = detectCalibrationInstabilityByScale(input.calibrations, {
+    now: agora,
+  });
   const staleByScale = findStaleOverridesByScale(input.calibrations, { now: agora });
   const escalas: readonly CalibrationScale[] = ['dominio', 'plataforma'];
 

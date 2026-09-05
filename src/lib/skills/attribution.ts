@@ -37,7 +37,7 @@ const LICENSE_ALIASES: Record<string, KnownLicense> = {
   mit: 'MIT',
   'mit license': 'MIT',
   'the mit license': 'MIT',
-  'expat': 'MIT',
+  expat: 'MIT',
   apache: 'Apache-2.0',
   'apache 2': 'Apache-2.0',
   'apache 2.0': 'Apache-2.0',
@@ -260,12 +260,7 @@ export function buildSkillAttribution(skill: SkillAttributionSource): SkillAttri
  * isolar as skills sem licença declarada — o pior cenário jurídico, porque
  * "sem licença" significa *todos os direitos reservados*, não domínio público.
  */
-export type LicenseFilter =
-  | 'all'
-  | 'native'
-  | 'permissive'
-  | 'copyleft'
-  | 'unlicensed';
+export type LicenseFilter = 'all' | 'native' | 'permissive' | 'copyleft' | 'unlicensed';
 
 export const LICENSE_FILTERS: ReadonlyArray<{
   value: LicenseFilter;
@@ -293,15 +288,11 @@ export const LICENSE_FILTERS: ReadonlyArray<{
     label: 'Licença indefinida',
     hint: 'Origem externa sem licença reconhecida (ausente ou texto livre): revisar antes do uso comercial.',
   },
-
 ] as const;
 
 /** `true` quando o valor é um modo de filtro válido. */
 export function isLicenseFilter(value: unknown): value is LicenseFilter {
-  return (
-    typeof value === 'string' &&
-    LICENSE_FILTERS.some((f) => f.value === value)
-  );
+  return typeof value === 'string' && LICENSE_FILTERS.some((f) => f.value === value);
 }
 
 /**

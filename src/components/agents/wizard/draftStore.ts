@@ -57,12 +57,21 @@ export interface DraftResumeTarget {
 interface ResumeStepDef {
   key: string;
   label?: string;
-  schema: { safeParse: (v: DbRow) => { success: boolean; error?: { errors: Array<{ path: (string | number)[]; message: string; code?: string }> } } };
+  schema: {
+    safeParse: (v: DbRow) => {
+      success: boolean;
+      error?: { errors: Array<{ path: (string | number)[]; message: string; code?: string }> };
+    };
+  };
   fields: readonly string[];
 }
 
 // Mapeia o code do zod (ou heurística) para um tipo curto e legível.
-function classifyZodCode(code: string | undefined, message: string | undefined, isEmpty: boolean): DraftResumeTarget['errorType'] {
+function classifyZodCode(
+  code: string | undefined,
+  message: string | undefined,
+  isEmpty: boolean,
+): DraftResumeTarget['errorType'] {
   if (isEmpty) return 'required';
   if (!code) return 'unknown';
   if (code === 'too_small') {
@@ -126,7 +135,7 @@ export function checkDraftRestorable(form: QuickAgentForm): DraftRestoreCheck {
     description: 'ajuste a descrição',
   };
   const reason = 'Rascunho incompleto demais para retomar';
-  const hint = fieldLabel[field] ?? (first?.message ?? 'preencha a identidade básica');
+  const hint = fieldLabel[field] ?? first?.message ?? 'preencha a identidade básica';
   return {
     canRestore: false,
     reason,
@@ -142,7 +151,7 @@ export const MAX_DRAFTS = 5;
 export interface DraftEntry {
   id: string;
   form: QuickAgentForm;
-  savedAt: string;   // ISO
+  savedAt: string; // ISO
   createdAt: string; // ISO
   /** When true, the prompt was manually edited — variant chips should not auto-detect. */
   promptCustomLocked?: boolean;
@@ -173,7 +182,9 @@ function emptyStore(): DraftsStoreV2 {
 function genId(): string {
   try {
     if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) return crypto.randomUUID();
-  } catch {/* ignore */}
+  } catch {
+    /* ignore */
+  }
   return `d_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
 }
 
@@ -195,7 +206,12 @@ export function loadDrafts(): DraftsStoreV2 {
             id: typeof d.id === 'string' ? d.id : genId(),
             form: normalizeForm(d.form as Partial<QuickAgentForm> | undefined),
             savedAt: typeof d.savedAt === 'string' ? d.savedAt : new Date().toISOString(),
-            createdAt: typeof d.createdAt === 'string' ? d.createdAt : (typeof d.savedAt === 'string' ? d.savedAt : new Date().toISOString()),
+            createdAt:
+              typeof d.createdAt === 'string'
+                ? d.createdAt
+                : typeof d.savedAt === 'string'
+                  ? d.savedAt
+                  : new Date().toISOString(),
             promptCustomLocked: d.promptCustomLocked === true,
             selectedVariant: normalizeVariant(d.selectedVariant),
             selectedSkillIds: normalizeSkillIds(d.selectedSkillIds),
@@ -203,7 +219,9 @@ export function loadDrafts(): DraftsStoreV2 {
         };
       }
     }
-  } catch {/* ignore */}
+  } catch {
+    /* ignore */
+  }
 
   // Migrate legacy v1
   try {
@@ -211,7 +229,8 @@ export function loadDrafts(): DraftsStoreV2 {
     if (legacy) {
       const parsed = JSON.parse(legacy);
       const form = normalizeForm(parsed?.form ?? parsed);
-      const savedAt = typeof parsed?.savedAt === 'string' ? parsed.savedAt : new Date().toISOString();
+      const savedAt =
+        typeof parsed?.savedAt === 'string' ? parsed.savedAt : new Date().toISOString();
       const id = genId();
       const store: DraftsStoreV2 = {
         version: 2,
@@ -219,10 +238,16 @@ export function loadDrafts(): DraftsStoreV2 {
         drafts: [{ id, form, savedAt, createdAt: savedAt }],
       };
       saveDrafts(store);
-      try { localStorage.removeItem(LEGACY_DRAFT_KEY); } catch {/* ignore */}
+      try {
+        localStorage.removeItem(LEGACY_DRAFT_KEY);
+      } catch {
+        /* ignore */
+      }
       return store;
     }
-  } catch {/* ignore */}
+  } catch {
+    /* ignore */
+  }
 
   return emptyStore();
 }
@@ -230,15 +255,13 @@ export function loadDrafts(): DraftsStoreV2 {
 export function saveDrafts(store: DraftsStoreV2): void {
   try {
     localStorage.setItem(DRAFTS_KEY, JSON.stringify(store));
-  } catch {/* ignore */}
+  } catch {
+    /* ignore */
+  }
 }
 
 /** Renames the agent inside a specific draft. Pure function. */
-export function renameDraft(
-  store: DraftsStoreV2,
-  id: string,
-  newName: string,
-): DraftsStoreV2 {
+export function renameDraft(store: DraftsStoreV2, id: string, newName: string): DraftsStoreV2 {
   const trimmed = newName.trim();
   const now = new Date().toISOString();
   return {
@@ -270,10 +293,14 @@ export function upsertDraft(
             form: draft.form,
             savedAt: now,
             promptCustomLocked: draft.promptCustomLocked ?? d.promptCustomLocked ?? false,
-            selectedVariant: draft.selectedVariant !== undefined ? draft.selectedVariant : d.selectedVariant ?? null,
-            selectedSkillIds: draft.selectedSkillIds !== undefined
-              ? normalizeSkillIds(draft.selectedSkillIds)
-              : d.selectedSkillIds ?? [],
+            selectedVariant:
+              draft.selectedVariant !== undefined
+                ? draft.selectedVariant
+                : (d.selectedVariant ?? null),
+            selectedSkillIds:
+              draft.selectedSkillIds !== undefined
+                ? normalizeSkillIds(draft.selectedSkillIds)
+                : (d.selectedSkillIds ?? []),
           }
         : d,
     );
@@ -307,7 +334,11 @@ export function removeDraft(store: DraftsStoreV2, id: string): DraftsStoreV2 {
 export function clearDrafts(): DraftsStoreV2 {
   const store = emptyStore();
   saveDrafts(store);
-  try { localStorage.removeItem(LEGACY_DRAFT_KEY); } catch {/* ignore */}
+  try {
+    localStorage.removeItem(LEGACY_DRAFT_KEY);
+  } catch {
+    /* ignore */
+  }
   return store;
 }
 

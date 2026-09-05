@@ -10,10 +10,7 @@
 import { describe, it, expect } from 'vitest';
 import { simulatePrompt, MAX_PROMPT_SKILLS } from '@/lib/skills/promptSimulation';
 import { diffPromptSimulations } from '@/lib/skills/promptDiff';
-import {
-  buildPromptAuditArtifact,
-  buildArtifactFilename,
-} from '@/lib/skills/promptAuditArtifact';
+import { buildPromptAuditArtifact, buildArtifactFilename } from '@/lib/skills/promptAuditArtifact';
 import type { CompilePromptInput, PromptSkill } from '@/lib/promptCompiler';
 
 function skills(n: number, prefix = 'skill', withId = true): PromptSkill[] {
@@ -25,7 +22,10 @@ function skills(n: number, prefix = 'skill', withId = true): PromptSkill[] {
   }));
 }
 
-function input(list: PromptSkill[], overrides: Partial<CompilePromptInput> = {}): CompilePromptInput {
+function input(
+  list: PromptSkill[],
+  overrides: Partial<CompilePromptInput> = {},
+): CompilePromptInput {
   return {
     name: 'Agente Teste',
     emoji: '🤖',
@@ -124,7 +124,9 @@ describe('diffPromptSimulations — simulação combinatória', () => {
   });
 
   it('ignora entradas descartadas e não as conta como remoção', () => {
-    const antes = simulatePrompt(input([{ id: 'a', name: 'Boa' }, { name: '   ' }, { name: '<b></b>' }]));
+    const antes = simulatePrompt(
+      input([{ id: 'a', name: 'Boa' }, { name: '   ' }, { name: '<b></b>' }]),
+    );
     const depois = simulatePrompt(input([{ id: 'a', name: 'Boa' }]));
     const diff = diffPromptSimulations(antes, depois);
     expect(diff.skills).toHaveLength(1);
@@ -150,8 +152,18 @@ describe('diffPromptSimulations — simulação combinatória', () => {
   });
 
   it('ordena as mudanças críticas antes das inalteradas', () => {
-    const antes = simulatePrompt(input([{ id: 'a', name: 'A' }, { id: 'b', name: 'B' }]));
-    const depois = simulatePrompt(input([{ id: 'a', name: 'A' }, { id: 'c', name: 'C' }]));
+    const antes = simulatePrompt(
+      input([
+        { id: 'a', name: 'A' },
+        { id: 'b', name: 'B' },
+      ]),
+    );
+    const depois = simulatePrompt(
+      input([
+        { id: 'a', name: 'A' },
+        { id: 'c', name: 'C' },
+      ]),
+    );
     const diff = diffPromptSimulations(antes, depois);
     expect(diff.skills[diff.skills.length - 1].kind).toBe('inalterada');
     expect(diff.skills[0].kind).not.toBe('inalterada');
@@ -198,9 +210,9 @@ describe('buildPromptAuditArtifact', () => {
 
   it('produz nome de arquivo seguro e determinístico', () => {
     expect(buildArtifactFilename(meta)).toBe('prompt-agente-de-vendas-2026-07-28T10-00-00-000.md');
-    expect(
-      buildArtifactFilename({ ...meta, agentName: 'Ação/Çç *?<>' }),
-    ).toMatch(/^prompt-acao-cc-2026-07-28T10-00-00-000\.md$/);
+    expect(buildArtifactFilename({ ...meta, agentName: 'Ação/Çç *?<>' })).toMatch(
+      /^prompt-acao-cc-2026-07-28T10-00-00-000\.md$/,
+    );
     expect(buildArtifactFilename({ ...meta, agentName: '' })).toContain('prompt-agent-1');
   });
 

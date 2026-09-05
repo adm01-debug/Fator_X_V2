@@ -33,7 +33,6 @@ export interface AgentSkillDefinition {
   source_license?: string | null;
 }
 
-
 // List available skills from registry
 export async function listSkills(options?: {
   category?: string;
@@ -115,7 +114,6 @@ export async function installSkill(agentId: string, skillId: string): Promise<bo
   return installed.length > 0;
 }
 
-
 /**
  * Instala skills em lote de forma **idempotente**.
  *
@@ -152,7 +150,6 @@ export async function bulkInstallSkills(
   }
   return { installed, skipped };
 }
-
 
 // Get installed skills for an agent
 export async function getInstalledSkills(agentId: string): Promise<AgentSkillDefinition[]> {
@@ -194,24 +191,29 @@ export async function bulkUninstallSkills(
     .filter((id): id is string => typeof id === 'string');
 }
 
-
 // Publish a skill to the registry
-export async function publishSkill(skill: Omit<AgentSkillDefinition, 'id' | 'install_count' | 'rating' | 'created_at'>): Promise<AgentSkillDefinition> {
+export async function publishSkill(
+  skill: Omit<AgentSkillDefinition, 'id' | 'install_count' | 'rating' | 'created_at'>,
+): Promise<AgentSkillDefinition> {
   const { data, error } = await supabaseExternal
     .from('skill_registry')
-    .insert([{
-      name: skill.name,
-      slug: skill.slug,
-      description: skill.description,
-      version: skill.version,
-      author: skill.author,
-      category: skill.category,
-      tags: skill.tags,
-      skill_config: skill.skill_config as Record<string, unknown> & { [key: string]: string | number | boolean | null },
-      mcp_server_url: skill.mcp_server_url ?? null,
-      is_verified: false,
-      is_public: skill.is_public,
-    }])
+    .insert([
+      {
+        name: skill.name,
+        slug: skill.slug,
+        description: skill.description,
+        version: skill.version,
+        author: skill.author,
+        category: skill.category,
+        tags: skill.tags,
+        skill_config: skill.skill_config as Record<string, unknown> & {
+          [key: string]: string | number | boolean | null;
+        },
+        mcp_server_url: skill.mcp_server_url ?? null,
+        is_verified: false,
+        is_public: skill.is_public,
+      },
+    ])
     .select()
     .single();
   if (error) throw error;

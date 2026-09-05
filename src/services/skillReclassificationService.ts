@@ -70,7 +70,10 @@ export async function applyReclassification(
         .eq('id', proposal.skillId);
 
       // Guarda de estado: só troca se o departamento continua o que o plano viu.
-      query = proposal.from === null ? query.is('department', null) : query.eq('department', proposal.from);
+      query =
+        proposal.from === null
+          ? query.is('department', null)
+          : query.eq('department', proposal.from);
 
       const { data, error } = await query.select('id');
 
@@ -222,7 +225,10 @@ export async function runLlmFallbackQueue(options: {
   onSnapshot?: (snapshot: QueueSnapshot<LlmClassificationVerdict>) => void;
   concurrency?: number;
   minIntervalMs?: number;
-}): Promise<{ proposals: ReclassifyProposal[]; snapshot: QueueSnapshot<LlmClassificationVerdict> }> {
+}): Promise<{
+  proposals: ReclassifyProposal[];
+  snapshot: QueueSnapshot<LlmClassificationVerdict>;
+}> {
   const porId = new Map(options.candidates.map((c) => [c.skillId, c]));
 
   const snapshot = await runBatchQueue<LlmFallbackCandidate, LlmClassificationVerdict>({

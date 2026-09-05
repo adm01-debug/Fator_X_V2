@@ -16,7 +16,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { useAgents } from '@/hooks/use-data';
 import { useStreamingResponse } from '@/hooks/useStreamingResponse';
-import { AgentListPane, type ChatAgentSummary, type ConversationPreview } from '@/components/chat/AgentListPane';
+import {
+  AgentListPane,
+  type ChatAgentSummary,
+  type ConversationPreview,
+} from '@/components/chat/AgentListPane';
 import { ChatHeader } from '@/components/chat/ChatHeader';
 import { ChatBackground } from '@/components/chat/ChatBackground';
 import { MessageBubble, type ChatMessage } from '@/components/chat/MessageBubble';
@@ -52,11 +56,14 @@ function newId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-
 function sameDay(a: number, b: number): boolean {
   const da = new Date(a);
   const db = new Date(b);
-  return da.getFullYear() === db.getFullYear() && da.getMonth() === db.getMonth() && da.getDate() === db.getDate();
+  return (
+    da.getFullYear() === db.getFullYear() &&
+    da.getMonth() === db.getMonth() &&
+    da.getDate() === db.getDate()
+  );
 }
 
 function useOnline(): boolean {
@@ -82,15 +89,19 @@ export default function ChatWithAgentPage() {
   const { data: rawAgents, isLoading } = useAgents();
   const online = useOnline();
 
-  const agents = useMemo<ChatAgentSummary[]>(() => (rawAgents ?? []).map((a) => ({
-    id: a.id,
-    name: a.name ?? 'Agente',
-    avatar_emoji: a.avatar_emoji,
-    status: a.status,
-    mission: a.mission,
-    updated_at: a.updated_at,
-    model: a.model,
-  })), [rawAgents]);
+  const agents = useMemo<ChatAgentSummary[]>(
+    () =>
+      (rawAgents ?? []).map((a) => ({
+        id: a.id,
+        name: a.name ?? 'Agente',
+        avatar_emoji: a.avatar_emoji,
+        status: a.status,
+        mission: a.mission,
+        updated_at: a.updated_at,
+        model: a.model,
+      })),
+    [rawAgents],
+  );
 
   const [activeId, setActiveId] = useState<string | null>(routeAgentId ?? null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -154,7 +165,9 @@ export default function ChatWithAgentPage() {
       lastPersistedIdRef.current = history.length ? history[history.length - 1].id : null;
     })();
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeId]);
 
@@ -176,9 +189,10 @@ export default function ChatWithAgentPage() {
       }
       setPreviews(map);
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [agents]);
-
 
   // Auto scroll (só se usuário já está no fim)
   useEffect(() => {
@@ -195,7 +209,9 @@ export default function ChatWithAgentPage() {
 
   // Detecta se o usuário está próximo do fim para exibir FAB
   useEffect(() => {
-    const el = scrollAreaRef.current?.querySelector('[data-radix-scroll-area-viewport]') as HTMLElement | null;
+    const el = scrollAreaRef.current?.querySelector(
+      '[data-radix-scroll-area-viewport]',
+    ) as HTMLElement | null;
     if (!el) return;
     function onScroll() {
       if (!el) return;
@@ -217,171 +233,222 @@ export default function ChatWithAgentPage() {
 
   // Delay do "digitando…" para evitar flicker
   useEffect(() => {
-    if (!isStreaming) { setShowTyping(false); return; }
-    if (streamText) { setShowTyping(false); return; }
+    if (!isStreaming) {
+      setShowTyping(false);
+      return;
+    }
+    if (streamText) {
+      setShowTyping(false);
+      return;
+    }
     const t = setTimeout(() => setShowTyping(true), TYPING_DELAY_MS);
     return () => clearTimeout(t);
   }, [isStreaming, streamText]);
 
-  const activeAgent = useMemo(() => agents.find((a) => a.id === activeId) ?? null, [agents, activeId]);
+  const activeAgent = useMemo(
+    () => agents.find((a) => a.id === activeId) ?? null,
+    [agents, activeId],
+  );
 
-  const handleSelect = useCallback((id: string) => {
-    setActiveId(id);
-    navigate(`/chat/${id}`);
-  }, [navigate]);
+  const handleSelect = useCallback(
+    (id: string) => {
+      setActiveId(id);
+      navigate(`/chat/${id}`);
+    },
+    [navigate],
+  );
 
-  const runStream = useCallback(async (
-    agent: ChatAgentSummary,
-    activeThreadId: string,
-    nextMsgs: ChatMessage[],
-    userMsg: ChatMessage,
-  ) => {
-    const payload = {
-      model: agent.model ?? 'google/gemini-2.5-flash',
-      messages: [
-        { role: 'system', content: `Você é ${agent.name}. ${agent.mission ?? ''}`.trim() },
-        ...nextMsgs.filter((m) => !m.failed).map((m) => ({ role: m.role, content: m.content })),
-      ],
-      agent_id: agent.id,
-      // O gateway só grava o ciclo de vida em `sessions`/`session_traces` quando
-      // recebe `session_id` (o `user_id` ele extrai do JWT). Sem isto, todo o
-      // tráfego de /chat ficava invisível para a observabilidade. A thread
-      // persistida é o identificador natural e estável desta conversa.
-      session_id: activeThreadId,
-      temperature: 0.7,
-      max_tokens: 1024,
-    };
+  const runStream = useCallback(
+    async (
+      agent: ChatAgentSummary,
+      activeThreadId: string,
+      nextMsgs: ChatMessage[],
+      userMsg: ChatMessage,
+    ) => {
+      const payload = {
+        model: agent.model ?? 'google/gemini-2.5-flash',
+        messages: [
+          { role: 'system', content: `Você é ${agent.name}. ${agent.mission ?? ''}`.trim() },
+          ...nextMsgs.filter((m) => !m.failed).map((m) => ({ role: m.role, content: m.content })),
+        ],
+        agent_id: agent.id,
+        // O gateway só grava o ciclo de vida em `sessions`/`session_traces` quando
+        // recebe `session_id` (o `user_id` ele extrai do JWT). Sem isto, todo o
+        // tráfego de /chat ficava invisível para a observabilidade. A thread
+        // persistida é o identificador natural e estável desta conversa.
+        session_id: activeThreadId,
+        temperature: 0.7,
+        max_tokens: 1024,
+      };
 
-    const startedAt = Date.now();
+      const startedAt = Date.now();
 
-    await stream(buildEdgeUrl('llm-gateway'), payload, {
-      onComplete: (fullText) => {
-        // Descarta se o usuário trocou de agente durante o stream
-        if (activeIdRef.current !== agent.id) return;
-        const timestamp = Date.now();
-        const tempId = newId();
-        setMessages((prev) => [
-          ...prev.map((m) => m.id === userMsg.id ? { ...m, delivered: true, read: true, failed: false } : m),
-          { id: tempId, role: 'assistant', content: fullText, timestamp },
-        ]);
-        setPreviews((p) => ({
-          ...p,
-          [agent.id]: { lastMessage: fullText.slice(0, 80), lastAt: timestamp, unread: 0 },
-        }));
+      await stream(buildEdgeUrl('llm-gateway'), payload, {
+        onComplete: (fullText) => {
+          // Descarta se o usuário trocou de agente durante o stream
+          if (activeIdRef.current !== agent.id) return;
+          const timestamp = Date.now();
+          const tempId = newId();
+          setMessages((prev) => [
+            ...prev.map((m) =>
+              m.id === userMsg.id ? { ...m, delivered: true, read: true, failed: false } : m,
+            ),
+            { id: tempId, role: 'assistant', content: fullText, timestamp },
+          ]);
+          setPreviews((p) => ({
+            ...p,
+            [agent.id]: { lastMessage: fullText.slice(0, 80), lastAt: timestamp, unread: 0 },
+          }));
 
-        // Persiste fora do reducer: efeitos colaterais dentro de setState
-        // rodam duas vezes em StrictMode e duplicariam a linha no banco.
-        void (async () => {
-          const persistedId = await appendMessage({
-            threadId: activeThreadId,
-            parentId: lastPersistedIdRef.current,
-            role: 'assistant',
-            content: fullText,
-            model: agent.model ?? null,
-            latencyMs: timestamp - startedAt,
-          });
-          if (!persistedId) return;
-          lastPersistedIdRef.current = persistedId;
-          setMessages((prev) => prev.map((m) => m.id === tempId ? { ...m, id: persistedId } : m));
-        })();
-      },
-      onError: (err) => {
-        toast.error(`Falha ao responder: ${err}`);
-        setMessages((prev) => prev.map((m) => m.id === userMsg.id ? { ...m, failed: true } : m));
-        void markMessageFailed(userMsg.id, true);
-      },
-    });
-  }, [stream]);
+          // Persiste fora do reducer: efeitos colaterais dentro de setState
+          // rodam duas vezes em StrictMode e duplicariam a linha no banco.
+          void (async () => {
+            const persistedId = await appendMessage({
+              threadId: activeThreadId,
+              parentId: lastPersistedIdRef.current,
+              role: 'assistant',
+              content: fullText,
+              model: agent.model ?? null,
+              latencyMs: timestamp - startedAt,
+            });
+            if (!persistedId) return;
+            lastPersistedIdRef.current = persistedId;
+            setMessages((prev) =>
+              prev.map((m) => (m.id === tempId ? { ...m, id: persistedId } : m)),
+            );
+          })();
+        },
+        onError: (err) => {
+          toast.error(`Falha ao responder: ${err}`);
+          setMessages((prev) =>
+            prev.map((m) => (m.id === userMsg.id ? { ...m, failed: true } : m)),
+          );
+          void markMessageFailed(userMsg.id, true);
+        },
+      });
+    },
+    [stream],
+  );
 
-  const handleSend = useCallback(async (text: string) => {
-    if (!activeAgent) return;
-    if (!online) { toast.error('Sem conexão.'); return; }
-    if (!threadId) { toast.error('Conversa ainda carregando, tente novamente.'); return; }
+  const handleSend = useCallback(
+    async (text: string) => {
+      if (!activeAgent) return;
+      if (!online) {
+        toast.error('Sem conexão.');
+        return;
+      }
+      if (!threadId) {
+        toast.error('Conversa ainda carregando, tente novamente.');
+        return;
+      }
 
-    const timestamp = Date.now();
-    const tempId = newId();
-    const optimistic: ChatMessage = { id: tempId, role: 'user', content: text, timestamp };
-    setMessages((prev) => [...prev, optimistic]);
-    setPreviews((p) => ({
-      ...p,
-      [activeAgent.id]: { lastMessage: text.slice(0, 80), lastAt: timestamp, unread: 0 },
-    }));
+      const timestamp = Date.now();
+      const tempId = newId();
+      const optimistic: ChatMessage = { id: tempId, role: 'user', content: text, timestamp };
+      setMessages((prev) => [...prev, optimistic]);
+      setPreviews((p) => ({
+        ...p,
+        [activeAgent.id]: { lastMessage: text.slice(0, 80), lastAt: timestamp, unread: 0 },
+      }));
 
-    const persistedId = await appendMessage({
-      threadId,
-      parentId: lastPersistedIdRef.current,
-      role: 'user',
-      content: text,
-    });
+      const persistedId = await appendMessage({
+        threadId,
+        parentId: lastPersistedIdRef.current,
+        role: 'user',
+        content: text,
+      });
 
-    // Troca o id otimista pelo id real para que o retry e o encadeamento
-    // de `parent_id` apontem para a linha que existe no banco.
-    const userMsg: ChatMessage = { ...optimistic, id: persistedId ?? tempId };
-    if (persistedId) {
-      lastPersistedIdRef.current = persistedId;
-      setMessages((prev) => prev.map((m) => m.id === tempId ? userMsg : m));
-    }
+      // Troca o id otimista pelo id real para que o retry e o encadeamento
+      // de `parent_id` apontem para a linha que existe no banco.
+      const userMsg: ChatMessage = { ...optimistic, id: persistedId ?? tempId };
+      if (persistedId) {
+        lastPersistedIdRef.current = persistedId;
+        setMessages((prev) => prev.map((m) => (m.id === tempId ? userMsg : m)));
+      }
 
-    await runStream(activeAgent, threadId, [...messages, userMsg], userMsg);
-  }, [activeAgent, messages, online, runStream, threadId]);
+      await runStream(activeAgent, threadId, [...messages, userMsg], userMsg);
+    },
+    [activeAgent, messages, online, runStream, threadId],
+  );
 
-  const handleRetry = useCallback(async (msgId: string) => {
-    if (!activeAgent || isStreaming || !threadId) return;
-    const target = messages.find((m) => m.id === msgId);
-    if (!target || target.role !== 'user') return;
+  const handleRetry = useCallback(
+    async (msgId: string) => {
+      if (!activeAgent || isStreaming || !threadId) return;
+      const target = messages.find((m) => m.id === msgId);
+      if (!target || target.role !== 'user') return;
 
-    // Descarta o que veio depois da mensagem alvo (respostas quebradas),
-    // no estado local e no banco, antes de reexecutar o stream.
-    const idx = messages.findIndex((m) => m.id === msgId);
-    const upTo = messages.slice(0, idx + 1).map((m) => m.id === msgId ? { ...m, failed: false } : m);
-    setMessages(upTo);
-    lastPersistedIdRef.current = msgId;
+      // Descarta o que veio depois da mensagem alvo (respostas quebradas),
+      // no estado local e no banco, antes de reexecutar o stream.
+      const idx = messages.findIndex((m) => m.id === msgId);
+      const upTo = messages
+        .slice(0, idx + 1)
+        .map((m) => (m.id === msgId ? { ...m, failed: false } : m));
+      setMessages(upTo);
+      lastPersistedIdRef.current = msgId;
 
-    await deleteMessagesAfter(threadId, target.timestamp);
-    await markMessageFailed(msgId, false);
-    await runStream(activeAgent, threadId, upTo, { ...target, failed: false });
-  }, [activeAgent, isStreaming, messages, runStream, threadId]);
+      await deleteMessagesAfter(threadId, target.timestamp);
+      await markMessageFailed(msgId, false);
+      await runStream(activeAgent, threadId, upTo, { ...target, failed: false });
+    },
+    [activeAgent, isStreaming, messages, runStream, threadId],
+  );
 
   const handleClear = useCallback(async () => {
     if (!activeAgent || !threadId) return;
     setMessages([]);
     lastPersistedIdRef.current = null;
-    setPreviews((p) => ({ ...p, [activeAgent.id]: { lastMessage: undefined, lastAt: undefined, unread: 0 } }));
+    setPreviews((p) => ({
+      ...p,
+      [activeAgent.id]: { lastMessage: undefined, lastAt: undefined, unread: 0 },
+    }));
     setConfirmClear(false);
     await clearThread(threadId);
     toast.success('Conversa limpa.');
   }, [activeAgent, threadId]);
 
-
-
-  const exportAs = useCallback((fmt: 'txt' | 'md' | 'json') => {
-    if (!activeAgent) return;
-    const stamp = Date.now();
-    const safeName = activeAgent.name.replace(/\s+/g, '-').toLowerCase();
-    let content = '';
-    let mime = 'text/plain;charset=utf-8';
-    if (fmt === 'json') {
-      content = JSON.stringify({ agent: activeAgent.name, exported_at: new Date().toISOString(), messages }, null, 2);
-      mime = 'application/json';
-    } else if (fmt === 'md') {
-      const header = `# Conversa com ${activeAgent.name}\n\n_Exportado em ${new Date().toISOString()}_\n\n---\n\n`;
-      content = header + messages.map((m) =>
-        `**${m.role === 'user' ? 'Você' : activeAgent.name}** — \`${new Date(m.timestamp).toISOString()}\`\n\n${m.content}\n`,
-      ).join('\n---\n\n');
-      mime = 'text/markdown;charset=utf-8';
-    } else {
-      content = messages.map((m) =>
-        `[${new Date(m.timestamp).toISOString()}] ${m.role === 'user' ? 'Você' : activeAgent.name}: ${m.content}`,
-      ).join('\n\n');
-    }
-    const blob = new Blob([content], { type: mime });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `conversa-${safeName}-${stamp}.${fmt}`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }, [activeAgent, messages]);
+  const exportAs = useCallback(
+    (fmt: 'txt' | 'md' | 'json') => {
+      if (!activeAgent) return;
+      const stamp = Date.now();
+      const safeName = activeAgent.name.replace(/\s+/g, '-').toLowerCase();
+      let content = '';
+      let mime = 'text/plain;charset=utf-8';
+      if (fmt === 'json') {
+        content = JSON.stringify(
+          { agent: activeAgent.name, exported_at: new Date().toISOString(), messages },
+          null,
+          2,
+        );
+        mime = 'application/json';
+      } else if (fmt === 'md') {
+        const header = `# Conversa com ${activeAgent.name}\n\n_Exportado em ${new Date().toISOString()}_\n\n---\n\n`;
+        content =
+          header +
+          messages
+            .map(
+              (m) =>
+                `**${m.role === 'user' ? 'Você' : activeAgent.name}** — \`${new Date(m.timestamp).toISOString()}\`\n\n${m.content}\n`,
+            )
+            .join('\n---\n\n');
+        mime = 'text/markdown;charset=utf-8';
+      } else {
+        content = messages
+          .map(
+            (m) =>
+              `[${new Date(m.timestamp).toISOString()}] ${m.role === 'user' ? 'Você' : activeAgent.name}: ${m.content}`,
+          )
+          .join('\n\n');
+      }
+      const blob = new Blob([content], { type: mime });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `conversa-${safeName}-${stamp}.${fmt}`;
+      a.click();
+      URL.revokeObjectURL(url);
+    },
+    [activeAgent, messages],
+  );
 
   // Atalhos globais Cmd/Ctrl+L (limpar), Esc (voltar mobile)
   useEffect(() => {
@@ -402,7 +469,8 @@ export default function ChatWithAgentPage() {
 
   // Agrupamento por dia
   const messagesWithSeparators = useMemo(() => {
-    const out: Array<{ type: 'sep'; ts: number; key: string } | { type: 'msg'; msg: ChatMessage }> = [];
+    const out: Array<{ type: 'sep'; ts: number; key: string } | { type: 'msg'; msg: ChatMessage }> =
+      [];
     let lastTs = 0;
     for (const m of messages) {
       if (!lastTs || !sameDay(lastTs, m.timestamp)) {
@@ -437,7 +505,10 @@ export default function ChatWithAgentPage() {
             <>
               <ChatHeader
                 agent={activeAgent}
-                onBack={() => { setActiveId(null); navigate('/chat'); }}
+                onBack={() => {
+                  setActiveId(null);
+                  navigate('/chat');
+                }}
                 onClear={() => setConfirmClear(true)}
                 onOpenDetails={() => navigate(`/agents/${activeAgent.id}`)}
                 onExport={(fmt) => exportAs(fmt ?? 'txt')}
@@ -449,9 +520,15 @@ export default function ChatWithAgentPage() {
                 <DropdownMenu>
                   <DropdownMenuTrigger />
                   <DropdownMenuContent>
-                    <DropdownMenuItem onSelect={() => exportAs('txt')}>Exportar .txt</DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => exportAs('md')}>Exportar .md</DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => exportAs('json')}>Exportar .json</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => exportAs('txt')}>
+                      Exportar .txt
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => exportAs('md')}>
+                      Exportar .md
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => exportAs('json')}>
+                      Exportar .json
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
@@ -469,28 +546,46 @@ export default function ChatWithAgentPage() {
                   >
                     {messages.length === 0 && !isStreaming ? (
                       <div className="mx-auto my-8 max-w-md rounded-xl bg-muted/50 backdrop-blur-sm border border-border/50 px-4 py-3 text-center text-body-sm text-muted-foreground">
-                        Diga olá para <span className="text-foreground font-medium">{activeAgent.name}</span> ✨
+                        Diga olá para{' '}
+                        <span className="text-foreground font-medium">{activeAgent.name}</span> ✨
                       </div>
                     ) : (
-                      messagesWithSeparators.map((item) => item.type === 'sep'
-                        ? <DaySeparator key={item.key} timestamp={item.ts} />
-                        : <MessageBubble key={item.msg.id} message={item.msg} onRetry={handleRetry} />,
+                      messagesWithSeparators.map((item) =>
+                        item.type === 'sep' ? (
+                          <DaySeparator key={item.key} timestamp={item.ts} />
+                        ) : (
+                          <MessageBubble
+                            key={item.msg.id}
+                            message={item.msg}
+                            onRetry={handleRetry}
+                          />
+                        ),
                       )
                     )}
 
-                    {isStreaming && (
-                      streamText ? (
+                    {isStreaming &&
+                      (streamText ? (
                         <MessageBubble
-                          message={{ id: 'streaming', role: 'assistant', content: streamText, timestamp: Date.now() }}
+                          message={{
+                            id: 'streaming',
+                            role: 'assistant',
+                            content: streamText,
+                            timestamp: Date.now(),
+                          }}
                           streaming
                         />
                       ) : showTyping ? (
-                        <div className="flex justify-start"><TypingIndicator /></div>
-                      ) : null
-                    )}
+                        <div className="flex justify-start">
+                          <TypingIndicator />
+                        </div>
+                      ) : null)}
                   </div>
                 </ScrollArea>
-                <ScrollToBottomButton visible={!atBottom} onClick={scrollToBottom} unread={unreadCount} />
+                <ScrollToBottomButton
+                  visible={!atBottom}
+                  onClick={scrollToBottom}
+                  unread={unreadCount}
+                />
               </div>
 
               <ChatComposer

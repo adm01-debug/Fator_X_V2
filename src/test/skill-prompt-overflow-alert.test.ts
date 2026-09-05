@@ -57,7 +57,12 @@ describe('classifyAgentLoad — varredura de 0 a 120', () => {
 describe('summarizeOverflowFleet', () => {
   it('é vazio-seguro', () => {
     const s = summarizeOverflowFleet([]);
-    expect(s).toMatchObject({ totalAgents: 0, critical: 0, totalDropped: 0, averageUtilization: 0 });
+    expect(s).toMatchObject({
+      totalAgents: 0,
+      critical: 0,
+      totalDropped: 0,
+      averageUtilization: 0,
+    });
   });
 
   it('mantém a soma das categorias igual ao total em 200 frotas aleatórias', () => {

@@ -53,6 +53,7 @@ describe("AppSidebar", () => {
 
   it("renders the brand name", () => {
     renderSidebar();
+    // Brand renders as "Fator" + a highlighted "X" inside a span labelled "Fator X".
     expect(screen.getByLabelText("Fator X")).toBeInTheDocument();
   });
 
@@ -63,7 +64,9 @@ describe("AppSidebar", () => {
 
   it("renders workspace info", async () => {
     renderSidebar();
-    expect(await screen.findByText(/Vazão do Workspace/i)).toBeInTheDocument();
-    expect(await screen.findByRole("progressbar")).toBeInTheDocument();
+    // Footer shows the workspace usage card ("Vazão do Workspace") with a
+    // plan badge and an agent-usage progress bar.
+    expect(screen.getByText("Vazão do Workspace")).toBeInTheDocument();
+    expect(screen.getByRole("progressbar")).toBeInTheDocument();
   });
 });

@@ -1,16 +1,11 @@
-import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
   MessageSquare,
   RefreshCw,
@@ -21,9 +16,9 @@ import {
   Clock,
   ShieldAlert,
   Copy,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface WhatsAppEvent {
   id: string;
@@ -47,44 +42,69 @@ const STATUS_META: Record<
   string,
   { label: string; icon: typeof CheckCircle2; color: string; bg: string }
 > = {
-  routed: { label: "Roteado", icon: CheckCircle2, color: "text-nexus-emerald", bg: "bg-nexus-emerald/10" },
-  pending: { label: "Pendente", icon: Clock, color: "text-nexus-amber", bg: "bg-nexus-amber/10" },
-  no_route: { label: "Sem rota", icon: AlertTriangle, color: "text-nexus-amber", bg: "bg-nexus-amber/10" },
-  failed: { label: "Falhou", icon: XCircle, color: "text-destructive", bg: "bg-destructive/10" },
-  invalid_signature: { label: "Assinatura inválida", icon: ShieldAlert, color: "text-destructive", bg: "bg-destructive/10" },
-  duplicate: { label: "Duplicado", icon: RefreshCw, color: "text-muted-foreground", bg: "bg-muted/40" },
+  routed: {
+    label: 'Roteado',
+    icon: CheckCircle2,
+    color: 'text-nexus-emerald',
+    bg: 'bg-nexus-emerald/10',
+  },
+  pending: { label: 'Pendente', icon: Clock, color: 'text-nexus-amber', bg: 'bg-nexus-amber/10' },
+  no_route: {
+    label: 'Sem rota',
+    icon: AlertTriangle,
+    color: 'text-nexus-amber',
+    bg: 'bg-nexus-amber/10',
+  },
+  failed: { label: 'Falhou', icon: XCircle, color: 'text-destructive', bg: 'bg-destructive/10' },
+  invalid_signature: {
+    label: 'Assinatura inválida',
+    icon: ShieldAlert,
+    color: 'text-destructive',
+    bg: 'bg-destructive/10',
+  },
+  duplicate: {
+    label: 'Duplicado',
+    icon: RefreshCw,
+    color: 'text-muted-foreground',
+    bg: 'bg-muted/40',
+  },
 };
 
 function fmtDate(iso: string) {
   try {
-    return new Date(iso).toLocaleString("pt-BR");
+    return new Date(iso).toLocaleString('pt-BR');
   } catch {
     return iso;
   }
 }
 
 function maskPhone(p: string | null) {
-  if (!p) return "—";
-  const digits = p.replace(/\D/g, "");
+  if (!p) return '—';
+  const digits = p.replace(/\D/g, '');
   if (digits.length < 6) return p;
   return `${digits.slice(0, 4)}••••${digits.slice(-2)}`;
 }
 
 export function WhatsAppInboxPanel() {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [selected, setSelected] = useState<WhatsAppEvent | null>(null);
 
-  const { data: events = [], isLoading, refetch, isRefetching } = useQuery({
-    queryKey: ["whatsapp_webhook_events"],
+  const {
+    data: events = [],
+    isLoading,
+    refetch,
+    isRefetching,
+  } = useQuery({
+    queryKey: ['whatsapp_webhook_events'],
     queryFn: async () => {
       // O `as never` que existia aqui era sintoma, não solução: a tabela não
       // existia no schema, então os tipos gerados não a conheciam e o cast
       // silenciava o erro. Com a tabela criada, a query é tipada de verdade.
       const { data, error } = await supabase
-        .from("whatsapp_webhook_events")
-        .select("*")
-        .order("received_at", { ascending: false })
+        .from('whatsapp_webhook_events')
+        .select('*')
+        .order('received_at', { ascending: false })
         .limit(100);
       if (error) throw error;
       return (data ?? []) as unknown as WhatsAppEvent[];
@@ -94,9 +114,11 @@ export function WhatsAppInboxPanel() {
 
   const stats = useMemo(() => {
     const total = events.length;
-    const routed = events.filter((e) => e.routing_status === "routed").length;
-    const failed = events.filter((e) => ["failed", "invalid_signature"].includes(e.routing_status)).length;
-    const pending = events.filter((e) => e.routing_status === "pending").length;
+    const routed = events.filter((e) => e.routing_status === 'routed').length;
+    const failed = events.filter((e) =>
+      ['failed', 'invalid_signature'].includes(e.routing_status),
+    ).length;
+    const pending = events.filter((e) => e.routing_status === 'pending').length;
     return { total, routed, failed, pending };
   }, [events]);
 
@@ -117,7 +139,7 @@ export function WhatsAppInboxPanel() {
 
   const copyPayload = (evt: WhatsAppEvent) => {
     navigator.clipboard.writeText(JSON.stringify(evt.raw_payload, null, 2));
-    toast.success("Payload copiado");
+    toast.success('Payload copiado');
   };
 
   return (
@@ -142,23 +164,23 @@ export function WhatsAppInboxPanel() {
           className="h-9 w-9 p-0 rounded-xl hover:bg-primary/10"
           aria-label="Recarregar"
         >
-          <RefreshCw className={cn("h-4 w-4", isRefetching && "animate-spin")} />
+          <RefreshCw className={cn('h-4 w-4', isRefetching && 'animate-spin')} />
         </Button>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-4 gap-3 mb-5">
         {[
-          { label: "Total", val: stats.total, color: "text-foreground" },
-          { label: "Roteados", val: stats.routed, color: "text-nexus-emerald" },
-          { label: "Pendentes", val: stats.pending, color: "text-nexus-amber" },
-          { label: "Falhas", val: stats.failed, color: "text-destructive" },
+          { label: 'Total', val: stats.total, color: 'text-foreground' },
+          { label: 'Roteados', val: stats.routed, color: 'text-nexus-emerald' },
+          { label: 'Pendentes', val: stats.pending, color: 'text-nexus-amber' },
+          { label: 'Falhas', val: stats.failed, color: 'text-destructive' },
         ].map((s) => (
           <div
             key={s.label}
             className="rounded-2xl border border-border/30 bg-secondary/30 p-3 text-center"
           >
-            <div className={cn("text-title-sm font-black font-mono", s.color)}>{s.val}</div>
+            <div className={cn('text-title-sm font-black font-mono', s.color)}>{s.val}</div>
             <div className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">
               {s.label}
             </div>
@@ -178,15 +200,15 @@ export function WhatsAppInboxPanel() {
           />
         </div>
         <div className="flex flex-wrap gap-1.5">
-          {[null, "routed", "pending", "failed", "invalid_signature", "no_route"].map((s) => (
+          {[null, 'routed', 'pending', 'failed', 'invalid_signature', 'no_route'].map((s) => (
             <Button
-              key={s ?? "all"}
+              key={s ?? 'all'}
               size="sm"
-              variant={statusFilter === s ? "default" : "outline"}
+              variant={statusFilter === s ? 'default' : 'outline'}
               onClick={() => setStatusFilter(s)}
               className="h-9 px-3 rounded-xl text-meta font-bold uppercase tracking-widest"
             >
-              {s ? STATUS_META[s]?.label ?? s : "Todos"}
+              {s ? (STATUS_META[s]?.label ?? s) : 'Todos'}
             </Button>
           ))}
         </div>
@@ -217,15 +239,23 @@ export function WhatsAppInboxPanel() {
                   onClick={() => setSelected(evt)}
                   className="w-full text-left flex items-center gap-3 p-3.5 rounded-2xl bg-secondary/20 border border-border/30 hover:border-primary/30 hover:bg-secondary/40 transition-all group"
                 >
-                  <div className={cn("h-9 w-9 rounded-xl flex items-center justify-center shrink-0", meta.bg)}>
-                    <Icon className={cn("h-4 w-4", meta.color)} />
+                  <div
+                    className={cn(
+                      'h-9 w-9 rounded-xl flex items-center justify-center shrink-0',
+                      meta.bg,
+                    )}
+                  >
+                    <Icon className={cn('h-4 w-4', meta.color)} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
                       <span className="text-body-sm font-bold text-foreground truncate">
                         {maskPhone(evt.from_phone)}
                       </span>
-                      <Badge variant="outline" className="h-5 px-2 rounded-lg text-[9px] font-black uppercase tracking-widest border-border/40">
+                      <Badge
+                        variant="outline"
+                        className="h-5 px-2 rounded-lg text-[9px] font-black uppercase tracking-widest border-border/40"
+                      >
                         {evt.provider}
                       </Badge>
                       {!evt.signature_valid && (
@@ -239,7 +269,9 @@ export function WhatsAppInboxPanel() {
                     </p>
                   </div>
                   <div className="text-right shrink-0">
-                    <div className={cn("text-meta font-black uppercase tracking-widest", meta.color)}>
+                    <div
+                      className={cn('text-meta font-black uppercase tracking-widest', meta.color)}
+                    >
                       {meta.label}
                     </div>
                     <div className="text-[9px] text-muted-foreground font-mono mt-0.5">
@@ -269,12 +301,21 @@ export function WhatsAppInboxPanel() {
                 <Field label="Para" value={maskPhone(selected.to_phone)} />
                 <Field label="Tipo" value={selected.event_type} />
                 <Field label="Provedor" value={selected.provider} />
-                <Field label="Status" value={STATUS_META[selected.routing_status]?.label ?? selected.routing_status} />
-                <Field label="Assinatura" value={selected.signature_valid ? "✓ Válida" : "✗ Inválida"} />
-                <Field label="Message ID" value={selected.message_id ?? "—"} mono />
-                <Field label="Trace ID" value={selected.trace_id ?? "—"} mono />
+                <Field
+                  label="Status"
+                  value={STATUS_META[selected.routing_status]?.label ?? selected.routing_status}
+                />
+                <Field
+                  label="Assinatura"
+                  value={selected.signature_valid ? '✓ Válida' : '✗ Inválida'}
+                />
+                <Field label="Message ID" value={selected.message_id ?? '—'} mono />
+                <Field label="Trace ID" value={selected.trace_id ?? '—'} mono />
                 <Field label="Recebido" value={fmtDate(selected.received_at)} />
-                <Field label="Processado" value={selected.processed_at ? fmtDate(selected.processed_at) : "—"} />
+                <Field
+                  label="Processado"
+                  value={selected.processed_at ? fmtDate(selected.processed_at) : '—'}
+                />
               </div>
 
               {selected.body_preview && (
@@ -304,7 +345,12 @@ export function WhatsAppInboxPanel() {
                   <p className="text-meta font-black uppercase tracking-widest text-muted-foreground">
                     Payload bruto
                   </p>
-                  <Button size="sm" variant="ghost" onClick={() => copyPayload(selected)} className="h-8 rounded-lg gap-1.5">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => copyPayload(selected)}
+                    className="h-8 rounded-lg gap-1.5"
+                  >
                     <Copy className="h-3.5 w-3.5" />
                     <span className="text-meta font-bold">Copiar</span>
                   </Button>
@@ -327,7 +373,7 @@ function Field({ label, value, mono }: { label: string; value: string; mono?: bo
       <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground mb-1">
         {label}
       </p>
-      <p className={cn("text-body-sm text-foreground break-all", mono && "font-mono text-meta")}>
+      <p className={cn('text-body-sm text-foreground break-all', mono && 'font-mono text-meta')}>
         {value}
       </p>
     </div>

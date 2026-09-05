@@ -17,20 +17,12 @@
  *  - Fail-closed-on-tracing: any tracer error must NOT throw to the handler
  *  - Honours `traceparent` per W3C spec: 00-{32-hex traceId}-{16-hex spanId}-{2-hex flags}
  */
-import { createClient, type SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
+import { createClient, type SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
 
 export type SpanKind =
-  | "server"
-  | "client"
-  | "llm"
-  | "tool"
-  | "auth"
-  | "guardrail"
-  | "db"
-  | "http"
-  | "custom";
+  'server' | 'client' | 'llm' | 'tool' | 'auth' | 'guardrail' | 'db' | 'http' | 'custom';
 
-export type SpanStatus = "unset" | "ok" | "error";
+export type SpanStatus = 'unset' | 'ok' | 'error';
 
 interface SpanRecord {
   span_id: string;
@@ -59,9 +51,9 @@ interface TraceRecord {
   workflow_id?: string;
   start_time: number;
   end_time: number | null;
-  status: "running" | "ok" | "error";
+  status: 'running' | 'ok' | 'error';
   spans: SpanRecord[];
-  source: "edge";
+  source: 'edge';
 }
 
 // ───────────────────────────────────────────────────────────────
@@ -71,10 +63,11 @@ interface TraceRecord {
 function parseTraceparent(header: string | null): { traceId: string; parentSpanId: string } | null {
   if (!header) return null;
   // Format: 00-{32 hex traceId}-{16 hex spanId}-{2 hex flags}
-  const parts = header.trim().split("-");
+  const parts = header.trim().split('-');
   if (parts.length !== 4) return null;
   const [version, traceId, spanId, flags] = parts;
-  if (version !== "00" || traceId.length !== 32 || spanId.length !== 16 || flags.length !== 2) return null;
+  if (version !== '00' || traceId.length !== 32 || spanId.length !== 16 || flags.length !== 2)
+    return null;
   if (!/^[0-9a-f]+$/i.test(traceId) || !/^[0-9a-f]+$/i.test(spanId)) return null;
   return { traceId: traceId.toLowerCase(), parentSpanId: spanId.toLowerCase() };
 }
@@ -82,7 +75,7 @@ function parseTraceparent(header: string | null): { traceId: string; parentSpanI
 function newId(bytes: 16 | 8): string {
   const buf = new Uint8Array(bytes);
   crypto.getRandomValues(buf);
-  return Array.from(buf, (b) => b.toString(16).padStart(2, "0")).join("");
+  return Array.from(buf, (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
 // ───────────────────────────────────────────────────────────────
@@ -103,7 +96,7 @@ export class EdgeSpan {
       start_time: Date.now(),
       end_time: null,
       duration_ms: null,
-      status: "unset",
+      status: 'unset',
       attributes: {},
       events: [],
     };
@@ -119,8 +112,14 @@ export class EdgeSpan {
     return this;
   }
 
-  setInput(input: unknown): this { this.rec.input = input; return this; }
-  setOutput(output: unknown): this { this.rec.output = output; return this; }
+  setInput(input: unknown): this {
+    this.rec.input = input;
+    return this;
+  }
+  setOutput(output: unknown): this {
+    this.rec.output = output;
+    return this;
+  }
   addEvent(name: string, attributes?: Record<string, unknown>): this {
     this.rec.events.push({ name, timestamp: Date.now(), attributes });
     return this;
@@ -131,17 +130,21 @@ export class EdgeSpan {
     return this;
   }
 
-  end(status: SpanStatus = "ok"): SpanRecord {
+  end(status: SpanStatus = 'ok'): SpanRecord {
     if (this.ended) return this.rec;
     this.ended = true;
     this.rec.end_time = Date.now();
     this.rec.duration_ms = this.rec.end_time - this.rec.start_time;
-    if (this.rec.status === "unset") this.rec.status = status;
+    if (this.rec.status === 'unset') this.rec.status = status;
     return this.rec;
   }
 
-  get id(): string { return this.rec.span_id; }
-  snapshot(): SpanRecord { return { ...this.rec }; }
+  get id(): string {
+    return this.rec.span_id;
+  }
+  snapshot(): SpanRecord {
+    return { ...this.rec };
+  }
 }
 
 // ───────────────────────────────────────────────────────────────
@@ -167,7 +170,7 @@ export class EdgeTraceContext {
   readonly startTime: number;
   private spans: EdgeSpan[] = [];
   private spanStack: string[] = [];
-  private status: "running" | "ok" | "error" = "running";
+  private status: 'running' | 'ok' | 'error' = 'running';
   private endTime: number | null = null;
 
   constructor(opts: EdgeTraceOptions, parsed: { traceId: string; parentSpanId: string } | null) {
@@ -181,7 +184,7 @@ export class EdgeTraceContext {
     this.startTime = Date.now();
   }
 
-  startSpan(name: string, kind: SpanKind = "custom"): EdgeSpan {
+  startSpan(name: string, kind: SpanKind = 'custom'): EdgeSpan {
     const parentSpanId = this.spanStack[this.spanStack.length - 1] ?? this.parentSpanIdFromHeader;
     const span = new EdgeSpan(name, kind, this.traceId, parentSpanId);
     this.spans.push(span);
@@ -189,27 +192,31 @@ export class EdgeTraceContext {
     return span;
   }
 
-  endSpan(span: EdgeSpan, status: SpanStatus = "ok"): void {
+  endSpan(span: EdgeSpan, status: SpanStatus = 'ok'): void {
     span.end(status);
     const idx = this.spanStack.lastIndexOf(span.id);
     if (idx >= 0) this.spanStack.splice(idx, 1);
   }
 
-  async withSpan<T>(name: string, kind: SpanKind, fn: (span: EdgeSpan) => Promise<T> | T): Promise<T> {
+  async withSpan<T>(
+    name: string,
+    kind: SpanKind,
+    fn: (span: EdgeSpan) => Promise<T> | T,
+  ): Promise<T> {
     const span = this.startSpan(name, kind);
     try {
       const result = await fn(span);
-      this.endSpan(span, "ok");
+      this.endSpan(span, 'ok');
       return result;
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      span.setStatus("error", msg);
-      this.endSpan(span, "error");
+      span.setStatus('error', msg);
+      this.endSpan(span, 'error');
       throw err;
     }
   }
 
-  end(status: "ok" | "error" = "ok"): TraceRecord | null {
+  end(status: 'ok' | 'error' = 'ok'): TraceRecord | null {
     if (this.endTime != null) return null; // idempotent — already ended
     this.status = status;
     this.endTime = Date.now();
@@ -229,7 +236,7 @@ export class EdgeTraceContext {
       end_time: this.endTime,
       status: this.status,
       spans: this.spans.map((s) => s.snapshot()),
-      source: "edge",
+      source: 'edge',
     };
     void exportTrace(record);
     return record;
@@ -247,7 +254,7 @@ export class EdgeTraceContext {
 // ───────────────────────────────────────────────────────────────
 
 export function startEdgeTrace(req: Request, opts: EdgeTraceOptions): EdgeTraceContext {
-  const parsed = parseTraceparent(req.headers.get("traceparent"));
+  const parsed = parseTraceparent(req.headers.get('traceparent'));
   return new EdgeTraceContext(opts, parsed);
 }
 
@@ -258,8 +265,8 @@ export function startEdgeTrace(req: Request, opts: EdgeTraceOptions): EdgeTraceC
 let exporterClient: SupabaseClient | null = null;
 function getExporter(): SupabaseClient | null {
   if (exporterClient) return exporterClient;
-  const url = Deno.env.get("SUPABASE_URL");
-  const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  const url = Deno.env.get('SUPABASE_URL');
+  const key = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
   if (!url || !key) return null;
   try {
     exporterClient = createClient(url, key, { auth: { persistSession: false } });
@@ -284,7 +291,7 @@ async function exportTrace(record: TraceRecord): Promise<void> {
   const supa = getExporter();
   if (!supa) return;
   try {
-    const { error: traceErr } = await supa.from("traces").insert({
+    const { error: traceErr } = await supa.from('traces').insert({
       trace_id: record.trace_id,
       root_name: record.root_name,
       user_id: record.user_id ?? null,
@@ -297,7 +304,7 @@ async function exportTrace(record: TraceRecord): Promise<void> {
       source: record.source,
       span_count: record.spans.length,
     });
-    if (traceErr) reportExportFailure("traces", traceErr);
+    if (traceErr) reportExportFailure('traces', traceErr);
 
     if (record.spans.length > 0) {
       const rows = record.spans.map((s) => ({
@@ -314,10 +321,10 @@ async function exportTrace(record: TraceRecord): Promise<void> {
         attributes: s.attributes,
         events: s.events,
       }));
-      const { error: spanErr } = await supa.from("spans").insert(rows);
-      if (spanErr) reportExportFailure("spans", spanErr);
+      const { error: spanErr } = await supa.from('spans').insert(rows);
+      if (spanErr) reportExportFailure('spans', spanErr);
     }
   } catch (err) {
-    reportExportFailure("trace", err);
+    reportExportFailure('trace', err);
   }
 }

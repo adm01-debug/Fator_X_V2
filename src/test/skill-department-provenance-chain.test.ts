@@ -205,7 +205,11 @@ describe('promoção candidato → registro', () => {
   it('o modo de falha original é impossível: promoção nunca gera unknown com rótulo', () => {
     for (const source of DEPARTMENT_SOURCES) {
       for (const conf of CONFIANCAS) {
-        const out = promote({ department: 'ti', department_source: source, department_confidence: conf });
+        const out = promote({
+          department: 'ti',
+          department_source: source,
+          department_confidence: conf,
+        });
         expect(out.department_source).not.toBe('unknown');
       }
     }

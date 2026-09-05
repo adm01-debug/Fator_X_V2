@@ -12,8 +12,8 @@
  *   catch (e) { cb.recordFailure(e); throw e; }
  *   finally { drainBreakerTransition(cb, { function: 'llm-gateway' }); }
  */
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import type { BreakerSnapshot } from "./circuitBreaker.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
+import type { BreakerSnapshot } from './circuitBreaker.ts';
 
 interface Breaker {
   snapshot(): BreakerSnapshot;
@@ -23,8 +23,8 @@ interface Breaker {
 let _client: ReturnType<typeof createClient> | null = null;
 function admin() {
   if (_client) return _client;
-  const url = Deno.env.get("SUPABASE_URL");
-  const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  const url = Deno.env.get('SUPABASE_URL');
+  const key = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
   if (!url || !key) return null;
   _client = createClient(url, key);
   return _client;
@@ -37,27 +37,33 @@ export function drainBreakerTransition(
   const transitioned = cb._drainTransition();
   if (!transitioned) return;
   const snap = cb.snapshot();
-  const level = transitioned === "open" ? "error" : transitioned === "half-open" ? "warn" : "info";
+  const level = transitioned === 'open' ? 'error' : transitioned === 'half-open' ? 'warn' : 'info';
   const client = admin();
   if (!client) return;
   // fire-and-forget
-  void client.from("openclaw_events").insert({
-    workspace_id: ctx.workspaceId ?? null,
-    kind: `breaker.${transitioned}`,
-    level,
-    source: "other",
-    payload: {
-      breaker_key: snap.key,
-      state: snap.state,
-      failures: snap.failures,
-      last_error: snap.lastError,
-      function: ctx.function ?? null,
-      opened_at: snap.openedAt,
-      ts: new Date().toISOString(),
-    },
-    // Fire-and-forget por design (o breaker não pode bloquear no log), mas a
-    // falha vai para o console: se a gravação do evento quebrar, o painel de
-    // circuit breakers ficaria vazio sugerindo "tudo saudável" — o oposto da
-    // verdade, justamente no momento em que há incidente.
-  }).then(() => {}, (e) => console.warn(`[breaker] falha ao registrar evento ${snap.key}: ${e?.message ?? e}`));
+  void client
+    .from('openclaw_events')
+    .insert({
+      workspace_id: ctx.workspaceId ?? null,
+      kind: `breaker.${transitioned}`,
+      level,
+      source: 'other',
+      payload: {
+        breaker_key: snap.key,
+        state: snap.state,
+        failures: snap.failures,
+        last_error: snap.lastError,
+        function: ctx.function ?? null,
+        opened_at: snap.openedAt,
+        ts: new Date().toISOString(),
+      },
+      // Fire-and-forget por design (o breaker não pode bloquear no log), mas a
+      // falha vai para o console: se a gravação do evento quebrar, o painel de
+      // circuit breakers ficaria vazio sugerindo "tudo saudável" — o oposto da
+      // verdade, justamente no momento em que há incidente.
+    })
+    .then(
+      () => {},
+      (e) => console.warn(`[breaker] falha ao registrar evento ${snap.key}: ${e?.message ?? e}`),
+    );
 }

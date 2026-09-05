@@ -32,7 +32,9 @@ function row(id: string, scale: unknown, to = 0.5) {
   };
 }
 
-function calib(over: Partial<ThresholdCalibration> & { scale: CalibrationScale }): ThresholdCalibration {
+function calib(
+  over: Partial<ThresholdCalibration> & { scale: CalibrationScale },
+): ThresholdCalibration {
   return {
     auditId: Math.random().toString(36).slice(2),
     from: 0.4,
@@ -179,10 +181,7 @@ describe('instabilidade isolada por régua', () => {
 describe('CSV com coluna de régua', () => {
   it('inclui o cabeçalho e o rótulo legível', () => {
     expect(CALIBRATION_CSV_HEADERS).toContain('regua');
-    const csv = buildCalibrationCsv([
-      calib({ scale: 'plataforma' }),
-      calib({ scale: 'dominio' }),
-    ]);
+    const csv = buildCalibrationCsv([calib({ scale: 'plataforma' }), calib({ scale: 'dominio' })]);
     const linhas = csv.replace('\uFEFF', '').split('\r\n');
     expect(linhas[0].split(';')[1]).toBe('regua');
     expect(linhas[1].split(';')[1]).toBe(CALIBRATION_SCALE_LABEL.plataforma);

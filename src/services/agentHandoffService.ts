@@ -80,10 +80,7 @@ export async function initiateHandoff(request: HandoffRequest): Promise<HandoffR
   };
 
   // Store in workflow_handoffs table
-  const { data, error } = await fromTable('workflow_handoffs')
-    .insert(record)
-    .select()
-    .single();
+  const { data, error } = await fromTable('workflow_handoffs').insert(record).select().single();
 
   if (error) throw new Error(`Failed to initiate handoff: ${error.message}`);
   return data as HandoffRecord;
@@ -128,10 +125,7 @@ export async function completeHandoff(
 /**
  * Reject a handoff (target agent cannot handle it)
  */
-export async function rejectHandoff(
-  handoffId: string,
-  reason: string
-): Promise<HandoffRecord> {
+export async function rejectHandoff(handoffId: string, reason: string): Promise<HandoffRecord> {
   const { data, error } = await fromTable('workflow_handoffs')
     .update({
       status: 'rejected' as const,
@@ -148,10 +142,7 @@ export async function rejectHandoff(
 /**
  * Fail a handoff due to error
  */
-export async function failHandoff(
-  handoffId: string,
-  errorMsg: string
-): Promise<HandoffRecord> {
+export async function failHandoff(handoffId: string, errorMsg: string): Promise<HandoffRecord> {
   const { data, error } = await fromTable('workflow_handoffs')
     .update({
       status: 'failed' as const,

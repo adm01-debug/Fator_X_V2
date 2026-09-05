@@ -54,14 +54,16 @@ describe('memoryService — envelope memory-tools', () => {
         params: { content: 'lembrar disto', memory_type: 'procedural', source: 'Wizard' },
       },
     });
-
   });
 
   it('addMemory aplica defaults semantic/Manual quando omitidos', async () => {
     local.setFunctionResult('memory-tools', { data: { ok: true } });
     await addMemory('conteudo');
 
-    const [, opts] = local.calls.invoke.mock.calls[0] as [string, { body: { params: Record<string, unknown> } }];
+    const [, opts] = local.calls.invoke.mock.calls[0] as [
+      string,
+      { body: { params: Record<string, unknown> } },
+    ];
     expect(opts.body.params).toEqual({
       content: 'conteudo',
       memory_type: 'semantic',
@@ -76,12 +78,19 @@ describe('memoryService — envelope memory-tools', () => {
 
   it('searchMemory repassa memórias e o limite solicitado', async () => {
     local.setFunctionResult('memory-tools', {
-      data: { memories: [{ id: 'm1', content: 'c', source: 's', created_at: 'now', relevance_score: 0.4 }] },
+      data: {
+        memories: [
+          { id: 'm1', content: 'c', source: 's', created_at: 'now', relevance_score: 0.4 },
+        ],
+      },
     });
     const out = await searchMemory('q', 'episodic', 7);
 
     expect(out).toHaveLength(1);
-    const [, opts] = local.calls.invoke.mock.calls[0] as [string, { body: { params: Record<string, unknown> } }];
+    const [, opts] = local.calls.invoke.mock.calls[0] as [
+      string,
+      { body: { params: Record<string, unknown> } },
+    ];
     expect(opts.body.params).toEqual({ query: 'q', memory_type: 'episodic', limit: 7 });
   });
 
@@ -116,7 +125,6 @@ describe('memoryService — fronteira entre client local e banco externo', () =>
     expect(external.calls.range).toHaveBeenCalledWith(20, 29);
     // A leitura NÃO pode vazar para o client local.
     expect(local.calls.from?.mock.calls ?? []).toHaveLength(0);
-
   });
 
   it('listMemories devolve total 0 quando o count vem nulo', async () => {
@@ -135,7 +143,10 @@ describe('memoryService — memory-manager (interface de operador)', () => {
     local.setFunctionResult('memory-manager', { data: { ok: true } });
     await invokeMemoryManager({ action: 'add', content: 'x' });
 
-    const [name, opts] = local.calls.invoke.mock.calls[0] as [string, { body: Record<string, unknown> }];
+    const [name, opts] = local.calls.invoke.mock.calls[0] as [
+      string,
+      { body: Record<string, unknown> },
+    ];
     expect(name).toBe('memory-manager');
     expect(opts.body).toMatchObject({
       action: 'add',
@@ -150,7 +161,10 @@ describe('memoryService — memory-manager (interface de operador)', () => {
     local.setFunctionResult('memory-manager', { data: { ok: true } });
     await promoteMemoryToFact('m-9');
 
-    const [, opts] = local.calls.invoke.mock.calls[0] as [string, { body: Record<string, unknown> }];
+    const [, opts] = local.calls.invoke.mock.calls[0] as [
+      string,
+      { body: Record<string, unknown> },
+    ];
     expect(opts.body).toMatchObject({
       action: 'promote_to_fact',
       memory_id: 'm-9',

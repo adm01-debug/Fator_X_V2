@@ -1,5 +1,18 @@
 import { useMemo, useState } from 'react';
-import { CheckCircle2, Circle, Plus, Wand2, AlertTriangle, Crosshair, Lock, Sparkles, FileSearch, ChevronDown, FileText, Unlock } from 'lucide-react';
+import {
+  CheckCircle2,
+  Circle,
+  Plus,
+  Wand2,
+  AlertTriangle,
+  Crosshair,
+  Lock,
+  Sparkles,
+  FileSearch,
+  ChevronDown,
+  FileText,
+  Unlock,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -65,7 +78,7 @@ interface Props {
  * template per section (which is guaranteed to clear the depth check).
  * New code should use `SECTION_TEMPLATES` from './sectionTemplates' instead.
  */
- 
+
 export const SECTION_SNIPPETS: Record<PromptSectionKey, string> = {
   persona: getDefaultTemplate('persona').body,
   scope: getDefaultTemplate('scope').body,
@@ -100,7 +113,10 @@ export function PromptSectionChecklist({
   // Per-section effective snippet: prefer the active variant's content, fall
   // back to the generic skeleton. Recomputed in real time.
   const effectiveSnippets = useMemo(() => {
-    const out = {} as Record<PromptSectionKey, { snippet: string; fromVariant: boolean; words: number }>;
+    const out = {} as Record<
+      PromptSectionKey,
+      { snippet: string; fromVariant: boolean; words: number }
+    >;
     for (const sec of REQUIRED_PROMPT_SECTIONS) {
       const fromVariant = activeVariantPrompt
         ? extractSectionFromPrompt(activeVariantPrompt, sec.key)
@@ -136,7 +152,9 @@ export function PromptSectionChecklist({
       aria-live="polite"
       className={cn(
         'nexus-card space-y-2.5 transition-colors',
-        allOk ? 'border-nexus-emerald/30 bg-nexus-emerald/5' : 'border-nexus-amber/40 bg-nexus-amber/5',
+        allOk
+          ? 'border-nexus-emerald/30 bg-nexus-emerald/5'
+          : 'border-nexus-amber/40 bg-nexus-amber/5',
       )}
     >
       <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -148,8 +166,8 @@ export function PromptSectionChecklist({
             {hasVariant
               ? `Cobertura mínima — fonte: variação "${activeVariantLabel}"`
               : customLocked
-              ? 'Cobertura mínima — modo customizado (snippets genéricos)'
-              : 'Seções mínimas + conteúdo suficiente em cada uma'}
+                ? 'Cobertura mínima — modo customizado (snippets genéricos)'
+                : 'Seções mínimas + conteúdo suficiente em cada uma'}
           </p>
           {/* Auto-unlock rule — small, opt-in, persisted in localStorage by the wizard. */}
           {onToggleAutoUnlock && (
@@ -214,8 +232,8 @@ export function PromptSectionChecklist({
                 </SheetTitle>
                 <SheetDescription>
                   Conteúdo extraído do prompt atual, agrupado por seção.{' '}
-                  <span className="font-mono tabular-nums">{totalWords}</span>{' '}
-                  palavra{totalWords === 1 ? '' : 's'} no total · {ok}/{total} seções completas.
+                  <span className="font-mono tabular-nums">{totalWords}</span> palavra
+                  {totalWords === 1 ? '' : 's'} no total · {ok}/{total} seções completas.
                 </SheetDescription>
               </SheetHeader>
               <div className="mt-6 space-y-4">
@@ -226,8 +244,8 @@ export function PromptSectionChecklist({
                   const tone = isOk
                     ? 'border-nexus-emerald/30 bg-nexus-emerald/5'
                     : isThin
-                    ? 'border-nexus-amber/40 bg-nexus-amber/5'
-                    : 'border-border/50 bg-secondary/30';
+                      ? 'border-nexus-amber/40 bg-nexus-amber/5'
+                      : 'border-border/50 bg-secondary/30';
                   return (
                     <section
                       key={r.key}
@@ -236,11 +254,20 @@ export function PromptSectionChecklist({
                       <header className="flex items-center justify-between gap-2 flex-wrap">
                         <div className="flex items-center gap-2 min-w-0">
                           {isOk ? (
-                            <CheckCircle2 className="h-4 w-4 text-nexus-emerald shrink-0" aria-hidden />
+                            <CheckCircle2
+                              className="h-4 w-4 text-nexus-emerald shrink-0"
+                              aria-hidden
+                            />
                           ) : isThin ? (
-                            <AlertTriangle className="h-4 w-4 text-nexus-amber shrink-0" aria-hidden />
+                            <AlertTriangle
+                              className="h-4 w-4 text-nexus-amber shrink-0"
+                              aria-hidden
+                            />
                           ) : (
-                            <Circle className="h-4 w-4 text-muted-foreground shrink-0" aria-hidden />
+                            <Circle
+                              className="h-4 w-4 text-muted-foreground shrink-0"
+                              aria-hidden
+                            />
                           )}
                           <h3 className="text-body-sm font-medium text-foreground truncate">
                             ## {r.label}
@@ -253,10 +280,16 @@ export function PromptSectionChecklist({
                               isOk
                                 ? 'border-nexus-emerald/40 bg-nexus-emerald/10 text-nexus-emerald'
                                 : isThin
-                                ? 'border-nexus-amber/40 bg-nexus-amber/10 text-nexus-amber'
-                                : 'border-border bg-background text-muted-foreground',
+                                  ? 'border-nexus-amber/40 bg-nexus-amber/10 text-nexus-amber'
+                                  : 'border-border bg-background text-muted-foreground',
                             )}
-                            title={isOk ? 'Cobertura suficiente' : isThin ? (r.thinReason ?? undefined) : 'Seção ausente'}
+                            title={
+                              isOk
+                                ? 'Cobertura suficiente'
+                                : isThin
+                                  ? (r.thinReason ?? undefined)
+                                  : 'Seção ausente'
+                            }
                           >
                             {body.words} palavra{body.words === 1 ? '' : 's'}
                           </span>
@@ -265,7 +298,10 @@ export function PromptSectionChecklist({
                               type="button"
                               size="sm"
                               variant="ghost"
-                              onClick={() => { onJumpToSection(r.key); setDrawerOpen(false); }}
+                              onClick={() => {
+                                onJumpToSection(r.key);
+                                setDrawerOpen(false);
+                              }}
                               className="h-6 gap-1 text-meta text-primary hover:bg-primary/10 px-2"
                               aria-label={`Ir para a seção ${r.label} no editor`}
                             >
@@ -345,10 +381,7 @@ export function PromptSectionChecklist({
           const isThin = r.present && !!r.thinReason;
           const eff = effectiveSnippets[r.key];
           return (
-            <li
-              key={r.key}
-              className="flex items-center justify-between gap-2 text-meta"
-            >
+            <li key={r.key} className="flex items-center justify-between gap-2 text-meta">
               <div className="flex items-center gap-2 min-w-0">
                 {isOk ? (
                   <CheckCircle2 className="h-4 w-4 text-nexus-emerald shrink-0" aria-hidden />
@@ -360,7 +393,11 @@ export function PromptSectionChecklist({
                 <span
                   className={cn(
                     'font-medium truncate',
-                    isOk ? 'text-foreground' : isThin ? 'text-nexus-amber' : 'text-muted-foreground',
+                    isOk
+                      ? 'text-foreground'
+                      : isThin
+                        ? 'text-nexus-amber'
+                        : 'text-muted-foreground',
                   )}
                 >
                   {r.label}
@@ -374,10 +411,10 @@ export function PromptSectionChecklist({
                   {isOk
                     ? `detectada · ${r.wordCount} palavras`
                     : isThin
-                    ? `${r.thinReason}`
-                    : hasVariant && eff.fromVariant
-                    ? `${activeVariantLabel} preenche com ~${eff.words} palavras`
-                    : `adicione "## ${r.label}"`}
+                      ? `${r.thinReason}`
+                      : hasVariant && eff.fromVariant
+                        ? `${activeVariantLabel} preenche com ~${eff.words} palavras`
+                        : `adicione "## ${r.label}"`}
                 </span>
               </div>
               <div className="flex items-center gap-1 shrink-0">
@@ -440,12 +477,18 @@ export function PromptSectionChecklist({
         <div className="text-meta text-nexus-amber pt-1 border-t border-nexus-amber/20 space-y-0.5">
           {missingCount > 0 && (
             <p>
-              ⚠ {missingCount === 1 ? 'Falta 1 seção obrigatória.' : `Faltam ${missingCount} seções obrigatórias.`}
+              ⚠{' '}
+              {missingCount === 1
+                ? 'Falta 1 seção obrigatória.'
+                : `Faltam ${missingCount} seções obrigatórias.`}
             </p>
           )}
           {thinCount > 0 && (
             <p>
-              ⚠ {thinCount === 1 ? '1 seção com conteúdo insuficiente' : `${thinCount} seções com conteúdo insuficiente`}{' '}
+              ⚠{' '}
+              {thinCount === 1
+                ? '1 seção com conteúdo insuficiente'
+                : `${thinCount} seções com conteúdo insuficiente`}{' '}
               (mín. 8 palavras cada).
             </p>
           )}

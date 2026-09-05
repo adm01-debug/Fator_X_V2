@@ -1,10 +1,25 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex, jsx-a11y/aria-activedescendant-has-tabindex -- composite keyboard-navigable timeline widget; tracked for dedicated a11y pass */
 import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  ChevronDown, ChevronRight, Info, AlertTriangle, XCircle,
-  CheckCircle2, Clock, DollarSign, Hash, Zap,
-  ChevronsLeft, ChevronLeft, ChevronsRight,
-  ChevronsDownUp, ChevronsUpDown, Keyboard, Search, X, BookmarkCheck,
+  ChevronDown,
+  ChevronRight,
+  Info,
+  AlertTriangle,
+  XCircle,
+  CheckCircle2,
+  Clock,
+  DollarSign,
+  Hash,
+  Zap,
+  ChevronsLeft,
+  ChevronLeft,
+  ChevronsRight,
+  ChevronsDownUp,
+  ChevronsUpDown,
+  Keyboard,
+  Search,
+  X,
+  BookmarkCheck,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -15,7 +30,7 @@ import type { AgentTraceRow, ExecutionGroup, TraceLevel } from '@/services/agent
 import { listBookmarks, type TraceBookmark } from '@/lib/traceBookmarks';
 import { BookmarkButton } from './BookmarkButton';
 import type { DbRow } from '@/types/dbRow';
-import { handleKeyboardClick } from "@/lib/a11y";
+import { handleKeyboardClick } from '@/lib/a11y';
 
 const LEVEL_ICON: Record<TraceLevel, JSX.Element> = {
   info: <Info className="h-3 w-3 text-nexus-emerald" aria-hidden />,
@@ -41,7 +56,11 @@ function traceHaystack(t: AgentTraceRow): string {
   const dump = (v: DbRow) => {
     if (v == null) return '';
     if (typeof v === 'string') return v;
-    try { return JSON.stringify(v); } catch { return String(v); }
+    try {
+      return JSON.stringify(v);
+    } catch {
+      return String(v);
+    }
   };
   parts.push(dump(t.input));
   parts.push(dump(t.output));
@@ -57,8 +76,12 @@ export function ExecutionTimeline({ execution, selectedStep, onSelectStep }: Pro
   // Per-execution bookmarks (persisted via traceBookmarks). Refreshed when:
   //  · execution changes
   //  · child BookmarkButton emits onChange after save/remove
-  const [bookmarks, setBookmarks] = useState<TraceBookmark[]>(() => listBookmarks(execution.session_id));
-  useEffect(() => { setBookmarks(listBookmarks(execution.session_id)); }, [execution.session_id]);
+  const [bookmarks, setBookmarks] = useState<TraceBookmark[]>(() =>
+    listBookmarks(execution.session_id),
+  );
+  useEffect(() => {
+    setBookmarks(listBookmarks(execution.session_id));
+  }, [execution.session_id]);
   const bookmarkByTraceId = useMemo(() => {
     const m = new Map<string, TraceBookmark>();
     for (const b of bookmarks) m.set(b.traceId, b);
@@ -82,7 +105,9 @@ export function ExecutionTimeline({ execution, selectedStep, onSelectStep }: Pro
   const matchSet = useMemo(() => new Set(matchIndexes), [matchIndexes]);
 
   // Reset search when switching execution.
-  useEffect(() => { setStepSearch(''); }, [execution.session_id]);
+  useEffect(() => {
+    setStepSearch('');
+  }, [execution.session_id]);
 
   // Bulk expand/collapse: bump a counter + carry the desired state.
   // TraceItem syncs its local `open` whenever this version changes.
@@ -104,7 +129,8 @@ export function ExecutionTimeline({ execution, selectedStep, onSelectStep }: Pro
       const next = matchIndexes.find((i) => i > step) ?? matchIndexes[0];
       setStep(next);
     } else {
-      const prev = [...matchIndexes].reverse().find((i) => i < step) ?? matchIndexes[matchIndexes.length - 1];
+      const prev =
+        [...matchIndexes].reverse().find((i) => i < step) ?? matchIndexes[matchIndexes.length - 1];
       setStep(prev);
     }
   };
@@ -113,9 +139,10 @@ export function ExecutionTimeline({ execution, selectedStep, onSelectStep }: Pro
   const jumpBookmark = (dir: 1 | -1) => {
     if (bookmarks.length === 0) return;
     const indexes = bookmarks.map((b) => b.stepIndex).sort((a, b) => a - b);
-    const target = dir === 1
-      ? (indexes.find((i) => i > step) ?? indexes[0])
-      : ([...indexes].reverse().find((i) => i < step) ?? indexes[indexes.length - 1]);
+    const target =
+      dir === 1
+        ? (indexes.find((i) => i > step) ?? indexes[0])
+        : ([...indexes].reverse().find((i) => i < step) ?? indexes[indexes.length - 1]);
     setStep(target);
   };
 
@@ -128,14 +155,31 @@ export function ExecutionTimeline({ execution, selectedStep, onSelectStep }: Pro
     const target = e.target as HTMLElement;
     if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return;
 
-    if (e.key === 'ArrowDown' || e.key === 'j') { e.preventDefault(); setStep(step + 1); }
-    else if (e.key === 'ArrowUp' || e.key === 'k') { e.preventDefault(); setStep(step - 1); }
-    else if (e.key === 'Home') { e.preventDefault(); setStep(0); }
-    else if (e.key === 'End') { e.preventDefault(); setStep(total - 1); }
-    else if (e.key === 'n' && matchIndexes.length > 0) { e.preventDefault(); jumpMatch(1); }
-    else if (e.key === 'N' && matchIndexes.length > 0) { e.preventDefault(); jumpMatch(-1); }
-    else if (e.key === 'b' && bookmarks.length > 0) { e.preventDefault(); jumpBookmark(1); }
-    else if (e.key === 'B' && bookmarks.length > 0) { e.preventDefault(); jumpBookmark(-1); }
+    if (e.key === 'ArrowDown' || e.key === 'j') {
+      e.preventDefault();
+      setStep(step + 1);
+    } else if (e.key === 'ArrowUp' || e.key === 'k') {
+      e.preventDefault();
+      setStep(step - 1);
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      setStep(0);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      setStep(total - 1);
+    } else if (e.key === 'n' && matchIndexes.length > 0) {
+      e.preventDefault();
+      jumpMatch(1);
+    } else if (e.key === 'N' && matchIndexes.length > 0) {
+      e.preventDefault();
+      jumpMatch(-1);
+    } else if (e.key === 'b' && bookmarks.length > 0) {
+      e.preventDefault();
+      jumpBookmark(1);
+    } else if (e.key === 'B' && bookmarks.length > 0) {
+      e.preventDefault();
+      jumpBookmark(-1);
+    }
   };
 
   const itemsRef = useRef<Array<HTMLLIElement | null>>([]);
@@ -189,15 +233,16 @@ export function ExecutionTimeline({ execution, selectedStep, onSelectStep }: Pro
           ? 'Atalhos de teclado ativos: setas para navegar, n para próximo match, b para próximo marcador.'
           : 'Clique na linha do tempo para ativar os atalhos de teclado.'}
       </span>
-
-// eslint-disable-next-line jsx-a11y/aria-activedescendant-has-tabindex -- tabIndex declarado no container pai (linha 150)
-
-      { }
+      // eslint-disable-next-line jsx-a11y/aria-activedescendant-has-tabindex -- tabIndex declarado
+      no container pai (linha 150)
+      {}
       <ol
         className="space-y-1.5 mt-3"
         role="listbox"
         aria-label="Eventos da execução"
-        aria-activedescendant={execution.traces[step] ? `trace-${execution.traces[step].id}` : undefined}
+        aria-activedescendant={
+          execution.traces[step] ? `trace-${execution.traces[step].id}` : undefined
+        }
       >
         {execution.traces.map((t, i) => {
           const isMatch = matchSet.has(i);
@@ -206,7 +251,9 @@ export function ExecutionTimeline({ execution, selectedStep, onSelectStep }: Pro
           return (
             <TraceItem
               key={t.id}
-              ref={(el) => { itemsRef.current[i] = el; }}
+              ref={(el) => {
+                itemsRef.current[i] = el;
+              }}
               trace={t}
               index={i}
               active={i === step}
@@ -231,9 +278,20 @@ export function ExecutionTimeline({ execution, selectedStep, onSelectStep }: Pro
 /* ------------------------------------------------------------------ */
 
 function ExecutionSummary({
-  execution, step, total, onStep, onExpandAll, onCollapseAll,
-  stepSearch, onStepSearch, matchCount, onJumpMatch,
-  bookmarks, onJumpBookmark, onBookmarksChange, focused,
+  execution,
+  step,
+  total,
+  onStep,
+  onExpandAll,
+  onCollapseAll,
+  stepSearch,
+  onStepSearch,
+  matchCount,
+  onJumpMatch,
+  bookmarks,
+  onJumpBookmark,
+  onBookmarksChange,
+  focused,
 }: {
   execution: ExecutionGroup;
   step: number;
@@ -251,7 +309,6 @@ function ExecutionSummary({
   /** Whether the parent timeline container is currently capturing keyboard events. */
   focused: boolean;
 }) {
-  
   const { counts, total_ms, total_tokens, total_cost, session_id, traces } = execution;
   const current = traces[step];
   const isAuto = session_id.startsWith('auto-');
@@ -290,9 +347,11 @@ function ExecutionSummary({
                 ? 'border-primary/60 bg-primary/10 text-primary shadow-[0_0_8px_hsl(var(--primary)/0.25)]'
                 : 'border-border/50 bg-muted/30 text-muted-foreground',
             )}
-            title={focused
-              ? 'Atalhos de teclado ativos (↑/↓, j/k, Home/End, n, b)'
-              : 'Clique aqui ou pressione Tab para ativar atalhos de teclado'}
+            title={
+              focused
+                ? 'Atalhos de teclado ativos (↑/↓, j/k, Home/End, n, b)'
+                : 'Clique aqui ou pressione Tab para ativar atalhos de teclado'
+            }
           >
             <Keyboard className="h-3 w-3" />
             {focused ? 'Atalhos ativos' : 'Atalhos inativos'}
@@ -449,7 +508,9 @@ function ExecutionSummary({
                 matchCount === 0 && 'text-muted-foreground',
               )}
             >
-              {matchCount === 0 ? 'sem matches' : `${matchCount} match${matchCount === 1 ? '' : 'es'}`}
+              {matchCount === 0
+                ? 'sem matches'
+                : `${matchCount} match${matchCount === 1 ? '' : 'es'}`}
             </Badge>
             <Button
               type="button"
@@ -480,12 +541,27 @@ function ExecutionSummary({
       </div>
 
       <div className="flex items-center gap-3 flex-wrap text-meta text-muted-foreground">
-        <SummaryStat icon={CheckCircle2} value={counts.info} className="text-nexus-emerald" label="info" />
+        <SummaryStat
+          icon={CheckCircle2}
+          value={counts.info}
+          className="text-nexus-emerald"
+          label="info"
+        />
         {counts.warning > 0 && (
-          <SummaryStat icon={AlertTriangle} value={counts.warning} className="text-nexus-amber" label="warning" />
+          <SummaryStat
+            icon={AlertTriangle}
+            value={counts.warning}
+            className="text-nexus-amber"
+            label="warning"
+          />
         )}
         {counts.error > 0 && (
-          <SummaryStat icon={XCircle} value={counts.error} className="text-destructive" label="error" />
+          <SummaryStat
+            icon={XCircle}
+            value={counts.error}
+            className="text-destructive"
+            label="error"
+          />
         )}
         <span className="h-3 w-px bg-border/60" aria-hidden />
         <SummaryStat icon={Clock} value={`${total_ms}ms`} label="tempo total" />
@@ -501,9 +577,13 @@ function ExecutionSummary({
         <div className="flex items-center gap-2 text-meta text-muted-foreground">
           <div className="truncate flex-1 min-w-0">
             <span className="font-medium text-foreground">↳</span> {current.event}
-            <span className="font-mono ml-2">{new Date(current.created_at).toLocaleTimeString('pt-BR')}</span>
+            <span className="font-mono ml-2">
+              {new Date(current.created_at).toLocaleTimeString('pt-BR')}
+            </span>
             {currentBookmark?.note && (
-              <span className="ml-2 text-nexus-amber italic truncate">— {currentBookmark.note}</span>
+              <span className="ml-2 text-nexus-amber italic truncate">
+                — {currentBookmark.note}
+              </span>
             )}
           </div>
           <BookmarkButton
@@ -538,7 +618,10 @@ function ShortcutRow({ keys, label }: { keys: string[]; label: string }) {
 }
 
 function SummaryStat({
-  icon: Icon, value, label, className,
+  icon: Icon,
+  value,
+  label,
+  className,
 }: {
   icon: React.ComponentType<{ className?: string }>;
   value: string | number;
@@ -572,7 +655,22 @@ interface TraceItemProps {
 }
 
 const TraceItem = forwardRef<HTMLLIElement, TraceItemProps>(
-  ({ trace, index, active, onSelect, bulk, highlight, isMatch, dim, sessionId, bookmark, onBookmarksChange }, ref) => {
+  (
+    {
+      trace,
+      index,
+      active,
+      onSelect,
+      bulk,
+      highlight,
+      isMatch,
+      dim,
+      sessionId,
+      bookmark,
+      onBookmarksChange,
+    },
+    ref,
+  ) => {
     const [open, setOpen] = useState(false);
     const ts = new Date(trace.created_at).toLocaleTimeString('pt-BR', { hour12: false });
     const isBookmarked = !!bookmark;
@@ -593,11 +691,15 @@ const TraceItem = forwardRef<HTMLLIElement, TraceItemProps>(
 
     const handleClick = () => {
       if (active) setOpen((o) => !o);
-      else { onSelect(); setOpen(true); }
+      else {
+        onSelect();
+        setOpen(true);
+      }
     };
 
     return (
-      <li onKeyDown={handleKeyboardClick}
+      <li
+        onKeyDown={handleKeyboardClick}
         ref={ref}
         id={`trace-${trace.id}`}
         role="option"
@@ -624,20 +726,29 @@ const TraceItem = forwardRef<HTMLLIElement, TraceItemProps>(
         <div className="flex items-center gap-2 text-meta">
           <button
             type="button"
-            onClick={(e) => { e.stopPropagation(); handleClick(); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleClick();
+            }}
             className="flex items-center gap-2 flex-1 min-w-0 text-left hover:text-foreground"
             aria-expanded={open}
           >
-            {open
-              ? <ChevronDown className="h-3 w-3 text-muted-foreground shrink-0" />
-              : <ChevronRight className="h-3 w-3 text-muted-foreground shrink-0" />}
-            <span className={cn(
-              'font-mono text-meta tabular-nums w-8 shrink-0',
-              active ? 'text-primary font-semibold' : 'text-muted-foreground',
-            )}>
+            {open ? (
+              <ChevronDown className="h-3 w-3 text-muted-foreground shrink-0" />
+            ) : (
+              <ChevronRight className="h-3 w-3 text-muted-foreground shrink-0" />
+            )}
+            <span
+              className={cn(
+                'font-mono text-meta tabular-nums w-8 shrink-0',
+                active ? 'text-primary font-semibold' : 'text-muted-foreground',
+              )}
+            >
               #{index + 1}
             </span>
-            <span className="font-mono text-meta text-muted-foreground tabular-nums shrink-0">{ts}</span>
+            <span className="font-mono text-meta text-muted-foreground tabular-nums shrink-0">
+              {ts}
+            </span>
             {LEVEL_ICON[trace.level]}
             {isBookmarked && (
               <BookmarkCheck
@@ -645,17 +756,35 @@ const TraceItem = forwardRef<HTMLLIElement, TraceItemProps>(
                 aria-label="Passo marcado"
               />
             )}
-            <span className={cn('font-medium truncate', active ? 'text-foreground' : 'text-foreground/90')}>
+            <span
+              className={cn(
+                'font-medium truncate',
+                active ? 'text-foreground' : 'text-foreground/90',
+              )}
+            >
               <Highlighted text={trace.event} query={highlight} />
             </span>
             <span className="ml-auto flex items-center gap-2 text-meta text-muted-foreground shrink-0">
-              {trace.latency_ms != null && <span className="tabular-nums">{trace.latency_ms}ms</span>}
-              {trace.tokens_used != null && trace.tokens_used > 0 && <span className="tabular-nums">{trace.tokens_used} tk</span>}
-              {trace.cost_usd != null && Number(trace.cost_usd) > 0 && <span className="tabular-nums">${Number(trace.cost_usd).toFixed(5)}</span>}
+              {trace.latency_ms != null && (
+                <span className="tabular-nums">{trace.latency_ms}ms</span>
+              )}
+              {trace.tokens_used != null && trace.tokens_used > 0 && (
+                <span className="tabular-nums">{trace.tokens_used} tk</span>
+              )}
+              {trace.cost_usd != null && Number(trace.cost_usd) > 0 && (
+                <span className="tabular-nums">${Number(trace.cost_usd).toFixed(5)}</span>
+              )}
             </span>
           </button>
           {/* Bookmark trigger appears on hover OR when already marked. */}
-          <div className={cn('shrink-0 transition-opacity', isBookmarked ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 hover:opacity-100 focus-within:opacity-100')}>
+          <div
+            className={cn(
+              'shrink-0 transition-opacity',
+              isBookmarked
+                ? 'opacity-100'
+                : 'opacity-0 group-hover:opacity-100 hover:opacity-100 focus-within:opacity-100',
+            )}
+          >
             <BookmarkButton
               sessionId={sessionId}
               traceId={trace.id}
@@ -675,7 +804,13 @@ const TraceItem = forwardRef<HTMLLIElement, TraceItemProps>(
         )}
 
         {open && (
-          <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick} className="mt-2 ml-6 space-y-2" onClick={(e) => e.stopPropagation()}>
+          <div
+            role="button"
+            tabIndex={0}
+            onKeyDown={handleKeyboardClick}
+            className="mt-2 ml-6 space-y-2"
+            onClick={(e) => e.stopPropagation()}
+          >
             {isBookmarked && bookmark.note && (
               <div className="rounded border border-nexus-amber/30 bg-nexus-amber/10 p-2 text-meta text-foreground flex items-start gap-1.5">
                 <BookmarkCheck className="h-3 w-3 text-nexus-amber mt-0.5 shrink-0" />
@@ -687,7 +822,9 @@ const TraceItem = forwardRef<HTMLLIElement, TraceItemProps>(
             {trace.metadata && Object.keys(trace.metadata).length > 0 && (
               <JsonBlock label="Metadata" data={trace.metadata} highlight={highlight} />
             )}
-            <Badge variant="outline" className="text-[9px] font-mono">{trace.id.slice(0, 8)}</Badge>
+            <Badge variant="outline" className="text-[9px] font-mono">
+              {trace.id.slice(0, 8)}
+            </Badge>
           </div>
         )}
       </li>
@@ -710,10 +847,7 @@ function Highlighted({ text, query }: { text: string; query: string }) {
     <>
       {parts.map((p, i) =>
         p.toLowerCase() === query.toLowerCase() ? (
-          <mark
-            key={i}
-            className="bg-primary/30 text-foreground rounded-sm px-0.5"
-          >
+          <mark key={i} className="bg-primary/30 text-foreground rounded-sm px-0.5">
             {p}
           </mark>
         ) : (
@@ -724,7 +858,15 @@ function Highlighted({ text, query }: { text: string; query: string }) {
   );
 }
 
-function JsonBlock({ label, data, highlight }: { label: string; data: unknown; highlight?: string }) {
+function JsonBlock({
+  label,
+  data,
+  highlight,
+}: {
+  label: string;
+  data: unknown;
+  highlight?: string;
+}) {
   if (data == null) return null;
   let body: string;
   try {
@@ -739,7 +881,9 @@ function JsonBlock({ label, data, highlight }: { label: string; data: unknown; h
       <p className="text-meta uppercase font-semibold text-muted-foreground mb-1 flex items-center gap-1.5">
         {label}
         {hasMatch && (
-          <Badge variant="secondary" className="h-3.5 px-1 text-[8px] font-mono normal-case">match</Badge>
+          <Badge variant="secondary" className="h-3.5 px-1 text-[8px] font-mono normal-case">
+            match
+          </Badge>
         )}
       </p>
       <pre className="text-[10.5px] font-mono bg-muted/40 border border-border/40 rounded p-2 overflow-x-auto max-h-40 whitespace-pre-wrap">

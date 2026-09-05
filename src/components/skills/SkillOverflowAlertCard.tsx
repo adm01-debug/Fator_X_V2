@@ -45,8 +45,8 @@ export function SkillOverflowAlertCard() {
           Teto de skills no prompt
         </CardTitle>
         <p className="text-meta text-muted-foreground">
-          O runtime injeta no máximo {MAX_PROMPT_SKILLS} skills por agente. O excedente é
-          descartado sem erro visível.
+          O runtime injeta no máximo {MAX_PROMPT_SKILLS} skills por agente. O excedente é descartado
+          sem erro visível.
         </p>
       </CardHeader>
 

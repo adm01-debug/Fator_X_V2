@@ -56,14 +56,47 @@ export interface PostgrestLikeResult<T = unknown> {
  */
 const CHAINABLE_METHODS = new Set([
   // verbos
-  'select', 'insert', 'update', 'upsert', 'delete',
+  'select',
+  'insert',
+  'update',
+  'upsert',
+  'delete',
   // filtros
-  'eq', 'neq', 'gt', 'gte', 'lt', 'lte', 'like', 'ilike', 'is', 'in',
-  'contains', 'containedBy', 'rangeGt', 'rangeGte', 'rangeLt', 'rangeLte',
-  'rangeAdjacent', 'overlaps', 'textSearch', 'match', 'not', 'or', 'filter',
+  'eq',
+  'neq',
+  'gt',
+  'gte',
+  'lt',
+  'lte',
+  'like',
+  'ilike',
+  'is',
+  'in',
+  'contains',
+  'containedBy',
+  'rangeGt',
+  'rangeGte',
+  'rangeLt',
+  'rangeLte',
+  'rangeAdjacent',
+  'overlaps',
+  'textSearch',
+  'match',
+  'not',
+  'or',
+  'filter',
   // modificadores
-  'order', 'limit', 'range', 'abortSignal', 'returns', 'setHeader',
-  'explain', 'rollback', 'onConflict', 'geojson', 'throwOnError',
+  'order',
+  'limit',
+  'range',
+  'abortSignal',
+  'returns',
+  'setHeader',
+  'explain',
+  'rollback',
+  'onConflict',
+  'geojson',
+  'throwOnError',
 ]);
 
 /**
@@ -96,7 +129,6 @@ export interface SupabaseMock {
   setUser: (user: { id: string; email?: string } | null) => void;
   /** Limpa espiões e resultados, voltando ao estado inicial. */
   reset: () => void;
-
 }
 
 /**
@@ -106,7 +138,10 @@ export interface SupabaseMock {
  *                    sessão ausente — útil para testar caminhos de 401.
  */
 export function createSupabaseMock(
-  initialUser: { id: string; email?: string } | null = { id: 'test-user-id', email: 'test@nexus.dev' },
+  initialUser: { id: string; email?: string } | null = {
+    id: 'test-user-id',
+    email: 'test@nexus.dev',
+  },
 ): SupabaseMock {
   const calls: Record<string, Mock> = {};
   let defaultResult: PostgrestLikeResult = { ...DEFAULT_RESULT };
@@ -137,8 +172,10 @@ export function createSupabaseMock(
 
         // Torna o builder aguardável (`await query`), como o PostgrestBuilder real.
         if (prop === 'then') {
-          return (onFulfilled?: (v: PostgrestLikeResult) => unknown, onRejected?: (e: unknown) => unknown) =>
-            Promise.resolve(resultFor(table)).then(onFulfilled, onRejected);
+          return (
+            onFulfilled?: (v: PostgrestLikeResult) => unknown,
+            onRejected?: (e: unknown) => unknown,
+          ) => Promise.resolve(resultFor(table)).then(onFulfilled, onRejected);
         }
         if (prop === 'catch') {
           return (onRejected?: (e: unknown) => unknown) =>
@@ -294,4 +331,3 @@ export function getSharedSupabaseMock(
   sharedMocks.set(key, created);
   return created;
 }
-

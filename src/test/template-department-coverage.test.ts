@@ -10,9 +10,9 @@ describe('Cobertura departamental dos templates', () => {
   const categoryLabels = new Set(TEMPLATE_CATEGORIES.map((c) => c.label));
 
   it('toda categoria usada por um template existe no filtro da galeria', () => {
-    const orphans = AGENT_TEMPLATES
-      .filter((t) => !categoryLabels.has(t.category))
-      .map((t) => `${t.id} → ${t.category}`);
+    const orphans = AGENT_TEMPLATES.filter((t) => !categoryLabels.has(t.category)).map(
+      (t) => `${t.id} → ${t.category}`,
+    );
     expect(orphans).toEqual([]);
   });
 
@@ -24,7 +24,12 @@ describe('Cobertura departamental dos templates', () => {
 
   it('cobre os departamentos antes ausentes', () => {
     const ids = new Set(AGENT_TEMPLATES.map((t) => t.id));
-    for (const id of ['spec_ti_infra', 'spec_marketing_performance', 'spec_expedicao_estoque', 'spec_posvenda_cx']) {
+    for (const id of [
+      'spec_ti_infra',
+      'spec_marketing_performance',
+      'spec_expedicao_estoque',
+      'spec_posvenda_cx',
+    ]) {
       expect(ids.has(id)).toBe(true);
     }
   });

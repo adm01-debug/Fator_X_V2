@@ -9,10 +9,7 @@
  *  5. Payload vazio (sem new e sem old) é inerte — nunca derruba o painel.
  */
 import { describe, expect, it } from 'vitest';
-import {
-  shouldRefreshCurationFeed,
-  type CurationRealtimeEvent,
-} from '@/hooks/useCurationRealtime';
+import { shouldRefreshCurationFeed, type CurationRealtimeEvent } from '@/hooks/useCurationRealtime';
 import type { CurationFeedFilter } from '@/services/templateSkillLinkService';
 
 const FILTROS: CurationFeedFilter[] = ['all', 'linked', 'unlinked'];
@@ -117,9 +114,7 @@ describe('shouldRefreshCurationFeed — 600 cenários aleatórios', () => {
       // 3. "all" é a união dos dois filtros específicos.
       expect(all).toBe(linked || unlinked);
 
-      const lados = [evento.new, evento.old].filter(Boolean) as Array<
-        ReturnType<typeof linha>
-      >;
+      const lados = [evento.new, evento.old].filter(Boolean) as Array<ReturnType<typeof linha>>;
 
       // 1. Nada automático passa.
       if (lados.length > 0 && lados.every((l) => l.origin !== 'manual')) {

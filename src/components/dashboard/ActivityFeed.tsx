@@ -1,7 +1,6 @@
 import { getAuditLog } from '@/services/securityService';
-import { useQuery } from "@tanstack/react-query";
-import { Activity, Loader2, ShieldAlert } from "lucide-react";
-
+import { useQuery } from '@tanstack/react-query';
+import { Activity, Loader2, ShieldAlert } from 'lucide-react';
 
 const ACTION_LABELS: Record<string, { label: string; color: string }> = {
   'agent.create': { label: 'Agente criado', color: 'text-nexus-emerald' },
@@ -23,7 +22,6 @@ const ACTION_LABELS: Record<string, { label: string; color: string }> = {
   'security.alert': { label: 'Alerta de Segurança', color: 'text-destructive' },
   'rbac.denied': { label: 'Acesso Negado', color: 'text-nexus-amber' },
 };
-
 
 function getRelativeTime(date: string): string {
   const diff = Date.now() - new Date(date).getTime();
@@ -70,8 +68,13 @@ export function ActivityFeed() {
         const detail = meta?.name || meta?.email || meta?.keyName || '';
 
         return (
-          <div key={String(log.id)} className="flex items-center gap-3 py-1.5 px-2 rounded-lg hover:bg-secondary/30 text-body-sm transition-colors">
-            <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${info.color.replace('text-', 'bg-')}`} />
+          <div
+            key={String(log.id)}
+            className="flex items-center gap-3 py-1.5 px-2 rounded-lg hover:bg-secondary/30 text-body-sm transition-colors"
+          >
+            <div
+              className={`w-1.5 h-1.5 rounded-full shrink-0 ${info.color.replace('text-', 'bg-')}`}
+            />
             {action.includes('security') || action.includes('denied') ? (
               <ShieldAlert className="h-3 w-3 text-destructive shrink-0" />
             ) : null}
@@ -80,7 +83,9 @@ export function ActivityFeed() {
               <span className={`font-medium ${info.color}`}>{info.label}</span>
               {detail && <span className="text-muted-foreground ml-1.5 truncate">— {detail}</span>}
             </div>
-            <span className="text-meta text-muted-foreground shrink-0 text-numeric">{getRelativeTime(String(log.created_at ?? ''))}</span>
+            <span className="text-meta text-muted-foreground shrink-0 text-numeric">
+              {getRelativeTime(String(log.created_at ?? ''))}
+            </span>
           </div>
         );
       })}

@@ -2,14 +2,14 @@
  * canvasesService — CRUD para `notebook_canvases` (whiteboards).
  * Cada canvas guarda nodes/edges/viewport em JSONB e é escopado por workspace.
  */
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabaseExternal } from "@/integrations/supabase/externalClient";
-import { supabase } from "@/integrations/supabase/client";
-import { logger } from "@/lib/logger";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabaseExternal } from '@/integrations/supabase/externalClient';
+import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
 
 export interface CanvasNodeData {
   id: string;
-  type: "note" | "text" | "image";
+  type: 'note' | 'text' | 'image';
   position: { x: number; y: number };
   data: {
     label?: string;
@@ -50,7 +50,7 @@ export interface NotebookCanvas {
   updated_at: string;
 }
 
-const KEY = (notebookId: string | null) => ["canvases", notebookId];
+const KEY = (notebookId: string | null) => ['canvases', notebookId];
 
 export function useCanvases(notebookId: string | null) {
   return useQuery({
@@ -58,11 +58,11 @@ export function useCanvases(notebookId: string | null) {
     enabled: !!notebookId,
     queryFn: async (): Promise<NotebookCanvas[]> => {
       const { data, error } = await supabaseExternal
-        .from("notebook_canvases")
-        .select("*")
-        .eq("notebook_id", notebookId!)
-        .eq("is_archived", false)
-        .order("updated_at", { ascending: false });
+        .from('notebook_canvases')
+        .select('*')
+        .eq('notebook_id', notebookId!)
+        .eq('is_archived', false)
+        .order('updated_at', { ascending: false });
       if (error) throw error;
       return (data ?? []) as unknown as NotebookCanvas[];
     },
@@ -71,13 +71,13 @@ export function useCanvases(notebookId: string | null) {
 
 export function useCanvas(canvasId: string | null) {
   return useQuery({
-    queryKey: ["canvas", canvasId],
+    queryKey: ['canvas', canvasId],
     enabled: !!canvasId,
     queryFn: async (): Promise<NotebookCanvas | null> => {
       const { data, error } = await supabaseExternal
-        .from("notebook_canvases")
-        .select("*")
-        .eq("id", canvasId!)
+        .from('notebook_canvases')
+        .select('*')
+        .eq('id', canvasId!)
         .maybeSingle();
       if (error) throw error;
       return (data as unknown as NotebookCanvas) ?? null;
@@ -95,22 +95,22 @@ export function useCreateCanvas() {
     }): Promise<NotebookCanvas> => {
       const { data: sess } = await supabase.auth.getSession();
       const uid = sess.session?.user?.id;
-      if (!uid) throw new Error("Não autenticado");
+      if (!uid) throw new Error('Não autenticado');
       const { data, error } = await supabaseExternal
-        .from("notebook_canvases")
+        .from('notebook_canvases')
         .insert({
           notebook_id: input.notebookId,
           workspace_id: input.workspaceId,
           created_by: uid,
-          name: input.name ?? "Novo canvas",
+          name: input.name ?? 'Novo canvas',
           nodes: [],
           edges: [],
           viewport: { x: 0, y: 0, zoom: 1 },
         })
-        .select("*")
+        .select('*')
         .single();
       if (error) throw error;
-      logger.info("cerebro.canvas.created", { canvas_id: data.id });
+      logger.info('cerebro.canvas.created', { canvas_id: data.id });
       return data as unknown as NotebookCanvas;
     },
     onSuccess: (row) => {
@@ -124,19 +124,24 @@ export function useUpdateCanvas() {
   return useMutation({
     mutationFn: async (input: {
       id: string;
-      patch: Partial<Pick<NotebookCanvas, "name" | "description" | "nodes" | "edges" | "viewport" | "is_archived">>;
+      patch: Partial<
+        Pick<
+          NotebookCanvas,
+          'name' | 'description' | 'nodes' | 'edges' | 'viewport' | 'is_archived'
+        >
+      >;
     }): Promise<NotebookCanvas> => {
       const { data, error } = await supabaseExternal
-        .from("notebook_canvases")
+        .from('notebook_canvases')
         .update(input.patch as never)
-        .eq("id", input.id)
-        .select("*")
+        .eq('id', input.id)
+        .select('*')
         .single();
       if (error) throw error;
       return data as unknown as NotebookCanvas;
     },
     onSuccess: (row) => {
-      qc.setQueryData(["canvas", row.id], row);
+      qc.setQueryData(['canvas', row.id], row);
       qc.invalidateQueries({ queryKey: KEY(row.notebook_id) });
     },
   });
@@ -147,9 +152,9 @@ export function useDeleteCanvas() {
   return useMutation({
     mutationFn: async (input: { id: string; notebookId: string }) => {
       const { error } = await supabaseExternal
-        .from("notebook_canvases")
+        .from('notebook_canvases')
         .delete()
-        .eq("id", input.id);
+        .eq('id', input.id);
       if (error) throw error;
       return input;
     },

@@ -87,9 +87,7 @@ export interface BuildInstallCapRecordInput {
   acknowledged?: boolean;
 }
 
-export function buildInstallCapRecord(
-  input: BuildInstallCapRecordInput,
-): InstallCapAuditRecord {
+export function buildInstallCapRecord(input: BuildInstallCapRecordInput): InstallCapAuditRecord {
   const { guard } = input;
   const todos = projectDroppedNames(input.installed ?? [], input.selected ?? []);
 

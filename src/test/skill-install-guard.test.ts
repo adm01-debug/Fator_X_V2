@@ -44,9 +44,7 @@ describe('evaluateInstallImpact — matriz combinatória', () => {
         expect(r.currentSlots).toBe(instaladas);
         expect(r.effectiveAdds).toBe(novas);
         expect(r.projectedSlots).toBe(instaladas + novas);
-        expect(r.totalDroppedAfter).toBe(
-          Math.max(0, instaladas + novas - MAX_PROMPT_SKILLS),
-        );
+        expect(r.totalDroppedAfter).toBe(Math.max(0, instaladas + novas - MAX_PROMPT_SKILLS));
         expect(r.additionalDropped).toBeGreaterThanOrEqual(0);
         expect(r.headroomAfter).toBeGreaterThanOrEqual(0);
         // Não pode haver folga e descarte ao mesmo tempo.

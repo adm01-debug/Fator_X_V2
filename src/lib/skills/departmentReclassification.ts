@@ -152,7 +152,8 @@ function clamp01(value: unknown, fallback: number): number {
 }
 
 function resolveThresholds(input: number | ReclassifyThresholds | undefined) {
-  const raw: ReclassifyThresholds = typeof input === 'number' ? { minConfidence: input } : (input ?? {});
+  const raw: ReclassifyThresholds =
+    typeof input === 'number' ? { minConfidence: input } : (input ?? {});
   const minConfidence = clamp01(raw.minConfidence, MIN_RECLASSIFY_CONFIDENCE);
   const minMargin = clamp01(raw.minMargin, MIN_RECLASSIFY_MARGIN);
   return {
@@ -365,7 +366,18 @@ export function reclassificationToCsv(proposals: readonly ReclassifyProposal[]):
   const escape = (value: string | number | null) =>
     `"${(value === null ? '' : String(value)).replace(/"/g, '""')}"`;
   const linhas = [
-    ['slug', 'nome', 'de', 'para', 'confianca', 'margem', 'segundo', 'termos', 'origem', 'justificativa']
+    [
+      'slug',
+      'nome',
+      'de',
+      'para',
+      'confianca',
+      'margem',
+      'segundo',
+      'termos',
+      'origem',
+      'justificativa',
+    ]
       .map(escape)
       .join(','),
   ];

@@ -19,12 +19,7 @@ interface ContactsTableProps {
   onSelect?: (contact: CrmContact) => void;
 }
 
-export function ContactsTable({
-  contacts,
-  companies,
-  isLoading,
-  onSelect,
-}: ContactsTableProps) {
+export function ContactsTable({ contacts, companies, isLoading, onSelect }: ContactsTableProps) {
   const companyName = new Map(companies.map((c) => [c.id, c.name]));
 
   if (isLoading) {

@@ -1,15 +1,37 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Clock, RefreshCw, Play, Loader2, Plus, Calendar, Settings2 } from 'lucide-react';
-import { listSchedules, runCronExecutor, CRON_PRESETS, getScheduleStats, describeCronExpression, createSchedule, type CronSchedule, type ScheduleStats } from '@/services/cronSchedulerService';
+import {
+  listSchedules,
+  runCronExecutor,
+  CRON_PRESETS,
+  getScheduleStats,
+  describeCronExpression,
+  createSchedule,
+  type CronSchedule,
+  type ScheduleStats,
+} from '@/services/cronSchedulerService';
 import { useToast } from '@/hooks/use-toast';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { CronVisualEditor } from './CronVisualEditor';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 const STATUS_COLORS: Record<string, string> = {
   active: 'bg-nexus-emerald/20 text-nexus-emerald',
@@ -33,13 +55,10 @@ export function CronSchedulerPanel() {
   const [targetType, setTargetType] = useState<CronSchedule['target_type']>('agent');
   const [targetId, setTargetId] = useState('');
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const [schedulesData, statsData] = await Promise.all([
-        listSchedules(),
-        getScheduleStats(),
-      ]);
+      const [schedulesData, statsData] = await Promise.all([listSchedules(), getScheduleStats()]);
       setSchedules(schedulesData);
       setStats(statsData);
     } catch {
@@ -47,17 +66,18 @@ export function CronSchedulerPanel() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
-  useEffect(() => { loadData(); }, []);
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const handleRunPending = async () => {
     setRunning(true);
     try {
       const result = await runCronExecutor();
       const count = result.results?.length ?? result.executed ?? 0;
-      const succ = result.results?.filter(r => r.status === 'success').length ?? 0;
+      const succ = result.results?.filter((r) => r.status === 'success').length ?? 0;
       toast({
         title: 'Cron-executor disparado',
         description: count
@@ -96,7 +116,11 @@ export function CronSchedulerPanel() {
       setTargetId('');
       await loadData();
     } catch (e: unknown) {
-      toast({ title: 'Erro ao criar', description: e instanceof Error ? e.message : String(e), variant: 'destructive' });
+      toast({
+        title: 'Erro ao criar',
+        description: e instanceof Error ? e.message : String(e),
+        variant: 'destructive',
+      });
     } finally {
       setSaving(false);
     }
@@ -108,13 +132,27 @@ export function CronSchedulerPanel() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
           { label: 'Total', value: stats?.total_schedules ?? 0, color: 'hsl(var(--nexus-blue))' },
-          { label: 'Ativos', value: stats?.active_schedules ?? 0, color: 'hsl(var(--nexus-emerald))' },
-          { label: 'Pausados', value: stats?.paused_schedules ?? 0, color: 'hsl(var(--nexus-yellow))' },
-          { label: 'Taxa Sucesso', value: `${(stats?.success_rate ?? 0).toFixed(1)}%`, color: 'hsl(var(--nexus-purple))' },
+          {
+            label: 'Ativos',
+            value: stats?.active_schedules ?? 0,
+            color: 'hsl(var(--nexus-emerald))',
+          },
+          {
+            label: 'Pausados',
+            value: stats?.paused_schedules ?? 0,
+            color: 'hsl(var(--nexus-yellow))',
+          },
+          {
+            label: 'Taxa Sucesso',
+            value: `${(stats?.success_rate ?? 0).toFixed(1)}%`,
+            color: 'hsl(var(--nexus-purple))',
+          },
         ].map((s, i) => (
           <Card key={i} className="bg-card border-border">
             <CardContent className="p-4 text-center">
-              <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
+              <p className="text-2xl font-bold" style={{ color: s.color }}>
+                {s.value}
+              </p>
               <p className="text-meta text-muted-foreground">{s.label}</p>
             </CardContent>
           </Card>
@@ -130,29 +168,41 @@ export function CronSchedulerPanel() {
         <div className="flex gap-2">
           <Dialog open={createOpen} onOpenChange={setCreateOpen}>
             <DialogTrigger asChild>
-              <Button size="sm" className="nexus-gradient-bg text-primary-foreground gap-1.5 h-9 rounded-xl font-bold">
+              <Button
+                size="sm"
+                className="nexus-gradient-bg text-primary-foreground gap-1.5 h-9 rounded-xl font-bold"
+              >
                 <Plus className="h-4 w-4" /> Novo Agendamento
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px] rounded-[2rem] border-border/40 p-8 shadow-nexus-2xl">
               <DialogHeader>
-                <DialogTitle className="text-2xl font-heading font-black">Configurar Cron-Job</DialogTitle>
+                <DialogTitle className="text-2xl font-heading font-black">
+                  Configurar Cron-Job
+                </DialogTitle>
               </DialogHeader>
               <div className="space-y-6 mt-4">
                 <div className="space-y-2">
-                  <Label className="text-meta font-black uppercase text-muted-foreground tracking-widest">Nome da Automação</Label>
-                  <Input 
-                    value={newName} 
-                    onChange={(e) => setNewName(e.target.value)} 
-                    placeholder="Ex: Sync de Estoque Diário" 
+                  <Label className="text-meta font-black uppercase text-muted-foreground tracking-widest">
+                    Nome da Automação
+                  </Label>
+                  <Input
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
+                    placeholder="Ex: Sync de Estoque Diário"
                     className="h-11 rounded-xl bg-secondary/30"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label className="text-meta font-black uppercase text-muted-foreground tracking-widest">Target Type</Label>
-                    <Select value={targetType} onValueChange={(v) => setTargetType(v as CronSchedule['target_type'])}>
+                    <Label className="text-meta font-black uppercase text-muted-foreground tracking-widest">
+                      Target Type
+                    </Label>
+                    <Select
+                      value={targetType}
+                      onValueChange={(v) => setTargetType(v as CronSchedule['target_type'])}
+                    >
                       <SelectTrigger className="h-11 rounded-xl bg-secondary/30">
                         <SelectValue />
                       </SelectTrigger>
@@ -164,25 +214,43 @@ export function CronSchedulerPanel() {
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-meta font-black uppercase text-muted-foreground tracking-widest">ID do Alvo</Label>
-                    <Input 
-                      value={targetId} 
-                      onChange={(e) => setTargetId(e.target.value)} 
-                      placeholder="UUID do recurso" 
+                    <Label className="text-meta font-black uppercase text-muted-foreground tracking-widest">
+                      ID do Alvo
+                    </Label>
+                    <Input
+                      value={targetId}
+                      onChange={(e) => setTargetId(e.target.value)}
+                      placeholder="UUID do recurso"
                       className="h-11 rounded-xl bg-secondary/30"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                   <Label className="text-meta font-black uppercase text-muted-foreground tracking-widest">Editor Visual Cron</Label>
-                   <CronVisualEditor value={newCron} onChange={setNewCron} />
+                  <Label className="text-meta font-black uppercase text-muted-foreground tracking-widest">
+                    Editor Visual Cron
+                  </Label>
+                  <CronVisualEditor value={newCron} onChange={setNewCron} />
                 </div>
 
                 <DialogFooter className="pt-4">
-                  <Button variant="outline" onClick={() => setCreateOpen(false)} className="h-12 rounded-xl px-6">Cancelar</Button>
-                  <Button onClick={handleCreate} disabled={saving} className="h-12 px-8 rounded-xl nexus-gradient-bg text-primary-foreground font-bold shadow-nexus-lg shadow-primary/20">
-                    {saving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Settings2 className="h-5 w-5" />}
+                  <Button
+                    variant="outline"
+                    onClick={() => setCreateOpen(false)}
+                    className="h-12 rounded-xl px-6"
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    onClick={handleCreate}
+                    disabled={saving}
+                    className="h-12 px-8 rounded-xl nexus-gradient-bg text-primary-foreground font-bold shadow-nexus-lg shadow-primary/20"
+                  >
+                    {saving ? (
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                    ) : (
+                      <Settings2 className="h-5 w-5" />
+                    )}
                     <span className="ml-2">Ativar Job</span>
                   </Button>
                 </DialogFooter>
@@ -212,11 +280,18 @@ export function CronSchedulerPanel() {
 
       {/* Presets */}
       <Card className="bg-card border-border">
-        <CardHeader className="pb-3"><CardTitle className="text-body-sm text-muted-foreground">Presets Disponíveis</CardTitle></CardHeader>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-body-sm text-muted-foreground">Presets Disponíveis</CardTitle>
+        </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2">
             {Object.entries(CRON_PRESETS).map(([key, preset]) => (
-              <Badge key={key} variant="outline" className="border-border text-meta cursor-pointer hover:bg-accent" title={preset.description}>
+              <Badge
+                key={key}
+                variant="outline"
+                className="border-border text-meta cursor-pointer hover:bg-accent"
+                title={preset.description}
+              >
                 <Clock size={10} className="mr-1 text-primary" />
                 {preset.label}
               </Badge>
@@ -233,7 +308,9 @@ export function CronSchedulerPanel() {
           <CardContent className="py-12 text-center text-muted-foreground">
             <Clock size={48} className="mx-auto mb-4 opacity-30" />
             <p>Nenhum agendamento criado ainda.</p>
-            <p className="text-body-sm mt-1">Use os presets acima ou crie um agendamento personalizado.</p>
+            <p className="text-body-sm mt-1">
+              Use os presets acima ou crie um agendamento personalizado.
+            </p>
           </CardContent>
         </Card>
       ) : (
@@ -247,8 +324,11 @@ export function CronSchedulerPanel() {
                     <div>
                       <p className="font-medium">{s.name}</p>
                       <p className="text-meta text-muted-foreground">
-                        {s.cron_expression ? describeCronExpression(s.cron_expression) : s.frequency}
-                        {s.next_run_at && ` • Próx: ${new Date(s.next_run_at).toLocaleString('pt-BR')}`}
+                        {s.cron_expression
+                          ? describeCronExpression(s.cron_expression)
+                          : s.frequency}
+                        {s.next_run_at &&
+                          ` • Próx: ${new Date(s.next_run_at).toLocaleString('pt-BR')}`}
                       </p>
                     </div>
                   </div>

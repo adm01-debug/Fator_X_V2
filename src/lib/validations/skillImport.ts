@@ -63,7 +63,10 @@ export const harvestRequestSchema = z.object({
   departments: z.array(z.enum(SKILL_DEPARTMENTS)).max(10).default([]),
   topics: z.array(z.string().trim().min(2).max(60)).max(20).default([]),
   extraQueries: z.array(z.string().trim().min(2).max(120)).max(20).default([]),
-  repos: z.array(z.string().trim().regex(repoSlugRegex, 'Use o formato owner/repo')).max(10).default([]),
+  repos: z
+    .array(z.string().trim().regex(repoSlugRegex, 'Use o formato owner/repo'))
+    .max(10)
+    .default([]),
   filesPerRepo: z.number().int().min(1).max(1000).default(8),
   /** Deslocamento na lista ordenada de SKILL.md — habilita varredura em lotes. */
   fileOffset: z.number().int().min(0).max(100000).default(0),
@@ -73,7 +76,6 @@ export const harvestRequestSchema = z.object({
   minStars: z.number().int().min(0).max(100000).default(3),
   dryRun: z.boolean().default(false),
 });
-
 
 export type HarvestRequest = z.infer<typeof harvestRequestSchema>;
 

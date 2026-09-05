@@ -67,7 +67,12 @@ describe('deploymentsService', () => {
       await createDeployment('a1', 'slack', { channel_id: 'C123' });
 
       expect(ext.calls.insert).toHaveBeenCalledWith(
-        expect.objectContaining({ agent_id: 'a1', channel: 'slack', status: 'active', config: { channel_id: 'C123' } }),
+        expect.objectContaining({
+          agent_id: 'a1',
+          channel: 'slack',
+          status: 'active',
+          config: { channel_id: 'C123' },
+        }),
       );
       // A escrita é dado: precisa ir para o banco externo, nunca para o de auth.
       expect(local.calls.insert).not.toHaveBeenCalled();
@@ -130,7 +135,13 @@ describe('deploymentsService', () => {
       ext.setTableResult('agents', { data: agents, error: null });
       ext.setTableResult('deploy_connections', {
         data: [
-          { agent_id: 'a1', channel: 'widget', status: 'active', message_count: 42, last_message_at: '2026-07-25T09:00:00Z' },
+          {
+            agent_id: 'a1',
+            channel: 'widget',
+            status: 'active',
+            message_count: 42,
+            last_message_at: '2026-07-25T09:00:00Z',
+          },
           { agent_id: 'a1', channel: 'telegram', status: 'active', message_count: 999 },
         ],
         error: null,
@@ -171,7 +182,17 @@ describe('deploymentsService', () => {
 
     it('usa environment production como padrão e tolera config nula', async () => {
       ext.setTableResult('agents', {
-        data: [{ id: 'a2', name: 'Sem config', avatar_emoji: null, status: 'production', version: 1, updated_at: 'x', config: null }],
+        data: [
+          {
+            id: 'a2',
+            name: 'Sem config',
+            avatar_emoji: null,
+            status: 'production',
+            version: 1,
+            updated_at: 'x',
+            config: null,
+          },
+        ],
         error: null,
       });
       ext.setTableResult('deploy_connections', { data: null, error: null });

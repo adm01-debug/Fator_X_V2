@@ -100,10 +100,7 @@ export function SkillReclassificationReviewPanel({
     void carregar();
   }, [carregar]);
 
-  const pendentes = useMemo(
-    () => reviews.filter((r) => r.status === 'pendente').length,
-    [reviews],
-  );
+  const pendentes = useMemo(() => reviews.filter((r) => r.status === 'pendente').length, [reviews]);
 
   const decidir = useCallback(
     async (review: ReclassificationReview, aprovar: boolean) => {
@@ -245,7 +242,6 @@ export function SkillReclassificationReviewPanel({
                           : ''}
                         {review.runnerUp ? ` · 2º ${departmentLabel(review.runnerUp)}` : ''}
                       </span>
-
                     </div>
 
                     {review.matchedTerms.length > 0 && (
@@ -254,9 +250,7 @@ export function SkillReclassificationReviewPanel({
                       </p>
                     )}
                     {review.rationale && (
-                      <p className="text-meta italic text-muted-foreground">
-                        “{review.rationale}”
-                      </p>
+                      <p className="text-meta italic text-muted-foreground">“{review.rationale}”</p>
                     )}
 
                     {review.status === 'pendente' ? (

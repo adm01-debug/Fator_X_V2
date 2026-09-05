@@ -2,11 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { History, RotateCcw, Trash2, Check, ChevronDown, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -52,8 +48,11 @@ function formatRelative(iso: string): string {
 function formatAbsolute(iso: string): string {
   try {
     return new Date(iso).toLocaleString('pt-BR', {
-      day: '2-digit', month: '2-digit', year: 'numeric',
-      hour: '2-digit', minute: '2-digit',
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     });
   } catch {
     return iso;
@@ -90,7 +89,7 @@ export function PromptHistoryPanel({ prompt, type, onRestore }: Props) {
   const lastSavedLabel = useMemo(() => {
     if (snapshots.length === 0) return null;
     return formatRelative(snapshots[0].savedAt);
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   }, [snapshots, justSavedAt]);
 
   const handleRestore = (snap: PromptSnapshot) => {
@@ -166,7 +165,10 @@ export function PromptHistoryPanel({ prompt, type, onRestore }: Props) {
                             {idx === 0 ? 'Mais recente' : `Versão ${snapshots.length - idx}`}
                           </span>
                           {isCurrent && (
-                            <Badge variant="outline" className="text-meta border-primary/40 text-primary">
+                            <Badge
+                              variant="outline"
+                              className="text-meta border-primary/40 text-primary"
+                            >
                               atual
                             </Badge>
                           )}
@@ -229,7 +231,8 @@ export function PromptHistoryPanel({ prompt, type, onRestore }: Props) {
           <AlertDialogHeader>
             <AlertDialogTitle>Remover esta versão?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta cópia salva do prompt será apagada do histórico local. Esta ação não pode ser desfeita.
+              Esta cópia salva do prompt será apagada do histórico local. Esta ação não pode ser
+              desfeita.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -246,7 +249,8 @@ export function PromptHistoryPanel({ prompt, type, onRestore }: Props) {
           <AlertDialogHeader>
             <AlertDialogTitle>Limpar todo o histórico?</AlertDialogTitle>
             <AlertDialogDescription>
-              Todas as {snapshots.length} versões salvas do prompt serão apagadas. Esta ação não pode ser desfeita.
+              Todas as {snapshots.length} versões salvas do prompt serão apagadas. Esta ação não
+              pode ser desfeita.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

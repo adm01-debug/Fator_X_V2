@@ -71,7 +71,10 @@ export function IcpProfilePanel() {
       });
     },
     onSuccess: () => {
-      toast({ title: 'Perfil de ICP salvo', description: 'Os próximos scores usarão estes critérios.' });
+      toast({
+        title: 'Perfil de ICP salvo',
+        description: 'Os próximos scores usarão estes critérios.',
+      });
       queryClient.invalidateQueries({ queryKey: ['crm', 'icp-profile'] });
     },
     onError: (error: unknown) =>
@@ -107,7 +110,12 @@ export function IcpProfilePanel() {
             <Target className="h-4 w-4 text-primary" aria-hidden="true" />
             Perfil de Cliente Ideal
           </CardTitle>
-          <Button size="sm" onClick={() => save.mutate(draft)} disabled={save.isPending} className="gap-2">
+          <Button
+            size="sm"
+            onClick={() => save.mutate(draft)}
+            disabled={save.isPending}
+            className="gap-2"
+          >
             <Save className="h-4 w-4" aria-hidden="true" />
             {save.isPending ? 'Salvando…' : 'Salvar'}
           </Button>
@@ -115,11 +123,17 @@ export function IcpProfilePanel() {
         <CardContent className="space-y-5">
           <div className="space-y-1.5">
             <Label htmlFor="icp-name">Nome do perfil</Label>
-            <Input id="icp-name" value={draft.name} onChange={(e) => patch({ name: e.target.value })} />
+            <Input
+              id="icp-name"
+              value={draft.name}
+              onChange={(e) => patch({ name: e.target.value })}
+            />
           </div>
 
           <fieldset className="space-y-4">
-            <legend className="text-body-sm font-medium text-foreground">Pesos dos critérios</legend>
+            <legend className="text-body-sm font-medium text-foreground">
+              Pesos dos critérios
+            </legend>
             {WEIGHTS.map(({ key, label }) => (
               <div key={key} className="space-y-2">
                 <div className="flex items-center justify-between text-body-sm">

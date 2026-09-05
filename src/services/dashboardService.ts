@@ -78,7 +78,9 @@ export function subscribeToAlerts(onChange: () => void): () => void {
       onChange();
     })
     .subscribe();
-  return () => { supabaseExternal.removeChannel(channel); };
+  return () => {
+    supabaseExternal.removeChannel(channel);
+  };
 }
 
 /**

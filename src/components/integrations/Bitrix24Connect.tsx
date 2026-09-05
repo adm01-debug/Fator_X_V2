@@ -34,7 +34,7 @@ export function Bitrix24Connect() {
   async function handleTest() {
     setTesting(true);
     try {
-      const data = await invokeBitrix24Api({ method: 'user.current', params: {} }) as Record<string, unknown>;
+      const data = await invokeBitrix24Api({ method: 'user.current', params: {} }) as { result?: { NAME?: string; LAST_NAME?: string } };
       if (data.result) {
         const result = data.result as { NAME?: string; LAST_NAME?: string };
         toast.success(`Conexão OK: ${result.NAME} ${result.LAST_NAME}`);

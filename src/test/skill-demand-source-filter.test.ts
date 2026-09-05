@@ -96,10 +96,11 @@ describe('filterBySource', () => {
   });
 
   it('isola exatamente o lote do tier de plataforma', () => {
-    expect(filterBySource(rows, 'platform_heuristic').map((r) => r.slug).sort()).toEqual([
-      'skill-a',
-      'skill-b',
-    ]);
+    expect(
+      filterBySource(rows, 'platform_heuristic')
+        .map((r) => r.slug)
+        .sort(),
+    ).toEqual(['skill-a', 'skill-b']);
   });
 
   it('a união das partições reconstrói o total, sem sobreposição', () => {

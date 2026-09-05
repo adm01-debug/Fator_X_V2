@@ -61,7 +61,10 @@ const CATEGORY_ADVICE: Record<FailureCategory, { hint: string; retryUseful: bool
   taxa: { hint: 'Aguarde alguns instantes e retente o lote.', retryUseful: true },
   servidor: { hint: 'Instabilidade temporária — retentar costuma resolver.', retryUseful: true },
   rede: { hint: 'Verifique a conexão e retente.', retryUseful: true },
-  contrato: { hint: 'O modelo devolveu formato inesperado; retente estes itens.', retryUseful: true },
+  contrato: {
+    hint: 'O modelo devolveu formato inesperado; retente estes itens.',
+    retryUseful: true,
+  },
   invalido: { hint: 'Estes itens precisam de correção manual.', retryUseful: false },
   cancelado: { hint: 'Execução interrompida pelo curador.', retryUseful: true },
   desconhecido: { hint: 'Revise o detalhe do erro antes de retentar.', retryUseful: true },
@@ -130,8 +133,7 @@ export function summarizeQueueFailures<T>(
     if (!item || (item.status !== 'falhou' && item.status !== 'cancelado')) continue;
     totalFailed += 1;
 
-    const category =
-      item.status === 'cancelado' ? 'cancelado' : toFailureCategory(item.errorKind);
+    const category = item.status === 'cancelado' ? 'cancelado' : toFailureCategory(item.errorKind);
     const advice = CATEGORY_ADVICE[category];
     let bucket = mapa.get(category);
     if (!bucket) {

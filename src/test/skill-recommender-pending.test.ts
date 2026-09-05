@@ -9,7 +9,11 @@ describe('computePendingSkillIds', () => {
   });
 
   it('preserva a ordem de ranking', () => {
-    expect(computePendingSkillIds([rec('c'), rec('a'), rec('b')], new Set())).toEqual(['c', 'a', 'b']);
+    expect(computePendingSkillIds([rec('c'), rec('a'), rec('b')], new Set())).toEqual([
+      'c',
+      'a',
+      'b',
+    ]);
   });
 
   it('remove duplicatas', () => {

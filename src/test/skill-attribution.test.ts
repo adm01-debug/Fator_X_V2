@@ -234,9 +234,7 @@ describe('buildSkillAttribution — produto cartesiano de cenários', () => {
       }
 
       // 4. Nativa ⇔ sem rótulo e sem licença ⇔ sem texto de aviso.
-      expect(attribution.isNative).toBe(
-        attribution.label === null && attribution.license === null,
-      );
+      expect(attribution.isNative).toBe(attribution.label === null && attribution.license === null);
       expect(attribution.noticeText === null).toBe(attribution.isNative);
 
       // 5. Texto de aviso sempre cita o que existe.

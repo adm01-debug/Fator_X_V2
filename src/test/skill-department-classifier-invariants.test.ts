@@ -26,7 +26,12 @@
  * reclassificações erradas com aparência de progresso.
  */
 import { describe, expect, it } from 'vitest';
-import { DEPARTMENT_META, DOMAIN_DEPARTMENTS, FALLBACK_DEPARTMENT, SKILL_DEPARTMENTS } from '@/config/skill-departments';
+import {
+  DEPARTMENT_META,
+  DOMAIN_DEPARTMENTS,
+  FALLBACK_DEPARTMENT,
+  SKILL_DEPARTMENTS,
+} from '@/config/skill-departments';
 import { classifyDepartment, LOW_CONFIDENCE_THRESHOLD } from '@/services/skillDepartmentClassifier';
 
 /** PRNG determinístico — a suíte não pode variar entre execuções. */
@@ -113,12 +118,9 @@ describe('classificador de departamento — invariantes', () => {
         continue;
       }
       expect(r.department, `"${ruido}" virou sinal de departamento`).toBeNull();
-      expect(r.confidence, `"${ruido}" pontuou em domínio`).toBeLessThan(
-        LOW_CONFIDENCE_THRESHOLD,
-      );
+      expect(r.confidence, `"${ruido}" pontuou em domínio`).toBeLessThan(LOW_CONFIDENCE_THRESHOLD);
     }
   });
-
 
   it('transversal jamais compete com um departamento de negócio com sinal', () => {
     for (const ruido of RUIDO_TRANSVERSAL) {

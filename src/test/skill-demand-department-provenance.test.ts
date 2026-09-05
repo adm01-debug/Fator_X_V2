@@ -17,10 +17,7 @@ import {
 } from '@/lib/skills/skillDemand';
 
 function build(skill: Partial<DemandSkillInput>) {
-  return buildSkillDemandRows(
-    [{ id: 's1', slug: 's1', department: 'ti', ...skill }],
-    [],
-  )[0];
+  return buildSkillDemandRows([{ id: 's1', slug: 's1', department: 'ti', ...skill }], [])[0];
 }
 
 describe('normalizeDepartmentConfidence', () => {
@@ -73,7 +70,11 @@ describe('departmentNeedsReview', () => {
   });
 
   it('não sinaliza skill sem departamento (já coberta pelo filtro "sem departamento")', () => {
-    const row = build({ department: null, department_source: 'heuristic', department_confidence: 0 });
+    const row = build({
+      department: null,
+      department_source: 'heuristic',
+      department_confidence: 0,
+    });
     expect(row.departmentNeedsReview).toBe(false);
   });
 

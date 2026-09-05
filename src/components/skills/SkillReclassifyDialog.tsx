@@ -81,8 +81,6 @@ const QUEUE_ERROR_LABEL: Record<string, string> = {
   erro: 'Erro',
 };
 
-
-
 export interface SkillReclassifyDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -115,7 +113,6 @@ export function SkillReclassifyDialog({
   autoRunLlm = false,
   onApplied,
 }: SkillReclassifyDialogProps) {
-
   // Limiar ajustável pelo curador, persistido nas preferências. O piso é o
   // default do módulo: afrouxar abaixo dele reabriria a porta para trocas sem
   // evidência, que é exatamente o que o classificador existe para impedir.
@@ -164,10 +161,7 @@ export function SkillReclassifyDialog({
     setFalhas([]);
   }, [plano]);
 
-  const propostas = useMemo(
-    () => mergeLlmProposals(plano, propostasIa),
-    [plano, propostasIa],
-  );
+  const propostas = useMemo(() => mergeLlmProposals(plano, propostasIa), [plano, propostasIa]);
 
   // Seleção por exclusão: o padrão é aplicar tudo que o plano propôs, já que
   // cada proposta passou pela barra de confiança E de margem. Propostas de IA
@@ -257,7 +251,6 @@ export function SkillReclassifyDialog({
     setClassificando(false);
   }, []);
 
-
   const exportar = useCallback(() => {
     const blob = new Blob([reclassificationToCsv(propostas)], {
       type: 'text/csv;charset=utf-8;',
@@ -287,7 +280,9 @@ export function SkillReclassifyDialog({
         confidenceThreshold: limiar,
       });
       if (queued > 0) {
-        toast.success(`${queued} proposta${queued === 1 ? '' : 's'} enviada${queued === 1 ? '' : 's'} para revisão.`);
+        toast.success(
+          `${queued} proposta${queued === 1 ? '' : 's'} enviada${queued === 1 ? '' : 's'} para revisão.`,
+        );
         onApplied();
       }
       if (duplicates.length > 0) {
@@ -300,7 +295,9 @@ export function SkillReclassifyDialog({
       }
     } catch (error) {
       const mensagem =
-        error instanceof ReviewOperationError ? error.message : 'Não foi possível enviar para revisão.';
+        error instanceof ReviewOperationError
+          ? error.message
+          : 'Não foi possível enviar para revisão.';
       logger.error('submitReclassificationReviews failed', { error: (error as Error).message });
       toast.error(mensagem);
     } finally {
@@ -394,8 +391,6 @@ export function SkillReclassifyDialog({
             reduz propostas e descarta as sugestões de IA já geradas neste recorte.
           </p>
         </div>
-
-
 
         {plano.llmCandidates.length > 0 && (
           <div className="rounded-lg border border-border bg-muted/30 p-3 space-y-2">

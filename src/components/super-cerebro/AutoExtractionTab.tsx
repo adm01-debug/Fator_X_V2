@@ -1,12 +1,17 @@
- 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Zap, ClipboardPaste, Save, Trash2, Sparkles } from "lucide-react";
-import { invokeCerebroBrain } from "@/services/cerebroService";
-import { addMemory } from "@/services/memoryService";
-import { toast } from "sonner";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Loader2, Zap, ClipboardPaste, Save, Trash2, Sparkles } from 'lucide-react';
+import { invokeCerebroBrain } from '@/services/cerebroService';
+import { addMemory } from '@/services/memoryService';
+import { toast } from 'sonner';
 
 const EXTRACT_TYPES = [
   { value: 'entities', label: '🏢 Entidades (pessoas, empresas, produtos)' },
@@ -20,10 +25,13 @@ const EXTRACT_TYPES = [
 ];
 
 const EXAMPLES: Record<string, string> = {
-  entities: 'Acabamos de fechar contrato com a Promo Brindes via João Silva (Diretor Comercial) para entrega de 5.000 canetas personalizadas.',
+  entities:
+    'Acabamos de fechar contrato com a Promo Brindes via João Silva (Diretor Comercial) para entrega de 5.000 canetas personalizadas.',
   facts: 'Em 2024, a empresa cresceu 32% em receita, atingindo R$ 8,2 milhões com margem de 18%.',
-  rules: 'Pedidos acima de R$ 50.000 precisam de aprovação do diretor financeiro. Pagamentos só são liberados após confirmação fiscal.',
-  contacts: 'Maria Santos, gerente de compras, maria.santos@empresa.com.br, (11) 98765-4321, ramal 2341',
+  rules:
+    'Pedidos acima de R$ 50.000 precisam de aprovação do diretor financeiro. Pagamentos só são liberados após confirmação fiscal.',
+  contacts:
+    'Maria Santos, gerente de compras, maria.santos@empresa.com.br, (11) 98765-4321, ramal 2341',
 };
 
 export function AutoExtractionTab() {
@@ -40,7 +48,11 @@ export function AutoExtractionTab() {
     setResult(null);
     setCostUsd(null);
     try {
-      const data = await invokeCerebroBrain({ action: 'auto_extract', text, extract_type: extractType });
+      const data = await invokeCerebroBrain({
+        action: 'auto_extract',
+        text,
+        extract_type: extractType,
+      });
       setResult(data?.extracted || 'Nenhuma extração');
       setCostUsd(typeof data?.cost_usd === 'number' ? data.cost_usd : null);
       toast.success('Extração concluída');
@@ -71,7 +83,7 @@ export function AutoExtractionTab() {
       await addMemory(
         `[${EXTRACT_TYPES.find((e) => e.value === extractType)?.label ?? extractType}]\n${result}`,
         memoryType,
-        'Auto-Extraction'
+        'Auto-Extraction',
       );
       toast.success('Salvo na memória do Super Cérebro');
     } catch (e) {
@@ -102,16 +114,22 @@ export function AutoExtractionTab() {
           <Zap className="h-4 w-4 text-primary" /> Extração Automática via LLM
         </h3>
         <p className="text-meta text-muted-foreground mt-0.5">
-          Cole texto e extraia entidades, fatos, regras, contatos, datas, valores, tarefas ou riscos automaticamente
+          Cole texto e extraia entidades, fatos, regras, contatos, datas, valores, tarefas ou riscos
+          automaticamente
         </p>
       </div>
 
       <div className="nexus-card space-y-4">
         <div className="flex gap-3 items-end flex-wrap">
           <div className="flex-1 min-w-[220px] space-y-1.5">
-            <label htmlFor="autoextractiontab-tipo-de-extra-o-5a5a28" className="text-meta text-muted-foreground font-medium">Tipo de extração</label>
+            <label
+              htmlFor="auto-extract-type"
+              className="text-meta text-muted-foreground font-medium"
+            >
+              Tipo de extração
+            </label>
             <Select value={extractType} onValueChange={setExtractType}>
-              <SelectTrigger id="autoextractiontab-tipo-de-extra-o-5a5a28" className="bg-secondary/50 text-meta">
+              <SelectTrigger id="auto-extract-type" className="bg-secondary/50 text-meta">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -123,16 +141,31 @@ export function AutoExtractionTab() {
               </SelectContent>
             </Select>
           </div>
-          <Button variant="outline" size="sm" onClick={handlePaste} className="gap-1.5 h-9 text-meta">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handlePaste}
+            className="gap-1.5 h-9 text-meta"
+          >
             <ClipboardPaste className="h-3.5 w-3.5" /> Colar
           </Button>
           {EXAMPLES[extractType] && (
-            <Button variant="outline" size="sm" onClick={handleLoadExample} className="gap-1.5 h-9 text-meta">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleLoadExample}
+              className="gap-1.5 h-9 text-meta"
+            >
               <Sparkles className="h-3.5 w-3.5" /> Exemplo
             </Button>
           )}
           {(text || result) && (
-            <Button variant="outline" size="sm" onClick={handleClear} className="gap-1.5 h-9 text-meta">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleClear}
+              className="gap-1.5 h-9 text-meta"
+            >
               <Trash2 className="h-3.5 w-3.5" /> Limpar
             </Button>
           )}
@@ -152,7 +185,11 @@ export function AutoExtractionTab() {
             disabled={isExtracting || !text.trim()}
             className="nexus-gradient-bg text-primary-foreground gap-2"
           >
-            {isExtracting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
+            {isExtracting ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Zap className="h-4 w-4" />
+            )}
             {isExtracting ? 'Extraindo...' : 'Extrair'}
           </Button>
         </div>
@@ -161,7 +198,8 @@ export function AutoExtractionTab() {
           <div className="p-4 rounded-lg bg-secondary/30 border border-border/30 space-y-3">
             <div className="flex items-center justify-between">
               <p className="text-meta font-semibold text-foreground">
-                Resultado ({EXTRACT_TYPES.find((t) => t.value === extractType)?.label ?? extractType})
+                Resultado (
+                {EXTRACT_TYPES.find((t) => t.value === extractType)?.label ?? extractType})
               </p>
               {costUsd != null && (
                 <span className="text-meta text-muted-foreground font-mono">
@@ -169,7 +207,9 @@ export function AutoExtractionTab() {
                 </span>
               )}
             </div>
-            <div className="text-body-sm text-foreground whitespace-pre-wrap leading-relaxed">{result}</div>
+            <div className="text-body-sm text-foreground whitespace-pre-wrap leading-relaxed">
+              {result}
+            </div>
             <div className="flex justify-end pt-2 border-t border-border/30">
               <Button
                 size="sm"
@@ -178,7 +218,11 @@ export function AutoExtractionTab() {
                 disabled={savingToMemory}
                 className="gap-1.5 text-meta h-7"
               >
-                {savingToMemory ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+                {savingToMemory ? (
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                ) : (
+                  <Save className="h-3 w-3" />
+                )}
                 Salvar na Memória
               </Button>
             </div>

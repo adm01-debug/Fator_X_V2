@@ -177,12 +177,10 @@ Deno.serve(async (req) => {
           });
 
         if (rows.length > 0) {
-          const { error: insErr } = await supabase
-            .from('agent_memories_v2')
-            .upsert(rows, {
-              onConflict: 'workspace_id,source_type,source_ref',
-              ignoreDuplicates: true,
-            });
+          const { error: insErr } = await supabase.from('agent_memories_v2').upsert(rows, {
+            onConflict: 'workspace_id,source_type,source_ref',
+            ignoreDuplicates: true,
+          });
           if (insErr) {
             // Tabela pode não ter a constraint; loga e prossegue sem duplicar-checar
             console.warn('[slack-rag-sync] insert warning:', insErr.message);

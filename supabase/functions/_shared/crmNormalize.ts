@@ -14,17 +14,17 @@
  * pela função `crm-bitrix-sync`, que consulta a REST API. Inventar campos a
  * partir de um payload que não os contém seria pior do que admitir o vazio.
  */
-import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
+import type { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
 
-export type CrmEntityKind = "deal" | "contact" | "company" | "lead";
+export type CrmEntityKind = 'deal' | 'contact' | 'company' | 'lead';
 
 /** Mapeia o evento do Bitrix24 para a entidade canônica correspondente. */
 export function entityKindForEvent(eventType: string): CrmEntityKind | null {
   const normalized = eventType.toUpperCase();
-  if (normalized.startsWith("ONCRMDEAL")) return "deal";
-  if (normalized.startsWith("ONCRMCONTACT")) return "contact";
-  if (normalized.startsWith("ONCRMCOMPANY")) return "company";
-  if (normalized.startsWith("ONCRMLEAD")) return "lead";
+  if (normalized.startsWith('ONCRMDEAL')) return 'deal';
+  if (normalized.startsWith('ONCRMCONTACT')) return 'contact';
+  if (normalized.startsWith('ONCRMCOMPANY')) return 'company';
+  if (normalized.startsWith('ONCRMLEAD')) return 'lead';
   return null;
 }
 
@@ -35,7 +35,7 @@ function str(value: unknown): string | null {
 }
 
 function num(value: unknown): number | null {
-  if (value === null || value === undefined || value === "") return null;
+  if (value === null || value === undefined || value === '') return null;
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : null;
 }
@@ -47,7 +47,7 @@ function num(value: unknown): number | null {
 function firstMultiValue(value: unknown): string | null {
   if (Array.isArray(value) && value.length > 0) {
     const head = value[0] as Record<string, unknown> | string;
-    if (typeof head === "string") return str(head);
+    if (typeof head === 'string') return str(head);
     return str(head?.VALUE);
   }
   return str(value);
@@ -57,7 +57,7 @@ export interface NormalizeResult {
   kind: CrmEntityKind;
   table: string;
   externalRef: string;
-  action: "inserted" | "updated" | "skipped";
+  action: 'inserted' | 'updated' | 'skipped';
 }
 
 /**
@@ -77,12 +77,12 @@ async function writeByExternalRef(
   workspaceId: string,
   externalRef: string,
   row: Record<string, unknown>,
-): Promise<"inserted" | "updated"> {
+): Promise<'inserted' | 'updated'> {
   const { data: existing, error: selectError } = await client
     .from(table)
-    .select("id")
-    .eq("workspace_id", workspaceId)
-    .eq("external_ref", externalRef)
+    .select('id')
+    .eq('workspace_id', workspaceId)
+    .eq('external_ref', externalRef)
     .maybeSingle();
   if (selectError) throw new Error(`${table} select: ${selectError.message}`);
 
@@ -90,26 +90,26 @@ async function writeByExternalRef(
     const { error } = await client
       .from(table)
       .update(row)
-      .eq("id", (existing as { id: string }).id);
+      .eq('id', (existing as { id: string }).id);
     if (error) throw new Error(`${table} update: ${error.message}`);
-    return "updated";
+    return 'updated';
   }
 
   const { error } = await client.from(table).insert(row);
   if (error) {
     // 23505 = corrida com outra entrega do mesmo evento; converge via update.
-    if (error.code === "23505") {
+    if (error.code === '23505') {
       const { error: retryError } = await client
         .from(table)
         .update(row)
-        .eq("workspace_id", workspaceId)
-        .eq("external_ref", externalRef);
+        .eq('workspace_id', workspaceId)
+        .eq('external_ref', externalRef);
       if (retryError) throw new Error(`${table} update (retry): ${retryError.message}`);
-      return "updated";
+      return 'updated';
     }
     throw new Error(`${table} insert: ${error.message}`);
   }
-  return "inserted";
+  return 'inserted';
 }
 
 /**
@@ -135,27 +135,25 @@ export async function upsertFromBitrix(
   const externalRef = str(params.fields.ID);
   if (!externalRef) return null;
 
-  const syncState = params.hydrated ? "synced" : "pending";
+  const syncState = params.hydrated ? 'synced' : 'pending';
   const ref = `${kind}:${externalRef}`;
   const base = { workspace_id: params.workspaceId, external_ref: ref };
 
-  if (kind === "company") {
+  if (kind === 'company') {
     const row = {
       ...base,
       name: str(params.fields.TITLE) ?? `Empresa Bitrix ${externalRef}`,
       domain: firstMultiValue(params.fields.WEB),
       industry: str(params.fields.INDUSTRY),
-      enrichment_json: { source: "bitrix24", sync_state: syncState },
+      enrichment_json: { source: 'bitrix24', sync_state: syncState },
     };
-    const action = await writeByExternalRef(
-      client, "crm_companies", params.workspaceId, ref, row,
-    );
-    return { kind, table: "crm_companies", externalRef, action };
+    const action = await writeByExternalRef(client, 'crm_companies', params.workspaceId, ref, row);
+    return { kind, table: 'crm_companies', externalRef, action };
   }
 
-  if (kind === "contact" || kind === "lead") {
+  if (kind === 'contact' || kind === 'lead') {
     const name =
-      [str(params.fields.NAME), str(params.fields.LAST_NAME)].filter(Boolean).join(" ") ||
+      [str(params.fields.NAME), str(params.fields.LAST_NAME)].filter(Boolean).join(' ') ||
       str(params.fields.TITLE) ||
       `Contato Bitrix ${externalRef}`;
     const row = {
@@ -165,15 +163,13 @@ export async function upsertFromBitrix(
       phone: firstMultiValue(params.fields.PHONE),
       job_title: str(params.fields.POST),
       enrichment_json: {
-        source: "bitrix24",
+        source: 'bitrix24',
         sync_state: syncState,
         bitrix_kind: kind,
       },
     };
-    const action = await writeByExternalRef(
-      client, "crm_contacts", params.workspaceId, ref, row,
-    );
-    return { kind, table: "crm_contacts", externalRef, action };
+    const action = await writeByExternalRef(client, 'crm_contacts', params.workspaceId, ref, row);
+    return { kind, table: 'crm_contacts', externalRef, action };
   }
 
   // kind === "deal"
@@ -181,15 +177,13 @@ export async function upsertFromBitrix(
     ...base,
     title: str(params.fields.TITLE) ?? `Negócio Bitrix ${externalRef}`,
     amount: num(params.fields.OPPORTUNITY) ?? 0,
-    currency: str(params.fields.CURRENCY_ID) ?? "BRL",
-    status: str(params.fields.CLOSED) === "Y" ? "won" : "open",
+    currency: str(params.fields.CURRENCY_ID) ?? 'BRL',
+    status: str(params.fields.CLOSED) === 'Y' ? 'won' : 'open',
     expected_close_at: str(params.fields.CLOSEDATE),
     last_activity_at: new Date().toISOString(),
   };
-  const action = await writeByExternalRef(
-    client, "crm_deals", params.workspaceId, ref, row,
-  );
-  return { kind, table: "crm_deals", externalRef, action };
+  const action = await writeByExternalRef(client, 'crm_deals', params.workspaceId, ref, row);
+  return { kind, table: 'crm_deals', externalRef, action };
 }
 
 /** Registra a origem do espelhamento na timeline unificada. */
@@ -202,10 +196,10 @@ export async function logSyncActivity(
     traceId?: string;
   },
 ): Promise<void> {
-  const { error } = await client.from("crm_activities").insert({
+  const { error } = await client.from('crm_activities').insert({
     workspace_id: params.workspaceId,
-    activity_type: "system",
-    source: "bitrix24",
+    activity_type: 'system',
+    source: 'bitrix24',
     body: `Evento ${params.eventType} espelhado em ${params.result.table}`,
     metadata: {
       external_ref: params.result.externalRef,
@@ -214,5 +208,5 @@ export async function logSyncActivity(
     },
     trace_id: params.traceId ?? null,
   });
-  if (error) console.error("crm_activities insert failed:", error.message);
+  if (error) console.error('crm_activities insert failed:', error.message);
 }

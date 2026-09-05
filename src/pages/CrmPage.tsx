@@ -91,10 +91,7 @@ export default function CrmPage() {
   const syncBitrix = useMutation({
     mutationFn: () => syncFromBitrix24(),
     onSuccess: (summary) => {
-      const total = Object.values(summary).reduce(
-        (acc, s) => acc + s.inserted + s.updated,
-        0,
-      );
+      const total = Object.values(summary).reduce((acc, s) => acc + s.inserted + s.updated, 0);
       toast({
         title: 'Sincronização concluída',
         description: `${total} registro(s) espelhados do Bitrix24.`,
@@ -296,7 +293,6 @@ export default function CrmPage() {
           )}
         </TabsContent>
       </Tabs>
-
     </div>
   );
 }

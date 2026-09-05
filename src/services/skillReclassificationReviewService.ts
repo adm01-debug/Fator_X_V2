@@ -60,13 +60,7 @@ export interface ReclassificationReview {
 export const MAX_DECISION_REASON = 1000;
 
 export type ReviewErrorKind =
-  | 'permission'
-  | 'conflict'
-  | 'duplicate'
-  | 'already_decided'
-  | 'not_found'
-  | 'network'
-  | 'unknown';
+  'permission' | 'conflict' | 'duplicate' | 'already_decided' | 'not_found' | 'network' | 'unknown';
 
 export class ReviewOperationError extends Error {
   constructor(

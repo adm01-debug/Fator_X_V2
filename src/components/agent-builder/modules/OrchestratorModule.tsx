@@ -14,7 +14,12 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 import dagre from 'dagre';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
-import { useAgentWorkflows, useWorkflowRuns, runWorkflow, type AgentWorkflow } from '@/hooks/useAgentWorkflows';
+import {
+  useAgentWorkflows,
+  useWorkflowRuns,
+  runWorkflow,
+  type AgentWorkflow,
+} from '@/hooks/useAgentWorkflows';
 import { useWorkspaceId } from '@/hooks/use-data';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -43,11 +48,12 @@ export function OrchestratorModule() {
   const [autoDoc, setAutoDoc] = useState<string | null>(null);
 
   useEffect(() => {
-    if (active) {
-      setNodes((active.nodes as unknown as Node[]) || []);
-      setEdges((active.edges as unknown as Edge[]) || []);
+    const wf = workflows.data?.find((w) => w.id === activeId);
+    if (wf) {
+      setNodes((wf.nodes as unknown as Node[]) || []);
+      setEdges((wf.edges as unknown as Edge[]) || []);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   }, [activeId]);
 
   const onConnect = useCallback((c: Connection) => setEdges((eds) => addEdge(c, eds)), [setEdges]);
@@ -76,7 +82,11 @@ export function OrchestratorModule() {
     setRunning(true);
     try {
       let parsed: unknown = testInput;
-      try { parsed = JSON.parse(testInput); } catch { /* not JSON: keep raw text */ }
+      try {
+        parsed = JSON.parse(testInput);
+      } catch {
+        /* not JSON: keep raw text */
+      }
       const result = await runWorkflow(active.id, parsed);
       toast.success('Execução concluída');
       logger.info('Workflow execution result', { workflow_id: active.id, result });
@@ -92,20 +102,20 @@ export function OrchestratorModule() {
     setIsGeneratingDoc(true);
     try {
       // Simulação de IA analisando o grafo do workflow
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      const nodeTypes = nodes.map(n => n.type);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      const nodeTypes = nodes.map((n) => n.type);
       const hasAgent = nodeTypes.includes('agent');
       const hasTool = nodeTypes.includes('tool');
       const hasCondition = nodeTypes.includes('condition');
 
       let doc = `Este workflow "${active.name}" orquestra `;
-      if (hasAgent && hasTool) doc += "agentes especializados utilizando ferramentas externas ";
-      else if (hasAgent) doc += "múltiplos agentes em cascata ";
-      
-      if (hasCondition) doc += "com lógica condicional para tratamento de exceções. ";
-      
-      doc += `O fluxo inicia com ${nodes.filter(n => edges.every(e => e.target !== n.id)).length} ponto(s) de entrada e possui ${nodes.length} nós processuais.`;
+      if (hasAgent && hasTool) doc += 'agentes especializados utilizando ferramentas externas ';
+      else if (hasAgent) doc += 'múltiplos agentes em cascata ';
+
+      if (hasCondition) doc += 'com lógica condicional para tratamento de exceções. ';
+
+      doc += `O fluxo inicia com ${nodes.filter((n) => edges.every((e) => e.target !== n.id)).length} ponto(s) de entrada e possui ${nodes.length} nós processuais.`;
 
       setAutoDoc(doc);
       toast.success('Documentação semântica gerada!');
@@ -141,7 +151,7 @@ export function OrchestratorModule() {
             y: nodeWithPosition.y - 36 / 2,
           },
         };
-      })
+      }),
     );
   }, [nodes, edges, setNodes]);
 
@@ -149,9 +159,12 @@ export function OrchestratorModule() {
     if (!workspaceId) return toast.error('Sem workspace ativo');
     const name = prompt('Nome do workflow?');
     if (!name) return;
-    createWorkflow.mutate({ name, workspace_id: workspaceId }, {
-      onSuccess: (w: { id: string }) => setActiveId(w.id),
-    });
+    createWorkflow.mutate(
+      { name, workspace_id: workspaceId },
+      {
+        onSuccess: (w: { id: string }) => setActiveId(w.id),
+      },
+    );
   };
 
   if (!agent.id) {
@@ -164,7 +177,11 @@ export function OrchestratorModule() {
 
   return (
     <div className="space-y-6">
-      <SectionTitle icon="🎨" title="Visual Orchestrator" subtitle="Construa fluxos multi-agente arrastando blocos." />
+      <SectionTitle
+        icon="🎨"
+        title="Visual Orchestrator"
+        subtitle="Construa fluxos multi-agente arrastando blocos."
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-[260px_1fr] gap-4">
         {/* Sidebar — workflows + palette */}
@@ -234,26 +251,39 @@ export function OrchestratorModule() {
                     onChange={(e) => updateWorkflow.mutate({ id: active.id, name: e.target.value })}
                     className="max-w-xs h-8 text-body-sm"
                   />
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     className="h-8 text-meta text-primary gap-1.5"
                     onClick={handleGenerateDoc}
                     disabled={isGeneratingDoc}
                   >
-                    {isGeneratingDoc ? <Loader2 className="h-3 w-3 animate-spin" /> : <Wand2 className="h-3 w-3" />}
+                    {isGeneratingDoc ? (
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                    ) : (
+                      <Wand2 className="h-3 w-3" />
+                    )}
                     Documentar Fluxo
                   </Button>
                 </div>
                 <div className="flex gap-2">
-                  <Button size="sm" variant="outline" onClick={onLayout} title="Organizar Automaticamente">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={onLayout}
+                    title="Organizar Automaticamente"
+                  >
                     <LayoutDashboard className="h-3.5 w-3.5" />
                   </Button>
                   <Button size="sm" variant="outline" onClick={handleSave}>
                     <Save className="h-3.5 w-3.5 mr-1" /> Salvar
                   </Button>
                   <Button size="sm" onClick={handleRun} disabled={running}>
-                    {running ? <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> : <Play className="h-3.5 w-3.5 mr-1" />}
+                    {running ? (
+                      <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />
+                    ) : (
+                      <Play className="h-3.5 w-3.5 mr-1" />
+                    )}
                     Executar
                   </Button>
                 </div>
@@ -263,8 +293,13 @@ export function OrchestratorModule() {
                 <Card className="bg-primary/5 border-primary/20 p-3 animate-in fade-in slide-in-from-top-1 duration-300">
                   <div className="flex items-center gap-2 mb-1.5">
                     <BookOpen className="h-3.5 w-3.5 text-primary" />
-                    <span className="text-meta font-bold text-primary uppercase">Documentação Automática (IA)</span>
-                    <button onClick={() => setAutoDoc(null)} className="ml-auto text-muted-foreground hover:text-foreground">
+                    <span className="text-meta font-bold text-primary uppercase">
+                      Documentação Automática (IA)
+                    </span>
+                    <button
+                      onClick={() => setAutoDoc(null)}
+                      className="ml-auto text-muted-foreground hover:text-foreground"
+                    >
                       <Plus className="h-3 w-3 rotate-45" />
                     </button>
                   </div>
@@ -300,16 +335,33 @@ export function OrchestratorModule() {
               </Card>
 
               <Card className="p-3">
-                <p className="text-meta font-semibold mb-2">Histórico de Runs ({runs?.length || 0})</p>
+                <p className="text-meta font-semibold mb-2">
+                  Histórico de Runs ({runs?.length || 0})
+                </p>
                 <div className="space-y-1 max-h-[200px] overflow-y-auto">
-                  {runs?.length === 0 && <p className="text-meta text-muted-foreground">Sem execuções</p>}
+                  {runs?.length === 0 && (
+                    <p className="text-meta text-muted-foreground">Sem execuções</p>
+                  )}
                   {runs?.map((r) => (
-                    <div key={r.id} className="text-meta flex items-center justify-between p-2 rounded bg-muted/40">
+                    <div
+                      key={r.id}
+                      className="text-meta flex items-center justify-between p-2 rounded bg-muted/40"
+                    >
                       <div className="flex items-center gap-2">
-                        <Badge variant={r.status === 'completed' ? 'default' : r.status === 'failed' ? 'destructive' : 'secondary'}>
+                        <Badge
+                          variant={
+                            r.status === 'completed'
+                              ? 'default'
+                              : r.status === 'failed'
+                                ? 'destructive'
+                                : 'secondary'
+                          }
+                        >
                           {r.status}
                         </Badge>
-                        <span className="text-muted-foreground">{new Date(r.started_at).toLocaleString('pt-BR')}</span>
+                        <span className="text-muted-foreground">
+                          {new Date(r.started_at).toLocaleString('pt-BR')}
+                        </span>
                       </div>
                       <span className="text-muted-foreground">{r.trace?.length || 0} nós</span>
                     </div>

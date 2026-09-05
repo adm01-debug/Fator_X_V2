@@ -71,7 +71,11 @@ export function SkillPromptSimulator() {
     staleTime: 300_000,
   });
 
-  const { data: context, isLoading, error } = useQuery({
+  const {
+    data: context,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['agent_prompt_context', agentId],
     queryFn: () => fetchAgentPromptContext(agentId),
     enabled: agentId !== '',
@@ -176,8 +180,6 @@ export function SkillPromptSimulator() {
     }
   };
 
-
-
   return (
     <Card className="border-border/60">
       <CardHeader className="space-y-3">
@@ -272,7 +274,6 @@ export function SkillPromptSimulator() {
             </Label>
           </div>
         </div>
-
       </CardHeader>
 
       <CardContent className="space-y-4">
@@ -300,7 +301,6 @@ export function SkillPromptSimulator() {
                 Comparar
               </TabsTrigger>
             </TabsList>
-
 
             <TabsContent value="prompt" className="mt-4">
               <pre className="max-h-96 overflow-auto whitespace-pre-wrap break-words rounded-lg border border-border/60 bg-muted/30 p-4 text-meta leading-relaxed">
@@ -340,7 +340,6 @@ export function SkillPromptSimulator() {
                 </p>
               ) : null}
             </TabsContent>
-
           </Tabs>
         ) : null}
       </CardContent>

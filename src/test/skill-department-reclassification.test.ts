@@ -69,7 +69,8 @@ function gerarCatalogo(seed: number, tamanho: number): ReclassifyCandidate[] {
   const itens: ReclassifyCandidate[] = [];
   for (let i = 0; i < tamanho; i += 1) {
     const texto = TEXTOS[Math.floor(rand() * TEXTOS.length)];
-    const dep = rand() < 0.3 ? null : SKILL_DEPARTMENTS[Math.floor(rand() * SKILL_DEPARTMENTS.length)];
+    const dep =
+      rand() < 0.3 ? null : SKILL_DEPARTMENTS[Math.floor(rand() * SKILL_DEPARTMENTS.length)];
     itens.push({
       skillId: `skill-${seed}-${i}`,
       name: texto,
@@ -164,7 +165,9 @@ describe('buildReclassificationPlan — 300 catálogos simulados', () => {
     const posicoes = selecionados.map((p) => ids.indexOf(p.skillId));
     expect([...posicoes].sort((a, b) => a - b)).toEqual(posicoes);
     // Teto respeitado mesmo com valores absurdos
-    expect(selectProposals(plano, ids, Number.NaN).length).toBeLessThanOrEqual(MAX_RECLASSIFY_BATCH);
+    expect(selectProposals(plano, ids, Number.NaN).length).toBeLessThanOrEqual(
+      MAX_RECLASSIFY_BATCH,
+    );
     expect(selectProposals(plano, ids, -10)).toEqual([]);
   });
 
@@ -178,7 +181,17 @@ describe('buildReclassificationPlan — 300 catálogos simulados', () => {
     expect(csv.split('\r\n').length).toBe(plano.proposals.length + 1);
     // Aspas internas são escapadas por duplicação
     const comAspas = reclassificationToCsv([
-      { skillId: 'a', name: 'diz "olá"', slug: 'a', from: null, to: 'ti', confidence: 1, margin: 1, runnerUp: null, matchedTerms: [] },
+      {
+        skillId: 'a',
+        name: 'diz "olá"',
+        slug: 'a',
+        from: null,
+        to: 'ti',
+        confidence: 1,
+        margin: 1,
+        runnerUp: null,
+        matchedTerms: [],
+      },
     ]);
     expect(comAspas).toContain('"diz ""olá"""');
   });
@@ -234,8 +247,12 @@ describe('buildReclassificationPlan — 300 catálogos simulados', () => {
 
   it('proposalFromLlmVerdict rejeita vereditos indefensáveis', () => {
     // Departamento fora da taxonomia (alucinação).
-    expect(proposalFromLlmVerdict(candidato, { department: 'vendas_b2b', confidence: 0.99 })).toBeNull();
-    expect(proposalFromLlmVerdict(candidato, { department: 'indefinido', confidence: 0.99 })).toBeNull();
+    expect(
+      proposalFromLlmVerdict(candidato, { department: 'vendas_b2b', confidence: 0.99 }),
+    ).toBeNull();
+    expect(
+      proposalFromLlmVerdict(candidato, { department: 'indefinido', confidence: 0.99 }),
+    ).toBeNull();
     expect(proposalFromLlmVerdict(candidato, { department: null, confidence: 0.99 })).toBeNull();
     // Confiança abaixo do limiar mínimo.
     expect(proposalFromLlmVerdict(candidato, { department: 'ti', confidence: 0 })).toBeNull();
@@ -323,7 +340,17 @@ describe('buildReclassificationPlan — 300 catálogos simulados', () => {
     }
     // Propostas legadas (sem `source`) não quebram a exportação.
     const legado = reclassificationToCsv([
-      { skillId: 'x', name: 'x', slug: 'x', from: null, to: 'ti', confidence: 1, margin: 1, runnerUp: null, matchedTerms: [] },
+      {
+        skillId: 'x',
+        name: 'x',
+        slug: 'x',
+        from: null,
+        to: 'ti',
+        confidence: 1,
+        margin: 1,
+        runnerUp: null,
+        matchedTerms: [],
+      },
     ]);
     expect(legado).toContain('"lexico"');
   });

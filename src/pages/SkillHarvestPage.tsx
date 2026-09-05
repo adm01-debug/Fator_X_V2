@@ -8,8 +8,16 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import {
-  Download, RefreshCw, Loader2, CheckCircle2, XCircle, Star,
-  ShieldAlert, ExternalLink, Search, Layers,
+  Download,
+  RefreshCw,
+  Loader2,
+  CheckCircle2,
+  XCircle,
+  Star,
+  ShieldAlert,
+  ExternalLink,
+  Search,
+  Layers,
 } from 'lucide-react';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { RecentCurationsPanel } from '@/components/agents/RecentCurationsPanel';
@@ -26,19 +34,40 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { repoSlugRegex } from '@/lib/validations/skillImport';
 
 import {
-  SKILL_DEPARTMENTS, DEPARTMENT_META, departmentLabel, type SkillDepartment,
+  SKILL_DEPARTMENTS,
+  DEPARTMENT_META,
+  departmentLabel,
+  type SkillDepartment,
 } from '@/config/skill-departments';
 import {
-  runHarvest, runHarvestAllBatches, listCandidates, listRuns, promoteCandidate, bulkUpdateStatus,
-  updateCandidate, getDepartmentCoverage,
-  loadHarvestCheckpoint, saveHarvestCheckpoint, clearHarvestCheckpoint, purgeStaleLocalCheckpoints,
-  type HarvestCandidate, type HarvestRun, type CandidateStatus, type HarvestBatchResult,
+  runHarvest,
+  runHarvestAllBatches,
+  listCandidates,
+  listRuns,
+  promoteCandidate,
+  bulkUpdateStatus,
+  updateCandidate,
+  getDepartmentCoverage,
+  loadHarvestCheckpoint,
+  saveHarvestCheckpoint,
+  clearHarvestCheckpoint,
+  purgeStaleLocalCheckpoints,
+  type HarvestCandidate,
+  type HarvestRun,
+  type CandidateStatus,
+  type HarvestBatchResult,
 } from '@/services/skillHarvestService';
 
 const STATUS_LABEL: Record<CandidateStatus, string> = {
@@ -77,7 +106,6 @@ export default function SkillHarvestPage() {
   const abortRef = useRef<AbortController | null>(null);
   const [rebuilding, setRebuilding] = useState(false);
 
-
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const [statusFilter, setStatusFilter] = useState<CandidateStatus | 'all'>('pending');
@@ -100,7 +128,13 @@ export default function SkillHarvestPage() {
         new Set(
           reposInput
             .split(/[\n,\s]+/)
-            .map((raw) => raw.trim().replace(/^https?:\/\/github\.com\//i, '').replace(/\.git$/i, '').replace(/\/+$/, ''))
+            .map((raw) =>
+              raw
+                .trim()
+                .replace(/^https?:\/\/github\.com\//i, '')
+                .replace(/\.git$/i, '')
+                .replace(/\/+$/, ''),
+            )
             .filter((s) => repoSlugRegex.test(s)),
         ),
       ).slice(0, 10),
@@ -127,11 +161,15 @@ export default function SkillHarvestPage() {
     }
   }, [statusFilter, deptFilter, search]);
 
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    void load();
+  }, [load]);
 
   // Higiene de storage: remove checkpoints locais vencidos (>24h) de qualquer
   // varredura antiga. Roda uma única vez por montagem, fora do caminho crítico.
-  useEffect(() => { purgeStaleLocalCheckpoints(); }, []);
+  useEffect(() => {
+    purgeStaleLocalCheckpoints();
+  }, []);
 
   const handleHarvest = async () => {
     const controller = new AbortController();
@@ -153,7 +191,9 @@ export default function SkillHarvestPage() {
           description: `${result.found} candidatos encontrados, ${result.inserted} novos, ${result.rejected} rejeitados automaticamente.`,
         });
         if (result.errors.length > 0) {
-          toast.warning(`${result.errors.length} consulta(s) falharam`, { description: result.errors[0] });
+          toast.warning(`${result.errors.length} consulta(s) falharam`, {
+            description: result.errors[0],
+          });
         }
         await load();
         return;
@@ -214,7 +254,9 @@ export default function SkillHarvestPage() {
               });
             }
           },
-          onCheckpoint: (offset, total) => { void saveHarvestCheckpoint(parsedRepos, offset, total); },
+          onCheckpoint: (offset, total) => {
+            void saveHarvestCheckpoint(parsedRepos, offset, total);
+          },
         },
       );
 
@@ -226,7 +268,6 @@ export default function SkillHarvestPage() {
       if (!incomplete) await clearHarvestCheckpoint(parsedRepos);
       else if (last) await saveHarvestCheckpoint(parsedRepos, last.nextFileOffset);
       setCheckpointsToken((n) => n + 1);
-
 
       if (controller.signal.aborted) {
         toast.info('Varredura interrompida', {
@@ -257,7 +298,6 @@ export default function SkillHarvestPage() {
     }
   };
 
-
   /**
    * Recalcula os vínculos automáticos entre os templates de agentes e as
    * skills do registry. Exige permissão de admin (garantida por RLS).
@@ -266,14 +306,11 @@ export default function SkillHarvestPage() {
     setRebuilding(true);
     try {
       const result = await rebuildTemplateSkillLinks();
-      toast.success(
-        `${result.links} vínculos gravados em ${result.templates} templates`,
-        {
-          description: result.templatesWithoutLinks.length
-            ? `Sem vínculo: ${result.templatesWithoutLinks.join(', ')}`
-            : `${result.strongLinks} vínculos fortes`,
-        },
-      );
+      toast.success(`${result.links} vínculos gravados em ${result.templates} templates`, {
+        description: result.templatesWithoutLinks.length
+          ? `Sem vínculo: ${result.templatesWithoutLinks.join(', ')}`
+          : `${result.strongLinks} vínculos fortes`,
+      });
     } catch (e) {
       toast.error('Falha ao recalcular os vínculos', {
         description: e instanceof Error ? e.message : undefined,
@@ -283,12 +320,11 @@ export default function SkillHarvestPage() {
     }
   };
 
-
-
   const toggleSelect = (id: string) => {
     setSelected((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id); else next.add(id);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
       return next;
     });
   };
@@ -298,11 +334,15 @@ export default function SkillHarvestPage() {
     if (ids.length === 0) return;
     try {
       await bulkUpdateStatus(ids, status);
-      toast.success(`${ids.length} candidato(s) marcados como ${STATUS_LABEL[status].toLowerCase()}`);
+      toast.success(
+        `${ids.length} candidato(s) marcados como ${STATUS_LABEL[status].toLowerCase()}`,
+      );
       setSelected(new Set());
       await load();
     } catch (e) {
-      toast.error('Falha na ação em lote', { description: e instanceof Error ? e.message : undefined });
+      toast.error('Falha na ação em lote', {
+        description: e instanceof Error ? e.message : undefined,
+      });
     }
   };
 
@@ -324,17 +364,22 @@ export default function SkillHarvestPage() {
       toast.success(`Reclassificada para ${departmentLabel(department)}`);
       await load();
     } catch (e) {
-      toast.error('Falha ao reclassificar', { description: e instanceof Error ? e.message : undefined });
+      toast.error('Falha ao reclassificar', {
+        description: e instanceof Error ? e.message : undefined,
+      });
     }
   };
 
-  const stats = useMemo(() => ({
-    total: candidates.length,
-    blocked: candidates.filter((c) => c.status === 'auto_rejected').length,
-    avgQuality: candidates.length
-      ? Math.round(candidates.reduce((s, c) => s + c.quality_score, 0) / candidates.length)
-      : 0,
-  }), [candidates]);
+  const stats = useMemo(
+    () => ({
+      total: candidates.length,
+      blocked: candidates.filter((c) => c.status === 'auto_rejected').length,
+      avgQuality: candidates.length
+        ? Math.round(candidates.reduce((s, c) => s + c.quality_score, 0) / candidates.length)
+        : 0,
+    }),
+    [candidates],
+  );
 
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
@@ -353,7 +398,6 @@ export default function SkillHarvestPage() {
         }
       />
 
-
       <Tabs defaultValue="queue" className="space-y-6">
         <TabsList>
           <TabsTrigger value="queue">Fila de curadoria</TabsTrigger>
@@ -362,7 +406,6 @@ export default function SkillHarvestPage() {
           <TabsTrigger value="runs">Histórico</TabsTrigger>
           <TabsTrigger value="curation">Curadoria recente</TabsTrigger>
           <TabsTrigger value="demand">Demanda</TabsTrigger>
-
         </TabsList>
 
         {/* ─── Fila */}
@@ -378,25 +421,35 @@ export default function SkillHarvestPage() {
                 aria-label="Buscar candidatos"
               />
             </div>
-            <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as CandidateStatus | 'all')}>
+            <Select
+              value={statusFilter}
+              onValueChange={(v) => setStatusFilter(v as CandidateStatus | 'all')}
+            >
               <SelectTrigger className="w-[200px]" aria-label="Filtrar por status">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos os status</SelectItem>
                 {(Object.keys(STATUS_LABEL) as CandidateStatus[]).map((s) => (
-                  <SelectItem key={s} value={s}>{STATUS_LABEL[s]}</SelectItem>
+                  <SelectItem key={s} value={s}>
+                    {STATUS_LABEL[s]}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <Select value={deptFilter} onValueChange={(v) => setDeptFilter(v as SkillDepartment | 'all')}>
+            <Select
+              value={deptFilter}
+              onValueChange={(v) => setDeptFilter(v as SkillDepartment | 'all')}
+            >
               <SelectTrigger className="w-[200px]" aria-label="Filtrar por departamento">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos os departamentos</SelectItem>
                 {SKILL_DEPARTMENTS.map((d) => (
-                  <SelectItem key={d} value={d}>{DEPARTMENT_META[d].label}</SelectItem>
+                  <SelectItem key={d} value={d}>
+                    {DEPARTMENT_META[d].label}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -416,7 +469,9 @@ export default function SkillHarvestPage() {
                 <Button size="sm" variant="outline" onClick={() => void handleBulk('rejected')}>
                   <XCircle className="h-4 w-4" /> Rejeitar
                 </Button>
-                <Button size="sm" variant="ghost" onClick={() => setSelected(new Set())}>Limpar</Button>
+                <Button size="sm" variant="ghost" onClick={() => setSelected(new Set())}>
+                  Limpar
+                </Button>
               </CardContent>
             </Card>
           )}
@@ -429,7 +484,9 @@ export default function SkillHarvestPage() {
 
           {loading ? (
             <div className="space-y-3">
-              {[0, 1, 2].map((i) => <Skeleton key={i} className="h-32 w-full" />)}
+              {[0, 1, 2].map((i) => (
+                <Skeleton key={i} className="h-32 w-full" />
+              ))}
             </div>
           ) : candidates.length === 0 ? (
             <Card>
@@ -474,7 +531,8 @@ export default function SkillHarvestPage() {
                         onCheckedChange={() => {
                           setPickedDepts((prev) => {
                             const next = new Set(prev);
-                            if (next.has(d)) next.delete(d); else next.add(d);
+                            if (next.has(d)) next.delete(d);
+                            else next.add(d);
                             return next;
                           });
                         }}
@@ -489,15 +547,25 @@ export default function SkillHarvestPage() {
                 <div className="space-y-1.5">
                   <Label htmlFor="minStars">Mínimo de estrelas</Label>
                   <Input
-                    id="minStars" type="number" min={0} max={100000} value={minStars}
+                    id="minStars"
+                    type="number"
+                    min={0}
+                    max={100000}
+                    value={minStars}
                     onChange={(e) => setMinStars(Math.max(0, Number(e.target.value) || 0))}
                   />
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="maxRepos">Máximo de repositórios</Label>
                   <Input
-                    id="maxRepos" type="number" min={1} max={200} value={maxRepos}
-                    onChange={(e) => setMaxRepos(Math.min(200, Math.max(1, Number(e.target.value) || 1)))}
+                    id="maxRepos"
+                    type="number"
+                    min={1}
+                    max={200}
+                    value={maxRepos}
+                    onChange={(e) =>
+                      setMaxRepos(Math.min(200, Math.max(1, Number(e.target.value) || 1)))
+                    }
                   />
                 </div>
               </div>
@@ -531,20 +599,35 @@ export default function SkillHarvestPage() {
                   <div className="space-y-1.5 pt-2">
                     <Label htmlFor="filesPerRepo">SKILL.md por lote (por repositório)</Label>
                     <Input
-                      id="filesPerRepo" type="number" min={1} max={1000} value={filesPerRepo}
-                      onChange={(e) => setFilesPerRepo(Math.min(1000, Math.max(1, Number(e.target.value) || 1)))}
+                      id="filesPerRepo"
+                      type="number"
+                      min={1}
+                      max={1000}
+                      value={filesPerRepo}
+                      onChange={(e) =>
+                        setFilesPerRepo(Math.min(1000, Math.max(1, Number(e.target.value) || 1)))
+                      }
                     />
                     <span className="text-meta text-muted-foreground">
-                      A varredura é encadeada automaticamente em até {MAX_HARVEST_BATCHES} lotes, então
-                      um monorepo com centenas de skills é coberto sem estourar o tempo de execução.
+                      A varredura é encadeada automaticamente em até {MAX_HARVEST_BATCHES} lotes,
+                      então um monorepo com centenas de skills é coberto sem estourar o tempo de
+                      execução.
                     </span>
                   </div>
                 )}
               </div>
 
               <div className="flex flex-col gap-2 sm:flex-row">
-                <Button onClick={() => void handleHarvest()} disabled={harvesting} className="w-full sm:w-auto">
-                  {harvesting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+                <Button
+                  onClick={() => void handleHarvest()}
+                  disabled={harvesting}
+                  className="w-full sm:w-auto"
+                >
+                  {harvesting ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Download className="h-4 w-4" />
+                  )}
                   {harvesting ? 'Varrendo o GitHub…' : 'Executar varredura'}
                 </Button>
 
@@ -569,7 +652,8 @@ export default function SkillHarvestPage() {
                     <span>
                       Lote {harvestProgress.batch} de até {MAX_HARVEST_BATCHES} ·{' '}
                       {harvestProgress.processed}
-                      {harvestProgress.total > 0 ? ` / ${harvestProgress.total}` : ''} arquivos lidos
+                      {harvestProgress.total > 0 ? ` / ${harvestProgress.total}` : ''} arquivos
+                      lidos
                     </span>
                     <span>{harvestProgress.inserted} novos</span>
                   </div>
@@ -586,12 +670,10 @@ export default function SkillHarvestPage() {
                 </div>
               )}
 
-
               <p className="text-meta text-muted-foreground">
                 Skills com licença bloqueada, segredos embutidos ou padrões de prompt-injection são
                 rejeitadas automaticamente e nunca chegam ao registry.
               </p>
-
             </CardContent>
           </Card>
 
@@ -607,7 +689,6 @@ export default function SkillHarvestPage() {
           />
         </TabsContent>
 
-
         {/* ─── Cobertura */}
         <TabsContent value="coverage">
           <Card>
@@ -619,10 +700,7 @@ export default function SkillHarvestPage() {
                 const count = coverage[d] ?? 0;
                 const below = count < COVERAGE_TARGET;
                 return (
-                  <div
-                    key={d}
-                    className="flex items-center justify-between rounded-lg border p-3"
-                  >
+                  <div key={d} className="flex items-center justify-between rounded-lg border p-3">
                     <div>
                       <p className="text-body-sm font-medium">{DEPARTMENT_META[d].label}</p>
                       <p className="text-meta text-muted-foreground">Meta: {COVERAGE_TARGET}</p>
@@ -688,7 +766,6 @@ export default function SkillHarvestPage() {
           <SkillDemandPanel />
         </TabsContent>
       </Tabs>
-
     </div>
   );
 }
@@ -712,7 +789,13 @@ interface CandidateCardProps {
   onReclassify: (department: string) => void;
 }
 
-function CandidateCard({ candidate, selected, onToggle, onPromote, onReclassify }: CandidateCardProps) {
+function CandidateCard({
+  candidate,
+  selected,
+  onToggle,
+  onPromote,
+  onReclassify,
+}: CandidateCardProps) {
   const blocked = candidate.status === 'auto_rejected';
   return (
     <Card className={selected ? 'border-primary' : undefined}>
@@ -761,7 +844,9 @@ function CandidateCard({ candidate, selected, onToggle, onPromote, onReclassify 
           <div className="flex flex-wrap items-center gap-1.5 rounded-md bg-destructive/10 p-2">
             <ShieldAlert className="h-3.5 w-3.5 text-destructive" />
             {candidate.rejection_reasons.slice(0, 6).map((r) => (
-              <Badge key={r} variant="destructive" className="text-meta">{r}</Badge>
+              <Badge key={r} variant="destructive" className="text-meta">
+                {r}
+              </Badge>
             ))}
           </div>
         )}
@@ -773,7 +858,9 @@ function CandidateCard({ candidate, selected, onToggle, onPromote, onReclassify 
             </SelectTrigger>
             <SelectContent>
               {SKILL_DEPARTMENTS.map((d) => (
-                <SelectItem key={d} value={d}>{DEPARTMENT_META[d].label}</SelectItem>
+                <SelectItem key={d} value={d}>
+                  {DEPARTMENT_META[d].label}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>

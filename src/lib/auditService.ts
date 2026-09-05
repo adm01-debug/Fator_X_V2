@@ -5,12 +5,25 @@ import type { PromptEvidenceRecord } from '@/lib/skills/promptAuditArtifact';
 import type { InstallCapAuditRecord } from '@/lib/skills/installCapAudit';
 
 type AuditAction =
-  | 'agent.create' | 'agent.update' | 'agent.delete' | 'agent.deploy' | 'agent.duplicate'
-  | 'kb.create' | 'kb.update' | 'kb.delete'
-  | 'prompt.create' | 'prompt.activate'
-  | 'secret.create' | 'secret.update' | 'secret.delete'
-  | 'member.invite' | 'member.remove' | 'member.role_change'
-  | 'auth.login' | 'auth.logout' | 'auth.password_change'
+  | 'agent.create'
+  | 'agent.update'
+  | 'agent.delete'
+  | 'agent.deploy'
+  | 'agent.duplicate'
+  | 'kb.create'
+  | 'kb.update'
+  | 'kb.delete'
+  | 'prompt.create'
+  | 'prompt.activate'
+  | 'secret.create'
+  | 'secret.update'
+  | 'secret.delete'
+  | 'member.invite'
+  | 'member.remove'
+  | 'member.role_change'
+  | 'auth.login'
+  | 'auth.logout'
+  | 'auth.password_change'
   | 'skill.threshold_calibrate'
   | 'skill.install_over_cap'
   | 'prompt.export_evidence';
@@ -33,15 +46,21 @@ interface AuditEntry {
 
 export async function logAudit(entry: AuditEntry): Promise<void> {
   try {
-    const { error } = await supabaseExternal.rpc('log_audit_entry' as never, {
-      p_action: entry.action,
-      p_entity_type: entry.entity_type,
-      p_entity_id: entry.entity_id ?? null,
-      p_metadata: (entry.metadata ?? {}) as Json,
-    } as never);
+    const { error } = await supabaseExternal.rpc(
+      'log_audit_entry' as never,
+      {
+        p_action: entry.action,
+        p_entity_type: entry.entity_type,
+        p_entity_id: entry.entity_id ?? null,
+        p_metadata: (entry.metadata ?? {}) as Json,
+      } as never,
+    );
 
     if (error) {
-      logger.warn('Failed to write audit log', { error: (error as { message: string }).message, action: entry.action });
+      logger.warn('Failed to write audit log', {
+        error: (error as { message: string }).message,
+        action: entry.action,
+      });
     }
   } catch (err) {
     logger.warn('Audit logging failed silently', { error: String(err) });
@@ -53,23 +72,53 @@ export const audit = {
   agentCreated: (id: string, name: string) =>
     logAudit({ action: 'agent.create', entity_type: 'agent', entity_id: id, metadata: { name } }),
   agentUpdated: (id: string, changes: string[]) =>
-    logAudit({ action: 'agent.update', entity_type: 'agent', entity_id: id, metadata: { changes } }),
+    logAudit({
+      action: 'agent.update',
+      entity_type: 'agent',
+      entity_id: id,
+      metadata: { changes },
+    }),
   agentDeleted: (id: string, name: string) =>
     logAudit({ action: 'agent.delete', entity_type: 'agent', entity_id: id, metadata: { name } }),
   agentDuplicated: (id: string, newId: string) =>
-    logAudit({ action: 'agent.duplicate', entity_type: 'agent', entity_id: id, metadata: { newId } }),
+    logAudit({
+      action: 'agent.duplicate',
+      entity_type: 'agent',
+      entity_id: id,
+      metadata: { newId },
+    }),
 
   kbCreated: (id: string, name: string) =>
-    logAudit({ action: 'kb.create', entity_type: 'knowledge_base', entity_id: id, metadata: { name } }),
+    logAudit({
+      action: 'kb.create',
+      entity_type: 'knowledge_base',
+      entity_id: id,
+      metadata: { name },
+    }),
   kbUpdated: (id: string) =>
     logAudit({ action: 'kb.update', entity_type: 'knowledge_base', entity_id: id }),
   kbDeleted: (id: string, name: string) =>
-    logAudit({ action: 'kb.delete', entity_type: 'knowledge_base', entity_id: id, metadata: { name } }),
+    logAudit({
+      action: 'kb.delete',
+      entity_type: 'knowledge_base',
+      entity_id: id,
+      metadata: { name },
+    }),
 
   promptCreated: (agentId: string, version: number) =>
-    logAudit({ action: 'prompt.create', entity_type: 'prompt_version', entity_id: agentId, metadata: { version } }),
+    logAudit({
+      action: 'prompt.create',
+      entity_type: 'prompt_version',
+      entity_id: agentId,
+      metadata: { version },
+    }),
   promptActivated: (agentId: string, version: number) =>
-    logAudit({ action: 'prompt.activate', entity_type: 'prompt_version', entity_id: agentId, metadata: { version } }),
+    logAudit({
+      action: 'prompt.activate',
+      entity_type: 'prompt_version',
+      entity_id: agentId,
+      metadata: { version },
+    }),
 
   secretCreated: (keyName: string) =>
     logAudit({ action: 'secret.create', entity_type: 'workspace_secret', metadata: { keyName } }),

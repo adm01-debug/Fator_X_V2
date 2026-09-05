@@ -19,21 +19,20 @@ import {
   parseBody,
   z,
   installRuntimeAlerts,
-} from "../_shared/mod.ts";
+} from '../_shared/mod.ts';
 import {
   DEFAULT_TOPICS,
   DEPARTMENT_QUERIES,
   SKILL_DEPARTMENTS,
   isLicenseAllowed,
   type SkillDepartment,
-} from "./departments.ts";
+} from './departments.ts';
 import {
   classifyDepartment,
   computeQualityScore,
   inferCategory,
   isMcpUrlAllowed,
   isMetaRepository,
-
   LOW_CONFIDENCE_THRESHOLD,
   MIN_QUALITY_SCORE,
   normalizeForHash,
@@ -42,8 +41,8 @@ import {
   sha256Hex,
   slugify,
   stripUnsafe,
-} from "./lib.ts";
-import { getRawFile, getTree, ghGet, resolveMode, searchRepos, type GhRepo } from "./github.ts";
+} from './lib.ts';
+import { getRawFile, getTree, ghGet, resolveMode, searchRepos, type GhRepo } from './github.ts';
 
 installRuntimeAlerts();
 
@@ -55,7 +54,10 @@ const RequestSchema = z.object({
   topics: z.array(z.string().min(2).max(60)).max(20).default([]),
   extraQueries: z.array(z.string().min(2).max(120)).max(20).default([]),
   /** Monorepos alvo (`owner/repo`). Quando presente, a busca por queries é ignorada. */
-  repos: z.array(z.string().trim().regex(REPO_SLUG_RE, 'Formato esperado: owner/repo')).max(10).default([]),
+  repos: z
+    .array(z.string().trim().regex(REPO_SLUG_RE, 'Formato esperado: owner/repo'))
+    .max(10)
+    .default([]),
   /** Teto de SKILL.md lidos por repositório — monorepos como sales-skills/sales têm centenas. */
   filesPerRepo: z.number().int().min(1).max(1000).default(8),
   /** Deslocamento na lista ordenada de SKILL.md — permite varrer um monorepo em lotes. */
@@ -82,8 +84,6 @@ const UPSERT_CHUNK = 50;
 
 const SKILL_FILE_RE = /(^|\/)(SKILL\.md|skill\.md)$/;
 const AGENT_JSON_RE = /(^|\/)(agent\.json|mcp\.json)$/;
-
-
 
 interface CandidateRow {
   run_id: string;
@@ -139,7 +139,8 @@ Deno.serve(async (req: Request) => {
     if (!isAdmin) return errorResponse(req, 'Acesso restrito a administradores', 403);
 
     const parsed = await parseBody(req, RequestSchema);
-    if (!parsed.success) return errorResponse(req, 'Payload inválido', 400, { details: parsed.error });
+    if (!parsed.success)
+      return errorResponse(req, 'Payload inválido', 400, { details: parsed.error });
     const body = parsed.data;
 
     const mode = resolveMode();
@@ -151,13 +152,17 @@ Deno.serve(async (req: Request) => {
     const directMode = body.repos.length > 0;
     const departments: SkillDepartment[] =
       body.departments.length > 0 ? body.departments : [...SKILL_DEPARTMENTS];
-    const topics = directMode ? [] : (body.topics.length > 0 ? body.topics : DEFAULT_TOPICS);
+    const topics = directMode ? [] : body.topics.length > 0 ? body.topics : DEFAULT_TOPICS;
 
     const queries: string[] = directMode
       ? body.repos.map((r) => `repo:${r}`)
       : [
           ...topics.map((t) => `topic:${t} stars:>=${body.minStars}`),
-          ...departments.flatMap((d) => DEPARTMENT_QUERIES[d].map((q) => `${q} in:name,description,readme stars:>=${body.minStars}`)),
+          ...departments.flatMap((d) =>
+            DEPARTMENT_QUERIES[d].map(
+              (q) => `${q} in:name,description,readme stars:>=${body.minStars}`,
+            ),
+          ),
           ...body.extraQueries,
         ];
 
@@ -213,7 +218,6 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-
     // ─── Extração de candidatos
     const candidates: CandidateRow[] = [];
     const hashes = new Set<string>();
@@ -228,17 +232,23 @@ Deno.serve(async (req: Request) => {
 
     for (const repo of repos) {
       if (candidates.length >= body.maxCandidates) break;
-      if (outOfTime()) { truncated = true; break; }
+      if (outOfTime()) {
+        truncated = true;
+        break;
+      }
 
-      const repoLicenseSpdx = repo.license?.spdx_id && repo.license.spdx_id !== 'NOASSERTION'
-        ? repo.license.spdx_id
-        : null;
+      const repoLicenseSpdx =
+        repo.license?.spdx_id && repo.license.spdx_id !== 'NOASSERTION'
+          ? repo.license.spdx_id
+          : null;
 
       const tree = await getTree(repo.full_name, repo.default_branch);
       if (!tree.ok || !tree.data) continue;
 
       const paths = tree.data.tree.filter((e) => e.type === 'blob').map((e) => e.path);
-      const hasTests = paths.some((p) => /(^|\/)(tests?|__tests__|spec)\//i.test(p) || /\.(test|spec)\.[jt]sx?$/.test(p));
+      const hasTests = paths.some(
+        (p) => /(^|\/)(tests?|__tests__|spec)\//i.test(p) || /\.(test|spec)\.[jt]sx?$/.test(p),
+      );
       const hasDocs = paths.some((p) => /(^|\/)(docs?|README\.md)/i.test(p));
 
       // Ordenar é o que torna a paginação estável: sem isso, dois lotes
@@ -251,9 +261,8 @@ Deno.serve(async (req: Request) => {
 
       // Fallback: repositório inteiro vira 1 candidato quando não há SKILL.md.
       // Só vale para o primeiro lote — em lotes seguintes o README já foi lido.
-      const targets = allSkillFiles.length > 0
-        ? skillFiles
-        : (body.fileOffset === 0 ? ['README.md'] : []);
+      const targets =
+        allSkillFiles.length > 0 ? skillFiles : body.fileOffset === 0 ? ['README.md'] : [];
       if (targets.length === 0) continue;
 
       // O manifesto do agente é do REPOSITÓRIO, não do arquivo. Buscá-lo uma
@@ -269,8 +278,10 @@ Deno.serve(async (req: Request) => {
             const servers = parsedAgent.servers;
             if (Array.isArray(servers) && servers.length > 0) {
               const first = servers[0] as { url?: string };
-              if (typeof first.url === 'string' && isMcpUrlAllowed(first.url)) repoMcpUrl = first.url;
-              else if (typeof first.url === 'string') repoManifestRisks.push('mcp:host_not_allowlisted');
+              if (typeof first.url === 'string' && isMcpUrlAllowed(first.url))
+                repoMcpUrl = first.url;
+              else if (typeof first.url === 'string')
+                repoManifestRisks.push('mcp:host_not_allowlisted');
             }
             repoSkillConfig.agent_manifest = {
               model: typeof parsedAgent.model === 'string' ? parsedAgent.model : null,
@@ -287,7 +298,10 @@ Deno.serve(async (req: Request) => {
       let consumed = 0;
       for (let i = 0; i < targets.length; i += RAW_CONCURRENCY) {
         if (candidates.length >= body.maxCandidates) break;
-        if (outOfTime()) { truncated = true; break; }
+        if (outOfTime()) {
+          truncated = true;
+          break;
+        }
 
         const window = targets.slice(i, i + RAW_CONCURRENCY);
         const raws = await Promise.all(
@@ -309,21 +323,26 @@ Deno.serve(async (req: Request) => {
           const fmTags = Array.isArray(fm.data.tags) ? fm.data.tags : [];
           // Monorepos de skills declaram a licença por arquivo; ela é mais
           // específica que a do repositório e por isso tem precedência.
-          const fmLicense = typeof fm.data.license === 'string'
-            ? stripUnsafe(fm.data.license, 60).trim()
-            : '';
+          const fmLicense =
+            typeof fm.data.license === 'string' ? stripUnsafe(fm.data.license, 60).trim() : '';
           const licenseSpdx = (isLicenseAllowed(fmLicense) ? fmLicense : null) ?? repoLicenseSpdx;
           const licenseOk = isLicenseAllowed(licenseSpdx);
 
           const name = stripUnsafe(fmName || deriveName(path, repo.full_name), 120);
           const description = stripUnsafe(fmDesc || repo.description || '', 1200);
           const tags = Array.from(
-            new Set([...(repo.topics ?? []), ...fmTags].map((t) => stripUnsafe(String(t), 40).toLowerCase()).filter(Boolean)),
+            new Set(
+              [...(repo.topics ?? []), ...fmTags]
+                .map((t) => stripUnsafe(String(t), 40).toLowerCase())
+                .filter(Boolean),
+            ),
           ).slice(0, 20);
 
           if (name.length < 2) continue;
 
-          const contentHash = await sha256Hex(normalizeForHash(`${repo.full_name}:${name}:${raw.slice(0, 4000)}`));
+          const contentHash = await sha256Hex(
+            normalizeForHash(`${repo.full_name}:${name}:${raw.slice(0, 4000)}`),
+          );
           if (hashes.has(contentHash)) continue;
           hashes.add(contentHash);
 
@@ -338,7 +357,12 @@ Deno.serve(async (req: Request) => {
           // A classificação precisa vir ANTES da nota: a confiança departamental
           // é um dos sinais de especificidade da fórmula de qualidade.
           const classification = classifyDepartment({ name, description, tags, content: fm.body });
-          const category = inferCategory({ name, description, tags, hasMcpServer: Boolean(mcpUrl) });
+          const category = inferCategory({
+            name,
+            description,
+            tags,
+            hasMcpServer: Boolean(mcpUrl),
+          });
 
           // Coletâneas (awesome-lists, cursos, roadmaps) não são skills
           // instaláveis — detectá-las aqui evita que a popularidade do
@@ -368,12 +392,19 @@ Deno.serve(async (req: Request) => {
           else if (!licenseOk) reasons.push(`license:blocked:${licenseSpdx}`);
           if (quality < MIN_QUALITY_SCORE) reasons.push(`quality:below_threshold:${quality}`);
           if (isMeta) reasons.push('meta:collection_repo');
-          if (classification.confidence < LOW_CONFIDENCE_THRESHOLD) reasons.push('department:low_confidence');
+          if (classification.confidence < LOW_CONFIDENCE_THRESHOLD)
+            reasons.push('department:low_confidence');
 
           const blocking = reasons.some(
-            (r) => r.startsWith('secret:') || r.startsWith('prompt_injection:') || r.startsWith('shell:') ||
-                   r.startsWith('exfiltration:') || r.startsWith('license:') || r.startsWith('quality:') ||
-                   r.startsWith('meta:') || r.startsWith('department:'),
+            (r) =>
+              r.startsWith('secret:') ||
+              r.startsWith('prompt_injection:') ||
+              r.startsWith('shell:') ||
+              r.startsWith('exfiltration:') ||
+              r.startsWith('license:') ||
+              r.startsWith('quality:') ||
+              r.startsWith('meta:') ||
+              r.startsWith('department:'),
           );
           if (blocking) rejected++;
 
@@ -382,7 +413,8 @@ Deno.serve(async (req: Request) => {
             name,
             slug: slugify(`${repo.owner?.login ?? 'gh'}-${name}`),
             description,
-            version: typeof fm.data.version === 'string' ? String(fm.data.version).slice(0, 20) : '1.0.0',
+            version:
+              typeof fm.data.version === 'string' ? String(fm.data.version).slice(0, 20) : '1.0.0',
             author: repo.owner?.login ?? repo.full_name.split('/')[0],
             category,
             department: classification.department,
@@ -451,7 +483,6 @@ Deno.serve(async (req: Request) => {
       .eq('id', runId);
     if (updErr) console.error('Falha ao fechar run:', updErr.message);
 
-
     const { error: auditErr } = await admin.rpc('log_audit_entry', {
       p_action: 'skill_harvest_run',
       p_entity_type: 'skill_harvest_runs',
@@ -486,7 +517,6 @@ Deno.serve(async (req: Request) => {
       truncated,
       repo_file_totals: repoFileTotals,
     });
-
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e);
     console.error('skill-harvester falhou:', message);

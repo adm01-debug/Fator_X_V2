@@ -1,16 +1,26 @@
- 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
-} from "@/components/ui/dialog";
-import { Loader2, AlertTriangle, CheckCircle2 } from "lucide-react";
-import { supabaseExternal } from "@/integrations/supabase/externalClient";
-import { toast } from "sonner";
-import type { ColumnDef } from "@/config/datahub-columns";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Loader2, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { supabaseExternal } from '@/integrations/supabase/externalClient';
+import { toast } from 'sonner';
+import type { ColumnDef } from '@/config/datahub-columns';
 
 interface BulkEditDialogProps {
   open: boolean;
@@ -22,19 +32,35 @@ interface BulkEditDialogProps {
   onSuccess: () => void;
 }
 
-const NON_EDITABLE = new Set(['id', 'created_at', 'updated_at', 'search_vector', 'is_customer', 'is_supplier', 'is_carrier']);
+const NON_EDITABLE = new Set([
+  'id',
+  'created_at',
+  'updated_at',
+  'search_vector',
+  'is_customer',
+  'is_supplier',
+  'is_carrier',
+]);
 
 export function BulkEditDialog({
-  open, onOpenChange, entityId, selectedRecords, columns, displayColumn, onSuccess,
+  open,
+  onOpenChange,
+  entityId,
+  selectedRecords,
+  columns,
+  displayColumn,
+  onSuccess,
 }: BulkEditDialogProps) {
   const [field, setField] = useState('');
   const [value, setValue] = useState('');
   const [saving, setSaving] = useState(false);
   const [step, setStep] = useState<'select' | 'preview'>('select');
 
-  const editableColumns = columns.filter(c => !NON_EDITABLE.has(c.key) && c.format !== 'sensitive');
+  const editableColumns = columns.filter(
+    (c) => !NON_EDITABLE.has(c.key) && c.format !== 'sensitive',
+  );
 
-  const selectedCol = editableColumns.find(c => c.key === field);
+  const selectedCol = editableColumns.find((c) => c.key === field);
 
   const handleNext = () => {
     if (!field) return;
@@ -44,7 +70,7 @@ export function BulkEditDialog({
   const handleSave = async () => {
     setSaving(true);
     try {
-      const recordIds = selectedRecords.map(r => r.id);
+      const recordIds = selectedRecords.map((r) => r.id);
       const { data: result, error } = await supabaseExternal.functions.invoke('datahub-query', {
         body: { action: 'batch_update', entity: entityId, record_ids: recordIds, field, value },
       });
@@ -73,7 +99,9 @@ export function BulkEditDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             Edição em massa
-            <Badge variant="secondary" className="text-meta">{selectedRecords.length} registros</Badge>
+            <Badge variant="secondary" className="text-meta">
+              {selectedRecords.length} registros
+            </Badge>
           </DialogTitle>
           <DialogDescription>
             {step === 'select'
@@ -85,12 +113,18 @@ export function BulkEditDialog({
         {step === 'select' ? (
           <div className="space-y-4 py-2">
             <div className="space-y-2">
-              <label htmlFor="bulkeditdialog-campo-a-alterar-079983" className="text-body-sm font-medium text-foreground">Campo a alterar</label>
+              <label htmlFor="bulk-edit-field" className="text-body-sm font-medium text-foreground">
+                Campo a alterar
+              </label>
               <Select value={field} onValueChange={setField}>
-                <SelectTrigger id="bulkeditdialog-campo-a-alterar-079983"><SelectValue placeholder="Selecione o campo..." /></SelectTrigger>
+                <SelectTrigger id="bulk-edit-field">
+                  <SelectValue placeholder="Selecione o campo..." />
+                </SelectTrigger>
                 <SelectContent>
-                  {editableColumns.map(c => (
-                    <SelectItem key={c.key} value={c.key}>{c.label}</SelectItem>
+                  {editableColumns.map((c) => (
+                    <SelectItem key={c.key} value={c.key}>
+                      {c.label}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -98,10 +132,17 @@ export function BulkEditDialog({
 
             {field && (
               <div className="space-y-2">
-                <label htmlFor="bulkeditdialog-novo-valor-66f81b" className="text-body-sm font-medium text-foreground">Novo valor</label>
+                <label
+                  htmlFor="bulk-edit-value"
+                  className="text-body-sm font-medium text-foreground"
+                >
+                  Novo valor
+                </label>
                 {selectedCol?.format === 'boolean' ? (
                   <Select value={value} onValueChange={setValue}>
-                    <SelectTrigger id="bulkeditdialog-novo-valor-66f81b"><SelectValue placeholder="Selecione..." /></SelectTrigger>
+                    <SelectTrigger id="bulk-edit-value">
+                      <SelectValue placeholder="Selecione..." />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="true">Sim (true)</SelectItem>
                       <SelectItem value="false">Não (false)</SelectItem>
@@ -109,9 +150,10 @@ export function BulkEditDialog({
                   </Select>
                 ) : (
                   <Input
+                    id="bulk-edit-value"
                     placeholder="Novo valor..."
                     value={value}
-                    onChange={e => setValue(e.target.value)}
+                    onChange={(e) => setValue(e.target.value)}
                   />
                 )}
               </div>
@@ -124,11 +166,16 @@ export function BulkEditDialog({
               <div className="text-body-sm">
                 <p className="font-medium text-foreground">Confirme a alteração</p>
                 <p className="text-muted-foreground mt-1">
-                  O campo <span className="font-mono font-semibold text-foreground">{selectedCol?.label}</span> será alterado para{' '}
+                  O campo{' '}
+                  <span className="font-mono font-semibold text-foreground">
+                    {selectedCol?.label}
+                  </span>{' '}
+                  será alterado para{' '}
                   <span className="font-mono font-semibold text-primary">
                     {value === '' ? '(vazio)' : value}
                   </span>{' '}
-                  em <span className="font-semibold text-foreground">{selectedRecords.length}</span> registros.
+                  em <span className="font-semibold text-foreground">{selectedRecords.length}</span>{' '}
+                  registros.
                 </p>
               </div>
             </div>
@@ -145,9 +192,15 @@ export function BulkEditDialog({
                 <tbody>
                   {selectedRecords.map((r, i) => (
                     <tr key={String(r.id ?? i)} className="border-t border-border/30">
-                      <td className="p-2 font-mono text-foreground truncate max-w-[180px]">{String(r[displayColumn] ?? r.id ?? '')}</td>
-                      <td className="p-2 font-mono text-muted-foreground">{r[field] === null || r[field] === undefined ? '—' : String(r[field])}</td>
-                      <td className="p-2 font-mono text-primary font-semibold">{value === '' ? '(vazio)' : value}</td>
+                      <td className="p-2 font-mono text-foreground truncate max-w-[180px]">
+                        {String(r[displayColumn] ?? r.id ?? '')}
+                      </td>
+                      <td className="p-2 font-mono text-muted-foreground">
+                        {r[field] === null || r[field] === undefined ? '—' : String(r[field])}
+                      </td>
+                      <td className="p-2 font-mono text-primary font-semibold">
+                        {value === '' ? '(vazio)' : value}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -159,14 +212,24 @@ export function BulkEditDialog({
         <DialogFooter>
           {step === 'select' ? (
             <>
-              <Button variant="outline" onClick={handleClose}>Cancelar</Button>
-              <Button onClick={handleNext} disabled={!field}>Próximo</Button>
+              <Button variant="outline" onClick={handleClose}>
+                Cancelar
+              </Button>
+              <Button onClick={handleNext} disabled={!field}>
+                Próximo
+              </Button>
             </>
           ) : (
             <>
-              <Button variant="outline" onClick={() => setStep('select')}>Voltar</Button>
+              <Button variant="outline" onClick={() => setStep('select')}>
+                Voltar
+              </Button>
               <Button onClick={handleSave} disabled={saving} className="gap-1.5">
-                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
+                {saving ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <CheckCircle2 className="h-4 w-4" />
+                )}
                 Confirmar alteração
               </Button>
             </>

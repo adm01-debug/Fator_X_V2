@@ -11,7 +11,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { AlertTriangle, Download, Gauge, Loader2, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -44,7 +50,6 @@ import {
   normalizeOverrideReason,
   type CalibrationTimelineFilter,
   type CalibrationScaleFilter,
-
   type ThresholdCalibration,
 } from '@/lib/skills/thresholdCalibration';
 import { buildCalibrationCsv, calibrationCsvFilename } from '@/lib/skills/calibrationCsv';
@@ -55,7 +60,6 @@ import {
 } from '@/lib/skills/calibrationGovernance';
 
 import { normalizeConfidenceThreshold } from '@/lib/skills/skillDemand';
-
 
 import {
   CONFIDENCE_SCALES,
@@ -71,7 +75,6 @@ import {
   type EfficacyFilter,
   type EfficacyVerdict,
 } from '@/lib/skills/classificationEfficacy';
-
 
 const VERDICT_STYLE: Record<EfficacyVerdict, string> = {
   corrigido: 'border-destructive/40 text-destructive',
@@ -157,7 +160,6 @@ export function SkillClassificationEfficacyCard({
    */
   const governanca = useMemo(() => summarizeCalibrationGovernance(calibracoes), [calibracoes]);
 
-
   /**
    * Exporta a lista já filtrada — o comitê leva exatamente o que está vendo,
    * sem reprocessar filtro fora da tela.
@@ -186,10 +188,6 @@ export function SkillClassificationEfficacyCard({
       toast.error('Falha ao gerar o CSV.');
     }
   }, [calibracoesVisiveis, filtroCalib, filtroRegua]);
-
-
-
-
 
   const carregar = useCallback(async () => {
     setLoading(true);
@@ -225,7 +223,6 @@ export function SkillClassificationEfficacyCard({
   useEffect(() => {
     void carregar();
   }, [carregar]);
-
 
   const resumo = useMemo(() => summarizeEfficacy(decisoes), [decisoes]);
   const visiveis = useMemo(() => filterByVerdict(decisoes, filtro), [decisoes, filtro]);
@@ -301,10 +298,7 @@ export function SkillClassificationEfficacyCard({
 
   const podeAplicar =
     sugerido !== null &&
-    (currentThreshold === undefined ||
-      normalizeConfidenceThreshold(currentThreshold) !== sugerido);
-
-
+    (currentThreshold === undefined || normalizeConfidenceThreshold(currentThreshold) !== sugerido);
 
   return (
     <Card>
@@ -485,14 +479,9 @@ export function SkillClassificationEfficacyCard({
                 critico: 'border-destructive/40 text-destructive',
               };
               return (
-                <div
-                  key={regua}
-                  className={cn('rounded-lg border p-3 space-y-1', tom[p.status])}
-                >
+                <div key={regua} className={cn('rounded-lg border p-3 space-y-1', tom[p.status])}>
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-body-sm font-medium text-foreground">
-                      {p.scaleLabel}
-                    </span>
+                    <span className="text-body-sm font-medium text-foreground">{p.scaleLabel}</span>
                     <Badge variant="outline" className={cn('text-caption', tom[p.status])}>
                       {CALIBRATION_POSTURE_LABEL[p.status]}
                     </Badge>
@@ -510,7 +499,6 @@ export function SkillClassificationEfficacyCard({
         )}
 
         {calibracoes.length > 0 && (
-
           <div className="space-y-2 rounded-lg border border-border/60 p-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p className="text-body-sm font-medium">Calibrações recentes</p>
@@ -578,7 +566,6 @@ export function SkillClassificationEfficacyCard({
               </div>
             )}
 
-
             {calibracoesVisiveis.length === 0 ? (
               <p className="text-meta text-muted-foreground">
                 Nenhuma calibração aplicada sob alerta de instabilidade.
@@ -633,7 +620,6 @@ export function SkillClassificationEfficacyCard({
             )}
           </div>
         )}
-
 
         <Select value={filtro} onValueChange={(v) => setFiltro(normalizeEfficacyFilter(v))}>
           <SelectTrigger className="w-[220px]" aria-label="Filtrar por veredito">

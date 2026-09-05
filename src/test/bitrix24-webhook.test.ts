@@ -142,7 +142,6 @@ describe('bitrix24WebhookService — CRUD de rotas', () => {
   });
 });
 
-
 // ════════════════════════════════════════════════════════════════
 // Tests for the HELPER LOGIC the Edge Function relies on.
 // We replicate the parseFormBody and validateSignature functions
@@ -154,14 +153,14 @@ function parseFormBody(body: string): Record<string, unknown> {
   const params = new URLSearchParams(body);
   const result: Record<string, unknown> = {};
   for (const [rawKey, value] of params.entries()) {
-    const path = rawKey.replace(/\]/g, "").split("[");
+    const path = rawKey.replace(/\]/g, '').split('[');
     let cursor: Record<string, unknown> = result;
     for (let i = 0; i < path.length; i++) {
       const seg = path[i];
       if (i === path.length - 1) {
         cursor[seg] = value;
       } else {
-        if (typeof cursor[seg] !== "object" || cursor[seg] === null) {
+        if (typeof cursor[seg] !== 'object' || cursor[seg] === null) {
           cursor[seg] = {};
         }
         cursor = cursor[seg] as Record<string, unknown>;
@@ -171,11 +170,14 @@ function parseFormBody(body: string): Record<string, unknown> {
   return result;
 }
 
-function validateSignature(parsed: Record<string, unknown>, expectedToken: string | undefined): boolean {
+function validateSignature(
+  parsed: Record<string, unknown>,
+  expectedToken: string | undefined,
+): boolean {
   if (!expectedToken) return true;
   const auth = parsed.auth as Record<string, unknown> | undefined;
   const received = auth?.application_token;
-  if (typeof received !== "string") return false;
+  if (typeof received !== 'string') return false;
   if (received.length !== expectedToken.length) return false;
   let diff = 0;
   for (let i = 0; i < received.length; i++) {
@@ -242,22 +244,19 @@ describe('bitrix24-webhook — validateSignature helper', () => {
   });
 
   it('returns false when token length differs (avoids timing attacks)', () => {
-    expect(validateSignature(
-      { auth: { application_token: 'short' } },
-      'much_longer_token'
-    )).toBe(false);
+    expect(validateSignature({ auth: { application_token: 'short' } }, 'much_longer_token')).toBe(
+      false,
+    );
   });
 
   it('uses constant-time comparison (no early exit on first diff)', () => {
     // Hard to assert directly, but we verify same-length tokens with single
     // char diff still return false (proves comparison reaches the end)
-    expect(validateSignature(
-      { auth: { application_token: 'abcdefghij' } },
-      'abcdefghiX'
-    )).toBe(false);
-    expect(validateSignature(
-      { auth: { application_token: 'Xbcdefghij' } },
-      'abcdefghij'
-    )).toBe(false);
+    expect(validateSignature({ auth: { application_token: 'abcdefghij' } }, 'abcdefghiX')).toBe(
+      false,
+    );
+    expect(validateSignature({ auth: { application_token: 'Xbcdefghij' } }, 'abcdefghij')).toBe(
+      false,
+    );
   });
 });

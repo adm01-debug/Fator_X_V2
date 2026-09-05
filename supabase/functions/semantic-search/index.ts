@@ -13,18 +13,24 @@
  * Returns top-K chunks with parent document title + source URL.
  * ═══════════════════════════════════════════════════════════════
  */
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { fetchWithTimeout } from "../_shared/retry.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
-import { z } from "https://esm.sh/zod@3.23.8";
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { fetchWithTimeout } from '../_shared/retry.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
+import { z } from 'https://esm.sh/zod@3.23.8';
 
-import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv, getCorsHeaders } from "../_shared/mod.ts";
+import {
+  checkRateLimit,
+  createRateLimitResponse,
+  getRateLimitIdentifier,
+  RATE_LIMITS,
+  requireEnv,
+  getCorsHeaders,
+} from '../_shared/mod.ts';
 const InputSchema = z.object({
   query: z.string().min(2).max(2000),
   knowledge_base_id: z.string().uuid().nullish(),
   top_k: z.number().int().min(1).max(50).default(10),
 });
-
 
 interface SearchResult {
   chunk_id: string;
@@ -33,7 +39,7 @@ interface SearchResult {
   source_url: string | null;
   content: string;
   similarity: number;
-  matched_via: "vector" | "trigram" | "ilike";
+  matched_via: 'vector' | 'trigram' | 'ilike';
 }
 
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
@@ -51,29 +57,36 @@ const cache = new Map<string, { ts: number; data: SearchResult[] }>();
 let vectorSearchAvailable = true;
 
 function cacheKey(q: string, kb: string | null, k: number) {
-  return `${kb ?? "*"}::${k}::${q.toLowerCase().trim()}`;
+  return `${kb ?? '*'}::${k}::${q.toLowerCase().trim()}`;
 }
 
 serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
-  if (req.method === "OPTIONS")
-    return new Response(null, { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
     // Auth — required
-    const auth = req.headers.get("Authorization");
+    const auth = req.headers.get('Authorization');
     if (!auth) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
-    const supabase = createClient(requireEnv("SUPABASE_URL"), requireEnv("SUPABASE_SERVICE_ROLE_KEY"), {
-      global: { headers: { Authorization: auth } },
-    });
-    const { data: { user } } = await supabase.auth.getUser();
+    const supabase = createClient(
+      requireEnv('SUPABASE_URL'),
+      requireEnv('SUPABASE_SERVICE_ROLE_KEY'),
+      {
+        global: { headers: { Authorization: auth } },
+      },
+    );
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
     const rateCheck = checkRateLimit(getRateLimitIdentifier(req, user.id), RATE_LIMITS.heavy);
@@ -83,13 +96,12 @@ serve(async (req) => {
     const parsed = InputSchema.safeParse(raw);
     if (!parsed.success) {
       return new Response(
-        JSON.stringify({ error: "Payload inválido", details: parsed.error.flatten() }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        JSON.stringify({ error: 'Payload inválido', details: parsed.error.flatten() }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
       );
     }
     const { query, knowledge_base_id, top_k: topK } = parsed.data;
     const knowledgeBaseId = knowledge_base_id ?? null;
-
 
     // ── Cache lookup ─────────────────────────────────────────────
     const key = cacheKey(query, knowledgeBaseId, topK);
@@ -97,38 +109,35 @@ serve(async (req) => {
     if (cached && Date.now() - cached.ts < CACHE_TTL_MS) {
       return new Response(
         JSON.stringify({ results: cached.data, cached: true, total: cached.data.length }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
       );
     }
 
-    const SUPABASE_URL = requireEnv("SUPABASE_URL");
-    const SERVICE_KEY = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
+    const SUPABASE_URL = requireEnv('SUPABASE_URL');
+    const SERVICE_KEY = requireEnv('SUPABASE_SERVICE_ROLE_KEY');
 
     let results: SearchResult[] = [];
 
     // ── 1. Try vector search via rag-embed-v2 + match_documents RPC ──
     try {
-      if (!vectorSearchAvailable) throw new Error("vector_search_disabled");
+      if (!vectorSearchAvailable) throw new Error('vector_search_disabled');
 
-      const embedResp = await fetchWithTimeout(
-        `${SUPABASE_URL}/functions/v1/rag-embed-v2`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${SERVICE_KEY}`,
-            apikey: SERVICE_KEY,
-          },
-          body: JSON.stringify({
-            texts: [query],
-            provider: "qwen3-embedding-8b",
-            // 1536 = dimensão canônica, igual à coluna chunks.embedding.
-            // Pedíamos 1024 antes, o que nunca poderia casar com o índice.
-            dimension: 1536,
-            task: "retrieval.query",
-          }),
+      const embedResp = await fetchWithTimeout(`${SUPABASE_URL}/functions/v1/rag-embed-v2`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${SERVICE_KEY}`,
+          apikey: SERVICE_KEY,
         },
-      );
+        body: JSON.stringify({
+          texts: [query],
+          provider: 'qwen3-embedding-8b',
+          // 1536 = dimensão canônica, igual à coluna chunks.embedding.
+          // Pedíamos 1024 antes, o que nunca poderia casar com o índice.
+          dimension: 1536,
+          task: 'retrieval.query',
+        }),
+      });
 
       if (embedResp.ok) {
         const embedData = await embedResp.json();
@@ -138,28 +147,25 @@ serve(async (req) => {
         // devolveria vizinhos aleatórios apresentados como relevantes. É
         // melhor cair no ILIKE, que ao menos é honesto sobre o que faz.
         if (embedData?.degraded === true) {
-          console.warn("embedder degradado; usando fallback textual");
+          console.warn('embedder degradado; usando fallback textual');
         } else if (Array.isArray(queryEmbedding)) {
-          const { data: matches, error: matchErr } = await supabase.rpc(
-            "match_documents",
-            {
-              query_embedding: queryEmbedding,
-              match_threshold: 0.4,
-              match_count: topK,
-              p_knowledge_base_id: knowledgeBaseId,
-              // Só compara contra trechos gerados pelo MESMO modelo.
-              p_embedding_model: embedData?.model ?? null,
-            },
-          );
+          const { data: matches, error: matchErr } = await supabase.rpc('match_documents', {
+            query_embedding: queryEmbedding,
+            match_threshold: 0.4,
+            match_count: topK,
+            p_knowledge_base_id: knowledgeBaseId,
+            // Só compara contra trechos gerados pelo MESMO modelo.
+            p_embedding_model: embedData?.model ?? null,
+          });
 
           if (matchErr) {
             // 42883 = undefined_function: o RPC não existe neste banco. Não
             // adianta repetir a chamada de embedding nas próximas requisições.
-            if (matchErr.code === "42883") {
+            if (matchErr.code === '42883') {
               vectorSearchAvailable = false;
-              console.warn("match_documents ausente; ramo vetorial desativado nesta instância");
+              console.warn('match_documents ausente; ramo vetorial desativado nesta instância');
             } else {
-              console.warn("match_documents falhou", matchErr.message);
+              console.warn('match_documents falhou', matchErr.message);
             }
           } else if (Array.isArray(matches)) {
             results = matches.map((m: Record<string, unknown>) => ({
@@ -167,28 +173,31 @@ serve(async (req) => {
               document_id: m.document_id ? String(m.document_id) : null,
               document_title: null,
               source_url: null,
-              content: String(m.content ?? ""),
+              content: String(m.content ?? ''),
               similarity: Number(m.similarity ?? 0),
-              matched_via: "vector",
+              matched_via: 'vector',
             }));
           }
         }
       }
     } catch (e) {
-      if (!(e instanceof Error && e.message === "vector_search_disabled")) {
-        console.warn("vector search failed, falling back to text", e);
+      if (!(e instanceof Error && e.message === 'vector_search_disabled')) {
+        console.warn('vector search failed, falling back to text', e);
       }
     }
 
     // ── 2. Fallback: ILIKE on chunks.content ─────────────────────
     if (results.length === 0) {
-      const tokens = query.split(/\s+/).filter((t) => t.length > 2).slice(0, 5);
-      const ilikePattern = `%${query.replace(/[%_]/g, "")}%`;
+      const tokens = query
+        .split(/\s+/)
+        .filter((t) => t.length > 2)
+        .slice(0, 5);
+      const ilikePattern = `%${query.replace(/[%_]/g, '')}%`;
 
       const q = supabase
-        .from("chunks")
-        .select("id, document_id, content")
-        .ilike("content", ilikePattern)
+        .from('chunks')
+        .select('id, document_id, content')
+        .ilike('content', ilikePattern)
         .limit(topK);
 
       const { data: textMatches } = await q;
@@ -202,12 +211,12 @@ serve(async (req) => {
           // Naive ranking: count token occurrences
           similarity:
             tokens.reduce(
-              (acc, t) =>
-                acc +
-                (m.content.toLowerCase().split(t.toLowerCase()).length - 1),
+              (acc, t) => acc + (m.content.toLowerCase().split(t.toLowerCase()).length - 1),
               0,
-            ) / Math.max(tokens.length, 1) / 10,
-          matched_via: "ilike" as const,
+            ) /
+            Math.max(tokens.length, 1) /
+            10,
+          matched_via: 'ilike' as const,
         }));
         results.sort((a, b) => b.similarity - a.similarity);
       }
@@ -217,9 +226,9 @@ serve(async (req) => {
     const docIds = [...new Set(results.map((r) => r.document_id).filter(Boolean))];
     if (docIds.length > 0) {
       const { data: docs } = await supabase
-        .from("documents")
-        .select("id, title, source_url")
-        .in("id", docIds as string[]);
+        .from('documents')
+        .select('id, title, source_url')
+        .in('id', docIds as string[]);
       const docMap = new Map((docs ?? []).map((d) => [d.id, d]));
       results = results.map((r) => {
         const d = r.document_id ? docMap.get(r.document_id) : null;
@@ -241,15 +250,14 @@ serve(async (req) => {
       }
     }
 
-    return new Response(
-      JSON.stringify({ results, cached: false, total: results.length }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
-    );
+    return new Response(JSON.stringify({ results, cached: false, total: results.length }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   } catch (e) {
-    console.error("semantic-search error", e);
+    console.error('semantic-search error', e);
     return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      JSON.stringify({ error: e instanceof Error ? e.message : 'Unknown error' }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
     );
   }
 });

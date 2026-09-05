@@ -185,21 +185,26 @@ export interface WorkflowStreamEvent {
 export async function executeWorkflowStream(
   workflowId: string,
   input: string = '',
-  onEvent: (event: WorkflowStreamEvent) => void
+  onEvent: (event: WorkflowStreamEvent) => void,
 ): Promise<void> {
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   if (!session?.access_token) throw new Error('Not authenticated');
 
-  const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/workflow-engine-v2`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${session.access_token}`,
-      'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-      'Accept': 'text/event-stream'
+  const response = await fetch(
+    `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/workflow-engine-v2`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.access_token}`,
+        apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+        Accept: 'text/event-stream',
+      },
+      body: JSON.stringify({ workflow_id: workflowId, input }),
     },
-    body: JSON.stringify({ workflow_id: workflowId, input })
-  });
+  );
 
   if (!response.ok) {
     const err = await response.json().catch(() => ({ error: 'Streaming failed' }));

@@ -2,13 +2,9 @@ import { ExternalLink, Scale } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
-import {
-  buildSkillAttribution,
-  type SkillAttributionSource,
-} from '@/lib/skills/attribution';
+import { buildSkillAttribution, type SkillAttributionSource } from '@/lib/skills/attribution';
 
-export interface SkillAttributionBadgeProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+export interface SkillAttributionBadgeProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Colunas de origem da skill (`source_repo`, `source_url`, `source_license`). */
   skill: SkillAttributionSource;
 }
@@ -20,11 +16,7 @@ export interface SkillAttributionBadgeProps
  * evitando ruído visual no marketplace. Para skills portadas, cumpre a
  * exigência de aviso das licenças permissivas (MIT, Apache-2.0, BSD…).
  */
-export function SkillAttributionBadge({
-  skill,
-  className,
-  ...rest
-}: SkillAttributionBadgeProps) {
+export function SkillAttributionBadge({ skill, className, ...rest }: SkillAttributionBadgeProps) {
   const attribution = buildSkillAttribution(skill);
 
   if (attribution.isNative) return null;

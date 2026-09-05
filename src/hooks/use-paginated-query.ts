@@ -10,7 +10,13 @@ interface QueryBuilder {
   eq: (column: string, value: string) => QueryBuilder;
   order: (column: string, options: { ascending: boolean }) => QueryBuilder;
   range: (from: number, to: number) => QueryBuilder;
-  then: (onfulfilled?: (value: { data: unknown[] | null; count: number | null; error: Error | null }) => unknown) => Promise<unknown>;
+  then: (
+    onfulfilled?: (value: {
+      data: unknown[] | null;
+      count: number | null;
+      error: Error | null;
+    }) => unknown,
+  ) => Promise<unknown>;
 }
 
 export interface PaginationState {
@@ -75,7 +81,7 @@ export function usePaginatedQuery<T = Record<string, unknown>>(
         const to = from + pageSize - 1;
 
         // Count
-        const countBuilder = (supabaseExternal.from(table) as unknown) as QueryBuilder;
+        const countBuilder = supabaseExternal.from(table) as unknown as QueryBuilder;
         let countQuery = countBuilder.select('*', { count: 'exact', head: true });
         for (const [col, val] of Object.entries(eqFilters)) {
           countQuery = countQuery.eq(col, val);
@@ -84,7 +90,7 @@ export function usePaginatedQuery<T = Record<string, unknown>>(
         const total = count ?? 0;
 
         // Data
-        const dataBuilder = (supabaseExternal.from(table) as unknown) as QueryBuilder;
+        const dataBuilder = supabaseExternal.from(table) as unknown as QueryBuilder;
         let dataQuery = dataBuilder.select(select).order(orderBy, { ascending }).range(from, to);
         for (const [col, val] of Object.entries(eqFilters)) {
           dataQuery = dataQuery.eq(col, val);
@@ -109,7 +115,9 @@ export function usePaginatedQuery<T = Record<string, unknown>>(
   }, [fetchPage, enabled]);
 
   const goToPage = useCallback(
-    (p: number) => { if (p >= 1 && p <= Math.max(pagination.totalPages, 1)) fetchPage(p); },
+    (p: number) => {
+      if (p >= 1 && p <= Math.max(pagination.totalPages, 1)) fetchPage(p);
+    },
     [fetchPage, pagination.totalPages],
   );
   const nextPage = useCallback(() => goToPage(pagination.page + 1), [goToPage, pagination.page]);

@@ -32,7 +32,6 @@ import {
 
 const ext = getSharedSupabaseMock('evaluations-external');
 
-
 describe('scoreDeterministic', () => {
   it('returns 0 for empty inputs', () => {
     expect(scoreDeterministic('', 'foo')).toBe(0);

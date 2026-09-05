@@ -182,14 +182,26 @@ describe('securityService', () => {
     it('installGuardrailPreset preserva rastreabilidade do preset no config', async () => {
       const { installGuardrailPreset } = await import('@/services/securityService');
       await installGuardrailPreset(
-        { id: 'pii-br', name: 'PII Brasil', type: 'pii_detection', config: { cpf: true }, severity: 'high', tags: ['br'] },
+        {
+          id: 'pii-br',
+          name: 'PII Brasil',
+          type: 'pii_detection',
+          config: { cpf: true },
+          severity: 'high',
+          tags: ['br'],
+        },
         'ws-1',
       );
 
       const inserted = ext.calls.insert.mock.calls[0]?.[0] as Record<string, unknown>;
       expect(inserted.is_enabled).toBe(true);
       expect(inserted.workspace_id).toBe('ws-1');
-      expect(inserted.config).toMatchObject({ cpf: true, preset_id: 'pii-br', severity: 'high', tags: ['br'] });
+      expect(inserted.config).toMatchObject({
+        cpf: true,
+        preset_id: 'pii-br',
+        severity: 'high',
+        tags: ['br'],
+      });
     });
 
     it('listGuardrailPolicies lança em erro (config de segurança não pode falhar em silêncio)', async () => {

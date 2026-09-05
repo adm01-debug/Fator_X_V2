@@ -21,9 +21,11 @@ interface Props {
 
 export function ClearFiltersToast({ toastId, cleared, storageKeys, onUndo, onClose }: Props) {
   return (
-    <div className="w-[360px] rounded-xl bg-card/95 backdrop-blur-xl border border-border/50 shadow-nexus-2xl p-4 space-y-3"
-         role="status"
-         aria-label="Filtros limpos">
+    <div
+      className="w-[360px] rounded-xl bg-card/95 backdrop-blur-xl border border-border/50 shadow-nexus-2xl p-4 space-y-3"
+      role="status"
+      aria-label="Filtros limpos"
+    >
       <div className="flex items-start gap-2">
         <div className="h-7 w-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
           <Sparkles className="h-3.5 w-3.5" />
@@ -68,7 +70,10 @@ export function ClearFiltersToast({ toastId, cleared, storageKeys, onUndo, onClo
         <Button
           size="sm"
           variant="outline"
-          onClick={() => { onUndo(); onClose(); }}
+          onClick={() => {
+            onUndo();
+            onClose();
+          }}
           className="h-7 text-meta gap-1.5"
         >
           <Undo2 className="h-3 w-3" /> Desfazer
@@ -81,7 +86,7 @@ export function ClearFiltersToast({ toastId, cleared, storageKeys, onUndo, onClo
           Dispensar
         </button>
       </div>
-      { }
+      {}
       {toastId && null}
     </div>
   );
